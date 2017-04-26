@@ -30,7 +30,7 @@ DEFINES += QT_NO_CAST_TO_ASCII \
 # Experimental stuff
 DEFINES += KEYWORDS_TAGS
 
-LIBS += -L"$$PWD/../../libs/"
+LIBS += -L"$$PWD/../../../libs/"
 LIBS += -lhunspell
 
 macx {

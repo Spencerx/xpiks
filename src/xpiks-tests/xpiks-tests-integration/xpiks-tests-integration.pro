@@ -387,7 +387,7 @@ INCLUDEPATH += ../../../vendors/cpp-libface
 INCLUDEPATH += ../../../vendors/ssdll/src/ssdll
 INCLUDEPATH += ../../../vendors/hunspell-1.6.0/src
 
-LIBS += -L"$$PWD/../../libs/"
+LIBS += -L"$$PWD/../../../libs/"
 LIBS += -lhunspell
 LIBS += -lz
 LIBS += -lcurl
