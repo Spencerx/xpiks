@@ -6,7 +6,7 @@ QT += qml quick widgets concurrent svg
 CONFIG += qtquickcompiler
 CONFIG += c++11
 
-VERSION = 1.4.0.0
+VERSION = 1.4.2.0
 QMAKE_TARGET_PRODUCT = Xpiks
 QMAKE_TARGET_DESCRIPTION = "Cross-Platform Image Keywording Software"
 QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2014-2017 Taras Kushnir"
@@ -437,7 +437,7 @@ INCLUDEPATH += ../../vendors/cpp-libface
 INCLUDEPATH += ../../vendors/ssdll/src/ssdll
 INCLUDEPATH += ../../vendors/hunspell-1.6.0/src
 
-LIBS += -L"$$PWD/../libs/"
+LIBS += -L"$$PWD/../../libs/"
 LIBS += -lhunspell
 LIBS += -lz
 LIBS += -lcurl
