@@ -8,9 +8,11 @@ cd -
 
 echo "Copying libraries..."
 
-cp ../libs/libssdll.1.0.0.dylib build-Release/xpiks-qt.app/Contents/Frameworks/
-cp ../libs/libface.1.0.0.dylib build-Release/xpiks-qt.app/Contents/Frameworks/
-cp ../libs/libquazip.1.0.0.dylib build-Release/xpiks-qt.app/Contents/Frameworks/
+LIBS_PATH="../../libs"
+
+cp $LIBS_PATH/libssdll.1.0.0.dylib build-Release/xpiks-qt.app/Contents/Frameworks/
+cp $LIBS_PATH/libface.1.0.0.dylib build-Release/xpiks-qt.app/Contents/Frameworks/
+cp $LIBS_PATH/libquazip.1.0.0.dylib build-Release/xpiks-qt.app/Contents/Frameworks/
 
 echo "Changing dependency path..."
 
@@ -18,7 +20,7 @@ install_name_tool -change libssdll.1.dylib @executable_path/../Frameworks/libssd
 install_name_tool -change libface.1.dylib @executable_path/../Frameworks/libface.1.dylib "build-Release/xpiks-qt.app/Contents/MacOS/xpiks-qt"
 install_name_tool -change libquazip.1.dylib @executable_path/../Frameworks/libquazip.1.dylib "build-Release/xpiks-qt.app/Contents/MacOS/xpiks-qt"
 
-echo "Linking dynamic libraries"
+echo "Linking dynamic libraries.."
 
 cd build-Release/xpiks-qt.app/Contents/Frameworks/
 ln -s libssdll.1.0.0.dylib libssdll.1.dylib
