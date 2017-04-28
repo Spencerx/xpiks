@@ -92,13 +92,14 @@ echo '
            set current view of container window to icon view
            set toolbar visible of container window to false
            set statusbar visible of container window to false
-           set the bounds of container window to {500, 300, 1000, 570}
+           set the bounds of container window to {480, 300, 980, 570}
            set viewOptions to the icon view options of container window
            set arrangement of viewOptions to not arranged
            set icon size of viewOptions to 128
            set background picture of viewOptions to file ".background:'${DMG_BACKGROUND_IMG}'"
-           set position of item "'${APP_NAME}'.app" of container window to {100, 160}
-           set position of item "Applications" of container window to {330, 160}
+           set position of item "'${APP_NAME}'.app" of container window to {110, 135}
+           set position of item "Applications" of container window to {395, 130}
+           set name of item "Applications" to " "
            close
            open
            update without registering applications
