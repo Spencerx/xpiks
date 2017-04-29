@@ -59,7 +59,7 @@ echo "App dir is packed. Creating DMG..."
 # figure out how big our DMG needs to be
 #  assumes our contents are at least 1M!
 SIZE=`du -sh "${STAGING_DIR}" | sed 's/\([0-9\.]*\)M\(.*\)/\1/'`
-SIZE=`echo "${SIZE} + 1.0" | bc | awk '{print int($1+0.5)}'`
+SIZE=`echo "${SIZE} + 32.0" | bc | awk '{print int($1+0.5)}'`
 
 if [ $? -ne 0 ]; then
    echo "Error: Cannot compute size of staging dir"
@@ -98,6 +98,8 @@ echo '
            set toolbar visible of container window to false
            set statusbar visible of container window to false
            set the bounds of container window to {480, 300, 980, 570}
+           set statusbar visible of container window to false
+           set position of every item to {600, 400}
            set viewOptions to the icon view options of container window
            set arrangement of viewOptions to not arranged
            set icon size of viewOptions to 128
