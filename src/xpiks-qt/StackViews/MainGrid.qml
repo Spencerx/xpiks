@@ -42,13 +42,13 @@ ColumnLayout {
         id: searchAction
         shortcut: StandardKey.Find
         onTriggered: filterText.forceActiveFocus()
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
     }
 
     Action {
         id: selectAllAction
         shortcut: StandardKey.SelectAll
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             if (selectAllCheckbox.checked) {
                 filteredArtItemsModel.selectFilteredArtworks();
