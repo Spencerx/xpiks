@@ -44,7 +44,7 @@ ColumnLayout {
         anchors.right: parent.right
         text: i18.n + qsTr("Add directory")
         onClicked: chooseDirectoryDialog.open()
-        enabled: (applicationWindow.openedDialogsCount == 0)
+        enabled: applicationWindow.actionsEnabled
     }
 
     Item {

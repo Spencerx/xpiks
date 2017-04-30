@@ -49,6 +49,8 @@ ApplicationWindow {
     property var spellCheckService: helpersWrapper.getSpellCheckerService()
     property bool leftSideCollapsed: false
 
+    property bool actionsEnabled: mainStackView.areActionsAllowed && (openedDialogsCount == 0)
+
     onVisibleChanged: {
         if (needToCenter) {
             needToCenter = false
@@ -242,7 +244,7 @@ ApplicationWindow {
     Action {
         id: upgradeAction
         text: i18.n + qsTr("&Upgrade Now!")
-        enabled: helpersWrapper.isUpdateDownloaded && (applicationWindow.openedDialogsCount == 0)
+        enabled: helpersWrapper.isUpdateDownloaded && applicationWindow.actionsEnabled
         onTriggered: {
             helpersWrapper.setUpgradeConsent()
             closeHandler({accepted: false})
@@ -259,7 +261,7 @@ ApplicationWindow {
     Action {
         id: editAction
         shortcut: "Ctrl+E"
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             if (filteredArtItemsModel.selectedArtworksCount === 0) {
                 mustSelectDialog.open()
@@ -293,7 +295,7 @@ ApplicationWindow {
     Action {
         id: saveAction
         shortcut: StandardKey.Save
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             if (filteredArtItemsModel.selectedArtworksCount == 0) {
                 mustSelectDialog.open()
@@ -316,13 +318,13 @@ ApplicationWindow {
         id: searchAndReplaceAction
         shortcut: "Shift+Ctrl+F"
         onTriggered: openFindAndReplaceDialog()
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
     }
 
     Action {
         id: removeAction
         shortcut: "Ctrl+Del"
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             if (filteredArtItemsModel.selectedArtworksCount === 0) {
                 mustSelectDialog.open()
@@ -344,7 +346,7 @@ ApplicationWindow {
     Action {
         id: uploadAction
         shortcut: "Shift+Ctrl+U"
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             if (filteredArtItemsModel.selectedArtworksCount === 0) {
                 filteredArtItemsModel.selectFilteredArtworks();
@@ -360,7 +362,7 @@ ApplicationWindow {
         id: addFilesAction
         shortcut: StandardKey.Open
         onTriggered: chooseArtworksDialog.open()
-        enabled: (applicationWindow.openedDialogsCount == 0)
+        enabled: applicationWindow.actionsEnabled
     }
 
     menuBar: MenuBar {
@@ -497,7 +499,7 @@ ApplicationWindow {
 
         Menu {
             title: i18.n + qsTr("&Tools")
-            enabled: (applicationWindow.openedDialogsCount == 0) || debug
+            enabled: applicationWindow.actionsEnabled || debug
 
             Menu {
                 title: i18.n + qsTr("&Change language")
@@ -970,7 +972,7 @@ ApplicationWindow {
         }
 
         onUpdateDownloaded: {
-            if (applicationWindow.openedDialogsCount == 0) {
+            if (applicationWindow.actionsEnabled) {
                 Common.launchDialog("Dialogs/InstallUpdateDialog.qml", applicationWindow, {})
             } else {
                 console.debug("Opened dialogs found. Postponing upgrade flow...");
@@ -991,7 +993,7 @@ ApplicationWindow {
         running: false
         triggeredOnStart: false
         onTriggered: {
-            if (applicationWindow.openedDialogsCount == 0) {
+            if (applicationWindow.actionsEnabled) {
                 upgradeTimer.stop()
                 Common.launchDialog("Dialogs/InstallUpdateDialog.qml", applicationWindow, {})
             }
