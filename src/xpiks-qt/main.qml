@@ -410,7 +410,7 @@ ApplicationWindow {
 
         Menu {
             title: i18.n + qsTr("&Edit")
-            enabled: applicationWindow.openedDialogsCount == 0
+            enabled: applicationWindow.actionsEnabled
 
             MenuItem {
                 text: i18.n + qsTr("&Presets")
@@ -1003,7 +1003,7 @@ ApplicationWindow {
         anchors.fill: parent
 
         DropArea {
-            enabled: applicationWindow.openedDialogsCount == 0
+            enabled: applicationWindow.actionsEnabled
             anchors.fill: parent
             onDropped: {
                 if (drop.hasUrls) {
