@@ -251,7 +251,7 @@ ApplicationWindow {
 
     Action {
         id: quitAction
-        text: i18.n + qsTr("&Exit")
+        text: i18.n + qsTr("Exit")
         shortcut: StandardKey.Quit
         onTriggered: closeHandler({accepted: false});
     }
