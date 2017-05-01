@@ -427,6 +427,7 @@ ApplicationWindow {
 
         Menu {
             title: i18.n + qsTr("&Edit")
+            enabled: applicationWindow.actionsEnabled
 
             MenuItem {
                 text: i18.n + qsTr("&Presets")
