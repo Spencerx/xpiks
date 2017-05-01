@@ -3,8 +3,9 @@ This is Xpiks 1.4.2 bugfix release.
 In this release:
 
 - fix for multiple edit mode incorrect keywords combining
+- fix for multiple editing combining empty when combining empty artworks
 - fix for keyword editing doesn't mark the item modified
-
+- improvement for menu items availability in different modes
 
 
 
