@@ -30,7 +30,11 @@ DEFINES += QT_NO_CAST_TO_ASCII \
 # Experimental stuff
 DEFINES += KEYWORDS_TAGS
 
-LIBS += -L"$$PWD/../../../libs/"
+CONFIG(debug, debug|release)  {
+    LIBS += -L"$$PWD/../../../libs/debug"
+} else {
+    LIBS += -L"$$PWD/../../../libs/release"
+}
 LIBS += -lhunspell
 
 macx {
@@ -50,6 +54,11 @@ win32 {
 travis-ci {
     message("for Travis CI")
     DEFINES += TRAVIS_CI
+    LIBS += -L"$$PWD/../../../libs/"
+}
+
+appveyor {
+    LIBS += -L"$$PWD/../../../libs/"
 }
 
 linux-g++-64 {
