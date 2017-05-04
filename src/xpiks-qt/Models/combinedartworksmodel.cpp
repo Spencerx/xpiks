@@ -440,6 +440,7 @@ namespace Models {
         });
 
         if (found) {
+            LOG_INFO << "Found artwork with non-empty keywords at" << nonEmptyIndex;
             artworkMetadata = nonEmptyMetadata;
             index = nonEmptyIndex;
         }
