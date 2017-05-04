@@ -218,6 +218,14 @@ int main(int argc, char *argv[]) {
     settingsModel.setExifToolPath("c:/projects/xpiks-deps/windows-3rd-party-bin/exiftool.exe");
 #endif
 
+#ifdef KEYWORDS_TAGS
+    LOG_INFO << "With KEYWORDS_TAGS define";
+#else
+    std::cerr << "Without KEYWORDS_TAGS define" << std::endl;
+    std::cerr.flush();
+    return 1;
+#endif
+
     commandManager.connectEntitiesSignalsSlots();    
     commandManager.afterConstructionCallback();
 

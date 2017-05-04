@@ -2,6 +2,9 @@
 
 #include <QCoreApplication>
 #include <QtTest/QtTest>
+#include <QDebug>
+#include <iostream>
+
 #include "encryption_tests.h"
 #include "indicestoranges_tests.h"
 #include "addcommand_tests.h"
@@ -35,6 +38,14 @@
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
     Q_UNUSED(app);
+
+#ifdef KEYWORDS_TAGS
+    qInfo() << "With KEYWORDS_TAGS define";
+#else
+    std::cerr << "Without KEYWORDS_TAGS define" << std::endl;
+    std::cerr.flush();
+    return 1;
+#endif
 
     int result = 0;
 
