@@ -337,7 +337,6 @@ namespace Models {
     void CombinedArtworksModel::recombineArtworks(std::function<bool (const MetadataElement &)> pred) {
         LOG_DEBUG << "#";
 
-        bool anyItemsProcessed = false;
         bool descriptionsDiffer = false;
         bool titleDiffer = false;
         bool anyDifferent = false;
@@ -345,27 +344,30 @@ namespace Models {
         QSet<QString> commonKeywords, unitedKeywords;
         QStringList firstItemKeywords;
         int firstItemKeywordsCount = 0;
+        int firstNonEmptyIndex = 0;
+        ArtworkMetadata *firstNonEmpty = nullptr;
 
 #ifdef KEYWORDS_TAGS
         QStringList intersectedKeywords;
 #endif
 
-        processArtworks(pred,
-                        [&](int, ArtworkMetadata *metadata) {
-            if (!anyItemsProcessed) {
-                description = metadata->getDescription();
-                title = metadata->getTitle();
-                firstItemKeywords = metadata->getKeywords();
-                // preserve case with List to Set convertion
-                auto firstSet = firstItemKeywords.toSet();
-                commonKeywords.unite(firstSet);
-                firstItemKeywordsCount = firstSet.count();
+        if (findNonEmptyData(pred, firstNonEmptyIndex, firstNonEmpty)) {
+            description = firstNonEmpty->getDescription();
+            title = firstNonEmpty->getTitle();
+            firstItemKeywords = firstNonEmpty->getKeywords();
+            // preserve case with List to Set convertion
+            auto firstSet = firstItemKeywords.toSet();
+            commonKeywords.unite(firstSet);
+            firstItemKeywordsCount = firstSet.count();
+
 #ifdef KEYWORDS_TAGS
-                intersectedKeywords = firstItemKeywords;
+            intersectedKeywords = firstItemKeywords;
 #endif
-                anyItemsProcessed = true;
-                return;
-            }
+        }
+
+        processArtworks(pred,
+                        [&](int index, ArtworkMetadata *metadata) {
+            if (index == firstNonEmptyIndex) { return; }
 
             QString currDescription = metadata->getDescription();
             QString currTitle = metadata->getTitle();
@@ -418,6 +420,31 @@ namespace Models {
 #endif
             }
         }
+    }
+
+    bool CombinedArtworksModel::findNonEmptyData(std::function<bool (const MetadataElement &)> pred, int &index,  ArtworkMetadata *&artworkMetadata) {
+        bool found = false;
+        int nonEmptyIndex = -1;
+        ArtworkMetadata *nonEmptyMetadata = nullptr;
+
+        processArtworks(pred,
+                        [&](int index, ArtworkMetadata *metadata) -> bool {
+            if (!metadata->areKeywordsEmpty()) {
+                nonEmptyMetadata = metadata;
+                nonEmptyIndex = index;
+                found = true;
+            }
+
+            bool shouldBreak = found;
+            return shouldBreak;
+        });
+
+        if (found) {
+            artworkMetadata = nonEmptyMetadata;
+            index = nonEmptyIndex;
+        }
+
+        return found;
     }
 
     void CombinedArtworksModel::spellCheckErrorsChangedHandler() {
