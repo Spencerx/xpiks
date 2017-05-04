@@ -23,6 +23,9 @@ DEFINES += TELEMETRY_ENABLED
 
 DEFINES += INTEGRATION_TESTS
 
+# Experimental stuff
+DEFINES += KEYWORDS_TAGS
+
 SOURCES += main.cpp \
     ../../xpiks-qt/Commands/addartworkscommand.cpp \
     ../../xpiks-qt/Commands/combinededitcommand.cpp \
