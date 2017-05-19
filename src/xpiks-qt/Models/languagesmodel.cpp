@@ -39,7 +39,7 @@ namespace Models {
 
         QString translationsPath;
 
-#if defined(Q_OS_LINUX)
+#if defined(Q_OS_LINUX) && !defined(LINUX_APPIMAGE)
         translationsPath = QStandardPaths::locate(XPIKS_DATA_LOCATION_TYPE, "/translations/", QStandardPaths::LocateDirectory);
 #else
         translationsPath = QCoreApplication::applicationDirPath();

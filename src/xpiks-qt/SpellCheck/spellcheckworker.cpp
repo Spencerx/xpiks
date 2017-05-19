@@ -60,7 +60,7 @@ namespace SpellCheck {
         QString affPath;
         QString dicPath;
 
-#if !defined(Q_OS_LINUX)
+#if !defined(Q_OS_LINUX) || defined(LINUX_APPIMAGE)
         resourcesPath = QCoreApplication::applicationDirPath();
         LOG_DEBUG << "App path:" << resourcesPath;
 
@@ -68,7 +68,7 @@ namespace SpellCheck {
         resourcesPath += "/../Resources/";
 #  elif defined(APPVEYOR)
         resourcesPath += "/../../../xpiks-qt/deps/dict/";
-#  elif defined(Q_OS_WIN)
+#  elif defined(Q_OS_WIN) || defined(LINUX_APPIMAGE)
         resourcesPath += "/dict/";
 #  endif
 

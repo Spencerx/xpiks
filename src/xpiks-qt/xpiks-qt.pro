@@ -569,6 +569,13 @@ linux-g++-64 {
     }
 }
 
+linux-appimage {
+    message("AppImage build")
+    DEFINES += LINUX_APPIMAGE
+    INCLUDEPATH += "../../vendors/quazip"
+    BUILDNO = $$system($$PWD/buildno.sh)
+}
+
 linux-qtcreator {
     message("in QtCreator")
     BUILDNO = $$system($$PWD/buildno.sh)

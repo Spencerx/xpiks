@@ -169,7 +169,7 @@ namespace Helpers {
             QString text;
             QString path;
 
-#if !defined(Q_OS_LINUX)
+#if !defined(Q_OS_LINUX) || defined(LINUX_APPIMAGE)
             path = QCoreApplication::applicationDirPath();
 
 #if defined(Q_OS_MAC)

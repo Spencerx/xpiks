@@ -64,7 +64,7 @@ namespace AutoComplete {
 #  endif
 #elif  defined(APPVEYOR)
         resourcesPath += "/../../../xpiks-qt/deps/";
-#elif defined(Q_OS_WIN)
+#elif defined(Q_OS_WIN) || defined(LINUX_APPIMAGE)
         resourcesPath += "/ac_sources/";
 #elif defined(TRAVIS_CI)
         resourcesPath += "/../../xpiks-qt/deps/";
