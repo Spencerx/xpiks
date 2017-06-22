@@ -762,16 +762,16 @@ void Commands::CommandManager::afterConstructionCallback() {
     QString endpoint = Encryption::decodeText(reportingEndpoint, "reporting");
     m_TelemetryService->setEndpoint(endpoint);
 
-#ifdef WITH_PLUGINS
-    m_PluginManager->loadPlugins();
-#endif
-
     m_TelemetryService->startReporting();
     m_UpdateService->startChecking();
     m_ArtworkUploader->initializeStocksList();
     m_WarningsService->initWarningsSettings();
     m_TranslationManager->initializeDictionaries();
     m_PresetsModelConfig->initializeConfigs();
+
+#ifdef WITH_PLUGINS
+    m_PluginManager->loadPlugins();
+#endif
 #endif
 
 #ifdef Q_OS_MAC
