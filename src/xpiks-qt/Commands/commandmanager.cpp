@@ -340,6 +340,11 @@ void Commands::CommandManager::connectEntitiesSignalsSlots() const {
                          m_HelpersQmlWrapper, SLOT(updateIsDownloaded(QString)));
     }
 
+    if (m_PluginManager != NULL && m_PresetsModel != NULL) {
+        QObject::connect(m_PresetsModel, &KeywordsPresets::PresetKeywordsModel::presetsUpdated,
+                         m_PluginManager, &Plugins::PluginManager::onPresetsUpdated);
+    }
+
     if (m_PresetsModel != NULL && m_PresetsModelConfig != NULL) {
         QObject::connect(m_PresetsModelConfig, SIGNAL(presetsUpdated()), m_PresetsModel, SLOT (onPresetsUpdated()));
     }
