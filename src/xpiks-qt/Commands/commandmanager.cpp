@@ -340,11 +340,6 @@ void Commands::CommandManager::connectEntitiesSignalsSlots() const {
                          m_HelpersQmlWrapper, SLOT(updateIsDownloaded(QString)));
     }
 
-    if (m_PluginManager != NULL && m_PresetsModel != NULL) {
-        QObject::connect(m_PresetsModel, &KeywordsPresets::PresetKeywordsModel::presetsUpdated,
-                         m_PluginManager, &Plugins::PluginManager::onPresetsUpdated);
-    }
-
     if (m_PresetsModel != NULL && m_PresetsModelConfig != NULL) {
         QObject::connect(m_PresetsModelConfig, SIGNAL(presetsUpdated()), m_PresetsModel, SLOT (onPresetsUpdated()));
     }
@@ -356,6 +351,11 @@ void Commands::CommandManager::connectEntitiesSignalsSlots() const {
 
     if (m_PluginManager != NULL && m_UndoRedoManager) {
         QObject::connect(m_UndoRedoManager, SIGNAL(actionUndone(int)), m_PluginManager, SLOT(onLastActionUndone(int)));
+    }
+
+    if (m_PluginManager != NULL && m_PresetsModel != NULL) {
+        QObject::connect(m_PresetsModel, &KeywordsPresets::PresetKeywordsModel::presetsUpdated,
+                         m_PluginManager, &Plugins::PluginManager::onPresetsUpdated);
     }
 #endif
 }
