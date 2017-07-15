@@ -26,6 +26,8 @@
 #include <QObject>
 
 namespace Common {
+    typedef uint32_t flag_t;
+
     template<typename FlagType>
     struct enable_bitmask_operators {
         static constexpr bool enable=false;
