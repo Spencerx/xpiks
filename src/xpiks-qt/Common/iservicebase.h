@@ -23,9 +23,10 @@
 #define ISERVICEBASE_H
 
 #include <QVector>
+#include "../Common/flags.h"
 
 namespace Common {
-    template<typename T, typename FlagsType=int>
+    template<typename T, typename FlagsType=Common::flag_t>
     class IServiceBase {
     public:
         virtual ~IServiceBase() {}
