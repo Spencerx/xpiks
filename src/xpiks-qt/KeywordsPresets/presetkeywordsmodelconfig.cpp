@@ -59,7 +59,7 @@ namespace KeywordsPresets {
         emit presetsUpdated();
     }
 
-    void PresetKeywordsModelConfig::saveFromModel(const std::vector<PresetModel *> &presets) {
+    void PresetKeywordsModelConfig::loadFromModel(const std::vector<PresetModel *> &presets) {
         int size = (int)presets.size();
         LOG_INTEGR_TESTS_OR_DEBUG << size;
 
@@ -74,7 +74,9 @@ namespace KeywordsPresets {
             m_PresetData[i].m_Keywords = keywordsModel.getKeywords();
             m_PresetData[i].m_Name = name;
         }
+    }
 
+    void PresetKeywordsModelConfig::sync() {
 #if !defined(INTEGRATION_TESTS) && !defined(CORE_TESTS)
         writeToConfig();
 #endif

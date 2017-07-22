@@ -40,7 +40,8 @@ namespace KeywordsPresets {
     public:
         PresetKeywordsModelConfig(QObject *parent=0);
         void initializeConfigs();
-        void saveFromModel(const std::vector<PresetModel *> &presets);
+        void loadFromModel(const std::vector<PresetModel *> &presets);
+        void sync();
 
     public:
         // AbstractConfigUpdaterModel interface
