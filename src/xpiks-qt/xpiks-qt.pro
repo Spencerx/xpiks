@@ -451,6 +451,7 @@ LIBS += -lexiv2
 LIBS += -lssdll
 
 BUILDNO=$$system(git log -n 1 --pretty=format:"%h")
+BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
 
 CONFIG(debug, debug|release)  {
     message("Building debug")
@@ -593,3 +594,4 @@ linux-static {
 }
 
 DEFINES += BUILDNUMBER=$${BUILDNO}
+DEFINES += BRANCHNAME=$${BRANCH_NAME}

@@ -28,6 +28,9 @@
 #include <QDateTime>
 #include <QStandardPaths>
 
+#define STRINGIZE_(x) #x
+#define STRINGIZE(x) STRINGIZE_(x)
+
 #ifdef KEYWORDS_TAGS
 #define KEYWORD_TAG_SYMBOL '#'
 #endif
@@ -80,10 +83,14 @@
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 #define XPIKS_DATA_LOCATION_TYPE QStandardPaths::AppDataLocation
-#define XPIKS_USERDATA_PATH QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+#ifdef QT_DEBUG
+    #define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" + STRINGIZE(BRANCHNAME))
+#else
+    #define XPIKS_USERDATA_PATH QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+#endif
 #else
 #define XPIKS_DATA_LOCATION_TYPE QStandardPaths::DataLocation
-#define XPIKS_USERDATA_PATH QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + STRINGIZE(BRANCHNAME))
 #endif
 
 #define PREVIEWOFFSET 25
