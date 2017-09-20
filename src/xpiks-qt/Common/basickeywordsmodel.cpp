@@ -541,6 +541,12 @@ namespace Common {
         for (int i = 0; i < size; ++i) {
             QString keyword = m_KeywordsList.at(i);
 
+#ifdef KEYWORDS_TAGS
+            if (keyword.startsWith(KEYWORD_TAG_SYMBOL)) {
+                continue;
+            }
+#endif
+
             if (!caseSensitive) {
                 keyword = keyword.toLower();
             }
