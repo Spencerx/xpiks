@@ -126,6 +126,9 @@ namespace Helpers {
         Q_PROPERTY(QString useAutoCompleteKey READ getUseAutoCompleteKey CONSTANT)
         QString getUseAutoCompleteKey() const { return QLatin1String(Constants::USE_AUTO_COMPLETE); }
 
+        Q_PROPERTY(QString usePresetsAutoCompleteKey READ getUsePresetsAutoCompleteKey CONSTANT)
+        QString getUsePresetsAutoCompleteKey() const { return QLatin1String(Constants::USE_PRESETS_AUTO_COMPLETE); }
+
         Q_PROPERTY(QString useExifToolKey READ getUseExifToolKey CONSTANT)
         QString getUseExifToolKey() const { return QLatin1String(Constants::USE_EXIFTOOL); }
 

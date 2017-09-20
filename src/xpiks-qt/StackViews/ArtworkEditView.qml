@@ -231,6 +231,7 @@ Rectangle {
         target: artworkProxy
 
         onCompletionsAvailable: {
+            acSource.initializeCompletions()
             if (typeof artworkEditComponent.autoCompleteBox !== "undefined") {
                 // update completion
                 return
@@ -249,7 +250,8 @@ Rectangle {
             var isBelow = (tmp.y + popupHeight) < directParent.height;
 
             var options = {
-                model: acSource,
+                model: acSource.getCompletionsModel(),
+                autoCompleteSource: acSource,
                 editableTags: flv,
                 isBelowEdit: isBelow,
                 "anchors.left": directParent.left,
@@ -271,7 +273,7 @@ Rectangle {
                 var instance = component.createObject(directParent, options);
 
                 instance.boxDestruction.connect(artworkEditComponent.onAutoCompleteClose)
-                instance.itemSelected.connect(flv.editControl.acceptCompletion)
+                instance.itemSelected.connect(flv.acceptCompletion)
                 artworkEditComponent.autoCompleteBox = instance
 
                 instance.openPopup()
@@ -801,6 +803,16 @@ Rectangle {
                                 scrollStep: keywordHeight
                                 populateAnimationEnabled: false
 
+                                function acceptCompletion(completionID) {
+                                    var accepted = artworkProxy.acceptCompletionAsPreset(completionID);
+                                    if (!accepted) {
+                                        var completion = acSource.getCompletion(completionID)
+                                        flv.editControl.acceptCompletion(completion)
+                                    } else {
+                                        flv.editControl.acceptCompletion('')
+                                    }
+                                }
+
                                 delegate: KeywordWrapper {
                                     id: kw
                                     isHighlighted: true
@@ -859,8 +871,7 @@ Rectangle {
                                 }
 
                                 onCompletionRequested: {
-                                    helpersWrapper.autoCompleteKeyword(prefix,
-                                                                       artworkProxy.getBasicModel())
+                                    artworkProxy.generateCompletions(prefix)
                                 }
 
                                 onExpandLastAsPreset: {

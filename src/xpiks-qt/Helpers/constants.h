@@ -63,6 +63,7 @@ namespace Constants {
     const char SELECTED_LOCALE[] = "SELECTED_LOCALE";
     const char SELECTED_THEME_INDEX[] = "SELECTED_THEME_INDEX";
     const char USE_AUTO_COMPLETE[] = "USE_AUTO_COMPLETE";
+    const char USE_PRESETS_AUTO_COMPLETE[] = "USE_PRESETS_AUTO_COMPLETE";
     const char USE_EXIFTOOL[] = "USE_EXIFTOOL";
     const char IMAGES_CACHE_DIR[] = "imagescache";
     const char IMAGES_CACHE_INDEX[] = "imagescache.index";
@@ -91,6 +92,7 @@ namespace Constants {
     const char SELECTED_THEME_INDEX[] = "DEBUG_SELECTED_THEME_INDEX";
     const char FTP_STOCKS_FILENAME[] = "stocks_ftp.json";
     const char USE_AUTO_COMPLETE[] = "DEBUG_USE_AUTO_COMPLETE";
+    const char USE_PRESETS_AUTO_COMPLETE[] = "DEBUG_USE_PRESETS_AUTO_COMPLETE";
     const char USE_EXIFTOOL[] = "DEBUG_USE_EXIFTOOL";
     const char IMAGES_CACHE_DIR[] = "debug_imagescache";
     const char IMAGES_CACHE_INDEX[] = "debug_imagescache.index";

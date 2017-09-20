@@ -299,8 +299,18 @@ namespace Models {
         doCopyToQuickBuffer();
     }
 
-    qint64 ArtworkProxyModel::getSpecialItemID() {
-        qint64 result = 0;
+    void ArtworkProxyModel::generateCompletions(const QString &prefix) {
+        LOG_DEBUG << prefix;
+        doGenerateCompletions(prefix);
+    }
+
+    bool ArtworkProxyModel::acceptCompletionAsPreset(int completionID) {
+        LOG_DEBUG << completionID;
+        return doAcceptCompletionAsPreset(completionID);
+    }
+
+    Common::ID_t ArtworkProxyModel::getSpecialItemID() {
+        Common::ID_t result = 0;
 
         if (m_ArtworkMetadata != nullptr) {
             result = m_ArtworkMetadata->getItemID();

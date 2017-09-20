@@ -44,7 +44,8 @@
 #define DEFAULT_AUTO_FIND_VECTORS true
 #define DEFAULT_LOCALE "en_US"
 #define DEFAULT_SELECTED_THEME_INDEX 0
-#define DEFAULT_USE_AUTO_COMPLETE true
+#define DEFAULT_USE_AUTO_COMPLETE false
+#define DEFAULT_USE_PRESETS_AUTOCOMPLETE true
 #define DEFAULT_USE_EXIFTOOL false
 #define DEFAULT_USE_PROXY false
 #define DEFAULT_ARTWORK_EDIT_RIGHT_PANE_WIDTH 300
@@ -81,7 +82,8 @@ namespace Models {
         m_AutoDownloadUpdates(DEFAULT_AUTO_DOWNLOAD_UPDATES),
         m_DictsPathChanged(false),
         m_AutoFindVectors(DEFAULT_AUTO_FIND_VECTORS),
-        m_UseAutoComplete(DEFAULT_USE_AUTO_COMPLETE),
+        m_UseKeywordsAutoComplete(DEFAULT_USE_AUTO_COMPLETE),
+        m_UsePresetsAutoComplete(DEFAULT_USE_PRESETS_AUTOCOMPLETE),
         m_UseExifTool(DEFAULT_USE_EXIFTOOL),
         m_UseProxy(DEFAULT_USE_PROXY),
         m_AutoCacheImages(DEFAULT_AUTO_CACHE_IMAGES)
@@ -139,7 +141,8 @@ namespace Models {
         appSettings.setValue(appSettings.getAutoDownloadUpdatesKey(), m_AutoDownloadUpdates);
         appSettings.setValue(appSettings.getAutoFindVectorsKey(), m_AutoFindVectors);
         appSettings.setValue(appSettings.getSelectedThemeIndexKey(), m_SelectedThemeIndex);
-        appSettings.setValue(appSettings.getUseAutoCompleteKey(), m_UseAutoComplete);
+        appSettings.setValue(appSettings.getUseAutoCompleteKey(), m_UseKeywordsAutoComplete);
+        appSettings.setValue(appSettings.getUsePresetsAutoCompleteKey(), m_UsePresetsAutoComplete);
         appSettings.setValue(appSettings.getUseExifToolKey(), m_UseExifTool);
         appSettings.setValue(appSettings.getUseProxyKey(), m_UseProxy);
         appSettings.setValue(appSettings.getProxyHashKey(),QVariant::fromValue(m_ProxySettings));
@@ -205,7 +208,8 @@ namespace Models {
         setAutoFindVectors(appSettings.boolValue(appSettings.getAutoFindVectorsKey(), DEFAULT_AUTO_FIND_VECTORS));
         setSelectedLocale(appSettings.value(appSettings.getSelectedLocaleKey(), DEFAULT_LOCALE).toString());
         setSelectedThemeIndex(appSettings.value(appSettings.getSelectedThemeIndexKey(), DEFAULT_SELECTED_THEME_INDEX).toInt());
-        setUseAutoComplete(appSettings.boolValue(appSettings.getUseAutoCompleteKey(), DEFAULT_USE_AUTO_COMPLETE));
+        setUseKeywordsAutoComplete(appSettings.boolValue(appSettings.getUseAutoCompleteKey(), DEFAULT_USE_AUTO_COMPLETE));
+        setUsePresetsAutoComplete(appSettings.boolValue(appSettings.getUsePresetsAutoCompleteKey(), DEFAULT_USE_PRESETS_AUTOCOMPLETE));
         setUseExifTool(appSettings.boolValue(appSettings.getUseExifToolKey(), DEFAULT_USE_EXIFTOOL));
         setUseProxy(appSettings.boolValue(appSettings.getUseProxyKey(), DEFAULT_USE_PROXY));
 
@@ -239,7 +243,8 @@ namespace Models {
         setAutoFindVectors(DEFAULT_AUTO_FIND_VECTORS);
         setSelectedLocale(DEFAULT_LOCALE);
         setSelectedThemeIndex(DEFAULT_SELECTED_THEME_INDEX);
-        setUseAutoComplete(DEFAULT_USE_AUTO_COMPLETE);
+        setUseKeywordsAutoComplete(DEFAULT_USE_AUTO_COMPLETE);
+        setUsePresetsAutoComplete(DEFAULT_USE_PRESETS_AUTOCOMPLETE);
         setUseExifTool(DEFAULT_USE_EXIFTOOL);
         setUseProxy(DEFAULT_USE_PROXY);
         resetProxySetting();

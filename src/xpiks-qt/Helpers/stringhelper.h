@@ -45,7 +45,8 @@ namespace Helpers {
     int wordInsertPos(const QStringList &keywords, const QString &tag);
 #endif
 
-    int levensteinDistance(const QString &s1, const QString &s2);
+    unsigned int levensteinDistance(const QString &s1, const QString &s2);
+    int levensteinPercentage(const QString &s1, const QString &s2);
     bool isUtf8(const char* const buffer);
     QString detectEncodingAndDecode(const std::string &value);
     bool is7BitAscii(const QByteArray &s);

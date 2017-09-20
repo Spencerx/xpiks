@@ -145,7 +145,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/ziparchiver.cpp \
     removefilesfs_tests.cpp \
     ../../xpiks-qt/Helpers/jsonhelper.cpp \
-    ../../xpiks-qt/AutoComplete/stringfilterproxymodel.cpp \
+    ../../xpiks-qt/AutoComplete/stringsautocompletemodel.cpp \
     ../../xpiks-qt/Models/imageartwork.cpp \
     recentdirectories_tests.cpp \
     artitemsmodel_tests.cpp \
@@ -175,6 +175,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/artworkproxymodel.cpp \
     ../../xpiks-qt/Models/uimanager.cpp \
     ../../xpiks-qt/QMLExtensions/tabsmodel.cpp
+    ../../xpiks-qt/AutoComplete/autocompletemodel.cpp \
+    ../../xpiks-qt/AutoComplete/keywordsautocompletemodel.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -261,7 +263,7 @@ HEADERS += \
     removefilesfs_tests.h \
     Mocks/artworksrepositorymock.h \
     ../../xpiks-qt/Helpers/jsonhelper.h \
-    ../../xpiks-qt/AutoComplete/stringfilterproxymodel.h \
+    ../../xpiks-qt/AutoComplete/stringsautocompletemodel.h \
     ../../xpiks-qt/Models/imageartwork.h \
     deleteoldlogstest.h \
     ../../xpiks-qt/Common/hold.h \
@@ -297,4 +299,6 @@ HEADERS += \
     ../../xpiks-qt/Models/uimanager.h \
     ../../xpiks-qt/KeywordsPresets/ipresetsmanager.h \
     ../../xpiks-qt/QMLExtensions/tabsmodel.h
+    ../../xpiks-qt/AutoComplete/autocompletemodel.h \
+    ../../xpiks-qt/AutoComplete/keywordsautocompletemodel.h
 

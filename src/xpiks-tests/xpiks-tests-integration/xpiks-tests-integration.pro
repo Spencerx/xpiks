@@ -116,7 +116,6 @@ SOURCES += main.cpp \
     ../../xpiks-qt/AutoComplete/autocompleteworker.cpp \
     ../../xpiks-qt/Suggestion/gettyqueryengine.cpp \
     ../../xpiks-qt/AutoComplete/stocksftplistmodel.cpp \
-    ../../xpiks-qt/AutoComplete/stringfilterproxymodel.cpp \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.cpp \
     ../../xpiks-qt/Helpers/jsonhelper.cpp \
     ../../xpiks-qt/Helpers/localconfig.cpp \
@@ -177,7 +176,11 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/artworkproxymodel.cpp \
     ../../xpiks-qt/SpellCheck/userdicteditmodel.cpp \
     userdictedittest.cpp \
-    ../../xpiks-qt/QMLExtensions/tabsmodel.cpp
+    ../../xpiks-qt/QMLExtensions/tabsmodel.cpp \
+    ../../xpiks-qt/AutoComplete/libfacecompletionengine.cpp \
+    ../../xpiks-qt/AutoComplete/presetscompletionengine.cpp \
+    ../../xpiks-qt/AutoComplete/keywordsautocompletemodel.cpp \
+    ../../xpiks-qt/AutoComplete/stringsautocompletemodel.cpp
 
 RESOURCES +=
 
@@ -311,7 +314,6 @@ HEADERS += \
     ../../xpiks-qt/AutoComplete/completionquery.h \
     ../../xpiks-qt/Suggestion/gettyqueryengine.h \
     ../../xpiks-qt/AutoComplete/stocksftplistmodel.h \
-    ../../xpiks-qt/AutoComplete/stringfilterproxymodel.h \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.h \
     ../../xpiks-qt/Helpers/jsonhelper.h \
     ../../xpiks-qt/Helpers/localconfig.h \
@@ -383,7 +385,12 @@ HEADERS += \
     ../../xpiks-qt/KeywordsPresets/ipresetsmanager.h \
     ../../xpiks-qt/SpellCheck/userdicteditmodel.h \
     userdictedittest.h \
-    ../../xpiks-qt/QMLExtensions/tabsmodel.h
+    ../../xpiks-qt/QMLExtensions/tabsmodel.h \
+    ../../xpiks-qt/AutoComplete/completionenginebase.h \
+    ../../xpiks-qt/AutoComplete/libfacecompletionengine.h \
+    ../../xpiks-qt/AutoComplete/presetscompletionengine.h \
+    ../../xpiks-qt/AutoComplete/keywordsautocompletemodel.h \
+    ../../xpiks-qt/AutoComplete/stringsautocompletemodel.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

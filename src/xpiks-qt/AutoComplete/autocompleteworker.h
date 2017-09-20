@@ -14,21 +14,39 @@
 #include <QObject>
 #include "../Common/itemprocessingworker.h"
 #include "completionquery.h"
-#include <src/libfaceapi.hpp>
+#include "libfacecompletionengine.h"
+#include "presetscompletionengine.h"
+
+namespace Helpers {
+    class AsyncCoordinator;
+}
+
+namespace KeywordsPresets {
+    class PresetKeywordsModel;
+}
 
 namespace AutoComplete {
+    class KeywordsAutoCompleteModel;
+
     class AutoCompleteWorker :
             public QObject,
             public Common::ItemProcessingWorker<CompletionQuery>
     {
         Q_OBJECT
     public:
-        explicit AutoCompleteWorker(QObject *parent = 0);
+        explicit AutoCompleteWorker(Helpers::AsyncCoordinator *initCoordinator,
+                                    KeywordsAutoCompleteModel *autoCompleteModel,
+                                    KeywordsPresets::PresetKeywordsModel *presetsManager,
+                                    QObject *parent = 0);
         virtual ~AutoCompleteWorker();
 
     protected:
         virtual bool initWorker() override;
         virtual void processOneItem(std::shared_ptr<CompletionQuery> &item) override;
+
+    private:
+        void generateCompletions(std::shared_ptr<CompletionQuery> &item);
+        void updateCompletions(std::shared_ptr<CompletionQuery> &item);
 
     protected:
         virtual void notifyQueueIsEmpty() override { emit queueIsEmpty(); }
@@ -43,8 +61,11 @@ namespace AutoComplete {
         void queueIsEmpty();
 
     private:
-        Souffleur *m_Soufleur;
-        const int m_CompletionsCount;
+        LibFaceCompletionEngine m_FaceCompletionEngine;
+        PresetsCompletionEngine m_PresetsCompletionEngine;
+        Helpers::AsyncCoordinator *m_InitCoordinator;
+        KeywordsAutoCompleteModel *m_AutoCompleteModel;
+        KeywordsPresets::PresetKeywordsModel *m_PresetsManager;
     };
 }
 

@@ -128,6 +128,7 @@ namespace Common {
     public:
         void notifySpellCheckResults(SpellCheckFlags flags);
         void notifyAboutToBeRemoved() { emit aboutToBeRemoved(); }
+        void notifyCompletionsAvailable() { emit completionsAvailable(); }
 
     public:
         void acquire() { m_Hold.acquire(); }

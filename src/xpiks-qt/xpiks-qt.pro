@@ -91,13 +91,11 @@ SOURCES += main.cpp \
     Helpers/remoteconfig.cpp \
     Helpers/localconfig.cpp \
     Helpers/jsonhelper.cpp \
-    AutoComplete/autocompletemodel.cpp \
     AutoComplete/autocompleteworker.cpp \
     AutoComplete/autocompleteservice.cpp \
     Suggestion/gettyqueryengine.cpp \
     Models/abstractconfigupdatermodel.cpp \
     AutoComplete/stocksftplistmodel.cpp \
-    AutoComplete/stringfilterproxymodel.cpp \
     Models/imageartwork.cpp \
     MetadataIO/exiv2readingworker.cpp \
     MetadataIO/readingorchestrator.cpp \
@@ -141,7 +139,12 @@ SOURCES += main.cpp \
     QuickBuffer/currenteditableproxyartwork.cpp \
     QuickBuffer/quickbuffer.cpp \
     SpellCheck/userdicteditmodel.cpp \
-    QMLExtensions/tabsmodel.cpp
+    QMLExtensions/tabsmodel.cpp \
+    AutoComplete/libfacecompletionengine.cpp \
+    AutoComplete/autocompletemodel.cpp \
+    AutoComplete/keywordsautocompletemodel.cpp \
+    AutoComplete/stringsautocompletemodel.cpp \
+    AutoComplete/presetscompletionengine.cpp
 
 RESOURCES += qml.qrc
 
@@ -276,14 +279,12 @@ HEADERS += \
     Helpers/localconfig.h \
     Helpers/jsonhelper.h \
     Helpers/comparevaluesjson.h \
-    AutoComplete/autocompletemodel.h \
     AutoComplete/autocompleteworker.h \
     AutoComplete/completionquery.h \
     AutoComplete/autocompleteservice.h \
     Suggestion/gettyqueryengine.h \
     Models/abstractconfigupdatermodel.h \
     AutoComplete/stocksftplistmodel.h \
-    AutoComplete/stringfilterproxymodel.h \
     Models/imageartwork.h \
     Common/hold.h \
     MetadataIO/exiv2readingworker.h \
@@ -339,7 +340,13 @@ HEADERS += \
     QuickBuffer/quickbuffer.h \
     KeywordsPresets/ipresetsmanager.h \
     SpellCheck/userdicteditmodel.h \
-    QMLExtensions/tabsmodel.h
+    QMLExtensions/tabsmodel.h \
+    AutoComplete/completionenginebase.h \
+    AutoComplete/libfacecompletionengine.h \
+    AutoComplete/autocompletemodel.h \
+    AutoComplete/keywordsautocompletemodel.h \
+    AutoComplete/stringsautocompletemodel.h \
+    AutoComplete/presetscompletionengine.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

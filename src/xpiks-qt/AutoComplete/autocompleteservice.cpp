@@ -14,14 +14,23 @@
 #include "completionquery.h"
 #include "../Common/flags.h"
 #include "../Common/basickeywordsmodel.h"
+#include "../Models/settingsmodel.h"
 
 namespace AutoComplete {
-    AutoCompleteService::AutoCompleteService(AutoCompleteModel *autoCompleteModel, QObject *parent):
+    AutoCompleteService::AutoCompleteService(KeywordsAutoCompleteModel *autoCompleteModel,
+                                             KeywordsPresets::PresetKeywordsModel *presetsManager,
+                                             Models::SettingsModel *settingsModel,
+                                             QObject *parent):
         QObject(parent),
         m_AutoCompleteWorker(NULL),
         m_AutoCompleteModel(autoCompleteModel),
+        m_PresetsManager(presetsManager),
+        m_SettingsModel(settingsModel),
         m_RestartRequired(false)
     {
+        Q_ASSERT(autoCompleteModel != nullptr);
+        Q_ASSERT(presetsManager != nullptr);
+        Q_ASSERT(settingsModel != nullptr);
     }
 
     AutoCompleteService::~AutoCompleteService() {
@@ -33,25 +42,25 @@ namespace AutoComplete {
             return;
         }
 
-        m_AutoCompleteWorker = new AutoCompleteWorker();
+        m_AutoCompleteWorker = new AutoCompleteWorker(nullptr, m_AutoCompleteModel, m_PresetsManager);
 
         QThread *thread = new QThread();
         m_AutoCompleteWorker->moveToThread(thread);
 
-        QObject::connect(thread, SIGNAL(started()), m_AutoCompleteWorker, SLOT(process()));
-        QObject::connect(m_AutoCompleteWorker, SIGNAL(stopped()), thread, SLOT(quit()));
+        QObject::connect(thread, &QThread::started, m_AutoCompleteWorker, &AutoCompleteWorker::process);
+        QObject::connect(m_AutoCompleteWorker, &AutoCompleteWorker::stopped, thread, &QThread::quit);
 
-        QObject::connect(m_AutoCompleteWorker, SIGNAL(stopped()), m_AutoCompleteWorker, SLOT(deleteLater()));
-        QObject::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+        QObject::connect(m_AutoCompleteWorker, &AutoCompleteWorker::stopped, m_AutoCompleteWorker, &AutoCompleteWorker::deleteLater);
+        QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 
-        QObject::connect(this, SIGNAL(cancelAutoCompletion()),
-                         m_AutoCompleteWorker, SLOT(cancel()));
+        QObject::connect(this, &AutoCompleteService::cancelAutoCompletion,
+                         m_AutoCompleteWorker, &AutoCompleteWorker::cancel);
 
-        QObject::connect(m_AutoCompleteWorker, SIGNAL(stopped()),
-                         this, SLOT(workerFinished()));
+        QObject::connect(m_AutoCompleteWorker, &AutoCompleteWorker::stopped,
+                         this, &AutoCompleteService::workerFinished);
 
-        QObject::connect(m_AutoCompleteWorker, SIGNAL(destroyed(QObject*)),
-                         this, SLOT(workerDestroyed(QObject*)));
+        QObject::connect(m_AutoCompleteWorker, &AutoCompleteWorker::destroyed,
+                         this, &AutoCompleteService::workerDestroyed);
 
         LOG_DEBUG << "starting thread...";
         thread->start();
@@ -96,24 +105,29 @@ namespace AutoComplete {
         stopService();
     }
 
-    void AutoCompleteService::findKeywordCompletions(const QString &prefix, QObject *notifyObject) {
+    void AutoCompleteService::generateCompletions(const QString &prefix, Common::BasicKeywordsModel *basicModel) {
         if (m_AutoCompleteWorker == NULL) {
             LOG_WARNING << "Worker is NULL";
+            return;
+        }
+
+        const bool completeKeywords = m_SettingsModel->getUseKeywordsAutoComplete();
+        const bool completePresets = m_SettingsModel->getUsePresetsAutoComplete();
+
+        LOG_INTEGR_TESTS_OR_DEBUG << "Complete keywords:" << completeKeywords << "presets:" << completePresets;
+
+        if (!completeKeywords && !completePresets) {
+            LOG_INTEGR_TESTS_OR_DEBUG << "Completions are disabled";
             return;
         }
 
         LOG_INFO << "Received:" << prefix;
         QString requestPrefix = prefix.toLower();
         LOG_INFO << "Requesting for" << requestPrefix;
-        std::shared_ptr<CompletionQuery> query(new CompletionQuery(requestPrefix, m_AutoCompleteModel),
-                                               [](CompletionQuery *cq) { cq->deleteLater(); });
 
-        Common::BasicKeywordsModel *basicKeywordsModel = qobject_cast<Common::BasicKeywordsModel*>(notifyObject);
-        Q_ASSERT(basicKeywordsModel != NULL);
-
-        QObject::connect(query.get(), SIGNAL(completionsAvailable()), basicKeywordsModel, SIGNAL(completionsAvailable()));
-        QObject::connect(query.get(), SIGNAL(completionsAvailable()), m_AutoCompleteModel, SLOT(completionsArrived()));
-
+        std::shared_ptr<CompletionQuery> query(new CompletionQuery(requestPrefix, basicModel));
+        query->setCompleteKeywords(completeKeywords);
+        query->setCompletePresets(completePresets);
         m_AutoCompleteWorker->submitItem(query);
     }
 

@@ -98,6 +98,7 @@ namespace QMLExtensions {
 
 namespace AutoComplete {
     class AutoCompleteService;
+    class KeywordsAutoCompleteModel;
 }
 
 namespace Helpers {
@@ -143,6 +144,7 @@ namespace Commands {
             m_LanguagesModel(NULL),
             m_ColorsModel(NULL),
             m_AutoCompleteService(NULL),
+            m_AutoCompleteModel(NULL),
             m_ImageCachingService(NULL),
             m_DeleteKeywordsViewModel(NULL),
             m_FindAndReplaceModel(NULL),
@@ -186,6 +188,7 @@ namespace Commands {
         void InjectDependency(Models::LanguagesModel *languagesModel);
         void InjectDependency(QMLExtensions::ColorsModel *colorsModel);
         void InjectDependency(AutoComplete::AutoCompleteService *autoCompleteService);
+        void InjectDependency(AutoComplete::KeywordsAutoCompleteModel *autoCompleteModel);
         void InjectDependency(QMLExtensions::ImageCachingService *imageCachingService);
         void InjectDependency(Models::FindAndReplaceModel *findAndReplaceModel);
         void InjectDependency(Models::DeleteKeywordsViewModel *deleteKeywordsViewModel);
@@ -266,9 +269,7 @@ namespace Commands {
         void beforeDestructionCallback() const;
         void requestCloseApplication() const;
         void restartSpellChecking();
-#ifndef CORE_TESTS
-        void autoCompleteKeyword(const QString &keyword, QObject *notifyObject) const;
-#endif
+        void generateCompletions(const QString &prefix, Common::BasicKeywordsModel *source) const;
 
 #ifdef INTEGRATION_TESTS
         void cleanup();
@@ -302,6 +303,7 @@ namespace Commands {
         virtual Translation::TranslationService *getTranslationService() const { return m_TranslationService; }
         virtual Models::UIManager *getUIManager() const { return m_UIManager; }
         virtual QuickBuffer::QuickBuffer *getQuickBuffer() const { return m_QuickBuffer; }
+        virtual AutoComplete::KeywordsAutoCompleteModel *getAutoCompleteModel() const { return m_AutoCompleteModel; }
 
 #ifdef INTEGRATION_TESTS
         virtual Translation::TranslationManager *getTranslationManager() const { return m_TranslationManager; }
@@ -338,6 +340,7 @@ namespace Commands {
         Models::LanguagesModel *m_LanguagesModel;
         QMLExtensions::ColorsModel *m_ColorsModel;
         AutoComplete::AutoCompleteService *m_AutoCompleteService;
+        AutoComplete::KeywordsAutoCompleteModel *m_AutoCompleteModel;
         QMLExtensions::ImageCachingService *m_ImageCachingService;
         Models::DeleteKeywordsViewModel *m_DeleteKeywordsViewModel;
         Models::FindAndReplaceModel *m_FindAndReplaceModel;

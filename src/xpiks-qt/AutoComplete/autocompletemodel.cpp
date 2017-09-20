@@ -9,26 +9,41 @@
  */
 
 #include "autocompletemodel.h"
+#include <QQmlEngine>
 #include "../Common/defines.h"
-#include "../Commands/commandmanager.h"
-#include "../KeywordsPresets/presetkeywordsmodel.h"
 
 namespace AutoComplete {
-    AutoCompleteModel::AutoCompleteModel(QObject *parent):
-        QAbstractListModel(parent),
+    AutoCompleteModel::AutoCompleteModel(QObject *parent) :
+        QObject(parent),
         m_SelectedIndex(-1),
         m_IsActive(false)
     {
     }
 
-    void AutoCompleteModel::setCompletions(const QStringList &completions) {
-        Q_ASSERT(!completions.isEmpty());
-        LOG_INFO << completions.length() << "completions";
-        m_LastGeneratedCompletions = completions;
+    void AutoCompleteModel::setSelectedIndex(int value) {
+        if (value != m_SelectedIndex) {
+            LOG_INTEGR_TESTS_OR_DEBUG << value;
+            m_SelectedIndex = value;
+            emit selectedIndexChanged(value);
+        }
+    }
+
+    void AutoCompleteModel::setIsActive(bool value) {
+        if (value != m_IsActive) {
+            m_IsActive = value;
+            emit isActiveChanged(value);
+        }
+    }
+
+    void AutoCompleteModel::initializeCompletions() {
+        doInitializeCompletions();
+        setSelectedIndex(-1);
+        setIsActive(true);
     }
 
     bool AutoCompleteModel::moveSelectionUp() {
-        bool canMove = m_SelectedIndex > 0;
+        const bool canMove = m_SelectedIndex > 0;
+        LOG_INTEGR_TESTS_OR_DEBUG << "can move:" << canMove;
         if (canMove) {
             setSelectedIndex(m_SelectedIndex - 1);
         }
@@ -36,18 +51,29 @@ namespace AutoComplete {
     }
 
     bool AutoCompleteModel::moveSelectionDown() {
-        bool canMove = m_SelectedIndex < m_CompletionList.length() - 1;
+        const int size = getCompletionsCount();
+        const bool canMove = m_SelectedIndex < size - 1;
+        LOG_INTEGR_TESTS_OR_DEBUG << "can move:" << canMove;
         if (canMove) {
             setSelectedIndex(m_SelectedIndex + 1);
         }
         return canMove;
     }
 
-    void AutoCompleteModel::acceptSelected(bool tryExpandPreset) {
-        LOG_DEBUG << "Selected index:" << m_SelectedIndex << "expand preset" << tryExpandPreset;
+    void AutoCompleteModel::cancelCompletion() {
+        LOG_DEBUG << "#";
+        clearCompletions();
+        setIsActive(false);
+        emit dismissPopupRequested();
+    }
 
-        if (0 <= m_SelectedIndex && m_SelectedIndex < m_CompletionList.length()) {
-            emit completionAccepted(m_CompletionList.at(m_SelectedIndex), tryExpandPreset);
+    void AutoCompleteModel::acceptSelected(bool withMetaAction) {
+        LOG_DEBUG << "Selected index:" << m_SelectedIndex << ", meta action:" << withMetaAction;
+        const int size = getCompletionsCount();
+
+        if (0 <= m_SelectedIndex && m_SelectedIndex < size) {
+            const int id = doAcceptCompletion(m_SelectedIndex, withMetaAction);
+            emit completionAccepted(id);
         }
 
         emit dismissPopupRequested();
@@ -55,44 +81,9 @@ namespace AutoComplete {
         setIsActive(false);
     }
 
-    void AutoCompleteModel::completionsArrived() {
-        LOG_DEBUG << "Updating completions...";
-        beginResetModel();
-
-        m_CompletionList.clear();
-        m_CompletionList.reserve(m_LastGeneratedCompletions.length());
-
-        foreach (const QString &item, m_LastGeneratedCompletions) {
-            m_CompletionList.append(item);
-        }
-
-        endResetModel();
-
-        setSelectedIndex(-1);
-        setIsActive(true);
-
-#ifdef INTEGRATION_TESTS
-        emit completionsUpdated();
-#endif
-    }
-
-    QVariant AutoCompleteModel::data(const QModelIndex &index, int role) const {
-        int row = index.row();
-        if (row < 0 || row >= m_CompletionList.length()) return QVariant();
-        if (role == Qt::DisplayRole) { return m_CompletionList.at(index.row()); }
-        else if (role == IsPresetRole) {
-            auto *presetsModel = m_CommandManager->getPresetsModel();
-            QString completion = m_CompletionList.at(index.row());
-            int dummy;
-            bool haveOnePreset = presetsModel->tryFindSinglePresetByName(completion, false, dummy);
-            return haveOnePreset;
-        }
-        return QVariant();
-    }
-
-    QHash<int, QByteArray> AutoCompleteModel::roleNames() const {
-        QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
-        roles[IsPresetRole] = "ispreset";
-        return roles;
+    QObject *AutoCompleteModel::getCompletionsModel() {
+        auto *listModel = doGetCompletionsModel();
+        QQmlEngine::setObjectOwnership(listModel, QQmlEngine::CppOwnership);
+        return listModel;
     }
 }

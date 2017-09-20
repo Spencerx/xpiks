@@ -36,7 +36,7 @@
 #include "AutoComplete/autocompleteservice.h"
 #include "Conectivity/analyticsuserevent.h"
 #include "SpellCheck/spellcheckerservice.h"
-#include "AutoComplete/autocompletemodel.h"
+#include "AutoComplete/keywordsautocompletemodel.h"
 #include "Models/deletekeywordsviewmodel.h"
 #include "Translation/translationmanager.h"
 #include "Translation/translationservice.h"
@@ -318,8 +318,8 @@ int main(int argc, char *argv[]) {
     warningsModel.setSourceModel(&artItemsModel);
     warningsModel.setWarningsSettingsModel(warningsService.getWarningsSettingsModel());
     Models::LanguagesModel languagesModel;
-    AutoComplete::AutoCompleteModel autoCompleteModel;
-    AutoComplete::AutoCompleteService autoCompleteService(&autoCompleteModel);
+    AutoComplete::KeywordsAutoCompleteModel autoCompleteModel;
+    AutoComplete::AutoCompleteService autoCompleteService(&autoCompleteModel, &presetsModel, &settingsModel);
     QMLExtensions::ImageCachingService imageCachingService;
     Models::FindAndReplaceModel replaceModel(&colorsModel);
     Models::DeleteKeywordsViewModel deleteKeywordsModel;
@@ -374,6 +374,7 @@ int main(int argc, char *argv[]) {
     commandManager.InjectDependency(&languagesModel);
     commandManager.InjectDependency(&colorsModel);
     commandManager.InjectDependency(&autoCompleteService);
+    commandManager.InjectDependency(&autoCompleteModel);
     commandManager.InjectDependency(&imageCachingService);
     commandManager.InjectDependency(&replaceModel);
     commandManager.InjectDependency(&deleteKeywordsModel);

@@ -318,7 +318,9 @@ Flickable {
                     return array.length;
                 }
 
-                function acceptCompletion(completion, expandPreset) {
+                function acceptCompletion(completion) {
+                    var wordsCount = getWordsCount();
+
                     var start = getCurrentWordStart()
                     var end = getCurrentWordEnd()
                     var currText = nextTagTextInput.text;
@@ -328,12 +330,8 @@ Flickable {
                     nextTagTextInput.text = newText
                     nextTagTextInput.cursorPosition = newCursorPosition
 
-                    if (getWordsCount() === 1) {
-                        if (submitCurrentKeyword()) {
-                            if (expandPreset) {
-                                expandLastAsPreset()
-                            }
-                        }
+                    if (wordsCount === 1) {
+                        submitCurrentKeyword()
                     }
                 }
 
@@ -448,7 +446,7 @@ Flickable {
                 }
 
                 Keys.onReleased: {
-                    if (Qt.Key_A <= event.key && event.key <= Qt.Key_Z) {
+                    if ((Qt.Key_A <= event.key && event.key <= Qt.Key_Z) || (event.key === Qt.Key_Colon)) {
                         if (text.length >= 3) {
                             requestCompletion()
                         }

@@ -53,6 +53,7 @@
 #include "../QuickBuffer/quickbuffer.h"
 #include "../QuickBuffer/currenteditableartwork.h"
 #include "../QuickBuffer/currenteditableproxyartwork.h"
+#include "../AutoComplete/keywordsautocompletemodel.h"
 
 void Commands::CommandManager::InjectDependency(Models::ArtworksRepository *artworkRepository) {
     Q_ASSERT(artworkRepository != NULL); m_ArtworksRepository = artworkRepository;
@@ -172,6 +173,11 @@ void Commands::CommandManager::InjectDependency(QMLExtensions::ColorsModel *colo
 
 void Commands::CommandManager::InjectDependency(AutoComplete::AutoCompleteService *autoCompleteService) {
     Q_ASSERT(autoCompleteService != NULL); m_AutoCompleteService = autoCompleteService;
+}
+
+void Commands::CommandManager::InjectDependency(AutoComplete::KeywordsAutoCompleteModel *autoCompleteModel) {
+    Q_ASSERT(autoCompleteModel != NULL); m_AutoCompleteModel = autoCompleteModel;
+    m_AutoCompleteModel->setCommandManager(this);
 }
 
 void Commands::CommandManager::InjectDependency(QMLExtensions::ImageCachingService *imageCachingService) {
@@ -387,6 +393,7 @@ void Commands::CommandManager::ensureDependenciesInjected() {
 
 #if !defined(INTEGRATION_TESTS) && !defined(CORE_TESTS)
     Q_ASSERT(m_UIManager != NULL);
+    Q_ASSERT(m_AutoCompleteModel != NULL);
 #endif
 
 #ifndef INTEGRATION_TESTS
@@ -833,13 +840,13 @@ void Commands::CommandManager::restartSpellChecking() {
     }
 }
 
+void Commands::CommandManager::generateCompletions(const QString &prefix, Common::BasicKeywordsModel *source) const {
 #ifndef CORE_TESTS
-void Commands::CommandManager::autoCompleteKeyword(const QString &keyword, QObject *notifyObject) const {
-    if ((m_SettingsModel != NULL) && m_SettingsModel->getUseAutoComplete() && (m_AutoCompleteService != NULL)) {
-        m_AutoCompleteService->findKeywordCompletions(keyword, notifyObject);
+    if (m_AutoCompleteService != NULL) {
+        m_AutoCompleteService->generateCompletions(prefix, source);
     }
-}
 #endif
+}
 
 void Commands::CommandManager::removeUnavailableFiles() {
     LOG_DEBUG << "#";
