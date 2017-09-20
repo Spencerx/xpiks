@@ -14,6 +14,7 @@
 #include "metadataelement.h"
 #include "../Commands/commandmanager.h"
 #include "../Commands/deletekeywordscommand.h"
+#include "../Helpers/stringhelper.h"
 #include "../Common/defines.h"
 
 namespace Models {
@@ -122,6 +123,10 @@ namespace Models {
 
         auto &artworksList = getArtworksList();
         auto keywordsList = m_KeywordsToDeleteModel.getKeywords();
+
+#ifdef KEYWORDS_TAGS
+        keywordsList = Helpers::clearTagsFromList(keywordsList);
+#endif
 
         if (!m_CaseSensitive) {
             for (auto &keyword: keywordsList) {
