@@ -174,7 +174,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/QuickBuffer/quickbuffer.cpp \
     ../../xpiks-qt/Models/artworkproxymodel.cpp \
     ../../xpiks-qt/Models/uimanager.cpp \
-    ../../xpiks-qt/QMLExtensions/tabsmodel.cpp
+    ../../xpiks-qt/QMLExtensions/tabsmodel.cpp \
     ../../xpiks-qt/AutoComplete/autocompletemodel.cpp \
     ../../xpiks-qt/AutoComplete/keywordsautocompletemodel.cpp
 
@@ -298,7 +298,7 @@ HEADERS += \
     ../../xpiks-qt/Models/artworkproxymodel.h \
     ../../xpiks-qt/Models/uimanager.h \
     ../../xpiks-qt/KeywordsPresets/ipresetsmanager.h \
-    ../../xpiks-qt/QMLExtensions/tabsmodel.h
+    ../../xpiks-qt/QMLExtensions/tabsmodel.h \
     ../../xpiks-qt/AutoComplete/autocompletemodel.h \
     ../../xpiks-qt/AutoComplete/keywordsautocompletemodel.h
 
