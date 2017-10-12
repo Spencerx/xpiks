@@ -798,6 +798,14 @@ void Commands::CommandManager::beforeDestructionCallback() const {
         return;
     }
 
+#ifndef CORE_TESTS
+    #ifdef WITH_PLUGINS
+
+    m_PluginManager->unloadPlugins();
+
+    #endif
+#endif
+
     m_ArtworksRepository->stopListeningToUnavailableFiles();
 
     m_ArtItemsModel->disconnect();
@@ -815,10 +823,6 @@ void Commands::CommandManager::beforeDestructionCallback() const {
     m_TranslationService->stopService();
 
 #ifndef CORE_TESTS
-
-#ifdef WITH_PLUGINS
-    m_PluginManager->unloadPlugins();
-#endif
 
     // we have a second for important stuff
     m_TelemetryService->reportAction(Conectivity::UserAction::Close);
