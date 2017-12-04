@@ -28,23 +28,46 @@ echo "Copying libraries..."
 
 LIBS_PATH="../../libs/release"
 
-cp "$LIBS_PATH/libssdll.1.0.0.dylib" "$BUILD_DIR/xpiks-qt.app/Contents/Frameworks/"
-cp "$LIBS_PATH/libface.1.0.0.dylib" "$BUILD_DIR/xpiks-qt.app/Contents/Frameworks/"
-cp "$LIBS_PATH/libquazip.1.0.0.dylib" "$BUILD_DIR/xpiks-qt.app/Contents/Frameworks/"
+FFMPEG_LIBS=(
+    libavcodec.57.dylib
+    libavdevice.57.dylib
+    libavfilter.6.dylib
+    libavformat.57.dylib
+    libavutil.55.dylib
+    libswscale.4.dylib
+)
 
-echo "Changing dependency path..."
+LIBS_TO_DEPLOY=(
+    libssdll.1.0.0.dylib
+    libface.1.0.0.dylib
+    libquazip.1.0.0.dylib
+    libavthumbnailer.1.0.0.dylib
+    libthmbnlr.1.0.0.dylib
+)
 
-install_name_tool -change libssdll.1.dylib @executable_path/../Frameworks/libssdll.1.dylib "$BUILD_DIR/xpiks-qt.app/Contents/MacOS/xpiks-qt"
-install_name_tool -change libface.1.dylib @executable_path/../Frameworks/libface.1.dylib "$BUILD_DIR/xpiks-qt.app/Contents/MacOS/xpiks-qt"
-install_name_tool -change libquazip.1.dylib @executable_path/../Frameworks/libquazip.1.dylib "$BUILD_DIR/xpiks-qt.app/Contents/MacOS/xpiks-qt"
+FRAMEWORKS_DIR="$BUILD_DIR/xpiks-qt.app/Contents/Frameworks"
 
-echo "Linking dynamic libraries.."
+for lib in "${LIBS_TO_DEPLOY[@]}"
+do
+    echo "Processing $lib..."
+    cp "$LIBS_PATH/$lib" "$BUILD_DIR/xpiks-qt.app/Contents/Frameworks/"
 
-pushd "$BUILD_DIR/xpiks-qt.app/Contents/Frameworks/"
-ln -s libssdll.1.0.0.dylib libssdll.1.dylib
-ln -s libquazip.1.0.0.dylib libquazip.1.dylib
-ln -s libface.1.0.0.dylib libface.1.dylib
-popd
+    LIBENTRY="${lib%.0.0.dylib}.dylib"
+    
+    install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "$BUILD_DIR/xpiks-qt.app/Contents/MacOS/xpiks-qt"
+
+    ln -s "$FRAMEWORKS_DIR/$lib" "$FRAMEWORKS_DIR/$LIBENTRY"
+done
+
+# just copying
+
+for lib in "${FFMPEG_LIBS[@]}"
+do
+    echo "Copying $lib..."
+    cp "$LIBS_PATH/$lib" "$BUILD_DIR/xpiks-qt.app/Contents/Frameworks/"
+    LIBENTRY="${lib%.0.0.dylib}.dylib"
+    install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "$BUILD_DIR/xpiks-qt.app/Contents/MacOS/xpiks-qt"
+done
 
 # ------------------------------
 
