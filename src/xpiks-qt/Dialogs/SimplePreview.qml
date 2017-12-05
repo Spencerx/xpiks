@@ -13,121 +13,162 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Controls.Styles 1.1
-import QtQml 2.2
-import xpiks 1.0
+import QtGraphicalEffects 1.0
 import "../Constants"
 import "../Common.js" as Common;
 import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-Rectangle {
+Item {
     id: artworkSimplePreview
-    color: uiColors.defaultDarkerColor
     anchors.fill: parent
-    property int index
+    property string thumbpath
 
-    Component.onCompleted: {
-        focus = true
-    }
+    signal dialogDestruction();
+    Component.onDestruction: dialogDestruction();
 
     function closePopup() {
         artworkSimplePreview.destroy()
     }
 
+    Component.onCompleted: focus = true
+    Keys.onEscapePressed: closePopup()
 
-    Item  {
-        id: boundsRect
-        Layout.fillWidth: true
+    // This rectange is the a overlay to partially show the parent through it
+    // and clicking outside of the 'dialog' popup will do 'nothing'
+    Rectangle {
+        anchors.fill: parent
+        id: overlay
+        color: "#000000"
+        opacity: 0.6
+        // add a mouse area so that clicks outside
+        // the dialog window will not do anything
+        MouseArea {
+            anchors.fill: parent
+        }
+    }
+
+    FocusScope {
         anchors.fill: parent
 
-        Rectangle {
-            id: topHeader
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            height: 55
-            color: uiColors.defaultDarkColor
+        MouseArea {
+            anchors.fill: parent
+            onWheel: wheel.accepted = true
+            onClicked: mouse.accepted = true
+            onDoubleClicked: mouse.accepted = true
 
-            RowLayout {
-                anchors.leftMargin: 10
-                anchors.rightMargin: 20
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                height: childrenRect.height
-                spacing: 0
+            property real old_x: 0
+            property real old_y: 0
 
-                BackGlyphButton {
-                    text: i18.n + qsTr("Back")
-                    onClicked: {
-                        closePopup()
-                    }
-                }
+            onPressed: {
+                var tmp = mapToItem(artworkSimplePreview, mouse.x, mouse.y)
+                old_x = tmp.x
+                old_y = tmp.y
+            }
 
-                Item {
-                    width: 10
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
+            onPositionChanged: {
+                var old_xy = Common.movePopupInsideComponent(
+                            artworkSimplePreview, dialogWindow, mouse,
+                            old_x, old_y)
+                old_x = old_xy[0]
+                old_y = old_xy[1]
             }
         }
 
-        Item {
-            id: imageWrapper
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: topHeader.bottom
-            anchors.bottom: parent.bottom
-            property int imageMargin: 10
+        RectangularGlow {
+            anchors.fill: dialogWindow
+            anchors.topMargin: glowRadius / 2
+            anchors.bottomMargin: -glowRadius / 2
+            glowRadius: 4
+            spread: 0.0
+            color: uiColors.defaultControlColor
+            cornerRadius: glowRadius
+        }
 
-            LoaderIcon {
-                width: 100
-                height: 100
-                anchors.centerIn: parent
-                running: image.status == Image.Loading
-            }
-
-            StyledScrollView {
-                id: scrollview
-                anchors.fill: parent
-                anchors.leftMargin: imageWrapper.imageMargin
-                anchors.topMargin: imageWrapper.imageMargin
-
-                Image {
-                    id: image
-                    source: "image://global/" + combinedArtworks.getThumbPathAt(index)
-                    property bool isFullSize: false
-                    width: isFullSize ? sourceSize.width : (imageWrapper.width - 2*imageWrapper.imageMargin)
-                    height: isFullSize ? sourceSize.height : (imageWrapper.height - 2*imageWrapper.imageMargin)
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    asynchronous: true
-                }
-            }
+        // This rectangle is the actual popup
+        Rectangle {
+            id: dialogWindow
+            width: 700
+            height: 500
+            color: uiColors.popupBackgroundColor
+            anchors.centerIn: parent
+            Component.onCompleted: anchors.centerIn = undefined
 
             Rectangle {
-                anchors.bottom: parent.bottom
+                id: imageWrapper
+                anchors.left: parent.left
                 anchors.right: parent.right
-                width: 50
-                height: 50
+                anchors.top: parent.top
+                anchors.bottom: bottomRow.top
                 color: uiColors.defaultDarkColor
+                property int imageMargin: 10
 
-                ZoomAmplifier {
-                    id: zoomIcon
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    scale: zoomMA.pressed ? 0.9 : 1
+                LoaderIcon {
+                    width: 100
+                    height: 100
+                    anchors.centerIn: parent
+                    running: image.status == Image.Loading
                 }
 
-                MouseArea {
-                    id: zoomMA
+                StyledScrollView {
+                    id: scrollview
                     anchors.fill: parent
+                    anchors.leftMargin: imageWrapper.imageMargin
+                    anchors.topMargin: imageWrapper.imageMargin
+
+                    Image {
+                        id: image
+                        source: "image://global/" + artworkSimplePreview.thumbpath
+                        property bool isFullSize: false
+                        width: isFullSize ? sourceSize.width : (imageWrapper.width - 2*imageWrapper.imageMargin)
+                        height: isFullSize ? sourceSize.height : (imageWrapper.height - 2*imageWrapper.imageMargin)
+                        fillMode: Image.PreserveAspectFit
+                        anchors.centerIn: parent
+                        asynchronous: true
+                    }
+                }
+
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    width: 50
+                    height: 50
+                    color: uiColors.defaultDarkColor
+
+                    ZoomAmplifier {
+                        id: zoomIcon
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        scale: zoomMA.pressed ? 0.9 : 1
+                    }
+
+                    MouseArea {
+                        id: zoomMA
+                        anchors.fill: parent
+                        onClicked: {
+                            image.isFullSize = !image.isFullSize
+                            zoomIcon.isPlus = !zoomIcon.isPlus
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: bottomRow
+                anchors.bottom: parent.bottom
+                height: 50
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                StyledButton {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.rightMargin: 20
+                    width: 100
+                    text: i18.n + qsTr("Close")
                     onClicked: {
-                        image.isFullSize = !image.isFullSize
-                        zoomIcon.isPlus = !zoomIcon.isPlus
+                        closePopup()
                     }
                 }
             }

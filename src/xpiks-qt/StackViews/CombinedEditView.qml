@@ -293,7 +293,7 @@ Rectangle {
 
     Menu {
         id: contextMenu
-        property int artworkIndex
+        property string thumbPath
 
         MenuItem {
             text: i18.n + qsTr("Preview")
@@ -301,7 +301,7 @@ Rectangle {
                 Common.launchDialog("Dialogs/SimplePreview.qml",
                                     applicationWindow,
                                     {
-                                        index: contextMenu.artworkIndex
+                                        thumbpath: contextMenu.thumbPath
                                     })
             }
         }
@@ -1320,6 +1320,7 @@ Rectangle {
                 anchors.bottom: parent.bottom
                 width: bottomPane.height
                 color: isselected ? uiColors.panelSelectedColor : "transparent"
+                property string thumbPath: thumbpath
 
                 Rectangle {
                     anchors.fill: parent
@@ -1391,16 +1392,9 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    onDoubleClicked: {
-                        Common.launchDialog("Dialogs/SimplePreview.qml",
-                                            applicationWindow,
-                                            {
-                                                index: cellItem.delegateIndex
-                                            })
-                    }
                     onClicked: {
                         if (mouse.button == Qt.RightButton) {
-                            contextMenu.artworkIndex = cellItem.delegateIndex
+                            contextMenu.thumbPath = cellItem.thumbPath
                             contextMenu.popup()
                         } else {
                              combinedArtworks.setArtworkSelected(delegateIndex, !isselected)
