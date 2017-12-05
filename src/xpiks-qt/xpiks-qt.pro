@@ -561,7 +561,7 @@ SOURCES += *.qml \
 INCLUDEPATH += ../../vendors/tiny-aes
 INCLUDEPATH += ../../vendors/cpp-libface
 INCLUDEPATH += ../../vendors/ssdll/src/ssdll
-INCLUDEPATH += ../../vendors/hunspell-1.6.0/src
+INCLUDEPATH += ../../vendors/hunspell-repo/src
 INCLUDEPATH += ../../vendors/libthmbnlr
 INCLUDEPATH += ../../vendors/libxpks
 

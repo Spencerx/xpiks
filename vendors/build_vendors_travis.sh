@@ -6,8 +6,6 @@
 cd vendors/
 
 ##########
-
-tar xzf /tmp/hunspell.tar.gz
 cd hunspell/
 qmake "CONFIG+=debug" hunspell.pro
 make

@@ -28,7 +28,6 @@ addons:
       - g++-5
 
 before_install:
-  - if [ -z "${UI_TESTS+xxx}" ]; then wget https://github.com/hunspell/hunspell/archive/v1.6.0.tar.gz -O /tmp/hunspell.tar.gz; fi
   - sudo add-apt-repository ppa:beineri/opt-qt562-trusty -y
   - sudo add-apt-repository ppa:kubuntu-ppa/backports -y
   - sudo add-apt-repository ppa:jonathonf/ffmpeg-3 -y

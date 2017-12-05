@@ -60,7 +60,6 @@ before_build:
   - cmd: 'echo %cd%'
   - cmd: 'xcopy /s c:\projects\xpiks-deps\windows-libs\%configuration%-x64 c:\projects\xpiks\libs'
   - cmd: 'xcopy /s c:\projects\xpiks-deps\windows-libs\ffmpeg-x64\%configuration% c:\projects\xpiks\libs'
-  - cmd: 'move c:\projects\xpiks-deps\hunspell-1.6.0 c:\projects\xpiks\vendors'
   - cmd: 'move c:\projects\xpiks-deps\zlib-1.2.11 c:\projects\xpiks\vendors'
   - cmd: 'cd c:\projects\xpiks'
   - cmd: 'ren vendors\tiny-aes\aes.c aes.cpp'
