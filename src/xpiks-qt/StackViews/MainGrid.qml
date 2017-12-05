@@ -732,7 +732,7 @@ Item {
                 Rectangle {
                     anchors.left: parent.left
                     color: uiColors.artworkSavedColor
-                    width: applicationWindow.listLayout ? 6 : 3
+                    width: 3
                     height: parent.height
                 }
 
