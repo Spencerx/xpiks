@@ -112,7 +112,7 @@ Item {
                     PresentationSlide {
                         parent: slidesHost
                         id: firstSlide
-                        title: i18.n + qsTr("Presets for keywords")
+                        title: i18.n + qsTr("Video files support")
                         imageUrl: "qrc:/Graphics/presets.png"
                         width: slidesHost.width
                         height: slidesHost.height
@@ -120,7 +120,7 @@ Item {
                     PresentationSlide {
                         parent: slidesHost
                         id: secondSlide
-                        title: i18.n + qsTr("Additional buffer for quick editing")
+                        title: i18.n + qsTr("Detection of semantical duplicates")
                         imageUrl: "qrc:/Graphics/quickbuffer.png"
                         width: slidesHost.width
                         height: slidesHost.height
@@ -128,7 +128,7 @@ Item {
                     PresentationSlide {
                         parent: slidesHost
                         id: thirdSlide
-                        title: i18.n + qsTr("Find and Replace functionality")
+                        title: i18.n + qsTr("Presets groups")
                         imageUrl: "qrc:/Graphics/findandreplace.png"
                         width: slidesHost.width
                         height: slidesHost.height
@@ -136,7 +136,7 @@ Item {
                     PresentationSlide {
                         parent: slidesHost
                         id: fourthSlide
-                        title: i18.n + qsTr("StarDict dictionaries support")
+                        title: i18.n + qsTr("Upgraded look and feel")
                         imageUrl: "qrc:/Graphics/translator.png"
                         width: slidesHost.width
                         height: slidesHost.height
@@ -144,7 +144,7 @@ Item {
                     PresentationSlide {
                         parent: slidesHost
                         id: fifthSlide
-                        title: i18.n + qsTr("List of failed uploads")
+                        title: i18.n + qsTr("Session management")
                         imageUrl: "qrc:/Graphics/faileduploads.png"
                         width: slidesHost.width
                         height: slidesHost.height
