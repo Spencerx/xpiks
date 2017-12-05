@@ -1,7 +1,7 @@
 Release translation plan:
 
 - update strings in the translations directory (run command from xpiks-qt.pro directory)
-`lupdate.exe -pro xpiks-qt.pro -ts deps/translations/xpiks_en_US.ts`
+`lupdate -pro xpiks-qt.pro -no-obsolete -ts deps/translations/xpiks_en_US.ts`
 - upload updated `xpiks_en_US.ts` to CrowdIn
 - translate
 - generate release and download .ts files to `translations/` dir
