@@ -45,7 +45,7 @@ namespace Encryption {
         QByteArray encodingBuffer(encryptionLength, 0);
         inputData.resize(encryptionLength);
 
-        AES128_CBC_encrypt_buffer((uint8_t*)encodingBuffer.data(), (uint8_t*)inputData.data(), encryptionLength, (const uint8_t*)keyData.data(), iv);
+        AES_CBC_encrypt_buffer((uint8_t*)encodingBuffer.data(), (uint8_t*)inputData.data(), encryptionLength, (const uint8_t*)keyData.data(), iv);
 
         QByteArray data(encodingBuffer.data(), encryptionLength);
         QString hex = QString::fromLatin1(data.toHex());
@@ -66,7 +66,7 @@ namespace Encryption {
         Q_ASSERT(encodedText.length() <= encryptionLength);
         encodedText.resize(encryptionLength);
 
-        AES128_CBC_decrypt_buffer((uint8_t*)encodingBuffer.data(), (uint8_t*)encodedText.data(), encryptionLength, (const uint8_t*)keyData.data(), iv);
+        AES_CBC_decrypt_buffer((uint8_t*)encodingBuffer.data(), (uint8_t*)encodedText.data(), encryptionLength, (const uint8_t*)keyData.data(), iv);
 
         encodingBuffer.append("\0\0");
         void *data = encodingBuffer.data();
