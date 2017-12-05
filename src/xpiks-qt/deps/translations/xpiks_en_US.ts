@@ -2134,59 +2134,47 @@ All upload hosts&apos; passwords will be purged.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="383"/>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="389"/>
-        <source>1 artwork selected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="383"/>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="389"/>
-        <source>%1 artworks selected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="419"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="391"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="524"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="496"/>
         <source>Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="558"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="530"/>
         <source>Untitled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="627"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="599"/>
         <source>Host:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="663"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="635"/>
         <source>Username:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="698"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="670"/>
         <source>Password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="741"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="713"/>
         <source>Show password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="779"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="751"/>
         <source>Test connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="419"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="391"/>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2202,57 +2190,57 @@ All upload hosts&apos; passwords will be purged.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="826"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="798"/>
         <source>Zip vector with preview</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="845"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="817"/>
         <source>Disable FTP passive mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="864"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="836"/>
         <source>Disable extended passive mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="883"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="855"/>
         <source>Upload vectors before previews</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="952"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="924"/>
         <source>1 warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="952"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="924"/>
         <source>%1 warnings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="977"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="949"/>
         <source>1 failed upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="978"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="950"/>
         <source>%1 failed uploads</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="995"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="967"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="995"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="967"/>
         <source>Start Upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/UploadArtworks.qml" line="1035"/>
+        <location filename="../../Dialogs/UploadArtworks.qml" line="1007"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
