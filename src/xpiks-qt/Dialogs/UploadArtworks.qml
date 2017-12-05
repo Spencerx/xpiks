@@ -366,38 +366,10 @@ Item {
             }
 
             Item {
-                id: rightHeader
-                anchors.left: leftPanel.right
-                anchors.right: parent.right
-                anchors.top: parent.top
-                height: 40
-
-                StyledText {
-                    anchors.right: parent.right
-                    anchors.rightMargin: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: i18.n + getOriginalText()
-                    isActive: false
-
-                    function getOriginalText() {
-                        return artworkUploader.itemsCount === 1 ? qsTr("1 artwork selected") : qsTr("%1 artworks selected").arg(artworkUploader.itemsCount)
-                    }
-
-                    Connections {
-                        target: artworkUploader
-                        onItemsCountChanged: {
-                            textItemsAvailable.originalText = artworkUploader.itemsCount === 1 ? qsTr("1 artwork selected") : qsTr("%1 artworks selected").arg(artworkUploader.itemsCount)
-                            textItemsAvailable.text = i18.n + originalText
-                        }
-                    }
-                }
-            }
-
-            Item {
                 id: rightPanel
                 anchors.left: leftPanel.right
                 anchors.right: parent.right
-                anchors.top: rightHeader.top
+                anchors.top: parent.top
                 anchors.bottom: progress.top
                 enabled: !artworkUploader.inProgress && (uploadHostsListView.count > 0)
 
