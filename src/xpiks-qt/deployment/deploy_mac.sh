@@ -5,13 +5,13 @@ VERSION="1.4.2"
 VOL_NAME="Xpiks"
 
 DMG_BACKGROUND_IMG="dmg-background.jpg"
-DMG_BACKGROUND_PATH="deps/$DMG_BACKGROUND_IMG"
+DMG_BACKGROUND_PATH="../deps/$DMG_BACKGROUND_IMG"
 
 DMG_TMP="xpiks-qt-v${VERSION}.tmp.dmg"
 DMG_FINAL="xpiks-qt-v${VERSION}.dmg"
 STAGING_DIR="./osx_deploy"
 
-BUILD_DIR=build-Release
+BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_6_2_clang_64bit-Debug"
 
 if [ -d "/Volumes/${VOL_NAME}" ]; then
     echo "Please unmount existing Volume ${VOL_NAME} first!"
@@ -20,13 +20,13 @@ fi
 
 pushd "$BUILD_DIR"
 
-~/Qt5.6.2/5.6/clang_64/bin/macdeployqt xpiks-qt.app -verbose=2 -executable=xpiks-qt.app/Contents/MacOS/xpiks-qt -qmldir=../ -qmldir=../Components/ -qmldir=../Constants/ -qmldir=../Dialogs/ -qmldir=../StyledControls/ -qmldir=../StackViews/ -qmldir=../CollapserTabs/
+~/Qt5.6.2/5.6/clang_64/bin/macdeployqt xpiks-qt.app -verbose=2 -executable=xpiks-qt.app/Contents/MacOS/xpiks-qt -qmldir=../xpiks-qt/ -qmldir=../xpiks-qt/Components/ -qmldir=../xpiks-qt/Constants/ -qmldir=../xpiks-qt/Dialogs/ -qmldir=../xpiks-qt/StyledControls/ -qmldir=../xpiks-qt/StackViews/ -qmldir=../xpiks-qt/CollapserTabs/
 
 popd
 
 echo "Copying libraries..."
 
-LIBS_PATH="../../libs/release"
+LIBS_PATH="../../../libs/release"
 
 FFMPEG_LIBS=(
     libavcodec.57.dylib
