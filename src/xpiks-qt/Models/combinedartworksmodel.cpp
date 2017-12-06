@@ -455,7 +455,7 @@ namespace Models {
         ArtworkMetadata *nonEmptyOtherMetadata = nullptr;
 
         processArtworksEx(pred,
-                        [&](int index, ArtworkMetadata *metadata) -> bool {
+                        [&](size_t index, ArtworkMetadata *metadata) -> bool {
             if (!metadata->areKeywordsEmpty()) {
                 nonEmptyKeywordsIndex = index;
                 nonEmptyKeywordsMetadata = metadata;

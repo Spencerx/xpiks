@@ -197,7 +197,7 @@ namespace Models {
     void DeleteKeywordsViewModel::fillKeywordsHash(QHash<QString, int> &keywordsHash) {
         LOG_DEBUG << "#";
         processArtworks([](const ArtworkElement*) { return true; },
-        [&keywordsHash](int, ArtworkMetadata *metadata) {
+        [&keywordsHash](size_t, ArtworkMetadata *metadata) {
             const auto &keywords = metadata->getKeywords();
 
             for (auto &keyword: keywords) {
