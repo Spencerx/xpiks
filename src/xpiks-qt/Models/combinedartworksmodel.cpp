@@ -457,14 +457,14 @@ namespace Models {
         processArtworksEx(pred,
                         [&](size_t index, ArtworkMetadata *metadata) -> bool {
             if (!metadata->areKeywordsEmpty()) {
-                nonEmptyKeywordsIndex = index;
+                nonEmptyKeywordsIndex = (int)index;
                 nonEmptyKeywordsMetadata = metadata;
                 found = true;
             } else {
                 if (!foundOther) {
                     if (!metadata->getDescription().trimmed().isEmpty() ||
                             !metadata->getTitle().trimmed().isEmpty()) {
-                        nonEmptyOtherIndex = index;
+                        nonEmptyOtherIndex = (int)index;
                         nonEmptyOtherMetadata = metadata;
                         foundOther = true;
                     }
