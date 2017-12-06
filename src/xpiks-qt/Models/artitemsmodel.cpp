@@ -1389,7 +1389,7 @@ namespace Models {
 #ifdef QT_DEBUG
             m_DestroyedList.push_back(artwork);
 #else
-            metadata->deleteLater();
+            artwork->deleteLater();
 #endif
         } else {
             LOG_DEBUG << "Metadata #" << artwork->getItemID() << "is locked. Postponing destruction...";
