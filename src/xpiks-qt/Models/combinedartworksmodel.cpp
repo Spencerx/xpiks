@@ -401,7 +401,7 @@ namespace Models {
         }
 
         processArtworks(pred,
-                        [&](int index, ArtworkMetadata *metadata) {
+                        [&](size_t index, ArtworkMetadata *metadata) {
             if (index == firstNonEmptyIndex) { return; }
 
             QString currDescription = metadata->getDescription();
