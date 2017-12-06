@@ -92,11 +92,6 @@ Item {
 
     function continueImport() {
         importButton.text = i18.n + qsTr("Importing...")
-
-        spinner.height = spinner.width
-        dialogWindow.height += spinner.height + column.spacing
-        spinner.running = true
-
         metadataIOCoordinator.continueReading(ignoreAutosavesCheckbox.checked)
     }
 
@@ -207,7 +202,18 @@ Item {
                     width: 150
                     height: 0
                     anchors.horizontalCenter: parent.horizontalCenter
-                    running: false
+                    running: metadataIOCoordinator.isInProgress
+
+                    states: [
+                        State {
+                            name: "importing"
+                            when: metadataIOCoordinator.isInProgress
+                            PropertyChanges {
+                                target: spinner
+                                height: spinner.width
+                            }
+                        }
+                    ]
                 }
 
                 StyledCheckbox {

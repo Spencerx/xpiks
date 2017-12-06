@@ -694,6 +694,8 @@ void Commands::CommandManager::afterInnerServicesInitialized() {
 #ifdef WITH_PLUGINS
     m_PluginManager->loadPlugins();
 #endif
+
+    m_SwitcherModel->initialize();
 #endif
 
     int newFilesAdded = m_MainDelegator.restoreReadSession();
@@ -704,7 +706,6 @@ void Commands::CommandManager::afterInnerServicesInitialized() {
     }
 
 #if !defined(CORE_TESTS) && !defined(INTEGRATION_TESTS)
-    m_SwitcherModel->initialize();
     m_SwitcherModel->afterInitializedCallback();
 #endif
 }
