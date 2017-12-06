@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ ! -f ../deps/exiftool ]; then
+    echo "Exiftool not found! Please put latest production release into the ../deps/ dir"
+    exit
+fi
+
 APP_NAME=xpiks-qt
 VERSION="1.4.2"
 VOL_NAME="Xpiks"
@@ -11,7 +16,14 @@ DMG_TMP="xpiks-qt-v${VERSION}.tmp.dmg"
 DMG_FINAL="xpiks-qt-v${VERSION}.dmg"
 STAGING_DIR="./osx_deploy"
 
-BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_6_2_clang_64bit-Debug"
+EXIFTOOL_DIR="../deps"
+
+BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_6_2_clang_64bit-Release"
+
+if [ ! -d "$BUILD_DIR" ]; then
+    echo "Build directory not found: $BUILD_DIR"
+    exit
+fi
 
 if [ -d "/Volumes/${VOL_NAME}" ]; then
     echo "Please unmount existing Volume ${VOL_NAME} first!"
@@ -28,7 +40,7 @@ echo "Copying libraries..."
 
 LIBS_PATH="../../../libs/release"
 
-FFMPEG_LIBS=(
+LIBS_TO_COPY=(
     libavcodec.57.dylib
     libavdevice.57.dylib
     libavfilter.6.dylib
@@ -46,6 +58,7 @@ LIBS_TO_DEPLOY=(
 )
 
 FRAMEWORKS_DIR="$BUILD_DIR/xpiks-qt.app/Contents/Frameworks"
+RESOURCES_DIR="$BUILD_DIR/xpiks-qt.app/Contents/Resources"
 
 for lib in "${LIBS_TO_DEPLOY[@]}"
 do
@@ -61,13 +74,18 @@ done
 
 # just copying
 
-for lib in "${FFMPEG_LIBS[@]}"
+for lib in "${LIBS_TO_COPY[@]}"
 do
     echo "Copying $lib..."
     cp "$LIBS_PATH/$lib" "$BUILD_DIR/xpiks-qt.app/Contents/Frameworks/"
     LIBENTRY="${lib%.0.0.dylib}.dylib"
     install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "$BUILD_DIR/xpiks-qt.app/Contents/MacOS/xpiks-qt"
 done
+
+echo "Copying exiftool distribution"
+
+cp "$EXIFTOOL_DIR/exiftool" "$RESOURCES_DIR"
+cp -r "$EXIFTOOL_DIR/lib" "$RESOURCES_DIR/"
 
 # ------------------------------
 

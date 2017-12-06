@@ -10,6 +10,7 @@
 
 #include "../Common/defines.h"
 #include <QDir>
+#include <QCoreApplication>
 #include <QProcess>
 #include <QFileInfo>
 #include <QStandardPaths>
@@ -18,7 +19,7 @@
 
 #define EXIFTOOL_VERSION_TIMEOUT 3000
 
-namespace Maintenance {    
+namespace Maintenance {
     bool tryGetExiftoolVersion(const QString &path, QString &version) {
         QProcess process;
         process.start(path, QStringList() << "-ver");
@@ -58,7 +59,9 @@ namespace Maintenance {
         possiblePaths << defaultPath;
 
 #if defined(Q_OS_MAC)
-        possiblePaths << "/usr/bin/exiftool" << "/usr/local/bin/exiftool";
+        QString resourcesPath = QCoreApplication::applicationDirPath();
+        resourcesPath += "/../Resources/exiftool";
+        possiblePaths << resourcesPath << "/usr/bin/exiftool" << "/usr/local/bin/exiftool";
 #elif defined(Q_OS_WIN)
         possiblePaths << "c:/exiftool.exe";
         QDir downloadsDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
