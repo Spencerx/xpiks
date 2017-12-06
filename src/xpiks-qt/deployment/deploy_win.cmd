@@ -7,6 +7,7 @@ set XPIKS_DEPS_PATH=%cd%\..\..\..\..\xpiks-deps
 set WINDOWS_LIBS=%XPIKS_DEPS_PATH%\windows-libs\release-%XPIKS_PLATFORM%
 set REDIST_LIBS=%XPIKS_DEPS_PATH%\windows-libs\redist-%XPIKS_PLATFORM%
 set OPENSSL_LIBS=%XPIKS_DEPS_PATH%\windows-libs\openssl-%XPIKS_PLATFORM%
+set FFMPEG_LIBS=%XPIKS_DEPS_PATH%\windows-libs\ffmpeg-%XPIKS_PLATFORM%\release
 
 pushd ..\..\build-xpiks-qt-Desktop_Qt_5_9_3_MSVC2015_64bit-Release\release
 
@@ -18,24 +19,19 @@ xcopy /Y /s %WINDOWS_LIBS% .
 rem xcopy /Y /s %REDIST_LIBS% .
 
 copy /Y %OPENSSL_LIBS%\*.dll .
+copy /Y %FFMPEG_LIBS%\*.dll .
+set XPIKS_LIBS_DIR=..\..\..\libs\release
 
-rem copy /Y ..\..\..\libs\libexiv2.dll .
-copy /Y ..\..\..\libs\libcurl*.dll .
-copy /Y ..\..\..\libs\quazip*.dll .
-copy /Y ..\..\..\libs\ssdll.dll .
-copy /Y ..\..\..\libs\mman.dll .
-copy /Y ..\..\..\libs\face.dll .
-rem copy /Y ..\..\..\libs\libexpat.dll .
-copy /Y ..\..\..\libs\z.dll .
-copy /Y ..\..\..\libs\thmbnlr.dll .
+rem copy /Y %XPIKS_LIBS_DIR%\libexiv2.dll .
+copy /Y %XPIKS_LIBS_DIR%\libcurl*.dll .
+copy /Y %XPIKS_LIBS_DIR%\quazip*.dll .
+copy /Y %XPIKS_LIBS_DIR%\ssdll.dll .
+copy /Y %XPIKS_LIBS_DIR%\mman.dll .
+copy /Y %XPIKS_LIBS_DIR%\face.dll .
+rem copy /Y %XPIKS_LIBS_DIR%\libexpat.dll .
+copy /Y %XPIKS_LIBS_DIR%\z.dll .
+copy /Y %XPIKS_LIBS_DIR%\thmbnlr.dll .
 rem -------------------------------
-copy /Y ..\..\..\libs\avcodec-57.dll .
-copy /Y ..\..\..\libs\avfilter-6.dll .
-copy /Y ..\..\..\libs\avformat-57.dll .
-copy /Y ..\..\..\libs\avutil-55.dll .
-copy /Y ..\..\..\libs\swresample-2.dll .
-copy /Y ..\..\..\libs\swscale-4.dll.dll .
-
 copy /Y ..\..\..\..\ministaller\src\ministaller.exe .
 
 del *.obj
@@ -43,6 +39,8 @@ del *.cpp
 del *.lib
 del *.pdb
 del vcredist_%XPIKS_PLATFORM%.exe
+del libexiv2.dll
+del libexpat.dll
 
 cd ..
 
