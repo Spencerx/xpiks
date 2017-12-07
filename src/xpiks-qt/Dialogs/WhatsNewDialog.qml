@@ -212,7 +212,7 @@ Item {
 
                 StyledLink {
                     text: i18.n + qsTr("Skip")
-                    color: skipMA.pressed ? uiColors.linkClickedColor : uiColors.labelInactiveForeground
+                    normalLinkColor: uiColors.labelInactiveForeground
                     onClicked: {
                         settingsModel.saveCurrentVersion()
                         closePopup()
@@ -225,7 +225,7 @@ Item {
 
                 StyledLink {
                     text: i18.n + qsTr("Previous")
-                    color: previousMA.pressed ? uiColors.linkClickedColor : uiColors.labelActiveForeground
+                    normalLinkColor: uiColors.labelActiveForeground
                     onClicked: {
                         slidesHost.swipeBackward()
                         actionButton.text = qsTr("Next")
