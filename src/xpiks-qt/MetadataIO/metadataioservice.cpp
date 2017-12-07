@@ -26,14 +26,15 @@ namespace MetadataIO {
         m_MetadataIOWorker(nullptr),
         m_IsStopped(false)
     {
+        // timers could not be started from another thread
+        QObject::connect(this, &MetadataIOService::cacheSyncRequest, this, &MetadataIOService::onCacheSyncRequest);
     }
 
     void MetadataIOService::startService() {
         Q_ASSERT(m_MetadataIOWorker == nullptr);
         Helpers::DatabaseManager *dbManager = m_CommandManager->getDatabaseManager();
-        QMLExtensions::ArtworksUpdateHub *updatesHub = m_CommandManager->getArtworksUpdateHub();
 
-        m_MetadataIOWorker = new MetadataIOWorker(dbManager, updatesHub);
+        m_MetadataIOWorker = new MetadataIOWorker(dbManager);
 
         QThread *thread = new QThread();
         m_MetadataIOWorker->moveToThread(thread);
@@ -75,7 +76,7 @@ namespace MetadataIO {
         std::shared_ptr<MetadataIOTaskBase> jobItem(new MetadataReadWriteTask(metadata, MetadataReadWriteTask::Write));
         m_MetadataIOWorker->submitItem(jobItem);
 
-        justChanged();
+        emit cacheSyncRequest();
     }
 
     quint32 MetadataIOService::readArtworks(const ArtworksSnapshot &snapshot) const {
@@ -141,6 +142,11 @@ namespace MetadataIO {
     void MetadataIOService::workerFinished() {
         LOG_INFO << "#";
     }
+
+    void MetadataIOService::onCacheSyncRequest() {
+        LOG_DEBUG << "#";
+        justChanged();
+}
 
     void MetadataIOService::onReadyToImportFromStorage() {
         LOG_DEBUG << "#";

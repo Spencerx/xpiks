@@ -49,6 +49,9 @@ namespace MetadataIO {
     public:
         void searchArtworks(Suggestion::LocalLibraryQuery *query);
 
+    signals:
+        void cacheSyncRequest();
+
 #ifdef INTEGRATION_TESTS
     public:
         MetadataIOWorker *getWorker() { return m_MetadataIOWorker; }
@@ -56,6 +59,7 @@ namespace MetadataIO {
 
     private slots:
         void workerFinished();
+        void onCacheSyncRequest();
         void onReadyToImportFromStorage();
 
         // DelayedActionEntity implementation

@@ -16,13 +16,11 @@
 #define STORAGE_IMPORT_INTERVAL 29
 
 namespace MetadataIO {
-    MetadataIOWorker::MetadataIOWorker(Helpers::DatabaseManager *dbManager, QMLExtensions::ArtworksUpdateHub *artworksUpdateHub, QObject *parent):
+    MetadataIOWorker::MetadataIOWorker(Helpers::DatabaseManager *dbManager, QObject *parent):
         QObject(parent),
         m_MetadataCache(dbManager),
-        m_ArtworksUpdateHub(artworksUpdateHub),
         m_ProcessedItemsCount(0)
     {
-        Q_ASSERT(artworksUpdateHub != nullptr);
     }
 
     bool MetadataIOWorker::initWorker() {

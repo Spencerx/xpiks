@@ -36,7 +36,7 @@ namespace MetadataIO {
     {
         Q_OBJECT
     public:
-        explicit MetadataIOWorker(Helpers::DatabaseManager *dbManager, QMLExtensions::ArtworksUpdateHub *artworksUpdateHub, QObject *parent = 0);
+        explicit MetadataIOWorker(Helpers::DatabaseManager *dbManager, QObject *parent = 0);
 
 #ifdef INTEGRATION_TESTS
     public:
@@ -71,7 +71,6 @@ namespace MetadataIO {
     private:
         Common::ReaderWriterQueue<StorageReadRequest> m_StorageReadQueue;
         MetadataCache m_MetadataCache;
-        QMLExtensions::ArtworksUpdateHub *m_ArtworksUpdateHub;
         volatile int m_ProcessedItemsCount;
     };
 }
