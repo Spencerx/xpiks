@@ -12,14 +12,14 @@
 
 Dependencies used by Xpiks:
 
-* _libcurl_ (from main website)
+* _libcurl_ (from [main website](https://curl.haxx.se/libcurl/), Windows build from [GitHub repository](https://github.com/blackrosezy/build-libcurl-windows))
 * _hunspell_ (from GitHub submodule)
-* _zlib_ (from main website)
-* _exiftool_ (from main website)
+* _zlib_ (from [main website](https://zlib.net/))
+* _exiftool_ (latest production release from [main website](https://www.sno.phy.queensu.ca/~phil/exiftool/history.html))
 * _tiny-AES_ (from GitHub submodule)
-* _sqlite_ (from main website)
-* _ffmpeg_ (from main website)
-* _openssl_ (from main website)
+* _sqlite_ (from [main website](https://www.sqlite.org/))
+* _ffmpeg_ (from [main website](https://www.ffmpeg.org/download.html))
+* _openssl_ (LTS from [main website](https://www.openssl.org/source/))
 * _ministaller_ [Windows] (from GitHub repo)
 
 1. `utils/` directory contains basic scripts to build complex dependencies
