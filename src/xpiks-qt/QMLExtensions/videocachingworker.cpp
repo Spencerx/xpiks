@@ -231,6 +231,7 @@ namespace QMLExtensions {
         Models::VideoArtwork *video = item->getArtwork();
         Q_ASSERT(video != nullptr);
         if (video->isLockedIO()) {
+            LOG_DEBUG << "video is locked for IO";
             this->submitItem(item);
             isLocked = true;
         }

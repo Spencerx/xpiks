@@ -16,11 +16,15 @@
 #define STORAGE_IMPORT_INTERVAL 29
 
 namespace MetadataIO {
-    MetadataIOWorker::MetadataIOWorker(Helpers::DatabaseManager *dbManager, QObject *parent):
+    MetadataIOWorker::MetadataIOWorker(Helpers::DatabaseManager *dbManager,
+                                       QMLExtensions::ArtworksUpdateHub *artworksUpdateHub,
+                                       QObject *parent):
         QObject(parent),
+        m_ArtworksUpdateHub(artworksUpdateHub),
         m_MetadataCache(dbManager),
         m_ProcessedItemsCount(0)
     {
+        Q_ASSERT(artworksUpdateHub != nullptr);
     }
 
     bool MetadataIOWorker::initWorker() {
@@ -108,6 +112,8 @@ namespace MetadataIO {
         for (auto &request: readRequests) {
             bool modified = request->m_Artwork->initFromStorage(request->m_CachedArtwork);
             Q_UNUSED(modified);
+
+            m_ArtworksUpdateHub->updateArtwork(request->m_Artwork);
         }
     }
 

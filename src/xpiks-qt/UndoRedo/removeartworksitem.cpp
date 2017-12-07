@@ -104,7 +104,9 @@ void UndoRedo::RemoveArtworksHistoryItem::undo(const Commands::ICommandManager *
     artworksRepository->updateFilesCounts();
 
     std::unique_ptr<IHistoryItem> addArtworksItem(new AddArtworksHistoryItem(getCommandID(), ranges));
-    commandManager->getDelegator()->recordHistoryItem(addArtworksItem);
+    auto *xpiks = commandManager->getDelegator();
+    xpiks->recordHistoryItem(addArtworksItem);
+    xpiks->generatePreviews(artworksToImport);
 
     int importID = commandManager->getDelegator()->readMetadata(artworksToImport);
     artItemsModel->raiseArtworksAdded(importID, usedCount, attachedVectors);

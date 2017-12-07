@@ -33,8 +33,9 @@ namespace MetadataIO {
     void MetadataIOService::startService() {
         Q_ASSERT(m_MetadataIOWorker == nullptr);
         Helpers::DatabaseManager *dbManager = m_CommandManager->getDatabaseManager();
+        QMLExtensions::ArtworksUpdateHub *updateHub = m_CommandManager->getArtworksUpdateHub();
 
-        m_MetadataIOWorker = new MetadataIOWorker(dbManager);
+        m_MetadataIOWorker = new MetadataIOWorker(dbManager, updateHub);
 
         QThread *thread = new QThread();
         m_MetadataIOWorker->moveToThread(thread);
