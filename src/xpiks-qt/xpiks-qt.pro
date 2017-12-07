@@ -6,6 +6,12 @@ QT += qml quick widgets concurrent svg
 CONFIG += qtquickcompiler
 CONFIG += c++11
 
+CONFIG += force_debug_info
+
+CONFIG(release, debug|release)  {
+    CONFIG += separate_debug_info
+}
+
 VERSION = 1.4.2.0
 QMAKE_TARGET_PRODUCT = Xpiks
 QMAKE_TARGET_DESCRIPTION = "Cross-Platform Image Keywording Software"

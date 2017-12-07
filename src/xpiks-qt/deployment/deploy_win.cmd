@@ -16,7 +16,7 @@ windeployqt.exe --release --verbose=2 --qmldir=../../xpiks-qt/CollapserTabs/ --q
 echo 'Copying libraries...'
 
 xcopy /Y /s %WINDOWS_LIBS% .
-rem xcopy /Y /s %REDIST_LIBS% .
+xcopy /Y /s %REDIST_LIBS% .
 
 copy /Y %OPENSSL_LIBS%\*.dll .
 copy /Y %FFMPEG_LIBS%\*.dll .
