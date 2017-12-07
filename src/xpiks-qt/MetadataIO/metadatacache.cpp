@@ -123,11 +123,11 @@ namespace MetadataIO {
 
 #endif
 
-    bool MetadataCache::read(Models::ArtworkMetadata *metadata) {
-        Q_ASSERT(metadata != nullptr);
-        if (metadata == nullptr) { return false; }
+    bool MetadataCache::read(Models::ArtworkMetadata *artwork, CachedArtwork &cachedArtwork) {
+        Q_ASSERT(artwork != nullptr);
+        if (artwork == nullptr) { return false; }
 
-        const QString &filepath = metadata->getFilepath();
+        const QString &filepath = artwork->getFilepath();
         QByteArray rawValue;
         bool found = false;
 
@@ -147,8 +147,7 @@ namespace MetadataIO {
             Q_ASSERT(ds.status() == QDataStream::Ok);
 
             if (ds.status() == QDataStream::Ok) {
-                bool modified = metadata->initFromStorage(value);
-                Q_UNUSED(modified);
+                cachedArtwork = value;
             }
         }
 

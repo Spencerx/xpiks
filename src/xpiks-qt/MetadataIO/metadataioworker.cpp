@@ -13,6 +13,7 @@
 #include "../Suggestion/locallibraryquery.h"
 
 #define METADATA_CACHE_SYNC_INTERVAL 29
+#define STORAGE_IMPORT_INTERVAL 29
 
 namespace MetadataIO {
     MetadataIOWorker::MetadataIOWorker(Helpers::DatabaseManager *dbManager, QMLExtensions::ArtworksUpdateHub *artworksUpdateHub, QObject *parent):
@@ -34,17 +35,22 @@ namespace MetadataIO {
         return true;
     }
 
+    void MetadataIOWorker::processOneItemEx(std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID, Common::flag_t flags) {
+        Q_UNUSED(batchID);
+
+        if (getIsSeparatorFlag(flags)) {
+            m_MetadataCache.sync();
+            emit readyToImportFromStorage();
+        } else {
+            ItemProcessingWorker::processOneItemEx(item, batchID, flags);
+        }
+    }
+
     void MetadataIOWorker::processOneItem(std::shared_ptr<MetadataIOTaskBase> &item) {
         do {
             std::shared_ptr<MetadataReadWriteTask> readWriteItem = std::dynamic_pointer_cast<MetadataReadWriteTask>(item);
             if (readWriteItem) {
                 processReadWriteItem(readWriteItem);
-                break;
-            }
-
-            std::shared_ptr<MetadataCacheSyncTask> syncTask = std::dynamic_pointer_cast<MetadataCacheSyncTask>(item);
-            if (syncTask) {
-                m_MetadataCache.sync();
                 break;
             }
 
@@ -66,8 +72,10 @@ namespace MetadataIO {
 
         const MetadataReadWriteTask::ReadWriteAction action = item->getReadWriteAction();
         if (action == MetadataReadWriteTask::Read) {
-            if (m_MetadataCache.read(artworkMetadata)) {
-                m_ArtworksUpdateHub->updateArtwork(artworkMetadata);
+            std::shared_ptr<StorageReadRequest> readRequest(new StorageReadRequest());
+            if (m_MetadataCache.read(artworkMetadata, readRequest->m_CachedArtwork)) {
+                readRequest->m_Artwork = artworkMetadata;
+                m_StorageReadQueue.push(readRequest);
             }
         } else if (action == MetadataReadWriteTask::Write) {
             m_MetadataCache.save(artworkMetadata, true);
@@ -80,12 +88,29 @@ namespace MetadataIO {
         if (m_ProcessedItemsCount % METADATA_CACHE_SYNC_INTERVAL == 0) {
             m_MetadataCache.sync();
         }
+
+        if (m_StorageReadQueue.size() > STORAGE_IMPORT_INTERVAL) {
+            emit readyToImportFromStorage();
+        }
     }
 
     void MetadataIOWorker::processSearchItem(std::shared_ptr<MetadataSearchTask> &item) {
         auto *localLibraryQuery = item->getQuery();
         m_MetadataCache.search(localLibraryQuery->getSearchQuery(), localLibraryQuery->getResults());
         localLibraryQuery->notifyResultsReady();
+    }
+
+    void MetadataIOWorker::importArtworksFromStorage() {
+        LOG_DEBUG << "#";
+        std::vector<std::shared_ptr<StorageReadRequest> > readRequests;
+        // popAll() returns queue in reversed order for performance reasons
+        m_StorageReadQueue.popAll(readRequests);
+        LOG_DEBUG << readRequests.size() << "requests to process";
+
+        for (auto &request: readRequests) {
+            bool modified = request->m_Artwork->initFromStorage(request->m_CachedArtwork);
+            Q_UNUSED(modified);
+        }
     }
 
     void MetadataIOWorker::workerStopped() {

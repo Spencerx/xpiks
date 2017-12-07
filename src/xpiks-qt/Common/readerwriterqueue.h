@@ -139,6 +139,18 @@ namespace Common {
             }
         }
 
+        size_t size() {
+            QMutexLocker readLocker(&m_ReadMutex);
+            Q_UNUSED(readLocker);
+            {
+                QMutexLocker writeLocker(&m_WriteMutex);
+                Q_UNUSED(writeLocker);
+
+                size_t size = m_ReadQueue.size() + m_WriteQueue.size();
+                return size;
+            }
+        }
+
     private:
         void rebalanceUnsafe() {
             //Q_ASSERT(m_ReadQueue.empty());

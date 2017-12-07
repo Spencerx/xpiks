@@ -16,6 +16,7 @@
 #include "../Common/itemprocessingworker.h"
 #include "metadataiotask.h"
 #include "metadatacache.h"
+#include "../Common/readerwriterqueue.h"
 
 namespace Helpers {
     class DatabaseManager;
@@ -26,6 +27,11 @@ namespace QMLExtensions {
 }
 
 namespace MetadataIO {
+    struct StorageReadRequest {
+        CachedArtwork m_CachedArtwork;
+        Models::ArtworkMetadata *m_Artwork;
+    };
+
     class MetadataIOWorker : public QObject, public Common::ItemProcessingWorker<MetadataIOTaskBase>
     {
         Q_OBJECT
@@ -39,11 +45,15 @@ namespace MetadataIO {
 
     protected:
         virtual bool initWorker() override;
+        virtual void processOneItemEx(std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID, Common::flag_t flags) override;
         virtual void processOneItem(std::shared_ptr<MetadataIOTaskBase> &item) override;
 
     private:
         void processReadWriteItem(std::shared_ptr<MetadataReadWriteTask> &item);
         void processSearchItem(std::shared_ptr<MetadataSearchTask> &item);
+
+    public:
+        void importArtworksFromStorage();
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
@@ -56,8 +66,10 @@ namespace MetadataIO {
     signals:
         void stopped();
         void queueIsEmpty();
+        void readyToImportFromStorage();
 
     private:
+        Common::ReaderWriterQueue<StorageReadRequest> m_StorageReadQueue;
         MetadataCache m_MetadataCache;
         QMLExtensions::ArtworksUpdateHub *m_ArtworksUpdateHub;
         volatile int m_ProcessedItemsCount;

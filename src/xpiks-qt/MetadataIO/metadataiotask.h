@@ -39,14 +39,6 @@ namespace MetadataIO {
         Suggestion::LocalLibraryQuery *m_Query;
     };
 
-    class MetadataCacheSyncTask: public MetadataIOTaskBase {
-    public:
-        MetadataCacheSyncTask():
-            MetadataIOTaskBase(nullptr)
-        {
-        }
-    };
-
     class MetadataReadWriteTask: public MetadataIOTaskBase {
     public:
         enum ReadWriteAction {

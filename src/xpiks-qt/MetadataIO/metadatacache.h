@@ -58,7 +58,7 @@ namespace MetadataIO {
 #endif
 
     public:
-        bool read(Models::ArtworkMetadata *metadata);
+        bool read(Models::ArtworkMetadata *artwork, CachedArtwork &cachedArtwork);
         void save(Models::ArtworkMetadata *metadata, bool overwrite = true);
 
     public:

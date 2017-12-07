@@ -26,7 +26,6 @@ namespace MetadataIO {
         m_MetadataIOWorker(nullptr),
         m_IsStopped(false)
     {
-        QObject::connect(this, &MetadataIOService::cacheSyncRequest, this, &MetadataIOService::onCacheSyncRequest);
     }
 
     void MetadataIOService::startService() {
@@ -48,6 +47,9 @@ namespace MetadataIO {
         QObject::connect(m_MetadataIOWorker, &MetadataIOWorker::stopped,
                          this, &MetadataIOService::workerFinished);
 
+        QObject::connect(m_MetadataIOWorker, &MetadataIOWorker::readyToImportFromStorage,
+                         this, &MetadataIOService::onReadyToImportFromStorage);
+
         thread->start();
 
         m_IsStopped = false;
@@ -66,14 +68,6 @@ namespace MetadataIO {
         m_MetadataIOWorker->cancelBatch(batchID);
     }
 
-    void MetadataIOService::readArtwork(Models::ArtworkMetadata *metadata) const {
-        Q_ASSERT(metadata != nullptr);
-        if (m_IsStopped) { return; }
-
-        std::shared_ptr<MetadataIOTaskBase> jobItem(new MetadataReadWriteTask(metadata, MetadataReadWriteTask::Read));
-        m_MetadataIOWorker->submitItem(jobItem);
-    }
-
     void MetadataIOService::writeArtwork(Models::ArtworkMetadata *metadata) {
         Q_ASSERT(metadata != nullptr);
         if (m_IsStopped) { return; }
@@ -81,7 +75,7 @@ namespace MetadataIO {
         std::shared_ptr<MetadataIOTaskBase> jobItem(new MetadataReadWriteTask(metadata, MetadataReadWriteTask::Write));
         m_MetadataIOWorker->submitItem(jobItem);
 
-        emit cacheSyncRequest();
+        justChanged();
     }
 
     quint32 MetadataIOService::readArtworks(const ArtworksSnapshot &snapshot) const {
@@ -98,6 +92,7 @@ namespace MetadataIO {
         }
 
         MetadataIOWorker::batch_id_t batchID = m_MetadataIOWorker->submitItems(jobs);
+        m_MetadataIOWorker->submitSeparator();
         LOG_INFO << "Batch ID is" << batchID;
 
         return batchID;
@@ -115,9 +110,8 @@ namespace MetadataIO {
             jobs.emplace_back(new MetadataReadWriteTask(artwork, MetadataReadWriteTask::Write));
         }
 
-        jobs.emplace_back(new MetadataCacheSyncTask());
-
         m_MetadataIOWorker->submitItems(jobs);
+        m_MetadataIOWorker->submitSeparator();
     }
 
     void MetadataIOService::addArtworks(const WeakArtworksSnapshot &artworks) const {
@@ -133,9 +127,7 @@ namespace MetadataIO {
         }
 
         m_MetadataIOWorker->submitItems(jobs);
-
-        std::shared_ptr<MetadataIOTaskBase> syncJob(new MetadataCacheSyncTask());
-        m_MetadataIOWorker->submitItem(syncJob);
+        m_MetadataIOWorker->submitSeparator();
     }
 
     void MetadataIOService::searchArtworks(Suggestion::LocalLibraryQuery *query) {
@@ -146,17 +138,17 @@ namespace MetadataIO {
         m_MetadataIOWorker->submitFirst(jobItem);
     }
 
-    void MetadataIOService::onCacheSyncRequest() {
-        LOG_DEBUG << "#";
-        justChanged();
-    }
-
     void MetadataIOService::workerFinished() {
         LOG_INFO << "#";
     }
 
+    void MetadataIOService::onReadyToImportFromStorage() {
+        LOG_DEBUG << "#";
+        if (m_IsStopped) { return; }
+        m_MetadataIOWorker->importArtworksFromStorage();
+    }
+
     void MetadataIOService::doOnTimer() {
-        std::shared_ptr<MetadataIOTaskBase> syncItem(new MetadataCacheSyncTask());
-        m_MetadataIOWorker->submitItem(syncItem);
+        m_MetadataIOWorker->submitSeparator();
     }
 }

@@ -41,7 +41,6 @@ namespace MetadataIO {
         void cancelBatch(quint32 batchID) const;
 
     public:
-        void readArtwork(Models::ArtworkMetadata *metadata) const;
         void writeArtwork(Models::ArtworkMetadata *metadata);
         quint32 readArtworks(const ArtworksSnapshot &snapshot) const;
         void writeArtworks(const WeakArtworksSnapshot &artworks) const;
@@ -50,17 +49,14 @@ namespace MetadataIO {
     public:
         void searchArtworks(Suggestion::LocalLibraryQuery *query);
 
-    signals:
-        void cacheSyncRequest();
-
 #ifdef INTEGRATION_TESTS
     public:
         MetadataIOWorker *getWorker() { return m_MetadataIOWorker; }
 #endif
 
     private slots:
-        void onCacheSyncRequest();
         void workerFinished();
+        void onReadyToImportFromStorage();
 
         // DelayedActionEntity implementation
     protected:
