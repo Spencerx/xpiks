@@ -11,7 +11,9 @@ set FFMPEG_LIBS=%XPIKS_DEPS_PATH%\windows-libs\ffmpeg-%XPIKS_PLATFORM%\release
 
 pushd ..\..\build-xpiks-qt-Desktop_Qt_5_9_3_MSVC2015_64bit-Release\release
 
-windeployqt.exe --release --verbose=2 --qmldir=../../xpiks-qt/CollapserTabs/ --qmldir=../../xpiks-qt/Components/ --qmldir=../../xpiks-qt/Constants/ --qmldir=../../xpiks-qt/Dialogs/ --qmldir=../../xpiks-qt/StackViews/ --qmldir=../../xpiks-qt/StyledControls/ --qmldir=../../xpiks-qt/ xpiks-qt.exe
+set QT_BIN_DIR=C:\Qt\5.9.3\msvc2015_64\bin
+
+%QT_BIN_DIR%\windeployqt.exe --release --verbose=2 --qmldir=../../xpiks-qt/CollapserTabs/ --qmldir=../../xpiks-qt/Components/ --qmldir=../../xpiks-qt/Constants/ --qmldir=../../xpiks-qt/Dialogs/ --qmldir=../../xpiks-qt/StackViews/ --qmldir=../../xpiks-qt/StyledControls/ --qmldir=../../xpiks-qt/ xpiks-qt.exe
 
 echo 'Copying libraries...'
 
@@ -31,6 +33,7 @@ copy /Y %XPIKS_LIBS_DIR%\face.dll .
 rem copy /Y %XPIKS_LIBS_DIR%\libexpat.dll .
 copy /Y %XPIKS_LIBS_DIR%\z.dll .
 copy /Y %XPIKS_LIBS_DIR%\thmbnlr.dll .
+copy /Y %XPIKS_DEPS_PATH%\windows-3rd-party-bin\exiftool.exe .
 rem -------------------------------
 copy /Y ..\..\..\..\ministaller\src\ministaller.exe .
 
