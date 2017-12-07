@@ -4,7 +4,7 @@
 
 1. Choose your platform's deploy script
 2. Make sure Qt's `bin/` directory is in your `$PATH`
-3. Verify build directory path
+3. Verify build directory path (Release version and correct Qt's version)
 4. Verify Xpiks version string
 5. Update dependencies
 
