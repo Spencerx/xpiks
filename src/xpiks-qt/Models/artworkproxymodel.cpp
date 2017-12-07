@@ -382,11 +382,13 @@ namespace Models {
         size_t lastKnownIndex = m_ArtworkMetadata->getLastKnownIndex();
         LOG_DEBUG << "index:" << lastKnownIndex;
 
+#ifndef CORE_TESTS
         Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork*>(m_ArtworkMetadata);
         if ((videoArtwork != nullptr) && !videoArtwork->isThumbnailGenerated()) {
             auto *videoCachingService = m_CommandManager->getVideoCachingService();
             videoCachingService->generateThumbnail(videoArtwork);
         }
+#endif
 
         xpiks()->updateArtworksAtIndices(QVector<int>() << (int)lastKnownIndex);
 
