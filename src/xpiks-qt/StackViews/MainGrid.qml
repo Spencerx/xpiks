@@ -1251,6 +1251,7 @@ Item {
                                         anchors.rightMargin: 20
                                         anchors.topMargin: 20
                                         property bool isWideEnough: width > 450
+                                        property real inputWidth: isWideEnough ? ((width / 2) - 10) : width
 
                                         StyledText {
                                             id: descriptionText
@@ -1289,8 +1290,7 @@ Item {
                                             id: descriptionRect
                                             height: 30
                                             anchors.left: parent.left
-                                            anchors.right: titleRect.left
-                                            anchors.rightMargin: columnLayout.isWideEnough ? 20 : 0
+                                            width: columnLayout.inputWidth
                                             anchors.top: descriptionText.bottom
                                             anchors.topMargin: 3
                                             color: rowWrapper.isHighlighted ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
@@ -1401,7 +1401,7 @@ Item {
                                             height: 30
                                             visible: columnLayout.isWideEnough
                                             enabled: columnLayout.isWideEnough && artworksHost.isEditingAllowed
-                                            width: columnLayout.isWideEnough ? ((columnLayout.width / 2) - 10) : 0
+                                            width: columnLayout.inputWidth
                                             anchors.right: parent.right
                                             anchors.top: descriptionText.bottom
                                             anchors.topMargin: 3
