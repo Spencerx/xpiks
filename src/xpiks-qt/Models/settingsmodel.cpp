@@ -69,17 +69,24 @@
 #define DEFAULT_USE_PROGRESSIVE_SUGGESTION_PREVIEWS false
 #define DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT 10
 
-#ifndef INTEGRATION_TESTS
+#ifdef QT_NO_DEBUG
     #define DEFAULT_USE_AUTOIMPORT true
     #define DEFAULT_AUTO_CACHE_IMAGES true
-    #define DEFAULT_VERBOSE_UPLOAD true
+    #define DEFAULT_VERBOSE_UPLOAD false
     #define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT false
 #else
-    // used in INTEGRATION TESTS
-    #define DEFAULT_USE_AUTOIMPORT false
-    #define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT true
-    #define DEFAULT_AUTO_CACHE_IMAGES false
-    #define DEFAULT_VERBOSE_UPLOAD false
+    #ifdef INTEGRATION_TESTS
+        // used in INTEGRATION TESTS
+        #define DEFAULT_USE_AUTOIMPORT false
+        #define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT true
+        #define DEFAULT_AUTO_CACHE_IMAGES false
+        #define DEFAULT_VERBOSE_UPLOAD false
+    #else
+        #define DEFAULT_USE_AUTOIMPORT true
+        #define DEFAULT_AUTO_CACHE_IMAGES true
+        #define DEFAULT_VERBOSE_UPLOAD true
+        #define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT false
+    #endif
 #endif
 
 namespace Models {

@@ -33,7 +33,8 @@ DISTFILES += \
     ../../xpiks-qt/Dialogs/CsvExportDialog.qml \
     tst_UploadDialog.qml \
     tst_PresetsEditDialog.qml \
-    tst_ZipArchiver.qml
+    tst_ZipArchiver.qml \
+    tst_WhatsNew.qml
 
 HEADERS += \
     ../../xpiks-qt/Helpers/clipboardhelper.h \
