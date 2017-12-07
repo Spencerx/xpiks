@@ -20,6 +20,7 @@
 namespace Models {
     class ArtworkMetadata;
     class ArtworkMetadataLocker;
+    class VideoArtwork;
 }
 
 namespace MetadataIO {
@@ -41,6 +42,7 @@ namespace QMLExtensions {
 
     public:
         void generateThumbnails(const MetadataIO::ArtworksSnapshot &snapshot);
+        void generateThumbnail(Models::VideoArtwork *videoArtwork);
         void waitWorkerIdle();
 
     private:

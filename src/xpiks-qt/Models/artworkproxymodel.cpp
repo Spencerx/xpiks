@@ -17,6 +17,7 @@
 #include "../Models/artitemsmodel.h"
 #include "../Models/videoartwork.h"
 #include "../Helpers/filehelpers.h"
+#include "../QMLExtensions/videocachingservice.h"
 
 namespace Models {
     ArtworkProxyModel::ArtworkProxyModel(QObject *parent) :
@@ -380,6 +381,12 @@ namespace Models {
 
         size_t lastKnownIndex = m_ArtworkMetadata->getLastKnownIndex();
         LOG_DEBUG << "index:" << lastKnownIndex;
+
+        Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork*>(m_ArtworkMetadata);
+        if ((videoArtwork != nullptr) && !videoArtwork->isThumbnailGenerated()) {
+            auto *videoCachingService = m_CommandManager->getVideoCachingService();
+            videoCachingService->generateThumbnail(videoArtwork);
+        }
 
         xpiks()->updateArtworksAtIndices(QVector<int>() << (int)lastKnownIndex);
 

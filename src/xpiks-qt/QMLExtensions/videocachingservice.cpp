@@ -88,6 +88,26 @@ namespace QMLExtensions {
         m_CachingWorker->submitSeparator();
     }
 
+    void VideoCachingService::generateThumbnail(Models::VideoArtwork *videoArtwork) {
+        Q_ASSERT(videoArtwork != nullptr);
+        if (videoArtwork == nullptr) { return; }
+        LOG_DEBUG << "#" << videoArtwork->getItemID();
+
+#ifndef INTEGRATION_TESTS
+        Models::SwitcherModel *switcher = m_CommandManager->getSwitcherModel();
+        const bool goodQualityAllowed = switcher->getGoodQualityVideoPreviews();
+#else
+        const bool goodQualityAllowed = false;
+#endif
+        const bool quickThumbnail = true, dontRecache = false;
+
+        std::shared_ptr<VideoCacheRequest> request(new VideoCacheRequest(videoArtwork,
+                                                                         dontRecache,
+                                                                         quickThumbnail,
+                                                                         goodQualityAllowed));
+        m_CachingWorker->submitItem(request);
+    }
+
     void VideoCachingService::waitWorkerIdle() {
         LOG_DEBUG << "#";
         Q_ASSERT(m_CachingWorker != nullptr);
