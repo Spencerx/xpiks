@@ -17,3 +17,4 @@ moc_*.cpp
 installer/packages/xpiks/data/
 *.qm
 UiTestsStubPlugin/
+*.qmlc
