@@ -28,3 +28,5 @@ Dependencies used by Xpiks:
 ## Post-deploy
 
 1. Calculate sha1 sum for created packages (`shasum -a 1 filepath` for macOS)
+2. Upload binary packages to GitHub, publish a release
+3. Update links and SHA1 checksums in `gh-pages` update config
