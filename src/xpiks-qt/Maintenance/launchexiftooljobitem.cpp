@@ -60,7 +60,7 @@ namespace Maintenance {
 
 #if defined(Q_OS_MAC)
         QString resourcesPath = QCoreApplication::applicationDirPath();
-        resourcesPath += "/../Resources/exiftool";
+        resourcesPath += "/../Resources/exiftool/exiftool";
         possiblePaths << resourcesPath << "/usr/bin/exiftool" << "/usr/local/bin/exiftool";
 #elif defined(Q_OS_WIN)
         possiblePaths << "c:/exiftool.exe";

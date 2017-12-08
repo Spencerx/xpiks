@@ -6,7 +6,7 @@ if [ ! -f ../deps/exiftool ]; then
 fi
 
 APP_NAME=xpiks-qt
-VERSION="1.4.2"
+VERSION="1.5.0.beta"
 VOL_NAME="Xpiks"
 
 DMG_BACKGROUND_IMG="dmg-background.jpg"
@@ -16,9 +16,7 @@ DMG_TMP="xpiks-qt-v${VERSION}.tmp.dmg"
 DMG_FINAL="xpiks-qt-v${VERSION}.dmg"
 STAGING_DIR="./osx_deploy"
 
-EXIFTOOL_DIR="../deps"
-
-BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_6_2_clang_64bit-Release"
+BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_9_3_clang_64bit-Release"
 
 if [ ! -d "$BUILD_DIR" ]; then
     echo "Build directory not found: $BUILD_DIR"
@@ -32,17 +30,15 @@ fi
 
 pushd "$BUILD_DIR"
 
-~/Qt5.6.2/5.6/clang_64/bin/macdeployqt xpiks-qt.app -verbose=2 -executable=xpiks-qt.app/Contents/MacOS/xpiks-qt -qmldir=../xpiks-qt/ -qmldir=../xpiks-qt/Components/ -qmldir=../xpiks-qt/Constants/ -qmldir=../xpiks-qt/Dialogs/ -qmldir=../xpiks-qt/StyledControls/ -qmldir=../xpiks-qt/StackViews/ -qmldir=../xpiks-qt/CollapserTabs/
+~/Qt5.9.3/5.9.3/clang_64/bin/macdeployqt xpiks-qt.app -verbose=2 -executable=xpiks-qt.app/Contents/MacOS/xpiks-qt -qmldir=../xpiks-qt/ -qmldir=../xpiks-qt/Components/ -qmldir=../xpiks-qt/Constants/ -qmldir=../xpiks-qt/Dialogs/ -qmldir=../xpiks-qt/StyledControls/ -qmldir=../xpiks-qt/StackViews/ -qmldir=../xpiks-qt/CollapserTabs/
 
 popd
 
 echo "Copying libraries..."
 
-LIBS_PATH="../../../libs/release"
-
-LIBS_TO_COPY=(
+FFMPEG_LIBS=(
     libavcodec.57.dylib
-    libavdevice.57.dylib
+#    libavdevice.57.dylib
     libavfilter.6.dylib
     libavformat.57.dylib
     libavutil.55.dylib
@@ -53,39 +49,60 @@ LIBS_TO_DEPLOY=(
     libssdll.1.0.0.dylib
     libface.1.0.0.dylib
     libquazip.1.0.0.dylib
-    libavthumbnailer.1.0.0.dylib
-    libthmbnlr.1.0.0.dylib
 )
 
 FRAMEWORKS_DIR="$BUILD_DIR/xpiks-qt.app/Contents/Frameworks"
-RESOURCES_DIR="$BUILD_DIR/xpiks-qt.app/Contents/Resources"
+pushd "$FRAMEWORKS_DIR"
+
+LIBS_PATH="../../../../../libs/release"
 
 for lib in "${LIBS_TO_DEPLOY[@]}"
 do
     echo "Processing $lib..."
-    cp "$LIBS_PATH/$lib" "$BUILD_DIR/xpiks-qt.app/Contents/Frameworks/"
+    cp -v "$LIBS_PATH/$lib" .
 
     LIBENTRY="${lib%.0.0.dylib}.dylib"
     
-    install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "$BUILD_DIR/xpiks-qt.app/Contents/MacOS/xpiks-qt"
+    install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "../MacOS/xpiks-qt"
 
-    ln -s "$FRAMEWORKS_DIR/$lib" "$FRAMEWORKS_DIR/$LIBENTRY"
+    ln -s "$lib" "$LIBENTRY"
 done
 
 # just copying
 
-for lib in "${LIBS_TO_COPY[@]}"
+for lib in "${FFMPEG_LIBS[@]}"
 do
     echo "Copying $lib..."
-    cp "$LIBS_PATH/$lib" "$BUILD_DIR/xpiks-qt.app/Contents/Frameworks/"
-    LIBENTRY="${lib%.0.0.dylib}.dylib"
-    install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "$BUILD_DIR/xpiks-qt.app/Contents/MacOS/xpiks-qt"
+    cp -v "$LIBS_PATH/$lib" .
+    
+    install_name_tool -change $lib "@executable_path/../Frameworks/$lib" "../MacOS/xpiks-qt"
+    # brew fix
+    install_name_tool -change "/usr/local/lib/$lib" "@executable_path/../Frameworks/$lib" "../MacOS/xpiks-qt"
+
+    for depend_lib in "${FFMPEG_LIBS[@]}"
+    do
+        install_name_tool -change "/usr/local/lib/$depend_lib" "@executable_path/../Frameworks/$depend_lib" "$lib"
+    done
 done
 
-echo "Copying exiftool distribution"
+popd
 
-cp "$EXIFTOOL_DIR/exiftool" "$RESOURCES_DIR"
-cp -r "$EXIFTOOL_DIR/lib" "$RESOURCES_DIR/"
+RESOURCES_DIR="$BUILD_DIR/xpiks-qt.app/Contents/Resources"
+pushd $RESOURCES_DIR
+
+echo "Copying exiftool distribution"
+EXIFTOOL_FROM_DIR="../../../../xpiks-qt/deps"
+EXIFTOOL_TO_DIR="exiftool"
+
+if [ ! -d "$EXIFTOOL_TO_DIR" ]; then
+    echo "Exiftool directory does not exist. Creating..."
+    mkdir "$EXIFTOOL_TO_DIR"
+fi
+
+cp "$EXIFTOOL_FROM_DIR/exiftool" "$EXIFTOOL_TO_DIR/"
+cp -r "$EXIFTOOL_FROM_DIR/lib" "$EXIFTOOL_TO_DIR/"
+
+popd
 
 # ------------------------------
 

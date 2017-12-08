@@ -604,6 +604,12 @@ macx {
     INCLUDEPATH += "../../vendors/quazip"
     INCLUDEPATH += "../../vendors/libcurl/include"
 
+    LIBS += -lavcodec.57
+    LIBS += -lavfilter.6
+    LIBS += -lavformat.57
+    LIBS += -lavutil.55
+    LIBS += -lswscale.4
+
     HUNSPELL_DICT_FILES.files = deps/dict/en_US.aff deps/dict/en_US.dic deps/dict/license.txt deps/dict/README_en_US.txt
     HUNSPELL_DICT_FILES.path = Contents/Resources
     QMAKE_BUNDLE_DATA += HUNSPELL_DICT_FILES
@@ -636,6 +642,12 @@ win32 {
     INCLUDEPATH += "../../vendors/libcurl/include"
 
     LIBS -= -lcurl
+
+    LIBS += -lavcodec
+    LIBS += -lavfilter
+    LIBS += -lavformat
+    LIBS += -lavutil
+    LIBS += -lswscale
 
     CONFIG(debug, debug|release) {
         EXE_DIR = debug
