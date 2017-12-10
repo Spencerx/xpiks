@@ -9,9 +9,6 @@ cd vendors/
 cd hunspell/
 qmake "CONFIG+=debug" hunspell.pro
 make
-pwd
-ls -la
-cp libhunspell.a ../../libs/libhunspell.a
 cd ../
 
 ##########

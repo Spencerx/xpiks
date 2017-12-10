@@ -13,6 +13,10 @@ DEFINES += HUNSPELL_STATIC
 
 CONFIG += c++11
 
+CONFIG(debug, debug|release) {
+    DESTDIR = ../../libs/debug
+}
+
 INCLUDEPATH += "../hunspell-repo/src/hunspell/"
 INCLUDEPATH += "../hunspell-repo/msvc/"
 

@@ -3,7 +3,6 @@ cd vendors
 cd hunspell
 qmake "CONFIG+=%configuration% hunspell.pro"
 nmake.exe
-copy %configuration%\hunspell.* ..\..\libs
 cd ..
 
 cd cpp-libface\libface-project
