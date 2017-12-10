@@ -701,6 +701,24 @@ win32 {
     POST_TARGETDEPS += copywhatsnew copyterms copydicts copytranslations copyfreqtables
 }
 
+linux {
+    message("for Linux")
+    INCLUDEPATH += "../../vendors/quazip"
+    LIBS += -L"$$PWD/../../libs"
+    BUILDNO = $$system($$PWD/buildno.sh)
+
+    LIBS += -ldl
+
+    LIBS += -lavcodec
+    LIBS += -lavfilter
+    LIBS += -lavformat
+    LIBS += -lavutil
+    LIBS += -lswscale
+
+    #QML_IMPORT_PATH += /usr/lib/x86_64-linux-gnu/qt5/imports/
+    #LIBS += -L/lib/x86_64-linux-gnu/
+}
+
 travis-ci {
     message("for Travis CI")
     LIBS += -L"$$PWD/../../libs"
@@ -712,27 +730,13 @@ travis-ci {
 
     LIBS -= -lthmbnlr
     SOURCES += ../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
-}
 
-linux-g++-64 {
-    message("for Linux")
-    target.path=/usr/bin/
-
-    QML_IMPORT_PATH += /usr/lib/x86_64-linux-gnu/qt5/imports/
-    LIBS += -L/lib/x86_64-linux-gnu/
-    BUILDNO = $$system($$PWD/buildno.sh)
-
-    UNAME = $$system(cat /proc/version | tr -d \'()\')
-
-    contains( UNAME, Debian|Ubuntu ) {
-        message("distribution : Debian")
-        LIBS -= -lquazip
-        LIBS += -lquazip5
-    }
-
-    contains( UNAME, SUSE ) {
-        message("distribution : SUSE")
-    }
+    # Travis does not have proper libthmbnlr for now
+    LIBS -= -lavcodec
+    LIBS -= -lavfilter
+    LIBS -= -lavformat
+    LIBS -= -lavutil
+    LIBS -= -lswscale
 }
 
 linux-qtcreator {

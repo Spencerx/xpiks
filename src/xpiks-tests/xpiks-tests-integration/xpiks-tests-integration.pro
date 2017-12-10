@@ -586,23 +586,21 @@ win32 {
                _MBCS
 }
 
-linux-g++-64 {
+linux {
+    message("for Linux")
+    INCLUDEPATH += "../../vendors/quazip"
+    LIBS += -L"$$PWD/../../libs"
+    BUILDNO = $$system($$PWD/buildno.sh)
+
     LIBS += -lexiv2
 
-    message("for Linux")
-    target.path=/usr/bin/
-    QML_IMPORT_PATH += /usr/lib/x86_64-linux-gnu/qt5/imports/
-    LIBS += -L/lib/x86_64-linux-gnu/
+    LIBS += -ldl
 
-    UNAME = $$system(cat /proc/version | tr -d \'()\')
-    contains( UNAME, Debian ) {
-        message("distribution : Debian")
-        LIBS -= -lquazip # temporary static link
-        LIBS += /usr/lib/x86_64-linux-gnu/libquazip-qt5.so
-    }
-    contains( UNAME, SUSE ) {
-        message("distribution : SUSE")
-    }
+    LIBS += -lavcodec
+    LIBS += -lavfilter
+    LIBS += -lavformat
+    LIBS += -lavutil
+    LIBS += -lswscale
 }
 
 travis-ci {
@@ -620,6 +618,13 @@ travis-ci {
 
     LIBS -= -lthmbnlr
     SOURCES += ../../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
+
+    # Travis does not have proper libthmbnlr for now
+    LIBS -= -lavcodec
+    LIBS -= -lavfilter
+    LIBS -= -lavformat
+    LIBS -= -lavutil
+    LIBS -= -lswscale
 
     # gcov
     QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
