@@ -246,13 +246,6 @@ namespace MetadataIO {
         }
     }
 
-    void CsvExportModel::setOutputDirectory(const QString &value) {
-        if (m_ExportDirectory != value) {
-            m_ExportDirectory = value;
-            emit outputDirectoryChanged();
-        }
-    }
-
     void CsvExportModel::setCommandManager(Commands::CommandManager *commandManager) {
         Common::BaseEntity::setCommandManager(commandManager);
 
@@ -441,6 +434,15 @@ namespace MetadataIO {
     void CsvExportModel::requestSave() {
         LOG_DEBUG << "#";
         justChanged();
+    }
+
+    void CsvExportModel::setOutputDirectory(const QUrl &url) {
+        LOG_DEBUG << url;
+
+        QString localFile = url.toLocalFile();
+        if (localFile != m_ExportDirectory) {
+            m_ExportDirectory = localFile;
+        }
     }
 
     void CsvExportModel::saveExportPlans() {

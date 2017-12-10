@@ -118,8 +118,7 @@ Item {
 
         onAccepted: {
             console.log("CsvExportDialog # You chose: " + exportDirDialog.folder)
-            var path = exportDirDialog.folder.toString().replace(/^(file:\/{2})/,"");
-            csvExportModel.outputDirectory = decodeURIComponent(path);
+            csvExportModel.setOutputDirectory(exportDirDialog.folder)
             csvExportModel.startExport()
         }
 

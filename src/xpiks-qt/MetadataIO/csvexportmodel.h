@@ -76,7 +76,6 @@ namespace MetadataIO {
         Q_OBJECT
         Q_PROPERTY(bool isExporting READ getIsExporting WRITE setIsExporting NOTIFY isExportingChanged)
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
-        Q_PROPERTY(QString outputDirectory READ getOutputDirectory WRITE setOutputDirectory NOTIFY outputDirectoryChanged)
     public:
         CsvExportModel();
 
@@ -84,11 +83,9 @@ namespace MetadataIO {
         const std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() const { return m_ExportPlans; }
         bool getIsExporting() const { return m_IsExporting; }
         int getArtworksCount() const { return (int)m_ArtworksToExport.size(); }
-        const QString &getOutputDirectory() const { return m_ExportDirectory; }
 
     public:
         void setIsExporting(bool value);
-        void setOutputDirectory(const QString &value);
 
     public:
         virtual void setCommandManager(Commands::CommandManager *commandManager) override;
@@ -128,6 +125,7 @@ namespace MetadataIO {
         Q_INVOKABLE void setCurrentItem(int row);
         Q_INVOKABLE void requestSave();
         Q_INVOKABLE int getSelectedPlansCount() { return retrieveSelectedPlansCount(); }
+        Q_INVOKABLE void setOutputDirectory(const QUrl &url);
 
     private:
         void saveExportPlans();
@@ -143,7 +141,6 @@ namespace MetadataIO {
         void isExportingChanged();
         void artworksCountChanged();
         void backupRequired();
-        void outputDirectoryChanged();
         void exportFinished();
 
     private slots:

@@ -117,25 +117,6 @@ ApplicationWindow {
         }
     }
 
-    FileDialog {
-        id: dictPathDialog
-        title: "Please choose dictionaries location"
-        selectExisting: true
-        selectMultiple: false
-        selectFolder: true
-        nameFilters: [ "All files (*)" ]
-
-        onAccepted: {
-            console.log("UI:SettingsWindow # You chose: " + dictPathDialog.folder)
-            var path = dictPathDialog.folder.toString().replace(/^(file:\/{2})/,"");
-            settingsModel.dictionaryPath = decodeURIComponent(path);
-        }
-
-        onRejected: {
-            console.log("UI:SettingsWindow # File dialog canceled")
-        }
-    }
-
     function turnMasterPasswordOff () {
         secretsManager.resetMasterPassword()
         settingsModel.clearMasterPasswordSettings();
