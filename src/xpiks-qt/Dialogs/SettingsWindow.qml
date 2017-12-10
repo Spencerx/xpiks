@@ -34,10 +34,7 @@ ApplicationWindow {
     signal dialogDestruction();
     signal refreshProxy();
 
-    onClosing: {
-        saveSettings()
-        dialogDestruction();
-    }
+    onClosing: dialogDestruction()
 
     function closeSettings() {
         settingsWindow.close()
@@ -112,8 +109,7 @@ ApplicationWindow {
 
         onAccepted: {
             console.log("UI:SettingsWindow # You chose: " + exifToolFileDialog.fileUrl)
-            var path = exifToolFileDialog.fileUrl.toString().replace(/^(file:\/{3})/,"");
-            settingsModel.exifToolPath = decodeURIComponent(path);
+            settingsModel.setExifTool(exifToolFileDialog.fileUrl)
         }
 
         onRejected: {
@@ -822,28 +818,8 @@ ApplicationWindow {
                         anchors.bottomMargin: 10
                         spacing: 0
 
-                        StyledCheckbox {
-                            id: useExifToolCheckbox
-                            text: i18.n + qsTr("Use ExifTool")
-                            onCheckedChanged: {
-                                settingsModel.useExifTool = checked
-                            }
-                            function onResetRequested() {
-                                checked = settingsModel.useExifTool
-                            }
-                            Component.onCompleted: {
-                                checked = settingsModel.useExifTool
-                                extTab.resetRequested.connect(useExifToolCheckbox.onResetRequested)
-                            }
-                        }
-
-                        Item {
-                            height: 20
-                        }
-
                         StyledText {
-                            enabled: settingsModel.useExifTool
-                            isActive: useExifToolCheckbox.checked
+                            isActive: true
                             text: i18.n + qsTr("ExifTool path:")
                         }
 
@@ -863,7 +839,6 @@ ApplicationWindow {
                                 Layout.fillWidth: true
                                 height: UIConfig.textInputHeight
                                 clip: true
-                                enabled: settingsModel.useExifTool
 
                                 StyledTextInput {
                                     id: exifToolText
@@ -889,14 +864,12 @@ ApplicationWindow {
                                 text: i18.n + qsTr("Select...")
                                 width: 100
                                 onClicked: exifToolFileDialog.open()
-                                enabled: settingsModel.useExifTool
                             }
 
                             StyledButton {
                                 text: i18.n + qsTr("Reset")
                                 width: 100
                                 onClicked: settingsModel.resetExifTool()
-                                enabled: settingsModel.useExifTool
                             }
                         }
 
@@ -915,80 +888,6 @@ ApplicationWindow {
 
                         Item {
                             height: 20
-                        }
-
-                        StyledText {
-                            text: i18.n + qsTr("Dictionary path:")
-                            enabled: Qt.platform.os === "linux"
-                            visible: enabled
-                        }
-
-                        Item {
-                            height: 10
-                            enabled: Qt.platform.os === "linux"
-                            visible: enabled
-                        }
-
-                        RowLayout {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            spacing: 20
-                            enabled: Qt.platform.os === "linux"
-                            visible: enabled
-
-                            Rectangle {
-                                color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                                border.color: uiColors.artworkActiveColor
-                                border.width: dictText.activeFocus ? 1 : 0
-                                Layout.fillWidth: true
-                                height: UIConfig.textInputHeight
-                                clip: true
-
-                                StyledTextInput {
-                                    id: dictText
-                                    text: settingsModel.dictionaryPath
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.leftMargin: 5
-                                    anchors.rightMargin: 5
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onTextChanged: settingsModel.dictionaryPath = text
-                                }
-                            }
-
-                            StyledButton {
-                                text: i18.n + qsTr("Select...")
-                                width: 100
-                                onClicked: dictPathDialog.open()
-                            }
-
-                            StyledButton {
-                                text: i18.n + qsTr("Reset")
-                                width: 100
-                                onClicked: settingsModel.resetDictPath()
-                            }
-                        }
-
-                        Item {
-                            height: 20
-                            enabled: Qt.platform.os === "linux"
-                            visible: enabled
-                        }
-
-                        Rectangle {
-                            height: 1
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.leftMargin: 10
-                            anchors.rightMargin: 10
-                            color: uiColors.panelSelectedColor
-                            enabled: Qt.platform.os === "linux"
-                            visible: enabled
-                        }
-
-                        Item {
-                            height: 20
-                            enabled: Qt.platform.os === "linux"
                             visible: enabled
                         }
 
@@ -1585,8 +1484,8 @@ ApplicationWindow {
                 }
 
                 StyledButton {
-                    text: i18.n + qsTr("Save and close")
-                    width: 150
+                    text: i18.n + qsTr("Close")
+                    width: 100
                     onClicked: {
                         saveSettings()
                         closeSettings()

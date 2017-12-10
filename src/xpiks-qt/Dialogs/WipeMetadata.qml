@@ -212,8 +212,7 @@ Item {
                     id: useBackupsCheckbox
                     text: i18.n + qsTr("Backup each file")
                     checked: true
-                    enabled: settingsModel.useExifTool && !metadataWipingComponent.isInProgress
-                    visible: settingsModel.useExifTool
+                    enabled: !metadataWipingComponent.isInProgress
                 }
 
                 StyledCheckbox {

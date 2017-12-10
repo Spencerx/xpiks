@@ -174,8 +174,7 @@ Item {
                     id: useBackupsCheckbox
                     text: i18.n + qsTr("Backup each file")
                     checked: true
-                    enabled: settingsModel.useExifTool && !metadataExportComponent.isInProgress
-                    visible: settingsModel.useExifTool
+                    enabled: !metadataExportComponent.isInProgress
                 }
 
                 RowLayout {

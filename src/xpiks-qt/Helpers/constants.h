@@ -156,7 +156,6 @@ namespace Constants {
     const char fitSmallPreview[] = "fitSmallPreview";
     const char searchUsingAnd[] = "searchUsingAnd";
     const char searchByFilepath[] = "searchByFilepath";
-    const char dictPath[] = "dictPath";
     const char userStatistics[] = "userStatistics";
     const char checkForUpdates[] = "checkForUpdates";
     const char numberOfLaunches[] = "numberOfLaunches";

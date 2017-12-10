@@ -86,10 +86,6 @@ namespace SpellCheck {
 #if defined(TRAVIS_CI)
         resourcesPath = STRINGIZE(HUNSPELL_DICTS_PATH);
         LOG_DEBUG << "Resources path:" << resourcesPath;
-#else
-        if (m_SettingsModel != nullptr) {
-            resourcesPath = m_SettingsModel->getDictPath();
-        }
 #endif
 
         if (resourcesPath.isEmpty()) {

@@ -39,7 +39,6 @@
 
 #define CURRENT_SETTINGS_VERSION 1
 
-#define DEFAULT_DICT_PATH ""
 #define DEFAULT_USE_MASTERPASSWORD false
 #define DEFAULT_UPLOAD_TIMEOUT 10
 #define DEFAULT_USE_CONFIRMATIONS false
@@ -89,6 +88,9 @@
     #endif
 #endif
 
+#define SETTINGS_SAVING_INTERVAL 3000
+#define SETTINGS_DELAY_TIMES 5
+
 namespace Models {
     int ensureInBounds(int value, int boundA, int boundB) {
         Q_ASSERT(boundA <= boundB);
@@ -130,8 +132,8 @@ namespace Models {
     SettingsModel::SettingsModel(QObject *parent) :
         QObject(parent),
         Common::BaseEntity(),
+        Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
         m_ExifToolPath(DEFAULT_EXIFTOOL),
-        m_DictPath(DEFAULT_DICT_PATH),
         m_SelectedLocale(DEFAULT_LOCALE),
         m_KeywordSizeScale(DEFAULT_KEYWORD_SIZE_SCALE),
         m_ScrollSpeedScale(DEFAULT_SCROLL_SPEED_SCALE),
@@ -370,11 +372,13 @@ namespace Models {
     }
 
     void SettingsModel::resetExifTool() {
+        LOG_DEBUG<< "#";
         setExifToolPath(DEFAULT_EXIFTOOL);
     }
 
-    void SettingsModel::resetDictPath() {
-        setDictionaryPath(DEFAULT_DICT_PATH);
+    void SettingsModel::setExifTool(const QUrl &pathUrl) {
+        LOG_DEBUG << pathUrl;
+        setExifToolPath(pathUrl.toLocalFile());
     }
 
     void SettingsModel::retrieveAllValues() {
@@ -436,7 +440,6 @@ namespace Models {
         using namespace Constants;
 
         setExifToolPath(stringValue(pathToExifTool, DEFAULT_EXIFTOOL));
-        setDictionaryPath(stringValue(dictPath, DEFAULT_DICT_PATH));
         setUploadTimeout(intValue(oneUploadSecondsTimeout, DEFAULT_UPLOAD_TIMEOUT));
         setMustUseMasterPassword(boolValue(useMasterPassword, DEFAULT_USE_MASTERPASSWORD));
         setMustUseConfirmations(boolValue(useConfirmationDialogs, DEFAULT_USE_CONFIRMATIONS));
@@ -491,7 +494,7 @@ namespace Models {
         moveSetting(oldSettings, FIT_SMALL_PREVIEW, fitSmallPreview, QMetaType::Bool);
         moveSetting(oldSettings, SEARCH_USING_AND, searchUsingAnd, QMetaType::Bool);
         moveSetting(oldSettings, SEARCH_BY_FILEPATH, searchByFilepath, QMetaType::Bool);
-        moveSetting(oldSettings, DICT_PATH, dictPath, QMetaType::QString);
+        //moveSetting(oldSettings, DICT_PATH, dictPath, QMetaType::QString);
         moveSetting(oldSettings, USER_STATISTICS, userStatistics, QMetaType::Bool);
         moveSetting(oldSettings, CHECK_FOR_UPDATES, checkForUpdates, QMetaType::Bool);
         moveSetting(oldSettings, NUMBER_OF_LAUNCHES, numberOfLaunches, QMetaType::Int);
@@ -539,7 +542,6 @@ namespace Models {
         LOG_DEBUG << "#";
 
         setExifToolPath(DEFAULT_EXIFTOOL);
-        setDictionaryPath(DEFAULT_DICT_PATH);
         setUploadTimeout(DEFAULT_UPLOAD_TIMEOUT);
         setMustUseMasterPassword(DEFAULT_USE_MASTERPASSWORD);
         setMustUseConfirmations(DEFAULT_USE_CONFIRMATIONS);
@@ -578,7 +580,7 @@ namespace Models {
         setValue(Constants::installedVersion, 0);
 #endif
 
-        sync();
+        justChanged();
 
         resetChangeStates();
     }
@@ -588,7 +590,6 @@ namespace Models {
         using namespace Constants;
 
         setValue(pathToExifTool, m_ExifToolPath);
-        setValue(dictPath, m_DictPath);
         setValue(oneUploadSecondsTimeout, m_UploadTimeout);
         setValue(useMasterPassword, m_MustUseMasterPassword);
         setValue(useConfirmationDialogs, m_MustUseConfirmations);
@@ -733,12 +734,283 @@ namespace Models {
         return text;
     }
 
-    void SettingsModel::setExifToolPath(QString exifToolPath) {
-        if (m_ExifToolPath == exifToolPath)
+    void SettingsModel::setExifToolPath(QString value) {
+        if (m_ExifToolPath == value)
             return;
 
-        m_ExifToolPath = exifToolPath;
-        emit exifToolPathChanged(exifToolPath);
+        m_ExifToolPath = value;
+        m_ExiftoolPathChanged = true;
+        emit exifToolPathChanged(value);
+        justChanged();
+    }
+
+
+    void SettingsModel::setUploadTimeout(int uploadTimeout) {
+        if (m_UploadTimeout == uploadTimeout)
+            return;
+
+        m_UploadTimeout = ensureInBounds(uploadTimeout, 1, 300);
+        emit uploadTimeoutChanged(m_UploadTimeout);
+        m_ExiftoolPathChanged = true;
+        justChanged();
+    }
+
+    void SettingsModel::setMustUseMasterPassword(bool mustUseMasterPassword) {
+        if (m_MustUseMasterPassword == mustUseMasterPassword)
+            return;
+
+        m_MustUseMasterPassword = mustUseMasterPassword;
+        emit mustUseMasterPasswordChanged(mustUseMasterPassword);
+        justChanged();
+    }
+
+    void SettingsModel::setMustUseConfirmations(bool mustUseConfirmations) {
+        if (m_MustUseConfirmations == mustUseConfirmations)
+            return;
+
+        m_MustUseConfirmations = mustUseConfirmations;
+        emit mustUseConfirmationsChanged(mustUseConfirmations);
+        justChanged();
+    }
+
+    void SettingsModel::setSaveSession(bool saveSession) {
+        if (m_SaveSession == saveSession)
+            return;
+
+        m_SaveSession = saveSession;
+        emit saveSessionChanged(saveSession);
+        justChanged();
+    }
+
+    void SettingsModel::setSaveBackups(bool saveBackups) {
+        if (m_SaveBackups == saveBackups)
+            return;
+
+        m_SaveBackups = saveBackups;
+        emit saveBackupsChanged(saveBackups);
+        justChanged();
+    }
+
+    void SettingsModel::setKeywordSizeScale(double value) {
+        if (qAbs(m_KeywordSizeScale - value) <= SETTINGS_EPSILON)
+            return;
+
+        m_KeywordSizeScale = ensureInBounds(value, 1.0, 1.2);
+        emit keywordSizeScaleChanged(m_KeywordSizeScale);
+        justChanged();
+    }
+
+    void SettingsModel::setDismissDuration(int value) {
+        if (m_DismissDuration == value)
+            return;
+
+        m_DismissDuration = ensureInBounds(value, 1, 100);
+        emit dismissDurationChanged(m_DismissDuration);
+        justChanged();
+    }
+
+    void SettingsModel::setMaxParallelUploads(int value) {
+        if (m_MaxParallelUploads == value)
+            return;
+
+        m_MaxParallelUploads = ensureInBounds(value, 1, 4);
+        emit maxParallelUploadsChanged(m_MaxParallelUploads);
+        justChanged();
+    }
+
+    void SettingsModel::setFitSmallPreview(bool value) {
+        if (m_FitSmallPreview == value)
+            return;
+
+        m_FitSmallPreview = value;
+        emit fitSmallPreviewChanged(value);
+        justChanged();
+    }
+
+    void SettingsModel::setSearchUsingAnd(bool value) {
+        if (m_SearchUsingAnd == value)
+            return;
+
+        m_SearchUsingAnd = value;
+        emit searchUsingAndChanged(value);
+        justChanged();
+    }
+
+    void SettingsModel::setSearchByFilepath(bool value) {
+        if (m_SearchByFilepath == value)
+            return;
+
+        m_SearchByFilepath = value;
+        emit searchByFilepathChanged(value);
+        justChanged();
+    }
+
+    void SettingsModel::setScrollSpeedScale(double value) {
+        if (qAbs(m_ScrollSpeedScale - value) <= SETTINGS_EPSILON)
+            return;
+
+        m_ScrollSpeedScale = ensureInBounds(value, 0.1, 2.0);
+        emit scrollSpeedScaleChanged(m_ScrollSpeedScale);
+        justChanged();
+    }
+
+    void SettingsModel::setUseSpellCheck(bool value) {
+        if (m_UseSpellCheck == value)
+            return;
+
+        m_UseSpellCheck = value;
+        emit useSpellCheckChanged(value);
+        m_UseSpellCheckChanged = true;
+        justChanged();
+    }
+
+    void SettingsModel::setDetectDuplicates(bool value)  {
+        if (m_DetectDuplicates == value)
+            return;
+
+        m_DetectDuplicates = value;
+        emit detectDuplicatesChanged(value);
+        justChanged();
+    }
+
+    void SettingsModel::setUserStatistics(bool value) {
+        if (m_UserStatistics == value)
+            return;
+
+        m_UserStatistics = value;
+        emit userStatisticsChanged(value);
+        justChanged();
+    }
+
+    void SettingsModel::setCheckForUpdates(bool value) {
+        if (m_CheckForUpdates == value)
+            return;
+
+        m_CheckForUpdates = value;
+        emit checkForUpdatesChanged(value);
+        justChanged();
+    }
+
+    void SettingsModel::setAutoDownloadUpdates(bool value) {
+        if (m_AutoDownloadUpdates == value)
+            return;
+
+        m_AutoDownloadUpdates = value;
+        emit autoDownloadUpdatesChanged(value);
+        justChanged();
+    }
+
+    void SettingsModel::setAutoFindVectors(bool value) {
+        if (value != m_AutoFindVectors) {
+            m_AutoFindVectors = value;
+            emit autoFindVectorsChanged(value);
+            justChanged();
+        }
+    }
+
+    void SettingsModel::setSelectedLocale(QString value) {
+        if (value != m_SelectedLocale) {
+            m_SelectedLocale = value;
+            emit selectedLocaleChanged(value);
+            justChanged();
+        }
+    }
+
+    void SettingsModel::setSelectedThemeIndex(int value) {
+        if (value != m_SelectedThemeIndex) {
+            m_SelectedThemeIndex = value;
+            emit selectedThemeIndexChanged(value);
+            justChanged();
+        }
+    }
+
+    void SettingsModel::setUseKeywordsAutoComplete(bool value) {
+        if (value != m_UseKeywordsAutoComplete) {
+            m_UseKeywordsAutoComplete = value;
+            emit useKeywordsAutoCompleteChanged(value);
+            justChanged();
+        }
+    }
+
+    void SettingsModel::setUsePresetsAutoComplete(bool value) {
+        if (value != m_UsePresetsAutoComplete) {
+            m_UsePresetsAutoComplete = value;
+            emit usePresetsAutoCompleteChanged(value);
+            justChanged();
+        }
+    }
+
+    void SettingsModel::setUseProxy(bool value) {
+        if (value != m_UseProxy) {
+            m_UseProxy = value;
+            emit useProxyChanged(value);
+            justChanged();
+        }
+    }
+
+    void SettingsModel::setUseExifTool(bool value) {
+        if (value != m_UseExifTool) {
+            m_UseExifTool = value;
+            emit useExifToolChanged(value);
+            justChanged();
+        }
+    }
+
+    void SettingsModel::setAutoCacheImages(bool value) {
+        if (value != m_AutoCacheImages) {
+            m_AutoCacheImages = value;
+            emit autoCacheImagesChanged(value);
+            justChanged();
+        }
+    }
+
+    void SettingsModel::setVerboseUpload(bool verboseUpload)
+    {
+        if (m_VerboseUpload == verboseUpload)
+            return;
+
+        m_VerboseUpload = verboseUpload;
+        emit verboseUploadChanged(verboseUpload);
+        justChanged();
+    }
+
+    void SettingsModel::setUseProgressiveSuggestionPreviews(bool useProgressiveSuggestionPreviews)
+    {
+        if (m_UseProgressiveSuggestionPreviews == useProgressiveSuggestionPreviews)
+            return;
+
+        m_UseProgressiveSuggestionPreviews = useProgressiveSuggestionPreviews;
+        emit useProgressiveSuggestionPreviewsChanged(useProgressiveSuggestionPreviews);
+        justChanged();
+    }
+
+    void SettingsModel::setProgressiveSuggestionIncrement(int progressiveSuggestionIncrement)
+    {
+        if (m_ProgressiveSuggestionIncrement == progressiveSuggestionIncrement)
+            return;
+
+        m_ProgressiveSuggestionIncrement = progressiveSuggestionIncrement;
+        emit progressiveSuggestionIncrementChanged(progressiveSuggestionIncrement);
+        justChanged();
+    }
+
+    void SettingsModel::setUseDirectExiftoolExport(bool value)
+    {
+        if (m_UseDirectExiftoolExport == value)
+            return;
+
+        m_UseDirectExiftoolExport = value;
+        justChanged();
+    }
+
+    void SettingsModel::setUseAutoImport(bool value)
+    {
+        if (m_UseAutoImport == value)
+            return;
+
+        m_UseAutoImport = value;
+        emit useAutoImportChanged(value);
+        justChanged();
     }
 
     void SettingsModel::resetToDefault() {

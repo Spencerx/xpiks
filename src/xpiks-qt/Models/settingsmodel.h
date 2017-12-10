@@ -29,6 +29,7 @@
 #include "../Models/recentdirectoriesmodel.h"
 #include "../Models/recentfilesmodel.h"
 #include "../Models/uploadinforepository.h"
+#include "../Common/delayedactionentity.h"
 
 #define SETTINGS_EPSILON 1e-9
 
@@ -39,7 +40,8 @@ namespace Models {
 
     class SettingsModel:
             public QObject,
-            public Common::BaseEntity
+            public Common::BaseEntity,
+            public Common::DelayedActionEntity
     {
         Q_OBJECT
         Q_PROPERTY(QString exifToolPath READ getExifToolPath WRITE setExifToolPath NOTIFY exifToolPathChanged)
@@ -60,7 +62,6 @@ namespace Models {
         Q_PROPERTY(bool userStatistics READ getUserStatistics WRITE setUserStatistics NOTIFY userStatisticsChanged)
         Q_PROPERTY(bool checkForUpdates READ getCheckForUpdates WRITE setCheckForUpdates NOTIFY checkForUpdatesChanged)
         Q_PROPERTY(bool autoDownloadUpdates READ getAutoDownloadUpdates WRITE setAutoDownloadUpdates NOTIFY autoDownloadUpdatesChanged)
-        Q_PROPERTY(QString dictionaryPath READ getDictionaryPath WRITE setDictionaryPath NOTIFY dictionaryPathChanged)
         Q_PROPERTY(bool autoFindVectors READ getAutoFindVectors WRITE setAutoFindVectors NOTIFY autoFindVectorsChanged)
         Q_PROPERTY(QString selectedLocale READ getSelectedLocale WRITE setSelectedLocale NOTIFY selectedLocaleChanged)
         Q_PROPERTY(int selectedThemeIndex READ getSelectedThemeIndex WRITE setSelectedThemeIndex NOTIFY selectedThemeIndexChanged)
@@ -111,7 +112,7 @@ namespace Models {
         Q_INVOKABLE void saveAllValues();
         Q_INVOKABLE void clearMasterPasswordSettings();
         Q_INVOKABLE void resetExifTool();
-        Q_INVOKABLE void resetDictPath();
+        Q_INVOKABLE void setExifTool(const QUrl &pathUrl);
         Q_INVOKABLE void retrieveAllValues();
         Q_INVOKABLE void raiseMasterPasswordSignal() { emit mustUseMasterPasswordChanged(m_MustUseMasterPassword); }
         Q_INVOKABLE void saveProxySetting(const QString &address, const QString &user, const QString &password, const QString &port);
@@ -183,7 +184,6 @@ namespace Models {
         QString getPathToUpdate() const { return stringValue(Constants::pathToUpdate); }
         QString getLegacyUploadHosts() const { return stringValue(Constants::legacyUploadHosts); }
         QString getMasterPasswordHash() const { return stringValue(Constants::masterPasswordHash); }
-        QString getDictPath() const { return stringValue(Constants::dictPath); }
         bool getMustUseConfirmationDialogs() const { return boolValue(Constants::useConfirmationDialogs, true); }
         int getAvailableUpdateVersion() const { return intValue(Constants::availableUpdateVersion); }
 
@@ -304,7 +304,6 @@ namespace Models {
         bool getUserStatistics() const { return m_UserStatistics; }
         bool getCheckForUpdates() const { return m_CheckForUpdates; }
         bool getAutoDownloadUpdates() const { return m_AutoDownloadUpdates; }
-        QString getDictionaryPath() const { return m_DictPath; }
         bool getAutoFindVectors() const { return m_AutoFindVectors; }
         QString getSelectedLocale() const { return m_SelectedLocale; }
         int getSelectedThemeIndex() const { return m_SelectedThemeIndex; }
@@ -347,7 +346,6 @@ namespace Models {
         void userStatisticsChanged(bool value);
         void checkForUpdatesChanged(bool value);
         void autoDownloadUpdatesChanged(bool value);
-        void dictionaryPathChanged(QString path);
         void autoFindVectorsChanged(bool value);
         void selectedLocaleChanged(QString value);
         void selectedThemeIndexChanged(int value);
@@ -366,254 +364,37 @@ namespace Models {
         void useAutoImportChanged(bool value);
 
     public:
-        void setExifToolPath(QString exifToolPath);
-
-        void setUploadTimeout(int uploadTimeout) {
-            if (m_UploadTimeout == uploadTimeout)
-                return;
-
-            m_UploadTimeout = ensureInBounds(uploadTimeout, 1, 300);
-            emit uploadTimeoutChanged(m_UploadTimeout);
-            m_ExiftoolPathChanged = true;
-        }
-
-        void setMustUseMasterPassword(bool mustUseMasterPassword) {
-            if (m_MustUseMasterPassword == mustUseMasterPassword)
-                return;
-
-            m_MustUseMasterPassword = mustUseMasterPassword;
-            emit mustUseMasterPasswordChanged(mustUseMasterPassword);
-        }
-
-        void setMustUseConfirmations(bool mustUseConfirmations) {
-            if (m_MustUseConfirmations == mustUseConfirmations)
-                return;
-
-            m_MustUseConfirmations = mustUseConfirmations;
-            emit mustUseConfirmationsChanged(mustUseConfirmations);
-        }
-
-        void setSaveSession(bool saveSession) {
-            if (m_SaveSession == saveSession)
-                return;
-
-            m_SaveSession = saveSession;
-            emit saveSessionChanged(saveSession);
-        }
-
-        void setSaveBackups(bool saveBackups) {
-            if (m_SaveBackups == saveBackups)
-                return;
-
-            m_SaveBackups = saveBackups;
-            emit saveBackupsChanged(saveBackups);
-        }
-
-        void setKeywordSizeScale(double value) {
-            if (qAbs(m_KeywordSizeScale - value) <= SETTINGS_EPSILON)
-                return;
-
-            m_KeywordSizeScale = ensureInBounds(value, 1.0, 1.2);
-            emit keywordSizeScaleChanged(m_KeywordSizeScale);
-        }
-
-        void setDismissDuration(int value) {
-            if (m_DismissDuration == value)
-                return;
-
-            m_DismissDuration = ensureInBounds(value, 1, 100);
-            emit dismissDurationChanged(m_DismissDuration);
-        }
-
-        void setMaxParallelUploads(int value) {
-            if (m_MaxParallelUploads == value)
-                return;
-
-            m_MaxParallelUploads = ensureInBounds(value, 1, 4);
-            emit maxParallelUploadsChanged(m_MaxParallelUploads);
-        }
-
-        void setFitSmallPreview(bool value) {
-            if (m_FitSmallPreview == value)
-                return;
-
-            m_FitSmallPreview = value;
-            emit fitSmallPreviewChanged(value);
-        }
-
-        void setSearchUsingAnd(bool value) {
-            if (m_SearchUsingAnd == value)
-                return;
-
-            m_SearchUsingAnd = value;
-            emit searchUsingAndChanged(value);
-        }
-
-        void setSearchByFilepath(bool value) {
-            if (m_SearchByFilepath == value)
-                return;
-
-            m_SearchByFilepath = value;
-            emit searchByFilepathChanged(value);
-        }
-
-        void setScrollSpeedScale(double value) {
-            if (qAbs(m_ScrollSpeedScale - value) <= SETTINGS_EPSILON)
-                return;
-
-            m_ScrollSpeedScale = ensureInBounds(value, 0.1, 2.0);
-            emit scrollSpeedScaleChanged(m_ScrollSpeedScale);
-        }
-
-        void setUseSpellCheck(bool value) {
-            if (m_UseSpellCheck == value)
-                return;
-
-            m_UseSpellCheck = value;
-            emit useSpellCheckChanged(value);
-            m_UseSpellCheckChanged = true;
-        }
-
-        void setDetectDuplicates(bool value)  {
-            if (m_DetectDuplicates == value)
-                return;
-
-            m_DetectDuplicates = value;
-            emit detectDuplicatesChanged(value);
-        }
-
-        void setUserStatistics(bool value) {
-            if (m_UserStatistics == value)
-                return;
-
-            m_UserStatistics = value;
-            emit userStatisticsChanged(value);
-        }
-
-        void setCheckForUpdates(bool value) {
-            if (m_CheckForUpdates == value)
-                return;
-
-            m_CheckForUpdates = value;
-            emit checkForUpdatesChanged(value);
-        }
-
-        void setAutoDownloadUpdates(bool value) {
-            if (m_AutoDownloadUpdates == value)
-                return;
-
-            m_AutoDownloadUpdates = value;
-            emit autoDownloadUpdatesChanged(value);
-        }
-
-        void setDictionaryPath(QString path) {
-            if (m_DictPath == path)
-                return;
-
-            m_DictPath = path;
-            emit dictionaryPathChanged(path);
-            m_DictsPathChanged = true;
-        }
-
-        void setAutoFindVectors(bool value) {
-            if (value != m_AutoFindVectors) {
-                m_AutoFindVectors = value;
-                emit autoFindVectorsChanged(value);
-            }
-        }
-
-        void setSelectedLocale(QString value) {
-            if (value != m_SelectedLocale) {
-                m_SelectedLocale = value;
-                emit selectedLocaleChanged(value);
-            }
-        }
-
-        void setSelectedThemeIndex(int value) {
-            if (value != m_SelectedThemeIndex) {
-                m_SelectedThemeIndex = value;
-                emit selectedThemeIndexChanged(value);
-            }
-        }
-
-        void setUseKeywordsAutoComplete(bool value) {
-            if (value != m_UseKeywordsAutoComplete) {
-                m_UseKeywordsAutoComplete = value;
-                emit useKeywordsAutoCompleteChanged(value);
-            }
-        }
-
-        void setUsePresetsAutoComplete(bool value) {
-            if (value != m_UsePresetsAutoComplete) {
-                m_UsePresetsAutoComplete = value;
-                emit usePresetsAutoCompleteChanged(value);
-            }
-        }
-
-        void setUseProxy(bool value) {
-            if (value != m_UseProxy) {
-                m_UseProxy = value;
-                emit useProxyChanged(value);
-            }
-        }
-
-        void setUseExifTool(bool value) {
-            if (value != m_UseExifTool) {
-                m_UseExifTool = value;
-                emit useExifToolChanged(value);
-            }
-        }
-
-        void setAutoCacheImages(bool value) {
-            if (value != m_AutoCacheImages) {
-                m_AutoCacheImages = value;
-                emit autoCacheImagesChanged(value);
-            }
-        }
-
-        void setVerboseUpload(bool verboseUpload)
-        {
-            if (m_VerboseUpload == verboseUpload)
-                return;
-
-            m_VerboseUpload = verboseUpload;
-            emit verboseUploadChanged(verboseUpload);
-        }
-
-        void setUseProgressiveSuggestionPreviews(bool useProgressiveSuggestionPreviews)
-        {
-            if (m_UseProgressiveSuggestionPreviews == useProgressiveSuggestionPreviews)
-                return;
-
-            m_UseProgressiveSuggestionPreviews = useProgressiveSuggestionPreviews;
-            emit useProgressiveSuggestionPreviewsChanged(useProgressiveSuggestionPreviews);
-        }
-
-        void setProgressiveSuggestionIncrement(int progressiveSuggestionIncrement)
-        {
-            if (m_ProgressiveSuggestionIncrement == progressiveSuggestionIncrement)
-                return;
-
-            m_ProgressiveSuggestionIncrement = progressiveSuggestionIncrement;
-            emit progressiveSuggestionIncrementChanged(progressiveSuggestionIncrement);
-        }
-
-        void setUseDirectExiftoolExport(bool value)
-        {
-            if (m_UseDirectExiftoolExport == value)
-                return;
-
-            m_UseDirectExiftoolExport = value;
-        }
-
-        void setUseAutoImport(bool value)
-        {
-            if (m_UseAutoImport == value)
-                return;
-
-            m_UseAutoImport = value;
-            emit useAutoImportChanged(value);
-        }
+        void setExifToolPath(QString value);
+        void setUploadTimeout(int uploadTimeout);
+        void setMustUseMasterPassword(bool mustUseMasterPassword);
+        void setMustUseConfirmations(bool mustUseConfirmations);
+        void setSaveSession(bool saveSession);
+        void setSaveBackups(bool saveBackups);
+        void setKeywordSizeScale(double value);
+        void setDismissDuration(int value);
+        void setMaxParallelUploads(int value);
+        void setFitSmallPreview(bool value);
+        void setSearchUsingAnd(bool value);
+        void setSearchByFilepath(bool value);
+        void setScrollSpeedScale(double value);
+        void setUseSpellCheck(bool value);
+        void setDetectDuplicates(bool value);
+        void setUserStatistics(bool value);
+        void setCheckForUpdates(bool value);
+        void setAutoDownloadUpdates(bool value);
+        void setAutoFindVectors(bool value);
+        void setSelectedLocale(QString value);
+        void setSelectedThemeIndex(int value);
+        void setUseKeywordsAutoComplete(bool value);
+        void setUsePresetsAutoComplete(bool value);
+        void setUseProxy(bool value);
+        void setUseExifTool(bool value);
+        void setAutoCacheImages(bool value);
+        void setVerboseUpload(bool verboseUpload);
+        void setUseProgressiveSuggestionPreviews(bool useProgressiveSuggestionPreviews);
+        void setProgressiveSuggestionIncrement(int progressiveSuggestionIncrement);
+        void setUseDirectExiftoolExport(bool value);
+        void setUseAutoImport(bool value);
 
 #ifndef INTEGRATION_TESTS
     private:
@@ -630,13 +411,20 @@ namespace Models {
         QString serializeProxyForSettings(ProxySettings &settings);
         void deserializeProxyFromSettings(const QString &serialized);
 
+        // DelayedActionEntity implementation
+    protected:
+        virtual void doKillTimer(int timerId) override { this->killTimer(timerId); }
+        virtual int doStartTimer(int interval, Qt::TimerType timerType) override { return this->startTimer(interval, timerType); }
+        virtual void doOnTimer() override { sync(); }
+        virtual void timerEvent(QTimerEvent *event) override { onQtTimer(event); }
+        virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
+
     private:
         QMutex m_SettingsMutex;
         Helpers::LocalConfig m_Config;
         QJsonObject m_SettingsJson;
         QJsonObject m_ExperimentalJson;
         QString m_ExifToolPath;
-        QString m_DictPath;
         QString m_SelectedLocale;
         double m_KeywordSizeScale;
         double m_ScrollSpeedScale;
