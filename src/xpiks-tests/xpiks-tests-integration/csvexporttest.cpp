@@ -154,7 +154,7 @@ int CsvExportTest::doTest() {
 
     const QString directoryPath = QCoreApplication::applicationDirPath();
     MetadataIO::CsvExportModel *csvExportModel = m_CommandManager->getCsvExportModel();
-    csvExportModel->setOutputDirectory(directoryPath);
+    csvExportModel->setOutputDirectory(QUrl::fromLocalFile(directoryPath));
 
     setupExportPlans(csvExportModel->accessExportPlans());
 
