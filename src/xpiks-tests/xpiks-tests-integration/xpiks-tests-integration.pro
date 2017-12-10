@@ -536,6 +536,12 @@ macx {
 
     LIBS += -lxmpsdk
     LIBS += -lexiv2
+
+    LIBS += -lavcodec.57
+    LIBS += -lavfilter.6
+    LIBS += -lavformat.57
+    LIBS += -lavutil.55
+    LIBS += -lswscale.4
 }
 
 win32 {
@@ -551,6 +557,12 @@ win32 {
 
     LIBS += -llibexpat
     LIBS += -llibexiv2
+
+    LIBS += -lavcodec
+    LIBS += -lavfilter
+    LIBS += -lavformat
+    LIBS += -lavutil
+    LIBS += -lswscale
 
     CONFIG(debug, debug|release) {
         EXE_DIR = debug
