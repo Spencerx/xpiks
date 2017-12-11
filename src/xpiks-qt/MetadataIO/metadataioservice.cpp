@@ -73,6 +73,7 @@ namespace MetadataIO {
     void MetadataIOService::writeArtwork(Models::ArtworkMetadata *metadata) {
         Q_ASSERT(metadata != nullptr);
         if (m_IsStopped) { return; }
+        LOG_DEBUG << "Saving" << metadata->getItemID();
 
         std::shared_ptr<MetadataIOTaskBase> jobItem(new MetadataReadWriteTask(metadata, MetadataReadWriteTask::Write));
         m_MetadataIOWorker->submitItem(jobItem);
