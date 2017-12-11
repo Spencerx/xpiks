@@ -49,7 +49,7 @@ namespace MetadataIO {
         QString m_Filepath;
         QString m_Title;
         QString m_Description;
-        QString m_ThumbnailPath;
+        /*VIDEO*/QString m_ThumbnailPath;
         /*VIDEO*/QString m_CodecName;
         /*VECTOR*/QString m_AttachedVector;
         /*PHOTO*/QDateTime m_CreationTime;

@@ -584,6 +584,15 @@ namespace Helpers {
         return true;
     }
 
+#ifdef DEBUG_UTILITY
+    bool DatabaseManager::initialize(const QString &dbDirPath) {
+        LOG_DEBUG << "#";
+        m_DBDirPath = dbDirPath;
+        m_Initialized = true;
+        return true;
+    }
+#endif
+
     void DatabaseManager::finalize() {
         LOG_DEBUG << "#";
         Q_ASSERT(m_Initialized);

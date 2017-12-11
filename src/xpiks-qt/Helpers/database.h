@@ -120,6 +120,11 @@ namespace Helpers {
     public:
         bool initialize();
 
+#ifdef DEBUG_UTILITY
+    public:
+        bool initialize(const QString &dbDirPath);
+#endif
+
     private:
         void finalize();
         int closeEnvironment();
