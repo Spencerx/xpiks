@@ -41,6 +41,7 @@ namespace MetadataIO {
         Q_UNUSED(batchID);
 
         if (getIsSeparatorFlag(flags)) {
+            LOG_DEBUG << "Processing separator";
             m_MetadataCache.sync();
             emit readyToImportFromStorage();
         } else {

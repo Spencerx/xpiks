@@ -157,6 +157,7 @@ namespace MetadataIO {
     }
 
     void MetadataIOService::doOnTimer() {
+        LOG_DEBUG << "#";
         m_MetadataIOWorker->submitSeparator();
     }
 }
