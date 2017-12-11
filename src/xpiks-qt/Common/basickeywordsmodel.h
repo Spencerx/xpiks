@@ -112,6 +112,7 @@ namespace Common {
 
     public:
         void resetSpellCheckResults();
+        void resetDuplicatesInfo();
         bool containsKeyword(const QString &searchTerm, Common::SearchFlags searchFlags=Common::SearchFlags::ExactKeywords);
         bool containsKeywords(const QStringList &keywordsList);
         virtual bool isEmpty();
@@ -149,7 +150,7 @@ namespace Common {
         void onSpellCheckRequestReady(Common::SpellCheckFlags flags, int index);
 
     private:
-        void updateKeywordsHighlighting(int index=-1);
+        void updateKeywordsHighlighting();
 
     private:
         std::shared_ptr<BasicKeywordsModelImpl> m_Impl;

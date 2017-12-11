@@ -207,11 +207,6 @@ int main(int argc, char *argv[]) {
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
     initQSettings();
 
-    Models::SettingsModel settingsModel;
-    settingsModel.initializeConfigs();
-    settingsModel.retrieveAllValues();
-    ensureUserIdExists(&settingsModel);
-
     QString appDataPath = XPIKS_USERDATA_PATH;
     const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
     Helpers::ensureDirectoryExists(statesPath);
@@ -247,6 +242,7 @@ int main(int argc, char *argv[]) {
     LOG_INFO << "Log started. Today is" << QDateTime::currentDateTimeUtc().toString("dd.MM.yyyy");
     LOG_INFO << "Xpiks" << XPIKS_FULL_VERSION_STRING << "-" << STRINGIZE(BUILDNUMBER);
 
+
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
     LOG_INFO << QSysInfo::productType() << QSysInfo::productVersion() << QSysInfo::currentCpuArchitecture();
 #else
@@ -260,6 +256,11 @@ int main(int argc, char *argv[]) {
 #endif
 
     QApplication app(argc, argv);
+
+    Models::SettingsModel settingsModel;
+    settingsModel.initializeConfigs();
+    settingsModel.retrieveAllValues();
+    ensureUserIdExists(&settingsModel);
 
     LOG_INFO << "Working directory of Xpiks is:" << QDir::currentPath();
     LOG_DEBUG << "Extra files search locations:" << QStandardPaths::standardLocations(XPIKS_DATA_LOCATION_TYPE);

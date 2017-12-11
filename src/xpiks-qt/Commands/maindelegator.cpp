@@ -650,6 +650,14 @@ namespace Commands {
         }
     }
 
+    void MainDelegator::disableDuplicatesCheck() {
+        LOG_DEBUG << "#";
+        auto *artItemsModel = m_CommandManager->getArtItemsModel();
+        if (artItemsModel) {
+            artItemsModel->resetDuplicatesInfo();
+        }
+    }
+
     void MainDelegator::generateCompletions(const QString &prefix, Common::BasicKeywordsModel *source) const {
     #ifndef CORE_TESTS
         auto *autoCompleteService = m_CommandManager->getAutoCompleteService();

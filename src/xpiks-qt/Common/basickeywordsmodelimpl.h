@@ -83,6 +83,7 @@ namespace Common {
         QString retrieveKeyword(size_t wordIndex);
         QStringList getKeywords();
         void resetSpellCheckResults();
+        void resetDuplicatesInfo();
         void setKeywordsSpellCheckResults(const std::vector<std::shared_ptr<SpellCheck::SpellCheckQueryItem> > &items);
         std::vector<KeywordItem> retrieveMisspelledKeywords();
         std::vector<KeywordItem> retrieveDuplicatedKeywords();
@@ -111,6 +112,7 @@ namespace Common {
 
     private:
         void resetSpellCheckResultsUnsafe();
+        void resetDuplicatesInfoUnsafe();
         bool canBeAddedUnsafe(const QString &keyword) const;
 
     public:

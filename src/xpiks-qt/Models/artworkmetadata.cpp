@@ -360,7 +360,7 @@ namespace Models {
         }
 
         size_t result = m_MetadataModel.appendKeywords(keywordsList);
-        LOG_INFO << "Appended" << result << "keywords out of" << keywordsList.length();
+        LOG_INFO << "#" << m_ID << "Appended" << result << "keywords out of" << keywordsList.length();
         if (result > 0) { markModified(); }
         return result;
     }
@@ -372,7 +372,7 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.removeKeywords(keywordsSet, caseSensitive);
-        LOG_INFO << "Removed keywords:" << result;
+        LOG_INFO << "#" << m_ID << "Removed keywords:" << result;
         if (result) { markModified(); }
         return result;
     }
@@ -479,7 +479,7 @@ namespace Models {
     }
 
     void ArtworkMetadata::deepDisconnect() {
-        LOG_DEBUG << "#";
+        LOG_DEBUG << "#" << m_ID;
         m_MetadataModel.disconnect();
         this->disconnect();
     }
@@ -490,10 +490,15 @@ namespace Models {
     }
 
     void ArtworkMetadata::resetSpellingInfo() {
-        LOG_DEBUG << "#";
+        LOG_DEBUG << "#" << m_ID;
         m_MetadataModel.resetSpellCheckResults();
         m_SpellCheckInfo.clear();
+        m_MetadataModel.notifySpellCheckResults(Common::SpellCheckFlags::All);
+    }
 
+    void ArtworkMetadata::resetDuplicatesInfo() {
+        LOG_DEBUG << "#" << m_ID;
+        m_MetadataModel.resetDuplicatesInfo();
         m_MetadataModel.notifySpellCheckResults(Common::SpellCheckFlags::All);
     }
 

@@ -414,7 +414,7 @@ namespace Models {
         // DelayedActionEntity implementation
     protected:
         virtual void doKillTimer(int timerId) override { this->killTimer(timerId); }
-        virtual int doStartTimer(int interval, Qt::TimerType timerType) override { return this->startTimer(interval, timerType); }
+        virtual int doStartTimer(int interval, Qt::TimerType timerType) override { LOG_DEBUG << this->metaObject()->className(); return this->startTimer(interval, timerType); }
         virtual void doOnTimer() override { sync(); }
         virtual void timerEvent(QTimerEvent *event) override { onQtTimer(event); }
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
@@ -446,6 +446,7 @@ namespace Models {
         bool m_AutoDownloadUpdates;
         bool m_DictsPathChanged;
         bool m_UseSpellCheckChanged;
+        bool m_DetectDuplicatesChanged;
         bool m_AutoFindVectors;
         bool m_UseKeywordsAutoComplete;
         bool m_UsePresetsAutoComplete;

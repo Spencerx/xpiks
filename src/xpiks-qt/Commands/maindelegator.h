@@ -212,6 +212,7 @@ namespace Commands {
     public:
         void restartSpellChecking();
         void disableSpellChecking();
+        void disableDuplicatesCheck();
         void generateCompletions(const QString &prefix, Common::BasicKeywordsModel *source) const;
 
     public:

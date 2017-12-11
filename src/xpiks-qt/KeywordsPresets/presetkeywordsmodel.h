@@ -157,7 +157,7 @@ namespace KeywordsPresets {
         // DelayedActionEntity implementation
     protected:
         virtual void doKillTimer(int timerId) override { this->killTimer(timerId); }
-        virtual int doStartTimer(int interval, Qt::TimerType timerType) override { return this->startTimer(interval, timerType); }
+        virtual int doStartTimer(int interval, Qt::TimerType timerType) override { LOG_DEBUG << this->metaObject()->className(); return this->startTimer(interval, timerType); }
         virtual void doOnTimer() override { emit requestBackup(); }
         virtual void timerEvent(QTimerEvent *event) override { onQtTimer(event); }
         virtual void callBaseTimer(QTimerEvent *event) override { QAbstractListModel::timerEvent(event); }

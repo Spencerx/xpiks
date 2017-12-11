@@ -155,6 +155,7 @@ namespace Models {
         m_AutoDownloadUpdates(DEFAULT_AUTO_DOWNLOAD_UPDATES),
         m_DictsPathChanged(false),
         m_UseSpellCheckChanged(false),
+        m_DetectDuplicatesChanged(false),
         m_AutoFindVectors(DEFAULT_AUTO_FIND_VECTORS),
         m_UseKeywordsAutoComplete(DEFAULT_USE_KEYWORDS_AUTO_COMPLETE),
         m_UsePresetsAutoComplete(DEFAULT_USE_PRESETS_AUTO_COMPLETE),
@@ -640,13 +641,27 @@ namespace Models {
         }
 #endif
 
+        bool requiresSpellCheck = false;
+
         if (m_UseSpellCheckChanged) {
             if (!getUseSpellCheck()) {
                 xpiks()->disableSpellChecking();
             } else {
-                auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-                filteredModel->spellCheckAllItems();
+                requiresSpellCheck = true;
             }
+        }
+
+        if (m_DetectDuplicatesChanged) {
+            if (!getDetectDuplicates()) {
+                xpiks()->disableDuplicatesCheck();
+            } else {
+                requiresSpellCheck = true;
+            }
+        }
+
+        if (requiresSpellCheck) {
+            auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
+            filteredModel->spellCheckAllItems();
         }
 
         if (m_ExiftoolPathChanged) {
@@ -663,6 +678,7 @@ namespace Models {
         m_DictsPathChanged = false;
         m_UseSpellCheckChanged = false;
         m_ExiftoolPathChanged = false;
+        m_DetectDuplicatesChanged = false;
     }
 
     QString SettingsModel::getWhatsNewText() const {
@@ -869,6 +885,7 @@ namespace Models {
             return;
 
         m_DetectDuplicates = value;
+        m_DetectDuplicatesChanged = true;
         emit detectDuplicatesChanged(value);
         justChanged();
     }

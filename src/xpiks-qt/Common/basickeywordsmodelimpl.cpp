@@ -348,6 +348,13 @@ namespace Common {
         resetSpellCheckResultsUnsafe();
     }
 
+    void BasicKeywordsModelImpl::resetDuplicatesInfo() {
+        QWriteLocker writeLocker(&m_KeywordsLock);
+        Q_UNUSED(writeLocker);
+
+        resetDuplicatesInfoUnsafe();
+    }
+
     void BasicKeywordsModelImpl::setKeywordsSpellCheckResults(const std::vector<std::shared_ptr<SpellCheck::SpellCheckQueryItem> > &items) {
         LOG_DEBUG << items.size() << "results";
 
@@ -572,6 +579,12 @@ namespace Common {
     void BasicKeywordsModelImpl::resetSpellCheckResultsUnsafe() {
         for (auto &keyword: m_KeywordsList) {
             keyword.m_IsCorrect = true;
+        }
+    }
+
+    void BasicKeywordsModelImpl::resetDuplicatesInfoUnsafe() {
+        for (auto &keyword: m_KeywordsList) {
+            keyword.m_HasDuplicates = false;
         }
     }
 

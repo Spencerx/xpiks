@@ -437,10 +437,17 @@ namespace Common {
         emit notifyKeywordsSpellingChanged();
         emit afterSpellingErrorsFixed();
         emit hasDuplicatesChanged();
+        emit spellingInfoUpdated();
     }
 
     void BasicKeywordsModel::resetSpellCheckResults() {
         m_Impl->resetSpellCheckResults();
+        emit spellingInfoUpdated();
+    }
+
+    void BasicKeywordsModel::resetDuplicatesInfo() {
+        m_Impl->resetDuplicatesInfo();
+        emit spellingInfoUpdated();
     }
 
     bool BasicKeywordsModel::containsKeyword(const QString &searchTerm, Common::SearchFlags searchFlags) {
@@ -473,6 +480,7 @@ namespace Common {
 
     void BasicKeywordsModel::notifySpellCheckResults(Common::SpellCheckFlags flags) {
         if (Common::HasFlag(flags, Common::SpellCheckFlags::Keywords)) {
+            updateKeywordsHighlighting();
             notifyKeywordsSpellingChanged();
         }
 
@@ -500,28 +508,18 @@ namespace Common {
     }
 
     void BasicKeywordsModel::onSpellCheckRequestReady(Common::SpellCheckFlags flags, int index) {
-        if (Common::HasFlag(flags, Common::SpellCheckFlags::Keywords)) {
-            updateKeywordsHighlighting(index);
-        }
-
         notifySpellCheckResults(flags);
+        Q_UNUSED(index);
         emit spellingInfoUpdated();
     }
 
-    void BasicKeywordsModel::updateKeywordsHighlighting(int index) {
+    void BasicKeywordsModel::updateKeywordsHighlighting() {
         const int count = getKeywordsCount();
 
-        if (index == -1) {
-            if (count > 0) {
-                QModelIndex start = this->index(0);
-                QModelIndex end = this->index(count - 1);
-                emit dataChanged(start, end, QVector<int>() << IsCorrectRole << HasDuplicateRole);
-            }
-        } else {
-            if (0 <= index && index < count) {
-                QModelIndex i = this->index(index);
-                emit dataChanged(i, i, QVector<int>() << IsCorrectRole << HasDuplicateRole);
-            }
+        if (count > 0) {
+            QModelIndex start = this->index(0);
+            QModelIndex end = this->index(count - 1);
+            emit dataChanged(start, end, QVector<int>() << IsCorrectRole << HasDuplicateRole);
         }
     }
 }
