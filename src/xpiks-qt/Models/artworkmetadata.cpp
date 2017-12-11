@@ -65,7 +65,7 @@ namespace Models {
     }
 
     bool ArtworkMetadata::initFromOrigin(const MetadataIO::OriginalMetadata &originalMetadata, bool overwrite) {
-        LOG_INTEGRATION_TESTS << "#" << m_ID << originalMetadata.m_Title << originalMetadata.m_Description << originalMetadata.m_Keywords;
+        LOG_INTEGR_TESTS_OR_DEBUG << "#" << m_ID << originalMetadata.m_Title << originalMetadata.m_Description << originalMetadata.m_Keywords;
         bool anythingChanged = false;
         QMutexLocker initLocker(&m_InitMutex);
         Q_UNUSED(initLocker);
@@ -86,7 +86,7 @@ namespace Models {
     }
 
     bool ArtworkMetadata::initFromStorage(const MetadataIO::CachedArtwork &cachedArtwork) {
-        LOG_INTEGRATION_TESTS << "#" << m_ID << cachedArtwork.m_Title <<
+        LOG_INTEGR_TESTS_OR_DEBUG << "#" << m_ID << cachedArtwork.m_Title <<
                                  cachedArtwork.m_Description << cachedArtwork.m_Keywords;
         bool anythingChanged = false;
         QMutexLocker initLocker(&m_InitMutex);
