@@ -16,11 +16,19 @@ import "../StyledControls"
 import "../Dialogs"
 import "../Common.js" as Common
 import "../Constants/UIConfig.js" as UIConfig
-import xpiks 1.0
 
-FolderElement {
-    width: 20
-    height: 17
-    thickness: 2
-    color: isHighlighted ? uiColors.labelActiveForeground : uiColors.inactiveControlColor
+Image {
+    id: iconWrapper
+    anchors.centerIn: parent
+    source: isHighlighted ? highlightedIcon : normalIcon
+
+    property string normalIcon: uiColors.t + helpersWrapper.getAssetForTheme("Folders_icon_normal.svg", settingsModel.selectedThemeIndex)
+    property string highlightedIcon: uiColors.t + helpersWrapper.getAssetForTheme("Folders_icon_selected.svg", settingsModel.selectedThemeIndex)
+
+    width: 27
+    height: 27
+    fillMode: Image.PreserveAspectFit
+    sourceSize.width: 27
+    sourceSize.height: 27
+    cache: true
 }

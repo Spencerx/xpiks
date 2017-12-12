@@ -137,5 +137,17 @@
         <file>Graphics/slategray/More_icon_normal.svg</file>
         <file>Dialogs/WipeMetadata.qml</file>
         <file>Dialogs/SimplePreview.qml</file>
+        <file>Graphics/black/Clipboard_icon_normal.svg</file>
+        <file>Graphics/black/Clipboard_icon_selected.svg</file>
+        <file>Graphics/black/Folders_icon_normal.svg</file>
+        <file>Graphics/black/Folders_icon_selected.svg</file>
+        <file>Graphics/black/Translator_icon_normal.svg</file>
+        <file>Graphics/black/Translator_icon_selected.svg</file>
+        <file>Graphics/slategray/Clipboard_icon_normal.svg</file>
+        <file>Graphics/slategray/Clipboard_icon_selected.svg</file>
+        <file>Graphics/slategray/Folders_icon_normal.svg</file>
+        <file>Graphics/slategray/Folders_icon_selected.svg</file>
+        <file>Graphics/slategray/Translator_icon_normal.svg</file>
+        <file>Graphics/slategray/Translator_icon_selected.svg</file>
     </qresource>
 </RCC>
