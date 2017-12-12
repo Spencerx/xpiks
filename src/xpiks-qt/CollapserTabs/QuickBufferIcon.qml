@@ -16,7 +16,6 @@ import "../StyledControls"
 import "../Dialogs"
 import "../Common.js" as Common
 import "../Constants/UIConfig.js" as UIConfig
-import xpiks 1.0
 
 Image {
     id: iconWrapper
