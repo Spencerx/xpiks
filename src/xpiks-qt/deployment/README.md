@@ -20,10 +20,31 @@ Dependencies used by Xpiks:
 * _sqlite_ (from [main website](https://www.sqlite.org/))
 * _ffmpeg_ (from [main website](https://www.ffmpeg.org/download.html))
 * _openssl_ (LTS from [main website](https://www.openssl.org/source/))
-* _ministaller_ [Windows] (from GitHub repo)
 
 1. `utils/` directory contains basic scripts to build complex dependencies
 2. `BitBucket:xpiks-deps` repo contains other scripts and build libraries
+
+### Windows-specific
+
+Dependencies:
+
+* _ministaller_ (from [GitHub repo](https://github.com/ribtoks/ministaller))
+
+### Mac-specific
+
+Steps:
+
+* put `exiftool` and `lib` dirs into `src/xpiks-qt/deps/` directory
+
+### Linux-specific
+
+Deployment tools:
+
+* _linuxdeploy_ (from [GitHub repo](https://github.com/ribtoks/linuxdeploy))
+
+Steps:
+
+* put `exiftool` and `lib` dirs into `src/xpiks-qt/deps/` directory
 
 ## Post-deploy
 
