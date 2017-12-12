@@ -67,8 +67,10 @@ namespace Maintenance {
         QDir downloadsDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
         possiblePaths << downloadsDir.filePath("exiftool.exe");
 #elif defined(Q_OS_LINUX)
+        QString resourcesPath = QCoreApplication::applicationDirPath();
+        const QString exiftoolAppImagePath = QDir::cleanPath(resourcesPath + "/exiftool/exiftool");
+        possiblePaths << exiftoolAppImagePath;
         possiblePaths << "/usr/bin/exiftool" << "/usr/local/bin/exiftool";
-        // TODO: add path inside AppImage
 #else
         // BUMP
 #endif
@@ -79,7 +81,7 @@ namespace Maintenance {
             LOG_DEBUG << "Trying path" << path;
 
             if (!QFileInfo(path).exists()) {
-                LOG_INFO << "File" << path << "does not exist";
+                LOG_DEBUG << "File" << path << "does not exist";
             }
 
             if (tryGetExiftoolVersion(path, exiftoolVersion)) {

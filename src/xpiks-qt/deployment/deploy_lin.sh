@@ -8,8 +8,8 @@ STAGING_DIR="./xpiks-qt.AppDir"
 
 DEPLOY_TOOL=linuxdeploy
 
-BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_9_3_GCC_64bit-Release"
-LIBS_PROFILE=release
+BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_9_3_GCC_64bit-Debug"
+LIBS_PROFILE=debug
 
 XPIKS_QT_DIR=".."
 REPO_ROOT="../../.."
@@ -23,6 +23,7 @@ echo "------------------------------"
 # clear out any old data
 echo "Wiping old data..."
 rm -v -rf "${STAGING_DIR}"
+rm -v *.AppImage
 
 QML_IMPORTS="-qmldir $XPIKS_QT_DIR/ -qmldir $XPIKS_QT_DIR/Components/ -qmldir $XPIKS_QT_DIR/Constants/ -qmldir $XPIKS_QT_DIR/Dialogs/ -qmldir $XPIKS_QT_DIR/StyledControls/ -qmldir $XPIKS_QT_DIR/StackViews/ -qmldir $XPIKS_QT_DIR/CollapserTabs/"
 
@@ -54,10 +55,6 @@ chmod +x "$STAGING_DIR/$APP_NAME.desktop"
 
 mkdir $STAGING_DIR/ac_sources
 mv $STAGING_DIR/en_wordlist.tsv $STAGING_DIR/ac_sources/
-
-# Currently this is disabled
-
-# rm -v *.AppImage
 
 appimagetool-x86_64.AppImage --verbose -n "$STAGING_DIR" "$APP_NAME-v$VERSION.AppImage"
 

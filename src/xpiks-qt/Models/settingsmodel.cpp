@@ -689,9 +689,10 @@ namespace Models {
         path += QDir::separator() + QLatin1String(Constants::WHATS_NEW_FILENAME);
         path = QDir::cleanPath(path);
 #else
-        path = QStandardPaths::locate(XPIKS_DATA_LOCATION_TYPE, Constants::WHATS_NEW_FILENAME);
+        // path inside appimage
+        path = QCoreApplication::applicationDirPath() + QDir::separator() + Constants::WHATS_NEW_FILENAME;
 #endif
-        QFile file(path);
+        QFile file(QDir::cleanPath(path));
         if (file.open(QIODevice::ReadOnly)) {
             text = QString::fromUtf8(file.readAll());
             file.close();
@@ -723,9 +724,10 @@ namespace Models {
         path += QDir::separator() + QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME);
         path = QDir::cleanPath(path);
 #else
-        path = QStandardPaths::locate(XPIKS_DATA_LOCATION_TYPE, Constants::TERMS_AND_CONDITIONS_FILENAME);
+        // path inside appimage
+        path = QCoreApplication::applicationDirPath() + QDir::separator() + Constants::TERMS_AND_CONDITIONS_FILENAME;
 #endif
-        QFile file(path);
+        QFile file(QDir::cleanPath(path));
         if (file.open(QIODevice::ReadOnly)) {
             text = QString::fromUtf8(file.readAll());
             file.close();
