@@ -160,7 +160,7 @@ namespace Commands {
     #ifndef CORE_TESTS
         auto *metadataIOService = m_CommandManager->getMetadataIOService();
         auto *metadataIOCoordinator = m_CommandManager->getMetadataIOCoordinator();
-        quint32 batchID = 0;
+        quint32 batchID = INVALID_BATCH_ID;
 
         if (metadataIOService != nullptr) {
             batchID = metadataIOService->readArtworks(snapshot);
@@ -230,6 +230,8 @@ namespace Commands {
     }
 
     void MainDelegator::addToLibrary(const MetadataIO::WeakArtworksSnapshot &artworks) const {
+        LOG_DEBUG << "#";
+
     #ifndef CORE_TESTS
         auto *metadataIOService = m_CommandManager->getMetadataIOService();
         if (metadataIOService != nullptr) {

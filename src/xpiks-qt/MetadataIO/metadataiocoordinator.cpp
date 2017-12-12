@@ -69,15 +69,7 @@ namespace MetadataIO {
 
         if (!m_ExiftoolNotFound && !m_RecommendedExiftoolPath.isEmpty()) {
             LOG_DEBUG << "Recommended exiftool path is" << m_RecommendedExiftoolPath;
-
-            Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-            QString existingExiftoolPath = settingsModel->getExifToolPath();
-
-            if (existingExiftoolPath != m_RecommendedExiftoolPath) {
-                LOG_INFO << "Setting exiftool path to recommended";
-                settingsModel->setExifToolPath(m_RecommendedExiftoolPath);
-                settingsModel->saveExiftool();
-            }
+            emit recommendedExiftoolFound(m_RecommendedExiftoolPath);
         }
     }
 

@@ -100,7 +100,7 @@ namespace QMLExtensions {
 
             if (saveThumbnail(image, originalPath, isQuickThumbnail, thumbnailPath)) {
                 cacheImage(thumbnailPath);
-                applyThumbnail(item, thumbnailPath);
+                applyThumbnail(item, thumbnailPath, true);
 
                 if (m_ProcessedItemsCount % VIDEO_INDEX_BACKUP_STEP == 0) {
                     saveIndex();
@@ -209,15 +209,17 @@ namespace QMLExtensions {
         imageCachingService->cacheImage(thumbnailPath);
     }
 
-    void VideoCachingWorker::applyThumbnail(std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath) {
+    void VideoCachingWorker::applyThumbnail(std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath, bool recacheArtwork) {
         item->setThumbnailPath(thumbnailPath);
 
         auto *updateHub = m_CommandManager->getArtworksUpdateHub();
         updateHub->updateArtwork(item->getArtworkID(), item->getLastKnownIndex(), m_RolesToUpdate);
 
-        // write video metadata set to the artwork
-        auto *metadataIOService = m_CommandManager->getMetadataIOService();
-        metadataIOService->writeArtwork(item->getArtwork());
+        if (recacheArtwork) {
+            // write video metadata set to the artwork
+            auto *metadataIOService = m_CommandManager->getMetadataIOService();
+            metadataIOService->writeArtwork(item->getArtwork());
+        }
     }
 
     void VideoCachingWorker::saveIndex() {
@@ -252,7 +254,7 @@ namespace QMLExtensions {
 
             if (item->getThumbnailPath() != cachedPath) {
                 LOG_DEBUG << "Updating outdated thumbnail of artwork #" << item->getArtworkID();
-                applyThumbnail(item, cachedPath);
+                applyThumbnail(item, cachedPath, false);
             }
         }
 

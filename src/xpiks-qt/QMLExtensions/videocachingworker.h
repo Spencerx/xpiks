@@ -55,7 +55,7 @@ namespace QMLExtensions {
     private:
         bool saveThumbnail(QImage &image, const QString &originalPath, bool isQuickThumbnail, QString &thumbnailPath);
         void cacheImage(const QString &thumbnailPath);
-        void applyThumbnail(std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath);
+        void applyThumbnail(std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath, bool recacheArtwork);
         void saveIndex();
         bool checkLockedIO(std::shared_ptr<VideoCacheRequest> &item);
         bool checkProcessed(std::shared_ptr<VideoCacheRequest> &item);

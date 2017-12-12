@@ -120,6 +120,7 @@
 #include "masterpasswordtest.h"
 #include "reimporttest.h"
 #include "autoimporttest.h"
+#include "importlostmetadatatest.h"
 
 #if defined(WITH_PLUGINS)
 #undef WITH_PLUGINS
@@ -348,8 +349,14 @@ int main(int argc, char *argv[]) {
     recentDirectorieModel.deserializeFromSettings(settingsModel.getRecentDirectories());
     recentFileModel.deserializeFromSettings(settingsModel.getRecentFiles());
 
-#if defined(APPVEYOR)
-    settingsModel.setExifToolPath("c:/projects/xpiks-deps/windows-3rd-party-bin/exiftool.exe");
+#if defined(Q_OS_WIN)
+    #if defined(APPVEYOR)
+        settingsModel.setExifToolPath("c:/projects/xpiks-deps/windows-3rd-party-bin/exiftool.exe");
+    #else
+        settingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool.exe"));
+    #endif
+#else
+     settingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool"));
 #endif
 
     switcherModel.setRemoteConfigOverride(findFullPathForTests("configs-for-tests/tests_switches.json"));
@@ -404,6 +411,7 @@ int main(int argc, char *argv[]) {
     integrationTests.append(new MasterPasswordTest(&commandManager));
     integrationTests.append(new ReimportTest(&commandManager));
     integrationTests.append(new AutoImportTest(&commandManager));
+    integrationTests.append(new ImportLostMetadataTest(&commandManager));
     // always the last one. insert new tests above
     integrationTests.append(new LocalLibrarySearchTest(&commandManager));
 

@@ -171,12 +171,6 @@ namespace Models {
     {
     }
 
-    void SettingsModel::saveExiftool() {
-        LOG_DEBUG << "#";
-        setValue(Constants::pathToExifTool, m_ExifToolPath);
-        sync();
-    }
-
     void SettingsModel::saveLocale() {
         LOG_DEBUG << "#";
         QMutexLocker locker(&m_SettingsMutex);
@@ -760,7 +754,6 @@ namespace Models {
         justChanged();
     }
 
-
     void SettingsModel::setUploadTimeout(int uploadTimeout) {
         if (m_UploadTimeout == uploadTimeout)
             return;
@@ -1028,6 +1021,16 @@ namespace Models {
         m_UseAutoImport = value;
         emit useAutoImportChanged(value);
         justChanged();
+    }
+
+    void SettingsModel::onRecommendedExiftoolFound(const QString &path) {
+        LOG_INFO << path;
+        QString existingExiftoolPath = getExifToolPath();
+
+        if (existingExiftoolPath != path) {
+            LOG_INFO << "Setting exiftool path to recommended";
+            setExifToolPath(path);
+        }
     }
 
     void SettingsModel::resetToDefault() {

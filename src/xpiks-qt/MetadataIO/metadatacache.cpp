@@ -223,6 +223,9 @@ namespace MetadataIO {
         LOG_DEBUG << "#";
         if (!m_DbCacheIndex) { return; }
 
+        LOG_DEBUG << "Add WAL size:" << m_AddWal.size();
+        LOG_DEBUG << "Set WAL size:" << m_SetWAL.size();
+
         m_AddWal.flush(m_DbCacheIndex);
         m_SetWAL.flush(m_DbCacheIndex);
     }

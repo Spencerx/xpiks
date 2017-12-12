@@ -39,6 +39,8 @@ namespace MetadataIO {
 
     public:
         void cancelBatch(quint32 batchID) const;
+        bool isBusy() const;
+        void waitWorkerIdle();
 
     public:
         void writeArtwork(Models::ArtworkMetadata *metadata);

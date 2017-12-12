@@ -382,7 +382,7 @@ namespace Helpers {
             success = true;
         } while (false);
 
-        LOG_INTEGRATION_TESTS << key << "set";
+        LOG_INTEGRATION_TESTS << key << "set status:" << success;
 
         cleanupSqliteStatement(m_SetStatement);
 
@@ -414,7 +414,7 @@ namespace Helpers {
             success = true;
         } while (false);
 
-        LOG_INTEGRATION_TESTS << key << "added";
+        LOG_INTEGR_TESTS_OR_DEBUG << key << "added or ignored status:" << success;
 
         cleanupSqliteStatement(m_AddStatement);
 

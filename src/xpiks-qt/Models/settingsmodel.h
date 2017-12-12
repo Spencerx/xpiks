@@ -89,7 +89,6 @@ namespace Models {
         virtual ~SettingsModel() { }
 
     public:
-        void saveExiftool();
         void saveLocale();
         void initializeConfigs();
         void syncronizeSettings() { sync(); }
@@ -395,6 +394,9 @@ namespace Models {
         void setProgressiveSuggestionIncrement(int progressiveSuggestionIncrement);
         void setUseDirectExiftoolExport(bool value);
         void setUseAutoImport(bool value);
+
+    public slots:
+        void onRecommendedExiftoolFound(const QString &path);
 
 #ifndef INTEGRATION_TESTS
     private:

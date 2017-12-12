@@ -232,6 +232,12 @@ namespace Helpers {
             }
         }
 
+        int size() {
+            QReadLocker locker(&m_LockWAL);
+            Q_UNUSED(locker);
+            return m_WriteAheadLog.size();
+        }
+
     protected:
         virtual QByteArray keyToByteArray(const TKey &key) const = 0;
         virtual bool doFlush(std::shared_ptr<Database::Table> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) = 0;

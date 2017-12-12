@@ -70,6 +70,18 @@ namespace MetadataIO {
         m_MetadataIOWorker->cancelBatch(batchID);
     }
 
+    bool MetadataIOService::isBusy() const {
+        if (m_IsStopped) { return false; }
+        if (m_MetadataIOWorker == nullptr) { return false; }
+        return m_MetadataIOWorker->hasPendingJobs();
+    }
+
+    void MetadataIOService::waitWorkerIdle() {
+        LOG_DEBUG << "#";
+        Q_ASSERT(m_MetadataIOWorker != nullptr);
+        m_MetadataIOWorker->waitIdle();
+    }
+
     void MetadataIOService::writeArtwork(Models::ArtworkMetadata *metadata) {
         Q_ASSERT(metadata != nullptr);
         if (m_IsStopped) { return; }
