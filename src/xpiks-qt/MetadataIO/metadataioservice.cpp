@@ -16,7 +16,7 @@
 #include "../Commands/commandmanager.h"
 #include "../Helpers/database.h"
 
-#define SAVER_TIMER_TIMEOUT 3000
+#define SAVER_TIMER_TIMEOUT 2000
 #define SAVER_TIMER_MAX_RESTARTS 5
 
 namespace MetadataIO {
