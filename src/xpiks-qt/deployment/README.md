@@ -15,6 +15,8 @@ Dependencies used by Xpiks:
 * _libcurl_ (from [main website](https://curl.haxx.se/libcurl/), Windows build from [GitHub repository](https://github.com/blackrosezy/build-libcurl-windows))
 * _hunspell_ (from GitHub submodule)
 * _zlib_ (from [main website](https://zlib.net/))
+* _cpp-libface_ (from GitHub submodule)
+* _ssdll_ (from GitHub submodule)
 * _exiftool_ (latest production release from [main website](https://www.sno.phy.queensu.ca/~phil/exiftool/history.html))
 * _tiny-AES_ (from GitHub submodule)
 * _sqlite_ (from [main website](https://www.sqlite.org/))
