@@ -25,8 +25,6 @@ DEFINES += WITH_LOGS
 DEFINES += INTEGRATION_TESTS
 DEFINES += WITH_PLUGINS
 
-DEFINES += HUNSPELL_DICTS_PATH=\"$$PWD/../../xpiks-qt/deps/dict\"
-
 SOURCES += main.cpp \
     ../../xpiks-qt/Commands/addartworkscommand.cpp \
     ../../xpiks-qt/Commands/combinededitcommand.cpp \
