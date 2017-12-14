@@ -8,8 +8,8 @@ STAGING_DIR="./xpiks-qt.AppDir"
 
 DEPLOY_TOOL=linuxdeploy
 
-BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_9_3_GCC_64bit-Debug"
-LIBS_PROFILE=debug
+BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_9_3_GCC_64bit-Release"
+LIBS_PROFILE=release
 
 XPIKS_QT_DIR=".."
 REPO_ROOT="../../.."
@@ -35,7 +35,7 @@ $DEPLOY_TOOL -appdir "$STAGING_DIR" -blacklist linuxdeploy.blacklist -exe "${BUI
 
 cp -v -r "${XPIKS_QT_DIR}"/deps/* "${STAGING_DIR}/"
 rm -v $STAGING_DIR/translations/*.ts
-rm -v $STAGING_DIR/dmg_background.jpg
+rm -v $STAGING_DIR/dmg-background.jpg
 
 cat << EOF > "$STAGING_DIR/$APP_NAME.desktop"
 [Desktop Entry]

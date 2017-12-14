@@ -35,12 +35,12 @@ win32|linux {
 
     copywhatsnew.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/whatsnew.txt)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
     copyterms.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/terms_and_conditions.txt)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
-    copydicts.commands = $(COPY_DIR) \"$$shell_path($$DEPS_DIR/dict)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/dict)\"
+    copydicts.commands = $(COPY_DIR) \"$$shell_path($$DEPS_DIR/dict)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
 
     appveyor|travis-ci {
         copytranslations.commands = echo "Skip translations"
     } else {
-        copytranslations.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/$$TR_DIR/xpiks_*.qm)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$TR_DIR/)\"
+        copytranslations.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/$$TR_DIR/)\"xpiks_*.qm \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$TR_DIR/)\"
     }
 
     copyfreqtables.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/$$AC_SOURCES_DIR/en_wordlist.tsv)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$AC_SOURCES_DIR/)\"

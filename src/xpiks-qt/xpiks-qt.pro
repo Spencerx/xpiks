@@ -6,7 +6,7 @@ QT += qml quick widgets concurrent svg
 CONFIG += qtquickcompiler
 CONFIG += c++11
 
-CONFIG += force_debug_info
+#CONFIG += force_debug_info
 
 CONFIG(release, debug|release)  {
     CONFIG += separate_debug_info
