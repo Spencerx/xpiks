@@ -34,6 +34,7 @@ namespace AutoComplete {
 
     AutoCompleteWorker::~AutoCompleteWorker() {
         m_FaceCompletionEngine.finalize();
+        m_PresetsCompletionEngine.finalize();
         LOG_INFO << "destroyed";
     }
 

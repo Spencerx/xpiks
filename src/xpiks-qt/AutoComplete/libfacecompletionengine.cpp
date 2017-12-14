@@ -50,9 +50,8 @@ namespace AutoComplete {
         resourcesPath += "/../../../xpiks-qt/deps/";
 #elif defined(TRAVIS_CI)
         resourcesPath += "/../../xpiks-qt/deps/";
-#elif defined(Q_OS_WIN) || defined(Q_OS_LINUX)
-        resourcesPath += "/ac_sources/";
 #endif
+        resourcesPath += "/ac_sources/";
 
         QDir resourcesDir(QDir::cleanPath(resourcesPath));
         wordlistPath = resourcesDir.absoluteFilePath(FREQUENCY_TABLE_FILENAME);

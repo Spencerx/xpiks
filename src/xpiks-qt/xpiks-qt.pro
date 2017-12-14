@@ -552,7 +552,8 @@ DISTFILES += \
     Graphics/slategray/More_icon_hovered.svg \
     Graphics/slategray/More_icon_normal.svg \
     Dialogs/WipeMetadata.qml \
-    Dialogs/SimplePreview.qml
+    Dialogs/SimplePreview.qml \
+    ../xpiks-common/xpiks-common.pri
 
 lupdate_only {
 SOURCES += *.qml \
@@ -589,6 +590,8 @@ LIBS += -lxpks
 BUILDNO=$$system(git log -n 1 --pretty=format:"%h")
 BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
 
+include(../xpiks-common/xpiks-common.pri)
+
 CONFIG(debug, debug|release)  {
     message("Building debug")
     DEFINES += WITH_PLUGINS
@@ -611,7 +614,7 @@ macx {
     LIBS += -lswscale.4
 
     HUNSPELL_DICT_FILES.files = deps/dict/en_US.aff deps/dict/en_US.dic deps/dict/license.txt deps/dict/README_en_US.txt
-    HUNSPELL_DICT_FILES.path = Contents/Resources
+    HUNSPELL_DICT_FILES.path = Contents/Resources/dict
     QMAKE_BUNDLE_DATA += HUNSPELL_DICT_FILES
 
     WHATS_NEW.files = deps/whatsnew.txt
@@ -627,8 +630,8 @@ macx {
     XPIKS_TRANSLATIONS.path = Contents/Resources/translations
     QMAKE_BUNDLE_DATA += XPIKS_TRANSLATIONS
 
-    FREQ_TABLES.files = deps/en_wordlist.tsv
-    FREQ_TABLES.path = Contents/Resources
+    FREQ_TABLES.files = deps/ac_sources/en_wordlist.tsv
+    FREQ_TABLES.path = Contents/Resources/ac_sources
     QMAKE_BUNDLE_DATA += FREQ_TABLES
 }
 
@@ -650,55 +653,16 @@ win32 {
     LIBS += -lswscale
 
     CONFIG(debug, debug|release) {
-        EXE_DIR = debug
         LIBS += -llibcurl_debug
         LIBS -= -lquazip
         LIBS += -lquazipd
     }
 
     CONFIG(release, debug|release) {
-        EXE_DIR = release
         LIBS += -llibcurl
     }
 
     LIBS += -lmman
-
-    TR_DIR = translations
-
-    exists($$OUT_PWD/$$EXE_DIR/$$TR_DIR/) {
-        message("Translations exist")
-    } else {
-        createtranslations.commands += $(MKDIR) \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$TR_DIR)\"
-        QMAKE_EXTRA_TARGETS += createtranslations
-        POST_TARGETDEPS += createtranslations
-    }
-
-    AC_SOURCES_DIR = ac_sources
-
-    exists($$OUT_PWD/$$EXE_DIR/$$AC_SOURCES_DIR/) {
-        message("ac_sources exist")
-    } else {
-        create_ac_sources.commands += $(MKDIR) \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$AC_SOURCES_DIR)\"
-        QMAKE_EXTRA_TARGETS += create_ac_sources
-        POST_TARGETDEPS += create_ac_sources
-    }
-
-    copywhatsnew.commands = $(COPY_FILE) \"$$shell_path($$PWD/deps/whatsnew.txt)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
-    copyterms.commands = $(COPY_FILE) \"$$shell_path($$PWD/deps/terms_and_conditions.txt)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
-    copydicts.commands = $(COPY_DIR) \"$$shell_path($$PWD/deps/dict)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/dict)\"
-
-    appveyor {
-        DEFINES += WITH_LOGS
-        LIBS += -L"$$PWD/../../libs"
-        copytranslations.commands = echo "Skip translations"
-    } else {
-        copytranslations.commands = $(COPY_FILE) \"$$shell_path($$PWD/deps/$$TR_DIR/xpiks_*.qm)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$TR_DIR/)\"
-    }
-
-    copyfreqtables.commands = $(COPY_FILE) \"$$shell_path($$PWD/deps/en_wordlist.tsv)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$AC_SOURCES_DIR/)\"
-
-    QMAKE_EXTRA_TARGETS += copywhatsnew copyterms copydicts copytranslations copyfreqtables
-    POST_TARGETDEPS += copywhatsnew copyterms copydicts copytranslations copyfreqtables
 }
 
 linux {
@@ -717,6 +681,11 @@ linux {
 
     #QML_IMPORT_PATH += /usr/lib/x86_64-linux-gnu/qt5/imports/
     #LIBS += -L/lib/x86_64-linux-gnu/
+}
+
+appveyor {
+    DEFINES += WITH_LOGS
+    LIBS += -L"$$PWD/../../libs"
 }
 
 travis-ci {

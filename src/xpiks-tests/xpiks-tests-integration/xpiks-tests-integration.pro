@@ -520,6 +520,8 @@ LIBS += -lssdll
 LIBS += -lthmbnlr
 LIBS += -lxpks
 
+include(../../xpiks-common/xpiks-common.pri)
+
 BUILDNO=$$system(git log -n 1 --pretty=format:"%h")
 BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
 
@@ -642,3 +644,6 @@ appveyor {
 
 DEFINES += BUILDNUMBER=$${BUILDNO}
 DEFINES += BRANCHNAME=$${BRANCH_NAME}
+
+DISTFILES += \
+    ../../xpiks-common/xpiks-common.pri
