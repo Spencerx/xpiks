@@ -37,7 +37,7 @@ win32|linux {
     copyterms.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/terms_and_conditions.txt)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
     copydicts.commands = $(COPY_DIR) \"$$shell_path($$DEPS_DIR/dict)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/dict)\"
 
-    appveyor {
+    appveyor|travis-ci {
         copytranslations.commands = echo "Skip translations"
     } else {
         copytranslations.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/$$TR_DIR/xpiks_*.qm)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$TR_DIR/)\"
