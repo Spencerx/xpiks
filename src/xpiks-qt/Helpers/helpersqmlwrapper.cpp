@@ -238,6 +238,12 @@ namespace Helpers {
         args << "/select," << QDir::toNativeSeparators(path);
         QProcess::startDetached("explorer", args);
 #endif
+
+#ifdef Q_OS_LINUX
+        QStringList args;
+        args << QFileInfo(path).absolutePath();
+        QProcess::startDetached("xdg-open", args);
+#endif
     }
 
     void HelpersQmlWrapper::updateIsDownloaded(QString pathToUpdate) {

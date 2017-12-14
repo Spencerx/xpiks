@@ -192,7 +192,6 @@ Item {
                 StyledButton {
                     id: revealFileButton
                     text: i18.n + qsTr("Reveal logfile")
-                    visible: Qt.platform.os !== "linux"
                     width: 130
                     onClicked: {
                         helpersWrapper.revealLogFile()
