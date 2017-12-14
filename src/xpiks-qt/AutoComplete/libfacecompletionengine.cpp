@@ -38,24 +38,23 @@ namespace AutoComplete {
         QString resourcesPath;
         QString wordlistPath;
 
-//#if !defined(Q_OS_LINUX)
         resourcesPath = QCoreApplication::applicationDirPath();
 
 #if defined(Q_OS_MAC)
-#  if defined(INTEGRATION_TESTS)
+    #if defined(INTEGRATION_TESTS)
         resourcesPath += "/../../../xpiks-qt/deps/";
-#  else
+    #else
         resourcesPath += "/../Resources/";
-#  endif
-#elif  defined(APPVEYOR)
+    #endif
+#elif defined(APPVEYOR)
         resourcesPath += "/../../../xpiks-qt/deps/";
-#elif defined(Q_OS_WIN)
-        resourcesPath += "/ac_sources/";
 #elif defined(TRAVIS_CI)
         resourcesPath += "/../../xpiks-qt/deps/";
+#elif defined(Q_OS_WIN) || defined(Q_OS_LINUX)
+        resourcesPath += "/ac_sources/";
 #endif
 
-        QDir resourcesDir(resourcesPath);
+        QDir resourcesDir(QDir::cleanPath(resourcesPath));
         wordlistPath = resourcesDir.absoluteFilePath(FREQUENCY_TABLE_FILENAME);
 
         if (QFileInfo(wordlistPath).exists()) {

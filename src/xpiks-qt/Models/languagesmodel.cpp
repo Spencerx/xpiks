@@ -26,19 +26,14 @@ namespace Models {
         m_XpiksTranslator = new QTranslator(this);
         m_QtTranslator = new QTranslator(this);
 
-        QString translationsPath;
+        QString translationsPath = QCoreApplication::applicationDirPath();;
 
-#if defined(Q_OS_LINUX)
-        translationsPath = QStandardPaths::locate(XPIKS_DATA_LOCATION_TYPE, "/translations/", QStandardPaths::LocateDirectory);
-#else
-        translationsPath = QCoreApplication::applicationDirPath();
 #if defined(Q_OS_MAC)
         translationsPath += "/../Resources/translations/";
 #else
         translationsPath += "/translations/";
 #endif
-#endif
-        m_TranslationsPath = translationsPath;
+        m_TranslationsPath = QDir::cleanPath(translationsPath);
     }
 
     void LanguagesModel::initFirstLanguage() {

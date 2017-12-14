@@ -62,43 +62,26 @@ namespace SpellCheck {
         QString affPath;
         QString dicPath;
 
-#if !defined(Q_OS_LINUX)
         resourcesPath = QCoreApplication::applicationDirPath();
-        LOG_DEBUG << "App path:" << resourcesPath;
 
-#  if defined(Q_OS_MAC)
-#ifndef INTEGRATION_TESTS
+#if defined(Q_OS_MAC)
+    #ifndef INTEGRATION_TESTS
         resourcesPath += "/../Resources/";
-#else
+    #else
         resourcesPath = STRINGIZE(HUNSPELL_DICTS_PATH);
-#endif
-#  elif defined(APPVEYOR)
+    #endif
+#elif defined(APPVEYOR)
         resourcesPath += "/../../../xpiks-qt/deps/dict/";
-#  elif defined(Q_OS_WIN)
-        resourcesPath += "/dict/";
-#  endif
-
-        QDir resourcesDir(resourcesPath);
-        affPath = resourcesDir.absoluteFilePath(EN_HUNSPELL_AFF);
-        dicPath = resourcesDir.absoluteFilePath(EN_HUNSPELL_DIC);
-
-#else
-#if defined(TRAVIS_CI)
+#elif defined(TRAVIS_CI)
         resourcesPath = STRINGIZE(HUNSPELL_DICTS_PATH);
         LOG_DEBUG << "Resources path:" << resourcesPath;
+#elif defined(Q_OS_WIN) || defined(Q_OS_LINUX)
+        resourcesPath += "/dict/";
 #endif
 
-        if (resourcesPath.isEmpty()) {
-            resourcesPath = "hunspell/";
-            dicPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, resourcesPath + EN_HUNSPELL_DIC);
-            affPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, resourcesPath + EN_HUNSPELL_AFF);
-        } else {
-            QDir resourcesDirectory(resourcesPath);
-            affPath = resourcesDirectory.absoluteFilePath(EN_HUNSPELL_AFF);
-            dicPath = resourcesDirectory.absoluteFilePath(EN_HUNSPELL_DIC);
-        }
-
-#endif
+        QDir resourcesDir(QDir::cleanPath(resourcesPath));
+        affPath = resourcesDir.absoluteFilePath(EN_HUNSPELL_AFF);
+        dicPath = resourcesDir.absoluteFilePath(EN_HUNSPELL_DIC);
 
         bool initResult = false;
 

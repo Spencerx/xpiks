@@ -43,13 +43,21 @@ namespace AutoComplete {
         Helpers::AsyncCoordinatorUnlocker unlocker(m_InitCoordinator);
         Q_UNUSED(unlocker);
 
-        bool anyError = false;
+        bool success = false;
 
-        if (!m_FaceCompletionEngine.initialize()) {
-            anyError = true;
-        }
+        do {
+            if (!m_FaceCompletionEngine.initialize()) {
+                break;
+            }
 
-        return !anyError;
+            if (!m_PresetsCompletionEngine.initialize()) {
+                break;
+            }
+
+            success = true;
+        } while(false);
+
+        return success;
     }
 
     void AutoCompleteWorker::processOneItem(std::shared_ptr<CompletionQuery> &item) {
