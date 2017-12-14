@@ -49,23 +49,17 @@ int ImportLostMetadataTest::doTest() {
     const QString filepath = artwork->getFilepath();
     VERIFY(artwork->getKeywords().count() == 0, "Initial keywords should not be found");
 
-    QStringList keywordsToCheck = QStringList() << "some" << "random" << "keyowrds";
+    QStringList keywordsToCheck = QStringList() << "some" << "random" << "keywords";
 
     for (auto &keyword: keywordsToCheck) {
         artItemsModel->appendKeyword(0, keyword);
     }
 
-    // wait for artwork to run justChanged() timer
-    QThread::sleep(1);
-
     MetadataIO::MetadataIOService *metadataIOService = m_CommandManager->getMetadataIOService();
-
-    // wait for metadata cache to flush
-    QThread::sleep(3);
-
     MetadataIO::MetadataCache &cache = metadataIOService->getWorker()->getMetadataCache();
 
-    sleepWaitUntil(4, [&]() {
+    // wait for artwork backup request and metadata cache timer
+    sleepWaitUntil(10, [&]() {
         Models::ArtworkMetadata fakeArtwork(filepath, 12345, 0);
         MetadataIO::CachedArtwork cachedArtwork;
         bool anythingAvailable = cache.read(&fakeArtwork, cachedArtwork);
