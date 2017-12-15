@@ -26,6 +26,15 @@ addons:
       - lcov
       - gcc-5
       - g++-5
+  sonarcloud:
+    organization: ribtoks-github
+    branches:
+      - master
+      - sonar_cube
+    
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
 
 before_install:
   - sudo add-apt-repository ppa:beineri/opt-qt562-trusty -y
@@ -77,6 +86,7 @@ script:
   - make
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/
   - if [ -n "$XPIKS_BINARY" ]; then cppcheck --language=c++ --inconclusive --quiet -DQT_DEBUG -DWITH_LOGS -DWITH_PLUGINS -DWITH_STDOUT_LOGS -DTRAVIS_CI -UCORE_TESTS -UINTEGRATION_TESTS -UQ_OS_WIN -DQ_OS_LINUX --error-exitcode=1 --suppress=missingIncludeSystem --suppress='*:moc_*.cpp' --max-configs=15 --enable=warning . ; fi
+  - if [ -n "$XPIKS_BINARY" ]; then sonar-scanner; fi
   - if [ -n "$CORE_TESTS" ]; then ./xpiks-tests-core; fi
   - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration; fi
   - if [ -n "$UI_TESTS" ]; then ./xpiks-tests-ui; fi
