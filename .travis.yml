@@ -28,9 +28,10 @@ addons:
       - g++-5
   sonarcloud:
     organization: "ribtoks-github"
+    token:
+      secure: "jlW0NkIDzrxD+elZgVR0nK01hNU4KEDd08EiH3hLwtDCB2rlzJC2alJCNqjQT+EDtwbUH2h62KJbAMxBP8apWaVcxkCtF6r2rporaJKxaFpXCjhMZSGZoa+GIsl4avMQPkPXBYGSPMZV521glxE7QVTjd1ExF5gon8H3RS8zaq9u97V5RgQPfsjmRrlP3etqdGbxjyvH2OQCQhncd6voMTEtZApVAGhdtaFrBhxwMFGP3SXivAxI7sGqeXPRam/IeHGsofOyt5WqYjkGYrube8plf94qt7/2F7nuvjjmKuXjS/INTUpd+eCJ+xWBynNRwfmqxqqst3PILNLkvh7Y5L7FYx92VmRyWA2xZnXkranb5OYjQyjAplDpiKCFjbJ5IiWf+4ohwiwm0kPIxl0Jx0NjMJkiqsdVXpHQANRbLsnU5YO6zijCp7F17QFJtmjqMihvfOqjYjhX57b2QuTg8QFiFqH5foCvqw4xNgjb/5yY1Yy7ANJsbbGnISLUsCcb18eVqQGda7m6xCX7gktDJoQYqIJqk/KYbPPgxZNkifeHijLn1MI40wyRcFUI/wdJHBkuaOIhHZclsxhKPjapZM9etIYvwdnsEYnXUlmxhV/nPp8wPJNcDcDJ41ycEeH3Hr0kw9qQbxbWKGV2bhJEQgCDPZFtEnServQXcLPfaFU="
     branches:
-      - master
-      - sonar_cube
+      - sonarqube
     
 cache:
   directories:
@@ -92,7 +93,6 @@ script:
   - if [ -n "$UI_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-ui.pro; fi
   - if [ -n "$UI_TESTS" ]; then make; fi
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/
-  - if [ -n "$XPIKS_BINARY" ]; then cppcheck --language=c++ --inconclusive --quiet -DQT_DEBUG -DWITH_LOGS -DWITH_PLUGINS -DWITH_STDOUT_LOGS -DTRAVIS_CI -UCORE_TESTS -UINTEGRATION_TESTS -UQ_OS_WIN -DQ_OS_LINUX --error-exitcode=1 --suppress=missingIncludeSystem --suppress='*:moc_*.cpp' --max-configs=15 --enable=warning . ; fi
   - if [ -n "$XPIKS_BINARY" ]; then sonar-scanner; fi
   - if [ -n "$CORE_TESTS" ]; then ./xpiks-tests-core; fi
   - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration; fi
