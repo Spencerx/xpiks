@@ -282,7 +282,7 @@ namespace Common {
                 LOG_INFO << "replaced keyword" << removedKeyword;
                 Q_UNUSED(wasCorrect);
 
-                size_t addedCount = m_Impl->appendKeywordsUnsafe(presetList, start, end);
+                addedCount = m_Impl->appendKeywordsUnsafe(presetList, start, end);
                 LOG_INFO << addedCount << "new added";
 
                 expanded = true;
