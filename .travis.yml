@@ -75,20 +75,21 @@ script:
   - echo "-------"
   - if [ -n "$XPIKS_BINARY" ]; then cd xpiks-qt/; fi
   - if [ -n "$XPIKS_BINARY" ]; then qmake "CONFIG+= debug travis-ci" xpiks-qt.pro; fi
+  - if [ -n "$XPIKS_BINARY" ]; then build-wrapper-linux-x86-64 --out-dir bw-output make; fi
   - echo "-------"
   - if [ -n "$CORE_TESTS" ]; then cd xpiks-tests/xpiks-tests-core; fi
   - if [ -n "$CORE_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-core.pro; fi
+  - if [ -n "$CORE_TESTS" ]; then make; fi
   - echo "-------"
   - if [ -n "$INTEGRATION_TESTS" ]; then cd xpiks-tests/xpiks-tests-integration; fi
   - if [ -n "$INTEGRATION_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-integration.pro; fi
+  - if [ -n "$INTEGRATION_TESTS" ]; then make; fi
   - echo "-------"
   - if [ -n "$UI_TESTS" ]; then cd xpiks-tests/ui-tests-stubs; fi
   - if [ -n "$UI_TESTS" ]; then qmake "CONFIG+=debug travis-ci" ui-tests-stubs.pro; fi
   - if [ -n "$UI_TESTS" ]; then make; fi
   - if [ -n "$UI_TESTS" ]; then cd ../xpiks-tests-ui; fi
   - if [ -n "$UI_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-ui.pro; fi
-  - echo "-------"
-  - make
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/
   - if [ -n "$XPIKS_BINARY" ]; then cppcheck --language=c++ --inconclusive --quiet -DQT_DEBUG -DWITH_LOGS -DWITH_PLUGINS -DWITH_STDOUT_LOGS -DTRAVIS_CI -UCORE_TESTS -UINTEGRATION_TESTS -UQ_OS_WIN -DQ_OS_LINUX --error-exitcode=1 --suppress=missingIncludeSystem --suppress='*:moc_*.cpp' --max-configs=15 --enable=warning . ; fi
   - if [ -n "$XPIKS_BINARY" ]; then sonar-scanner; fi
