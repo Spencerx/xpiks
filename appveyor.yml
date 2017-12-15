@@ -39,6 +39,9 @@ clone_folder: c:\projects\xpiks
 # set clone depth
 clone_depth: 3                      # clone entire repository history if not defined
 
+cache:
+  - vendors -> appveyor.yml
+
 matrix:
   fast_finish: true
   allow_failures:
