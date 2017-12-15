@@ -131,9 +131,7 @@ namespace Connectivity {
       switch (type) {
       case CURLINFO_TEXT:
           LOG_INFO << sanitizeCurlLogline(Helpers::string_format("== Info: %s", data));
-      default: /* in case a new one is introduced to shock us */
-          return 0;
-
+          break;
       case CURLINFO_HEADER_OUT:
           text = "=> Send header";
           break;
@@ -152,6 +150,8 @@ namespace Connectivity {
       case CURLINFO_SSL_DATA_IN:
           text = "<= Recv SSL data";
           break;
+      default: /* in case a new one is introduced to shock us */
+          return 0;
       }
 
       dump(text, (unsigned char *)data, size);
