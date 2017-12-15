@@ -16,6 +16,7 @@ Translations: https://crowdin.com/project/xpiks/
   <img alt="Coverity Scan Build Status"
        src="https://scan.coverity.com/projects/8498/badge.svg"/>
 </a>
+[![Quality Gate](https://sonarcloud.io/api/badges/gate?key=ribtoks-xpiks-qt%3Asonarqube)](https://sonarcloud.io/dashboard/index/ribtoks-xpiks-qt%3Asonarqube)
 
 [![GitHub release](https://img.shields.io/github/release/ribtoks/xpiks.svg)](https://github.com/ribtoks/xpiks/releases)
 [![GitHub Release Date](https://img.shields.io/github/release-date/ribtoks/xpiks.svg)](https://github.com/ribtoks/xpiks/releases)
