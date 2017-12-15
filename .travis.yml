@@ -90,6 +90,7 @@ script:
   - if [ -n "$UI_TESTS" ]; then make; fi
   - if [ -n "$UI_TESTS" ]; then cd ../xpiks-tests-ui; fi
   - if [ -n "$UI_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-ui.pro; fi
+  - if [ -n "$UI_TESTS" ]; then make; fi
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/
   - if [ -n "$XPIKS_BINARY" ]; then cppcheck --language=c++ --inconclusive --quiet -DQT_DEBUG -DWITH_LOGS -DWITH_PLUGINS -DWITH_STDOUT_LOGS -DTRAVIS_CI -UCORE_TESTS -UINTEGRATION_TESTS -UQ_OS_WIN -DQ_OS_LINUX --error-exitcode=1 --suppress=missingIncludeSystem --suppress='*:moc_*.cpp' --max-configs=15 --enable=warning . ; fi
   - if [ -n "$XPIKS_BINARY" ]; then sonar-scanner; fi
