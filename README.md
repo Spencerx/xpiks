@@ -16,7 +16,10 @@ Translations: https://crowdin.com/project/xpiks/
   <img alt="Coverity Scan Build Status"
        src="https://scan.coverity.com/projects/8498/badge.svg"/>
 </a>
-[![Downloads](https://img.shields.io/github/downloads/atom/atom/latest/total.svg)](https://github.com/ribtoks/xpiks/releases)
+
+[![GitHub release](https://img.shields.io/github/release/ribtoks/xpiks.svg)](https://github.com/ribtoks/xpiks/releases)
+[![GitHub Release Date](https://img.shields.io/github/release-date/ribtoks/xpiks.svg)](https://github.com/ribtoks/xpiks/releases)
+[![Downloads](https://img.shields.io/github/downloads/ribtoks/xpiks/latest/total.svg)](https://github.com/ribtoks/xpiks/releases)
 
 Xpiks is a free and open source keywording and uploading tool for microstock photographers and illustrators. It was written from scratch with aim to make it more usefull, convenient and quicker than existing tools.
 
