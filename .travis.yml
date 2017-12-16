@@ -28,7 +28,9 @@ addons:
       - g++-5
       
 cache:
-  apt: true  
+  apt: true
+  directories:
+    - vendors
 
 before_install:
   - sudo add-apt-repository ppa:beineri/opt-qt562-trusty -y
@@ -83,9 +85,9 @@ script:
   - if [ -n "$CORE_TESTS" ]; then ./xpiks-tests-core; fi
   - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration; fi
   - if [ -n "$UI_TESTS" ]; then ./xpiks-tests-ui; fi
+  - if [ -z "${XPIKS_BINARY+xxx}" ]; then ../get_code_cov.sh "$PWD"; fi
 
 after_success:
-  - if [ -z "${XPIKS_BINARY+xxx}" ]; then ../get_code_cov.sh "$PWD"; fi
   - if [ -z "${XPIKS_BINARY+xxx}" ]; then bash <(curl -s https://codecov.io/bash); fi
 
 after_failure:
