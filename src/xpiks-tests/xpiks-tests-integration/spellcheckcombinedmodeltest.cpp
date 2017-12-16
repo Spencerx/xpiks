@@ -39,9 +39,7 @@ int SpellCheckCombinedModelTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -83,9 +81,7 @@ int SpellCheckCombinedModelTest::doTest() {
 
     spellSuggestor->submitCorrections();
 
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for corrected spellcheck results");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for corrected spellcheck results");
 
     VERIFY(!basicModel->hasDescriptionSpellError(), "Description spell error was not fixed");
     VERIFY(!basicModel->hasTitleSpellError(), "Title spell error was not fixed");

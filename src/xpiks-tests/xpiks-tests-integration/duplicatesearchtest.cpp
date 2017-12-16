@@ -34,9 +34,7 @@ int DuplicateSearchTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -52,9 +50,7 @@ int DuplicateSearchTest::doTest() {
 
     QThread::sleep(1);
 
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for first spellcheck results");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for first spellcheck results");
 
     VERIFY(!metadata->hasDuplicates(0), "Duplicates detected for unique keyword");
     VERIFY(metadata->hasDuplicates(1), "Duplicate not detected for mouse");

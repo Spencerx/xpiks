@@ -39,9 +39,7 @@ int SpellCheckMultireplaceTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -62,9 +60,7 @@ int SpellCheckMultireplaceTest::doTest() {
 
     filteredModel->spellCheckSelected();
 
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for spellcheck results");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for spellcheck results");
 
     // wait for finding suggestions
     QThread::sleep(1);
@@ -93,9 +89,7 @@ int SpellCheckMultireplaceTest::doTest() {
 
     spellSuggestor->submitCorrections();
 
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for corrected spellcheck results");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for corrected spellcheck results");
 
     VERIFY(!basicKeywordsModel->hasDescriptionSpellError(), "Description spell error was not fixed");
     VERIFY(!basicKeywordsModel->hasTitleSpellError(), "Title spell error was not fixed");

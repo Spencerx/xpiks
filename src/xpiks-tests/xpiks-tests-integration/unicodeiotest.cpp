@@ -35,9 +35,7 @@ int UnicodeIoTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -59,9 +57,7 @@ int UnicodeIoTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -83,9 +79,7 @@ int UnicodeIoTest::doTest() {
     auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
     filteredModel->saveSelectedArtworks(doOverwrite, dontSaveBackups);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for writing metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while writing");
 

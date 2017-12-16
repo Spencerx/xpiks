@@ -38,9 +38,7 @@ int ZipArtworksTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add files");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -54,9 +52,7 @@ int ZipArtworksTest::doTest() {
 
     zipArchiver->archiveArtworks();
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout while zipping artworks");
-    }
+    VERIFY(waiter.wait(20), "Timeout while zipping artworks");
 
     VERIFY(zipArchiver->getItemsCount() == 2, "ZipArchiver didn't get all the files");
     VERIFY(!zipArchiver->getHasErrors(), "Errors while zipping");

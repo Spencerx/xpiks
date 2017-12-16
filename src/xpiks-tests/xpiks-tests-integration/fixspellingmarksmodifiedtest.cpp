@@ -42,9 +42,7 @@ int FixSpellingMarksModifiedTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -59,9 +57,7 @@ int FixSpellingMarksModifiedTest::doTest() {
 
     xpiks()->submitItemForSpellCheck(basicModel);
 
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for initial spellcheck results");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for initial spellcheck results");
 
     sleepWaitUntil(5, [&]() { return basicModel->hasKeywordsSpellError(); });
 
@@ -81,9 +77,7 @@ int FixSpellingMarksModifiedTest::doTest() {
 
     spellSuggestor->submitCorrections();
 
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for corrected spellcheck results");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for corrected spellcheck results");
 
     VERIFY(!basicModel->hasKeywordsSpellError(), "Keywords spell error was not fixed");
     VERIFY(artItemsModel->getArtwork(0)->isModified(), "Artwork was not modified");

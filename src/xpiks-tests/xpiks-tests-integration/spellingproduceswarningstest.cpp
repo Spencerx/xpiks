@@ -42,9 +42,7 @@ int SpellingProducesWarningsTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -75,9 +73,7 @@ int SpellingProducesWarningsTest::doTest() {
 
     filteredModel->spellCheckSelected();
 
-    if (!spellingWaiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for first spellcheck results");
-    }
+    VERIFY(spellingWaiter.wait(5), "Timeout for waiting for first spellcheck results");
 
     LOG_INFO << "Spellchecking finished. Waiting for warnings...";
 

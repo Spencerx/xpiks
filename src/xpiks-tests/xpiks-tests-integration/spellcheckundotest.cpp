@@ -38,9 +38,7 @@ int SpellCheckUndoTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -61,9 +59,7 @@ int SpellCheckUndoTest::doTest() {
 
     filteredModel->spellCheckSelected();
 
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for first spellcheck results");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for first spellcheck results");
 
     // wait for finding suggestions
     QThread::sleep(1);
@@ -81,9 +77,7 @@ int SpellCheckUndoTest::doTest() {
     UndoRedo::UndoRedoManager *undoRedoManager = m_CommandManager->getUndoRedoManager();
     undoRedoManager->undoLastAction();
 
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for second spellcheck results");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for second spellcheck results");
 
     // wait for finding suggestions
     QThread::sleep(1);
