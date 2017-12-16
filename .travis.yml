@@ -29,8 +29,6 @@ addons:
       
 cache:
   apt: true  
-  directories:
-    - vendors
 
 before_install:
   - sudo add-apt-repository ppa:beineri/opt-qt562-trusty -y
