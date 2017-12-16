@@ -25,7 +25,7 @@ coverage:
         target: 60%
         threshold: 5%
         paths:
-          - src/xpiks/
+          - src/xpiks-qt/
           - !vendors/
         
 flags:
