@@ -42,7 +42,6 @@
         <file>Dialogs/TermsAndConditionsDialog.qml</file>
         <file>Dialogs/PluginsDialog.qml</file>
         <file>Components/LayoutButton.qml</file>
-        <file>Graphics/vector-icon.svg</file>
         <file>Constants/UIConfig.js</file>
         <file>Components/SelectedIcon.qml</file>
         <file>Components/CompletionBox.qml</file>
@@ -77,8 +76,6 @@
         <file>CollapserTabs/QuickBufferTab.qml</file>
         <file>Dialogs/UserDictEditDialog.qml</file>
         <file>Components/LoaderIcon.qml</file>
-        <file>Graphics/video-icon.svg</file>
-        <file>Graphics/video-icon-s.png</file>
         <file>Graphics/video-default-thumbnail.png</file>
         <file>Graphics/black/Icon_donate.svg</file>
         <file>Graphics/slategray/Icon_donate.svg</file>
@@ -149,5 +146,7 @@
         <file>Graphics/slategray/Folders_icon_selected.svg</file>
         <file>Graphics/slategray/Translator_icon_normal.svg</file>
         <file>Graphics/slategray/Translator_icon_selected.svg</file>
+        <file>Graphics/vector-icon.svg</file>
+        <file>Graphics/video-icon.svg</file>
     </qresource>
 </RCC>

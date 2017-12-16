@@ -31,6 +31,7 @@
 #include "../Helpers/filehelpers.h"
 #include "../Helpers/updatehelpers.h"
 #include "../QMLExtensions/colorsmodel.h"
+#include "../Helpers/filehelpers.h"
 
 #ifdef Q_OS_WIN
 #include <QWinTaskbarButton>
@@ -149,6 +150,10 @@ namespace Helpers {
     bool HelpersQmlWrapper::isVector(const QString &path) const {
         return path.endsWith("eps", Qt::CaseInsensitive) ||
                 path.endsWith("ai", Qt::CaseInsensitive);
+    }
+
+    bool HelpersQmlWrapper::isVideo(const QString &path) const {
+        return Helpers::couldBeVideo(path);
     }
 
     QString HelpersQmlWrapper::toImagePath(const QString &path) const {

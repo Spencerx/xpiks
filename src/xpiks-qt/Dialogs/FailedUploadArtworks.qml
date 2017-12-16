@@ -234,17 +234,25 @@ Item {
                                                 cache: false
                                             }
 
-                                            Image {
-                                                id: imageTypeIcon
-                                                property bool isVector: helpersWrapper.isVector(imageItem.delegateData)
-                                                visible: isVector
-                                                enabled: isVector
-                                                source: "qrc:/Graphics/vector-icon.svg"
-                                                sourceSize.width: 20
-                                                sourceSize.height: 20
+                                            Rectangle {
                                                 anchors.left: artworkImage.left
                                                 anchors.bottom: artworkImage.bottom
-                                                cache: true
+                                                width: 20
+                                                height: 20
+                                                color: uiColors.defaultDarkColor
+                                                property bool isVideo: helpersWrapper.isVideo(imageItem.delegateData)
+                                                property bool isVector: helpersWrapper.isVector(imageItem.delegateData)
+                                                visible: isVideo || isVector
+                                                enabled: isVideo || isVector
+
+                                                Image {
+                                                    id: typeIcon
+                                                    anchors.fill: parent
+                                                    source: parent.isVector ? "qrc:/Graphics/vector-icon.svg" : (parent.isVideo ? "qrc:/Graphics/video-icon.svg" : "")
+                                                    sourceSize.width: 20
+                                                    sourceSize.height: 20
+                                                    cache: true
+                                                }
                                             }
                                         }
 

@@ -51,6 +51,7 @@ namespace Helpers {
         Q_INVOKABLE void removeUnavailableFiles();
         Q_INVOKABLE void revealArtworkFile(const QString &path);
         Q_INVOKABLE bool isVector(const QString &path) const;
+        Q_INVOKABLE bool isVideo(const QString &path) const;
         Q_INVOKABLE QString toImagePath(const QString &path) const;
         Q_INVOKABLE void setUpgradeConsent();
         Q_INVOKABLE void upgradeNow();

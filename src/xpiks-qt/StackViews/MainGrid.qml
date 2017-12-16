@@ -1156,28 +1156,25 @@ Item {
                                                 cache: false
                                             }
 
-                                            Image {
-                                                id: videoTypeIcon
-                                                visible: isvideo
-                                                enabled: isvideo
-                                                source: "qrc:/Graphics/video-icon-s.png"
-                                                fillMode: Image.PreserveAspectCrop
-                                                //sourceSize.width: 300
-                                                //sourceSize.height: 300
-                                                anchors.fill: artworkImage
-                                                cache: true
-                                            }
-
-                                            Image {
-                                                id: imageTypeIcon
-                                                visible: hasvectorattached
-                                                enabled: hasvectorattached
-                                                source: "qrc:/Graphics/vector-icon.svg"
-                                                sourceSize.width: 20
-                                                sourceSize.height: 20
-                                                anchors.left: artworkImage.left
+                                            Rectangle {
+                                                anchors.right: artworkImage.right
                                                 anchors.bottom: artworkImage.bottom
-                                                cache: true
+                                                width: 20
+                                                height: 20
+                                                color: uiColors.defaultDarkColor
+                                                property bool isVideo: isvideo
+                                                property bool isVector: hasvectorattached
+                                                visible: isVideo || isVector
+                                                enabled: isVideo || isVector
+
+                                                Image {
+                                                    id: typeIcon
+                                                    anchors.fill: parent
+                                                    source: parent.isVector ? "qrc:/Graphics/vector-icon.svg" : (parent.isVideo ? "qrc:/Graphics/video-icon.svg" : "")
+                                                    sourceSize.width: 20
+                                                    sourceSize.height: 20
+                                                    cache: true
+                                                }
                                             }
 
                                             Rectangle {
