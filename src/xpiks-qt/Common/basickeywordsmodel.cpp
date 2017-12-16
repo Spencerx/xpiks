@@ -357,7 +357,7 @@ namespace Common {
             Q_UNUSED(locker);
 
             QVector<int> indicesToRemove;
-            if (m_Impl->removeKeywordsUnsafe(keywords, caseSensitive, indicesToRemove)) {
+            if (m_Impl->findKeywordsIndicesUnsafe(keywords, caseSensitive, indicesToRemove)) {
                 Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
                 AbstractListModel::doRemoveItemsFromRanges(rangesToRemove);
                 anyRemoved = true;

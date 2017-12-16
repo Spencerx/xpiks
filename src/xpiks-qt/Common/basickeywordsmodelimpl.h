@@ -69,7 +69,7 @@ namespace Common {
         bool containsKeywordUnsafe(const QString &searchTerm, Common::SearchFlags searchFlags=Common::SearchFlags::Keywords);
         bool hasKeywordsSpellErrorUnsafe() const;
         bool hasKeywordsDuplicatesUnsafe() const;
-        bool removeKeywordsUnsafe(const QSet<QString> &keywordsToRemove, bool caseSensitive, QVector<int> &indicesToRemove);
+        bool findKeywordsIndicesUnsafe(const QSet<QString> &keywordsToFind, bool caseSensitive, QVector<int> &foundIndices);
         bool hasKeywordsUnsafe(const QStringList &keywordsList) const;
         QStringList generateStringListUnsafe();
 

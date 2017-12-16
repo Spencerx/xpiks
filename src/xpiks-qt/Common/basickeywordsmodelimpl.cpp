@@ -277,10 +277,10 @@ namespace Common {
         return hasDuplicate;
     }
 
-    bool BasicKeywordsModelImpl::removeKeywordsUnsafe(const QSet<QString> &keywordsToRemove, bool caseSensitive, QVector<int> &indicesToRemove) {
+    bool BasicKeywordsModelImpl::findKeywordsIndicesUnsafe(const QSet<QString> &keywordsToFind, bool caseSensitive, QVector<int> &foundIndices) {
         size_t size = m_KeywordsList.size();
 
-        indicesToRemove.reserve((int)size/2);
+        foundIndices.reserve((int)size/2);
 
         for (size_t i = 0; i < size; ++i) {
             QString keyword = m_KeywordsList.at(i).m_Value;
@@ -289,13 +289,13 @@ namespace Common {
                 keyword = keyword.toLower();
             }
 
-            if (keywordsToRemove.contains(keyword)) {
-                indicesToRemove.append((int)i);
+            if (keywordsToFind.contains(keyword)) {
+                foundIndices.append((int)i);
             }
         }
 
-        bool anythingRemoved = !indicesToRemove.empty();
-        return anythingRemoved;
+        bool anythingFound = !foundIndices.empty();
+        return anythingFound;
     }
 
     bool BasicKeywordsModelImpl::hasKeywordsUnsafe(const QStringList &keywordsList) const {
