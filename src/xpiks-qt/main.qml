@@ -1630,7 +1630,7 @@ ApplicationWindow {
 
             StyledLink {
                 text: i18.n + qsTr("Check warnings")
-                enabled: mainStackView.areActionsAllowed
+                enabled: mainStackView.areActionsAllowed && (warningsModel.warningsCount > 0)
                 normalLinkColor: uiColors.labelActiveForeground
                 onClicked: {
                     warningsModel.update()
