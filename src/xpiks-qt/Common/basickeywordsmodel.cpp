@@ -39,23 +39,18 @@ namespace Common {
 
     void BasicKeywordsModel::removeItemsFromRanges(const QVector<QPair<int, int> > &ranges) {
         LOG_INFO << "#";
-        int rangesLength = Helpers::getRangesLength(ranges);
 
-        {
-            QWriteLocker writeLocker(m_Impl->accessLock());
-            Q_UNUSED(writeLocker);
+        QWriteLocker writeLocker(&m_KeywordsLock);
+        Q_UNUSED(writeLocker);
 
-            AbstractListModel::doRemoveItemsFromRanges(ranges);
-        }
-
-        AbstractListModel::doEmitItemsRemovedAtIndices(ranges, rangesLength);
+        AbstractListModel::removeItemsFromRanges(ranges);
     }
 
     void BasicKeywordsModel::removeInnerItem(int row) {
         QString removedKeyword;
         bool wasCorrect = false;
 
-        m_Impl->takeKeywordAtUnsafe(row, removedKeyword, wasCorrect);
+        m_Impl->takeKeywordAt(row, removedKeyword, wasCorrect);
         LOG_INTEGRATION_TESTS << "keyword:" << removedKeyword << "was correct:" << wasCorrect;
         Q_UNUSED(removedKeyword);
         Q_UNUSED(wasCorrect);
@@ -63,20 +58,20 @@ namespace Common {
 
     int BasicKeywordsModel::rowCount(const QModelIndex &parent) const {
         Q_UNUSED(parent);
-        return m_Impl->getKeywordsCount();
+        return (int)m_Impl->getKeywordsSize();
     }
 
     QVariant BasicKeywordsModel::data(const QModelIndex &index, int role) const {
-        QReadLocker readLocker(m_Impl->accessLock());
-        Q_UNUSED(readLocker);
+        //QReadLocker readLocker(&m_KeywordsLock);
+        //Q_UNUSED(readLocker);
 
         const int row = index.row();
 
-        if (row < 0 || row >= (int)m_Impl->getKeywordsSizeUnsafe()) {
+        if (row < 0 || row >= (int)m_Impl->getKeywordsSize()) {
             return QVariant();
         }
 
-        auto &keyword = m_Impl->accessKeywordUnsafe(row);
+        auto &keyword = m_Impl->accessKeyword(row);
 
         switch (role) {
             case KeywordRole:
@@ -99,30 +94,38 @@ namespace Common {
     }
 
     int BasicKeywordsModel::getKeywordsCount() {
-        return m_Impl->getKeywordsCount();
+        QReadLocker readLocker(&m_KeywordsLock);
+        Q_UNUSED(readLocker);
+        return (int)m_Impl->getKeywordsSize();
     }
 
     QSet<QString> BasicKeywordsModel::getKeywordsSet() {
+        QReadLocker readLocker(&m_KeywordsLock);
+        Q_UNUSED(readLocker);
         return m_Impl->getKeywordsSet();
     }
 
     QString BasicKeywordsModel::getKeywordsString() {
+        QReadLocker readLocker(&m_KeywordsLock);
+        Q_UNUSED(readLocker);
         return m_Impl->getKeywordsString();
     }
 
     bool BasicKeywordsModel::appendKeyword(const QString &keyword) {
         bool added = false;
-        size_t index = 0;
 
-        {
-            QWriteLocker writeLocker(m_Impl->accessLock());
-            Q_UNUSED(writeLocker);
-            added = m_Impl->appendKeywordUnsafe(keyword, index);
-        }
+        QWriteLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
 
-        if (added) {
+        bool dryRun = true;
+        if (m_Impl->appendKeyword(keyword, dryRun)) {
+            size_t index = m_Impl->getKeywordsSize();
+
             beginInsertRows(QModelIndex(), (int)index, (int)index);
+            m_Impl->appendKeyword(keyword);
             endInsertRows();
+
+            added = true;
         }
 
         return added;
@@ -131,19 +134,18 @@ namespace Common {
     bool BasicKeywordsModel::removeKeywordAt(size_t index, QString &removedKeyword) {
         bool wasCorrect = false, removed = false;
 
-        m_Impl->lockKeywordsWrite();
+        m_KeywordsLock.lockForWrite();
         {
-            if (index < m_Impl->getKeywordsSizeUnsafe()) {
-                m_Impl->takeKeywordAtUnsafe(index, removedKeyword, wasCorrect);
+            if (index < m_Impl->getKeywordsSize()) {
+                beginRemoveRows(QModelIndex(), (int)index, (int)index);
+                m_Impl->takeKeywordAt(index, removedKeyword, wasCorrect);
+                endRemoveRows();
                 removed = true;
             }
         }
-        m_Impl->unlockKeywords();
+        m_KeywordsLock.unlock();
 
         if (removed) {
-            beginRemoveRows(QModelIndex(), (int)index, (int)index);
-            endRemoveRows();
-
             if (!wasCorrect) {
                 notifyKeywordsSpellingChanged();
             }
@@ -158,21 +160,20 @@ namespace Common {
         bool wasCorrect = false, removed = false;
         size_t indexLast = 0;
 
-        m_Impl->lockKeywordsWrite();
+        m_KeywordsLock.lockForWrite();
         {
-            const size_t size = m_Impl->getKeywordsSizeUnsafe();
+            const size_t size = m_Impl->getKeywordsSize();
             if (size > 0) {
                 indexLast = size - 1;
-                m_Impl->takeKeywordAtUnsafe(indexLast, removedKeyword, wasCorrect);
+                beginRemoveRows(QModelIndex(), (int)indexLast, (int)indexLast);
+                m_Impl->takeKeywordAt(indexLast, removedKeyword, wasCorrect);
+                endRemoveRows();
                 removed = true;
             }
         }
-        m_Impl->unlockKeywords();
+        m_KeywordsLock.unlock();
 
         if (removed) {
-            beginRemoveRows(QModelIndex(), (int)indexLast, (int)indexLast);
-            endRemoveRows();
-
             if (!wasCorrect) {
                 notifyKeywordsSpellingChanged();
             }
@@ -184,56 +185,44 @@ namespace Common {
     }
 
     void BasicKeywordsModel::setKeywords(const QStringList &keywordsList) {
-        bool anyChange = false;
-
+        beginResetModel();
         {
-            QWriteLocker writeLocker(m_Impl->accessLock());
+            QWriteLocker writeLocker(&m_KeywordsLock);
             Q_UNUSED(writeLocker);
 
-
-            anyChange = m_Impl->clearKeywordsUnsafe();
-
-            size_t start = 0, end = 0;
-            size_t size = m_Impl->appendKeywordsUnsafe(keywordsList, start, end);
-            if (size > 0) { anyChange = true; }
+            m_Impl->clearKeywords();
+            m_Impl->appendKeywords(keywordsList);
         }
-
-        if (anyChange) {
-            beginResetModel();
-            endResetModel();
-        }
+        endResetModel();
     }
 
     size_t BasicKeywordsModel::appendKeywords(const QStringList &keywordsList) {
-        size_t size = 0;
-        size_t start = 0, end = 0;
+        QWriteLocker writeLocker(&m_KeywordsLock);
+        Q_UNUSED(writeLocker);
 
-        {
-            QWriteLocker writeLocker(m_Impl->accessLock());
-            Q_UNUSED(writeLocker);
-            size = m_Impl->appendKeywordsUnsafe(keywordsList, start, end);
-        }
-
-        if (size > 0) {
-            beginInsertRows(QModelIndex(), (int)start, (int)end);
+        size_t appendedCount = 0;
+        if (m_Impl->prepareAppend(keywordsList, appendedCount)) {
+            const size_t size = m_Impl->getKeywordsSize();
+            beginInsertRows(QModelIndex(), (int)size, (int)(size + appendedCount));
+            m_Impl->appendKeywords(keywordsList);
             endInsertRows();
         }
 
-        return size;
+        return appendedCount;
     }
 
     bool BasicKeywordsModel::editKeyword(size_t index, const QString &replacement) {
         bool result = false;
 
-        m_Impl->lockKeywordsWrite();
+        m_KeywordsLock.lockForWrite();
         {
-            if (index < m_Impl->getKeywordsSizeUnsafe()) {
-                result = m_Impl->editKeywordUnsafe(index, replacement);
+            if (index < m_Impl->getKeywordsSize()) {
+                result = m_Impl->editKeyword(index, replacement);
             } else {
                 LOG_WARNING << "Failed to edit keyword with index" << index;
             }
         }
-        m_Impl->unlockKeywords();
+        m_KeywordsLock.unlock();
 
         if (result) {
             QModelIndex i = this->index((int)index);
@@ -246,16 +235,16 @@ namespace Common {
     bool BasicKeywordsModel::clearKeywords() {
         bool result = false;
 
-        m_Impl->lockKeywordsWrite();
+        beginResetModel();
         {
-            result = m_Impl->clearKeywordsUnsafe();
+            QWriteLocker locker(&m_KeywordsLock);
+            Q_UNUSED(locker);
+
+            result = m_Impl->clearKeywords();
         }
-        m_Impl->unlockKeywords();
+        endResetModel();
 
         if (result) {
-            beginResetModel();
-            endResetModel();
-
             notifyKeywordsSpellingChanged();
             emit hasDuplicatesChanged();
         }
@@ -266,36 +255,32 @@ namespace Common {
     bool BasicKeywordsModel::expandPreset(size_t keywordIndex, const QStringList &presetList) {
         LOG_INFO << keywordIndex;
         bool expanded = false;
-        size_t start = 0, end = 0;
         size_t addedCount = 0;
 
         {
-            QWriteLocker writeLocker(m_Impl->accessLock());
+            QWriteLocker writeLocker(&m_KeywordsLock);
             Q_UNUSED(writeLocker);
 
-            if (keywordIndex < m_Impl->getKeywordsSizeUnsafe()) {
+            if (keywordIndex < m_Impl->getKeywordsSize()) {
                 LOG_INFO << "index" << keywordIndex << "list:" << presetList;
                 QString removedKeyword;
                 bool wasCorrect = false;
-                m_Impl->takeKeywordAtUnsafe(keywordIndex, removedKeyword, wasCorrect);
+                beginRemoveRows(QModelIndex(), (int)keywordIndex, (int)keywordIndex);
+                m_Impl->takeKeywordAt(keywordIndex, removedKeyword, wasCorrect);
+                endRemoveRows();
 
                 LOG_INFO << "replaced keyword" << removedKeyword;
                 Q_UNUSED(wasCorrect);
 
-                addedCount = m_Impl->appendKeywordsUnsafe(presetList, start, end);
-                LOG_INFO << addedCount << "new added";
+                if (m_Impl->prepareAppend(presetList, addedCount)) {
+                    size_t size = m_Impl->getKeywordsSize();
+                    beginInsertRows(QModelIndex(), (int)size, (int)(size + addedCount));
+                    m_Impl->appendKeywords(presetList);
+                    endInsertRows();
+                    LOG_INFO << addedCount << "new added";
+                }
 
                 expanded = true;
-            }
-        }
-
-        if (expanded) {
-            beginRemoveRows(QModelIndex(), (int)keywordIndex, (int)keywordIndex);
-            endRemoveRows();
-
-            if (addedCount > 0) {
-                beginInsertRows(QModelIndex(), (int)start, (int)end);
-                endInsertRows();
             }
         }
 
@@ -309,10 +294,14 @@ namespace Common {
     }
 
     bool BasicKeywordsModel::hasKeywords(const QStringList &keywordsList) {
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
         return m_Impl->hasKeywords(keywordsList);
     }
 
     bool BasicKeywordsModel::areKeywordsEmpty() {
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
         return m_Impl->areKeywordsEmpty();
     }
 
@@ -327,20 +316,19 @@ namespace Common {
 
         const bool needToCheckKeywords = Common::HasFlag(flags, Common::SearchFlags::Keywords);
         if (needToCheckKeywords) {
-            QWriteLocker locker(m_Impl->accessLock());
+            QWriteLocker locker(&m_KeywordsLock);
             Q_UNUSED(locker);
 
-            if (m_Impl->replaceInKeywordsUnsafe(replaceWhat, replaceTo, flags, indicesToRemove, indicesToUpdate)) {
+            if (m_Impl->replaceInKeywords(replaceWhat, replaceTo, flags, indicesToRemove, indicesToUpdate)) {
                 Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
-                AbstractListModel::doRemoveItemsFromRanges(rangesToRemove);
+                AbstractListModel::removeItemsFromRanges(rangesToRemove);
                 anyChanged = true;
             }
         }
 
         if (anyChanged) {
-            AbstractListModel::emitRemovedSignalsForRanges(rangesToRemove);
-            int size = m_Impl->getKeywordsCount();
-            // update all because of easiness instead of calculated correct shifts after removal
+            const int size = (int)m_Impl->getKeywordsSize();
+            // update all because of easiness instead of calculating correct shifts after removal
             this->updateItemsInRanges({{0, size - 1}}, QVector<int>() << KeywordRole);
         }
 
@@ -353,46 +341,59 @@ namespace Common {
         QVector<QPair<int, int> > rangesToRemove;
 
         {
-            QWriteLocker locker(m_Impl->accessLock());
+            QWriteLocker locker(&m_KeywordsLock);
             Q_UNUSED(locker);
 
             QVector<int> indicesToRemove;
-            if (m_Impl->findKeywordsIndicesUnsafe(keywords, caseSensitive, indicesToRemove)) {
+            if (m_Impl->findKeywordsIndices(keywords, caseSensitive, indicesToRemove)) {
                 Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
-                AbstractListModel::doRemoveItemsFromRanges(rangesToRemove);
+                AbstractListModel::removeItemsFromRanges(rangesToRemove);
                 anyRemoved = true;
             }
-        }
-
-        if (anyRemoved) {
-            AbstractListModel::emitRemovedSignalsForRanges(rangesToRemove);
         }
 
         return anyRemoved;
     }
 
     QString BasicKeywordsModel::retrieveKeyword(size_t wordIndex) {
-        return m_Impl->retrieveKeyword(wordIndex);
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
+        auto &keyword = m_Impl->accessKeyword(wordIndex);
+        return keyword.m_Value;
     }
 
     QStringList BasicKeywordsModel::getKeywords() {
-        return m_Impl->getKeywords();
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
+        return m_Impl->generateStringList();
     }
 
     void BasicKeywordsModel::setKeywordsSpellCheckResults(const std::vector<std::shared_ptr<SpellCheck::SpellCheckQueryItem> > &items) {
-       m_Impl->setKeywordsSpellCheckResults(items);
+        QWriteLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
+        m_Impl->setSpellCheckResults(items);
     }
 
     std::vector<KeywordItem> BasicKeywordsModel::retrieveMisspelledKeywords() {
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
         return m_Impl->retrieveMisspelledKeywords();
     }
 
     std::vector<KeywordItem> BasicKeywordsModel::retrieveDuplicatedKeywords() {
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
         return m_Impl->retrieveDuplicatedKeywords();
     }
 
     Common::KeywordReplaceResult BasicKeywordsModel::fixKeywordSpelling(size_t index, const QString &existing, const QString &replacement) {
-        Common::KeywordReplaceResult result = m_Impl->fixKeywordSpelling(index, existing, replacement);
+        Common::KeywordReplaceResult result;
+
+        {
+            QWriteLocker locker(&m_KeywordsLock);
+            Q_UNUSED(locker);
+            result = m_Impl->fixKeywordSpelling(index, existing, replacement);
+        }
 
         if (result == Common::KeywordReplaceResult::Succeeded) {
             QModelIndex i = this->index((int)index);
@@ -410,19 +411,17 @@ namespace Common {
         QVector<QPair<int, int> > rangesToRemove;
 
         {
-            QWriteLocker locker(m_Impl->accessLock());
+            QWriteLocker locker(&m_KeywordsLock);
             Q_UNUSED(locker);
 
             QVector<int> indicesToRemove;
-            if (m_Impl->processFailedKeywordReplacementsUnsafe(candidatesForRemoval, indicesToRemove)) {
+            if (m_Impl->processFailedKeywordReplacements(candidatesForRemoval, indicesToRemove)) {
                 Q_ASSERT(!indicesToRemove.isEmpty());
                 Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
-                AbstractListModel::doRemoveItemsFromRanges(rangesToRemove);
+                AbstractListModel::removeItemsFromRanges(rangesToRemove);
                 anyReplaced = true;
             }
         }
-
-        AbstractListModel::emitRemovedSignalsForRanges(rangesToRemove);
 
         return anyReplaced;
     }
@@ -441,41 +440,63 @@ namespace Common {
     }
 
     void BasicKeywordsModel::resetSpellCheckResults() {
-        m_Impl->resetSpellCheckResults();
+        {
+            QWriteLocker locker(&m_KeywordsLock);
+            Q_UNUSED(locker);
+            m_Impl->resetSpellCheckResults();
+        }
         emit spellingInfoUpdated();
     }
 
     void BasicKeywordsModel::resetDuplicatesInfo() {
-        m_Impl->resetDuplicatesInfo();
+        {
+            QWriteLocker locker(&m_KeywordsLock);
+            Q_UNUSED(locker);
+            m_Impl->resetDuplicatesInfo();
+        }
         emit spellingInfoUpdated();
     }
 
     bool BasicKeywordsModel::containsKeyword(const QString &searchTerm, Common::SearchFlags searchFlags) {
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
         return m_Impl->containsKeyword(searchTerm, searchFlags);
     }
 
     bool BasicKeywordsModel::containsKeywords(const QStringList &keywordsList) {
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
         return m_Impl->containsKeywords(keywordsList);
     }
 
     bool BasicKeywordsModel::isEmpty() {
-        return m_Impl->isEmpty();
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
+        return m_Impl->areKeywordsEmpty();
     }
 
     bool BasicKeywordsModel::hasKeywordsSpellError() {
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
         return m_Impl->hasKeywordsSpellError();
     }
 
     bool BasicKeywordsModel::hasKeywordsDuplicates() {
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
         return m_Impl->hasKeywordsDuplicates();
     }
 
     bool BasicKeywordsModel::hasSpellErrors() {
-        return m_Impl->hasSpellErrors();
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
+        return m_Impl->hasKeywordsSpellError();
     }
 
     bool BasicKeywordsModel::hasDuplicates() {
-        return m_Impl->hasDuplicates();
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
+        return m_Impl->hasKeywordsDuplicates();
     }
 
     void BasicKeywordsModel::notifySpellCheckResults(Common::SpellCheckFlags flags) {
@@ -500,10 +521,14 @@ namespace Common {
     }
 
     bool BasicKeywordsModel::hasKeyword(const QString &keyword) {
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
         return m_Impl->hasKeyword(keyword);
     }
 
     bool BasicKeywordsModel::canEditKeyword(int index, const QString &replacement) {
+        QReadLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
         return m_Impl->canEditKeyword(index, replacement);
     }
 

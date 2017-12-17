@@ -18,6 +18,7 @@
 #include <QHash>
 #include <QVector>
 #include <QHash>
+#include <QReadWriteLock>
 #include <memory>
 #include "flags.h"
 #include "wordanalysisresult.h"
@@ -153,6 +154,7 @@ namespace Common {
         void updateKeywordsHighlighting();
 
     private:
+        QReadWriteLock m_KeywordsLock;
         std::shared_ptr<BasicKeywordsModelImpl> m_Impl;
     };
 }

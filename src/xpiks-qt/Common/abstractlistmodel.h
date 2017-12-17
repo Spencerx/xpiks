@@ -29,16 +29,9 @@ namespace Common {
 
     public:
         virtual void removeItemsFromRanges(const QVector<QPair<int, int> > &ranges) {
-            doRemoveItemsFromRanges(ranges);
-            emitRemovedSignalsForRanges(ranges);
-        }
-
-        virtual void emitRemovedSignalsForRanges(const QVector<QPair<int, int> > &ranges) {
-            if (ranges.empty()) { return; }
-
             int rangesLength = Helpers::getRangesLength(ranges);
             LOG_INFO << "Ranges length:" << rangesLength;
-            doEmitItemsRemovedAtIndices(ranges, rangesLength);
+            doRemoveItemsFromRanges(ranges, rangesLength);
         }
 
     protected:
@@ -62,34 +55,35 @@ namespace Common {
             for (int row = endRow; row >= startRow; --row) { removeInnerItem(row); }
         }
 
-        void doRemoveItemsFromRanges(const QVector<QPair<int, int> > &ranges) {
+        void doRemoveItemsFromRanges(const QVector<QPair<int, int> > &ranges, int rangesLength) {
             const int rangesCount = ranges.count();
-            for (int i = rangesCount - 1; i >= 0; --i) {
-                const int startRow = ranges[i].first;
-                const int endRow = ranges[i].second;
-
-                removeInnerItemRange(startRow, endRow);
-            }
-        }
-
-        void doEmitItemsRemovedAtIndices(const QVector<QPair<int, int> > &ranges, int rangesLength) {
             const int rangesLengthForReset = getRangesLengthForReset();
+
             const bool willResetModel = rangesLength >= rangesLengthForReset;
 
             if (willResetModel) {
                 beginResetModel();
-                endResetModel();
-            } else {
-                const int rangesCount = ranges.count();
-                QModelIndex dummy;
+            }
 
-                for (int i = rangesCount - 1; i >= 0; --i) {
-                    const int startRow = ranges[i].first;
-                    const int endRow = ranges[i].second;
+            QModelIndex dummy;
 
+            for (int i = rangesCount - 1; i >= 0; --i) {
+                const int startRow = ranges[i].first;
+                const int endRow = ranges[i].second;
+
+                if (!willResetModel) {
                     beginRemoveRows(dummy, startRow, endRow);
+                }
+
+                removeInnerItemRange(startRow, endRow);
+
+                if (!willResetModel) {
                     endRemoveRows();
                 }
+            }
+
+            if (willResetModel) {
+                endResetModel();
             }
         }
     };
