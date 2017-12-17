@@ -38,9 +38,7 @@ int PlainTextEditTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -52,9 +50,7 @@ int PlainTextEditTest::doTest() {
     filteredModel->combineSelectedArtworks();
 
     // wait for after-add spellchecking
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for initial spellchecks");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for initial spellchecks");
 
     Models::CombinedArtworksModel *combinedModel = m_CommandManager->getCombinedArtworksModel();
     auto *basicModel = combinedModel->retrieveBasicMetadataModel();

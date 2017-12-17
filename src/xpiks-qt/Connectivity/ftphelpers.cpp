@@ -133,7 +133,6 @@ namespace Connectivity {
           LOG_INFO << sanitizeCurlLogline(Helpers::string_format("== Info: %s", data));
       default: /* in case a new one is introduced to shock us */
           return 0;
-
       case CURLINFO_HEADER_OUT:
           text = "=> Send header";
           break;

@@ -61,13 +61,13 @@
     </message>
     <message>
         <location filename="../../StackViews/ArtworkEditView.qml" line="261"/>
-        <location filename="../../StackViews/ArtworkEditView.qml" line="1181"/>
+        <location filename="../../StackViews/ArtworkEditView.qml" line="1169"/>
         <source>Suggest keywords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/ArtworkEditView.qml" line="284"/>
-        <location filename="../../StackViews/ArtworkEditView.qml" line="1162"/>
+        <location filename="../../StackViews/ArtworkEditView.qml" line="1150"/>
         <source>Show duplicates</source>
         <translation type="unfinished"></translation>
     </message>
@@ -102,44 +102,44 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/ArtworkEditView.qml" line="629"/>
+        <location filename="../../StackViews/ArtworkEditView.qml" line="617"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/ArtworkEditView.qml" line="629"/>
+        <location filename="../../StackViews/ArtworkEditView.qml" line="617"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/ArtworkEditView.qml" line="697"/>
+        <location filename="../../StackViews/ArtworkEditView.qml" line="685"/>
         <source>Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/ArtworkEditView.qml" line="822"/>
+        <location filename="../../StackViews/ArtworkEditView.qml" line="810"/>
         <source>Description:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/ArtworkEditView.qml" line="954"/>
+        <location filename="../../StackViews/ArtworkEditView.qml" line="942"/>
         <source>Keywords:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/ArtworkEditView.qml" line="1216"/>
+        <location filename="../../StackViews/ArtworkEditView.qml" line="1204"/>
         <source>More</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/ArtworkEditView.qml" line="270"/>
-        <location filename="../../StackViews/ArtworkEditView.qml" line="1140"/>
+        <location filename="../../StackViews/ArtworkEditView.qml" line="1128"/>
         <source>Fix spelling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/ArtworkEditView.qml" line="294"/>
-        <location filename="../../StackViews/ArtworkEditView.qml" line="1195"/>
+        <location filename="../../StackViews/ArtworkEditView.qml" line="1183"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -333,74 +333,74 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="133"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="132"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="134"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="133"/>
         <source>Please, select some export plans first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="139"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="138"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="140"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="139"/>
         <source>CSV export finished</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="343"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="342"/>
         <source>Add new</source>
         <comment>csv export plan</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="377"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="376"/>
         <source>1 artwork selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="377"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="376"/>
         <source>%1 artworks selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="410"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="409"/>
         <source>Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="450"/>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="608"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="449"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="607"/>
         <source>Untitled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="492"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="491"/>
         <source>Column name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="499"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="498"/>
         <source>Property:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="684"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="683"/>
         <source>Add column</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="787"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="786"/>
         <source>Start Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/CsvExportDialog.qml" line="802"/>
+        <location filename="../../Dialogs/CsvExportDialog.qml" line="801"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -538,27 +538,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/DuplicatesReView.qml" line="192"/>
+        <location filename="../../StackViews/DuplicatesReView.qml" line="189"/>
         <source>Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/DuplicatesReView.qml" line="229"/>
+        <location filename="../../StackViews/DuplicatesReView.qml" line="226"/>
         <source>Description:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/DuplicatesReView.qml" line="267"/>
+        <location filename="../../StackViews/DuplicatesReView.qml" line="264"/>
         <source>Keywords:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/DuplicatesReView.qml" line="323"/>
+        <location filename="../../StackViews/DuplicatesReView.qml" line="320"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/DuplicatesReView.qml" line="347"/>
+        <location filename="../../StackViews/DuplicatesReView.qml" line="344"/>
         <source>There are no duplicates</source>
         <translation type="unfinished"></translation>
     </message>
@@ -632,18 +632,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ExportMetadata.qml" line="189"/>
-        <location filename="../../Dialogs/ExportMetadata.qml" line="207"/>
+        <location filename="../../Dialogs/ExportMetadata.qml" line="188"/>
+        <location filename="../../Dialogs/ExportMetadata.qml" line="206"/>
         <source>Start Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ExportMetadata.qml" line="193"/>
+        <location filename="../../Dialogs/ExportMetadata.qml" line="192"/>
         <source>Exporting...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ExportMetadata.qml" line="221"/>
+        <location filename="../../Dialogs/ExportMetadata.qml" line="220"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -666,7 +666,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/FailedUploadArtworks.qml" line="284"/>
+        <location filename="../../Dialogs/FailedUploadArtworks.qml" line="292"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -805,27 +805,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ImportMetadata.qml" line="196"/>
+        <location filename="../../Dialogs/ImportMetadata.qml" line="191"/>
         <source>Import existing metadata</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ImportMetadata.qml" line="201"/>
+        <location filename="../../Dialogs/ImportMetadata.qml" line="196"/>
         <source>from %1 file(s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ImportMetadata.qml" line="215"/>
+        <location filename="../../Dialogs/ImportMetadata.qml" line="221"/>
         <source>Ignore autosaves</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ImportMetadata.qml" line="229"/>
+        <location filename="../../Dialogs/ImportMetadata.qml" line="235"/>
         <source>Start Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ImportMetadata.qml" line="246"/>
+        <location filename="../../Dialogs/ImportMetadata.qml" line="252"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -952,7 +952,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/LogsDialog.qml" line="208"/>
+        <location filename="../../Dialogs/LogsDialog.qml" line="207"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -986,13 +986,13 @@
     </message>
     <message>
         <location filename="../../StackViews/MainGrid.qml" line="200"/>
-        <location filename="../../StackViews/MainGrid.qml" line="1760"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1757"/>
         <source>Suggest keywords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/MainGrid.qml" line="217"/>
-        <location filename="../../StackViews/MainGrid.qml" line="1742"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1739"/>
         <source>Show duplicates</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1073,29 +1073,29 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1259"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1257"/>
         <source>Description:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1276"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1274"/>
         <source>Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1512"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1509"/>
         <source>Keywords:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/MainGrid.qml" line="209"/>
-        <location filename="../../StackViews/MainGrid.qml" line="1724"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1721"/>
         <source>Fix spelling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/MainGrid.qml" line="227"/>
-        <location filename="../../StackViews/MainGrid.qml" line="1777"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1774"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1106,7 +1106,7 @@
     </message>
     <message>
         <location filename="../../StackViews/MainGrid.qml" line="439"/>
-        <location filename="../../StackViews/MainGrid.qml" line="1799"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1796"/>
         <source>More</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1126,23 +1126,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1902"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1899"/>
         <source>No items available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1907"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1904"/>
         <source>Add files</source>
         <comment>link</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1912"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1909"/>
         <source>or</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1917"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1914"/>
         <source>clear the filter</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1398,10 +1398,10 @@
     <message>
         <location filename="../../KeywordsPresets/presetkeywordsmodel.cpp" line="838"/>
         <location filename="../../KeywordsPresets/presetmodel.h" line="30"/>
-        <location filename="../../MetadataIO/csvexportmodel.cpp" line="57"/>
-        <location filename="../../MetadataIO/csvexportmodel.cpp" line="71"/>
-        <location filename="../../MetadataIO/csvexportmodel.cpp" line="184"/>
-        <location filename="../../MetadataIO/csvexportmodel.cpp" line="417"/>
+        <location filename="../../MetadataIO/csvexportmodel.cpp" line="58"/>
+        <location filename="../../MetadataIO/csvexportmodel.cpp" line="72"/>
+        <location filename="../../MetadataIO/csvexportmodel.cpp" line="185"/>
+        <location filename="../../MetadataIO/csvexportmodel.cpp" line="412"/>
         <location filename="../../Models/uploadinfo.h" line="50"/>
         <location filename="../../Models/uploadinfo.h" line="62"/>
         <location filename="../../Models/uploadinfo.h" line="85"/>
@@ -1672,252 +1672,240 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="150"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="127"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="156"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="168"/>
         <location filename="../../Dialogs/SettingsWindow.qml" line="179"/>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="191"/>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="202"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="151"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="128"/>
         <source>Switching off master password will make your passwords storage less secure. Continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="180"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="157"/>
         <source>Are you sure you want to reset all settings? 
 This action cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="192"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="169"/>
         <source>Are you sure you want to clear user dictionary? 
 This action cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="203"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="180"/>
         <source>Are you sure you want to reset Master password? 
 All upload hosts&apos; passwords will be purged.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="229"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="206"/>
         <source>Behavior</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="233"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="210"/>
         <source>System</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="378"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="355"/>
         <source>Detect duplicates automatically</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="449"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="426"/>
         <source>Search by path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="496"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="473"/>
         <source>Autocomplete presets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1184"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1064"/>
         <source>Detailed logging</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1319"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1199"/>
         <source>Restore last session on startup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1367"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1247"/>
         <source>Check for updates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1415"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1295"/>
         <source>Health report</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1459"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1339"/>
         <source>Experimental settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1524"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1404"/>
         <source>Automatic metadata import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1588"/>
-        <source>Save and close</source>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1468"/>
+        <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1343"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1223"/>
         <source>Use confirmation dialogs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="426"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="403"/>
         <source>Search match all terms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="520"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="497"/>
         <source>Attach vector automatically</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1391"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1271"/>
         <source>Save backups for artworks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="402"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="379"/>
         <source>Check spelling automatically</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="472"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="449"/>
         <source>Autocomplete keywords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="230"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="207"/>
         <source>Interface</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="571"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="548"/>
         <source>Theme:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="608"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="585"/>
         <source>Fit artwork&apos;s preview</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="636"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="613"/>
         <source>Keywords size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="689"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="666"/>
         <source>keyword</source>
         <comment>standalone</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="722"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="699"/>
         <source>Scroll sensitivity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="758"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="735"/>
         <source>Undo dismiss duration:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="795"/>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1082"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="772"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="962"/>
         <source>(seconds)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="231"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="208"/>
         <source>External</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="827"/>
-        <source>Use ExifTool</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="847"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="804"/>
         <source>ExifTool path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="889"/>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="960"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="845"/>
         <source>Select...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="896"/>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="966"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="851"/>
         <source>Reset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="921"/>
-        <source>Dictionary path:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="997"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="877"/>
         <source>Manage user dictionary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="232"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="209"/>
         <source>Upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1040"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="920"/>
         <source>File upload timeout:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1094"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="974"/>
         <source>Max parallel uploads:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1135"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1015"/>
         <source>(takes effect after relaunch)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1146"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1026"/>
         <source>Use Proxy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1173"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1053"/>
         <source>Configure proxy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1225"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1105"/>
         <source>Use Master password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1261"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1141"/>
         <source>Change Master password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1277"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1157"/>
         <source>Reset Master password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="1569"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="1449"/>
         <source>Reset to defaults</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2348,12 +2336,12 @@ This action cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/WarningsView.qml" line="226"/>
+        <location filename="../../StackViews/WarningsView.qml" line="223"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/WarningsView.qml" line="246"/>
+        <location filename="../../StackViews/WarningsView.qml" line="243"/>
         <source>There are no warnings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2480,17 +2468,17 @@ This action cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WipeMetadata.qml" line="221"/>
+        <location filename="../../Dialogs/WipeMetadata.qml" line="220"/>
         <source>I know what I&apos;m doing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WipeMetadata.qml" line="233"/>
+        <location filename="../../Dialogs/WipeMetadata.qml" line="232"/>
         <source>Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WipeMetadata.qml" line="246"/>
+        <location filename="../../Dialogs/WipeMetadata.qml" line="245"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2632,11 +2620,6 @@ This action cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="774"/>
-        <source>&amp;Video tutorials</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../main.qml" line="779"/>
         <source>&amp;FAQ</source>
         <translation type="unfinished"></translation>
@@ -2765,6 +2748,11 @@ This action cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../main.qml" line="774"/>
+        <source>&amp;User&apos;s guide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../main.qml" line="953"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
@@ -2876,18 +2864,33 @@ They will be detached automatically.</source>
     </message>
     <message>
         <location filename="../../main.qml" line="1675"/>
-        <location filename="../../main.qml" line="1684"/>
+        <location filename="../../main.qml" line="1686"/>
         <source>No items available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1682"/>
+        <location filename="../../main.qml" line="1684"/>
         <source>%1 items available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1682"/>
+        <location filename="../../main.qml" line="1684"/>
         <source>1 item available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../main.qml" line="1711"/>
+        <source>%1 modified items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../main.qml" line="1711"/>
+        <source>1 modified item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../main.qml" line="1711"/>
+        <source>No modified items</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

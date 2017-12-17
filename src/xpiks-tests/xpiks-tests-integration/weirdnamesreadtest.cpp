@@ -35,9 +35,7 @@ int WeirdNamesReadTest::doTest() {
     VERIFY(addedCount == FILES_IN_WEIRD_DIRECTORY, "Failed to add directory");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
     VERIFY(artItemsModel->getArtworksCount() == FILES_IN_WEIRD_DIRECTORY, "Did not read all files!");

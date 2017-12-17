@@ -11,8 +11,9 @@
 #include "csvexportmodel.h"
 #include <QQmlEngine>
 #include <QStandardPaths>
-#include "csvexportworker.h"
+#include <QDir>
 #include <QTimerEvent>
+#include "csvexportworker.h"
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 
@@ -356,8 +357,9 @@ namespace MetadataIO {
 
         QString exportDirectory = m_ExportDirectory;
 
-        if (exportDirectory.isEmpty()) {
+        if (exportDirectory.isEmpty() || !QDir(exportDirectory).exists()) {
             exportDirectory = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+            LOG_INFO << "Export directory is not valid. Saving to Downloads directory...";
         }
 
         CsvExportWorker *exportWorker = new CsvExportWorker(m_ExportPlans, m_ArtworksToExport, exportDirectory);
@@ -437,7 +439,7 @@ namespace MetadataIO {
     }
 
     void CsvExportModel::setOutputDirectory(const QUrl &url) {
-        LOG_DEBUG << url;
+        LOG_INFO << url;
 
         QString localFile = url.toLocalFile();
         if (localFile != m_ExportDirectory) {

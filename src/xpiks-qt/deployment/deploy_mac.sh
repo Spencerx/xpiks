@@ -1,22 +1,22 @@
 #!/bin/bash
 
-if [ ! -f ../deps/exiftool ]; then
+if [ ! -f ../deps/exiftool/exiftool ]; then
     echo "Exiftool not found! Please put latest production release into the ../deps/ dir"
     exit
 fi
 
-APP_NAME=xpiks-qt
+APP_NAME=Xpiks
 VERSION="1.5.0.beta"
 VOL_NAME="Xpiks"
 
 DMG_BACKGROUND_IMG="dmg-background.jpg"
 DMG_BACKGROUND_PATH="../deps/$DMG_BACKGROUND_IMG"
 
-DMG_TMP="xpiks-qt-v${VERSION}.tmp.dmg"
-DMG_FINAL="xpiks-qt-v${VERSION}.dmg"
-STAGING_DIR="./osx_deploy"
+DMG_TMP="${APP_NAME}-v${VERSION}.tmp.dmg"
+DMG_FINAL="${APP_NAME}-v${VERSION}.dmg"
+STAGING_DIR="./osx-release-staging"
 
-BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_9_3_clang_64bit-Release"
+BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_6_2_clang_64bit-Release"
 
 if [ ! -d "$BUILD_DIR" ]; then
     echo "Build directory not found: $BUILD_DIR"
@@ -28,9 +28,20 @@ if [ -d "/Volumes/${VOL_NAME}" ]; then
     exit
 fi
 
-pushd "$BUILD_DIR"
+rm -v -rf "${STAGING_DIR}" "${DMG_TMP}" "${DMG_FINAL}"
+mkdir -p "$STAGING_DIR"
 
-~/Qt5.9.3/5.9.3/clang_64/bin/macdeployqt xpiks-qt.app -verbose=2 -executable=xpiks-qt.app/Contents/MacOS/xpiks-qt -qmldir=../xpiks-qt/ -qmldir=../xpiks-qt/Components/ -qmldir=../xpiks-qt/Constants/ -qmldir=../xpiks-qt/Dialogs/ -qmldir=../xpiks-qt/StyledControls/ -qmldir=../xpiks-qt/StackViews/ -qmldir=../xpiks-qt/CollapserTabs/
+cp -rpfv "$BUILD_DIR/${APP_NAME}.app" "${STAGING_DIR}"
+
+pushd "$STAGING_DIR"
+
+QT_BIN_DIR=~/Qt5.6.2/5.6/clang_64/bin
+DEPLOY_TOOL="$QT_BIN_DIR/macdeployqt"
+XPIKS_QT_DIR="../.."
+
+QML_IMPORTS="-qmldir=$XPIKS_QT_DIR/ -qmldir=$XPIKS_QT_DIR/Components/ -qmldir=$XPIKS_QT_DIR/Constants/ -qmldir=$XPIKS_QT_DIR/Dialogs/ -qmldir=$XPIKS_QT_DIR/StyledControls/ -qmldir=$XPIKS_QT_DIR/StackViews/ -qmldir=$XPIKS_QT_DIR/CollapserTabs/"
+
+$DEPLOY_TOOL "${APP_NAME}.app" -no-strip -verbose=2 -executable="${APP_NAME}.app/Contents/MacOS/${APP_NAME}" $QML_IMPORTS
 
 popd
 
@@ -51,10 +62,10 @@ LIBS_TO_DEPLOY=(
     libquazip.1.0.0.dylib
 )
 
-FRAMEWORKS_DIR="$BUILD_DIR/xpiks-qt.app/Contents/Frameworks"
+FRAMEWORKS_DIR="$STAGING_DIR/${APP_NAME}.app/Contents/Frameworks"
 pushd "$FRAMEWORKS_DIR"
 
-LIBS_PATH="../../../../../libs/release"
+LIBS_PATH="../../../../../../../libs/release"
 
 for lib in "${LIBS_TO_DEPLOY[@]}"
 do
@@ -63,7 +74,7 @@ do
 
     LIBENTRY="${lib%.0.0.dylib}.dylib"
     
-    install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "../MacOS/xpiks-qt"
+    install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "../MacOS/$APP_NAME"
 
     ln -s "$lib" "$LIBENTRY"
 done
@@ -75,9 +86,9 @@ do
     echo "Copying $lib..."
     cp -v "$LIBS_PATH/$lib" .
     
-    install_name_tool -change $lib "@executable_path/../Frameworks/$lib" "../MacOS/xpiks-qt"
+    install_name_tool -change $lib "@executable_path/../Frameworks/$lib" "../MacOS/$APP_NAME"
     # brew fix
-    install_name_tool -change "/usr/local/lib/$lib" "@executable_path/../Frameworks/$lib" "../MacOS/xpiks-qt"
+    install_name_tool -change "/usr/local/lib/$lib" "@executable_path/../Frameworks/$lib" "../MacOS/$APP_NAME"
 
     for depend_lib in "${FFMPEG_LIBS[@]}"
     do
@@ -87,12 +98,11 @@ done
 
 popd
 
-RESOURCES_DIR="$BUILD_DIR/xpiks-qt.app/Contents/Resources"
-pushd $RESOURCES_DIR
+RESOURCES_DIR="$STAGING_DIR/${APP_NAME}.app/Contents/Resources"
 
 echo "Copying exiftool distribution"
-EXIFTOOL_FROM_DIR="../../../../xpiks-qt/deps"
-EXIFTOOL_TO_DIR="exiftool"
+EXIFTOOL_FROM_DIR="../deps/exiftool"
+EXIFTOOL_TO_DIR="$RESOURCES_DIR/exiftool"
 
 if [ ! -d "$EXIFTOOL_TO_DIR" ]; then
     echo "Exiftool directory does not exist. Creating..."
@@ -102,15 +112,7 @@ fi
 cp "$EXIFTOOL_FROM_DIR/exiftool" "$EXIFTOOL_TO_DIR/"
 cp -r "$EXIFTOOL_FROM_DIR/lib" "$EXIFTOOL_TO_DIR/"
 
-popd
-
 # ------------------------------
-
-# clear out any old data
-rm -rf "${STAGING_DIR}" "${DMG_TMP}" "${DMG_FINAL}"
-# copy over the stuff we want in the final disk image to our staging dir
-mkdir -p "${STAGING_DIR}"
-cp -rpf "$BUILD_DIR/${APP_NAME}.app" "${STAGING_DIR}"
 
 echo "App dir is packed. Creating DMG..."
 
@@ -123,6 +125,8 @@ if [ $? -ne 0 ]; then
    echo "Error: Cannot compute size of staging dir"
    exit
 fi
+
+echo "Size is estimated to: $SIZE"
 
 hdiutil create -srcfolder "${STAGING_DIR}" -volname "${VOL_NAME}" -fs HFS+ \
 -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "${DMG_TMP}"
@@ -185,7 +189,6 @@ hdiutil convert "${DMG_TMP}" -format UDZO -imagekey zlib-level=9 -o "${DMG_FINAL
 shasum "${DMG_FINAL}"
 
 # clean up
-rm -rf "${DMG_TMP}"
-rm -rf "${STAGING_DIR}"
+# rm -rf "${DMG_TMP}"
 
 echo 'Done.'

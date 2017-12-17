@@ -39,8 +39,9 @@ clone_folder: c:\projects\xpiks
 # set clone depth
 clone_depth: 3                      # clone entire repository history if not defined
 
-cache:
-  - vendors -> appveyor.yml
+# appveyor cannot process cache correctly
+#cache:
+#  - vendors -> appveyor.yml
 
 matrix:
   fast_finish: true
@@ -89,7 +90,7 @@ build_script:
 after_build:
   - cmd: 'echo %cd%'
   - if defined XPIKS_BINARY cd %configuration%
-  - if defined XPIKS_BINARY windeployqt.exe --debug --qmldir=../../xpiks-qt/CollapserTabs/ --qmldir=../../xpiks-qt/Components/ --qmldir=../../xpiks-qt/Constants/ --qmldir=../../xpiks-qt/Dialogs/ --qmldir=../../xpiks-qt/StackViews/ --qmldir=../../xpiks-qt/StyledControls/ --qmldir=../../xpiks-qt/ xpiks-qt.exe
+  - if defined XPIKS_BINARY windeployqt.exe --debug --qmldir=../../xpiks-qt/CollapserTabs/ --qmldir=../../xpiks-qt/Components/ --qmldir=../../xpiks-qt/Constants/ --qmldir=../../xpiks-qt/Dialogs/ --qmldir=../../xpiks-qt/StackViews/ --qmldir=../../xpiks-qt/StyledControls/ --qmldir=../../xpiks-qt/ Xpiks.exe
   - if defined XPIKS_BINARY xcopy /Y /s c:\projects\xpiks\src\xpiks-qt\deps .
   - if defined XPIKS_BINARY copy /Y ..\..\..\libs\libcurl*.dll .
   - if defined XPIKS_BINARY copy /Y ..\..\..\libs\quazip*.dll .

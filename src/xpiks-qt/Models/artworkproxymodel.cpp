@@ -18,6 +18,7 @@
 #include "../Models/videoartwork.h"
 #include "../Helpers/filehelpers.h"
 #include "../QMLExtensions/videocachingservice.h"
+#include "../QMLExtensions/artworksupdatehub.h"
 
 namespace Models {
     ArtworkProxyModel::ArtworkProxyModel(QObject *parent) :
@@ -384,9 +385,16 @@ namespace Models {
 
 #ifndef CORE_TESTS
         Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork*>(m_ArtworkMetadata);
-        if ((videoArtwork != nullptr) && !videoArtwork->isThumbnailGenerated()) {
-            auto *videoCachingService = m_CommandManager->getVideoCachingService();
-            videoCachingService->generateThumbnail(videoArtwork);
+        if (videoArtwork != nullptr) {
+            if (!videoArtwork->isThumbnailGenerated()) {
+                auto *videoCachingService = m_CommandManager->getVideoCachingService();
+                videoCachingService->generateThumbnail(videoArtwork);
+            } else {
+                auto *updateHub = m_CommandManager->getArtworksUpdateHub();
+                updateHub->updateArtwork(videoArtwork->getItemID(),
+                                         videoArtwork->getLastKnownIndex(),
+                                         QSet<int>() << ArtItemsModel::ArtworkThumbnailRole);
+            }
         }
 #endif
 

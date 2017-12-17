@@ -35,9 +35,7 @@ int AutoImportTest::doTest() {
     int addedCount = artItemsModel->addLocalArtworks(files);
     VERIFY(addedCount == files.length(), "Failed to add file");
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for initial metadata reading.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for initial metadata reading.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
     VERIFY(ioCoordinator->getImportIDs().size() == 1, "Import does not have any trace");
@@ -53,9 +51,7 @@ int AutoImportTest::doTest() {
     bool undoSuccess = undoRedoManager->undoLastAction();
     VERIFY(undoSuccess, "Failed to Undo last action");
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata after undo.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata after undo.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
     VERIFY(ioCoordinator->getImportIDs().size() == 2, "Undo import does not have any trace");

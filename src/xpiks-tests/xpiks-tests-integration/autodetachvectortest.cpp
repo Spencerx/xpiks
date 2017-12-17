@@ -35,9 +35,7 @@ int AutoDetachVectorTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add files");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -56,9 +54,7 @@ int AutoDetachVectorTest::doTest() {
     QObject::connect(artItemsModel, SIGNAL(unavailableVectorsFound()),
                      &unavailableVectorsWaiter, SIGNAL(finished()));
 
-    if (!unavailableVectorsWaiter.wait(5)) {
-        VERIFY(false, "Timeout exceeded for unavailable vectors");
-    }
+    VERIFY(unavailableVectorsWaiter.wait(5), "Timeout exceeded for unavailable vectors");
 
     VERIFY(!image->hasVectorAttached(), "Vector should not be attached!");
 

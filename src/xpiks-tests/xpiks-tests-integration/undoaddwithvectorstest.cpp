@@ -36,9 +36,7 @@ int UndoAddWithVectorsTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -69,9 +67,7 @@ int UndoAddWithVectorsTest::doTest() {
 
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(artItemsModel->getArtworksCount() == files.length(), "Items were not put back");
 

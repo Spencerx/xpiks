@@ -67,8 +67,6 @@ std::shared_ptr<Commands::ICommandResult> Commands::CombinedEditCommand::execute
     itemsToSave.reserve(size);
     affectedItems.reserve((int)size);
 
-    const bool needToClear = Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::Clear);
-
     for (size_t i = 0; i < size; ++i) {
         auto &locker = m_RawSnapshot.at(i);
         Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
@@ -80,12 +78,7 @@ std::shared_ptr<Commands::ICommandResult> Commands::CombinedEditCommand::execute
         setDescription(artwork);
         setTitle(artwork);
 
-        // do not save if Сlear flag present
-        // to be able to restore from .xpks
-        if (!needToClear) {
-            itemsToSave.push_back(artwork);
-        }
-
+        itemsToSave.push_back(artwork);
         affectedItems.push_back(artwork);
     }
 

@@ -281,6 +281,8 @@ namespace Models {
             }, isSelected, unselectFirst);
             break;
         }
+        default:
+            break;
         }
     }
 

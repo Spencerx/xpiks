@@ -771,8 +771,8 @@ ApplicationWindow {
             title: i18.n + qsTr("&Help")
 
             MenuItem {
-                text: i18.n + qsTr("&Video tutorials")
-                onTriggered: Qt.openUrlExternally("https://ribtoks.github.io/xpiks/blog/2016/videos")
+                text: i18.n + qsTr("&User's guide")
+                onTriggered: Qt.openUrlExternally("https://ribtoks.github.io/xpiks/tutorials/")
             }
 
             MenuItem {
@@ -1630,8 +1630,8 @@ ApplicationWindow {
 
             StyledLink {
                 text: i18.n + qsTr("Check warnings")
-                color: isPressed ? uiColors.linkClickedColor : (warningsModel.warningsCount > 0 ? uiColors.artworkModifiedColor : uiColors.labelInactiveForeground)
-                enabled: mainStackView.areActionsAllowed
+                enabled: mainStackView.areActionsAllowed && (warningsModel.warningsCount > 0)
+                normalLinkColor: uiColors.labelActiveForeground
                 onClicked: {
                     warningsModel.update()
                     //filteredArtItemsModel.checkForWarnings()
@@ -1675,6 +1675,8 @@ ApplicationWindow {
                 text: i18.n + qsTr("No items available")
                 color: uiColors.labelInactiveForeground
                 verticalAlignment: Text.AlignVCenter
+                visible: artItemsModel.modifiedArtworksCount == 0
+                enabled: artItemsModel.modifiedArtworksCount == 0
 
                 function updateText() {
                     var itemsCount = filteredArtItemsModel.getItemsCount()
@@ -1695,6 +1697,30 @@ ApplicationWindow {
                 Connections {
                     target: languagesModel
                     onLanguageChanged: filteredCountText.updateText()
+                }
+            }
+
+            StyledText {
+                text: i18.n + getOriginalText()
+                verticalAlignment: Text.AlignVCenter
+                color: uiColors.artworkModifiedColor
+                visible: artItemsModel.modifiedArtworksCount > 0
+                enabled: artItemsModel.modifiedArtworksCount > 0
+
+                function getOriginalText() {
+                    return artItemsModel.modifiedArtworksCount > 1 ? qsTr("%1 modified items").arg(artItemsModel.modifiedArtworksCount) : (artItemsModel.modifiedArtworksCount === 1 ? qsTr("1 modified item") : qsTr("No modified items"))
+                }
+
+                MouseArea {
+                    id: selectModifiedMA
+                    anchors.fill: parent
+                    enabled: mainStackView.areActionsAllowed
+                    cursorShape: artItemsModel.modifiedArtworksCount > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: {
+                        if (artItemsModel.modifiedArtworksCount > 0) {
+                            filteredArtItemsModel.searchTerm = "x:modified"
+                        }
+                    }
                 }
             }
 

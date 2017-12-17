@@ -35,9 +35,7 @@ int RemoveFromUserDictionaryTest::doTest() {
 
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -60,9 +58,7 @@ int RemoveFromUserDictionaryTest::doTest() {
 
     filteredModel->spellCheckSelected();
 
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for spellcheck results");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for spellcheck results");
 
     // wait for finding suggestions
     QThread::sleep(1);
@@ -79,9 +75,7 @@ int RemoveFromUserDictionaryTest::doTest() {
     QCoreApplication::processEvents(QEventLoop::AllEvents);
 
     // wait add user word to finish
-    if (!spellingWaiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for spellcheck results");
-    }
+    VERIFY(spellingWaiter.wait(5), "Timeout for waiting for spellcheck results");
 
     sleepWaitUntil(5, [=]() {
         return !basicKeywordsModel->hasDescriptionSpellError() &&
@@ -108,9 +102,7 @@ int RemoveFromUserDictionaryTest::doTest() {
     QCoreApplication::processEvents(QEventLoop::AllEvents);
 
     // wait clear user word to finish
-    if (!clearWaiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for spellcheck results");
-    }
+    VERIFY(clearWaiter.wait(5), "Timeout for waiting for spellcheck results");
 
     sleepWaitUntil(5, [=]() {
         return basicKeywordsModel->hasDescriptionSpellError() &&

@@ -42,9 +42,7 @@ int UserDictEditTest::doTest() {
     VERIFY(addedCount == files.length(), "Failed to add file");
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -69,9 +67,7 @@ int UserDictEditTest::doTest() {
     filteredModel->spellCheckSelected();
     filteredModel->copyToQuickBuffer(0);
 
-    if (!waiter.wait(5)) {
-        VERIFY(false, "Timeout for waiting for spellcheck results");
-    }
+    VERIFY(waiter.wait(5), "Timeout for waiting for spellcheck results");
 
     // wait for finding suggestions
     QThread::sleep(1);

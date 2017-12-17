@@ -32,9 +32,7 @@ int UndoAddDirectoryTest::doTest() {
     const int artworksCount = artItemsModel->addLocalDirectories(dirs);
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
@@ -54,9 +52,7 @@ int UndoAddDirectoryTest::doTest() {
 
     ioCoordinator->continueReading(true);
 
-    if (!waiter.wait(20)) {
-        VERIFY(false, "Timeout exceeded for reading metadata.");
-    }
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(artItemsModel->getArtworksCount() == artworksCount, "Items were not put back");
 
