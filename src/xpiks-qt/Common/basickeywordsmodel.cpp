@@ -29,12 +29,12 @@ namespace Common {
     {}
 
 #ifdef CORE_TESTS
-    const QString &BasicKeywordsModel::getKeywordAt(int index) const { return m_Impl->accessKeywordUnsafe(index).m_Value; }
+    const QString &BasicKeywordsModel::getKeywordAt(int index) const { return m_Impl->accessKeyword(index).m_Value; }
     std::vector<Keyword> &BasicKeywordsModel::getRawKeywords() { return m_Impl->m_KeywordsList; }
 #endif
 
 #ifdef INTEGRATION_TESTS
-        bool BasicKeywordsModel::hasDuplicateAt(size_t i) const { return m_Impl->accessKeywordUnsafe(i).m_HasDuplicates; }
+        bool BasicKeywordsModel::hasDuplicateAt(size_t i) const { return m_Impl->accessKeyword(i).m_HasDuplicates; }
 #endif
 
     void BasicKeywordsModel::removeItemsFromRanges(const QVector<QPair<int, int> > &ranges) {
