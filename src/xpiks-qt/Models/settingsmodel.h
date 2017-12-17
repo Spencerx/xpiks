@@ -417,7 +417,7 @@ namespace Models {
     protected:
         virtual void doKillTimer(int timerId) override { this->killTimer(timerId); }
         virtual int doStartTimer(int interval, Qt::TimerType timerType) override { return this->startTimer(interval, timerType); }
-        virtual void doOnTimer() override { sync(); }
+        virtual void doOnTimer() override { doSaveAllValues(); }
         virtual void timerEvent(QTimerEvent *event) override { onQtTimer(event); }
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 

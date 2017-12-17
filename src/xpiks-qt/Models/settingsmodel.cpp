@@ -1006,8 +1006,7 @@ namespace Models {
         justChanged();
     }
 
-    void SettingsModel::setUseDirectExiftoolExport(bool value)
-    {
+    void SettingsModel::setUseDirectExiftoolExport(bool value) {
         if (m_UseDirectExiftoolExport == value)
             return;
 
@@ -1015,8 +1014,7 @@ namespace Models {
         justChanged();
     }
 
-    void SettingsModel::setUseAutoImport(bool value)
-    {
+    void SettingsModel::setUseAutoImport(bool value) {
         if (m_UseAutoImport == value)
             return;
 
