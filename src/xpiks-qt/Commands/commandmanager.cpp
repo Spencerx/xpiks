@@ -426,6 +426,11 @@ void Commands::CommandManager::connectEntitiesSignalsSlots() const {
         QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::recommendedExiftoolFound,
                          m_SettingsModel, &Models::SettingsModel::onRecommendedExiftoolFound);
     }
+
+    if (m_MetadataIOCoordinator != nullptr && m_ArtItemsModel != nullptr) {
+        QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
+                         m_ArtItemsModel, &Models::ArtItemsModel::modifiedArtworksCountChanged);
+    }
 #endif
 
     if (m_SpellCheckerService != NULL && m_ArtItemsModel != NULL) {
