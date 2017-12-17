@@ -771,8 +771,8 @@ ApplicationWindow {
             title: i18.n + qsTr("&Help")
 
             MenuItem {
-                text: i18.n + qsTr("&Video tutorials")
-                onTriggered: Qt.openUrlExternally("https://ribtoks.github.io/xpiks/blog/2016/videos")
+                text: i18.n + qsTr("&User's guide")
+                onTriggered: Qt.openUrlExternally("https://ribtoks.github.io/xpiks/tutorials/")
             }
 
             MenuItem {
