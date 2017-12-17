@@ -88,7 +88,7 @@ script:
   - if [ -z "${XPIKS_BINARY+xxx}" ]; then ../get_code_cov.sh "$PWD"; fi
 
 after_success:
-  - if [ -z "${XPIKS_BINARY+xxx}" ]; then bash <(curl -s https://codecov.io/bash); fi
+  - if [ -z "${XPIKS_BINARY+xxx}" ]; then bash <(curl -s https://codecov.io/bash) || echo 'Codecov failed to upload'; fi
 
 after_failure:
   - if [ -n "$CORE_TESTS" ]; then for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/xpiks-tests-core core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi
