@@ -12,8 +12,8 @@ VOL_NAME="Xpiks"
 DMG_BACKGROUND_IMG="dmg-background.jpg"
 DMG_BACKGROUND_PATH="../deps/$DMG_BACKGROUND_IMG"
 
-DMG_TMP="xpiks-qt-v${VERSION}.tmp.dmg"
-DMG_FINAL="xpiks-qt-v${VERSION}.dmg"
+DMG_TMP="${APP_NAME}-v${VERSION}.tmp.dmg"
+DMG_FINAL="${APP_NAME}-v${VERSION}.dmg"
 STAGING_DIR="./osx-release-staging"
 
 BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_6_2_clang_64bit-Release"

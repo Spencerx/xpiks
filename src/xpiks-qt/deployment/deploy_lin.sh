@@ -1,10 +1,10 @@
 #!/bin/bash
 
-APP_NAME=xpiks-qt
+APP_NAME=Xpiks
 VERSION="1.5.0.beta"
 APPDIR_NAME="Xpiks"
 
-STAGING_DIR="./xpiks-qt.AppDir"
+STAGING_DIR="./${APP_NAME}.AppDir"
 
 DEPLOY_TOOL=linuxdeploy
 

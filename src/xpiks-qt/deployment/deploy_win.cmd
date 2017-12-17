@@ -2,12 +2,14 @@ echo 'Starting deployment...'
 
 set XPIKS_PLATFORM=x64
 set XPIKS_VERSION=1.5.0.beta
+set APP_NAME=Xpiks
 
 rem deploy dir should be "Xpiks" in order to have it nicely zipped in the end
 set DEPLOY_DIR_NAME=Xpiks
 
 echo "Cleaning up old artifacts..."
 rmdir xpiks-qt-v%XPIKS_VERSION%-tmp
+rmdir Xpiks-v%XPIKS_VERSION%-tmp
 rmdir %DEPLOY_DIR_NAME%
 
 set XPIKS_DEPS_PATH=%cd%\..\..\..\..\xpiks-deps
@@ -17,11 +19,12 @@ set OPENSSL_LIBS=%XPIKS_DEPS_PATH%\windows-libs\openssl-%XPIKS_PLATFORM%
 set FFMPEG_LIBS=%XPIKS_DEPS_PATH%\windows-libs\ffmpeg-%XPIKS_PLATFORM%\release
 
 mkdir %DEPLOY_DIR_NAME%
-copy /Y ..\..\build-xpiks-qt-Desktop_Qt_5_9_3_MSVC2015_64bit-Release\release\xpiks-qt.exe %DEPLOY_DIR_NAME%\
+copy /Y ..\..\build-xpiks-qt-Desktop_Qt_5_9_3_MSVC2015_64bit-Release\release\%APP_NAME%.exe %DEPLOY_DIR_NAME%\
 
 set QT_BIN_DIR=C:\Qt\5.9.3\msvc2015_64\bin
+set XPIKS_QT_DIR=..
 
-%QT_BIN_DIR%\windeployqt.exe --release --verbose=2 --qmldir=../../xpiks-qt/CollapserTabs/ --qmldir=../../xpiks-qt/Components/ --qmldir=../../xpiks-qt/Constants/ --qmldir=../../xpiks-qt/Dialogs/ --qmldir=../../xpiks-qt/StackViews/ --qmldir=../../xpiks-qt/StyledControls/ --qmldir=../../xpiks-qt/ %DEPLOY_DIR_NAME%\xpiks-qt.exe
+%QT_BIN_DIR%\windeployqt.exe --release --verbose=2 --qmldir=%XPIKS_QT_DIR%/CollapserTabs/ --qmldir=%XPIKS_QT_DIR%/Components/ --qmldir=%XPIKS_QT_DIR%/Constants/ --qmldir=%XPIKS_QT_DIR%/Dialogs/ --qmldir=%XPIKS_QT_DIR%/StackViews/ --qmldir=%XPIKS_QT_DIR%/StyledControls/ --qmldir=%XPIKS_QT_DIR%/ %DEPLOY_DIR_NAME%\%APP_NAME%.exe
 
 echo "Copying additional files..."
 xcopy /Y /s ..\deps %DEPLOY_DIR_NAME%\
@@ -59,8 +62,8 @@ del %DEPLOY_DIR_NAME%\dmg-background.jpg
 
 echo 'Packing binaries...'
 
-"C:\Program Files\7-Zip\7z" a xpiks-qt-v%XPIKS_VERSION%.zip Xpiks
+"C:\Program Files\7-Zip\7z" a %APP_NAME%-v%XPIKS_VERSION%.zip Xpiks
 
-ren Xpiks xpiks-qt-v%XPIKS_VERSION%-tmp
+ren Xpiks %APP_NAME%-v%XPIKS_VERSION%-tmp
 
 echo 'Done'
