@@ -203,7 +203,7 @@ namespace Common {
         size_t appendedCount = 0;
         if (m_Impl->prepareAppend(keywordsList, appendedCount)) {
             const size_t size = m_Impl->getKeywordsSize();
-            beginInsertRows(QModelIndex(), (int)size, (int)(size + appendedCount));
+            beginInsertRows(QModelIndex(), (int)size, (int)(size + appendedCount - 1));
             m_Impl->appendKeywords(keywordsList);
             endInsertRows();
         }
