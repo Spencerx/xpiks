@@ -430,6 +430,9 @@ void Commands::CommandManager::connectEntitiesSignalsSlots() const {
     if (m_MetadataIOCoordinator != nullptr && m_ArtItemsModel != nullptr) {
         QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
                          m_ArtItemsModel, &Models::ArtItemsModel::modifiedArtworksCountChanged);
+
+        QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
+                         m_ArtItemsModel, &Models::ArtItemsModel::modifiedArtworksCountChanged);
     }
 #endif
 
