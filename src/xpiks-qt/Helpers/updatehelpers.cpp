@@ -63,7 +63,7 @@ void launchWindowsInstaller(const QString &pathToUpdate) {
     arguments << "-force-update" << "-gui" <<
                  "-install-path" << appDirPath <<
                  "-l" << installerLogPath <<
-                 "-launch-exe" << "xpiks-qt.exe" <<
+                 "-launch-exe" << "Xpiks.exe" <<
                  "-package-path" << pathToUpdate <<
                  "-stdout";
 
