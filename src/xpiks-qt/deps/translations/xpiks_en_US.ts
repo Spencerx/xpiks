@@ -2620,11 +2620,6 @@ This action cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="774"/>
-        <source>&amp;Video tutorials</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../main.qml" line="779"/>
         <source>&amp;FAQ</source>
         <translation type="unfinished"></translation>
@@ -2753,6 +2748,11 @@ This action cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../main.qml" line="774"/>
+        <source>&amp;User&apos;s guide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../main.qml" line="953"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
@@ -2858,38 +2858,38 @@ They will be detached automatically.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1661"/>
+        <location filename="../../main.qml" line="1662"/>
         <source>Update available!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1674"/>
-        <location filename="../../main.qml" line="1685"/>
+        <location filename="../../main.qml" line="1675"/>
+        <location filename="../../main.qml" line="1686"/>
         <source>No items available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1683"/>
+        <location filename="../../main.qml" line="1684"/>
         <source>%1 items available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1683"/>
+        <location filename="../../main.qml" line="1684"/>
         <source>1 item available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1710"/>
+        <location filename="../../main.qml" line="1711"/>
         <source>%1 modified items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1710"/>
+        <location filename="../../main.qml" line="1711"/>
         <source>1 modified item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1710"/>
+        <location filename="../../main.qml" line="1711"/>
         <source>No modified items</source>
         <translation type="unfinished"></translation>
     </message>
