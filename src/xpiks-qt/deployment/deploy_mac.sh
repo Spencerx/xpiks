@@ -5,7 +5,7 @@ if [ ! -f ../deps/exiftool/exiftool ]; then
     exit
 fi
 
-APP_NAME=xpiks-qt
+APP_NAME=Xpiks
 VERSION="1.5.0.beta"
 VOL_NAME="Xpiks"
 
@@ -74,7 +74,7 @@ do
 
     LIBENTRY="${lib%.0.0.dylib}.dylib"
     
-    install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "../MacOS/xpiks-qt"
+    install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "../MacOS/$APP_NAME"
 
     ln -s "$lib" "$LIBENTRY"
 done
@@ -86,9 +86,9 @@ do
     echo "Copying $lib..."
     cp -v "$LIBS_PATH/$lib" .
     
-    install_name_tool -change $lib "@executable_path/../Frameworks/$lib" "../MacOS/xpiks-qt"
+    install_name_tool -change $lib "@executable_path/../Frameworks/$lib" "../MacOS/$APP_NAME"
     # brew fix
-    install_name_tool -change "/usr/local/lib/$lib" "@executable_path/../Frameworks/$lib" "../MacOS/xpiks-qt"
+    install_name_tool -change "/usr/local/lib/$lib" "@executable_path/../Frameworks/$lib" "../MacOS/$APP_NAME"
 
     for depend_lib in "${FFMPEG_LIBS[@]}"
     do
