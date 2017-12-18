@@ -5,7 +5,7 @@ Cross-Platform Image Keywording Software
 
 ![alt tag](https://raw.githubusercontent.com/Ribtoks/xpiks/gh-pages/images/screenshots/xpiks-qt-dark.jpg)
 
-Official website: http://ribtoks.github.io/xpiks/
+Official website: http://xpiksapp.com
 
 Translations: https://crowdin.com/project/xpiks/
 
