@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="20px" height="20px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve">
-<path fill="#12B9BC" d="M10,18.5c-4.687,0-8.5-3.813-8.5-8.5S5.313,1.5,10,1.5c4.687,0,8.5,3.813,8.5,8.5S14.687,18.5,10,18.5z
-	 M10,2.5c-4.136,0-7.5,3.364-7.5,7.5c0,4.136,3.364,7.5,7.5,7.5s7.5-3.364,7.5-7.5C17.5,5.864,14.136,2.5,10,2.5z"/>
-<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#12B9BC" points="14.5,10 7.5,14 7.5,6 "/>
-</svg>
