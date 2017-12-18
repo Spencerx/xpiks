@@ -19,9 +19,9 @@ set OPENSSL_LIBS=%XPIKS_DEPS_PATH%\windows-libs\openssl-%XPIKS_PLATFORM%
 set FFMPEG_LIBS=%XPIKS_DEPS_PATH%\windows-libs\ffmpeg-%XPIKS_PLATFORM%\release
 
 mkdir %DEPLOY_DIR_NAME%
-copy /Y ..\..\build-xpiks-qt-Desktop_Qt_5_9_3_MSVC2015_64bit-Release\release\%APP_NAME%.exe %DEPLOY_DIR_NAME%\
+copy /Y ..\..\build-xpiks-qt-Desktop_Qt_5_6_2_MSVC2015_64bit-Release\release\%APP_NAME%.exe %DEPLOY_DIR_NAME%\
 
-set QT_BIN_DIR=C:\Qt\5.9.3\msvc2015_64\bin
+set QT_BIN_DIR=C:\Qt\Qt5.6.2\5.6\msvc2015_64\bin
 set XPIKS_QT_DIR=..
 
 %QT_BIN_DIR%\windeployqt.exe --release --verbose=2 --qmldir=%XPIKS_QT_DIR%/CollapserTabs/ --qmldir=%XPIKS_QT_DIR%/Components/ --qmldir=%XPIKS_QT_DIR%/Constants/ --qmldir=%XPIKS_QT_DIR%/Dialogs/ --qmldir=%XPIKS_QT_DIR%/StackViews/ --qmldir=%XPIKS_QT_DIR%/StyledControls/ --qmldir=%XPIKS_QT_DIR%/ %DEPLOY_DIR_NAME%\%APP_NAME%.exe
