@@ -59,6 +59,7 @@ del %DEPLOY_DIR_NAME%\vcredist_%XPIKS_PLATFORM%.exe
 del %DEPLOY_DIR_NAME%\libexiv2.dll
 del %DEPLOY_DIR_NAME%\libexpat.dll
 del %DEPLOY_DIR_NAME%\dmg-background.jpg
+rem need to remove exiftool/ dir as well
 
 echo 'Packing binaries...'
 
