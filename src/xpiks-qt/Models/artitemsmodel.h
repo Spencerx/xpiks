@@ -148,6 +148,7 @@ namespace Models {
         Q_INVOKABLE void setupDuplicatesModel(int metadataIndex);
         Q_INVOKABLE int addLocalArtworks(const QList<QUrl> &artworksPaths);
         Q_INVOKABLE int addLocalDirectories(const QList<QUrl> &directories);
+        Q_INVOKABLE bool hasModifiedArtworks() const;
 
     public:
         void fillFromQuickBuffer(size_t metadataIndex);

@@ -734,6 +734,22 @@ namespace Models {
         return addedFilesCount;
     }
 
+    bool ArtItemsModel::hasModifiedArtworks() const {
+        LOG_DEBUG << "#";
+
+        bool anyModified = false;
+        const size_t size = m_ArtworkList.size();
+
+        for (size_t i = 0; i < size; ++i) {
+            if (accessArtwork(i)->isModified()) {
+                anyModified = true;
+                break;
+            }
+        }
+
+        return anyModified;
+    }
+
     void ArtItemsModel::fillFromQuickBuffer(size_t metadataIndex) {
         LOG_INFO << "item" << metadataIndex;
 

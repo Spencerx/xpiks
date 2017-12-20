@@ -52,7 +52,8 @@ ApplicationWindow {
         settingsModel.saveRecentDirectories()
         settingsModel.saveRecentFiles()
 
-        if (artItemsModel.modifiedArtworksCount > 0) {
+        if (artItemsModel.hasModifiedArtworks()) {
+            console.debug("Modified artworks present")
             close.accepted = false
             configExitDialog.open()
         } else {
