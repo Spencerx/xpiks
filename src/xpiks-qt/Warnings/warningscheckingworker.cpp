@@ -114,7 +114,7 @@ namespace Warnings {
             QSize size = image->getImageSize();
 
             double currentProd = size.width() * size.height() / 1000000.0;
-            if (currentProd < minimumMegapixels) {
+            if ((0.1 < currentProd) && (currentProd < minimumMegapixels)) {
                 Common::SetFlag(warningsInfo, Common::WarningFlags::SizeLessThanMinimum);
             }
         }
