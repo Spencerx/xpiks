@@ -59,12 +59,22 @@ namespace Models {
 
     bool ArtworkProxyBase::doSetDescription(const QString &description) {
         auto *metadataOperator = getMetadataOperator();
-        return metadataOperator->setDescription(description);
+        bool result = metadataOperator->setDescription(description);
+        if (result) {
+            doJustEdited();
+        }
+
+        return result;
     }
 
     bool ArtworkProxyBase::doSetTitle(const QString &title) {
         auto *metadataOperator = getMetadataOperator();
-        return metadataOperator->setTitle(title);
+        bool result = metadataOperator->setTitle(title);
+        if (result) {
+            doJustEdited();
+        }
+
+        return result;
     }
 
     void ArtworkProxyBase::doSetKeywords(const QStringList &keywords) {
