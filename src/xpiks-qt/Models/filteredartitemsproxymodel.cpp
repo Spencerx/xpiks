@@ -193,9 +193,17 @@ namespace Models {
     }
 
     bool FilteredArtItemsProxyModel::areSelectedArtworksSaved() {
-        int modifiedSelectedCount = getModifiedSelectedCount();
+        auto selectedArtworks = getSelectedOriginalItems();
+        bool anyModified = false;
 
-        return modifiedSelectedCount == 0;
+        for (ArtworkMetadata *artwork: selectedArtworks) {
+            if (artwork->isModified()) {
+                anyModified = true;
+                break;
+            }
+        }
+
+        return !anyModified;
     }
 
     void FilteredArtItemsProxyModel::spellCheckSelected() {
