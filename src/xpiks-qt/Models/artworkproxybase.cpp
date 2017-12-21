@@ -173,6 +173,7 @@ namespace Models {
         bool result = metadataOperator->clearKeywords();
         if (result) {
             signalKeywordsCountChanged();
+            doJustEdited();
         }
 
         // to update fix spelling link
@@ -216,26 +217,6 @@ namespace Models {
         QMLExtensions::ColorsModel *colorsModel = m_CommandManager->getColorsModel();
         auto *highlighter = info->createHighlighterForTitle(document->textDocument(), colorsModel, nullptr);
         return highlighter;
-    }
-
-    void ArtworkProxyBase::doSpellCheckDescription() {
-        LOG_DEBUG << "#";
-        auto *keywordsModel = getBasicMetadataModel();
-        if (!keywordsModel->getDescription().trimmed().isEmpty()) {
-            xpiks()->submitItemForSpellCheck(keywordsModel, Common::SpellCheckFlags::Description);
-        } else {
-            keywordsModel->notifySpellCheckResults(Common::SpellCheckFlags::Description);
-        }
-    }
-
-    void ArtworkProxyBase::doSpellCheckTitle() {
-        LOG_DEBUG << "#";
-        auto *keywordsModel = getBasicMetadataModel();
-        if (!keywordsModel->getTitle().trimmed().isEmpty()) {
-            xpiks()->submitItemForSpellCheck(keywordsModel, Common::SpellCheckFlags::Title);
-        } else {
-            keywordsModel->notifySpellCheckResults(Common::SpellCheckFlags::Title);
-        }
     }
 
     void ArtworkProxyBase::doPlainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {

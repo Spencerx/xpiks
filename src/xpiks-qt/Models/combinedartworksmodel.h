@@ -200,6 +200,9 @@ namespace Models {
         virtual Common::IMetadataOperator *getMetadataOperator() override { return &m_CommonKeywordsModel; }
 
     protected:
+        virtual void doJustEdited() override;
+
+    protected:
         virtual qint64 getSpecialItemID() override;
         virtual bool doRemoveSelectedArtworks() override;
         virtual void doResetModel() override;

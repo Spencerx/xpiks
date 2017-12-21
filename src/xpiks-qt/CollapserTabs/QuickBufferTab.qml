@@ -55,9 +55,18 @@ ColumnLayout {
         anchors.right: parent.right
 
         StyledText {
+            id: titleText
             anchors.left: parent.left
             text: i18.n + qsTr("Title:")
             isActive: false
+        }
+
+        StyledText {
+            anchors.left: titleText.right
+            anchors.leftMargin: 3
+            text: "*"
+            color: uiColors.destructiveColor
+            visible: quickBuffer.hasTitleSpellErrors
         }
 
         StyledText {
@@ -102,7 +111,7 @@ ColumnLayout {
             StyledTextEdit {
                 id: titleTextInput
                 focus: true
-                width: titleFlick.width
+                width: paintedWidth > titleFlick.width ? paintedWidth : titleFlick.width
                 height: titleFlick.height
                 text: quickBuffer.title
                 isActive: false
@@ -138,8 +147,6 @@ ColumnLayout {
 
                 onCursorRectangleChanged: titleFlick.ensureVisible(cursorRectangle)
 
-                onActiveFocusChanged: quickBuffer.spellCheckTitle()
-
                 Keys.onPressed: {
                     if(event.matches(StandardKey.Paste)) {
                         var clipboardText = quickClipboard.getText();
@@ -164,9 +171,18 @@ ColumnLayout {
         anchors.right: parent.right
 
         StyledText {
+            id: descriptionText
             anchors.left: parent.left
             isActive: false
             text: i18.n + qsTr("Description:")
+        }
+
+        StyledText {
+            anchors.left: descriptionText.right
+            anchors.leftMargin: 3
+            text: "*"
+            color: uiColors.destructiveColor
+            visible: quickBuffer.hasDescriptionSpellErrors
         }
 
         StyledText {
@@ -214,7 +230,7 @@ ColumnLayout {
             StyledTextEdit {
                 id: descriptionTextInput
                 width: descriptionFlick.width
-                height: descriptionFlick.height
+                height: paintedHeight > descriptionFlick.height ? paintedHeight : descriptionFlick.height
                 text: quickBuffer.description
                 focus: true
                 isActive: false
@@ -256,8 +272,6 @@ ColumnLayout {
 
                 onCursorRectangleChanged: descriptionFlick.ensureVisible(cursorRectangle)
 
-                onActiveFocusChanged: quickBuffer.spellCheckDescription()
-
                 Keys.onPressed: {
                     if(event.matches(StandardKey.Paste)) {
                         var clipboardText = quickClipboard.getText();
@@ -286,6 +300,15 @@ ColumnLayout {
             id: keywordsLabel
             isActive: false
             text: i18.n + qsTr("Keywords:")
+        }
+
+        StyledText {
+            anchors.left: keywordsLabel.right
+            anchors.leftMargin: 3
+            anchors.top: keywordsLabel.top
+            text: "*"
+            color: uiColors.destructiveColor
+            visible: quickBuffer.hasKeywordsSpellErrors
         }
 
         StyledText {

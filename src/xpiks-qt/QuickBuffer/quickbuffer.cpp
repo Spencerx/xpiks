@@ -9,24 +9,31 @@
  */
 
 #include "quickbuffer.h"
+#include <QSyntaxHighlighter>
 #include "../Commands/commandmanager.h"
 #include "icurrenteditable.h"
 #include "../Models/uimanager.h"
 #include "../QuickBuffer/currenteditableartwork.h"
 #include "../Models/artitemsmodel.h"
 
+#define MAX_EDITING_PAUSE_RESTARTS 10
+#define QUICKBUFFER_EDITING_PAUSE 1000
+
 namespace QuickBuffer {
     QuickBuffer::QuickBuffer(QObject *parent) :
         QObject(parent),
         ArtworkProxyBase(),
+        Common::DelayedActionEntity(QUICKBUFFER_EDITING_PAUSE, MAX_EDITING_PAUSE_RESTARTS),
         m_BasicModel(m_HoldPlaceholder, this)
     {
         m_BasicModel.setSpellCheckInfo(&m_SpellCheckInfo);
 
         QObject::connect(&m_BasicModel, &Common::BasicMetadataModel::titleSpellingChanged,
-                         this, &QuickBuffer::onTitleSpellingChanged);
+                         this, &QuickBuffer::titleSpellingChanged);
         QObject::connect(&m_BasicModel, &Common::BasicMetadataModel::descriptionSpellingChanged,
-                         this, &QuickBuffer::onDescriptionSpellingChanged);
+                         this, &QuickBuffer::descriptionSpellingChanged);
+        QObject::connect(&m_BasicModel, &Common::BasicMetadataModel::keywordsSpellingChanged,
+                         this, &QuickBuffer::keywordsSpellingChanged);
 
 //        QObject::connect(&m_BasicModel, SIGNAL(completionsAvailable()),
 //                         this, SIGNAL(completionsAvailable()));
@@ -42,14 +49,9 @@ namespace QuickBuffer {
     void QuickBuffer::afterSpellingErrorsFixedHandler() {
         // if squeezing took place after replace
         signalKeywordsCountChanged();
-    }
-
-    void QuickBuffer::onTitleSpellingChanged() {
-        emit titleChanged();
-    }
-
-    void QuickBuffer::onDescriptionSpellingChanged() {
-        emit descriptionChanged();
+        emit descriptionSpellingChanged();
+        emit titleSpellingChanged();
+        emit keywordsSpellingChanged();
     }
 
     void QuickBuffer::userDictUpdateHandler(const QStringList &keywords, bool overwritten) {
@@ -95,19 +97,17 @@ namespace QuickBuffer {
     }
 
     void QuickBuffer::initDescriptionHighlighting(QQuickTextDocument *document) {
-        doCreateDescriptionHighligher(document);
+        QSyntaxHighlighter *highlighter = doCreateDescriptionHighligher(document);
+
+        QObject::connect(this, &QuickBuffer::descriptionSpellingChanged,
+                         highlighter, &QSyntaxHighlighter::rehighlight);
     }
 
     void QuickBuffer::initTitleHighlighting(QQuickTextDocument *document) {
-        doCreateTitleHighlighter(document);
-    }
+        QSyntaxHighlighter *highlighter = doCreateTitleHighlighter(document);
 
-    void QuickBuffer::spellCheckDescription() {
-        doSpellCheckDescription();
-    }
-
-    void QuickBuffer::spellCheckTitle() {
-        doSpellCheckTitle();
+        QObject::connect(this, &QuickBuffer::titleSpellingChanged,
+                         highlighter, &QSyntaxHighlighter::rehighlight);
     }
 
     bool QuickBuffer::hasTitleWordSpellError(const QString &word) {
@@ -194,5 +194,15 @@ namespace QuickBuffer {
         if (!keywords.empty()) { this->setKeywords(keywords); }
 
         emit isEmptyChanged();
+    }
+
+    void QuickBuffer::doJustEdited() {
+        ArtworkProxyBase::doJustEdited();
+        justChanged();
+    }
+
+    void QuickBuffer::doOnTimer() {
+        LOG_DEBUG << "#";
+        xpiks()->submitItemForSpellCheck(&m_BasicModel);
     }
 }
