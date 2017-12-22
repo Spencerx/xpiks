@@ -629,7 +629,6 @@ namespace Models {
         LOG_DEBUG << "Set selected" << selectedCount << "item(s) to" << selected;
         artItemsModel->updateItems(indices, QVector<int>() << ArtItemsModel::IsSelectedRole);
         emit allItemsSelectedChanged();
-        emit selectedArtworksCountChanged();
 
         xpiks()->clearCurrentItem();
     }
@@ -655,7 +654,6 @@ namespace Models {
 
         artItemsModel->updateItems(indices, QVector<int>() << ArtItemsModel::IsSelectedRole);
         emit allItemsSelectedChanged();
-        emit selectedArtworksCountChanged();
     }
 
     MetadataIO::WeakArtworksSnapshot FilteredArtItemsProxyModel::getSelectedOriginalItems() const {
