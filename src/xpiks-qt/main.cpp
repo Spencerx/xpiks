@@ -390,8 +390,8 @@ int main(int argc, char *argv[]) {
 
     // other initializations
     secretsManager.setMasterPasswordHash(settingsModel.getMasterPasswordHash());
-    recentDirectorieModel.deserializeFromSettings(settingsModel.getRecentDirectories());
-    recentFileModel.deserializeFromSettings(settingsModel.getRecentFiles());
+    recentDirectorieModel.initialize();
+    recentFileModel.initialize();
 
     commandManager.connectEntitiesSignalsSlots();
 

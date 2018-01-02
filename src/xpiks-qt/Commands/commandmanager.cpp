@@ -495,18 +495,6 @@ void Commands::CommandManager::connectEntitiesSignalsSlots() const {
                          m_PluginManager, &Plugins::PluginManager::onPresetsUpdated);
     }
 #endif
-
-    // needed for Setting Moving task because QAbstractListModel is not thread safe
-
-    if (m_SettingsModel != NULL && m_RecentDirectories != NULL) {
-        QObject::connect(m_SettingsModel, &Models::SettingsModel::recentDirectoriesUpdated,
-                         m_RecentDirectories, &Models::RecentDirectoriesModel::onRecentItemsUpdated);
-    }
-
-    if (m_SettingsModel != NULL && m_RecentFiles != NULL) {
-        QObject::connect(m_SettingsModel, &Models::SettingsModel::recentFilesUpdated,
-                         m_RecentFiles, &Models::RecentFilesModel::onRecentItemsUpdated);
-    }
 }
 
 /*virtual*/
@@ -772,6 +760,7 @@ void Commands::CommandManager::beforeDestructionCallback() const {
     m_AutoCompleteService->stopService();
     m_TranslationService->stopService();
 
+    m_SettingsModel->protectHealthReporting();
     m_SettingsModel->syncronizeSettings();
 
 #ifndef CORE_TESTS

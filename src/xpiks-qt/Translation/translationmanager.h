@@ -30,8 +30,7 @@ namespace Translation {
 
     class TranslationManager :
             public QObject,
-            public Common::BaseEntity,
-            public Common::StatefulEntity
+            public Common::BaseEntity
     {
         Q_OBJECT
         Q_PROPERTY(bool isBusy READ getIsBusy WRITE setIsBusy NOTIFY isBusyChanged)
@@ -92,6 +91,7 @@ namespace Translation {
         void updateTranslationTimer();
 
     private:
+        Common::StatefulEntity m_State;
         QStringList m_AllowedSuffixes;
         QVector<DictionaryInfo> m_DictionariesList;
         QTimer m_TranslateTimer;

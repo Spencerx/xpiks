@@ -26,8 +26,8 @@
 namespace Models {
     UIManager::UIManager(SettingsModel *settingsModel, QObject *parent) :
         QObject(parent),
-        Common::StatefulEntity("uimanager"),
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
+        m_State("uimanager"),
         m_SettingsModel(settingsModel),
         m_TabID(42),
         m_SaveTimerId(-1),
@@ -77,59 +77,59 @@ namespace Models {
     }
 
     int UIManager::getArtworkEditRightPaneWidth() {
-        return getStateInt(Constants::artworkEditRightPaneWidth, DEFAULT_ARTWORK_EDIT_RIGHT_PANE_WIDTH);
+        return m_State.getInt(Constants::artworkEditRightPaneWidth, DEFAULT_ARTWORK_EDIT_RIGHT_PANE_WIDTH);
     }
 
     void UIManager::setArtworkEditRightPaneWidth(int value) {
         const int current = getArtworkEditRightPaneWidth();
         if (current != value) {
-            setStateValue(Constants::artworkEditRightPaneWidth, value);
+            m_State.setValue(Constants::artworkEditRightPaneWidth, value);
             justChanged();
             emit artworkEditRightPaneWidthChanged();
         }
     }
 
     int UIManager::getAppWidth(int defaultWidth)  {
-        return getStateInt(Constants::appWindowWidth, defaultWidth);
+        return m_State.getInt(Constants::appWindowWidth, defaultWidth);
     }
 
     void UIManager::setAppWidth(int width) {
         LOG_DEBUG << width;
-        setStateValue(Constants::appWindowWidth, width);
+        m_State.setValue(Constants::appWindowWidth, width);
         justChanged();
     }
 
     int UIManager::getAppHeight(int defaultHeight) {
-        return getStateInt(Constants::appWindowHeight, defaultHeight);
+        return m_State.getInt(Constants::appWindowHeight, defaultHeight);
     }
 
     void UIManager::setAppHeight(int height) {
         LOG_DEBUG << height;
-        setStateValue(Constants::appWindowHeight, height);
+        m_State.setValue(Constants::appWindowHeight, height);
         justChanged();
     }
 
     int UIManager::getAppPosX(int defaultPosX) {
-        int posX = getStateInt(Constants::appWindowX, defaultPosX);
+        int posX = m_State.getInt(Constants::appWindowX, defaultPosX);
         if (posX == -1) { posX = defaultPosX; }
         return posX;
     }
 
     void UIManager::setAppPosX(int x) {
         LOG_DEBUG << x;
-        setStateValue(Constants::appWindowX, x);
+        m_State.setValue(Constants::appWindowX, x);
         justChanged();
     }
 
     int UIManager::getAppPosY(int defaultPosY) {
-        int posY = getStateInt(Constants::appWindowY, defaultPosY);
+        int posY = m_State.getInt(Constants::appWindowY, defaultPosY);
         if (posY == -1) { posY = defaultPosY; }
         return posY;
     }
 
     void UIManager::setAppPosY(int y) {
         LOG_DEBUG << y;
-        setStateValue(Constants::appWindowY, y);
+        m_State.setValue(Constants::appWindowY, y);
         justChanged();
     }
 
@@ -213,23 +213,23 @@ namespace Models {
     }
 
     void UIManager::initializeState() {
-         initState();
+         m_State.init();
     }
 
     void UIManager::resetWindowSettings() {
         // resetting position in settings is pretty useless because
         // we will overwrite them on Xpiks exit. But anyway for the future...
-        setStateValue(Constants::appWindowHeight, DEFAULT_APP_HEIGHT);
-        setStateValue(Constants::appWindowWidth, DEFAULT_APP_WIDTH);
-        setStateValue(Constants::appWindowX, DEFAULT_APP_POSITION);
-        setStateValue(Constants::appWindowY, DEFAULT_APP_POSITION);
+        m_State.setValue(Constants::appWindowHeight, DEFAULT_APP_HEIGHT);
+        m_State.setValue(Constants::appWindowWidth, DEFAULT_APP_WIDTH);
+        m_State.setValue(Constants::appWindowX, DEFAULT_APP_POSITION);
+        m_State.setValue(Constants::appWindowY, DEFAULT_APP_POSITION);
 
-        setStateValue(Constants::artworkEditRightPaneWidth, DEFAULT_ARTWORK_EDIT_RIGHT_PANE_WIDTH);
+        m_State.setValue(Constants::artworkEditRightPaneWidth, DEFAULT_ARTWORK_EDIT_RIGHT_PANE_WIDTH);
 
         justChanged();
     }
 
     void UIManager::doOnTimer() {
-        syncState();
+        m_State.sync();
     }
 }

@@ -9,12 +9,27 @@
  */
 
 #include "recentfilesmodel.h"
+#include "../Helpers/constants.h"
 
 #define MAX_RECENT_FILES 10
 
 namespace Models {
     RecentFilesModel::RecentFilesModel():
-        RecentItemsModel(MAX_RECENT_FILES)
+        RecentItemsModel(MAX_RECENT_FILES),
+        m_State("recentfiles")
     {
+    }
+
+    void RecentFilesModel::initialize() {
+        m_State.init();
+
+        QString recentFiles = m_State.getString(Constants::recentFiles);
+        deserializeFromSettings(recentFiles);
+    }
+
+    void RecentFilesModel::sync() {
+        QString recentFiles = serializeForSettings();
+        m_State.setValue(Constants::recentFiles, recentFiles);
+        m_State.sync();
     }
 }

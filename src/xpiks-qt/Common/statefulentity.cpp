@@ -20,7 +20,7 @@ namespace Common {
         Q_ASSERT(!stateName.endsWith(".json", Qt::CaseInsensitive));
     }
 
-    void StatefulEntity::initState() {
+    void StatefulEntity::init() {
         LOG_DEBUG << m_StateName;
         QString localConfigPath;
 
@@ -50,7 +50,7 @@ namespace Common {
         }
     }
 
-    void StatefulEntity::syncState() {
+    void StatefulEntity::sync() {
         LOG_DEBUG << m_StateName;
 
         // do not use dropper

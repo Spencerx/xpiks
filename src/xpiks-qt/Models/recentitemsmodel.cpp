@@ -59,6 +59,7 @@ namespace Models {
     void RecentItemsModel::pushItem(const QString &itemPath) {
         if (doPushItem(itemPath)) {
             LOG_DEBUG << "Added new recent item";
+            sync();
         }
 
         m_LatestUsedItem = itemPath;

@@ -21,16 +21,16 @@ namespace Common {
     public:
         StatefulEntity(const QString &stateName);
 
-    protected:
-        void initState();
-        void syncState();
+    public:
+        void init();
+        void sync();
 
-    protected:
-        inline void setStateValue(const char *key, const QJsonValue &value) {
+    public:
+        inline void setValue(const char *key, const QJsonValue &value) {
             m_StateJson.insert(QLatin1String(key), value);
         }
 
-        inline QJsonValue getStateValue(const char *key, const QJsonValue &defaultValue = QJsonValue()) const {
+        inline QJsonValue getValue(const char *key, const QJsonValue &defaultValue = QJsonValue()) const {
             QJsonValue value = m_StateJson.value(QLatin1String(key));
 
             if (value.isUndefined()) {
@@ -40,23 +40,23 @@ namespace Common {
             return value;
         }
 
-        inline bool getStateBool(const char *key, const bool defaultValue = false) const {
+        inline bool getBool(const char *key, const bool defaultValue = false) const {
             return m_StateJson.value(QLatin1String(key)).toBool(defaultValue);
         }
 
-        inline double getStateDouble(const char *key, const double defaultValue = 0) const {
+        inline double getDouble(const char *key, const double defaultValue = 0) const {
             return m_StateJson.value(QLatin1String(key)).toDouble(defaultValue);
         }
 
-        inline int getStateInt(const char *key, const int defaultValue = 0) const {
+        inline int getInt(const char *key, const int defaultValue = 0) const {
             return m_StateJson.value(QLatin1String(key)).toInt(defaultValue);
         }
 
-        inline QString getStateString(const char *key, const QString &defaultValue = QString("")) const {
+        inline QString getString(const char *key, const QString &defaultValue = QString("")) const {
             return m_StateJson.value(QLatin1String(key)).toString(defaultValue);
         }
 
-        inline bool containsState(const char *key) const {
+        inline bool contains(const char *key) const {
             return m_StateJson.contains(QLatin1String(key));
         }
 

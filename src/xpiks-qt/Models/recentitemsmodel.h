@@ -31,8 +31,11 @@ namespace Models {
         int getRecentItemsCount() const { return m_RecentItems.size(); }
 
     public:
-        Q_INVOKABLE QString serializeForSettings();
+        QString serializeForSettings();
         Q_INVOKABLE QUrl getLatestItem() const;
+
+    public:
+        virtual void initialize() = 0;
 
     public:
         void deserializeFromSettings(const QString &serialized);
@@ -46,6 +49,9 @@ namespace Models {
 
     private:
         bool doPushItem(const QString &itemPath);
+
+    protected:
+        virtual void sync() = 0;
 
     public:
         int rowCount(const QModelIndex &parent = QModelIndex()) const override { Q_UNUSED(parent); return m_RecentItems.length(); }

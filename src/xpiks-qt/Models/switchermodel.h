@@ -19,7 +19,7 @@
 #include "../Common/statefulentity.h"
 
 namespace Models {
-    class SwitcherModel: public QObject, public Common::BaseEntity, public Common::StatefulEntity
+    class SwitcherModel: public QObject, public Common::BaseEntity
     {
         Q_OBJECT
         Q_PROPERTY(bool isDonationCampaign1Active READ getIsDonationCampaign1On NOTIFY switchesUpdated)
@@ -75,6 +75,7 @@ namespace Models {
         void readEngagementConfig();
 
     private:
+        Common::StatefulEntity m_State;
         QTimer m_DelayTimer;
         Connectivity::SwitcherConfig m_Config;
         int m_Threshold;

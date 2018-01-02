@@ -44,6 +44,7 @@
 #include "../AutoComplete/keywordsautocompletemodel.h"
 #include "../AutoComplete/completionitem.h"
 #include "../Models/switchermodel.h"
+#include "../Models/recentfilesmodel.h"
 
 namespace Models {
     ArtItemsModel::ArtItemsModel(QObject *parent):

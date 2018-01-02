@@ -26,10 +26,9 @@
 #include "../Helpers/constants.h"
 #include "../Commands/commandmanager.h"
 #include "../Encryption/secretsmanager.h"
-#include "../Models/recentdirectoriesmodel.h"
-#include "../Models/recentfilesmodel.h"
 #include "../Models/uploadinforepository.h"
 #include "../Common/delayedactionentity.h"
+#include "../Common/statefulentity.h"
 
 #define SETTINGS_EPSILON 1e-9
 
@@ -177,58 +176,23 @@ namespace Models {
         QString getTermsAndConditionsText() const;
 
     public:
-        QString getRecentDirectories() const { return stringValue(Constants::recentDirectories); }
-        QString getRecentFiles() const { return stringValue(Constants::recentFiles); }
-        QString getUserAgentId() const { return stringValue(Constants::userAgentId); }
-        QString getPathToUpdate() const { return stringValue(Constants::pathToUpdate); }
+        QString getUserAgentId() const { return m_State.getString(Constants::userAgentId); }
+        QString getPathToUpdate() const { return m_State.getString(Constants::pathToUpdate); }
         QString getLegacyUploadHosts() const { return stringValue(Constants::legacyUploadHosts); }
         QString getMasterPasswordHash() const { return stringValue(Constants::masterPasswordHash); }
         bool getMustUseConfirmationDialogs() const { return boolValue(Constants::useConfirmationDialogs, true); }
-        int getAvailableUpdateVersion() const { return intValue(Constants::availableUpdateVersion); }
+        int getAvailableUpdateVersion() const { return m_State.getInt(Constants::availableUpdateVersion); }
 
     public:
-        Q_INVOKABLE bool needToShowWhatsNew() {
-#ifndef QT_DEBUG
-            int lastVersion = intValue(Constants::installedVersion, 0);
-            int installedMajorPart = lastVersion / XPIKS_VERSION_MAJOR_DIVISOR;
-            int currentMajorPart = XPIKS_FULL_VERSION_INT / XPIKS_VERSION_MAJOR_DIVISOR;
-            bool result = currentMajorPart > installedMajorPart;
-            return result;
-#else
-            return false;
-#endif
-        }
-
-        Q_INVOKABLE bool needToShowTextWhatsNew() {
-#ifndef QT_DEBUG
-            int lastVersion = intValue(Constants::installedVersion, 0);
-            int installedMajorPart = lastVersion / XPIKS_VERSION_MAJOR_DIVISOR;
-            int currentMajorPart = XPIKS_FULL_VERSION_INT / XPIKS_VERSION_MAJOR_DIVISOR;
-            bool result = (currentMajorPart == installedMajorPart) &&
-                    (XPIKS_FULL_VERSION_INT > lastVersion);
-            return result;
-#else
-            return false;
-#endif
-        }
-
-        Q_INVOKABLE void saveCurrentVersion() {
-            LOG_DEBUG << "Saving current xpiks version" << XPIKS_FULL_VERSION_INT;
-            setValue(Constants::installedVersion, XPIKS_FULL_VERSION_INT);
-        }
-
-        Q_INVOKABLE bool needToShowTermsAndConditions() {
-#ifndef QT_DEBUG
-            bool haveConsent = boolValue(Constants::userConsent, false);
-            return !haveConsent;
-#else
-            return false;
-#endif
-        }
+        Q_INVOKABLE bool needToShowWhatsNew();
+        Q_INVOKABLE bool needToShowTextWhatsNew();
+        Q_INVOKABLE void saveCurrentVersion();
+        Q_INVOKABLE bool needToShowTermsAndConditions();
 
         Q_INVOKABLE void userAgreeHandler() {
             LOG_DEBUG << "#";
-            setValue(Constants::userConsent, true);
+            m_State.setValue(Constants::userConsent, true);
+            m_State.sync();
         }
 
         Q_INVOKABLE void setUseMasterPassword(bool value) {
@@ -242,34 +206,25 @@ namespace Models {
             setValue(Constants::masterPasswordHash, secretsManager->getMasterPasswordHash());
         }
 
-        Q_INVOKABLE void saveRecentDirectories() {
+        /*Q_INVOKABLE*/ void setUserAgentId(const QString &id) {
             LOG_DEBUG << "#";
-            Models::RecentDirectoriesModel *recentDirectories = m_CommandManager->getRecentDirectories();
-            setValue(Constants::recentDirectories, recentDirectories->serializeForSettings());
+            m_State.setValue(Constants::userAgentId, id);
+            m_State.sync();
         }
 
-        Q_INVOKABLE void saveRecentFiles() {
+        /*Q_INVOKABLE*/ void setAvailableUpdateVersion(int version) {
             LOG_DEBUG << "#";
-            Models::RecentFilesModel *recentFiles = m_CommandManager->getRecentFiles();
-            setValue(Constants::recentFiles, recentFiles->serializeForSettings());
+            m_State.setValue(Constants::availableUpdateVersion, version);
+            m_State.sync();
         }
 
-        Q_INVOKABLE void setUserAgentId(const QString &id) {
+        /*Q_INVOKABLE*/ void setPathToUpdate(QString path) {
             LOG_DEBUG << "#";
-            setValue(Constants::userAgentId, id);
+            m_State.setValue(Constants::pathToUpdate, path);
+            m_State.sync();
         }
 
-        Q_INVOKABLE void setAvailableUpdateVersion(int version) {
-            LOG_DEBUG << "#";
-            setValue(Constants::availableUpdateVersion, version);
-        }
-
-        Q_INVOKABLE void setPathToUpdate(QString path) {
-            LOG_DEBUG << "#";
-            setValue(Constants::pathToUpdate, path);
-        }
-
-        Q_INVOKABLE void protectTelemetry();
+        /*Q_INVOKABLE*/ void protectHealthReporting();
 
         Q_INVOKABLE void onMasterPasswordSet() {
             LOG_INFO << "Master password changed";
@@ -325,8 +280,6 @@ namespace Models {
     signals:
         void settingsReset();
         void settingsUpdated();
-        void recentDirectoriesUpdated(const QString &serialized);
-        void recentFilesUpdated(const QString &serialized);
         void exifToolPathChanged(QString exifToolPath);
         void uploadTimeoutChanged(int uploadTimeout);
         void mustUseMasterPasswordChanged(bool mustUseMasterPassword);
@@ -422,6 +375,7 @@ namespace Models {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
+        Common::StatefulEntity m_State;
         QMutex m_SettingsMutex;
         Helpers::LocalConfig m_Config;
         QJsonObject m_SettingsJson;

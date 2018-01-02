@@ -133,6 +133,7 @@ namespace Models {
         QObject(parent),
         Common::BaseEntity(),
         Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
+        m_State("settings"),
         m_ExifToolPath(DEFAULT_EXIFTOOL),
         m_SelectedLocale(DEFAULT_LOCALE),
         m_KeywordSizeScale(DEFAULT_KEYWORD_SIZE_SCALE),
@@ -193,6 +194,7 @@ namespace Models {
         }
 
         m_Config.initConfig(localConfigPath);
+        m_State.init();
 
         QJsonDocument &doc = m_Config.getConfig();
         if (doc.isObject()) {
@@ -317,9 +319,6 @@ namespace Models {
         Models::UploadInfoRepository *uploadInfoRepository = m_CommandManager->getUploadInfoRepository();
         secretsManager->setMasterPasswordHash(getMasterPasswordHash());
         uploadInfoRepository->initFromString(getLegacyUploadHosts());
-
-        emit recentDirectoriesUpdated(getRecentDirectories());
-        emit recentFilesUpdated(getRecentFiles());
     }
 
     ProxySettings *SettingsModel::retrieveProxySettings() {
@@ -492,7 +491,7 @@ namespace Models {
         //moveSetting(oldSettings, DICT_PATH, dictPath, QMetaType::QString);
         moveSetting(oldSettings, USER_STATISTICS, userStatistics, QMetaType::Bool);
         moveSetting(oldSettings, CHECK_FOR_UPDATES, checkForUpdates, QMetaType::Bool);
-        moveSetting(oldSettings, NUMBER_OF_LAUNCHES, numberOfLaunches, QMetaType::Int);
+        //moveSetting(oldSettings, NUMBER_OF_LAUNCHES, numberOfLaunches, QMetaType::Int);
         //moveSetting(oldSettings, APP_WINDOW_WIDTH, appWindowWidth, QMetaType::Int);
         //moveSetting(oldSettings, APP_WINDOW_HEIGHT, appWindowHeight, QMetaType::Int);
         //moveSetting(oldSettings, APP_WINDOW_X, appWindowX, QMetaType::Int);
@@ -505,13 +504,13 @@ namespace Models {
         moveSetting(oldSettings, MASTER_PASSWORD_HASH, masterPasswordHash, QMetaType::QString);
         moveSetting(oldSettings, ONE_UPLOAD_SECONDS_TIMEMOUT, oneUploadSecondsTimeout, QMetaType::Int);
         moveSetting(oldSettings, USE_CONFIRMATION_DIALOGS, useConfirmationDialogs, QMetaType::Bool);
-        moveSetting(oldSettings, RECENT_DIRECTORIES, recentDirectories, QMetaType::QString);
-        moveSetting(oldSettings, RECENT_FILES, recentFiles, QMetaType::QString);
+        //moveSetting(oldSettings, RECENT_DIRECTORIES, recentDirectories, QMetaType::QString);
+        //moveSetting(oldSettings, RECENT_FILES, recentFiles, QMetaType::QString);
         moveSetting(oldSettings, MAX_PARALLEL_UPLOADS, maxParallelUploads, QMetaType::Int);
         moveSetting(oldSettings, USE_SPELL_CHECK, useSpellCheck, QMetaType::Bool);
-        moveSetting(oldSettings, USER_AGENT_ID, userAgentId, QMetaType::QString);
-        moveSetting(oldSettings, INSTALLED_VERSION, installedVersion, QMetaType::Int);
-        moveSetting(oldSettings, USER_CONSENT, userConsent, QMetaType::Bool);
+        //moveSetting(oldSettings, USER_AGENT_ID, userAgentId, QMetaType::QString);
+        //moveSetting(oldSettings, INSTALLED_VERSION, installedVersion, QMetaType::Int);
+        //moveSetting(oldSettings, USER_CONSENT, userConsent, QMetaType::Bool);
         moveSetting(oldSettings, SELECTED_LOCALE, selectedLocale, QMetaType::QString);
         moveSetting(oldSettings, SELECTED_THEME_INDEX, selectedThemeIndex, QMetaType::Int);
         moveSetting(oldSettings, USE_AUTO_COMPLETE, useKeywordsAutoComplete, QMetaType::Bool);
@@ -569,11 +568,6 @@ namespace Models {
         setProgressiveSuggestionIncrement(DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT);
         setUseDirectExiftoolExport(DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT);
         setUseAutoImport(DEFAULT_USE_AUTOIMPORT);
-
-#if defined(QT_DEBUG)
-        setValue(Constants::userConsent, DEFAULT_HAVE_USER_CONSENT);
-        setValue(Constants::installedVersion, 0);
-#endif
 
         justChanged();
 
@@ -744,6 +738,34 @@ namespace Models {
         }
 
         return text;
+    }
+
+    bool SettingsModel::needToShowWhatsNew() {
+        int lastVersion = m_State.getInt(Constants::installedVersion, 0);
+        int installedMajorPart = lastVersion / XPIKS_VERSION_MAJOR_DIVISOR;
+        int currentMajorPart = XPIKS_FULL_VERSION_INT / XPIKS_VERSION_MAJOR_DIVISOR;
+        bool result = currentMajorPart > installedMajorPart;
+        return result;
+    }
+
+    bool SettingsModel::needToShowTextWhatsNew() {
+        int lastVersion = m_State.getInt(Constants::installedVersion, 0);
+        int installedMajorPart = lastVersion / XPIKS_VERSION_MAJOR_DIVISOR;
+        int currentMajorPart = XPIKS_FULL_VERSION_INT / XPIKS_VERSION_MAJOR_DIVISOR;
+        bool result = (currentMajorPart == installedMajorPart) &&
+                (XPIKS_FULL_VERSION_INT > lastVersion);
+        return result;
+    }
+
+    void SettingsModel::saveCurrentVersion() {
+        LOG_DEBUG << "version" << XPIKS_FULL_VERSION_INT;
+        m_State.setValue(Constants::installedVersion, XPIKS_FULL_VERSION_INT);
+        m_State.sync();
+    }
+
+    bool SettingsModel::needToShowTermsAndConditions() {
+        bool haveConsent = m_State.getBool(Constants::userConsent, false);
+        return !haveConsent;
     }
 
     void SettingsModel::setExifToolPath(QString value) {
@@ -1045,24 +1067,26 @@ namespace Models {
         SettingsModel::saveProxySetting(empty, empty, empty, empty);
     }
 
-    void SettingsModel::protectTelemetry() {
-        bool telemetryEnabled = this->boolValue(Constants::userStatistics, false);
+    void SettingsModel::protectHealthReporting() {
+        const bool reportingEnabled = getUserStatistics();
 
-        if (telemetryEnabled) {
-            this->setValue(Constants::numberOfLaunches, 0);
+        if (reportingEnabled) {
+            m_State.setValue(Constants::numberOfLaunches, 0);
         } else {
-            int numberOfLaunches = this->intValue(Constants::numberOfLaunches, 0);
+            int numberOfLaunches = m_State.getInt(Constants::numberOfLaunches, 0);
             numberOfLaunches++;
 
             if (numberOfLaunches >= 31) {
-                this->setValue(Constants::userStatistics, true);
-                this->setValue(Constants::numberOfLaunches, 0);
-                LOG_DEBUG << "Resetting telemetry to ON";
+                setUserStatistics(true);
+                m_State.setValue(Constants::numberOfLaunches, 0);
+                LOG_DEBUG << "Resetting health reporting to ON";
             } else {
                 this->setValue(Constants::numberOfLaunches, numberOfLaunches);
-                LOG_DEBUG << numberOfLaunches << "launches of Xpiks with Telemetry OFF";
+                LOG_DEBUG << numberOfLaunches << "launches of Xpiks with Health reporting OFF";
             }
         }
+
+        m_State.sync();
     }
 
     void SettingsModel::sync() {

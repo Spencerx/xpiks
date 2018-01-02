@@ -23,7 +23,7 @@ namespace Models {
     SwitcherModel::SwitcherModel(QObject *parent):
         QObject(parent),
         Common::BaseEntity(),
-        Common::StatefulEntity("switcher"),
+        m_State("switcher"),
         // effectively meaning all features are OFF
         m_Threshold(100)
     {
@@ -40,10 +40,10 @@ namespace Models {
     }
 
     void SwitcherModel::initialize() {
-        initState();
+        m_State.init();
         ensureSessionTokenValid();
 
-        QString sessionToken = getStateString(SWITCHER_SESSION_TOKEN);
+        QString sessionToken = m_State.getString(SWITCHER_SESSION_TOKEN);
         if (!sessionToken.isEmpty()) {
             quint32 hash = Helpers::switcherHash(sessionToken);
             quint32 threshold = hash % 100;
@@ -72,12 +72,12 @@ namespace Models {
         const QDateTime dtNow = QDateTime::currentDateTime();
 
         do {
-            if (!containsState(SWITCHER_SESSION_TOKEN)) {
+            if (!m_State.contains(SWITCHER_SESSION_TOKEN)) {
                 LOG_DEBUG << "Token not found in the state config";
                 break;
             }
 
-            const QString sessionStart = getStateString(SWITCHER_SESSION_START);
+            const QString sessionStart = m_State.getString(SWITCHER_SESSION_START);
             const QDateTime sessionStartDateTime = QDateTime::fromString(sessionStart, Qt::ISODate);
             if (!sessionStartDateTime.isValid()) {
                 LOG_WARNING << "Cannot parse session start datetime:" << sessionStart;
@@ -98,16 +98,16 @@ namespace Models {
             LOG_INFO << "Updating switcher token";
 
             QUuid uuid = QUuid::createUuid();
-            setStateValue(SWITCHER_SESSION_TOKEN, uuid.toString());
+            m_State.setValue(SWITCHER_SESSION_TOKEN, uuid.toString());
             QString dateTimeString = dtNow.toString(Qt::ISODate);
-            setStateValue(SWITCHER_SESSION_START, dateTimeString);
+            m_State.setValue(SWITCHER_SESSION_START, dateTimeString);
 
-            syncState();
+            m_State.sync();
         }
     }
 
     bool SwitcherModel::getDonateCampaign1LinkClicked() const {
-        bool clicked = getStateBool(DONATE_CAMPAIGN1_CLICKED, false);
+        bool clicked = m_State.getBool(DONATE_CAMPAIGN1_CLICKED, false);
         return clicked;
     }
 
@@ -115,11 +115,11 @@ namespace Models {
         LOG_DEBUG << "#";
         if (getDonateCampaign1LinkClicked()) { return; }
 
-        setStateValue(DONATE_CAMPAIGN1_CLICKED, true);
+        m_State.setValue(DONATE_CAMPAIGN1_CLICKED, true);
         emit donateCampaign1LinkClicked();
 
         // save config
-        syncState();
+        m_State.sync();
     }
 
     void SwitcherModel::configUpdated() {

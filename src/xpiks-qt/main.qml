@@ -49,8 +49,6 @@ ApplicationWindow {
 
     function closeHandler(close) {
         console.info("closeHandler")
-        settingsModel.saveRecentDirectories()
-        settingsModel.saveRecentFiles()
 
         if (artItemsModel.hasModifiedArtworks()) {
             console.debug("Modified artworks present")
@@ -66,7 +64,6 @@ ApplicationWindow {
     function shutdownEverything() {
         applicationWindow.visibility = "Minimized"
         helpersWrapper.beforeDestruction();
-        settingsModel.protectTelemetry();
         saveAppGeometry()
         closingTimer.start()
     }
@@ -1098,8 +1095,6 @@ ApplicationWindow {
             console.debug("You chose: " + chooseArtworksDialog.fileUrls)
             var filesAdded = artItemsModel.addLocalArtworks(chooseArtworksDialog.fileUrls)
             if (filesAdded > 0) {
-                settingsModel.saveRecentDirectories()
-                settingsModel.saveRecentFiles()
                 console.debug("" + filesAdded + ' files via Open File(s)')
             } else {
                 noNewFilesDialog.open()
@@ -1122,11 +1117,8 @@ ApplicationWindow {
         onAccepted: {
             console.debug("You chose: " + chooseDirectoryDialog.fileUrls)
             var filesAdded = artItemsModel.addLocalDirectories(chooseDirectoryDialog.fileUrls)
-            if (filesAdded > 0) {
-                settingsModel.saveRecentDirectories()
-                settingsModel.saveRecentFiles()
-                console.debug("" + filesAdded + ' files via Open Directory')
-            } else {
+            console.debug("" + filesAdded + ' files via Open Directory')
+            if (filesAdded === 0) {
                 noNewFilesDialog.open()
             }
         }
@@ -1310,11 +1302,7 @@ ApplicationWindow {
             onDropped: {
                 if (drop.hasUrls) {
                     var filesCount = artItemsModel.dropFiles(drop.urls)
-                    if (filesCount > 0) {
-                        settingsModel.saveRecentDirectories()
-                        settingsModel.saveRecentFiles()
-                        console.debug(filesCount + ' files added via drag&drop')
-                    }
+                    console.debug(filesCount + ' files added via drag&drop')
                 }
             }
         }

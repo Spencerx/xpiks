@@ -33,7 +33,7 @@ namespace Suggestion {
     KeywordsSuggestor::KeywordsSuggestor(QObject *parent):
         QAbstractListModel(parent),
         Common::BaseEntity(),
-        Common::StatefulEntity("ksuggest"),
+        m_State("ksuggest"),
         m_SuggestedKeywords(m_HoldPlaceholder, this),
         m_AllOtherKeywords(m_HoldPlaceholder, this),
         m_SelectedArtworksCount(0),
@@ -87,7 +87,7 @@ namespace Suggestion {
                              this, &KeywordsSuggestor::errorsReceivedHandler);
         }
 
-        initState();
+        m_State.init();
     }
 
     void KeywordsSuggestor::setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks) {
@@ -170,15 +170,15 @@ namespace Suggestion {
     }
 
     int KeywordsSuggestor::getSearchTypeIndex() const {
-        return getStateInt(Constants::suggestorSearchTypeIndex, DEFAULT_SEARCH_TYPE_INDEX);
+        return m_State.getInt(Constants::suggestorSearchTypeIndex, DEFAULT_SEARCH_TYPE_INDEX);
     }
 
     void KeywordsSuggestor::setSearchTypeIndex(int value) {
         int current = getSearchTypeIndex();
         if (current != value) {
-            setStateValue(Constants::suggestorSearchTypeIndex, value);
+            m_State.setValue(Constants::suggestorSearchTypeIndex, value);
             emit suggestedKeywordsCountChanged();
-            syncState();
+            m_State.sync();
         }
     }
 

@@ -12,6 +12,7 @@
 #define RECENTFILESMODEL_H
 
 #include "recentitemsmodel.h"
+#include "../Common/statefulentity.h"
 
 namespace Models {
     class RecentFilesModel : public RecentItemsModel
@@ -19,6 +20,15 @@ namespace Models {
         Q_OBJECT
     public:
         RecentFilesModel();
+
+    public:
+        virtual void initialize() override;
+
+    protected:
+        virtual void sync() override;
+
+    private:
+        Common::StatefulEntity m_State;
     };
 }
 
