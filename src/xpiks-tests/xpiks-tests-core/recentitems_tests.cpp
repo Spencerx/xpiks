@@ -15,12 +15,14 @@ void checkCannotPushMoreThan(Models::RecentItemsModel &recentItems) {
 
 void RecentItemsTests::pushMoreThanXFilesTest() {
     Models::RecentFilesModel recentFiles;
+    recentFiles.initialize();
 
     checkCannotPushMoreThan(recentFiles);
 }
 
 void RecentItemsTests::pushMoreThanXDirectoriesTest() {
     Models::RecentDirectoriesModel recentDirectories;
+    recentDirectories.initialize();
 
     checkCannotPushMoreThan(recentDirectories);
 }
@@ -39,12 +41,14 @@ void checkLastPushedIsMostRecent(Models::RecentItemsModel &recentItems) {
 
 void RecentItemsTests::lastPushedIsMostRecentFileTest() {
     Models::RecentFilesModel recentFiles;
+    recentFiles.initialize();
 
     checkLastPushedIsMostRecent(recentFiles);
 }
 
 void RecentItemsTests::lastPushedIsMostRecentDirectoryTest() {
     Models::RecentDirectoriesModel recentDirectories;
+    recentDirectories.initialize();
 
     checkLastPushedIsMostRecent(recentDirectories);
 }
