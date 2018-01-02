@@ -831,7 +831,8 @@ Item {
 
                 GridView {
                     id: artworksHost
-                    property bool isEditingAllowed: filteredArtItemsModel.selectedArtworksCount == 0
+                    // TODO: UX refactoring // filteredArtItemsModel.selectedArtworksCount == 0
+                    property bool isEditingAllowed: true
                     anchors.fill: parent
                     anchors.rightMargin: mainScrollView.areScrollbarsVisible ? 10 : 0
                     model: filteredArtItemsModel

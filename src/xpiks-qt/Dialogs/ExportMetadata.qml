@@ -173,7 +173,7 @@ Item {
                 StyledCheckbox {
                     id: useBackupsCheckbox
                     text: i18.n + qsTr("Backup each file")
-                    checked: true
+                    checked: false
                     enabled: !metadataExportComponent.isInProgress
                 }
 
