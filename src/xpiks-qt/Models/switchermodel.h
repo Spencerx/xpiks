@@ -52,7 +52,7 @@ namespace Models {
 
     public:
         bool getDonateCampaign1LinkClicked() const;
-        QString getDonateCampaign1Link() const { return QString("https://ribtoks.github.io/xpiks/donatecampaign/"); }
+        QString getDonateCampaign1Link() const { return QString("http://xpiksapp.com/donatecampaign/"); }
 
 #ifdef INTEGRATION_TESTS
     public:

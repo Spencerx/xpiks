@@ -770,17 +770,17 @@ ApplicationWindow {
 
             MenuItem {
                 text: i18.n + qsTr("&User's guide")
-                onTriggered: Qt.openUrlExternally("https://ribtoks.github.io/xpiks/tutorials/")
+                onTriggered: Qt.openUrlExternally("http://xpiksapp.com/tutorials/")
             }
 
             MenuItem {
                 text: i18.n + qsTr("&FAQ")
-                onTriggered: Qt.openUrlExternally("https://ribtoks.github.io/xpiks/faq/")
+                onTriggered: Qt.openUrlExternally("http://xpiksapp.com/faq/")
             }
 
             MenuItem {
                 text: i18.n + qsTr("&Support")
-                onTriggered: Qt.openUrlExternally("https://ribtoks.github.io/xpiks/support/")
+                onTriggered: Qt.openUrlExternally("http://xpiksapp.com/support/")
             }
         }
 
@@ -815,7 +815,7 @@ ApplicationWindow {
                 text: "Update window"
                 onTriggered: {
                     Common.launchDialog("Dialogs/UpdateWindow.qml",
-                                        applicationWindow, {updateUrl: "https://ribtoks.github.io/xpiks/downloads/"},
+                                        applicationWindow, {updateUrl: "http://xpiksapp.com/downloads/"},
                                         function(wnd) {wnd.show();});
                 }
             }
@@ -1651,7 +1651,7 @@ ApplicationWindow {
                 text: i18.n + qsTr("Update available!")
                 color: isPressed ? uiColors.linkClickedColor : uiColors.greenColor
                 onClicked: {
-                    Qt.openUrlExternally("https://ribtoks.github.io/xpiks/downloads/")
+                    Qt.openUrlExternally("http://xpiksapp.com/downloads/")
                 }
             }
 
