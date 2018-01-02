@@ -206,11 +206,14 @@ int main(int argc, char *argv[]) {
     Exiv2InitHelper exiv2InitHelper;
     Q_UNUSED(exiv2InitHelper);
 
+    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
+    qInstallMessageHandler(myMessageHandler);
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
 
+    QCoreApplication app(argc, argv);
+    std::cout << "Initialized application" << std::endl;
+
     QString appDataPath = XPIKS_USERDATA_PATH;
-    const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
-    Helpers::ensureDirectoryExists(statesPath);
 #ifdef WITH_LOGS
     const QString &logFileDir = QDir::cleanPath(appDataPath + QDir::separator() + Constants::LOGS_DIR);
     if (!logFileDir.isEmpty()) {
@@ -230,19 +233,15 @@ int main(int argc, char *argv[]) {
     }
 #endif
 
-    QCoreApplication app(argc, argv);
+    Models::LogsModel logsModel;
+    logsModel.startLogging();
 
-    std::cout << "Initialized application" << std::endl;
-
-    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
-    qInstallMessageHandler(myMessageHandler);
+    const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
+    Helpers::ensureDirectoryExists(statesPath);
 
     Models::SettingsModel settingsModel;
     settingsModel.initializeConfigs();
     settingsModel.retrieveAllValues();
-
-    Models::LogsModel logsModel;
-    logsModel.startLogging();
 
     QMLExtensions::ColorsModel colorsModel;
 

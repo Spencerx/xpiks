@@ -207,9 +207,18 @@ int main(int argc, char *argv[]) {
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
     initQSettings();
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
+#endif
+
+    qInstallMessageHandler(myMessageHandler);
+
+    // ----------------------------------------------
+    QApplication app(argc, argv);
+    // ----------------------------------------------
+
     QString appDataPath = XPIKS_USERDATA_PATH;
-    const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
-    Helpers::ensureDirectoryExists(statesPath);
+
 #ifdef WITH_LOGS
     const QString &logFileDir = QDir::cleanPath(appDataPath + QDir::separator() + Constants::LOGS_DIR);
     if (!logFileDir.isEmpty()) {
@@ -233,37 +242,19 @@ int main(int argc, char *argv[]) {
     Models::LogsModel logsModel(&colorsModel);
     logsModel.startLogging();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
-#endif
-
-    qInstallMessageHandler(myMessageHandler);
-
     LOG_INFO << "Log started. Today is" << QDateTime::currentDateTimeUtc().toString("dd.MM.yyyy");
     LOG_INFO << "Xpiks" << XPIKS_FULL_VERSION_STRING << "-" << STRINGIZE(BUILDNUMBER);
-
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
     LOG_INFO << QSysInfo::productType() << QSysInfo::productVersion() << QSysInfo::currentCpuArchitecture();
-#else
-#ifdef Q_OS_WIN
-    LOG_INFO << QLatin1String("Windows Qt<5.4");
-#elsif Q_OS_DARWIN
-    LOG_INFO << QLatin1String("OS X Qt<5.4");
-#else
-    LOG_INFO << QLatin1String("LINUX Qt<5.4");
-#endif
-#endif
+    LOG_INFO << "Working directory of Xpiks is:" << QDir::currentPath();
+    LOG_DEBUG << "Extra files search locations:" << QStandardPaths::standardLocations(XPIKS_DATA_LOCATION_TYPE);
 
-    QApplication app(argc, argv);
+    const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
+    Helpers::ensureDirectoryExists(statesPath);
 
     Models::SettingsModel settingsModel;
     settingsModel.initializeConfigs();
     settingsModel.retrieveAllValues();
     ensureUserIdExists(&settingsModel);
-
-    LOG_INFO << "Working directory of Xpiks is:" << QDir::currentPath();
-    LOG_DEBUG << "Extra files search locations:" << QStandardPaths::standardLocations(XPIKS_DATA_LOCATION_TYPE);
 
     QString userId = settingsModel.getUserAgentId();
     userId.remove(QRegExp("[{}-]."));
