@@ -206,17 +206,7 @@ int main(int argc, char *argv[]) {
     Exiv2InitHelper exiv2InitHelper;
     Q_UNUSED(exiv2InitHelper);
 
-    QCoreApplication app(argc, argv);
-
-    std::cout << "Initialized application" << std::endl;
-
-    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
-    qInstallMessageHandler(myMessageHandler);
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
-
-    Models::SettingsModel settingsModel;
-    settingsModel.initializeConfigs();
-    settingsModel.retrieveAllValues();
 
     QString appDataPath = XPIKS_USERDATA_PATH;
     const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
@@ -239,6 +229,17 @@ int main(int argc, char *argv[]) {
         logger.setLogFilePath(logFilePath);
     }
 #endif
+
+    QCoreApplication app(argc, argv);
+
+    std::cout << "Initialized application" << std::endl;
+
+    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
+    qInstallMessageHandler(myMessageHandler);
+
+    Models::SettingsModel settingsModel;
+    settingsModel.initializeConfigs();
+    settingsModel.retrieveAllValues();
 
     Models::LogsModel logsModel;
     logsModel.startLogging();

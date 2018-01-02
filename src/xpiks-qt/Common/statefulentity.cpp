@@ -36,7 +36,9 @@ namespace Common {
         if (!appDataPath.isEmpty()) {
             const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
             QDir statesDir(statesPath);
+#ifndef CORE_TESTS
             Q_ASSERT(statesDir.exists());
+#endif
             localConfigPath = statesDir.filePath(filename);
         } else {
             localConfigPath = filename;
