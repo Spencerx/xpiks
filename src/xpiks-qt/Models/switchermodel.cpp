@@ -15,9 +15,9 @@
 #include "../Helpers/stringhelper.h"
 
 namespace Models {
-#define DONATE_CAMPAIGN1_CLICKED "DonateCampaign1Clicked"
-#define SWITCHER_SESSION_TOKEN "SessionToken"
-#define SWITCHER_SESSION_START "SessionStart"
+#define DONATE_CAMPAIGN1_CLICKED "sonateCampaign1Clicked"
+#define SWITCHER_SESSION_TOKEN "sessionToken"
+#define SWITCHER_SESSION_START "sessionStart"
 #define SWITCHER_TIMER_DELAY 2000
 
     SwitcherModel::SwitcherModel(QObject *parent):
