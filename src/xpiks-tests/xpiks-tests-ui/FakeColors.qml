@@ -55,4 +55,5 @@ QtObject {
     property color leftSliderColor: artworkBackground
     property color popupBackgroundColor: inactiveControlColor
     property color popupDarkInputBackground: inputInactiveBackground
+    property color popupGlowColor: defaultDarkerColor
 }
