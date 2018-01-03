@@ -183,7 +183,7 @@ Item {
             anchors.bottomMargin: -glowRadius/2
             glowRadius: 4
             spread: 0.0
-            color: uiColors.defaultControlColor
+            color: uiColors.popupGlowColor
             cornerRadius: glowRadius
         }
 
@@ -686,6 +686,7 @@ Item {
                                     anchors.leftMargin: 5
                                     anchors.right: parent.right
                                     anchors.rightMargin: 5
+                                    horizontalAlignment: TextInput.AlignLeft
                                     echoMode: showPasswordCheckBox.checked ? TextInput.Normal : TextInput.Password
                                     text: uploadHostsListView.currentItem ? uploadHostsListView.currentItem.myData.password : ""
                                     onTextChanged: {

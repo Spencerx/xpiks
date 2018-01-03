@@ -87,7 +87,7 @@ Item {
             anchors.bottomMargin: -glowRadius/2
             glowRadius: 4
             spread: 0.0
-            color: uiColors.defaultControlColor
+            color: uiColors.popupGlowColor
             cornerRadius: glowRadius
         }
 
