@@ -1167,7 +1167,7 @@ Rectangle {
         anchors.left: leftSpacer.right
         anchors.right: parent.right
         anchors.bottom: bottomPane.top
-        height: 45
+        height: 55
         color: uiColors.defaultDarkColor
 
         RowLayout {
