@@ -282,11 +282,20 @@ Item {
 
         MenuItem { action: fixSpellingInSelectedAction }
         MenuItem { action: fixDuplicatesInSelectedAction }
+
+        MenuSeparator { }
+
         MenuItem { action: removeMetadataAction }
         MenuItem { action: deleteKeywordsAction }
         MenuItem { action: detachVectorsAction }
+
+        MenuSeparator { }
+
         MenuItem { action: createArchivesAction }
         MenuItem { action: exportToCsvAction }
+
+        MenuSeparator { }
+
         MenuItem { action: reimportMetadataAction }
         MenuItem { action: overwriteMetadataAction }
     }
