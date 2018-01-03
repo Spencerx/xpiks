@@ -1258,7 +1258,7 @@ Item {
                                         anchors.rightMargin: 20
                                         anchors.topMargin: 20
                                         property bool isWideEnough: width > 450
-                                        property real inputWidth: isWideEnough ? ((width / 2) - 10) : width
+                                        property real inputWidth: isWideEnough ? ((width / 2) - 12) : width
 
                                         StyledText {
                                             id: descriptionText
