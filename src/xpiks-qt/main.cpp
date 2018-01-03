@@ -149,7 +149,11 @@ void initQSettings() {
 }
 
 void ensureUserIdExists(Models::SettingsModel *settings) {
-    if (settings->getUserAgentId().isEmpty()) {
+    QString userID = settings->getUserAgentId();
+    QUuid latest(userID);
+    if (userID.isEmpty()
+            || (latest.isNull())
+            || (latest.version() == QUuid::VerUnknown)) {
         QUuid uuid = QUuid::createUuid();
         settings->setUserAgentId(uuid.toString());
     }

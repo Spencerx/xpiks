@@ -72,8 +72,15 @@ namespace Models {
         const QDateTime dtNow = QDateTime::currentDateTime();
 
         do {
-            if (!m_State.contains(SWITCHER_SESSION_TOKEN)) {
+            QString token = m_State.getString(SWITCHER_SESSION_TOKEN);
+            if (token.isEmpty()) {
                 LOG_DEBUG << "Token not found in the state config";
+                break;
+            }
+
+            QUuid tokenUuid(token);
+            if (tokenUuid.isNull() || (tokenUuid.version() == QUuid::VerUnknown)) {
+                LOG_DEBUG << "Token has incorrect format";
                 break;
             }
 
@@ -89,7 +96,7 @@ namespace Models {
 
             if ((daysPassed < 0) || (daysPassed > 30)) {
                 break;
-            }
+            }            
 
             canKeepToken = true;
         } while (false);
