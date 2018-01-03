@@ -114,6 +114,7 @@ Item {
                         wrapMode: TextEdit.Wrap
                         selectionColor: uiColors.inputBackgroundColor
                         readOnly: true
+                        textFormat: TextEdit.PlainText
                     }
                 }
             }
