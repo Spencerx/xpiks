@@ -340,6 +340,8 @@ namespace SpellCheck {
                 continue;
             }
 
+            if (queryItem->m_Stem.length() <= 2) { continue; }
+
             stemToIndexMap[queryItem->m_Stem].append(i);
         }
 
