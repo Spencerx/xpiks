@@ -347,7 +347,7 @@ namespace Models {
                 return uploadInfo->getZipBeforeUpload();
             case PercentRole: {
             double percent = uploadInfo->getPercent();
-            return ((0.0001 < percent) && (percent < 1.0)) ? 1.0 : percent;
+            return ((1e-7 < percent) && (percent < 1.0)) ? 1.0 : percent;
         }
             /*case FtpPassiveModeRole:
                 return uploadInfo->getFtpPassiveMode();*/
