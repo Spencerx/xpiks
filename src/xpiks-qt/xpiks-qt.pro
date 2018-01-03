@@ -197,12 +197,11 @@ QML_IMPORT_PATH =
 
 CONFIG(debug, debug|release)  {
     ICON = Graphics/xpiks-qt-dev.icns
-    RC_ICONS = Graphics/xpiks-qt.ico
+    RC_ICONS = Graphics/xpiks-qt-dev.ico
 } else {
     ICON = Graphics/xpiks-qt.icns
     RC_ICONS = Graphics/xpiks-qt.ico
 }
-
 
 # Default rules for deployment.
 include(deployment.pri)
