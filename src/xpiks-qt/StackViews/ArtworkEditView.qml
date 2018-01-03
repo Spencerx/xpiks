@@ -559,8 +559,26 @@ Rectangle {
                         source: "image://global/" + artworkProxy.thumbPath
                         cache: false
                         property bool isFullSize: false
-                        width: isFullSize ? sourceSize.width : (imageWrapper.width - 2*imageWrapper.imageMargin)
-                        height: isFullSize ? sourceSize.height : (imageWrapper.height - 2*imageWrapper.imageMargin)
+                        width: {
+                            var fullWidth = sourceSize.width
+                            var fitWidth = (imageWrapper.width - 2*imageWrapper.imageMargin)
+
+                            if (isFullSize) {
+                                return Math.max(fullWidth, fitWidth)
+                            } else {
+                                return fitWidth
+                            }
+                        }
+                        height: {
+                            var fullHeight = sourceSize.height
+                            var fitHeight = (imageWrapper.height - 2*imageWrapper.imageMargin)
+
+                            if (isFullSize) {
+                                return Math.max(fullHeight, fitHeight)
+                            } else {
+                                return fitHeight
+                            }
+                        }
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                         asynchronous: true
