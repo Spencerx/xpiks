@@ -272,7 +272,8 @@ namespace Models {
         case 3: {
             // select Images
             this->setFilteredItemsSelectedEx([](ArtworkMetadata *artwork) {
-                return dynamic_cast<ImageArtwork*>(artwork) != nullptr;
+                ImageArtwork *image = dynamic_cast<ImageArtwork*>(artwork);
+                return (image != nullptr) ? !image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
             break;
         }
