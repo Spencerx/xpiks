@@ -88,6 +88,8 @@ namespace Models {
                 destination->setUsername(usernameValue.toString());
             }
 
+            if (destination->isEmpty()) { break; }
+
             QJsonValue passwordValue = element.value(FTP_PASS_KEY);
             if (passwordValue.isString()) {
                 QString rawPassword = passwordValue.toString();

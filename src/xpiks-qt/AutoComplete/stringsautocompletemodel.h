@@ -56,17 +56,14 @@ namespace AutoComplete {
 
     public:
         const QString &getSearchTerm() { return m_StringsModel.getSearchTerm(); }
-        void setSearchTerm(const QString &value) {
-            if (m_StringsModel.setSearchTerm(value)) {
-                emit searchTermChanged(value);
-            }
-        }
+        void setSearchTerm(const QString &value);
 
     public:
         void setStrings(const QStringList &list) { m_StringsModel.setStrings(list); }
 
     signals:
         void searchTermChanged(const QString &value);
+        void completionsAvailable();
 
         // AutoCompleteModel interface
     protected:
