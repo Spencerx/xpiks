@@ -20,7 +20,7 @@ namespace Models {
     {
     }
 
-    QString RecentItemsModel::serializeForSettings() {
+    QString RecentItemsModel::serializeItems() {
         QByteArray raw;
         QDataStream ds(&raw, QIODevice::WriteOnly);
         ds << m_RecentItems;
@@ -31,7 +31,7 @@ namespace Models {
         return QUrl::fromLocalFile(m_LatestUsedItem);
     }
 
-    void RecentItemsModel::deserializeFromSettings(const QString &serialized) {
+    void RecentItemsModel::deserializeItems(const QString &serialized) {
         LOG_DEBUG << "#";
 
         QByteArray originalData;
@@ -114,7 +114,7 @@ namespace Models {
         LOG_DEBUG << "#";
         beginResetModel();
         {
-            deserializeFromSettings(serialized);
+            deserializeItems(serialized);
         }
         endResetModel();
 

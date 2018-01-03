@@ -31,14 +31,14 @@ namespace Models {
         int getRecentItemsCount() const { return m_RecentItems.size(); }
 
     public:
-        QString serializeForSettings();
+        QString serializeItems();
         Q_INVOKABLE QUrl getLatestItem() const;
 
     public:
         virtual void initialize() = 0;
 
     public:
-        void deserializeFromSettings(const QString &serialized);
+        void deserializeItems(const QString &serialized);
         void pushItem(const QString &directoryPath);
         QStringList getAllRecentFiles();
 

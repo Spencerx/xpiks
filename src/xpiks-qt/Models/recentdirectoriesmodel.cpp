@@ -24,11 +24,11 @@ namespace Models {
         m_State.init();
 
         QString recentDirectories = m_State.getString(Constants::recentDirectories);
-        deserializeFromSettings(recentDirectories);
+        deserializeItems(recentDirectories);
     }
 
     void RecentDirectoriesModel::sync() {
-        QString recentDirectories = serializeForSettings();
+        QString recentDirectories = serializeItems();
         m_State.setValue(Constants::recentDirectories, recentDirectories);
         m_State.sync();
     }

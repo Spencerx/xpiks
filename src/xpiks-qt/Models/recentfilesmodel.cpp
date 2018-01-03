@@ -24,11 +24,11 @@ namespace Models {
         m_State.init();
 
         QString recentFiles = m_State.getString(Constants::recentFiles);
-        deserializeFromSettings(recentFiles);
+        deserializeItems(recentFiles);
     }
 
     void RecentFilesModel::sync() {
-        QString recentFiles = serializeForSettings();
+        QString recentFiles = serializeItems();
         m_State.setValue(Constants::recentFiles, recentFiles);
         m_State.sync();
     }
