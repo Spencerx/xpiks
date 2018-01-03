@@ -195,7 +195,11 @@ DEFINES += QT_MESSAGELOGCONTEXT
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
-ICON = xpiks-qt.icns
+CONFIG(debug, debug|release)  {
+    ICON = xpiks-qt-dev.icns
+} else {
+    ICON = xpiks-qt.icns
+}
 
 RC_ICONS = xpiks-qt.ico
 
