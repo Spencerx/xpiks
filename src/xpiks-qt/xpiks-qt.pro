@@ -196,12 +196,13 @@ DEFINES += QT_MESSAGELOGCONTEXT
 QML_IMPORT_PATH =
 
 CONFIG(debug, debug|release)  {
-    ICON = xpiks-qt-dev.icns
+    ICON = Graphics/xpiks-qt-dev.icns
+    RC_ICONS = Graphics/xpiks-qt.ico
 } else {
-    ICON = xpiks-qt.icns
+    ICON = Graphics/xpiks-qt.icns
+    RC_ICONS = Graphics/xpiks-qt.ico
 }
 
-RC_ICONS = xpiks-qt.ico
 
 # Default rules for deployment.
 include(deployment.pri)
