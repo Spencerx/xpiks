@@ -142,7 +142,7 @@ Item {
         // This rectangle is the actual popup
         Rectangle {
             id: dialogWindow
-            property bool isTooNarrow: parent.width <= 1100
+            property bool isTooNarrow: parent.width <= 1150
             width: Math.max(900, Math.min(1100, parent.width - 200))
             height: Math.min(parent.height - 40, 700)
             color: uiColors.popupBackgroundColor
