@@ -451,6 +451,11 @@ Item {
                         function showStockCompletion(textField) {
                             ftpListAC.selectedIndex = -1
 
+                            if (ftpListAC.getCount() === 0) {
+                                ftpListAC.cancelCompletion()
+                                return;
+                            }
+
                             if (typeof generalTab.autoCompleteBox !== "undefined") {
                                 // update completion
                                 return
@@ -582,10 +587,11 @@ Item {
                                         if ((Qt.Key_A <= event.key && event.key <= Qt.Key_Z) ||
                                                 (Qt.Key_0 <= event.key && event.key <= Qt.Key_9) ||
                                                 (text.length === 0 && !ftpListAC.isActive)) {
-                                            generalTab.showStockCompletion(titleText)
                                             ftpListAC.searchTerm = text
+                                            generalTab.showStockCompletion(titleText)
                                         } else if (event.key === Qt.Key_Backspace) {
                                             ftpListAC.searchTerm = text
+                                            generalTab.showStockCompletion(titleText)
                                         }
                                     }
                                 }

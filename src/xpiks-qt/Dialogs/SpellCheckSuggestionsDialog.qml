@@ -220,7 +220,10 @@ Item {
                                                 itemHeight: uiManager.keywordHeight
                                                 suggestionText: suggestion
                                                 isSelected: isselected
-                                                onActionClicked: editreplacementindex = suggestionIndex
+                                                onActionClicked: {
+                                                    editreplacementindex = suggestionIndex
+                                                    spellCheckSuggestionModel.updateSelection()
+                                                }
                                             }
                                         }
                                     }
@@ -249,6 +252,8 @@ Item {
 
                     StyledButton {
                         text: i18.n + qsTr("Replace")
+                        enabled: spellCheckSuggestionModel.anythingSelected
+                        isDefault: true
                         width: 100
                         onClicked: {
                             spellCheckSuggestionModel.submitCorrections()
