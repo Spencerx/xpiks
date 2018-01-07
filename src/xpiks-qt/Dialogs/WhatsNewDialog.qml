@@ -108,54 +108,47 @@ Item {
                 property int currentSlideIndex: 0
                 property int previousSlideIndex: 0
 
+                // slide pictures should be in 2:1 aspect ratio
                 property list<Item> whatsNewSlides: [
                     PresentationSlide {
                         parent: slidesHost
                         id: firstSlide
                         title: i18.n + qsTr("Video files support")
-                        imageUrl: "qrc:/Graphics/presets.png"
-                        width: slidesHost.width
-                        height: slidesHost.height
+                        imageUrl: "qrc:/Graphics/whatsnew/videosupport.png"
+                        anchors.fill: parent
+                        anchors.margins: 1
                     },
                     PresentationSlide {
                         parent: slidesHost
                         id: secondSlide
                         title: i18.n + qsTr("Detection of semantical duplicates")
-                        imageUrl: "qrc:/Graphics/quickbuffer.png"
-                        width: slidesHost.width
-                        height: slidesHost.height
+                        imageUrl: "qrc:/Graphics/whatsnew/duplicates.png"
+                        anchors.fill: parent
+                        anchors.margins: 1
                     },
                     PresentationSlide {
                         parent: slidesHost
                         id: thirdSlide
                         title: i18.n + qsTr("Presets groups")
-                        imageUrl: "qrc:/Graphics/findandreplace.png"
-                        width: slidesHost.width
-                        height: slidesHost.height
+                        imageUrl: "qrc:/Graphics/whatsnew/presetsgroups.png"
+                        anchors.fill: parent
+                        anchors.margins: 1
                     },
                     PresentationSlide {
                         parent: slidesHost
                         id: fourthSlide
                         title: i18.n + qsTr("Upgraded look and feel")
-                        imageUrl: "qrc:/Graphics/translator.png"
-                        width: slidesHost.width
-                        height: slidesHost.height
-                    },
-                    PresentationSlide {
-                        parent: slidesHost
-                        id: fifthSlide
-                        title: i18.n + qsTr("Session management")
-                        imageUrl: "qrc:/Graphics/faileduploads.png"
-                        width: slidesHost.width
-                        height: slidesHost.height
+                        imageUrl: "qrc:/Graphics/whatsnew/lookandfeel.png"
+                        anchors.fill: parent
+                        anchors.margins: 1
                     },
                     PresentationSlide {
                         parent: slidesHost
                         id: sixsSlide
                         title: i18.n + qsTr("Bug fixes and improvements")
-                        imageUrl: "qrc:/Graphics/gears.png"
-                        width: slidesHost.width
-                        height: slidesHost.height
+                        imageUrl: "qrc:/Graphics/whatsnew/gears.png"
+                        anchors.fill: parent
+                        anchors.margins: 1
                     }
                 ]
 

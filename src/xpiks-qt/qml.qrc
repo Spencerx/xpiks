@@ -45,12 +45,7 @@
         <file>Components/SelectedIcon.qml</file>
         <file>Components/CompletionBox.qml</file>
         <file>Components/PresentationSlide.qml</file>
-        <file>Graphics/faileduploads.png</file>
-        <file>Graphics/gears.png</file>
-        <file>Graphics/presets.png</file>
-        <file>Graphics/quickbuffer.png</file>
-        <file>Graphics/translator.png</file>
-        <file>Graphics/findandreplace.png</file>
+        <file>Graphics/whatsnew/gears.png</file>
         <file>Dialogs/ProxySetupDialog.qml</file>
         <file>Dialogs/WhatsNewMinorDialog.qml</file>
         <file>Dialogs/FindAndReplace.qml</file>
@@ -147,5 +142,9 @@
         <file>Graphics/slategray/Translator_icon_selected.svg</file>
         <file>Graphics/vector-icon.svg</file>
         <file>Graphics/video-icon.svg</file>
+        <file>Graphics/whatsnew/duplicates.png</file>
+        <file>Graphics/whatsnew/lookandfeel.png</file>
+        <file>Graphics/whatsnew/videosupport.png</file>
+        <file>Graphics/whatsnew/presetsgroups.png</file>
     </qresource>
 </RCC>
