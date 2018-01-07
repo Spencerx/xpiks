@@ -58,7 +58,8 @@ namespace Connectivity {
             DirectMetadataExport,
             GoodQualityVideoPreviews,
             MetadataAutoImport,
-            GettySuggestionEnabled
+            GettySuggestionEnabled,
+            UpdateEnabled
         };
 
     private:

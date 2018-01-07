@@ -15,6 +15,7 @@
 
 namespace Models {
     class SettingsModel;
+    class SwitcherModel;
 }
 
 namespace Connectivity {
@@ -24,7 +25,7 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        UpdateService(Models::SettingsModel *settingsModel);
+        UpdateService(Models::SettingsModel *settingsModel, Models::SwitcherModel *switcherModel);
 
     public:
         void startChecking();
@@ -49,6 +50,7 @@ namespace Connectivity {
     private:
         Connectivity::UpdatesCheckerWorker *m_UpdatesCheckerWorker;
         Models::SettingsModel *m_SettingsModel;
+        Models::SwitcherModel *m_SwitcherModel;
         QString m_PathToUpdate;
         int m_AvailableVersion;
         volatile bool m_UpdateAvailable;

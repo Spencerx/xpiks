@@ -673,7 +673,6 @@ void Commands::CommandManager::afterConstructionCallback() {
     m_TelemetryService->setEndpoint(endpoint);
 
     m_TelemetryService->startReporting();
-    m_UpdateService->startChecking();
     m_ArtworkUploader->initializeStocksList(&m_InitCoordinator);
     m_WarningsService->initWarningsSettings();
     m_TranslationManager->initializeDictionaries();
@@ -708,6 +707,10 @@ void Commands::CommandManager::afterInnerServicesInitialized() {
 
 #if !defined(CORE_TESTS) && !defined(INTEGRATION_TESTS)
     m_SwitcherModel->afterInitializedCallback();
+#endif
+
+#ifndef CORE_TESTS
+    m_UpdateService->startChecking();
 #endif
 }
 
