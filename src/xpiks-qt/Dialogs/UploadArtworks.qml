@@ -57,8 +57,9 @@ Item {
         uploadWatcher.resetModel()
     }
 
-    function mainAction() {
+    function doStartUpload() {
         artworkUploader.resetProgress()
+        uploadWatcher.resetModel()
         artworkUploader.uploadArtworks()
     }
 
@@ -66,7 +67,7 @@ Item {
         if (artworkUploader.needCreateArchives()) {
             var callbackObject = {
                 afterZipped: function() {
-                    mainAction();
+                    doStartUpload();
                 }
             }
 
@@ -78,7 +79,7 @@ Item {
                                     callbackObject: callbackObject
                                 });
         } else {
-            mainAction();
+            doStartUpload();
         }
     }
 
