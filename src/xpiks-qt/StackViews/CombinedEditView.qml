@@ -307,6 +307,18 @@ Rectangle {
         }
     }
 
+    Menu {
+        id: dotsMenu
+
+        MenuItem {
+            text: i18.n + qsTr("Assign from selected")
+            onTriggered: {
+                combinedArtworks.assignFromSelected()
+                combinedArtworks.unselectAllItems()
+            }
+        }
+    }
+
     Component.onCompleted: {
         focus = true
 
@@ -1171,7 +1183,7 @@ Rectangle {
         color: uiColors.defaultDarkColor
 
         RowLayout {
-            spacing: 20
+            spacing: 10
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.leftMargin: 20
@@ -1194,17 +1206,6 @@ Rectangle {
             }
 
             StyledButton {
-                text: i18.n + qsTr("Assign from selected")
-                width: 160
-                enabled: combinedArtworks.selectedArtworksCount > 0
-                tooltip: i18.n + qsTr("Combine metadata from selected artworks")
-                onClicked: {
-                    combinedArtworks.assignFromSelected()
-                    combinedArtworks.unselectAllItems()
-                }
-            }
-
-            StyledButton {
                 text: i18.n + qsTr("Remove selected")
                 width: 150
                 tooltip: i18.n + qsTr("Remove selected artworks from this dialog")
@@ -1213,6 +1214,12 @@ Rectangle {
                     confirmRemoveArtworksDialog.itemsCount = combinedArtworks.selectedArtworksCount
                     confirmRemoveArtworksDialog.open()
                 }
+            }
+
+            DotsButton {
+                defaultDotsColor: enabled ? uiColors.labelInactiveForeground : uiColors.inactiveControlColor
+                enabled: combinedArtworks.selectedArtworksCount > 0
+                onDotsClicked: dotsMenu.popup()
             }
         }
     }
