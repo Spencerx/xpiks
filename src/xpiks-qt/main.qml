@@ -74,6 +74,7 @@ ApplicationWindow {
         uiManager.setAppHeight(applicationWindow.height)
         uiManager.setAppPosX(applicationWindow.x)
         uiManager.setAppPosY(applicationWindow.y)
+        uiManager.sync()
     }
 
     onClosing: closeHandler(close)

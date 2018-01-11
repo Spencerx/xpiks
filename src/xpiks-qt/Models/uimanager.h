@@ -61,6 +61,7 @@ namespace Models {
     public:
         Q_INVOKABLE void clearCurrentItem();
         Q_INVOKABLE QObject *retrieveTabsModel(int tabID);
+        Q_INVOKABLE void sync();
 
     public:
         int getArtworkEditRightPaneWidth();

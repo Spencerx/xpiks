@@ -42,6 +42,7 @@ namespace SpellCheck {
         bool anyError();
         bool anyDuplicate();
         void clear();
+        void clearDuplicates();
         QStringList toList();
 
     private:
@@ -72,6 +73,7 @@ namespace SpellCheck {
         bool hasTitleDuplicate(const QString &word) { return m_TitleErrors.hasDuplicates(word); }
         bool hasDescriptionDuplicate(const QString &word) { return m_DescriptionErrors.hasDuplicates(word); }
         void clear() { m_DescriptionErrors.clear(); m_TitleErrors.clear(); }
+        void clearDuplicates() { m_DescriptionErrors.clearDuplicates(); m_TitleErrors.clearDuplicates(); }
         bool anyTitleDuplicates() { return m_TitleErrors.anyDuplicate(); }
         bool anyDescriptionDuplicates() { return m_DescriptionErrors.anyDuplicate(); }
 

@@ -76,6 +76,11 @@ namespace Models {
         return model;
     }
 
+    void UIManager::sync() {
+        LOG_DEBUG << "#";
+        m_State.sync();
+    }
+
     int UIManager::getArtworkEditRightPaneWidth() {
         return m_State.getInt(Constants::artworkEditRightPaneWidth, DEFAULT_ARTWORK_EDIT_RIGHT_PANE_WIDTH);
     }
