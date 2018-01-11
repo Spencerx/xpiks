@@ -156,7 +156,7 @@ Item {
                         text: i18.n + qsTr("Add")
                         width: 90
                         enabled: !addGroupComponent.anyError && (groupNameInput.text.trim().length > 2)
-                        onClicked: submitGroupName()
+                        onClicked: submitGroupName(groupNameInput.text)
                     }
 
                     StyledButton {
