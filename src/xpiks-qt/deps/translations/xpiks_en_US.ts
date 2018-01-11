@@ -184,13 +184,13 @@
     </message>
     <message>
         <location filename="../../StackViews/CombinedEditView.qml" line="213"/>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1086"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="1098"/>
         <source>Suggest keywords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/CombinedEditView.qml" line="236"/>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1068"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="1080"/>
         <source>Show duplicates</source>
         <translation type="unfinished"></translation>
     </message>
@@ -210,44 +210,44 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="417"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="429"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="422"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="434"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="496"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="508"/>
         <source>Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="665"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="677"/>
         <source>Description:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="845"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="857"/>
         <source>Keywords:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="849"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="861"/>
         <source>(comma-separated)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/CombinedEditView.qml" line="222"/>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1046"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="1058"/>
         <source>Fix spelling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/CombinedEditView.qml" line="246"/>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1105"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="1117"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -257,37 +257,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1035"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="1047"/>
         <source>Only append new keywords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1125"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="1137"/>
         <source>More</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1183"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="1195"/>
         <source>Copy to Quick Buffer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1197"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="314"/>
         <source>Assign from selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1200"/>
-        <source>Combine metadata from selected artworks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1208"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="1209"/>
         <source>Remove selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/CombinedEditView.qml" line="1210"/>
+        <location filename="../../StackViews/CombinedEditView.qml" line="1211"/>
         <source>Remove selected artworks from this dialog</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1713,7 +1708,7 @@ All upload hosts&apos; passwords will be purged.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="355"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="379"/>
         <source>Detect duplicates automatically</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1783,7 +1778,7 @@ All upload hosts&apos; passwords will be purged.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/SettingsWindow.qml" line="379"/>
+        <location filename="../../Dialogs/SettingsWindow.qml" line="355"/>
         <source>Check spelling automatically</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2520,371 +2515,371 @@ This action cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="241"/>
+        <location filename="../../main.qml" line="242"/>
         <source>&amp;Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="252"/>
+        <location filename="../../main.qml" line="253"/>
         <source>&amp;Upgrade Now!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="502"/>
+        <location filename="../../main.qml" line="503"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="506"/>
+        <location filename="../../main.qml" line="507"/>
         <source>&amp;Recent directories</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="589"/>
+        <location filename="../../main.qml" line="590"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="601"/>
+        <location filename="../../main.qml" line="602"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="604"/>
+        <location filename="../../main.qml" line="605"/>
         <source>&amp;Presets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="616"/>
+        <location filename="../../main.qml" line="617"/>
         <source>&amp;Invert selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="627"/>
+        <location filename="../../main.qml" line="628"/>
         <source>&amp;Sort by filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="639"/>
+        <location filename="../../main.qml" line="640"/>
         <source>&amp;Find and replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="738"/>
+        <location filename="../../main.qml" line="739"/>
         <source>&amp;Manage upload hosts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="668"/>
+        <location filename="../../main.qml" line="669"/>
         <source>&amp;Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="672"/>
+        <location filename="../../main.qml" line="673"/>
         <source>&amp;Change language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="692"/>
+        <location filename="../../main.qml" line="693"/>
         <source>&amp;Plugins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="729"/>
+        <location filename="../../main.qml" line="730"/>
         <source>&amp;Plugin manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="747"/>
+        <location filename="../../main.qml" line="748"/>
         <source>&amp;Advanced</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="750"/>
+        <location filename="../../main.qml" line="751"/>
         <source>Manage &amp;user dictionary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="771"/>
+        <location filename="../../main.qml" line="772"/>
         <source>Show logs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="778"/>
+        <location filename="../../main.qml" line="779"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="786"/>
+        <location filename="../../main.qml" line="787"/>
         <source>&amp;FAQ</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="791"/>
+        <location filename="../../main.qml" line="792"/>
         <source>&amp;Support</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="987"/>
+        <location filename="../../main.qml" line="988"/>
         <source>Copy to Quick Buffer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="995"/>
+        <location filename="../../main.qml" line="996"/>
         <source>Fill from Quick Buffer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1000"/>
+        <location filename="../../main.qml" line="1001"/>
         <source>Show in folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1014"/>
-        <location filename="../../main.qml" line="1040"/>
-        <location filename="../../main.qml" line="1051"/>
-        <location filename="../../main.qml" line="1073"/>
-        <location filename="../../main.qml" line="1084"/>
+        <location filename="../../main.qml" line="1015"/>
+        <location filename="../../main.qml" line="1041"/>
+        <location filename="../../main.qml" line="1052"/>
+        <location filename="../../main.qml" line="1074"/>
+        <location filename="../../main.qml" line="1085"/>
         <source>Confirmation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1015"/>
+        <location filename="../../main.qml" line="1016"/>
         <source>You have some artworks modified. Really exit?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1007"/>
-        <location filename="../../main.qml" line="1022"/>
-        <location filename="../../main.qml" line="1032"/>
-        <location filename="../../main.qml" line="1169"/>
-        <location filename="../../main.qml" line="1175"/>
+        <location filename="../../main.qml" line="1008"/>
+        <location filename="../../main.qml" line="1023"/>
+        <location filename="../../main.qml" line="1033"/>
+        <location filename="../../main.qml" line="1170"/>
+        <location filename="../../main.qml" line="1176"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="262"/>
+        <location filename="../../main.qml" line="263"/>
         <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="389"/>
+        <location filename="../../main.qml" line="390"/>
         <source>&amp;Fix spelling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="402"/>
+        <location filename="../../main.qml" line="403"/>
         <source>&amp;Show duplicates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="423"/>
+        <location filename="../../main.qml" line="424"/>
         <source>&amp;Remove metadata</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="433"/>
+        <location filename="../../main.qml" line="434"/>
         <source>&amp;Delete keywords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="444"/>
+        <location filename="../../main.qml" line="445"/>
         <source>&amp;Detach vectors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="454"/>
+        <location filename="../../main.qml" line="455"/>
         <source>&amp;Create archives</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="468"/>
+        <location filename="../../main.qml" line="469"/>
         <source>&amp;Export to CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="482"/>
+        <location filename="../../main.qml" line="483"/>
         <source>&amp;Reimport metadata</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="492"/>
+        <location filename="../../main.qml" line="493"/>
         <source>&amp;Overwrite metadata</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="528"/>
+        <location filename="../../main.qml" line="529"/>
         <source>&amp;Recent files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="532"/>
+        <location filename="../../main.qml" line="533"/>
         <source>Open all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="564"/>
+        <location filename="../../main.qml" line="565"/>
         <source>Session Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="568"/>
+        <location filename="../../main.qml" line="569"/>
         <source>Restore last session on startup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="644"/>
+        <location filename="../../main.qml" line="645"/>
         <source>&amp;Selected artworks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="759"/>
+        <location filename="../../main.qml" line="760"/>
         <source>&amp;Wipe all metadata from files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="781"/>
+        <location filename="../../main.qml" line="782"/>
         <source>&amp;User&apos;s guide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="960"/>
+        <location filename="../../main.qml" line="961"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="969"/>
+        <location filename="../../main.qml" line="970"/>
         <source>Show info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="978"/>
+        <location filename="../../main.qml" line="979"/>
         <source>Detach vector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1008"/>
+        <location filename="../../main.qml" line="1009"/>
         <source>Xpiks installation is corrupted.
 Please reinstall Xpiks and try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1023"/>
+        <location filename="../../main.qml" line="1024"/>
         <source>Some files are not available anymore.
 They will be removed from the workflow.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1033"/>
+        <location filename="../../main.qml" line="1034"/>
         <source>Some vectors are not available anymore.
 They will be detached automatically.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1041"/>
+        <location filename="../../main.qml" line="1042"/>
         <source>Remove metadata from selected artworks?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1052"/>
+        <location filename="../../main.qml" line="1053"/>
         <source>Are you sure you want to remove %1 item(s)?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1074"/>
+        <location filename="../../main.qml" line="1075"/>
         <source>You will lose all unsaved changes after reimport. Proceed?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1085"/>
+        <location filename="../../main.qml" line="1086"/>
         <source>Are you sure you want to remove this directory?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1163"/>
+        <location filename="../../main.qml" line="1164"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1164"/>
+        <location filename="../../main.qml" line="1165"/>
         <source>Dictionary has been added</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1170"/>
+        <location filename="../../main.qml" line="1171"/>
         <source>Please, save selected items before upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1176"/>
+        <location filename="../../main.qml" line="1177"/>
         <source>Please, select some artworks first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1181"/>
-        <location filename="../../main.qml" line="1187"/>
-        <location filename="../../main.qml" line="1193"/>
+        <location filename="../../main.qml" line="1182"/>
+        <location filename="../../main.qml" line="1188"/>
+        <location filename="../../main.qml" line="1194"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1182"/>
+        <location filename="../../main.qml" line="1183"/>
         <source>No new files were added</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1188"/>
+        <location filename="../../main.qml" line="1189"/>
         <source>All selected files are already saved or read-only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1195"/>
+        <location filename="../../main.qml" line="1196"/>
         <source>%1 vectors attached</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1195"/>
+        <location filename="../../main.qml" line="1196"/>
         <source>1 vector attached</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1630"/>
+        <location filename="../../main.qml" line="1631"/>
         <source>Check warnings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1660"/>
+        <location filename="../../main.qml" line="1661"/>
         <source>Update available!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1673"/>
-        <location filename="../../main.qml" line="1684"/>
+        <location filename="../../main.qml" line="1674"/>
+        <location filename="../../main.qml" line="1685"/>
         <source>No items available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1682"/>
+        <location filename="../../main.qml" line="1683"/>
         <source>%1 items available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1682"/>
+        <location filename="../../main.qml" line="1683"/>
         <source>1 item available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1709"/>
+        <location filename="../../main.qml" line="1710"/>
         <source>%1 modified items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1709"/>
+        <location filename="../../main.qml" line="1710"/>
         <source>1 modified item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../main.qml" line="1709"/>
+        <location filename="../../main.qml" line="1710"/>
         <source>No modified items</source>
         <translation type="unfinished"></translation>
     </message>
