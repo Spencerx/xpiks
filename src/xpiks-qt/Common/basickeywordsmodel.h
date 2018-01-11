@@ -100,6 +100,9 @@ namespace Common {
         virtual bool replace(const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags);
         virtual bool removeKeywords(const QSet<QString> &keywords, bool caseSensitive);
 
+    private:
+        size_t appendKeywordsUnsafe(const QStringList &keywordsList);
+
     public:
         virtual QString retrieveKeyword(size_t wordIndex);
         virtual QStringList getKeywords();

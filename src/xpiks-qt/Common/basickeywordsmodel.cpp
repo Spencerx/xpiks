@@ -200,15 +200,7 @@ namespace Common {
         QWriteLocker writeLocker(&m_KeywordsLock);
         Q_UNUSED(writeLocker);
 
-        size_t appendedCount = 0;
-        if (m_Impl->prepareAppend(keywordsList, appendedCount)) {
-            const size_t size = m_Impl->getKeywordsSize();
-            beginInsertRows(QModelIndex(), (int)size, (int)(size + appendedCount - 1));
-            m_Impl->appendKeywords(keywordsList);
-            endInsertRows();
-        }
-
-        return appendedCount;
+        return appendKeywordsUnsafe(keywordsList);
     }
 
     bool BasicKeywordsModel::editKeyword(size_t index, const QString &replacement) {
@@ -253,6 +245,7 @@ namespace Common {
     }
 
     bool BasicKeywordsModel::expandPreset(size_t keywordIndex, const QStringList &presetList) {
+        Q_ASSERT(!presetList.isEmpty());
         LOG_INFO << keywordIndex;
         bool expanded = false;
         size_t addedCount = 0;
@@ -272,15 +265,8 @@ namespace Common {
                 LOG_INFO << "replaced keyword" << removedKeyword;
                 Q_UNUSED(wasCorrect);
 
-                if (m_Impl->prepareAppend(presetList, addedCount)) {
-                    size_t size = m_Impl->getKeywordsSize();
-                    beginInsertRows(QModelIndex(), (int)size, (int)(size + addedCount));
-                    m_Impl->appendKeywords(presetList);
-                    endInsertRows();
-                    LOG_INFO << addedCount << "new added";
-                }
-
-                expanded = true;
+                addedCount = appendKeywordsUnsafe(presetList);
+                expanded = addedCount > 0;
             }
         }
 
@@ -353,6 +339,18 @@ namespace Common {
         }
 
         return anyRemoved;
+    }
+
+    size_t BasicKeywordsModel::appendKeywordsUnsafe(const QStringList &keywordsList) {
+        size_t appendedCount = 0;
+        if (m_Impl->prepareAppend(keywordsList, appendedCount)) {
+            const size_t size = m_Impl->getKeywordsSize();
+            beginInsertRows(QModelIndex(), (int)size, (int)(size + appendedCount - 1));
+            m_Impl->appendKeywords(keywordsList);
+            endInsertRows();
+        }
+
+        return appendedCount;
     }
 
     QString BasicKeywordsModel::retrieveKeyword(size_t wordIndex) {
