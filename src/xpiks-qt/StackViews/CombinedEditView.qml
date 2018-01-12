@@ -244,7 +244,7 @@ Rectangle {
 
         MenuItem {
             text: i18.n + qsTr("Copy")
-            enabled: keywordsMoreMenu.keywordsCount > 0
+            enabled: combinedArtworks.keywordsCount > 0
             onTriggered: {
                 clipboard.setText(combinedArtworks.getKeywordsString())
             }

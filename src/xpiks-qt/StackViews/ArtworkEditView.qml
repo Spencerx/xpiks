@@ -292,7 +292,7 @@ Rectangle {
 
         MenuItem {
             text: i18.n + qsTr("Copy")
-            enabled: keywordsMoreMenu.keywordsCount > 0
+            enabled: artworkProxy.keywordsCount > 0
             onTriggered: {
                 clipboard.setText(artworkProxy.getKeywordsString())
             }
