@@ -31,7 +31,6 @@ namespace Models {
 
     class UIManager:
             public QObject,
-            public Common::StatefulEntity,
             public Common::DelayedActionEntity
 
     {
@@ -62,6 +61,7 @@ namespace Models {
     public:
         Q_INVOKABLE void clearCurrentItem();
         Q_INVOKABLE QObject *retrieveTabsModel(int tabID);
+        Q_INVOKABLE void sync();
 
     public:
         int getArtworkEditRightPaneWidth();
@@ -102,6 +102,7 @@ namespace Models {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
+        Common::StatefulEntity m_State;
         Models::SettingsModel *m_SettingsModel;
         QMLExtensions::TabsModel m_TabsModel;
         QMLExtensions::ActiveTabsModel m_ActiveTabs;

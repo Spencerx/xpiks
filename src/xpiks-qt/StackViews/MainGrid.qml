@@ -282,11 +282,20 @@ Item {
 
         MenuItem { action: fixSpellingInSelectedAction }
         MenuItem { action: fixDuplicatesInSelectedAction }
+
+        MenuSeparator { }
+
         MenuItem { action: removeMetadataAction }
         MenuItem { action: deleteKeywordsAction }
         MenuItem { action: detachVectorsAction }
+
+        MenuSeparator { }
+
         MenuItem { action: createArchivesAction }
         MenuItem { action: exportToCsvAction }
+
+        MenuSeparator { }
+
         MenuItem { action: reimportMetadataAction }
         MenuItem { action: overwriteMetadataAction }
     }
@@ -831,7 +840,8 @@ Item {
 
                 GridView {
                     id: artworksHost
-                    property bool isEditingAllowed: filteredArtItemsModel.selectedArtworksCount == 0
+                    // TODO: UX refactoring // filteredArtItemsModel.selectedArtworksCount == 0
+                    property bool isEditingAllowed: true
                     anchors.fill: parent
                     anchors.rightMargin: mainScrollView.areScrollbarsVisible ? 10 : 0
                     model: filteredArtItemsModel
@@ -1248,7 +1258,7 @@ Item {
                                         anchors.rightMargin: 20
                                         anchors.topMargin: 20
                                         property bool isWideEnough: width > 450
-                                        property real inputWidth: isWideEnough ? ((width / 2) - 10) : width
+                                        property real inputWidth: isWideEnough ? ((width / 2) - 12) : width
 
                                         StyledText {
                                             id: descriptionText

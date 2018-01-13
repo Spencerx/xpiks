@@ -499,6 +499,7 @@ namespace Models {
     void ArtworkMetadata::resetDuplicatesInfo() {
         LOG_DEBUG << "#" << m_ID;
         m_MetadataModel.resetDuplicatesInfo();
+        m_SpellCheckInfo.clearDuplicates();
         m_MetadataModel.notifySpellCheckResults(Common::SpellCheckFlags::All);
     }
 

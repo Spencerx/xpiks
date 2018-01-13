@@ -149,27 +149,26 @@ void initQSettings() {
 }
 
 void ensureUserIdExists(Models::SettingsModel *settings) {
-    if (settings->getUserAgentId().isEmpty()) {
+    QString userID = settings->getUserAgentId();
+    QUuid latest(userID);
+    if (userID.isEmpty()
+            || (latest.isNull())
+            || (latest.version() == QUuid::VerUnknown)) {
         QUuid uuid = QUuid::createUuid();
         settings->setUserAgentId(uuid.toString());
     }
 }
 
 void setHighDpiEnvironmentVariable() {
-    static const char ENV_VAR_QT_DEVICE_PIXEL_RATIO[] = "QT_DEVICE_PIXEL_RATIO";
 #ifdef Q_OS_WIN
-    bool isWindows = true;
-#else
-    bool isWindows = false;
-#endif
-
-    if (isWindows
-            && !qEnvironmentVariableIsSet(ENV_VAR_QT_DEVICE_PIXEL_RATIO)
+    static const char ENV_VAR_QT_DEVICE_PIXEL_RATIO[] = "QT_DEVICE_PIXEL_RATIO";
+    if (!qEnvironmentVariableIsSet(ENV_VAR_QT_DEVICE_PIXEL_RATIO)
             && !qEnvironmentVariableIsSet("QT_AUTO_SCREEN_SCALE_FACTOR")
             && !qEnvironmentVariableIsSet("QT_SCALE_FACTOR")
             && !qEnvironmentVariableIsSet("QT_SCREEN_SCALE_FACTORS")) {
         QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     }
+#endif
 }
 
 QString getRunGuardName() {
@@ -207,9 +206,18 @@ int main(int argc, char *argv[]) {
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
     initQSettings();
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
+#endif
+
+    qInstallMessageHandler(myMessageHandler);
+
+    // ----------------------------------------------
+    QApplication app(argc, argv);
+    // ----------------------------------------------
+
     QString appDataPath = XPIKS_USERDATA_PATH;
-    const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
-    Helpers::ensureDirectoryExists(statesPath);
+
 #ifdef WITH_LOGS
     const QString &logFileDir = QDir::cleanPath(appDataPath + QDir::separator() + Constants::LOGS_DIR);
     if (!logFileDir.isEmpty()) {
@@ -233,37 +241,19 @@ int main(int argc, char *argv[]) {
     Models::LogsModel logsModel(&colorsModel);
     logsModel.startLogging();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
-#endif
-
-    qInstallMessageHandler(myMessageHandler);
-
     LOG_INFO << "Log started. Today is" << QDateTime::currentDateTimeUtc().toString("dd.MM.yyyy");
     LOG_INFO << "Xpiks" << XPIKS_FULL_VERSION_STRING << "-" << STRINGIZE(BUILDNUMBER);
-
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
     LOG_INFO << QSysInfo::productType() << QSysInfo::productVersion() << QSysInfo::currentCpuArchitecture();
-#else
-#ifdef Q_OS_WIN
-    LOG_INFO << QLatin1String("Windows Qt<5.4");
-#elsif Q_OS_DARWIN
-    LOG_INFO << QLatin1String("OS X Qt<5.4");
-#else
-    LOG_INFO << QLatin1String("LINUX Qt<5.4");
-#endif
-#endif
+    LOG_INFO << "Working directory of Xpiks is:" << QDir::currentPath();
+    LOG_DEBUG << "Extra files search locations:" << QStandardPaths::standardLocations(XPIKS_DATA_LOCATION_TYPE);
 
-    QApplication app(argc, argv);
+    const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
+    Helpers::ensureDirectoryExists(statesPath);
 
     Models::SettingsModel settingsModel;
     settingsModel.initializeConfigs();
     settingsModel.retrieveAllValues();
     ensureUserIdExists(&settingsModel);
-
-    LOG_INFO << "Working directory of Xpiks is:" << QDir::currentPath();
-    LOG_DEBUG << "Extra files search locations:" << QStandardPaths::standardLocations(XPIKS_DATA_LOCATION_TYPE);
 
     QString userId = settingsModel.getUserAgentId();
     userId.remove(QRegExp("[{}-]."));
@@ -317,7 +307,7 @@ int main(int argc, char *argv[]) {
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel;
 
-    Connectivity::UpdateService updateService(&settingsModel);
+    Connectivity::UpdateService updateService(&settingsModel, &switcherModel);
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
 
@@ -390,8 +380,8 @@ int main(int argc, char *argv[]) {
 
     // other initializations
     secretsManager.setMasterPasswordHash(settingsModel.getMasterPasswordHash());
-    recentDirectorieModel.deserializeFromSettings(settingsModel.getRecentDirectories());
-    recentFileModel.deserializeFromSettings(settingsModel.getRecentFiles());
+    recentDirectorieModel.initialize();
+    recentFileModel.initialize();
 
     commandManager.connectEntitiesSignalsSlots();
 

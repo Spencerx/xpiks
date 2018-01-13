@@ -81,6 +81,7 @@ namespace QMLExtensions {
         Q_PROPERTY(QColor statusBarColor READ statusBarColor WRITE setStatusBarColor NOTIFY statusBarColorChanged)
         Q_PROPERTY(QColor leftSliderColor READ leftSliderColor WRITE setLeftSliderColor NOTIFY leftSliderColorChanged)
         Q_PROPERTY(QColor popupBackgroundColor READ popupBackgroundColor WRITE setPopupBackgroundColor NOTIFY popupBackgroundColorChanged)
+        Q_PROPERTY(QColor popupGlowColor READ popupGlowColor WRITE setPopupGlowColor NOTIFY popupGlowColorChanged)
         Q_PROPERTY(QColor inactiveControlColor READ inactiveControlColor WRITE setInactiveControlColor NOTIFY inactiveControlColorChanged)
         Q_PROPERTY(QColor inactiveKeywordBackground READ inactiveKeywordBackground WRITE setInactiveKeywordBackground NOTIFY inactiveKeywordBackgroundChanged)
         Q_PROPERTY(QColor inactiveKeywordForeground READ inactiveKeywordForeground WRITE setInactiveKeywordForeground NOTIFY inactiveKeywordForegroundChanged)
@@ -136,7 +137,8 @@ namespace QMLExtensions {
         QColor m_inputHintForeground;
         QColor m_popupDarkInputBackground;
         QColor m_goldColor;
-        QColor m_buttonHoverForeground;
+        QColor m_buttonHoverForeground;        
+        QColor m_popupGlowColor;
 
     public:
         explicit ColorsModel(QObject *parent = 0);
@@ -373,6 +375,11 @@ namespace QMLExtensions {
             return m_buttonHoverForeground;
         }
 
+        QColor popupGlowColor() const
+        {
+            return m_popupGlowColor;
+        }
+
     signals:
         void themeChanged();
         void defaultDarkColorChanged(QColor defaultDarkColor);
@@ -418,7 +425,8 @@ namespace QMLExtensions {
         void inputHintForegroundChanged(QColor inputHintForeground);
         void popupDarkInputBackgroundChanged(QColor popupInputBackground);
         void goldColorChanged(QColor goldColor);
-        void buttonHoverForegroundChanged(QColor buttonHoverForeground);
+        void buttonHoverForegroundChanged(QColor buttonHoverForeground);        
+        void popupGlowColorChanged(QColor popupGlowColor);
 
     public slots:
         void setDefaultDarkColor(QColor defaultDarkColor)
@@ -772,6 +780,14 @@ namespace QMLExtensions {
 
             m_buttonHoverForeground = buttonHoverForeground;
             emit buttonHoverForegroundChanged(buttonHoverForeground);
+        }
+        void setPopupGlowColor(QColor popupGlowColor)
+        {
+            if (m_popupGlowColor == popupGlowColor)
+                return;
+
+            m_popupGlowColor = popupGlowColor;
+            emit popupGlowColorChanged(popupGlowColor);
         }
     };
 }

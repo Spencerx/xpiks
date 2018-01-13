@@ -19,7 +19,7 @@
 #include "../Common/statefulentity.h"
 
 namespace Models {
-    class SwitcherModel: public QObject, public Common::BaseEntity, public Common::StatefulEntity
+    class SwitcherModel: public QObject, public Common::BaseEntity
     {
         Q_OBJECT
         Q_PROPERTY(bool isDonationCampaign1Active READ getIsDonationCampaign1On NOTIFY switchesUpdated)
@@ -49,10 +49,11 @@ namespace Models {
         bool getGoodQualityVideoPreviews() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::GoodQualityVideoPreviews, m_Threshold); }
         bool getUseAutoImport() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::MetadataAutoImport, m_Threshold); }
         bool getGettySuggestionEnabled() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::GettySuggestionEnabled, m_Threshold); }
+        bool getUpdateEnabled() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::UpdateEnabled, m_Threshold); }
 
     public:
         bool getDonateCampaign1LinkClicked() const;
-        QString getDonateCampaign1Link() const { return QString("https://ribtoks.github.io/xpiks/donatecampaign/"); }
+        QString getDonateCampaign1Link() const { return QString("http://xpiksapp.com/donatecampaign/"); }
 
 #ifdef INTEGRATION_TESTS
     public:
@@ -75,6 +76,7 @@ namespace Models {
         void readEngagementConfig();
 
     private:
+        Common::StatefulEntity m_State;
         QTimer m_DelayTimer;
         Connectivity::SwitcherConfig m_Config;
         int m_Threshold;

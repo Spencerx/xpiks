@@ -87,7 +87,7 @@ Item {
             anchors.bottomMargin: -glowRadius/2
             glowRadius: 4
             spread: 0.0
-            color: uiColors.defaultControlColor
+            color: uiColors.popupGlowColor
             cornerRadius: glowRadius
         }
 
@@ -220,7 +220,10 @@ Item {
                                                 itemHeight: uiManager.keywordHeight
                                                 suggestionText: suggestion
                                                 isSelected: isselected
-                                                onActionClicked: editreplacementindex = suggestionIndex
+                                                onActionClicked: {
+                                                    editreplacementindex = suggestionIndex
+                                                    spellCheckSuggestionModel.updateSelection()
+                                                }
                                             }
                                         }
                                     }
@@ -249,6 +252,8 @@ Item {
 
                     StyledButton {
                         text: i18.n + qsTr("Replace")
+                        enabled: spellCheckSuggestionModel.anythingSelected
+                        isDefault: true
                         width: 100
                         onClicked: {
                             spellCheckSuggestionModel.submitCorrections()

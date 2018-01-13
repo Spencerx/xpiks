@@ -193,9 +193,19 @@ namespace Models {
     }
 
     bool FilteredArtItemsProxyModel::areSelectedArtworksSaved() {
-        int modifiedSelectedCount = getModifiedSelectedCount();
+        auto selectedArtworks = getSelectedOriginalItems();
+        bool anyModified = false;
 
-        return modifiedSelectedCount == 0;
+        for (ArtworkMetadata *artwork: selectedArtworks) {
+            if (artwork->isModified()) {
+                anyModified = true;
+                break;
+            }
+        }
+
+        LOG_DEBUG << "any modified:" << anyModified;
+
+        return !anyModified;
     }
 
     void FilteredArtItemsProxyModel::spellCheckSelected() {
@@ -262,7 +272,8 @@ namespace Models {
         case 3: {
             // select Images
             this->setFilteredItemsSelectedEx([](ArtworkMetadata *artwork) {
-                return dynamic_cast<ImageArtwork*>(artwork) != nullptr;
+                ImageArtwork *image = dynamic_cast<ImageArtwork*>(artwork);
+                return (image != nullptr) ? !image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
             break;
         }

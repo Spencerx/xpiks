@@ -88,6 +88,8 @@ namespace Models {
                 destination->setUsername(usernameValue.toString());
             }
 
+            if (destination->isEmpty()) { break; }
+
             QJsonValue passwordValue = element.value(FTP_PASS_KEY);
             if (passwordValue.isString()) {
                 QString rawPassword = passwordValue.toString();
@@ -347,7 +349,7 @@ namespace Models {
                 return uploadInfo->getZipBeforeUpload();
             case PercentRole: {
             double percent = uploadInfo->getPercent();
-            return ((0.0001 < percent) && (percent < 1.0)) ? 1.0 : percent;
+            return ((1e-7 < percent) && (percent < 1.0)) ? 1.0 : percent;
         }
             /*case FtpPassiveModeRole:
                 return uploadInfo->getFtpPassiveMode();*/

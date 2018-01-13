@@ -351,30 +351,6 @@ ApplicationWindow {
                                     anchors.left: parent.left
                                     anchors.leftMargin: 10
                                     anchors.verticalCenter: parent.verticalCenter
-                                    id: autoDuplicateSearchCheckbox
-                                    text: i18.n + qsTr("Detect duplicates automatically")
-                                    onCheckedChanged: {
-                                        settingsModel.detectDuplicates = checked
-                                    }
-                                    function onResetRequested() {
-                                        checked = settingsModel.detectDuplicates
-                                    }
-
-                                    Component.onCompleted: {
-                                        checked = settingsModel.detectDuplicates
-                                        behaviorTab.resetRequested.connect(autoDuplicateSearchCheckbox.onResetRequested)
-                                    }
-                                }
-                            }
-
-                            Item {
-                                width: parent.itemWidth
-                                height: parent.itemHeight
-
-                                StyledCheckbox {
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    anchors.verticalCenter: parent.verticalCenter
                                     id: autoSpellCheckCheckbox
                                     text: i18.n + qsTr("Check spelling automatically")
                                     onCheckedChanged: {
@@ -387,6 +363,30 @@ ApplicationWindow {
                                     Component.onCompleted: {
                                         checked = settingsModel.useSpellCheck
                                         behaviorTab.resetRequested.connect(autoSpellCheckCheckbox.onResetRequested)
+                                    }
+                                }
+                            }
+
+                            Item {
+                                width: parent.itemWidth
+                                height: parent.itemHeight
+
+                                StyledCheckbox {
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 10
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    id: autoDuplicateSearchCheckbox
+                                    text: i18.n + qsTr("Detect duplicates automatically")
+                                    onCheckedChanged: {
+                                        settingsModel.detectDuplicates = checked
+                                    }
+                                    function onResetRequested() {
+                                        checked = settingsModel.detectDuplicates
+                                    }
+
+                                    Component.onCompleted: {
+                                        checked = settingsModel.detectDuplicates
+                                        behaviorTab.resetRequested.connect(autoDuplicateSearchCheckbox.onResetRequested)
                                     }
                                 }
                             }

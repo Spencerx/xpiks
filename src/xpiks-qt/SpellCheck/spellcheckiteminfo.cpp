@@ -94,6 +94,13 @@ namespace SpellCheck {
         }
     }
 
+    void SpellCheckErrorsInfo::clearDuplicates() {
+        QWriteLocker writeLocker(&m_DuplicatesLock);
+        Q_UNUSED(writeLocker);
+
+        m_WordsWithDuplicates.clear();
+    }
+
     QStringList SpellCheckErrorsInfo::toList() {
         QReadLocker readLocker(&m_ErrorsLock);
         Q_UNUSED(readLocker);

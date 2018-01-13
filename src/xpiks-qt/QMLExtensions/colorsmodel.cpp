@@ -72,6 +72,7 @@
 #define STATUS_BAR_COLOR "statusBarColor"
 #define LEFT_SLIDER_COLOR "leftSliderColor"
 #define POPUP_BACKGROUND_COLOR "popupBackgroundColor"
+#define POPUP_GLOW_COLOR "popupGlowColor"
 #define POPUP_DARK_INPUT_BACKGROUND "popupDarkInputBackground"
 
 typedef std::unordered_map<std::string, std::string> ColorsMap;
@@ -132,6 +133,7 @@ ColorsMap createBlackTheme() {
     BlackTheme[LEFT_SLIDER_COLOR] = BlackTheme[ARTWORK_BACKGROUND];
     BlackTheme[POPUP_BACKGROUND_COLOR] = BlackTheme[INACTIVE_CONTROL_COLOR];
     BlackTheme[POPUP_DARK_INPUT_BACKGROUND] = BlackTheme[INPUT_INACTIVE_BACKGROUND];
+    BlackTheme[POPUP_GLOW_COLOR] = BlackTheme[DEFAULT_DARKER_COLOR];
 
     BlackTheme[INACTIVE_KEYWORD_BACKGROUND] = BlackTheme[INACTIVE_CONTROL_COLOR];
     BlackTheme[INACTIVE_KEYWORD_FOREGROUND] = BlackTheme[LABEL_ACTIVE_FOREGROUND];
@@ -199,6 +201,7 @@ ColorsMap createSlateGrayTheme() {
     SlateGrayTheme[LEFT_SLIDER_COLOR] = SlateGrayTheme[ARTWORK_BACKGROUND];
     SlateGrayTheme[POPUP_BACKGROUND_COLOR] = SlateGrayTheme[INACTIVE_CONTROL_COLOR];
     SlateGrayTheme[POPUP_DARK_INPUT_BACKGROUND] = SlateGrayTheme[INPUT_INACTIVE_BACKGROUND];
+    SlateGrayTheme[POPUP_GLOW_COLOR] = SlateGrayTheme[DEFAULT_DARKER_COLOR];
 
     SlateGrayTheme[INACTIVE_KEYWORD_BACKGROUND] = SlateGrayTheme[INACTIVE_CONTROL_COLOR];
     SlateGrayTheme[INACTIVE_KEYWORD_FOREGROUND] = SlateGrayTheme[LABEL_ACTIVE_FOREGROUND];
@@ -331,6 +334,7 @@ namespace QMLExtensions {
         setStatusBarColor(getColor(STATUS_BAR_COLOR, theme, fallback));
         setLeftSliderColor(getColor(LEFT_SLIDER_COLOR, theme, fallback));
         setPopupBackgroundColor(getColor(POPUP_BACKGROUND_COLOR, theme, fallback));
+        setPopupGlowColor(getColor(POPUP_GLOW_COLOR, theme, fallback));
         setInactiveKeywordBackground(getColor(INACTIVE_KEYWORD_BACKGROUND, theme, fallback));
         setInactiveKeywordForeground(getColor(INACTIVE_KEYWORD_FOREGROUND, theme, fallback));
 

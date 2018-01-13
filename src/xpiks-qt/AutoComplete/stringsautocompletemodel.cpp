@@ -96,6 +96,12 @@ namespace AutoComplete {
     {
     }
 
+    void StringsAutoCompleteModel::setSearchTerm(const QString &value) {
+        if (m_StringsModel.setSearchTerm(value)) {
+            emit searchTermChanged(value);
+        }
+    }
+
     int StringsAutoCompleteModel::getCompletionsCount() {
         const int count = m_StringsModel.rowCount();
         return count;

@@ -29,8 +29,7 @@ namespace Suggestion {
 
     class KeywordsSuggestor:
             public QAbstractListModel,
-            public Common::BaseEntity,
-            public Common::StatefulEntity
+            public Common::BaseEntity
     {
         Q_OBJECT
         Q_PROPERTY(int suggestedKeywordsCount READ getSuggestedKeywordsCount NOTIFY suggestedKeywordsCountChanged)
@@ -145,6 +144,7 @@ namespace Suggestion {
         void calculateBounds(int &lowerBound, int &upperBound) const;
 
     private:
+        Common::StatefulEntity m_State;
         QHash<QString, int> m_KeywordsHash;
         std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
         QVector<SuggestionQueryEngineBase*> m_QueryEngines;

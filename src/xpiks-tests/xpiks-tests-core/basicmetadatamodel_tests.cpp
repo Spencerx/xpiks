@@ -164,6 +164,28 @@ void BasicKeywordsModelTests::appendNoKeywordsTest() {
     QCOMPARE(basicModel.getKeywordsCount(), 0);
 }
 
+void BasicKeywordsModelTests::expandPresetTest() {
+    Common::BasicMetadataModel basicModel(m_FakeHold);
+    basicModel.appendKeywords(QStringList() << "hills" << "mountains" << "away");
+    const int initialSize = basicModel.getKeywordsCount();
+
+    QSignalSpy addSignalSpy(&basicModel, SIGNAL(rowsInserted(QModelIndex,int,int)));
+
+    QStringList presetKeywords;
+    presetKeywords << "mountains" << "peaks" << "high" << "altitude" << "terrain";
+
+    const int indexToExpand = 1;
+
+    bool expanded = basicModel.expandPreset(indexToExpand, presetKeywords);
+    QCOMPARE(expanded, true);
+
+    QCOMPARE(addSignalSpy.count(), 1);
+    QCOMPARE(basicModel.getKeywordsCount(), initialSize - 1 + presetKeywords.size());
+    QList<QVariant> addedArguments = addSignalSpy.takeFirst();
+    QCOMPARE(addedArguments.at(1).toInt(), initialSize - 1);
+    QCOMPARE(addedArguments.at(2).toInt(), initialSize - 1 + presetKeywords.size() - 1);
+}
+
 void BasicKeywordsModelTests::clearKeywordsTest() {
     Common::BasicMetadataModel basicModel(m_FakeHold);
 

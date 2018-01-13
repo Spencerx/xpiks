@@ -38,6 +38,7 @@ namespace SpellCheck {
     class SpellCheckSuggestionModel : public QAbstractListModel, public Common::BaseEntity {
         Q_OBJECT
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
+        Q_PROPERTY(bool anythingSelected READ getAnythingSelected NOTIFY anythingSelectedChanged)
     public:
         SpellCheckSuggestionModel();
         virtual ~SpellCheckSuggestionModel();
@@ -51,16 +52,19 @@ namespace SpellCheck {
 
     public:
         int getArtworksCount() const { return (int)m_ItemsPairs.size(); }
+        bool getAnythingSelected() const;
 
     public:
         Q_INVOKABLE QObject *getSuggestionItself(int index) const;
         Q_INVOKABLE void clearModel();
         Q_INVOKABLE void submitCorrections() const;
         Q_INVOKABLE void resetAllSuggestions();
+        Q_INVOKABLE void updateSelection() { emit anythingSelectedChanged(); }
 
     signals:
         void selectAllChanged();
-        int artworksCountChanged();
+        void artworksCountChanged();
+        void anythingSelectedChanged();
 
     public:
         void setupModel(Common::IMetadataOperator *item, int index, Common::SuggestionFlags flags);

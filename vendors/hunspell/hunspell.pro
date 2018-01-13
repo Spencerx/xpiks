@@ -17,6 +17,8 @@ QMAKE_MAC_SDK = macosx10.11
 
 CONFIG(debug, debug|release) {
     DESTDIR = ../../libs/debug
+} else {
+    DESTDIR = ../../libs/release
 }
 
 INCLUDEPATH += "../hunspell-repo/src/hunspell/"

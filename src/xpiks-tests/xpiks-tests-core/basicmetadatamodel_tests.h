@@ -18,6 +18,7 @@ private slots:
     void appendSameKeywordsTest();
     void appendSameChangedKeywordTest();
     void appendNoKeywordsTest();
+    void expandPresetTest();
     void clearKeywordsTest();
     void clearModelTest();
     void containsKeywordTest();

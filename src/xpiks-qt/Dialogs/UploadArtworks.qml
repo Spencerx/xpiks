@@ -57,8 +57,9 @@ Item {
         uploadWatcher.resetModel()
     }
 
-    function mainAction() {
+    function doStartUpload() {
         artworkUploader.resetProgress()
+        uploadWatcher.resetModel()
         artworkUploader.uploadArtworks()
     }
 
@@ -66,7 +67,7 @@ Item {
         if (artworkUploader.needCreateArchives()) {
             var callbackObject = {
                 afterZipped: function() {
-                    mainAction();
+                    doStartUpload();
                 }
             }
 
@@ -78,7 +79,7 @@ Item {
                                     callbackObject: callbackObject
                                 });
         } else {
-            mainAction();
+            doStartUpload();
         }
     }
 
@@ -183,7 +184,7 @@ Item {
             anchors.bottomMargin: -glowRadius/2
             glowRadius: 4
             spread: 0.0
-            color: uiColors.defaultControlColor
+            color: uiColors.popupGlowColor
             cornerRadius: glowRadius
         }
 
@@ -451,6 +452,11 @@ Item {
                         function showStockCompletion(textField) {
                             ftpListAC.selectedIndex = -1
 
+                            if (ftpListAC.getCount() === 0) {
+                                ftpListAC.cancelCompletion()
+                                return;
+                            }
+
                             if (typeof generalTab.autoCompleteBox !== "undefined") {
                                 // update completion
                                 return
@@ -582,10 +588,11 @@ Item {
                                         if ((Qt.Key_A <= event.key && event.key <= Qt.Key_Z) ||
                                                 (Qt.Key_0 <= event.key && event.key <= Qt.Key_9) ||
                                                 (text.length === 0 && !ftpListAC.isActive)) {
-                                            generalTab.showStockCompletion(titleText)
                                             ftpListAC.searchTerm = text
+                                            generalTab.showStockCompletion(titleText)
                                         } else if (event.key === Qt.Key_Backspace) {
                                             ftpListAC.searchTerm = text
+                                            generalTab.showStockCompletion(titleText)
                                         }
                                     }
                                 }
@@ -686,6 +693,7 @@ Item {
                                     anchors.leftMargin: 5
                                     anchors.right: parent.right
                                     anchors.rightMargin: 5
+                                    horizontalAlignment: TextInput.AlignLeft
                                     echoMode: showPasswordCheckBox.checked ? TextInput.Normal : TextInput.Password
                                     text: uploadHostsListView.currentItem ? uploadHostsListView.currentItem.myData.password : ""
                                     onTextChanged: {

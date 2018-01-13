@@ -105,6 +105,19 @@ namespace SpellCheck {
     SpellCheckSuggestionModel::~SpellCheckSuggestionModel() {
     }
 
+    bool SpellCheckSuggestionModel::getAnythingSelected() const {
+        bool anySelected = false;
+
+        for (auto &item: m_SuggestionsList) {
+            if (item->anyReplacementSelected()) {
+                anySelected = true;
+                break;
+            }
+        }
+
+        return anySelected;
+    }
+
     QObject *SpellCheckSuggestionModel::getSuggestionItself(int index) const {
         SpellSuggestionsItem *item = NULL;
 

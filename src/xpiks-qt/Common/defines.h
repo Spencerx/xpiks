@@ -67,15 +67,15 @@
 #endif
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-#define XPIKS_DATA_LOCATION_TYPE QStandardPaths::AppDataLocation
-#ifdef QT_DEBUG
-    #define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" + STRINGIZE(BRANCHNAME))
+    #define XPIKS_DATA_LOCATION_TYPE QStandardPaths::AppDataLocation
+    #ifdef QT_DEBUG
+        #define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" + STRINGIZE(BRANCHNAME))
+    #else
+        #define XPIKS_USERDATA_PATH QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+    #endif
 #else
-    #define XPIKS_USERDATA_PATH QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
-#endif
-#else
-#define XPIKS_DATA_LOCATION_TYPE QStandardPaths::DataLocation
-#define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + STRINGIZE(BRANCHNAME))
+    #define XPIKS_DATA_LOCATION_TYPE QStandardPaths::DataLocation
+    #define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + STRINGIZE(BRANCHNAME))
 #endif
 
 #define PREVIEWOFFSET 25

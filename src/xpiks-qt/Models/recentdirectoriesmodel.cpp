@@ -9,13 +9,28 @@
  */
 
 #include "recentdirectoriesmodel.h"
+#include "../Helpers/constants.h"
 
 #define MAX_RECENT_DIRECTORIES 5
 
 namespace Models {
     RecentDirectoriesModel::RecentDirectoriesModel():
-        RecentItemsModel(MAX_RECENT_DIRECTORIES)
+        RecentItemsModel(MAX_RECENT_DIRECTORIES),
+        m_State("recentdirs")
     {
+    }
+
+    void RecentDirectoriesModel::initialize() {
+        m_State.init();
+
+        QString recentDirectories = m_State.getString(Constants::recentDirectories);
+        deserializeItems(recentDirectories);
+    }
+
+    void RecentDirectoriesModel::sync() {
+        QString recentDirectories = serializeItems();
+        m_State.setValue(Constants::recentDirectories, recentDirectories);
+        m_State.sync();
     }
 }
 

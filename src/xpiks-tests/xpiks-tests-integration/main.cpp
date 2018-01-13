@@ -206,21 +206,14 @@ int main(int argc, char *argv[]) {
     Exiv2InitHelper exiv2InitHelper;
     Q_UNUSED(exiv2InitHelper);
 
-    QCoreApplication app(argc, argv);
-
-    std::cout << "Initialized application" << std::endl;
-
     qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
     qInstallMessageHandler(myMessageHandler);
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
 
-    Models::SettingsModel settingsModel;
-    settingsModel.initializeConfigs();
-    settingsModel.retrieveAllValues();
+    QCoreApplication app(argc, argv);
+    std::cout << "Initialized application" << std::endl;
 
     QString appDataPath = XPIKS_USERDATA_PATH;
-    const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
-    Helpers::ensureDirectoryExists(statesPath);
 #ifdef WITH_LOGS
     const QString &logFileDir = QDir::cleanPath(appDataPath + QDir::separator() + Constants::LOGS_DIR);
     if (!logFileDir.isEmpty()) {
@@ -242,6 +235,13 @@ int main(int argc, char *argv[]) {
 
     Models::LogsModel logsModel;
     logsModel.startLogging();
+
+    const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
+    Helpers::ensureDirectoryExists(statesPath);
+
+    Models::SettingsModel settingsModel;
+    settingsModel.initializeConfigs();
+    settingsModel.retrieveAllValues();
 
     QMLExtensions::ColorsModel colorsModel;
 
@@ -286,7 +286,7 @@ int main(int argc, char *argv[]) {
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
     Models::SwitcherModel switcherModel;
-    Connectivity::UpdateService updateService(&settingsModel);
+    Connectivity::UpdateService updateService(&settingsModel, &switcherModel);
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
     Connectivity::TelemetryService telemetryService("1234567890", false);
@@ -346,8 +346,8 @@ int main(int argc, char *argv[]) {
     commandManager.ensureDependenciesInjected();
 
     secretsManager.setMasterPasswordHash(settingsModel.getMasterPasswordHash());
-    recentDirectorieModel.deserializeFromSettings(settingsModel.getRecentDirectories());
-    recentFileModel.deserializeFromSettings(settingsModel.getRecentFiles());
+    recentDirectorieModel.initialize();
+    recentFileModel.initialize();
 
 #if defined(Q_OS_WIN)
     #if defined(APPVEYOR)

@@ -100,7 +100,6 @@ namespace Models {
         if (doSetDescription(value)) {
             signalDescriptionChanged();
             setDescriptionModified(true);
-            justChanged();
         }
     }
 
@@ -108,14 +107,12 @@ namespace Models {
         if (doSetTitle(value)) {
             signalTitleChanged();
             setTitleModified(true);
-            justChanged();
         }
     }
 
     void CombinedArtworksModel::setKeywords(const QStringList &keywords) {
         ArtworkProxyBase::setKeywords(keywords);
         setKeywordsModified(true);
-        justChanged();
     }
 
     void CombinedArtworksModel::setChangeDescription(bool value) {
@@ -164,7 +161,6 @@ namespace Models {
     void CombinedArtworksModel::editKeyword(int index, const QString &replacement) {
         if (doEditKeyword(index, replacement)) {
             setKeywordsModified(true);
-            justChanged();
         }
     }
 
@@ -172,7 +168,6 @@ namespace Models {
         QString keyword;
         if (doRemoveKeywordAt(keywordIndex, keyword)) {
             setKeywordsModified(true);
-            justChanged();
         }
         return keyword;
     }
@@ -181,7 +176,6 @@ namespace Models {
         QString keyword;
         if (doRemoveLastKeyword(keyword)) {
             setKeywordsModified(true);
-            justChanged();
         }
     }
 
@@ -189,7 +183,6 @@ namespace Models {
         bool added = doAppendKeyword(keyword);
         if (added) {
             setKeywordsModified(true);
-            justChanged();
         }
 
         return added;
@@ -198,7 +191,6 @@ namespace Models {
     void CombinedArtworksModel::pasteKeywords(const QStringList &keywords) {
         if (doAppendKeywords(keywords) > 0) {
             setKeywordsModified(true);
-            justChanged();
         }
     }
 
@@ -226,7 +218,6 @@ namespace Models {
     void CombinedArtworksModel::clearKeywords() {
         if (doClearKeywords()) {
             setKeywordsModified(true);
-            justChanged();
         }
     }
 
@@ -282,7 +273,6 @@ namespace Models {
     void CombinedArtworksModel::plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {
         doPlainTextEdit(rawKeywords, spaceIsSeparator);
         setKeywordsModified(true);
-        justChanged();
     }
 
     bool CombinedArtworksModel::hasTitleWordSpellError(const QString &word) {
@@ -296,19 +286,16 @@ namespace Models {
     void CombinedArtworksModel::expandPreset(int keywordIndex, unsigned int presetID) {
         if (doExpandPreset(keywordIndex, (KeywordsPresets::ID_t)presetID)) {
             setKeywordsModified(true);
-            justChanged();
         }
     }
 
     void CombinedArtworksModel::expandLastKeywordAsPreset() {
         doExpandLastKeywordAsPreset();
-        justChanged();
     }
 
     void CombinedArtworksModel::addPreset(unsigned int presetID) {
         if (doAddPreset((KeywordsPresets::ID_t)presetID)) {
             setKeywordsModified(true);
-            justChanged();
         }
     }
 
@@ -504,6 +491,30 @@ namespace Models {
         emit keywordsCountChanged();
     }
 
+    void CombinedArtworksModel::generateAboutToBeRemoved() {
+        LOG_DEBUG << "#";
+        m_CommonKeywordsModel.notifyAboutToBeRemoved();
+    }
+
+    void CombinedArtworksModel::userDictUpdateHandler(const QStringList &keywords, bool overwritten) {
+        LOG_DEBUG << "#";
+        doHandleUserDictChanged(keywords, overwritten);
+    }
+
+    void CombinedArtworksModel::userDictClearedHandler() {
+        LOG_DEBUG << "#";
+        doHandleUserDictCleared();
+    }
+
+    void CombinedArtworksModel::onEditingPaused() {
+        LOG_INTEGR_TESTS_OR_DEBUG << "#";
+        xpiks()->submitItemForSpellCheck(&m_CommonKeywordsModel);
+    }
+
+    void CombinedArtworksModel::doJustEdited() {
+        justChanged();
+    }
+
     qint64 CombinedArtworksModel::getSpecialItemID() {
         return SPECIAL_ID_COMBINED_MODEL;
     }
@@ -553,25 +564,5 @@ namespace Models {
         }
 
         return anyRemoved;
-    }
-
-    void CombinedArtworksModel::generateAboutToBeRemoved() {
-        LOG_DEBUG << "#";
-        m_CommonKeywordsModel.notifyAboutToBeRemoved();
-    }
-
-    void CombinedArtworksModel::userDictUpdateHandler(const QStringList &keywords, bool overwritten) {
-        LOG_DEBUG << "#";
-        doHandleUserDictChanged(keywords, overwritten);
-    }
-
-    void CombinedArtworksModel::userDictClearedHandler() {
-        LOG_DEBUG << "#";
-        doHandleUserDictCleared();
-    }
-
-    void CombinedArtworksModel::onEditingPaused() {
-        LOG_INTEGR_TESTS_OR_DEBUG << "#";
-        xpiks()->submitItemForSpellCheck(&m_CommonKeywordsModel);
     }
 }

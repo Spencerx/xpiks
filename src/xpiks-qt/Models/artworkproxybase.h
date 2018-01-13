@@ -70,8 +70,6 @@ namespace Models {
     protected:
         QSyntaxHighlighter *doCreateDescriptionHighligher(QQuickTextDocument *document);
         QSyntaxHighlighter *doCreateTitleHighlighter(QQuickTextDocument *document);
-        void doSpellCheckDescription();
-        void doSpellCheckTitle();
         void doPlainTextEdit(const QString &rawKeywords, bool spaceIsSeparator);
         bool getHasTitleWordSpellError(const QString &word);
         bool getHasDescriptionWordSpellError(const QString &word);
@@ -93,7 +91,7 @@ namespace Models {
         void doHandleUserDictCleared();
         void doCopyToQuickBuffer();
         bool hasKeywords(const QStringList &keywordsList);
-        void doJustEdited();
+        virtual void doJustEdited();
         void doCheckSemanticDuplicates();
         void doGenerateCompletions(const QString &prefix);
         bool doAcceptCompletionAsPreset(int completionID);

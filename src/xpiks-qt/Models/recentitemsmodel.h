@@ -31,11 +31,14 @@ namespace Models {
         int getRecentItemsCount() const { return m_RecentItems.size(); }
 
     public:
-        Q_INVOKABLE QString serializeForSettings();
+        QString serializeItems();
         Q_INVOKABLE QUrl getLatestItem() const;
 
     public:
-        void deserializeFromSettings(const QString &serialized);
+        virtual void initialize() = 0;
+
+    public:
+        void deserializeItems(const QString &serialized);
         void pushItem(const QString &directoryPath);
         QStringList getAllRecentFiles();
 
@@ -46,6 +49,9 @@ namespace Models {
 
     private:
         bool doPushItem(const QString &itemPath);
+
+    protected:
+        virtual void sync() = 0;
 
     public:
         int rowCount(const QModelIndex &parent = QModelIndex()) const override { Q_UNUSED(parent); return m_RecentItems.length(); }

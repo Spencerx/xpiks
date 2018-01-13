@@ -49,10 +49,9 @@ ApplicationWindow {
 
     function closeHandler(close) {
         console.info("closeHandler")
-        settingsModel.saveRecentDirectories()
-        settingsModel.saveRecentFiles()
 
-        if (artItemsModel.modifiedArtworksCount > 0) {
+        if (artItemsModel.hasModifiedArtworks()) {
+            console.debug("Modified artworks present")
             close.accepted = false
             configExitDialog.open()
         } else {
@@ -65,7 +64,6 @@ ApplicationWindow {
     function shutdownEverything() {
         applicationWindow.visibility = "Minimized"
         helpersWrapper.beforeDestruction();
-        settingsModel.protectTelemetry();
         saveAppGeometry()
         closingTimer.start()
     }
@@ -76,6 +74,7 @@ ApplicationWindow {
         uiManager.setAppHeight(applicationWindow.height)
         uiManager.setAppPosX(applicationWindow.x)
         uiManager.setAppPosY(applicationWindow.y)
+        uiManager.sync()
     }
 
     onClosing: closeHandler(close)
@@ -647,11 +646,20 @@ ApplicationWindow {
 
                 MenuItem { action: fixSpellingInSelectedAction }
                 MenuItem { action: fixDuplicatesInSelectedAction }
+
+                MenuSeparator {}
+
                 MenuItem { action: removeMetadataAction }
                 MenuItem { action: deleteKeywordsAction }
                 MenuItem { action: detachVectorsAction }
+
+                MenuSeparator {}
+
                 MenuItem { action: createArchivesAction }
                 MenuItem { action: exportToCsvAction }
+
+                MenuSeparator {}
+
                 MenuItem { action: reimportMetadataAction }
                 MenuItem { action: overwriteMetadataAction }
             }
@@ -772,17 +780,17 @@ ApplicationWindow {
 
             MenuItem {
                 text: i18.n + qsTr("&User's guide")
-                onTriggered: Qt.openUrlExternally("https://ribtoks.github.io/xpiks/tutorials/")
+                onTriggered: Qt.openUrlExternally("http://xpiksapp.com/tutorials/")
             }
 
             MenuItem {
                 text: i18.n + qsTr("&FAQ")
-                onTriggered: Qt.openUrlExternally("https://ribtoks.github.io/xpiks/faq/")
+                onTriggered: Qt.openUrlExternally("http://xpiksapp.com/faq/")
             }
 
             MenuItem {
                 text: i18.n + qsTr("&Support")
-                onTriggered: Qt.openUrlExternally("https://ribtoks.github.io/xpiks/support/")
+                onTriggered: Qt.openUrlExternally("http://xpiksapp.com/support/")
             }
         }
 
@@ -817,7 +825,7 @@ ApplicationWindow {
                 text: "Update window"
                 onTriggered: {
                     Common.launchDialog("Dialogs/UpdateWindow.qml",
-                                        applicationWindow, {updateUrl: "https://ribtoks.github.io/xpiks/downloads/"},
+                                        applicationWindow, {updateUrl: "http://xpiksapp.com/downloads/"},
                                         function(wnd) {wnd.show();});
                 }
             }
@@ -1097,8 +1105,6 @@ ApplicationWindow {
             console.debug("You chose: " + chooseArtworksDialog.fileUrls)
             var filesAdded = artItemsModel.addLocalArtworks(chooseArtworksDialog.fileUrls)
             if (filesAdded > 0) {
-                settingsModel.saveRecentDirectories()
-                settingsModel.saveRecentFiles()
                 console.debug("" + filesAdded + ' files via Open File(s)')
             } else {
                 noNewFilesDialog.open()
@@ -1121,11 +1127,8 @@ ApplicationWindow {
         onAccepted: {
             console.debug("You chose: " + chooseDirectoryDialog.fileUrls)
             var filesAdded = artItemsModel.addLocalDirectories(chooseDirectoryDialog.fileUrls)
-            if (filesAdded > 0) {
-                settingsModel.saveRecentDirectories()
-                settingsModel.saveRecentFiles()
-                console.debug("" + filesAdded + ' files via Open Directory')
-            } else {
+            console.debug("" + filesAdded + ' files via Open Directory')
+            if (filesAdded === 0) {
                 noNewFilesDialog.open()
             }
         }
@@ -1309,11 +1312,7 @@ ApplicationWindow {
             onDropped: {
                 if (drop.hasUrls) {
                     var filesCount = artItemsModel.dropFiles(drop.urls)
-                    if (filesCount > 0) {
-                        settingsModel.saveRecentDirectories()
-                        settingsModel.saveRecentFiles()
-                        console.debug(filesCount + ' files added via drag&drop')
-                    }
+                    console.debug(filesCount + ' files added via drag&drop')
                 }
             }
         }
@@ -1662,7 +1661,7 @@ ApplicationWindow {
                 text: i18.n + qsTr("Update available!")
                 color: isPressed ? uiColors.linkClickedColor : uiColors.greenColor
                 onClicked: {
-                    Qt.openUrlExternally("https://ribtoks.github.io/xpiks/downloads/")
+                    Qt.openUrlExternally("http://xpiksapp.com/downloads/")
                 }
             }
 

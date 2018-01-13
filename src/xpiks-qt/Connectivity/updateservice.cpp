@@ -15,19 +15,23 @@
 #include "../Common/defines.h"
 #include "../Models/settingsmodel.h"
 #include "../Common/version.h"
+#include "../Models/switchermodel.h"
 
 namespace Connectivity {
-    UpdateService::UpdateService(Models::SettingsModel *settingsModel):
+    UpdateService::UpdateService(Models::SettingsModel *settingsModel, Models::SwitcherModel *switcherModel):
         m_UpdatesCheckerWorker(nullptr),
         m_SettingsModel(settingsModel),
+        m_SwitcherModel(switcherModel),
         m_AvailableVersion(0),
         m_UpdateAvailable(false)
     {
         Q_ASSERT(settingsModel != nullptr);
+        Q_ASSERT(switcherModel != nullptr);
     }
 
     void UpdateService::startChecking() {
-        const bool startWorker = m_SettingsModel->getCheckForUpdates();
+        const bool startWorker = m_SettingsModel->getCheckForUpdates() &&
+                m_SwitcherModel->getUpdateEnabled();
 
         if (startWorker) {
             updateSettings();

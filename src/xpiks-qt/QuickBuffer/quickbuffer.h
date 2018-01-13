@@ -18,15 +18,22 @@
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../Suggestion/suggestionartwork.h"
 #include "../Common/hold.h"
+#include "../Common/delayedactionentity.h"
 
 namespace QuickBuffer {
-    class QuickBuffer : public QObject, public Models::ArtworkProxyBase
+    class QuickBuffer:
+            public QObject,
+            public Models::ArtworkProxyBase,
+            public Common::DelayedActionEntity
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
         Q_PROPERTY(QString title READ getTitle WRITE setTitle NOTIFY titleChanged)
         Q_PROPERTY(int keywordsCount READ getKeywordsCount NOTIFY keywordsCountChanged)
         Q_PROPERTY(bool isEmpty READ getIsEmpty NOTIFY isEmptyChanged)
+        Q_PROPERTY(bool hasTitleSpellErrors READ getHasTitleSpellErrors NOTIFY titleSpellingChanged)
+        Q_PROPERTY(bool hasDescriptionSpellErrors READ getHasDescriptionSpellError NOTIFY descriptionSpellingChanged)
+        Q_PROPERTY(bool hasKeywordsSpellErrors READ getHasKeywordsSpellError NOTIFY keywordsSpellingChanged)
 
     public:
         explicit QuickBuffer(QObject *parent = 0);
@@ -37,6 +44,9 @@ namespace QuickBuffer {
         void titleChanged();
         void keywordsCountChanged();
         void isEmptyChanged();
+        void titleSpellingChanged();
+        void descriptionSpellingChanged();
+        void keywordsSpellingChanged();
 
     protected:
         virtual void signalDescriptionChanged() override { emit descriptionChanged(); emit isEmptyChanged(); }
@@ -45,8 +55,6 @@ namespace QuickBuffer {
 
     public slots:
         void afterSpellingErrorsFixedHandler();
-        void onTitleSpellingChanged();
-        void onDescriptionSpellingChanged();
         void userDictUpdateHandler(const QStringList &keywords, bool overwritten);
         void userDictClearedHandler();
 
@@ -59,8 +67,6 @@ namespace QuickBuffer {
         Q_INVOKABLE QString getKeywordsString();
         Q_INVOKABLE void initDescriptionHighlighting(QQuickTextDocument *document);
         Q_INVOKABLE void initTitleHighlighting(QQuickTextDocument *document);
-        Q_INVOKABLE void spellCheckDescription();
-        Q_INVOKABLE void spellCheckTitle();
         Q_INVOKABLE bool hasTitleWordSpellError(const QString &word);
         Q_INVOKABLE bool hasDescriptionWordSpellError(const QString &word);
         Q_INVOKABLE void resetModel();
@@ -85,6 +91,17 @@ namespace QuickBuffer {
     protected:
         virtual Common::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }
         virtual Common::IMetadataOperator *getMetadataOperator() override { return &m_BasicModel; }
+
+    protected:
+        virtual void doJustEdited() override;
+
+        // DelayedActionEntity implementation
+    protected:
+        virtual void doKillTimer(int timerId) override { this->killTimer(timerId); }
+        virtual int doStartTimer(int interval, Qt::TimerType timerType) override { return this->startTimer(interval, timerType); }
+        virtual void doOnTimer() override;
+        virtual void timerEvent(QTimerEvent *event) override { onQtTimer(event); }
+        virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
         Common::Hold m_HoldPlaceholder;
