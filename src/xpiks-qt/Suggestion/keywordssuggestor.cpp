@@ -177,7 +177,7 @@ namespace Suggestion {
         int current = getSearchTypeIndex();
         if (current != value) {
             m_State.setValue(Constants::suggestorSearchTypeIndex, value);
-            emit suggestedKeywordsCountChanged();
+            emit searchTypeIndexChanged();
             m_State.sync();
         }
     }

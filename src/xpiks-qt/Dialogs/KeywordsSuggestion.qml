@@ -203,7 +203,10 @@ Item {
                         glowTopMargin: 2
                         globalParent: keywordsSuggestionComponent
                         onComboItemSelected: {
+                            keywordsSuggestor.searchTypeIndex = searchTypeCombobox.selectedIndex
                         }
+
+                        Component.onCompleted: searchTypeCombobox.selectedIndex = keywordsSuggestor.searchTypeIndex
                     }
 
                     StyledButton {
