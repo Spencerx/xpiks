@@ -440,7 +440,7 @@ Item {
             }
 
             ToolButton {
-                enabled: filteredArtItemsModel.selectedArtworksCount > 0
+                enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && (applicationWindow.openedDialogsCount == 0)
                 normalIcon: uiColors.t + helpersWrapper.getAssetForTheme("More_icon_normal.svg", settingsModel.selectedThemeIndex)
                 disabledIcon: uiColors.t + helpersWrapper.getAssetForTheme("More_icon_disabled.svg", settingsModel.selectedThemeIndex)
                 hoveredIcon: uiColors.t + helpersWrapper.getAssetForTheme("More_icon_hovered.svg", settingsModel.selectedThemeIndex)
@@ -461,6 +461,7 @@ Item {
                 tooltip: i18.n + qsTr("Support Xpiks")
                 iconWidth: 25
                 iconHeight: 25
+                enabled: applicationWindow.openedDialogsCount == 0
                 visible: {
                     if (switcher.isDonationCampaign1Active) {
                         if ((artworkRepository.artworksSourcesCount > 0) ||
@@ -478,7 +479,7 @@ Item {
             }
 
             LayoutButton {
-                enabled: artworkRepository.artworksSourcesCount > 0
+                enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
                 anchors.verticalCenter: parent.verticalCenter
                 isListLayout: applicationWindow.listLayout
                 onLayoutChanged: {
@@ -497,7 +498,7 @@ Item {
 
                 ZoomAmplifier {
                     visible: !filterWrapper.isOpened
-                    enabled: !filterWrapper.isOpened
+                    enabled: (!filterWrapper.isOpened) && (applicationWindow.openedDialogsCount == 0)
                     isPlus: false
                     showPlus: false
                     width: 20
