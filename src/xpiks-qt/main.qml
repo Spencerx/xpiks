@@ -1096,8 +1096,8 @@ ApplicationWindow {
         selectExisting: true
         selectMultiple: true
         folder: shortcuts.pictures
-        nameFilters: [ "All Xpiks files (*.jpg *.tiff *.tif *.eps *.ai *.mov *.mp4 *.avi *.mpeg *.qt *.vob *.wmv *.asf *.asx *.flv)",
-            "Image files (*.jpg *.tiff *.tif *.eps *.ai)",
+        nameFilters: [ "All Xpiks files (*.jpg *.jpeg *.tiff *.tif *.eps *.ai *.mov *.mp4 *.avi *.mpeg *.qt *.vob *.wmv *.asf *.asx *.flv)",
+            "Image files (*.jpg *.jpeg *.tiff *.tif *.eps *.ai)",
             "Video files (*.mov *.mp4 *.avi *.mpeg *.qt *.vob *.wmv *.asf *.asx *.flv)",
             "All files (*)" ]
 
