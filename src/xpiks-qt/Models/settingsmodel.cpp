@@ -484,7 +484,7 @@ namespace Models {
                               QCoreApplication::instance()->applicationName());
 
         moveSetting(oldSettings, PATH_TO_EXIFTOOL, pathToExifTool, QMetaType::QString);
-        moveSetting(oldSettings, SAVE_BACKUPS, saveBackups, QMetaType::QMetaType::Bool);
+        moveSetting(oldSettings, SAVE_BACKUPS, saveBackups, QMetaType::Bool);
         moveSetting(oldSettings, KEYWORD_SIZE_SCALE, keywordSizeScale, QMetaType::Double);
         moveSetting(oldSettings, DISMISS_DURATION, dismissDuration, QMetaType::Int);
         moveSetting(oldSettings, FIT_SMALL_PREVIEW, fitSmallPreview, QMetaType::Bool);
