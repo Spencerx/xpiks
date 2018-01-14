@@ -1,7 +1,7 @@
 echo 'Starting deployment...'
 
 set XPIKS_PLATFORM=x64
-set XPIKS_VERSION=1.5.0.beta
+set XPIKS_VERSION=1.5.0
 set APP_NAME=Xpiks
 
 rem deploy dir should be "Xpiks" in order to have it nicely zipped in the end
@@ -59,6 +59,7 @@ del %DEPLOY_DIR_NAME%\vcredist_%XPIKS_PLATFORM%.exe
 del %DEPLOY_DIR_NAME%\libexiv2.dll
 del %DEPLOY_DIR_NAME%\libexpat.dll
 del %DEPLOY_DIR_NAME%\dmg-background.jpg
+del %DEPLOY_DIR_NAME%\translations\*.ts
 rem need to remove exiftool/ dir as well
 
 echo 'Packing binaries...'
