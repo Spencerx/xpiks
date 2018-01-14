@@ -6,7 +6,7 @@ if [ ! -f ../deps/exiftool/exiftool ]; then
 fi
 
 APP_NAME=Xpiks
-VERSION="1.5.0.beta"
+VERSION="1.5.0"
 VOL_NAME="Xpiks"
 
 DMG_BACKGROUND_IMG="dmg-background.jpg"
