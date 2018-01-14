@@ -1,0 +1,32 @@
+{
+    "overwrite": {
+        "v": true
+    },
+    "donateCampaign1": {
+        "v": false
+    },
+    "donateCampaign1Stage2": {
+        "v": false
+    },
+    "progressiveSuggestionPreviews": {
+        "v": true
+    },
+    "directExport": {
+        "v": true,
+        "t": 50
+    },
+    "qualityVideoPreviews": {
+        "v": true,
+        "t": 30
+    },
+    "autoImport": {
+        "v": true,
+        "t": 90
+    },
+    "iStockSuggestion": {
+        "v": true
+    },
+    "updateEnabled": {
+        "v": false
+    }
+}
