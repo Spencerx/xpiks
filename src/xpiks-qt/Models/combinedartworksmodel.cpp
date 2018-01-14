@@ -389,7 +389,7 @@ namespace Models {
 
         processArtworks(pred,
                         [&](size_t index, ArtworkMetadata *metadata) {
-            if (index == firstNonEmptyIndex) { return; }
+            if ((int)index == firstNonEmptyIndex) { return; }
 
             QString currDescription = metadata->getDescription();
             QString currTitle = metadata->getTitle();
