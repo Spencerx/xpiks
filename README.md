@@ -21,6 +21,7 @@ Translations: https://crowdin.com/project/xpiks/
 [![GitHub release](https://img.shields.io/github/release/ribtoks/xpiks.svg)](https://github.com/ribtoks/xpiks/releases)
 [![GitHub Release Date](https://img.shields.io/github/release-date/ribtoks/xpiks.svg)](https://github.com/ribtoks/xpiks/releases)
 [![Downloads](https://img.shields.io/github/downloads/ribtoks/xpiks/latest/total.svg)](https://github.com/ribtoks/xpiks/releases)
+[![Downloads](https://img.shields.io/github/downloads/ribtoks/xpiks/total.svg)](https://github.com/ribtoks/xpiks/releases)
 
 Xpiks is a free and open source keywording and uploading tool for microstock photographers and illustrators. It was written from scratch with aim to make it more usefull, convenient and quicker than existing tools.
 
@@ -28,12 +29,12 @@ Xpiks is a free and open source keywording and uploading tool for microstock pho
 
 - XMP/IPTC/EXIF metadata editing in images, vectors and videos
 - FTP upload to predefined or custom hosts
-- extensive keywording capabilities (autocompletion, spellchecking)
+- extensive keywording capabilities (autocompletion, spellchecking, duplicates)
 - keywords suggestion based on Shutterstock API, iStock, Fotolia or the local library
 - automatic zipping of vector and preview for selected microstocks
 - checks for potential problems before upload (insufficient resolution, missing metadata etc.)
 - keywords presets to automate your work
-- localized to other languages (Ukrainian, Portugese, Spanish, Catalan, Russian, French, German) 
+- localized to other languages (Ukrainian, Portugese, Spanish, Catalan, Russian, French, German, Hungarian, Indonesian, Polish, Turkish) 
 - extensible with plugins
 - works under Linux, OS X and Windows
 
