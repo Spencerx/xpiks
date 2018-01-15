@@ -1,7 +1,7 @@
 {
     "major_version": 1,
-    "minor_version": 4,
-    "fix_version": 2,
-    "checksum": "a4435cdabf6742610eae325452628d8dbe913470",
+    "minor_version": 5,
+    "fix_version": 0,
+    "checksum": "f6de13ee9ab51788cd1f8d8ff98bab0b13fcc4d5",
     "update_link": "https://github.com/ribtoks/xpiks/releases/download/v1.5.0/Xpiks-v1.5.0.AppImage"
 }
