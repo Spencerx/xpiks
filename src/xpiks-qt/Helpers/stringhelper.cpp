@@ -59,16 +59,19 @@ namespace Helpers {
         bool anyError = false;
 
         while (i < length) {
-            if (url[i] == '%') {
-                if (((i + 2) < length) &&
-                        isHex(url[i+1]) &&
-                        isHex(url[i+2])) {
-                    int value = (hexToDec(url[i+1]) << 4) | (hexToDec(url[i+2]));
-                    url[iDecoded++] = (char)value;
-                    i += 3;
-                } else {
-                    anyError = true;
-                    break;
+            const char c = url[i];
+            if (c == '%') {
+                if ((i + 2) < length) {
+                    const char c1 = url[i+1];
+                    const char c2 = url[i+2];
+                    if (isHex(c1) && isHex(c2)) {
+                        int value = (hexToDec(c1) << 4) | (hexToDec(c2));
+                        url[iDecoded++] = (char)value;
+                        i += 3;
+                    } else {
+                        anyError = true;
+                        break;
+                    }
                 }
             } else {
                 url[iDecoded++] = url[i++];
