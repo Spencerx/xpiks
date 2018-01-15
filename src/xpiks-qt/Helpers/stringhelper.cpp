@@ -51,7 +51,7 @@ namespace Helpers {
         return -1;
     }
 
-    QString urlPercentDecode(const QString &from) {
+    QString stringPercentDecode(const QString &from) {
         QByteArray url = from.toUtf8();
 
         const int length = url.size();

@@ -20,7 +20,7 @@ namespace QMLExtensions {
         QString id;
 
         if (url.contains(QChar('%'))) {
-            id = Helpers::urlPercentDecode(url);
+            id = Helpers::stringPercentDecode(url);
         } else {
             id = url;
         }
