@@ -106,8 +106,9 @@ namespace QMLExtensions {
 
         const bool isInResources = originalPath.startsWith(":/");
 
-        QImage img(originalPath);
-        if (img.isNull()) {
+        QImage img;
+        bool isLoaded = img.load(originalPath);
+        if (!isLoaded || img.isNull()) {
             LOG_WARNING << "Image" << originalPath << "is null image";
             return;
         }

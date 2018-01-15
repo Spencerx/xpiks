@@ -39,7 +39,6 @@ namespace QMLExtensions {
 
         if (m_ImageCachingService->tryGetCachedImage(id, requestedSize, cachedPath, needsUpdate)) {
             QImage cachedImage(cachedPath);
-            *size = cachedImage.size();
 
             if (needsUpdate) {
                 LOG_INFO << "Recaching image" << id;
@@ -47,6 +46,7 @@ namespace QMLExtensions {
             }
 
             if (!cachedImage.isNull()) {
+                *size = cachedImage.size();
                 return cachedImage;
             }
         }
@@ -54,7 +54,6 @@ namespace QMLExtensions {
         LOG_INTEGR_TESTS_OR_DEBUG << "Not found properly cached:" << id;
 
         QImage originalImage(id);
-        *size = originalImage.size();
 
         QImage result;
 
@@ -67,6 +66,7 @@ namespace QMLExtensions {
             result = originalImage.scaled(m_ImageCachingService->getDefaultSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
 
+        *size = result.size();
         return result;
     }
 }

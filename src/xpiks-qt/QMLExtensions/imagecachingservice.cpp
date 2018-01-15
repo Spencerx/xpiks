@@ -140,6 +140,8 @@ namespace QMLExtensions {
     void ImageCachingService::updateDefaultSize() {
         m_DefaultSize.setHeight(DEFAULT_THUMB_HEIGHT * m_Scale);
         m_DefaultSize.setWidth(DEFAULT_THUMB_WIDTH * m_Scale);
+
+        LOG_DEBUG << "Default size is" << m_DefaultSize.height() << "x" << m_DefaultSize.width();
     }
 
     void ImageCachingService::screenChangedHandler(QScreen *screen) {

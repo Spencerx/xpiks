@@ -721,7 +721,9 @@ void Commands::CommandManager::executeMaintenanceJobs() {
 
 #if !defined(INTEGRATION_TESTS)
     m_MaintenanceService->moveSettings(m_SettingsModel);
+#ifdef QT_DEBUG
     m_MaintenanceService->upgradeImagesCache(m_ImageCachingService);
+#endif
 
     m_MaintenanceService->cleanupLogs();
     m_MaintenanceService->cleanupUpdatesArtifacts();
