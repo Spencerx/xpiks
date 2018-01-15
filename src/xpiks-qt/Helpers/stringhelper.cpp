@@ -37,6 +37,56 @@
 #define SYNONYMS_DISTANCE 3
 
 namespace Helpers {
+    bool isHex(char c) {
+        return	(c >= '0' && c <= '9')	||
+                (c >= 'a' && c <= 'f')	||
+                (c >= 'A' && c <= 'F');
+    }
+
+    int hexToDec(char c) {
+        Q_ASSERT(isHex(c));
+        if ('0' <= c && c <= '9') { return c - '0'; }
+        if ('a' <= c && c <= 'f') { return c - 'a' + 10; }
+        if ('A' <= c && c <= 'F') { return c - 'A' + 10; }
+        return -1;
+    }
+
+    QString urlPercentDecode(const QString &from) {
+        QByteArray url = from.toUtf8();
+
+        const int length = url.size();
+        int iDecoded = 0, i = 0;
+        bool anyError = false;
+
+        while (i < length) {
+            if (url[i] == '%') {
+                if (((i + 2) < length) &&
+                        isHex(url[i+1]) &&
+                        isHex(url[i+2])) {
+                    int value = (hexToDec(url[i+1]) << 4) | (hexToDec(url[i+2]));
+                    url[iDecoded++] = (char)value;
+                    i += 3;
+                } else {
+                    anyError = true;
+                    break;
+                }
+            } else {
+                url[iDecoded++] = url[i++];
+            }
+        }
+
+        QString result;
+
+        if (!anyError) {
+            url.remove(iDecoded, length);
+            result = QString::fromUtf8(url);
+        } else {
+            result = from;
+        }
+
+        return result;
+    }
+
     void foreachPart(const QString &text,
                      const std::function<bool (const QChar &symbol)> &isSeparatorPred,
                      const std::function<bool (const QString &word)> &pred,

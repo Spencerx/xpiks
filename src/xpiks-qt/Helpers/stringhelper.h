@@ -23,6 +23,7 @@ class QStringList;
 class QByteArray;
 
 namespace Helpers {
+    QString urlPercentDecode(const QString &from);
     void foreachPart(const QString &text,
                      const std::function<bool (const QChar &symbol)> &isSeparatorPred,
                      const std::function<bool (const QString &word)> &pred,

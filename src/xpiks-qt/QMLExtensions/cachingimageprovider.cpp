@@ -11,6 +11,7 @@
 #include "cachingimageprovider.h"
 #include "../Common/defines.h"
 #include "../QMLExtensions/imagecachingservice.h"
+#include "../Helpers/stringhelper.h"
 
 #define RECACHE true
 
@@ -19,8 +20,7 @@ namespace QMLExtensions {
         QString id;
 
         if (url.contains(QChar('%'))) {
-            QUrl initialUrl(url);
-            id = initialUrl.path();
+            id = Helpers::urlPercentDecode(url);
         } else {
             id = url;
         }
@@ -33,6 +33,7 @@ namespace QMLExtensions {
         if (url.isEmpty()) { return QImage(); }
 
         const QString id = prepareUrl(url);
+        LOG_DEBUG << url << id;
 
         QString cachedPath;
         bool needsUpdate = false;
