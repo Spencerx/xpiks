@@ -38,14 +38,14 @@ namespace QMLExtensions {
         bool needsUpdate = false;
 
         if (m_ImageCachingService->tryGetCachedImage(id, requestedSize, cachedPath, needsUpdate)) {
-            QImage cachedImage(cachedPath);
-
             if (needsUpdate) {
                 LOG_INFO << "Recaching image" << id;
                 m_ImageCachingService->cacheImage(id, requestedSize, RECACHE);
             }
 
-            if (!cachedImage.isNull()) {
+            QImage cachedImage;
+            bool loaded = cachedImage.load(cachedPath);
+            if (loaded && !cachedImage.isNull()) {
                 *size = cachedImage.size();
                 return cachedImage;
             }
@@ -54,7 +54,6 @@ namespace QMLExtensions {
         LOG_INTEGR_TESTS_OR_DEBUG << "Not found properly cached:" << id;
 
         QImage originalImage(id);
-
         QImage result;
 
         if (requestedSize.isValid()) {
