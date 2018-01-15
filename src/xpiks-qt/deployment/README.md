@@ -1,12 +1,13 @@
 # Xpiks deployment
 
-## Prerequisites
+## Global plan
 
 1. Choose your platform's deploy script
 2. Make sure Qt's `bin/` directory is in your `$PATH`
 3. Verify build directory path (Release version and correct Qt's version)
 4. Verify Xpiks version string (in `version.h`, `xpiks-qt.pro` and all deploy scripts)
 5. Update dependencies
+6. Update `whatsnew.txt` with proper info
 
 ## Updating dependencies
 
