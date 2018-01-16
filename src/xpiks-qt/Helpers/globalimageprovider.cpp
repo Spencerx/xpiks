@@ -9,14 +9,14 @@
  */
 
 #include "globalimageprovider.h"
+#include "../Helpers/stringhelper.h"
 
 namespace Helpers {
     QImage GlobalImageProvider::requestImage(const QString &url, QSize *size, const QSize &requestedSize) {
         QString id;
 
         if (url.contains(QChar('%'))) {
-            QUrl initialUrl(url);
-            id = initialUrl.path();
+            id = Helpers::stringPercentDecode(url);
         } else {
             id = url;
         }
