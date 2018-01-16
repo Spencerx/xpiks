@@ -1,7 +1,7 @@
 /*
  * This file is a part of Xpiks - cross platform application for
  * keywording and uploading images for microstocks
- * Copyright (C) 2014-2017 Taras Kushnir <kushnirTV@gmail.com>
+ * Copyright (C) 2014-2018 Taras Kushnir <kushnirTV@gmail.com>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -484,7 +484,7 @@ namespace Models {
                               QCoreApplication::instance()->applicationName());
 
         moveSetting(oldSettings, PATH_TO_EXIFTOOL, pathToExifTool, QMetaType::QString);
-        moveSetting(oldSettings, SAVE_BACKUPS, saveBackups, QMetaType::QMetaType::Bool);
+        moveSetting(oldSettings, SAVE_BACKUPS, saveBackups, QMetaType::Bool);
         moveSetting(oldSettings, KEYWORD_SIZE_SCALE, keywordSizeScale, QMetaType::Double);
         moveSetting(oldSettings, DISMISS_DURATION, dismissDuration, QMetaType::Int);
         moveSetting(oldSettings, FIT_SMALL_PREVIEW, fitSmallPreview, QMetaType::Bool);

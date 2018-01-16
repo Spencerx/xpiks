@@ -1,7 +1,7 @@
 /*
  * This file is a part of Xpiks - cross platform application for
  * keywording and uploading images for microstocks
- * Copyright (C) 2014-2017 Taras Kushnir <kushnirTV@gmail.com>
+ * Copyright (C) 2014-2018 Taras Kushnir <kushnirTV@gmail.com>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -1096,8 +1096,8 @@ ApplicationWindow {
         selectExisting: true
         selectMultiple: true
         folder: shortcuts.pictures
-        nameFilters: [ "All Xpiks files (*.jpg *.tiff *.tif *.eps *.ai *.mov *.mp4 *.avi *.mpeg *.qt *.vob *.wmv *.asf *.asx *.flv)",
-            "Image files (*.jpg *.tiff *.tif *.eps *.ai)",
+        nameFilters: [ "All Xpiks files (*.jpg *.jpeg *.tiff *.tif *.eps *.ai *.mov *.mp4 *.avi *.mpeg *.qt *.vob *.wmv *.asf *.asx *.flv)",
+            "Image files (*.jpg *.jpeg *.tiff *.tif *.eps *.ai)",
             "Video files (*.mov *.mp4 *.avi *.mpeg *.qt *.vob *.wmv *.asf *.asx *.flv)",
             "All files (*)" ]
 

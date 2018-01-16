@@ -886,27 +886,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/KeywordsSuggestion.qml" line="211"/>
+        <location filename="../../Dialogs/KeywordsSuggestion.qml" line="214"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/KeywordsSuggestion.qml" line="389"/>
+        <location filename="../../Dialogs/KeywordsSuggestion.qml" line="392"/>
         <source>Suggested keywords:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/KeywordsSuggestion.qml" line="486"/>
+        <location filename="../../Dialogs/KeywordsSuggestion.qml" line="489"/>
         <source>Other keywords:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/KeywordsSuggestion.qml" line="590"/>
+        <location filename="../../Dialogs/KeywordsSuggestion.qml" line="593"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/KeywordsSuggestion.qml" line="601"/>
+        <location filename="../../Dialogs/KeywordsSuggestion.qml" line="604"/>
         <source>Add suggested</source>
         <translation type="unfinished"></translation>
     </message>
@@ -981,13 +981,13 @@
     </message>
     <message>
         <location filename="../../StackViews/MainGrid.qml" line="200"/>
-        <location filename="../../StackViews/MainGrid.qml" line="1767"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1768"/>
         <source>Suggest keywords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/MainGrid.qml" line="217"/>
-        <location filename="../../StackViews/MainGrid.qml" line="1749"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1750"/>
         <source>Show duplicates</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1053,44 +1053,44 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="690"/>
+        <location filename="../../StackViews/MainGrid.qml" line="691"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="762"/>
+        <location filename="../../StackViews/MainGrid.qml" line="763"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="777"/>
+        <location filename="../../StackViews/MainGrid.qml" line="778"/>
         <source>Dismiss (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1267"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1268"/>
         <source>Description:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1284"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1285"/>
         <source>Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1519"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1520"/>
         <source>Keywords:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/MainGrid.qml" line="209"/>
-        <location filename="../../StackViews/MainGrid.qml" line="1731"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1732"/>
         <source>Fix spelling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../StackViews/MainGrid.qml" line="227"/>
-        <location filename="../../StackViews/MainGrid.qml" line="1784"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1785"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1101,7 +1101,7 @@
     </message>
     <message>
         <location filename="../../StackViews/MainGrid.qml" line="448"/>
-        <location filename="../../StackViews/MainGrid.qml" line="1806"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1807"/>
         <source>More</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1111,33 +1111,33 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="511"/>
+        <location filename="../../StackViews/MainGrid.qml" line="512"/>
         <source>Filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="668"/>
+        <location filename="../../StackViews/MainGrid.qml" line="669"/>
         <source>Search...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1909"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1910"/>
         <source>No items available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1914"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1915"/>
         <source>Add files</source>
         <comment>link</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1919"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1920"/>
         <source>or</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../StackViews/MainGrid.qml" line="1924"/>
+        <location filename="../../StackViews/MainGrid.qml" line="1925"/>
         <source>clear the filter</source>
         <translation type="unfinished"></translation>
     </message>

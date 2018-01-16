@@ -13,10 +13,10 @@ CONFIG(release, debug|release)  {
     CONFIG += separate_debug_info
 }
 
-VERSION = 1.4.2.0
+VERSION = 1.5.0.2
 QMAKE_TARGET_PRODUCT = Xpiks
 QMAKE_TARGET_DESCRIPTION = "Cross-Platform Image Keywording Software"
-QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2014-2017 Taras Kushnir"
+QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2014-2018 Taras Kushnir"
 
 SOURCES += main.cpp \
     Models/artitemsmodel.cpp \

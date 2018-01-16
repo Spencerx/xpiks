@@ -1,7 +1,7 @@
 /*
  * This file is a part of Xpiks - cross platform application for
  * keywording and uploading images for microstocks
- * Copyright (C) 2014-2017 Taras Kushnir <kushnirTV@gmail.com>
+ * Copyright (C) 2014-2018 Taras Kushnir <kushnirTV@gmail.com>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,7 +18,7 @@
 #define XPIKS_MAJOR_VERSION 1
 #define XPIKS_MINOR_VERSION 5
 #define XPIKS_FIX_VERSION 0
-#define XPIKS_HOTFIX_VERSION 0
+#define XPIKS_HOTFIX_VERSION 2
 
 #define VERSION_STR_(x) #x
 #define VERSION_STR(x) VERSION_STR_(x)
