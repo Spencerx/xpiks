@@ -59,8 +59,7 @@ namespace Helpers {
         bool anyError = false;
 
         while (i < length) {
-            const char c = url[i];
-            if (c == '%') {
+            if (url[i] == '%') {
                 if ((i + 2) < length) {
                     const char c1 = url[i+1];
                     const char c2 = url[i+2];

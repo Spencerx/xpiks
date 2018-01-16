@@ -1291,7 +1291,7 @@ Item {
                                             anchors.leftMargin: 3
                                             text: "*"
                                             color: uiColors.destructiveColor
-                                            visible: rowWrapper.keywordsModel.hasTitleSpellErrors
+                                            visible: rowWrapper.keywordsModel.hasTitleSpellErrors && columnLayout.isWideEnough
                                         }
 
                                         Rectangle {
