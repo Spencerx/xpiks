@@ -57,46 +57,15 @@ before_script:
   - export COMPILER=g++-5
   - g++ --version
   - ulimit -c unlimited -S       # enable core dumps
-  - if [ -n "$UI_TESTS" ]; then export DISPLAY=:99.0; fi
-  - if [ -n "$UI_TESTS" ]; then sh -e /etc/init.d/xvfb start; fi
-  - if [ -n "$UI_TESTS" ]; then sleep 3; fi # give xvfb some time to start
   - chmod +x vendors/build_vendors_travis.sh
-  - chmod +x src/xpiks-tests/get_code_cov.sh
 
 script:
-  - if [ -z "${UI_TESTS+xxx}" ]; then bash vendors/build_vendors_travis.sh; fi
+  - bash vendors/build_vendors_travis.sh
   - cd src/
   - ls -la ../libs/
   - echo "-------"
-  - if [ -n "$XPIKS_BINARY" ]; then cd xpiks-qt/; fi
-  - if [ -n "$XPIKS_BINARY" ]; then qmake "CONFIG+= debug travis-ci" xpiks-qt.pro; fi
-  - if [ -n "$XPIKS_BINARY" ]; then build-wrapper-linux-x86-64 --out-dir bw-output make; fi
-  - echo "-------"
-  - if [ -n "$CORE_TESTS" ]; then cd xpiks-tests/xpiks-tests-core; fi
-  - if [ -n "$CORE_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-core.pro; fi
-  - if [ -n "$CORE_TESTS" ]; then make; fi
-  - echo "-------"
-  - if [ -n "$INTEGRATION_TESTS" ]; then cd xpiks-tests/xpiks-tests-integration; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-integration.pro; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then make; fi
-  - echo "-------"
-  - if [ -n "$UI_TESTS" ]; then cd xpiks-tests/ui-tests-stubs; fi
-  - if [ -n "$UI_TESTS" ]; then qmake "CONFIG+=debug travis-ci" ui-tests-stubs.pro; fi
-  - if [ -n "$UI_TESTS" ]; then make; fi
-  - if [ -n "$UI_TESTS" ]; then cd ../xpiks-tests-ui; fi
-  - if [ -n "$UI_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-ui.pro; fi
-  - if [ -n "$UI_TESTS" ]; then make; fi
+  - cd xpiks-qt/
+  - qmake "CONFIG+= debug travis-ci" xpiks-qt.pro
+  - build-wrapper-linux-x86-64 --out-dir bw-output make
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/
-  - if [ -n "$XPIKS_BINARY" ]; then sonar-scanner; fi
-  - if [ -n "$CORE_TESTS" ]; then ./xpiks-tests-core; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration; fi
-  - if [ -n "$UI_TESTS" ]; then ./xpiks-tests-ui; fi
-  - if [ -z "${XPIKS_BINARY+xxx}" ]; then ../get_code_cov.sh "$PWD"; fi
-
-after_success:
-  - if [ -z "${XPIKS_BINARY+xxx}" ]; then bash <(curl -s https://codecov.io/bash) -x gcov-5 || echo 'Codecov failed to upload'; fi
-
-after_failure:
-  - if [ -n "$CORE_TESTS" ]; then for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/xpiks-tests-core core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/xpiks-tests-integration core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi
-  - if [ -n "$UI_TESTS" ]; then for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/xpiks-tests-ui core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi
+  - sonar-scanner
