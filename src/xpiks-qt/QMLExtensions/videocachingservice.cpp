@@ -67,6 +67,7 @@ namespace QMLExtensions {
 #else
         const bool goodQualityAllowed = false;
 #endif
+        LOG_DEBUG << (goodQualityAllowed ? "Good" : "Quick") << "quality allowed";
 
         const size_t size = snapshot.size();
         std::vector<std::shared_ptr<VideoCacheRequest> > requests;

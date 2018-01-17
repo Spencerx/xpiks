@@ -1094,7 +1094,8 @@ namespace Models {
         updateItemsAtIndicesEx(indices, roles);
     }
 
-    void ArtItemsModel::updateItemsAtIndicesEx(const QVector<int> &indices, const QVector<int> &roles) {
+    void ArtItemsModel::updateItemsAtIndicesEx(const QVector<int> &indices, const QVector<int> &roles) {        
+        LOG_INFO << "Updating roles" << roles << "in" << indices.size() << "item(s)";
         QVector<int> sortedIndices(indices);
         qSort(sortedIndices);
         QVector<QPair<int, int> > ranges;
