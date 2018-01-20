@@ -590,7 +590,7 @@ win32 {
 
 linux {
     message("for Linux")
-    INCLUDEPATH += "../../vendors/quazip"
+    INCLUDEPATH += "../../../vendors/quazip"
     LIBS += -L"$$PWD/../../libs"
     BUILDNO = $$system($$PWD/buildno.sh)
 

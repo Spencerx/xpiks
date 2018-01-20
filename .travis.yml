@@ -56,13 +56,13 @@ before_script:
   - if [ -n "$UI_TESTS" ]; then export DISPLAY=:99.0; fi
   - if [ -n "$UI_TESTS" ]; then sh -e /etc/init.d/xvfb start; fi
   - if [ -n "$UI_TESTS" ]; then sleep 3; fi # give xvfb some time to start
-  - chmod +x vendors/build_vendors_travis.sh
+  - chmod +x vendors/build_vendors_linux.sh
   - chmod +x src/xpiks-tests/get_code_cov.sh
 
 script:
-  - if [ -z "${UI_TESTS+xxx}" ]; then bash vendors/build_vendors_travis.sh; fi
+  - if [ -z "${UI_TESTS+xxx}" ]; then bash vendors/build_vendors_linux.sh travis-ci; fi
   - cd src/
-  - ls -la ../libs/
+  - ls -la ../libs/*
   - echo "-------"
   - if [ -n "$XPIKS_BINARY" ]; then cd xpiks-qt/; fi
   - if [ -n "$XPIKS_BINARY" ]; then qmake "CONFIG+= debug travis-ci" xpiks-qt.pro; fi
@@ -80,7 +80,7 @@ script:
   - if [ -n "$UI_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-ui.pro; fi
   - echo "-------"
   - make
-  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
   - if [ -n "$XPIKS_BINARY" ]; then cppcheck --language=c++ --inconclusive --quiet -DQT_DEBUG -DWITH_LOGS -DWITH_PLUGINS -DWITH_STDOUT_LOGS -DTRAVIS_CI -UCORE_TESTS -UINTEGRATION_TESTS -UQ_OS_WIN -DQ_OS_LINUX --error-exitcode=1 --suppress=missingIncludeSystem --suppress='*:moc_*.cpp' --max-configs=15 --enable=warning . ; fi
   - if [ -n "$CORE_TESTS" ]; then ./xpiks-tests-core; fi
   - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration; fi
