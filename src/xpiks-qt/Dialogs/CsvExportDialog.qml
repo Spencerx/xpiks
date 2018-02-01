@@ -298,6 +298,8 @@ Item {
                                 height: 14
                                 anchors.verticalCenterOffset: 1
                                 isActive: false
+                                enabled: !issystem
+                                visible: !issystem
                                 disabledColor: uiColors.closeIconInactiveColor
 
                                 onItemClicked: {
