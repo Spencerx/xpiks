@@ -160,13 +160,13 @@ namespace Models {
         if (!originalMetadata.m_Title.trimmed().isEmpty()) {
             anythingChanged = m_MetadataModel.setTitle(originalMetadata.m_Title) || anythingChanged;
         } else {
-            shouldPreserveModified = !m_MetadataModel.isTitleEmpty() || shouldPreserveModified;
+            shouldPreserveModified = shouldPreserveModified || !m_MetadataModel.isTitleEmpty();
         }
 
         if (!originalMetadata.m_Description.trimmed().isEmpty()) {
             anythingChanged = m_MetadataModel.setDescription(originalMetadata.m_Description) || anythingChanged;
         } else {
-            shouldPreserveModified = !m_MetadataModel.isDescriptionEmpty() || shouldPreserveModified;
+            shouldPreserveModified = shouldPreserveModified || (!m_MetadataModel.isDescriptionEmpty());
         }
 
         if (!m_MetadataModel.containsKeywords(originalMetadata.m_Keywords)) {
@@ -176,7 +176,7 @@ namespace Models {
             const int existingCount = m_MetadataModel.getKeywordsCount();
             const int originCount = originalMetadata.m_Keywords.count();
             // which should mean that this artwork has been already imported from storage
-            shouldPreserveModified = (existingCount > originCount) || shouldPreserveModified;
+            shouldPreserveModified = shouldPreserveModified || (existingCount > originCount);
         }
 
         setIsModifiedFlag(shouldPreserveModified);
