@@ -2,7 +2,7 @@
     "plans": [
         {
             "issystem": true,
-            "name": "Shutterstock Video (s)",
+            "name": "Shutterstock Video *",
             "properties": [
                 {
                     "columnName": "Filename",
@@ -28,7 +28,7 @@
         },
         {
             "issystem": true,
-            "name": "Pond5 Video (s)",
+            "name": "Pond5 Video *",
             "properties": [
                 {
                     "columnName": "ClipId",
