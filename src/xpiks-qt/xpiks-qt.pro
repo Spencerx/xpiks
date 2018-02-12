@@ -182,7 +182,8 @@ SOURCES += main.cpp \
     Common/basickeywordsmodelimpl.cpp \
     Maintenance/xpkscleanupjob.cpp \
     Commands/maindelegator.cpp \
-    Common/baseentity.cpp
+    Common/baseentity.cpp \
+    Warnings/warningsitem.cpp
 
 RESOURCES += qml.qrc
 
@@ -426,7 +427,8 @@ HEADERS += \
     Maintenance/xpkscleanupjob.h \
     Commands/maindelegator.h \
     KeywordsPresets/presetmodel.h \
-    KeywordsPresets/groupmodel.h
+    KeywordsPresets/groupmodel.h \
+    Warnings/iwarningssettings.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

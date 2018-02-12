@@ -124,31 +124,7 @@ namespace Common {
         FilenameSymbols = 1 << 17,
         VideoFileIsTooBig = 1 << 18,
         VideoIsTooLong = 1 << 19,
-        VideoIsTooShort = 1 << 20,
-
-        DescriptionGroup = DescriptionIsEmpty |
-            DescriptionNotEnoughWords |
-            DescriptionTooBig |
-            SpellErrorsInDescription |
-            KeywordsInDescription,
-
-        TitleGroup = TitleIsEmpty |
-            TitleNotEnoughWords |
-            TitleTooManyWords |
-            TitleTooBig |
-            SpellErrorsInTitle |
-            KeywordsInTitle,
-
-        KeywordsGroup = NoKeywords |
-            TooFewKeywords |
-            TooManyKeywords |
-            SpellErrorsInKeywords |
-            KeywordsInDescription |
-            KeywordsInTitle,
-
-        SpellingGroup = SpellErrorsInKeywords |
-            SpellErrorsInDescription |
-            SpellErrorsInTitle
+        VideoIsTooShort = 1 << 20
     };
 
     template<>

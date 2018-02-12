@@ -27,6 +27,7 @@
 #include "preset_tests.h"
 #include "quickbuffer_tests.h"
 #include "jsonmerge_tests.h"
+#include "warningscheck_tests.h"
 
 #define QTEST_CLASS(TestObject, vName, result) \
     TestObject vName; \
@@ -63,6 +64,7 @@ int main(int argc, char *argv[]) {
     QTEST_CLASS(PresetTests, pst, result);
     QTEST_CLASS(QuickBufferTests, qbt, result);
     QTEST_CLASS(JsonMergeTests, jmt, result);
+    QTEST_CLASS(WarningsCheckTests, wct, result);
 
     QThread::sleep(1);
 

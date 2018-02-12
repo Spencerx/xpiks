@@ -11,87 +11,52 @@
 #ifndef WARNINGSQUERYITEM
 #define WARNINGSQUERYITEM
 
-#include <QStringList>
-#include <QString>
-#include <QSet>
-#include "../Helpers/stringhelper.h"
 #include "../Common/flags.h"
-#include "../Models/artworkmetadata.h"
-#include "../Common/defines.h"
+#include <QSet>
 #include "iwarningsitem.h"
 
+namespace Models {
+    class ArtworkMetadata;
+}
+
 namespace Warnings {
+    class IWarningsSettings;
+
     class WarningsItem: public IWarningsItem {
     public:
-        WarningsItem(Models::ArtworkMetadata *checkableItem, Common::WarningsCheckFlags checkingFlags = Common::WarningsCheckFlags::All):
-            m_CheckableItem(checkableItem),
-            m_CheckingFlags(checkingFlags)
-        {
-            checkableItem->acquire();
-            m_Description = checkableItem->getDescription();
-            m_Title = checkableItem->getTitle();
-            m_KeywordsSet = checkableItem->getKeywordsSet();
-        }
-
-        virtual ~WarningsItem() {
-            if (m_CheckableItem->release()) {
-                LOG_WARNING << "Item #" << m_CheckableItem->getItemID() << "could have been removed";
-            }
-        }
+        WarningsItem(Models::ArtworkMetadata *checkableItem, Common::WarningsCheckFlags checkingFlags = Common::WarningsCheckFlags::All);
+        virtual ~WarningsItem();
 
     public:
-        virtual void submitWarnings(Common::flag_t warningsFlags) override {
-            if (m_CheckingFlags == Common::WarningsCheckFlags::All) {
-                m_CheckableItem->setWarningsFlags(warningsFlags);
-            } else {
-                Common::WarningFlags flagsToDrop = Common::WarningFlags::None;
+        virtual void checkWarnings(IWarningsSettings *warningsSettings) override;
 
-                switch (m_CheckingFlags) {
-                case Common::WarningsCheckFlags::Description:
-                    flagsToDrop = Common::WarningFlags::DescriptionGroup;
-                    break;
-                case Common::WarningsCheckFlags::Keywords:
-                    flagsToDrop = Common::WarningFlags::KeywordsGroup;
-                    break;
-                case Common::WarningsCheckFlags::Title:
-                    flagsToDrop = Common::WarningFlags::TitleGroup;
-                    break;
-                case Common::WarningsCheckFlags::Spelling:
-                    flagsToDrop = Common::WarningFlags::SpellingGroup;
-                    break;
-                case Common::WarningsCheckFlags::All:
-                    // to make compiler happy
-                    break;
-                default:
-                    break;
-                }
+    private:
+        void submitWarnings();
 
-                m_CheckableItem->dropWarningsFlags((Common::flag_t)flagsToDrop);
-                m_CheckableItem->addWarningsFlags((Common::flag_t)warningsFlags);
-            }
-        }
+    private:
+        void checkImageProperties(IWarningsSettings *warningsSettings);
+        void checkVideoProperties(IWarningsSettings *warningsSettings);
+        void checkFilename(IWarningsSettings *warningsSettings);
+        void checkKeywords(IWarningsSettings *warningsSettings);
+        void checkDescription(IWarningsSettings *warningsSettings);
+        void checkTitle(IWarningsSettings *warningsSettings);
+        void checkSpelling(IWarningsSettings *warningsSettings);
+        void checkDuplicates(IWarningsSettings *warningsSettings);
 
-    public:
+    private:
         bool needCheckAll() const { return m_CheckingFlags == Common::WarningsCheckFlags::All; }
         Common::WarningsCheckFlags getCheckingFlags() const { return m_CheckingFlags; }
         const QString &getDescription() const { return m_Description; }
         const QString &getTitle() const { return m_Title; }
         const QSet<QString> &getKeywordsSet() const { return m_KeywordsSet; }
 
-    public:
-        QStringList getDescriptionWords() const {
-            QStringList words;
-            Helpers::splitText(m_Description, words);
-            return words;
-        }
+    private:
+        void accountFlag(Common::WarningFlags flag, bool value);
+        void dropFlag(Common::WarningFlags flag);
 
-        QStringList getTitleWords() const {
-            QStringList words;
-            Helpers::splitText(m_Title, words);
-            return words;
-        }
-
-        Models::ArtworkMetadata *getCheckableItem() const { return m_CheckableItem; }
+    private:
+        QStringList getDescriptionWords() const;
+        QStringList getTitleWords() const;
 
     private:
         Models::ArtworkMetadata *m_CheckableItem;
@@ -99,6 +64,8 @@ namespace Warnings {
         QString m_Title;
         QSet<QString> m_KeywordsSet;
         Common::WarningsCheckFlags m_CheckingFlags;
+        Common::WarningFlags m_FlagsToSet;
+        Common::WarningFlags m_FlagsToDrop;
     };
 }
 
