@@ -218,14 +218,6 @@ Item {
                     clip: true
                     boundsBehavior: Flickable.StopAtBounds
 
-                    add: Transition {
-                        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 230 }
-                    }
-
-                    remove: Transition {
-                        NumberAnimation { property: "opacity"; to: 0; duration: 230 }
-                    }
-
                     displaced: Transition {
                         NumberAnimation { properties: "x,y"; duration: 230 }
                     }

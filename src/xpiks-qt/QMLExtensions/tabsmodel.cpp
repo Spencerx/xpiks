@@ -39,9 +39,7 @@ namespace QMLExtensions {
         case TabIconPathRole: return tab.m_TabIconPath;
         case TabComponentPathRole: return tab.m_TabComponentPath;
         case ExternalTabIDRole: return tab.m_ExternalTabID;
-#ifdef QT_DEBUG
         case CacheTagRole: return tab.m_CacheTag;
-#endif
         default: return QVariant();
         }
     }
@@ -51,9 +49,7 @@ namespace QMLExtensions {
         roles[TabIconPathRole] = "tabicon";
         roles[TabComponentPathRole] = "tabcomponent";
         roles[ExternalTabIDRole] = "tabid";
-#ifdef QT_DEBUG
         roles[CacheTagRole] = "cachetag";
-#endif
         return roles;
     }
 

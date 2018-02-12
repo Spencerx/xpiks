@@ -56,7 +56,6 @@ win32 {
 travis-ci {
     message("for Travis CI")
     DEFINES += TRAVIS_CI
-    LIBS += -L"$$PWD/../../../libs"
 
     # gcov
     QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
@@ -64,7 +63,6 @@ travis-ci {
 }
 
 appveyor {
-    LIBS += -L"$$PWD/../../../libs"
     DEFINES += APPVEYOR
 }
 

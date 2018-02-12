@@ -214,14 +214,6 @@ Item {
                     clip: true
                     boundsBehavior: Flickable.StopAtBounds
 
-                    add: Transition {
-                        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 230 }
-                    }
-
-                    remove: Transition {
-                        NumberAnimation { property: "opacity"; to: 0; duration: 230 }
-                    }
-
                     displaced: Transition {
                         NumberAnimation { properties: "x,y"; duration: 230 }
                     }
@@ -298,6 +290,8 @@ Item {
                                 height: 14
                                 anchors.verticalCenterOffset: 1
                                 isActive: false
+                                enabled: !issystem
+                                visible: !issystem
                                 disabledColor: uiColors.closeIconInactiveColor
 
                                 onItemClicked: {
@@ -521,14 +515,6 @@ Item {
                             boundsBehavior: Flickable.StopAtBounds
                             spacing: 10
                             focus: true
-
-                            add: Transition {
-                                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 230 }
-                            }
-
-                            remove: Transition {
-                                NumberAnimation { property: "opacity"; to: 0; duration: 230 }
-                            }
 
                             displaced: Transition {
                                 NumberAnimation { properties: "x,y"; duration: 230 }

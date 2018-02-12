@@ -592,8 +592,7 @@ win32 {
 
 linux {
     message("for Linux")
-    INCLUDEPATH += "../../vendors/quazip"
-    LIBS += -L"$$PWD/../../libs"
+    INCLUDEPATH += "../../../vendors/quazip"
     BUILDNO = $$system($$PWD/buildno.sh)
 
     LIBS += -lexiv2
@@ -611,7 +610,6 @@ travis-ci {
     message("for Travis CI")
     INCLUDEPATH += "../../../vendors/quazip"
 
-    LIBS += -L"$$PWD/../../../libs"
     LIBS -= -lz
     LIBS += /usr/lib/x86_64-linux-gnu/libz.so
     LIBS += -ldl
@@ -639,7 +637,6 @@ appveyor {
     message("for Appveyor")
     DEFINES += APPVEYOR
     DEFINES -= WITH_LOGS
-    LIBS += -L"$$PWD/../../../libs"
 }
 
 DEFINES += BUILDNUMBER=$${BUILDNO}
