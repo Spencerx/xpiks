@@ -229,7 +229,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Common/baseentity.cpp \
     ../../xpiks-qt/Commands/maindelegator.cpp \
     importlostmetadatatest.cpp \
-    ../../xpiks-qt/Warnings/warningsitem.cpp
+    ../../xpiks-qt/Warnings/warningsitem.cpp \
+    warningscombinedtest.cpp
 
 RESOURCES +=
 
@@ -496,7 +497,8 @@ HEADERS += \
     ../../xpiks-qt/KeywordsPresets/groupmodel.h \
     ../../xpiks-qt/KeywordsPresets/presetmodel.h \
     importlostmetadatatest.h \
-    ../../xpiks-qt/Warnings/iwarningssettings.h
+    ../../xpiks-qt/Warnings/iwarningssettings.h \
+    warningscombinedtest.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

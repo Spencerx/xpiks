@@ -121,6 +121,7 @@
 #include "reimporttest.h"
 #include "autoimporttest.h"
 #include "importlostmetadatatest.h"
+#include "warningscombinedtest.h"
 
 #if defined(WITH_PLUGINS)
 #undef WITH_PLUGINS
@@ -412,6 +413,7 @@ int main(int argc, char *argv[]) {
     integrationTests.append(new ReimportTest(&commandManager));
     integrationTests.append(new AutoImportTest(&commandManager));
     integrationTests.append(new ImportLostMetadataTest(&commandManager));
+    integrationTests.append(new WarningsCombinedTest(&commandManager));
     // always the last one. insert new tests above
     integrationTests.append(new LocalLibrarySearchTest(&commandManager));
 

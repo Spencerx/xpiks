@@ -413,8 +413,7 @@ namespace Models {
     }
 
     void ArtworkProxyBase::doJustEdited() {
-        auto *metadataOperator = getMetadataOperator();
-        metadataOperator->justEdited();
+        /*metadataOperator->justEdited();*/
     }
 
     void ArtworkProxyBase::doCheckSemanticDuplicates() {
