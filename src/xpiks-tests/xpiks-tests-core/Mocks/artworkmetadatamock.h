@@ -48,6 +48,8 @@ namespace Mocks {
 
         void resetAll() { this->clearModel(); this->resetFlags(); }
 
+        virtual void justChanged() override { /*Don't need threads*/ }
+
         //virtual QString getDirectory() const { return "somedirectory"; }
     };
 }

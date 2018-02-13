@@ -26,7 +26,7 @@ namespace Common {
         { }
 
     protected:
-        void justChanged() {
+        virtual void justChanged() {
             if (m_RestartsCount < m_MaxRestartsCount) {
                 if (m_LastTimerId != -1) {
                     doKillTimer(m_LastTimerId);
