@@ -46,9 +46,9 @@ namespace Warnings {
     private:
         bool needCheckAll() const { return m_CheckingFlags == Common::WarningsCheckFlags::All; }
         Common::WarningsCheckFlags getCheckingFlags() const { return m_CheckingFlags; }
-        const QString &getDescription() const { return m_Description; }
-        const QString &getTitle() const { return m_Title; }
-        const QSet<QString> &getKeywordsSet() const { return m_KeywordsSet; }
+        QString getDescription() const;
+        QString getTitle() const;
+        QSet<QString> getKeywordsSet() const;
 
     private:
         void accountFlag(Common::WarningFlags flag, bool value);
@@ -60,9 +60,6 @@ namespace Warnings {
 
     private:
         Models::ArtworkMetadata *m_CheckableItem;
-        QString m_Description;
-        QString m_Title;
-        QSet<QString> m_KeywordsSet;
         Common::WarningsCheckFlags m_CheckingFlags;
         Common::WarningFlags m_FlagsToSet;
         Common::WarningFlags m_FlagsToDrop;

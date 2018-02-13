@@ -39,9 +39,6 @@ namespace Warnings {
         m_FlagsToDrop((Common::WarningFlags)0)
     {
         checkableItem->acquire();
-        m_Description = checkableItem->getDescription();
-        m_Title = checkableItem->getTitle();
-        m_KeywordsSet = checkableItem->getKeywordsSet();
     }
 
     WarningsItem::~WarningsItem() {
@@ -283,6 +280,18 @@ namespace Warnings {
         accountFlag(Common::WarningFlags::KeywordsInDescription, keywordsInDescriptionValue);
     }
 
+    QString WarningsItem::getDescription() const {
+        return m_CheckableItem->getDescription();
+    }
+
+    QString WarningsItem::getTitle() const {
+        return m_CheckableItem->getTitle();
+    }
+
+    QSet<QString> WarningsItem::getKeywordsSet() const {
+        return m_CheckableItem->getKeywordsSet();
+    }
+
     void WarningsItem::accountFlag(Common::WarningFlags flag, bool value) {
         if (value) {
             m_FlagsToSet |= flag;
@@ -297,13 +306,13 @@ namespace Warnings {
 
     QStringList WarningsItem::getDescriptionWords() const {
         QStringList words;
-        Helpers::splitText(m_Description, words);
+        Helpers::splitText(getDescription(), words);
         return words;
     }
 
     QStringList WarningsItem::getTitleWords() const {
         QStringList words;
-        Helpers::splitText(m_Title, words);
+        Helpers::splitText(getTitle(), words);
         return words;
     }
 }

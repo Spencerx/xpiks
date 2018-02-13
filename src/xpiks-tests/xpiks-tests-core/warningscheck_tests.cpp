@@ -313,3 +313,23 @@ void WarningsCheckTests::titleTooBigTest() {
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleIsEmpty));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleNotEnoughWords));
 }
+
+void WarningsCheckTests::descriptionTooBigChangesTest() {
+    Mocks::ArtworkMetadataMock artwork;
+    artwork.initialize();
+    Mocks::WarningsSettingsMock warningsSettings;
+
+    QVERIFY(artwork.getWarningsFlags() == 0);
+
+    artwork.setDescription(getRandomString(warningsSettings.getMaxDescriptionLength() + 1, true));
+
+    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+
+    QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionTooBig));
+
+    artwork.setDescription(getRandomString(warningsSettings.getMaxDescriptionLength() - 1, true));
+
+    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+
+    QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionTooBig));
+}

@@ -25,6 +25,7 @@ private slots:
     void keywordsInDescriptionTest();
     void keywordsInTitleTest();
     void titleTooBigTest();
+    void descriptionTooBigChangesTest();
 };
 
 #endif // WARNINGSCHECKTESTS_H
