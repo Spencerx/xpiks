@@ -220,6 +220,11 @@ namespace Models {
         bool hasDuplicates(size_t index) { return m_MetadataModel.hasDuplicateAt(index); }
 #endif
 
+#ifdef CORE_TESTS
+    public:
+        SpellCheck::SpellCheckItemInfo *getSpellCheckInfo() { return &m_SpellCheckInfo; }
+#endif
+
 #ifndef CORE_TESTS
     private:
 #else

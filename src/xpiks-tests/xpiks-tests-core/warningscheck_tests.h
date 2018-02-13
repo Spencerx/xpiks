@@ -17,6 +17,14 @@ private slots:
     void spellingDescriptionChangesTest();
     void emptyDescriptionTest();
     void descriptionLengthChangesTest();
+    void descriptionTooBigTest();
+    void emptyTitleTest();
+    void titleLengthChangesTest();
+    void spellingTitleTest();
+    void spellingTitleChangesWhenRemovedTest();
+    void keywordsInDescriptionTest();
+    void keywordsInTitleTest();
+    void titleTooBigTest();
 };
 
 #endif // WARNINGSCHECKTESTS_H
