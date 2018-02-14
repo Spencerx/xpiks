@@ -12,6 +12,7 @@
 #include <QDir>
 #include <QFile>
 #include <QDateTime>
+#include <QRegularExpression>
 #include "csvexportplansmodel.h"
 #include "../Models/artworkmetadata.h"
 
@@ -99,11 +100,19 @@ namespace MetadataIO {
     QString filenameForPlan(const std::shared_ptr<CsvExportPlan> &plan) {
         Q_ASSERT(!plan->m_Name.trimmed().isEmpty());
 #ifndef INTEGRATION_TESTS
-        QString time = QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmm");
+        QString time = QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss");
 #else
         QString time = "now";
 #endif
-        QString result = QString("%1-%2-xpks.csv").arg(plan->m_Name).arg(time);
+
+        QString sanitizedName = plan->m_Name;
+        sanitizedName.replace(QRegularExpression("[^a-zA-Z0-9 -]+"), "_");
+        if (!sanitizedName.contains(QRegularExpression("[a-zA-Z0-9 -]+")) ||
+                sanitizedName.isEmpty()) {
+            sanitizedName = "plan" + sanitizedName;
+        }
+
+        QString result = QString("%1-%2-xpks.csv").arg(sanitizedName).arg(time);
         return result;
     }
 

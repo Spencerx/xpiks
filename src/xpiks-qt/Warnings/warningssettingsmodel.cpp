@@ -95,12 +95,18 @@ namespace Warnings {
     bool WarningsSettingsModel::processLocalConfig(const QJsonDocument &document) {
         LOG_INTEGR_TESTS_OR_DEBUG << document;
         bool result = parseConfig(document);
+        if (result) {
+            emit settingsUpdated();
+        }
         return result;
     }
 
     void WarningsSettingsModel::processMergedConfig(const QJsonDocument &document) {
         LOG_DEBUG << "#";
-        parseConfig(document);
+        bool result = parseConfig(document);
+        if (result) {
+            emit settingsUpdated();
+        }
     }
 
     bool WarningsSettingsModel::parseConfig(const QJsonDocument &document) {
@@ -230,8 +236,6 @@ namespace Warnings {
                 m_MaxDescriptionLength = maxDescriptionCount.toInt(DEFAULT_MAX_DESCRIPTION_LENGTH);
             }
         } while (false);
-
-        emit settingsUpdated();
 
         return anyError;
     }

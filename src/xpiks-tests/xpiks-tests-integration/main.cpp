@@ -122,6 +122,7 @@
 #include "autoimporttest.h"
 #include "importlostmetadatatest.h"
 #include "warningscombinedtest.h"
+#include "csvdefaultexporttest.h"
 
 #if defined(WITH_PLUGINS)
 #undef WITH_PLUGINS
@@ -295,7 +296,6 @@ int main(int argc, char *argv[]) {
     Helpers::DatabaseManager databaseManager;
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel;
-    csvExportModel.disableRemoteConfigs();
 
     Commands::CommandManager commandManager;
     commandManager.InjectDependency(&artworkRepository);
@@ -361,9 +361,13 @@ int main(int argc, char *argv[]) {
 #endif
 
     switcherModel.setRemoteConfigOverride(findFullPathForTests("configs-for-tests/tests_switches.json"));
+    csvExportModel.setRemoteConfigOverride(findFullPathForTests("api/v1/csv_export_plans.json"));
 
     commandManager.connectEntitiesSignalsSlots();
     commandManager.afterConstructionCallback();
+
+    // process signals from construction
+    QCoreApplication::processEvents();
 
     int result = 0;
 
@@ -414,6 +418,7 @@ int main(int argc, char *argv[]) {
     integrationTests.append(new AutoImportTest(&commandManager));
     integrationTests.append(new ImportLostMetadataTest(&commandManager));
     integrationTests.append(new WarningsCombinedTest(&commandManager));
+    integrationTests.append(new CsvDefaultExportTest(&commandManager));
     // always the last one. insert new tests above
     integrationTests.append(new LocalLibrarySearchTest(&commandManager));
 

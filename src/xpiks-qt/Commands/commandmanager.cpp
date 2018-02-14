@@ -621,8 +621,6 @@ void Commands::CommandManager::ensureDependenciesInjected() {
 #endif
 }
 
-
-
 void Commands::CommandManager::afterConstructionCallback() {
     if (m_AfterInitCalled) {
         LOG_WARNING << "Attempt to call afterConstructionCallback() second time";
@@ -788,7 +786,7 @@ void Commands::CommandManager::cleanup() {
     m_AutoCompleteModel->clear();
 
     m_CsvExportModel->clearModel();
-    m_CsvExportModel->clearPlans();
+    m_CsvExportModel->resetModel();
     m_CombinedArtworksModel->resetModel();
     m_ZipArchiver->resetModel();
     m_ArtworkUploader->resetModel();
