@@ -676,6 +676,7 @@ namespace Models {
         int originalRow = getOriginalIndex(row);
         ArtworksRepository *artworksRepository = getArtworksRepository();
         artworksRepository->toggleDirectorySelected(originalRow);
+        emit directoriesFiltered();
     }
 
     bool FilteredArtworksRepository::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
