@@ -54,6 +54,7 @@ namespace Maintenance {
 
     public:
         void cleanupUpdatesArtifacts();
+        void cleanupDownloadedUpdates(const QString &downloadsPath);
         void launchExiftool(const QString &settingsExiftoolPath, MetadataIO::MetadataIOCoordinator *coordinator);
         void initializeDictionaries(Translation::TranslationManager *translationManager, Helpers::AsyncCoordinator *initCoordinator);
         void cleanupLogs();

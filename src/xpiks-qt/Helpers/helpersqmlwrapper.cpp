@@ -251,7 +251,7 @@ namespace Helpers {
 #endif
     }
 
-    void HelpersQmlWrapper::updateIsDownloaded(QString pathToUpdate) {
+    void HelpersQmlWrapper::onUpdateDownloaded(QString pathToUpdate) {
         m_IsUpdateDownloaded = true;
         m_PathToUpdate = pathToUpdate;
         emit updateDownloadedChanged(true);

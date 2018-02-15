@@ -231,7 +231,8 @@ SOURCES += main.cpp \
     importlostmetadatatest.cpp \
     ../../xpiks-qt/Warnings/warningsitem.cpp \
     warningscombinedtest.cpp \
-    csvdefaultexporttest.cpp
+    csvdefaultexporttest.cpp \
+    ../../xpiks-qt/Maintenance/updatebundlecleanupjobitem.cpp
 
 RESOURCES +=
 
@@ -500,7 +501,8 @@ HEADERS += \
     importlostmetadatatest.h \
     ../../xpiks-qt/Warnings/iwarningssettings.h \
     warningscombinedtest.h \
-    csvdefaultexporttest.h
+    csvdefaultexporttest.h \
+    ../../xpiks-qt/Maintenance/updatebundlecleanupjobitem.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

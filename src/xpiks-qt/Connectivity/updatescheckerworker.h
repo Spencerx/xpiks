@@ -17,6 +17,10 @@ namespace Models {
     class SettingsModel;
 }
 
+namespace Maintenance {
+    class MaintenanceService;
+}
+
 namespace Connectivity {
     struct UpdateCheckResult {
         QString m_UpdateURL;
@@ -28,7 +32,9 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        UpdatesCheckerWorker(Models::SettingsModel *settingsModel, const QString &availableUpdatePath);
+        UpdatesCheckerWorker(Models::SettingsModel *settingsModel,
+                             Maintenance::MaintenanceService *maintenanceService,
+                             const QString &availableUpdatePath);
         virtual ~UpdatesCheckerWorker();
 
     private:
@@ -50,6 +56,7 @@ namespace Connectivity {
 
     private:
         Models::SettingsModel *m_SettingsModel;
+        Maintenance::MaintenanceService *m_MaintenanceService;
         QString m_UpdatesDirectory;
         QString m_AvailableUpdatePath;
     };

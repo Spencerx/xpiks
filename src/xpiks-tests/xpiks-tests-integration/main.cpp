@@ -288,7 +288,7 @@ int main(int argc, char *argv[]) {
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
     Models::SwitcherModel switcherModel;
-    Connectivity::UpdateService updateService(&settingsModel, &switcherModel);
+    Connectivity::UpdateService updateService(&settingsModel, &switcherModel, &maintenanceService);
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
     Connectivity::TelemetryService telemetryService("1234567890", false);

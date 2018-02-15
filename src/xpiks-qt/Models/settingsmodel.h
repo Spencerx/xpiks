@@ -177,11 +177,9 @@ namespace Models {
 
     public:
         QString getUserAgentId() const { return m_State.getString(Constants::userAgentId); }
-        QString getPathToUpdate() const { return m_State.getString(Constants::pathToUpdate); }
         QString getLegacyUploadHosts() const { return stringValue(Constants::legacyUploadHosts); }
         QString getMasterPasswordHash() const { return stringValue(Constants::masterPasswordHash); }
         bool getMustUseConfirmationDialogs() const { return boolValue(Constants::useConfirmationDialogs, true); }
-        int getAvailableUpdateVersion() const { return m_State.getInt(Constants::availableUpdateVersion); }
 
     public:
         Q_INVOKABLE bool needToShowWhatsNew();
@@ -209,18 +207,6 @@ namespace Models {
         /*Q_INVOKABLE*/ void setUserAgentId(const QString &id) {
             LOG_DEBUG << "#";
             m_State.setValue(Constants::userAgentId, id);
-            m_State.sync();
-        }
-
-        /*Q_INVOKABLE*/ void setAvailableUpdateVersion(int version) {
-            LOG_DEBUG << "#";
-            m_State.setValue(Constants::availableUpdateVersion, version);
-            m_State.sync();
-        }
-
-        /*Q_INVOKABLE*/ void setPathToUpdate(QString path) {
-            LOG_DEBUG << "#";
-            m_State.setValue(Constants::pathToUpdate, path);
             m_State.sync();
         }
 

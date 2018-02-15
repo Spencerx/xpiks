@@ -414,7 +414,7 @@ void Commands::CommandManager::connectEntitiesSignalsSlots() const {
                          m_HelpersQmlWrapper, &Helpers::HelpersQmlWrapper::updateAvailable);
 
         QObject::connect(m_UpdateService, &Connectivity::UpdateService::updateDownloaded,
-                         m_HelpersQmlWrapper, &Helpers::HelpersQmlWrapper::updateIsDownloaded);
+                         m_HelpersQmlWrapper, &Helpers::HelpersQmlWrapper::onUpdateDownloaded);
     }
 
     if (m_WarningsModel != NULL && m_WarningsService != NULL) {

@@ -307,7 +307,7 @@ int main(int argc, char *argv[]) {
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel;
 
-    Connectivity::UpdateService updateService(&settingsModel, &switcherModel);
+    Connectivity::UpdateService updateService(&settingsModel, &switcherModel, &maintenanceService);
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
 
