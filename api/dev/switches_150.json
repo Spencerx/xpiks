@@ -27,6 +27,6 @@
         "v": true
     },
     "updateEnabled": {
-        "v": false
+        "v": true
     }
 }
