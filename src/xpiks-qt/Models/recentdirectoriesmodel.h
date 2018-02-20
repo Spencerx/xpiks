@@ -13,13 +13,14 @@
 
 #include "recentitemsmodel.h"
 #include "../Common/statefulentity.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class RecentDirectoriesModel : public RecentItemsModel
     {
         Q_OBJECT
     public:
-        RecentDirectoriesModel();
+        RecentDirectoriesModel(Common::ISystemEnvironment &environment);
 
     public:
         virtual void initialize() override;

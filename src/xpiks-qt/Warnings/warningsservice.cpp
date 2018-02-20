@@ -54,9 +54,10 @@ namespace Warnings {
 #endif
     }
 
-    WarningsService::WarningsService(QObject *parent):
+    WarningsService::WarningsService(Common::ISystemEnvironment &environment, QObject *parent):
         QObject(parent),
         m_WarningsWorker(NULL),
+        m_WarningsSettingsModel(environment),
         m_IsStopped(false)
     {}
 

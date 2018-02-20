@@ -19,6 +19,7 @@
 #include <memory>
 #include "../Common/baseentity.h"
 #include "../Common/iservicebase.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class ArtworkMetadata;
@@ -38,7 +39,7 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        explicit ImageCachingService(QObject *parent = 0);
+        explicit ImageCachingService(Common::ISystemEnvironment &environment, QObject *parent = 0);
 
     public:
         void startService(const std::shared_ptr<Common::ServiceStartParams> &params);
@@ -63,6 +64,7 @@ namespace QMLExtensions {
         void dpiChanged(qreal someDPI);
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         ImageCachingWorker *m_CachingWorker;
         QSize m_DefaultSize;
         volatile bool m_IsCancelled;

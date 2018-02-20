@@ -39,7 +39,8 @@
 #endif
 
 namespace Helpers {
-    HelpersQmlWrapper::HelpersQmlWrapper(QMLExtensions::ColorsModel *colorsModel):
+    HelpersQmlWrapper::HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel *colorsModel):
+        m_Environment(environment),
         m_IsUpdateDownloaded(false),
         m_HaveUpgradeConsent(false),
         m_ColorsModel(colorsModel)
@@ -77,7 +78,7 @@ namespace Helpers {
 
         if (m_IsUpdateDownloaded && m_HaveUpgradeConsent) {
             LOG_INFO << "Installing update" << m_PathToUpdate;
-            Helpers::installUpdate(m_PathToUpdate);
+            Helpers::installUpdate(m_Environment, m_PathToUpdate);
         }
     }
 

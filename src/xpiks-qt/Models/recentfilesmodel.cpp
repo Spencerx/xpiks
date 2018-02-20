@@ -14,9 +14,9 @@
 #define MAX_RECENT_FILES 10
 
 namespace Models {
-    RecentFilesModel::RecentFilesModel():
+    RecentFilesModel::RecentFilesModel(Common::ISystemEnvironment &environment):
         RecentItemsModel(MAX_RECENT_FILES),
-        m_State("recentfiles")
+        m_State("recentfiles", environment)
     {
     }
 

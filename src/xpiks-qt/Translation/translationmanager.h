@@ -17,6 +17,7 @@
 #include <QVector>
 #include "../Common/baseentity.h"
 #include "../Common/statefulentity.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Helpers {
     class AsyncCoordinator;
@@ -42,7 +43,7 @@ namespace Translation {
         Q_PROPERTY(QStringList dictionaries READ getDictionariesDescriptions NOTIFY dictionariesChanged)
 
     public:
-        explicit TranslationManager(QObject *parent = 0);
+        explicit TranslationManager(Common::ISystemEnvironment &environment, QObject *parent = 0);
 
     public:
         bool getHasMore() const { return m_HasMore; }
@@ -91,6 +92,7 @@ namespace Translation {
         void updateTranslationTimer();
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         Common::StatefulEntity m_State;
         QStringList m_AllowedSuffixes;
         QVector<DictionaryInfo> m_DictionariesList;

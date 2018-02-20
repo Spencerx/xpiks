@@ -32,9 +32,13 @@
 #endif
 
 namespace Models {
-    ArtworkUploader::ArtworkUploader(Connectivity::IFtpCoordinator *ftpCoordinator, QObject *parent):
+    ArtworkUploader::ArtworkUploader(Common::ISystemEnvironment &environment,
+                                     Connectivity::IFtpCoordinator *ftpCoordinator,
+                                     QObject *parent):
         QObject(parent),
+        m_Environment(environment),
         m_FtpCoordinator(ftpCoordinator),
+        m_StocksFtpList(environment),
         m_Percent(0),
         m_IsInProgress(false),
         m_HasErrors(false)

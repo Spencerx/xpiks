@@ -20,9 +20,10 @@
 #include "../MetadataIO/artworkssnapshot.h"
 
 namespace QMLExtensions {
-    ImageCachingService::ImageCachingService(QObject *parent) :
+    ImageCachingService::ImageCachingService(Common::ISystemEnvironment &environment, QObject *parent) :
         QObject(parent),
         Common::BaseEntity(),
+        m_Environment(environment),
         m_CachingWorker(NULL),
         m_IsCancelled(false),
         m_Scale(1.0)
@@ -40,7 +41,7 @@ namespace QMLExtensions {
         Q_UNUSED(locker);
 
         auto *dbManager = m_CommandManager->getDatabaseManager();
-        m_CachingWorker = new ImageCachingWorker(coordinator, dbManager);
+        m_CachingWorker = new ImageCachingWorker(m_Environment, coordinator, dbManager);
 
         QThread *thread = new QThread();
         m_CachingWorker->moveToThread(thread);

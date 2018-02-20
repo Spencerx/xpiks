@@ -34,9 +34,12 @@ namespace QMLExtensions {
         return hash;
     }
 
-    VideoCachingWorker::VideoCachingWorker(Helpers::DatabaseManager *dbManager, QObject *parent) :
+    VideoCachingWorker::VideoCachingWorker(Common::ISystemEnvironment &environment,
+                                           Helpers::DatabaseManager *dbManager,
+                                           QObject *parent) :
         QObject(parent),
         ItemProcessingWorker(2),
+        m_Environment(environment),
         m_ProcessedItemsCount(0),
         m_Cache(dbManager)
     {
@@ -47,20 +50,9 @@ namespace QMLExtensions {
         LOG_DEBUG << "#";
 
         m_ProcessedItemsCount = 0;
-        QString appDataPath = XPIKS_USERDATA_PATH;
 
-        if (!appDataPath.isEmpty()) {
-            m_VideosCacheDir = QDir::cleanPath(appDataPath + QDir::separator() + Constants::VIDEO_CACHE_DIR);
-
-            QDir imagesCacheDir(m_VideosCacheDir);
-            if (!imagesCacheDir.exists()) {
-                LOG_INFO << "Creating cache dir" << m_VideosCacheDir;
-                QDir().mkpath(m_VideosCacheDir);
-            }
-        } else {
-            m_VideosCacheDir = QDir::currentPath();
-        }
-
+        m_Environment.ensureDirExists(Constants::VIDEO_CACHE_DIR);
+        m_VideosCacheDir = m_Environment.dirpath(Constants::VIDEO_CACHE_DIR);
         LOG_INFO << "Using" << m_VideosCacheDir << "for videos cache";
 
         m_Cache.initialize();

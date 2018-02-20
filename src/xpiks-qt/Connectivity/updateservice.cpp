@@ -18,14 +18,16 @@
 #include "../Models/switchermodel.h"
 
 namespace Connectivity {
-    UpdateService::UpdateService(Models::SettingsModel *settingsModel,
+    UpdateService::UpdateService(Common::ISystemEnvironment &environment,
+                                 Models::SettingsModel *settingsModel,
                                  Models::SwitcherModel *switcherModel,
                                  Maintenance::MaintenanceService *maintenanceService):
+        m_Environment(environment),
         m_UpdatesCheckerWorker(nullptr),
         m_SettingsModel(settingsModel),
         m_SwitcherModel(switcherModel),
         m_MaintenanceService(maintenanceService),
-        m_State("updater")
+        m_State("updater", environment)
     {
         Q_ASSERT(settingsModel != nullptr);
         Q_ASSERT(switcherModel != nullptr);
@@ -53,7 +55,7 @@ namespace Connectivity {
     void UpdateService::doStartChecking(const QString &pathToUpdate) {
         LOG_DEBUG << "path to update:" << pathToUpdate;
 
-        m_UpdatesCheckerWorker = new UpdatesCheckerWorker(m_SettingsModel, m_MaintenanceService, pathToUpdate);
+        m_UpdatesCheckerWorker = new UpdatesCheckerWorker(m_Environment, m_SettingsModel, m_MaintenanceService, pathToUpdate);
         QThread *thread = new QThread();
         m_UpdatesCheckerWorker->moveToThread(thread);
 

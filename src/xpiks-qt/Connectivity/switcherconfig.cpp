@@ -47,22 +47,15 @@ namespace Connectivity {
         return d;
     }
 
-    SwitcherConfig::SwitcherConfig(QObject *parent):
-        Models::AbstractConfigUpdaterModel(OVERWRITE_SWITCHER_CONFIG, parent)
+    SwitcherConfig::SwitcherConfig(Common::ISystemEnvironment &environment, QObject *parent):
+        Models::AbstractConfigUpdaterModel(OVERWRITE_SWITCHER_CONFIG, parent),
+        m_Environment(environment)
     {
     }
 
     void SwitcherConfig::initializeConfigs() {
-        QString localConfigPath;
-
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        if (!appDataPath.isEmpty()) {
-            QDir appDataDir(appDataPath);
-            localConfigPath = appDataDir.filePath(LOCAL_SWITCHER_CONFIG);
-        } else {
-            localConfigPath = LOCAL_SWITCHER_CONFIG;
-        }
-
+        LOG_DEBUG << "#";
+        QString localConfigPath = m_Environment.filepath(LOCAL_SWITCHER_CONFIG);
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getSwitcherAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);

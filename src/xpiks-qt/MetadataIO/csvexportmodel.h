@@ -19,6 +19,7 @@
 #include "csvexportplansmodel.h"
 #include "../Common/baseentity.h"
 #include "../Common/delayedactionentity.h"
+#include "../Common/isystemenvironment.h"
 
 class QTimerEvent;
 
@@ -77,7 +78,7 @@ namespace MetadataIO {
         Q_PROPERTY(bool isExporting READ getIsExporting WRITE setIsExporting NOTIFY isExportingChanged)
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
     public:
-        CsvExportModel();
+        CsvExportModel(Common::ISystemEnvironment &environment);
 
     public:
         const std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() const { return m_ExportPlans; }

@@ -16,12 +16,13 @@
 #include "../Common/flags.h"
 
 namespace SpellCheck {
-    SpellCheckerService::SpellCheckerService(Models::SettingsModel *settingsModel):
+    SpellCheckerService::SpellCheckerService(Common::ISystemEnvironment &environment, Models::SettingsModel *settingsModel):
+        m_Environment(environment),
         m_SpellCheckWorker(NULL),
         m_SettingsModel(settingsModel),
         m_RestartRequired(false),
         m_IsStopped(false)
-    {}
+    { }
 
     SpellCheckerService::~SpellCheckerService() {
         if (m_SpellCheckWorker != nullptr) {}
@@ -37,7 +38,7 @@ namespace SpellCheck {
         Helpers::AsyncCoordinator *coordinator = nullptr;
         if (coordinatorParams) { coordinator = coordinatorParams->m_Coordinator; }
 
-        m_SpellCheckWorker = new SpellCheckWorker(coordinator, m_SettingsModel);
+        m_SpellCheckWorker = new SpellCheckWorker(m_Environment, coordinator, m_SettingsModel);
         Helpers::AsyncCoordinatorLocker locker(coordinator);
         Q_UNUSED(locker);
 

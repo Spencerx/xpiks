@@ -17,10 +17,12 @@
 #define PRESET_SAVE_TIMEOUT 3000
 
 namespace KeywordsPresets {
-    PresetKeywordsModel::PresetKeywordsModel(QObject *parent):
+    PresetKeywordsModel::PresetKeywordsModel(Common::ISystemEnvironment &environment, QObject *parent):
         QAbstractListModel(parent),
         Common::BaseEntity(),
         Common::DelayedActionEntity(PRESET_SAVE_TIMEOUT, MAX_SAVE_PAUSE_RESTARTS),
+        m_Environment(environment),
+        m_PresetsConfig(environment),
         m_GroupsModel(this),
         m_LastUsedID(0)
     {

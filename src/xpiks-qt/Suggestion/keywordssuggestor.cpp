@@ -30,10 +30,10 @@
 #define DEFAULT_SEARCH_TYPE_INDEX 0
 
 namespace Suggestion {
-    KeywordsSuggestor::KeywordsSuggestor(QObject *parent):
+    KeywordsSuggestor::KeywordsSuggestor(Common::ISystemEnvironment &environment, QObject *parent):
         QAbstractListModel(parent),
         Common::BaseEntity(),
-        m_State("ksuggest"),
+        m_State("ksuggest", environment),
         m_SuggestedKeywords(m_HoldPlaceholder, this),
         m_AllOtherKeywords(m_HoldPlaceholder, this),
         m_SelectedArtworksCount(0),

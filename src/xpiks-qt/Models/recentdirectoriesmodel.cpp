@@ -14,9 +14,9 @@
 #define MAX_RECENT_DIRECTORIES 5
 
 namespace Models {
-    RecentDirectoriesModel::RecentDirectoriesModel():
+    RecentDirectoriesModel::RecentDirectoriesModel(Common::ISystemEnvironment &environment):
         RecentItemsModel(MAX_RECENT_DIRECTORIES),
-        m_State("recentdirs")
+        m_State("recentdirs", environment)
     {
     }
 

@@ -23,6 +23,7 @@
 #include "../Common/statefulentity.h"
 #include "../Helpers/constants.h"
 #include "../Common/delayedactionentity.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class ArtworkMetadata;
@@ -39,7 +40,9 @@ namespace Models {
         Q_PROPERTY(double keywordHeight READ getKeywordHeight NOTIFY keywordHeightChanged)
         Q_PROPERTY(int artworkEditRightPaneWidth READ getArtworkEditRightPaneWidth WRITE setArtworkEditRightPaneWidth NOTIFY artworkEditRightPaneWidthChanged)
     public:
-        explicit UIManager(Models::SettingsModel *settingsModel, QObject *parent = 0);
+        explicit UIManager(Common::ISystemEnvironment &environment,
+                           Models::SettingsModel *settingsModel,
+                           QObject *parent = 0);
 
     private:
         int generateNextTabID() { int id = m_TabID++; return id; }

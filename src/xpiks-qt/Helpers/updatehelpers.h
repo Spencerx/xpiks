@@ -12,9 +12,10 @@
 #define UPDATEHELPERS_H
 
 #include <QString>
+#include "../Common/isystemenvironment.h"
 
 namespace Helpers {
-    void installUpdate(const QString &updatePath);
+    void installUpdate(Common::ISystemEnvironment &environment, const QString &updatePath);
 }
 
 #endif // UPDATEHELPERS_H

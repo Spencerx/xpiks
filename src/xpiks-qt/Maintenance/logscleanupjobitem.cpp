@@ -18,10 +18,9 @@ namespace Maintenance {
                 ((arg1.m_AgeDays == arg2.m_AgeDays) && (arg1.m_SizeBytes < arg2.m_SizeBytes));
     }
 
-    LogsCleanupJobItem::LogsCleanupJobItem()
+    LogsCleanupJobItem::LogsCleanupJobItem(Common::ISystemEnvironment &environment)
     {
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        m_LogFileDir = QDir::cleanPath(appDataPath + QDir::separator() + "logs");
+        m_LogFileDir = environment.dirpath("logs");
     }
 
     void LogsCleanupJobItem::processJob() {

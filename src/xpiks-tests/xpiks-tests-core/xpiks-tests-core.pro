@@ -334,5 +334,7 @@ HEADERS += \
     ../../xpiks-qt/KeywordsPresets/groupmodel.h \
     ../../xpiks-qt/KeywordsPresets/presetmodel.h \
     warningscheck_tests.h \
-    Mocks/warningssettingsmock.h
+    Mocks/warningssettingsmock.h \
+    Mocks/coretestsenvironment.h \
+    ../../xpiks-qt/Common/isystemenvironment.h
 

@@ -16,6 +16,7 @@
 #include <memory>
 #include "../Helpers/localconfig.h"
 #include "../Common/baseentity.h"
+#include "../Common/isystemenvironment.h"
 
 namespace MetadataIO {
     class ArtworkSessionSnapshot;
@@ -31,7 +32,7 @@ namespace Models {
     {
         Q_OBJECT
     public:
-        SessionManager();
+        SessionManager(Common::ISystemEnvironment &environment);
         virtual ~SessionManager() {}
 
     public:

@@ -14,6 +14,7 @@
 #include <QObject>
 #include "../Common/statefulentity.h"
 #include "../Helpers/constants.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class SettingsModel;
@@ -31,7 +32,8 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        UpdateService(Models::SettingsModel *settingsModel,
+        UpdateService(Common::ISystemEnvironment &environment,
+                      Models::SettingsModel *settingsModel,
                       Models::SwitcherModel *switcherModel,
                       Maintenance::MaintenanceService *maintenanceService);
 
@@ -69,6 +71,7 @@ namespace Connectivity {
         void cancelRequested();
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         Connectivity::UpdatesCheckerWorker *m_UpdatesCheckerWorker;
         Models::SettingsModel *m_SettingsModel;
         Models::SwitcherModel *m_SwitcherModel;

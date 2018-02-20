@@ -18,6 +18,7 @@
 #include "../Models/abstractconfigupdatermodel.h"
 #include "../Helpers/localconfig.h"
 #include "../Common/baseentity.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Helpers {
     class AsyncCoordinator;
@@ -29,7 +30,7 @@ namespace MetadataIO {
     {
         Q_OBJECT
     public:
-        CsvExportPlansModel(QObject *parent = nullptr);
+        CsvExportPlansModel(Common::ISystemEnvironment &environment, QObject *parent = nullptr);
 
     public:
         std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() { return m_ExportPlans; }
@@ -55,6 +56,7 @@ namespace MetadataIO {
         void deserializeExportPlans(const QJsonObject &object);
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         std::vector<std::shared_ptr<CsvExportPlan> > m_ExportPlans;
     };
 }

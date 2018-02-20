@@ -174,8 +174,9 @@ namespace MetadataIO {
         return result;
     }
 
-    CsvExportPlansModel::CsvExportPlansModel(QObject *parent):
-        Models::AbstractConfigUpdaterModel(OVERWRITE_CSV_PLANS, parent)
+    CsvExportPlansModel::CsvExportPlansModel(Common::ISystemEnvironment &environment, QObject *parent):
+        Models::AbstractConfigUpdaterModel(OVERWRITE_CSV_PLANS, parent),
+        m_Environment(environment)
     {
     }
 
@@ -186,16 +187,7 @@ namespace MetadataIO {
         Helpers::AsyncCoordinatorUnlocker unlocker(initCoordinator);
         Q_UNUSED(locker); Q_UNUSED(unlocker);
 
-        QString localConfigPath;
-
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        if (!appDataPath.isEmpty()) {
-            QDir appDataDir(appDataPath);
-            localConfigPath = appDataDir.filePath(EXPORT_PLANS_FILE);
-        } else {
-            localConfigPath = EXPORT_PLANS_FILE;
-        }
-
+        QString localConfigPath = m_Environment.filepath(EXPORT_PLANS_FILE);
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getCsvExportPlansAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);

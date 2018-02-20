@@ -28,6 +28,7 @@
 #include "../Common/iartworkssource.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
 #include "../Helpers/ifilenotavailablemodel.h"
+#include "artworksrepository.h"
 
 namespace Common {
     class BasicMetadataModel;

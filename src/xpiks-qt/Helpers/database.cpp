@@ -23,25 +23,6 @@
 #define MAX_BLOB_BYTES (10*MEGABYTE)
 
 namespace Helpers {
-    QString ensureDBDirectoryExists(const QString &dbDirName) {
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        QString path;
-
-        if (!appDataPath.isEmpty()) {
-            path = QDir::cleanPath(appDataPath + QDir::separator() + dbDirName);
-
-            QDir dbDir(path);
-            if (!dbDir.exists()) {
-                LOG_INFO << "Creating db dir" << path;
-                QDir().mkpath(path);
-            }
-        } else {
-            path = QDir::currentPath();
-        }
-
-        return path;
-    }
-
     bool readSqliteBlob(sqlite3_stmt *statement, int index, QByteArray &result) {
         Q_ASSERT(statement != nullptr);
 
@@ -567,8 +548,9 @@ namespace Helpers {
         return success;
     }
 
-    DatabaseManager::DatabaseManager():
+    DatabaseManager::DatabaseManager(Common::ISystemEnvironment &environment):
         QObject(),
+        m_Environment(environment),
         m_LastDatabaseID(0),
         m_Initialized(false)
     {
@@ -578,7 +560,8 @@ namespace Helpers {
 
     bool DatabaseManager::initialize() {
         LOG_DEBUG << "#";
-        QString dbDirPath = ensureDBDirectoryExists(Constants::DB_DIR);
+        m_Environment.ensureDirExists(Constants::DB_DIR);
+        QString dbDirPath = m_Environment.dirpath(Constants::DB_DIR);
         m_DBDirPath = dbDirPath;
         m_Initialized = true;
         return true;

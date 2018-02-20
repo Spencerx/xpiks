@@ -64,21 +64,14 @@ namespace KeywordsPresets {
         return parsed;
     }
 
-    PresetKeywordsModelConfig::PresetKeywordsModelConfig()
+    PresetKeywordsModelConfig::PresetKeywordsModelConfig(Common::ISystemEnvironment &environment):
+        m_Environment(environment)
     { }
 
     void PresetKeywordsModelConfig::initializeConfigs() {
         LOG_DEBUG << "#";
 
-        QString localConfigPath;
-
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        if (!appDataPath.isEmpty()) {
-            QDir appDataDir(appDataPath);
-            localConfigPath = appDataDir.filePath(LOCAL_PRESETKEYWORDS_LIST_FILE);
-        } else {
-            localConfigPath = LOCAL_PRESETKEYWORDS_LIST_FILE;
-        }
+        QString localConfigPath = m_Environment.filepath(LOCAL_PRESETKEYWORDS_LIST_FILE);
 
         if (XPIKS_MAJOR_VERSION_CHECK(1, 5) ||
                 XPIKS_MAJOR_VERSION_CHECK(1, 4)) {

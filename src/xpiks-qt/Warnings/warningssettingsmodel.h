@@ -15,6 +15,7 @@
 #include <QJsonArray>
 #include "iwarningssettings.h"
 #include "../Models/abstractconfigupdatermodel.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Warnings {
     class WarningsSettingsModel:
@@ -24,7 +25,7 @@ namespace Warnings {
         Q_OBJECT
 
     public:
-        WarningsSettingsModel();
+        WarningsSettingsModel(Common::ISystemEnvironment &environment);
         void initializeConfigs();
 
         virtual const QString &getAllowedFilenameCharacters() const override { return m_AllowedFilenameCharacters; }
@@ -56,6 +57,7 @@ namespace Warnings {
         void settingsUpdated();
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         QString m_AllowedFilenameCharacters;
         double m_MinMegapixels;
         double m_MaxImageFilesizeMB;

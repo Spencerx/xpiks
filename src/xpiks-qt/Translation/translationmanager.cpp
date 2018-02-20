@@ -64,10 +64,11 @@ namespace Translation {
         return success;
     }
 
-    TranslationManager::TranslationManager(QObject *parent) :
+    TranslationManager::TranslationManager(Common::ISystemEnvironment &environment, QObject *parent) :
         QObject(parent),
         Common::BaseEntity(),
-        m_State("translator"),
+        m_Environment(environment),
+        m_State("translator", environment),
         m_AllowedSuffixes({"idx", "idx.dz", "idx.oft", "dict.dz", "dict", "ifo"}),
         m_SelectedDictionaryIndex(-1),
         m_IsBusy(false),
@@ -141,19 +142,8 @@ namespace Translation {
     }
 
     void TranslationManager::doInitializeDictionaries() {
-        QString appDataPath = XPIKS_USERDATA_PATH;
-
-        if (!appDataPath.isEmpty()) {
-            m_DictionariesDirPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::TRANSLATOR_DIR);
-
-            QDir dictionariesDir(m_DictionariesDirPath);
-            if (!dictionariesDir.exists()) {
-                LOG_INFO << "Creating dictionaries dir" << m_DictionariesDirPath;
-                QDir().mkpath(m_DictionariesDirPath);
-            }
-        } else {
-            m_DictionariesDirPath = QDir::currentPath();
-        }
+        m_Environment.ensureDirExists(Constants::TRANSLATOR_DIR);
+        m_DictionariesDirPath = m_Environment.dirpath(Constants::TRANSLATOR_DIR);
 
         QDirIterator it(m_DictionariesDirPath, QStringList() << "*.ifo", QDir::Files, QDirIterator::NoIteratorFlags);
 

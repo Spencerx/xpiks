@@ -10,6 +10,7 @@
 #include "../../xpiks-qt/Models/artworkproxymodel.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
 #include "../../xpiks-qt/UndoRedo/undoredomanager.h"
+#include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \
     Mocks::CommandManagerMock commandManagerMock;\
@@ -23,6 +24,7 @@
     commandManagerMock.generateAndAddArtworks(count, withVector);
 
 #define SETUP_SELECTION_TEST(count, dirsCount) \
+    Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock; \
     Mocks::ArtItemsModelMock artItemsMock; \
     Mocks::ArtworksRepositoryMock artworksRepository; \
@@ -31,7 +33,7 @@
     commandManagerMock.InjectDependency(artItemsModel); \
     UndoRedo::UndoRedoManager undoRedoManager; \
     commandManagerMock.InjectDependency(&undoRedoManager); \
-    Models::SettingsModel settingsModel; \
+    Models::SettingsModel settingsModel(environment); \
     commandManagerMock.InjectDependency(&settingsModel); \
     settingsModel.setAutoFindVectors(false); \
     commandManagerMock.generateAndAddArtworksEx(count, dirsCount, false); \

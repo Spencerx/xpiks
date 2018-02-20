@@ -85,9 +85,11 @@ QString urlFilename(const QString &url) {
 }
 
 namespace Connectivity {
-    UpdatesCheckerWorker::UpdatesCheckerWorker(Models::SettingsModel *settingsModel,
+    UpdatesCheckerWorker::UpdatesCheckerWorker(Common::ISystemEnvironment &environment,
+                                               Models::SettingsModel *settingsModel,
                                                Maintenance::MaintenanceService *maintenanceService,
                                                const QString &availableUpdatePath):
+        m_Environment(environment),
         m_SettingsModel(settingsModel),
         m_MaintenanceService(maintenanceService),
         m_AvailableUpdatePath(availableUpdatePath)
@@ -99,18 +101,8 @@ namespace Connectivity {
     }
 
     void UpdatesCheckerWorker::initWorker() {
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        if (!appDataPath.isEmpty()) {
-            QDir appDir(appDataPath);
-            if (appDir.mkdir(QLatin1String(Constants::UPDATES_DIRECTORY))) {
-                LOG_INFO << "Created updates directory";
-            }
-
-            m_UpdatesDirectory = QDir::cleanPath(appDataPath + QDir::separator() + Constants::UPDATES_DIRECTORY);
-        } else {
-            LOG_WARNING << "Can't get to the updates directory. Using temporary...";
-            m_UpdatesDirectory = QDir::temp().absolutePath();
-        }
+        m_Environment.ensureDirExists(Constants::UPDATES_DIRECTORY);
+        m_UpdatesDirectory = m_Environment.dirpath(Constants::UPDATES_DIRECTORY);
     }
 
     void UpdatesCheckerWorker::processOneItem() {

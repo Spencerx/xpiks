@@ -21,13 +21,16 @@
 #include "videocacherequest.h"
 #include "cachedvideo.h"
 #include "dbvideocacheindex.h"
+#include "../Common/isystemenvironment.h"
 
 namespace QMLExtensions {
     class VideoCachingWorker : public QObject, public Common::BaseEntity, public Common::ItemProcessingWorker<VideoCacheRequest>
     {
         Q_OBJECT
     public:
-        explicit VideoCachingWorker(Helpers::DatabaseManager *dbManager, QObject *parent = 0);
+        explicit VideoCachingWorker(Common::ISystemEnvironment &environment,
+                                    Helpers::DatabaseManager *dbManager,
+                                    QObject *parent = 0);
 
     protected:
         virtual bool initWorker() override;
@@ -61,6 +64,7 @@ namespace QMLExtensions {
         bool checkProcessed(std::shared_ptr<VideoCacheRequest> &item);
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         volatile int m_ProcessedItemsCount;
         qreal m_Scale;
         QString m_VideosCacheDir;

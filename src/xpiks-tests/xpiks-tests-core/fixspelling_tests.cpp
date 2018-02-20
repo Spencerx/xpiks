@@ -7,10 +7,12 @@
 #include "../../xpiks-qt/SpellCheck/spellsuggestionsitem.h"
 #include "../../xpiks-qt/SpellCheck/spellcheckiteminfo.h"
 #include "Mocks/spellcheckservicemock.h"
+#include "Mocks/coretestsenvironment.h"
 
 #define INIT_FIX_SPELLING_TEST \
+    Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManager; \
-    Mocks::SpellCheckServiceMock spellCheckService; \
+    Mocks::SpellCheckServiceMock spellCheckService(environment); \
     commandManager.InjectDependency(&spellCheckService); \
     SpellCheck::SpellCheckSuggestionModel suggestionModel; \
     commandManager.InjectDependency(&suggestionModel); \

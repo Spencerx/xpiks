@@ -29,6 +29,7 @@
 #include "../Models/uploadinforepository.h"
 #include "../Common/delayedactionentity.h"
 #include "../Common/statefulentity.h"
+#include "../Common/isystemenvironment.h"
 
 #define SETTINGS_EPSILON 1e-9
 
@@ -84,7 +85,7 @@ namespace Models {
         Q_PROPERTY(QString termsAndConditionsText READ getTermsAndConditionsText CONSTANT)
 
     public:
-        explicit SettingsModel(QObject *parent = 0);
+        explicit SettingsModel(Common::ISystemEnvironment &environment, QObject *parent = 0);
         virtual ~SettingsModel() { }
 
     public:
@@ -361,6 +362,7 @@ namespace Models {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         Common::StatefulEntity m_State;
         QMutex m_SettingsMutex;
         Helpers::LocalConfig m_Config;

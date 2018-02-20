@@ -23,8 +23,9 @@
 #include "updatebundlecleanupjobitem.h"
 
 namespace Maintenance {
-    MaintenanceService::MaintenanceService():
-        m_MaintenanceWorker(NULL)
+    MaintenanceService::MaintenanceService(Common::ISystemEnvironment &environment):
+        m_MaintenanceWorker(NULL),
+        m_Environment(environment)
     {
     }
 
@@ -94,7 +95,7 @@ namespace Maintenance {
     void MaintenanceService::cleanupLogs() {
 #ifdef WITH_LOGS
         LOG_DEBUG << "#";
-        std::shared_ptr<IMaintenanceItem> jobItem(new LogsCleanupJobItem());
+        std::shared_ptr<IMaintenanceItem> jobItem(new LogsCleanupJobItem(m_Environment));
         m_MaintenanceWorker->submitItem(jobItem);
 #endif
     }

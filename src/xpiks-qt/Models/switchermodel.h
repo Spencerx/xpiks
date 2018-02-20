@@ -17,6 +17,7 @@
 #include "../Helpers/localconfig.h"
 #include "../Common/baseentity.h"
 #include "../Common/statefulentity.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class SwitcherModel: public QObject, public Common::BaseEntity
@@ -28,7 +29,7 @@ namespace Models {
         Q_PROPERTY(bool isDonateCampaign1Stage2On READ getIsDonateCampaign1Stage2On NOTIFY switchesUpdated)
         Q_PROPERTY(bool useAutoImport READ getUseAutoImport NOTIFY switchesUpdated)
     public:
-        SwitcherModel(QObject *parent=nullptr);
+        SwitcherModel(Common::ISystemEnvironment &environment, QObject *parent=nullptr);
 
     public:
         virtual void setCommandManager(Commands::CommandManager *commandManager) override;

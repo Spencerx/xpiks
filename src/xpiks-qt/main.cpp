@@ -94,6 +94,7 @@
 #include "KeywordsPresets/presetgroupsmodel.h"
 #include <ftpcoordinator.h>
 #include "Helpers/filehelpers.h"
+#include "Common/systemenvironment.h"
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);
@@ -214,23 +215,16 @@ int main(int argc, char *argv[]) {
 
     // ----------------------------------------------
     QApplication app(argc, argv);
+    Common::SystemEnvironment environment(app.arguments());
+    environment.ensureSystemDirectoriesExist();
     // ----------------------------------------------
 
-    QString appDataPath = XPIKS_USERDATA_PATH;
-
 #ifdef WITH_LOGS
-    const QString &logFileDir = QDir::cleanPath(appDataPath + QDir::separator() + Constants::LOGS_DIR);
-    if (!logFileDir.isEmpty()) {
-        QDir dir(logFileDir);
-        if (!dir.exists()) {
-            bool created = QDir().mkpath(logFileDir);
-            Q_UNUSED(created);
-        }
-
+    {
         QString time = QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss-zzz");
         QString logFilename = QString("xpiks-qt-%1.log").arg(time);
 
-        QString logFilePath = dir.filePath(logFilename);
+        QString logFilePath = environment.fileInDir(logFilename, Constants::LOGS_DIR);
 
         Helpers::Logger &logger = Helpers::Logger::getInstance();
         logger.setLogFilePath(logFilePath);
@@ -245,12 +239,8 @@ int main(int argc, char *argv[]) {
     LOG_INFO << "Xpiks" << XPIKS_FULL_VERSION_STRING << "-" << STRINGIZE(BUILDNUMBER);
     LOG_INFO << QSysInfo::productType() << QSysInfo::productVersion() << QSysInfo::currentCpuArchitecture();
     LOG_INFO << "Working directory of Xpiks is:" << QDir::currentPath();
-    LOG_DEBUG << "Extra files search locations:" << QStandardPaths::standardLocations(XPIKS_DATA_LOCATION_TYPE);
 
-    const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
-    Helpers::ensureDirectoryExists(statesPath);
-
-    Models::SettingsModel settingsModel;
+    Models::SettingsModel settingsModel(environment);
     settingsModel.initializeConfigs();
     settingsModel.retrieveAllValues();
     ensureUserIdExists(&settingsModel);
@@ -262,22 +252,22 @@ int main(int argc, char *argv[]) {
     Models::FilteredArtworksRepository filteredArtworksRepository(&artworkRepository);
     Models::ArtItemsModel artItemsModel;
     Models::CombinedArtworksModel combinedArtworksModel;
-    Models::UploadInfoRepository uploadInfoRepository;
-    KeywordsPresets::PresetKeywordsModel presetsModel;
+    Models::UploadInfoRepository uploadInfoRepository(environment);
+    KeywordsPresets::PresetKeywordsModel presetsModel(environment);
     KeywordsPresets::FilteredPresetKeywordsModel filteredPresetsModel;
     filteredPresetsModel.setSourceModel(&presetsModel);
-    Warnings::WarningsService warningsService;
+    Warnings::WarningsService warningsService(environment);
     Encryption::SecretsManager secretsManager;
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
-    Suggestion::KeywordsSuggestor keywordsSuggestor;
+    Suggestion::KeywordsSuggestor keywordsSuggestor(environment);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
-    Models::RecentDirectoriesModel recentDirectorieModel;
-    Models::RecentFilesModel recentFileModel;
+    Models::RecentDirectoriesModel recentDirectorieModel(environment);
+    Models::RecentFilesModel recentFileModel(environment);
     libxpks::net::FtpCoordinator *ftpCoordinator = new libxpks::net::FtpCoordinator(settingsModel.getMaxParallelUploads());
-    Models::ArtworkUploader artworkUploader(ftpCoordinator);
-    SpellCheck::SpellCheckerService spellCheckerService(&settingsModel);
+    Models::ArtworkUploader artworkUploader(environment, ftpCoordinator);
+    SpellCheck::SpellCheckerService spellCheckerService(environment, &settingsModel);
     SpellCheck::SpellCheckSuggestionModel spellCheckSuggestionModel;
     SpellCheck::UserDictEditModel userDictEditModel;
     MetadataIO::MetadataIOService metadataIOService;
@@ -287,27 +277,27 @@ int main(int argc, char *argv[]) {
     Models::LanguagesModel languagesModel;
     AutoComplete::KeywordsAutoCompleteModel autoCompleteModel;
     AutoComplete::AutoCompleteService autoCompleteService(&autoCompleteModel, &presetsModel, &settingsModel);
-    QMLExtensions::ImageCachingService imageCachingService;
+    QMLExtensions::ImageCachingService imageCachingService(environment);
     Models::FindAndReplaceModel replaceModel(&colorsModel);
     Models::DeleteKeywordsViewModel deleteKeywordsModel;
     Models::ArtworkProxyModel artworkProxyModel;
-    Translation::TranslationManager translationManager;
+    Translation::TranslationManager translationManager(environment);
     Translation::TranslationService translationService(translationManager);
-    Models::UIManager uiManager(&settingsModel);
-    Models::SessionManager sessionManager;
+    Models::UIManager uiManager(environment, &settingsModel);
+    Models::SessionManager sessionManager(environment);
     sessionManager.initialize();
     QuickBuffer::QuickBuffer quickBuffer;
-    Maintenance::MaintenanceService maintenanceService;
-    QMLExtensions::VideoCachingService videoCachingService;
+    Maintenance::MaintenanceService maintenanceService(environment);
+    QMLExtensions::VideoCachingService videoCachingService(environment);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
-    Models::SwitcherModel switcherModel;
+    Models::SwitcherModel switcherModel(environment);
     Connectivity::RequestsService requestsService;
-    Helpers::DatabaseManager databaseManager;
+    Helpers::DatabaseManager databaseManager(environment);
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
-    MetadataIO::CsvExportModel csvExportModel;
+    MetadataIO::CsvExportModel csvExportModel(environment);
 
-    Connectivity::UpdateService updateService(&settingsModel, &switcherModel, &maintenanceService);
+    Connectivity::UpdateService updateService(environment, &settingsModel, &switcherModel, &maintenanceService);
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
 
@@ -318,11 +308,11 @@ int main(int argc, char *argv[]) {
 #endif
     Connectivity::TelemetryService telemetryService(userId, telemetryEnabled);
 
-    Plugins::PluginManager pluginManager;
+    Plugins::PluginManager pluginManager(environment);
     Plugins::PluginsWithActionsModel pluginsWithActions;
     pluginsWithActions.setSourceModel(&pluginManager);
 
-    Helpers::HelpersQmlWrapper helpersQmlWrapper(&colorsModel);
+    Helpers::HelpersQmlWrapper helpersQmlWrapper(environment, &colorsModel);
 
     LOG_INFO << "Models created";
 

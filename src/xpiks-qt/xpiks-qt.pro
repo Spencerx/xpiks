@@ -183,7 +183,8 @@ SOURCES += main.cpp \
     Commands/maindelegator.cpp \
     Common/baseentity.cpp \
     Warnings/warningsitem.cpp \
-    Maintenance/updatebundlecleanupjobitem.cpp
+    Maintenance/updatebundlecleanupjobitem.cpp \
+    Common/systemenvironment.cpp
 
 RESOURCES += qml.qrc
 
@@ -429,7 +430,9 @@ HEADERS += \
     KeywordsPresets/presetmodel.h \
     KeywordsPresets/groupmodel.h \
     Warnings/iwarningssettings.h \
-    Maintenance/updatebundlecleanupjobitem.h
+    Maintenance/updatebundlecleanupjobitem.h \
+    Common/systemenvironment.h \
+    Common/isystemenvironment.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
