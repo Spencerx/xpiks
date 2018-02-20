@@ -71,6 +71,8 @@ before_build:
   - cmd: 'copy libs\%configuration%\mman.* vendors\ssdll\src\libs'
   - cmd: 'copy libs\%configuration%\z.* vendors\ssdll\src\libs'
   - cmd: 'call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%'
+  - git fetch origin gh-pages
+  - git checkout FETCH_HEAD -- api
 
 build_script:
   - cmd: 'echo %cd%'

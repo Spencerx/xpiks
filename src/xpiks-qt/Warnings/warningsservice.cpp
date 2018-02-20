@@ -59,7 +59,7 @@ namespace Warnings {
 
         LOG_INFO << "Starting worker";
 
-        thread->start();
+        thread->start(QThread::LowestPriority);
 
         m_IsStopped = false;
     }

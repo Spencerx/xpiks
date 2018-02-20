@@ -79,7 +79,7 @@ namespace Helpers {
         void revealFile(const QString &path);
 
     public slots:
-        void updateIsDownloaded(QString pathToUpdate);
+        void onUpdateDownloaded(QString pathToUpdate);
 
     signals:
         void globalCloseRequested();

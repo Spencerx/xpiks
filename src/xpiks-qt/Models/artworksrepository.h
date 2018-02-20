@@ -197,6 +197,7 @@ namespace Models {
 
     signals:
         void artworksSourcesCountChanged();
+        void directoriesFiltered();
 
     private slots:
         void onRefreshRequired();

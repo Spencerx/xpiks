@@ -206,7 +206,6 @@ namespace Models {
         void setUnavailable() { setIsUnavailableFlag(true); }
         void resetModified() { setIsModifiedFlag(false); }
         void requestFocus(int directionSign) { emit focusRequested(directionSign); }
-        virtual void justEdited() override { justChanged(); }
         virtual bool expandPreset(size_t keywordIndex, const QStringList &presetList) override;
         virtual bool appendPreset(const QStringList &presetList) override;
         virtual bool hasKeywords(const QStringList &keywordsList) override;
@@ -218,6 +217,11 @@ namespace Models {
 #ifdef INTEGRATION_TESTS
     public:
         bool hasDuplicates(size_t index) { return m_MetadataModel.hasDuplicateAt(index); }
+#endif
+
+#ifdef CORE_TESTS
+    public:
+        SpellCheck::SpellCheckItemInfo *getSpellCheckInfo() { return &m_SpellCheckInfo; }
 #endif
 
 #ifndef CORE_TESTS

@@ -1860,6 +1860,14 @@ Item {
                             artworksHost.positionViewAtBeginning()
                         }
                     }
+
+                    Connections {
+                        target: artworkRepository
+                        onDirectoriesFiltered: {
+                            artworksHost.forceUpdateArtworks(true)
+                            artworksHost.positionViewAtBeginning()
+                        }
+                    }
                 }
 
                 CustomScrollbar {

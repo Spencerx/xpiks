@@ -228,7 +228,11 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Maintenance/xpkscleanupjob.cpp \
     ../../xpiks-qt/Common/baseentity.cpp \
     ../../xpiks-qt/Commands/maindelegator.cpp \
-    importlostmetadatatest.cpp
+    importlostmetadatatest.cpp \
+    ../../xpiks-qt/Warnings/warningsitem.cpp \
+    warningscombinedtest.cpp \
+    csvdefaultexporttest.cpp \
+    ../../xpiks-qt/Maintenance/updatebundlecleanupjobitem.cpp
 
 RESOURCES +=
 
@@ -494,7 +498,11 @@ HEADERS += \
     ../../xpiks-qt/Commands/maindelegator.h \
     ../../xpiks-qt/KeywordsPresets/groupmodel.h \
     ../../xpiks-qt/KeywordsPresets/presetmodel.h \
-    importlostmetadatatest.h
+    importlostmetadatatest.h \
+    ../../xpiks-qt/Warnings/iwarningssettings.h \
+    warningscombinedtest.h \
+    csvdefaultexporttest.h \
+    ../../xpiks-qt/Maintenance/updatebundlecleanupjobitem.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

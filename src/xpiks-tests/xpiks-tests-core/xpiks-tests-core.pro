@@ -193,7 +193,9 @@ SOURCES += main.cpp \
     ../../xpiks-qt/UndoRedo/removedirectoryitem.cpp \
     ../../xpiks-qt/Common/basickeywordsmodelimpl.cpp \
     ../../xpiks-qt/Commands/maindelegator.cpp \
-    ../../xpiks-qt/Common/baseentity.cpp
+    ../../xpiks-qt/Common/baseentity.cpp \
+    ../../xpiks-qt/Warnings/warningsitem.cpp \
+    warningscheck_tests.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -331,5 +333,7 @@ HEADERS += \
     ../../xpiks-qt/Common/basickeywordsmodelimpl.h \
     ../../xpiks-qt/Commands/maindelegator.h \
     ../../xpiks-qt/KeywordsPresets/groupmodel.h \
-    ../../xpiks-qt/KeywordsPresets/presetmodel.h
+    ../../xpiks-qt/KeywordsPresets/presetmodel.h \
+    warningscheck_tests.h \
+    Mocks/warningssettingsmock.h
 

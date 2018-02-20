@@ -244,6 +244,7 @@ namespace Models {
 
         m_MetadataModel.clearModel();
         markModified();
+        justChanged();
     }
 
     bool ArtworkMetadata::clearKeywords() {
@@ -253,7 +254,10 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.clearKeywords();
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -264,7 +268,10 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.editKeyword(index, replacement);
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -275,7 +282,10 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.replace(replaceWhat, replaceTo, flags);
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -287,7 +297,10 @@ namespace Models {
 
         bool result = m_MetadataModel.setDescription(value);
 
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
 
         return result;
     }
@@ -300,7 +313,10 @@ namespace Models {
 
         bool result = m_MetadataModel.setTitle(value);
 
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
 
         return result;
     }
@@ -313,6 +329,7 @@ namespace Models {
 
         m_MetadataModel.setKeywords(keywords);
         markModified();
+        justChanged();
     }
 
     bool ArtworkMetadata::setIsSelected(bool value) {
@@ -327,7 +344,11 @@ namespace Models {
 
     bool ArtworkMetadata::removeKeywordAt(size_t index, QString &removed) {
         bool result = m_MetadataModel.removeKeywordAt(index, removed);
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
+
         return result;
     }
 
@@ -338,7 +359,11 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.removeLastKeyword(removed);
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
+
         return result;
     }
 
@@ -349,7 +374,10 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.appendKeyword(keyword);
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -361,7 +389,10 @@ namespace Models {
 
         size_t result = m_MetadataModel.appendKeywords(keywordsList);
         LOG_INFO << "#" << m_ID << "Appended" << result << "keywords out of" << keywordsList.length();
-        if (result > 0) { markModified(); }
+        if (result > 0) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -373,7 +404,10 @@ namespace Models {
 
         bool result = m_MetadataModel.removeKeywords(keywordsSet, caseSensitive);
         LOG_INFO << "#" << m_ID << "Removed keywords:" << result;
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -386,6 +420,7 @@ namespace Models {
         auto result = m_MetadataModel.fixKeywordSpelling(index, existing, replacement);
         if (Common::KeywordReplaceResult::Succeeded == result) {
             markModified();
+            justChanged();
         }
 
         return result;
@@ -400,6 +435,7 @@ namespace Models {
         bool result = m_MetadataModel.fixDescriptionSpelling(word, replacement);
         if (result) {
             markModified();
+            justChanged();
         }
 
         return result;
@@ -414,6 +450,7 @@ namespace Models {
         bool result = m_MetadataModel.fixTitleSpelling(word, replacement);
         if (result) {
             markModified();
+            justChanged();
         }
 
         return result;
@@ -459,6 +496,7 @@ namespace Models {
         bool result = m_MetadataModel.expandPreset(keywordIndex, presetList);
         if (result) {
             markModified();
+            justChanged();
         }
 
         return result;
@@ -468,6 +506,7 @@ namespace Models {
         bool result = m_MetadataModel.appendPreset(presetList);
         if (result) {
             markModified();
+            justChanged();
         }
 
         return result;

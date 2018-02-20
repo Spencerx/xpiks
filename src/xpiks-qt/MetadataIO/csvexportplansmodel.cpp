@@ -199,8 +199,6 @@ namespace MetadataIO {
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getCsvExportPlansAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);
-
-        emit plansUpdated();
     }
 
     void CsvExportPlansModel::sync(const std::vector<std::shared_ptr<CsvExportPlan> > &exportPlans) {
@@ -226,6 +224,7 @@ namespace MetadataIO {
         if (document.isObject()) {
             QJsonObject exportPlansObject = document.object();
             deserializeExportPlans(exportPlansObject);
+            emit plansUpdated();
         } else {
             LOG_WARNING << "JSON document doesn't contain an object";
         }

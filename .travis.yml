@@ -58,6 +58,8 @@ before_script:
   - if [ -n "$UI_TESTS" ]; then sleep 3; fi # give xvfb some time to start
   - chmod +x vendors/build_vendors_linux.sh
   - chmod +x src/xpiks-tests/get_code_cov.sh
+  - git fetch origin gh-pages
+  - git checkout FETCH_HEAD -- api
 
 script:
   - if [ -z "${UI_TESTS+xxx}" ]; then bash vendors/build_vendors_linux.sh travis-ci; fi
@@ -85,7 +87,7 @@ script:
   - if [ -n "$CORE_TESTS" ]; then ./xpiks-tests-core; fi
   - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration; fi
   - if [ -n "$UI_TESTS" ]; then ./xpiks-tests-ui; fi
-  - if [ -z "${XPIKS_BINARY+xxx}" ]; then ../get_code_cov.sh "$PWD"; fi
+  - if [ -z "${XPIKS_BINARY+xxx}" ]; then ../get_code_cov.sh "$PWD/../../"; fi
 
 after_success:
   - if [ -z "${XPIKS_BINARY+xxx}" ]; then bash <(curl -s https://codecov.io/bash) -X gcov || echo 'Codecov failed to upload'; fi

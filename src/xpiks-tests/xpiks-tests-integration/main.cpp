@@ -121,6 +121,8 @@
 #include "reimporttest.h"
 #include "autoimporttest.h"
 #include "importlostmetadatatest.h"
+#include "warningscombinedtest.h"
+#include "csvdefaultexporttest.h"
 
 #if defined(WITH_PLUGINS)
 #undef WITH_PLUGINS
@@ -286,7 +288,7 @@ int main(int argc, char *argv[]) {
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
     Models::SwitcherModel switcherModel;
-    Connectivity::UpdateService updateService(&settingsModel, &switcherModel);
+    Connectivity::UpdateService updateService(&settingsModel, &switcherModel, &maintenanceService);
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
     Connectivity::TelemetryService telemetryService("1234567890", false);
@@ -294,7 +296,6 @@ int main(int argc, char *argv[]) {
     Helpers::DatabaseManager databaseManager;
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel;
-    csvExportModel.disableRemoteConfigs();
 
     Commands::CommandManager commandManager;
     commandManager.InjectDependency(&artworkRepository);
@@ -360,9 +361,13 @@ int main(int argc, char *argv[]) {
 #endif
 
     switcherModel.setRemoteConfigOverride(findFullPathForTests("configs-for-tests/tests_switches.json"));
+    csvExportModel.setRemoteConfigOverride(findFullPathForTests("api/v1/csv_export_plans.json"));
 
     commandManager.connectEntitiesSignalsSlots();
     commandManager.afterConstructionCallback();
+
+    // process signals from construction
+    QCoreApplication::processEvents();
 
     int result = 0;
 
@@ -412,6 +417,8 @@ int main(int argc, char *argv[]) {
     integrationTests.append(new ReimportTest(&commandManager));
     integrationTests.append(new AutoImportTest(&commandManager));
     integrationTests.append(new ImportLostMetadataTest(&commandManager));
+    integrationTests.append(new WarningsCombinedTest(&commandManager));
+    integrationTests.append(new CsvDefaultExportTest(&commandManager));
     // always the last one. insert new tests above
     integrationTests.append(new LocalLibrarySearchTest(&commandManager));
 

@@ -12,10 +12,16 @@
 #define UPDATESERVICE_H
 
 #include <QObject>
+#include "../Common/statefulentity.h"
+#include "../Helpers/constants.h"
 
 namespace Models {
     class SettingsModel;
     class SwitcherModel;
+}
+
+namespace Maintenance {
+    class MaintenanceService;
 }
 
 namespace Connectivity {
@@ -25,15 +31,33 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        UpdateService(Models::SettingsModel *settingsModel, Models::SwitcherModel *switcherModel);
+        UpdateService(Models::SettingsModel *settingsModel,
+                      Models::SwitcherModel *switcherModel,
+                      Maintenance::MaintenanceService *maintenanceService);
 
     public:
         void startChecking();
         void stopChecking();
 
     private:
-        void doStartChecking();
+        void doStartChecking(const QString &pathToUpdate);
         void updateSettings();
+
+    private:
+        int getAvailableUpdateVersion() const { return m_State.getInt(Constants::availableUpdateVersion); }
+        QString getPathToUpdate() const { return m_State.getString(Constants::pathToUpdate); }
+
+        void setAvailableUpdateVersion(int version) {
+            LOG_DEBUG << "#";
+            m_State.setValue(Constants::availableUpdateVersion, version);
+            m_State.sync();
+        }
+
+        void setPathToUpdate(QString path) {
+            LOG_DEBUG << "#";
+            m_State.setValue(Constants::pathToUpdate, path);
+            m_State.sync();
+        }
 
     private slots:
         void workerFinished();
@@ -45,15 +69,11 @@ namespace Connectivity {
         void cancelRequested();
 
     private:
-        void saveUpdateInfo() const;
-
-    private:
         Connectivity::UpdatesCheckerWorker *m_UpdatesCheckerWorker;
         Models::SettingsModel *m_SettingsModel;
         Models::SwitcherModel *m_SwitcherModel;
-        QString m_PathToUpdate;
-        int m_AvailableVersion;
-        volatile bool m_UpdateAvailable;
+        Maintenance::MaintenanceService *m_MaintenanceService;
+        Common::StatefulEntity m_State;
     };
 }
 

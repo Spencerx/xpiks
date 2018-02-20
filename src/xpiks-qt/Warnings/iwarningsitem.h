@@ -14,11 +14,13 @@
 #include "../Common/flags.h"
 
 namespace Warnings {
+    class IWarningsSettings;
+
     class IWarningsItem {
     public:
         virtual ~IWarningsItem() {}
 
-        virtual void submitWarnings(Common::flag_t warningsFlags) = 0;
+        virtual void checkWarnings(IWarningsSettings *warningsSettings) = 0;
     };
 }
 

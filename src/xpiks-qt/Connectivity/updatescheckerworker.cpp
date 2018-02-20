@@ -35,6 +35,7 @@
 #include "../Models/settingsmodel.h"
 #include "../Models/proxysettings.h"
 #include "../Helpers/constants.h"
+#include "../Maintenance/maintenanceservice.h"
 
 QString fileChecksum(const QString &fileName, QCryptographicHash::Algorithm hashAlgorithm) {
     QString result;
@@ -84,8 +85,11 @@ QString urlFilename(const QString &url) {
 }
 
 namespace Connectivity {
-    UpdatesCheckerWorker::UpdatesCheckerWorker(Models::SettingsModel *settingsModel, const QString &availableUpdatePath):
+    UpdatesCheckerWorker::UpdatesCheckerWorker(Models::SettingsModel *settingsModel,
+                                               Maintenance::MaintenanceService *maintenanceService,
+                                               const QString &availableUpdatePath):
         m_SettingsModel(settingsModel),
+        m_MaintenanceService(maintenanceService),
         m_AvailableUpdatePath(availableUpdatePath)
     {
         Q_ASSERT(settingsModel != nullptr);
@@ -110,7 +114,7 @@ namespace Connectivity {
     }
 
     void UpdatesCheckerWorker::processOneItem() {
-        LOG_INFO << "Update service: checking for updates...";
+        LOG_INFO << "Checking for updates...";
 
         UpdateCheckResult updateCheckResult;
         if (checkForUpdates(updateCheckResult)) {
@@ -131,6 +135,8 @@ namespace Connectivity {
             {
                 emit updateAvailable(updateCheckResult.m_UpdateURL);
             }
+        } else {
+            m_MaintenanceService->cleanupDownloadedUpdates(m_UpdatesDirectory);
         }
 
         emit stopped();
@@ -213,7 +219,6 @@ namespace Connectivity {
                 QDir updatesDir(m_UpdatesDirectory);
                 Q_ASSERT(updatesDir.exists());
 
-                QString filename = QFileInfo(downloadedPath).fileName();
                 QString realFilename = urlFilename(updateCheckResult.m_UpdateURL);
                 QString updatePath = updatesDir.filePath(realFilename);
 

@@ -95,7 +95,8 @@ namespace Connectivity {
             }
 
             QJsonObject rootObject = document.object();
-            parseSwitches(rootObject);
+            parseSwitches(rootObject);            
+            emit switchesUpdated();
         } while (false);
 
         return anyError;
@@ -129,6 +130,7 @@ namespace Connectivity {
 
         if (document.isObject()) {
             parseSwitches(document.object());
+            emit switchesUpdated();
         } else {
             LOG_WARNING << "Remote document is not an object";
         }
@@ -256,7 +258,5 @@ namespace Connectivity {
 
             LOG_INTEGR_TESTS_OR_DEBUG << m_SwitchesHash;
         }
-
-        emit switchesUpdated();
     }
 }

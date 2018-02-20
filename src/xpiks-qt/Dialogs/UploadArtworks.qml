@@ -109,14 +109,6 @@ Item {
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
             uploadInfos.removeItem(itemIndex)
-            if (uploadInfos.infosCount == 0) {
-                if (typeof titleText !== "undefined") {
-                    titleText.text = ""
-                    ftpHost.text = ""
-                    ftpUsername.text = ""
-                    ftpPassword.text = ""
-                }
-            }
         }
     }
 

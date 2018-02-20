@@ -5,7 +5,7 @@ QString getRandomString(int length, bool exactSize) {
     
     QString result;
     result.reserve(length*2);
-    QLatin1String chars("/!@#$% ^&*()_+=|");
+    QLatin1String chars("/!@ #$% ^&*()_+ =|");
     int charsLength = chars.size() - 1;
     int originalLength = length;
 
@@ -22,6 +22,10 @@ QString getRandomString(int length, bool exactSize) {
 
         if (qrand() % 13 == 0) {
             result.append('A' + qrand()%26);
+        }
+
+        if (qrand() % 17 == 0) {
+            result.append(' ');
         }
     }
 

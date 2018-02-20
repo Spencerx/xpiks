@@ -33,10 +33,6 @@ namespace Warnings {
         virtual void processOneItemEx(std::shared_ptr<IWarningsItem> &item, batch_id_t batchID, Common::flag_t flags) override;
         virtual void processOneItem(std::shared_ptr<IWarningsItem> &item) override;
 
-    private:
-        void processWarningsItem(std::shared_ptr<WarningsItem> &item);
-        void initValuesFromSettings();
-
     protected:
         virtual void onQueueIsEmpty() override { /* Notify only on batches */ /* emit queueIsEmpty(); */ }
         virtual void workerStopped() override { emit stopped(); }
@@ -48,14 +44,6 @@ namespace Warnings {
     signals:
         void stopped();
         void queueIsEmpty();
-
-    private:
-        Common::flag_t checkDimensions(std::shared_ptr<WarningsItem> &wi) const;
-        Common::flag_t checkKeywords(std::shared_ptr<WarningsItem> &wi) const;
-        Common::flag_t checkDescription(std::shared_ptr<WarningsItem> &wi) const;
-        Common::flag_t checkTitle(std::shared_ptr<WarningsItem> &wi) const;
-        Common::flag_t checkSpelling(std::shared_ptr<WarningsItem> &wi) const;
-        Common::flag_t checkDuplicates(std::shared_ptr<WarningsItem> &wi) const;
 
     private:
         WarningsSettingsModel *m_WarningsSettingsModel;

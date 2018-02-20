@@ -124,31 +124,7 @@ namespace Common {
         FilenameSymbols = 1 << 17,
         VideoFileIsTooBig = 1 << 18,
         VideoIsTooLong = 1 << 19,
-        VideoIsTooShort = 1 << 20,
-
-        DescriptionGroup = DescriptionIsEmpty |
-            DescriptionNotEnoughWords |
-            DescriptionTooBig |
-            SpellErrorsInDescription |
-            KeywordsInDescription,
-
-        TitleGroup = TitleIsEmpty |
-            TitleNotEnoughWords |
-            TitleTooManyWords |
-            TitleTooBig |
-            SpellErrorsInTitle |
-            KeywordsInTitle,
-
-        KeywordsGroup = NoKeywords |
-            TooFewKeywords |
-            TooManyKeywords |
-            SpellErrorsInKeywords |
-            KeywordsInDescription |
-            KeywordsInTitle,
-
-        SpellingGroup = SpellErrorsInKeywords |
-            SpellErrorsInDescription |
-            SpellErrorsInTitle
+        VideoIsTooShort = 1 << 20
     };
 
     template<>
@@ -156,12 +132,14 @@ namespace Common {
         static constexpr bool enable = true;
     };
 
-    enum struct WarningsCheckFlags {
-        All = 0,
-        Keywords = 1,
-        Title = 2,
-        Description = 3,
-        Spelling = 4
+    enum struct WarningsCheckFlags: flag_t {
+        Keywords = 1 << 0,
+        Title = 1 << 1,
+        Description = 1 << 2,
+        Spelling = 1 << 3,
+        FileProperties = 1 << 4,
+        Metadata = Keywords | Title | Description | Spelling,
+        All = Metadata | FileProperties
     };
 
     enum struct WordAnalysisFlags: flag_t {
