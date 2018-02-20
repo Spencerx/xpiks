@@ -727,36 +727,33 @@ ApplicationWindow {
                                 text: i18.n + qsTr("Undo dismiss duration:")
                             }
 
-                            Rectangle {
-                                color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                                border.color: uiColors.artworkActiveColor
-                                border.width: dismissDuration.activeFocus ? 1 : 0
-                                width: 115
-                                height: UIConfig.textInputHeight
-                                clip: true
+                            ComboBoxPopup {
+                                id: undoDurationComboBox
+                                model: [10, 20, 30, 40, 50, 60]
+                                showColorSign: false
+                                width: 130
+                                height: 24
+                                itemHeight: 28
+                                dropDownWidth: 130
+                                glowEnabled: true
+                                glowTopMargin: 2
+                                globalParent: globalHost
 
-                                StyledTextInput {
-                                    id: dismissDuration
-                                    text: settingsModel.dismissDuration
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.leftMargin: 5
-                                    anchors.rightMargin: 5
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onTextChanged: {
-                                        if (text.length > 0) {
-                                            settingsModel.dismissDuration = parseInt(text)
-                                        }
-                                    }
+                                onComboItemSelected: {
+                                    var index = undoDurationComboBox.selectedIndex;
+                                    var value = undoDurationComboBox.model[index]
+                                    settingsModel.dismissDuration = parseInt(value)
+                                }
 
-                                    function onResetRequested() {
-                                        text = settingsModel.dismissDuration
-                                    }
+                                function onResetRequested() {
+                                    var index = undoDurationComboBox.model.indexOf(settingsModel.dismissDuration)
+                                    if (index === -1) { index = 2 }
+                                    selectedIndex  = index
+                                }
 
-                                    validator: IntValidator {
-                                        bottom: 1
-                                        top: 100
-                                    }
+                                Component.onCompleted: {
+                                    selectedIndex  = undoDurationComboBox.model.indexOf(settingsModel.dismissDuration)
+                                    uxTab.resetRequested.connect(undoDurationComboBox.onResetRequested)
                                 }
                             }
 
@@ -916,7 +913,7 @@ ApplicationWindow {
                                 color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
                                 border.width: timeoutSeconds.activeFocus ? 1 : 0
                                 border.color: uiColors.artworkActiveColor
-                                width: 115
+                                width: 130
                                 height: UIConfig.textInputHeight
                                 clip: true
 
@@ -942,7 +939,7 @@ ApplicationWindow {
                                         uploadTab.resetRequested.connect(timeoutSeconds.onResetRequested)
                                     }
 
-                                    KeyNavigation.tab: maxParallelUploads
+                                    //KeyNavigation.tab: maxParallelUploads
                                     validator: IntValidator {
                                         bottom: 0
                                         top: 300
@@ -966,40 +963,31 @@ ApplicationWindow {
                                 text: i18.n + qsTr("Max parallel uploads:")
                             }
 
-                            Rectangle {
-                                color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                                border.width: maxParallelUploads.activeFocus ? 1 : 0
-                                border.color: uiColors.artworkActiveColor
-                                width: 115
-                                height: UIConfig.textInputHeight
-                                clip: true
+                            ComboBoxPopup {
+                                id: parallelUploadsComboBox
+                                model: [1, 2, 3, 4]
+                                showColorSign: false
+                                width: 130
+                                height: 24
+                                itemHeight: 28
+                                dropDownWidth: 130
+                                glowEnabled: true
+                                glowTopMargin: 2
+                                globalParent: globalHost
 
-                                StyledTextInput {
-                                    id: maxParallelUploads
-                                    text: settingsModel.maxParallelUploads
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.leftMargin: 5
-                                    anchors.rightMargin: 5
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onTextChanged: {
-                                        if (text.length > 0) {
-                                            settingsModel.maxParallelUploads = parseInt(text)
-                                        }
-                                    }
+                                onComboItemSelected: {
+                                    var index = parallelUploadsComboBox.selectedIndex;
+                                    var value = parallelUploadsComboBox.model[index]
+                                    settingsModel.maxParallelUploads = parseInt(value)
+                                }
 
-                                    function onResetRequested() {
-                                        text = settingsModel.maxParallelUploads
-                                    }
+                                function onResetRequested() {
+                                    selectedIndex  = parallelUploadsComboBox.model.indexOf(settingsModel.maxParallelUploads)
+                                }
 
-                                    Component.onCompleted: {
-                                        uploadTab.resetRequested.connect(maxParallelUploads.onResetRequested)
-                                    }
-                                    KeyNavigation.backtab: timeoutSeconds
-                                    validator: IntValidator {
-                                        bottom: 1
-                                        top: 4
-                                    }
+                                Component.onCompleted: {
+                                    selectedIndex  = parallelUploadsComboBox.model.indexOf(settingsModel.maxParallelUploads)
+                                    uploadTab.resetRequested.connect(parallelUploadsComboBox.onResetRequested)
                                 }
                             }
 
