@@ -97,6 +97,29 @@ Item {
         filterClearTimer.start()
     }
 
+    function editInPlainText(artworkIndex, filteredIndex) {
+        var callbackObject = {
+            onSuccess: function(text, spaceIsSeparator) {
+                artItemsModel.plainTextEdit(artworkIndex, text, spaceIsSeparator)
+            },
+            onClose: function() {
+                filteredArtItemsModel.focusCurrentItemKeywords(filteredIndex)
+                //flv.activateEdit()
+            }
+        }
+
+        var basicModel = filteredArtItemsModel.getBasicModel(filteredIndex)
+        var keywordsString = filteredArtItemsModel.getKeywordsString(filteredIndex)
+
+        Common.launchDialog("../Dialogs/PlainTextKeywordsDialog.qml",
+                            applicationWindow,
+                            {
+                                callbackObject: callbackObject,
+                                keywordsText: keywordsString,
+                                keywordsModel: basicModel
+                            });
+    }
+
     Menu {
         id: wordRightClickMenu
         property string word
@@ -245,26 +268,7 @@ Item {
         MenuItem {
             text: i18.n + qsTr("Edit in plain text")
             onTriggered: {
-                var callbackObject = {
-                    onSuccess: function(text, spaceIsSeparator) {
-                        artItemsModel.plainTextEdit(keywordsMoreMenu.artworkIndex, text, spaceIsSeparator)
-                    },
-                    onClose: function() {
-                        filteredArtItemsModel.focusCurrentItemKeywords(keywordsMoreMenu.filteredIndex)
-                        //flv.activateEdit()
-                    }
-                }
-
-                var basicModel = filteredArtItemsModel.getBasicModel(keywordsMoreMenu.filteredIndex)
-                var keywordsString = filteredArtItemsModel.getKeywordsString(keywordsMoreMenu.filteredIndex)
-
-                Common.launchDialog("../Dialogs/PlainTextKeywordsDialog.qml",
-                                    applicationWindow,
-                                    {
-                                        callbackObject: callbackObject,
-                                        keywordsText: keywordsString,
-                                        keywordsModel: basicModel
-                                    });
+                editInPlainText(keywordsMoreMenu.artworkIndex, keywordsMoreMenu.filteredIndex)
             }
         }
 
@@ -1259,6 +1263,7 @@ Item {
                                         anchors.rightMargin: 20
                                         anchors.topMargin: 20
                                         property bool isWideEnough: width > 450
+                                        property bool isWideForLinks: width > 700
                                         property real inputWidth: isWideEnough ? ((width / 2) - 12) : width
 
                                         StyledText {
@@ -1723,6 +1728,17 @@ Item {
                                             anchors.topMargin: 3
                                             spacing: 5
 
+                                            StyledLink {
+                                                text: i18.n + qsTr("Edit in plain text")
+                                                property bool canBeShown: columnLayout.isWideForLinks && rowWrapper.isHighlighted
+                                                normalLinkColor: uiColors.labelActiveForeground
+                                                enabled: canBeShown
+                                                visible: canBeShown
+                                                onClicked: {
+                                                    editInPlainText(rowWrapper.getIndex(), rowWrapper.delegateIndex)
+                                                }
+                                            }
+
                                             Item {
                                                 Layout.fillWidth: true
                                             }
@@ -1766,7 +1782,7 @@ Item {
                                             StyledLink {
                                                 id: suggestLink
                                                 text: i18.n + qsTr("Suggest keywords")
-                                                property bool canBeShown: (keywordscount < warningsModel.minKeywordsCount) && (!removeDuplicatesText.canBeShown) && (!fixSpellingText.canBeShown)
+                                                property bool canBeShown: (keywordscount < warningsModel.minKeywordsCount) || (columnLayout.isWideForLinks)
                                                 visible: canBeShown
                                                 enabled: canBeShown
                                                 onClicked: { suggestKeywords(rowWrapper.getIndex()) }
@@ -1783,7 +1799,7 @@ Item {
                                             StyledLink {
                                                 id: copyLink
                                                 text: i18.n + qsTr("Copy")
-                                                property bool canBeShown: (keywordscount > 0) && (!suggestLink.canBeShown) && (!removeDuplicatesText.canBeShown) && (!fixSpellingText.canBeShown)
+                                                property bool canBeShown: (keywordscount > 0)
                                                 enabled: canBeShown
                                                 visible: canBeShown
                                                 onClicked: clipboard.setText(keywordsstring)
@@ -1792,6 +1808,23 @@ Item {
                                             StyledText {
                                                 visible: copyLink.canBeShown
                                                 enabled: copyLink.canBeShown
+                                                text: "|"
+                                                isActive: rowWrapper.isHighlighted
+                                                verticalAlignment: Text.AlignVCenter
+                                            }
+
+                                            StyledLink {
+                                                id: clearLink
+                                                text: i18.n + qsTr("Clear")
+                                                property bool canBeShown: (keywordscount > 0)
+                                                enabled: canBeShown
+                                                visible: canBeShown
+                                                onClicked: filteredArtItemsModel.clearKeywords(rowWrapper.delegateIndex)
+                                            }
+
+                                            StyledText {
+                                                visible: clearLink.canBeShown
+                                                enabled: clearLink.canBeShown
                                                 text: "|"
                                                 isActive: rowWrapper.isHighlighted
                                                 verticalAlignment: Text.AlignVCenter
