@@ -48,7 +48,7 @@ void launchWindowsInstaller(Common::ISystemEnvironment &environment, const QStri
     QString installerLogPath = environment.fileInDir(installerLogName, "logs");
     QStringList arguments;
     arguments << "-force-update" << "-gui" <<
-                 "-install-path" << appDirPath <<
+                 "-install-path" << environment.root() <<
                  "-l" << installerLogPath <<
                  "-launch-exe" << "Xpiks.exe" <<
                  "-package-path" << pathToUpdate <<
