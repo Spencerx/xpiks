@@ -124,7 +124,6 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/imageartwork.cpp \
     spellingproduceswarningstest.cpp \
     undoaddwithvectorstest.cpp \
-    ../../xpiks-qt/Common/flags.cpp \
     readlegacysavedtest.cpp \
     ../../xpiks-qt/QMLExtensions/imagecachingservice.cpp \
     ../../xpiks-qt/QMLExtensions/imagecachingworker.cpp \

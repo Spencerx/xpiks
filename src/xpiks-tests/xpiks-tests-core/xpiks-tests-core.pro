@@ -148,7 +148,6 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/imageartwork.cpp \
     recentitems_tests.cpp \
     artitemsmodel_tests.cpp \
-    ../../xpiks-qt/Common/flags.cpp \
     fixspelling_tests.cpp \
     ../../xpiks-qt/Models/findandreplacemodel.cpp \
     replacepreview_tests.cpp \

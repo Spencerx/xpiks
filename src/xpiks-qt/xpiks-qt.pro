@@ -91,7 +91,6 @@ SOURCES += main.cpp \
     Models/abstractconfigupdatermodel.cpp \
     AutoComplete/stocksftplistmodel.cpp \
     Models/imageartwork.cpp \
-    Common/flags.cpp \
     Models/proxysettings.cpp \
     QMLExtensions/imagecachingworker.cpp \
     QMLExtensions/imagecachingservice.cpp \

@@ -16,7 +16,44 @@
 #include "warningsitem.h"
 #include "../Common/flags.h"
 
-namespace Warnings {
+namespace Warnings {    
+    QString warningsFlagToString(Common::WarningsCheckFlags flags) {
+#ifdef QT_DEBUG
+        QStringList items;
+        if (Common::HasFlag(flags, Common::WarningsCheckFlags::All)) {
+            items << "All";
+        } else {
+            if (Common::HasFlag(flags, Common::WarningsCheckFlags::Metadata)) {
+                items << "Metadata";
+            } else {
+                if (Common::HasFlag(flags, Common::WarningsCheckFlags::Title)) {
+                    items << "Title";
+                }
+
+                if (Common::HasFlag(flags, Common::WarningsCheckFlags::Description)) {
+                    items << "Description";
+                }
+
+                if (Common::HasFlag(flags, Common::WarningsCheckFlags::Keywords)) {
+                    items << "Keywords";
+                }
+            }
+
+            if (Common::HasFlag(flags, Common::WarningsCheckFlags::FileProperties)) {
+                items << "File";
+            }
+
+            if (Common::HasFlag(flags, Common::WarningsCheckFlags::Spelling)) {
+                items << "Spelling";
+            }
+        }
+
+        return items.join(QChar('|'));
+#else
+        return QString("Release");
+#endif
+    }
+
     WarningsService::WarningsService(QObject *parent):
         QObject(parent),
         m_WarningsWorker(NULL),
@@ -95,7 +132,7 @@ namespace Warnings {
         if (m_WarningsWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
-        LOG_INFO << "Submitting one item with flags" << Common::warningsFlagToString(flags);
+        LOG_INFO << "flags:" << (int)flags << warningsFlagToString(flags);
 
         std::shared_ptr<IWarningsItem> wItem(new WarningsItem(item, flags));
         m_WarningsWorker->submitItem(wItem);

@@ -133,6 +133,7 @@ namespace Common {
     };
 
     enum struct WarningsCheckFlags: flag_t {
+        None = 0,
         Keywords = 1 << 0,
         Title = 1 << 1,
         Description = 1 << 2,
@@ -155,8 +156,6 @@ namespace Common {
         IsAddedAsDirectory = 1 << 1,
         IsRemoved = 1 << 2
     };
-
-    const char *warningsFlagToString(WarningsCheckFlags flags);
 
     template<typename FlagType>
     bool HasFlag(flag_t value, FlagType flag) {
