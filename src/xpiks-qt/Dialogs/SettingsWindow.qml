@@ -320,7 +320,7 @@ ApplicationWindow {
 
                     Connections {
                         target: settingsModel
-                        onSettingsReset: { resetRequested() }
+                        onSettingsReset: { behaviorTab.resetRequested() }
                     }
 
                     ColumnLayout {
@@ -519,7 +519,7 @@ ApplicationWindow {
 
                     Connections {
                         target: settingsModel
-                        onSettingsReset: { resetRequested() }
+                        onSettingsReset: { uxTab.resetRequested() }
                     }
 
                     ColumnLayout {
@@ -745,14 +745,18 @@ ApplicationWindow {
                                     settingsModel.dismissDuration = parseInt(value)
                                 }
 
+                                function setValue(value, defaultIndex) {
+                                    var index = undoDurationComboBox.model.indexOf(value)
+                                    if (index === -1) { index = defaultIndex }
+                                    selectedIndex = index
+                                }
+
                                 function onResetRequested() {
-                                    var index = undoDurationComboBox.model.indexOf(settingsModel.dismissDuration)
-                                    if (index === -1) { index = 2 }
-                                    selectedIndex  = index
+                                    setValue(settingsModel.dismissDuration, 2)
                                 }
 
                                 Component.onCompleted: {
-                                    selectedIndex  = undoDurationComboBox.model.indexOf(settingsModel.dismissDuration)
+                                    setValue(settingsModel.dismissDuration, 2)
                                     uxTab.resetRequested.connect(undoDurationComboBox.onResetRequested)
                                 }
                             }
@@ -777,7 +781,7 @@ ApplicationWindow {
 
                     Connections {
                         target: settingsModel
-                        onSettingsReset: { resetRequested() }
+                        onSettingsReset: { extTab.resetRequested() }
                     }
 
                     ColumnLayout {
@@ -888,7 +892,7 @@ ApplicationWindow {
 
                     Connections {
                         target: settingsModel
-                        onSettingsReset: { resetRequested() }
+                        onSettingsReset: { uploadTab.resetRequested() }
                     }
 
                     ColumnLayout {
@@ -982,11 +986,17 @@ ApplicationWindow {
                                 }
 
                                 function onResetRequested() {
-                                    selectedIndex  = parallelUploadsComboBox.model.indexOf(settingsModel.maxParallelUploads)
+                                    setValue(settingsModel.maxParallelUploads, 1)
+                                }
+
+                                function setValue(value, defaultIndex) {
+                                    var index = parallelUploadsComboBox.model.indexOf(value)
+                                    if (index === -1) { index = defaultIndex }
+                                    selectedIndex = index
                                 }
 
                                 Component.onCompleted: {
-                                    selectedIndex  = parallelUploadsComboBox.model.indexOf(settingsModel.maxParallelUploads)
+                                    setValue(settingsModel.maxParallelUploads, 1)
                                     uploadTab.resetRequested.connect(parallelUploadsComboBox.onResetRequested)
                                 }
                             }
@@ -1069,7 +1079,7 @@ ApplicationWindow {
 
                     Connections {
                         target: settingsModel
-                        onSettingsReset: { resetRequested() }
+                        onSettingsReset: { secTab.resetRequested() }
                     }
 
                     ColumnLayout {
