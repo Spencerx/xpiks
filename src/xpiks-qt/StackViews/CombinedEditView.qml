@@ -1127,6 +1127,22 @@ Rectangle {
                             verticalAlignment: Text.AlignVCenter
                         }
 
+                        StyledLink {
+                            id: clearLink
+                            property bool canBeShown: combinedArtworks.keywordsCount > 0
+                            text: i18.n + qsTr("Clear")
+                            enabled: canBeShown
+                            visible: canBeShown
+                            onClicked: clearKeywordsDialog.open()
+                        }
+
+                        StyledText {
+                            enabled: clearLink.canBeShown
+                            visible: clearLink.canBeShown
+                            text: "|"
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
                         Item {
                             width: childrenRect.width
                             height: moreLink.height

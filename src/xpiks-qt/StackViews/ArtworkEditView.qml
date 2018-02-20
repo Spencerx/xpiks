@@ -618,6 +618,7 @@ Rectangle {
             //width: 300
             anchors.top: parent.top
             anchors.bottom: parent.bottom
+            property bool isWideEnough: width > 350
 
             Component.onCompleted: {
                 rightPane.width = uiManager.artworkEditRightPaneWidth
@@ -1181,7 +1182,7 @@ Rectangle {
 
                             StyledLink {
                                 id: suggestLink
-                                property bool canBeShown: artworkProxy.keywordsCount < warningsModel.minKeywordsCount
+                                property bool canBeShown: (artworkProxy.keywordsCount < warningsModel.minKeywordsCount) || rightPane.isWideEnough
                                 visible: canBeShown
                                 enabled: canBeShown
                                 text: i18.n + qsTr("Suggest keywords")
@@ -1197,7 +1198,7 @@ Rectangle {
 
                             StyledLink {
                                 id: copyLink
-                                property bool canBeShown: (artworkProxy.keywordsCount > 0) && (!fixSpellingLink.canBeShown) && (!removeDuplicatesText.canBeShown)
+                                property bool canBeShown: (artworkProxy.keywordsCount > 0)
                                 text: i18.n + qsTr("Copy")
                                 enabled: canBeShown
                                 visible: canBeShown
@@ -1207,6 +1208,22 @@ Rectangle {
                             StyledText {
                                 enabled: copyLink.canBeShown
                                 visible: copyLink.canBeShown
+                                text: "|"
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            StyledLink {
+                                id: clearLink
+                                property bool canBeShown: (artworkProxy.keywordsCount > 0)
+                                text: i18.n + qsTr("Clear")
+                                enabled: canBeShown
+                                visible: canBeShown
+                                onClicked: clearKeywordsDialog.open()
+                            }
+
+                            StyledText {
+                                enabled: clearLink.canBeShown
+                                visible: clearLink.canBeShown
                                 text: "|"
                                 verticalAlignment: Text.AlignVCenter
                             }
