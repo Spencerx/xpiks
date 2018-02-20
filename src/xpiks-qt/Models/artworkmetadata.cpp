@@ -281,7 +281,7 @@ namespace Models {
 
     bool ArtworkMetadata::setDescription(const QString &value)  {
         if (!getIsInitializedFlag()) {
-            LOG_WARNING << "#" << m_ID << "attempt to set description for not initialized artwork";
+            LOG_WARNING << "#" << m_ID << "attempt to set description to" << value << "for not initialized artwork";
             return false;
         }
 
@@ -294,7 +294,7 @@ namespace Models {
 
     bool ArtworkMetadata::setTitle(const QString &value) {
         if (!getIsInitializedFlag()) {
-            LOG_WARNING << "#" << m_ID << "attempt to set title for not initialized artwork";
+            LOG_WARNING << "#" << m_ID << "attempt to set title to" << value << "for not initialized artwork";
             return false;
         }
 
