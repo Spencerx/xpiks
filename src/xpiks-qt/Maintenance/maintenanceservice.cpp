@@ -24,8 +24,8 @@
 
 namespace Maintenance {
     MaintenanceService::MaintenanceService(Common::ISystemEnvironment &environment):
-        m_MaintenanceWorker(NULL),
-        m_Environment(environment)
+        m_Environment(environment),
+        m_MaintenanceWorker(NULL)
     {
     }
 
