@@ -21,7 +21,7 @@ namespace Common {
         virtual QString fileInDir(const QString &filename, const QString &dirname) = 0;
         virtual QString filepath(const QString &name) = 0;
         virtual QString dirpath(const QString &name) = 0;
-        virtual void ensureDirExists(const QString &name) = 0;
+        virtual bool ensureDirExists(const QString &name) = 0;
     };
 }
 

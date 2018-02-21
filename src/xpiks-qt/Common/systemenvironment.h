@@ -29,7 +29,7 @@ namespace Common {
         virtual QString fileInDir(const QString &filename, const QString &dirname) override;
         virtual QString filepath(const QString &name) override;
         virtual QString dirpath(const QString &name) override;
-        virtual void ensureDirExists(const QString &name) override;
+        virtual bool ensureDirExists(const QString &name) override;
 
     private:
         QString m_Root;

@@ -72,8 +72,9 @@ namespace Common {
         return path;
     }
 
-    void SystemEnvironment::ensureDirExists(const QString &name) {
+    bool SystemEnvironment::ensureDirExists(const QString &name) {
         QString path = dirpath(name);
-        Helpers::ensureDirectoryExists(path);
+        bool result = Helpers::ensureDirectoryExists(path);
+        return result;
     }
 }

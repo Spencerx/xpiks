@@ -43,7 +43,7 @@ namespace Plugins {
         };
 
     private:
-        void initPluginsDir();
+        bool initPluginsDir();
         const QString &getPluginsDirectoryPath() const { return m_PluginsDirectoryPath; }
         void processInvalidFile(const QString &filename, const QString &pluginFullPath);
 

@@ -34,15 +34,18 @@ namespace Plugins {
         LOG_DEBUG << "#";
     }
 
-    void PluginManager::initPluginsDir() {
+    bool PluginManager::initPluginsDir() {
         LOG_DEBUG << "#";
-        m_Environment.ensureDirExists(Constants::PLUGINS_DIR);
-        m_Environment.ensureDirExists(Constants::FAILED_PLUGINS_DIR);
-
-        LOG_INFO << "Plugins directory:" << m_PluginsDirectoryPath;
+        bool success = m_Environment.ensureDirExists(Constants::PLUGINS_DIR);
+        if (!success) { return false; }
 
         m_PluginsDirectoryPath = m_Environment.dirpath(Constants::PLUGINS_DIR);
-        m_FailedPluginsDirectory = m_Environment.dirpath(Constants::FAILED_PLUGINS_DIR);
+
+        m_FailedPluginsDirectory = QDir::cleanPath(m_PluginsDirectoryPath + QDir::separator() + Constants::FAILED_PLUGINS_DIR);
+        Helpers::ensureDirectoryExists(m_FailedPluginsDirectory);
+
+        LOG_INFO << "Plugins directory:" << m_PluginsDirectoryPath;
+        return true;
     }
 
     void PluginManager::processInvalidFile(const QString &filename, const QString &pluginFullPath) {
@@ -64,7 +67,10 @@ namespace Plugins {
     void PluginManager::loadPlugins() {
         LOG_DEBUG << "#";
 
-        initPluginsDir();
+        if (!initPluginsDir()) {
+            LOG_WARNING << "Failed to initialize plugins directory. Exiting...";
+            return;
+        }
 
         QDir pluginsDir(getPluginsDirectoryPath());
         Q_ASSERT(pluginsDir.exists());

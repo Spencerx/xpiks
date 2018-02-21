@@ -9,7 +9,7 @@ namespace Mocks {
         virtual QString fileInDir(const QString &filename, const QString &dirname) override { return filename; }
         virtual QString filepath(const QString &name) override { return name; }
         virtual QString dirpath(const QString &name) override { return name; }
-        virtual void ensureDirExists(const QString &name) override { }
+        virtual bool ensureDirExists(const QString &name) override { return true; }
     };
 }
 
