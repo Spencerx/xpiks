@@ -23,6 +23,7 @@
 #include "flags.h"
 #include "wordanalysisresult.h"
 #include "keyword.h"
+#include "hold.h"
 
 namespace SpellCheck {
     class SpellCheckQueryItem;
@@ -33,7 +34,6 @@ namespace SpellCheck {
 
 namespace Common {
     class BasicKeywordsModelImpl;
-    class Hold;
 
     class BasicKeywordsModel:
             public AbstractListModel
@@ -158,6 +158,7 @@ namespace Common {
 
     private:
         QReadWriteLock m_KeywordsLock;
+        Common::Hold &m_Hold;
         std::shared_ptr<BasicKeywordsModelImpl> m_Impl;
     };
 }

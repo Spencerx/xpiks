@@ -23,8 +23,7 @@
 #include "../Common/flags.h"
 
 namespace Common {
-    BasicKeywordsModelImpl::BasicKeywordsModelImpl(Hold &hold):
-        m_Hold(hold)
+    BasicKeywordsModelImpl::BasicKeywordsModelImpl()
     {}
 
     QString BasicKeywordsModelImpl::getKeywordsString() {

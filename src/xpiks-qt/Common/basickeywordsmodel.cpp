@@ -25,7 +25,8 @@
 namespace Common {
     BasicKeywordsModel::BasicKeywordsModel(Hold &hold, QObject *parent):
         AbstractListModel(parent),
-        m_Impl(new BasicKeywordsModelImpl(hold))
+        m_Hold(hold),
+        m_Impl(new BasicKeywordsModelImpl())
     {}
 
 #ifdef CORE_TESTS
@@ -511,11 +512,11 @@ namespace Common {
     }
 
     void BasicKeywordsModel::acquire() {
-        m_Impl->acquire();
+        m_Hold.acquire();
     }
 
     bool BasicKeywordsModel::release() {
-        return m_Impl->release();
+        return m_Hold.release();
     }
 
     bool BasicKeywordsModel::hasKeyword(const QString &keyword) {
