@@ -30,15 +30,17 @@
 
 namespace Common {
     SystemEnvironment::SystemEnvironment(const QStringList &appArguments) {
-        Q_UNUSED(appArguments);
         m_Root = XPIKS_USERDATA_PATH;
         bool portable = false;
+
 #ifdef Q_OS_WIN
         portable = appArguments.contains("--portable", Qt::CaseInsensitive);
+#else
+        Q_UNUSED(appArguments);
 #endif
 
         if (portable || m_Root.isEmpty()) {
-            m_Root = QCoreApplication::applicationDirPath();
+            m_Root = QDir::cleanPath(QCoreApplication::applicationDirPath() + QDir::separator() + "settings");
         }
 
         LOG_DEBUG << "Configs root is" << m_Root;
