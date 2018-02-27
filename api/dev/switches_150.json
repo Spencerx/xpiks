@@ -30,6 +30,7 @@
         "v": true
     },
     "keywordsDragDropEnabled": {
-        "v": false
+        "v": true,
+        "t": 70
     }
 }
