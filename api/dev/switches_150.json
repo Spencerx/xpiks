@@ -28,5 +28,8 @@
     },
     "updateEnabled": {
         "v": true
+    },
+    "keywordsDragDropEnabled": {
+        "v": false
     }
 }
