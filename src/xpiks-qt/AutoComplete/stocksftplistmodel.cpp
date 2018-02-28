@@ -28,23 +28,14 @@
 #define FTP_ADDRESS_KEY QLatin1String("ftp")
 
 namespace AutoComplete {
-    StocksFtpListModel::StocksFtpListModel():
-        Models::AbstractConfigUpdaterModel(OVERWRITE_STOCKS_CONFIG)
+    StocksFtpListModel::StocksFtpListModel(Common::ISystemEnvironment &environment):
+        Models::AbstractConfigUpdaterModel(OVERWRITE_STOCKS_CONFIG),
+        m_Environment(environment)
     { }
 
     void StocksFtpListModel::initializeConfigs() {
         LOG_DEBUG << "#";
-
-        QString localConfigPath;
-
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        if (!appDataPath.isEmpty()) {
-            QDir appDataDir(appDataPath);
-            localConfigPath = appDataDir.filePath(LOCAL_STOCKS_LIST_FILE);
-        } else {
-            localConfigPath = LOCAL_STOCKS_LIST_FILE;
-        }
-
+        QString localConfigPath = m_Environment.filepath(LOCAL_STOCKS_LIST_FILE);
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getStocksACSourceAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);

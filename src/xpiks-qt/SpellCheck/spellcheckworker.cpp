@@ -32,9 +32,13 @@
 #define SPELLCHECK_DELAY_PERIOD 50
 
 namespace SpellCheck {
-    SpellCheckWorker::SpellCheckWorker(Helpers::AsyncCoordinator *initCoordinator, Models::SettingsModel *settingsModel, QObject *parent):
+    SpellCheckWorker::SpellCheckWorker(Common::ISystemEnvironment &environment,
+                                       Helpers::AsyncCoordinator *initCoordinator,
+                                       Models::SettingsModel *settingsModel,
+                                       QObject *parent):
         QObject(parent),
         ItemProcessingWorker(SPELLCHECK_DELAY_PERIOD),
+        m_Environment(environment),
         m_InitCoordinator(initCoordinator),
         m_SettingsModel(settingsModel),
         m_Hunspell(NULL),
@@ -400,10 +404,8 @@ namespace SpellCheck {
 
     void SpellCheckWorker::initUserDictionary() {
         LOG_DEBUG << "#";
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        QDir dir(appDataPath);
 
-        m_UserDictionaryPath = dir.filePath(QLatin1String(Constants::USER_DICT_FILENAME));
+        m_UserDictionaryPath = m_Environment.filepath(Constants::USER_DICT_FILENAME);
         QFile userDictonaryFile(m_UserDictionaryPath);
 
         if (userDictonaryFile.open(QIODevice::ReadOnly)) {

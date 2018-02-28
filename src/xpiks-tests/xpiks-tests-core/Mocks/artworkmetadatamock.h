@@ -8,9 +8,18 @@
 namespace Mocks {
     class ArtworkMetadataMock : public Models::ImageArtwork {
     public:
+        ArtworkMetadataMock():
+            Models::ImageArtwork("random.jpg", 0, 0)
+        {
+        }
+
         ArtworkMetadataMock(const QString &filepath, qint64 directoryID = 0):
             Models::ImageArtwork(filepath, 0, directoryID)
         {
+        }
+
+        void initialize() {
+            this->initAsEmpty();
         }
 
         void initialize(const QString &title, const QString &description, const QStringList &keywords, bool overwrite=false) {
@@ -38,6 +47,8 @@ namespace Mocks {
         bool areKeywordsEmpty() { return getBasicModel()->areKeywordsEmpty(); }
 
         void resetAll() { this->clearModel(); this->resetFlags(); }
+
+        virtual void justChanged() override { /*Don't need threads*/ }
 
         //virtual QString getDirectory() const { return "somedirectory"; }
     };

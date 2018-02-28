@@ -63,7 +63,6 @@ namespace QMLExtensions {
         bool isRepeated() const { return Common::HasFlag(m_Flags, RepeatRequestFlag); }
 
     public:
-        void repeatRequestOnce() { if (!isRepeated()) { setRepeatRequest(); } }
         void setRepeatRequest() { Common::ApplyFlag(m_Flags, true, RepeatRequestFlag); }
         void setGoodQualityRequest() { Common::ApplyFlag(m_Flags, false, QuickThumbnailFlag); }
         void setThumbnailPath(const QString &path) { m_VideoArtwork->setThumbnailPath(path); }

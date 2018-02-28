@@ -46,6 +46,13 @@ private slots:
     void clearKeywordsMarksAsModifiedTest();
     void clearEmptyKeywordsDoesNotMarkModifiedTest();
     void removeKeywordsMarksModifiedTest();
+    void swapKeywordsBasicTest();
+    void dontSwapKeywordsTest();
+    void moveKeywordForwardTest();
+    void moveBackToFrontTest();
+    void moveFrontToBackTest();
+    void moveMiddleToBackTest();
+    void moveSameSpotTest();
 };
 
 #endif // ARTWORKMETADATA_TESTS_H

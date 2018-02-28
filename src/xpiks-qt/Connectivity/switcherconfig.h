@@ -16,6 +16,7 @@
 #include <QHash>
 #include <QReadWriteLock>
 #include "../Models/abstractconfigupdatermodel.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Connectivity {
     class SwitcherConfig: public Models::AbstractConfigUpdaterModel
@@ -28,7 +29,7 @@ namespace Connectivity {
         };
 
     public:
-        SwitcherConfig(QObject *parent=nullptr);
+        SwitcherConfig(Common::ISystemEnvironment &environment, QObject *parent=nullptr);
 
     public:
         void initializeConfigs();
@@ -59,10 +60,12 @@ namespace Connectivity {
             GoodQualityVideoPreviews,
             MetadataAutoImport,
             GettySuggestionEnabled,
-            UpdateEnabled
+            UpdateEnabled,
+            KeywordsDragDropEnabled
         };
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         QReadWriteLock m_RwLock;
         QHash<int, SwitchValue> m_SwitchesHash;
     };

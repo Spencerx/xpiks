@@ -22,7 +22,7 @@ namespace Maintenance {
     public:
         virtual void processJob() override;
 
-    public:
+    private:
         void doCleanUpdateArtifacts();
     };
 }

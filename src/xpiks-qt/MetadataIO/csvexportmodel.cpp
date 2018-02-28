@@ -225,9 +225,10 @@ namespace MetadataIO {
 
     /*------------------------------------------------------*/
 
-    CsvExportModel::CsvExportModel():
+    CsvExportModel::CsvExportModel(Common::ISystemEnvironment &environment):
         Common::BaseEntity(),
         Common::DelayedActionEntity(3000, MAX_SAVE_PAUSE_RESTARTS),
+        m_ExportPlansModel(environment),
         m_SaveTimerId(-1),
         m_SaveRestartsCount(0),
         m_IsExporting(false)

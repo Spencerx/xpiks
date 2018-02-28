@@ -14,12 +14,13 @@
 #include "../Helpers/localconfig.h"
 #include <QString>
 #include <QJsonObject>
+#include "isystemenvironment.h"
 
 namespace Common {
     class StatefulEntity
     {
     public:
-        StatefulEntity(const QString &stateName);
+        StatefulEntity(const QString &stateName, ISystemEnvironment &environment);
 
     public:
         void init();
@@ -61,6 +62,7 @@ namespace Common {
         }
 
     private:
+        ISystemEnvironment &m_Environment;
         QString m_StateName;
         Helpers::LocalConfig m_StateConfig;
         QJsonObject m_StateJson;

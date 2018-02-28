@@ -38,6 +38,18 @@ namespace Common {
             m_HasDuplicates = false;
         }
 
+        void swap(Keyword &other) {
+            m_Value.swap(other.m_Value);
+
+            bool temp = m_IsCorrect;
+            m_IsCorrect = other.m_IsCorrect;
+            other.m_IsCorrect = temp;
+
+            temp = m_HasDuplicates;
+            m_HasDuplicates = other.m_HasDuplicates;
+            other.m_HasDuplicates = temp;
+        }
+
         QString m_Value;
         volatile bool m_IsCorrect;
         volatile bool m_HasDuplicates;

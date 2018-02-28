@@ -12,9 +12,14 @@
 #define UPDATESCHECKERWORKER_H
 
 #include <QObject>
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class SettingsModel;
+}
+
+namespace Maintenance {
+    class MaintenanceService;
 }
 
 namespace Connectivity {
@@ -28,7 +33,10 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        UpdatesCheckerWorker(Models::SettingsModel *settingsModel, const QString &availableUpdatePath);
+        UpdatesCheckerWorker(Common::ISystemEnvironment &environment,
+                             Models::SettingsModel *settingsModel,
+                             Maintenance::MaintenanceService *maintenanceService,
+                             const QString &availableUpdatePath);
         virtual ~UpdatesCheckerWorker();
 
     private:
@@ -49,7 +57,9 @@ namespace Connectivity {
         void cancelRequested();
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         Models::SettingsModel *m_SettingsModel;
+        Maintenance::MaintenanceService *m_MaintenanceService;
         QString m_UpdatesDirectory;
         QString m_AvailableUpdatePath;
     };

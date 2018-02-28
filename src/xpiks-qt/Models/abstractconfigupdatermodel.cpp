@@ -17,8 +17,7 @@ namespace Models {
     AbstractConfigUpdaterModel::AbstractConfigUpdaterModel(bool forceOverwrite, QObject *parent):
         QObject(parent),
         m_RemoteConfig(this),
-        m_ForceOverwrite(forceOverwrite),
-        m_OnlyLocal(false)
+        m_ForceOverwrite(forceOverwrite)
     {
         QObject::connect(&m_RemoteConfig, &Helpers::RemoteConfig::configArrived, this, &AbstractConfigUpdaterModel::remoteConfigArrived);
     }
@@ -27,10 +26,7 @@ namespace Models {
         LOG_DEBUG << "#";
 
         initLocalConfig(filePath);
-
-        if (!m_OnlyLocal) {
-            initRemoteConfig(configUrl);
-        }
+        initRemoteConfig(configUrl);
     }
 
     void AbstractConfigUpdaterModel::remoteConfigArrived() {

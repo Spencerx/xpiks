@@ -7,8 +7,10 @@
 #include "../../xpiks-qt/Models/artworksrepository.h"
 #include "../../xpiks-qt/Helpers/threadhelpers.h"
 #include "../../xpiks-qt/Models/artworkproxymodel.h"
+#include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
+    Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock; \
     Mocks::ArtItemsModelMock artItemsModelMock; \
     Models::ArtworksRepository artworksRepository; \
@@ -18,7 +20,7 @@
     filteredItemsModel.setSourceModel(&artItemsModelMock); \
     commandManagerMock.InjectDependency(&filteredItemsModel); \
     commandManagerMock.generateAndAddArtworks(count); \
-    KeywordsPresets::PresetKeywordsModel presetKeywordsModel; \
+    KeywordsPresets::PresetKeywordsModel presetKeywordsModel(environment); \
     commandManagerMock.InjectDependency(&presetKeywordsModel); \
     KeywordsPresets::FilteredPresetKeywordsModel filteredPresetKeywordsModel; \
     filteredPresetKeywordsModel.setSourceModel(&presetKeywordsModel);

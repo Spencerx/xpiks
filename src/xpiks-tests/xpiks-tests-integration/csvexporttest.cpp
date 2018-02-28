@@ -15,6 +15,7 @@
 #include "../../xpiks-qt/Models/imageartwork.h"
 #include "../../xpiks-qt/MetadataIO/csvexportmodel.h"
 #include "testshelpers.h"
+#include "../../xpiks-qt/Helpers/filehelpers.h"
 #include "../../../vendors/csv/csv.h"
 
 QString CsvExportTest::testName() {
@@ -109,7 +110,7 @@ int parsePlan2Csv(const QString &filepath, const std::deque<Models::ArtworkMetad
 }
 
 void setupExportPlans(std::vector<std::shared_ptr<MetadataIO::CsvExportPlan> > &exportPlans) {
-    Q_ASSERT(exportPlans.empty());
+    for (auto &plan: exportPlans) { Q_ASSERT(!plan->m_IsSelected); }
 
     std::shared_ptr<MetadataIO::CsvExportPlan> plan1(new MetadataIO::CsvExportPlan("plan1"));
     plan1->m_IsSelected = true;
@@ -150,7 +151,8 @@ int CsvExportTest::doTest() {
     filteredModel->selectFilteredArtworks();
     filteredModel->setSelectedForCsvExport();
 
-    const QString directoryPath = QCoreApplication::applicationDirPath();
+    const QString directoryPath = QCoreApplication::applicationDirPath() + QDir::separator() + testName();
+    Helpers::ensureDirectoryExists(directoryPath);
     MetadataIO::CsvExportModel *csvExportModel = m_CommandManager->getCsvExportModel();
     csvExportModel->setOutputDirectory(QUrl::fromLocalFile(directoryPath));
 

@@ -25,6 +25,7 @@
 #include <functional>
 #include "asynccoordinator.h"
 #include "../Common/defines.h"
+#include "../Common/isystemenvironment.h"
 
 struct sqlite3;
 struct sqlite3_stmt;
@@ -115,7 +116,7 @@ namespace Helpers {
     class DatabaseManager: public QObject {
         Q_OBJECT
     public:
-        DatabaseManager();
+        DatabaseManager(Common::ISystemEnvironment &environment);
 
     public:
         bool initialize();
@@ -143,6 +144,7 @@ namespace Helpers {
         int getNextID();
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         QMutex m_Mutex;
         AsyncCoordinator m_FinalizeCoordinator;
         QString m_DBDirPath;

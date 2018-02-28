@@ -16,6 +16,7 @@
 #include "imagecacherequest.h"
 #include "cachedimage.h"
 #include "dbimagecacheindex.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Helpers {
     class AsyncCoordinator;
@@ -27,7 +28,10 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        ImageCachingWorker(Helpers::AsyncCoordinator *initCoordinator, Helpers::DatabaseManager *dbManager, QObject *parent=0);
+        ImageCachingWorker(Common::ISystemEnvironment &environment,
+                           Helpers::AsyncCoordinator *initCoordinator,
+                           Helpers::DatabaseManager *dbManager,
+                           QObject *parent=0);
 
     protected:
         virtual bool initWorker() override;
@@ -57,6 +61,7 @@ namespace QMLExtensions {
         bool isProcessed(std::shared_ptr<ImageCacheRequest> &item);
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         Helpers::AsyncCoordinator *m_InitCoordinator;
         volatile int m_ProcessedItemsCount;
         DbImageCacheIndex m_Cache;

@@ -179,6 +179,10 @@ namespace Models {
         }
     }
 
+    bool CombinedArtworksModel::moveKeyword(int from, int to) {
+        return doMoveKeyword(from, to);
+    }
+
     bool CombinedArtworksModel::appendKeyword(const QString &keyword) {
         bool added = doAppendKeyword(keyword);
         if (added) {

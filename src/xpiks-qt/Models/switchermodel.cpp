@@ -20,10 +20,11 @@ namespace Models {
 #define SWITCHER_SESSION_START "sessionStart"
 #define SWITCHER_TIMER_DELAY 2000
 
-    SwitcherModel::SwitcherModel(QObject *parent):
+    SwitcherModel::SwitcherModel(Common::ISystemEnvironment &environment, QObject *parent):
         QObject(parent),
         Common::BaseEntity(),
-        m_State("switcher"),
+        m_State("switcher", environment),
+        m_Config(environment),
         // effectively meaning all features are OFF
         m_Threshold(100)
     {

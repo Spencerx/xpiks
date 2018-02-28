@@ -131,11 +131,12 @@ namespace Models {
         oldSettings.remove(QLatin1String(settingName));
     }
 
-    SettingsModel::SettingsModel(QObject *parent) :
+    SettingsModel::SettingsModel(Common::ISystemEnvironment &environment, QObject *parent) :
         QObject(parent),
         Common::BaseEntity(),
         Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
-        m_State("settings"),
+        m_Environment(environment),
+        m_State("settings", environment),
         m_ExifToolPath(DEFAULT_EXIFTOOL),
         m_SelectedLocale(DEFAULT_LOCALE),
         m_KeywordSizeScale(DEFAULT_KEYWORD_SIZE_SCALE),
@@ -185,16 +186,7 @@ namespace Models {
     void SettingsModel::initializeConfigs() {
         LOG_DEBUG << "#";
 
-        QString localConfigPath;
-
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        if (!appDataPath.isEmpty()) {
-            QDir appDataDir(appDataPath);
-            localConfigPath = appDataDir.filePath(SETTINGS_FILE);
-        } else {
-            localConfigPath = SETTINGS_FILE;
-        }
-
+        QString localConfigPath = m_Environment.filepath(SETTINGS_FILE);
         m_Config.initConfig(localConfigPath);
         m_State.init();
 

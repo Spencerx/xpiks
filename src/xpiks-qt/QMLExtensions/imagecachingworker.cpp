@@ -34,9 +34,13 @@ namespace QMLExtensions {
         return QString::fromLatin1(QCryptographicHash::hash(path.toUtf8(), QCryptographicHash::Sha256).toHex());
     }
 
-    ImageCachingWorker::ImageCachingWorker(Helpers::AsyncCoordinator *initCoordinator, Helpers::DatabaseManager *dbManager, QObject *parent):
+    ImageCachingWorker::ImageCachingWorker(Common::ISystemEnvironment &environment,
+                                           Helpers::AsyncCoordinator *initCoordinator,
+                                           Helpers::DatabaseManager *dbManager,
+                                           QObject *parent):
         QObject(parent),
         ItemProcessingWorker(2),
+        m_Environment(environment),
         m_InitCoordinator(initCoordinator),
         m_ProcessedItemsCount(0),
         m_Cache(dbManager),
@@ -51,20 +55,9 @@ namespace QMLExtensions {
         Q_UNUSED(unlocker);
 
         m_ProcessedItemsCount = 0;
-        QString appDataPath = XPIKS_USERDATA_PATH;
 
-        if (!appDataPath.isEmpty()) {
-            m_ImagesCacheDir = QDir::cleanPath(appDataPath + QDir::separator() + Constants::IMAGES_CACHE_DIR);
-
-            QDir imagesCacheDir(m_ImagesCacheDir);
-            if (!imagesCacheDir.exists()) {
-                LOG_INFO << "Creating cache dir" << m_ImagesCacheDir;
-                QDir().mkpath(m_ImagesCacheDir);
-            }
-        } else {
-            m_ImagesCacheDir = QDir::currentPath();
-        }
-
+        m_Environment.ensureDirExists(Constants::IMAGES_CACHE_DIR);
+        m_ImagesCacheDir = m_Environment.dirpath(Constants::IMAGES_CACHE_DIR);
         LOG_INFO << "Using" << m_ImagesCacheDir << "for images cache";
 
         m_Cache.initialize();
@@ -168,23 +161,9 @@ namespace QMLExtensions {
         return found;
     }
 
-    QString getOldCacheFilepath() {
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        QString indexFilepath;
-
-        if (!appDataPath.isEmpty()) {
-            QDir appDataDir(appDataPath);
-            indexFilepath = appDataDir.filePath(Constants::IMAGES_CACHE_INDEX);
-        } else {
-            indexFilepath = Constants::IMAGES_CACHE_INDEX;
-        }
-
-        return indexFilepath;
-    }
-
     bool ImageCachingWorker::upgradeCacheStorage() {
         bool migrated = false;
-        QString indexFilepath = getOldCacheFilepath();
+        QString indexFilepath = m_Environment.filepath(Constants::IMAGES_CACHE_INDEX);
         LOG_INFO << "Trying to load old cache index from" << indexFilepath;
 
         QHash<QString, CachedImage> oldCache;

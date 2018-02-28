@@ -17,6 +17,7 @@
 #include "../Helpers/localconfig.h"
 #include "../Common/baseentity.h"
 #include "../Common/statefulentity.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class SwitcherModel: public QObject, public Common::BaseEntity
@@ -27,8 +28,9 @@ namespace Models {
         Q_PROPERTY(bool isDonateCampaign1LinkClicked READ getDonateCampaign1LinkClicked NOTIFY donateCampaign1LinkClicked)
         Q_PROPERTY(bool isDonateCampaign1Stage2On READ getIsDonateCampaign1Stage2On NOTIFY switchesUpdated)
         Q_PROPERTY(bool useAutoImport READ getUseAutoImport NOTIFY switchesUpdated)
+        Q_PROPERTY(bool keywordsDragDropEnabled READ getKeywordsDragDropEnabled NOTIFY switchesUpdated)
     public:
-        SwitcherModel(QObject *parent=nullptr);
+        SwitcherModel(Common::ISystemEnvironment &environment, QObject *parent=nullptr);
 
     public:
         virtual void setCommandManager(Commands::CommandManager *commandManager) override;
@@ -50,6 +52,7 @@ namespace Models {
         bool getUseAutoImport() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::MetadataAutoImport, m_Threshold); }
         bool getGettySuggestionEnabled() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::GettySuggestionEnabled, m_Threshold); }
         bool getUpdateEnabled() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::UpdateEnabled, m_Threshold); }
+        bool getKeywordsDragDropEnabled() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::KeywordsDragDropEnabled, m_Threshold); }
 
     public:
         bool getDonateCampaign1LinkClicked() const;

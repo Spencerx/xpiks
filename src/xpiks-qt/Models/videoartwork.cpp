@@ -28,8 +28,8 @@ namespace Models {
         m_ThumbnailPath = ":/Graphics/video-default-thumbnail.png";
     }
 
-    void VideoArtwork::setThumbnailPath(const QString &filepath) {        
-        LOG_INFO << filepath;
+    void VideoArtwork::setThumbnailPath(const QString &filepath) {
+        LOG_INFO << "#" << getItemID() << filepath;
         Q_ASSERT(!filepath.isEmpty());
 
         QMutexLocker locker(&m_ThumbnailLock);
@@ -62,6 +62,7 @@ namespace Models {
         if (getThumbnailGeneratedFlag()) { return; }
 
         if (QFileInfo(filepath).exists()) {
+            LOG_INFO << "#" << getItemID() << filepath;
             m_ThumbnailPath = filepath;
         } else {
             LOG_WARNING << "Wrong thumbnail filepath:" << filepath;

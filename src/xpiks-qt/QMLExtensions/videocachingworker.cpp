@@ -34,9 +34,12 @@ namespace QMLExtensions {
         return hash;
     }
 
-    VideoCachingWorker::VideoCachingWorker(Helpers::DatabaseManager *dbManager, QObject *parent) :
+    VideoCachingWorker::VideoCachingWorker(Common::ISystemEnvironment &environment,
+                                           Helpers::DatabaseManager *dbManager,
+                                           QObject *parent) :
         QObject(parent),
         ItemProcessingWorker(2),
+        m_Environment(environment),
         m_ProcessedItemsCount(0),
         m_Cache(dbManager)
     {
@@ -47,20 +50,9 @@ namespace QMLExtensions {
         LOG_DEBUG << "#";
 
         m_ProcessedItemsCount = 0;
-        QString appDataPath = XPIKS_USERDATA_PATH;
 
-        if (!appDataPath.isEmpty()) {
-            m_VideosCacheDir = QDir::cleanPath(appDataPath + QDir::separator() + Constants::VIDEO_CACHE_DIR);
-
-            QDir imagesCacheDir(m_VideosCacheDir);
-            if (!imagesCacheDir.exists()) {
-                LOG_INFO << "Creating cache dir" << m_VideosCacheDir;
-                QDir().mkpath(m_VideosCacheDir);
-            }
-        } else {
-            m_VideosCacheDir = QDir::currentPath();
-        }
-
+        m_Environment.ensureDirExists(Constants::VIDEO_CACHE_DIR);
+        m_VideosCacheDir = m_Environment.dirpath(Constants::VIDEO_CACHE_DIR);
         LOG_INFO << "Using" << m_VideosCacheDir << "for videos cache";
 
         m_Cache.initialize();
@@ -82,6 +74,7 @@ namespace QMLExtensions {
     }
 
     void VideoCachingWorker::processOneItem(std::shared_ptr<VideoCacheRequest> &item) {
+        LOG_DEBUG << "Processing #" << item->getArtworkID();
         if (checkLockedIO(item)) { return; }
         if (checkProcessed(item)) { return; }
 
@@ -113,11 +106,11 @@ namespace QMLExtensions {
                 }
 
                 success = true;
-            } else { /* // TODO: change global retry to smth smarter */ }
+            }
         }
 
-        if (!success) {
-            item->repeatRequestOnce();
+        if (!success && !item->isRepeated()) {
+            item->setRepeatRequest();
             needsRefresh = true;
         }
 
@@ -144,6 +137,8 @@ namespace QMLExtensions {
             LOG_INTEGR_TESTS_OR_DEBUG << "Thumb generated for" << originalPath;
             if (thumbnailCreated) {
                 item->setVideoMetadata(thumbnailCreator.getMetadata());
+            } else {
+                LOG_WARNING << "Failed to create thumbnail";
             }
         } catch (...) {
             LOG_WARNING << "Unknown exception while creating thumbnail";
@@ -210,6 +205,7 @@ namespace QMLExtensions {
     }
 
     void VideoCachingWorker::applyThumbnail(std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath, bool recacheArtwork) {
+        LOG_INFO << "#" << item->getArtworkID() << thumbnailPath;
         item->setThumbnailPath(thumbnailPath);
 
         auto *updateHub = m_CommandManager->getArtworksUpdateHub();
@@ -243,6 +239,7 @@ namespace QMLExtensions {
 
     bool VideoCachingWorker::checkProcessed(std::shared_ptr<VideoCacheRequest> &item) {
         if (item->getNeedRecache()) { return false; }
+        if (item->isRepeated()) { return false; }
 
         const QString &originalPath = item->getFilepath();
         bool isAlreadyProcessed = false;

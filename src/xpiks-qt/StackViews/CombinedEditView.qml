@@ -920,6 +920,8 @@ Rectangle {
                             property int keywordHeight: uiManager.keywordHeight
                             populateAnimationEnabled: false
                             scrollStep: keywordHeight
+                            property int droppedIndex: -1
+                            onDroppedIndexChanged: dropTimer.start()
 
                             function acceptCompletion(completionID) {
                                 var accepted = combinedArtworks.acceptCompletionAsPreset(completionID);
@@ -931,7 +933,7 @@ Rectangle {
                                 }
                             }
 
-                            delegate: KeywordWrapper {
+                            delegate: DraggableKeywordWrapper {
                                 id: kw
                                 isHighlighted: keywordsCheckBox.checked
                                 keywordText: keyword
@@ -941,6 +943,9 @@ Rectangle {
                                 itemHeight: flv.keywordHeight
                                 closeIconDisabledColor: uiColors.closeIconInactiveColor
                                 onRemoveClicked: keywordsWrapper.removeKeyword(delegateIndex)
+                                dragDropAllowed: switcher.keywordsDragDropEnabled
+                                dragParent: flv
+                                wasDropped: flv.droppedIndex == delegateIndex
                                 onActionDoubleClicked: {
                                     var callbackObject = {
                                         onSuccess: function(replacement) {
@@ -969,6 +974,18 @@ Rectangle {
                                     wordRightClickMenu.showExpandPreset = (filteredPresetsModel.getItemsCount() !== 0 )
                                     wordRightClickMenu.keywordIndex = kw.delegateIndex
                                     wordRightClickMenu.popupIfNeeded()
+                                }
+
+                                onMoveRequested: {
+                                    if (from !== to) {
+                                        flv.droppedIndex = to
+                                    }
+
+                                    if (combinedArtworks.moveKeyword(from, to)) {
+                                        console.debug("Just dropped to " + to)
+                                    } else {
+                                        flv.droppedIndex = -1
+                                    }
                                 }
                             }
 
@@ -1021,6 +1038,14 @@ Rectangle {
                             interval: 400
                             triggeredOnStart: false
                             onTriggered: keywordsWrapper.state = ""
+                        }
+
+                        Timer {
+                            id: dropTimer
+                            repeat: false
+                            interval: 1000
+                            triggeredOnStart: false
+                            onTriggered: flv.droppedIndex = -1
                         }
 
                         states: State {
@@ -1123,6 +1148,22 @@ Rectangle {
                         StyledText {
                             enabled: copyLink.canBeShown
                             visible: copyLink.canBeShown
+                            text: "|"
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        StyledLink {
+                            id: clearLink
+                            property bool canBeShown: combinedArtworks.keywordsCount > 0
+                            text: i18.n + qsTr("Clear")
+                            enabled: canBeShown
+                            visible: canBeShown
+                            onClicked: clearKeywordsDialog.open()
+                        }
+
+                        StyledText {
+                            enabled: clearLink.canBeShown
+                            visible: clearLink.canBeShown
                             text: "|"
                             verticalAlignment: Text.AlignVCenter
                         }
@@ -1298,14 +1339,6 @@ Rectangle {
                 } else if (shiftX < -epsilon) { // bottom/left
                     flickable.contentX = Math.max(0, flickable.contentX + shiftX)
                 }
-            }
-
-            add: Transition {
-                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 230 }
-            }
-
-            remove: Transition {
-                NumberAnimation { property: "opacity"; to: 0; duration: 230 }
             }
 
             displaced: Transition {

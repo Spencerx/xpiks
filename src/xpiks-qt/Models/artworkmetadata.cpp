@@ -160,13 +160,13 @@ namespace Models {
         if (!originalMetadata.m_Title.trimmed().isEmpty()) {
             anythingChanged = m_MetadataModel.setTitle(originalMetadata.m_Title) || anythingChanged;
         } else {
-            shouldPreserveModified = !m_MetadataModel.isTitleEmpty() || shouldPreserveModified;
+            shouldPreserveModified = shouldPreserveModified || !m_MetadataModel.isTitleEmpty();
         }
 
         if (!originalMetadata.m_Description.trimmed().isEmpty()) {
             anythingChanged = m_MetadataModel.setDescription(originalMetadata.m_Description) || anythingChanged;
         } else {
-            shouldPreserveModified = !m_MetadataModel.isDescriptionEmpty() || shouldPreserveModified;
+            shouldPreserveModified = shouldPreserveModified || (!m_MetadataModel.isDescriptionEmpty());
         }
 
         if (!m_MetadataModel.containsKeywords(originalMetadata.m_Keywords)) {
@@ -176,7 +176,7 @@ namespace Models {
             const int existingCount = m_MetadataModel.getKeywordsCount();
             const int originCount = originalMetadata.m_Keywords.count();
             // which should mean that this artwork has been already imported from storage
-            shouldPreserveModified = (existingCount > originCount) || shouldPreserveModified;
+            shouldPreserveModified = shouldPreserveModified || (existingCount > originCount);
         }
 
         setIsModifiedFlag(shouldPreserveModified);
@@ -244,6 +244,7 @@ namespace Models {
 
         m_MetadataModel.clearModel();
         markModified();
+        justChanged();
     }
 
     bool ArtworkMetadata::clearKeywords() {
@@ -253,7 +254,10 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.clearKeywords();
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -264,7 +268,10 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.editKeyword(index, replacement);
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -275,32 +282,55 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.replace(replaceWhat, replaceTo, flags);
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
+        return result;
+    }
+
+    bool ArtworkMetadata::moveKeyword(size_t from, size_t to) {
+        if (!getIsInitializedFlag()) {
+            LOG_WARNING << "#" << m_ID << "attempt to move keyword" << from << to;
+            return false;
+        }
+
+        bool result = m_MetadataModel.moveKeyword(from, to);
+        if (result) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
     bool ArtworkMetadata::setDescription(const QString &value)  {
         if (!getIsInitializedFlag()) {
-            LOG_WARNING << "#" << m_ID << "attempt to set description for not initialized artwork";
+            LOG_WARNING << "#" << m_ID << "attempt to set description to" << value << "for not initialized artwork";
             return false;
         }
 
         bool result = m_MetadataModel.setDescription(value);
 
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
 
         return result;
     }
 
     bool ArtworkMetadata::setTitle(const QString &value) {
         if (!getIsInitializedFlag()) {
-            LOG_WARNING << "#" << m_ID << "attempt to set title for not initialized artwork";
+            LOG_WARNING << "#" << m_ID << "attempt to set title to" << value << "for not initialized artwork";
             return false;
         }
 
         bool result = m_MetadataModel.setTitle(value);
 
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
 
         return result;
     }
@@ -313,6 +343,7 @@ namespace Models {
 
         m_MetadataModel.setKeywords(keywords);
         markModified();
+        justChanged();
     }
 
     bool ArtworkMetadata::setIsSelected(bool value) {
@@ -327,7 +358,11 @@ namespace Models {
 
     bool ArtworkMetadata::removeKeywordAt(size_t index, QString &removed) {
         bool result = m_MetadataModel.removeKeywordAt(index, removed);
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
+
         return result;
     }
 
@@ -338,7 +373,11 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.removeLastKeyword(removed);
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
+
         return result;
     }
 
@@ -349,7 +388,10 @@ namespace Models {
         }
 
         bool result = m_MetadataModel.appendKeyword(keyword);
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -361,7 +403,10 @@ namespace Models {
 
         size_t result = m_MetadataModel.appendKeywords(keywordsList);
         LOG_INFO << "#" << m_ID << "Appended" << result << "keywords out of" << keywordsList.length();
-        if (result > 0) { markModified(); }
+        if (result > 0) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -373,7 +418,10 @@ namespace Models {
 
         bool result = m_MetadataModel.removeKeywords(keywordsSet, caseSensitive);
         LOG_INFO << "#" << m_ID << "Removed keywords:" << result;
-        if (result) { markModified(); }
+        if (result) {
+            markModified();
+            justChanged();
+        }
         return result;
     }
 
@@ -386,6 +434,7 @@ namespace Models {
         auto result = m_MetadataModel.fixKeywordSpelling(index, existing, replacement);
         if (Common::KeywordReplaceResult::Succeeded == result) {
             markModified();
+            justChanged();
         }
 
         return result;
@@ -400,6 +449,7 @@ namespace Models {
         bool result = m_MetadataModel.fixDescriptionSpelling(word, replacement);
         if (result) {
             markModified();
+            justChanged();
         }
 
         return result;
@@ -414,6 +464,7 @@ namespace Models {
         bool result = m_MetadataModel.fixTitleSpelling(word, replacement);
         if (result) {
             markModified();
+            justChanged();
         }
 
         return result;
@@ -459,6 +510,7 @@ namespace Models {
         bool result = m_MetadataModel.expandPreset(keywordIndex, presetList);
         if (result) {
             markModified();
+            justChanged();
         }
 
         return result;
@@ -468,6 +520,7 @@ namespace Models {
         bool result = m_MetadataModel.appendPreset(presetList);
         if (result) {
             markModified();
+            justChanged();
         }
 
         return result;

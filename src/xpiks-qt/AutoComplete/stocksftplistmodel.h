@@ -16,13 +16,14 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include "../Models/abstractconfigupdatermodel.h"
+#include "../Common/isystemenvironment.h"
 
 namespace AutoComplete {
     class StocksFtpListModel: public Models::AbstractConfigUpdaterModel
     {
         Q_OBJECT
     public:
-        StocksFtpListModel();
+        StocksFtpListModel(Common::ISystemEnvironment &environment);
 
     public:
         void initializeConfigs();
@@ -47,6 +48,7 @@ namespace AutoComplete {
         virtual int operator ()(const QJsonObject &val1, const QJsonObject &val2) override;
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         QHash<QString, QString> m_StocksHash;
         QStringList m_StockNames;
     };

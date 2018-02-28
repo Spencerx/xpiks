@@ -20,9 +20,11 @@
 #include "savesessionjobitem.h"
 #include "moveimagecachejobitem.h"
 #include "xpkscleanupjob.h"
+#include "updatebundlecleanupjobitem.h"
 
 namespace Maintenance {
-    MaintenanceService::MaintenanceService():
+    MaintenanceService::MaintenanceService(Common::ISystemEnvironment &environment):
+        m_Environment(environment),
         m_MaintenanceWorker(NULL)
     {
     }
@@ -72,6 +74,12 @@ namespace Maintenance {
 #endif
     }
 
+    void MaintenanceService::cleanupDownloadedUpdates(const QString &downloadsPath) {
+        LOG_DEBUG << "#";
+        std::shared_ptr<IMaintenanceItem> jobItem(new UpdateBundleCleanupJobItem(downloadsPath));
+        m_MaintenanceWorker->submitItem(jobItem);
+    }
+
     void MaintenanceService::launchExiftool(const QString &settingsExiftoolPath, MetadataIO::MetadataIOCoordinator *coordinator) {
         LOG_DEBUG << "#";
         std::shared_ptr<IMaintenanceItem> jobItem(new LaunchExiftoolJobItem(settingsExiftoolPath, coordinator));
@@ -87,7 +95,7 @@ namespace Maintenance {
     void MaintenanceService::cleanupLogs() {
 #ifdef WITH_LOGS
         LOG_DEBUG << "#";
-        std::shared_ptr<IMaintenanceItem> jobItem(new LogsCleanupJobItem());
+        std::shared_ptr<IMaintenanceItem> jobItem(new LogsCleanupJobItem(m_Environment));
         m_MaintenanceWorker->submitItem(jobItem);
 #endif
     }

@@ -221,8 +221,6 @@ namespace Models {
             if (metadata->removeKeywordAt(keywordIndex, removed)) {
                 QModelIndex index = this->index(metadataIndex);
                 emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
-                xpiks()->submitKeywordsForWarningsCheck(metadata);
-                metadata->justEdited();
             }
         }
     }
@@ -236,8 +234,6 @@ namespace Models {
             if (metadata->removeLastKeyword(removed)) {
                 QModelIndex index = this->index(metadataIndex);
                 emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
-                xpiks()->submitKeywordsForWarningsCheck(metadata);
-                metadata->justEdited();
             }
         }
     }
@@ -255,8 +251,6 @@ namespace Models {
                 auto *keywordsModel = metadata->getBasicModel();
 
                 xpiks()->submitKeywordForSpellCheck(keywordsModel, keywordsModel->getKeywordsCount() - 1);
-                xpiks()->submitKeywordsForWarningsCheck(metadata);
-                metadata->justEdited();
 
                 added = true;
             }
@@ -550,8 +544,6 @@ namespace Models {
 
                 auto *keywordsModel = metadata->getBasicModel();
                 xpiks()->submitKeywordForSpellCheck(keywordsModel, keywordIndex);
-                xpiks()->submitKeywordsForWarningsCheck(metadata);
-                metadata->justEdited();
             }
         }
     }
@@ -874,13 +866,6 @@ namespace Models {
 
         if (needToUpdate) {
             emit dataChanged(index, index, QVector<int>() << IsModifiedRole << roleToUpdate);
-
-            if (role == EditArtworkDescriptionRole ||
-                role == EditArtworkTitleRole) {
-                if (metadata->isInitialized()) {
-                    metadata->justEdited();
-                }
-            }
         }
 
         return true;
@@ -1094,7 +1079,8 @@ namespace Models {
         updateItemsAtIndicesEx(indices, roles);
     }
 
-    void ArtItemsModel::updateItemsAtIndicesEx(const QVector<int> &indices, const QVector<int> &roles) {
+    void ArtItemsModel::updateItemsAtIndicesEx(const QVector<int> &indices, const QVector<int> &roles) {        
+        LOG_INFO << "Updating roles" << roles << "in" << indices.size() << "item(s)";
         QVector<int> sortedIndices(indices);
         qSort(sortedIndices);
         QVector<QPair<int, int> > ranges;

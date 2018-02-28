@@ -33,14 +33,13 @@ namespace QMLExtensions {
         if (url.isEmpty()) { return QImage(); }
 
         const QString id = prepareUrl(url);
-        LOG_DEBUG << url << id;
+        LOG_DEBUG << "Requesting file:" << id;
 
         QString cachedPath;
         bool needsUpdate = false;
 
         if (m_ImageCachingService->tryGetCachedImage(id, requestedSize, cachedPath, needsUpdate)) {
             if (needsUpdate) {
-                LOG_INFO << "Recaching image" << id;
                 m_ImageCachingService->cacheImage(id, requestedSize, RECACHE);
             }
 
@@ -52,7 +51,7 @@ namespace QMLExtensions {
             }
         }
 
-        LOG_INTEGR_TESTS_OR_DEBUG << "Not found properly cached:" << id;
+        LOG_DEBUG << "Not found properly cached:" << id;
 
         QImage originalImage(id);
         QImage result;

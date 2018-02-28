@@ -19,6 +19,7 @@
 #include "csvexportplansmodel.h"
 #include "../Common/baseentity.h"
 #include "../Common/delayedactionentity.h"
+#include "../Common/isystemenvironment.h"
 
 class QTimerEvent;
 
@@ -77,7 +78,7 @@ namespace MetadataIO {
         Q_PROPERTY(bool isExporting READ getIsExporting WRITE setIsExporting NOTIFY isExportingChanged)
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
     public:
-        CsvExportModel();
+        CsvExportModel(Common::ISystemEnvironment &environment);
 
     public:
         const std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() const { return m_ExportPlans; }
@@ -96,7 +97,7 @@ namespace MetadataIO {
 
 #ifdef INTEGRATION_TESTS
     public:
-        void disableRemoteConfigs() { m_ExportPlansModel.setOnlyLocal(); }
+        void setRemoteConfigOverride(const QString &localPath) { m_ExportPlansModel.setRemoteOverride(localPath); }
 #endif
 
     private:
@@ -134,7 +135,14 @@ namespace MetadataIO {
 #ifdef INTEGRATION_TESTS
     public:
         std::vector<std::shared_ptr<CsvExportPlan> > &accessExportPlans() { return m_ExportPlans; }
-        void clearPlans() { m_ExportPlans.clear(); }
+        void resetModel() {
+            m_ExportPlans.erase(
+                        std::remove_if(m_ExportPlans.begin(), m_ExportPlans.end(),
+                                       [](const std::shared_ptr<CsvExportPlan> &plan) { return !plan->m_IsSystemPlan; }),
+                        m_ExportPlans.end());
+
+            for (auto &p: m_ExportPlans) { p->m_IsSelected = false; }
+        }
 #endif
 
     signals:

@@ -6,8 +6,10 @@
 #include "../../xpiks-qt/Models/artworkuploader.h"
 #include "../../xpiks-qt/Models/ziparchiver.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
+#include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
+    Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock;\
     Mocks::ArtItemsModelMock artItemsModelMock;\
     Models::ArtworksRepository artworksRepository;\
@@ -17,7 +19,7 @@
     filteredItemsModel.setSourceModel(&artItemsModelMock);\
     commandManagerMock.InjectDependency(&filteredItemsModel);\
     commandManagerMock.generateAndAddArtworks(count);\
-    Models::SettingsModel settingsModel; \
+    Models::SettingsModel settingsModel(environment); \
     settingsModel.initializeConfigs(); \
     settingsModel.setSearchUsingAnd(false); \
     commandManagerMock.InjectDependency(&settingsModel);

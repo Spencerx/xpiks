@@ -25,7 +25,8 @@
 namespace Common {
     BasicKeywordsModel::BasicKeywordsModel(Hold &hold, QObject *parent):
         AbstractListModel(parent),
-        m_Impl(new BasicKeywordsModelImpl(hold))
+        m_Hold(hold),
+        m_Impl(new BasicKeywordsModelImpl())
     {}
 
 #ifdef CORE_TESTS
@@ -341,6 +342,17 @@ namespace Common {
         return anyRemoved;
     }
 
+    bool BasicKeywordsModel::moveKeyword(size_t from, size_t to) {
+        QWriteLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
+
+        beginResetModel();
+        const bool success = m_Impl->moveKeyword(from, to);
+        endResetModel();
+
+        return success;
+    }
+
     size_t BasicKeywordsModel::appendKeywordsUnsafe(const QStringList &keywordsList) {
         size_t appendedCount = 0;
         if (m_Impl->prepareAppend(keywordsList, appendedCount)) {
@@ -511,11 +523,11 @@ namespace Common {
     }
 
     void BasicKeywordsModel::acquire() {
-        m_Impl->acquire();
+        m_Hold.acquire();
     }
 
     bool BasicKeywordsModel::release() {
-        return m_Impl->release();
+        return m_Hold.release();
     }
 
     bool BasicKeywordsModel::hasKeyword(const QString &keyword) {

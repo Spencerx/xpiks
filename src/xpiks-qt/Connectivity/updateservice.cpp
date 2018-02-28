@@ -18,15 +18,20 @@
 #include "../Models/switchermodel.h"
 
 namespace Connectivity {
-    UpdateService::UpdateService(Models::SettingsModel *settingsModel, Models::SwitcherModel *switcherModel):
+    UpdateService::UpdateService(Common::ISystemEnvironment &environment,
+                                 Models::SettingsModel *settingsModel,
+                                 Models::SwitcherModel *switcherModel,
+                                 Maintenance::MaintenanceService *maintenanceService):
+        m_Environment(environment),
         m_UpdatesCheckerWorker(nullptr),
         m_SettingsModel(settingsModel),
         m_SwitcherModel(switcherModel),
-        m_AvailableVersion(0),
-        m_UpdateAvailable(false)
+        m_MaintenanceService(maintenanceService),
+        m_State("updater", environment)
     {
         Q_ASSERT(settingsModel != nullptr);
         Q_ASSERT(switcherModel != nullptr);
+        Q_ASSERT(maintenanceService != nullptr);
     }
 
     void UpdateService::startChecking() {
@@ -35,7 +40,8 @@ namespace Connectivity {
 
         if (startWorker) {
             updateSettings();
-            doStartChecking();
+            auto pathToUpdate = getPathToUpdate();
+            doStartChecking(pathToUpdate);
         } else {
             LOG_INFO << "Update checking disabled";
         }
@@ -46,10 +52,10 @@ namespace Connectivity {
         emit cancelRequested();
     }
 
-    void UpdateService::doStartChecking() {
-        LOG_DEBUG << "#";
+    void UpdateService::doStartChecking(const QString &pathToUpdate) {
+        LOG_DEBUG << "path to update:" << pathToUpdate;
 
-        m_UpdatesCheckerWorker = new UpdatesCheckerWorker(m_SettingsModel, m_PathToUpdate);
+        m_UpdatesCheckerWorker = new UpdatesCheckerWorker(m_Environment, m_SettingsModel, m_MaintenanceService, pathToUpdate);
         QThread *thread = new QThread();
         m_UpdatesCheckerWorker->moveToThread(thread);
 
@@ -70,23 +76,19 @@ namespace Connectivity {
         QObject::connect(m_UpdatesCheckerWorker, &UpdatesCheckerWorker::stopped,
                          this, &UpdateService::workerFinished);
 
-        thread->start();
+        thread->start(QThread::LowPriority);
     }
 
     void UpdateService::updateSettings() {
         LOG_DEBUG << "#";
 
-        int availableValue = m_SettingsModel->getAvailableUpdateVersion();
+        const int availableValue = getAvailableUpdateVersion();
+        LOG_DEBUG << "Available:" << availableValue << "current:" << XPIKS_VERSION_INT;
 
         if ((0 < availableValue) && (availableValue <= XPIKS_VERSION_INT)) {
             LOG_DEBUG << "Flushing available update settings values";
-            m_SettingsModel->setPathToUpdate("");
-            m_SettingsModel->setAvailableUpdateVersion(0);
-            m_SettingsModel->syncronizeSettings();
-        } else {
-            m_PathToUpdate = m_SettingsModel->getPathToUpdate();
-            m_AvailableVersion = m_SettingsModel->getAvailableUpdateVersion();
-            LOG_INFO << "Available:" << m_PathToUpdate << "version:" << m_AvailableVersion;
+            setPathToUpdate("");
+            setAvailableUpdateVersion(0);
         }
     }
 
@@ -96,19 +98,10 @@ namespace Connectivity {
 
     void UpdateService::updateDownloadedHandler(const QString &updatePath, int version) {
         LOG_DEBUG << "#";
-        m_UpdateAvailable = true;
-        m_PathToUpdate = updatePath;
-        m_AvailableVersion = version;
 
-        saveUpdateInfo();
+        setAvailableUpdateVersion(version);
+        setPathToUpdate(updatePath);
 
-        emit updateDownloaded(m_PathToUpdate);
-    }
-
-    void UpdateService::saveUpdateInfo() const {
-        Q_ASSERT(m_UpdateAvailable);
-
-        m_SettingsModel->setAvailableUpdateVersion(m_AvailableVersion);
-        m_SettingsModel->setPathToUpdate(m_PathToUpdate);
+        emit updateDownloaded(updatePath);
     }
 }

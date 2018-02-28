@@ -21,6 +21,7 @@
 #include "../Common/baseentity.h"
 #include "../Common/delayedactionentity.h"
 #include "../Helpers/localconfig.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class UploadInfo;
@@ -34,7 +35,7 @@ namespace Models {
         Q_PROPERTY(int infosCount READ getInfosCount NOTIFY infosCountChanged)
 
     public:
-        UploadInfoRepository(QObject *parent = 0);
+        UploadInfoRepository(Common::ISystemEnvironment &environment, QObject *parent = 0);
         virtual ~UploadInfoRepository();
 
         void initFromString(const QString &savedString);
@@ -134,6 +135,7 @@ namespace Models {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         std::vector<std::shared_ptr<UploadInfo> > m_UploadInfos;
         Helpers::LocalConfig m_LocalConfig;
         // when MP is cancelled before Upload dialog

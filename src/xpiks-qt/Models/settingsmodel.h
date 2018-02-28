@@ -29,6 +29,7 @@
 #include "../Models/uploadinforepository.h"
 #include "../Common/delayedactionentity.h"
 #include "../Common/statefulentity.h"
+#include "../Common/isystemenvironment.h"
 
 #define SETTINGS_EPSILON 1e-9
 
@@ -84,7 +85,7 @@ namespace Models {
         Q_PROPERTY(QString termsAndConditionsText READ getTermsAndConditionsText CONSTANT)
 
     public:
-        explicit SettingsModel(QObject *parent = 0);
+        explicit SettingsModel(Common::ISystemEnvironment &environment, QObject *parent = 0);
         virtual ~SettingsModel() { }
 
     public:
@@ -177,11 +178,9 @@ namespace Models {
 
     public:
         QString getUserAgentId() const { return m_State.getString(Constants::userAgentId); }
-        QString getPathToUpdate() const { return m_State.getString(Constants::pathToUpdate); }
         QString getLegacyUploadHosts() const { return stringValue(Constants::legacyUploadHosts); }
         QString getMasterPasswordHash() const { return stringValue(Constants::masterPasswordHash); }
         bool getMustUseConfirmationDialogs() const { return boolValue(Constants::useConfirmationDialogs, true); }
-        int getAvailableUpdateVersion() const { return m_State.getInt(Constants::availableUpdateVersion); }
 
     public:
         Q_INVOKABLE bool needToShowWhatsNew();
@@ -209,18 +208,6 @@ namespace Models {
         /*Q_INVOKABLE*/ void setUserAgentId(const QString &id) {
             LOG_DEBUG << "#";
             m_State.setValue(Constants::userAgentId, id);
-            m_State.sync();
-        }
-
-        /*Q_INVOKABLE*/ void setAvailableUpdateVersion(int version) {
-            LOG_DEBUG << "#";
-            m_State.setValue(Constants::availableUpdateVersion, version);
-            m_State.sync();
-        }
-
-        /*Q_INVOKABLE*/ void setPathToUpdate(QString path) {
-            LOG_DEBUG << "#";
-            m_State.setValue(Constants::pathToUpdate, path);
             m_State.sync();
         }
 
@@ -375,6 +362,7 @@ namespace Models {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         Common::StatefulEntity m_State;
         QMutex m_SettingsMutex;
         Helpers::LocalConfig m_Config;

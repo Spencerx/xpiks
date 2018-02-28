@@ -64,6 +64,7 @@
 #include "../../xpiks-qt/MetadataIO/csvexportmodel.h"
 #include "../../xpiks-qt/Models/switchermodel.h"
 #include "../../xpiks-qt/Helpers/filehelpers.h"
+#include "../../xpiks-qt/Common/systemenvironment.h"
 
 #include "exiv2iohelpers.h"
 
@@ -121,6 +122,8 @@
 #include "reimporttest.h"
 #include "autoimporttest.h"
 #include "importlostmetadatatest.h"
+#include "warningscombinedtest.h"
+#include "csvdefaultexporttest.h"
 
 #if defined(WITH_PLUGINS)
 #undef WITH_PLUGINS
@@ -210,23 +213,19 @@ int main(int argc, char *argv[]) {
     qInstallMessageHandler(myMessageHandler);
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
 
+    // -----------------------------------------------
     QCoreApplication app(argc, argv);
+    Common::SystemEnvironment environment(app.arguments());
+    environment.ensureSystemDirectoriesExist();
+    // -----------------------------------------------
     std::cout << "Initialized application" << std::endl;
 
-    QString appDataPath = XPIKS_USERDATA_PATH;
 #ifdef WITH_LOGS
-    const QString &logFileDir = QDir::cleanPath(appDataPath + QDir::separator() + Constants::LOGS_DIR);
-    if (!logFileDir.isEmpty()) {
-        QDir dir(logFileDir);
-        if (!dir.exists()) {
-            bool created = QDir().mkpath(logFileDir);
-            Q_UNUSED(created);
-        }
-
+    {
         QString time = QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss-zzz");
         QString logFilename = QString("xpiks-qt-%1.log").arg(time);
 
-        QString logFilePath = dir.filePath(logFilename);
+        QString logFilePath = environment.fileInDir(logFilename, Constants::LOGS_DIR);
 
         Helpers::Logger &logger = Helpers::Logger::getInstance();
         logger.setLogFilePath(logFilePath);
@@ -236,10 +235,7 @@ int main(int argc, char *argv[]) {
     Models::LogsModel logsModel;
     logsModel.startLogging();
 
-    const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
-    Helpers::ensureDirectoryExists(statesPath);
-
-    Models::SettingsModel settingsModel;
+    Models::SettingsModel settingsModel(environment);
     settingsModel.initializeConfigs();
     settingsModel.retrieveAllValues();
 
@@ -248,20 +244,20 @@ int main(int argc, char *argv[]) {
     Models::ArtworksRepository artworkRepository;
     Models::ArtItemsModel artItemsModel;
     Models::CombinedArtworksModel combinedArtworksModel;
-    Models::UploadInfoRepository uploadInfoRepository;
-    KeywordsPresets::PresetKeywordsModel presetsModel;
-    Warnings::WarningsService warningsService;
+    Models::UploadInfoRepository uploadInfoRepository(environment);
+    KeywordsPresets::PresetKeywordsModel presetsModel(environment);
+    Warnings::WarningsService warningsService(environment);
     Encryption::SecretsManager secretsManager;
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
-    Suggestion::KeywordsSuggestor keywordsSuggestor;
+    Suggestion::KeywordsSuggestor keywordsSuggestor(environment);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
-    Models::RecentDirectoriesModel recentDirectorieModel;
-    Models::RecentFilesModel recentFileModel;
+    Models::RecentDirectoriesModel recentDirectorieModel(environment);
+    Models::RecentFilesModel recentFileModel(environment);
     libxpks::net::FtpCoordinator *ftpCoordinator = new libxpks::net::FtpCoordinator(settingsModel.getMaxParallelUploads());
-    Models::ArtworkUploader artworkUploader(ftpCoordinator);
-    SpellCheck::SpellCheckerService spellCheckerService(&settingsModel);
+    Models::ArtworkUploader artworkUploader(environment, ftpCoordinator);
+    SpellCheck::SpellCheckerService spellCheckerService(environment, &settingsModel);
     SpellCheck::SpellCheckSuggestionModel spellCheckSuggestionModel;
     MetadataIO::MetadataIOService metadataIOService;
     Warnings::WarningsModel warningsModel;
@@ -269,32 +265,31 @@ int main(int argc, char *argv[]) {
     Models::LanguagesModel languagesModel;
     AutoComplete::KeywordsAutoCompleteModel autoCompleteModel;
     AutoComplete::AutoCompleteService autoCompleteService(&autoCompleteModel, &presetsModel, &settingsModel);
-    QMLExtensions::ImageCachingService imageCachingService;
+    QMLExtensions::ImageCachingService imageCachingService(environment);
     Models::FindAndReplaceModel findAndReplaceModel(&colorsModel);
     Models::DeleteKeywordsViewModel deleteKeywordsModel;
-    Translation::TranslationManager translationManager;
+    Translation::TranslationManager translationManager(environment);
     Translation::TranslationService translationService(translationManager);
     Models::ArtworkProxyModel artworkProxy;
-    Models::SessionManager sessionManager;
+    Models::SessionManager sessionManager(environment);
     sessionManager.initialize();
     // intentional memory leak to beat spellcheck lock stuff
     QuickBuffer::QuickBuffer quickBuffer;
-    Maintenance::MaintenanceService maintenanceService;
+    Maintenance::MaintenanceService maintenanceService(environment);
     Connectivity::RequestsService requestsService;
 
-    QMLExtensions::VideoCachingService videoCachingService;
+    QMLExtensions::VideoCachingService videoCachingService(environment);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
-    Models::SwitcherModel switcherModel;
-    Connectivity::UpdateService updateService(&settingsModel, &switcherModel);
+    Models::SwitcherModel switcherModel(environment);
+    Connectivity::UpdateService updateService(environment, &settingsModel, &switcherModel, &maintenanceService);
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
     Connectivity::TelemetryService telemetryService("1234567890", false);
-    Plugins::PluginManager pluginManager;
-    Helpers::DatabaseManager databaseManager;
+    Plugins::PluginManager pluginManager(environment);
+    Helpers::DatabaseManager databaseManager(environment);
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
-    MetadataIO::CsvExportModel csvExportModel;
-    csvExportModel.disableRemoteConfigs();
+    MetadataIO::CsvExportModel csvExportModel(environment);
 
     Commands::CommandManager commandManager;
     commandManager.InjectDependency(&artworkRepository);
@@ -360,9 +355,13 @@ int main(int argc, char *argv[]) {
 #endif
 
     switcherModel.setRemoteConfigOverride(findFullPathForTests("configs-for-tests/tests_switches.json"));
+    csvExportModel.setRemoteConfigOverride(findFullPathForTests("api/v1/csv_export_plans.json"));
 
     commandManager.connectEntitiesSignalsSlots();
     commandManager.afterConstructionCallback();
+
+    // process signals from construction
+    QCoreApplication::processEvents();
 
     int result = 0;
 
@@ -412,6 +411,8 @@ int main(int argc, char *argv[]) {
     integrationTests.append(new ReimportTest(&commandManager));
     integrationTests.append(new AutoImportTest(&commandManager));
     integrationTests.append(new ImportLostMetadataTest(&commandManager));
+    integrationTests.append(new WarningsCombinedTest(&commandManager));
+    integrationTests.append(new CsvDefaultExportTest(&commandManager));
     // always the last one. insert new tests above
     integrationTests.append(new LocalLibrarySearchTest(&commandManager));
 

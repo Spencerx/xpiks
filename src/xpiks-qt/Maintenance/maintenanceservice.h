@@ -13,6 +13,7 @@
 
 #include <QObject>
 #include "../MetadataIO/artworkssnapshot.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class ArtworkMetadata;
@@ -46,7 +47,7 @@ namespace Maintenance {
     {
         Q_OBJECT
     public:
-        MaintenanceService();
+        MaintenanceService(Common::ISystemEnvironment &environment);
 
     public:
         void startService();
@@ -54,6 +55,7 @@ namespace Maintenance {
 
     public:
         void cleanupUpdatesArtifacts();
+        void cleanupDownloadedUpdates(const QString &downloadsPath);
         void launchExiftool(const QString &settingsExiftoolPath, MetadataIO::MetadataIOCoordinator *coordinator);
         void initializeDictionaries(Translation::TranslationManager *translationManager, Helpers::AsyncCoordinator *initCoordinator);
         void cleanupLogs();
@@ -67,6 +69,7 @@ namespace Maintenance {
         void workerDestroyed(QObject *object);
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         MaintenanceWorker *m_MaintenanceWorker;
     };
 }

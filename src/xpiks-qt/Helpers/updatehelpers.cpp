@@ -30,38 +30,25 @@ void launchOSXdmg(const QString &dmgPath) {
 #ifdef Q_OS_WIN
 
 QString getLogFilenameForMinistaller() {
-    QString appDataPath = XPIKS_USERDATA_PATH;
-    if (appDataPath.isEmpty()) {
-        appDataPath = QDir::currentPath();
-    }
-
-    const QString &logFileDir = QDir::cleanPath(appDataPath + QDir::separator() + "logs");
-    QDir logsDir(logFileDir);
-    Q_ASSERT(logsDir.exists());
-
     QString time = QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss-zzz");
     QString logFilename = QString("ministaller-%1.log").arg(time);
-
-    QString logFilePath = logsDir.filePath(logFilename);
-    return logFilePath;
+    return logFilename;
 }
 
-void launchWindowsInstaller(const QString &pathToUpdate) {
+void launchWindowsInstaller(Common::ISystemEnvironment &environment, const QString &pathToUpdate) {
     LOG_DEBUG << "#";
-
-    const QString appDirPath = QCoreApplication::applicationDirPath();
-    QDir appDir(appDirPath);
-    QString ministallerPath = appDir.filePath("ministaller.exe");
+    QString ministallerPath = environment.filepath("ministaller.exe");
 
     if (!QFileInfo(ministallerPath).exists()) {
         LOG_WARNING << "Updater not found!" << ministallerPath;
         return;
     }
 
-    QString installerLogPath = getLogFilenameForMinistaller();
+    QString installerLogName = getLogFilenameForMinistaller();
+    QString installerLogPath = environment.fileInDir(installerLogName, "logs");
     QStringList arguments;
     arguments << "-force-update" << "-gui" <<
-                 "-install-path" << appDirPath <<
+                 "-install-path" << environment.root() <<
                  "-l" << installerLogPath <<
                  "-launch-exe" << "Xpiks.exe" <<
                  "-package-path" << pathToUpdate <<
@@ -73,11 +60,11 @@ void launchWindowsInstaller(const QString &pathToUpdate) {
 #endif
 
 namespace Helpers {
-    void installUpdate(const QString &updatePath) {
+    void installUpdate(Common::ISystemEnvironment &environment, const QString &updatePath) {
 #if defined(Q_OS_OSX)
         launchOSXdmg(updatePath);
 #elif defined(Q_OS_WIN)
-        launchWindowsInstaller(updatePath);
+        launchWindowsInstaller(environment, updatePath);
 #endif
     }
 }

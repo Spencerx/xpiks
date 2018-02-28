@@ -57,15 +57,15 @@ before_script:
   - export COMPILER=g++-5
   - g++ --version
   - ulimit -c unlimited -S       # enable core dumps
-  - chmod +x vendors/build_vendors_travis.sh
+  - chmod +x vendors/build_vendors_linux.sh
 
 script:
-  - bash vendors/build_vendors_travis.sh
+  - if [ -z "${UI_TESTS+xxx}" ]; then bash vendors/build_vendors_linux.sh travis-ci; fi
   - cd src/
-  - ls -la ../libs/
+  - ls -la ../libs/*
   - echo "-------"
   - cd xpiks-qt/
   - qmake "CONFIG+= debug travis-ci" xpiks-qt.pro
   - build-wrapper-linux-x86-64 --out-dir bw-output make
-  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
   - sonar-scanner

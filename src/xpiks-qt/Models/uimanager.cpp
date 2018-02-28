@@ -24,10 +24,10 @@
 #define DEFAULT_APP_POSITION -1
 
 namespace Models {
-    UIManager::UIManager(SettingsModel *settingsModel, QObject *parent) :
+    UIManager::UIManager(Common::ISystemEnvironment &environment, SettingsModel *settingsModel, QObject *parent) :
         QObject(parent),
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
-        m_State("uimanager"),
+        m_State("uimanager", environment),
         m_SettingsModel(settingsModel),
         m_TabID(42),
         m_SaveTimerId(-1),

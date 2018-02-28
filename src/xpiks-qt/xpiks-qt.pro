@@ -13,7 +13,7 @@ CONFIG(release, debug|release)  {
     CONFIG += separate_debug_info
 }
 
-VERSION = 1.5.0.2
+VERSION = 1.5.0.5
 QMAKE_TARGET_PRODUCT = Xpiks
 QMAKE_TARGET_DESCRIPTION = "Cross-Platform Image Keywording Software"
 QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2014-2018 Taras Kushnir"
@@ -91,7 +91,6 @@ SOURCES += main.cpp \
     Models/abstractconfigupdatermodel.cpp \
     AutoComplete/stocksftplistmodel.cpp \
     Models/imageartwork.cpp \
-    Common/flags.cpp \
     Models/proxysettings.cpp \
     QMLExtensions/imagecachingworker.cpp \
     QMLExtensions/imagecachingservice.cpp \
@@ -182,7 +181,10 @@ SOURCES += main.cpp \
     Common/basickeywordsmodelimpl.cpp \
     Maintenance/xpkscleanupjob.cpp \
     Commands/maindelegator.cpp \
-    Common/baseentity.cpp
+    Common/baseentity.cpp \
+    Warnings/warningsitem.cpp \
+    Maintenance/updatebundlecleanupjobitem.cpp \
+    Common/systemenvironment.cpp
 
 RESOURCES += qml.qrc
 
@@ -426,7 +428,11 @@ HEADERS += \
     Maintenance/xpkscleanupjob.h \
     Commands/maindelegator.h \
     KeywordsPresets/presetmodel.h \
-    KeywordsPresets/groupmodel.h
+    KeywordsPresets/groupmodel.h \
+    Warnings/iwarningssettings.h \
+    Maintenance/updatebundlecleanupjobitem.h \
+    Common/systemenvironment.h \
+    Common/isystemenvironment.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
@@ -558,7 +564,8 @@ DISTFILES += \
     Graphics/slategray/More_icon_normal.svg \
     Dialogs/WipeMetadata.qml \
     Dialogs/SimplePreview.qml \
-    ../xpiks-common/xpiks-common.pri
+    ../xpiks-common/xpiks-common.pri \
+    Components/DraggableKeywordWrapper.qml
 
 lupdate_only {
 SOURCES += *.qml \
@@ -673,7 +680,6 @@ win32 {
 linux {
     message("for Linux")
     INCLUDEPATH += "../../vendors/quazip"
-    LIBS += -L"$$PWD/../../libs"
     BUILDNO = $$system($$PWD/buildno.sh)
 
     LIBS += -ldl
@@ -690,12 +696,10 @@ linux {
 
 appveyor {
     DEFINES += WITH_LOGS
-    LIBS += -L"$$PWD/../../libs"
 }
 
 travis-ci {
     message("for Travis CI")
-    LIBS += -L"$$PWD/../../libs"
     LIBS -= -lz
     LIBS += /usr/lib/x86_64-linux-gnu/libz.so
     LIBS += -ldl

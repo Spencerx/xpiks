@@ -19,6 +19,7 @@
 #include <QSortFilterProxyModel>
 #include "../Common/baseentity.h"
 #include "uiprovider.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Plugins {
     class XpiksPluginInterface;
@@ -28,7 +29,7 @@ namespace Plugins {
     {
         Q_OBJECT
     public:
-        PluginManager();
+        PluginManager(Common::ISystemEnvironment &environment);
         virtual ~PluginManager();
 
     public:
@@ -84,6 +85,7 @@ namespace Plugins {
         int getNextPluginID() { return m_LastPluginID++; }
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         QString m_PluginsDirectoryPath;
         QString m_FailedPluginsDirectory;
         std::vector<std::shared_ptr<PluginWrapper> > m_PluginsList;

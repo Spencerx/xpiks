@@ -124,7 +124,6 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/imageartwork.cpp \
     spellingproduceswarningstest.cpp \
     undoaddwithvectorstest.cpp \
-    ../../xpiks-qt/Common/flags.cpp \
     readlegacysavedtest.cpp \
     ../../xpiks-qt/QMLExtensions/imagecachingservice.cpp \
     ../../xpiks-qt/QMLExtensions/imagecachingworker.cpp \
@@ -228,7 +227,12 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Maintenance/xpkscleanupjob.cpp \
     ../../xpiks-qt/Common/baseentity.cpp \
     ../../xpiks-qt/Commands/maindelegator.cpp \
-    importlostmetadatatest.cpp
+    importlostmetadatatest.cpp \
+    ../../xpiks-qt/Warnings/warningsitem.cpp \
+    warningscombinedtest.cpp \
+    csvdefaultexporttest.cpp \
+    ../../xpiks-qt/Maintenance/updatebundlecleanupjobitem.cpp \
+    ../../xpiks-qt/Common/systemenvironment.cpp
 
 RESOURCES +=
 
@@ -494,7 +498,13 @@ HEADERS += \
     ../../xpiks-qt/Commands/maindelegator.h \
     ../../xpiks-qt/KeywordsPresets/groupmodel.h \
     ../../xpiks-qt/KeywordsPresets/presetmodel.h \
-    importlostmetadatatest.h
+    importlostmetadatatest.h \
+    ../../xpiks-qt/Warnings/iwarningssettings.h \
+    warningscombinedtest.h \
+    csvdefaultexporttest.h \
+    ../../xpiks-qt/Maintenance/updatebundlecleanupjobitem.h \
+    ../../xpiks-qt/Common/isystemenvironment.h \
+    ../../xpiks-qt/Common/systemenvironment.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface
@@ -590,8 +600,7 @@ win32 {
 
 linux {
     message("for Linux")
-    INCLUDEPATH += "../../vendors/quazip"
-    LIBS += -L"$$PWD/../../libs"
+    INCLUDEPATH += "../../../vendors/quazip"
     BUILDNO = $$system($$PWD/buildno.sh)
 
     LIBS += -lexiv2
@@ -609,7 +618,6 @@ travis-ci {
     message("for Travis CI")
     INCLUDEPATH += "../../../vendors/quazip"
 
-    LIBS += -L"$$PWD/../../../libs"
     LIBS -= -lz
     LIBS += /usr/lib/x86_64-linux-gnu/libz.so
     LIBS += -ldl
@@ -637,7 +645,6 @@ appveyor {
     message("for Appveyor")
     DEFINES += APPVEYOR
     DEFINES -= WITH_LOGS
-    LIBS += -L"$$PWD/../../../libs"
 }
 
 DEFINES += BUILDNUMBER=$${BUILDNO}

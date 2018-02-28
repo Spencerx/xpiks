@@ -41,28 +41,22 @@ namespace Connectivity {
 #define METADATA_AUTO_IMPORT QLatin1String("autoImport")
 #define GETTY_SUGGESTION QLatin1String("iStockSuggestion")
 #define UPDATE_ENABLED QLatin1String("updateEnabled")
+#define KEYWORDS_DRAG_DROP_ENABLED QLatin1String("keywordsDragDropEnabled")
 
     QDebug operator << (QDebug d, const SwitcherConfig::SwitchValue &value) {
         d << "{" << value.m_IsOn << "*" << value.m_Threshold << "}";
         return d;
     }
 
-    SwitcherConfig::SwitcherConfig(QObject *parent):
-        Models::AbstractConfigUpdaterModel(OVERWRITE_SWITCHER_CONFIG, parent)
+    SwitcherConfig::SwitcherConfig(Common::ISystemEnvironment &environment, QObject *parent):
+        Models::AbstractConfigUpdaterModel(OVERWRITE_SWITCHER_CONFIG, parent),
+        m_Environment(environment)
     {
     }
 
     void SwitcherConfig::initializeConfigs() {
-        QString localConfigPath;
-
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        if (!appDataPath.isEmpty()) {
-            QDir appDataDir(appDataPath);
-            localConfigPath = appDataDir.filePath(LOCAL_SWITCHER_CONFIG);
-        } else {
-            localConfigPath = LOCAL_SWITCHER_CONFIG;
-        }
-
+        LOG_DEBUG << "#";
+        QString localConfigPath = m_Environment.filepath(LOCAL_SWITCHER_CONFIG);
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getSwitcherAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);
@@ -95,7 +89,8 @@ namespace Connectivity {
             }
 
             QJsonObject rootObject = document.object();
-            parseSwitches(rootObject);
+            parseSwitches(rootObject);            
+            emit switchesUpdated();
         } while (false);
 
         return anyError;
@@ -129,6 +124,7 @@ namespace Connectivity {
 
         if (document.isObject()) {
             parseSwitches(document.object());
+            emit switchesUpdated();
         } else {
             LOG_WARNING << "Remote document is not an object";
         }
@@ -229,6 +225,7 @@ namespace Connectivity {
         SwitchValue autoImport;
         SwitchValue gettySuggestion;
         SwitchValue updateEnabled;
+        SwitchValue keywordsDragDropEnabled;
 
         initSwitchValue(object, DONATE_CAMPAIGN_1_KEY, donateCampaign1Active);
         initSwitchValue(object, DONATE_CAMPAIGN_1_STAGE_2, donateCampaign1Stage2);
@@ -238,6 +235,7 @@ namespace Connectivity {
         initSwitchValue(object, METADATA_AUTO_IMPORT, autoImport);
         initSwitchValue(object, GETTY_SUGGESTION, gettySuggestion);
         initSwitchValue(object, UPDATE_ENABLED, updateEnabled);
+        initSwitchValue(object, KEYWORDS_DRAG_DROP_ENABLED, keywordsDragDropEnabled);
 
         // overwrite these values
         {
@@ -253,10 +251,9 @@ namespace Connectivity {
             m_SwitchesHash[MetadataAutoImport] = autoImport;
             m_SwitchesHash[GettySuggestionEnabled] = gettySuggestion;
             m_SwitchesHash[UpdateEnabled] = updateEnabled;
+            m_SwitchesHash[KeywordsDragDropEnabled] = keywordsDragDropEnabled;
 
             LOG_INTEGR_TESTS_OR_DEBUG << m_SwitchesHash;
         }
-
-        emit switchesUpdated();
     }
 }

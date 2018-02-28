@@ -109,14 +109,6 @@ Item {
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
             uploadInfos.removeItem(itemIndex)
-            if (uploadInfos.infosCount == 0) {
-                if (typeof titleText !== "undefined") {
-                    titleText.text = ""
-                    ftpHost.text = ""
-                    ftpUsername.text = ""
-                    ftpPassword.text = ""
-                }
-            }
         }
     }
 
@@ -217,14 +209,6 @@ Item {
                     anchors.bottomMargin: 10
                     clip: true
                     boundsBehavior: Flickable.StopAtBounds
-
-                    add: Transition {
-                        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 230 }
-                    }
-
-                    remove: Transition {
-                        NumberAnimation { property: "opacity"; to: 0; duration: 230 }
-                    }
 
                     displaced: Transition {
                         NumberAnimation { properties: "x,y"; duration: 230 }

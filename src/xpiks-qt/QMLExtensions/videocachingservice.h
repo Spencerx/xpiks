@@ -16,6 +16,7 @@
 #include <memory>
 #include <vector>
 #include "../Common/baseentity.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class ArtworkMetadata;
@@ -34,7 +35,7 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        explicit VideoCachingService(QObject *parent = 0);
+        explicit VideoCachingService(Common::ISystemEnvironment &environment, QObject *parent = 0);
 
     public:
         void startService();
@@ -46,6 +47,7 @@ namespace QMLExtensions {
         void waitWorkerIdle();
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         VideoCachingWorker *m_CachingWorker;
         volatile bool m_IsCancelled;
     };

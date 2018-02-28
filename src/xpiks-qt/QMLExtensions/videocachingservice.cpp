@@ -19,9 +19,10 @@
 #include "../Common/defines.h"
 
 namespace QMLExtensions {
-    VideoCachingService::VideoCachingService(QObject *parent) :
+    VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment, QObject *parent) :
         QObject(parent),
         Common::BaseEntity(),
+        m_Environment(environment),
         m_CachingWorker(nullptr),
         m_IsCancelled(false)
     {
@@ -30,7 +31,7 @@ namespace QMLExtensions {
     void VideoCachingService::startService() {
         Helpers::DatabaseManager *dbManager = m_CommandManager->getDatabaseManager();
 
-        m_CachingWorker = new VideoCachingWorker(dbManager);
+        m_CachingWorker = new VideoCachingWorker(m_Environment, dbManager);
         m_CachingWorker->setCommandManager(m_CommandManager);
 
         QThread *thread = new QThread();
@@ -67,6 +68,7 @@ namespace QMLExtensions {
 #else
         const bool goodQualityAllowed = false;
 #endif
+        LOG_DEBUG << (goodQualityAllowed ? "Good" : "Quick") << "quality allowed";
 
         const size_t size = snapshot.size();
         std::vector<std::shared_ptr<VideoCacheRequest> > requests;

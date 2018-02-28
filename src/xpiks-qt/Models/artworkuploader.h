@@ -20,6 +20,7 @@
 #include "../Connectivity/uploadwatcher.h"
 #include "../Helpers/ifilenotavailablemodel.h"
 #include "../MetadataIO/artworkssnapshot.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Helpers {
     class TestConnectionResult;
@@ -52,7 +53,9 @@ namespace Models {
         Q_PROPERTY(int itemsCount READ getItemsCount NOTIFY itemsCountChanged)
         Q_OBJECT
     public:
-        ArtworkUploader(Connectivity::IFtpCoordinator *ftpCoordinator, QObject *parent=0);
+        ArtworkUploader(Common::ISystemEnvironment &environment,
+                        Connectivity::IFtpCoordinator *ftpCoordinator,
+                        QObject *parent=0);
         virtual ~ArtworkUploader();
 
     public:
@@ -133,6 +136,7 @@ namespace Models {
         virtual bool removeUnavailableItems() override;
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         MetadataIO::ArtworksSnapshot m_ArtworksSnapshot;
         Connectivity::UploadWatcher m_UploadWatcher;
         Connectivity::IFtpCoordinator *m_FtpCoordinator;

@@ -45,7 +45,7 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::TooFewKeywords)) {
-            int minKeywordsCount = settingsModel->getMinKeywordsCount();
+            const int minKeywordsCount = settingsModel->getMinKeywordsCount();
             descriptions.append(QObject::tr("There's less than %1 keywords").arg(minKeywordsCount));
         }
 
@@ -59,7 +59,7 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::DescriptionNotEnoughWords)) {
-            int minWordsCount = settingsModel->getMinWordsCount();
+            const int minWordsCount = settingsModel->getMinWordsCount();
             descriptions.append(QObject::tr("Description should not have less than %1 words").arg(minWordsCount));
         }
 
@@ -72,7 +72,7 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::TitleNotEnoughWords)) {
-            int minWordsCount = settingsModel->getMinWordsCount();
+            const int minWordsCount = settingsModel->getMinWordsCount();
             descriptions.append(QObject::tr("Title should not have less than %1 words").arg(minWordsCount));
         }
 

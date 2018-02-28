@@ -34,23 +34,15 @@
 #define DIRECTORY_PATH_KEY "dirpath"
 
 namespace Models {
-    SessionManager::SessionManager():
+    SessionManager::SessionManager(Common::ISystemEnvironment &environment):
         QObject(),
+        m_LocalConfigPath(environment.filepath(SESSION_FILE)),
         m_CanRestore(false)
     {
     }
 
     void SessionManager::initialize() {
         LOG_DEBUG << "#";
-
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        if (!appDataPath.isEmpty()) {
-            QDir appDataDir(appDataPath);
-            m_LocalConfigPath = appDataDir.filePath(SESSION_FILE);
-        } else {
-            m_LocalConfigPath = SESSION_FILE;
-        }
-
         m_Config.setPath(m_LocalConfigPath);
     }
 

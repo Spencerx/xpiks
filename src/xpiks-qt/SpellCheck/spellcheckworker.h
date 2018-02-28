@@ -20,6 +20,7 @@
 #include "../Models/settingsmodel.h"
 #include "spellcheckitem.h"
 #include "../Helpers/asynccoordinator.h"
+#include "../Common/isystemenvironment.h"
 
 class Hunspell;
 class QTextCodec;
@@ -64,7 +65,10 @@ namespace SpellCheck {
         Q_OBJECT
 
     public:
-        SpellCheckWorker(Helpers::AsyncCoordinator *initCoordinator, Models::SettingsModel *settingsModel, QObject *parent=0);
+        SpellCheckWorker(Common::ISystemEnvironment &environment,
+                         Helpers::AsyncCoordinator *initCoordinator,
+                         Models::SettingsModel *settingsModel,
+                         QObject *parent=0);
         virtual ~SpellCheckWorker();
 
     public:
@@ -120,6 +124,7 @@ namespace SpellCheck {
         void signalUserDictWordsCount();
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         Helpers::AsyncCoordinator *m_InitCoordinator;
         Models::SettingsModel *m_SettingsModel;
         QHash<QString, QStringList> m_Suggestions;

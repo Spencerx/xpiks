@@ -217,14 +217,6 @@ ApplicationWindow {
                 clip: true
                 boundsBehavior: Flickable.StopAtBounds
 
-                add: Transition {
-                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 230 }
-                }
-
-                remove: Transition {
-                    NumberAnimation { property: "opacity"; to: 0; duration: 230 }
-                }
-
                 displaced: Transition {
                     NumberAnimation { properties: "x,y"; duration: 230 }
                 }
@@ -328,7 +320,7 @@ ApplicationWindow {
 
                     Connections {
                         target: settingsModel
-                        onSettingsReset: { resetRequested() }
+                        onSettingsReset: { behaviorTab.resetRequested() }
                     }
 
                     ColumnLayout {
@@ -527,7 +519,7 @@ ApplicationWindow {
 
                     Connections {
                         target: settingsModel
-                        onSettingsReset: { resetRequested() }
+                        onSettingsReset: { uxTab.resetRequested() }
                     }
 
                     ColumnLayout {
@@ -735,36 +727,37 @@ ApplicationWindow {
                                 text: i18.n + qsTr("Undo dismiss duration:")
                             }
 
-                            Rectangle {
-                                color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                                border.color: uiColors.artworkActiveColor
-                                border.width: dismissDuration.activeFocus ? 1 : 0
-                                width: 115
-                                height: UIConfig.textInputHeight
-                                clip: true
+                            ComboBoxPopup {
+                                id: undoDurationComboBox
+                                model: [10, 20, 30, 40, 50, 60]
+                                showColorSign: false
+                                width: 130
+                                height: 24
+                                itemHeight: 28
+                                dropDownWidth: 130
+                                glowEnabled: true
+                                glowTopMargin: 2
+                                globalParent: globalHost
 
-                                StyledTextInput {
-                                    id: dismissDuration
-                                    text: settingsModel.dismissDuration
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.leftMargin: 5
-                                    anchors.rightMargin: 5
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onTextChanged: {
-                                        if (text.length > 0) {
-                                            settingsModel.dismissDuration = parseInt(text)
-                                        }
-                                    }
+                                onComboItemSelected: {
+                                    var index = undoDurationComboBox.selectedIndex;
+                                    var value = undoDurationComboBox.model[index]
+                                    settingsModel.dismissDuration = parseInt(value)
+                                }
 
-                                    function onResetRequested() {
-                                        text = settingsModel.dismissDuration
-                                    }
+                                function setValue(value, defaultIndex) {
+                                    var index = undoDurationComboBox.model.indexOf(value)
+                                    if (index === -1) { index = defaultIndex }
+                                    selectedIndex = index
+                                }
 
-                                    validator: IntValidator {
-                                        bottom: 1
-                                        top: 100
-                                    }
+                                function onResetRequested() {
+                                    setValue(settingsModel.dismissDuration, 2)
+                                }
+
+                                Component.onCompleted: {
+                                    setValue(settingsModel.dismissDuration, 2)
+                                    uxTab.resetRequested.connect(undoDurationComboBox.onResetRequested)
                                 }
                             }
 
@@ -788,7 +781,7 @@ ApplicationWindow {
 
                     Connections {
                         target: settingsModel
-                        onSettingsReset: { resetRequested() }
+                        onSettingsReset: { extTab.resetRequested() }
                     }
 
                     ColumnLayout {
@@ -899,7 +892,7 @@ ApplicationWindow {
 
                     Connections {
                         target: settingsModel
-                        onSettingsReset: { resetRequested() }
+                        onSettingsReset: { uploadTab.resetRequested() }
                     }
 
                     ColumnLayout {
@@ -924,7 +917,7 @@ ApplicationWindow {
                                 color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
                                 border.width: timeoutSeconds.activeFocus ? 1 : 0
                                 border.color: uiColors.artworkActiveColor
-                                width: 115
+                                width: 130
                                 height: UIConfig.textInputHeight
                                 clip: true
 
@@ -950,7 +943,7 @@ ApplicationWindow {
                                         uploadTab.resetRequested.connect(timeoutSeconds.onResetRequested)
                                     }
 
-                                    KeyNavigation.tab: maxParallelUploads
+                                    //KeyNavigation.tab: maxParallelUploads
                                     validator: IntValidator {
                                         bottom: 0
                                         top: 300
@@ -974,40 +967,37 @@ ApplicationWindow {
                                 text: i18.n + qsTr("Max parallel uploads:")
                             }
 
-                            Rectangle {
-                                color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                                border.width: maxParallelUploads.activeFocus ? 1 : 0
-                                border.color: uiColors.artworkActiveColor
-                                width: 115
-                                height: UIConfig.textInputHeight
-                                clip: true
+                            ComboBoxPopup {
+                                id: parallelUploadsComboBox
+                                model: [1, 2, 3, 4]
+                                showColorSign: false
+                                width: 130
+                                height: 24
+                                itemHeight: 28
+                                dropDownWidth: 130
+                                glowEnabled: true
+                                glowTopMargin: 2
+                                globalParent: globalHost
 
-                                StyledTextInput {
-                                    id: maxParallelUploads
-                                    text: settingsModel.maxParallelUploads
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.leftMargin: 5
-                                    anchors.rightMargin: 5
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onTextChanged: {
-                                        if (text.length > 0) {
-                                            settingsModel.maxParallelUploads = parseInt(text)
-                                        }
-                                    }
+                                onComboItemSelected: {
+                                    var index = parallelUploadsComboBox.selectedIndex;
+                                    var value = parallelUploadsComboBox.model[index]
+                                    settingsModel.maxParallelUploads = parseInt(value)
+                                }
 
-                                    function onResetRequested() {
-                                        text = settingsModel.maxParallelUploads
-                                    }
+                                function onResetRequested() {
+                                    setValue(settingsModel.maxParallelUploads, 1)
+                                }
 
-                                    Component.onCompleted: {
-                                        uploadTab.resetRequested.connect(maxParallelUploads.onResetRequested)
-                                    }
-                                    KeyNavigation.backtab: timeoutSeconds
-                                    validator: IntValidator {
-                                        bottom: 1
-                                        top: 4
-                                    }
+                                function setValue(value, defaultIndex) {
+                                    var index = parallelUploadsComboBox.model.indexOf(value)
+                                    if (index === -1) { index = defaultIndex }
+                                    selectedIndex = index
+                                }
+
+                                Component.onCompleted: {
+                                    setValue(settingsModel.maxParallelUploads, 1)
+                                    uploadTab.resetRequested.connect(parallelUploadsComboBox.onResetRequested)
                                 }
                             }
 
@@ -1089,7 +1079,7 @@ ApplicationWindow {
 
                     Connections {
                         target: settingsModel
-                        onSettingsReset: { resetRequested() }
+                        onSettingsReset: { secTab.resetRequested() }
                     }
 
                     ColumnLayout {

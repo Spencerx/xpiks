@@ -809,3 +809,124 @@ void ArtworkMetadataTests::removeKeywordsMarksModifiedTest() {
     QVERIFY(result);
     QVERIFY(metadata.isModified());
 }
+
+void ArtworkMetadataTests::swapKeywordsBasicTest() {
+    Mocks::ArtworkMetadataMock artwork("file.jpg");
+    artwork.initAsEmpty();
+    const QString first = "keyword1";
+    const QString second = "keyword2";
+    artwork.appendKeywords(QStringList() << first << second);
+    artwork.getBasicModel()->getRawKeywords()[0].m_IsCorrect = false;
+    artwork.getBasicModel()->getRawKeywords()[1].m_HasDuplicates = true;
+
+    QCOMPARE(first, artwork.getBasicModel()->getKeywordAt(0));
+    QCOMPARE(second, artwork.getBasicModel()->getKeywordAt(1));
+
+    bool result = artwork.moveKeyword(1, 0);
+    QVERIFY(result);
+    QVERIFY(artwork.isModified());
+
+    auto keywords = artwork.getBasicModel()->getRawKeywords();
+
+    QCOMPARE(second, artwork.getBasicModel()->getKeywordAt(0));
+    QCOMPARE(bool(keywords[0].m_IsCorrect), true);
+    QCOMPARE(bool(keywords[0].m_HasDuplicates), true);
+    QCOMPARE(first, artwork.getBasicModel()->getKeywordAt(1));
+    QCOMPARE(bool(keywords[1].m_IsCorrect), false);
+    QCOMPARE(bool(keywords[1].m_HasDuplicates), false);
+}
+
+void ArtworkMetadataTests::dontSwapKeywordsTest() {
+    Mocks::ArtworkMetadataMock artwork("file.jpg");
+    QString first = "keyword1";
+    QString second = "keyword2";
+    artwork.initialize("", "", QStringList() << first << second);
+
+    QCOMPARE(first, artwork.getBasicModel()->getKeywordAt(0));
+    QCOMPARE(second, artwork.getBasicModel()->getKeywordAt(1));
+
+    bool result = artwork.moveKeyword(2, 0);
+    QVERIFY(!result);
+    QVERIFY(!artwork.isModified());
+
+    QCOMPARE(first, artwork.getBasicModel()->getKeywordAt(0));
+    QCOMPARE(second, artwork.getBasicModel()->getKeywordAt(1));
+}
+
+void ArtworkMetadataTests::moveKeywordForwardTest() {
+    Mocks::ArtworkMetadataMock artwork("file.jpg");
+    artwork.initAsEmpty();
+
+    QStringList original = QStringList() << "first" << "second" << "third" << "forth";
+    artwork.appendKeywords(original);
+
+    bool result = artwork.moveKeyword(3, 1);
+    QVERIFY(result);
+    QVERIFY(artwork.isModified());
+
+    auto keywords = artwork.getBasicModel()->getKeywords();
+
+    QStringList expected = QStringList() << "first" << "forth" << "second" << "third";
+    QCOMPARE(keywords, expected);
+}
+
+void ArtworkMetadataTests::moveBackToFrontTest() {
+    Mocks::ArtworkMetadataMock artwork("file.jpg");
+    artwork.initAsEmpty();
+
+    QStringList original = QStringList() << "first" << "second" << "third" << "forth";
+    artwork.appendKeywords(original);
+
+    bool result = artwork.moveKeyword(3, 0);
+    QVERIFY(result);
+    QVERIFY(artwork.isModified());
+
+    auto keywords = artwork.getBasicModel()->getKeywords();
+
+    QStringList expected = QStringList() << "forth" << "first" << "second" << "third";
+    QCOMPARE(keywords, expected);
+}
+
+void ArtworkMetadataTests::moveFrontToBackTest() {
+    Mocks::ArtworkMetadataMock artwork("file.jpg");
+    artwork.initAsEmpty();
+
+    QStringList original = QStringList() << "first" << "second" << "third" << "forth";
+    artwork.appendKeywords(original);
+
+    bool result = artwork.moveKeyword(0, 3);
+    QVERIFY(result);
+    QVERIFY(artwork.isModified());
+
+    auto keywords = artwork.getBasicModel()->getKeywords();
+
+    QStringList expected = QStringList() << "second" << "third" << "forth" << "first";
+    QCOMPARE(keywords, expected);
+}
+
+void ArtworkMetadataTests::moveMiddleToBackTest() {
+    Mocks::ArtworkMetadataMock artwork("file.jpg");
+    artwork.initAsEmpty();
+
+    QStringList original = QStringList() << "first" << "second" << "third" << "forth";
+    artwork.appendKeywords(original);
+
+    bool result = artwork.moveKeyword(2, 3);
+    QVERIFY(result);
+    QVERIFY(artwork.isModified());
+
+    auto keywords = artwork.getBasicModel()->getKeywords();
+
+    QStringList expected = QStringList() << "first" << "second" << "forth" << "third";
+    QCOMPARE(keywords, expected);
+}
+
+void ArtworkMetadataTests::moveSameSpotTest() {
+    Mocks::ArtworkMetadataMock artwork("file.jpg");
+
+    artwork.initialize("", "", QStringList() << "first" << "second" << "third" << "forth");
+
+    bool result = artwork.moveKeyword(2, 2);
+    QVERIFY(!artwork.isModified());
+    QVERIFY(!result);
+}

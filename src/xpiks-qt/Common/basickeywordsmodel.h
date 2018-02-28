@@ -23,6 +23,7 @@
 #include "flags.h"
 #include "wordanalysisresult.h"
 #include "keyword.h"
+#include "hold.h"
 
 namespace SpellCheck {
     class SpellCheckQueryItem;
@@ -33,7 +34,6 @@ namespace SpellCheck {
 
 namespace Common {
     class BasicKeywordsModelImpl;
-    class Hold;
 
     class BasicKeywordsModel:
             public AbstractListModel
@@ -99,6 +99,7 @@ namespace Common {
         bool areKeywordsEmpty();
         virtual bool replace(const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags);
         virtual bool removeKeywords(const QSet<QString> &keywords, bool caseSensitive);
+        virtual bool moveKeyword(size_t from, size_t to);
 
     private:
         size_t appendKeywordsUnsafe(const QStringList &keywordsList);
@@ -158,6 +159,7 @@ namespace Common {
 
     private:
         QReadWriteLock m_KeywordsLock;
+        Common::Hold &m_Hold;
         std::shared_ptr<BasicKeywordsModelImpl> m_Impl;
     };
 }

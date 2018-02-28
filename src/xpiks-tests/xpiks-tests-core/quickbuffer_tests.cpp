@@ -9,14 +9,16 @@
 #include "../../xpiks-qt/Models/combinedartworksmodel.h"
 #include "../../xpiks-qt/Models/uimanager.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
+#include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
+    Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock;\
     Mocks::ArtItemsModelMock artItemsModelMock;\
     Models::ArtworksRepository artworksRepository;\
     QuickBuffer::QuickBuffer quickBuffer;\
-    Models::SettingsModel settingsModel;\
-    Models::UIManager uiManager(&settingsModel);\
+    Models::SettingsModel settingsModel(environment);\
+    Models::UIManager uiManager(environment, &settingsModel);\
     Models::FilteredArtItemsProxyModel filteredItemsModel;\
     commandManagerMock.InjectDependency(&artworksRepository);\
     commandManagerMock.InjectDependency(&artItemsModelMock);\

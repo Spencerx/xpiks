@@ -2,6 +2,7 @@
 #define SPELLCHECKSERVICEMOCK_H
 
 #include "../../xpiks-qt/SpellCheck/spellcheckerservice.h"
+#include "../../xpiks-qt/Common/isystemenvironment.h"
 
 namespace Mocks {
     class SpellCheckServiceMock:
@@ -10,8 +11,8 @@ namespace Mocks {
     Q_OBJECT
 
     public:
-        SpellCheckServiceMock():
-            SpellCheck::SpellCheckerService() {}
+        SpellCheckServiceMock(Common::ISystemEnvironment &environment):
+            SpellCheck::SpellCheckerService(environment) {}
 
         // SpellCheckerService interface
 

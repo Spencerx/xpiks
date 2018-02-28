@@ -7,8 +7,10 @@
 #include "../../xpiks-qt/QuickBuffer/quickbuffer.h"
 #include "../../xpiks-qt/KeywordsPresets/presetkeywordsmodel.h"
 #include "../../xpiks-qt/Models/artworkproxymodel.h"
+#include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \
+    Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock;\
     Mocks::ArtItemsModelMock artItemsModelMock;\
     Models::ArtworksRepository artworksRepository;\
@@ -305,7 +307,7 @@ void ArtItemsModelTests::fillFromQuickBufferEmitsModifiedTest() {
 void ArtItemsModelTests::addPresetEmitsModifiedTest() {
     DECLARE_MODELS_AND_GENERATE(1, false);
 
-    KeywordsPresets::PresetKeywordsModel presetKeywordsModel;
+    KeywordsPresets::PresetKeywordsModel presetKeywordsModel(environment);
     commandManagerMock.InjectDependency(&presetKeywordsModel);
     presetKeywordsModel.addItem("preset", QString("preset,keywords").split(','));
 

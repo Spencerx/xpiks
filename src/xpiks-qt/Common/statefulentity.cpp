@@ -14,7 +14,8 @@
 #include "../Helpers/filehelpers.h"
 
 namespace Common {
-    StatefulEntity::StatefulEntity(const QString &stateName):
+    StatefulEntity::StatefulEntity(const QString &stateName, ISystemEnvironment &environment):
+        m_Environment(environment),
         m_StateName(stateName)
     {
         Q_ASSERT(!stateName.endsWith(".json", Qt::CaseInsensitive));
@@ -22,7 +23,6 @@ namespace Common {
 
     void StatefulEntity::init() {
         LOG_DEBUG << m_StateName;
-        QString localConfigPath;
 
 #if defined(QT_DEBUG)
         QString filename = QString("debug_%1.json").arg(m_StateName);
@@ -32,18 +32,7 @@ namespace Common {
         QString filename = QString("%1.json").arg(m_StateName);
 #endif
 
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        if (!appDataPath.isEmpty()) {
-            const QString statesPath = QDir::cleanPath(appDataPath + QDir::separator() + Constants::STATES_DIR);
-            QDir statesDir(statesPath);
-#ifndef CORE_TESTS
-            Q_ASSERT(statesDir.exists());
-#endif
-            localConfigPath = statesDir.filePath(filename);
-        } else {
-            localConfigPath = filename;
-        }
-
+        QString localConfigPath = m_Environment.fileInDir(filename, Constants::STATES_DIR);
         m_StateConfig.initConfig(localConfigPath);
 
         QJsonDocument &doc = m_StateConfig.getConfig();

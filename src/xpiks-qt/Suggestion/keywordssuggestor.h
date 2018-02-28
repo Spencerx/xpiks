@@ -23,6 +23,7 @@
 #include "suggestionartwork.h"
 #include "../Common/hold.h"
 #include "../Common/statefulentity.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Suggestion {
     class SuggestionQueryEngineBase;
@@ -42,7 +43,7 @@ namespace Suggestion {
         Q_PROPERTY(int searchTypeIndex READ getSearchTypeIndex WRITE setSearchTypeIndex NOTIFY searchTypeIndexChanged)
 
     public:
-        KeywordsSuggestor(QObject *parent=NULL);
+        KeywordsSuggestor(Common::ISystemEnvironment &environment, QObject *parent=NULL);
         virtual ~KeywordsSuggestor();
 
     public:

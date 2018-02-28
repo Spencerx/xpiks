@@ -32,7 +32,6 @@ namespace Models {
         void initializeConfigs(const QString &configUrl, const QString &filePath);
         const Helpers::LocalConfig &getLocalConfig() const { return m_LocalConfig; }
         Helpers::LocalConfig &getLocalConfig() { return m_LocalConfig; }
-        void setOnlyLocal() { m_OnlyLocal = true; }
 
 #ifdef INTEGRATION_TESTS
         void setRemoteOverride(const QString &localPath) {
@@ -57,7 +56,6 @@ namespace Models {
         Helpers::RemoteConfig m_RemoteConfig;
         Helpers::LocalConfig m_LocalConfig;
         bool m_ForceOverwrite;
-        bool m_OnlyLocal;
 
 #ifdef INTEGRATION_TESTS
         QString m_RemoteOverrideLocalPath;

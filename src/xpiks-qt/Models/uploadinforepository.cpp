@@ -148,10 +148,11 @@ namespace Models {
         }
     }
 
-    UploadInfoRepository::UploadInfoRepository(QObject *parent):
+    UploadInfoRepository::UploadInfoRepository(Common::ISystemEnvironment &environment, QObject *parent):
         QAbstractListModel(parent),
         Common::BaseEntity(),
         Common::DelayedActionEntity(UPLOAD_INFO_SAVE_TIMEOUT, UPLOAD_INFO_DELAYS_COUNT),
+        m_Environment(environment),
         m_EmptyPasswordsMode(false)
     {
         QObject::connect(this, &UploadInfoRepository::backupRequired, this, &UploadInfoRepository::onBackupRequired);
@@ -188,16 +189,7 @@ namespace Models {
 
     void UploadInfoRepository::initializeConfig() {
         LOG_DEBUG << "#";
-        QString localConfigPath;
-
-        QString appDataPath = XPIKS_USERDATA_PATH;
-        if (!appDataPath.isEmpty()) {
-            QDir appDataDir(appDataPath);
-            localConfigPath = appDataDir.filePath(UPLOAD_INFOS_FILE);
-        } else {
-            localConfigPath = UPLOAD_INFOS_FILE;
-        }
-
+        QString localConfigPath = m_Environment.filepath(UPLOAD_INFOS_FILE);
         m_LocalConfig.initConfig(localConfigPath);
         const QJsonDocument &localDocument = m_LocalConfig.getConfig();
 

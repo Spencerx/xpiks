@@ -15,6 +15,7 @@
 #include "../Helpers/localconfig.h"
 #include "presetgroupsmodel.h"
 #include "../Common/defines.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Helpers {
     class AsyncCoordinator;
@@ -39,7 +40,7 @@ namespace KeywordsPresets {
     friend class PresetKeywordsModel;
 
     public:
-        PresetKeywordsModelConfig();
+        PresetKeywordsModelConfig(Common::ISystemEnvironment &environment);
         void initializeConfigs();
         void loadFromModel(const std::vector<PresetModel *> &presets, const std::vector<GroupModel> &presetGroups);
         void sync();
@@ -63,6 +64,7 @@ namespace KeywordsPresets {
         void writeToConfig();
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         Helpers::LocalConfig m_Config;
         QString m_LocalConfigPath;
         std::vector<PresetData> m_PresetData;

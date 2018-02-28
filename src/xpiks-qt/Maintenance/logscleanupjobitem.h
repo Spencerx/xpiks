@@ -15,6 +15,7 @@
 #include <QVector>
 #include "../Common/defines.h"
 #include "imaintenanceitem.h"
+#include "../Common/isystemenvironment.h"
 
 #define MAX_LOGS_SIZE_MB 10
 #define MAX_LOGS_SIZE_BYTES (MAX_LOGS_SIZE_MB * 1024 * 1024)
@@ -33,7 +34,7 @@ namespace Maintenance {
     class LogsCleanupJobItem: public IMaintenanceItem
     {
     public:
-        LogsCleanupJobItem();
+        LogsCleanupJobItem(Common::ISystemEnvironment &environment);
 
     public:
         virtual void processJob() override;

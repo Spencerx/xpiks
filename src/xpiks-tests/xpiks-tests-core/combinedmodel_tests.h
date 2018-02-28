@@ -4,9 +4,13 @@
 #include <QtTest/QtTest>
 #include "Mocks/commandmanagermock.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
+#include "Mocks/coretestsenvironment.h"
 
 class CombinedModelTests : public QObject {
     Q_OBJECT
+
+public:
+    CombinedModelTests(QObject *parent = nullptr);
 
 private slots:
     void initTestCase();
@@ -59,6 +63,7 @@ private slots:
 private:
     Mocks::CommandManagerMock m_CommandManagerMock;
     Models::SettingsModel m_SettingsModel;
+    Mocks::CoreTestsEnvironment m_Environment;
 };
 
 #endif // COMBINEDMODELTESTS_H

@@ -20,7 +20,6 @@
 #include <QHash>
 #include <vector>
 #include "baseentity.h"
-#include "hold.h"
 #include "keyword.h"
 #include "flags.h"
 #include "imetadataoperator.h"
@@ -41,7 +40,7 @@ namespace Common {
         friend class BasicKeywordsModel;
 
     public:
-        BasicKeywordsModelImpl(Common::Hold &hold);
+        BasicKeywordsModelImpl();
         virtual ~BasicKeywordsModelImpl() { }
 
     public:
@@ -61,6 +60,7 @@ namespace Common {
         bool canEditKeyword(size_t index, const QString &replacement) const;
         bool editKeyword(size_t index, const QString &replacement);
         bool replaceKeyword(size_t index, const QString &existing, const QString &replacement);
+        bool moveKeyword(size_t from, size_t to);
         bool clearKeywords();
         bool containsKeyword(const QString &searchTerm, Common::SearchFlags searchFlags=Common::SearchFlags::Keywords);
         bool hasKeywordsSpellError() const;
@@ -86,10 +86,6 @@ namespace Common {
         bool containsKeywords(const QStringList &keywordsList);
 
     public:
-        void acquire() { m_Hold.acquire(); }
-        bool release() { return m_Hold.release(); }
-
-    public:
         void resetSpellCheckResults();
         void resetDuplicatesInfo();
         bool canBeAdded(const QString &keyword) const;
@@ -103,7 +99,6 @@ namespace Common {
                                         const QString &replacement) const;
 
     private:
-        Common::Hold &m_Hold;
         std::vector<Keyword> m_KeywordsList;
         QSet<QString> m_KeywordsSet;
     };

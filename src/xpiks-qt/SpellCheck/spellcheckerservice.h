@@ -18,6 +18,7 @@
 #include "../Common/iservicebase.h"
 #include "../Common/flags.h"
 #include "../Models/settingsmodel.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class ArtworkMetadata;
@@ -34,7 +35,7 @@ namespace SpellCheck {
         Q_PROPERTY(int userDictWordsNumber READ getUserDictWordsNumber NOTIFY userDictWordsNumberChanged)
 
     public:
-        SpellCheckerService(Models::SettingsModel *settingsModel = 0);
+        SpellCheckerService(Common::ISystemEnvironment &environment, Models::SettingsModel *settingsModel = 0);
 
         virtual ~SpellCheckerService();
 
@@ -87,6 +88,7 @@ namespace SpellCheck {
         Common::WordAnalysisFlags getWordAnalysisFlags() const;
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         SpellCheckWorker *m_SpellCheckWorker;
         Models::SettingsModel *m_SettingsModel;
         QString m_DictionariesPath;

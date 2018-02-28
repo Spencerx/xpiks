@@ -56,7 +56,6 @@ win32 {
 travis-ci {
     message("for Travis CI")
     DEFINES += TRAVIS_CI
-    LIBS += -L"$$PWD/../../../libs"
 
     # gcov
     QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
@@ -64,7 +63,6 @@ travis-ci {
 }
 
 appveyor {
-    LIBS += -L"$$PWD/../../../libs"
     DEFINES += APPVEYOR
 }
 
@@ -150,7 +148,6 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/imageartwork.cpp \
     recentitems_tests.cpp \
     artitemsmodel_tests.cpp \
-    ../../xpiks-qt/Common/flags.cpp \
     fixspelling_tests.cpp \
     ../../xpiks-qt/Models/findandreplacemodel.cpp \
     replacepreview_tests.cpp \
@@ -195,7 +192,9 @@ SOURCES += main.cpp \
     ../../xpiks-qt/UndoRedo/removedirectoryitem.cpp \
     ../../xpiks-qt/Common/basickeywordsmodelimpl.cpp \
     ../../xpiks-qt/Commands/maindelegator.cpp \
-    ../../xpiks-qt/Common/baseentity.cpp
+    ../../xpiks-qt/Common/baseentity.cpp \
+    ../../xpiks-qt/Warnings/warningsitem.cpp \
+    warningscheck_tests.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -333,5 +332,9 @@ HEADERS += \
     ../../xpiks-qt/Common/basickeywordsmodelimpl.h \
     ../../xpiks-qt/Commands/maindelegator.h \
     ../../xpiks-qt/KeywordsPresets/groupmodel.h \
-    ../../xpiks-qt/KeywordsPresets/presetmodel.h
+    ../../xpiks-qt/KeywordsPresets/presetmodel.h \
+    warningscheck_tests.h \
+    Mocks/warningssettingsmock.h \
+    Mocks/coretestsenvironment.h \
+    ../../xpiks-qt/Common/isystemenvironment.h
 

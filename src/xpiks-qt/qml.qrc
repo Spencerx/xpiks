@@ -146,5 +146,6 @@
         <file>Graphics/whatsnew/lookandfeel.png</file>
         <file>Graphics/whatsnew/videosupport.png</file>
         <file>Graphics/whatsnew/presetsgroups.png</file>
+        <file>Components/DraggableKeywordWrapper.qml</file>
     </qresource>
 </RCC>

@@ -18,6 +18,7 @@
 #include "../Common/flags.h"
 #include "warningssettingsmodel.h"
 #include "../MetadataIO/artworkssnapshot.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Warnings {
     class WarningsCheckingWorker;
@@ -30,7 +31,7 @@ namespace Warnings {
         Q_OBJECT
 
     public:
-        explicit WarningsService(QObject *parent=0);
+        explicit WarningsService(Common::ISystemEnvironment &environment, QObject *parent=0);
         virtual ~WarningsService() {}
 
     public:

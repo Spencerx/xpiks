@@ -13,28 +13,32 @@
 
 #include <QJsonDocument>
 #include <QJsonArray>
+#include "iwarningssettings.h"
 #include "../Models/abstractconfigupdatermodel.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Warnings {
     class WarningsSettingsModel:
-        public Models::AbstractConfigUpdaterModel
+            public Models::AbstractConfigUpdaterModel,
+            public IWarningsSettings
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        WarningsSettingsModel();
+        WarningsSettingsModel(Common::ISystemEnvironment &environment);
         void initializeConfigs();
 
-        const QString &getAllowedFilenameCharacters() const { return m_AllowedFilenameCharacters; }
-        double getMinMegapixels() const { return m_MinMegapixels; }
-        double getMaxImageFilesizeMB() const { return m_MaxImageFilesizeMB; }
-        double getMaxVideoFilesizeMB() const { return m_MaxVideoFilesizeMB; }
-        double getMinVideoDurationSeconds() const { return m_MinVideoDurationSeconds; }
-        double getMaxVideoDurationSeconds() const { return m_MaxVideoDurationSeconds; }
-        int getMinKeywordsCount() const { return m_MinKeywordsCount; }
-        int getMaxKeywordsCount() const { return m_MaxKeywordsCount; }
-        int getMinWordsCount() const { return m_MinWordsCount; }
-        int getMaxDescriptionLength() const { return m_MaxDescriptionLength; }
+        virtual const QString &getAllowedFilenameCharacters() const override { return m_AllowedFilenameCharacters; }
+        virtual double getMinMegapixels() const override { return m_MinMegapixels; }
+        virtual double getMaxImageFilesizeMB() const override { return m_MaxImageFilesizeMB; }
+        virtual double getMaxVideoFilesizeMB() const override { return m_MaxVideoFilesizeMB; }
+        virtual double getMinVideoDurationSeconds() const override { return m_MinVideoDurationSeconds; }
+        virtual double getMaxVideoDurationSeconds() const override { return m_MaxVideoDurationSeconds; }
+        virtual int getMinKeywordsCount() const override { return m_MinKeywordsCount; }
+        virtual int getMaxKeywordsCount() const override { return m_MaxKeywordsCount; }
+        virtual int getMinWordsCount() const override { return m_MinWordsCount; }
+        virtual int getMaxDescriptionLength() const override { return m_MaxDescriptionLength; }
+        virtual int getMaxTitleWords() const override { return 10; }
 
         // AbstractConfigUpdaterModel interface
     protected:
@@ -53,6 +57,7 @@ namespace Warnings {
         void settingsUpdated();
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         QString m_AllowedFilenameCharacters;
         double m_MinMegapixels;
         double m_MaxImageFilesizeMB;

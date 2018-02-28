@@ -23,6 +23,7 @@
 #include "ipresetsmanager.h"
 #include "presetkeywordsmodelconfig.h"
 #include "presetgroupsmodel.h"
+#include "../Common/isystemenvironment.h"
 
 namespace KeywordsPresets {
     struct PresetModel;
@@ -37,7 +38,7 @@ namespace KeywordsPresets {
         Q_OBJECT
 
     public:
-        PresetKeywordsModel(QObject *parent=0);
+        PresetKeywordsModel(Common::ISystemEnvironment &environment, QObject *parent=0);
         virtual ~PresetKeywordsModel();
 
 #ifdef INTEGRATION_TESTS
@@ -163,6 +164,7 @@ namespace KeywordsPresets {
         virtual void callBaseTimer(QTimerEvent *event) override { QAbstractListModel::timerEvent(event); }
 
     private:
+        Common::ISystemEnvironment &m_Environment;
         PresetKeywordsModelConfig m_PresetsConfig;
         PresetGroupsModel m_GroupsModel;
         QReadWriteLock m_PresetsLock;

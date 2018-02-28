@@ -39,8 +39,9 @@
 #define DEFAULT_MAX_VIDEO_DURATION_SECONDS 60
 
 namespace Warnings {
-    WarningsSettingsModel::WarningsSettingsModel():
+    WarningsSettingsModel::WarningsSettingsModel(Common::ISystemEnvironment &environment):
         Models::AbstractConfigUpdaterModel(OVERWRITE_WARNINGS_CONFIG),
+        m_Environment(environment),
         m_AllowedFilenameCharacters("._-@#"),
         m_MinMegapixels(DEFAULT_MIN_MEGAPIXELS),
         m_MaxImageFilesizeMB(DEFAULT_MAX_IMAGE_FILESIZE_MB),
@@ -55,17 +56,7 @@ namespace Warnings {
 
     void WarningsSettingsModel::initializeConfigs() {
         LOG_DEBUG << "#";
-        QString localConfigPath;
-
-        QString appDataPath = XPIKS_USERDATA_PATH;
-
-        if (!appDataPath.isEmpty()) {
-            QDir appDataDir(appDataPath);
-            localConfigPath = appDataDir.filePath(LOCAL_WARNINGS_SETTINGS_FILE);
-        } else {
-            localConfigPath = LOCAL_WARNINGS_SETTINGS_FILE;
-        }
-
+        QString localConfigPath = m_Environment.filepath(LOCAL_WARNINGS_SETTINGS_FILE);
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getWarningSettingsAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);
@@ -95,12 +86,18 @@ namespace Warnings {
     bool WarningsSettingsModel::processLocalConfig(const QJsonDocument &document) {
         LOG_INTEGR_TESTS_OR_DEBUG << document;
         bool result = parseConfig(document);
+        if (result) {
+            emit settingsUpdated();
+        }
         return result;
     }
 
     void WarningsSettingsModel::processMergedConfig(const QJsonDocument &document) {
         LOG_DEBUG << "#";
-        parseConfig(document);
+        bool result = parseConfig(document);
+        if (result) {
+            emit settingsUpdated();
+        }
     }
 
     bool WarningsSettingsModel::parseConfig(const QJsonDocument &document) {
@@ -230,8 +227,6 @@ namespace Warnings {
                 m_MaxDescriptionLength = maxDescriptionCount.toInt(DEFAULT_MAX_DESCRIPTION_LENGTH);
             }
         } while (false);
-
-        emit settingsUpdated();
 
         return anyError;
     }
