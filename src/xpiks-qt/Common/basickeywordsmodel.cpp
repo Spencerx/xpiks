@@ -342,6 +342,17 @@ namespace Common {
         return anyRemoved;
     }
 
+    bool BasicKeywordsModel::moveKeyword(size_t from, size_t to) {
+        QWriteLocker locker(&m_KeywordsLock);
+        Q_UNUSED(locker);
+
+        beginResetModel();
+        const bool success = m_Impl->moveKeyword(from, to);
+        endResetModel();
+
+        return success;
+    }
+
     size_t BasicKeywordsModel::appendKeywordsUnsafe(const QStringList &keywordsList) {
         size_t appendedCount = 0;
         if (m_Impl->prepareAppend(keywordsList, appendedCount)) {

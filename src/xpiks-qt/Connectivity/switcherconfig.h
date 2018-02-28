@@ -60,7 +60,8 @@ namespace Connectivity {
             GoodQualityVideoPreviews,
             MetadataAutoImport,
             GettySuggestionEnabled,
-            UpdateEnabled
+            UpdateEnabled,
+            KeywordsDragDropEnabled
         };
 
     private:

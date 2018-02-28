@@ -41,6 +41,7 @@ namespace Connectivity {
 #define METADATA_AUTO_IMPORT QLatin1String("autoImport")
 #define GETTY_SUGGESTION QLatin1String("iStockSuggestion")
 #define UPDATE_ENABLED QLatin1String("updateEnabled")
+#define KEYWORDS_DRAG_DROP_ENABLED QLatin1String("keywordsDragDropEnabled")
 
     QDebug operator << (QDebug d, const SwitcherConfig::SwitchValue &value) {
         d << "{" << value.m_IsOn << "*" << value.m_Threshold << "}";
@@ -224,6 +225,7 @@ namespace Connectivity {
         SwitchValue autoImport;
         SwitchValue gettySuggestion;
         SwitchValue updateEnabled;
+        SwitchValue keywordsDragDropEnabled;
 
         initSwitchValue(object, DONATE_CAMPAIGN_1_KEY, donateCampaign1Active);
         initSwitchValue(object, DONATE_CAMPAIGN_1_STAGE_2, donateCampaign1Stage2);
@@ -233,6 +235,7 @@ namespace Connectivity {
         initSwitchValue(object, METADATA_AUTO_IMPORT, autoImport);
         initSwitchValue(object, GETTY_SUGGESTION, gettySuggestion);
         initSwitchValue(object, UPDATE_ENABLED, updateEnabled);
+        initSwitchValue(object, KEYWORDS_DRAG_DROP_ENABLED, keywordsDragDropEnabled);
 
         // overwrite these values
         {
@@ -248,6 +251,7 @@ namespace Connectivity {
             m_SwitchesHash[MetadataAutoImport] = autoImport;
             m_SwitchesHash[GettySuggestionEnabled] = gettySuggestion;
             m_SwitchesHash[UpdateEnabled] = updateEnabled;
+            m_SwitchesHash[KeywordsDragDropEnabled] = keywordsDragDropEnabled;
 
             LOG_INTEGR_TESTS_OR_DEBUG << m_SwitchesHash;
         }

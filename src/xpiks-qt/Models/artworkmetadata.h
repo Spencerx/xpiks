@@ -148,6 +148,7 @@ namespace Models {
         virtual bool clearKeywords() override;
         virtual bool editKeyword(size_t index, const QString &replacement) override;
         virtual bool replace(const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags);
+        virtual bool moveKeyword(size_t from, size_t to) override;
 
     public:
         virtual bool setDescription(const QString &value) override;

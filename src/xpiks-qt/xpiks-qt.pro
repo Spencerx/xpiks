@@ -564,7 +564,8 @@ DISTFILES += \
     Graphics/slategray/More_icon_normal.svg \
     Dialogs/WipeMetadata.qml \
     Dialogs/SimplePreview.qml \
-    ../xpiks-common/xpiks-common.pri
+    ../xpiks-common/xpiks-common.pri \
+    Components/DraggableKeywordWrapper.qml
 
 lupdate_only {
 SOURCES += *.qml \

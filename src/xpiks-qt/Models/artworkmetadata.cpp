@@ -289,6 +289,20 @@ namespace Models {
         return result;
     }
 
+    bool ArtworkMetadata::moveKeyword(size_t from, size_t to) {
+        if (!getIsInitializedFlag()) {
+            LOG_WARNING << "#" << m_ID << "attempt to move keyword" << from << to;
+            return false;
+        }
+
+        bool result = m_MetadataModel.moveKeyword(from, to);
+        if (result) {
+            markModified();
+            justChanged();
+        }
+        return result;
+    }
+
     bool ArtworkMetadata::setDescription(const QString &value)  {
         if (!getIsInitializedFlag()) {
             LOG_WARNING << "#" << m_ID << "attempt to set description to" << value << "for not initialized artwork";

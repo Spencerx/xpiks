@@ -147,6 +147,10 @@ namespace Models {
         doRemoveLastKeyword(keyword);
     }
 
+    bool ArtworkProxyModel::moveKeyword(int from, int to) {
+        return doMoveKeyword(from, to);
+    }
+
     bool ArtworkProxyModel::appendKeyword(const QString &keyword) {
         return doAppendKeyword(keyword);
     }

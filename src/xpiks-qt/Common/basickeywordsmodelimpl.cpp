@@ -12,6 +12,7 @@
 #include <QReadWriteLock>
 #include <QReadLocker>
 #include <QWriteLocker>
+#include <algorithm>
 #include "../SpellCheck/spellcheckitem.h"
 #include "../SpellCheck/spellsuggestionsitem.h"
 #include "../SpellCheck/spellcheckiteminfo.h"
@@ -177,6 +178,25 @@ namespace Common {
         }
 
         return result;
+    }
+
+    bool BasicKeywordsModelImpl::moveKeyword(size_t from, size_t to) {
+        const size_t size = m_KeywordsList.size();
+        if (from >= size) { return false; }
+        if (from == to) { return false; }
+        if (to >= size) { to = size - 1; }
+
+        if (from < to) {
+            for (size_t i = from; i < to; i++) {
+                m_KeywordsList[i].swap(m_KeywordsList[i + 1]);
+            }
+        } else /*if (from > to)*/ {
+            for (size_t i = from; i > to; i--) {
+                m_KeywordsList[i].swap(m_KeywordsList[i - 1]);
+            }
+        }
+
+        return true;
     }
 
     bool BasicKeywordsModelImpl::clearKeywords() {

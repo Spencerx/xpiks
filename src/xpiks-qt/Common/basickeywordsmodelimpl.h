@@ -60,6 +60,7 @@ namespace Common {
         bool canEditKeyword(size_t index, const QString &replacement) const;
         bool editKeyword(size_t index, const QString &replacement);
         bool replaceKeyword(size_t index, const QString &existing, const QString &replacement);
+        bool moveKeyword(size_t from, size_t to);
         bool clearKeywords();
         bool containsKeyword(const QString &searchTerm, Common::SearchFlags searchFlags=Common::SearchFlags::Keywords);
         bool hasKeywordsSpellError() const;

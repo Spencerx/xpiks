@@ -177,6 +177,17 @@ namespace Models {
         return result;
     }
 
+    bool ArtworkProxyBase::doMoveKeyword(int from, int to) {
+        LOG_INFO << from << "-->" << to;
+        auto *metadataOperator = getMetadataOperator();
+        bool result = metadataOperator->moveKeyword(from, to);
+        if (result) {
+            doJustEdited();
+        }
+
+        return result;
+    }
+
     bool ArtworkProxyBase::doClearKeywords() {
         LOG_DEBUG << "#";
         auto *metadataOperator = getMetadataOperator();

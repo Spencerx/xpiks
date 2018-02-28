@@ -1026,6 +1026,8 @@ Rectangle {
                                 property int keywordHeight: uiManager.keywordHeight
                                 scrollStep: keywordHeight
                                 populateAnimationEnabled: false
+                                property int droppedIndex: -1
+                                onDroppedIndexChanged: dropTimer.start()
 
                                 function acceptCompletion(completionID) {
                                     var accepted = artworkProxy.acceptCompletionAsPreset(completionID);
@@ -1037,7 +1039,7 @@ Rectangle {
                                     }
                                 }
 
-                                delegate: KeywordWrapper {
+                                delegate: DraggableKeywordWrapper {
                                     id: kw
                                     isHighlighted: true
                                     keywordText: keyword
@@ -1046,6 +1048,9 @@ Rectangle {
                                     delegateIndex: index
                                     itemHeight: flv.keywordHeight
                                     onRemoveClicked: keywordsWrapper.removeKeyword(delegateIndex)
+                                    dragDropAllowed: switcher.keywordsDragDropEnabled
+                                    dragParent: flv
+                                    wasDropped: flv.droppedIndex == delegateIndex
                                     onActionDoubleClicked: {
                                         var callbackObject = {
                                             onSuccess: function(replacement) {
@@ -1075,6 +1080,18 @@ Rectangle {
                                         wordRightClickMenu.showExpandPreset = (filteredPresetsModel.getItemsCount() !== 0 )
                                         wordRightClickMenu.keywordIndex = kw.delegateIndex
                                         wordRightClickMenu.popupIfNeeded()
+                                    }
+
+                                    onMoveRequested: {
+                                        if (from !== to) {
+                                            flv.droppedIndex = to
+                                        }
+
+                                        if (artworkProxy.moveKeyword(from, to)) {
+                                            console.debug("Just dropped to " + to)
+                                        } else {
+                                            flv.droppedIndex = -1
+                                        }
                                     }
                                 }
 
@@ -1122,6 +1139,14 @@ Rectangle {
                                 interval: 400
                                 triggeredOnStart: false
                                 onTriggered: keywordsWrapper.state = ""
+                            }
+
+                            Timer {
+                                id: dropTimer
+                                repeat: false
+                                interval: 1000
+                                triggeredOnStart: false
+                                onTriggered: flv.droppedIndex = -1
                             }
 
                             states: State {

@@ -62,6 +62,7 @@ namespace Models {
         bool doAppendKeyword(const QString &keyword);
         size_t doAppendKeywords(const QStringList &keywords);
         bool doRemoveKeywords(const QSet<QString> &keywords, bool caseSensitive);
+        bool doMoveKeyword(int from, int to);
         bool doClearKeywords();
         QString doGetKeywordsString();
         void doSuggestCorrections();

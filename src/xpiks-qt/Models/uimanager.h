@@ -39,6 +39,7 @@ namespace Models {
         Q_PROPERTY(bool hasCurrentEditable READ getHasCurrentEditable NOTIFY currentEditableChanged)
         Q_PROPERTY(double keywordHeight READ getKeywordHeight NOTIFY keywordHeightChanged)
         Q_PROPERTY(int artworkEditRightPaneWidth READ getArtworkEditRightPaneWidth WRITE setArtworkEditRightPaneWidth NOTIFY artworkEditRightPaneWidthChanged)
+
     public:
         explicit UIManager(Common::ISystemEnvironment &environment,
                            Models::SettingsModel *settingsModel,

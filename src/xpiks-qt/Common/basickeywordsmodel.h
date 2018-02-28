@@ -99,6 +99,7 @@ namespace Common {
         bool areKeywordsEmpty();
         virtual bool replace(const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags);
         virtual bool removeKeywords(const QSet<QString> &keywords, bool caseSensitive);
+        virtual bool moveKeyword(size_t from, size_t to);
 
     private:
         size_t appendKeywordsUnsafe(const QStringList &keywordsList);
