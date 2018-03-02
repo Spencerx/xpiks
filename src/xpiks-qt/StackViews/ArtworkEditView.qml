@@ -553,6 +553,7 @@ Rectangle {
                     anchors.fill: parent
                     anchors.leftMargin: imageWrapper.imageMargin
                     anchors.topMargin: imageWrapper.imageMargin
+                    flickableItem.interactive: previewImage.isFullSize
 
                     Image {
                         id: previewImage
