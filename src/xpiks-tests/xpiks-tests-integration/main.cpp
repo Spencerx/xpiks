@@ -183,7 +183,14 @@ void linuxAbortHandler(int signalNumber) {
 }
 #endif
 
+void initQSettings() {
+    QCoreApplication::setOrganizationName(Constants::ORGANIZATION_NAME);
+    QCoreApplication::setApplicationName(Constants::APPLICATION_NAME);
+}
+
 int main(int argc, char *argv[]) {
+    initQSettings();
+
 #if defined(Q_OS_WIN) && defined(APPVEYOR)
     WindowsCrashHandler crashHandler;
     crashHandler.SetProcessExceptionHandlers();

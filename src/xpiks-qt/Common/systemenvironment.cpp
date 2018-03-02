@@ -18,8 +18,10 @@
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
     #define XPIKS_DATA_LOCATION_TYPE QStandardPaths::AppDataLocation
-    #ifdef QT_DEBUG
-        #define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" + STRINGIZE(BRANCHNAME))
+    #if defined(INTEGRATION_TESTS)
+        #define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "_integration-tests/" + STRINGIZE(BRANCHNAME))
+    #elif defined(QT_DEBUG)
+        #define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "_debug/" + STRINGIZE(BRANCHNAME))
     #else
         #define XPIKS_USERDATA_PATH QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
     #endif
