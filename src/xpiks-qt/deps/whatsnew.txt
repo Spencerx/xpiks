@@ -1,4 +1,22 @@
-This is Xpiks 1.5.0 major release.
+This is Xpiks 1.5.1 bugfix release.
+
+In this release:
+
+- Fix for default CSV plans being not usable
+- Fix for warnings not updated after editing
+- Fix for artwork grid filtering positioning
+- Fix for Upload dialog host Title issues
+- Option to have portable settings in Xpiks
+- Show links from More menu on bigger screens
+- Fix for video previews of files larger than 2GB
+- Ability to mouse move full size image in single view
+
+
+
+
+
+
+Xpiks 1.5.0 release.
 
 In this release:
 
