@@ -2,6 +2,7 @@ This is Xpiks 1.5.1 bugfix release.
 
 In this release:
 
+- Added Italian translation
 - Fix for default CSV plans being not usable
 - Fix for warnings not updated after editing
 - Fix for artwork grid filtering positioning
