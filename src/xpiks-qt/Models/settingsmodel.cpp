@@ -1061,28 +1061,6 @@ namespace Models {
         SettingsModel::saveProxySetting(empty, empty, empty, empty);
     }
 
-    void SettingsModel::protectHealthReporting() {
-        const bool reportingEnabled = getUserStatistics();
-
-        if (reportingEnabled) {
-            m_State.setValue(Constants::numberOfLaunches, 0);
-        } else {
-            int numberOfLaunches = m_State.getInt(Constants::numberOfLaunches, 0);
-            numberOfLaunches++;
-
-            if (numberOfLaunches >= 31) {
-                setUserStatistics(true);
-                m_State.setValue(Constants::numberOfLaunches, 0);
-                LOG_DEBUG << "Resetting health reporting to ON";
-            } else {
-                this->setValue(Constants::numberOfLaunches, numberOfLaunches);
-                LOG_DEBUG << numberOfLaunches << "launches of Xpiks with Health reporting OFF";
-            }
-        }
-
-        m_State.sync();
-    }
-
     void SettingsModel::sync() {
         LOG_DEBUG << "Syncing settings";
 

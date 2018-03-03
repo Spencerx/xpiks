@@ -211,8 +211,6 @@ namespace Models {
             m_State.sync();
         }
 
-        /*Q_INVOKABLE*/ void protectHealthReporting();
-
         Q_INVOKABLE void onMasterPasswordSet() {
             LOG_INFO << "Master password changed";
 
