@@ -11,7 +11,7 @@ In this release:
 - Show links from More menu on bigger screens
 - Fix for video previews of files larger than 2GB
 - Ability to mouse move full size image in single view
-
+- Basic drag'n'drop functionality for keywords
 
 
 
