@@ -1720,28 +1720,12 @@ Item {
                                             }
                                         }
 
-                                        RowLayout {
-                                            anchors.left: parent.left
+                                        Row {
                                             anchors.right: parent.right
                                             anchors.rightMargin: 3
                                             anchors.top: keywordsWrapper.bottom
                                             anchors.topMargin: 3
                                             spacing: 5
-
-                                            StyledLink {
-                                                text: i18.n + qsTr("Edit in plain text")
-                                                property bool canBeShown: columnLayout.isWideForLinks && rowWrapper.isHighlighted
-                                                normalLinkColor: uiColors.labelActiveForeground
-                                                enabled: canBeShown
-                                                visible: canBeShown
-                                                onClicked: {
-                                                    editInPlainText(rowWrapper.getIndex(), rowWrapper.delegateIndex)
-                                                }
-                                            }
-
-                                            Item {
-                                                Layout.fillWidth: true
-                                            }
 
                                             StyledLink {
                                                 id: fixSpellingText
@@ -1831,7 +1815,8 @@ Item {
                                             }
 
                                             Item {
-                                                width: childrenRect.width
+                                                // not childrenRect.width because of localization/width issues
+                                                width: moreLink.width + moreTriangle.width + moreTriangle.anchors.leftMargin
                                                 height: moreLink.height
 
                                                 StyledText {
@@ -1844,6 +1829,7 @@ Item {
                                                 }
 
                                                 TriangleElement {
+                                                    id: moreTriangle
                                                     anchors.left: moreLink.right
                                                     anchors.leftMargin: 4
                                                     anchors.verticalCenter: parent.verticalCenter
