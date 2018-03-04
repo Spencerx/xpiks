@@ -27,7 +27,7 @@
         "v": true
     },
     "updateEnabled": {
-        "v": true,
-        "t": 20
+        "v": false,
+        "t": 1
     }
 }
