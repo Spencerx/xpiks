@@ -13,7 +13,7 @@
     },
     "directExport": {
         "v": true,
-        "t": 70
+        "t": 50
     },
     "qualityVideoPreviews": {
         "v": true,
@@ -27,7 +27,10 @@
         "v": true
     },
     "updateEnabled": {
+        "v": false
+    },
+    "keywordsDragDropEnabled": {
         "v": true,
-        "t": 20
+        "t": 70
     }
 }
