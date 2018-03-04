@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_NAME=Xpiks
-VERSION="1.5.0.beta"
+VERSION="1.5.1"
 APPDIR_NAME="Xpiks"
 
 STAGING_DIR="./${APP_NAME}.AppDir"
@@ -56,6 +56,6 @@ chmod +x "$STAGING_DIR/$APP_NAME.desktop"
 mkdir $STAGING_DIR/ac_sources
 mv $STAGING_DIR/en_wordlist.tsv $STAGING_DIR/ac_sources/
 
-appimagetool-x86_64.AppImage --verbose -n "$STAGING_DIR" "$APP_NAME-v$VERSION.AppImage"
+appimagetool-x86_64.AppImage --verbose -n "$STAGING_DIR" "$APP_NAME-v$VERSION-x86_64.AppImage"
 
 echo "Done"
