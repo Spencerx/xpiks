@@ -17,8 +17,8 @@
 // update.json (values from 0..9)
 #define XPIKS_MAJOR_VERSION 1
 #define XPIKS_MINOR_VERSION 5
-#define XPIKS_FIX_VERSION 0
-#define XPIKS_HOTFIX_VERSION 5
+#define XPIKS_FIX_VERSION 1
+#define XPIKS_HOTFIX_VERSION 1
 
 #define VERSION_STR_(x) #x
 #define VERSION_STR(x) VERSION_STR_(x)

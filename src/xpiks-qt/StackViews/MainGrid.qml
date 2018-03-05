@@ -414,16 +414,6 @@ Item {
             }
 
             ToolButton {
-                enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && removeAction.enabled
-                normalIcon: uiColors.t + helpersWrapper.getAssetForTheme("Remove_icon_normal.svg", settingsModel.selectedThemeIndex)
-                disabledIcon: uiColors.t + helpersWrapper.getAssetForTheme("Remove_icon_disabled.svg", settingsModel.selectedThemeIndex)
-                hoveredIcon: uiColors.t + helpersWrapper.getAssetForTheme("Remove_icon_hovered.svg", settingsModel.selectedThemeIndex)
-                clickedIcon: uiColors.t + helpersWrapper.getAssetForTheme("Remove_icon_clicked.svg", settingsModel.selectedThemeIndex)
-                tooltip: i18.n + qsTr("Remove")
-                onClicked: removeAction.trigger()
-            }
-
-            ToolButton {
                 enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && saveAction.enabled
                 normalIcon: uiColors.t + helpersWrapper.getAssetForTheme("Save_icon_normal.svg", settingsModel.selectedThemeIndex)
                 disabledIcon: uiColors.t + helpersWrapper.getAssetForTheme("Save_icon_disabled.svg", settingsModel.selectedThemeIndex)
@@ -451,6 +441,16 @@ Item {
                 clickedIcon: uiColors.t + helpersWrapper.getAssetForTheme("More_icon_clicked.svg", settingsModel.selectedThemeIndex)
                 tooltip: i18.n + qsTr("More")
                 onClicked: selectedArtworksMoreMenu.popup()
+            }
+
+            ToolButton {
+                enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && removeAction.enabled
+                normalIcon: uiColors.t + helpersWrapper.getAssetForTheme("Remove_icon_normal.svg", settingsModel.selectedThemeIndex)
+                disabledIcon: uiColors.t + helpersWrapper.getAssetForTheme("Remove_icon_disabled.svg", settingsModel.selectedThemeIndex)
+                hoveredIcon: uiColors.t + helpersWrapper.getAssetForTheme("Remove_icon_hovered.svg", settingsModel.selectedThemeIndex)
+                clickedIcon: uiColors.t + helpersWrapper.getAssetForTheme("Remove_icon_clicked.svg", settingsModel.selectedThemeIndex)
+                tooltip: i18.n + qsTr("Remove")
+                onClicked: removeAction.trigger()
             }
 
             Item {
@@ -1263,7 +1263,7 @@ Item {
                                         anchors.rightMargin: 20
                                         anchors.topMargin: 20
                                         property bool isWideEnough: width > 450
-                                        property bool isWideForLinks: width > 700
+                                        property bool isWideForLinks: width > 600
                                         property real inputWidth: isWideEnough ? ((width / 2) - 12) : width
 
                                         StyledText {
@@ -1720,28 +1720,12 @@ Item {
                                             }
                                         }
 
-                                        RowLayout {
-                                            anchors.left: parent.left
+                                        Row {
                                             anchors.right: parent.right
                                             anchors.rightMargin: 3
                                             anchors.top: keywordsWrapper.bottom
                                             anchors.topMargin: 3
                                             spacing: 5
-
-                                            StyledLink {
-                                                text: i18.n + qsTr("Edit in plain text")
-                                                property bool canBeShown: columnLayout.isWideForLinks && rowWrapper.isHighlighted
-                                                normalLinkColor: uiColors.labelActiveForeground
-                                                enabled: canBeShown
-                                                visible: canBeShown
-                                                onClicked: {
-                                                    editInPlainText(rowWrapper.getIndex(), rowWrapper.delegateIndex)
-                                                }
-                                            }
-
-                                            Item {
-                                                Layout.fillWidth: true
-                                            }
 
                                             StyledLink {
                                                 id: fixSpellingText
@@ -1782,7 +1766,7 @@ Item {
                                             StyledLink {
                                                 id: suggestLink
                                                 text: i18.n + qsTr("Suggest keywords")
-                                                property bool canBeShown: (keywordscount < warningsModel.minKeywordsCount) || (columnLayout.isWideForLinks)
+                                                property bool canBeShown: ((keywordscount < warningsModel.minKeywordsCount) && !removeDuplicatesText.canBeShown && !fixSpellingText.canBeShown) || (columnLayout.isWideForLinks)
                                                 visible: canBeShown
                                                 enabled: canBeShown
                                                 onClicked: { suggestKeywords(rowWrapper.getIndex()) }
@@ -1799,7 +1783,7 @@ Item {
                                             StyledLink {
                                                 id: copyLink
                                                 text: i18.n + qsTr("Copy")
-                                                property bool canBeShown: (keywordscount > 0)
+                                                property bool canBeShown: (keywordscount > 0) && (columnLayout.isWideForLinks)
                                                 enabled: canBeShown
                                                 visible: canBeShown
                                                 onClicked: clipboard.setText(keywordsstring)
@@ -1816,7 +1800,7 @@ Item {
                                             StyledLink {
                                                 id: clearLink
                                                 text: i18.n + qsTr("Clear")
-                                                property bool canBeShown: (keywordscount > 0)
+                                                property bool canBeShown: (keywordscount > 0) && (columnLayout.isWideForLinks)
                                                 enabled: canBeShown
                                                 visible: canBeShown
                                                 onClicked: filteredArtItemsModel.clearKeywords(rowWrapper.delegateIndex)
@@ -1831,7 +1815,8 @@ Item {
                                             }
 
                                             Item {
-                                                width: childrenRect.width
+                                                // not childrenRect.width because of localization/width issues
+                                                width: moreLink.width + moreTriangle.width + moreTriangle.anchors.leftMargin
                                                 height: moreLink.height
 
                                                 StyledText {
@@ -1844,6 +1829,7 @@ Item {
                                                 }
 
                                                 TriangleElement {
+                                                    id: moreTriangle
                                                     anchors.left: moreLink.right
                                                     anchors.leftMargin: 4
                                                     anchors.verticalCenter: parent.verticalCenter

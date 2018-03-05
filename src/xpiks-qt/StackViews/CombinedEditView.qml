@@ -454,6 +454,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.top: topHeader.bottom
         anchors.bottom: bottomActionsPane.top
+        property bool isWideEnough: width > 650
         anchors.leftMargin: 10
         anchors.rightMargin: 15
         anchors.topMargin: 10
@@ -1121,7 +1122,7 @@ Rectangle {
                         StyledLink {
                             id: suggestLink
                             text: i18.n + qsTr("Suggest keywords")
-                            property bool canBeShown: combinedArtworks.keywordsCount < warningsModel.minKeywordsCount
+                            property bool canBeShown: (combinedArtworks.keywordsCount < warningsModel.minKeywordsCount) || (mainRect.isWideEnough)
                             visible: canBeShown
                             enabled: canBeShown
                             onClicked: {

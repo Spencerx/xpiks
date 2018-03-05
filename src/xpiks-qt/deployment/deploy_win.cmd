@@ -1,7 +1,7 @@
 echo 'Starting deployment...'
 
 set XPIKS_PLATFORM=x64
-set XPIKS_VERSION=1.5.0
+set XPIKS_VERSION=1.5.1
 set APP_NAME=Xpiks
 
 rem deploy dir should be "Xpiks" in order to have it nicely zipped in the end

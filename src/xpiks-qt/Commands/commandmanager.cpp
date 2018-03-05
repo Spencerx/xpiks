@@ -763,7 +763,6 @@ void Commands::CommandManager::beforeDestructionCallback() const {
     m_AutoCompleteService->stopService();
     m_TranslationService->stopService();
 
-    m_SettingsModel->protectHealthReporting();
     m_SettingsModel->syncronizeSettings();
 
 #ifndef CORE_TESTS

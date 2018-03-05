@@ -36,9 +36,7 @@ namespace QMLExtensions {
             TabIconPathRole = Qt::UserRole + 1
             ,TabComponentPathRole
             ,ExternalTabIDRole
-#ifdef QT_DEBUG
             ,CacheTagRole
-#endif
         };
 
     public:
