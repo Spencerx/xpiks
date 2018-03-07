@@ -37,7 +37,7 @@ QString getLogFilenameForMinistaller() {
 
 void launchWindowsInstaller(Common::ISystemEnvironment &environment, const QString &pathToUpdate) {
     LOG_DEBUG << "#";
-    QString ministallerPath = environment.filepath("ministaller.exe");
+    QString ministallerPath = environment.path({"ministaller.exe"});
 
     if (!QFileInfo(ministallerPath).exists()) {
         LOG_WARNING << "Updater not found!" << ministallerPath;
@@ -45,7 +45,7 @@ void launchWindowsInstaller(Common::ISystemEnvironment &environment, const QStri
     }
 
     QString installerLogName = getLogFilenameForMinistaller();
-    QString installerLogPath = environment.fileInDir(installerLogName, "logs");
+    QString installerLogPath = environment.path({"logs", installerLogName});
     QStringList arguments;
     arguments << "-force-update" << "-gui" <<
                  "-install-path" << environment.root() <<
