@@ -21,6 +21,7 @@
 #include "../UndoRedo/iundoredomanager.h"
 #include "ipluginaction.h"
 #include "iuiprovider.h"
+#include "../Common/isystemenvironment.h"
 #include "../Common/iartworkssource.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
 #include "../Common/flags.h"

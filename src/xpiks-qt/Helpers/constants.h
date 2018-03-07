@@ -46,7 +46,7 @@ namespace Constants {
     const char VIDEO_CACHE_TABLE[] = "vidcache";
     const char METADATA_CACHE_TABLE[] = "metadatacache";
     const char TRANSLATOR_DIR[] = "dictionaries";
-    const char PLUGINS_DIR[] = "XpiksPlugins";
+    const char PLUGINS_DIR[] = "plugins";
     const char VIDEO_CACHE_DIR[] = "videoscache";
     const char STATES_DIR[] = "states";
     const char DB_DIR[] = "db";
