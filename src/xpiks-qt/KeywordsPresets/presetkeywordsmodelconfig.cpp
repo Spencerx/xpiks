@@ -63,7 +63,7 @@ namespace KeywordsPresets {
     void PresetKeywordsModelConfig::initializeConfigs() {
         LOG_DEBUG << "#";
 
-        QString localConfigPath = m_Environment.filepath(LOCAL_PRESETKEYWORDS_LIST_FILE);
+        QString localConfigPath = m_Environment.path({LOCAL_PRESETKEYWORDS_LIST_FILE});
 
         if (XPIKS_MAJOR_VERSION_CHECK(1, 5) ||
                 XPIKS_MAJOR_VERSION_CHECK(1, 4)) {

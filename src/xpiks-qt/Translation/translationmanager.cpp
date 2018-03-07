@@ -143,7 +143,7 @@ namespace Translation {
 
     void TranslationManager::doInitializeDictionaries() {
         m_Environment.ensureDirExists(Constants::TRANSLATOR_DIR);
-        m_DictionariesDirPath = m_Environment.dirpath(Constants::TRANSLATOR_DIR);
+        m_DictionariesDirPath = m_Environment.path({Constants::TRANSLATOR_DIR});
 
         QDirIterator it(m_DictionariesDirPath, QStringList() << "*.ifo", QDir::Files, QDirIterator::NoIteratorFlags);
 
@@ -164,7 +164,7 @@ namespace Translation {
     bool TranslationManager::acquireDictionary(const QString &anyDictFilePath) {
         QFileInfo fi(anyDictFilePath);
         Q_ASSERT(fi.exists());
-        QString longPrefix = QDir::cleanPath(fi.absolutePath() + QDir::separator() + fi.baseName());
+        QString longPrefix = QDir::cleanPath(fi.absolutePath() + QChar('/') + fi.baseName());
         QString shortPrefix = fi.baseName();
 
         bool anyError = false, anyFileCopied = false,
@@ -175,7 +175,7 @@ namespace Translation {
 
             if (QFileInfo(probablePath).exists()) {
                 LOG_INFO << "File found:" << probablePath;
-                QString localDict = QDir::cleanPath(m_DictionariesDirPath + QDir::separator() + shortPrefix + "." + suffix);
+                QString localDict = QDir::cleanPath(m_DictionariesDirPath + QChar('/') + shortPrefix + "." + suffix);
 
                 if (QFile::copy(probablePath, localDict)) {
                     LOG_INFO << "Copied to" << localDict;
@@ -206,7 +206,7 @@ namespace Translation {
         QFileInfo fi(anyDictFilePath);
         Q_ASSERT(fi.exists());
 
-        QString longPrefix = QDir::cleanPath(fi.absolutePath() + QDir::separator() + fi.baseName());
+        QString longPrefix = QDir::cleanPath(fi.absolutePath() + QChar('/') + fi.baseName());
         bool indexFound = false, dictFound = false, ifoFound = false;
 
         foreach (const QString &suffix, m_AllowedSuffixes) {
@@ -261,7 +261,7 @@ namespace Translation {
                 break;
             }
 
-            QString probableIfoPath = QDir::cleanPath(fi.absolutePath() + QDir::separator() +
+            QString probableIfoPath = QDir::cleanPath(fi.absolutePath() + QChar('/') +
                                                       fi.baseName() + ".ifo");
             DictionaryInfo di;
             if (parseIfoFile(probableIfoPath, di)) {

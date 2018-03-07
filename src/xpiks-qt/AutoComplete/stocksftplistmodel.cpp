@@ -35,7 +35,7 @@ namespace AutoComplete {
 
     void StocksFtpListModel::initializeConfigs() {
         LOG_DEBUG << "#";
-        QString localConfigPath = m_Environment.filepath(LOCAL_STOCKS_LIST_FILE);
+        QString localConfigPath = m_Environment.path({LOCAL_STOCKS_LIST_FILE});
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getStocksACSourceAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);

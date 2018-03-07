@@ -177,7 +177,7 @@ namespace MetadataIO {
         Helpers::AsyncCoordinatorUnlocker unlocker(initCoordinator);
         Q_UNUSED(locker); Q_UNUSED(unlocker);
 
-        QString localConfigPath = m_Environment.filepath(EXPORT_PLANS_FILE);
+        QString localConfigPath = m_Environment.path({EXPORT_PLANS_FILE});
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getCsvExportPlansAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);

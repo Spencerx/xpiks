@@ -232,7 +232,7 @@ int main(int argc, char *argv[]) {
         QString time = QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss-zzz");
         QString logFilename = QString("xpiks-qt-%1.log").arg(time);
 
-        QString logFilePath = environment.fileInDir(logFilename, Constants::LOGS_DIR);
+        QString logFilePath = environment.path({Constants::LOGS_DIR, logFilename});
 
         Helpers::Logger &logger = Helpers::Logger::getInstance();
         logger.setLogFilePath(logFilePath);

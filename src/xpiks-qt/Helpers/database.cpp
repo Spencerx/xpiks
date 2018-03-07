@@ -561,7 +561,7 @@ namespace Helpers {
     bool DatabaseManager::initialize() {
         LOG_DEBUG << "#";
         m_Environment.ensureDirExists(Constants::DB_DIR);
-        QString dbDirPath = m_Environment.dirpath(Constants::DB_DIR);
+        QString dbDirPath = m_Environment.path({Constants::DB_DIR});
         m_DBDirPath = dbDirPath;
         m_Initialized = true;
         return true;

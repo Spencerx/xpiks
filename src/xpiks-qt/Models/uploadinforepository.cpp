@@ -181,7 +181,7 @@ namespace Models {
 
     void UploadInfoRepository::initializeConfig() {
         LOG_DEBUG << "#";
-        QString localConfigPath = m_Environment.filepath(UPLOAD_INFOS_FILE);
+        QString localConfigPath = m_Environment.path({UPLOAD_INFOS_FILE});
         m_LocalConfig.initConfig(localConfigPath);
         const QJsonDocument &localDocument = m_LocalConfig.getConfig();
 

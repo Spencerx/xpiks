@@ -20,7 +20,7 @@ namespace Maintenance {
 
     LogsCleanupJobItem::LogsCleanupJobItem(Common::ISystemEnvironment &environment)
     {
-        m_LogFileDir = environment.dirpath("logs");
+        m_LogFileDir = environment.path({"logs"});
     }
 
     void LogsCleanupJobItem::processJob() {

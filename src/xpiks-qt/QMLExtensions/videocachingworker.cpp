@@ -52,7 +52,7 @@ namespace QMLExtensions {
         m_ProcessedItemsCount = 0;
 
         m_Environment.ensureDirExists(Constants::VIDEO_CACHE_DIR);
-        m_VideosCacheDir = m_Environment.dirpath(Constants::VIDEO_CACHE_DIR);
+        m_VideosCacheDir = m_Environment.path({Constants::VIDEO_CACHE_DIR});
         LOG_INFO << "Using" << m_VideosCacheDir << "for videos cache";
 
         m_Cache.initialize();
@@ -158,7 +158,7 @@ namespace QMLExtensions {
         CachedVideo cachedVideo;
 
         if (m_Cache.tryGet(key, cachedVideo)) {
-            QString cachedValue = QDir::cleanPath(m_VideosCacheDir + QDir::separator() + cachedVideo.m_Filename);
+            QString cachedValue = QDir::cleanPath(m_VideosCacheDir + QChar('/') + cachedVideo.m_Filename);
 
             QFileInfo fi(cachedValue);
 
@@ -179,7 +179,7 @@ namespace QMLExtensions {
 
         QFileInfo fi(originalPath);
         QString pathHash = getVideoPathHash(originalPath, isQuickThumbnail) + ".jpg";
-        QString cachedFilepath = QDir::cleanPath(m_VideosCacheDir + QDir::separator() + pathHash);
+        QString cachedFilepath = QDir::cleanPath(m_VideosCacheDir + QChar('/') + pathHash);
 
         if (image.save(cachedFilepath, "JPG", THUMBNAIL_JPG_QUALITY)) {
             CachedVideo cachedVideo;

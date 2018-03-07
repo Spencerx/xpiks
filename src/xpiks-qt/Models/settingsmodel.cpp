@@ -178,7 +178,7 @@ namespace Models {
     void SettingsModel::initializeConfigs() {
         LOG_DEBUG << "#";
 
-        QString localConfigPath = m_Environment.filepath(SETTINGS_FILE);
+        QString localConfigPath = m_Environment.path({SETTINGS_FILE});
         m_Config.initConfig(localConfigPath);
         m_State.init();
 
@@ -666,11 +666,11 @@ namespace Models {
         path += "/../Resources/";
 #endif
 
-        path += QDir::separator() + QLatin1String(Constants::WHATS_NEW_FILENAME);
+        path += QChar('/') + QLatin1String(Constants::WHATS_NEW_FILENAME);
         path = QDir::cleanPath(path);
 #else
         // path inside appimage
-        path = QCoreApplication::applicationDirPath() + QDir::separator() + Constants::WHATS_NEW_FILENAME;
+        path = QCoreApplication::applicationDirPath() + QChar('/') + Constants::WHATS_NEW_FILENAME;
 #endif
         QFile file(QDir::cleanPath(path));
         if (file.open(QIODevice::ReadOnly)) {
@@ -701,11 +701,11 @@ namespace Models {
         path += "/../Resources/";
 #endif
 
-        path += QDir::separator() + QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME);
+        path += QChar('/') + QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME);
         path = QDir::cleanPath(path);
 #else
         // path inside appimage
-        path = QCoreApplication::applicationDirPath() + QDir::separator() + Constants::TERMS_AND_CONDITIONS_FILENAME;
+        path = QCoreApplication::applicationDirPath() + QChar('/') + Constants::TERMS_AND_CONDITIONS_FILENAME;
 #endif
         QFile file(QDir::cleanPath(path));
         if (file.open(QIODevice::ReadOnly)) {

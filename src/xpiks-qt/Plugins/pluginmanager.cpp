@@ -39,9 +39,9 @@ namespace Plugins {
         bool success = m_Environment.ensureDirExists(Constants::PLUGINS_DIR);
         if (!success) { return false; }
 
-        m_PluginsDirectoryPath = m_Environment.dirpath(Constants::PLUGINS_DIR);
+        m_PluginsDirectoryPath = m_Environment.path({Constants::PLUGINS_DIR});
 
-        m_FailedPluginsDirectory = QDir::cleanPath(m_PluginsDirectoryPath + QDir::separator() + Constants::FAILED_PLUGINS_DIR);
+        m_FailedPluginsDirectory = QDir::cleanPath(m_PluginsDirectoryPath + QChar('/') + Constants::FAILED_PLUGINS_DIR);
         Helpers::ensureDirectoryExists(m_FailedPluginsDirectory);
 
         LOG_INFO << "Plugins directory:" << m_PluginsDirectoryPath;
@@ -51,7 +51,7 @@ namespace Plugins {
     void PluginManager::processInvalidFile(const QString &filename, const QString &pluginFullPath) {
         LOG_DEBUG << pluginFullPath;
 
-        const QString failedDestination = QDir::cleanPath(m_FailedPluginsDirectory + QDir::separator() + filename);
+        const QString failedDestination = QDir::cleanPath(m_FailedPluginsDirectory + QChar('/') + filename);
         if (QFile::rename(pluginFullPath, failedDestination)) {
             LOG_INFO << "Moved invalid file from the plugins dir" << pluginFullPath;
         } else {
@@ -258,7 +258,7 @@ namespace Plugins {
         QFileInfo existingFI(fullpath);
         if (existingFI.exists()) {
             const QString filename = existingFI.fileName();
-            QString destinationPath = QDir::cleanPath(m_PluginsDirectoryPath + QDir::separator() + filename);
+            QString destinationPath = QDir::cleanPath(m_PluginsDirectoryPath + QChar('/') + filename);
             exists = QFileInfo(destinationPath).exists() || isPluginAdded(destinationPath);
         }
 
@@ -282,7 +282,7 @@ namespace Plugins {
             }
 
             const QString filename = existingFI.fileName();
-            QString destinationPath = QDir::cleanPath(m_PluginsDirectoryPath + QDir::separator() + filename);
+            QString destinationPath = QDir::cleanPath(m_PluginsDirectoryPath + QChar('/') + filename);
             if (QFileInfo(destinationPath).exists() || isPluginAdded(destinationPath)) {
                 LOG_WARNING << "Plugin with same filename already added";
                 break;
@@ -349,7 +349,6 @@ namespace Plugins {
     std::shared_ptr<PluginWrapper> PluginManager::loadPlugin(const QString &filepath) {
         LOG_INFO << filepath;
         std::shared_ptr<PluginWrapper> result;
-
 
         try {
             bool success = false;

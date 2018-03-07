@@ -57,7 +57,7 @@ namespace QMLExtensions {
         m_ProcessedItemsCount = 0;
 
         m_Environment.ensureDirExists(Constants::IMAGES_CACHE_DIR);
-        m_ImagesCacheDir = m_Environment.dirpath(Constants::IMAGES_CACHE_DIR);
+        m_ImagesCacheDir = m_Environment.path({Constants::IMAGES_CACHE_DIR});
         LOG_INFO << "Using" << m_ImagesCacheDir << "for images cache";
 
         m_Cache.initialize();
@@ -111,7 +111,7 @@ namespace QMLExtensions {
         QFileInfo fi(originalPath);
         const QString suffix = isInResources ? "jpg" : fi.suffix();
         QString pathHash = getImagePathHash(originalPath) + "." + suffix;
-        QString cachedFilepath = QDir::cleanPath(m_ImagesCacheDir + QDir::separator() + pathHash);
+        QString cachedFilepath = QDir::cleanPath(m_ImagesCacheDir + QChar('/') + pathHash);
 
         if (resizedImage.save(cachedFilepath, nullptr, PREVIEW_JPG_QUALITY)) {
             CachedImage cachedImage;
@@ -143,7 +143,7 @@ namespace QMLExtensions {
         CachedImage cachedImage;
 
         if (m_Cache.tryGet(key, cachedImage)) {
-            QString cachedValue = QDir::cleanPath(m_ImagesCacheDir + QDir::separator() + cachedImage.m_Filename);
+            QString cachedValue = QDir::cleanPath(m_ImagesCacheDir + QChar('/') + cachedImage.m_Filename);
 
             QFileInfo fi(cachedValue);
 
@@ -163,7 +163,7 @@ namespace QMLExtensions {
 
     bool ImageCachingWorker::upgradeCacheStorage() {
         bool migrated = false;
-        QString indexFilepath = m_Environment.filepath(Constants::IMAGES_CACHE_INDEX);
+        QString indexFilepath = m_Environment.path({Constants::IMAGES_CACHE_INDEX});
         LOG_INFO << "Trying to load old cache index from" << indexFilepath;
 
         QHash<QString, CachedImage> oldCache;

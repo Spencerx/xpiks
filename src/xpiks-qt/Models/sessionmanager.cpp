@@ -28,7 +28,7 @@
 namespace Models {
     SessionManager::SessionManager(Common::ISystemEnvironment &environment):
         QObject(),
-        m_LocalConfigPath(environment.filepath(SESSION_FILE)),
+        m_LocalConfigPath(environment.path({SESSION_FILE})),
         m_CanRestore(false)
     {
     }

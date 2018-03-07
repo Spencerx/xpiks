@@ -49,7 +49,7 @@ namespace Connectivity {
 
     void SwitcherConfig::initializeConfigs() {
         LOG_DEBUG << "#";
-        QString localConfigPath = m_Environment.filepath(LOCAL_SWITCHER_CONFIG);
+        QString localConfigPath = m_Environment.path({LOCAL_SWITCHER_CONFIG});
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getSwitcherAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);

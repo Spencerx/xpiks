@@ -26,7 +26,7 @@ namespace Common {
 
         QString filename = QString("%1.json").arg(m_StateName);
 
-        QString localConfigPath = m_Environment.fileInDir(filename, Constants::STATES_DIR);
+        QString localConfigPath = m_Environment.path({Constants::STATES_DIR, filename});
         m_StateConfig.initConfig(localConfigPath);
 
         QJsonDocument &doc = m_StateConfig.getConfig();
