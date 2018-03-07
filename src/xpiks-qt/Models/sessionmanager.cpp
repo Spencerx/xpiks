@@ -17,15 +17,7 @@
 #include "../MetadataIO/artworkssnapshot.h"
 #include "sessionmanager.h"
 
-#ifdef QT_DEBUG
-    #ifdef INTEGRATION_TESTS
-        #define SESSION_FILE "integration_session.json"
-    #else
-        #define SESSION_FILE "debug_session.json"
-    #endif
-#else
-    #define SESSION_FILE "session.json"
-#endif
+#define SESSION_FILE "session.json"
 
 #define OPENED_FILES_KEY "openedFiles"
 #define OPENED_DIRECTORIES_KEY "openedDirectories"

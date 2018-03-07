@@ -31,15 +31,7 @@
 #define FTP_ISSELECTED QLatin1String("selected")
 #define FTP_VECTORS_FIRST QLatin1String("vectorder")
 
-#ifdef QT_DEBUG
-    #ifdef INTEGRATION_TESTS
-        #define UPLOAD_INFOS_FILE "integration_uploadinfos.json"
-    #else
-        #define UPLOAD_INFOS_FILE "debug_uploadinfos.json"
-    #endif
-#else
 #define UPLOAD_INFOS_FILE "uploadinfos.json"
-#endif
 
 #define OVERWRITE_KEY "overwrite"
 #define OVERWRITE_CSV_PLANS false

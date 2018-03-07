@@ -29,15 +29,7 @@ namespace KeywordsPresets {
 #define GROUP_NAME_KEY QLatin1String("name")
 #define GROUP_ID_KEY QLatin1String("id")
 
-#ifdef QT_DEBUG
-    #ifdef INTEGRATION_TESTS
-        #define LOCAL_PRESETKEYWORDS_LIST_FILE "tests_keywords_presets.json"
-    #else
-        #define LOCAL_PRESETKEYWORDS_LIST_FILE "debug_keywords_presets.json"
-    #endif
-#else
 #define LOCAL_PRESETKEYWORDS_LIST_FILE "keywords_presets.json"
-#endif
 
 #define OVERWRITE_PRESETS_CONFIG false
 

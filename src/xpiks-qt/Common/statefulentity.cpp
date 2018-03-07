@@ -24,13 +24,7 @@ namespace Common {
     void StatefulEntity::init() {
         LOG_DEBUG << m_StateName;
 
-#if defined(QT_DEBUG)
-        QString filename = QString("debug_%1.json").arg(m_StateName);
-#elif defined(INTEGRATION_TESTS)
-        QString filename = QString("tests_%1.json").arg(m_StateName);
-#else
         QString filename = QString("%1.json").arg(m_StateName);
-#endif
 
         QString localConfigPath = m_Environment.fileInDir(filename, Constants::STATES_DIR);
         m_StateConfig.initConfig(localConfigPath);

@@ -15,15 +15,8 @@
 #include "../Common/defines.h"
 
 namespace Connectivity {
-#ifdef QT_DEBUG
-    #ifdef INTEGRATION_TESTS
-        #define LOCAL_SWITCHER_CONFIG "tests_switches.json"
-    #else
-        #define LOCAL_SWITCHER_CONFIG "debug_switches.json"
-    #endif
-#else
+
 #define LOCAL_SWITCHER_CONFIG "switches.json"
-#endif
 
 #define VALUE_KEY QLatin1String("v")
 #define THRESHOLD_KEY QLatin1String("t")
