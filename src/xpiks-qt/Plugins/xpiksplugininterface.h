@@ -46,8 +46,8 @@ namespace Plugins {
 
         // actions routines
     public:
-        virtual const std::vector<std::shared_ptr<IPluginAction> > &getExportedActions() const = 0;
-        virtual bool executeAction(int actionID) = 0;
+        virtual std::vector<std::shared_ptr<IPluginAction> > getExportedActions() const { return std::vector<std::shared_ptr<IPluginAction> >(); }
+        virtual bool executeAction(int actionID) { Q_UNUSED(actionID); return false; }
 
         // general routines
     public:
@@ -59,16 +59,16 @@ namespace Plugins {
         // notification handlers
     public:
         // properties of which plugin wants to be notified
-        virtual Common::flag_t getDesiredNotificationFlags() const = 0;
-        virtual void onPropertyChanged(PluginNotificationFlags flag, const QVariant &data, void *pointer) = 0;
+        virtual Common::flag_t getDesiredNotificationFlags() const { return (Common::flag_t)PluginNotificationFlags::None; }
+        virtual void onPropertyChanged(PluginNotificationFlags flag, const QVariant &data, void *pointer) { Q_UNUSED(flag); Q_UNUSED(data); Q_UNUSED(pointer); }
 
     public:
-        virtual void injectCommandManager(Commands::ICommandManager *commandManager) = 0;
-        virtual void injectUndoRedoManager(UndoRedo::IUndoRedoManager *undoRedoManager) = 0;
-        virtual void injectArtworksSource(Common::IArtworksSource *artworksSource) = 0;
-        virtual void injectUIProvider(IUIProvider *uiProvider) = 0;
-        virtual void injectPresetsManager(KeywordsPresets::IPresetsManager *presetsManager) = 0;
-        virtual void injectDatabaseManager(Helpers::IDatabaseManager *databaseManager) = 0;
+        virtual void injectCommandManager(Commands::ICommandManager *commandManager) { Q_UNUSED(commandManager); }
+        virtual void injectUndoRedoManager(UndoRedo::IUndoRedoManager *undoRedoManager) { Q_UNUSED(undoRedoManager); }
+        virtual void injectArtworksSource(Common::IArtworksSource *artworksSource) { Q_UNUSED(artworksSource); }
+        virtual void injectUIProvider(IUIProvider *uiProvider) { Q_UNUSED(uiProvider); }
+        virtual void injectPresetsManager(KeywordsPresets::IPresetsManager *presetsManager) { Q_UNUSED(presetsManager); }
+        virtual void injectDatabaseManager(Helpers::IDatabaseManager *databaseManager) { Q_UNUSED(databaseManager); }
     };
 }
 
