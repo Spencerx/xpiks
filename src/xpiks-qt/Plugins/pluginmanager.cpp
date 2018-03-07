@@ -43,7 +43,7 @@ namespace Plugins {
 
         m_PluginsDirectoryPath = m_Environment.path({Constants::PLUGINS_DIR});
 
-        m_FailedPluginsDirectory = QDir::cleanPath(m_PluginsDirectoryPath + QChar('/') + Constants::FAILED_PLUGINS_DIR);
+        m_FailedPluginsDirectory = m_Environment.path({Constants::PLUGINS_DIR, Constants::FAILED_PLUGINS_DIR});
         Helpers::ensureDirectoryExists(m_FailedPluginsDirectory);
 
         LOG_INFO << "Plugins directory:" << m_PluginsDirectoryPath;

@@ -16,7 +16,9 @@
 class PluginEnvironment: public Common::ISystemEnvironment
 {
 public:
-    PluginEnvironment(Common::ISystemEnvironment &systemEnvironment, const QString &pluginsDir, const QString &pluginName);
+    PluginEnvironment(Common::ISystemEnvironment &systemEnvironment,
+                      const QString &pluginsDir,
+                      const QString &fullPluginPath);
 
 public:
     void initialize();
@@ -30,7 +32,8 @@ public:
 private:
     Common::ISystemEnvironment &m_SystemEnvironment;
     QString m_PluginsDir;
-    QString m_PluginName;
+    QString m_PluginDirName;
+    QString m_DataDirName;
 };
 
 #endif // PLUGINSENVIRONMENT_H

@@ -10,16 +10,22 @@
 
 #include "pluginenvironment.h"
 #include <QDir>
+#include <QFileInfo>
 #include "../Helpers/filehelpers.h"
 #include "../Helpers/constants.h"
 
-PluginEnvironment::PluginEnvironment(ISystemEnvironment &systemEnvironment, const QString &pluginsDir, const QString &pluginName):
+PluginEnvironment::PluginEnvironment(ISystemEnvironment &systemEnvironment,
+                                     const QString &pluginsDir,
+                                     const QString &fullPluginPath):
     m_SystemEnvironment(systemEnvironment),
     m_PluginsDir(pluginsDir),
-    m_PluginName(pluginName)
+    m_DataDirName("data")
 {
     Q_ASSERT(!pluginsDir.isEmpty());
-    Q_ASSERT(!pluginName.isEmpty());
+    Q_ASSERT(!fullPluginPath.isEmpty());
+
+    QFileInfo fi(fullPluginPath);
+    m_PluginDirName = fi.baseName();
 }
 
 void PluginEnvironment::initialize() {
@@ -28,18 +34,18 @@ void PluginEnvironment::initialize() {
 }
 
 QString PluginEnvironment::root() const {
-    return m_SystemEnvironment.path({m_PluginsDir, m_PluginName});
+    return m_SystemEnvironment.path({m_PluginsDir, m_DataDirName, m_PluginDirName});
 }
 
 QString PluginEnvironment::path(const QStringList &path) {
     QStringList extended;
-    extended << m_PluginsDir << m_PluginName;
+    extended << m_PluginsDir << m_DataDirName << m_PluginDirName;
     extended.append(path);
     return m_SystemEnvironment.path(extended);
 }
 
 bool PluginEnvironment::ensureDirExists(const QString &name) {
-    QString dirPath = m_SystemEnvironment.path({m_PluginsDir, m_PluginName, name});
+    QString dirPath = m_SystemEnvironment.path({m_PluginsDir, m_DataDirName, m_PluginDirName, name});
     bool result = Helpers::ensureDirectoryExists(dirPath);
     return result;
 }

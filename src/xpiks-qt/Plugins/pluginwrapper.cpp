@@ -24,7 +24,7 @@ namespace Plugins {
                                  UIProvider *realUIProvider,
                                  Helpers::DatabaseManager *databaseManager):
         m_PluginInterface(pluginInterface),
-        m_PluginEnvironment(environment, Constants::PLUGINS_DIR, pluginInterface->getPrettyName()),
+        m_PluginEnvironment(environment, Constants::PLUGINS_DIR, filepath),
         m_PluginDatabaseManager(m_PluginEnvironment, databaseManager),
         m_ActionsModel(pluginInterface->getExportedActions(), pluginID),
         m_NotificationFlags(pluginInterface->getDesiredNotificationFlags()),
