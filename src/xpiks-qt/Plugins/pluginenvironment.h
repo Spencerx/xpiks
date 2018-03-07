@@ -13,10 +13,13 @@
 
 #include "../Common/isystemenvironment.h"
 
-class PluginsEnvironment: public Common::ISystemEnvironment
+class PluginEnvironment: public Common::ISystemEnvironment
 {
 public:
-    PluginsEnvironment(Common::ISystemEnvironment &systemEnvironment, const QString &pluginsDir);
+    PluginEnvironment(Common::ISystemEnvironment &systemEnvironment, const QString &pluginsDir, const QString &pluginName);
+
+public:
+    void initialize();
 
     // ISystemEnvironment interface
 public:
@@ -27,6 +30,7 @@ public:
 private:
     Common::ISystemEnvironment &m_SystemEnvironment;
     QString m_PluginsDir;
+    QString m_PluginName;
 };
 
 #endif // PLUGINSENVIRONMENT_H

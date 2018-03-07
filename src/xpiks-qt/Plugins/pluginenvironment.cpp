@@ -1,0 +1,45 @@
+/*
+ * This file is a part of Xpiks - cross platform application for
+ * keywording and uploading images for microstocks
+ * Copyright (C) 2014-2018 Taras Kushnir <kushnirTV@gmail.com>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+#include "pluginenvironment.h"
+#include <QDir>
+#include "../Helpers/filehelpers.h"
+#include "../Helpers/constants.h"
+
+PluginEnvironment::PluginEnvironment(ISystemEnvironment &systemEnvironment, const QString &pluginsDir, const QString &pluginName):
+    m_SystemEnvironment(systemEnvironment),
+    m_PluginsDir(pluginsDir),
+    m_PluginName(pluginName)
+{
+    Q_ASSERT(!pluginsDir.isEmpty());
+    Q_ASSERT(!pluginName.isEmpty());
+}
+
+void PluginEnvironment::initialize() {
+    ensureDirExists(Constants::STATES_DIR);
+    ensureDirExists(Constants::DB_DIR);
+}
+
+QString PluginEnvironment::root() const {
+    return m_SystemEnvironment.path({m_PluginsDir, m_PluginName});
+}
+
+QString PluginEnvironment::path(const QStringList &path) {
+    QStringList extended;
+    extended << m_PluginsDir << m_PluginName;
+    extended.append(path);
+    return m_SystemEnvironment.path(extended);
+}
+
+bool PluginEnvironment::ensureDirExists(const QString &name) {
+    QString dirPath = m_SystemEnvironment.path({m_PluginsDir, m_PluginName, name});
+    bool result = Helpers::ensureDirectoryExists(dirPath);
+    return result;
+}

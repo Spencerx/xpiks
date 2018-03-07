@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
         QString time = QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss-zzz");
         QString logFilename = QString("xpiks-qt-%1.log").arg(time);
 
-        QString logFilePath = environment.path(QStringList() << Constants::LOGS_DIR << logFilename);
+        QString logFilePath = environment.path({Constants::LOGS_DIR, logFilename});
 
         Helpers::Logger &logger = Helpers::Logger::getInstance();
         logger.setLogFilePath(logFilePath);
@@ -308,7 +308,7 @@ int main(int argc, char *argv[]) {
 #endif
     Connectivity::TelemetryService telemetryService(userId, telemetryEnabled);
 
-    Plugins::PluginManager pluginManager(environment);
+    Plugins::PluginManager pluginManager(environment, &databaseManager);
     Plugins::PluginsWithActionsModel pluginsWithActions;
     pluginsWithActions.setSourceModel(&pluginManager);
 

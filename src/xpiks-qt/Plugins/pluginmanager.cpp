@@ -23,18 +23,20 @@
 #include "../Helpers/filehelpers.h"
 
 namespace Plugins {
-    PluginManager::PluginManager(Common::ISystemEnvironment &environment):
+    PluginManager::PluginManager(Common::ISystemEnvironment &environment, Helpers::DatabaseManager *dbManager):
         QAbstractListModel(),
         m_Environment(environment),
+        m_DatabaseManager(dbManager),
         m_LastPluginID(0)
     {
+        Q_ASSERT(dbManager != nullptr);
     }
 
     PluginManager::~PluginManager() {
         LOG_DEBUG << "#";
     }
 
-    bool PluginManager::initPluginsDir() {
+    bool PluginManager::initialize() {
         LOG_DEBUG << "#";
         bool success = m_Environment.ensureDirExists(Constants::PLUGINS_DIR);
         if (!success) { return false; }
@@ -67,7 +69,7 @@ namespace Plugins {
     void PluginManager::loadPlugins() {
         LOG_DEBUG << "#";
 
-        if (!initPluginsDir()) {
+        if (!initialize()) {
             LOG_WARNING << "Failed to initialize plugins directory. Exiting...";
             return;
         }
@@ -388,7 +390,13 @@ namespace Plugins {
         const int pluginID = getNextPluginID();
         LOG_INFO << "ID:" << pluginID << "name:" << plugin->getPrettyName() << "version:" << plugin->getVersionString() << "filepath:" << filepath;
 
-        std::shared_ptr<PluginWrapper> pluginWrapper(new PluginWrapper(filepath, plugin, pluginID, &m_UIProvider));
+        std::shared_ptr<PluginWrapper> pluginWrapper(new PluginWrapper(filepath,
+                                                                       plugin,
+                                                                       pluginID,
+                                                                       m_Environment,
+                                                                       &m_UIProvider,
+                                                                       m_DatabaseManager));
+        pluginWrapper->initialize();
 
         try {
             plugin->injectCommandManager(m_CommandManager);
@@ -396,6 +404,7 @@ namespace Plugins {
             plugin->injectUIProvider(pluginWrapper->getUIProvider());
             plugin->injectArtworksSource(m_CommandManager->getArtItemsModel());
             plugin->injectPresetsManager(m_CommandManager->getPresetsModel());
+            plugin->injectDatabaseManager(pluginWrapper->getDatabaseManager());
 
             plugin->initializePlugin();
             // TODO: check this in config in future

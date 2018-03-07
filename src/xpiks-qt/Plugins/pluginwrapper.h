@@ -19,6 +19,10 @@
 #include "iuiprovider.h"
 #include "xpiksplugininterface.h"
 #include "../Common/flags.h"
+#include "pluginenvironment.h"
+#include "../Helpers/database.h"
+#include "plugindatabasemanager.h"
+#include "../Common/isystemenvironment.h"
 
 namespace Plugins {
     class UIProvider;
@@ -26,7 +30,12 @@ namespace Plugins {
     class PluginWrapper
     {
     public:
-        PluginWrapper(const QString &filepath, XpiksPluginInterface *pluginInterface, int pluginID, UIProvider *realUIProvider);
+        PluginWrapper(const QString &filepath,
+                      XpiksPluginInterface *pluginInterface,
+                      int pluginID,
+                      Common::ISystemEnvironment &environment,
+                      UIProvider *realUIProvider,
+                      Helpers::DatabaseManager *databaseManager);
         virtual ~PluginWrapper();
 
     public:
@@ -41,7 +50,10 @@ namespace Plugins {
         bool anyActionsProvided() const { return m_ActionsModel.size() > 0; }
         PluginActionsModel *getActionsModel() { return &m_ActionsModel; }
         IUIProvider *getUIProvider() { return &m_UIProviderSafe; }
+        Helpers::IDatabaseManager *getDatabaseManager() { return &m_PluginDatabaseManager; }
 
+    public:
+        void initialize();
         void enablePlugin();
         void disablePlugin();
 
@@ -53,6 +65,8 @@ namespace Plugins {
 
     private:
         XpiksPluginInterface *m_PluginInterface;
+        PluginEnvironment m_PluginEnvironment;
+        PluginDatabaseManager m_PluginDatabaseManager;
         PluginActionsModel m_ActionsModel;
         Common::flag_t m_NotificationFlags;
         UIProviderSafe m_UIProviderSafe;

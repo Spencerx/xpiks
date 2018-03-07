@@ -584,13 +584,21 @@ namespace Helpers {
     }
 
     std::shared_ptr<Database> DatabaseManager::openDatabase(const QString &dbName) {
+        return doOpenDatabase(m_DBDirPath, dbName);
+    }
+
+    std::shared_ptr<Database> DatabaseManager::openDatabase(Common::ISystemEnvironment &environment, const QString &dbName) {
+        return doOpenDatabase(environment.path({Constants::DB_DIR}), dbName);
+    }
+
+    std::shared_ptr<Database> DatabaseManager::doOpenDatabase(const QString &root, const QString &dbName) {
         Q_ASSERT(m_Initialized);
         LOG_DEBUG << dbName;
 
         const int id = getNextID();
         std::shared_ptr<Database> db(new Database(id, &m_FinalizeCoordinator));
 
-        QDir databasesDir(m_DBDirPath);
+        QDir databasesDir(root);
         Q_ASSERT(databasesDir.exists());
         QString fullDbPath = databasesDir.filePath(dbName);
         QByteArray utf8Path = fullDbPath.toUtf8();

@@ -1,0 +1,27 @@
+/*
+ * This file is a part of Xpiks - cross platform application for
+ * keywording and uploading images for microstocks
+ * Copyright (C) 2014-2018 Taras Kushnir <kushnirTV@gmail.com>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef IDATABASEMANAGER_H
+#define IDATABASEMANAGER_H
+
+#include <QString>
+#include <memory>
+
+namespace Helpers {
+    class Database;
+
+    class IDatabaseManager {
+    public:
+        virtual ~IDatabaseManager() {}
+        virtual std::shared_ptr<Database> openDatabase(const QString &dbName) = 0;
+    };
+}
+
+#endif // IDATABASEMANAGER_H

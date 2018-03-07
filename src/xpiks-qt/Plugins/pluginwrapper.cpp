@@ -14,10 +14,18 @@
 #include "pluginactionsmodel.h"
 #include "uiprovider.h"
 #include "../Common/defines.h"
+#include "../Helpers/constants.h"
 
 namespace Plugins {
-    PluginWrapper::PluginWrapper(const QString &filepath, XpiksPluginInterface *pluginInterface, int pluginID, UIProvider *realUIProvider):
+    PluginWrapper::PluginWrapper(const QString &filepath,
+                                 XpiksPluginInterface *pluginInterface,
+                                 int pluginID,
+                                 Common::ISystemEnvironment &environment,
+                                 UIProvider *realUIProvider,
+                                 Helpers::DatabaseManager *databaseManager):
         m_PluginInterface(pluginInterface),
+        m_PluginEnvironment(environment, Constants::PLUGINS_DIR, pluginInterface->getPrettyName()),
+        m_PluginDatabaseManager(m_PluginEnvironment, databaseManager),
         m_ActionsModel(pluginInterface->getExportedActions(), pluginID),
         m_NotificationFlags(pluginInterface->getDesiredNotificationFlags()),
         m_UIProviderSafe(pluginID, realUIProvider),
@@ -34,6 +42,11 @@ namespace Plugins {
 
     PluginWrapper::~PluginWrapper() {
         LOG_DEBUG << m_PluginID;
+    }
+
+    void PluginWrapper::initialize() {
+        LOG_DEBUG << "#";
+        m_PluginEnvironment.initialize();
     }
 
     void PluginWrapper::enablePlugin() {

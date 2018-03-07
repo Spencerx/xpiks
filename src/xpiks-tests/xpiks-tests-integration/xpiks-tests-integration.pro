@@ -232,7 +232,9 @@ SOURCES += main.cpp \
     warningscombinedtest.cpp \
     csvdefaultexporttest.cpp \
     ../../xpiks-qt/Maintenance/updatebundlecleanupjobitem.cpp \
-    ../../xpiks-qt/Common/systemenvironment.cpp
+    ../../xpiks-qt/Common/systemenvironment.cpp \
+    ../../xpiks-qt/Plugins/plugindatabasemanager.cpp \
+    ../../xpiks-qt/Plugins/pluginenvironment.cpp
 
 RESOURCES +=
 
@@ -504,7 +506,10 @@ HEADERS += \
     csvdefaultexporttest.h \
     ../../xpiks-qt/Maintenance/updatebundlecleanupjobitem.h \
     ../../xpiks-qt/Common/isystemenvironment.h \
-    ../../xpiks-qt/Common/systemenvironment.h
+    ../../xpiks-qt/Common/systemenvironment.h \
+    ../../xpiks-qt/Plugins/plugindatabasemanager.h \
+    ../../xpiks-qt/Plugins/pluginenvironment.h \
+    ../../xpiks-qt/Helpers/idatabasemanager.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

@@ -293,7 +293,7 @@ int main(int argc, char *argv[]) {
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
     Connectivity::TelemetryService telemetryService("1234567890", false);
-    Plugins::PluginManager pluginManager(environment);
+    Plugins::PluginManager pluginManager(environment, &databaseManager);
     Helpers::DatabaseManager databaseManager(environment);
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel(environment);

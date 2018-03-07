@@ -26,6 +26,7 @@
 #include "asynccoordinator.h"
 #include "../Common/defines.h"
 #include "../Common/isystemenvironment.h"
+#include "idatabasemanager.h"
 
 struct sqlite3;
 struct sqlite3_stmt;
@@ -113,7 +114,7 @@ namespace Helpers {
         volatile bool m_IsOpened;
     };
 
-    class DatabaseManager: public QObject {
+    class DatabaseManager: public QObject, public IDatabaseManager {
         Q_OBJECT
     public:
         DatabaseManager(Common::ISystemEnvironment &environment);
@@ -131,7 +132,11 @@ namespace Helpers {
         int closeEnvironment();
 
     public:
-        std::shared_ptr<Database> openDatabase(const QString &dbName);
+        virtual std::shared_ptr<Database> openDatabase(const QString &dbName) override;
+        std::shared_ptr<Database> openDatabase(Common::ISystemEnvironment &environment, const QString &dbName);
+
+    private:
+        std::shared_ptr<Database> doOpenDatabase(const QString &root, const QString &dbName);
 
     public:
         void prepareToFinalize();

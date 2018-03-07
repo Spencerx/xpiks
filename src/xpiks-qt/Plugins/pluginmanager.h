@@ -20,6 +20,9 @@
 #include "../Common/baseentity.h"
 #include "uiprovider.h"
 #include "../Common/isystemenvironment.h"
+#include "pluginenvironment.h"
+#include "plugindatabasemanager.h"
+#include "../Helpers/database.h"
 
 namespace Plugins {
     class XpiksPluginInterface;
@@ -29,7 +32,7 @@ namespace Plugins {
     {
         Q_OBJECT
     public:
-        PluginManager(Common::ISystemEnvironment &environment);
+        PluginManager(Common::ISystemEnvironment &environment, Helpers::DatabaseManager *dbManager);
         virtual ~PluginManager();
 
     public:
@@ -43,7 +46,7 @@ namespace Plugins {
         };
 
     private:
-        bool initPluginsDir();
+        bool initialize();
         const QString &getPluginsDirectoryPath() const { return m_PluginsDirectoryPath; }
         void processInvalidFile(const QString &filename, const QString &pluginFullPath);
 
@@ -86,6 +89,7 @@ namespace Plugins {
 
     private:
         Common::ISystemEnvironment &m_Environment;
+        Helpers::DatabaseManager *m_DatabaseManager;
         QString m_PluginsDirectoryPath;
         QString m_FailedPluginsDirectory;
         std::vector<std::shared_ptr<PluginWrapper> > m_PluginsList;
