@@ -412,14 +412,10 @@ namespace Plugins {
                 break;
             }
 
-            if (!pluginWrapper->initializePlugin()) {
-                break;
-            }
+            if (!pluginWrapper->initializePlugin()) { break; }
 
             // TODO: check this in config in future
-            if (!pluginWrapper->enablePlugin()) {
-                break;
-            }
+            if (!pluginWrapper->enablePlugin()) { break; }
 
             initialized = true;
         } while(false);

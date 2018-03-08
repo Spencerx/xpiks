@@ -134,12 +134,7 @@ namespace Plugins {
         LOG_INFO << getPrettyName() << getVersionString();
         setIsRemovedFlag(true);
 
-        const QString pluginRootPath = m_PluginEnvironment.root();
-        LOG_DEBUG << "About to remove:" << pluginRootPath;
-
-        QDir dataRoot(pluginRootPath);
-        bool result = dataRoot.removeRecursively();
-        LOG_INFO << "Removed plugin's data:" << result;
+        // TODO: cleanup the data or not?
     }
 
     void PluginWrapper::notifyPlugin(PluginNotificationFlags flag, const QVariant &data, void *pointer) {
