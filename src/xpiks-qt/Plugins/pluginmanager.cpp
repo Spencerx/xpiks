@@ -396,8 +396,6 @@ namespace Plugins {
                                                                        m_Environment,
                                                                        &m_UIProvider,
                                                                        m_DatabaseManager));
-        pluginWrapper->initialize();
-
         try {
             plugin->injectCommandManager(m_CommandManager);
             plugin->injectUndoRedoManager(m_CommandManager->getUndoRedoManager());
@@ -406,9 +404,10 @@ namespace Plugins {
             plugin->injectPresetsManager(m_CommandManager->getPresetsModel());
             plugin->injectDatabaseManager(pluginWrapper->getDatabaseManager());
 
-            plugin->initializePlugin();
-            // TODO: check this in config in future
-            plugin->enablePlugin();
+            if (pluginWrapper->initializePlugin()) {
+                // TODO: check this in config in future
+                pluginWrapper->enablePlugin();
+            }
         }
         catch(...) {
             LOG_WARNING << "Fail initializing plugin with ID:" << pluginID;

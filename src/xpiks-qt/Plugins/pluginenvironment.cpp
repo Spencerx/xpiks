@@ -13,6 +13,7 @@
 #include <QFileInfo>
 #include "../Helpers/filehelpers.h"
 #include "../Helpers/constants.h"
+#include "../Common/defines.h"
 
 PluginEnvironment::PluginEnvironment(ISystemEnvironment &systemEnvironment,
                                      const QString &pluginsDir,
@@ -29,6 +30,7 @@ PluginEnvironment::PluginEnvironment(ISystemEnvironment &systemEnvironment,
 }
 
 void PluginEnvironment::initialize() {
+    LOG_DEBUG << "Initializing in" << root();
     ensureDirExists(Constants::STATES_DIR);
     ensureDirExists(Constants::DB_DIR);
 }

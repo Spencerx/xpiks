@@ -51,10 +51,10 @@ namespace Plugins {
 
         // general routines
     public:
-        virtual void initializePlugin() = 0;
-        virtual void finalizePlugin() = 0;
-        virtual void enablePlugin() = 0;
-        virtual void disablePlugin() = 0;
+        virtual bool initialize() = 0;
+        virtual void finalize() = 0;
+        virtual void enable() = 0;
+        virtual void disable() = 0;
 
         // notification handlers
     public:

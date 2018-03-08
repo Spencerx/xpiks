@@ -23,6 +23,7 @@
 #include "../Helpers/database.h"
 #include "plugindatabasemanager.h"
 #include "../Common/isystemenvironment.h"
+#include "../Common/flags.h"
 
 namespace Plugins {
     class UIProvider;
@@ -38,10 +39,25 @@ namespace Plugins {
                       Helpers::DatabaseManager *databaseManager);
         virtual ~PluginWrapper();
 
+    private:
+        enum PluginFlags {
+            FlagIsInitialized = 1 << 0,
+            FlagIsEnabled = 1 << 1,
+            FlagIsRemoved = 1 << 2
+        };
+
+        inline bool getIsInitializedFlag() const { return Common::HasFlag(m_PluginFlags, FlagIsInitialized); }
+        inline bool getIsEnabledFlag() const { return Common::HasFlag(m_PluginFlags, FlagIsEnabled); }
+        inline bool getIsRemovedFlag() const { return Common::HasFlag(m_PluginFlags, FlagIsRemoved); }
+
+        inline void setIsInitializedFlag(bool value) { Common::ApplyFlag(m_PluginFlags, value, FlagIsInitialized); }
+        inline void setIsEnabledFlag(bool value) { Common::ApplyFlag(m_PluginFlags, value, FlagIsEnabled); }
+        inline void setIsRemovedFlag(bool value) { Common::ApplyFlag(m_PluginFlags, value, FlagIsRemoved); }
+
     public:
         int getPluginID() const { return m_PluginID; }
-        bool getIsEnabled() const { return m_IsEnabled && !m_IsRemoved; }
-        bool getIsRemoved() const { return m_IsRemoved; }
+        bool getIsEnabled() const { return getIsEnabledFlag() && !getIsRemovedFlag(); }
+        bool getIsRemoved() const { return getIsRemovedFlag(); }
         const QString &getFilepath() const { return m_PluginFilepath; }
         const QString &getPrettyName() const { return m_PrettyName; }
         const QString &getVersionString() const { return m_VersionString; }
@@ -53,13 +69,13 @@ namespace Plugins {
         Helpers::IDatabaseManager *getDatabaseManager() { return &m_PluginDatabaseManager; }
 
     public:
-        void initialize();
+        bool initializePlugin();
         void enablePlugin();
         void disablePlugin();
 
         void triggerActionSafe(int actionID) const;
         void finalizePlugin();
-        void removePlugin() { m_IsRemoved = true; }
+        void removePlugin();
 
         void notifyPlugin(PluginNotificationFlags flag, const QVariant &data, void *pointer);
 
@@ -72,8 +88,7 @@ namespace Plugins {
         UIProviderSafe m_UIProviderSafe;
         QString m_PluginFilepath;
         int m_PluginID;
-        bool m_IsEnabled;
-        bool m_IsRemoved;
+        Common::flag_t m_PluginFlags;
         const QString &m_PrettyName;
         const QString &m_VersionString;
         const QString &m_Author;
