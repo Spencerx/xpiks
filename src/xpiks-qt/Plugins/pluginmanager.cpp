@@ -396,20 +396,37 @@ namespace Plugins {
                                                                        m_Environment,
                                                                        &m_UIProvider,
                                                                        m_DatabaseManager));
-        try {
-            plugin->injectCommandManager(m_CommandManager);
-            plugin->injectUndoRedoManager(m_CommandManager->getUndoRedoManager());
-            plugin->injectUIProvider(pluginWrapper->getUIProvider());
-            plugin->injectArtworksSource(m_CommandManager->getArtItemsModel());
-            plugin->injectPresetsManager(m_CommandManager->getPresetsModel());
-            plugin->injectDatabaseManager(pluginWrapper->getDatabaseManager());
+        bool initialized = false;
 
-            if (pluginWrapper->initializePlugin()) {
-                // TODO: check this in config in future
-                pluginWrapper->enablePlugin();
+        do {
+            try {
+                plugin->injectCommandManager(m_CommandManager);
+                plugin->injectUndoRedoManager(m_CommandManager->getUndoRedoManager());
+                plugin->injectUIProvider(pluginWrapper->getUIProvider());
+                plugin->injectArtworksSource(m_CommandManager->getArtItemsModel());
+                plugin->injectPresetsManager(m_CommandManager->getPresetsModel());
+                plugin->injectDatabaseManager(pluginWrapper->getDatabaseManager());
             }
-        }
-        catch(...) {
+            catch(...) {
+                LOG_WARNING << "Failed to inject dependencies to plugin with ID:" << pluginID;
+                break;
+            }
+
+            if (!pluginWrapper->initializePlugin()) {
+                break;
+            }
+
+            // TODO: check this in config in future
+            if (!pluginWrapper->enablePlugin()) {
+                break;
+            }
+
+            initialized = true;
+        } while(false);
+
+        if (!initialized) {
+            pluginWrapper->finalizePlugin();
+
             LOG_WARNING << "Fail initializing plugin with ID:" << pluginID;
             pluginWrapper.reset();
         }

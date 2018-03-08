@@ -70,11 +70,11 @@ namespace Plugins {
 
     public:
         bool initializePlugin();
-        void enablePlugin();
-        void disablePlugin();
+        bool enablePlugin();
+        bool disablePlugin();
+        bool finalizePlugin();
 
         void triggerActionSafe(int actionID) const;
-        void finalizePlugin();
         void removePlugin();
 
         void notifyPlugin(PluginNotificationFlags flag, const QVariant &data, void *pointer);

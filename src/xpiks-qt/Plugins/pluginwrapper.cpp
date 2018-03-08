@@ -62,31 +62,57 @@ namespace Plugins {
         return result;
     }
 
-    void PluginWrapper::enablePlugin() {
+    bool PluginWrapper::enablePlugin() {
         LOG_INFO << getPrettyName() << getVersionString();
         Q_ASSERT(getIsInitializedFlag());
+        bool result = false;
 
         try {
             m_PluginInterface->enable();
             setIsEnabledFlag(true);
+            result = true;
         }
         catch(...) {
             LOG_WARNING << "Exception while enabling plugin";
         }
+
+        return result;
     }
 
-    void PluginWrapper::disablePlugin() {
+    bool PluginWrapper::disablePlugin() {
         Q_ASSERT(getIsEnabledFlag());
         LOG_INFO << getPrettyName() << getVersionString();
+        bool result = false;
 
         try {
             // set disabled in any case
             setIsEnabledFlag(false);
             m_PluginInterface->disable();
+            result = true;
         }
         catch(...) {
             LOG_WARNING << "Exception while disabling plugin";
         }
+
+        return result;
+    }
+
+    bool PluginWrapper::finalizePlugin() {
+        LOG_INFO << getPrettyName() << getVersionString();
+        if (!getIsInitializedFlag()) { return true; }
+
+        bool result = false;
+
+        try {
+            m_PluginInterface->finalize();
+            setIsInitializedFlag(false);
+            result = true;
+        }
+        catch (...) {
+            LOG_WARNING << "Exception on finalization";
+        }
+
+        return result;
     }
 
     void PluginWrapper::triggerActionSafe(int actionID) const {
@@ -101,19 +127,6 @@ namespace Plugins {
         }
         catch (...) {
             LOG_WARNING << "Exception while triggering action for plugin ID" << m_PluginID;
-        }
-    }
-
-    void PluginWrapper::finalizePlugin() {
-        LOG_INFO << getPrettyName() << getVersionString();
-        Q_ASSERT(getIsInitializedFlag());
-
-        try {
-            m_PluginInterface->finalize();
-            setIsInitializedFlag(false);
-        }
-        catch (...) {
-            LOG_WARNING << "Exception on finalization";
         }
     }
 
