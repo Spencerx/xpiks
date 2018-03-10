@@ -61,7 +61,7 @@ namespace Connectivity {
 
         QObject::connect(this, &TelemetryService::cancelAllQueries, m_TelemetryWorker, &TelemetryWorker::cancelAllQueries);
 
-        thread->start();
+        thread->start(QThread::LowestPriority);
     }
 
     void TelemetryService::reportAction(UserAction action) {
