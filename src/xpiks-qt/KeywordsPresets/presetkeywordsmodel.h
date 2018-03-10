@@ -139,6 +139,7 @@ namespace KeywordsPresets {
         Q_INVOKABLE QObject *getKeywordsModel(int index);
         Q_INVOKABLE void saveToConfig();
         Q_INVOKABLE void makeTitleValid(int row);
+        Q_INVOKABLE void generateCompletions(int index, const QString &prefix);
 
     private:
         /*Q_INVOKABLE*/ void loadModelFromConfig();
