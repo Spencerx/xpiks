@@ -82,6 +82,10 @@ build_script:
   - if defined XPIKS_BINARY qmake "CONFIG+=%configuration% appveyor" xpiks-qt.pro
   - if defined CORE_TESTS cd xpiks-tests\xpiks-tests-core
   - if defined CORE_TESTS qmake "CONFIG+=%configuration% appveyor" xpiks-tests-core.pro
+  - if defined INTEGRATION_TESTS cd xpiks-tests\plugins-for-tests\helloworld\xpiks-helloworld-plugin
+  - if defined INTEGRATION_TESTS qmake "CONFIG+=%configuration% appveyor" xpiks-helloworld-plugin.pro
+  - if defined INTEGRATION_TESTS nmake.exe
+  - if defined INTEGRATION_TESTS cd ..\..\..\..\
   - if defined INTEGRATION_TESTS cd xpiks-tests\xpiks-tests-integration
   - if defined INTEGRATION_TESTS qmake "CONFIG+=%configuration% appveyor" xpiks-tests-integration.pro
   - if defined UI_TESTS cd xpiks-tests\ui-tests-stubs

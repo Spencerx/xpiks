@@ -270,6 +270,7 @@ namespace Commands {
 #ifdef INTEGRATION_TESTS
         virtual Translation::TranslationManager *getTranslationManager() const { return m_TranslationManager; }
         virtual Models::FindAndReplaceModel *getFindAndReplaceModel() const { return m_FindAndReplaceModel; }
+        virtual Plugins::PluginManager *getPluginManager() const { return m_PluginManager; }
 #endif
 
     private:

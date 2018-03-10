@@ -234,7 +234,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Maintenance/updatebundlecleanupjobitem.cpp \
     ../../xpiks-qt/Common/systemenvironment.cpp \
     ../../xpiks-qt/Plugins/plugindatabasemanager.cpp \
-    ../../xpiks-qt/Plugins/pluginenvironment.cpp
+    ../../xpiks-qt/Plugins/pluginenvironment.cpp \
+    loadpluginbasictest.cpp
 
 RESOURCES +=
 
@@ -509,7 +510,8 @@ HEADERS += \
     ../../xpiks-qt/Common/systemenvironment.h \
     ../../xpiks-qt/Plugins/plugindatabasemanager.h \
     ../../xpiks-qt/Plugins/pluginenvironment.h \
-    ../../xpiks-qt/Helpers/idatabasemanager.h
+    ../../xpiks-qt/Helpers/idatabasemanager.h \
+    loadpluginbasictest.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

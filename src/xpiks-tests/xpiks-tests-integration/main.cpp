@@ -65,6 +65,7 @@
 #include "../../xpiks-qt/Models/switchermodel.h"
 #include "../../xpiks-qt/Helpers/filehelpers.h"
 #include "../../xpiks-qt/Common/systemenvironment.h"
+#include "../../xpiks-qt/Models/uimanager.h"
 
 #include "exiv2iohelpers.h"
 
@@ -124,6 +125,7 @@
 #include "importlostmetadatatest.h"
 #include "warningscombinedtest.h"
 #include "csvdefaultexporttest.h"
+#include "loadpluginbasictest.h"
 
 #if defined(WITH_PLUGINS)
 #undef WITH_PLUGINS
@@ -278,6 +280,7 @@ int main(int argc, char *argv[]) {
     Translation::TranslationManager translationManager(environment);
     Translation::TranslationService translationService(translationManager);
     Models::ArtworkProxyModel artworkProxy;
+    Models::UIManager uiManager(environment, &settingsModel);
     Models::SessionManager sessionManager(environment);
     sessionManager.initialize();
     // intentional memory leak to beat spellcheck lock stuff
@@ -296,7 +299,10 @@ int main(int argc, char *argv[]) {
     Helpers::DatabaseManager databaseManager(environment);
     Plugins::PluginManager pluginManager(environment, &databaseManager);
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
-    MetadataIO::CsvExportModel csvExportModel(environment);
+    MetadataIO::CsvExportModel csvExportModel(environment);    
+
+    auto *uiProvider = pluginManager.getUIProvider();
+    uiProvider->setUIManager(&uiManager);
 
     Commands::CommandManager commandManager;
     commandManager.InjectDependency(&artworkRepository);
@@ -343,7 +349,6 @@ int main(int argc, char *argv[]) {
     commandManager.InjectDependency(&databaseManager);
     commandManager.InjectDependency(&duplicatesModel);
     commandManager.InjectDependency(&csvExportModel);
-
 
     commandManager.ensureDependenciesInjected();
 
@@ -420,6 +425,7 @@ int main(int argc, char *argv[]) {
     integrationTests.append(new ImportLostMetadataTest(&commandManager));
     integrationTests.append(new WarningsCombinedTest(&commandManager));
     integrationTests.append(new CsvDefaultExportTest(&commandManager));
+    integrationTests.append(new LoadPluginBasicTest(&commandManager));
     // always the last one. insert new tests above
     integrationTests.append(new LocalLibrarySearchTest(&commandManager));
 

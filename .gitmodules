@@ -10,3 +10,6 @@
 [submodule "vendors/hunspell-repo"]
 	path = vendors/hunspell-repo
 	url = https://github.com/hunspell/hunspell.git
+[submodule "src/xpiks-tests/plugins-for-tests/helloworld"]
+	path = src/xpiks-tests/plugins-for-tests/helloworld
+	url = https://github.com/ribtoks/xpiks-helloworld-plugin.git
