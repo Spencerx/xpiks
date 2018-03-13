@@ -511,7 +511,8 @@ HEADERS += \
     ../../xpiks-qt/Plugins/plugindatabasemanager.h \
     ../../xpiks-qt/Plugins/pluginenvironment.h \
     ../../xpiks-qt/Helpers/idatabasemanager.h \
-    loadpluginbasictest.h
+    loadpluginbasictest.h \
+    ../../xpiks-qt/Helpers/jsonobjectmap.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

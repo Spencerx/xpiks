@@ -437,7 +437,8 @@ HEADERS += \
     Common/isystemenvironment.h \
     Helpers/idatabasemanager.h \
     Plugins/pluginenvironment.h \
-    Plugins/plugindatabasemanager.h
+    Plugins/plugindatabasemanager.h \
+    Helpers/jsonobjectmap.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

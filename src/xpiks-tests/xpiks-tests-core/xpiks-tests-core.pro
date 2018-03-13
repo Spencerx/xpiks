@@ -336,5 +336,6 @@ HEADERS += \
     warningscheck_tests.h \
     Mocks/warningssettingsmock.h \
     Mocks/coretestsenvironment.h \
-    ../../xpiks-qt/Common/isystemenvironment.h
+    ../../xpiks-qt/Common/isystemenvironment.h \
+    ../../xpiks-qt/Helpers/jsonobjectmap.h
 

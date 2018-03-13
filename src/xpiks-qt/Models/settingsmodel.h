@@ -30,14 +30,9 @@
 #include "../Common/delayedactionentity.h"
 #include "../Common/statefulentity.h"
 #include "../Common/isystemenvironment.h"
-
-#define SETTINGS_EPSILON 1e-9
+#include "../Helpers/jsonobjectmap.h"
 
 namespace Models {
-
-    int ensureInBounds(int value, int boundA, int boundB);
-    double ensureInBounds(double value, double boundA, double boundB);
-
     class SettingsModel:
             public QObject,
             public Common::BaseEntity,
@@ -103,8 +98,8 @@ namespace Models {
 
     public:
         ProxySettings *retrieveProxySettings();
-        bool getIsTelemetryEnabled() const { return boolValue(Constants::userStatistics, true); }
-        int getSettingsVersion() const { return intValue(Constants::settingsVersion); }
+        bool getIsTelemetryEnabled() const { return m_SettingsMap->boolValue(Constants::userStatistics, true); }
+        int getSettingsVersion() const { return m_SettingsMap->intValue(Constants::settingsVersion); }
 
     public:
         Q_INVOKABLE void resetAllValues();
@@ -126,103 +121,27 @@ namespace Models {
         void resetChangeStates();
 
     private:
-        inline void setValue(const char *key, const QJsonValue &value) {
-            m_SettingsJson.insert(QLatin1String(key), value);
-        }
-
-        inline void setExperimentalValue(const char *key, const QJsonValue &value) {
-            m_ExperimentalJson.insert(QLatin1String(key), value);
-        }
-
-        inline QJsonValue value(const char *key, const QJsonValue &defaultValue = QJsonValue()) const {
-            QJsonValue value = m_SettingsJson.value(QLatin1String(key));
-
-            if (value.isUndefined()) {
-                return defaultValue;
-            }
-
-            return value;
-        }
-
-        inline bool boolValue(const char *key, const bool defaultValue = false) const {
-            return m_SettingsJson.value(QLatin1String(key)).toBool(defaultValue);
-        }
-
-        inline bool expBoolValue(const char *key, const bool defaultValue = false) const {
-            return m_ExperimentalJson.value(QLatin1String(key)).toBool(defaultValue);
-        }
-
-        inline double doubleValue(const char *key, const double defaultValue = 0) const {
-            return m_SettingsJson.value(QLatin1String(key)).toDouble(defaultValue);
-        }
-
-        inline int intValue(const char *key, const int defaultValue = 0) const {
-            return m_SettingsJson.value(QLatin1String(key)).toInt(defaultValue);
-        }
-
-        inline int expIntValue(const char *key, const int defaultValue = 0) const {
-            return m_ExperimentalJson.value(QLatin1String(key)).toInt(defaultValue);
-        }
-
-        inline QString stringValue(const char *key, const QString &defaultValue = QString("")) const {
-            return m_SettingsJson.value(QLatin1String(key)).toString(defaultValue);
-        }
-
-        inline void deleteValue(const char *key) { m_SettingsJson.remove(QLatin1String(key)); }
-        inline bool containsValue(const char *key) { return m_SettingsJson.contains(QLatin1String(key)); }
-
-    private:
         QString getAppVersion() const { return QCoreApplication::applicationVersion(); }
         QString getWhatsNewText() const;
         QString getTermsAndConditionsText() const;
 
     public:
         QString getUserAgentId() const { return m_State.getString(Constants::userAgentId); }
-        QString getLegacyUploadHosts() const { return stringValue(Constants::legacyUploadHosts); }
-        QString getMasterPasswordHash() const { return stringValue(Constants::masterPasswordHash); }
-        bool getMustUseConfirmationDialogs() const { return boolValue(Constants::useConfirmationDialogs, true); }
+        QString getLegacyUploadHosts() const { return m_SettingsMap->stringValue(Constants::legacyUploadHosts); }
+        QString getMasterPasswordHash() const { return m_SettingsMap->stringValue(Constants::masterPasswordHash); }
+        bool getMustUseConfirmationDialogs() const { return m_SettingsMap->boolValue(Constants::useConfirmationDialogs, true); }
 
     public:
         Q_INVOKABLE bool needToShowWhatsNew();
         Q_INVOKABLE bool needToShowTextWhatsNew();
         Q_INVOKABLE void saveCurrentVersion();
         Q_INVOKABLE bool needToShowTermsAndConditions();
-
-        Q_INVOKABLE void userAgreeHandler() {
-            LOG_DEBUG << "#";
-            m_State.setValue(Constants::userConsent, true);
-            m_State.sync();
-        }
-
-        Q_INVOKABLE void setUseMasterPassword(bool value) {
-            LOG_DEBUG << "#";
-            setValue(Constants::useMasterPassword, value);
-        }
-
-        Q_INVOKABLE void setMasterPasswordHash() {
-            LOG_DEBUG << "#";
-            Encryption::SecretsManager *secretsManager = m_CommandManager->getSecretsManager();
-            setValue(Constants::masterPasswordHash, secretsManager->getMasterPasswordHash());
-        }
-
-        /*Q_INVOKABLE*/ void setUserAgentId(const QString &id) {
-            LOG_DEBUG << "#";
-            m_State.setValue(Constants::userAgentId, id);
-            m_State.sync();
-        }
-
-        Q_INVOKABLE void onMasterPasswordSet() {
-            LOG_INFO << "Master password changed";
-
-            setMasterPasswordHash();
-            setUseMasterPassword(true);
-            setMustUseMasterPassword(true);
-        }
-
-        Q_INVOKABLE void onMasterPasswordUnset(bool firstTime) {
-            setMustUseMasterPassword(!firstTime);
-            raiseMasterPasswordSignal();
-        }
+        Q_INVOKABLE void userAgreeHandler();
+        Q_INVOKABLE void setUseMasterPassword(bool value);
+        Q_INVOKABLE void setMasterPasswordHash();
+        /*Q_INVOKABLE*/ void setUserAgentId(const QString &id);
+        Q_INVOKABLE void onMasterPasswordSet();
+        Q_INVOKABLE void onMasterPasswordUnset(bool firstTime);
 
     public:
         QString getExifToolPath() const { return m_ExifToolPath; }
@@ -364,8 +283,8 @@ namespace Models {
         Common::StatefulEntity m_State;
         QMutex m_SettingsMutex;
         Helpers::LocalConfig m_Config;
-        QJsonObject m_SettingsJson;
-        QJsonObject m_ExperimentalJson;
+        std::shared_ptr<Helpers::JsonObjectMap> m_SettingsMap;
+        std::shared_ptr<Helpers::JsonObjectMap> m_ExperimentalMap;
         QString m_ExifToolPath;
         QString m_SelectedLocale;
         double m_KeywordSizeScale;

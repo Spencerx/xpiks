@@ -31,7 +31,8 @@ namespace Common {
 
         QJsonDocument &doc = m_StateConfig.getConfig();
         if (doc.isObject()) {
-            m_StateJson = doc.object();
+            QJsonObject json = doc.object();
+            m_StateMap.reset(new Helpers::JsonObjectMap(json));
         }
     }
 
@@ -42,7 +43,8 @@ namespace Common {
         // Helpers::LocalConfigDropper dropper(&m_StateConfig);
 
         QJsonDocument doc;
-        doc.setObject(m_StateJson);
+        QJsonObject json = m_StateMap->json();
+        doc.setObject(json);
 
         m_StateConfig.setConfig(doc);
         m_StateConfig.saveToFile();
