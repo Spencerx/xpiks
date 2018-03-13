@@ -131,6 +131,8 @@ namespace Models {
         Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
         m_Environment(environment),
         m_State("settings", environment),
+        m_SettingsMap(new Helpers::JsonObjectMap()),
+        m_ExperimentalMap(new Helpers::JsonObjectMap()),
         m_ExifToolPath(DEFAULT_EXIFTOOL),
         m_SelectedLocale(DEFAULT_LOCALE),
         m_KeywordSizeScale(DEFAULT_KEYWORD_SIZE_SCALE),
