@@ -16,7 +16,8 @@
 namespace Common {
     StatefulEntity::StatefulEntity(const QString &stateName, ISystemEnvironment &environment):
         m_Environment(environment),
-        m_StateName(stateName)
+        m_StateName(stateName),
+        m_StateMap(new Helpers::JsonObjectMap())
     {
         Q_ASSERT(!stateName.endsWith(".json", Qt::CaseInsensitive));
     }

@@ -18,6 +18,8 @@ namespace Helpers {
     class JsonObjectMap
     {
     public:
+        JsonObjectMap() { }
+
         JsonObjectMap(const QJsonObject &json):
             m_Json(json)
         { }
