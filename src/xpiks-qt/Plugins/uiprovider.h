@@ -37,9 +37,12 @@ namespace Plugins {
         void setRoot(QQuickItem *root) { m_Root = root; }
         void setUIManager(Models::UIManager *manager) { m_UiManager = manager; }
 
+    public:
+        void closeAllDialogs();
+
         // IUIProvider interface
     public:
-        void openDialog(const QUrl &rcPath, const QHash<QString, QObject*> &contextModels = QHash<QString, QObject*>()) const;
+        void openDialog(const QUrl &rcPath, const QHash<QString, QObject*> &contextModels = QHash<QString, QObject*>());
 
     private slots:
         void viewStatusChanged(QQmlComponent::Status status);
@@ -50,6 +53,7 @@ namespace Plugins {
         QQmlEngine *m_QmlEngine;
         QQuickItem *m_Root;
         Models::UIManager *m_UiManager;
+        QVector<QObject*> m_OpenedDialogs;
     };
 }
 

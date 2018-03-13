@@ -112,6 +112,8 @@ namespace Plugins {
     }
 
     void PluginManager::unloadPlugins() {
+        m_UIProvider.closeAllDialogs();
+
         const size_t size = m_PluginsList.size();
         LOG_DEBUG << size << "plugin(s)";
 
