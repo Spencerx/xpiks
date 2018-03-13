@@ -52,7 +52,7 @@ namespace Plugins {
         m_PluginEnvironment.initialize();
 
         try {
-            result = m_PluginInterface->initialize();
+            result = m_PluginInterface->initialize(m_PluginEnvironment);
             setIsInitializedFlag(true);
         }
         catch(...) {

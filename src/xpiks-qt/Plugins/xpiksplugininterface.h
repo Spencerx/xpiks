@@ -51,7 +51,7 @@ namespace Plugins {
 
         // general routines
     public:
-        virtual bool initialize() = 0;
+        virtual bool initialize(Common::ISystemEnvironment &environment) = 0;
         virtual void finalize() = 0;
         virtual void enable() = 0;
         virtual void disable() = 0;
