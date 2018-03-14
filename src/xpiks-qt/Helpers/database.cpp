@@ -179,7 +179,20 @@ namespace Helpers {
         executeStatement("PRAGMA synchronous = NORMAL;");
         // executeStatement("PRAGMA quick_check;");
 
-        return true;
+        int rc = 0;
+        bool anyError = false;
+
+        do {
+            std::string selectStr = QString("SELECT name FROM sqlite_master WHERE type='table'").toStdString();
+            rc = sqlite3_prepare_v2(m_Database, selectStr.c_str(), -1, &m_GetTablesStatement, 0);
+            if (rc != SQLITE_OK) {
+                LOG_WARNING << "Failed to prepare Tables statement:" << sqlite3_errstr(rc);
+                anyError = true;
+                break;
+            }
+        } while (false);
+
+        return anyError;
     }
 
     void Database::finalize() {

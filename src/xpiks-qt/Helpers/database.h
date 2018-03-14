@@ -108,10 +108,11 @@ namespace Helpers {
 
     private:
         int m_ID;
-        AsyncCoordinator *m_FinalizeCoordinator;
-        sqlite3 *m_Database;
+        AsyncCoordinator *m_FinalizeCoordinator = nullptr;
+        sqlite3 *m_Database = nullptr;
+        sqlite3_stmt *m_GetTablesStatement = nullptr;
         std::vector<std::shared_ptr<Table> > m_Tables;
-        volatile bool m_IsOpened;
+        volatile bool m_IsOpened = false;
     };
 
     class DatabaseManager: public QObject, public IDatabaseManager {
