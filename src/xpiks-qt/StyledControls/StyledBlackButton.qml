@@ -31,7 +31,7 @@ Button {
                 return result
             }
             implicitWidth: control.width
-            implicitHeight: 24
+            implicitHeight: control.height > 24 ? control.height : 24
         }
 
         label: StyledText {
