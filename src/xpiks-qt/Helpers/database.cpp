@@ -192,11 +192,13 @@ namespace Helpers {
             }
         } while (false);
 
-        return anyError;
+        return !anyError;
     }
 
     void Database::finalize() {
         LOG_DEBUG << "#" << m_ID;
+
+        finalizeSqliteStatement(m_GetTablesStatement);
 
         for (auto &table: m_Tables) {
             table->finalize();
