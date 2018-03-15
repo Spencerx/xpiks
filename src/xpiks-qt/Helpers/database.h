@@ -101,6 +101,7 @@ namespace Helpers {
         void finalize();
         void sync();
         std::shared_ptr<Table> getTable(const QString &name);
+        QStringList retrieveTableNames();
 
     private:
         void doClose();

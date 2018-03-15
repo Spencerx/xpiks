@@ -31,7 +31,7 @@ namespace Helpers {
         do {
             int resultColumnType = sqlite3_column_type(statement, index);
             if (resultColumnType != SQLITE_BLOB) {
-                LOG_WARNING << "Table structure is incorrect";
+                LOG_WARNING << "Column type is not BLOB";
                 Q_ASSERT(false);
                 break;
             }
@@ -47,6 +47,37 @@ namespace Helpers {
             result.clear();
             result.reserve(blobBytes);
             result.append((const char *)blobData, blobBytes);
+
+            success = true;
+        } while (false);
+
+        return success;
+    }
+
+    bool readSqliteString(sqlite3_stmt *statement, int index, QString &result) {
+        Q_ASSERT(statement != nullptr);
+
+        bool success = false;
+        do {
+            int resultColumnType = sqlite3_column_type(statement, index);
+            if (resultColumnType != SQLITE_TEXT) {
+                LOG_WARNING << "Column type is not TEXT";
+                Q_ASSERT(false);
+                break;
+            }
+
+            const void *textData = sqlite3_column_text(statement, index);
+
+            int textBytes = sqlite3_column_bytes(statement, index);
+            if ((textBytes <= 0) || (textBytes > MAX_BLOB_BYTES)) {
+                LOG_WARNING << "Stored blob has incorrect size";
+                break;
+            }
+
+            QByteArray bytes;
+            bytes.reserve(textBytes);
+            bytes.append((const char *)textData, textBytes);
+            result = QString::fromUtf8(bytes);
 
             success = true;
         } while (false);
@@ -238,6 +269,31 @@ namespace Helpers {
         }
 
         return table;
+    }
+
+    QStringList Database::retrieveTableNames() {
+        LOG_DEBUG << "#";
+        Q_ASSERT(m_GetTablesStatement != nullptr);
+
+        QStringList names;
+        int rc = 0;
+
+        do {
+            while (SQLITE_ROW == (rc = sqlite3_step(m_GetTablesStatement))) {
+                QString name;
+                if (!readSqliteString(m_GetTablesStatement, 0, name)) { continue; }
+                names.append(name);
+            }
+
+            if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW)) {
+                LOG_WARNING << "Error while going through the ALL statement." << sqlite3_errstr(rc);
+                Q_ASSERT(false);
+            }
+        } while (false);
+
+        cleanupSqliteStatement(m_GetTablesStatement);
+
+        return names;
     }
 
     Database::Table::Table(sqlite3 *database, const QString &tableName):
