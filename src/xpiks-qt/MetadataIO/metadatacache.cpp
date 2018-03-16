@@ -14,6 +14,7 @@
 #include "../Models/artworkmetadata.h"
 #include "../Helpers/constants.h"
 #include "../Common/defines.h"
+#include "../Storage/idatabasemanager.h"
 
 namespace MetadataIO {
     CachedArtwork::CachedArtworkType queryFlagToCachedType(Common::flag_t queryFlag) {
@@ -30,7 +31,7 @@ namespace MetadataIO {
         return searchType;
     }
 
-    MetadataCache::MetadataCache(Helpers::DatabaseManager *dbManager):
+    MetadataCache::MetadataCache(Storage::IDatabaseManager *dbManager):
         m_DatabaseManager(dbManager)
     {
         Q_ASSERT(dbManager != nullptr);

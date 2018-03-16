@@ -185,7 +185,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Connectivity/switcherconfig.cpp \
     ../../xpiks-qt/Helpers/artworkshelpers.cpp \
     ../../xpiks-qt/Models/keyvaluelist.cpp \
-    ../../xpiks-qt/Helpers/database.cpp \
+    ../../xpiks-qt/Storage/database.cpp \
     ../../xpiks-qt/QMLExtensions/cachedimage.cpp \
     ../../xpiks-qt/QMLExtensions/cachedvideo.cpp \
     ../../xpiks-qt/Maintenance/moveimagecachejobitem.cpp \
@@ -235,7 +235,9 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Common/systemenvironment.cpp \
     ../../xpiks-qt/Plugins/plugindatabasemanager.cpp \
     ../../xpiks-qt/Plugins/pluginenvironment.cpp \
-    loadpluginbasictest.cpp
+    loadpluginbasictest.cpp \
+    ../../xpiks-qt/Storage/database.cpp \
+    ../../xpiks-qt/Storage/databasemanager.cpp
 
 RESOURCES +=
 
@@ -450,7 +452,7 @@ HEADERS += \
     ../../xpiks-qt/AutoComplete/completionitem.h \
     ../../xpiks-qt/Helpers/artworkshelpers.h \
     ../../xpiks-qt/Models/keyvaluelist.h \
-    ../../xpiks-qt/Helpers/database.h \
+    ../../xpiks-qt/Storage/database.h \
     ../../xpiks-qt/QMLExtensions/cachedimage.h \
     ../../xpiks-qt/QMLExtensions/cachedvideo.h \
     ../../xpiks-qt/QMLExtensions/previewstorage.h \
@@ -512,7 +514,12 @@ HEADERS += \
     ../../xpiks-qt/Plugins/pluginenvironment.h \
     ../../xpiks-qt/Helpers/idatabasemanager.h \
     loadpluginbasictest.h \
-    ../../xpiks-qt/Helpers/jsonobjectmap.h
+    ../../xpiks-qt/Helpers/jsonobjectmap.h \
+    ../../xpiks-qt/Storage/database.h \
+    ../../xpiks-qt/Storage/databasemanager.h \
+    ../../xpiks-qt/Storage/idatabase.h \
+    ../../xpiks-qt/Storage/idatabasemanager.h \
+    ../../xpiks-qt/Storage/writeaheadlog.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

@@ -14,14 +14,14 @@
 #include <QString>
 #include <QHash>
 #include "cachedimage.h"
-#include "../Helpers/database.h"
+#include "../Storage/idatabase.h"
 #include "dbcacheindex.h"
 
 namespace QMLExtensions {
     class DbImageCacheIndex: public DbCacheIndex<CachedImage>
     {
     public:
-        DbImageCacheIndex(Helpers::DatabaseManager *dbManager);
+        DbImageCacheIndex(Storage::IDatabaseManager *dbManager);
 
     public:
         virtual bool initialize() override;

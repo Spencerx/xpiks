@@ -56,7 +56,7 @@
 #include "../../xpiks-qt/Helpers/logger.h"
 #include "../../xpiks-qt/Common/version.h"
 #include "../../xpiks-qt/Common/defines.h"
-#include "../../xpiks-qt/Helpers/database.h"
+#include "../../xpiks-qt/Storage/databasemanager.h"
 #include "../../xpiks-qt/KeywordsPresets/presetkeywordsmodel.h"
 #include "../../xpiks-qt/Maintenance/maintenanceservice.h"
 #include "../../xpiks-qt/Connectivity/requestsservice.h"
@@ -259,6 +259,7 @@ int main(int argc, char *argv[]) {
     Encryption::SecretsManager secretsManager;
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
+    Storage::DatabaseManager databaseManager(environment);
     Suggestion::KeywordsSuggestor keywordsSuggestor(environment);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
@@ -268,13 +269,13 @@ int main(int argc, char *argv[]) {
     Models::ArtworkUploader artworkUploader(environment, ftpCoordinator);
     SpellCheck::SpellCheckerService spellCheckerService(environment, &settingsModel);
     SpellCheck::SpellCheckSuggestionModel spellCheckSuggestionModel;
-    MetadataIO::MetadataIOService metadataIOService;
+    MetadataIO::MetadataIOService metadataIOService(&databaseManager);
     Warnings::WarningsModel warningsModel;
     warningsModel.setSourceModel(&artItemsModel);
     Models::LanguagesModel languagesModel;
     AutoComplete::KeywordsAutoCompleteModel autoCompleteModel;
     AutoComplete::AutoCompleteService autoCompleteService(&autoCompleteModel, &presetsModel, &settingsModel);
-    QMLExtensions::ImageCachingService imageCachingService(environment);
+    QMLExtensions::ImageCachingService imageCachingService(environment, &databaseManager);
     Models::FindAndReplaceModel findAndReplaceModel(&colorsModel);
     Models::DeleteKeywordsViewModel deleteKeywordsModel;
     Translation::TranslationManager translationManager(environment);
@@ -288,7 +289,7 @@ int main(int argc, char *argv[]) {
     Maintenance::MaintenanceService maintenanceService(environment);
     Connectivity::RequestsService requestsService;
 
-    QMLExtensions::VideoCachingService videoCachingService(environment);
+    QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
     Models::SwitcherModel switcherModel(environment);
@@ -296,7 +297,6 @@ int main(int argc, char *argv[]) {
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
     Connectivity::TelemetryService telemetryService("1234567890", false);
-    Helpers::DatabaseManager databaseManager(environment);
     Plugins::PluginManager pluginManager(environment, &databaseManager);
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel(environment);    

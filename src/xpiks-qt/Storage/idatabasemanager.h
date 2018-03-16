@@ -14,13 +14,13 @@
 #include <QString>
 #include <memory>
 
-namespace Helpers {
-    class Database;
+namespace Storage {
+    class IDatabase;
 
     class IDatabaseManager {
     public:
         virtual ~IDatabaseManager() {}
-        virtual std::shared_ptr<Database> openDatabase(const QString &dbName) = 0;
+        virtual std::shared_ptr<IDatabase> openDatabase(const QString &dbName) = 0;
     };
 }
 

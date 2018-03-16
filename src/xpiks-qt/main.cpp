@@ -76,7 +76,7 @@
 #include "Helpers/runguard.h"
 #include "Models/logsmodel.h"
 #include "Models/uimanager.h"
-#include "Helpers/database.h"
+#include "Storage/databasemanager.h"
 #include "Helpers/logger.h"
 #include "Common/version.h"
 #include "Common/defines.h"
@@ -260,6 +260,7 @@ int main(int argc, char *argv[]) {
     Encryption::SecretsManager secretsManager;
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
+    Storage::DatabaseManager databaseManager(environment);
     Suggestion::KeywordsSuggestor keywordsSuggestor(environment);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
@@ -270,14 +271,14 @@ int main(int argc, char *argv[]) {
     SpellCheck::SpellCheckerService spellCheckerService(environment, &settingsModel);
     SpellCheck::SpellCheckSuggestionModel spellCheckSuggestionModel;
     SpellCheck::UserDictEditModel userDictEditModel;
-    MetadataIO::MetadataIOService metadataIOService;
+    MetadataIO::MetadataIOService metadataIOService(&databaseManager);
     Warnings::WarningsModel warningsModel;
     warningsModel.setSourceModel(&artItemsModel);
     warningsModel.setWarningsSettingsModel(warningsService.getWarningsSettingsModel());
     Models::LanguagesModel languagesModel;
     AutoComplete::KeywordsAutoCompleteModel autoCompleteModel;
     AutoComplete::AutoCompleteService autoCompleteService(&autoCompleteModel, &presetsModel, &settingsModel);
-    QMLExtensions::ImageCachingService imageCachingService(environment);
+    QMLExtensions::ImageCachingService imageCachingService(environment, &databaseManager);
     Models::FindAndReplaceModel replaceModel(&colorsModel);
     Models::DeleteKeywordsViewModel deleteKeywordsModel;
     Models::ArtworkProxyModel artworkProxyModel;
@@ -288,12 +289,11 @@ int main(int argc, char *argv[]) {
     sessionManager.initialize();
     QuickBuffer::QuickBuffer quickBuffer;
     Maintenance::MaintenanceService maintenanceService(environment);
-    QMLExtensions::VideoCachingService videoCachingService(environment);
+    QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
     Models::SwitcherModel switcherModel(environment);
     Connectivity::RequestsService requestsService;
-    Helpers::DatabaseManager databaseManager(environment);
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel(environment);
 

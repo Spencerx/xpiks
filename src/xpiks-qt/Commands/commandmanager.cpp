@@ -60,7 +60,8 @@
 #include "../QMLExtensions/videocachingservice.h"
 #include "../QMLExtensions/artworksupdatehub.h"
 #include "../Helpers/asynccoordinator.h"
-#include "../Helpers/database.h"
+#include "../Storage/database.h"
+#include "../Storage/databasemanager.h"
 #include "../Models/switchermodel.h"
 #include "../Connectivity/requestsservice.h"
 #include "../AutoComplete/keywordsautocompletemodel.h"
@@ -336,7 +337,7 @@ void Commands::CommandManager::InjectDependency(Connectivity::RequestsService *r
     m_RequestsService->setCommandManager(this);
 }
 
-void Commands::CommandManager::InjectDependency(Helpers::DatabaseManager *databaseManager) {
+void Commands::CommandManager::InjectDependency(Storage::DatabaseManager *databaseManager) {
     Q_ASSERT(databaseManager != NULL); m_DatabaseManager = databaseManager;
 }
 

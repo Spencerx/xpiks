@@ -30,6 +30,10 @@ namespace MetadataIO {
     class ArtworksSnapshot;
 }
 
+namespace Storage {
+    class IDatabaseManager;
+}
+
 class QScreen;
 
 namespace QMLExtensions {
@@ -39,7 +43,7 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        explicit ImageCachingService(Common::ISystemEnvironment &environment, QObject *parent = 0);
+        explicit ImageCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent = 0);
 
     public:
         void startService(const std::shared_ptr<Common::ServiceStartParams> &params);
@@ -65,6 +69,7 @@ namespace QMLExtensions {
 
     private:
         Common::ISystemEnvironment &m_Environment;
+        Storage::IDatabaseManager *m_DatabaseManager;
         ImageCachingWorker *m_CachingWorker;
         QSize m_DefaultSize;
         volatile bool m_IsCancelled;

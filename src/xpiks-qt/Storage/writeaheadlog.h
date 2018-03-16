@@ -8,143 +8,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef DATABASE_H
-#define DATABASE_H
+#ifndef WRITEAHEADLOG_H
+#define WRITEAHEADLOG_H
 
-#include <QByteArray>
 #include <QReadWriteLock>
-#include <QDataStream>
-#include <QAtomicInt>
-#include <QMutex>
 #include <QHash>
-#include <QString>
-#include <QVector>
-#include <QPair>
-#include <vector>
-#include <memory>
-#include <functional>
-#include "asynccoordinator.h"
+#include <QDataStream>
+#include "idatabase.h"
 #include "../Common/defines.h"
-#include "../Common/isystemenvironment.h"
-#include "idatabasemanager.h"
 
-struct sqlite3;
-struct sqlite3_stmt;
-
-namespace Helpers {
-    // super simple wrapper over sqlite
-    // to make it look like a key-value storage
-    class Database {
-    public:
-        Database(int id, AsyncCoordinator *finalizeCoordinator);
-        virtual ~Database();
-
-    private:
-        class Transaction {
-        public:
-            Transaction(sqlite3 *database);
-            virtual ~Transaction();
-
-        private:
-            sqlite3 *m_Database;
-            bool m_Started;
-        };
-
-    public:
-        class Table {
-        public:
-            Table(sqlite3 *database, const QString &tableName);
-
-        public:
-            bool initialize();
-            void finalize();
-
-        public:
-            bool tryGetValue(const QByteArray &key, QByteArray &value);
-            bool trySetValue(const QByteArray &key, const QByteArray &value);
-            bool tryAddValue(const QByteArray &key, const QByteArray &value);
-            bool trySetMany(const QVector<QPair<QByteArray, QByteArray> > &keyValueList, QVector<int> &failedIndices);
-            int tryAddMany(const QVector<QPair<QByteArray, QByteArray> > &keyValueList);
-            bool tryDeleteRecord(const QByteArray &key);
-            bool tryDeleteMany(const QVector<QByteArray> &keysList);
-            void foreachRow(const std::function<bool (QByteArray &, QByteArray &)> &action);
-
-        private:
-            QString m_TableName;
-            sqlite3 *m_Database;
-            sqlite3_stmt *m_GetStatement;
-            sqlite3_stmt *m_SetStatement;
-            sqlite3_stmt *m_AddStatement;
-            sqlite3_stmt *m_DelStatement;
-            sqlite3_stmt *m_AllStatement;
-        };
-
-    public:
-        bool open(const char *fullDbPath);
-        void close();
-        bool initialize();
-        void finalize();
-        void sync();
-        std::shared_ptr<Table> getTable(const QString &name);
-        QStringList retrieveTableNames();
-
-    private:
-        void doClose();
-        bool executeStatement(const char *stmt);
-
-    private:
-        int m_ID;
-        AsyncCoordinator *m_FinalizeCoordinator = nullptr;
-        sqlite3 *m_Database = nullptr;
-        sqlite3_stmt *m_GetTablesStatement = nullptr;
-        std::vector<std::shared_ptr<Table> > m_Tables;
-        volatile bool m_IsOpened = false;
-    };
-
-    class DatabaseManager: public QObject, public IDatabaseManager {
-        Q_OBJECT
-    public:
-        DatabaseManager(Common::ISystemEnvironment &environment);
-
-    public:
-        bool initialize();
-
-#ifdef DEBUG_UTILITY
-    public:
-        bool initialize(const QString &dbDirPath);
-#endif
-
-    private:
-        void finalize();
-        int closeEnvironment();
-
-    public:
-        virtual std::shared_ptr<Database> openDatabase(const QString &dbName) override;
-        std::shared_ptr<Database> openDatabase(Common::ISystemEnvironment &environment, const QString &dbName);
-
-    private:
-        std::shared_ptr<Database> doOpenDatabase(const QString &root, const QString &dbName);
-
-    public:
-        void prepareToFinalize();
-
-    private slots:
-        void onReadyToFinalize(int status);
-
-    private:
-        void closeAll();
-        int getNextID();
-
-    private:
-        Common::ISystemEnvironment &m_Environment;
-        QMutex m_Mutex;
-        AsyncCoordinator m_FinalizeCoordinator;
-        QString m_DBDirPath;
-        QAtomicInt m_LastDatabaseID;
-        std::vector<std::shared_ptr<Database> > m_DatabaseArray;
-        volatile bool m_Initialized;
-    };
-
+namespace Storage {
     template<class TKey, class TValue>
     class WriteAheadLog {
     public:
@@ -182,7 +55,7 @@ namespace Helpers {
             }
         }
 
-        void flush(std::shared_ptr<Database::Table> &dbTable) {
+        void flush(std::shared_ptr<IDbTable> &dbTable) {
             LOG_DEBUG << "#";
             if (m_WriteAheadLog.empty()) { return; }
 
@@ -252,7 +125,7 @@ namespace Helpers {
     protected:
         virtual QByteArray keyToByteArray(const TKey &key) const = 0;
         virtual TKey keyFromByteArray(const QByteArray &rawKey) const = 0;
-        virtual bool doFlush(std::shared_ptr<Database::Table> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) = 0;
+        virtual bool doFlush(std::shared_ptr<IDbTable> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) = 0;
 
     private:
         QReadWriteLock m_LockWAL;
@@ -260,4 +133,4 @@ namespace Helpers {
     };
 }
 
-#endif // DATABASE_H
+#endif // WRITEAHEADLOG_H

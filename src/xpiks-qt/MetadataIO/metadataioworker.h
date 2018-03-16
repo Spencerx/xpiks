@@ -26,6 +26,10 @@ namespace QMLExtensions {
     class ArtworksUpdateHub;
 }
 
+namespace Storage {
+    class IDatabaseManager;
+}
+
 namespace MetadataIO {
     struct StorageReadRequest {
         CachedArtwork m_CachedArtwork;
@@ -36,7 +40,7 @@ namespace MetadataIO {
     {
         Q_OBJECT
     public:
-        explicit MetadataIOWorker(Helpers::DatabaseManager *dbManager,
+        explicit MetadataIOWorker(Storage::IDatabaseManager *dbManager,
                                   QMLExtensions::ArtworksUpdateHub *artworksUpdateHub,
                                   QObject *parent = 0);
 

@@ -21,6 +21,11 @@
 namespace Models {
     class ArtworkMetadata;
 }
+
+namespace Storage {
+    class IDatabaseManager;
+}
+
 namespace MetadataIO {
     class MetadataIOWorker;
 
@@ -31,7 +36,7 @@ namespace MetadataIO {
     {
         Q_OBJECT
     public:
-        MetadataIOService(QObject *parent = nullptr);
+        MetadataIOService(Storage::IDatabaseManager *dbManager, QObject *parent = nullptr);
 
     public:
         void startService();
@@ -74,6 +79,7 @@ namespace MetadataIO {
 
     private:
         MetadataIOWorker *m_MetadataIOWorker;
+        Storage::IDatabaseManager *m_DatabaseManager;
         bool m_IsStopped;
     };
 }

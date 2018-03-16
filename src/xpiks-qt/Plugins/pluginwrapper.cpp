@@ -23,7 +23,7 @@ namespace Plugins {
                                  int pluginID,
                                  Common::ISystemEnvironment &environment,
                                  UIProvider *realUIProvider,
-                                 Helpers::DatabaseManager *databaseManager):
+                                 Storage::DatabaseManager *databaseManager):
         m_PluginInterface(pluginInterface),
         m_PluginEnvironment(environment, Constants::PLUGINS_DIR, filepath),
         m_PluginDatabaseManager(m_PluginEnvironment, databaseManager),

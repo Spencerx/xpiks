@@ -9,11 +9,11 @@
  */
 
 #include "dbvideocacheindex.h"
-#include "../Helpers/database.h"
+#include "../Storage/database.h"
 #include "../Helpers/constants.h"
 
 namespace QMLExtensions {
-    DbVideoCacheIndex::DbVideoCacheIndex(Helpers::DatabaseManager *dbManager):
+    DbVideoCacheIndex::DbVideoCacheIndex(Storage::IDatabaseManager *dbManager):
         DbCacheIndex(dbManager)
     {
     }

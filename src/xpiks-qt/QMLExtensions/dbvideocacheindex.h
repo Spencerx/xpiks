@@ -14,14 +14,14 @@
 #include <QString>
 #include <QHash>
 #include "cachedvideo.h"
-#include "../Helpers/database.h"
+#include "../Storage/idatabasemanager.h"
 #include "dbcacheindex.h"
 
 namespace QMLExtensions {
     class DbVideoCacheIndex: public DbCacheIndex<CachedVideo>
     {
     public:
-        DbVideoCacheIndex(Helpers::DatabaseManager *dbManager);
+        DbVideoCacheIndex(Storage::IDatabaseManager *dbManager);
 
     public:
         virtual bool initialize() override;

@@ -23,7 +23,7 @@
 #include "../Helpers/filehelpers.h"
 
 namespace Plugins {
-    PluginManager::PluginManager(Common::ISystemEnvironment &environment, Helpers::DatabaseManager *dbManager):
+    PluginManager::PluginManager(Common::ISystemEnvironment &environment, Storage::DatabaseManager *dbManager):
         QAbstractListModel(),
         m_Environment(environment),
         m_DatabaseManager(dbManager),

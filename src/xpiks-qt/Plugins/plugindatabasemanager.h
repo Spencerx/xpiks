@@ -11,23 +11,23 @@
 #ifndef PLUGINSDATABASEMANAGER_H
 #define PLUGINSDATABASEMANAGER_H
 
-#include "../Helpers/idatabasemanager.h"
-#include "../Helpers/database.h"
+#include "../Storage/idatabasemanager.h"
+#include "../Storage/databasemanager.h"
 #include "../Common/isystemenvironment.h"
 
 namespace Plugins {
-    class PluginDatabaseManager: public Helpers::IDatabaseManager
+    class PluginDatabaseManager: public Storage::IDatabaseManager
     {
     public:
-        PluginDatabaseManager(Common::ISystemEnvironment &environment, Helpers::DatabaseManager *dbManager);
+        PluginDatabaseManager(Common::ISystemEnvironment &environment, Storage::DatabaseManager *dbManager);
 
         // IDatabaseManager interface
     public:
-        virtual std::shared_ptr<Helpers::Database> openDatabase(const QString &dbName) override;
+        virtual std::shared_ptr<Storage::IDatabase> openDatabase(const QString &dbName) override;
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Helpers::DatabaseManager *m_DatabaseManager;
+        Storage::DatabaseManager *m_DatabaseManager;
     };
 }
 

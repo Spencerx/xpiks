@@ -25,7 +25,7 @@
 #include "../Common/iartworkssource.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
 #include "../Common/flags.h"
-#include "../Helpers/idatabasemanager.h"
+#include "../Storage/idatabasemanager.h"
 
 namespace Plugins {
     enum struct PluginNotificationFlags: Common::flag_t {
@@ -68,7 +68,7 @@ namespace Plugins {
         virtual void injectArtworksSource(Common::IArtworksSource *artworksSource) { Q_UNUSED(artworksSource); }
         virtual void injectUIProvider(IUIProvider *uiProvider) { Q_UNUSED(uiProvider); }
         virtual void injectPresetsManager(KeywordsPresets::IPresetsManager *presetsManager) { Q_UNUSED(presetsManager); }
-        virtual void injectDatabaseManager(Helpers::IDatabaseManager *databaseManager) { Q_UNUSED(databaseManager); }
+        virtual void injectDatabaseManager(Storage::IDatabaseManager *databaseManager) { Q_UNUSED(databaseManager); }
     };
 }
 

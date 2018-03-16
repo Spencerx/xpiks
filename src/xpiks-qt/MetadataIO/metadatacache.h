@@ -13,29 +13,34 @@
 
 #include <QMutex>
 #include <QReadWriteLock>
-#include "../Helpers/database.h"
+#include "../Storage/idatabase.h"
 #include "cachedartwork.h"
 #include "../Suggestion/searchquery.h"
+#include "../Storage/writeaheadlog.h"
 
 namespace Models {
     class ArtworkMetadata;
 }
 
+namespace Storage {
+    class IDatabaseManager;
+}
+
 namespace MetadataIO {
-    class ArtworkSetWAL: public Helpers::WriteAheadLog<QString, CachedArtwork> {
+    class ArtworkSetWAL: public Storage::WriteAheadLog<QString, CachedArtwork> {
     protected:
         virtual QByteArray keyToByteArray(const QString &key) const override { return key.toUtf8(); }
         virtual QString keyFromByteArray(const QByteArray &rawKey) const override { return QString::fromUtf8(rawKey); }
-        virtual bool doFlush(std::shared_ptr<Helpers::Database::Table> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) override {
+        virtual bool doFlush(std::shared_ptr<Storage::IDbTable> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) override {
             return dbTable->trySetMany(keyValuesList, failedIndices);
         }
     };
 
-    class ArtworkAddWAL: public Helpers::WriteAheadLog<QString, CachedArtwork> {
+    class ArtworkAddWAL: public Storage::WriteAheadLog<QString, CachedArtwork> {
     protected:
         virtual QByteArray keyToByteArray(const QString &key) const override { return key.toUtf8(); }
         virtual QString keyFromByteArray(const QByteArray &rawKey) const override { return QString::fromUtf8(rawKey); }
-        virtual bool doFlush(std::shared_ptr<Helpers::Database::Table> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) override {
+        virtual bool doFlush(std::shared_ptr<Storage::IDbTable> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) override {
             Q_UNUSED(failedIndices);
             int count = dbTable->tryAddMany(keyValuesList);
             return count > 0;
@@ -45,7 +50,7 @@ namespace MetadataIO {
     class MetadataCache
     {
     public:
-        MetadataCache(Helpers::DatabaseManager *dbManager);
+        MetadataCache(Storage::IDatabaseManager *dbManager);
 
     public:
         bool initialize();
@@ -71,9 +76,9 @@ namespace MetadataIO {
 
     private:
         QMutex m_ReadMutex;
-        Helpers::DatabaseManager *m_DatabaseManager;
-        std::shared_ptr<Helpers::Database::Table> m_DbCacheIndex;
-        std::shared_ptr<Helpers::Database> m_Database;
+        Storage::IDatabaseManager *m_DatabaseManager;
+        std::shared_ptr<Storage::IDbTable> m_DbCacheIndex;
+        std::shared_ptr<Storage::IDatabase> m_Database;
         ArtworkSetWAL m_SetWAL;
         ArtworkAddWAL m_AddWal;
     };

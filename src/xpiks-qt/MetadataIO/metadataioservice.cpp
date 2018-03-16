@@ -14,28 +14,30 @@
 #include "metadataioworker.h"
 #include "metadataiotask.h"
 #include "../Commands/commandmanager.h"
-#include "../Helpers/database.h"
+#include "../Storage/database.h"
 
 #define SAVER_TIMER_TIMEOUT 2000
 #define SAVER_TIMER_MAX_RESTARTS 5
 
 namespace MetadataIO {
-    MetadataIOService::MetadataIOService(QObject *parent):
+    MetadataIOService::MetadataIOService(Storage::IDatabaseManager *dbManager, QObject *parent):
         QObject(parent),
         Common::DelayedActionEntity(SAVER_TIMER_TIMEOUT, SAVER_TIMER_MAX_RESTARTS),
         m_MetadataIOWorker(nullptr),
+        m_DatabaseManager(dbManager),
         m_IsStopped(false)
     {
+        Q_ASSERT(dbManager != nullptr);
+
         // timers could not be started from another thread
         QObject::connect(this, &MetadataIOService::cacheSyncRequest, this, &MetadataIOService::onCacheSyncRequest);
     }
 
     void MetadataIOService::startService() {
         Q_ASSERT(m_MetadataIOWorker == nullptr);
-        Helpers::DatabaseManager *dbManager = m_CommandManager->getDatabaseManager();
         QMLExtensions::ArtworksUpdateHub *updateHub = m_CommandManager->getArtworksUpdateHub();
 
-        m_MetadataIOWorker = new MetadataIOWorker(dbManager, updateHub);
+        m_MetadataIOWorker = new MetadataIOWorker(m_DatabaseManager, updateHub);
 
         QThread *thread = new QThread();
         m_MetadataIOWorker->moveToThread(thread);

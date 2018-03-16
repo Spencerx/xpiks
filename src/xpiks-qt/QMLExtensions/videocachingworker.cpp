@@ -35,7 +35,7 @@ namespace QMLExtensions {
     }
 
     VideoCachingWorker::VideoCachingWorker(Common::ISystemEnvironment &environment,
-                                           Helpers::DatabaseManager *dbManager,
+                                           Storage::IDatabaseManager *dbManager,
                                            QObject *parent) :
         QObject(parent),
         ItemProcessingWorker(2),

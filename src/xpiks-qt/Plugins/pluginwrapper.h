@@ -20,7 +20,7 @@
 #include "xpiksplugininterface.h"
 #include "../Common/flags.h"
 #include "pluginenvironment.h"
-#include "../Helpers/database.h"
+#include "../Storage/database.h"
 #include "plugindatabasemanager.h"
 #include "../Common/isystemenvironment.h"
 #include "../Common/flags.h"
@@ -36,7 +36,7 @@ namespace Plugins {
                       int pluginID,
                       Common::ISystemEnvironment &environment,
                       UIProvider *realUIProvider,
-                      Helpers::DatabaseManager *databaseManager);
+                      Storage::DatabaseManager *databaseManager);
         virtual ~PluginWrapper();
 
     private:
@@ -66,7 +66,7 @@ namespace Plugins {
         bool anyActionsProvided() const { return m_ActionsModel.size() > 0; }
         PluginActionsModel *getActionsModel() { return &m_ActionsModel; }
         IUIProvider *getUIProvider() { return &m_UIProviderSafe; }
-        Helpers::IDatabaseManager *getDatabaseManager() { return &m_PluginDatabaseManager; }
+        Storage::IDatabaseManager *getDatabaseManager() { return &m_PluginDatabaseManager; }
 
     public:
         bool initializePlugin();
