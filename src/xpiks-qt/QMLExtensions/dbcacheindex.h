@@ -26,6 +26,7 @@ namespace QMLExtensions {
     class IndexWriteAheadLog: public Helpers::WriteAheadLog<QString, TValue> {
     protected:
         virtual QByteArray keyToByteArray(const QString &key) const override { return key.toUtf8(); }
+        virtual QString keyFromByteArray(const QByteArray &rawKey) const override { return QString::fromUtf8(rawKey); }
         virtual bool doFlush(std::shared_ptr<Helpers::Database::Table> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) override {
             return dbTable->trySetMany(keyValuesList, failedIndices);
         }

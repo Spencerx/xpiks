@@ -32,21 +32,6 @@ struct sqlite3;
 struct sqlite3_stmt;
 
 namespace Helpers {
-    template<class TValue>
-    void restoreFailedItems(QHash<QString, TValue> &hash, QVector<QPair<QByteArray, QByteArray> > &keyValuesList, const QVector<int> &failedIndices) {
-        for (auto &index: failedIndices) {
-            auto &keyValuePair = keyValuesList[index];
-            QString key = QString::fromUtf8(keyValuePair.first);
-
-            TValue value;
-            QByteArray &rawData = keyValuePair.second;
-            QDataStream ds(&rawData, QIODevice::ReadOnly);
-            ds >> value;
-
-            hash.insert(key, value);
-        }
-    }
-
     // super simple wrapper over sqlite
     // to make it look like a key-value storage
     class Database {
@@ -233,11 +218,12 @@ namespace Helpers {
             bool success = doFlush(dbTable, keyValuesList, failedIndices);
             if (success) {
                 LOG_INFO << "WAL has been flushed successfully";
+                Q_ASSERT(failedIndices.isEmpty());
             } else {
                 LOG_WARNING << "Failed to flush WAL successfully. Restoring failed items...";
                 QWriteLocker locker(&m_LockWAL);
                 Q_UNUSED(locker);
-                Helpers::restoreFailedItems<TValue>(m_WriteAheadLog, keyValuesList, failedIndices);
+                restoreFailedItems(keyValuesList, failedIndices);
             }
         }
 
@@ -247,8 +233,25 @@ namespace Helpers {
             return m_WriteAheadLog.size();
         }
 
+    private:
+        void restoreFailedItems(QVector<QPair<QByteArray, QByteArray> > &keyValuesList, const QVector<int> &failedIndices) {
+            for (auto &index: failedIndices) {
+                auto &keyValuePair = keyValuesList[index];
+
+                TKey key = keyFromByteArray(keyValuePair.first);
+
+                TValue value;
+                QByteArray &rawData = keyValuePair.second;
+                QDataStream ds(&rawData, QIODevice::ReadOnly);
+                ds >> value;
+
+                m_WriteAheadLog.insert(key, value);
+            }
+        }
+
     protected:
         virtual QByteArray keyToByteArray(const TKey &key) const = 0;
+        virtual TKey keyFromByteArray(const QByteArray &rawKey) const = 0;
         virtual bool doFlush(std::shared_ptr<Database::Table> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) = 0;
 
     private:

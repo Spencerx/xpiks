@@ -25,6 +25,7 @@ namespace MetadataIO {
     class ArtworkSetWAL: public Helpers::WriteAheadLog<QString, CachedArtwork> {
     protected:
         virtual QByteArray keyToByteArray(const QString &key) const override { return key.toUtf8(); }
+        virtual QString keyFromByteArray(const QByteArray &rawKey) const override { return QString::fromUtf8(rawKey); }
         virtual bool doFlush(std::shared_ptr<Helpers::Database::Table> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) override {
             return dbTable->trySetMany(keyValuesList, failedIndices);
         }
@@ -33,6 +34,7 @@ namespace MetadataIO {
     class ArtworkAddWAL: public Helpers::WriteAheadLog<QString, CachedArtwork> {
     protected:
         virtual QByteArray keyToByteArray(const QString &key) const override { return key.toUtf8(); }
+        virtual QString keyFromByteArray(const QByteArray &rawKey) const override { return QString::fromUtf8(rawKey); }
         virtual bool doFlush(std::shared_ptr<Helpers::Database::Table> &dbTable, const QVector<QPair<QByteArray, QByteArray> > &keyValuesList, QVector<int> &failedIndices) override {
             Q_UNUSED(failedIndices);
             int count = dbTable->tryAddMany(keyValuesList);
