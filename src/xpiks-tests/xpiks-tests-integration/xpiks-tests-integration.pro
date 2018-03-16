@@ -236,7 +236,6 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Plugins/plugindatabasemanager.cpp \
     ../../xpiks-qt/Plugins/pluginenvironment.cpp \
     loadpluginbasictest.cpp \
-    ../../xpiks-qt/Storage/database.cpp \
     ../../xpiks-qt/Storage/databasemanager.cpp
 
 RESOURCES +=
@@ -512,7 +511,6 @@ HEADERS += \
     ../../xpiks-qt/Common/systemenvironment.h \
     ../../xpiks-qt/Plugins/plugindatabasemanager.h \
     ../../xpiks-qt/Plugins/pluginenvironment.h \
-    ../../xpiks-qt/Helpers/idatabasemanager.h \
     loadpluginbasictest.h \
     ../../xpiks-qt/Helpers/jsonobjectmap.h \
     ../../xpiks-qt/Storage/database.h \
