@@ -24,8 +24,8 @@ namespace QMLExtensions {
         QObject(parent),
         Common::BaseEntity(),
         m_Environment(environment),
-        m_CachingWorker(NULL),
         m_DatabaseManager(dbManager),
+        m_CachingWorker(NULL),
         m_IsCancelled(false),
         m_Scale(1.0)
     {
