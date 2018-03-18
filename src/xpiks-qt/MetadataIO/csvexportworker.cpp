@@ -162,7 +162,7 @@ namespace MetadataIO {
 
         if ((m_ExportPlans.size() * m_ArtworksToExport.size()) < 1000) {
             // simulate working for the spinner to show up
-            QThread::usleep(1000);
+            QThread::msleep(1000);
         }
     }
 }
