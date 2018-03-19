@@ -30,10 +30,10 @@
 #define DEFAULT_SEARCH_TYPE_INDEX 0
 
 namespace Suggestion {
-    KeywordsSuggestor::KeywordsSuggestor(Common::ISystemEnvironment &environment, QObject *parent):
+    KeywordsSuggestor::KeywordsSuggestor(QObject *parent):
         QAbstractListModel(parent),
         Common::BaseEntity(),
-        m_State("ksuggest", environment),
+        m_State("ksuggest"),
         m_SuggestedKeywords(m_HoldPlaceholder, this),
         m_AllOtherKeywords(m_HoldPlaceholder, this),
         m_SelectedArtworksCount(0),
@@ -57,7 +57,7 @@ namespace Suggestion {
         m_ExistingKeywords.clear(); m_ExistingKeywords.unite(keywords);
     }
 
-    void KeywordsSuggestor::initSuggestionEngines() {
+    void KeywordsSuggestor::initSuggestionEngines(Common::ISystemEnvironment &environment) {
         LOG_DEBUG << "#";
         Q_ASSERT(m_CommandManager != NULL);
         auto *settingsModel = m_CommandManager->getSettingsModel();
@@ -87,7 +87,7 @@ namespace Suggestion {
                              this, &KeywordsSuggestor::errorsReceivedHandler);
         }
 
-        m_State.init();
+        m_State.init(environment);
     }
 
     void KeywordsSuggestor::setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks) {

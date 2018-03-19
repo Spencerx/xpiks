@@ -68,7 +68,7 @@ namespace Translation {
         QObject(parent),
         Common::BaseEntity(),
         m_Environment(environment),
-        m_State("translator", environment),
+        m_State("translator"),
         m_AllowedSuffixes({"idx", "idx.dz", "idx.oft", "dict.dz", "dict", "ifo"}),
         m_SelectedDictionaryIndex(-1),
         m_IsBusy(false),
@@ -325,7 +325,7 @@ namespace Translation {
     void TranslationManager::initializationFinished() {
         LOG_DEBUG << "#";
 
-        m_State.init();
+        m_State.init(m_Environment);
 
         const int selectedDictIndex = m_State.getInt(Constants::translatorSelectedDictIndex, DEFAULT_SELECTED_DICT_INDEX);
         if ((0 <= selectedDictIndex) && (selectedDictIndex < m_DictionariesList.length())) {

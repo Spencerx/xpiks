@@ -132,7 +132,7 @@ void UndoRedoTests::undoRemoveItemsTest() {
 
 void UndoRedoTests::undoRemoveAddFullDirectoryTest() {
     SETUP_TEST;
-    Models::SettingsModel settingsModel(environment);
+    Models::SettingsModel settingsModel;
     commandManagerMock.InjectDependency(&settingsModel);
     settingsModel.setAutoFindVectors(false);
 
@@ -155,7 +155,7 @@ void UndoRedoTests::undoRemoveAddFullDirectoryTest() {
 
 void UndoRedoTests::undoRemoveNotFullDirectoryTest() {
     SETUP_TEST;
-    Models::SettingsModel settingsModel(environment);
+    Models::SettingsModel settingsModel;
     commandManagerMock.InjectDependency(&settingsModel);
     settingsModel.setAutoFindVectors(false);
 
@@ -184,7 +184,7 @@ void UndoRedoTests::undoRemoveLaterFullDirectoryTest() {
     commandManagerMock.generateAndAddArtworks(itemsToAdd, false);
     const int addedFromSecondDir = artworksRepository.getFilesCountForDirectory(1);
 
-    Models::SettingsModel settingsModel(environment);
+    Models::SettingsModel settingsModel;
     commandManagerMock.InjectDependency(&settingsModel);
     settingsModel.setAutoFindVectors(false);
 

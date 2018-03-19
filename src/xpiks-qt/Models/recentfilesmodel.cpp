@@ -14,14 +14,14 @@
 #define MAX_RECENT_FILES 10
 
 namespace Models {
-    RecentFilesModel::RecentFilesModel(Common::ISystemEnvironment &environment):
+    RecentFilesModel::RecentFilesModel():
         RecentItemsModel(MAX_RECENT_FILES),
-        m_State("recentfiles", environment)
+        m_State("recentfiles")
     {
     }
 
-    void RecentFilesModel::initialize() {
-        m_State.init();
+    void RecentFilesModel::initialize(Common::ISystemEnvironment &environment) {
+        m_State.init(environment);
 
         QString recentFiles = m_State.getString(Constants::recentFiles);
         deserializeItems(recentFiles);

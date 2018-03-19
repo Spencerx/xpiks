@@ -80,12 +80,12 @@ namespace Models {
         Q_PROPERTY(QString termsAndConditionsText READ getTermsAndConditionsText CONSTANT)
 
     public:
-        explicit SettingsModel(Common::ISystemEnvironment &environment, QObject *parent = 0);
+        explicit SettingsModel(QObject *parent = 0);
         virtual ~SettingsModel() { }
 
     public:
         void saveLocale();
-        void initializeConfigs();
+        void initializeConfigs(Common::ISystemEnvironment &environment);
         void syncronizeSettings() { sync(); }
         void migrateSettings();
         void clearLegacyUploadInfos();
@@ -279,7 +279,6 @@ namespace Models {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
-        Common::ISystemEnvironment &m_Environment;
         Common::StatefulEntity m_State;
         QMutex m_SettingsMutex;
         Helpers::LocalConfig m_Config;

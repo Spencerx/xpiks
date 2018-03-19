@@ -14,20 +14,19 @@
 #include "../Helpers/filehelpers.h"
 
 namespace Common {
-    StatefulEntity::StatefulEntity(const QString &stateName, ISystemEnvironment &environment):
-        m_Environment(environment),
+    StatefulEntity::StatefulEntity(const QString &stateName):
         m_StateName(stateName),
         m_StateMap(new Helpers::JsonObjectMap())
     {
         Q_ASSERT(!stateName.endsWith(".json", Qt::CaseInsensitive));
     }
 
-    void StatefulEntity::init() {
+    void StatefulEntity::init(ISystemEnvironment &environment) {
         LOG_DEBUG << m_StateName;
 
         QString filename = QString("%1.json").arg(m_StateName);
 
-        QString localConfigPath = m_Environment.path({Constants::STATES_DIR, filename});
+        QString localConfigPath = environment.path({Constants::STATES_DIR, filename});
         m_StateConfig.initConfig(localConfigPath);
 
         QJsonDocument &doc = m_StateConfig.getConfig();
@@ -35,10 +34,17 @@ namespace Common {
             QJsonObject json = doc.object();
             m_StateMap.reset(new Helpers::JsonObjectMap(json));
         }
+
+#ifdef QT_DEBUG
+        m_Initialized = true;
+#endif
     }
 
     void StatefulEntity::sync() {
         LOG_DEBUG << m_StateName;
+#ifdef QT_DEBUG
+        Q_ASSERT(m_Initialized);
+#endif
 
         // do not use dropper
         // Helpers::LocalConfigDropper dropper(&m_StateConfig);

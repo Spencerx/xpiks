@@ -244,8 +244,8 @@ int main(int argc, char *argv[]) {
     Models::LogsModel logsModel;
     logsModel.startLogging();
 
-    Models::SettingsModel settingsModel(environment);
-    settingsModel.initializeConfigs();
+    Models::SettingsModel settingsModel;
+    settingsModel.initializeConfigs(environment);
     settingsModel.retrieveAllValues();
 
     QMLExtensions::ColorsModel colorsModel;
@@ -260,11 +260,11 @@ int main(int argc, char *argv[]) {
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
     Storage::DatabaseManager databaseManager(environment);
-    Suggestion::KeywordsSuggestor keywordsSuggestor(environment);
+    Suggestion::KeywordsSuggestor keywordsSuggestor;
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
-    Models::RecentDirectoriesModel recentDirectorieModel(environment);
-    Models::RecentFilesModel recentFileModel(environment);
+    Models::RecentDirectoriesModel recentDirectorieModel;
+    Models::RecentFilesModel recentFileModel;
     libxpks::net::FtpCoordinator *ftpCoordinator = new libxpks::net::FtpCoordinator(settingsModel.getMaxParallelUploads());
     Models::ArtworkUploader artworkUploader(environment, ftpCoordinator);
     SpellCheck::SpellCheckerService spellCheckerService(environment, &settingsModel);
@@ -281,7 +281,7 @@ int main(int argc, char *argv[]) {
     Translation::TranslationManager translationManager(environment);
     Translation::TranslationService translationService(translationManager);
     Models::ArtworkProxyModel artworkProxy;
-    Models::UIManager uiManager(environment, &settingsModel);
+    Models::UIManager uiManager(&settingsModel);
     Models::SessionManager sessionManager(environment);
     sessionManager.initialize();
     // intentional memory leak to beat spellcheck lock stuff
@@ -292,7 +292,7 @@ int main(int argc, char *argv[]) {
     QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
-    Models::SwitcherModel switcherModel(environment);
+    Models::SwitcherModel switcherModel;
     Connectivity::UpdateService updateService(environment, &settingsModel, &switcherModel, &maintenanceService);
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
@@ -353,8 +353,8 @@ int main(int argc, char *argv[]) {
     commandManager.ensureDependenciesInjected();
 
     secretsManager.setMasterPasswordHash(settingsModel.getMasterPasswordHash());
-    recentDirectorieModel.initialize();
-    recentFileModel.initialize();
+    recentDirectorieModel.initialize(environment);
+    recentFileModel.initialize(environment);
 
 #if defined(Q_OS_WIN)
     #if defined(APPVEYOR)
@@ -370,7 +370,7 @@ int main(int argc, char *argv[]) {
     csvExportModel.setRemoteConfigOverride(findFullPathForTests("api/v1/csv_export_plans.json"));
 
     commandManager.connectEntitiesSignalsSlots();
-    commandManager.afterConstructionCallback();
+    commandManager.afterConstructionCallback(environment);
 
     // process signals from construction
     QCoreApplication::processEvents();

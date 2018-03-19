@@ -65,10 +65,6 @@ namespace Helpers {
         return doSanitizeKeyword(keyword);
     }
 
-    void HelpersQmlWrapper::afterConstruction() {
-        m_CommandManager->afterConstructionCallback();
-    }
-
     void HelpersQmlWrapper::beforeDestruction() {
         LOG_DEBUG << "emitting signal";
         emit globalBeforeDestruction();

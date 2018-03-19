@@ -622,7 +622,7 @@ void Commands::CommandManager::ensureDependenciesInjected() {
 #endif
 }
 
-void Commands::CommandManager::afterConstructionCallback() {
+void Commands::CommandManager::afterConstructionCallback(Common::ISystemEnvironment &environment) {
     if (m_AfterInitCalled) {
         LOG_WARNING << "Attempt to call afterConstructionCallback() second time";
         return;
@@ -633,7 +633,8 @@ void Commands::CommandManager::afterConstructionCallback() {
 #endif
 
 #if !defined(CORE_TESTS)
-    m_SwitcherModel->updateConfigs();
+    m_SwitcherModel->initialize(environment);
+    m_SwitcherModel->updateConfigs(environment);
 #endif
 
     const int waitSeconds = 5;
@@ -678,10 +679,9 @@ void Commands::CommandManager::afterConstructionCallback() {
     m_UploadInfoRepository->initializeConfig();
     m_PresetsModel->initializePresets();
     m_CsvExportModel->initializeExportPlans(&m_InitCoordinator);
-    m_KeywordsSuggestor->initSuggestionEngines();
+    m_KeywordsSuggestor->initSuggestionEngines(environment);
+    m_UpdateService->initialize();
 #endif
-
-    executeMaintenanceJobs();
 
     m_MainDelegator.readSession();
 }
@@ -693,8 +693,6 @@ void Commands::CommandManager::afterInnerServicesInitialized() {
 #ifdef WITH_PLUGINS
     m_PluginManager->loadPlugins();
 #endif
-
-    m_SwitcherModel->initialize();
 #endif
 
     int newFilesAdded = m_MainDelegator.restoreReadSession();
@@ -711,6 +709,8 @@ void Commands::CommandManager::afterInnerServicesInitialized() {
 #ifndef CORE_TESTS
     m_UpdateService->startChecking();
 #endif
+
+    executeMaintenanceJobs();
 }
 
 void Commands::CommandManager::executeMaintenanceJobs() {

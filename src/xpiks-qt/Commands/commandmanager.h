@@ -45,6 +45,7 @@ namespace UndoRedo {
 namespace Common {
     class BasicMetadataModel;
     class IMetadataOperator;
+    class ISystemEnvironment;
 }
 
 namespace Models {
@@ -209,7 +210,7 @@ namespace Commands {
 
     public:
         void ensureDependenciesInjected();
-        void afterConstructionCallback();
+        void afterConstructionCallback(Common::ISystemEnvironment &environment);
 
     private:
         void afterInnerServicesInitialized();

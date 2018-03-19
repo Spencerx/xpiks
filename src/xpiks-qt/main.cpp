@@ -240,8 +240,8 @@ int main(int argc, char *argv[]) {
     LOG_INFO << QSysInfo::productType() << QSysInfo::productVersion() << QSysInfo::currentCpuArchitecture();
     LOG_INFO << "Working directory of Xpiks is:" << QDir::currentPath();
 
-    Models::SettingsModel settingsModel(environment);
-    settingsModel.initializeConfigs();
+    Models::SettingsModel settingsModel;
+    settingsModel.initializeConfigs(environment);
     settingsModel.retrieveAllValues();
     ensureUserIdExists(&settingsModel);
 
@@ -261,11 +261,11 @@ int main(int argc, char *argv[]) {
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
     Storage::DatabaseManager databaseManager(environment);
-    Suggestion::KeywordsSuggestor keywordsSuggestor(environment);
+    Suggestion::KeywordsSuggestor keywordsSuggestor;
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
-    Models::RecentDirectoriesModel recentDirectorieModel(environment);
-    Models::RecentFilesModel recentFileModel(environment);
+    Models::RecentDirectoriesModel recentDirectorieModel;
+    Models::RecentFilesModel recentFileModel;
     libxpks::net::FtpCoordinator *ftpCoordinator = new libxpks::net::FtpCoordinator(settingsModel.getMaxParallelUploads());
     Models::ArtworkUploader artworkUploader(environment, ftpCoordinator);
     SpellCheck::SpellCheckerService spellCheckerService(environment, &settingsModel);
@@ -284,7 +284,7 @@ int main(int argc, char *argv[]) {
     Models::ArtworkProxyModel artworkProxyModel;
     Translation::TranslationManager translationManager(environment);
     Translation::TranslationService translationService(translationManager);
-    Models::UIManager uiManager(environment, &settingsModel);
+    Models::UIManager uiManager(&settingsModel);
     Models::SessionManager sessionManager(environment);
     sessionManager.initialize();
     QuickBuffer::QuickBuffer quickBuffer;
@@ -292,7 +292,7 @@ int main(int argc, char *argv[]) {
     QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
-    Models::SwitcherModel switcherModel(environment);
+    Models::SwitcherModel switcherModel;
     Connectivity::RequestsService requestsService;
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel(environment);
@@ -370,8 +370,8 @@ int main(int argc, char *argv[]) {
 
     // other initializations
     secretsManager.setMasterPasswordHash(settingsModel.getMasterPasswordHash());
-    recentDirectorieModel.initialize();
-    recentFileModel.initialize();
+    recentDirectorieModel.initialize(environment);
+    recentFileModel.initialize(environment);
 
     commandManager.connectEntitiesSignalsSlots();
 
@@ -445,7 +445,7 @@ int main(int argc, char *argv[]) {
     uiManager.addSystemTab(QUICKBUFFER_TAB_ID, "qrc:/CollapserTabs/QuickBufferIcon.qml", "qrc:/CollapserTabs/QuickBufferTab.qml");
     uiManager.addSystemTab(TRANSLATOR_TAB_ID, "qrc:/CollapserTabs/TranslatorIcon.qml", "qrc:/CollapserTabs/TranslatorTab.qml");
     uiManager.initializeSystemTabs();
-    uiManager.initializeState();
+    uiManager.initializeState(environment);
 
     LOG_DEBUG << "About to load main view...";
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
@@ -464,7 +464,7 @@ int main(int argc, char *argv[]) {
     uiProvider->setRoot(window->contentItem());
     uiProvider->setUIManager(&uiManager);
 
-    commandManager.afterConstructionCallback();
+    commandManager.afterConstructionCallback(environment);
 
     return app.exec();
 }
