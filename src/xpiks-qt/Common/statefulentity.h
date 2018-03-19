@@ -13,6 +13,7 @@
 
 #include "../Helpers/localconfig.h"
 #include <QString>
+#include <QAtomicInt>
 #include <QJsonObject>
 #include <memory>
 #include "isystemenvironment.h"
@@ -61,9 +62,7 @@ namespace Common {
         QString m_StateName;
         Helpers::LocalConfig m_StateConfig;
         std::shared_ptr<Helpers::JsonObjectMap> m_StateMap;
-#ifdef QT_DEBUG
-        bool m_Initialized = false;
-#endif
+        QAtomicInt m_InitCounter;
     };
 }
 
