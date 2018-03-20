@@ -24,6 +24,7 @@ DEFINES += WITH_STDOUT_LOGS
 DEFINES += WITH_LOGS
 DEFINES += INTEGRATION_TESTS
 DEFINES += WITH_PLUGINS
+DEFINES += WITH_UPDATES
 
 SOURCES += main.cpp \
     ../../xpiks-qt/Commands/addartworkscommand.cpp \
