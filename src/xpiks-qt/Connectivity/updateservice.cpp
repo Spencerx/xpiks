@@ -39,8 +39,12 @@ namespace Connectivity {
     }
 
     void UpdateService::startChecking() {
+#ifdef WITH_UPDATES
         const bool startWorker = m_SettingsModel->getCheckForUpdates() &&
                 m_SwitcherModel->getUpdateEnabled();
+#else
+        const bool startWorker = false;
+#endif
 
         if (startWorker) {
             updateSettings();

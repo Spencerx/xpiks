@@ -614,6 +614,8 @@ BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
 
 include(../xpiks-common/xpiks-common.pri)
 
+DEFINES += WITH_UPDATES
+
 CONFIG(debug, debug|release)  {
     message("Building debug")
     DEFINES += WITH_PLUGINS
