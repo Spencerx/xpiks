@@ -23,6 +23,7 @@ namespace Storage {
     public:
         virtual ~IDbTable() {}
     public:
+        virtual const QString &getTableName() const = 0;
         virtual bool initialize() = 0;
         virtual void finalize() = 0;
         virtual bool tryGetValue(const QByteArray &key, QByteArray &value) = 0;
@@ -46,6 +47,7 @@ namespace Storage {
         virtual void finalize() = 0;
         virtual void sync() = 0;
         virtual std::shared_ptr<IDbTable> getTable(const QString &name) = 0;
+        virtual bool deleteTable(std::shared_ptr<IDbTable> &table) = 0;
         virtual QStringList retrieveTableNames() = 0;
     };
 }

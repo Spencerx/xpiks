@@ -63,6 +63,7 @@ namespace Storage {
             virtual void finalize() override;
 
         public:
+            virtual const QString &getTableName() const override { return m_TableName; }
             virtual bool tryGetValue(const QByteArray &key, QByteArray &value) override;
             virtual bool trySetValue(const QByteArray &key, const QByteArray &value) override;
             virtual bool tryAddValue(const QByteArray &key, const QByteArray &value) override;
@@ -83,13 +84,14 @@ namespace Storage {
         };
 
     public:
-        bool open(const char *fullDbPath);
-        void close();
-        bool initialize();
-        void finalize();
-        void sync();
-        std::shared_ptr<IDbTable> getTable(const QString &name);
-        QStringList retrieveTableNames();
+        virtual bool open(const char *fullDbPath) override;
+        virtual void close() override;
+        virtual bool initialize() override;
+        virtual void finalize() override;
+        virtual void sync() override;
+        virtual std::shared_ptr<IDbTable> getTable(const QString &name) override;
+        virtual bool deleteTable(std::shared_ptr<IDbTable> &table) override;
+        virtual QStringList retrieveTableNames() override;
 
     private:
         void doClose();

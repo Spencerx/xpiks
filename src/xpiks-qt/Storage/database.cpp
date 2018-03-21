@@ -14,6 +14,7 @@
 #include <cstring>
 #include <cmath>
 #include <climits>
+#include <algorithm>
 #include "../../vendors/sqlite/sqlite3.h"
 #include "../Common/defines.h"
 #include "../Helpers/stringhelper.h"
@@ -270,6 +271,33 @@ namespace Storage {
         }
 
         return table;
+    }
+
+    bool Database::deleteTable(std::shared_ptr<IDbTable> &table) {
+        bool success = false;
+
+        auto it = std::find_if(m_Tables.begin(), m_Tables.end(),
+                               [&](std::shared_ptr<IDbTable> const &current) {
+                return current.get() == table.get(); });
+        if (it != m_Tables.end()) {
+            m_Tables.erase(it);
+
+            table->finalize();
+
+            QString dropSql = QString("DROP TABLE IF EXISTS %1;").arg(table->getTableName());
+            std::string dropStr = dropSql.toStdString();
+
+            int rc = sqlite3_exec(m_Database, dropStr.c_str(), nullptr, nullptr, nullptr);
+            if (rc == SQLITE_OK) {
+                success = true;
+                table.reset();
+            }
+        } else {
+            LOG_WARNING << "Attempt to delete a table not created by this database";
+            Q_ASSERT(false);
+        }
+
+        return success;
     }
 
     QStringList Database::retrieveTableNames() {
