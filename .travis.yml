@@ -33,6 +33,15 @@ addons:
       version: "1.5"
       description: "Build submitted via Travis CI"
     branch_pattern: coverity_scan
+    build_command_prepend:
+      - chmod +x vendors/build_vendors_linux.sh
+      - chmod +x src/xpiks-tests/get_code_cov.sh
+      - if [ -z "${UI_TESTS+xxx}" ]; then bash vendors/build_vendors_linux.sh travis-ci; fi
+      - cd src/
+      - ls -la ../libs/*
+      - echo "-------"
+      - cd xpiks-qt/
+      - qmake "CONFIG+= debug travis-ci" xpiks-qt.pro
     build_command: make
       
 cache:
@@ -61,17 +70,6 @@ before_script:
   - export COMPILER=g++-5
   - g++ --version
   - ulimit -c unlimited -S       # enable core dumps
-  - if [ -n "$UI_TESTS" ]; then export DISPLAY=:99.0; fi
-  - if [ -n "$UI_TESTS" ]; then sh -e /etc/init.d/xvfb start; fi
-  - if [ -n "$UI_TESTS" ]; then sleep 3; fi # give xvfb some time to start
-  - chmod +x vendors/build_vendors_linux.sh
-  - chmod +x src/xpiks-tests/get_code_cov.sh
-  - if [ -z "${UI_TESTS+xxx}" ]; then bash vendors/build_vendors_linux.sh travis-ci; fi
-  - cd src/
-  - ls -la ../libs/*
-  - echo "-------"
-  - cd xpiks-qt/
-  - qmake "CONFIG+= debug travis-ci" xpiks-qt.pro
 
 script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi
 
