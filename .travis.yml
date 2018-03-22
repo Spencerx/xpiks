@@ -30,9 +30,10 @@ addons:
   coverity_scan:
     project:
       name: "Xpiks-qt"
+      version: "1.5"
       description: "Build submitted via Travis CI"
-      branch_pattern: coverity_scan
-      build_command: make
+    branch_pattern: coverity_scan
+    build_command: make
       
 cache:
   apt: true
