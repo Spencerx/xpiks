@@ -48,7 +48,7 @@ namespace Common {
     }
 
     void BasicKeywordsModelImpl::takeKeywordAt(size_t index, QString &removedKeyword, bool &wasCorrect) {
-        Q_ASSERT((0 <= index) && (index < m_KeywordsList.size()));
+        Q_ASSERT(index < m_KeywordsList.size());
         const auto &keyword = m_KeywordsList.at(index);
         const QString invariant = keyword.m_Value.toLower();
 
@@ -99,7 +99,7 @@ namespace Common {
     }
 
     bool BasicKeywordsModelImpl::canEditKeyword(size_t index, const QString &replacement) const {
-        Q_ASSERT((0 <= index) && (index < m_KeywordsList.size()));
+        Q_ASSERT(index < m_KeywordsList.size());
         bool result = false;
         LOG_INFO << "index:" << index << "replacement:" << replacement;
 
@@ -121,7 +121,7 @@ namespace Common {
     }
 
     bool BasicKeywordsModelImpl::editKeyword(size_t index, const QString &replacement) {
-        Q_ASSERT((0 <= index) && (index < m_KeywordsList.size()));
+        Q_ASSERT(index < m_KeywordsList.size());
         bool result = false;
 
         LOG_INFO << "index:" << index << "replacement:" << replacement;
@@ -155,7 +155,7 @@ namespace Common {
     }
 
     bool BasicKeywordsModelImpl::replaceKeyword(size_t index, const QString &existing, const QString &replacement) {
-        Q_ASSERT((0 <= index) && (index < m_KeywordsList.size()));
+        Q_ASSERT(index < m_KeywordsList.size());
         bool result = false;
 
         auto &keyword = m_KeywordsList.at(index);

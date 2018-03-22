@@ -439,7 +439,10 @@ namespace Models {
         int originalIndex = getOriginalIndex(index);
         ArtItemsModel *artItemsModel = getArtItemsModel();
         ArtworkMetadata *artwork = artItemsModel->getArtwork(originalIndex);
-        QString keywords = artwork->getKeywordsString();
+        QString keywords;
+        if (artwork != nullptr) {
+            keywords = artwork->getKeywordsString();
+        }
         return keywords;
     }
 

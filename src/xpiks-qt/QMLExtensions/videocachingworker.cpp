@@ -41,7 +41,8 @@ namespace QMLExtensions {
         ItemProcessingWorker(2),
         m_Environment(environment),
         m_ProcessedItemsCount(0),
-        m_Cache(dbManager)
+        m_Cache(dbManager),
+        m_Scale(1.0)
     {
         m_RolesToUpdate << Models::ArtItemsModel::ArtworkThumbnailRole;
     }
