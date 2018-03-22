@@ -1304,7 +1304,7 @@ namespace Models {
     }
 
     ArtworkMetadata *ArtItemsModel::accessArtwork(size_t index) const {
-        Q_ASSERT((0 <= index) && (index < m_ArtworkList.size()));
+        Q_ASSERT(index < m_ArtworkList.size());
         ArtworkMetadata *metadata = m_ArtworkList.at(index);
         metadata->setCurrentIndex(index);
         return metadata;

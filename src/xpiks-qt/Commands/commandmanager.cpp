@@ -114,6 +114,7 @@ Commands::CommandManager::CommandManager():
     m_RequestsService(NULL),
     m_DuplicatesModel(NULL),
     m_CsvExportModel(NULL),
+    m_DatabaseManager(NULL),
     m_ServicesInitialized(false),
     m_AfterInitCalled(false),
     m_LastCommandID(0)
