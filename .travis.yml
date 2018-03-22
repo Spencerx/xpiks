@@ -14,18 +14,25 @@ git:
 
 env:
   - XPIKS_BINARY=binary
-  - CORE_TESTS=tests QT_FATAL_WARNINGS=true
-  - INTEGRATION_TESTS=tests QT_FATAL_WARNINGS=true
-  - UI_TESTS=tests QT_FATAL_WARNINGS=true
+
+env:
+  global:
+    # COVERITY_SCAN_TOKEN
+    - secure: "GK9b2y7xTZgBhTtziCaQTBwjVh72KdaoVqaez5kNeKPUQUm7nEt2NsaIPQyMi2oe6hwOXV1cgTag08udDU5sJoPtj3PhqxkuRwY4QqNSvBQObgKr+Jaad66ZioOOsrVh3OuLI+8Zt75MYSyX+NdiyTApUSbcZIdU5BIsq9R70TAWrZiT/QlcdYVt7iB4DTHFvPDY/Eh8Y0JY+0UFSXIRAAEnjk/KuHSoYjPbCQ1HLG/LDqtibIsUWH4+njjT5NvMFcI5nOSgPZuQ3D7pXizMx6uDzbq5fUx4boh3bLBFbFLXTH/+vPpFaqj1dGAQ3X2RL5SyydWAmVfQJ8exSXNcNEbujbiZg6Ob0OqgiK2IM9kPuMh7TOsDdwEZcnZYhkivL4WsoVbnld54mw8kAZLotiC+k52eLlmNDP+PUVK0d4ZCMA8cwVmpuHixSQevp1zxCofT/hE2Wgwez3IKWnmxiZmomYOiexOxYP6FkxHOR/YRLZGmtN+Sn/X88GRiaYt8zi5UXH7o3f2fFIeavcIF70t0hOCYRbALLm+KUuu3+VWLUQ+4FEE12cATbdTOUc+5UR9JJyZQrqOBDvIF3eN2EuYieF9+S6CoDaKaAXhseoYMYflxKF8pg1G7snwYMTRnkLuxHK8dCUXAlKaQnSwU2ZEA2avlxQnjbSDm1F3zASg="
 
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - lcov
       - gcc-5
       - g++-5
+  coverity_scan:
+    project:
+      name: "Xpiks-qt"
+      description: "Build submitted via Travis CI"
+      branch_pattern: coverity_scan
+      build_command: make
       
 cache:
   apt: true
@@ -58,45 +65,12 @@ before_script:
   - if [ -n "$UI_TESTS" ]; then sleep 3; fi # give xvfb some time to start
   - chmod +x vendors/build_vendors_linux.sh
   - chmod +x src/xpiks-tests/get_code_cov.sh
-  - git fetch origin gh-pages
-  - git checkout FETCH_HEAD -- api
-
-script:
   - if [ -z "${UI_TESTS+xxx}" ]; then bash vendors/build_vendors_linux.sh travis-ci; fi
   - cd src/
   - ls -la ../libs/*
   - echo "-------"
-  - if [ -n "$XPIKS_BINARY" ]; then cd xpiks-qt/; fi
-  - if [ -n "$XPIKS_BINARY" ]; then qmake "CONFIG+= debug travis-ci" xpiks-qt.pro; fi
-  - echo "-------"
-  - if [ -n "$CORE_TESTS" ]; then cd xpiks-tests/xpiks-tests-core; fi
-  - if [ -n "$CORE_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-core.pro; fi
-  - echo "-------"
-  - if [ -n "$INTEGRATION_TESTS" ]; then cd xpiks-tests/plugins-for-tests/helloworld/xpiks-helloworld-plugin; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-helloworld-plugin.pro; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then make; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then cd ../../../../; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then cd xpiks-tests/xpiks-tests-integration; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-integration.pro; fi
-  - echo "-------"
-  - if [ -n "$UI_TESTS" ]; then cd xpiks-tests/ui-tests-stubs; fi
-  - if [ -n "$UI_TESTS" ]; then qmake "CONFIG+=debug travis-ci" ui-tests-stubs.pro; fi
-  - if [ -n "$UI_TESTS" ]; then make; fi
-  - if [ -n "$UI_TESTS" ]; then cd ../xpiks-tests-ui; fi
-  - if [ -n "$UI_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-ui.pro; fi
-  - echo "-------"
-  - make
-  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
-  - if [ -n "$XPIKS_BINARY" ]; then cppcheck --language=c++ --inconclusive --quiet -DQT_DEBUG -DWITH_LOGS -DWITH_PLUGINS -DWITH_STDOUT_LOGS -DTRAVIS_CI -UCORE_TESTS -UINTEGRATION_TESTS -UQ_OS_WIN -DQ_OS_LINUX --error-exitcode=1 --suppress=missingIncludeSystem --suppress='*:moc_*.cpp' --max-configs=15 --enable=warning . ; fi
-  - if [ -n "$CORE_TESTS" ]; then ./xpiks-tests-core; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration; fi
-  - if [ -n "$UI_TESTS" ]; then ./xpiks-tests-ui; fi
-  - if [ -z "${XPIKS_BINARY+xxx}" ]; then ../get_code_cov.sh "$PWD/../../"; fi
+  - cd xpiks-qt/
+  - qmake "CONFIG+= debug travis-ci" xpiks-qt.pro
 
-after_success:
-  - if [ -z "${XPIKS_BINARY+xxx}" ]; then bash <(curl -s https://codecov.io/bash) -X gcov || echo 'Codecov failed to upload'; fi
+script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi
 
-after_failure:
-  - if [ -n "$CORE_TESTS" ]; then for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/xpiks-tests-core core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/xpiks-tests-integration core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi
-  - if [ -n "$UI_TESTS" ]; then for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/xpiks-tests-ui core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi
