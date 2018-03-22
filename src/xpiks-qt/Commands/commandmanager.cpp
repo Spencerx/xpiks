@@ -60,7 +60,8 @@
 #include "../QMLExtensions/videocachingservice.h"
 #include "../QMLExtensions/artworksupdatehub.h"
 #include "../Helpers/asynccoordinator.h"
-#include "../Helpers/database.h"
+#include "../Storage/database.h"
+#include "../Storage/databasemanager.h"
 #include "../Models/switchermodel.h"
 #include "../Connectivity/requestsservice.h"
 #include "../AutoComplete/keywordsautocompletemodel.h"
@@ -113,6 +114,7 @@ Commands::CommandManager::CommandManager():
     m_RequestsService(NULL),
     m_DuplicatesModel(NULL),
     m_CsvExportModel(NULL),
+    m_DatabaseManager(NULL),
     m_ServicesInitialized(false),
     m_AfterInitCalled(false),
     m_LastCommandID(0)
@@ -336,7 +338,7 @@ void Commands::CommandManager::InjectDependency(Connectivity::RequestsService *r
     m_RequestsService->setCommandManager(this);
 }
 
-void Commands::CommandManager::InjectDependency(Helpers::DatabaseManager *databaseManager) {
+void Commands::CommandManager::InjectDependency(Storage::DatabaseManager *databaseManager) {
     Q_ASSERT(databaseManager != NULL); m_DatabaseManager = databaseManager;
 }
 
@@ -621,7 +623,7 @@ void Commands::CommandManager::ensureDependenciesInjected() {
 #endif
 }
 
-void Commands::CommandManager::afterConstructionCallback() {
+void Commands::CommandManager::afterConstructionCallback(Common::ISystemEnvironment &environment) {
     if (m_AfterInitCalled) {
         LOG_WARNING << "Attempt to call afterConstructionCallback() second time";
         return;
@@ -632,7 +634,8 @@ void Commands::CommandManager::afterConstructionCallback() {
 #endif
 
 #if !defined(CORE_TESTS)
-    m_SwitcherModel->updateConfigs();
+    m_SwitcherModel->initialize(environment);
+    m_SwitcherModel->updateConfigs(environment);
 #endif
 
     const int waitSeconds = 5;
@@ -677,10 +680,9 @@ void Commands::CommandManager::afterConstructionCallback() {
     m_UploadInfoRepository->initializeConfig();
     m_PresetsModel->initializePresets();
     m_CsvExportModel->initializeExportPlans(&m_InitCoordinator);
-    m_KeywordsSuggestor->initSuggestionEngines();
+    m_KeywordsSuggestor->initSuggestionEngines(environment);
+    m_UpdateService->initialize();
 #endif
-
-    executeMaintenanceJobs();
 
     m_MainDelegator.readSession();
 }
@@ -692,8 +694,6 @@ void Commands::CommandManager::afterInnerServicesInitialized() {
 #ifdef WITH_PLUGINS
     m_PluginManager->loadPlugins();
 #endif
-
-    m_SwitcherModel->initialize();
 #endif
 
     int newFilesAdded = m_MainDelegator.restoreReadSession();
@@ -710,6 +710,8 @@ void Commands::CommandManager::afterInnerServicesInitialized() {
 #ifndef CORE_TESTS
     m_UpdateService->startChecking();
 #endif
+
+    executeMaintenanceJobs();
 }
 
 void Commands::CommandManager::executeMaintenanceJobs() {

@@ -29,10 +29,10 @@ namespace Connectivity {
         };
 
     public:
-        SwitcherConfig(Common::ISystemEnvironment &environment, QObject *parent=nullptr);
+        SwitcherConfig(QObject *parent=nullptr);
 
     public:
-        void initializeConfigs();
+        void initializeConfigs(Common::ISystemEnvironment &environment);
         bool isSwitchOn(int switchKey, int minThreshold);
 
     signals:
@@ -65,7 +65,6 @@ namespace Connectivity {
         };
 
     private:
-        Common::ISystemEnvironment &m_Environment;
         QReadWriteLock m_RwLock;
         QHash<int, SwitchValue> m_SwitchesHash;
     };

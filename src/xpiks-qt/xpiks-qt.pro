@@ -150,7 +150,7 @@ SOURCES += main.cpp \
     Models/switchermodel.cpp \
     Connectivity/requestsworker.cpp \
     Connectivity/requestsservice.cpp \
-    Helpers/database.cpp \
+    Storage/database.cpp \
     Common/statefulentity.cpp \
     QMLExtensions/cachedimage.cpp \
     QMLExtensions/dbimagecacheindex.cpp \
@@ -184,7 +184,10 @@ SOURCES += main.cpp \
     Common/baseentity.cpp \
     Warnings/warningsitem.cpp \
     Maintenance/updatebundlecleanupjobitem.cpp \
-    Common/systemenvironment.cpp
+    Common/systemenvironment.cpp \
+    Plugins/pluginenvironment.cpp \
+    Plugins/plugindatabasemanager.cpp \
+    Storage/databasemanager.cpp
 
 RESOURCES += qml.qrc
 
@@ -382,7 +385,7 @@ HEADERS += \
     Connectivity/requestsservice.h \
     Warnings/iwarningsitem.h \
     AutoComplete/completionitem.h \
-    Helpers/database.h \
+    Storage/database.h \
     AutoComplete/completionitem.h \
     Common/statefulentity.h \
     QMLExtensions/previewstorage.h \
@@ -432,7 +435,14 @@ HEADERS += \
     Warnings/iwarningssettings.h \
     Maintenance/updatebundlecleanupjobitem.h \
     Common/systemenvironment.h \
-    Common/isystemenvironment.h
+    Common/isystemenvironment.h \
+    Storage/idatabasemanager.h \
+    Plugins/pluginenvironment.h \
+    Plugins/plugindatabasemanager.h \
+    Helpers/jsonobjectmap.h \
+    Storage/databasemanager.h \
+    Storage/idatabase.h \
+    Storage/writeaheadlog.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
@@ -603,6 +613,8 @@ BUILDNO=$$system(git log -n 1 --pretty=format:"%h")
 BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
 
 include(../xpiks-common/xpiks-common.pri)
+
+DEFINES += WITH_UPDATES
 
 CONFIG(debug, debug|release)  {
     message("Building debug")

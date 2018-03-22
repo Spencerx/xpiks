@@ -21,9 +21,11 @@
 #include "../UndoRedo/iundoredomanager.h"
 #include "ipluginaction.h"
 #include "iuiprovider.h"
+#include "../Common/isystemenvironment.h"
 #include "../Common/iartworkssource.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
 #include "../Common/flags.h"
+#include "../Storage/idatabasemanager.h"
 
 namespace Plugins {
     enum struct PluginNotificationFlags: Common::flag_t {
@@ -44,28 +46,29 @@ namespace Plugins {
 
         // actions routines
     public:
-        virtual const std::vector<std::shared_ptr<IPluginAction> > &getExportedActions() const = 0;
-        virtual bool executeAction(int actionID) = 0;
+        virtual std::vector<std::shared_ptr<IPluginAction> > getExportedActions() const { return std::vector<std::shared_ptr<IPluginAction> >(); }
+        virtual bool executeAction(int actionID) { Q_UNUSED(actionID); return false; }
 
         // general routines
     public:
-        virtual void initializePlugin() = 0;
-        virtual void finalizePlugin() = 0;
-        virtual void enablePlugin() = 0;
-        virtual void disablePlugin() = 0;
+        virtual bool initialize(Common::ISystemEnvironment &environment) = 0;
+        virtual void finalize() = 0;
+        virtual void enable() = 0;
+        virtual void disable() = 0;
 
         // notification handlers
     public:
         // properties of which plugin wants to be notified
-        virtual Common::flag_t getDesiredNotificationFlags() const = 0;
-        virtual void onPropertyChanged(PluginNotificationFlags flag, const QVariant &data, void *pointer) = 0;
+        virtual Common::flag_t getDesiredNotificationFlags() const { return (Common::flag_t)PluginNotificationFlags::None; }
+        virtual void onPropertyChanged(PluginNotificationFlags flag, const QVariant &data, void *pointer) { Q_UNUSED(flag); Q_UNUSED(data); Q_UNUSED(pointer); }
 
     public:
-        virtual void injectCommandManager(Commands::ICommandManager *commandManager) = 0;
-        virtual void injectUndoRedoManager(UndoRedo::IUndoRedoManager *undoRedoManager) = 0;
-        virtual void injectArtworksSource(Common::IArtworksSource *artworksSource) = 0;
-        virtual void injectUIProvider(IUIProvider *uiProvider) = 0;
-        virtual void injectPresetsManager(KeywordsPresets::IPresetsManager *presetsManager) = 0;
+        virtual void injectCommandManager(Commands::ICommandManager *commandManager) { Q_UNUSED(commandManager); }
+        virtual void injectUndoRedoManager(UndoRedo::IUndoRedoManager *undoRedoManager) { Q_UNUSED(undoRedoManager); }
+        virtual void injectArtworksSource(Common::IArtworksSource *artworksSource) { Q_UNUSED(artworksSource); }
+        virtual void injectUIProvider(IUIProvider *uiProvider) { Q_UNUSED(uiProvider); }
+        virtual void injectPresetsManager(KeywordsPresets::IPresetsManager *presetsManager) { Q_UNUSED(presetsManager); }
+        virtual void injectDatabaseManager(Storage::IDatabaseManager *databaseManager) { Q_UNUSED(databaseManager); }
     };
 }
 

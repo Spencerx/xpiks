@@ -25,7 +25,6 @@ ColumnLayout {
     enabled: mainStackView.areActionsAllowed
 
     StyledBlackButton {
-        implicitHeight: 30
         height: 30
         anchors.left: parent.left
         anchors.right: parent.right
@@ -41,7 +40,6 @@ ColumnLayout {
     }
 
     StyledBlackButton {
-        implicitHeight: 30
         height: 30
         anchors.left: parent.left
         anchors.right: parent.right

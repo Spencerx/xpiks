@@ -43,12 +43,12 @@ namespace Suggestion {
         Q_PROPERTY(int searchTypeIndex READ getSearchTypeIndex WRITE setSearchTypeIndex NOTIFY searchTypeIndexChanged)
 
     public:
-        KeywordsSuggestor(Common::ISystemEnvironment &environment, QObject *parent=NULL);
+        KeywordsSuggestor(QObject *parent=NULL);
         virtual ~KeywordsSuggestor();
 
     public:
         void setExistingKeywords(const QSet<QString> &keywords);
-        void initSuggestionEngines();
+        void initSuggestionEngines(Common::ISystemEnvironment &environment);
         void setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks);
         void clear();
 

@@ -9,56 +9,110 @@
  */
 
 #include "pluginwrapper.h"
+#include <QDir>
 #include "xpiksplugininterface.h"
 #include "ipluginaction.h"
 #include "pluginactionsmodel.h"
 #include "uiprovider.h"
 #include "../Common/defines.h"
+#include "../Helpers/constants.h"
 
 namespace Plugins {
-    PluginWrapper::PluginWrapper(const QString &filepath, XpiksPluginInterface *pluginInterface, int pluginID, UIProvider *realUIProvider):
+    PluginWrapper::PluginWrapper(const QString &filepath,
+                                 XpiksPluginInterface *pluginInterface,
+                                 int pluginID,
+                                 Common::ISystemEnvironment &environment,
+                                 UIProvider *realUIProvider,
+                                 Storage::DatabaseManager *databaseManager):
         m_PluginInterface(pluginInterface),
+        m_PluginEnvironment(environment, Constants::PLUGINS_DIR, filepath),
+        m_PluginDatabaseManager(m_PluginEnvironment, databaseManager),
         m_ActionsModel(pluginInterface->getExportedActions(), pluginID),
         m_NotificationFlags(pluginInterface->getDesiredNotificationFlags()),
         m_UIProviderSafe(pluginID, realUIProvider),
         m_PluginFilepath(filepath),
         m_PluginID(pluginID),
-        m_IsEnabled(true),
-        m_IsRemoved(false),
+        m_PluginFlags(0),
         m_PrettyName(pluginInterface->getPrettyName()),
         m_VersionString(pluginInterface->getVersionString()),
         m_Author(pluginInterface->getAuthor())
     {
         Q_ASSERT(realUIProvider != nullptr);
+        Q_ASSERT(databaseManager != nullptr);
     }
 
     PluginWrapper::~PluginWrapper() {
         LOG_DEBUG << m_PluginID;
     }
 
-    void PluginWrapper::enablePlugin() {
+    bool PluginWrapper::initializePlugin() {
         LOG_INFO << getPrettyName() << getVersionString();
 
+        bool result = false;
+        m_PluginEnvironment.initialize();
+
         try {
-            m_PluginInterface->enablePlugin();
-            m_IsEnabled = true;
+            result = m_PluginInterface->initialize(m_PluginEnvironment);
+            setIsInitializedFlag(true);
+        }
+        catch(...) {
+            LOG_WARNING << "Exception while initializing plugin";
+        }
+
+        return result;
+    }
+
+    bool PluginWrapper::enablePlugin() {
+        LOG_INFO << getPrettyName() << getVersionString();
+        Q_ASSERT(getIsInitializedFlag());
+        bool result = false;
+
+        try {
+            m_PluginInterface->enable();
+            setIsEnabledFlag(true);
+            result = true;
         }
         catch(...) {
             LOG_WARNING << "Exception while enabling plugin";
         }
+
+        return result;
     }
 
-    void PluginWrapper::disablePlugin() {
+    bool PluginWrapper::disablePlugin() {
+        Q_ASSERT(getIsEnabledFlag());
         LOG_INFO << getPrettyName() << getVersionString();
+        bool result = false;
 
         try {
             // set disabled in any case
-            m_IsEnabled = false;
-            m_PluginInterface->disablePlugin();
+            setIsEnabledFlag(false);
+            m_PluginInterface->disable();
+            result = true;
         }
         catch(...) {
             LOG_WARNING << "Exception while disabling plugin";
         }
+
+        return result;
+    }
+
+    bool PluginWrapper::finalizePlugin() {
+        LOG_INFO << getPrettyName() << getVersionString();
+        if (!getIsInitializedFlag()) { return true; }
+
+        bool result = false;
+
+        try {
+            m_PluginInterface->finalize();
+            setIsInitializedFlag(false);
+            result = true;
+        }
+        catch (...) {
+            LOG_WARNING << "Exception on finalization";
+        }
+
+        return result;
     }
 
     void PluginWrapper::triggerActionSafe(int actionID) const {
@@ -76,15 +130,11 @@ namespace Plugins {
         }
     }
 
-    void PluginWrapper::finalizePlugin() {
+    void PluginWrapper::removePlugin() {
         LOG_INFO << getPrettyName() << getVersionString();
+        setIsRemovedFlag(true);
 
-        try {
-            m_PluginInterface->finalizePlugin();
-        }
-        catch (...) {
-            LOG_WARNING << "Exception on finalization";
-        }
+        // TODO: cleanup the data or not?
     }
 
     void PluginWrapper::notifyPlugin(PluginNotificationFlags flag, const QVariant &data, void *pointer) {

@@ -38,6 +38,9 @@ namespace Connectivity {
                       Maintenance::MaintenanceService *maintenanceService);
 
     public:
+        void initialize();
+
+    public:
         void startChecking();
         void stopChecking();
 

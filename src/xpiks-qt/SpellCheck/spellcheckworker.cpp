@@ -405,7 +405,7 @@ namespace SpellCheck {
     void SpellCheckWorker::initUserDictionary() {
         LOG_DEBUG << "#";
 
-        m_UserDictionaryPath = m_Environment.filepath(Constants::USER_DICT_FILENAME);
+        m_UserDictionaryPath = m_Environment.path({Constants::USER_DICT_FILENAME});
         QFile userDictonaryFile(m_UserDictionaryPath);
 
         if (userDictonaryFile.open(QIODevice::ReadOnly)) {

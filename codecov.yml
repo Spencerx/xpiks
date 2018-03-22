@@ -9,36 +9,16 @@ coverage:
   precision: 2
   status:
     project:
-      default: false
-      tests:
-        base: auto 
-        target: 95%
+      default:
+        enabled: true
         if_ci_failed: error
         only_pulls: false
-        paths:
-          - src/xpiks-tests/
-          - !vendors
-      app:
-        base: auto 
-        if_ci_failed: error
-        only_pulls: false
-        target: 60%
+        target: 75%
         threshold: 5%
         paths:
           - src/xpiks-qt/
           - !vendors/
         
-flags:
-  # filter the folder(s) you wish to measure by that flag
-  app:
-    paths:
-      - src/xpiks-qt/
-      - !vendors
-  tests:
-    paths:
-      - src/xpiks-tests/
-      - !vendors
-
 comment:
   layout: "reach, diff, flags, files"
   behavior: default

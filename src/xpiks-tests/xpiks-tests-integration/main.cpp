@@ -56,7 +56,7 @@
 #include "../../xpiks-qt/Helpers/logger.h"
 #include "../../xpiks-qt/Common/version.h"
 #include "../../xpiks-qt/Common/defines.h"
-#include "../../xpiks-qt/Helpers/database.h"
+#include "../../xpiks-qt/Storage/databasemanager.h"
 #include "../../xpiks-qt/KeywordsPresets/presetkeywordsmodel.h"
 #include "../../xpiks-qt/Maintenance/maintenanceservice.h"
 #include "../../xpiks-qt/Connectivity/requestsservice.h"
@@ -65,6 +65,7 @@
 #include "../../xpiks-qt/Models/switchermodel.h"
 #include "../../xpiks-qt/Helpers/filehelpers.h"
 #include "../../xpiks-qt/Common/systemenvironment.h"
+#include "../../xpiks-qt/Models/uimanager.h"
 
 #include "exiv2iohelpers.h"
 
@@ -124,6 +125,7 @@
 #include "importlostmetadatatest.h"
 #include "warningscombinedtest.h"
 #include "csvdefaultexporttest.h"
+#include "loadpluginbasictest.h"
 
 #if defined(WITH_PLUGINS)
 #undef WITH_PLUGINS
@@ -232,7 +234,7 @@ int main(int argc, char *argv[]) {
         QString time = QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss-zzz");
         QString logFilename = QString("xpiks-qt-%1.log").arg(time);
 
-        QString logFilePath = environment.fileInDir(logFilename, Constants::LOGS_DIR);
+        QString logFilePath = environment.path({Constants::LOGS_DIR, logFilename});
 
         Helpers::Logger &logger = Helpers::Logger::getInstance();
         logger.setLogFilePath(logFilePath);
@@ -242,8 +244,8 @@ int main(int argc, char *argv[]) {
     Models::LogsModel logsModel;
     logsModel.startLogging();
 
-    Models::SettingsModel settingsModel(environment);
-    settingsModel.initializeConfigs();
+    Models::SettingsModel settingsModel;
+    settingsModel.initializeConfigs(environment);
     settingsModel.retrieveAllValues();
 
     QMLExtensions::ColorsModel colorsModel;
@@ -257,27 +259,29 @@ int main(int argc, char *argv[]) {
     Encryption::SecretsManager secretsManager;
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
-    Suggestion::KeywordsSuggestor keywordsSuggestor(environment);
+    Storage::DatabaseManager databaseManager(environment);
+    Suggestion::KeywordsSuggestor keywordsSuggestor;
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
-    Models::RecentDirectoriesModel recentDirectorieModel(environment);
-    Models::RecentFilesModel recentFileModel(environment);
+    Models::RecentDirectoriesModel recentDirectorieModel;
+    Models::RecentFilesModel recentFileModel;
     libxpks::net::FtpCoordinator *ftpCoordinator = new libxpks::net::FtpCoordinator(settingsModel.getMaxParallelUploads());
     Models::ArtworkUploader artworkUploader(environment, ftpCoordinator);
     SpellCheck::SpellCheckerService spellCheckerService(environment, &settingsModel);
     SpellCheck::SpellCheckSuggestionModel spellCheckSuggestionModel;
-    MetadataIO::MetadataIOService metadataIOService;
+    MetadataIO::MetadataIOService metadataIOService(&databaseManager);
     Warnings::WarningsModel warningsModel;
     warningsModel.setSourceModel(&artItemsModel);
     Models::LanguagesModel languagesModel;
     AutoComplete::KeywordsAutoCompleteModel autoCompleteModel;
     AutoComplete::AutoCompleteService autoCompleteService(&autoCompleteModel, &presetsModel, &settingsModel);
-    QMLExtensions::ImageCachingService imageCachingService(environment);
+    QMLExtensions::ImageCachingService imageCachingService(environment, &databaseManager);
     Models::FindAndReplaceModel findAndReplaceModel(&colorsModel);
     Models::DeleteKeywordsViewModel deleteKeywordsModel;
     Translation::TranslationManager translationManager(environment);
     Translation::TranslationService translationService(translationManager);
     Models::ArtworkProxyModel artworkProxy;
+    Models::UIManager uiManager(&settingsModel);
     Models::SessionManager sessionManager(environment);
     sessionManager.initialize();
     // intentional memory leak to beat spellcheck lock stuff
@@ -285,18 +289,20 @@ int main(int argc, char *argv[]) {
     Maintenance::MaintenanceService maintenanceService(environment);
     Connectivity::RequestsService requestsService;
 
-    QMLExtensions::VideoCachingService videoCachingService(environment);
+    QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
-    Models::SwitcherModel switcherModel(environment);
+    Models::SwitcherModel switcherModel;
     Connectivity::UpdateService updateService(environment, &settingsModel, &switcherModel, &maintenanceService);
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
     Connectivity::TelemetryService telemetryService("1234567890", false);
-    Plugins::PluginManager pluginManager(environment);
-    Helpers::DatabaseManager databaseManager(environment);
+    Plugins::PluginManager pluginManager(environment, &databaseManager);
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
-    MetadataIO::CsvExportModel csvExportModel(environment);
+    MetadataIO::CsvExportModel csvExportModel(environment);    
+
+    auto *uiProvider = pluginManager.getUIProvider();
+    uiProvider->setUIManager(&uiManager);
 
     Commands::CommandManager commandManager;
     commandManager.InjectDependency(&artworkRepository);
@@ -344,12 +350,11 @@ int main(int argc, char *argv[]) {
     commandManager.InjectDependency(&duplicatesModel);
     commandManager.InjectDependency(&csvExportModel);
 
-
     commandManager.ensureDependenciesInjected();
 
     secretsManager.setMasterPasswordHash(settingsModel.getMasterPasswordHash());
-    recentDirectorieModel.initialize();
-    recentFileModel.initialize();
+    recentDirectorieModel.initialize(environment);
+    recentFileModel.initialize(environment);
 
 #if defined(Q_OS_WIN)
     #if defined(APPVEYOR)
@@ -365,7 +370,7 @@ int main(int argc, char *argv[]) {
     csvExportModel.setRemoteConfigOverride(findFullPathForTests("api/v1/csv_export_plans.json"));
 
     commandManager.connectEntitiesSignalsSlots();
-    commandManager.afterConstructionCallback();
+    commandManager.afterConstructionCallback(environment);
 
     // process signals from construction
     QCoreApplication::processEvents();
@@ -420,6 +425,7 @@ int main(int argc, char *argv[]) {
     integrationTests.append(new ImportLostMetadataTest(&commandManager));
     integrationTests.append(new WarningsCombinedTest(&commandManager));
     integrationTests.append(new CsvDefaultExportTest(&commandManager));
+    integrationTests.append(new LoadPluginBasicTest(&commandManager));
     // always the last one. insert new tests above
     integrationTests.append(new LocalLibrarySearchTest(&commandManager));
 

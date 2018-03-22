@@ -23,17 +23,7 @@
 #define PROPERTY_TYPE_KEY QLatin1String("propertyType")
 #define PROPERTY_NAME_KEY QLatin1String("propertyName")
 #define COLUMN_NAME_KEY QLatin1String("columnName")
-
-#ifdef QT_DEBUG
-    #ifdef INTEGRATION_TESTS
-        #define EXPORT_PLANS_FILE "integration_csv_export_plans.json"
-    #else
-        #define EXPORT_PLANS_FILE "debug_csv_export_plans.json"
-    #endif
-#else
 #define EXPORT_PLANS_FILE "csv_export_plans.json"
-#endif
-
 #define OVERWRITE_KEY "overwrite"
 #define OVERWRITE_CSV_PLANS false
 
@@ -187,7 +177,7 @@ namespace MetadataIO {
         Helpers::AsyncCoordinatorUnlocker unlocker(initCoordinator);
         Q_UNUSED(locker); Q_UNUSED(unlocker);
 
-        QString localConfigPath = m_Environment.filepath(EXPORT_PLANS_FILE);
+        QString localConfigPath = m_Environment.path({EXPORT_PLANS_FILE});
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getCsvExportPlansAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);

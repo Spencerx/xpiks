@@ -27,16 +27,24 @@ namespace Connectivity {
         m_SettingsModel(settingsModel),
         m_SwitcherModel(switcherModel),
         m_MaintenanceService(maintenanceService),
-        m_State("updater", environment)
+        m_State("updater")
     {
         Q_ASSERT(settingsModel != nullptr);
         Q_ASSERT(switcherModel != nullptr);
         Q_ASSERT(maintenanceService != nullptr);
     }
 
+    void UpdateService::initialize() {
+        m_State.init(m_Environment);
+    }
+
     void UpdateService::startChecking() {
+#ifdef WITH_UPDATES
         const bool startWorker = m_SettingsModel->getCheckForUpdates() &&
                 m_SwitcherModel->getUpdateEnabled();
+#else
+        const bool startWorker = false;
+#endif
 
         if (startWorker) {
             updateSettings();

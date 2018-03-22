@@ -13,59 +13,56 @@
 
 #include "../Helpers/localconfig.h"
 #include <QString>
+#include <QAtomicInt>
 #include <QJsonObject>
+#include <memory>
 #include "isystemenvironment.h"
+#include "../Helpers/jsonobjectmap.h"
 
 namespace Common {
     class StatefulEntity
     {
     public:
-        StatefulEntity(const QString &stateName, ISystemEnvironment &environment);
+        StatefulEntity(const QString &stateName);
 
     public:
-        void init();
+        void init(ISystemEnvironment &environment);
         void sync();
 
     public:
         inline void setValue(const char *key, const QJsonValue &value) {
-            m_StateJson.insert(QLatin1String(key), value);
+            m_StateMap->setValue(key, value);
         }
 
         inline QJsonValue getValue(const char *key, const QJsonValue &defaultValue = QJsonValue()) const {
-            QJsonValue value = m_StateJson.value(QLatin1String(key));
-
-            if (value.isUndefined()) {
-                return defaultValue;
-            }
-
-            return value;
+            return m_StateMap->value(key, defaultValue);
         }
 
         inline bool getBool(const char *key, const bool defaultValue = false) const {
-            return m_StateJson.value(QLatin1String(key)).toBool(defaultValue);
+            return m_StateMap->boolValue(key, defaultValue);
         }
 
         inline double getDouble(const char *key, const double defaultValue = 0) const {
-            return m_StateJson.value(QLatin1String(key)).toDouble(defaultValue);
+            return m_StateMap->doubleValue(key, defaultValue);
         }
 
         inline int getInt(const char *key, const int defaultValue = 0) const {
-            return m_StateJson.value(QLatin1String(key)).toInt(defaultValue);
+            return m_StateMap->intValue(key, defaultValue);
         }
 
         inline QString getString(const char *key, const QString &defaultValue = QString("")) const {
-            return m_StateJson.value(QLatin1String(key)).toString(defaultValue);
+            return m_StateMap->stringValue(key, defaultValue);
         }
 
         inline bool contains(const char *key) const {
-            return m_StateJson.contains(QLatin1String(key));
+            return m_StateMap->containsValue(key);
         }
 
     private:
-        ISystemEnvironment &m_Environment;
         QString m_StateName;
         Helpers::LocalConfig m_StateConfig;
-        QJsonObject m_StateJson;
+        std::shared_ptr<Helpers::JsonObjectMap> m_StateMap;
+        QAtomicInt m_InitCounter;
     };
 }
 

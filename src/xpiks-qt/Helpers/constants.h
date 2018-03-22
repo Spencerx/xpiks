@@ -45,6 +45,20 @@ namespace Constants {
     const char IMAGE_CACHE_TABLE[] = "imgcache";
     const char VIDEO_CACHE_TABLE[] = "vidcache";
     const char METADATA_CACHE_TABLE[] = "metadatacache";
+    const char TRANSLATOR_DIR[] = "dictionaries";
+    const char PLUGINS_DIR[] = "plugins";
+    const char VIDEO_CACHE_DIR[] = "videoscache";
+    const char STATES_DIR[] = "states";
+    const char DB_DIR[] = "db";
+    const char DB_DIR_FAILOVER[] = "db_failover";
+    const char METADATA_DB_NAME[] = "metadata.db";
+    const char IMAGECACHE_DB_NAME[] = "imgcache.db";
+    const char VIDEOCACHE_DB_NAME[] = "videocache.db";
+    const char METADATA_CACHE_DB_NAME[] = "metadatacache.db";
+    const char LOGS_DIR[] = "logs";
+    const char USER_DICT_FILENAME[] = "userdict.dic";
+    const char IMAGES_CACHE_DIR[] = "imagescache";
+    const char IMAGES_CACHE_INDEX[] = "imagescache.index";
 
     // different for DEBUG and RELEASE
 
@@ -65,27 +79,13 @@ namespace Constants {
     const char SELECTED_THEME_INDEX[] = "SELECTED_THEME_INDEX";
     const char USE_AUTO_COMPLETE[] = "USE_AUTO_COMPLETE";
     const char USE_EXIFTOOL[] = "USE_EXIFTOOL";
-    const char IMAGES_CACHE_DIR[] = "imagescache";
-    const char IMAGES_CACHE_INDEX[] = "imagescache.index";
     const char CACHE_IMAGES_AUTOMATICALLY[] = "CACHE_IMAGES_AUTOMATICALLY";
     const char SCROLL_SPEED_SENSIVITY[] = "SCROLL_SPEED_SENSIVITY";
     const char AUTO_DOWNLOAD_UPDATES[] = "AUTO_DOWNLOAD_UPDATES";
-    const char USER_DICT_FILENAME[] = "userdict.dic";
     const char PATH_TO_UPDATE[] = "PATH_TO_UPDATE";
     const char AVAILABLE_UPDATE_VERSION[] = "AVAILABLE_UPDATE_VERSION";
     const char ARTWORK_EDIT_RIGHT_PANE_WIDTH[] = "ARTWORK_EDIT_RIGHT_PANE_WIDTH";
     const char TRANSLATOR_SELECTED_DICT_INDEX[] = "TRANSLATOR_SELECTED_DICT_INDEX";
-    const char TRANSLATOR_DIR[] = "dictionaries";
-    const char PLUGINS_DIR[] = "XpiksPlugins";
-    const char VIDEO_CACHE_DIR[] = "videoscache";
-    const char STATES_DIR[] = "states";
-    const char DB_DIR[] = "db";
-    const char DB_DIR_FAILOVER[] = "db_failover";
-    const char METADATA_DB_NAME[] = "metadata.db";
-    const char IMAGECACHE_DB_NAME[] = "imgcache.db";
-    const char VIDEOCACHE_DB_NAME[] = "videocache.db";
-    const char METADATA_CACHE_DB_NAME[] = "metadatacache.db";
-    const char LOGS_DIR[] = "logs";
 #else
     // common for DEBUG and INTEGRATION_TESTS
     const char ONE_UPLOAD_SECONDS_TIMEMOUT[] = "DEBUG_ONE_UPLOAD_SECONDS_TIMEMOUT";
@@ -100,18 +100,12 @@ namespace Constants {
     const char FTP_STOCKS_FILENAME[] = "stocks_ftp.json";
     const char USE_AUTO_COMPLETE[] = "DEBUG_USE_AUTO_COMPLETE";
     const char USE_EXIFTOOL[] = "DEBUG_USE_EXIFTOOL";
-    const char IMAGES_CACHE_DIR[] = "debug_imagescache";
-    const char IMAGES_CACHE_INDEX[] = "debug_imagescache.index";
     const char SCROLL_SPEED_SENSIVITY[] = "DEBUG_SCROLL_SPEED_SENSIVITY";
     const char AUTO_DOWNLOAD_UPDATES[] = "DEBUG_AUTO_DOWNLOAD_UPDATES";
     const char PATH_TO_UPDATE[] = "DEBUG_PATH_TO_UPDATE";
     const char AVAILABLE_UPDATE_VERSION[] = "DEBUG_AVAILABLE_UPDATE_VERSION";
     const char ARTWORK_EDIT_RIGHT_PANE_WIDTH[] = "DEBUG_ARTWORK_EDIT_RIGHT_PANE_WIDTH";
     const char TRANSLATOR_SELECTED_DICT_INDEX[] = "DEBUG_TRANSLATOR_SELECTED_DICT_INDEX";
-    const char TRANSLATOR_DIR[] = "debug_dictionaries";
-    const char PLUGINS_DIR[] = "debug_XpiksPlugins";
-    const char VIDEO_CACHE_DIR[] = "debug_videoscache";
-    const char STATES_DIR[] = "debug_states";
 
     // different for DEBUG and INTEGRATION_TESTS
 #ifdef INTEGRATION_TESTS
@@ -121,14 +115,6 @@ namespace Constants {
     const char RECENT_DIRECTORIES[] = "INTEGRATION_RECENT_DIRECTORIES";
     const char RECENT_FILES[] = "INTEGRATION_RECENT_FILES";
     const char CACHE_IMAGES_AUTOMATICALLY[] = "INTEGRATION_CACHE_IMAGES_AUTOMATICALLY";
-    const char USER_DICT_FILENAME[] = "userdict_debug_tests.dic";
-    const char DB_DIR[] = "tests_db";
-    const char DB_DIR_FAILOVER[] = "tests_db_failover";
-    const char METADATA_DB_NAME[] = "tests_metadata.db";
-    const char IMAGECACHE_DB_NAME[] = "tests_imgcache.db";
-    const char VIDEOCACHE_DB_NAME[] = "tests_videocache.db";
-    const char METADATA_CACHE_DB_NAME[] = "tests_metadatacache.db";
-    const char LOGS_DIR[] = "tests_logs";
 #else
     const char UPLOAD_HOSTS[] = "DEBUG_UPLOAD_HOSTS_HASH";
     const char USE_MASTER_PASSWORD[] = "DEBUG_USE_MASTER_PASSWORD";
@@ -136,14 +122,6 @@ namespace Constants {
     const char RECENT_DIRECTORIES[] = "DEBUG_RECENT_DIRECTORIES";
     const char RECENT_FILES[] = "DEBUG_RECENT_FILES";
     const char CACHE_IMAGES_AUTOMATICALLY[] = "DEBUG_CACHE_IMAGES_AUTOMATICALLY";
-    const char USER_DICT_FILENAME[] = "userdict_debug.dic";
-    const char DB_DIR[] = "debug_db";
-    const char DB_DIR_FAILOVER[] = "debug_db_failover";
-    const char METADATA_DB_NAME[] = "debug_metadata.db";
-    const char IMAGECACHE_DB_NAME[] = "debug_imgcache.db";
-    const char VIDEOCACHE_DB_NAME[] = "debug_videocache.db";
-    const char METADATA_CACHE_DB_NAME[] = "debug_metadatacache.db";
-    const char LOGS_DIR[] = "debug_logs";
 #endif
 #endif // QT_NO_DEBUG
 

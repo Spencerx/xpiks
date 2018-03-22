@@ -19,19 +19,19 @@
 #include "../Common/defines.h"
 
 namespace QMLExtensions {
-    VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment, QObject *parent) :
+    VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent) :
         QObject(parent),
         Common::BaseEntity(),
         m_Environment(environment),
+        m_DatabaseManager(dbManager),
         m_CachingWorker(nullptr),
         m_IsCancelled(false)
     {
+        Q_ASSERT(dbManager != nullptr);
     }
 
     void VideoCachingService::startService() {
-        Helpers::DatabaseManager *dbManager = m_CommandManager->getDatabaseManager();
-
-        m_CachingWorker = new VideoCachingWorker(m_Environment, dbManager);
+        m_CachingWorker = new VideoCachingWorker(m_Environment, m_DatabaseManager);
         m_CachingWorker->setCommandManager(m_CommandManager);
 
         QThread *thread = new QThread();

@@ -9,11 +9,11 @@
  */
 
 #include "dbimagecacheindex.h"
-#include "../Helpers/database.h"
+#include "../Storage/database.h"
 #include "../Helpers/constants.h"
 
 namespace QMLExtensions {
-    DbImageCacheIndex::DbImageCacheIndex(Helpers::DatabaseManager *dbManager):
+    DbImageCacheIndex::DbImageCacheIndex(Storage::IDatabaseManager *dbManager):
         DbCacheIndex(dbManager)
     {
     }

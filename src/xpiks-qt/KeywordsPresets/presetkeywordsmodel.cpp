@@ -622,6 +622,15 @@ namespace KeywordsPresets {
         }
     }
 
+    void PresetKeywordsModel::generateCompletions(int index, const QString &prefix) {
+        LOG_DEBUG << "#" << index << prefix;
+
+        if (0 <= index && index < getPresetsCount()) {
+            auto *basicArwork = &m_PresetsList[index]->m_KeywordsModel;
+            xpiks()->generateCompletions(prefix, basicArwork);
+        }
+    }
+
     void PresetKeywordsModel::loadModelFromConfig() {
         beginResetModel();
         {

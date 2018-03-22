@@ -12,15 +12,14 @@
 #define ISYSTEMENVIRONMENT_H
 
 #include <QString>
+#include <QStringList>
 
 namespace Common {
     class ISystemEnvironment {
     public:
         virtual ~ISystemEnvironment() {}
         virtual QString root() const = 0;
-        virtual QString fileInDir(const QString &filename, const QString &dirname) = 0;
-        virtual QString filepath(const QString &name) = 0;
-        virtual QString dirpath(const QString &name) = 0;
+        virtual QString path(const QStringList &path) = 0;
         virtual bool ensureDirExists(const QString &name) = 0;
     };
 }

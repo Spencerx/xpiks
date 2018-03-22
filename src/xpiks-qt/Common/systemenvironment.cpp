@@ -42,7 +42,7 @@ namespace Common {
 #endif
 
         if (portable || m_Root.isEmpty()) {
-            m_Root = QDir::cleanPath(QCoreApplication::applicationDirPath() + QDir::separator() + "settings");
+            m_Root = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + "settings");
         }
 
         LOG_DEBUG << "Configs root is" << m_Root;
@@ -54,29 +54,14 @@ namespace Common {
         ensureDirExists(Constants::STATES_DIR);
     }
 
-    QString SystemEnvironment::fileInDir(const QString &filename, const QString &dirname) {
-        const QString dirpath = QDir::cleanPath(m_Root + QDir::separator() + dirname);
-        QDir dir(dirpath);
-#ifndef CORE_TESTS
-        Q_ASSERT(dir.exists());
-#endif
-        QString filepath = dir.filePath(filename);
-        return filepath;
-    }
-
-    QString SystemEnvironment::filepath(const QString &name) {
-        QString path = QDir::cleanPath(m_Root + QDir::separator() + name);
-        return path;
-    }
-
-    QString SystemEnvironment::dirpath(const QString &name) {
-        QString path = QDir::cleanPath(m_Root + QDir::separator() + name);
-        return path;
+    QString SystemEnvironment::path(const QStringList &path) {
+        QString result = QDir::cleanPath(m_Root + QChar('/') + path.join(QChar('/')));
+        return result;
     }
 
     bool SystemEnvironment::ensureDirExists(const QString &name) {
-        QString path = dirpath(name);
-        bool result = Helpers::ensureDirectoryExists(path);
+        QString dirpath = path(QStringList() << name);
+        bool result = Helpers::ensureDirectoryExists(dirpath);
         return result;
     }
 }

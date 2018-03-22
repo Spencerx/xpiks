@@ -20,6 +20,7 @@ Item {
     property alias model: dropDownItems.model
     property var autoCompleteSource
     property real itemHeight: 25
+    property bool withPresets: true
 
     signal boxDestruction();
     Component.onDestruction: boxDestruction();
@@ -111,7 +112,7 @@ Item {
                 StyledText {
                     id: presetMarkText
                     text: "p"
-                    visible: ispreset
+                    visible: completeBox.withPresets && ispreset
                     font.pixelSize: 10
                     color: completionText.color
                     anchors.right: parent.right

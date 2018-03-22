@@ -14,43 +14,49 @@
 #include "../Helpers/filehelpers.h"
 
 namespace Common {
-    StatefulEntity::StatefulEntity(const QString &stateName, ISystemEnvironment &environment):
-        m_Environment(environment),
-        m_StateName(stateName)
+    StatefulEntity::StatefulEntity(const QString &stateName):
+        m_StateName(stateName),
+        m_StateMap(new Helpers::JsonObjectMap()),
+        m_InitCounter(0)
     {
         Q_ASSERT(!stateName.endsWith(".json", Qt::CaseInsensitive));
     }
 
-    void StatefulEntity::init() {
+    void StatefulEntity::init(ISystemEnvironment &environment) {
         LOG_DEBUG << m_StateName;
+        if (m_InitCounter.fetchAndAddOrdered(1) == 0) {
+            QString filename = QString("%1.json").arg(m_StateName);
 
-#if defined(QT_DEBUG)
-        QString filename = QString("debug_%1.json").arg(m_StateName);
-#elif defined(INTEGRATION_TESTS)
-        QString filename = QString("tests_%1.json").arg(m_StateName);
-#else
-        QString filename = QString("%1.json").arg(m_StateName);
-#endif
+            QString localConfigPath = environment.path({Constants::STATES_DIR, filename});
+            m_StateConfig.initConfig(localConfigPath);
 
-        QString localConfigPath = m_Environment.fileInDir(filename, Constants::STATES_DIR);
-        m_StateConfig.initConfig(localConfigPath);
-
-        QJsonDocument &doc = m_StateConfig.getConfig();
-        if (doc.isObject()) {
-            m_StateJson = doc.object();
+            QJsonDocument &doc = m_StateConfig.getConfig();
+            if (doc.isObject()) {
+                QJsonObject json = doc.object();
+                m_StateMap.reset(new Helpers::JsonObjectMap(json));
+            }
+        } else {
+            LOG_WARNING << "Attempt to initialize state" << m_StateName << "twice";
+            Q_ASSERT(false);
         }
     }
 
     void StatefulEntity::sync() {
         LOG_DEBUG << m_StateName;
 
-        // do not use dropper
-        // Helpers::LocalConfigDropper dropper(&m_StateConfig);
+        if (m_InitCounter.loadAcquire() > 0) {
+            // do not use dropper
+            // Helpers::LocalConfigDropper dropper(&m_StateConfig);
 
-        QJsonDocument doc;
-        doc.setObject(m_StateJson);
+            QJsonDocument doc;
+            QJsonObject json = m_StateMap->json();
+            doc.setObject(json);
 
-        m_StateConfig.setConfig(doc);
-        m_StateConfig.saveToFile();
+            m_StateConfig.setConfig(doc);
+            m_StateConfig.saveToFile();
+        } else {
+            LOG_WARNING << "State" << m_StateName << "is not initialized!";
+            Q_ASSERT(false);
+        }
     }
 }

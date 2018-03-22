@@ -56,7 +56,7 @@ namespace Warnings {
 
     void WarningsSettingsModel::initializeConfigs() {
         LOG_DEBUG << "#";
-        QString localConfigPath = m_Environment.filepath(LOCAL_WARNINGS_SETTINGS_FILE);
+        QString localConfigPath = m_Environment.path({LOCAL_WARNINGS_SETTINGS_FILE});
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getWarningSettingsAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);

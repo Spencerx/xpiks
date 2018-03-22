@@ -22,6 +22,7 @@
 #include "cachedvideo.h"
 #include "dbvideocacheindex.h"
 #include "../Common/isystemenvironment.h"
+#include "../Storage/idatabasemanager.h"
 
 namespace QMLExtensions {
     class VideoCachingWorker : public QObject, public Common::BaseEntity, public Common::ItemProcessingWorker<VideoCacheRequest>
@@ -29,7 +30,7 @@ namespace QMLExtensions {
         Q_OBJECT
     public:
         explicit VideoCachingWorker(Common::ISystemEnvironment &environment,
-                                    Helpers::DatabaseManager *dbManager,
+                                    Storage::IDatabaseManager *dbManager,
                                     QObject *parent = 0);
 
     protected:

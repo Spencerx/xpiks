@@ -20,7 +20,10 @@
 
 namespace Helpers {
     class AsyncCoordinator;
-    class DatabaseManager;
+}
+
+namespace Storage {
+    class IDatabaseManager;
 }
 
 namespace QMLExtensions {
@@ -30,7 +33,7 @@ namespace QMLExtensions {
     public:
         ImageCachingWorker(Common::ISystemEnvironment &environment,
                            Helpers::AsyncCoordinator *initCoordinator,
-                           Helpers::DatabaseManager *dbManager,
+                           Storage::IDatabaseManager *dbManager,
                            QObject *parent=0);
 
     protected:

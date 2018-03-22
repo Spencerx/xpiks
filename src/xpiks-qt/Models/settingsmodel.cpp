@@ -25,15 +25,7 @@
 #  define DEFAULT_EXIFTOOL "exiftool"
 #endif
 
-#ifdef QT_DEBUG
-    #ifdef INTEGRATION_TESTS
-        #define SETTINGS_FILE "integration_settings.json"
-    #else
-        #define SETTINGS_FILE "debug_settings.json"
-    #endif
-#else
 #define SETTINGS_FILE "settings.json"
-#endif
 
 #define EXPERIMENTAL_KEY QLatin1String("experimental")
 
@@ -93,6 +85,8 @@
 #define SETTINGS_SAVING_INTERVAL 3000
 #define SETTINGS_DELAY_TIMES 5
 
+#define SETTINGS_EPSILON 1e-9
+
 namespace Models {
     int ensureInBounds(int value, int boundA, int boundB) {
         Q_ASSERT(boundA <= boundB);
@@ -131,12 +125,13 @@ namespace Models {
         oldSettings.remove(QLatin1String(settingName));
     }
 
-    SettingsModel::SettingsModel(Common::ISystemEnvironment &environment, QObject *parent) :
+    SettingsModel::SettingsModel(QObject *parent) :
         QObject(parent),
         Common::BaseEntity(),
         Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
-        m_Environment(environment),
-        m_State("settings", environment),
+        m_State("settings"),
+        m_SettingsMap(new Helpers::JsonObjectMap()),
+        m_ExperimentalMap(new Helpers::JsonObjectMap()),
         m_ExifToolPath(DEFAULT_EXIFTOOL),
         m_SelectedLocale(DEFAULT_LOCALE),
         m_KeywordSizeScale(DEFAULT_KEYWORD_SIZE_SCALE),
@@ -179,25 +174,27 @@ namespace Models {
         LOG_DEBUG << "#";
         QMutexLocker locker(&m_SettingsMutex);
         Q_UNUSED(locker);
-        setValue(Constants::selectedLocale, m_SelectedLocale);
+        m_SettingsMap->setValue(Constants::selectedLocale, m_SelectedLocale);
         sync();
     }
 
-    void SettingsModel::initializeConfigs() {
+    void SettingsModel::initializeConfigs(Common::ISystemEnvironment &environment) {
         LOG_DEBUG << "#";
 
-        QString localConfigPath = m_Environment.filepath(SETTINGS_FILE);
+        QString localConfigPath = environment.path({SETTINGS_FILE});
         m_Config.initConfig(localConfigPath);
-        m_State.init();
+        m_State.init(environment);
 
         QJsonDocument &doc = m_Config.getConfig();
         if (doc.isObject()) {
-            m_SettingsJson = doc.object();
+            QJsonObject settingsJson = doc.object();
+            m_SettingsMap.reset(new Helpers::JsonObjectMap(settingsJson));
 
-            if (m_SettingsJson.contains(EXPERIMENTAL_KEY)) {
-                QJsonValue experimental = m_SettingsJson[EXPERIMENTAL_KEY];
+            if (settingsJson.contains(EXPERIMENTAL_KEY)) {
+                QJsonValue experimental = settingsJson[EXPERIMENTAL_KEY];
                 if (experimental.isObject()) {
-                    m_ExperimentalJson = experimental.toObject();
+                    QJsonObject experimentalJson = experimental.toObject();
+                    m_ExperimentalMap.reset(new Helpers::JsonObjectMap(experimentalJson));
                 }
             }
         } else {
@@ -217,11 +214,11 @@ namespace Models {
     void SettingsModel::clearLegacyUploadInfos() {
         LOG_DEBUG << "#";
 
-        if (containsValue(Constants::legacyUploadHosts)) {
+        if (m_SettingsMap->containsValue(Constants::legacyUploadHosts)) {
             LOG_INFO << "Removing legacy upload hosts info";
             QString empty = "";
-            setValue(Constants::legacyUploadHosts, empty);
-            deleteValue(Constants::legacyUploadHosts);
+            m_SettingsMap->setValue(Constants::legacyUploadHosts, empty);
+            m_SettingsMap->deleteValue(Constants::legacyUploadHosts);
             sync();
         }
     }
@@ -235,9 +232,9 @@ namespace Models {
         auto oldValue = oldSettings.value(oldKey);
         if (oldValue.convert(type)) {
             auto newValue = QJsonValue::fromVariant(oldValue);
-            setValue(newKey, newValue);
+            m_SettingsMap->setValue(newKey, newValue);
         } else {
-            LOG_WARNING <<"Failed to convert value in key" << oldKey;
+            LOG_WARNING << "Failed to convert value in key" << oldKey;
         }
     }
 
@@ -251,7 +248,7 @@ namespace Models {
 
         QVariant qvalue = oldSettings.value(oldKey);
         ProxySettings proxySettings = qvalue.value<ProxySettings>();
-        setValue(Constants::proxyHost, serializeProxyForSettings(proxySettings));
+        m_SettingsMap->setValue(Constants::proxyHost, serializeProxyForSettings(proxySettings));
     }
 
     void SettingsModel::wipeOldSettings(QSettings &oldSettings) {
@@ -354,8 +351,8 @@ namespace Models {
 
     void SettingsModel::clearMasterPasswordSettings() {
         setMustUseMasterPassword(false);
-        setValue(Constants::masterPasswordHash, "");
-        setValue(Constants::useMasterPassword, false);
+        m_SettingsMap->setValue(Constants::masterPasswordHash, "");
+        m_SettingsMap->setValue(Constants::useMasterPassword, false);
         sync();
     }
 
@@ -416,7 +413,7 @@ namespace Models {
         m_SaveSession = value;
         emit saveSessionChanged(value);
 
-        setValue(Constants::saveSession, value);
+        m_SettingsMap->setValue(Constants::saveSession, value);
         sync();
 
         if (value) {
@@ -427,41 +424,41 @@ namespace Models {
     void SettingsModel::doReadAllValues() {
         using namespace Constants;
 
-        setExifToolPath(stringValue(pathToExifTool, DEFAULT_EXIFTOOL));
-        setUploadTimeout(intValue(oneUploadSecondsTimeout, DEFAULT_UPLOAD_TIMEOUT));
-        setMustUseMasterPassword(boolValue(useMasterPassword, DEFAULT_USE_MASTERPASSWORD));
-        setMustUseConfirmations(boolValue(useConfirmationDialogs, DEFAULT_USE_CONFIRMATIONS));
-        setSaveSession(boolValue(saveSession, DEFAULT_SAVE_SESSION));
-        setSaveBackups(boolValue(saveBackups, DEFAULT_SAVE_BACKUPS));
-        setKeywordSizeScale(doubleValue(keywordSizeScale, DEFAULT_KEYWORD_SIZE_SCALE));
-        setDismissDuration(intValue(dismissDuration, DEFAULT_DISMISS_DURATION));
-        setMaxParallelUploads(intValue(maxParallelUploads, DEFAULT_MAX_PARALLEL_UPLOADS));
-        setFitSmallPreview(boolValue(fitSmallPreview, DEFAULT_FIT_SMALL_PREVIEW));
-        setSearchUsingAnd(boolValue(searchUsingAnd, DEFAULT_SEARCH_USING_AND));
-        setSearchByFilepath(boolValue(searchByFilepath, DEFAULT_SEARCH_BY_FILEPATH));
-        setScrollSpeedScale(doubleValue(scrollSpeedSensivity, DEFAULT_SCROLL_SPEED_SCALE));
-        setUseSpellCheck(boolValue(useSpellCheck, DEFAULT_USE_SPELL_CHECK));
-        setDetectDuplicates(boolValue(detectDuplicates, DEFAULT_DETECT_DUPLICATES));
-        setUserStatistics(boolValue(userStatistics, DEFAULT_COLLECT_USER_STATISTICS));
-        setCheckForUpdates(boolValue(checkForUpdates, DEFAULT_CHECK_FOR_UPDATES));
-        setAutoDownloadUpdates(boolValue(autoDownloadUpdates, DEFAULT_AUTO_DOWNLOAD_UPDATES));
-        setAutoFindVectors(boolValue(autoFindVectors, DEFAULT_AUTO_FIND_VECTORS));
-        setSelectedLocale(stringValue(selectedLocale, DEFAULT_LOCALE));
-        setSelectedThemeIndex(intValue(selectedThemeIndex, DEFAULT_SELECTED_THEME_INDEX));
-        setUseKeywordsAutoComplete(boolValue(useKeywordsAutoComplete, DEFAULT_USE_KEYWORDS_AUTO_COMPLETE));
-        setUsePresetsAutoComplete(boolValue(usePresetsAutoComplete, DEFAULT_USE_PRESETS_AUTO_COMPLETE));
-        setUseExifTool(boolValue(useExifTool, DEFAULT_USE_EXIFTOOL));
-        setUseProxy(boolValue(useProxy, DEFAULT_USE_PROXY));
-        setVerboseUpload(boolValue(verboseUpload, DEFAULT_VERBOSE_UPLOAD));
+        setExifToolPath(m_SettingsMap->stringValue(pathToExifTool, DEFAULT_EXIFTOOL));
+        setUploadTimeout(m_SettingsMap->intValue(oneUploadSecondsTimeout, DEFAULT_UPLOAD_TIMEOUT));
+        setMustUseMasterPassword(m_SettingsMap->boolValue(useMasterPassword, DEFAULT_USE_MASTERPASSWORD));
+        setMustUseConfirmations(m_SettingsMap->boolValue(useConfirmationDialogs, DEFAULT_USE_CONFIRMATIONS));
+        setSaveSession(m_SettingsMap->boolValue(saveSession, DEFAULT_SAVE_SESSION));
+        setSaveBackups(m_SettingsMap->boolValue(saveBackups, DEFAULT_SAVE_BACKUPS));
+        setKeywordSizeScale(m_SettingsMap->doubleValue(keywordSizeScale, DEFAULT_KEYWORD_SIZE_SCALE));
+        setDismissDuration(m_SettingsMap->intValue(dismissDuration, DEFAULT_DISMISS_DURATION));
+        setMaxParallelUploads(m_SettingsMap->intValue(maxParallelUploads, DEFAULT_MAX_PARALLEL_UPLOADS));
+        setFitSmallPreview(m_SettingsMap->boolValue(fitSmallPreview, DEFAULT_FIT_SMALL_PREVIEW));
+        setSearchUsingAnd(m_SettingsMap->boolValue(searchUsingAnd, DEFAULT_SEARCH_USING_AND));
+        setSearchByFilepath(m_SettingsMap->boolValue(searchByFilepath, DEFAULT_SEARCH_BY_FILEPATH));
+        setScrollSpeedScale(m_SettingsMap->doubleValue(scrollSpeedSensivity, DEFAULT_SCROLL_SPEED_SCALE));
+        setUseSpellCheck(m_SettingsMap->boolValue(useSpellCheck, DEFAULT_USE_SPELL_CHECK));
+        setDetectDuplicates(m_SettingsMap->boolValue(detectDuplicates, DEFAULT_DETECT_DUPLICATES));
+        setUserStatistics(m_SettingsMap->boolValue(userStatistics, DEFAULT_COLLECT_USER_STATISTICS));
+        setCheckForUpdates(m_SettingsMap->boolValue(checkForUpdates, DEFAULT_CHECK_FOR_UPDATES));
+        setAutoDownloadUpdates(m_SettingsMap->boolValue(autoDownloadUpdates, DEFAULT_AUTO_DOWNLOAD_UPDATES));
+        setAutoFindVectors(m_SettingsMap->boolValue(autoFindVectors, DEFAULT_AUTO_FIND_VECTORS));
+        setSelectedLocale(m_SettingsMap->stringValue(selectedLocale, DEFAULT_LOCALE));
+        setSelectedThemeIndex(m_SettingsMap->intValue(selectedThemeIndex, DEFAULT_SELECTED_THEME_INDEX));
+        setUseKeywordsAutoComplete(m_SettingsMap->boolValue(useKeywordsAutoComplete, DEFAULT_USE_KEYWORDS_AUTO_COMPLETE));
+        setUsePresetsAutoComplete(m_SettingsMap->boolValue(usePresetsAutoComplete, DEFAULT_USE_PRESETS_AUTO_COMPLETE));
+        setUseExifTool(m_SettingsMap->boolValue(useExifTool, DEFAULT_USE_EXIFTOOL));
+        setUseProxy(m_SettingsMap->boolValue(useProxy, DEFAULT_USE_PROXY));
+        setVerboseUpload(m_SettingsMap->boolValue(verboseUpload, DEFAULT_VERBOSE_UPLOAD));
 
-        setUseProgressiveSuggestionPreviews(expBoolValue(useProgressiveSuggestionPreviews, DEFAULT_USE_PROGRESSIVE_SUGGESTION_PREVIEWS));
-        setProgressiveSuggestionIncrement(expIntValue(progressiveSuggestionIncrement, DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT));
-        setUseDirectExiftoolExport(expBoolValue(useDirectExiftoolExport, DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT));
-        setUseAutoImport(expBoolValue(useAutoImport, DEFAULT_USE_AUTOIMPORT));
+        setUseProgressiveSuggestionPreviews(m_ExperimentalMap->boolValue(useProgressiveSuggestionPreviews, DEFAULT_USE_PROGRESSIVE_SUGGESTION_PREVIEWS));
+        setProgressiveSuggestionIncrement(m_ExperimentalMap->intValue(progressiveSuggestionIncrement, DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT));
+        setUseDirectExiftoolExport(m_ExperimentalMap->boolValue(useDirectExiftoolExport, DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT));
+        setUseAutoImport(m_ExperimentalMap->boolValue(useAutoImport, DEFAULT_USE_AUTOIMPORT));
 
-        deserializeProxyFromSettings(stringValue(proxyHost, DEFAULT_PROXY_HOST));
+        deserializeProxyFromSettings(m_SettingsMap->stringValue(proxyHost, DEFAULT_PROXY_HOST));
 
-        setAutoCacheImages(boolValue(cacheImagesAutomatically, DEFAULT_AUTO_CACHE_IMAGES));
+        setAutoCacheImages(m_SettingsMap->boolValue(cacheImagesAutomatically, DEFAULT_AUTO_CACHE_IMAGES));
 
         resetChangeStates();
     }
@@ -520,7 +517,7 @@ namespace Models {
         // apply imported settings
         doReadAllValues();
 
-        setValue(settingsVersion, CURRENT_SETTINGS_VERSION);
+        m_SettingsMap->setValue(settingsVersion, CURRENT_SETTINGS_VERSION);
         sync();
 
         wipeOldSettings(oldSettings);
@@ -572,41 +569,41 @@ namespace Models {
         LOG_DEBUG << "#";
         using namespace Constants;
 
-        setValue(pathToExifTool, m_ExifToolPath);
-        setValue(oneUploadSecondsTimeout, m_UploadTimeout);
-        setValue(useMasterPassword, m_MustUseMasterPassword);
-        setValue(useConfirmationDialogs, m_MustUseConfirmations);
-        setValue(saveSession, m_SaveSession);
-        setValue(saveBackups, m_SaveBackups);
-        setValue(keywordSizeScale, m_KeywordSizeScale);
-        setValue(dismissDuration, m_DismissDuration);
-        setValue(maxParallelUploads, m_MaxParallelUploads);
-        setValue(fitSmallPreview, m_FitSmallPreview);
-        setValue(searchUsingAnd, m_SearchUsingAnd);
-        setValue(searchByFilepath, m_SearchByFilepath);
-        setValue(scrollSpeedSensivity, m_ScrollSpeedScale);
-        setValue(useSpellCheck, m_UseSpellCheck);
-        setValue(detectDuplicates, m_DetectDuplicates);
-        setValue(userStatistics, m_UserStatistics);
-        setValue(checkForUpdates, m_CheckForUpdates);
-        setValue(autoDownloadUpdates, m_AutoDownloadUpdates);
-        setValue(autoFindVectors, m_AutoFindVectors);
-        setValue(selectedThemeIndex, m_SelectedThemeIndex);
-        setValue(useKeywordsAutoComplete, m_UseKeywordsAutoComplete);
-        setValue(usePresetsAutoComplete, m_UsePresetsAutoComplete);
-        setValue(useExifTool, m_UseExifTool);
-        setValue(useProxy, m_UseProxy);
-        setValue(proxyHost, serializeProxyForSettings(m_ProxySettings));
-        setValue(cacheImagesAutomatically, m_AutoCacheImages);
-        setValue(verboseUpload, m_VerboseUpload);
+        m_SettingsMap->setValue(pathToExifTool, m_ExifToolPath);
+        m_SettingsMap->setValue(oneUploadSecondsTimeout, m_UploadTimeout);
+        m_SettingsMap->setValue(useMasterPassword, m_MustUseMasterPassword);
+        m_SettingsMap->setValue(useConfirmationDialogs, m_MustUseConfirmations);
+        m_SettingsMap->setValue(saveSession, m_SaveSession);
+        m_SettingsMap->setValue(saveBackups, m_SaveBackups);
+        m_SettingsMap->setValue(keywordSizeScale, m_KeywordSizeScale);
+        m_SettingsMap->setValue(dismissDuration, m_DismissDuration);
+        m_SettingsMap->setValue(maxParallelUploads, m_MaxParallelUploads);
+        m_SettingsMap->setValue(fitSmallPreview, m_FitSmallPreview);
+        m_SettingsMap->setValue(searchUsingAnd, m_SearchUsingAnd);
+        m_SettingsMap->setValue(searchByFilepath, m_SearchByFilepath);
+        m_SettingsMap->setValue(scrollSpeedSensivity, m_ScrollSpeedScale);
+        m_SettingsMap->setValue(useSpellCheck, m_UseSpellCheck);
+        m_SettingsMap->setValue(detectDuplicates, m_DetectDuplicates);
+        m_SettingsMap->setValue(userStatistics, m_UserStatistics);
+        m_SettingsMap->setValue(checkForUpdates, m_CheckForUpdates);
+        m_SettingsMap->setValue(autoDownloadUpdates, m_AutoDownloadUpdates);
+        m_SettingsMap->setValue(autoFindVectors, m_AutoFindVectors);
+        m_SettingsMap->setValue(selectedThemeIndex, m_SelectedThemeIndex);
+        m_SettingsMap->setValue(useKeywordsAutoComplete, m_UseKeywordsAutoComplete);
+        m_SettingsMap->setValue(usePresetsAutoComplete, m_UsePresetsAutoComplete);
+        m_SettingsMap->setValue(useExifTool, m_UseExifTool);
+        m_SettingsMap->setValue(useProxy, m_UseProxy);
+        m_SettingsMap->setValue(proxyHost, serializeProxyForSettings(m_ProxySettings));
+        m_SettingsMap->setValue(cacheImagesAutomatically, m_AutoCacheImages);
+        m_SettingsMap->setValue(verboseUpload, m_VerboseUpload);
 
-        setExperimentalValue(useProgressiveSuggestionPreviews, m_UseProgressiveSuggestionPreviews);
-        setExperimentalValue(progressiveSuggestionIncrement, m_ProgressiveSuggestionIncrement);
-        setExperimentalValue(useDirectExiftoolExport, m_UseDirectExiftoolExport);
-        setExperimentalValue(useAutoImport, m_UseAutoImport);
+        m_ExperimentalMap->setValue(useProgressiveSuggestionPreviews, m_UseProgressiveSuggestionPreviews);
+        m_ExperimentalMap->setValue(progressiveSuggestionIncrement, m_ProgressiveSuggestionIncrement);
+        m_ExperimentalMap->setValue(useDirectExiftoolExport, m_UseDirectExiftoolExport);
+        m_ExperimentalMap->setValue(useAutoImport, m_UseAutoImport);
 
         if (!m_MustUseMasterPassword) {
-            setValue(masterPasswordHash, "");
+            m_SettingsMap->setValue(masterPasswordHash, "");
         }
 
         sync();
@@ -674,11 +671,11 @@ namespace Models {
         path += "/../Resources/";
 #endif
 
-        path += QDir::separator() + QLatin1String(Constants::WHATS_NEW_FILENAME);
+        path += QChar('/') + QLatin1String(Constants::WHATS_NEW_FILENAME);
         path = QDir::cleanPath(path);
 #else
         // path inside appimage
-        path = QCoreApplication::applicationDirPath() + QDir::separator() + Constants::WHATS_NEW_FILENAME;
+        path = QCoreApplication::applicationDirPath() + QChar('/') + Constants::WHATS_NEW_FILENAME;
 #endif
         QFile file(QDir::cleanPath(path));
         if (file.open(QIODevice::ReadOnly)) {
@@ -709,11 +706,11 @@ namespace Models {
         path += "/../Resources/";
 #endif
 
-        path += QDir::separator() + QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME);
+        path += QChar('/') + QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME);
         path = QDir::cleanPath(path);
 #else
         // path inside appimage
-        path = QCoreApplication::applicationDirPath() + QDir::separator() + Constants::TERMS_AND_CONDITIONS_FILENAME;
+        path = QCoreApplication::applicationDirPath() + QChar('/') + Constants::TERMS_AND_CONDITIONS_FILENAME;
 #endif
         QFile file(QDir::cleanPath(path));
         if (file.open(QIODevice::ReadOnly)) {
@@ -760,6 +757,42 @@ namespace Models {
     bool SettingsModel::needToShowTermsAndConditions() {
         bool haveConsent = m_State.getBool(Constants::userConsent, false);
         return !haveConsent;
+    }
+
+    void SettingsModel::userAgreeHandler() {
+        LOG_DEBUG << "#";
+        m_State.setValue(Constants::userConsent, true);
+        m_State.sync();
+    }
+
+    void SettingsModel::setUseMasterPassword(bool value) {
+        LOG_DEBUG << "#";
+        m_SettingsMap->setValue(Constants::useMasterPassword, value);
+    }
+
+    void SettingsModel::setMasterPasswordHash() {
+        LOG_DEBUG << "#";
+        Encryption::SecretsManager *secretsManager = m_CommandManager->getSecretsManager();
+        m_SettingsMap->setValue(Constants::masterPasswordHash, secretsManager->getMasterPasswordHash());
+    }
+
+    void SettingsModel::setUserAgentId(const QString &id) {
+        LOG_DEBUG << "#";
+        m_State.setValue(Constants::userAgentId, id);
+        m_State.sync();
+    }
+
+    void SettingsModel::onMasterPasswordSet() {
+        LOG_INFO << "Master password changed";
+
+        setMasterPasswordHash();
+        setUseMasterPassword(true);
+        setMustUseMasterPassword(true);
+    }
+
+    void SettingsModel::onMasterPasswordUnset(bool firstTime) {
+        setMustUseMasterPassword(!firstTime);
+        raiseMasterPasswordSignal();
     }
 
     void SettingsModel::setExifToolPath(QString value) {
@@ -1067,10 +1100,11 @@ namespace Models {
         Helpers::LocalConfigDropper dropper(&m_Config);
         Q_UNUSED(dropper);
 
-        m_SettingsJson[EXPERIMENTAL_KEY] = m_ExperimentalJson;
+        QJsonObject settingsJson = m_SettingsMap->json();
+        settingsJson[EXPERIMENTAL_KEY] = m_ExperimentalMap->json();
 
         QJsonDocument doc;
-        doc.setObject(m_SettingsJson);
+        doc.setObject(settingsJson);
 
         m_Config.setConfig(doc);
         m_Config.saveToFile();

@@ -17,6 +17,7 @@
 #include <QSet>
 #include <QHash>
 #include <QUrl>
+#include "../Common/isystemenvironment.h"
 
 namespace Models {
     class RecentItemsModel: public QAbstractListModel
@@ -35,7 +36,7 @@ namespace Models {
         Q_INVOKABLE QUrl getLatestItem() const;
 
     public:
-        virtual void initialize() = 0;
+        virtual void initialize(Common::ISystemEnvironment &environment) = 0;
 
     public:
         void deserializeItems(const QString &serialized);

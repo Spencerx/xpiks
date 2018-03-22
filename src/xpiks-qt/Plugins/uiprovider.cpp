@@ -32,7 +32,20 @@ namespace Plugins {
     UIProvider::~UIProvider() {
     }
 
-    void UIProvider::openDialog(const QUrl &rcPath, const QHash<QString, QObject *> &contextModels) const {
+    void UIProvider::closeAllDialogs() {
+        LOG_DEBUG << "#";
+        LOG_DEBUG << m_OpenedDialogs.size() << "possibly opened dialogs";
+
+        for (QObject *object: m_OpenedDialogs) {
+            QVariant returnedValue;
+            bool result = QMetaObject::invokeMethod(object, "closePopup", Q_RETURN_ARG(QVariant, returnedValue));
+            if (!result) {
+                LOG_WARNING << "Failed to call closePopup() for object";
+            }
+        }
+    }
+
+    void UIProvider::openDialog(const QUrl &rcPath, const QHash<QString, QObject *> &contextModels) {
         QQmlComponent component(m_QmlEngine);
 
         QObject::connect(&component, &QQmlComponent::statusChanged,
@@ -72,6 +85,8 @@ namespace Plugins {
             if (!result) {
                 LOG_WARNING << "Failed to call onAfterCreated() for" << rcPath;
             }
+
+            m_OpenedDialogs.append(object);
         } else {
             LOG_WARNING << "Failed to create object";
         }
@@ -91,11 +106,13 @@ namespace Plugins {
         Q_UNUSED(object);
         LOG_DEBUG << "Component destroyed";
         m_QmlEngine->collectGarbage();
+        m_OpenedDialogs.removeOne(object);
     }
 
     void UIProvider::contextDestroyed(QObject *object) {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
         m_QmlEngine->collectGarbage();
+        m_OpenedDialogs.removeOne(object);
     }
 }

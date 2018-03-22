@@ -102,7 +102,7 @@ namespace Connectivity {
 
     void UpdatesCheckerWorker::initWorker() {
         m_Environment.ensureDirExists(Constants::UPDATES_DIRECTORY);
-        m_UpdatesDirectory = m_Environment.dirpath(Constants::UPDATES_DIRECTORY);
+        m_UpdatesDirectory = m_Environment.path({Constants::UPDATES_DIRECTORY});
     }
 
     void UpdatesCheckerWorker::processOneItem() {

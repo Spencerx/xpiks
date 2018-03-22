@@ -45,6 +45,7 @@ namespace UndoRedo {
 namespace Common {
     class BasicMetadataModel;
     class IMetadataOperator;
+    class ISystemEnvironment;
 }
 
 namespace Models {
@@ -116,6 +117,9 @@ namespace AutoComplete {
 
 namespace Helpers {
     class HelpersQmlWrapper;
+}
+
+namespace Storage {
     class DatabaseManager;
 }
 
@@ -185,7 +189,7 @@ namespace Commands {
         void InjectDependency(Models::SwitcherModel *switcherModel);
         void InjectDependency(QMLExtensions::ArtworksUpdateHub *artworksUpdateHub);
         void InjectDependency(Connectivity::RequestsService *requestsService);
-        void InjectDependency(Helpers::DatabaseManager *databaseManager);
+        void InjectDependency(Storage::DatabaseManager *databaseManager);
         void InjectDependency(SpellCheck::DuplicatesReviewModel *duplicatesModel);
         void InjectDependency(MetadataIO::CsvExportModel *csvExportModel);
 
@@ -206,7 +210,7 @@ namespace Commands {
 
     public:
         void ensureDependenciesInjected();
-        void afterConstructionCallback();
+        void afterConstructionCallback(Common::ISystemEnvironment &environment);
 
     private:
         void afterInnerServicesInitialized();
@@ -255,7 +259,7 @@ namespace Commands {
         virtual Warnings::WarningsModel *getWarningsModel() const { return m_WarningsModel; }
         virtual Models::SwitcherModel *getSwitcherModel() const { return m_SwitcherModel; }
         virtual Connectivity::RequestsService *getRequestsService() const { return m_RequestsService; }
-        virtual Helpers::DatabaseManager *getDatabaseManager() const { return m_DatabaseManager; }
+        virtual Storage::DatabaseManager *getDatabaseManager() const { return m_DatabaseManager; }
         virtual MetadataIO::MetadataIOCoordinator *getMetadataIOCoordinator() const { return m_MetadataIOCoordinator; }
         virtual AutoComplete::KeywordsAutoCompleteModel *getAutoCompleteModel() const { return m_AutoCompleteModel; }
         virtual QMLExtensions::VideoCachingService *getVideoCachingService() const { return m_VideoCachingService; }
@@ -270,6 +274,7 @@ namespace Commands {
 #ifdef INTEGRATION_TESTS
         virtual Translation::TranslationManager *getTranslationManager() const { return m_TranslationManager; }
         virtual Models::FindAndReplaceModel *getFindAndReplaceModel() const { return m_FindAndReplaceModel; }
+        virtual Plugins::PluginManager *getPluginManager() const { return m_PluginManager; }
 #endif
 
     private:
@@ -319,7 +324,7 @@ namespace Commands {
         QMLExtensions::ArtworksUpdateHub *m_ArtworksUpdateHub;
         Models::SwitcherModel *m_SwitcherModel;
         Connectivity::RequestsService *m_RequestsService;
-        Helpers::DatabaseManager *m_DatabaseManager;
+        Storage::DatabaseManager *m_DatabaseManager;
         SpellCheck::DuplicatesReviewModel *m_DuplicatesModel;
         MetadataIO::CsvExportModel *m_CsvExportModel;
 

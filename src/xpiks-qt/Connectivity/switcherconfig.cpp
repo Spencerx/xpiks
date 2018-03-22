@@ -15,15 +15,8 @@
 #include "../Common/defines.h"
 
 namespace Connectivity {
-#ifdef QT_DEBUG
-    #ifdef INTEGRATION_TESTS
-        #define LOCAL_SWITCHER_CONFIG "tests_switches.json"
-    #else
-        #define LOCAL_SWITCHER_CONFIG "debug_switches.json"
-    #endif
-#else
+
 #define LOCAL_SWITCHER_CONFIG "switches.json"
-#endif
 
 #define VALUE_KEY QLatin1String("v")
 #define THRESHOLD_KEY QLatin1String("t")
@@ -48,15 +41,14 @@ namespace Connectivity {
         return d;
     }
 
-    SwitcherConfig::SwitcherConfig(Common::ISystemEnvironment &environment, QObject *parent):
-        Models::AbstractConfigUpdaterModel(OVERWRITE_SWITCHER_CONFIG, parent),
-        m_Environment(environment)
+    SwitcherConfig::SwitcherConfig(QObject *parent):
+        Models::AbstractConfigUpdaterModel(OVERWRITE_SWITCHER_CONFIG, parent)
     {
     }
 
-    void SwitcherConfig::initializeConfigs() {
+    void SwitcherConfig::initializeConfigs(Common::ISystemEnvironment &environment) {
         LOG_DEBUG << "#";
-        QString localConfigPath = m_Environment.filepath(LOCAL_SWITCHER_CONFIG);
+        QString localConfigPath = environment.path({LOCAL_SWITCHER_CONFIG});
         auto &apiManager = Connectivity::ApiManager::getInstance();
         QString remoteAddress = apiManager.getSwitcherAddr();
         AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);

@@ -14,15 +14,17 @@
 #include <cstring>
 #include <cmath>
 #include <climits>
+#include <algorithm>
 #include "../../vendors/sqlite/sqlite3.h"
 #include "../Common/defines.h"
 #include "../Helpers/stringhelper.h"
-#include "constants.h"
+#include "../Helpers/constants.h"
+#include "../Helpers/asynccoordinator.h"
 
 #define MEGABYTE (1024*1024)
 #define MAX_BLOB_BYTES (10*MEGABYTE)
 
-namespace Helpers {
+namespace Storage {
     bool readSqliteBlob(sqlite3_stmt *statement, int index, QByteArray &result) {
         Q_ASSERT(statement != nullptr);
 
@@ -31,7 +33,7 @@ namespace Helpers {
         do {
             int resultColumnType = sqlite3_column_type(statement, index);
             if (resultColumnType != SQLITE_BLOB) {
-                LOG_WARNING << "Table structure is incorrect";
+                LOG_WARNING << "Column type is not BLOB";
                 Q_ASSERT(false);
                 break;
             }
@@ -47,6 +49,37 @@ namespace Helpers {
             result.clear();
             result.reserve(blobBytes);
             result.append((const char *)blobData, blobBytes);
+
+            success = true;
+        } while (false);
+
+        return success;
+    }
+
+    bool readSqliteString(sqlite3_stmt *statement, int index, QString &result) {
+        Q_ASSERT(statement != nullptr);
+
+        bool success = false;
+        do {
+            int resultColumnType = sqlite3_column_type(statement, index);
+            if (resultColumnType != SQLITE_TEXT) {
+                LOG_WARNING << "Column type is not TEXT";
+                Q_ASSERT(false);
+                break;
+            }
+
+            const void *textData = sqlite3_column_text(statement, index);
+
+            int textBytes = sqlite3_column_bytes(statement, index);
+            if ((textBytes <= 0) || (textBytes > MAX_BLOB_BYTES)) {
+                LOG_WARNING << "Stored blob has incorrect size";
+                break;
+            }
+
+            QByteArray bytes;
+            bytes.reserve(textBytes);
+            bytes.append((const char *)textData, textBytes);
+            result = QString::fromUtf8(bytes);
 
             success = true;
         } while (false);
@@ -94,13 +127,13 @@ namespace Helpers {
         }
     }
 
-    Database::Database(int id, AsyncCoordinator *finalizeCoordinator):
+    Database::Database(int id, Helpers::AsyncCoordinator *finalizeCoordinator):
         m_ID(id),
         m_FinalizeCoordinator(finalizeCoordinator),
         m_Database(nullptr),
         m_IsOpened(false)
     {
-        AsyncCoordinatorLocker locker(m_FinalizeCoordinator);
+        Helpers::AsyncCoordinatorLocker locker(m_FinalizeCoordinator);
         Q_UNUSED(locker);
     }
 
@@ -179,11 +212,26 @@ namespace Helpers {
         executeStatement("PRAGMA synchronous = NORMAL;");
         // executeStatement("PRAGMA quick_check;");
 
-        return true;
+        int rc = 0;
+        bool anyError = false;
+
+        do {
+            std::string selectStr = QString("SELECT name FROM sqlite_master WHERE type='table'").toStdString();
+            rc = sqlite3_prepare_v2(m_Database, selectStr.c_str(), -1, &m_GetTablesStatement, 0);
+            if (rc != SQLITE_OK) {
+                LOG_WARNING << "Failed to prepare Tables statement:" << sqlite3_errstr(rc);
+                anyError = true;
+                break;
+            }
+        } while (false);
+
+        return !anyError;
     }
 
     void Database::finalize() {
         LOG_DEBUG << "#" << m_ID;
+
+        finalizeSqliteStatement(m_GetTablesStatement);
 
         for (auto &table: m_Tables) {
             table->finalize();
@@ -198,9 +246,9 @@ namespace Helpers {
         }
     }
 
-    std::shared_ptr<Database::Table> Database::getTable(const QString &name) {
+    std::shared_ptr<IDbTable> Database::getTable(const QString &name) {
         LOG_DEBUG << "#" << m_ID << name;
-        std::shared_ptr<Database::Table> table;
+        std::shared_ptr<IDbTable> table;
 
         QString createSql = QString("CREATE TABLE IF NOT EXISTS %1 ("
                                     "key BLOB PRIMARY KEY NOT NULL,"
@@ -223,6 +271,58 @@ namespace Helpers {
         }
 
         return table;
+    }
+
+    bool Database::deleteTable(std::shared_ptr<IDbTable> &table) {
+        bool success = false;
+
+        auto it = std::find_if(m_Tables.begin(), m_Tables.end(),
+                               [&](std::shared_ptr<IDbTable> const &current) {
+                return current.get() == table.get(); });
+        if (it != m_Tables.end()) {
+            m_Tables.erase(it);
+
+            table->finalize();
+
+            QString dropSql = QString("DROP TABLE IF EXISTS %1;").arg(table->getTableName());
+            std::string dropStr = dropSql.toStdString();
+
+            int rc = sqlite3_exec(m_Database, dropStr.c_str(), nullptr, nullptr, nullptr);
+            if (rc == SQLITE_OK) {
+                success = true;
+                table.reset();
+            }
+        } else {
+            LOG_WARNING << "Attempt to delete a table not created by this database";
+            Q_ASSERT(false);
+        }
+
+        return success;
+    }
+
+    QStringList Database::retrieveTableNames() {
+        LOG_DEBUG << "#";
+        Q_ASSERT(m_GetTablesStatement != nullptr);
+
+        QStringList names;
+        int rc = 0;
+
+        do {
+            while (SQLITE_ROW == (rc = sqlite3_step(m_GetTablesStatement))) {
+                QString name;
+                if (!readSqliteString(m_GetTablesStatement, 0, name)) { continue; }
+                names.append(name);
+            }
+
+            if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW)) {
+                LOG_WARNING << "Error while going through the ALL statement." << sqlite3_errstr(rc);
+                Q_ASSERT(false);
+            }
+        } while (false);
+
+        cleanupSqliteStatement(m_GetTablesStatement);
+
+        return names;
     }
 
     Database::Table::Table(sqlite3 *database, const QString &tableName):
@@ -546,94 +646,5 @@ namespace Helpers {
 
         bool success = rc == SQLITE_OK;
         return success;
-    }
-
-    DatabaseManager::DatabaseManager(Common::ISystemEnvironment &environment):
-        QObject(),
-        m_Environment(environment),
-        m_LastDatabaseID(0),
-        m_Initialized(false)
-    {
-        QObject::connect(&m_FinalizeCoordinator, &Helpers::AsyncCoordinator::statusReported,
-                         this, &DatabaseManager::onReadyToFinalize);
-    }
-
-    bool DatabaseManager::initialize() {
-        LOG_DEBUG << "#";
-        m_Environment.ensureDirExists(Constants::DB_DIR);
-        QString dbDirPath = m_Environment.dirpath(Constants::DB_DIR);
-        m_DBDirPath = dbDirPath;
-        m_Initialized = true;
-        return true;
-    }
-
-#ifdef DEBUG_UTILITY
-    bool DatabaseManager::initialize(const QString &dbDirPath) {
-        LOG_DEBUG << "#";
-        m_DBDirPath = dbDirPath;
-        m_Initialized = true;
-        return true;
-    }
-#endif
-
-    void DatabaseManager::finalize() {
-        LOG_DEBUG << "#";
-        Q_ASSERT(m_Initialized);
-        closeAll();
-        m_Initialized = false;
-    }
-
-    std::shared_ptr<Database> DatabaseManager::openDatabase(const QString &dbName) {
-        Q_ASSERT(m_Initialized);
-        LOG_DEBUG << dbName;
-
-        const int id = getNextID();
-        std::shared_ptr<Database> db(new Database(id, &m_FinalizeCoordinator));
-
-        QDir databasesDir(m_DBDirPath);
-        Q_ASSERT(databasesDir.exists());
-        QString fullDbPath = databasesDir.filePath(dbName);
-        QByteArray utf8Path = fullDbPath.toUtf8();
-        const char *dbPath = utf8Path.data();
-
-        bool openSucceded = db->open(dbPath);
-        if (!openSucceded) {
-            LOG_WARNING << "Failed to open" << dbName;
-            db.reset();
-        } else {
-            LOG_INFO << "Opened" << dbName << "database";
-
-            QMutexLocker locker(&m_Mutex);
-            Q_UNUSED(locker);
-            m_DatabaseArray.push_back(db);
-        }
-
-        return db;
-    }
-
-    void DatabaseManager::prepareToFinalize() {
-        LOG_DEBUG << "#";
-        m_FinalizeCoordinator.allBegun();
-    }
-
-    void DatabaseManager::onReadyToFinalize(int status) {
-        LOG_INFO << status;
-        finalize();
-    }
-
-    void DatabaseManager::closeAll() {
-        LOG_DEBUG << "#";
-
-        for (auto &db: m_DatabaseArray) {
-            db->finalize();
-            db->close();
-        }
-
-        LOG_INFO << "Databases closed";
-    }
-
-    int DatabaseManager::getNextID() {
-        int id = m_LastDatabaseID.fetchAndAddOrdered(1);
-        return id;
     }
 }

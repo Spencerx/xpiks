@@ -50,7 +50,7 @@
 #include "../QMLExtensions/videocachingservice.h"
 #include "../QMLExtensions/artworksupdatehub.h"
 #include "../Helpers/asynccoordinator.h"
-#include "../Helpers/database.h"
+#include "../Storage/database.h"
 #include "../Models/switchermodel.h"
 #include "../Connectivity/requestsservice.h"
 #include "../AutoComplete/keywordsautocompletemodel.h"

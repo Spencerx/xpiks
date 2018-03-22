@@ -25,6 +25,11 @@ Item {
     anchors.fill: parent
 
     property variant componentParent
+    property var autoCompleteBox
+
+    function onAutoCompleteClose() {
+        autoCompleteBox = undefined
+    }
 
     Component.onCompleted: {
     }
@@ -266,6 +271,71 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: footer.top
+                property var keywordsModel: presetsModel.getKeywordsModel(presetNamesListView.currentIndex)
+
+                Connections {
+                    target: rightPanel.keywordsModel
+
+                    onCompletionsAvailable: {
+                        acSource.initializeCompletions()
+
+                        if (typeof presetEditComponent.autoCompleteBox !== "undefined") {
+                            if (presetEditComponent.autoCompleteBox.isBelowEdit) {
+                                // update completion
+                                return;
+                            }
+                        }
+
+                        var directParent = presetEditComponent;
+                        var currWordStartRect = flv.editControl.getCurrentWordStartRect()
+
+                        var tmp = flv.editControl.mapToItem(directParent,
+                                                            currWordStartRect.x - 17,
+                                                            flv.editControl.height + 1)
+
+                        var visibleItemsCount = Math.min(acSource.getCount(), 5);
+                        var popupHeight = visibleItemsCount * (25 + 1) + 10
+
+                        if (typeof presetEditComponent.autoCompleteBox !== "undefined") {
+                            if (!presetEditComponent.autoCompleteBox.isBelowEdit) {
+                                presetEditComponent.autoCompleteBox.anchors.topMargin = tmp.y - popupHeight - flv.editControl.height - 2
+                            }
+                            // update completion
+                            return
+                        }
+
+                        var isBelow = (tmp.y + popupHeight) < directParent.height;
+
+                        var options = {
+                            model: acSource.getCompletionsModel(),
+                            autoCompleteSource: acSource,
+                            isBelowEdit: isBelow,
+                            withPresets: false,
+                            "anchors.left": directParent.left,
+                            "anchors.leftMargin": Math.min(tmp.x, directParent.width - 200),
+                            "anchors.top": directParent.top
+                        }
+
+                        if (isBelow) {
+                            options["anchors.topMargin"] = tmp.y
+                        } else {
+                            options["anchors.topMargin"] = tmp.y - popupHeight - flv.editControl.height - 2
+                        }
+
+                        var component = Qt.createComponent("../Components/CompletionBox.qml");
+                        if (component.status !== Component.Ready) {
+                            console.warn("Component Error: " + component.errorString());
+                        } else {
+                            var instance = component.createObject(directParent, options);
+
+                            instance.boxDestruction.connect(presetEditComponent.onAutoCompleteClose)
+                            instance.itemSelected.connect(flv.acceptCompletion)
+                            presetEditComponent.autoCompleteBox = instance
+
+                            instance.openPopup()
+                        }
+                    }
+                }
 
                 MouseArea {
                     id: rightPanelMA
@@ -476,9 +546,15 @@ Item {
                             id: flv
                             anchors.fill: parent
                             enabled: presetNamesListView.currentIndex >= 0
-                            model: presetsModel.getKeywordsModel(presetNamesListView.currentIndex)
+                            model: rightPanel.keywordsModel
                             property int keywordHeight: uiManager.keywordHeight
                             scrollStep: keywordHeight
+
+                            function acceptCompletion(completionID) {
+                                // do not handle preset insertion here
+                                var completion = acSource.getCompletion(completionID)
+                                flv.editControl.acceptCompletion(completion)
+                            }
 
                             delegate: KeywordWrapper {
                                 id: kw
@@ -530,7 +606,7 @@ Item {
                             }
 
                             onCompletionRequested: {
-                                // no completion in presets for now
+                                presetsModel.generateCompletions(presetNamesListView.currentIndex, prefix)
                             }
                         }
 

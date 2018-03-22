@@ -28,6 +28,10 @@ namespace MetadataIO {
     class ArtworksSnapshot;
 }
 
+namespace Storage {
+    class IDatabaseManager;
+}
+
 namespace QMLExtensions {
     class VideoCachingWorker;
 
@@ -35,7 +39,7 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        explicit VideoCachingService(Common::ISystemEnvironment &environment, QObject *parent = 0);
+        explicit VideoCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent = 0);
 
     public:
         void startService();
@@ -48,6 +52,7 @@ namespace QMLExtensions {
 
     private:
         Common::ISystemEnvironment &m_Environment;
+        Storage::IDatabaseManager *m_DatabaseManager;
         VideoCachingWorker *m_CachingWorker;
         volatile bool m_IsCancelled;
     };

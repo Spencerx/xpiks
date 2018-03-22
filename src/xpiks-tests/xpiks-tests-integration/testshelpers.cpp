@@ -2,6 +2,7 @@
 #include <QThread>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QDir>
 #include <QFileInfo>
 
 void sleepWaitUntil(int seconds, const std::function<bool ()> &condition) {
@@ -39,4 +40,22 @@ QString findFullPathForTests(const QString &prefix) {
     }
 
     return QFileInfo(prefix).absoluteFilePath();
+}
+
+QString findWildcartPathForTests(const QString &dirPath, const QStringList &filters) {
+    Q_ASSERT(!filters.empty());
+    QStringList parents = QStringList() << ".";
+    int tries = 6;
+    while (tries--) {
+        QDir dir = QDir::current();
+        dir.cd(parents.join("/") + "/" + dirPath);
+        auto files = dir.entryInfoList(filters, QDir::Files);
+        if (files.size() > 0) {
+            return files.first().absoluteFilePath();
+        } else {
+            parents.append("..");
+        }
+    }
+
+    return dirPath + "/" + filters.first();
 }

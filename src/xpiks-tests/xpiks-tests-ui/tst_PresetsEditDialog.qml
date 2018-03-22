@@ -33,6 +33,14 @@ Item {
         property string n: ''
     }
 
+    QtObject {
+        id: fakeKeywordsModel
+        property bool hasduplicate: false
+        property bool iscorrect: true
+        property string keyword: "stuff"
+        signal completionsAvailable()
+    }
+
     ListModel {
         id: presetsModel
 
@@ -40,7 +48,7 @@ Item {
         ListElement { name: "Harry"; keywordscount: 2; isnamevalid: true }
         ListElement { name: "Wendy"; keywordscount: 3; isnamevalid: true }
 
-        function getKeywordsModel(index) { return {} }
+        function getKeywordsModel(index) { return fakeKeywordsModel }
     }
 
     ListModel {

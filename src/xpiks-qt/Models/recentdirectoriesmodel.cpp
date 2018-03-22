@@ -14,14 +14,14 @@
 #define MAX_RECENT_DIRECTORIES 5
 
 namespace Models {
-    RecentDirectoriesModel::RecentDirectoriesModel(Common::ISystemEnvironment &environment):
+    RecentDirectoriesModel::RecentDirectoriesModel():
         RecentItemsModel(MAX_RECENT_DIRECTORIES),
-        m_State("recentdirs", environment)
+        m_State("recentdirs")
     {
     }
 
-    void RecentDirectoriesModel::initialize() {
-        m_State.init();
+    void RecentDirectoriesModel::initialize(Common::ISystemEnvironment &environment) {
+        m_State.init(environment);
 
         QString recentDirectories = m_State.getString(Constants::recentDirectories);
         deserializeItems(recentDirectories);

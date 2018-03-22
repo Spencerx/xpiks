@@ -21,7 +21,7 @@ Button {
     style: ButtonStyle {
         background: Rectangle {
             implicitWidth: control.width
-            implicitHeight: 24
+            implicitHeight: control.height > 24 ? control.height : 24
             color: {
                 var result = uiColors.buttonDefaultBackground;
 
