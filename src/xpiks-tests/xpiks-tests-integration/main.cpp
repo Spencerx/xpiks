@@ -287,7 +287,7 @@ int main(int argc, char *argv[]) {
     // intentional memory leak to beat spellcheck lock stuff
     QuickBuffer::QuickBuffer quickBuffer;
     Maintenance::MaintenanceService maintenanceService(environment);
-    Connectivity::RequestsService requestsService;
+    Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
 
     QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
