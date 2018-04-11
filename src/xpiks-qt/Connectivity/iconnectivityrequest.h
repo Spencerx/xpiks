@@ -29,7 +29,7 @@ namespace Connectivity {
         virtual QString getResourceURL() const = 0;
         virtual QStringList getRawHeaders() const = 0;
         virtual Common::flag_t getFlags() const = 0;
-        virtual void setResponse(const QByteArray &responseData) = 0;
+        virtual void setResponse(bool success, const QByteArray &responseData) = 0;
     };
 }
 

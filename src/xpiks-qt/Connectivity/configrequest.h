@@ -40,13 +40,7 @@ namespace Connectivity {
         virtual QString getResourceURL() const override { return m_Url; }
         virtual QStringList getRawHeaders() const override { return QStringList(); }
         virtual Common::flag_t getFlags() const override { return m_Flags; }
-        virtual void setResponse(const QByteArray &responseData) override;
-
-    public:
-        const QString &getURL() const { return m_Url; }
-
-    signals:
-        void responseReceived(bool success);
+        virtual void setResponse(bool success, const QByteArray &responseData) override;
 
     private:
         Helpers::RemoteConfig *m_RemoteConfig;

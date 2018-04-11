@@ -12,7 +12,9 @@
 #include "../Helpers/remoteconfig.h"
 
 namespace Connectivity {
-    void ConfigRequest::setResponse(const QByteArray &responseData) {
-        m_RemoteConfig->setRemoteResponse(responseData);
+    void ConfigRequest::setResponse(bool success, const QByteArray &responseData) {
+        if (success) {
+            m_RemoteConfig->setRemoteResponse(responseData);
+        }
     }
 }

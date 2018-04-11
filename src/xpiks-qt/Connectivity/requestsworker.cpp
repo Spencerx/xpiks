@@ -26,7 +26,7 @@ namespace Connectivity {
     }
 
     void RequestsWorker::processOneItem(std::shared_ptr<IConnectivityRequest> &item) {
-        auto &url = item->getResourceURL();
+        auto url = item->getResourceURL();
         LOG_INFO << "Request:" << url;
 
         SimpleCurlRequest request(url);
@@ -39,10 +39,7 @@ namespace Connectivity {
         }
 
         const bool success = request.sendRequestSync();
-        if (success) {
-            item->setResponse(request.getResponseData());
-        } else {
-            LOG_WARNING << "Failed to process" << url;
-        }
+        if (!success) { LOG_WARNING << "Failed to process" << url; }
+        item->setResponse(success, request.getResponseData());
     }
 }
