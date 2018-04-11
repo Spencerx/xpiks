@@ -22,8 +22,7 @@ namespace Connectivity {
     RequestsService::RequestsService(Models::ProxySettings *proxySettings, QObject *parent):
         QObject(parent),
         m_RequestsWorker(nullptr),
-        m_ProxySettings(proxySettings),
-        m_IsStopped(false)
+        m_ProxySettings(proxySettings)
     {
         Q_ASSERT(proxySettings != nullptr);
     }
@@ -48,6 +47,8 @@ namespace Connectivity {
 
         QObject::connect(m_RequestsWorker, &RequestsWorker::stopped,
                          this, &RequestsService::workerFinished);
+        QObject::connect(m_RequestsWorker, &RequestsWorker::destroyed,
+                         this, &RequestsService::workerDestroyed);
 
         thread->start(/*QThread::LowPriority*/);
     }
@@ -56,11 +57,10 @@ namespace Connectivity {
         LOG_DEBUG << "#";
         Q_ASSERT(m_RequestsWorker != nullptr);
         m_RequestsWorker->stopWorking();
-        m_IsStopped = true;
     }
 
     void RequestsService::receiveConfig(const QString &url, Helpers::RemoteConfig *config) {
-        if (m_IsStopped) {
+        if (m_RequestsWorker == nullptr) {
             LOG_DEBUG << "Skipping" << url << ". Service is stopped";
             return;
         }
@@ -71,5 +71,11 @@ namespace Connectivity {
 
     void RequestsService::workerFinished() {
         LOG_DEBUG << "#";
+    }
+
+    void RequestsService::workerDestroyed(QObject *object) {
+        LOG_DEBUG << "#";
+        Q_UNUSED(object);
+        m_RequestsWorker = nullptr;
     }
 }

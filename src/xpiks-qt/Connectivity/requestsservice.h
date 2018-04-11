@@ -43,11 +43,11 @@ namespace Connectivity {
 
     private slots:
         void workerFinished();
+        void workerDestroyed(QObject *object);
 
     private:
         RequestsWorker *m_RequestsWorker;
         Models::ProxySettings *m_ProxySettings;
-        bool m_IsStopped;
     };
 }
 
