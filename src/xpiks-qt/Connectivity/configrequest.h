@@ -21,11 +21,11 @@ namespace Helpers {
 }
 
 namespace Connectivity {
-    class ConnectivityRequest: public QObject, public IConnectivityRequest {
+    class ConfigRequest: public QObject, public IConnectivityRequest {
         Q_OBJECT
 
     public:
-        ConnectivityRequest(Helpers::RemoteConfig *config, const QString &url, bool noCache = false):
+        ConfigRequest(Helpers::RemoteConfig *config, const QString &url, bool noCache = false):
             QObject(),
             m_RemoteConfig(config),
             m_Url(url),

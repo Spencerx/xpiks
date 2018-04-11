@@ -179,7 +179,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/QMLExtensions/videocachingworker.cpp \
     ../../xpiks-qt/QMLExtensions/artworksupdatehub.cpp \
     restoresessiontest.cpp \
-    ../../xpiks-qt/Connectivity/connectivityrequest.cpp \
+    ../../xpiks-qt/Connectivity/configrequest.cpp \
     ../../xpiks-qt/Connectivity/requestsservice.cpp \
     ../../xpiks-qt/Connectivity/requestsworker.cpp \
     ../../xpiks-qt/Models/switchermodel.cpp \
@@ -443,7 +443,7 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/artworksupdatehub.h \
     ../../xpiks-qt/QMLExtensions/artworkupdaterequest.h \
     restoresessiontest.h \
-    ../../xpiks-qt/Connectivity/connectivityrequest.h \
+    ../../xpiks-qt/Connectivity/configrequest.h \
     ../../xpiks-qt/Connectivity/requestsservice.h \
     ../../xpiks-qt/Connectivity/requestsworker.h \
     ../../xpiks-qt/Models/switchermodel.h \

@@ -162,7 +162,6 @@ SOURCES += main.cpp \
     MetadataIO/metadataioworker.cpp \
     MetadataIO/metadataioservice.cpp \
     MetadataIO/artworkssnapshot.cpp \
-    Connectivity/connectivityrequest.cpp \
     MetadataIO/metadatareadinghub.cpp \
     AutoComplete/libfacecompletionengine.cpp \
     AutoComplete/autocompletemodel.cpp \
@@ -187,7 +186,8 @@ SOURCES += main.cpp \
     Common/systemenvironment.cpp \
     Plugins/pluginenvironment.cpp \
     Plugins/plugindatabasemanager.cpp \
-    Storage/databasemanager.cpp
+    Storage/databasemanager.cpp \
+    Connectivity/configrequest.cpp
 
 RESOURCES += qml.qrc
 
@@ -405,7 +405,6 @@ HEADERS += \
     Suggestion/searchquery.h \
     Suggestion/locallibraryquery.h \
     MetadataIO/artworkssnapshot.h \
-    Connectivity/connectivityrequest.h \
     MetadataIO/metadatareadinghub.h \
     AutoComplete/completionenginebase.h \
     AutoComplete/libfacecompletionengine.h \
@@ -443,7 +442,8 @@ HEADERS += \
     Storage/databasemanager.h \
     Storage/idatabase.h \
     Storage/writeaheadlog.h \
-    Connectivity/iconnectivityrequest.h
+    Connectivity/iconnectivityrequest.h \
+    Connectivity/configrequest.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

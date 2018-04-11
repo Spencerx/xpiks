@@ -65,7 +65,7 @@ namespace Connectivity {
             return;
         }
 
-        std::shared_ptr<IConnectivityRequest> item(new ConnectivityRequest(config, url, NO_CACHE_ATTRIBUTE));
+        std::shared_ptr<IConnectivityRequest> item(new ConfigRequest(config, url, NO_CACHE_ATTRIBUTE));
         m_RequestsWorker->submitItem(item);
     }
 

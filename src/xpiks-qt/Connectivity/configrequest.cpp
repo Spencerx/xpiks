@@ -8,11 +8,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "connectivityrequest.h"
+#include "configrequest.h"
 #include "../Helpers/remoteconfig.h"
 
 namespace Connectivity {
-    void ConnectivityRequest::setResponse(const QByteArray &responseData) {
+    void ConfigRequest::setResponse(const QByteArray &responseData) {
         m_RemoteConfig->setRemoteResponse(responseData);
     }
 }
