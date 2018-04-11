@@ -518,7 +518,8 @@ HEADERS += \
     ../../xpiks-qt/Storage/databasemanager.h \
     ../../xpiks-qt/Storage/idatabase.h \
     ../../xpiks-qt/Storage/idatabasemanager.h \
-    ../../xpiks-qt/Storage/writeaheadlog.h
+    ../../xpiks-qt/Storage/writeaheadlog.h \
+    ../../xpiks-qt/Connectivity/iconnectivityrequest.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

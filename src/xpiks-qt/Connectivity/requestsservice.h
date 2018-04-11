@@ -29,7 +29,7 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        explicit RequestsService(QObject *parent = 0);
+        explicit RequestsService(Models::ProxySettings *proxySettings, QObject *parent = 0);
 
     public:
         void startService();
@@ -37,9 +37,6 @@ namespace Connectivity {
 
     public:
         void receiveConfig(const QString &url, Helpers::RemoteConfig *config);
-
-    private:
-        Models::ProxySettings *getProxySettings() const;
 
     signals:
         void cancelServing();
@@ -49,6 +46,7 @@ namespace Connectivity {
 
     private:
         RequestsWorker *m_RequestsWorker;
+        Models::ProxySettings *m_ProxySettings;
         bool m_IsStopped;
     };
 }

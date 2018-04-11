@@ -39,7 +39,7 @@ namespace Suggestion {
 
         QString resourceUrl = QString::fromLocal8Bit(url.toEncoded());
         Connectivity::SimpleCurlRequest *request = new Connectivity::SimpleCurlRequest(resourceUrl);
-        request->setRawHeaders(QStringList() << "Api-Key: " + decodedAPIKey);
+        request->addRawHeaders(QStringList() << "Api-Key: " + decodedAPIKey);
         request->setProxySettings(proxySettings);
 
         QThread *thread = new QThread();

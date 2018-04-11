@@ -442,7 +442,8 @@ HEADERS += \
     Helpers/jsonobjectmap.h \
     Storage/databasemanager.h \
     Storage/idatabase.h \
-    Storage/writeaheadlog.h
+    Storage/writeaheadlog.h \
+    Connectivity/iconnectivityrequest.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

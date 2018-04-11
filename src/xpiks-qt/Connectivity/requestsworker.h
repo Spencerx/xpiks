@@ -12,19 +12,23 @@
 #define REQUESTSWORKER_H
 
 #include <QObject>
-#include "connectivityrequest.h"
+#include "iconnectivityrequest.h"
 #include "../Common/itemprocessingworker.h"
 
+namespace Models {
+    class ProxySettings;
+}
+
 namespace Connectivity {
-    class RequestsWorker: public QObject, public Common::ItemProcessingWorker<ConnectivityRequest>
+    class RequestsWorker: public QObject, public Common::ItemProcessingWorker<IConnectivityRequest>
     {
         Q_OBJECT
     public:
-        explicit RequestsWorker(QObject *parent = 0);
+        explicit RequestsWorker(Models::ProxySettings *proxySettings, QObject *parent = 0);
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItem(std::shared_ptr<ConnectivityRequest> &item) override;
+        virtual void processOneItem(std::shared_ptr<IConnectivityRequest> &item) override;
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
@@ -37,6 +41,9 @@ namespace Connectivity {
     signals:
         void stopped();
         void queueIsEmpty();
+
+    private:
+        Models::ProxySettings *m_ProxySettings;
     };
 }
 

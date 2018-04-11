@@ -45,7 +45,7 @@ namespace Suggestion {
 
         QString resourceUrl = QString::fromLocal8Bit(url.toEncoded());
         Connectivity::SimpleCurlRequest *request = new Connectivity::SimpleCurlRequest(resourceUrl);
-        request->setRawHeaders(QStringList() << "Authorization: " + headerData);
+        request->addRawHeaders(QStringList() << "Authorization: " + headerData);
         request->setProxySettings(proxySettings);
 
         QThread *thread = new QThread();

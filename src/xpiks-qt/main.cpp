@@ -293,7 +293,7 @@ int main(int argc, char *argv[]) {
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
     Models::SwitcherModel switcherModel;
-    Connectivity::RequestsService requestsService;
+    Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel(environment);
 

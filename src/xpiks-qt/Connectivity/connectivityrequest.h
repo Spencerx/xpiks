@@ -14,37 +14,35 @@
 #include <QObject>
 #include <QString>
 #include <QByteArray>
-
-namespace Models {
-    class ProxySettings;
-}
+#include "iconnectivityrequest.h"
 
 namespace Helpers {
     class RemoteConfig;
 }
 
 namespace Connectivity {
-    class ConnectivityRequest: public QObject {
+    class ConnectivityRequest: public QObject, public IConnectivityRequest {
         Q_OBJECT
 
     public:
-        ConnectivityRequest(Helpers::RemoteConfig *config, const QString &url, Models::ProxySettings *proxySettings, bool noCache = false):
+        ConnectivityRequest(Helpers::RemoteConfig *config, const QString &url, bool noCache = false):
             QObject(),
             m_RemoteConfig(config),
             m_Url(url),
-            m_NoCache(noCache),
-            m_ProxySettings(proxySettings)
+            m_NoCache(noCache)
         {
             Q_ASSERT(config != nullptr);
         }
 
+        // IConnectivityRequest interface
     public:
-        const QString &getURL() const { return m_Url; }
-        bool getNoCache() const { return m_NoCache; }
-        Models::ProxySettings *getProxySettings() const { return m_ProxySettings; }
+        virtual QString getResourceURL() const override { return m_Url; }
+        virtual QStringList getRawHeaders() const override { return QStringList(); }
+        virtual Common::flag_t getFlags() const override { return (Common::flag_t)(m_NoCache ? Connectivity::NoCache : Connectivity::None); }
+        virtual void setResponse(const QByteArray &responseData) override;
 
     public:
-        void setResponse(const QByteArray &responseData);
+        const QString &getURL() const { return m_Url; }
 
     signals:
         void responseReceived(bool success);
@@ -53,7 +51,6 @@ namespace Connectivity {
         Helpers::RemoteConfig *m_RemoteConfig;
         QString m_Url;
         bool m_NoCache;
-        Models::ProxySettings *m_ProxySettings;
     };
 }
 

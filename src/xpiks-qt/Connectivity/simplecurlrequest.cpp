@@ -52,8 +52,8 @@ namespace Connectivity {
         return doRequest();
     }
 
-    void SimpleCurlRequest::setRawHeaders(const QStringList &headers) {
-        m_RawHeaders = headers;
+    void SimpleCurlRequest::addRawHeaders(const QStringList &headers) {
+        m_RawHeaders.append(headers);
     }
 
     void SimpleCurlRequest::setProxySettings(Models::ProxySettings *proxySettings) {
