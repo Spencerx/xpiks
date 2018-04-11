@@ -29,16 +29,17 @@ namespace Connectivity {
             QObject(),
             m_RemoteConfig(config),
             m_Url(url),
-            m_NoCache(noCache)
+            m_Flags(0)
         {
             Q_ASSERT(config != nullptr);
+            m_Flags = (Common::flag_t)(noCache ? Connectivity::NoCache : Connectivity::None);
         }
 
         // IConnectivityRequest interface
     public:
         virtual QString getResourceURL() const override { return m_Url; }
         virtual QStringList getRawHeaders() const override { return QStringList(); }
-        virtual Common::flag_t getFlags() const override { return (Common::flag_t)(m_NoCache ? Connectivity::NoCache : Connectivity::None); }
+        virtual Common::flag_t getFlags() const override { return m_Flags; }
         virtual void setResponse(const QByteArray &responseData) override;
 
     public:
@@ -50,7 +51,7 @@ namespace Connectivity {
     private:
         Helpers::RemoteConfig *m_RemoteConfig;
         QString m_Url;
-        bool m_NoCache;
+        Common::flag_t m_Flags;
     };
 }
 
