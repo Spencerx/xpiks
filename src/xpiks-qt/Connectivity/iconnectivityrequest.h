@@ -14,6 +14,7 @@
 #include <QString>
 #include <QByteArray>
 #include "../Common/flags.h"
+#include "iconnectivityresponse.h"
 
 namespace Connectivity {
     enum RequestFlags {
@@ -26,10 +27,10 @@ namespace Connectivity {
         virtual ~IConnectivityRequest() {}
 
     public:
-        virtual QString getResourceURL() const = 0;
-        virtual QStringList getRawHeaders() const = 0;
-        virtual Common::flag_t getFlags() const = 0;
-        virtual void setResponse(bool success, const QByteArray &responseData) = 0;
+        virtual QString getResourceURL() = 0;
+        virtual QStringList getRawHeaders() = 0;
+        virtual Common::flag_t getFlags() = 0;
+        virtual IConnectivityResponse *getResponse() = 0;
     };
 }
 

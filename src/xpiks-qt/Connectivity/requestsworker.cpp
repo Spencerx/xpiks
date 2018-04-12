@@ -40,6 +40,11 @@ namespace Connectivity {
 
         const bool success = request.sendRequestSync();
         if (!success) { LOG_WARNING << "Failed to process" << url; }
-        item->setResponse(success, request.getResponseData());
+
+        IConnectivityResponse *response = item->getResponse();
+        Q_ASSERT(response != nullptr);
+        if (response != nullptr) {
+            response->setResult(success, request.getResponseData());
+        }
     }
 }

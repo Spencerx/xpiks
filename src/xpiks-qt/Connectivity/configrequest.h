@@ -21,7 +21,7 @@ namespace Helpers {
 }
 
 namespace Connectivity {
-    class ConfigRequest: public QObject, public IConnectivityRequest {
+    class ConfigRequest: public QObject, public IConnectivityRequest, public IConnectivityResponse {
         Q_OBJECT
 
     public:
@@ -37,10 +37,14 @@ namespace Connectivity {
 
         // IConnectivityRequest interface
     public:
-        virtual QString getResourceURL() const override { return m_Url; }
-        virtual QStringList getRawHeaders() const override { return QStringList(); }
-        virtual Common::flag_t getFlags() const override { return m_Flags; }
-        virtual void setResponse(bool success, const QByteArray &responseData) override;
+        virtual QString getResourceURL() override { return m_Url; }
+        virtual QStringList getRawHeaders() override { return QStringList(); }
+        virtual Common::flag_t getFlags() override { return m_Flags; }
+        virtual IConnectivityResponse *getResponse() override { return this; }
+
+        // IConnectivityResponse interface
+    public:
+        virtual void setResult(bool result, const QByteArray &body) override;
 
     private:
         Helpers::RemoteConfig *m_RemoteConfig;

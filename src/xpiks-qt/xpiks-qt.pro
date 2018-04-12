@@ -443,7 +443,8 @@ HEADERS += \
     Storage/idatabase.h \
     Storage/writeaheadlog.h \
     Connectivity/iconnectivityrequest.h \
-    Connectivity/configrequest.h
+    Connectivity/configrequest.h \
+    Connectivity/iconnectivityresponse.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
