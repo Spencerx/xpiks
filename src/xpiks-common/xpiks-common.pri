@@ -49,20 +49,3 @@ win32|linux {
     QMAKE_EXTRA_TARGETS += copywhatsnew copyterms copydicts copytranslations copyfreqtables
     POST_TARGETDEPS += copywhatsnew copyterms copydicts copytranslations copyfreqtables
 }
-
-without-video {
-    LIBS -= -lavcodec
-    LIBS -= -lavfilter
-    LIBS -= -lavformat
-    LIBS -= -lavutil
-    LIBS -= -lswscale
-
-    LIBS -= -lavcodec.57
-    LIBS -= -lavfilter.6
-    LIBS -= -lavformat.57
-    LIBS -= -lavutil.55
-    LIBS -= -lswscale.4
-
-    LIBS -= -lthmbnlr
-    SOURCES += ../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
-}

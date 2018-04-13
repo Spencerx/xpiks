@@ -752,5 +752,24 @@ linux-static {
     message("Static build.")
 }
 
+without-video {
+    message("Without video")
+
+    LIBS -= -lavcodec
+    LIBS -= -lavfilter
+    LIBS -= -lavformat
+    LIBS -= -lavutil
+    LIBS -= -lswscale
+
+    LIBS -= -lavcodec.57
+    LIBS -= -lavfilter.6
+    LIBS -= -lavformat.57
+    LIBS -= -lavutil.55
+    LIBS -= -lswscale.4
+
+    LIBS -= -lthmbnlr
+    SOURCES += ../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
+}
+
 DEFINES += BUILDNUMBER=$${BUILDNO}
 DEFINES += BRANCHNAME=$${BRANCH_NAME}
