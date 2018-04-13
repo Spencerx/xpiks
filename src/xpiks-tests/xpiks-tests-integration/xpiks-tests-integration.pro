@@ -654,16 +654,6 @@ travis-ci {
     DEFINES += TRAVIS_CI
     DEFINES -= WITH_LOGS
 
-    LIBS -= -lthmbnlr
-    SOURCES += ../../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
-
-    # Travis does not have proper libthmbnlr for now
-    LIBS -= -lavcodec
-    LIBS -= -lavfilter
-    LIBS -= -lavformat
-    LIBS -= -lavutil
-    LIBS -= -lswscale
-
     # gcov
     QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
     LIBS += -lgcov

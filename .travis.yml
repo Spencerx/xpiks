@@ -67,7 +67,7 @@ script:
   - ls -la ../libs/*
   - echo "-------"
   - if [ -n "$XPIKS_BINARY" ]; then cd xpiks-qt/; fi
-  - if [ -n "$XPIKS_BINARY" ]; then qmake "CONFIG+= debug travis-ci" xpiks-qt.pro; fi
+  - if [ -n "$XPIKS_BINARY" ]; then qmake "CONFIG+= debug travis-ci without-video" xpiks-qt.pro; fi
   - echo "-------"
   - if [ -n "$CORE_TESTS" ]; then cd xpiks-tests/xpiks-tests-core; fi
   - if [ -n "$CORE_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-core.pro; fi
@@ -77,7 +77,7 @@ script:
   - if [ -n "$INTEGRATION_TESTS" ]; then make; fi
   - if [ -n "$INTEGRATION_TESTS" ]; then cd ../../../../; fi
   - if [ -n "$INTEGRATION_TESTS" ]; then cd xpiks-tests/xpiks-tests-integration; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then qmake "CONFIG+=debug travis-ci" xpiks-tests-integration.pro; fi
+  - if [ -n "$INTEGRATION_TESTS" ]; then qmake "CONFIG+=debug travis-ci without-video" xpiks-tests-integration.pro; fi
   - echo "-------"
   - if [ -n "$UI_TESTS" ]; then cd xpiks-tests/ui-tests-stubs; fi
   - if [ -n "$UI_TESTS" ]; then qmake "CONFIG+=debug travis-ci" ui-tests-stubs.pro; fi

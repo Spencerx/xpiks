@@ -732,16 +732,6 @@ travis-ci {
     LIBS += -ldl
     DEFINES += TRAVIS_CI
     INCLUDEPATH += "../../vendors/quazip"
-
-    LIBS -= -lthmbnlr
-    SOURCES += ../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
-
-    # Travis does not have proper libthmbnlr for now
-    LIBS -= -lavcodec
-    LIBS -= -lavfilter
-    LIBS -= -lavformat
-    LIBS -= -lavutil
-    LIBS -= -lswscale
 }
 
 linux-qtcreator {
