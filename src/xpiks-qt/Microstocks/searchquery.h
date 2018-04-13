@@ -15,7 +15,7 @@
 #include <QStringList>
 #include "../Common/flags.h"
 
-namespace Suggestion {
+namespace Microstocks {
     enum QueryFlags {
         AllImages = 1 << 0,
         Photos = 1 << 1,
@@ -27,12 +27,14 @@ namespace Suggestion {
     struct SearchQuery {
         SearchQuery():
             m_Flags(0),
-            m_MaxResults(0)
+            m_PageOffset(1),
+            m_PageSize(100)
         {}
 
         SearchQuery(const QString &searchTerm, int resultType, int maxResults):
             m_Flags(0),
-            m_MaxResults(maxResults)
+            m_PageSize(maxResults),
+            m_PageOffset(0)
         {
             // "All Images"
             // "Photos"
@@ -64,7 +66,8 @@ namespace Suggestion {
 
         QStringList m_SearchTerms;
         Common::flag_t m_Flags;
-        int m_MaxResults;
+        int m_PageSize;
+        int m_PageOffset;
     };
 }
 

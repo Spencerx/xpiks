@@ -66,6 +66,7 @@
 #include "../../xpiks-qt/Helpers/filehelpers.h"
 #include "../../xpiks-qt/Common/systemenvironment.h"
 #include "../../xpiks-qt/Models/uimanager.h"
+#include "../../xpiks-qt/Microstocks/microstockapiclients.h"
 
 #include "exiv2iohelpers.h"
 
@@ -260,7 +261,9 @@ int main(int argc, char *argv[]) {
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
     Storage::DatabaseManager databaseManager(environment);
-    Suggestion::KeywordsSuggestor keywordsSuggestor;
+    Microstocks::MicrostockAPIClients apiClients;
+    Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
+    Suggestion::KeywordsSuggestor keywordsSuggestor(apiClients, requestsService);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
     Models::RecentDirectoriesModel recentDirectorieModel;
@@ -287,7 +290,6 @@ int main(int argc, char *argv[]) {
     // intentional memory leak to beat spellcheck lock stuff
     QuickBuffer::QuickBuffer quickBuffer;
     Maintenance::MaintenanceService maintenanceService(environment);
-    Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
 
     QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;

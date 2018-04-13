@@ -108,14 +108,11 @@ SOURCES += main.cpp \
     spellcheckcombinedmodeltest.cpp \
     zipartworkstest.cpp \
     ../../xpiks-qt/Suggestion/locallibraryqueryengine.cpp \
-    ../../xpiks-qt/Suggestion/shutterstockqueryengine.cpp \
     spellcheckundotest.cpp \
-    ../../xpiks-qt/Suggestion/fotoliaqueryengine.cpp \
     ../../xpiks-qt/QMLExtensions/colorsmodel.cpp \
     ../../xpiks-qt/AutoComplete/autocompletemodel.cpp \
     ../../xpiks-qt/AutoComplete/autocompleteservice.cpp \
     ../../xpiks-qt/AutoComplete/autocompleteworker.cpp \
-    ../../xpiks-qt/Suggestion/gettyqueryengine.cpp \
     ../../xpiks-qt/AutoComplete/stocksftplistmodel.cpp \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.cpp \
     ../../xpiks-qt/Helpers/jsonhelper.cpp \
@@ -237,7 +234,14 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Plugins/plugindatabasemanager.cpp \
     ../../xpiks-qt/Plugins/pluginenvironment.cpp \
     loadpluginbasictest.cpp \
-    ../../xpiks-qt/Storage/databasemanager.cpp
+    ../../xpiks-qt/Storage/databasemanager.cpp \
+    ../../xpiks-qt/Suggestion/fotoliasuggestionengine.cpp \
+    ../../xpiks-qt/Suggestion/gettysuggestionengine.cpp \
+    ../../xpiks-qt/Suggestion/shutterstocksuggestionengine.cpp \
+    ../../xpiks-qt/Suggestion/suggestionresultsresponse.cpp \
+    ../../xpiks-qt/Microstocks/fotoliaapiclient.cpp \
+    ../../xpiks-qt/Microstocks/gettyapiclient.cpp \
+    ../../xpiks-qt/Microstocks/shutterstockapiclient.cpp
 
 RESOURCES +=
 
@@ -359,16 +363,12 @@ HEADERS += \
     spellcheckcombinedmodeltest.h \
     zipartworkstest.h \
     ../../xpiks-qt/Suggestion/locallibraryqueryengine.h \
-    ../../xpiks-qt/Suggestion/shutterstockqueryengine.h \
-    ../../xpiks-qt/Suggestion/suggestionqueryenginebase.h \
     spellcheckundotest.h \
-    ../../xpiks-qt/Suggestion/fotoliaqueryengine.h \
     ../../xpiks-qt/QMLExtensions/colorsmodel.h \
     ../../xpiks-qt/AutoComplete/autocompletemodel.h \
     ../../xpiks-qt/AutoComplete/autocompleteservice.h \
     ../../xpiks-qt/AutoComplete/autocompleteworker.h \
     ../../xpiks-qt/AutoComplete/completionquery.h \
-    ../../xpiks-qt/Suggestion/gettyqueryengine.h \
     ../../xpiks-qt/AutoComplete/stocksftplistmodel.h \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.h \
     ../../xpiks-qt/Helpers/jsonhelper.h \
@@ -463,7 +463,7 @@ HEADERS += \
     ../../xpiks-qt/MetadataIO/cachedartwork.h \
     ../../xpiks-qt/MetadataIO/metadatacache.h \
     ../../xpiks-qt/Suggestion/locallibraryquery.h \
-    ../../xpiks-qt/Suggestion/searchquery.h \
+    ../../xpiks-qt/Microstocks/searchquery.h \
     savefilelegacytest.h \
     ../../xpiks-qt/Common/statefulentity.h \
     locallibrarysearchtest.h \
@@ -520,7 +520,19 @@ HEADERS += \
     ../../xpiks-qt/Storage/idatabasemanager.h \
     ../../xpiks-qt/Storage/writeaheadlog.h \
     ../../xpiks-qt/Connectivity/iconnectivityrequest.h \
-    ../../xpiks-qt/Connectivity/iconnectivityresponse.h
+    ../../xpiks-qt/Connectivity/iconnectivityresponse.h \
+    ../../xpiks-qt/Suggestion/fotoliasuggestionengine.h \
+    ../../xpiks-qt/Suggestion/gettysuggestionengine.h \
+    ../../xpiks-qt/Suggestion/isuggestionengine.h \
+    ../../xpiks-qt/Suggestion/isuggestionsrepository.h \
+    ../../xpiks-qt/Suggestion/microstocksuggestionengine.h \
+    ../../xpiks-qt/Suggestion/shutterstocksuggestionengine.h \
+    ../../xpiks-qt/Suggestion/suggestionresultsresponse.h \
+    ../../xpiks-qt/Microstocks/fotoliaapiclient.h \
+    ../../xpiks-qt/Microstocks/gettyapiclient.h \
+    ../../xpiks-qt/Microstocks/imicrostockapiclient.h \
+    ../../xpiks-qt/Microstocks/microstockapiclients.h \
+    ../../xpiks-qt/Microstocks/shutterstockapiclient.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

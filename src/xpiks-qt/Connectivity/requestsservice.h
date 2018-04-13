@@ -12,7 +12,9 @@
 #define REQUESTSSERVICE_H
 
 #include <QObject>
+#include <memory>
 #include "../Common/baseentity.h"
+#include "iconnectivityrequest.h"
 
 namespace Helpers {
     class RemoteConfig;
@@ -25,7 +27,7 @@ namespace Models {
 namespace Connectivity {
     class RequestsWorker;
 
-    class RequestsService : public QObject, public Common::BaseEntity
+    class RequestsService : public QObject
     {
         Q_OBJECT
     public:
@@ -37,6 +39,7 @@ namespace Connectivity {
 
     public:
         void receiveConfig(const QString &url, Helpers::RemoteConfig *config);
+        void sendRequest(const std::shared_ptr<IConnectivityRequest> &request);
 
     signals:
         void cancelServing();

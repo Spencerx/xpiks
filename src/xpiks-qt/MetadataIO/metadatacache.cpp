@@ -20,11 +20,11 @@ namespace MetadataIO {
     CachedArtwork::CachedArtworkType queryFlagToCachedType(Common::flag_t queryFlag) {
         CachedArtwork::CachedArtworkType searchType = CachedArtwork::Unknown;
 
-        if (Common::HasFlag(queryFlag, Suggestion::Photos)) {
+        if (Common::HasFlag(queryFlag, Microstocks::Photos)) {
             searchType = CachedArtwork::Image;
-        } else if (Common::HasFlag(queryFlag, Suggestion::Vectors)) {
+        } else if (Common::HasFlag(queryFlag, Microstocks::Vectors)) {
             searchType = CachedArtwork::Vector;
-        } else if (Common::HasFlag(queryFlag, Suggestion::Videos)) {
+        } else if (Common::HasFlag(queryFlag, Microstocks::Videos)) {
             searchType = CachedArtwork::Video;
         }
 
@@ -169,7 +169,7 @@ namespace MetadataIO {
         }
     }
 
-    void MetadataCache::search(const Suggestion::SearchQuery &query, QVector<CachedArtwork> &results) {
+    void MetadataCache::search(const Microstocks::SearchQuery &query, QVector<CachedArtwork> &results) {
         Q_ASSERT(results.empty());
         LOG_INTEGR_TESTS_OR_DEBUG << query.m_SearchTerms;
         CachedArtwork::CachedArtworkType searchType = queryFlagToCachedType(query.m_Flags);
@@ -213,7 +213,7 @@ namespace MetadataIO {
                 }
             }
 
-            const bool canContinue = results.size() < query.m_MaxResults;
+            const bool canContinue = results.size() < query.m_PageSize;
             return canContinue;
         });
 

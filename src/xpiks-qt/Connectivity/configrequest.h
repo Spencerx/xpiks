@@ -21,7 +21,10 @@ namespace Helpers {
 }
 
 namespace Connectivity {
-    class ConfigRequest: public QObject, public IConnectivityRequest, public IConnectivityResponse {
+    class ConfigRequest:
+            public QObject,
+            public IConnectivityRequest,
+            public IConnectivityResponse {
         Q_OBJECT
 
     public:

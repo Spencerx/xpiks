@@ -78,16 +78,13 @@ SOURCES += main.cpp \
     Models/languagesmodel.cpp \
     Helpers/filterhelpers.cpp \
     QMLExtensions/triangleelement.cpp \
-    Suggestion/shutterstockqueryengine.cpp \
     Suggestion/locallibraryqueryengine.cpp \
-    Suggestion/fotoliaqueryengine.cpp \
     QMLExtensions/colorsmodel.cpp \
     Helpers/remoteconfig.cpp \
     Helpers/localconfig.cpp \
     Helpers/jsonhelper.cpp \
     AutoComplete/autocompleteworker.cpp \
     AutoComplete/autocompleteservice.cpp \
-    Suggestion/gettyqueryengine.cpp \
     Models/abstractconfigupdatermodel.cpp \
     AutoComplete/stocksftplistmodel.cpp \
     Models/imageartwork.cpp \
@@ -187,7 +184,14 @@ SOURCES += main.cpp \
     Plugins/pluginenvironment.cpp \
     Plugins/plugindatabasemanager.cpp \
     Storage/databasemanager.cpp \
-    Connectivity/configrequest.cpp
+    Connectivity/configrequest.cpp \
+    Suggestion/suggestionresultsresponse.cpp \
+    Microstocks/shutterstockapiclient.cpp \
+    Microstocks/fotoliaapiclient.cpp \
+    Microstocks/gettyapiclient.cpp \
+    Suggestion/shutterstocksuggestionengine.cpp \
+    Suggestion/fotoliasuggestionengine.cpp \
+    Suggestion/gettysuggestionengine.cpp
 
 RESOURCES += qml.qrc
 
@@ -297,11 +301,8 @@ HEADERS += \
     Helpers/filterhelpers.h \
     Connectivity/iftpcoordinator.h \
     QMLExtensions/triangleelement.h \
-    Suggestion/shutterstockqueryengine.h \
     Suggestion/locallibraryqueryengine.h \
-    Suggestion/suggestionqueryenginebase.h \
     Helpers/ifilenotavailablemodel.h \
-    Suggestion/fotoliaqueryengine.h \
     QMLExtensions/colorsmodel.h \
     Helpers/remoteconfig.h \
     Helpers/localconfig.h \
@@ -310,7 +311,6 @@ HEADERS += \
     AutoComplete/autocompleteworker.h \
     AutoComplete/completionquery.h \
     AutoComplete/autocompleteservice.h \
-    Suggestion/gettyqueryengine.h \
     Models/abstractconfigupdatermodel.h \
     AutoComplete/stocksftplistmodel.h \
     Models/imageartwork.h \
@@ -402,7 +402,7 @@ HEADERS += \
     MetadataIO/metadataiotask.h \
     MetadataIO/metadataioservice.h \
     MetadataIO/originalmetadata.h \
-    Suggestion/searchquery.h \
+    Microstocks/searchquery.h \
     Suggestion/locallibraryquery.h \
     MetadataIO/artworkssnapshot.h \
     MetadataIO/metadatareadinghub.h \
@@ -444,7 +444,20 @@ HEADERS += \
     Storage/writeaheadlog.h \
     Connectivity/iconnectivityrequest.h \
     Connectivity/configrequest.h \
-    Connectivity/iconnectivityresponse.h
+    Connectivity/iconnectivityresponse.h \
+    Suggestion/suggestionresultsresponse.h \
+    Microstocks/imicrostockapiclient.h \
+    Microstocks/shutterstockapiclient.h \
+    Connectivity/simpleapirequest.h \
+    Suggestion/microstocksuggestionengine.h \
+    Suggestion/isuggestionsrepository.h \
+    Suggestion/isuggestionengine.h \
+    Microstocks/fotoliaapiclient.h \
+    Microstocks/gettyapiclient.h \
+    Microstocks/microstockapiclients.h \
+    Suggestion/shutterstocksuggestionengine.h \
+    Suggestion/fotoliasuggestionengine.h \
+    Suggestion/gettysuggestionengine.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

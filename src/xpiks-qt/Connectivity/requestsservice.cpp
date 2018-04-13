@@ -60,6 +60,8 @@ namespace Connectivity {
     }
 
     void RequestsService::receiveConfig(const QString &url, Helpers::RemoteConfig *config) {
+        LOG_DEBUG << "#";
+
         if (m_RequestsWorker == nullptr) {
             LOG_DEBUG << "Skipping" << url << ". Service is stopped";
             return;
@@ -67,6 +69,17 @@ namespace Connectivity {
 
         std::shared_ptr<IConnectivityRequest> item(new ConfigRequest(config, url, NO_CACHE_ATTRIBUTE));
         m_RequestsWorker->submitItem(item);
+    }
+
+    void RequestsService::sendRequest(const std::shared_ptr<IConnectivityRequest> &request) {
+        LOG_DEBUG << "#";
+
+        if (m_RequestsWorker == nullptr) {
+            LOG_DEBUG << "Skipping request. Service is stopped";
+            return;
+        }
+
+        m_RequestsWorker->submitItem(request);
     }
 
     void RequestsService::workerFinished() {

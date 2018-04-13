@@ -95,6 +95,7 @@
 #include <ftpcoordinator.h>
 #include "Helpers/filehelpers.h"
 #include "Common/systemenvironment.h"
+#include "Microstocks/microstockapiclients.h"
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);
@@ -253,6 +254,7 @@ int main(int argc, char *argv[]) {
     Models::ArtItemsModel artItemsModel;
     Models::CombinedArtworksModel combinedArtworksModel;
     Models::UploadInfoRepository uploadInfoRepository(environment);
+    Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
     KeywordsPresets::PresetKeywordsModel presetsModel(environment);
     KeywordsPresets::FilteredPresetKeywordsModel filteredPresetsModel;
     filteredPresetsModel.setSourceModel(&presetsModel);
@@ -261,7 +263,8 @@ int main(int argc, char *argv[]) {
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
     Storage::DatabaseManager databaseManager(environment);
-    Suggestion::KeywordsSuggestor keywordsSuggestor;
+    Microstocks::MicrostockAPIClients apiClients;
+    Suggestion::KeywordsSuggestor keywordsSuggestor(apiClients, requestsService);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
     Models::RecentDirectoriesModel recentDirectorieModel;
@@ -293,7 +296,6 @@ int main(int argc, char *argv[]) {
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
     Models::SwitcherModel switcherModel;
-    Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel(environment);
 

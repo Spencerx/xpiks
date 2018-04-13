@@ -13,7 +13,7 @@
 
 #include <QObject>
 #include <QVector>
-#include "searchquery.h"
+#include "../Microstocks/searchquery.h"
 #include "../MetadataIO/cachedartwork.h"
 
 namespace Suggestion {
@@ -25,8 +25,8 @@ namespace Suggestion {
         { }
 
     public:
-        void setSearchQuery(const SearchQuery &value) { m_SearchQuery = value; }
-        const SearchQuery &getSearchQuery() const { return m_SearchQuery; }
+        void setSearchQuery(const Microstocks::SearchQuery &value) { m_SearchQuery = value; }
+        const Microstocks::SearchQuery &getSearchQuery() const { return m_SearchQuery; }
         QVector<MetadataIO::CachedArtwork> &getResults() { return m_Results; }
 
     public:
@@ -40,7 +40,7 @@ namespace Suggestion {
 
     private:
         QVector<MetadataIO::CachedArtwork> m_Results;
-        SearchQuery m_SearchQuery;
+        Microstocks::SearchQuery m_SearchQuery;
     };
 }
 

@@ -335,7 +335,6 @@ void Commands::CommandManager::InjectDependency(QMLExtensions::ArtworksUpdateHub
 
 void Commands::CommandManager::InjectDependency(Connectivity::RequestsService *requestsService) {
     Q_ASSERT(requestsService != NULL); m_RequestsService = requestsService;
-    m_RequestsService->setCommandManager(this);
 }
 
 void Commands::CommandManager::InjectDependency(Storage::DatabaseManager *databaseManager) {

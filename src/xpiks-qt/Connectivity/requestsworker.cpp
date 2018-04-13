@@ -42,7 +42,6 @@ namespace Connectivity {
         if (!success) { LOG_WARNING << "Failed to process" << url; }
 
         IConnectivityResponse *response = item->getResponse();
-        Q_ASSERT(response != nullptr);
         if (response != nullptr) {
             response->setResult(success, request.getResponseData());
         }

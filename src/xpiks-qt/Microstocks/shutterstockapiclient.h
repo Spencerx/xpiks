@@ -1,0 +1,37 @@
+/*
+ * This file is a part of Xpiks - cross platform application for
+ * keywording and uploading images for microstocks
+ * Copyright (C) 2014-2018 Taras Kushnir <kushnirTV@gmail.com>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+#ifndef SHUTTERSTOCKAPICLIENT_H
+#define SHUTTERSTOCKAPICLIENT_H
+
+#include <QUrl>
+#include "imicrostockapiclient.h"
+
+namespace Microstocks {
+    class ShutterstockAPIClient: public IMicrostockAPIClient
+    {
+    public:
+        ShutterstockAPIClient();
+
+        // IMicrostockAPIClient interface
+    public:
+        virtual std::shared_ptr<Connectivity::IConnectivityRequest> search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) override;
+
+    private:
+        QUrl buildSearchQuery(const SearchQuery &query) const;
+        QString resultsTypeToString(Common::flag_t queryFlags) const;
+
+    private:
+        QString m_ClientId;
+        QString m_ClientSecret;
+    };
+}
+
+#endif // SHUTTERSTOCKAPICLIENT_H
