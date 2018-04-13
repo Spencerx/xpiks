@@ -8,21 +8,19 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef IMICROSTOCKAPICLIENT_H
-#define IMICROSTOCKAPICLIENT_H
+#ifndef IMICROSTOCKSERVICE_H
+#define IMICROSTOCKSERVICE_H
 
 #include <memory>
-#include "../Connectivity/iconnectivityrequest.h"
 #include "../Connectivity/iconnectivityresponse.h"
 #include "searchquery.h"
 
 namespace Microstocks {
-    class IMicrostockAPIClient {
+    class IMicrostockService {
     public:
-        virtual ~IMicrostockAPIClient() {}
-        virtual std::shared_ptr<Connectivity::IConnectivityRequest> search(const SearchQuery &query,
-                                                                           const std::shared_ptr<Connectivity::IConnectivityResponse> &response) = 0;
+        virtual ~IMicrostockService() {}
+        virtual void search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) = 0;
     };
 }
 
-#endif // IMICROSTOCKAPICLIENT_H
+#endif // IMICROSTOCKSERVICE_H

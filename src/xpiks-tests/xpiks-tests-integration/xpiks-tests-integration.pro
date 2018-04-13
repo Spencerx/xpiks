@@ -241,7 +241,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Suggestion/suggestionresultsresponse.cpp \
     ../../xpiks-qt/Microstocks/fotoliaapiclient.cpp \
     ../../xpiks-qt/Microstocks/gettyapiclient.cpp \
-    ../../xpiks-qt/Microstocks/shutterstockapiclient.cpp
+    ../../xpiks-qt/Microstocks/shutterstockapiclient.cpp \
+    ../../xpiks-qt/Microstocks/microstockservice.cpp
 
 RESOURCES +=
 
@@ -532,7 +533,10 @@ HEADERS += \
     ../../xpiks-qt/Microstocks/gettyapiclient.h \
     ../../xpiks-qt/Microstocks/imicrostockapiclient.h \
     ../../xpiks-qt/Microstocks/microstockapiclients.h \
-    ../../xpiks-qt/Microstocks/shutterstockapiclient.h
+    ../../xpiks-qt/Microstocks/shutterstockapiclient.h \
+    ../../xpiks-qt/Microstocks/imicrostockservice.h \
+    ../../xpiks-qt/Microstocks/imicrostockservices.h \
+    ../../xpiks-qt/Microstocks/microstockservice.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

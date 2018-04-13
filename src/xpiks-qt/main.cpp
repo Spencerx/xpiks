@@ -310,7 +310,7 @@ int main(int argc, char *argv[]) {
 #endif
     Connectivity::TelemetryService telemetryService(userId, telemetryEnabled);
 
-    Plugins::PluginManager pluginManager(environment, &databaseManager);
+    Plugins::PluginManager pluginManager(environment, &databaseManager, requestsService, apiClients);
     Plugins::PluginsWithActionsModel pluginsWithActions;
     pluginsWithActions.setSourceModel(&pluginManager);
 

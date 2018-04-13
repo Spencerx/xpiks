@@ -191,7 +191,8 @@ SOURCES += main.cpp \
     Microstocks/gettyapiclient.cpp \
     Suggestion/shutterstocksuggestionengine.cpp \
     Suggestion/fotoliasuggestionengine.cpp \
-    Suggestion/gettysuggestionengine.cpp
+    Suggestion/gettysuggestionengine.cpp \
+    Microstocks/microstockservice.cpp
 
 RESOURCES += qml.qrc
 
@@ -457,7 +458,10 @@ HEADERS += \
     Microstocks/microstockapiclients.h \
     Suggestion/shutterstocksuggestionengine.h \
     Suggestion/fotoliasuggestionengine.h \
-    Suggestion/gettysuggestionengine.h
+    Suggestion/gettysuggestionengine.h \
+    Microstocks/imicrostockservice.h \
+    Microstocks/microstockservice.h \
+    Microstocks/imicrostockservices.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
