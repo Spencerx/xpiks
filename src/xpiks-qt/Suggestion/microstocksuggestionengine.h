@@ -50,7 +50,7 @@ namespace Suggestion {
             m_RequestsService->sendRequest(request);
         }
 
-        virtual void cancelQuery() {
+        virtual void cancelQuery() override {
             m_IsCancelled = true;
         }
 

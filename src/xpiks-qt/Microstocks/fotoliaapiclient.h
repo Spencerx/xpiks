@@ -12,12 +12,13 @@
 #define FOTOLIAAPICLIENT_H
 
 #include "imicrostockapiclient.h"
+#include "../Encryption/isecretsstorage.h"
 
 namespace Microstocks {
     class FotoliaAPIClient: public IMicrostockAPIClient
     {
     public:
-        FotoliaAPIClient();
+        FotoliaAPIClient(Encryption::ISecretsStorage *secretsStorage);
 
         // IMicrostockAPIClient interface
     public:
@@ -28,7 +29,7 @@ namespace Microstocks {
         QString resultsTypeToString(Common::flag_t queryFlags) const;
 
     private:
-        QString m_FotoliaAPIKey;
+        Encryption::ISecretsStorage *m_SecretsStorage;
     };
 }
 

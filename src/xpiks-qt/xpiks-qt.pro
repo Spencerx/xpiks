@@ -461,7 +461,10 @@ HEADERS += \
     Suggestion/gettysuggestionengine.h \
     Microstocks/imicrostockservice.h \
     Microstocks/microstockservice.h \
-    Microstocks/imicrostockservices.h
+    Microstocks/imicrostockservices.h \
+    Encryption/secretpair.h \
+    Encryption/isecretsstorage.h \
+    Microstocks/apisecrets.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

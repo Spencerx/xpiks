@@ -93,9 +93,11 @@
 #include "MetadataIO/csvexportmodel.h"
 #include "KeywordsPresets/presetgroupsmodel.h"
 #include <ftpcoordinator.h>
+#include <apisecretsstorage.h>
 #include "Helpers/filehelpers.h"
 #include "Common/systemenvironment.h"
 #include "Microstocks/microstockapiclients.h"
+#include "Encryption/isecretsstorage.h"
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);
@@ -263,7 +265,8 @@ int main(int argc, char *argv[]) {
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
     Storage::DatabaseManager databaseManager(environment);
-    Microstocks::MicrostockAPIClients apiClients;
+    std::shared_ptr<Encryption::ISecretsStorage> secretsStorage(new libxpks::microstocks::APISecretsStorage());
+    Microstocks::MicrostockAPIClients apiClients(secretsStorage.get());
     Suggestion::KeywordsSuggestor keywordsSuggestor(apiClients, requestsService);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);

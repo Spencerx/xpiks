@@ -12,14 +12,18 @@
 #include <QUrlQuery>
 #include "../Connectivity/simpleapirequest.h"
 #include "../Encryption/aes-qt.h"
+#include "apisecrets.h"
 
-Microstocks::FotoliaAPIClient::FotoliaAPIClient()
+Microstocks::FotoliaAPIClient::FotoliaAPIClient(Encryption::ISecretsStorage *secretsStorage):
+    m_SecretsStorage(secretsStorage)
 {
-    m_FotoliaAPIKey = "ad2954b4ee1e9686fbf8446f85e0c26edfae6003f51f49ca5559aed915879e733bbaf2003b3575bc0b96e682a30a69907c612865ec8f4ec2522131108a4a9f24467f1f83befc3d80201e5f906c761341";
+    Q_ASSERT(secretsStorage != nullptr);
 }
 
 std::shared_ptr<Connectivity::IConnectivityRequest> Microstocks::FotoliaAPIClient::search(const Microstocks::SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
-    QString decodedAPIKey = Encryption::decodeText(m_FotoliaAPIKey, "MasterPassword");
+    Encryption::SecretPair apiSecret;
+    if (!m_SecretsStorage->tryFindPair(FotoliaAPIKey, apiSecret)) { Q_ASSERT(false); }
+    QString decodedAPIKey = Encryption::decodeText(apiSecret.m_Value, apiSecret.m_Key);
 
     QUrl url = buildSearchQuery(decodedAPIKey, query);
     QString resourceUrl = QString::fromLocal8Bit(url.toEncoded());

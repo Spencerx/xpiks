@@ -13,20 +13,25 @@
 #include "../Common/defines.h"
 #include "../Encryption/aes-qt.h"
 #include "../Connectivity/simpleapirequest.h"
+#include "apisecrets.h"
 
 namespace Microstocks {
-    ShutterstockAPIClient::ShutterstockAPIClient()
+    ShutterstockAPIClient::ShutterstockAPIClient(Encryption::ISecretsStorage *secretsStorage):
+        m_SecretsStorage(secretsStorage)
     {
-        m_ClientId = "28a2a9b917961a0cbc343c81b2dd0f6618377f9210aa3182e5cc9f5588f914d918ede1533c9e06b91769c89e80909743";
-        m_ClientSecret = "5092d9a967c2f19b57aac29bc09ac3b9e6ae5baec1a371331b73ff24f1625d95c4f3fef90bdacfbe9b0b3803b48c269192bc55f14bb9c2b5a16d650cd641b746eb384fcf9dbd53a96f1f81215921b04409f3635ecf846ffdf01ee04ba76624c9";
+        Q_ASSERT(secretsStorage != nullptr);
     }
 
     std::shared_ptr<Connectivity::IConnectivityRequest> ShutterstockAPIClient::search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
         LOG_INFO << query.m_SearchTerms;
         QUrl url = buildSearchQuery(query);
 
-        QString decodedClientId = Encryption::decodeText(m_ClientId, "MasterPassword");
-        QString decodedClientSecret = Encryption::decodeText(m_ClientSecret, "MasterPassword");
+        Encryption::SecretPair clientID, clientSecret;
+        if (!m_SecretsStorage->tryFindPair(ShutterstockClientID, clientID)) { Q_ASSERT(false); }
+        if (!m_SecretsStorage->tryFindPair(ShutterstockClientSecret, clientSecret)) { Q_ASSERT(false); }
+
+        QString decodedClientId = Encryption::decodeText(clientID.m_Value, clientID.m_Key);
+        QString decodedClientSecret = Encryption::decodeText(clientSecret.m_Value, clientSecret.m_Key);
 
         QString authStr = QString("%1:%2").arg(decodedClientId).arg(decodedClientSecret);
         QString headerData = "Authorization: Basic " + QString::fromLatin1(authStr.toLocal8Bit().toBase64());

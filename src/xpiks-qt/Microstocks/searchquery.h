@@ -33,8 +33,8 @@ namespace Microstocks {
 
         SearchQuery(const QString &searchTerm, int resultType, int maxResults):
             m_Flags(0),
-            m_PageSize(maxResults),
-            m_PageOffset(0)
+            m_PageOffset(0),
+            m_PageSize(maxResults)
         {
             // "All Images"
             // "Photos"
@@ -66,8 +66,8 @@ namespace Microstocks {
 
         QStringList m_SearchTerms;
         Common::flag_t m_Flags;
-        int m_PageSize;
         int m_PageOffset;
+        int m_PageSize;
     };
 }
 

@@ -12,18 +12,23 @@
 #include <QUrlQuery>
 #include "../Encryption/aes-qt.h"
 #include "../Connectivity/simpleapirequest.h"
+#include "apisecrets.h"
 
 namespace Microstocks {
-    GettyAPIClient::GettyAPIClient()
+    GettyAPIClient::GettyAPIClient(Encryption::ISecretsStorage *secretsStorage):
+        m_SecretsStorage(secretsStorage)
     {
-        m_GettyImagesAPIKey = QLatin1String("17a45639c3bf88f7a6d549759af398090c3f420e53a61a06d7a2a2b153c89fc9470b2365dae8c6d92203287dc6f69f55b230835a8fb2a70b24e806771b750690");
+        Q_ASSERT(secretsStorage != nullptr);
     }
 
     std::shared_ptr<Connectivity::IConnectivityRequest> GettyAPIClient::search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
         QUrl url = buildSearchQuery(query);
         QString resourceUrl = QString::fromLocal8Bit(url.toEncoded());
 
-        QString decodedAPIKey = Encryption::decodeText(m_GettyImagesAPIKey, "MasterPassword");
+        Encryption::SecretPair apiSecret;
+        if (!m_SecretsStorage->tryFindPair(GettyAPIKey, apiSecret)) { Q_ASSERT(false); }
+
+        QString decodedAPIKey = Encryption::decodeText(apiSecret.m_Value, apiSecret.m_Key);
         QString headerData = "Api-Key: " + decodedAPIKey;
 
         std::shared_ptr<Connectivity::IConnectivityRequest> request(new Connectivity::SimpleAPIRequest(resourceUrl, QStringList() << headerData, response));

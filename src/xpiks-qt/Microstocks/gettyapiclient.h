@@ -12,12 +12,13 @@
 #define GETTYAPICLIENT_H
 
 #include "imicrostockapiclient.h"
+#include "../Encryption/isecretsstorage.h"
 
 namespace Microstocks {
     class GettyAPIClient: public IMicrostockAPIClient
     {
     public:
-        GettyAPIClient();
+        GettyAPIClient(Encryption::ISecretsStorage *secretsStorage);
 
         // IMicrostockAPIClient interface
     public:
@@ -28,7 +29,7 @@ namespace Microstocks {
         QString resultsTypeToString(Common::flag_t queryFlags) const;
 
     private:
-        QString m_GettyImagesAPIKey;
+        Encryption::ISecretsStorage *m_SecretsStorage;
     };
 }
 

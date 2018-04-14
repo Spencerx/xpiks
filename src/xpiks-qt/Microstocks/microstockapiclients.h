@@ -14,10 +14,18 @@
 #include "shutterstockapiclient.h"
 #include "fotoliaapiclient.h"
 #include "gettyapiclient.h"
+#include "../Encryption/isecretsstorage.h"
 
 namespace Microstocks {
     class MicrostockAPIClients
     {
+    public:
+        MicrostockAPIClients(Encryption::ISecretsStorage *secretsStorage):
+            m_ShutterstockClient(secretsStorage),
+            m_FotoliaClient(secretsStorage),
+            m_GettyClient(secretsStorage)
+        { }
+
     public:
         ShutterstockAPIClient &getShutterstockClient() { return m_ShutterstockClient; }
         FotoliaAPIClient &getFotoliaClient() { return m_FotoliaClient; }

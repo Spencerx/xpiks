@@ -13,12 +13,13 @@
 
 #include <QUrl>
 #include "imicrostockapiclient.h"
+#include "../Encryption/isecretsstorage.h"
 
 namespace Microstocks {
     class ShutterstockAPIClient: public IMicrostockAPIClient
     {
     public:
-        ShutterstockAPIClient();
+        ShutterstockAPIClient(Encryption::ISecretsStorage *secretsStorage);
 
         // IMicrostockAPIClient interface
     public:
@@ -29,8 +30,7 @@ namespace Microstocks {
         QString resultsTypeToString(Common::flag_t queryFlags) const;
 
     private:
-        QString m_ClientId;
-        QString m_ClientSecret;
+        Encryption::ISecretsStorage *m_SecretsStorage;
     };
 }
 
