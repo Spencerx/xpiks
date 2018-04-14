@@ -21,6 +21,7 @@ namespace Connectivity {
         SimpleAPIRequest(const QString &url, const QStringList &headers, const std::shared_ptr<IConnectivityResponse> &response):
             m_URL(url),
             m_Headers(headers),
+            m_Flags(Connectivity::None),
             m_Response(response)
         { }
 
@@ -28,7 +29,7 @@ namespace Connectivity {
     public:
         virtual QString getResourceURL() override { return m_URL; }
         virtual QStringList getRawHeaders() override { return m_Headers; }
-        virtual Common::flag_t getFlags() override { return Connectivity::None; }
+        virtual Common::flag_t getFlags() override { return m_Flags; }
         virtual IConnectivityResponse *getResponse() override { return m_Response.get(); }
 
     private:
