@@ -536,7 +536,10 @@ HEADERS += \
     ../../xpiks-qt/Microstocks/shutterstockapiclient.h \
     ../../xpiks-qt/Microstocks/imicrostockservice.h \
     ../../xpiks-qt/Microstocks/imicrostockservices.h \
-    ../../xpiks-qt/Microstocks/microstockservice.h
+    ../../xpiks-qt/Microstocks/microstockservice.h \
+    ../../xpiks-qt/Microstocks/apisecrets.h \
+    ../../xpiks-qt/Encryption/isecretsstorage.h \
+    ../../xpiks-qt/Encryption/secretpair.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

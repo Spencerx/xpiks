@@ -67,6 +67,8 @@
 #include "../../xpiks-qt/Common/systemenvironment.h"
 #include "../../xpiks-qt/Models/uimanager.h"
 #include "../../xpiks-qt/Microstocks/microstockapiclients.h"
+#include "../../xpiks-qt/Encryption/isecretsstorage.h"
+#include <apisecretsstorage.h>
 
 #include "exiv2iohelpers.h"
 
@@ -261,7 +263,8 @@ int main(int argc, char *argv[]) {
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
     Storage::DatabaseManager databaseManager(environment);
-    Microstocks::MicrostockAPIClients apiClients;
+    std::shared_ptr<Encryption::ISecretsStorage> secretsStorage(new libxpks::microstocks::APISecretsStorage());
+    Microstocks::MicrostockAPIClients apiClients(secretsStorage.get());
     Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
     Suggestion::KeywordsSuggestor keywordsSuggestor(apiClients, requestsService);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
