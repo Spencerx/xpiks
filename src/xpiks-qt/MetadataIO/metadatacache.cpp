@@ -17,14 +17,14 @@
 #include "../Storage/idatabasemanager.h"
 
 namespace MetadataIO {
-    CachedArtwork::CachedArtworkType queryFlagToCachedType(Common::flag_t queryFlag) {
+    CachedArtwork::CachedArtworkType queryFlagToCachedType(const Microstocks::SearchQuery &query) {
         CachedArtwork::CachedArtworkType searchType = CachedArtwork::Unknown;
 
-        if (Common::HasFlag(queryFlag, Microstocks::Photos)) {
+        if (query.getSearchPhotos()) {
             searchType = CachedArtwork::Image;
-        } else if (Common::HasFlag(queryFlag, Microstocks::Vectors)) {
+        } else if (query.getSearchVectors()) {
             searchType = CachedArtwork::Vector;
-        } else if (Common::HasFlag(queryFlag, Microstocks::Videos)) {
+        } else if (query.getSearchVideos()) {
             searchType = CachedArtwork::Video;
         }
 
@@ -171,8 +171,9 @@ namespace MetadataIO {
 
     void MetadataCache::search(const Microstocks::SearchQuery &query, QVector<CachedArtwork> &results) {
         Q_ASSERT(results.empty());
-        LOG_INTEGR_TESTS_OR_DEBUG << query.m_SearchTerms;
-        CachedArtwork::CachedArtworkType searchType = queryFlagToCachedType(query.m_Flags);
+        const auto &searchTerms = query.getSearchTerms();
+        LOG_INTEGR_TESTS_OR_DEBUG << searchTerms;
+        CachedArtwork::CachedArtworkType searchType = queryFlagToCachedType(query);
 
         m_DbCacheIndex->foreachRow([&](QByteArray &rawKey, QByteArray &rawValue) {
             CachedArtwork value;
@@ -186,7 +187,7 @@ namespace MetadataIO {
 
             bool hasMatch = false;
 
-            foreach (const QString &searchTerm, query.m_SearchTerms) {
+            foreach (const QString &searchTerm, searchTerms) {
                 if (value.m_Title.contains(searchTerm, Qt::CaseInsensitive)) {
                     hasMatch = true;
                     break;
@@ -213,7 +214,7 @@ namespace MetadataIO {
                 }
             }
 
-            const bool canContinue = results.size() < query.m_PageSize;
+            const bool canContinue = results.size() < query.getPageSize();
             return canContinue;
         });
 

@@ -36,7 +36,7 @@ namespace Suggestion {
     }
 
     void LocalLibraryQueryEngine::submitQuery(const Microstocks::SearchQuery &query) {
-        LOG_DEBUG << query.m_SearchTerms;
+        LOG_DEBUG << query.getSearchTerms();
         m_Query.setSearchQuery(query);
 
         m_MetadataIOService->searchArtworks(&m_Query);

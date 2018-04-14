@@ -39,13 +39,13 @@ namespace Microstocks {
         QUrlQuery urlQuery;
 
         urlQuery.addQueryItem("fields", "keywords,preview,title,id,caption");
-        urlQuery.addQueryItem("phrase", query.m_SearchTerms.join(' '));
-        urlQuery.addQueryItem("page", "1");
-        urlQuery.addQueryItem("page_size", QString::number(query.m_PageSize));
+        urlQuery.addQueryItem("phrase", query.getSearchTerms().join(' '));
+        urlQuery.addQueryItem("page", QString::number(query.getPageIndex() + 1));
+        urlQuery.addQueryItem("page_size", QString::number(query.getPageSize()));
         urlQuery.addQueryItem("sort_order", "most_popular");
 
-        if (!Common::HasFlag(query.m_Flags, Microstocks::AllImages)) {
-            urlQuery.addQueryItem("graphical_styles", resultsTypeToString(query.m_Flags));
+        if (!query.getSearchAllImages()) {
+            urlQuery.addQueryItem("graphical_styles", resultsTypeToString(query));
         }
 
         QUrl url;
@@ -54,10 +54,10 @@ namespace Microstocks {
         return url;
     }
 
-    QString GettyAPIClient::resultsTypeToString(Common::flag_t queryFlags) const {
-        if (Common::HasFlag(queryFlags, Microstocks::Photos)) { return QLatin1String("photography"); }
-        else if (Common::HasFlag(queryFlags, Microstocks::Vectors)) { return QLatin1String("illustration"); }
-        else if (Common::HasFlag(queryFlags, Microstocks::Illustrations)) { return QLatin1String("fine_art"); }
+    QString GettyAPIClient::resultsTypeToString(const SearchQuery &query) const {
+        if (query.getSearchPhotos()) { return QLatin1String("photography"); }
+        else if (query.getSearchVectors()) { return QLatin1String("illustration"); }
+        else if (query.getSearchIllustrations()) { return QLatin1String("fine_art"); }
         else { return QString(); }
     }
 }

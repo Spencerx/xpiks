@@ -37,15 +37,20 @@ QUrl Microstocks::FotoliaAPIClient::buildSearchQuery(const QString &apiKey, cons
 
     urlQuery.addQueryItem("search_parameters[language_id]", "2");
     urlQuery.addQueryItem("search_parameters[thumbnail_size]", "160");
-    urlQuery.addQueryItem("search_parameters[limit]", QString::number(query.m_PageSize));
+    urlQuery.addQueryItem("search_parameters[limit]", QString::number(query.getPageSize()));
+    urlQuery.addQueryItem("search_parameters[offset]", QString::number(query.getPageSize() * query.getPageIndex()));
+    /*
+    relevance | price_1 | creation | nb_views | nb_downloads
+    Relevance | price ASC | creation date DESC | number of views DESC | number of downloads DESC
+     */
     urlQuery.addQueryItem("search_parameters[order]", "nb_downloads");
-    urlQuery.addQueryItem("search_parameters[words]", query.m_SearchTerms.join(' '));
+    urlQuery.addQueryItem("search_parameters[words]", query.getSearchTerms().join(' '));
     urlQuery.addQueryItem("result_columns[0]", "nb_results");
     urlQuery.addQueryItem("result_columns[1]", "title");
     urlQuery.addQueryItem("result_columns[2]", "keywords");
     urlQuery.addQueryItem("result_columns[3]", "thumbnail_url");
     urlQuery.addQueryItem("result_columns[4]", "id");
-    urlQuery.addQueryItem(resultsTypeToString(query.m_Flags), "1");
+    urlQuery.addQueryItem(resultsTypeToString(query), "1");
 
     QUrl url;
     url.setUrl(QLatin1String("http://api.fotolia.com/Rest/1/search/getSearchResults"));
@@ -55,10 +60,10 @@ QUrl Microstocks::FotoliaAPIClient::buildSearchQuery(const QString &apiKey, cons
     return url;
 }
 
-QString Microstocks::FotoliaAPIClient::resultsTypeToString(Common::flag_t queryFlags) const {
-    if (Common::HasFlag(queryFlags, Microstocks::AllImages)) { return QLatin1String("search_parameters[filters][content_type:all]"); }
-    else if (Common::HasFlag(queryFlags, Microstocks::Photos)) { return QLatin1String("search_parameters[filters][content_type:photo]"); }
-    else if (Common::HasFlag(queryFlags, Microstocks::Vectors)) { return QLatin1String("search_parameters[filters][content_type:vector]"); }
-    else if (Common::HasFlag(queryFlags, Microstocks::Illustrations)) { return QLatin1String("search_parameters[filters][content_type:illustration]"); }
+QString Microstocks::FotoliaAPIClient::resultsTypeToString(const SearchQuery &query) const {
+    if (query.getSearchAllImages()) { return QLatin1String("search_parameters[filters][content_type:all]"); }
+    else if (query.getSearchPhotos()) { return QLatin1String("search_parameters[filters][content_type:photo]"); }
+    else if (query.getSearchVectors()) { return QLatin1String("search_parameters[filters][content_type:vector]"); }
+    else if (query.getSearchIllustrations()) { return QLatin1String("search_parameters[filters][content_type:illustration]"); }
     else { return QString(); }
 }

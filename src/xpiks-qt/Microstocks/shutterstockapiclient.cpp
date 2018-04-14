@@ -23,7 +23,7 @@ namespace Microstocks {
     }
 
     std::shared_ptr<Connectivity::IConnectivityRequest> ShutterstockAPIClient::search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
-        LOG_INFO << query.m_SearchTerms;
+        LOG_INFO << query.getSearchTerms();
         QUrl url = buildSearchQuery(query);
 
         Encryption::SecretPair clientID, clientSecret;
@@ -47,13 +47,14 @@ namespace Microstocks {
         QUrlQuery urlQuery;
 
         urlQuery.addQueryItem("language", "en");
-        urlQuery.addQueryItem("view", "full");
-        urlQuery.addQueryItem("per_page", QString::number(query.m_PageSize));
+        urlQuery.addQueryItem("view", query.getFullSearch() ? QLatin1String("full") : QLatin1String("minimal"));
+        urlQuery.addQueryItem("per_page", QString::number(query.getPageSize()));
+        urlQuery.addQueryItem("page", QString::number(query.getPageIndex() + 1));
         urlQuery.addQueryItem("sort", "popular");
-        urlQuery.addQueryItem("query", query.m_SearchTerms.join(' '));
+        urlQuery.addQueryItem("query", query.getSearchTerms().join(' '));
 
-        if (!Common::HasFlag(query.m_Flags, Microstocks::AllImages)) {
-            urlQuery.addQueryItem("image_type", resultsTypeToString(query.m_Flags));
+        if (!query.getSearchAllImages()) {
+            urlQuery.addQueryItem("image_type", resultsTypeToString(query));
         }
 
         QUrl url;
@@ -62,10 +63,10 @@ namespace Microstocks {
         return url;
     }
 
-    QString ShutterstockAPIClient::resultsTypeToString(Common::flag_t queryFlags) const {
-        if (Common::HasFlag(queryFlags, Microstocks::Photos)) { return QLatin1String("photo"); }
-        else if (Common::HasFlag(queryFlags, Microstocks::Vectors)) { return QLatin1String("vector"); }
-        else if (Common::HasFlag(queryFlags, Microstocks::Illustrations)) { return QLatin1String("illustration"); }
+    QString ShutterstockAPIClient::resultsTypeToString(const SearchQuery &query) const {
+        if (query.getSearchPhotos()) { return QLatin1String("photo"); }
+        else if (query.getSearchVectors()) { return QLatin1String("vector"); }
+        else if (query.getSearchIllustrations()) { return QLatin1String("illustration"); }
         else { return QString(); }
     }
 }

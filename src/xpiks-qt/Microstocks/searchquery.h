@@ -16,24 +16,42 @@
 #include "../Common/flags.h"
 
 namespace Microstocks {
-    enum QueryFlags {
-        AllImages = 1 << 0,
-        Photos = 1 << 1,
-        Vectors = 1 << 2,
-        Illustrations = 1 << 3,
-        Videos = 1 << 4
-    };
+    class SearchQuery {
+    private:
+        enum QueryFlags {
+            FlagAllImages = 1 << 0,
+            FlagPhotos = 1 << 1,
+            FlagVectors = 1 << 2,
+            FlagIllustrations = 1 << 3,
+            FlagVideos = 1 << 4,
+            FlagFullSearch = 1 << 5
+        };
 
-    struct SearchQuery {
+    private:
+        inline bool getAllImagesFlag() const { return Common::HasFlag(m_Flags, FlagAllImages); }
+        inline bool getPhotosFlag() const { return Common::HasFlag(m_Flags, FlagPhotos); }
+        inline bool getVectorsFlag() const { return Common::HasFlag(m_Flags, FlagVectors); }
+        inline bool getIllustrationsFlag() const { return Common::HasFlag(m_Flags, FlagIllustrations); }
+        inline bool getVideosFlag() const { return Common::HasFlag(m_Flags, FlagVideos); }
+        inline bool getFullSearchFlag() const { return Common::HasFlag(m_Flags, FlagFullSearch); }
+
+        inline void setAllImagesFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagAllImages); }
+        inline void setPhotosFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagPhotos); }
+        inline void setVectorsFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagVectors); }
+        inline void setIllustrationsFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagIllustrations); }
+        inline void setVideosFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagVideos); }
+        inline void setFullSearchFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagFullSearch); }
+
+    public:
         SearchQuery():
             m_Flags(0),
-            m_PageOffset(1),
+            m_PageIndex(0),
             m_PageSize(100)
         {}
 
         SearchQuery(const QString &searchTerm, int resultType, int maxResults):
             m_Flags(0),
-            m_PageOffset(0),
+            m_PageIndex(0),
             m_PageSize(maxResults)
         {
             // "All Images"
@@ -45,28 +63,40 @@ namespace Microstocks {
 
             switch (resultType) {
             case 0:
-                Common::SetFlag(m_Flags, AllImages);
+                setAllImagesFlag(true);
                 break;
             case 1:
-                Common::SetFlag(m_Flags, Photos);
+                setPhotosFlag(true);
                 break;
             case 2:
-                Common::SetFlag(m_Flags, Vectors);
+                setVectorsFlag(true);
                 break;
             case 3:
-                Common::SetFlag(m_Flags, Illustrations);
+                setIllustrationsFlag(true);
                 break;
             case 4:
-                Common::SetFlag(m_Flags, Videos);
+                setVideosFlag(true);
                 break;
             default:
                 break;
             }
         }
 
+    public:
+        const QStringList &getSearchTerms() const { return m_SearchTerms; }
+        int getPageSize() const { return m_PageSize; }
+        int getPageIndex() const { return m_PageIndex; }
+        bool getFullSearch() const { return getFullSearchFlag(); }
+        bool getSearchAllImages() const { return getAllImagesFlag(); }
+        bool getSearchPhotos() const { return getPhotosFlag(); }
+        bool getSearchVectors() const { return getVectorsFlag(); }
+        bool getSearchIllustrations() const { return getIllustrationsFlag(); }
+        bool getSearchVideos() const { return getVideosFlag(); }
+
+    private:
         QStringList m_SearchTerms;
         Common::flag_t m_Flags;
-        int m_PageOffset;
+        int m_PageIndex;
         int m_PageSize;
     };
 }
