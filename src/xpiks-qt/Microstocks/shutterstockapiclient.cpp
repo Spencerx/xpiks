@@ -50,7 +50,7 @@ namespace Microstocks {
         urlQuery.addQueryItem("view", query.getFullSearch() ? QLatin1String("full") : QLatin1String("minimal"));
         urlQuery.addQueryItem("per_page", QString::number(query.getPageSize()));
         urlQuery.addQueryItem("page", QString::number(query.getPageIndex() + 1));
-        urlQuery.addQueryItem("sort", "popular");
+        urlQuery.addQueryItem("sort", orderingToString(query));
         urlQuery.addQueryItem("query", query.getSearchQuery());
 
         if (!query.getSearchAllImages()) {
@@ -67,6 +67,13 @@ namespace Microstocks {
         if (query.getSearchPhotos()) { return QLatin1String("photo"); }
         else if (query.getSearchVectors()) { return QLatin1String("vector"); }
         else if (query.getSearchIllustrations()) { return QLatin1String("illustration"); }
+        else { return QString(); }
+    }
+
+    QString ShutterstockAPIClient::orderingToString(const SearchQuery &query) const {
+        if (query.getOrderNewest()) { return QLatin1String("newest"); }
+        else if (query.getOrderRelevance()) { return QLatin1String("relevance"); }
+        else if (query.getOrderPopular()) { return QLatin1String("popular"); }
         else { return QString(); }
     }
 }

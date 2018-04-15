@@ -28,6 +28,7 @@ namespace Microstocks {
     private:
         QUrl buildSearchQuery(const SearchQuery &query) const;
         QString resultsTypeToString(const SearchQuery &query) const;
+        QString orderingToString(const SearchQuery &query) const;
 
     private:
         Encryption::ISecretsStorage *m_SecretsStorage;

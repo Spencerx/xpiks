@@ -39,11 +39,7 @@ QUrl Microstocks::FotoliaAPIClient::buildSearchQuery(const QString &apiKey, cons
     urlQuery.addQueryItem("search_parameters[thumbnail_size]", "160");
     urlQuery.addQueryItem("search_parameters[limit]", QString::number(query.getPageSize()));
     urlQuery.addQueryItem("search_parameters[offset]", QString::number(query.getPageSize() * query.getPageIndex()));
-    /*
-    relevance | price_1 | creation | nb_views | nb_downloads
-    Relevance | price ASC | creation date DESC | number of views DESC | number of downloads DESC
-     */
-    urlQuery.addQueryItem("search_parameters[order]", "nb_downloads");
+    urlQuery.addQueryItem("search_parameters[order]", orderingToString(query));
     urlQuery.addQueryItem("search_parameters[words]", query.getSearchQuery());
     urlQuery.addQueryItem("result_columns[0]", "nb_results");
     urlQuery.addQueryItem("result_columns[1]", "title");
@@ -65,5 +61,16 @@ QString Microstocks::FotoliaAPIClient::resultsTypeToString(const SearchQuery &qu
     else if (query.getSearchPhotos()) { return QLatin1String("search_parameters[filters][content_type:photo]"); }
     else if (query.getSearchVectors()) { return QLatin1String("search_parameters[filters][content_type:vector]"); }
     else if (query.getSearchIllustrations()) { return QLatin1String("search_parameters[filters][content_type:illustration]"); }
+    else { return QString(); }
+}
+
+QString Microstocks::FotoliaAPIClient::orderingToString(const Microstocks::SearchQuery &query) const {
+    /*
+     * relevance | price_1 | creation | nb_views | nb_downloads
+     * Relevance | price ASC | creation date DESC | number of views DESC | number of downloads DESC
+    */
+    if (query.getOrderNewest()) { return QLatin1String("creation"); }
+    else if (query.getOrderRelevance()) { return QLatin1String("relevance"); }
+    else if (query.getOrderPopular()) { return QLatin1String("nb_downloads"); }
     else { return QString(); }
 }

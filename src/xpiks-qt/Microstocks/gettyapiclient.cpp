@@ -37,12 +37,13 @@ namespace Microstocks {
 
     QUrl GettyAPIClient::buildSearchQuery(const SearchQuery &query) const {
         QUrlQuery urlQuery;
+        // http://developers.gettyimages.com/api/
 
         urlQuery.addQueryItem("fields", "keywords,preview,title,id,caption");
         urlQuery.addQueryItem("phrase", query.getSearchQuery());
         urlQuery.addQueryItem("page", QString::number(query.getPageIndex() + 1));
         urlQuery.addQueryItem("page_size", QString::number(query.getPageSize()));
-        urlQuery.addQueryItem("sort_order", "most_popular");
+        urlQuery.addQueryItem("sort_order", orderingToString(query));
 
         if (!query.getSearchAllImages()) {
             urlQuery.addQueryItem("graphical_styles", resultsTypeToString(query));
@@ -58,6 +59,14 @@ namespace Microstocks {
         if (query.getSearchPhotos()) { return QLatin1String("photography"); }
         else if (query.getSearchVectors()) { return QLatin1String("illustration"); }
         else if (query.getSearchIllustrations()) { return QLatin1String("fine_art"); }
+        else { return QString(); }
+    }
+
+    QString GettyAPIClient::orderingToString(const SearchQuery &query) const {
+        // http://developers.gettyimages.com/docs/#operation/Search_GetCreativeImagesByPhrase
+        if (query.getOrderNewest()) { return QLatin1String("newest"); }
+        else if (query.getOrderRelevance()) { return QLatin1String("best_match"); }
+        else if (query.getOrderPopular()) { return QLatin1String("most_popular"); }
         else { return QString(); }
     }
 }
