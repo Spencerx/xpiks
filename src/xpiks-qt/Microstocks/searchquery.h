@@ -46,7 +46,9 @@ namespace Microstocks {
         inline void setSynchronousFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagSynchronous); }
 
     public:
-        SearchQuery() { }
+        SearchQuery()
+        {
+        }
 
         SearchQuery(const QString &searchQuery, Common::flag_t flags, int pageIndex=0, int pageSize=100):
             m_Flags(flags),
@@ -65,6 +67,7 @@ namespace Microstocks {
             // "Illustrations"
 
             m_SearchQuery = searchQuery.simplified();
+            setFullSearchFlag(true);
 
             switch (resultType) {
             case 0:
@@ -101,7 +104,7 @@ namespace Microstocks {
 
     private:
         QString m_SearchQuery;
-        Common::flag_t m_Flags = FlagAllImages | FlagFullSearch;
+        Common::flag_t m_Flags = 0;
         int m_PageIndex = 0;
         int m_PageSize = 100;
     };
