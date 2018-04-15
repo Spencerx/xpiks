@@ -109,13 +109,13 @@ namespace Microstocks {
         void checkValid() {
             Q_ASSERT(((getOrderNewestFlag() ? 1 : 0) +
                       (getOrderRelevanceFlag() ? 1 : 0) +
-                      (getOrderPopularFlag() ? 1 : 0)) == 1);
+                      (getOrderPopularFlag() ? 1 : 0)) <= 1);
 
             Q_ASSERT(((getSearchAllImages() ? 1 : 0) +
                       (getSearchIllustrations() ? 1 : 0) +
                       (getSearchPhotos() ? 1 : 0) +
                       (getSearchVectors() ? 1 : 0) +
-                      (getSearchVideos() ? 1 : 0)) == 1);
+                      (getSearchVideos() ? 1 : 0)) <= 1);
         }
 
     public:
