@@ -168,7 +168,7 @@ namespace Helpers {
 
     QString HelpersQmlWrapper::getAssetForTheme(const QString &assetName, int themeIndex) const {
         QString themeName = m_ColorsModel->getThemeName(themeIndex);
-        themeName.remove(QChar(' '));
+        themeName.remove(QChar::Space);
         QString result = QString("qrc:/Graphics/%1/%2").arg(themeName.toLower()).arg(assetName);
         return result;
     }

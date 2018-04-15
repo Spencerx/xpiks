@@ -13,32 +13,49 @@
 
 #include <QObject>
 #include <QString>
-#include "suggestionqueryenginebase.h"
 #include "locallibraryquery.h"
+#include "isuggestionengine.h"
+#include "../Microstocks/searchquery.h"
 
 namespace MetadataIO {
     class MetadataIOService;
 }
 
 namespace Suggestion {
-    class LocalLibraryQueryEngine : public SuggestionQueryEngineBase
+    class LocalLibraryQueryEngine:
+            public QObject,
+            public ISuggestionEngine
     {
         Q_OBJECT
     public:
-        LocalLibraryQueryEngine(int engineID, MetadataIO::MetadataIOService *metadataIOService);
+        LocalLibraryQueryEngine(int engineID,
+                                MetadataIO::MetadataIOService *metadataIOService);
 
-        // ISuggestionQueryEngine interface
     public:
-        virtual int getMaxResults() const override { return 200; }
-        virtual void submitQuery(const SearchQuery &query) override;
+        virtual void setSuggestions(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestions) override;
+        virtual std::vector<std::shared_ptr<SuggestionArtwork> > &getSuggestions() override { return m_Suggestions; }
+
+        // ISuggestionEngine interface
+    public:
         virtual QString getName() const override { return tr("Local files"); }
+        virtual int getID() const override { return m_EngineID; }
+        virtual int getMaxResultsPerPage() const override { return 200; }
+
+    public:
+        virtual void submitQuery(const Microstocks::SearchQuery &query) override;
+        virtual void cancelQuery() override { /* BUMP */ }
 
     private slots:
         void resultsFoundHandler();
 
+    signals:
+        void resultsAvailable();
+
     private:
+        int m_EngineID;
         LocalLibraryQuery m_Query;
         MetadataIO::MetadataIOService *m_MetadataIOService;
+        std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
     };
 }
 

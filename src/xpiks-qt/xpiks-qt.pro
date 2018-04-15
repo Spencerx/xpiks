@@ -78,16 +78,13 @@ SOURCES += main.cpp \
     Models/languagesmodel.cpp \
     Helpers/filterhelpers.cpp \
     QMLExtensions/triangleelement.cpp \
-    Suggestion/shutterstockqueryengine.cpp \
     Suggestion/locallibraryqueryengine.cpp \
-    Suggestion/fotoliaqueryengine.cpp \
     QMLExtensions/colorsmodel.cpp \
     Helpers/remoteconfig.cpp \
     Helpers/localconfig.cpp \
     Helpers/jsonhelper.cpp \
     AutoComplete/autocompleteworker.cpp \
     AutoComplete/autocompleteservice.cpp \
-    Suggestion/gettyqueryengine.cpp \
     Models/abstractconfigupdatermodel.cpp \
     AutoComplete/stocksftplistmodel.cpp \
     Models/imageartwork.cpp \
@@ -162,7 +159,6 @@ SOURCES += main.cpp \
     MetadataIO/metadataioworker.cpp \
     MetadataIO/metadataioservice.cpp \
     MetadataIO/artworkssnapshot.cpp \
-    Connectivity/connectivityrequest.cpp \
     MetadataIO/metadatareadinghub.cpp \
     AutoComplete/libfacecompletionengine.cpp \
     AutoComplete/autocompletemodel.cpp \
@@ -187,7 +183,16 @@ SOURCES += main.cpp \
     Common/systemenvironment.cpp \
     Plugins/pluginenvironment.cpp \
     Plugins/plugindatabasemanager.cpp \
-    Storage/databasemanager.cpp
+    Storage/databasemanager.cpp \
+    Connectivity/configrequest.cpp \
+    Suggestion/suggestionresultsresponse.cpp \
+    Microstocks/shutterstockapiclient.cpp \
+    Microstocks/fotoliaapiclient.cpp \
+    Microstocks/gettyapiclient.cpp \
+    Suggestion/shutterstocksuggestionengine.cpp \
+    Suggestion/fotoliasuggestionengine.cpp \
+    Suggestion/gettysuggestionengine.cpp \
+    Microstocks/microstockservice.cpp
 
 RESOURCES += qml.qrc
 
@@ -297,11 +302,8 @@ HEADERS += \
     Helpers/filterhelpers.h \
     Connectivity/iftpcoordinator.h \
     QMLExtensions/triangleelement.h \
-    Suggestion/shutterstockqueryengine.h \
     Suggestion/locallibraryqueryengine.h \
-    Suggestion/suggestionqueryenginebase.h \
     Helpers/ifilenotavailablemodel.h \
-    Suggestion/fotoliaqueryengine.h \
     QMLExtensions/colorsmodel.h \
     Helpers/remoteconfig.h \
     Helpers/localconfig.h \
@@ -310,7 +312,6 @@ HEADERS += \
     AutoComplete/autocompleteworker.h \
     AutoComplete/completionquery.h \
     AutoComplete/autocompleteservice.h \
-    Suggestion/gettyqueryengine.h \
     Models/abstractconfigupdatermodel.h \
     AutoComplete/stocksftplistmodel.h \
     Models/imageartwork.h \
@@ -402,10 +403,9 @@ HEADERS += \
     MetadataIO/metadataiotask.h \
     MetadataIO/metadataioservice.h \
     MetadataIO/originalmetadata.h \
-    Suggestion/searchquery.h \
+    Microstocks/searchquery.h \
     Suggestion/locallibraryquery.h \
     MetadataIO/artworkssnapshot.h \
-    Connectivity/connectivityrequest.h \
     MetadataIO/metadatareadinghub.h \
     AutoComplete/completionenginebase.h \
     AutoComplete/libfacecompletionengine.h \
@@ -442,7 +442,29 @@ HEADERS += \
     Helpers/jsonobjectmap.h \
     Storage/databasemanager.h \
     Storage/idatabase.h \
-    Storage/writeaheadlog.h
+    Storage/writeaheadlog.h \
+    Connectivity/iconnectivityrequest.h \
+    Connectivity/configrequest.h \
+    Connectivity/iconnectivityresponse.h \
+    Suggestion/suggestionresultsresponse.h \
+    Microstocks/imicrostockapiclient.h \
+    Microstocks/shutterstockapiclient.h \
+    Connectivity/simpleapirequest.h \
+    Suggestion/microstocksuggestionengine.h \
+    Suggestion/isuggestionsrepository.h \
+    Suggestion/isuggestionengine.h \
+    Microstocks/fotoliaapiclient.h \
+    Microstocks/gettyapiclient.h \
+    Microstocks/microstockapiclients.h \
+    Suggestion/shutterstocksuggestionengine.h \
+    Suggestion/fotoliasuggestionengine.h \
+    Suggestion/gettysuggestionengine.h \
+    Microstocks/imicrostockservice.h \
+    Microstocks/microstockservice.h \
+    Microstocks/imicrostockservices.h \
+    Encryption/secretpair.h \
+    Encryption/isecretsstorage.h \
+    Microstocks/apisecrets.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
@@ -717,16 +739,6 @@ travis-ci {
     LIBS += -ldl
     DEFINES += TRAVIS_CI
     INCLUDEPATH += "../../vendors/quazip"
-
-    LIBS -= -lthmbnlr
-    SOURCES += ../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
-
-    # Travis does not have proper libthmbnlr for now
-    LIBS -= -lavcodec
-    LIBS -= -lavfilter
-    LIBS -= -lavformat
-    LIBS -= -lavutil
-    LIBS -= -lswscale
 }
 
 linux-qtcreator {
@@ -745,6 +757,25 @@ linux-static {
     QTPLUGIN += qt5quick
     DEFINES += STATIC
     message("Static build.")
+}
+
+without-video {
+    message("Without video")
+
+    LIBS -= -lavcodec
+    LIBS -= -lavfilter
+    LIBS -= -lavformat
+    LIBS -= -lavutil
+    LIBS -= -lswscale
+
+    LIBS -= -lavcodec.57
+    LIBS -= -lavfilter.6
+    LIBS -= -lavformat.57
+    LIBS -= -lavutil.55
+    LIBS -= -lswscale.4
+
+    LIBS -= -lthmbnlr
+    SOURCES += ../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
 }
 
 DEFINES += BUILDNUMBER=$${BUILDNO}

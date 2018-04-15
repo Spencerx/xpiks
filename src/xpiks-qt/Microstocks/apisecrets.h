@@ -8,11 +8,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "connectivityrequest.h"
-#include "../Helpers/remoteconfig.h"
+#ifndef APISECRETS_H
+#define APISECRETS_H
 
-namespace Connectivity {
-    void ConnectivityRequest::setResponse(const QByteArray &responseData) {
-        m_RemoteConfig->setRemoteResponse(responseData);
-    }
+namespace Microstocks {
+    enum APISecrets {
+        ShutterstockClientID,
+        ShutterstockClientSecret,
+        FotoliaAPIKey,
+        GettyAPIKey
+    };
 }
+
+#endif // APISECRETS_H

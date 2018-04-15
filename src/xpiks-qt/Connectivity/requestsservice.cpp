@@ -19,16 +19,19 @@
 #define NO_CACHE_ATTRIBUTE true
 
 namespace Connectivity {
-    RequestsService::RequestsService(QObject *parent):
+    RequestsService::RequestsService(Models::ProxySettings *proxySettings, QObject *parent):
         QObject(parent),
-        m_IsStopped(false)
+        m_RequestsWorker(nullptr),
+        m_ProxySettings(proxySettings)
     {
-        m_RequestsWorker = new RequestsWorker();
+        Q_ASSERT(proxySettings != nullptr);
     }
 
     void RequestsService::startService() {
-        Q_ASSERT(!m_RequestsWorker->isRunning());
+        Q_ASSERT(m_RequestsWorker == nullptr);
         LOG_DEBUG << "#";
+
+        m_RequestsWorker = new RequestsWorker(m_ProxySettings);
 
         QThread *thread = new QThread();
         m_RequestsWorker->moveToThread(thread);
@@ -44,36 +47,59 @@ namespace Connectivity {
 
         QObject::connect(m_RequestsWorker, &RequestsWorker::stopped,
                          this, &RequestsService::workerFinished);
+        QObject::connect(m_RequestsWorker, &RequestsWorker::destroyed,
+                         this, &RequestsService::workerDestroyed);
 
         thread->start(/*QThread::LowPriority*/);
     }
 
     void RequestsService::stopService() {
         LOG_DEBUG << "#";
+        Q_ASSERT(m_RequestsWorker != nullptr);
         m_RequestsWorker->stopWorking();
-        m_IsStopped = true;
     }
 
     void RequestsService::receiveConfig(const QString &url, Helpers::RemoteConfig *config) {
-        if (m_IsStopped) {
+        LOG_DEBUG << "#";
+
+        if (m_RequestsWorker == nullptr) {
             LOG_DEBUG << "Skipping" << url << ". Service is stopped";
             return;
         }
 
-        LOG_INFO << url;
-        Models::ProxySettings *proxySettings = getProxySettings();
-
-        std::shared_ptr<ConnectivityRequest> item(new ConnectivityRequest(config, url, proxySettings, NO_CACHE_ATTRIBUTE));
+        std::shared_ptr<IConnectivityRequest> item(new ConfigRequest(config, url, NO_CACHE_ATTRIBUTE));
         m_RequestsWorker->submitItem(item);
     }
 
-    Models::ProxySettings *RequestsService::getProxySettings() const {
-        Models::SettingsModel *settings = m_CommandManager->getSettingsModel();
-        Models::ProxySettings *proxySettings = settings->retrieveProxySettings();
-        return proxySettings;
+    void RequestsService::sendRequest(const std::shared_ptr<IConnectivityRequest> &request) {
+        LOG_DEBUG << "#";
+
+        if (m_RequestsWorker == nullptr) {
+            LOG_DEBUG << "Skipping request. Service is stopped";
+            return;
+        }
+
+        m_RequestsWorker->submitItem(request);
+    }
+
+    void RequestsService::sendRequestSync(std::shared_ptr<IConnectivityRequest> &request) {
+        LOG_DEBUG << "#";
+
+        if (m_RequestsWorker == nullptr) {
+            LOG_DEBUG << "Skipping request. Service is stopped";
+            return;
+        }
+
+        m_RequestsWorker->sendRequestSync(request);
     }
 
     void RequestsService::workerFinished() {
         LOG_DEBUG << "#";
+    }
+
+    void RequestsService::workerDestroyed(QObject *object) {
+        LOG_DEBUG << "#";
+        Q_UNUSED(object);
+        m_RequestsWorker = nullptr;
     }
 }

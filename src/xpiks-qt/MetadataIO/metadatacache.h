@@ -15,7 +15,7 @@
 #include <QReadWriteLock>
 #include "../Storage/idatabase.h"
 #include "cachedartwork.h"
-#include "../Suggestion/searchquery.h"
+#include "../Microstocks/searchquery.h"
 #include "../Storage/writeaheadlog.h"
 
 namespace Models {
@@ -69,7 +69,7 @@ namespace MetadataIO {
         void save(Models::ArtworkMetadata *metadata, bool overwrite = true);
 
     public:
-        void search(const Suggestion::SearchQuery &query, QVector<CachedArtwork> &results);
+        void search(const Microstocks::SearchQuery &query, QVector<CachedArtwork> &results);
 
     private:
         void flushWAL();

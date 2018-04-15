@@ -66,6 +66,9 @@
 #include "../../xpiks-qt/Helpers/filehelpers.h"
 #include "../../xpiks-qt/Common/systemenvironment.h"
 #include "../../xpiks-qt/Models/uimanager.h"
+#include "../../xpiks-qt/Microstocks/microstockapiclients.h"
+#include "../../xpiks-qt/Encryption/isecretsstorage.h"
+#include <apisecretsstorage.h>
 
 #include "exiv2iohelpers.h"
 
@@ -260,7 +263,10 @@ int main(int argc, char *argv[]) {
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
     Storage::DatabaseManager databaseManager(environment);
-    Suggestion::KeywordsSuggestor keywordsSuggestor;
+    std::shared_ptr<Encryption::ISecretsStorage> secretsStorage(new libxpks::microstocks::APISecretsStorage());
+    Microstocks::MicrostockAPIClients apiClients(secretsStorage.get());
+    Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
+    Suggestion::KeywordsSuggestor keywordsSuggestor(apiClients, requestsService);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
     Models::RecentDirectoriesModel recentDirectorieModel;
@@ -287,7 +293,6 @@ int main(int argc, char *argv[]) {
     // intentional memory leak to beat spellcheck lock stuff
     QuickBuffer::QuickBuffer quickBuffer;
     Maintenance::MaintenanceService maintenanceService(environment);
-    Connectivity::RequestsService requestsService;
 
     QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
@@ -297,7 +302,7 @@ int main(int argc, char *argv[]) {
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
     Connectivity::TelemetryService telemetryService("1234567890", false);
-    Plugins::PluginManager pluginManager(environment, &databaseManager);
+    Plugins::PluginManager pluginManager(environment, &databaseManager, requestsService, apiClients);
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel(environment);    
 

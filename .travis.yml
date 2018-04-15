@@ -65,7 +65,7 @@ script:
   - ls -la ../libs/*
   - echo "-------"
   - cd xpiks-qt/
-  - qmake "CONFIG+= debug travis-ci" xpiks-qt.pro
+  - qmake "CONFIG+= debug travis-ci without-video" xpiks-qt.pro
   - build-wrapper-linux-x86-64 --out-dir bw-output make
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
   - sonar-scanner

@@ -19,8 +19,9 @@
 #define MAX_LOCAL_RESULTS 200
 
 namespace Suggestion {
-    LocalLibraryQueryEngine::LocalLibraryQueryEngine(int engineID, MetadataIO::MetadataIOService *metadataIOService):
-        SuggestionQueryEngineBase(engineID),
+    LocalLibraryQueryEngine::LocalLibraryQueryEngine(int engineID,
+                                                     MetadataIO::MetadataIOService *metadataIOService):
+        m_EngineID(engineID),
         m_MetadataIOService(metadataIOService)
     {
         Q_ASSERT(metadataIOService != nullptr);
@@ -29,14 +30,20 @@ namespace Suggestion {
                          this, &LocalLibraryQueryEngine::resultsFoundHandler);
     }
 
-    void LocalLibraryQueryEngine::submitQuery(const SearchQuery &query) {
-        LOG_DEBUG << query.m_SearchTerms;
+    void LocalLibraryQueryEngine::setSuggestions(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestions) {
+        m_Suggestions = std::move(suggestions);
+        emit resultsAvailable();
+    }
+
+    void LocalLibraryQueryEngine::submitQuery(const Microstocks::SearchQuery &query) {
+        LOG_DEBUG << query.getSearchQuery();
         m_Query.setSearchQuery(query);
 
         m_MetadataIOService->searchArtworks(&m_Query);
     }
 
     void LocalLibraryQueryEngine::resultsFoundHandler() {
+        LOG_DEBUG << "#";
         std::vector<std::shared_ptr<SuggestionArtwork> > results;
 
         auto &cachedArtworks = m_Query.getResults();
@@ -44,8 +51,7 @@ namespace Suggestion {
             results.emplace_back(new SuggestionArtwork(artwork.m_Filepath, artwork.m_Title, artwork.m_Description, artwork.m_Keywords, true));
         }
 
-        setResults(results);
-        cachedArtworks.clear();
-        emit resultsAvailable();
+        setSuggestions(results);
+        m_Query.clear();
     }
 }
