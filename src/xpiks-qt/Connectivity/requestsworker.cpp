@@ -20,12 +20,17 @@ namespace Connectivity {
         Q_ASSERT(proxySettings != nullptr);
     }
 
+    void RequestsWorker::sendRequestSync(std::shared_ptr<IConnectivityRequest> &item) {
+        LOG_DEBUG << "#";
+        sendRequest(item);
+    }
+
     bool RequestsWorker::initWorker() {
         LOG_DEBUG << "#";
         return true;
     }
 
-    void RequestsWorker::processOneItem(std::shared_ptr<IConnectivityRequest> &item) {
+    void RequestsWorker::sendRequest(std::shared_ptr<IConnectivityRequest> &item) {
         auto url = item->getResourceURL();
         LOG_INFO << "Request:" << url;
 
@@ -34,7 +39,7 @@ namespace Connectivity {
         request.addRawHeaders(item->getRawHeaders());
 
         Common::flag_t flags = item->getFlags();
-        if (Common::HasFlag(flags, RequestFlags::NoCache)) {
+        if (Common::HasFlag(flags, IConnectivityRequest::NoCache)) {
             request.addRawHeaders(QStringList() << "Cache-Control: no-cache");
         }
 

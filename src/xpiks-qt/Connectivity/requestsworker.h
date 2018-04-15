@@ -26,9 +26,15 @@ namespace Connectivity {
     public:
         explicit RequestsWorker(Models::ProxySettings *proxySettings, QObject *parent = 0);
 
+    public:
+        void sendRequestSync(std::shared_ptr<IConnectivityRequest> &item);
+
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItem(std::shared_ptr<IConnectivityRequest> &item) override;
+        virtual void processOneItem(std::shared_ptr<IConnectivityRequest> &item) override { sendRequest(item); }
+
+    private:
+        void sendRequest(std::shared_ptr<IConnectivityRequest> &item);
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }

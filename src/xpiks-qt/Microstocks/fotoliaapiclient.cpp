@@ -44,7 +44,7 @@ QUrl Microstocks::FotoliaAPIClient::buildSearchQuery(const QString &apiKey, cons
     Relevance | price ASC | creation date DESC | number of views DESC | number of downloads DESC
      */
     urlQuery.addQueryItem("search_parameters[order]", "nb_downloads");
-    urlQuery.addQueryItem("search_parameters[words]", query.getSearchTerms().join(' '));
+    urlQuery.addQueryItem("search_parameters[words]", query.getSearchQuery());
     urlQuery.addQueryItem("result_columns[0]", "nb_results");
     urlQuery.addQueryItem("result_columns[1]", "title");
     urlQuery.addQueryItem("result_columns[2]", "keywords");

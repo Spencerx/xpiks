@@ -20,6 +20,10 @@ namespace Microstocks {
 
     void MicrostockService::search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
         std::shared_ptr<Connectivity::IConnectivityRequest> request = m_ApiClient->search(query, response);
-        m_RequestsService.sendRequest(request);
+        if (query.getSynchronous()) {
+            m_RequestsService.sendRequestSync(request);
+        } else {
+            m_RequestsService.sendRequest(request);
+        }
     }
 }

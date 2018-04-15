@@ -171,7 +171,7 @@ namespace MetadataIO {
 
     void MetadataCache::search(const Microstocks::SearchQuery &query, QVector<CachedArtwork> &results) {
         Q_ASSERT(results.empty());
-        const auto &searchTerms = query.getSearchTerms();
+        QStringList searchTerms = query.getSearchQuery().split(QChar::Space, QString::SkipEmptyParts);
         LOG_INTEGR_TESTS_OR_DEBUG << searchTerms;
         CachedArtwork::CachedArtworkType searchType = queryFlagToCachedType(query);
 

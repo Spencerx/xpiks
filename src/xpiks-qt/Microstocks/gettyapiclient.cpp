@@ -39,7 +39,7 @@ namespace Microstocks {
         QUrlQuery urlQuery;
 
         urlQuery.addQueryItem("fields", "keywords,preview,title,id,caption");
-        urlQuery.addQueryItem("phrase", query.getSearchTerms().join(' '));
+        urlQuery.addQueryItem("phrase", query.getSearchQuery());
         urlQuery.addQueryItem("page", QString::number(query.getPageIndex() + 1));
         urlQuery.addQueryItem("page_size", QString::number(query.getPageSize()));
         urlQuery.addQueryItem("sort_order", "most_popular");

@@ -21,7 +21,7 @@ namespace Connectivity {
         SimpleAPIRequest(const QString &url, const QStringList &headers, const std::shared_ptr<IConnectivityResponse> &response):
             m_URL(url),
             m_Headers(headers),
-            m_Flags(Connectivity::None),
+            m_Flags(IConnectivityRequest::None),
             m_Response(response)
         { }
 

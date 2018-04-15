@@ -35,7 +35,8 @@ namespace Connectivity {
             m_Flags(0)
         {
             Q_ASSERT(config != nullptr);
-            m_Flags = (Common::flag_t)(noCache ? Connectivity::NoCache : Connectivity::None);
+            m_Flags = (Common::flag_t)(noCache ? Connectivity::IConnectivityRequest::NoCache :
+                                                 Connectivity::IConnectivityRequest::None);
         }
 
         // IConnectivityRequest interface

@@ -17,12 +17,12 @@
 #include "iconnectivityresponse.h"
 
 namespace Connectivity {
-    enum RequestFlags {
-        None = 1 << 0,
-        NoCache = 1 << 1
-    };
-
     class IConnectivityRequest {
+    public:
+        enum RequestFlags {
+            None = 1 << 0,
+            NoCache = 1 << 1
+        };
     public:
         virtual ~IConnectivityRequest() {}
 

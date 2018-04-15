@@ -23,7 +23,7 @@ namespace Microstocks {
     }
 
     std::shared_ptr<Connectivity::IConnectivityRequest> ShutterstockAPIClient::search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
-        LOG_INFO << query.getSearchTerms();
+        LOG_INFO << query.getSearchQuery();
         QUrl url = buildSearchQuery(query);
 
         Encryption::SecretPair clientID, clientSecret;
@@ -51,7 +51,7 @@ namespace Microstocks {
         urlQuery.addQueryItem("per_page", QString::number(query.getPageSize()));
         urlQuery.addQueryItem("page", QString::number(query.getPageIndex() + 1));
         urlQuery.addQueryItem("sort", "popular");
-        urlQuery.addQueryItem("query", query.getSearchTerms().join(' '));
+        urlQuery.addQueryItem("query", query.getSearchQuery());
 
         if (!query.getSearchAllImages()) {
             urlQuery.addQueryItem("image_type", resultsTypeToString(query));

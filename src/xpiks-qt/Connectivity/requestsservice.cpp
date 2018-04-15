@@ -82,6 +82,17 @@ namespace Connectivity {
         m_RequestsWorker->submitItem(request);
     }
 
+    void RequestsService::sendRequestSync(std::shared_ptr<IConnectivityRequest> &request) {
+        LOG_DEBUG << "#";
+
+        if (m_RequestsWorker == nullptr) {
+            LOG_DEBUG << "Skipping request. Service is stopped";
+            return;
+        }
+
+        m_RequestsWorker->sendRequestSync(request);
+    }
+
     void RequestsService::workerFinished() {
         LOG_DEBUG << "#";
     }
