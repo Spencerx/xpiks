@@ -101,7 +101,7 @@ namespace Microstocks {
 
     private:
         QString m_SearchQuery;
-        Common::flag_t m_Flags = FlagAllImages;
+        Common::flag_t m_Flags = FlagAllImages | FlagFullSearch;
         int m_PageIndex = 0;
         int m_PageSize = 100;
     };
