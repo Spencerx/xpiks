@@ -13,15 +13,14 @@
     },
     "directExport": {
         "v": true,
-        "t": 80
+        "t": 90
     },
     "qualityVideoPreviews": {
         "v": true,
         "t": 30
     },
     "autoImport": {
-        "v": true,
-        "t": 90
+        "v": true
     },
     "iStockSuggestion": {
         "v": true
