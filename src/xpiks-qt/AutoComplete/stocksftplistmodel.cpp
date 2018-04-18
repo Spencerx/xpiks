@@ -70,11 +70,7 @@ namespace AutoComplete {
     }
 
     void StocksFtpListModel::processMergedConfig(const QJsonDocument &document) {
-#ifdef INTEGRATION_TESTS
         parseConfig(document);
-#else
-        Q_UNUSED(document);
-#endif
     }
 
     bool StocksFtpListModel::parseConfig(const QJsonDocument &document) {
