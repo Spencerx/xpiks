@@ -53,9 +53,6 @@ init:
 
 install:
   - if %QTDIR:_64=%==%QTDIR% ( set ARCH=x86 ) else set ARCH=x64
-  - git clone --depth=2 https://bitbucket.org/ribtoks/xpiks-deps.git c:\projects\xpiks-deps
-  - cmd: 'cd c:\projects\xpiks'
-  - git submodule update --init --recursive
   - cmd: set PATH=%PATH%;%QTDIR%\bin
   - qmake -v
 
@@ -67,6 +64,7 @@ before_build:
   - git checkout FETCH_HEAD -- api
 
 build_script:
+  - if not defined UI_TESTS vendors\checkout_deps_windows.bat
   - if not defined UI_TESTS vendors\build_vendors_windows.bat appveyor
   - cmd: 'echo %cd%'
   - cmd: 'cd src'

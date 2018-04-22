@@ -20,7 +20,8 @@ if "%BUILD_MODE%"=="appveyor" (
    set PRINT_PREFIX=""
    set QMAKE_EXE="qmake"
    set ARCH="x64"
-   call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%
+   rem call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%
+   git submodule update --init --recursive
 ) else (
   set QMAKE_EXE="C:\Qt\Qt5.9.5\5.9.5\msvc2017_64\bin\qmake.exe"
 )
