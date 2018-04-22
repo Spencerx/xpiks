@@ -59,7 +59,6 @@ install:
 before_build:
 #  - cmd: 'xcopy /s c:\projects\xpiks-deps\windows-libs\%configuration%-x64 c:\projects\xpiks\libs\%configuration%'
   - cmd: 'call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%'
-  - cmd: 'xcopy /s c:\projects\xpiks-deps\windows-libs\ffmpeg-x64\%configuration% c:\projects\xpiks\libs\%configuration%'
   - git fetch origin gh-pages
   - git checkout FETCH_HEAD -- api
 

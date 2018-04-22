@@ -123,6 +123,10 @@ if not "%BUILD_MODE%"=="appveyor" (
 ) else (
   echo "%PRINT_PREFIX% Copying non-buildable artifacts from xpiks-deps..."
   echo "%PRINT_PREFIX% xpiks-deps root is %XPIKS_DEPS_LIBS%"
+
+  rem ffmpeg
+  xcopy /s %XPIKS_DEPS_ROOT%\windows-libs\ffmpeg-x64\%TARGET% %ROOT_DIR%\libs\%TARGET%
+  
   rem xpiks deps
   copy %XPIKS_DEPS_LIBS%\*curl* %ROOT_DIR%\libs\%TARGET%
   copy %XPIKS_DEPS_LIBS%\thmbnlr.* %ROOT_DIR%\libs\%TARGET%
