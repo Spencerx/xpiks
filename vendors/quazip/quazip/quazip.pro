@@ -2,9 +2,16 @@ TEMPLATE = lib
 CONFIG += qt warn_on
 QT -= gui
 
+
+CONFIG(debug, debug|release) {
+    LIBS += -L"../../../libs/debug"
+} else {
+    LIBS += -L"../../../libs/release"
+}
+
 win32 {
     DEFINES += ZLIB_WINAPI
-    LIBS += -L"$$PWD/../../libs" -lz
+    LIBS += -lz
     INCLUDEPATH += "$$PWD/../../zlib-1.2.11/"
 }
 

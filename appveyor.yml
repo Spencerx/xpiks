@@ -61,22 +61,15 @@ install:
   - qmake -v
 
 before_build:
-  - cmd: 'echo %cd%'
-  - cmd: 'xcopy /s c:\projects\xpiks-deps\windows-libs\%configuration%-x64 c:\projects\xpiks\libs\%configuration%'
-  - cmd: 'xcopy /s c:\projects\xpiks-deps\windows-libs\ffmpeg-x64\%configuration% c:\projects\xpiks\libs\%configuration%'
-  - cmd: 'move c:\projects\xpiks-deps\zlib-1.2.11 c:\projects\xpiks\vendors'
-  - cmd: 'cd c:\projects\xpiks'
-  - cmd: 'ren vendors\tiny-aes\aes.c aes.cpp'
-  - cmd: 'copy libs\%configuration%\mman.* vendors\cpp-libface\libs'
-  - cmd: 'copy libs\%configuration%\mman.* vendors\ssdll\src\libs'
-  - cmd: 'copy libs\%configuration%\z.* vendors\ssdll\src\libs'
+#  - cmd: 'xcopy /s c:\projects\xpiks-deps\windows-libs\%configuration%-x64 c:\projects\xpiks\libs\%configuration%'
   - cmd: 'call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%'
+  - cmd: 'xcopy /s c:\projects\xpiks-deps\windows-libs\ffmpeg-x64\%configuration% c:\projects\xpiks\libs\%configuration%'
   - git fetch origin gh-pages
   - git checkout FETCH_HEAD -- api
 
 build_script:
+  - if not defined UI_TESTS vendors\build_vendors_windows.bat appveyor
   - cmd: 'echo %cd%'
-  - if not defined UI_TESTS vendors\build_vendors_appveyor.bat
   - cmd: 'cd src'
   - if defined XPIKS_BINARY cd xpiks-qt
   - if defined XPIKS_BINARY qmake "CONFIG+=%configuration% appveyor" xpiks-qt.pro
