@@ -54,7 +54,6 @@ init:
 install:
   - if %QTDIR:_64=%==%QTDIR% ( set ARCH=x86 ) else set ARCH=x64
   - git clone --depth=2 https://bitbucket.org/ribtoks/xpiks-deps.git c:\projects\xpiks-deps
-  - cmd: 'cd c:\projects\xpiks-deps'
   - cmd: 'cd c:\projects\xpiks'
   - git submodule update --init --recursive
   - cmd: set PATH=%PATH%;%QTDIR%\bin

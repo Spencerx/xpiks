@@ -13,6 +13,9 @@ echo "Build mode is %BUILD_MODE%"
 rem for Windows 10+ only
 set PRINT_PREFIX="^<ESC^>[32m [32mGreen[0m"
 
+set XPIKS_DEPS_ROOT="%ROOT_DIR%\..\xpiks-deps"
+set XPIKS_DEPS_LIBS="%XPIKS_DEPS_ROOT%\windows-libs\%TARGET%-x64"
+
 if "%BUILD_MODE%"=="appveyor" (
    set PRINT_PREFIX=""
    set QMAKE_EXE="qmake"
@@ -24,7 +27,7 @@ if "%BUILD_MODE%"=="appveyor" (
 
 rem zlib
 echo "%PRINT_PREFIX% Building zlib..."
-move %ROOT_DIR%\..\xpiks-deps\zlib-1.2.11 %ROOT_DIR%\vendors
+move %XPIKS_DEPS_ROOT%\zlib-1.2.11 %ROOT_DIR%\vendors
 cd %ROOT_DIR%\vendors\zlib-project
 %QMAKE_EXE% "CONFIG+=%TARGET%" zlib.pro
 nmake.exe
@@ -76,8 +79,6 @@ cd %ROOT_DIR%\vendors\hunspell
 nmake.exe
 copy %TARGET%\hunspell.* ..\..\libs\%TARGET%
 echo "%PRINT_PREFIX% Building hunspell... - done"
-
-set XPIKS_DEPS_LIBS="%ROOT_DIR%\..\xpiks-deps\windows-libs\%TARGET%-x64"
 
 if not "%BUILD_MODE%"=="appveyor" (
    rem libthmbnlr
