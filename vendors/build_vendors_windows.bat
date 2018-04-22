@@ -80,17 +80,13 @@ nmake.exe
 copy %TARGET%\hunspell.* ..\..\libs\%TARGET%
 echo "%PRINT_PREFIX% Building hunspell... - done"
 
-if not "%BUILD_MODE%"=="appveyor" (
-   rem libthmbnlr
-   echo "%PRINT_PREFIX% Building libthmbnlr..."
-   cd "%ROOT_DIR%\vendors\libthmbnlr"
-   %QMAKE_EXE% "CONFIG+=%TARGET%" thmbnlr.pro
-   echo "%PRINT_PREFIX% Bulding libthmbnlr... - done"
+set XPKS_ROOT="%ROOT_DIR%\..\libxpks"
+set THMBNLR_ROOT="%ROOT_DIR%\..\libthmbnlr"
 
-   rem libxpks
+if not "%BUILD_MODE%"=="appveyor" (
    if "%BUILD_MODE%"=="fulldebug" (
+      rem libxpks
       echo "%PRINT_PREFIX% Building real libxpks..."
-      set XPKS_ROOT="%ROOT_DIR%\..\libxpks"
       copy %ROOT_DIR%\libs\%TARGET%\*curl* %XPKS_ROOT%\libs\%TARGET%
       copy %ROOT_DIR%\libs\%TARGET%\quazip* %XPKS_ROOT%\libs\%TARGET%
       cd %XPKS_ROOT%\src\xpks
@@ -98,13 +94,30 @@ if not "%BUILD_MODE%"=="appveyor" (
       nmake.exe
       copy %TARGET%\xpks.* %ROOT_DIR%\libs\%TARGET%
       echo "%PRINT_PREFIX% Building libxpks... - done"
+
+      rem libthmbnlr
+      echo "%PRINT_PREFIX% Building real libthmbnlr..."
+      cd "%THMBNLR_ROOT%\src\libthmbnlr"
+      %QMAKE_EXE% "CONFIG+=%TARGET%" libthmbnlr.pro
+      nmake.exe
+      copy %TARGET%\thmbnlr.* %ROOT_DIR%\libs\%TARGET%
+      echo "%PRINT_PREFIX% Building libthmbnlr... - done"
     ) else (
+      rem libxpks
       echo "%PRINT_PREFIX% Building stub libxpks..."
       cd %ROOT_DIR%\src\libxpks_stub
       %QMAKE_EXE% "CONFIG+=%TARGET%" libxpks_stub.pro
       nmake.exe
       copy %TARGET%\xpks.* ..\..\libs\%TARGET%
       echo "%PRINT_PREFIX% Building libxpks... - done"
+
+      rem libthmbnlr
+      echo "%PRINT_PREFIX% Building stub libthmbnlr..."
+      cd "%ROOT_DIR%\vendors\libthmbnlr"
+      %QMAKE_EXE% "CONFIG+=%TARGET%" thmbnlr.pro
+      nmake.exe
+      copy %TARGET%\thmbnlr.* %ROOT_DIR%\libs\%TARGET%    
+      echo "%PRINT_PREFIX% Building libthmbnlr... - done"
     )
 ) else (
   echo "%PRINT_PREFIX% Copying non-buildable artifacts from xpiks-deps..."
