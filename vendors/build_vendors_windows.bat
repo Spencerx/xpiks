@@ -1,4 +1,7 @@
 @echo off
+rem -----------------------------------
+rem TO BE RUN FROM THE ROOT OF THE REPO
+rem -----------------------------------
 
 set BUILD_MODE=%1
 if "%BUILD_MODE%"=="debug" set TARGET="debug"
@@ -12,6 +15,7 @@ echo "Build mode is %BUILD_MODE%"
 
 rem for Windows 10+ only
 set PRINT_PREFIX="^<ESC^>[32m [32mGreen[0m"
+set NMAKE_OPTIONS="clean all /f Makefile"
 
 set XPIKS_DEPS_ROOT="%ROOT_DIR%\..\xpiks-deps"
 set XPIKS_DEPS_LIBS="%XPIKS_DEPS_ROOT%\windows-libs\%TARGET%-x64"
@@ -23,7 +27,7 @@ if "%BUILD_MODE%"=="appveyor" (
    rem call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%
    git submodule update --init --recursive
 ) else (
-  set QMAKE_EXE="C:\Qt\Qt5.9.5\5.9.5\msvc2017_64\bin\qmake.exe"
+  set QMAKE_EXE="C:\Qt\Qt5.6.2\5.6\msvc2015_64\bin\qmake.exe"
 )
 
 rem zlib
@@ -31,7 +35,7 @@ echo "%PRINT_PREFIX% Building zlib..."
 move %XPIKS_DEPS_ROOT%\zlib-1.2.11 %ROOT_DIR%\vendors
 cd %ROOT_DIR%\vendors\zlib-project
 %QMAKE_EXE% "CONFIG+=%TARGET%" zlib.pro
-nmake.exe
+nmake.exe "%NMAKE_OPTIONS%"
 copy %TARGET%\z.* ..\..\libs\%TARGET%
 echo "%PRINT_PREFIX% Building zlib... - done"
 
@@ -39,7 +43,7 @@ rem mman
 echo "%PRINT_PREFIX% Building mman..."
 cd %ROOT_DIR%\vendors\cpp-libface\mman-win32
 %QMAKE_EXE% "CONFIG+=%TARGET%" mman-win32.pro
-nmake.exe
+nmake.exe "%NMAKE_OPTIONS%"
 copy %TARGET%\mman.* ..\..\..\libs\%TARGET%
 echo "%PRINT_PREFIX% Building mman... - done"
 
@@ -53,7 +57,7 @@ rem cpp-libface
 echo "%PRINT_PREFIX% Building cpp-libface..."
 cd %ROOT_DIR%\vendors\cpp-libface\libface-project
 %QMAKE_EXE% "CONFIG+=%TARGET%" libface.pro
-nmake.exe
+nmake.exe "%NMAKE_OPTIONS%"
 copy %TARGET%\face.* ..\..\..\libs\%TARGET%
 echo "%PRINT_PREFIX% Building cpp-libface... - done"
 
@@ -61,7 +65,7 @@ rem ssdll
 echo "%PRINT_PREFIX% Building ssdll..."
 cd %ROOT_DIR%\vendors\ssdll\src\ssdll
 %QMAKE_EXE% "CONFIG+=%TARGET% %BUILD_MODE%" ssdll.pro
-nmake.exe
+nmake.exe "%NMAKE_OPTIONS%"
 copy %TARGET%\ssdll.* ..\..\..\..\libs\%TARGET%
 echo "%PRINT_PREFIX% Building ssdll... - done"
 
@@ -69,7 +73,7 @@ rem quazip
 echo "%PRINT_PREFIX% Building quazip..."
 cd %ROOT_DIR%\vendors\quazip\quazip
 %QMAKE_EXE% "CONFIG+=%TARGET%" quazip.pro
-nmake.exe
+nmake.exe "%NMAKE_OPTIONS%"
 copy %TARGET%\quazip* ..\..\..\libs\%TARGET%
 echo "%PRINT_PREFIX% Building quazip... - done"
 
@@ -77,7 +81,7 @@ rem hunspell
 echo "%PRINT_PREFIX% Building hunspell..."
 cd %ROOT_DIR%\vendors\hunspell
 %QMAKE_EXE% "CONFIG+=%TARGET%" hunspell.pro
-nmake.exe
+nmake.exe "%NMAKE_OPTIONS%"
 copy %TARGET%\hunspell.* ..\..\libs\%TARGET%
 echo "%PRINT_PREFIX% Building hunspell... - done"
 
@@ -92,7 +96,7 @@ if not "%BUILD_MODE%"=="appveyor" (
       copy %ROOT_DIR%\libs\%TARGET%\quazip* %XPKS_ROOT%\libs\%TARGET%
       cd %XPKS_ROOT%\src\xpks
       %QMAKE_EXE% "CONFIG+=%TARGET%" xpks.pro
-      nmake.exe
+      nmake.exe "%NMAKE_OPTIONS%"
       copy %TARGET%\xpks.* %ROOT_DIR%\libs\%TARGET%
       echo "%PRINT_PREFIX% Building libxpks... - done"
 
@@ -100,7 +104,7 @@ if not "%BUILD_MODE%"=="appveyor" (
       echo "%PRINT_PREFIX% Building real libthmbnlr..."
       cd "%THMBNLR_ROOT%\src\libthmbnlr"
       %QMAKE_EXE% "CONFIG+=%TARGET%" libthmbnlr.pro
-      nmake.exe
+      nmake.exe "%NMAKE_OPTIONS%"
       copy %TARGET%\thmbnlr.* %ROOT_DIR%\libs\%TARGET%
       echo "%PRINT_PREFIX% Building libthmbnlr... - done"
     ) else (
@@ -108,7 +112,7 @@ if not "%BUILD_MODE%"=="appveyor" (
       echo "%PRINT_PREFIX% Building stub libxpks..."
       cd %ROOT_DIR%\src\libxpks_stub
       %QMAKE_EXE% "CONFIG+=%TARGET%" libxpks_stub.pro
-      nmake.exe
+      nmake.exe "%NMAKE_OPTIONS%"
       copy %TARGET%\xpks.* ..\..\libs\%TARGET%
       echo "%PRINT_PREFIX% Building libxpks... - done"
 
@@ -116,7 +120,7 @@ if not "%BUILD_MODE%"=="appveyor" (
       echo "%PRINT_PREFIX% Building stub libthmbnlr..."
       cd "%ROOT_DIR%\vendors\libthmbnlr"
       %QMAKE_EXE% "CONFIG+=%TARGET%" thmbnlr.pro
-      nmake.exe
+      nmake.exe "%NMAKE_OPTIONS%"
       copy %TARGET%\thmbnlr.* %ROOT_DIR%\libs\%TARGET%    
       echo "%PRINT_PREFIX% Building libthmbnlr... - done"
     )
