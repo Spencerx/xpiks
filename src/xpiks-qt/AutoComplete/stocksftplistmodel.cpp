@@ -29,17 +29,12 @@
 
 namespace AutoComplete {
     StocksFtpListModel::StocksFtpListModel(Common::ISystemEnvironment &environment):
-        Models::AbstractConfigUpdaterModel(OVERWRITE_STOCKS_CONFIG),
-        m_Environment(environment)
+        Models::AbstractConfigUpdaterModel(
+            environment.path({LOCAL_STOCKS_LIST_FILE}),
+            Connectivity::ApiManager::getInstance().getStocksACSourceAddr(),
+            OVERWRITE_STOCKS_CONFIG,
+            environment.getIsInMemoryOnly())
     { }
-
-    void StocksFtpListModel::initializeConfigs() {
-        LOG_DEBUG << "#";
-        QString localConfigPath = m_Environment.path({LOCAL_STOCKS_LIST_FILE});
-        auto &apiManager = Connectivity::ApiManager::getInstance();
-        QString remoteAddress = apiManager.getStocksACSourceAddr();
-        AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);
-    }
 
     void StocksFtpListModel::processRemoteConfig(const QJsonDocument &remoteDocument, bool overwriteLocal) {
         LOG_DEBUG << "#";
@@ -70,11 +65,7 @@ namespace AutoComplete {
     }
 
     void StocksFtpListModel::processMergedConfig(const QJsonDocument &document) {
-#ifdef INTEGRATION_TESTS
         parseConfig(document);
-#else
-        Q_UNUSED(document);
-#endif
     }
 
     bool StocksFtpListModel::parseConfig(const QJsonDocument &document) {

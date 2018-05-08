@@ -9,6 +9,7 @@ namespace Mocks {
         virtual QString root() const override { return QString(); }
         virtual QString path(const QStringList &path) override { return path.join(QDir::separator()); }
         virtual bool ensureDirExists(const QString &name) override { return true; }
+        virtual bool getIsInMemoryOnly() const override { return true; }
     };
 }
 

@@ -7,8 +7,8 @@ class AddToUserDictionaryTest:
     public IntegrationTestBase
 {
 public:
-    AddToUserDictionaryTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    AddToUserDictionaryTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

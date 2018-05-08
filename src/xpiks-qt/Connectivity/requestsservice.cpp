@@ -59,15 +59,17 @@ namespace Connectivity {
         m_RequestsWorker->stopWorking();
     }
 
-    void RequestsService::receiveConfig(const QString &url, Helpers::RemoteConfig *config) {
+    void RequestsService::receiveConfig(Helpers::RemoteConfig *config) {
         LOG_DEBUG << "#";
+        Q_ASSERT(config != nullptr);
+        if (config == nullptr) { return; }
 
         if (m_RequestsWorker == nullptr) {
-            LOG_DEBUG << "Skipping" << url << ". Service is stopped";
+            LOG_DEBUG << "Skipping" << config->getUrl() << ". Service is stopped";
             return;
         }
 
-        std::shared_ptr<IConnectivityRequest> item(new ConfigRequest(config, url, NO_CACHE_ATTRIBUTE));
+        std::shared_ptr<IConnectivityRequest> item(new ConfigRequest(config, config->getUrl(), NO_CACHE_ATTRIBUTE));
         m_RequestsWorker->submitItem(item);
     }
 

@@ -31,10 +31,11 @@
 namespace Suggestion {
     KeywordsSuggestor::KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
                                          Connectivity::RequestsService &requestsService,
+                                         Common::ISystemEnvironment &environment,
                                          QObject *parent):
         QAbstractListModel(parent),
         Common::BaseEntity(),
-        m_State("ksuggest"),
+        m_State("ksuggest", environment),
         m_ApiClients(apiClients),
         m_RequestsService(requestsService),
         m_SuggestedKeywords(m_HoldPlaceholder, this),
@@ -56,7 +57,7 @@ namespace Suggestion {
         m_ExistingKeywords.clear(); m_ExistingKeywords.unite(keywords);
     }
 
-    void KeywordsSuggestor::initSuggestionEngines(Common::ISystemEnvironment &environment) {
+    void KeywordsSuggestor::initSuggestionEngines() {
         LOG_DEBUG << "#";
         Q_ASSERT(m_CommandManager != NULL);
         auto *metadataIOService = m_CommandManager->getMetadataIOService();
@@ -100,7 +101,7 @@ namespace Suggestion {
         m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(localEngine));
         m_LocalSearchIndex = (int)m_QueryEngines.size() - 1;
 
-        m_State.init(environment);
+        m_State.init();
     }
 
     void KeywordsSuggestor::setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks) {

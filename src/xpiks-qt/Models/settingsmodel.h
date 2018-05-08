@@ -80,12 +80,12 @@ namespace Models {
         Q_PROPERTY(QString termsAndConditionsText READ getTermsAndConditionsText CONSTANT)
 
     public:
-        explicit SettingsModel(QObject *parent = 0);
+        explicit SettingsModel(Common::ISystemEnvironment &environment, QObject *parent = 0);
         virtual ~SettingsModel() { }
 
     public:
         void saveLocale();
-        void initializeConfigs(Common::ISystemEnvironment &environment);
+        void initializeConfigs();
         void syncronizeSettings() { sync(); }
         void migrateSettings();
         void clearLegacyUploadInfos();

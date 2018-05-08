@@ -41,17 +41,13 @@ namespace Connectivity {
         return d;
     }
 
-    SwitcherConfig::SwitcherConfig(QObject *parent):
-        Models::AbstractConfigUpdaterModel(OVERWRITE_SWITCHER_CONFIG, parent)
+    SwitcherConfig::SwitcherConfig(Common::ISystemEnvironment &environment, QObject *parent):
+        Models::AbstractConfigUpdaterModel(
+            environment.path({LOCAL_SWITCHER_CONFIG}),
+            Connectivity::ApiManager::getInstance().getSwitcherAddr(),
+            OVERWRITE_SWITCHER_CONFIG,
+            environment.getIsInMemoryOnly(), parent)
     {
-    }
-
-    void SwitcherConfig::initializeConfigs(Common::ISystemEnvironment &environment) {
-        LOG_DEBUG << "#";
-        QString localConfigPath = environment.path({LOCAL_SWITCHER_CONFIG});
-        auto &apiManager = Connectivity::ApiManager::getInstance();
-        QString remoteAddress = apiManager.getSwitcherAddr();
-        AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);
     }
 
     bool SwitcherConfig::isSwitchOn(int switchKey, int minThreshold) {

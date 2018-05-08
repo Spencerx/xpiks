@@ -7,8 +7,8 @@ class ArtworkUploaderBasicTest:
         public IntegrationTestBase
 {
 public:
-    ArtworkUploaderBasicTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    ArtworkUploaderBasicTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

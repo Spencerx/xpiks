@@ -117,6 +117,7 @@ namespace QMLExtensions {
 
         bool getFromDB(const QString &key, /*out*/ TValue &value) {
             if (!m_DbCacheIndex) { return false; }
+
             bool success = false;
 
             QByteArray rawValue;

@@ -24,7 +24,7 @@ int DuplicateSearchTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
 
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/mixed/cat.jpg");
+    files << setupFilePathForTest("images-for-tests/mixed/cat.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

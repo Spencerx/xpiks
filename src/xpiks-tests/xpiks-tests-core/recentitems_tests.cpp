@@ -16,16 +16,16 @@ void checkCannotPushMoreThan(Models::RecentItemsModel &recentItems) {
 
 void RecentItemsTests::pushMoreThanXFilesTest() {
     Mocks::CoreTestsEnvironment environment;
-    Models::RecentFilesModel recentFiles;
-    recentFiles.initialize(environment);
+    Models::RecentFilesModel recentFiles(environment);
+    recentFiles.initialize();
 
     checkCannotPushMoreThan(recentFiles);
 }
 
 void RecentItemsTests::pushMoreThanXDirectoriesTest() {
     Mocks::CoreTestsEnvironment environment;
-    Models::RecentDirectoriesModel recentDirectories;
-    recentDirectories.initialize(environment);
+    Models::RecentDirectoriesModel recentDirectories(environment);
+    recentDirectories.initialize();
 
     checkCannotPushMoreThan(recentDirectories);
 }
@@ -44,16 +44,16 @@ void checkLastPushedIsMostRecent(Models::RecentItemsModel &recentItems) {
 
 void RecentItemsTests::lastPushedIsMostRecentFileTest() {
     Mocks::CoreTestsEnvironment environment;
-    Models::RecentFilesModel recentFiles;
-    recentFiles.initialize(environment);
+    Models::RecentFilesModel recentFiles(environment);
+    recentFiles.initialize();
 
     checkLastPushedIsMostRecent(recentFiles);
 }
 
 void RecentItemsTests::lastPushedIsMostRecentDirectoryTest() {
     Mocks::CoreTestsEnvironment environment;
-    Models::RecentDirectoriesModel recentDirectories;
-    recentDirectories.initialize(environment);
+    Models::RecentDirectoriesModel recentDirectories(environment);
+    recentDirectories.initialize();
 
     checkLastPushedIsMostRecent(recentDirectories);
 }

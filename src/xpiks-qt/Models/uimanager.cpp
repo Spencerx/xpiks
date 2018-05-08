@@ -24,10 +24,10 @@
 #define DEFAULT_APP_POSITION -1
 
 namespace Models {
-    UIManager::UIManager(SettingsModel *settingsModel, QObject *parent) :
+    UIManager::UIManager(Common::ISystemEnvironment &environment, SettingsModel *settingsModel, QObject *parent) :
         QObject(parent),
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
-        m_State("uimanager"),
+        m_State("uimanager", environment),
         m_SettingsModel(settingsModel),
         m_TabID(42),
         m_SaveTimerId(-1),
@@ -217,8 +217,9 @@ namespace Models {
         m_TabsModel.touchTab(0);
     }
 
-    void UIManager::initializeState(Common::ISystemEnvironment &environment) {
-         m_State.init(environment);
+    void UIManager::initialize() {
+        LOG_DEBUG << "#";
+        m_State.init();
     }
 
     void UIManager::resetWindowSettings() {

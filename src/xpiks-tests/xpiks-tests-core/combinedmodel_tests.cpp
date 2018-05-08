@@ -26,12 +26,13 @@ void freeArtworks(MetadataIO::WeakArtworksSnapshot &items) {
 }
 
 CombinedModelTests::CombinedModelTests(QObject *parent):
-    QObject(parent)
+    QObject(parent),
+    m_SettingsModel(m_Environment)
 {
 }
 
 void CombinedModelTests::initTestCase() {
-    m_SettingsModel.initializeConfigs(m_Environment);
+    m_SettingsModel.initializeConfigs();
     m_SettingsModel.setUseSpellCheck(false);
     m_CommandManagerMock.InjectDependency(&m_SettingsModel);
     m_CommandManagerMock.disableCommands();

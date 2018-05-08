@@ -19,20 +19,21 @@
 namespace Helpers {
     class LocalConfig {
     public:
-        LocalConfig();
+        LocalConfig(const QString &filepath, bool memoryOnly);
 
     public:
         QJsonDocument& getConfig() { return m_Config; }
         const QJsonDocument& getConfig() const { return m_Config; }
+        const QString &getPath() const { return m_FilePath; }
         void setConfig(const QJsonDocument &config) { m_Config = config; }
-        void setPath(const QString &filePath) { m_FilePath = filePath; }
-        void initConfig(const QString &configPath);
-        bool saveToFile();
+        void initialize();
+        bool save();
         void dropConfig();
 
     private:
         QString m_FilePath;
         QJsonDocument m_Config;
+        bool m_MemoryOnly;
     };
 
     class LocalConfigDropper {

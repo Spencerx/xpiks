@@ -24,8 +24,6 @@ namespace Storage {
         virtual ~IDbTable() {}
     public:
         virtual const QString &getTableName() const = 0;
-        virtual bool initialize() = 0;
-        virtual void finalize() = 0;
         virtual bool tryGetValue(const QByteArray &key, QByteArray &value) = 0;
         virtual bool trySetValue(const QByteArray &key, const QByteArray &value) = 0;
         virtual bool tryAddValue(const QByteArray &key, const QByteArray &value) = 0;
@@ -33,7 +31,7 @@ namespace Storage {
         virtual int tryAddMany(const QVector<QPair<QByteArray, QByteArray> > &keyValueList) = 0;
         virtual bool tryDeleteRecord(const QByteArray &key) = 0;
         virtual bool tryDeleteMany(const QVector<QByteArray> &keysList) = 0;
-        virtual void foreachRow(const std::function<bool (QByteArray &, QByteArray &)> &action) = 0;
+        virtual void foreachRow(const std::function<bool (const QByteArray &, QByteArray &)> &action) = 0;
     };
 
     class IDatabase {
@@ -43,8 +41,6 @@ namespace Storage {
     public:
         virtual bool open(const char *fullDbPath) = 0;
         virtual void close() = 0;
-        virtual bool initialize() = 0;
-        virtual void finalize() = 0;
         virtual void sync() = 0;
         virtual std::shared_ptr<IDbTable> getTable(const QString &name) = 0;
         virtual bool deleteTable(std::shared_ptr<IDbTable> &table) = 0;

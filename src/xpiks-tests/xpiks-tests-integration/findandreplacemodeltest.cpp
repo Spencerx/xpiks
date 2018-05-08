@@ -25,9 +25,9 @@ void FindAndReplaceModelTest::setup() {
 int FindAndReplaceModelTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/mixed/026.jpg");
-    files << getFilePathForTest("images-for-tests/mixed/027.jpg");
-    files << getFilePathForTest("images-for-tests/mixed/0267.jpg");
+    files << setupFilePathForTest("images-for-tests/mixed/026.jpg");
+    files << setupFilePathForTest("images-for-tests/mixed/027.jpg");
+    files << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

@@ -1,4 +1,5 @@
 #include "masterpasswordtest.h"
+#include "../../xpiks-qt/Commands/commandmanager.h"
 #include "../../xpiks-qt/Models/artworkuploader.h"
 #include "../../xpiks-qt/Encryption/secretsmanager.h"
 #include "../../xpiks-qt/Models/uploadinforepository.h"

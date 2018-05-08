@@ -125,11 +125,13 @@ namespace Models {
         oldSettings.remove(QLatin1String(settingName));
     }
 
-    SettingsModel::SettingsModel(QObject *parent) :
+    SettingsModel::SettingsModel(Common::ISystemEnvironment &environment, QObject *parent) :
         QObject(parent),
         Common::BaseEntity(),
         Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
-        m_State("settings"),
+        m_State("settings", environment),
+        m_Config(environment.path({SETTINGS_FILE}),
+                 environment.getIsInMemoryOnly()),
         m_SettingsMap(new Helpers::JsonObjectMap()),
         m_ExperimentalMap(new Helpers::JsonObjectMap()),
         m_ExifToolPath(DEFAULT_EXIFTOOL),
@@ -178,12 +180,11 @@ namespace Models {
         sync();
     }
 
-    void SettingsModel::initializeConfigs(Common::ISystemEnvironment &environment) {
+    void SettingsModel::initializeConfigs() {
         LOG_DEBUG << "#";
 
-        QString localConfigPath = environment.path({SETTINGS_FILE});
-        m_Config.initConfig(localConfigPath);
-        m_State.init(environment);
+        m_Config.initialize();
+        m_State.init();
 
         QJsonDocument &doc = m_Config.getConfig();
         if (doc.isObject()) {
@@ -1107,7 +1108,7 @@ namespace Models {
         doc.setObject(settingsJson);
 
         m_Config.setConfig(doc);
-        m_Config.saveToFile();
+        m_Config.save();
     }
 
     QString SettingsModel::serializeProxyForSettings(ProxySettings &settings) {

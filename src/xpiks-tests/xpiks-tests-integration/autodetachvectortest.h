@@ -6,8 +6,8 @@
 class AutoDetachVectorTest : public IntegrationTestBase
 {
 public:
-    AutoDetachVectorTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    AutoDetachVectorTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

@@ -6,8 +6,8 @@
 class UndoAddWithVectorsTest : public IntegrationTestBase
 {
 public:
-    UndoAddWithVectorsTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    UndoAddWithVectorsTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

@@ -11,6 +11,7 @@
 #include "dbvideocacheindex.h"
 #include "../Storage/database.h"
 #include "../Helpers/constants.h"
+#include "../Storage/memorytable.h"
 
 namespace QMLExtensions {
     DbVideoCacheIndex::DbVideoCacheIndex(Storage::IDatabaseManager *dbManager):
@@ -27,18 +28,13 @@ namespace QMLExtensions {
             m_Database = m_DatabaseManager->openDatabase(Constants::VIDEOCACHE_DB_NAME);
             if (!m_Database) {
                 LOG_WARNING << "Failed to open database";
-                break;
+            } else {
+                m_DbCacheIndex = m_Database->getTable(Constants::VIDEO_CACHE_TABLE);
             }
 
-            if (!m_Database->initialize()) {
-                LOG_WARNING << "Failed to initialize images cache";
-                break;
-            }
-
-            m_DbCacheIndex = m_Database->getTable(Constants::VIDEO_CACHE_TABLE);
             if (!m_DbCacheIndex) {
                 LOG_WARNING << "Failed to get table" << Constants::VIDEO_CACHE_TABLE;
-                break;
+                m_DbCacheIndex.reset(new Storage::MemoryTable(Constants::VIDEO_CACHE_TABLE));
             }
 
             success = true;

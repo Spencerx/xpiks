@@ -19,14 +19,18 @@ QString UndoAddWithVectorsTest::testName() {
 void UndoAddWithVectorsTest::setup() {
     Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
     settingsModel->setAutoFindVectors(true);
+
+    // copy files
+    setupFilePathForTest("images-for-tests/mixed/026.eps");
+    setupFilePathForTest("images-for-tests/mixed/027.eps");
 }
 
 int UndoAddWithVectorsTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/mixed/026.jpg");
-    files << getFilePathForTest("images-for-tests/mixed/0267.jpg");
-    files << getFilePathForTest("images-for-tests/mixed/027.jpg");
+    files << setupFilePathForTest("images-for-tests/mixed/026.jpg");
+    files << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
+    files << setupFilePathForTest("images-for-tests/mixed/027.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

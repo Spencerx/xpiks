@@ -52,7 +52,8 @@ namespace Storage {
         std::shared_ptr<IDatabase> openDatabase(Common::ISystemEnvironment &environment, const QString &dbName);
 
     private:
-        std::shared_ptr<IDatabase> doOpenDatabase(const QString &root, const QString &dbName);
+        std::shared_ptr<Database> openDbFromFile(const QString &root, const QString &dbName);
+        std::shared_ptr<Database> openTempDb();
 
     public:
         void prepareToFinalize();
@@ -70,7 +71,7 @@ namespace Storage {
         Helpers::AsyncCoordinator m_FinalizeCoordinator;
         QString m_DBDirPath;
         QAtomicInt m_LastDatabaseID;
-        std::vector<std::shared_ptr<IDatabase> > m_DatabaseArray;
+        std::vector<std::shared_ptr<Database> > m_DatabaseArray;
         volatile bool m_Initialized;
     };
 }

@@ -26,12 +26,12 @@ namespace Helpers {
     class RemoteConfig : public QObject {
         Q_OBJECT
     public:
-        RemoteConfig(QObject *parent=0);
+        RemoteConfig(const QString &configUrl, QObject *parent=0);
         virtual ~RemoteConfig();
 
     public:
-        void setConfigUrl(const QString &configUrl) { m_ConfigUrl = configUrl; }
         const QJsonDocument& getConfig() const { return m_Config; }
+        const QString &getUrl() const { return m_ConfigUrl; }
 
     private:
         friend class Connectivity::ConfigRequest;

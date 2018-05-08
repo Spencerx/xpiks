@@ -36,7 +36,6 @@ namespace Models {
         virtual ~SessionManager() {}
 
     public:
-        void initialize();
         void onBeforeRestore();
         void onAfterRestore();
         void saveToFile(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
@@ -74,7 +73,6 @@ namespace Models {
 
     private:
         Helpers::LocalConfig m_Config;
-        QString m_LocalConfigPath;
         QJsonObject m_SessionJson;
         QMutex m_Mutex;
         QStringList m_Filenames;

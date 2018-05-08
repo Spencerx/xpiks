@@ -10,7 +10,6 @@
 
 #include "updateservice.h"
 #include "updatescheckerworker.h"
-#include <QFile>
 #include <QString>
 #include "../Common/defines.h"
 #include "../Models/settingsmodel.h"
@@ -27,7 +26,7 @@ namespace Connectivity {
         m_SettingsModel(settingsModel),
         m_SwitcherModel(switcherModel),
         m_MaintenanceService(maintenanceService),
-        m_State("updater")
+        m_State("updater", environment)
     {
         Q_ASSERT(settingsModel != nullptr);
         Q_ASSERT(switcherModel != nullptr);
@@ -35,7 +34,8 @@ namespace Connectivity {
     }
 
     void UpdateService::initialize() {
-        m_State.init(m_Environment);
+        LOG_DEBUG << "#";
+        m_State.init();
     }
 
     void UpdateService::startChecking() {

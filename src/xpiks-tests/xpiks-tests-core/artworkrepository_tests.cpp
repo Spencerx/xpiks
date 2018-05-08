@@ -33,7 +33,7 @@
     commandManagerMock.InjectDependency(artItemsModel); \
     UndoRedo::UndoRedoManager undoRedoManager; \
     commandManagerMock.InjectDependency(&undoRedoManager); \
-    Models::SettingsModel settingsModel; \
+    Models::SettingsModel settingsModel(environment); \
     commandManagerMock.InjectDependency(&settingsModel); \
     settingsModel.setAutoFindVectors(false); \
     commandManagerMock.generateAndAddArtworksEx(count, dirsCount, false); \

@@ -15,8 +15,9 @@
 #include "../Models/proxysettings.h"
 
 namespace Helpers {
-    RemoteConfig::RemoteConfig(QObject *parent):
-        QObject(parent)
+    RemoteConfig::RemoteConfig(const QString &configUrl, QObject *parent):
+        QObject(parent),
+        m_ConfigUrl(configUrl)
     {
     }
 

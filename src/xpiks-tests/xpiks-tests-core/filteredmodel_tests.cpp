@@ -19,8 +19,8 @@
     filteredItemsModel.setSourceModel(&artItemsModelMock);\
     commandManagerMock.InjectDependency(&filteredItemsModel);\
     commandManagerMock.generateAndAddArtworks(count);\
-    Models::SettingsModel settingsModel; \
-    settingsModel.initializeConfigs(environment); \
+    Models::SettingsModel settingsModel(environment); \
+    settingsModel.initializeConfigs(); \
     settingsModel.setSearchUsingAnd(false); \
     commandManagerMock.InjectDependency(&settingsModel);
 

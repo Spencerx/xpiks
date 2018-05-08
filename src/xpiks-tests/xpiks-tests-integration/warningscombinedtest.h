@@ -6,8 +6,8 @@
 class WarningsCombinedTest : public IntegrationTestBase
 {
 public:
-    WarningsCombinedTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    WarningsCombinedTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

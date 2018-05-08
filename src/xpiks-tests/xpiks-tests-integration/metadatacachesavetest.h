@@ -6,8 +6,8 @@
 class MetadataCacheSaveTest : public IntegrationTestBase
 {
 public:
-    MetadataCacheSaveTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    MetadataCacheSaveTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

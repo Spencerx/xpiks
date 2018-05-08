@@ -64,11 +64,11 @@
 #include "../../xpiks-qt/MetadataIO/csvexportmodel.h"
 #include "../../xpiks-qt/Models/switchermodel.h"
 #include "../../xpiks-qt/Helpers/filehelpers.h"
-#include "../../xpiks-qt/Common/systemenvironment.h"
 #include "../../xpiks-qt/Models/uimanager.h"
 #include "../../xpiks-qt/Microstocks/microstockapiclients.h"
 #include "../../xpiks-qt/Encryption/isecretsstorage.h"
 #include <apisecretsstorage.h>
+#include "integrationtestsenvironment.h"
 
 #include "exiv2iohelpers.h"
 
@@ -130,10 +130,6 @@
 #include "csvdefaultexporttest.h"
 #include "loadpluginbasictest.h"
 
-#if defined(WITH_PLUGINS)
-#undef WITH_PLUGINS
-#endif
-
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);
 
@@ -170,7 +166,7 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
 #endif
 
     Helpers::Logger &logger = Helpers::Logger::getInstance();
-    logger.log(logLine);
+    logger.log(type, logLine);
 
     if ((type == QtFatalMsg) || (type == QtWarningMsg)) {
         logger.emergencyFlush();
@@ -227,7 +223,7 @@ int main(int argc, char *argv[]) {
 
     // -----------------------------------------------
     QCoreApplication app(argc, argv);
-    Common::SystemEnvironment environment(app.arguments());
+    IntegrationTestsEnvironment environment(app.arguments());
     environment.ensureSystemDirectoriesExist();
     // -----------------------------------------------
     std::cout << "Initialized application" << std::endl;
@@ -236,19 +232,18 @@ int main(int argc, char *argv[]) {
     {
         QString time = QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss-zzz");
         QString logFilename = QString("xpiks-qt-%1.log").arg(time);
-
         QString logFilePath = environment.path({Constants::LOGS_DIR, logFilename});
-
         Helpers::Logger &logger = Helpers::Logger::getInstance();
         logger.setLogFilePath(logFilePath);
+        logger.setMemoryOnly(environment.getIsInMemoryOnly());
     }
 #endif
 
     Models::LogsModel logsModel;
     logsModel.startLogging();
 
-    Models::SettingsModel settingsModel;
-    settingsModel.initializeConfigs(environment);
+    Models::SettingsModel settingsModel(environment);
+    settingsModel.initializeConfigs();
     settingsModel.retrieveAllValues();
 
     QMLExtensions::ColorsModel colorsModel;
@@ -266,11 +261,11 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<Encryption::ISecretsStorage> secretsStorage(new libxpks::microstocks::APISecretsStorage());
     Microstocks::MicrostockAPIClients apiClients(secretsStorage.get());
     Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
-    Suggestion::KeywordsSuggestor keywordsSuggestor(apiClients, requestsService);
+    Suggestion::KeywordsSuggestor keywordsSuggestor(apiClients, requestsService, environment);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
-    Models::RecentDirectoriesModel recentDirectorieModel;
-    Models::RecentFilesModel recentFileModel;
+    Models::RecentDirectoriesModel recentDirectorieModel(environment);
+    Models::RecentFilesModel recentFileModel(environment);
     libxpks::net::FtpCoordinator *ftpCoordinator = new libxpks::net::FtpCoordinator(settingsModel.getMaxParallelUploads());
     Models::ArtworkUploader artworkUploader(environment, ftpCoordinator);
     SpellCheck::SpellCheckerService spellCheckerService(environment, &settingsModel);
@@ -287,9 +282,8 @@ int main(int argc, char *argv[]) {
     Translation::TranslationManager translationManager(environment);
     Translation::TranslationService translationService(translationManager);
     Models::ArtworkProxyModel artworkProxy;
-    Models::UIManager uiManager(&settingsModel);
+    Models::UIManager uiManager(environment, &settingsModel);
     Models::SessionManager sessionManager(environment);
-    sessionManager.initialize();
     // intentional memory leak to beat spellcheck lock stuff
     QuickBuffer::QuickBuffer quickBuffer;
     Maintenance::MaintenanceService maintenanceService(environment);
@@ -297,7 +291,7 @@ int main(int argc, char *argv[]) {
     QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
-    Models::SwitcherModel switcherModel;
+    Models::SwitcherModel switcherModel(environment);
     Connectivity::UpdateService updateService(environment, &settingsModel, &switcherModel, &maintenanceService);
 
     MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
@@ -358,8 +352,8 @@ int main(int argc, char *argv[]) {
     commandManager.ensureDependenciesInjected();
 
     secretsManager.setMasterPasswordHash(settingsModel.getMasterPasswordHash());
-    recentDirectorieModel.initialize(environment);
-    recentFileModel.initialize(environment);
+    recentDirectorieModel.initialize();
+    recentFileModel.initialize();
 
 #if defined(Q_OS_WIN)
     #if defined(APPVEYOR)
@@ -367,15 +361,22 @@ int main(int argc, char *argv[]) {
     #else
         settingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool.exe"));
     #endif
-#else
-     settingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool"));
+#elif defined(Q_OS_MAC)
+    settingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool/exiftool"));
 #endif
 
     switcherModel.setRemoteConfigOverride(findFullPathForTests("configs-for-tests/tests_switches.json"));
-    csvExportModel.setRemoteConfigOverride(findFullPathForTests("api/v1/csv_export_plans.json"));
+    QString csvExportPlansPath;
+    if (!tryFindFullPathForTests("api/v1/csv_export_plans.json", csvExportPlansPath)) {
+        if (!tryFindFullPathForTests("xpiks-api/api/v1/csv_export_plans.json", csvExportPlansPath)) {
+            // fallback to copy-pasted and probably not enough frequently updated just for the sake of tests
+            tryFindFullPathForTests("configs-for-tests/csv_export_plans.json", csvExportPlansPath);
+        }
+    }
+    csvExportModel.setRemoteConfigOverride(csvExportPlansPath);
 
     commandManager.connectEntitiesSignalsSlots();
-    commandManager.afterConstructionCallback(environment);
+    commandManager.afterConstructionCallback();
 
     // process signals from construction
     QCoreApplication::processEvents();
@@ -385,64 +386,64 @@ int main(int argc, char *argv[]) {
     QVector<IntegrationTestBase*> integrationTests;
 
     // always the first one
-    integrationTests.append(new MetadataCacheSaveTest(&commandManager));
+    integrationTests.append(new MetadataCacheSaveTest(environment, &commandManager));
     // and all others
-    integrationTests.append(new AddFilesBasicTest(&commandManager));
-    integrationTests.append(new AutoAttachVectorsTest(&commandManager));
-    integrationTests.append(new SaveFileBasicTest(&commandManager));
-    integrationTests.append(new SaveFileLegacyTest(&commandManager));
+    integrationTests.append(new AddFilesBasicTest(environment, &commandManager));
+    integrationTests.append(new AutoAttachVectorsTest(environment, &commandManager));
+    integrationTests.append(new SaveFileBasicTest(environment, &commandManager));
+    integrationTests.append(new SaveFileLegacyTest(environment, &commandManager));
 #ifndef TRAVIS_CI
-    integrationTests.append(new SaveVideoBasicTest(&commandManager));
+    integrationTests.append(new SaveVideoBasicTest(environment, &commandManager));
 #endif
-    integrationTests.append(new FailedUploadsTest(&commandManager));
-    integrationTests.append(new SpellCheckMultireplaceTest(&commandManager));
-    integrationTests.append(new SpellCheckCombinedModelTest(&commandManager));
-    integrationTests.append(new ZipArtworksTest(&commandManager));
-    integrationTests.append(new SpellCheckUndoTest(&commandManager));
-    integrationTests.append(new AutoCompleteBasicTest(&commandManager));
-    integrationTests.append(new SpellingProducesWarningsTest(&commandManager));
-    integrationTests.append(new UndoAddWithVectorsTest(&commandManager));
-    integrationTests.append(new ReadLegacySavedTest(&commandManager));
-    integrationTests.append(new ClearMetadataTest(&commandManager));
-    integrationTests.append(new SaveWithEmptyTitleTest(&commandManager));
-    integrationTests.append(new CombinedEditFixSpellingTest(&commandManager));
-    integrationTests.append(new FindAndReplaceModelTest(&commandManager));
-    integrationTests.append(new AddToUserDictionaryTest(&commandManager));
-    integrationTests.append(new AutoDetachVectorTest(&commandManager));
-    integrationTests.append(new RemoveFromUserDictionaryTest(&commandManager));
-    integrationTests.append(new ArtworkUploaderBasicTest(&commandManager));
-    integrationTests.append(new PlainTextEditTest(&commandManager));
-    integrationTests.append(new FixSpellingMarksModifiedTest(&commandManager));
-    integrationTests.append(new PresetsTest(&commandManager));
-    integrationTests.append(new TranslatorBasicTest(&commandManager));
-    integrationTests.append(new UserDictEditTest(&commandManager));
-    integrationTests.append(new WeirdNamesReadTest(&commandManager));
-    integrationTests.append(new RestoreSessionTest(&commandManager));
-    integrationTests.append(new DuplicateSearchTest(&commandManager));
-    integrationTests.append(new AutoCompletePresetsTest(&commandManager));
-    integrationTests.append(new CsvExportTest(&commandManager));
-    integrationTests.append(new UnicodeIoTest(&commandManager));
-    integrationTests.append(new UndoAddDirectoryTest(&commandManager));
-    integrationTests.append(new UndoRestoreSessionTest(&commandManager));
-    integrationTests.append(new MasterPasswordTest(&commandManager));
-    integrationTests.append(new ReimportTest(&commandManager));
-    integrationTests.append(new AutoImportTest(&commandManager));
-    integrationTests.append(new ImportLostMetadataTest(&commandManager));
-    integrationTests.append(new WarningsCombinedTest(&commandManager));
-    integrationTests.append(new CsvDefaultExportTest(&commandManager));
-    integrationTests.append(new LoadPluginBasicTest(&commandManager));
+    integrationTests.append(new FailedUploadsTest(environment, &commandManager));
+    integrationTests.append(new SpellCheckMultireplaceTest(environment, &commandManager));
+    integrationTests.append(new SpellCheckCombinedModelTest(environment, &commandManager));
+    integrationTests.append(new ZipArtworksTest(environment, &commandManager));
+    integrationTests.append(new SpellCheckUndoTest(environment, &commandManager));
+    integrationTests.append(new AutoCompleteBasicTest(environment, &commandManager));
+    integrationTests.append(new SpellingProducesWarningsTest(environment, &commandManager));
+    integrationTests.append(new UndoAddWithVectorsTest(environment, &commandManager));
+    integrationTests.append(new ReadLegacySavedTest(environment, &commandManager));
+    integrationTests.append(new ClearMetadataTest(environment, &commandManager));
+    integrationTests.append(new SaveWithEmptyTitleTest(environment, &commandManager));
+    integrationTests.append(new CombinedEditFixSpellingTest(environment, &commandManager));
+    integrationTests.append(new FindAndReplaceModelTest(environment, &commandManager));
+    integrationTests.append(new AddToUserDictionaryTest(environment, &commandManager));
+    integrationTests.append(new AutoDetachVectorTest(environment, &commandManager));
+    integrationTests.append(new RemoveFromUserDictionaryTest(environment, &commandManager));
+    integrationTests.append(new ArtworkUploaderBasicTest(environment, &commandManager));
+    integrationTests.append(new PlainTextEditTest(environment, &commandManager));
+    integrationTests.append(new FixSpellingMarksModifiedTest(environment, &commandManager));
+    integrationTests.append(new PresetsTest(environment, &commandManager));
+    integrationTests.append(new TranslatorBasicTest(environment, &commandManager));
+    integrationTests.append(new UserDictEditTest(environment, &commandManager));
+    integrationTests.append(new WeirdNamesReadTest(environment, &commandManager));
+    integrationTests.append(new RestoreSessionTest(environment, &commandManager));
+    integrationTests.append(new DuplicateSearchTest(environment, &commandManager));
+    integrationTests.append(new AutoCompletePresetsTest(environment, &commandManager));
+    integrationTests.append(new CsvExportTest(environment, &commandManager));
+    integrationTests.append(new UnicodeIoTest(environment, &commandManager));
+    integrationTests.append(new UndoAddDirectoryTest(environment, &commandManager));
+    integrationTests.append(new UndoRestoreSessionTest(environment, &commandManager));
+    integrationTests.append(new MasterPasswordTest(environment, &commandManager));
+    integrationTests.append(new ReimportTest(environment, &commandManager));
+    integrationTests.append(new AutoImportTest(environment, &commandManager));
+    integrationTests.append(new ImportLostMetadataTest(environment, &commandManager));
+    integrationTests.append(new WarningsCombinedTest(environment, &commandManager));
+    integrationTests.append(new CsvDefaultExportTest(environment, &commandManager));
+    integrationTests.append(new LoadPluginBasicTest(environment, &commandManager));
     // always the last one. insert new tests above
-    integrationTests.append(new LocalLibrarySearchTest(&commandManager));
+    integrationTests.append(new LocalLibrarySearchTest(environment, &commandManager));
 
 
-    qDebug("\n");
+    qInfo("\n");
     int succeededTestsCount = 0, failedTestsCount = 0;
     QStringList failedTests;
 
     foreach (IntegrationTestBase *test, integrationTests) {
         QThread::msleep(500);
 
-        qDebug("---------------------------------------------------------");
+        qInfo("---------------------------------------------------------");
         qInfo("Running test: %s", test->testName().toStdString().c_str());
 
         test->setup();
@@ -459,7 +460,7 @@ int main(int argc, char *argv[]) {
             failedTests.append(test->testName());
         }
 
-        qDebug("\n");
+        qInfo("\n");
     }
 
     qDeleteAll(integrationTests);
@@ -482,9 +483,9 @@ int main(int argc, char *argv[]) {
     });
     // assert in 1 minute to see hung threads
     debuggingTimer.start(60*1000);
-    qDebug() << "--";
-    qDebug() << "-----> Crash timer started...";
-    qDebug() << "--";
+    qInfo() << "--";
+    qInfo() << "-----> Crash timer started...";
+    qInfo() << "--";
 
     commandManager.beforeDestructionCallback();
 

@@ -27,12 +27,12 @@ void MetadataCacheSaveTest::setup() {
 int MetadataCacheSaveTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/pixmap/img_0007.jpg")
-          << getFilePathForTest("images-for-tests/pixmap/seagull-for-clear.jpg")
-          << getFilePathForTest("images-for-tests/pixmap/seagull.jpg")
-          << getFilePathForTest("images-for-tests/vector/026.jpg")
-          << getFilePathForTest("images-for-tests/vector/027.jpg")
-          << getFilePathForTest("images-for-tests/mixed/0267.jpg");
+    files << setupFilePathForTest("images-for-tests/pixmap/img_0007.jpg")
+          << setupFilePathForTest("images-for-tests/pixmap/seagull-for-clear.jpg")
+          << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg")
+          << setupFilePathForTest("images-for-tests/vector/026.jpg")
+          << setupFilePathForTest("images-for-tests/vector/027.jpg")
+          << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

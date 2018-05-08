@@ -26,8 +26,8 @@ namespace Warnings {
 
     public:
         WarningsSettingsModel(Common::ISystemEnvironment &environment);
-        void initializeConfigs();
 
+    public:
         virtual const QString &getAllowedFilenameCharacters() const override { return m_AllowedFilenameCharacters; }
         virtual double getMinMegapixels() const override { return m_MinMegapixels; }
         virtual double getMaxImageFilesizeMB() const override { return m_MaxImageFilesizeMB; }
@@ -57,7 +57,6 @@ namespace Warnings {
         void settingsUpdated();
 
     private:
-        Common::ISystemEnvironment &m_Environment;
         QString m_AllowedFilenameCharacters;
         double m_MinMegapixels;
         double m_MaxImageFilesizeMB;

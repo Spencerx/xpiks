@@ -13,11 +13,14 @@
 #include <QStandardPaths>
 
 namespace Helpers {
-    LocalConfig::LocalConfig() {
+    LocalConfig::LocalConfig(const QString &filepath, bool memoryOnly):
+        m_FilePath(filepath),
+        m_MemoryOnly(memoryOnly)
+    {
+        Q_ASSERT(!m_FilePath.isEmpty());
     }
 
-    void LocalConfig::initConfig(const QString &configPath) {
-        m_FilePath = configPath;
+    void LocalConfig::initialize() {
         QFile file(m_FilePath);
 
         if (file.open(QIODevice::ReadOnly)) {
@@ -29,11 +32,14 @@ namespace Helpers {
         }
     }
 
-    bool LocalConfig::saveToFile() {
+    bool LocalConfig::save() {
+        LOG_DEBUG << "memory-only:" << m_MemoryOnly;
+
+        if (m_MemoryOnly) { return true; }
+        if (m_FilePath.isEmpty()) { return false; }
+
         bool success = false;
         QFile file(m_FilePath);
-
-        Q_ASSERT(!m_FilePath.isEmpty());
 
         if (file.open(QIODevice::WriteOnly)) {
             file.write(m_Config.toJson(QJsonDocument::Indented));
@@ -47,6 +53,7 @@ namespace Helpers {
     }
 
     void LocalConfig::dropConfig() {
+        if (m_MemoryOnly) { return; }
         m_Config = QJsonDocument();
         Q_ASSERT(m_Config.isEmpty());
     }

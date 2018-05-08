@@ -25,7 +25,7 @@ int UnicodeIoTest::doTest() {
 
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/utf8-meta/Eiffel_Wikimedia_Commons.jpg");
+    files << setupFilePathForTest("images-for-tests/utf8-meta/Eiffel_Wikimedia_Commons.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;
@@ -51,7 +51,7 @@ int UnicodeIoTest::doTest() {
     // writing part ---------------------------------
 
     files.clear();
-    files << getFilePathForTest("images-for-tests/utf8-meta/Maurice_koechlin_pylone.jpg");
+    files << setupFilePathForTest("images-for-tests/utf8-meta/Maurice_koechlin_pylone.jpg");
 
     addedCount = artItemsModel->addLocalArtworks(files);
     VERIFY(addedCount == files.length(), "Failed to add file");

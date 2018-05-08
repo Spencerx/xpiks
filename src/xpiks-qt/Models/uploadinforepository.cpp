@@ -145,6 +145,8 @@ namespace Models {
         Common::BaseEntity(),
         Common::DelayedActionEntity(UPLOAD_INFO_SAVE_TIMEOUT, UPLOAD_INFO_DELAYS_COUNT),
         m_Environment(environment),
+        m_LocalConfig(environment.path({UPLOAD_INFOS_FILE}),
+                      environment.getIsInMemoryOnly()),
         m_EmptyPasswordsMode(false)
     {
         QObject::connect(this, &UploadInfoRepository::backupRequired, this, &UploadInfoRepository::onBackupRequired);
@@ -181,8 +183,7 @@ namespace Models {
 
     void UploadInfoRepository::initializeConfig() {
         LOG_DEBUG << "#";
-        QString localConfigPath = m_Environment.path({UPLOAD_INFOS_FILE});
-        m_LocalConfig.initConfig(localConfigPath);
+        m_LocalConfig.initialize();
         const QJsonDocument &localDocument = m_LocalConfig.getConfig();
 
         decltype(m_UploadInfos) tempInfos;
@@ -468,7 +469,7 @@ namespace Models {
         Q_UNUSED(dropper);
 
         m_LocalConfig.setConfig(doc);
-        bool success = m_LocalConfig.saveToFile();
+        bool success = m_LocalConfig.save();
         return success;
     }
 

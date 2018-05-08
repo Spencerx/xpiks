@@ -76,6 +76,12 @@ namespace Helpers {
     }
 
 #ifdef INTEGRATION_TESTS
+    void Logger::log(QtMsgType type, const QString &message) {
+        // basically this thing is here because Travis CI does not like long logs
+        if (m_MemoryOnly && (type == QtDebugMsg)) { return; }
+        log(message);
+    }
+
     void Logger::emergencyFlush() {
         flushStream(&m_LogsStorage[0]);
         flushStream(&m_LogsStorage[1]);
@@ -93,16 +99,18 @@ namespace Helpers {
         if (logItems->empty()) { return; }
 
 #ifdef WITH_LOGS
-        QFile outFile(m_LogFilepath);
-        if (outFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
-            QTextStream ts(&outFile);
-            ts.setCodec("UTF-8");
+        if (!m_MemoryOnly) {
+            QFile outFile(m_LogFilepath);
+            if (outFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+                QTextStream ts(&outFile);
+                ts.setCodec("UTF-8");
 
-            int size = logItems->size();
-            for (int i = 0; i < size; ++i) {
-                const QString &line = logItems->at(i);
-                ts << line;
-                endl(ts);
+                int size = logItems->size();
+                for (int i = 0; i < size; ++i) {
+                    const QString &line = logItems->at(i);
+                    ts << line;
+                    endl(ts);
+                }
             }
         }
 #endif

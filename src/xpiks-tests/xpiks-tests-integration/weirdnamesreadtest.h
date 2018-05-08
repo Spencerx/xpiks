@@ -6,8 +6,8 @@
 class WeirdNamesReadTest : public IntegrationTestBase
 {
 public:
-    WeirdNamesReadTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    WeirdNamesReadTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

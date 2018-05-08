@@ -49,7 +49,7 @@ namespace Models {
         QObject::connect(m_LoggingWorker, &Helpers::LoggingWorker::stopped, m_LoggingWorker, &Helpers::LoggingWorker::deleteLater);
         QObject::connect(loggingThread, &QThread::finished, loggingThread, &QThread::deleteLater);
 
-        loggingThread->start();
+        loggingThread->start(QThread::LowPriority);
     }
 
     void LogsModel::stopLogging() {
