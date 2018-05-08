@@ -5,7 +5,7 @@ Cross-Platform Image Keywording Software
 
 ![Xpiks main window](https://raw.githubusercontent.com/Ribtoks/xpiks/master/assets/xpiks-main-window.png)
 
-Official website: http://xpiksapp.com
+Official website: https://xpiksapp.com
 
 Translations: https://crowdin.com/project/xpiks/
 
@@ -30,7 +30,7 @@ Xpiks is a free and open source keywording and uploading tool for microstock pho
 - XMP/IPTC/EXIF metadata editing in images, vectors and videos
 - FTP upload to predefined or custom hosts
 - extensive keywording capabilities (autocompletion, spellchecking, duplicates)
-- keywords suggestion based on Shutterstock API, iStock, Fotolia or the local library
+- keywords suggestion based on Shutterstock, iStock or Fotolia API or the local library
 - automatic zipping of vector and preview for selected microstocks
 - checks for potential problems before upload (insufficient resolution, missing metadata etc.)
 - keywords presets to automate your work
@@ -40,11 +40,7 @@ Xpiks is a free and open source keywording and uploading tool for microstock pho
 
 **How to build**
 
-Please see the [BUILD.md](https://github.com/ribtoks/xpiks/blob/master/BUILD.md) file
-
-**How to install**
-
-Please see the [INSTALL.md](https://github.com/ribtoks/xpiks/blob/master/INSTALL.md) file
+Please see the [Build Wiki page](https://github.com/ribtoks/xpiks/wiki/Build-instructions)
 
 **How to contribute**
 
