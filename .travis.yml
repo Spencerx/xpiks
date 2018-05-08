@@ -67,6 +67,6 @@ before_script:
   - ls -la ../libs/*
   - echo "-------"
   - cd xpiks-qt/
-  - qmake "CONFIG+= debug travis-ci" xpiks-qt.pro
+  - qmake "CONFIG+= debug travis-ci without-video" xpiks-qt.pro
 
 script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi
