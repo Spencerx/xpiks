@@ -67,7 +67,7 @@ namespace Storage {
     std::shared_ptr<IDatabase> DatabaseManager::openDatabase(Common::ISystemEnvironment &environment, const QString &dbName) {
         std::shared_ptr<Database> db;
 
-        if (!m_Environment.getIsInMemoryOnly()) {
+        if (!environment.getIsInMemoryOnly()) {
             db = openDbFromFile(environment.path({Constants::DB_DIR}), dbName);
         }
 
