@@ -242,7 +242,10 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Microstocks/fotoliaapiclient.cpp \
     ../../xpiks-qt/Microstocks/gettyapiclient.cpp \
     ../../xpiks-qt/Microstocks/shutterstockapiclient.cpp \
-    ../../xpiks-qt/Microstocks/microstockservice.cpp
+    ../../xpiks-qt/Microstocks/microstockservice.cpp \
+    ../../xpiks-qt/Storage/memorytable.cpp \
+    integrationtestsenvironment.cpp \
+    integrationtestbase.cpp
 
 RESOURCES +=
 
@@ -539,7 +542,9 @@ HEADERS += \
     ../../xpiks-qt/Microstocks/microstockservice.h \
     ../../xpiks-qt/Microstocks/apisecrets.h \
     ../../xpiks-qt/Encryption/isecretsstorage.h \
-    ../../xpiks-qt/Encryption/secretpair.h
+    ../../xpiks-qt/Encryption/secretpair.h \
+    ../../xpiks-qt/Storage/memorytable.h \
+    integrationtestsenvironment.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface
@@ -659,7 +664,6 @@ travis-ci {
     LIBS += -lexiv2
 
     DEFINES += TRAVIS_CI
-    DEFINES -= WITH_LOGS
 
     # gcov
     QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
@@ -669,7 +673,6 @@ travis-ci {
 appveyor {
     message("for Appveyor")
     DEFINES += APPVEYOR
-    DEFINES -= WITH_LOGS
 }
 
 without-video {

@@ -6,8 +6,8 @@
 class ZipArtworksTest : public IntegrationTestBase
 {
 public:
-    ZipArtworksTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    ZipArtworksTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

@@ -22,7 +22,7 @@ void SaveWithEmptyTitleTest::setup() {
 int SaveWithEmptyTitleTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/pixmap/seagull.jpg");
+    files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

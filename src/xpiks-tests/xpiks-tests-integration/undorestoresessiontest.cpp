@@ -29,9 +29,9 @@ int UndoRestoreSessionTest::doTest() {
     Models::ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
 
     QList<QUrl> sources;
-    sources << getFilePathForTest("images-for-tests/pixmap/img_0007.jpg")
-            << getFilePathForTest("images-for-tests/pixmap/seagull-for-clear.jpg")
-            << getFilePathForTest("images-for-tests/pixmap/seagull.jpg")
+    sources << setupFilePathForTest("images-for-tests/pixmap/img_0007.jpg")
+            << setupFilePathForTest("images-for-tests/pixmap/seagull-for-clear.jpg")
+            << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg")
             << getDirPathForTest("images-for-tests/mixed/")
             << getDirPathForTest("images-for-tests/vector/");
 

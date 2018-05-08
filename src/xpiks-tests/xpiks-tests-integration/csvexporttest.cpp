@@ -132,8 +132,8 @@ void setupExportPlans(std::vector<std::shared_ptr<MetadataIO::CsvExportPlan> > &
 int CsvExportTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/vector/026.jpg") <<
-             getFilePathForTest("images-for-tests/pixmap/seagull.jpg");
+    files << setupFilePathForTest("images-for-tests/vector/026.jpg") <<
+             setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

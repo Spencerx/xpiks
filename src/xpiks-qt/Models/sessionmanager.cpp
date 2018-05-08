@@ -28,14 +28,10 @@
 namespace Models {
     SessionManager::SessionManager(Common::ISystemEnvironment &environment):
         QObject(),
-        m_LocalConfigPath(environment.path({SESSION_FILE})),
+        m_Config(environment.path({SESSION_FILE}),
+                 environment.getIsInMemoryOnly()),
         m_CanRestore(false)
     {
-    }
-
-    void SessionManager::initialize() {
-        LOG_DEBUG << "#";
-        m_Config.setPath(m_LocalConfigPath);
     }
 
     void SessionManager::onBeforeRestore() {
@@ -96,13 +92,13 @@ namespace Models {
         QMutexLocker locker(&m_Mutex);
         Q_UNUSED(locker);
 
-        m_Config.saveToFile();
+        m_Config.save();
     }
 
     void SessionManager::readSessionFromFile() {
         LOG_DEBUG << "#";
 
-        m_Config.initConfig(m_LocalConfigPath);
+        m_Config.initialize();
         Helpers::LocalConfigDropper dropper(&m_Config);
         Q_UNUSED(dropper);
 

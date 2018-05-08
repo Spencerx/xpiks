@@ -20,10 +20,10 @@ namespace Models {
     {
         Q_OBJECT
     public:
-        RecentDirectoriesModel();
+        RecentDirectoriesModel(Common::ISystemEnvironment &environment);
 
     public:
-        virtual void initialize(Common::ISystemEnvironment &environment) override;
+        virtual void initialize() override;
 
     protected:
         virtual void sync() override;

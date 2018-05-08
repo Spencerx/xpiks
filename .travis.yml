@@ -89,14 +89,18 @@ script:
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
   - if [ -n "$XPIKS_BINARY" ]; then cppcheck --language=c++ --inconclusive --quiet -DQT_DEBUG -DWITH_LOGS -DWITH_PLUGINS -DWITH_STDOUT_LOGS -DTRAVIS_CI -UCORE_TESTS -UINTEGRATION_TESTS -UQ_OS_WIN -DQ_OS_LINUX --error-exitcode=1 --suppress=missingIncludeSystem --suppress='*:moc_*.cpp' --max-configs=15 --enable=warning . ; fi
   - if [ -n "$CORE_TESTS" ]; then ./xpiks-tests-core; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration; fi
+  - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration > tests.log; fi
+  - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration --in-memory > tests_in_memory.log; fi
   - if [ -n "$UI_TESTS" ]; then ./xpiks-tests-ui; fi
   - if [ -z "${XPIKS_BINARY+xxx}" ]; then ../get_code_cov.sh "$PWD/../../"; fi
 
 after_success:
+  - if [ -n "$INTEGRATION_TESTS" ]; then cat tests.log; fi
   - if [ -z "${XPIKS_BINARY+xxx}" ]; then bash <(curl -s https://codecov.io/bash) -X gcov || echo 'Codecov failed to upload'; fi
 
 after_failure:
   - if [ -n "$CORE_TESTS" ]; then for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/xpiks-tests-core core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi
+  - if [ -n "$INTEGRATION_TESTS" ]; then cat tests.log; fi
+  - if [ -n "$INTEGRATION_TESTS" ]; then cat tests_in_memory.log; fi
   - if [ -n "$INTEGRATION_TESTS" ]; then for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/xpiks-tests-integration core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi
   - if [ -n "$UI_TESTS" ]; then for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/xpiks-tests-ui core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done; fi

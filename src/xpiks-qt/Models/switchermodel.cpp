@@ -20,10 +20,11 @@ namespace Models {
 #define SWITCHER_SESSION_START "sessionStart"
 #define SWITCHER_TIMER_DELAY 2000
 
-    SwitcherModel::SwitcherModel(QObject *parent):
+    SwitcherModel::SwitcherModel(Common::ISystemEnvironment &environment, QObject *parent):
         QObject(parent),
         Common::BaseEntity(),
-        m_State("switcher"),
+        m_State("switcher", environment),
+        m_Config(environment),
         // effectively meaning all features are OFF
         m_Threshold(100)
     {
@@ -39,8 +40,8 @@ namespace Models {
         m_Config.setCommandManager(commandManager);
     }
 
-    void SwitcherModel::initialize(Common::ISystemEnvironment &environment) {
-        m_State.init(environment);
+    void SwitcherModel::initialize() {
+        m_State.init();
         ensureSessionTokenValid();
 
         QString sessionToken = m_State.getString(SWITCHER_SESSION_TOKEN);
@@ -56,9 +57,9 @@ namespace Models {
         LOG_INFO << "Current threshold is" << m_Threshold;
     }
 
-    void SwitcherModel::updateConfigs(Common::ISystemEnvironment &environment) {
+    void SwitcherModel::updateConfigs() {
         LOG_DEBUG << "#";
-        m_Config.initializeConfigs(environment);
+        m_Config.initializeConfigs();
     }
 
     void SwitcherModel::afterInitializedCallback() {

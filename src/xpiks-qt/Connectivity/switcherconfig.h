@@ -29,10 +29,9 @@ namespace Connectivity {
         };
 
     public:
-        SwitcherConfig(QObject *parent=nullptr);
+        SwitcherConfig(Common::ISystemEnvironment &environment, QObject *parent=nullptr);
 
     public:
-        void initializeConfigs(Common::ISystemEnvironment &environment);
         bool isSwitchOn(int switchKey, int minThreshold);
 
     signals:

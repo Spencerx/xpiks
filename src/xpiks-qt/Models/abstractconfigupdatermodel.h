@@ -25,11 +25,14 @@ namespace Models {
     {
         Q_OBJECT
     public:
-        AbstractConfigUpdaterModel(bool forceOverwrite, QObject *parent=nullptr);
+        AbstractConfigUpdaterModel(const QString &localPath,
+                                   const QString &remoteResource,
+                                   bool forceOverwrite,
+                                   bool memoryOnly, QObject *parent=nullptr);
         virtual ~AbstractConfigUpdaterModel() {}
 
     public:
-        void initializeConfigs(const QString &configUrl, const QString &filePath);
+        void initializeConfigs();
         const Helpers::LocalConfig &getLocalConfig() const { return m_LocalConfig; }
         Helpers::LocalConfig &getLocalConfig() { return m_LocalConfig; }
 
@@ -49,8 +52,8 @@ namespace Models {
         virtual void processMergedConfig(const QJsonDocument &document) { Q_UNUSED(document); }
 
     private:
-        virtual void initRemoteConfig(const QString &configUrl);
-        virtual void initLocalConfig(const QString &filePath);
+        virtual void initRemoteConfig();
+        virtual void initLocalConfig();
 
     private:
         Helpers::RemoteConfig m_RemoteConfig;
@@ -58,6 +61,7 @@ namespace Models {
         bool m_ForceOverwrite;
 
 #ifdef INTEGRATION_TESTS
+        bool m_MemoryOnly;
         QString m_RemoteOverrideLocalPath;
 #endif
     };

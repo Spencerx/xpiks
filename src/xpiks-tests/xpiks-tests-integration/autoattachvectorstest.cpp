@@ -18,13 +18,17 @@ QString AutoAttachVectorsTest::testName() {
 void AutoAttachVectorsTest::setup() {
     Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
     settingsModel->setAutoFindVectors(true);
+
+    // copy files
+    setupFilePathForTest("images-for-tests/vector/026.eps");
+    setupFilePathForTest("images-for-tests/vector/027.eps");
 }
 
 int AutoAttachVectorsTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/vector/026.jpg");
-    files << getFilePathForTest("images-for-tests/vector/027.jpg");
+    files << setupFilePathForTest("images-for-tests/vector/026.jpg");
+    files << setupFilePathForTest("images-for-tests/vector/027.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

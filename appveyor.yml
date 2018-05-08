@@ -109,10 +109,16 @@ before_test:
 test_script:
   - cmd: 'echo %cd%'
   - if defined CORE_TESTS %configuration%\xpiks-tests-core.exe
-  - if defined INTEGRATION_TESTS %configuration%\xpiks-tests-integration.exe
+  - if defined INTEGRATION_TESTS %configuration%\xpiks-tests-integration.exe > tests.log
+  - if defined INTEGRATION_TESTS %configuration%\xpiks-tests-integration.exe --in-memory  > tests_in_memory.log
   - if defined UI_TESTS %configuration%\xpiks-tests-ui.exe
+  
+on_success:
+  - if defined INTEGRATION_TESTS type tests.log
 
 on_failure:
+  - if defined INTEGRATION_TESTS type tests.log
+  - if defined INTEGRATION_TESTS type tests_in_memory.log
   - ps: Get-ChildItem .\*.dmp | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
   - if defined INTEGRATION_TESTS appveyor PushArtifact %configuration%\xpiks-tests-integration.exe
   - if defined INTEGRATION_TESTS appveyor PushArtifact %configuration%\xpiks-tests-integration.pdb

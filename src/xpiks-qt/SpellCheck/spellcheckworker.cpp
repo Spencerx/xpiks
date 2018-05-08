@@ -32,7 +32,8 @@
 #define SPELLCHECK_DELAY_PERIOD 50
 
 namespace SpellCheck {
-    SpellCheckWorker::SpellCheckWorker(Common::ISystemEnvironment &environment,
+    SpellCheckWorker::SpellCheckWorker(const QString &dictsRoot,
+                                       Common::ISystemEnvironment &environment,
                                        Helpers::AsyncCoordinator *initCoordinator,
                                        Models::SettingsModel *settingsModel,
                                        QObject *parent):
@@ -41,10 +42,12 @@ namespace SpellCheck {
         m_Environment(environment),
         m_InitCoordinator(initCoordinator),
         m_SettingsModel(settingsModel),
+        m_DictsRoot(dictsRoot),
         m_Hunspell(NULL),
         m_Codec(NULL),
         m_UserDictionaryPath("")
     {
+        Q_ASSERT(!dictsRoot.isEmpty());
         Q_ASSERT(settingsModel);
     }
 
@@ -57,27 +60,14 @@ namespace SpellCheck {
     }
 
     bool SpellCheckWorker::initWorker() {
-        LOG_INFO << "#";
+        LOG_INFO << "Dicts root:" << m_DictsRoot;
 
         Helpers::AsyncCoordinatorUnlocker unlocker(m_InitCoordinator);
         Q_UNUSED(unlocker);
 
-        QString resourcesPath;
-        QString affPath;
-        QString dicPath;
-
-        resourcesPath = QCoreApplication::applicationDirPath();
-
-#if defined(Q_OS_MAC)
-        resourcesPath += "/../Resources/";
-#elif defined(APPVEYOR)
-        resourcesPath += "/../../../xpiks-qt/deps/";
-#endif
-        resourcesPath += "/dict/";
-
-        QDir resourcesDir(QDir::cleanPath(resourcesPath));
-        affPath = resourcesDir.absoluteFilePath(EN_HUNSPELL_AFF);
-        dicPath = resourcesDir.absoluteFilePath(EN_HUNSPELL_DIC);
+        QDir resourcesDir(m_DictsRoot);
+        QString affPath = resourcesDir.absoluteFilePath(EN_HUNSPELL_AFF);
+        QString dicPath = resourcesDir.absoluteFilePath(EN_HUNSPELL_DIC);
 
         bool initResult = false;
 

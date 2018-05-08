@@ -62,8 +62,8 @@ private slots:
 
 private:
     Mocks::CommandManagerMock m_CommandManagerMock;
-    Models::SettingsModel m_SettingsModel;
     Mocks::CoreTestsEnvironment m_Environment;
+    Models::SettingsModel m_SettingsModel;
 };
 
 #endif // COMBINEDMODELTESTS_H

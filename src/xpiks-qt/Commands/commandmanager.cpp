@@ -622,7 +622,7 @@ void Commands::CommandManager::ensureDependenciesInjected() {
 #endif
 }
 
-void Commands::CommandManager::afterConstructionCallback(Common::ISystemEnvironment &environment) {
+void Commands::CommandManager::afterConstructionCallback() {
     if (m_AfterInitCalled) {
         LOG_WARNING << "Attempt to call afterConstructionCallback() second time";
         return;
@@ -633,8 +633,8 @@ void Commands::CommandManager::afterConstructionCallback(Common::ISystemEnvironm
 #endif
 
 #if !defined(CORE_TESTS)
-    m_SwitcherModel->initialize(environment);
-    m_SwitcherModel->updateConfigs(environment);
+    m_SwitcherModel->initialize();
+    m_SwitcherModel->updateConfigs();
 #endif
 
     const int waitSeconds = 5;
@@ -679,7 +679,7 @@ void Commands::CommandManager::afterConstructionCallback(Common::ISystemEnvironm
     m_UploadInfoRepository->initializeConfig();
     m_PresetsModel->initializePresets();
     m_CsvExportModel->initializeExportPlans(&m_InitCoordinator);
-    m_KeywordsSuggestor->initSuggestionEngines(environment);
+    m_KeywordsSuggestor->initSuggestionEngines();
     m_UpdateService->initialize();
 #endif
 

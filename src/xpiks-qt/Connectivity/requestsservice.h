@@ -38,7 +38,7 @@ namespace Connectivity {
         void stopService();
 
     public:
-        void receiveConfig(const QString &url, Helpers::RemoteConfig *config);
+        void receiveConfig(Helpers::RemoteConfig *config);
         void sendRequest(const std::shared_ptr<IConnectivityRequest> &request);
         void sendRequestSync(std::shared_ptr<IConnectivityRequest> &request);
 

@@ -24,7 +24,7 @@ void ClearMetadataTest::setup() {
 int ClearMetadataTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/pixmap/seagull-for-clear.jpg");
+    files << setupFilePathForTest("images-for-tests/pixmap/seagull-for-clear.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

@@ -32,6 +32,10 @@ namespace Helpers {
             m_LogFilepath = filepath;
         }
 
+        void setMemoryOnly(bool value) {
+            m_MemoryOnly = value;
+        }
+
         QString getLogFilePath() const { return m_LogFilepath; }
 
         void log(const QString &message);
@@ -40,6 +44,7 @@ namespace Helpers {
 
 #ifdef INTEGRATION_TESTS
     public:
+        void log(QtMsgType type, const QString &message);
         void emergencyFlush();
 #endif
 
@@ -52,6 +57,7 @@ namespace Helpers {
             m_QueueLogTo = &m_LogsStorage[0];
             m_QueueFlushFrom = &m_LogsStorage[1];
             m_Stopped = false;
+            m_MemoryOnly = false;
         }
 
         Logger(Logger const&);
@@ -66,6 +72,7 @@ namespace Helpers {
         QMutex m_FlushMutex;
         QWaitCondition m_AnyLogsToFlush;
         volatile bool m_Stopped;
+        volatile bool m_MemoryOnly;
     };
 }
 

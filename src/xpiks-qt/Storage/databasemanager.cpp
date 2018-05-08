@@ -49,36 +49,110 @@ namespace Storage {
     }
 
     std::shared_ptr<IDatabase> DatabaseManager::openDatabase(const QString &dbName) {
-        return doOpenDatabase(m_DBDirPath, dbName);
+        std::shared_ptr<Database> db;
+
+        if (!m_Environment.getIsInMemoryOnly()) {
+            db = openDbFromFile(m_DBDirPath, dbName);
+        }
+
+        if (!db) {
+            LOG_WARNING << "Failed to open DB" << dbName << "from file";
+            db = openTempDb();
+        }
+
+        auto result = std::dynamic_pointer_cast<IDatabase>(db);
+        return result;
     }
 
     std::shared_ptr<IDatabase> DatabaseManager::openDatabase(Common::ISystemEnvironment &environment, const QString &dbName) {
-        return doOpenDatabase(environment.path({Constants::DB_DIR}), dbName);
+        std::shared_ptr<Database> db;
+
+        if (!m_Environment.getIsInMemoryOnly()) {
+            db = openDbFromFile(environment.path({Constants::DB_DIR}), dbName);
+        }
+
+        if (!db) {
+            LOG_WARNING << "Failed to open DB" << dbName << "from file";
+            db = openTempDb();
+        }
+
+        auto result = std::dynamic_pointer_cast<IDatabase>(db);
+        return result;
     }
 
-    std::shared_ptr<IDatabase> DatabaseManager::doOpenDatabase(const QString &root, const QString &dbName) {
+    std::shared_ptr<Database> DatabaseManager::openDbFromFile(const QString &root, const QString &dbName) {
         Q_ASSERT(m_Initialized);
-        LOG_DEBUG << dbName;
 
         const int id = getNextID();
-        std::shared_ptr<IDatabase> db(new Database(id, &m_FinalizeCoordinator));
+        LOG_INFO << "Using #" << id << "for DB" << dbName;
 
         QDir databasesDir(root);
         Q_ASSERT(databasesDir.exists());
         QString fullDbPath = databasesDir.filePath(dbName);
         QByteArray utf8Path = fullDbPath.toUtf8();
         const char *dbPath = utf8Path.data();
+        std::shared_ptr<Database> db;
+        bool success = false, triedHard = false;
 
-        bool openSucceded = db->open(dbPath);
-        if (!openSucceded) {
-            LOG_WARNING << "Failed to open" << dbName;
-            db.reset();
-        } else {
-            LOG_INFO << "Opened" << dbName << "database";
+        do {
+            db.reset(new Database(id, &m_FinalizeCoordinator));
+            if (db->open(dbPath)) {
+                success = db->initialize();
+            }
+
+            if (!success) { db->close(); }
+            if (triedHard || success) { break; }
+
+            bool removed = QFile(fullDbPath).remove();
+            LOG_DEBUG << "File" << fullDbPath << "removed:" << removed;
+            triedHard = true;
+        } while (!success);
+
+        if (success) {
+            LOG_INFO << "Opened and initialized" << dbName << "database";
 
             QMutexLocker locker(&m_Mutex);
             Q_UNUSED(locker);
             m_DatabaseArray.push_back(db);
+        } else {
+            db.reset();
+        }
+
+        return db;
+    }
+
+    std::shared_ptr<Database> DatabaseManager::openTempDb() {
+        Q_ASSERT(m_Initialized);
+
+        const int id = getNextID();
+        LOG_INFO << "Using #" << id << "for temp DB";
+
+        std::shared_ptr<Database> db(new Database(id, &m_FinalizeCoordinator));
+        bool success = false;
+
+        // empty string means temp db
+        if (db->open("")) {
+            success = db->initialize();
+        }
+
+        if (!success) {
+            db->close();
+            db.reset(new Database(id, &m_FinalizeCoordinator));
+
+            // in-memory db
+            if (db->open(":memory:")) {
+                success = db->initialize();
+            }
+        }
+
+        if (success) {
+            LOG_INFO << "Opened and initialized temporary database";
+
+            QMutexLocker locker(&m_Mutex);
+            Q_UNUSED(locker);
+            m_DatabaseArray.push_back(db);
+        } else {
+            db.reset();
         }
 
         return db;
@@ -98,7 +172,6 @@ namespace Storage {
         LOG_DEBUG << "#";
 
         for (auto &db: m_DatabaseArray) {
-            db->finalize();
             db->close();
         }
 

@@ -27,6 +27,14 @@ void sleepWaitUntil(int seconds, const std::function<bool ()> &condition) {
 }
 
 QString findFullPathForTests(const QString &prefix) {
+    QString foundPath;
+    if (!tryFindFullPathForTests(prefix, foundPath)) {
+        foundPath = QFileInfo(prefix).absoluteFilePath();
+    }
+    return foundPath;
+}
+
+bool tryFindFullPathForTests(const QString &prefix, QString &path) {
     QFileInfo fi(prefix);
     int tries = 6;
     QStringList parents;
@@ -35,11 +43,12 @@ QString findFullPathForTests(const QString &prefix) {
             parents.append("..");
             fi.setFile(parents.join('/') + "/" + prefix);
         } else {
-            return fi.absoluteFilePath();
+            path = fi.absoluteFilePath();
+            return true;
         }
     }
 
-    return QFileInfo(prefix).absoluteFilePath();
+    return false;
 }
 
 QString findWildcartPathForTests(const QString &dirPath, const QStringList &filters) {

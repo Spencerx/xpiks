@@ -6,8 +6,8 @@
 class FailedUploadsTest : public IntegrationTestBase
 {
 public:
-    FailedUploadsTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    FailedUploadsTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

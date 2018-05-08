@@ -65,7 +65,8 @@ namespace SpellCheck {
         Q_OBJECT
 
     public:
-        SpellCheckWorker(Common::ISystemEnvironment &environment,
+        SpellCheckWorker(const QString &dictsRoot,
+                         Common::ISystemEnvironment &environment,
                          Helpers::AsyncCoordinator *initCoordinator,
                          Models::SettingsModel *settingsModel,
                          QObject *parent=0);
@@ -131,6 +132,7 @@ namespace SpellCheck {
         QSet<QString> m_WrongWords;
         UserDictionary m_UserDictionary;
         QReadWriteLock m_SuggestionsLock;
+        QString m_DictsRoot;
         QString m_Encoding;
         Hunspell *m_Hunspell;
         // Coded does not need destruction

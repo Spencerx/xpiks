@@ -57,23 +57,25 @@ namespace KeywordsPresets {
     }
 
     PresetKeywordsModelConfig::PresetKeywordsModelConfig(Common::ISystemEnvironment &environment):
-        m_Environment(environment)
+        m_Environment(environment),
+        m_Config(environment.path({LOCAL_PRESETKEYWORDS_LIST_FILE}),
+                 environment.getIsInMemoryOnly())
     { }
 
     void PresetKeywordsModelConfig::initializeConfigs() {
         LOG_DEBUG << "#";
 
-        QString localConfigPath = m_Environment.path({LOCAL_PRESETKEYWORDS_LIST_FILE});
-
         if (XPIKS_MAJOR_VERSION_CHECK(1, 5) ||
                 XPIKS_MAJOR_VERSION_CHECK(1, 4)) {
-            backupXpiks14xPresets(localConfigPath);
+            if (!m_Environment.getIsInMemoryOnly()) {
+                backupXpiks14xPresets(m_Config.getPath());
+            }
         } else {
             // remove backup for 1.6
             Q_ASSERT(false);
         }
 
-        m_Config.initConfig(localConfigPath);
+        m_Config.initialize();
         processLocalConfig(m_Config.getConfig());
     }
 
@@ -279,6 +281,6 @@ namespace KeywordsPresets {
         Q_UNUSED(dropper);
 
         m_Config.setConfig(doc);
-        m_Config.saveToFile();
+        m_Config.save();
     }
 }

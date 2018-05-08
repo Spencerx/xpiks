@@ -6,8 +6,8 @@
 class AutoAttachVectorsTest : public IntegrationTestBase
 {
 public:
-    AutoAttachVectorsTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    AutoAttachVectorsTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

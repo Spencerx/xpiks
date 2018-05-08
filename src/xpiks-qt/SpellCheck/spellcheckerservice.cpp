@@ -38,7 +38,7 @@ namespace SpellCheck {
         Helpers::AsyncCoordinator *coordinator = nullptr;
         if (coordinatorParams) { coordinator = coordinatorParams->m_Coordinator; }
 
-        m_SpellCheckWorker = new SpellCheckWorker(m_Environment, coordinator, m_SettingsModel);
+        m_SpellCheckWorker = new SpellCheckWorker(getDictsRoot(), m_Environment, coordinator, m_SettingsModel);
         Helpers::AsyncCoordinatorLocker locker(coordinator);
         Q_UNUSED(locker);
 
@@ -304,5 +304,17 @@ namespace SpellCheck {
             }
         }
         return result;
+    }
+
+    QString SpellCheckerService::getDictsRoot() const {
+        QString resourcesPath = QCoreApplication::applicationDirPath();
+#if defined(Q_OS_MAC)
+        resourcesPath += "/../Resources/";
+#elif defined(APPVEYOR)
+        resourcesPath += "/../../../xpiks-qt/deps/";
+#endif
+        resourcesPath += "/dict/";
+
+        return QDir::cleanPath(resourcesPath);
     }
 }

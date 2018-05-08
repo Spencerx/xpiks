@@ -6,8 +6,8 @@
 class ReadLegacySavedTest: public IntegrationTestBase
 {
 public:
-    ReadLegacySavedTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    ReadLegacySavedTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

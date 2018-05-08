@@ -46,11 +46,12 @@ namespace Suggestion {
     public:
         KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
                           Connectivity::RequestsService &requestsService,
+                          Common::ISystemEnvironment &environment,
                           QObject *parent=NULL);
 
     public:
         void setExistingKeywords(const QSet<QString> &keywords);
-        void initSuggestionEngines(Common::ISystemEnvironment &environment);
+        void initSuggestionEngines();
         void setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks);
         void clear();
 

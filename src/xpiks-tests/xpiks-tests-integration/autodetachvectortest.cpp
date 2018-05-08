@@ -20,12 +20,15 @@ QString AutoDetachVectorTest::testName() {
 void AutoDetachVectorTest::setup() {
     Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
     settingsModel->setAutoFindVectors(true);
+
+    // copy file
+    setupFilePathForTest("images-for-tests/items-to-remove/026.eps");
 }
 
 int AutoDetachVectorTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/items-to-remove/026.jpg");
+    files << setupFilePathForTest("images-for-tests/items-to-remove/026.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

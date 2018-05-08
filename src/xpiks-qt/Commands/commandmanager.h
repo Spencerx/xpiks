@@ -210,7 +210,7 @@ namespace Commands {
 
     public:
         void ensureDependenciesInjected();
-        void afterConstructionCallback(Common::ISystemEnvironment &environment);
+        void afterConstructionCallback();
 
     private:
         void afterInnerServicesInitialized();

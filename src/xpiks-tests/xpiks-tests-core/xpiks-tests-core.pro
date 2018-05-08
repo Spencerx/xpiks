@@ -57,6 +57,9 @@ travis-ci {
     message("for Travis CI")
     DEFINES += TRAVIS_CI
 
+    # sqlite
+    LIBS += -ldl
+
     # gcov
     QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
     LIBS += -lgcov
@@ -194,7 +197,14 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Commands/maindelegator.cpp \
     ../../xpiks-qt/Common/baseentity.cpp \
     ../../xpiks-qt/Warnings/warningsitem.cpp \
-    warningscheck_tests.cpp
+    warningscheck_tests.cpp \
+    ../../xpiks-qt/Storage/database.cpp \
+    ../../xpiks-qt/Storage/databasemanager.cpp \
+    ../../xpiks-qt/Storage/memorytable.cpp \
+    ../../../vendors/sqlite/sqlite3.c \
+    ../../xpiks-qt/QMLExtensions/cachedimage.cpp \
+    dbimagecache_tests.cpp \
+    ../../xpiks-qt/QMLExtensions/dbimagecacheindex.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -337,5 +347,17 @@ HEADERS += \
     Mocks/warningssettingsmock.h \
     Mocks/coretestsenvironment.h \
     ../../xpiks-qt/Common/isystemenvironment.h \
-    ../../xpiks-qt/Helpers/jsonobjectmap.h
+    ../../xpiks-qt/Helpers/jsonobjectmap.h \
+    ../../xpiks-qt/Storage/database.h \
+    ../../xpiks-qt/Storage/databasemanager.h \
+    ../../xpiks-qt/Storage/idatabase.h \
+    ../../xpiks-qt/Storage/idatabasemanager.h \
+    ../../xpiks-qt/Storage/memorytable.h \
+    ../../xpiks-qt/Storage/writeaheadlog.h \
+    ../../../vendors/sqlite/sqlite3.h \
+    ../../xpiks-qt/QMLExtensions/cachedimage.h \
+    dbimagecache_tests.h \
+    ../../xpiks-qt/QMLExtensions/dbcacheindex.h \
+    ../../xpiks-qt/QMLExtensions/previewstorage.h \
+    ../../xpiks-qt/QMLExtensions/dbimagecacheindex.h
 

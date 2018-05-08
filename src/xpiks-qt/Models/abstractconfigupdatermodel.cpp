@@ -14,19 +14,28 @@
 #include "../Connectivity/requestsservice.h"
 
 namespace Models {
-    AbstractConfigUpdaterModel::AbstractConfigUpdaterModel(bool forceOverwrite, QObject *parent):
-        QObject(parent),
-        m_RemoteConfig(this),
-        m_ForceOverwrite(forceOverwrite)
+    AbstractConfigUpdaterModel::AbstractConfigUpdaterModel(const QString &localPath,
+                                                           const QString &remoteResource,
+                                                           bool forceOverwrite,
+                                                           bool memoryOnly,
+                                                           QObject *parent):
+        QObject(parent)
+        ,m_RemoteConfig(remoteResource, this)
+        ,m_LocalConfig(localPath, memoryOnly)
+        ,m_ForceOverwrite(forceOverwrite)
+  #ifdef INTEGRATION_TESTS
+        ,m_MemoryOnly(memoryOnly)
+  #endif
     {
-        QObject::connect(&m_RemoteConfig, &Helpers::RemoteConfig::configArrived, this, &AbstractConfigUpdaterModel::remoteConfigArrived);
+        QObject::connect(&m_RemoteConfig, &Helpers::RemoteConfig::configArrived,
+                         this, &AbstractConfigUpdaterModel::remoteConfigArrived);
     }
 
-    void AbstractConfigUpdaterModel::initializeConfigs(const QString &configUrl, const QString &filePath) {
+    void AbstractConfigUpdaterModel::initializeConfigs() {
         LOG_DEBUG << "#";
 
-        initLocalConfig(filePath);
-        initRemoteConfig(configUrl);
+        initLocalConfig();
+        initRemoteConfig();
     }
 
     void AbstractConfigUpdaterModel::remoteConfigArrived() {
@@ -39,17 +48,17 @@ namespace Models {
         LOG_DEBUG << "#";
         QJsonDocument &localDocument = m_LocalConfig.getConfig();
         Helpers::mergeJson(remoteDocument, localDocument, overwriteLocal, *this);
-        m_LocalConfig.saveToFile();
+        m_LocalConfig.save();
 
         processMergedConfig(localDocument);
     }
 
-    void AbstractConfigUpdaterModel::initRemoteConfig(const QString &configUrl) {
+    void AbstractConfigUpdaterModel::initRemoteConfig() {
 #ifdef INTEGRATION_TESTS
         if (!m_RemoteOverrideLocalPath.isEmpty()) {
             LOG_DEBUG << "Using remote override" << m_RemoteOverrideLocalPath;
-            Helpers::LocalConfig m_RemoteOverrideConfig;
-            m_RemoteOverrideConfig.initConfig(m_RemoteOverrideLocalPath);
+            Helpers::LocalConfig m_RemoteOverrideConfig(m_RemoteOverrideLocalPath, m_MemoryOnly);
+            m_RemoteOverrideConfig.initialize();
 
             const QJsonDocument &localDocument = m_RemoteOverrideConfig.getConfig();
             processRemoteConfig(localDocument, m_ForceOverwrite);
@@ -57,16 +66,13 @@ namespace Models {
 #endif
         {
             Q_ASSERT(m_CommandManager != NULL);
-            Q_ASSERT(!configUrl.isEmpty());
-            m_RemoteConfig.setConfigUrl(configUrl);
-
             Connectivity::RequestsService *requestsService = m_CommandManager->getRequestsService();
-            requestsService->receiveConfig(configUrl, &m_RemoteConfig);
+            requestsService->receiveConfig(&m_RemoteConfig);
         }
     }
 
-    void AbstractConfigUpdaterModel::initLocalConfig(const QString &filePath){
-        m_LocalConfig.initConfig(filePath);
+    void AbstractConfigUpdaterModel::initLocalConfig() {
+        m_LocalConfig.initialize();
         const QJsonDocument &localDocument = m_LocalConfig.getConfig();
         processLocalConfig(localDocument);
     }

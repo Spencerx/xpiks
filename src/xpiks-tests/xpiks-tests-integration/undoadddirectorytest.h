@@ -6,8 +6,8 @@
 class UndoAddDirectoryTest : public IntegrationTestBase
 {
 public:
-    UndoAddDirectoryTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    UndoAddDirectoryTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface
