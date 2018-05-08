@@ -652,6 +652,9 @@ CONFIG(debug, debug|release)  {
 }
 
 macx {
+    QMAKE_TARGET_BUNDLE_PREFIX = com.xpiksapp
+    QMAKE_BUNDLE = Xpiks
+
     INCLUDEPATH += "../../vendors/quazip"
     INCLUDEPATH += "../../vendors/libcurl/include"
 

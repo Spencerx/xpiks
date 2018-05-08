@@ -15,7 +15,7 @@ namespace Constants {
     // common for DEBUG and RELEASE
     const char PATH_TO_EXIFTOOL[] = "PATH_TO_EXIF_TOOL";
     const char ORGANIZATION_NAME[] = "Xpiks";
-    const char ORGANIZATION_DOMAIN[] = "ribtoks.github.io";
+    const char ORGANIZATION_DOMAIN[] = "xpiksapp.com";
     const char APPLICATION_NAME[] = "Xpiks";
     const char LOG_FILENAME[] = "xpiks.log";
     const char LOG_PREFIX[] = "xpiks-";
