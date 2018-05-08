@@ -7,11 +7,11 @@ Most useful pages are **[Build instructions](https://github.com/ribtoks/xpiks/wi
 ### How to contribute
 - [Fork](http://help.github.com/forking/) Xpiks repository on GitHub
 - Clone your fork locally
-- Configure the upstream repo (`git remote add upstream git@github.com:Ribtoks/xpiks.git`)
+- Configure the upstream repo (`git remote add upstream git@github.com:ribtoks/xpiks.git`)
 - Create local branch (`git checkout -b your_feature`)
 - Work on your feature
-- Build project using BUILD.md instructions
-- Build and Run tests (`xpiks-tests.pro` project), fix your feature if needed
+- Build project using [build instructions](https://github.com/ribtoks/xpiks/wiki/Build-instructions)
+- Build and Run tests (`xpiks-tests-core` and `xpiks-tests-integration` projects), fix your feature if needed
 - Push the branch to GitHub (`git push origin your_feature`)
 - Make sure all integration tests are green across all platforms
 - Send a [pull request](https://help.github.com/articles/using-pull-requests) on GitHub
