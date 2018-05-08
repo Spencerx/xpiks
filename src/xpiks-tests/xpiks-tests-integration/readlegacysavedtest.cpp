@@ -23,7 +23,7 @@ void ReadLegacySavedTest::setup() {
 int ReadLegacySavedTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/pixmap/img_0007.jpg");
+    files << setupFilePathForTest("images-for-tests/pixmap/img_0007.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

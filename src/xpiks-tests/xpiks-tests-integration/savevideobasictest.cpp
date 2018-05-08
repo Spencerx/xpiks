@@ -22,7 +22,7 @@ void SaveVideoBasicTest::setup() {
 int SaveVideoBasicTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("videos-for-tests/Untitled.mp4");
+    files << setupFilePathForTest("videos-for-tests/Untitled.mp4");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

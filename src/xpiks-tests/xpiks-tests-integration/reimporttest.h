@@ -6,8 +6,8 @@
 class ReimportTest: public IntegrationTestBase
 {
 public:
-    ReimportTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    ReimportTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

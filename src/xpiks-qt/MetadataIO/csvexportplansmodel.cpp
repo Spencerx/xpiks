@@ -165,7 +165,12 @@ namespace MetadataIO {
     }
 
     CsvExportPlansModel::CsvExportPlansModel(Common::ISystemEnvironment &environment, QObject *parent):
-        Models::AbstractConfigUpdaterModel(OVERWRITE_CSV_PLANS, parent),
+        Models::AbstractConfigUpdaterModel(
+            environment.path({EXPORT_PLANS_FILE}),
+            Connectivity::ApiManager::getInstance().getCsvExportPlansAddr(),
+            OVERWRITE_CSV_PLANS,
+            environment.getIsInMemoryOnly(),
+            parent),
         m_Environment(environment)
     {
     }
@@ -177,10 +182,7 @@ namespace MetadataIO {
         Helpers::AsyncCoordinatorUnlocker unlocker(initCoordinator);
         Q_UNUSED(locker); Q_UNUSED(unlocker);
 
-        QString localConfigPath = m_Environment.path({EXPORT_PLANS_FILE});
-        auto &apiManager = Connectivity::ApiManager::getInstance();
-        QString remoteAddress = apiManager.getCsvExportPlansAddr();
-        AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);
+        AbstractConfigUpdaterModel::initializeConfigs();
     }
 
     void CsvExportPlansModel::sync(const std::vector<std::shared_ptr<CsvExportPlan> > &exportPlans) {
@@ -197,7 +199,7 @@ namespace MetadataIO {
         Q_UNUSED(dropper);
 
         localConfig.setConfig(doc);
-        localConfig.saveToFile();
+        localConfig.save();
     }
 
     bool CsvExportPlansModel::processLocalConfig(const QJsonDocument &document) {

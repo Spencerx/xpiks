@@ -16,24 +16,28 @@
 #include "../Commands/commandmanager.h"
 #include "../Common/defines.h"
 #include "../QuickBuffer/quickbuffer.h"
-#include "suggestionqueryenginebase.h"
-#include "shutterstockqueryengine.h"
 #include "locallibraryqueryengine.h"
-#include "fotoliaqueryengine.h"
-#include "gettyqueryengine.h"
 #include "../Models/switchermodel.h"
 #include "../Models/settingsmodel.h"
 #include "../Helpers/constants.h"
 #include "../Models/switchermodel.h"
+#include "shutterstocksuggestionengine.h"
+#include "fotoliasuggestionengine.h"
+#include "gettysuggestionengine.h"
 
 #define LINEAR_TIMER_INTERVAL 1000
 #define DEFAULT_SEARCH_TYPE_INDEX 0
 
 namespace Suggestion {
-    KeywordsSuggestor::KeywordsSuggestor(QObject *parent):
+    KeywordsSuggestor::KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
+                                         Connectivity::RequestsService &requestsService,
+                                         Common::ISystemEnvironment &environment,
+                                         QObject *parent):
         QAbstractListModel(parent),
         Common::BaseEntity(),
-        m_State("ksuggest"),
+        m_State("ksuggest", environment),
+        m_ApiClients(apiClients),
+        m_RequestsService(requestsService),
         m_SuggestedKeywords(m_HoldPlaceholder, this),
         m_AllOtherKeywords(m_HoldPlaceholder, this),
         m_SelectedArtworksCount(0),
@@ -48,46 +52,56 @@ namespace Suggestion {
         QObject::connect(&m_LinearTimer, &QTimer::timeout, this, &KeywordsSuggestor::onLinearTimer);
     }
 
-    KeywordsSuggestor::~KeywordsSuggestor() {
-        qDeleteAll(m_QueryEngines);
-    }
-
     void KeywordsSuggestor::setExistingKeywords(const QSet<QString> &keywords) {
         LOG_DEBUG << "#";
         m_ExistingKeywords.clear(); m_ExistingKeywords.unite(keywords);
     }
 
-    void KeywordsSuggestor::initSuggestionEngines(Common::ISystemEnvironment &environment) {
+    void KeywordsSuggestor::initSuggestionEngines() {
         LOG_DEBUG << "#";
         Q_ASSERT(m_CommandManager != NULL);
-        auto *settingsModel = m_CommandManager->getSettingsModel();
         auto *metadataIOService = m_CommandManager->getMetadataIOService();
         auto *switcherModel = m_CommandManager->getSwitcherModel();
 
         int id = 0;
-        m_QueryEngines.append(new ShutterstockQueryEngine(id++, settingsModel));
+        std::shared_ptr<ShutterstockSuggestionEngine> shutterstockEngine(new ShutterstockSuggestionEngine(
+                                                                             id++,
+                                                                             &m_ApiClients.getShutterstockClient(),
+                                                                             &m_RequestsService));
+        QObject::connect(shutterstockEngine.get(), &ShutterstockSuggestionEngine::resultsAvailable,
+                         this, &KeywordsSuggestor::resultsAvailableHandler);
+        m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(shutterstockEngine));
+
         if (switcherModel->getGettySuggestionEnabled()) {
             // https://github.com/ribtoks/xpiks/issues/463
-            m_QueryEngines.append(new GettyQueryEngine(id++, settingsModel));
+           std::shared_ptr<GettySuggestionEngine> gettyEngine(new GettySuggestionEngine(
+                                                                  id++,
+                                                                  &m_ApiClients.getGettyClient(),
+                                                                  &m_RequestsService));
+           QObject::connect(gettyEngine.get(), &GettySuggestionEngine::resultsAvailable,
+                            this, &KeywordsSuggestor::resultsAvailableHandler);
+           m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(gettyEngine));
+        } else {
             LOG_DEBUG << "Getty query engine is disabled";
         }
-        m_QueryEngines.append(new FotoliaQueryEngine(id++, settingsModel));
-        m_QueryEngines.append(new LocalLibraryQueryEngine(id++, metadataIOService));
-        m_LocalSearchIndex = m_QueryEngines.length() - 1;
 
-        int length = m_QueryEngines.length();
-        for (int i = 0; i < length; ++i) {
-            SuggestionQueryEngineBase *engine = m_QueryEngines.at(i);
-            m_QueryEnginesNames.append(engine->getName());
+        std::shared_ptr<FotoliaSuggestionEngine> fotoliaEngine(new FotoliaSuggestionEngine(
+                                                                   id++,
+                                                                   &m_ApiClients.getFotoliaClient(),
+                                                                   &m_RequestsService));
+        QObject::connect(fotoliaEngine.get(), &FotoliaSuggestionEngine::resultsAvailable,
+                         this, &KeywordsSuggestor::resultsAvailableHandler);
+        m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(fotoliaEngine));
 
-            QObject::connect(engine, &SuggestionQueryEngineBase::resultsAvailable,
-                             this, &KeywordsSuggestor::resultsAvailableHandler);
+        std::shared_ptr<LocalLibraryQueryEngine> localEngine(new LocalLibraryQueryEngine(
+                                                                 id++,
+                                                                 metadataIOService));
+        QObject::connect(localEngine.get(), &LocalLibraryQueryEngine::resultsAvailable,
+                         this, &KeywordsSuggestor::resultsAvailableHandler);
+        m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(localEngine));
+        m_LocalSearchIndex = (int)m_QueryEngines.size() - 1;
 
-            QObject::connect(engine, &SuggestionQueryEngineBase::errorReceived,
-                             this, &KeywordsSuggestor::errorsReceivedHandler);
-        }
-
-        m_State.init(environment);
+        m_State.init();
     }
 
     void KeywordsSuggestor::setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks) {
@@ -160,7 +174,7 @@ namespace Suggestion {
     void KeywordsSuggestor::setSelectedSourceIndex(int value) {
         if (!m_IsInProgress && (value != m_SelectedSourceIndex)) {
             if (0 <= value &&
-                    value < m_QueryEngines.length()) {
+                    value < (int)m_QueryEngines.size()) {
                 LOG_INFO << "Selected query source index:" << value;
                 m_SelectedSourceIndex = value;
                 emit selectedSourceIndexChanged();
@@ -189,17 +203,10 @@ namespace Suggestion {
     }
 
     void KeywordsSuggestor::resultsAvailableHandler() {
-        Q_ASSERT(0 <= m_SelectedSourceIndex && m_SelectedSourceIndex < m_QueryEngines.length());
-        SuggestionQueryEngineBase *currentEngine = m_QueryEngines.at(m_SelectedSourceIndex);
-        SuggestionQueryEngineBase *senderEngine = qobject_cast<SuggestionQueryEngineBase *>(sender());
-
-        if ((senderEngine == nullptr) || (senderEngine->getID() != currentEngine->getID())) {
-            qInfo() << "Received results from another engine:" <<
-                       ((senderEngine != nullptr) ? senderEngine->getID() : (-1)) << "current:" << currentEngine->getID();
-        }
-
+        Q_ASSERT(0 <= m_SelectedSourceIndex && m_SelectedSourceIndex < (int)m_QueryEngines.size());
+        auto &currentEngine = m_QueryEngines.at(m_SelectedSourceIndex);
         unsetInProgress();
-        auto &results = currentEngine->getLastResults();
+        auto &results = currentEngine->getSuggestions();
         setSuggestedArtworks(results);
     }
 
@@ -229,14 +236,6 @@ namespace Suggestion {
     }
 
     void KeywordsSuggestor::onLanguageChanged() {
-        m_QueryEnginesNames.clear();
-        int length = m_QueryEngines.length();
-
-        for (int i = 0; i < length; ++i) {
-            SuggestionQueryEngineBase *engine = m_QueryEngines.at(i);
-            m_QueryEnginesNames.append(engine->getName());
-        }
-
         setLastErrorString(tr("No results found"));
     }
 
@@ -244,8 +243,8 @@ namespace Suggestion {
         const int index = getSelectedSourceIndex();
         if ((index < 0) || (index >= (int)m_QueryEngines.size())) { return false; }
 
-        SuggestionQueryEngineBase *engine = m_QueryEngines.at(index);
-        LocalLibraryQueryEngine *localEngine = dynamic_cast<LocalLibraryQueryEngine*>(engine);
+        auto &engine = m_QueryEngines.at(index);
+        auto localEngine = std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine);
         bool result = localEngine != nullptr;
         return result;
     }
@@ -308,11 +307,11 @@ namespace Suggestion {
         if (!m_IsInProgress && !searchTerm.trimmed().isEmpty()) {
             setInProgress();
 
-            SuggestionQueryEngineBase *engine = m_QueryEngines.at(m_SelectedSourceIndex);
-            SearchQuery query(searchTerm, resultsType, engine->getMaxResults());
+            auto &engine = m_QueryEngines.at(m_SelectedSourceIndex);
+            Microstocks::SearchQuery query(searchTerm, resultsType, engine->getMaxResultsPerPage());
             engine->submitQuery(query);
 
-            if (dynamic_cast<LocalLibraryQueryEngine*>(engine) == NULL) {
+            if (std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine) == nullptr) {
                 xpiks()->reportUserAction(Connectivity::UserAction::SuggestionRemote);
             } else {
                 xpiks()->reportUserAction(Connectivity::UserAction::SuggestionLocal);
@@ -322,8 +321,16 @@ namespace Suggestion {
 
     void KeywordsSuggestor::cancelSearch() {
         LOG_DEBUG << "#";
-        SuggestionQueryEngineBase *engine = m_QueryEngines.at(m_SelectedSourceIndex);
-        engine->cancelQueries();
+        auto &engine = m_QueryEngines.at(m_SelectedSourceIndex);
+        engine->cancelQuery();
+    }
+
+    QStringList KeywordsSuggestor::getEngineNames() const {
+        QStringList names;
+        for (auto &engine: m_QueryEngines) {
+            names.append(engine->getName());
+        }
+        return names;
     }
 
     void KeywordsSuggestor::clearSuggested() {

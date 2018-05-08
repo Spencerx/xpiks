@@ -23,6 +23,9 @@
 #include "pluginenvironment.h"
 #include "plugindatabasemanager.h"
 #include "../Storage/idatabasemanager.h"
+#include "sandboxeddependencies.h"
+#include "../Connectivity/requestsservice.h"
+#include "../Microstocks/microstockapiclients.h"
 
 namespace Plugins {
     class XpiksPluginInterface;
@@ -32,7 +35,10 @@ namespace Plugins {
     {
         Q_OBJECT
     public:
-        PluginManager(Common::ISystemEnvironment &environment, Storage::DatabaseManager *dbManager);
+        PluginManager(Common::ISystemEnvironment &environment,
+                      Storage::DatabaseManager *dbManager,
+                      Connectivity::RequestsService &requestsService,
+                      Microstocks::MicrostockAPIClients &apiClients);
         virtual ~PluginManager();
 
     public:
@@ -90,6 +96,7 @@ namespace Plugins {
     private:
         Common::ISystemEnvironment &m_Environment;
         Storage::DatabaseManager *m_DatabaseManager;
+        MicrostockServicesSafe m_MicrostockServices;
         QString m_PluginsDirectoryPath;
         QString m_FailedPluginsDirectory;
         std::vector<std::shared_ptr<PluginWrapper> > m_PluginsList;

@@ -6,8 +6,8 @@
 class UnicodeIoTest : public IntegrationTestBase
 {
 public:
-    UnicodeIoTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    UnicodeIoTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

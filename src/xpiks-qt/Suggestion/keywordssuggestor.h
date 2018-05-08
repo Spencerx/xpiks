@@ -24,10 +24,11 @@
 #include "../Common/hold.h"
 #include "../Common/statefulentity.h"
 #include "../Common/isystemenvironment.h"
+#include "isuggestionengine.h"
+#include "../Microstocks/microstockapiclients.h"
+#include "../Connectivity/requestsservice.h"
 
 namespace Suggestion {
-    class SuggestionQueryEngineBase;
-
     class KeywordsSuggestor:
             public QAbstractListModel,
             public Common::BaseEntity
@@ -43,12 +44,14 @@ namespace Suggestion {
         Q_PROPERTY(int searchTypeIndex READ getSearchTypeIndex WRITE setSearchTypeIndex NOTIFY searchTypeIndexChanged)
 
     public:
-        KeywordsSuggestor(QObject *parent=NULL);
-        virtual ~KeywordsSuggestor();
+        KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
+                          Connectivity::RequestsService &requestsService,
+                          Common::ISystemEnvironment &environment,
+                          QObject *parent=NULL);
 
     public:
         void setExistingKeywords(const QSet<QString> &keywords);
-        void initSuggestionEngines(Common::ISystemEnvironment &environment);
+        void initSuggestionEngines();
         void setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks);
         void clear();
 
@@ -108,7 +111,7 @@ namespace Suggestion {
         Q_INVOKABLE void cancelSearch();
         Q_INVOKABLE void close() { clear(); }
         Q_INVOKABLE QStringList getSuggestedKeywords() { return m_SuggestedKeywords.getKeywords(); }
-        Q_INVOKABLE QStringList getEngineNames() const { return m_QueryEnginesNames; }
+        Q_INVOKABLE QStringList getEngineNames() const;
         Q_INVOKABLE QString getSuggestedKeywordsString() { return m_SuggestedKeywords.getKeywordsString(); }
         Q_INVOKABLE void clearSuggested();
         Q_INVOKABLE void resetSelection();
@@ -146,11 +149,12 @@ namespace Suggestion {
 
     private:
         Common::StatefulEntity m_State;
-        QHash<QString, int> m_KeywordsHash;
+        Microstocks::MicrostockAPIClients &m_ApiClients;
+        Connectivity::RequestsService &m_RequestsService;
+        std::vector<std::shared_ptr<ISuggestionEngine>> m_QueryEngines;
         std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
-        QVector<SuggestionQueryEngineBase*> m_QueryEngines;
-        QStringList m_QueryEnginesNames;
         QString m_LastErrorString;
+        QHash<QString, int> m_KeywordsHash;
         QSet<QString> m_ExistingKeywords;
         Common::FakeHold m_HoldPlaceholder;
         Common::BasicKeywordsModel m_SuggestedKeywords;

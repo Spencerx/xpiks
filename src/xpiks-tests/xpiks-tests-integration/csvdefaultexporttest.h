@@ -6,8 +6,8 @@
 class CsvDefaultExportTest : public IntegrationTestBase
 {
 public:
-    CsvDefaultExportTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    CsvDefaultExportTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

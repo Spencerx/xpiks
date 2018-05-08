@@ -86,6 +86,7 @@ namespace SpellCheck {
 
     private:
         Common::WordAnalysisFlags getWordAnalysisFlags() const;
+        QString getDictsRoot() const;
 
     private:
         Common::ISystemEnvironment &m_Environment;

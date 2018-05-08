@@ -563,7 +563,7 @@ namespace KeywordsPresets {
 
             QVector<QChar> separators;
             separators << QChar(',');
-            if (spaceIsSeparator) { separators << QChar(' '); }
+            if (spaceIsSeparator) { separators << QChar::Space; }
             QStringList keywords;
             Helpers::splitKeywords(rawKeywords.trimmed(), separators, keywords);
 

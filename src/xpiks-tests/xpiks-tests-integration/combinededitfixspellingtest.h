@@ -6,8 +6,8 @@
 class CombinedEditFixSpellingTest : public IntegrationTestBase
 {
 public:
-    CombinedEditFixSpellingTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    CombinedEditFixSpellingTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

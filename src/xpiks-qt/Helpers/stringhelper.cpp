@@ -9,7 +9,6 @@
  */
 
 #include "stringhelper.h"
-#include <QFile>
 #include <QTextStream>
 #include <QStringRef>
 #include <QVector>

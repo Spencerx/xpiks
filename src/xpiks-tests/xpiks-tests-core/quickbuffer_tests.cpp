@@ -17,8 +17,8 @@
     Mocks::ArtItemsModelMock artItemsModelMock;\
     Models::ArtworksRepository artworksRepository;\
     QuickBuffer::QuickBuffer quickBuffer;\
-    Models::SettingsModel settingsModel;\
-    Models::UIManager uiManager(&settingsModel);\
+    Models::SettingsModel settingsModel(environment);\
+    Models::UIManager uiManager(environment, &settingsModel);\
     Models::FilteredArtItemsProxyModel filteredItemsModel;\
     commandManagerMock.InjectDependency(&artworksRepository);\
     commandManagerMock.InjectDependency(&artItemsModelMock);\

@@ -6,8 +6,8 @@
 class PresetsTest: public IntegrationTestBase
 {
 public:
-    PresetsTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    PresetsTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

@@ -34,7 +34,7 @@ namespace Connectivity {
     public:
         void dispose() { emit stopped(); }
         bool sendRequestSync();
-        void setRawHeaders(const QStringList &headers);
+        void addRawHeaders(const QStringList &headers);
         void setProxySettings(Models::ProxySettings *proxySettings);
 
     public slots:

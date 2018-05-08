@@ -33,6 +33,12 @@
 namespace Common {
     SystemEnvironment::SystemEnvironment(const QStringList &appArguments) {
         m_Root = XPIKS_USERDATA_PATH;
+
+#ifdef INTEGRATION_TESTS
+        m_SessionTag = "session-" + QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss");
+        m_Root += "/" + m_SessionTag;
+#endif
+
         bool portable = false;
 
 #ifdef Q_OS_WIN
@@ -45,11 +51,15 @@ namespace Common {
             m_Root = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + "settings");
         }
 
-        LOG_DEBUG << "Configs root is" << m_Root;
-        LOG_DEBUG << "Extra files search locations:" << QStandardPaths::standardLocations(XPIKS_DATA_LOCATION_TYPE);
+        m_InMemoryExperiment = appArguments.contains("--in-memory", Qt::CaseInsensitive);
+
+        LOG_INFO << "Configs root is" << m_Root;
+        LOG_INFO << "Extra files search locations:" << QStandardPaths::standardLocations(XPIKS_DATA_LOCATION_TYPE);
+        LOG_INFO << "In-memory experiment:" << m_InMemoryExperiment;
     }
 
     void SystemEnvironment::ensureSystemDirectoriesExist() {
+        if (m_InMemoryExperiment) { return; }
         ensureDirExists(Constants::LOGS_DIR);
         ensureDirExists(Constants::STATES_DIR);
     }

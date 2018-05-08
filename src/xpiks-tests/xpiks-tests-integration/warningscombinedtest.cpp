@@ -10,6 +10,7 @@
 #include "../../xpiks-qt/Models/artworkmetadata.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
 #include "../../xpiks-qt/Models/imageartwork.h"
+#include "testshelpers.h"
 
 QString WarningsCombinedTest::testName() {
     return QLatin1String("WarningsCombinedTest");
@@ -23,7 +24,7 @@ void WarningsCombinedTest::setup() {
 int WarningsCombinedTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/read-only/Nokota_Horses.jpg");
+    files << setupFilePathForTest("images-for-tests/read-only/Nokota_Horses.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

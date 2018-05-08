@@ -26,6 +26,7 @@
 #include "../KeywordsPresets/ipresetsmanager.h"
 #include "../Common/flags.h"
 #include "../Storage/idatabasemanager.h"
+#include "../Microstocks/imicrostockservices.h"
 
 namespace Plugins {
     enum struct PluginNotificationFlags: Common::flag_t {
@@ -69,6 +70,7 @@ namespace Plugins {
         virtual void injectUIProvider(IUIProvider *uiProvider) { Q_UNUSED(uiProvider); }
         virtual void injectPresetsManager(KeywordsPresets::IPresetsManager *presetsManager) { Q_UNUSED(presetsManager); }
         virtual void injectDatabaseManager(Storage::IDatabaseManager *databaseManager) { Q_UNUSED(databaseManager); }
+        virtual void injectMicrostockServices(Microstocks::IMicrostockServices *microstockServices) { Q_UNUSED(microstockServices); }
     };
 }
 

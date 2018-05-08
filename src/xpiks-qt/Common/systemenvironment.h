@@ -22,15 +22,23 @@ namespace Common {
         SystemEnvironment(const QStringList &appArguments = QStringList());
 
     public:
-        void ensureSystemDirectoriesExist();
+        virtual void ensureSystemDirectoriesExist();
 
     public:
         virtual QString root() const override { return m_Root; }
         virtual QString path(const QStringList &path) override;
         virtual bool ensureDirExists(const QString &name) override;
+        virtual bool getIsInMemoryOnly() const override { return m_InMemoryExperiment; }
+
+#ifdef INTEGRATION_TESTS
+    protected:
+        const QString &getSessionTag() const { return m_SessionTag; }
+#endif
 
     private:
         QString m_Root;
+        QString m_SessionTag;
+        bool m_InMemoryExperiment = false;
     };
 }
 

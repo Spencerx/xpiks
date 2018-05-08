@@ -23,10 +23,14 @@
 #include "../Helpers/filehelpers.h"
 
 namespace Plugins {
-    PluginManager::PluginManager(Common::ISystemEnvironment &environment, Storage::DatabaseManager *dbManager):
+    PluginManager::PluginManager(Common::ISystemEnvironment &environment,
+                                 Storage::DatabaseManager *dbManager,
+                                 Connectivity::RequestsService &requestsService,
+                                 Microstocks::MicrostockAPIClients &apiClients):
         QAbstractListModel(),
         m_Environment(environment),
         m_DatabaseManager(dbManager),
+        m_MicrostockServices(requestsService, apiClients),
         m_LastPluginID(0)
     {
         Q_ASSERT(dbManager != nullptr);
@@ -408,6 +412,7 @@ namespace Plugins {
                 plugin->injectArtworksSource(m_CommandManager->getArtItemsModel());
                 plugin->injectPresetsManager(m_CommandManager->getPresetsModel());
                 plugin->injectDatabaseManager(pluginWrapper->getDatabaseManager());
+                plugin->injectMicrostockServices(&m_MicrostockServices);
             }
             catch(...) {
                 LOG_WARNING << "Failed to inject dependencies to plugin with ID:" << pluginID;

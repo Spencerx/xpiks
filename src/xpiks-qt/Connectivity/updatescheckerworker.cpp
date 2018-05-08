@@ -114,7 +114,7 @@ namespace Connectivity {
             if (checkAvailableUpdate(updateCheckResult)) {
                 LOG_INFO << "Update is already downloaded:" << m_AvailableUpdatePath;
                 emit updateDownloaded(m_AvailableUpdatePath, updateCheckResult.m_Version);
-            } else if (m_SettingsModel->getAutoDownloadUpdates()) {
+            } else if (m_SettingsModel->getAutoDownloadUpdates() && !m_Environment.getIsInMemoryOnly()) {
                 LOG_DEBUG << "Going to download update...";
                 QString pathToUpdate;
                 if (downloadUpdate(updateCheckResult, pathToUpdate)) {
@@ -191,6 +191,7 @@ namespace Connectivity {
 
     bool UpdatesCheckerWorker::downloadUpdate(const UpdateCheckResult &updateCheckResult, QString &pathToUpdate) {
         LOG_DEBUG << "#";
+        Q_ASSERT(!m_Environment.getIsInMemoryOnly());
         bool success = false;
 
         Connectivity::SimpleCurlDownloader downloader(updateCheckResult.m_UpdateURL);

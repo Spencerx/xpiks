@@ -30,14 +30,14 @@ namespace Models {
         Q_PROPERTY(bool useAutoImport READ getUseAutoImport NOTIFY switchesUpdated)
         Q_PROPERTY(bool keywordsDragDropEnabled READ getKeywordsDragDropEnabled NOTIFY switchesUpdated)
     public:
-        SwitcherModel(QObject *parent=nullptr);
+        SwitcherModel(Common::ISystemEnvironment &environment, QObject *parent=nullptr);
 
     public:
         virtual void setCommandManager(Commands::CommandManager *commandManager) override;
 
     public:
-        void initialize(Common::ISystemEnvironment &environment);
-        void updateConfigs(Common::ISystemEnvironment &environment);
+        void initialize();
+        void updateConfigs();
         void afterInitializedCallback();
 
     private:

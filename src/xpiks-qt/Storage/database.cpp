@@ -194,47 +194,7 @@ namespace Storage {
         if (m_IsOpened) {
             doClose();
         } else {
-            LOG_WARNING << "Database is not opened. Skipping closing.";
-        }
-    }
-
-    bool Database::initialize() {
-        LOG_DEBUG << "#" << m_ID;
-        Q_ASSERT(m_IsOpened);
-        Q_ASSERT(m_Database != nullptr);
-
-        executeStatement("PRAGMA auto_vacuum = 0;");
-        executeStatement("PRAGMA cache_size = -20000;");
-        executeStatement("PRAGMA case_sensitive_like = true;");
-        executeStatement("PRAGMA encoding = \"UTF-8\";");
-        executeStatement("PRAGMA journal_mode = WAL;");
-        executeStatement("PRAGMA locking_mode = EXCLUSIVE;");
-        executeStatement("PRAGMA synchronous = NORMAL;");
-        // executeStatement("PRAGMA quick_check;");
-
-        int rc = 0;
-        bool anyError = false;
-
-        do {
-            std::string selectStr = QString("SELECT name FROM sqlite_master WHERE type='table'").toStdString();
-            rc = sqlite3_prepare_v2(m_Database, selectStr.c_str(), -1, &m_GetTablesStatement, 0);
-            if (rc != SQLITE_OK) {
-                LOG_WARNING << "Failed to prepare Tables statement:" << sqlite3_errstr(rc);
-                anyError = true;
-                break;
-            }
-        } while (false);
-
-        return !anyError;
-    }
-
-    void Database::finalize() {
-        LOG_DEBUG << "#" << m_ID;
-
-        finalizeSqliteStatement(m_GetTablesStatement);
-
-        for (auto &table: m_Tables) {
-            table->finalize();
+            LOG_WARNING << "#" << m_ID << "Database is not opened. Skipping closing.";
         }
     }
 
@@ -248,7 +208,7 @@ namespace Storage {
 
     std::shared_ptr<IDbTable> Database::getTable(const QString &name) {
         LOG_DEBUG << "#" << m_ID << name;
-        std::shared_ptr<IDbTable> table;
+        std::shared_ptr<Database::Table> table;
 
         QString createSql = QString("CREATE TABLE IF NOT EXISTS %1 ("
                                     "key BLOB PRIMARY KEY NOT NULL,"
@@ -270,27 +230,30 @@ namespace Storage {
             LOG_WARNING << "Creating a table failed! Error:" << sqlite3_errstr(rc);
         }
 
-        return table;
+        auto result = std::dynamic_pointer_cast<IDbTable>(table);
+        return result;
     }
 
     bool Database::deleteTable(std::shared_ptr<IDbTable> &table) {
         bool success = false;
+        auto dbTable = std::dynamic_pointer_cast<Database::Table>(table);
+        if (!dbTable) { return false; }
 
         auto it = std::find_if(m_Tables.begin(), m_Tables.end(),
                                [&](std::shared_ptr<IDbTable> const &current) {
-                return current.get() == table.get(); });
+                return current.get() == dbTable.get(); });
         if (it != m_Tables.end()) {
             m_Tables.erase(it);
 
-            table->finalize();
+            dbTable->finalize();
 
-            QString dropSql = QString("DROP TABLE IF EXISTS %1;").arg(table->getTableName());
+            QString dropSql = QString("DROP TABLE IF EXISTS %1;").arg(dbTable->getTableName());
             std::string dropStr = dropSql.toStdString();
 
             int rc = sqlite3_exec(m_Database, dropStr.c_str(), nullptr, nullptr, nullptr);
             if (rc == SQLITE_OK) {
                 success = true;
-                table.reset();
+                dbTable.reset();
             }
         } else {
             LOG_WARNING << "Attempt to delete a table not created by this database";
@@ -403,6 +366,7 @@ namespace Storage {
     bool Database::Table::tryGetValue(const QByteArray &key, QByteArray &value) {
         Q_ASSERT(m_GetStatement != nullptr);
         Q_ASSERT(!key.isEmpty());
+        if (m_GetStatement == nullptr) { return false; }
         if (key.isEmpty()) { return false; }
 
         int rc = 0;
@@ -442,6 +406,7 @@ namespace Storage {
         Q_ASSERT(m_SetStatement != nullptr);
         Q_ASSERT(!key.isEmpty());
         Q_ASSERT(!value.isEmpty());
+        if (m_SetStatement == nullptr) { return false; }
 
         LOG_INTEGR_TESTS_OR_DEBUG << key << "->" << "[" << value.size() << "] bytes";
 
@@ -596,7 +561,7 @@ namespace Storage {
         return !anyError;
     }
 
-    void Database::Table::foreachRow(const std::function<bool (QByteArray &, QByteArray &)> &action) {
+    void Database::Table::foreachRow(const std::function<bool (const QByteArray &, QByteArray &)> &action) {
         Q_ASSERT(m_AllStatement != nullptr);
         LOG_DEBUG << "#";
 
@@ -622,6 +587,54 @@ namespace Storage {
         cleanupSqliteStatement(m_AllStatement);
     }
 
+    bool Database::initialize() {
+        LOG_DEBUG << "#" << m_ID;
+        Q_ASSERT(m_IsOpened);
+        Q_ASSERT(m_Database != nullptr);
+
+        bool pragmaError = false;
+
+        executeStatement("PRAGMA auto_vacuum = 0;", pragmaError);
+        executeStatement("PRAGMA cache_size = -20000;", pragmaError);
+        executeStatement("PRAGMA case_sensitive_like = true;", pragmaError);
+        executeStatement("PRAGMA encoding = \"UTF-8\";", pragmaError);
+        executeStatement("PRAGMA journal_mode = WAL;", pragmaError);
+        executeStatement("PRAGMA locking_mode = EXCLUSIVE;", pragmaError);
+        executeStatement("PRAGMA synchronous = NORMAL;", pragmaError);
+
+        bool anyError = false;
+
+        if (pragmaError) {
+            executeStatement("PRAGMA quick_check;", anyError);
+        }
+
+        int rc = 0;
+
+        do {
+            std::string selectStr = QString("SELECT name FROM sqlite_master WHERE type='table'").toStdString();
+            rc = sqlite3_prepare_v2(m_Database, selectStr.c_str(), -1, &m_GetTablesStatement, 0);
+            if (rc != SQLITE_OK) {
+                LOG_WARNING << "Failed to prepare Tables statement:" << sqlite3_errstr(rc);
+                anyError = true;
+                break;
+            }
+        } while (false);
+
+        return !anyError;
+    }
+
+    void Database::finalize() {
+        LOG_DEBUG << "#" << m_ID;
+
+        finalizeSqliteStatement(m_GetTablesStatement);
+
+        for (auto &table: m_Tables) {
+            table->finalize();
+        }
+
+        LOG_DEBUG << "#" << m_ID << "members are finalized";
+    }
+
     void Database::doClose() {
         LOG_DEBUG << "#" << m_ID;
 
@@ -632,19 +645,21 @@ namespace Storage {
             LOG_WARNING << "Failed to close a database #" << m_ID << ". Error:" << sqlite3_errstr(closeResult);
         } else {
             LOG_DEBUG << "DB" << "#" << m_ID << "closed";
-            m_IsOpened = false;
         }
+
+        m_IsOpened = false;
+
+        Helpers::AsyncCoordinatorUnlocker unlocker(m_FinalizeCoordinator);
+        Q_UNUSED(unlocker);
     }
 
-    bool Database::executeStatement(const char *stmt) {
+    void Database::executeStatement(const char *stmt, bool &anyError) {
         LOG_DEBUG << "#" << m_ID << stmt;
 
         int rc = sqlite3_exec(m_Database, stmt, nullptr, nullptr, nullptr);
         if (rc != SQLITE_OK) {
-            LOG_WARNING << "Failed to execute (" << stmt << "). Error:" << sqlite3_errstr(rc);
+            LOG_WARNING << "#" << m_ID << "Failed to execute (" << stmt << "). Error:" << sqlite3_errstr(rc);
+            anyError = true;
         }
-
-        bool success = rc == SQLITE_OK;
-        return success;
     }
 }

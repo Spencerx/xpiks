@@ -41,7 +41,7 @@ namespace Models {
         Q_PROPERTY(int artworkEditRightPaneWidth READ getArtworkEditRightPaneWidth WRITE setArtworkEditRightPaneWidth NOTIFY artworkEditRightPaneWidthChanged)
 
     public:
-        explicit UIManager(Models::SettingsModel *settingsModel,
+        explicit UIManager(Common::ISystemEnvironment &environment, Models::SettingsModel *settingsModel,
                            QObject *parent = 0);
 
     private:
@@ -86,7 +86,7 @@ namespace Models {
         int addPluginTab(int pluginID, const QString &tabIconComponent, const QString &tabComponent, QObject *tabModel);
         bool removePluginTab(int pluginID, int tabID);
         void initializeSystemTabs();
-        void initializeState(Common::ISystemEnvironment &environment);
+        void initialize();
         void resetWindowSettings();
 
     signals:

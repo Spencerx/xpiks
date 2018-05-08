@@ -10,8 +10,8 @@ namespace SpellCheck {
 class UserDictEditTest : public IntegrationTestBase
 {
 public:
-    UserDictEditTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    UserDictEditTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

@@ -108,14 +108,11 @@ SOURCES += main.cpp \
     spellcheckcombinedmodeltest.cpp \
     zipartworkstest.cpp \
     ../../xpiks-qt/Suggestion/locallibraryqueryengine.cpp \
-    ../../xpiks-qt/Suggestion/shutterstockqueryengine.cpp \
     spellcheckundotest.cpp \
-    ../../xpiks-qt/Suggestion/fotoliaqueryengine.cpp \
     ../../xpiks-qt/QMLExtensions/colorsmodel.cpp \
     ../../xpiks-qt/AutoComplete/autocompletemodel.cpp \
     ../../xpiks-qt/AutoComplete/autocompleteservice.cpp \
     ../../xpiks-qt/AutoComplete/autocompleteworker.cpp \
-    ../../xpiks-qt/Suggestion/gettyqueryengine.cpp \
     ../../xpiks-qt/AutoComplete/stocksftplistmodel.cpp \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.cpp \
     ../../xpiks-qt/Helpers/jsonhelper.cpp \
@@ -179,7 +176,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/QMLExtensions/videocachingworker.cpp \
     ../../xpiks-qt/QMLExtensions/artworksupdatehub.cpp \
     restoresessiontest.cpp \
-    ../../xpiks-qt/Connectivity/connectivityrequest.cpp \
+    ../../xpiks-qt/Connectivity/configrequest.cpp \
     ../../xpiks-qt/Connectivity/requestsservice.cpp \
     ../../xpiks-qt/Connectivity/requestsworker.cpp \
     ../../xpiks-qt/Models/switchermodel.cpp \
@@ -237,7 +234,18 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Plugins/plugindatabasemanager.cpp \
     ../../xpiks-qt/Plugins/pluginenvironment.cpp \
     loadpluginbasictest.cpp \
-    ../../xpiks-qt/Storage/databasemanager.cpp
+    ../../xpiks-qt/Storage/databasemanager.cpp \
+    ../../xpiks-qt/Suggestion/fotoliasuggestionengine.cpp \
+    ../../xpiks-qt/Suggestion/gettysuggestionengine.cpp \
+    ../../xpiks-qt/Suggestion/shutterstocksuggestionengine.cpp \
+    ../../xpiks-qt/Suggestion/suggestionresultsresponse.cpp \
+    ../../xpiks-qt/Microstocks/fotoliaapiclient.cpp \
+    ../../xpiks-qt/Microstocks/gettyapiclient.cpp \
+    ../../xpiks-qt/Microstocks/shutterstockapiclient.cpp \
+    ../../xpiks-qt/Microstocks/microstockservice.cpp \
+    ../../xpiks-qt/Storage/memorytable.cpp \
+    integrationtestsenvironment.cpp \
+    integrationtestbase.cpp
 
 RESOURCES +=
 
@@ -359,16 +367,12 @@ HEADERS += \
     spellcheckcombinedmodeltest.h \
     zipartworkstest.h \
     ../../xpiks-qt/Suggestion/locallibraryqueryengine.h \
-    ../../xpiks-qt/Suggestion/shutterstockqueryengine.h \
-    ../../xpiks-qt/Suggestion/suggestionqueryenginebase.h \
     spellcheckundotest.h \
-    ../../xpiks-qt/Suggestion/fotoliaqueryengine.h \
     ../../xpiks-qt/QMLExtensions/colorsmodel.h \
     ../../xpiks-qt/AutoComplete/autocompletemodel.h \
     ../../xpiks-qt/AutoComplete/autocompleteservice.h \
     ../../xpiks-qt/AutoComplete/autocompleteworker.h \
     ../../xpiks-qt/AutoComplete/completionquery.h \
-    ../../xpiks-qt/Suggestion/gettyqueryengine.h \
     ../../xpiks-qt/AutoComplete/stocksftplistmodel.h \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.h \
     ../../xpiks-qt/Helpers/jsonhelper.h \
@@ -443,7 +447,7 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/artworksupdatehub.h \
     ../../xpiks-qt/QMLExtensions/artworkupdaterequest.h \
     restoresessiontest.h \
-    ../../xpiks-qt/Connectivity/connectivityrequest.h \
+    ../../xpiks-qt/Connectivity/configrequest.h \
     ../../xpiks-qt/Connectivity/requestsservice.h \
     ../../xpiks-qt/Connectivity/requestsworker.h \
     ../../xpiks-qt/Models/switchermodel.h \
@@ -463,7 +467,7 @@ HEADERS += \
     ../../xpiks-qt/MetadataIO/cachedartwork.h \
     ../../xpiks-qt/MetadataIO/metadatacache.h \
     ../../xpiks-qt/Suggestion/locallibraryquery.h \
-    ../../xpiks-qt/Suggestion/searchquery.h \
+    ../../xpiks-qt/Microstocks/searchquery.h \
     savefilelegacytest.h \
     ../../xpiks-qt/Common/statefulentity.h \
     locallibrarysearchtest.h \
@@ -518,7 +522,29 @@ HEADERS += \
     ../../xpiks-qt/Storage/databasemanager.h \
     ../../xpiks-qt/Storage/idatabase.h \
     ../../xpiks-qt/Storage/idatabasemanager.h \
-    ../../xpiks-qt/Storage/writeaheadlog.h
+    ../../xpiks-qt/Storage/writeaheadlog.h \
+    ../../xpiks-qt/Connectivity/iconnectivityrequest.h \
+    ../../xpiks-qt/Connectivity/iconnectivityresponse.h \
+    ../../xpiks-qt/Suggestion/fotoliasuggestionengine.h \
+    ../../xpiks-qt/Suggestion/gettysuggestionengine.h \
+    ../../xpiks-qt/Suggestion/isuggestionengine.h \
+    ../../xpiks-qt/Suggestion/isuggestionsrepository.h \
+    ../../xpiks-qt/Suggestion/microstocksuggestionengine.h \
+    ../../xpiks-qt/Suggestion/shutterstocksuggestionengine.h \
+    ../../xpiks-qt/Suggestion/suggestionresultsresponse.h \
+    ../../xpiks-qt/Microstocks/fotoliaapiclient.h \
+    ../../xpiks-qt/Microstocks/gettyapiclient.h \
+    ../../xpiks-qt/Microstocks/imicrostockapiclient.h \
+    ../../xpiks-qt/Microstocks/microstockapiclients.h \
+    ../../xpiks-qt/Microstocks/shutterstockapiclient.h \
+    ../../xpiks-qt/Microstocks/imicrostockservice.h \
+    ../../xpiks-qt/Microstocks/imicrostockservices.h \
+    ../../xpiks-qt/Microstocks/microstockservice.h \
+    ../../xpiks-qt/Microstocks/apisecrets.h \
+    ../../xpiks-qt/Encryption/isecretsstorage.h \
+    ../../xpiks-qt/Encryption/secretpair.h \
+    ../../xpiks-qt/Storage/memorytable.h \
+    integrationtestsenvironment.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface
@@ -638,17 +664,6 @@ travis-ci {
     LIBS += -lexiv2
 
     DEFINES += TRAVIS_CI
-    DEFINES -= WITH_LOGS
-
-    LIBS -= -lthmbnlr
-    SOURCES += ../../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
-
-    # Travis does not have proper libthmbnlr for now
-    LIBS -= -lavcodec
-    LIBS -= -lavfilter
-    LIBS -= -lavformat
-    LIBS -= -lavutil
-    LIBS -= -lswscale
 
     # gcov
     QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
@@ -658,7 +673,25 @@ travis-ci {
 appveyor {
     message("for Appveyor")
     DEFINES += APPVEYOR
-    DEFINES -= WITH_LOGS
+}
+
+without-video {
+    message("Without video")
+
+    LIBS -= -lavcodec
+    LIBS -= -lavfilter
+    LIBS -= -lavformat
+    LIBS -= -lavutil
+    LIBS -= -lswscale
+
+    LIBS -= -lavcodec.57
+    LIBS -= -lavfilter.6
+    LIBS -= -lavformat.57
+    LIBS -= -lavutil.55
+    LIBS -= -lswscale.4
+
+    LIBS -= -lthmbnlr
+    SOURCES += ../../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
 }
 
 DEFINES += BUILDNUMBER=$${BUILDNO}

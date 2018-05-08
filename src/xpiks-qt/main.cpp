@@ -93,8 +93,11 @@
 #include "MetadataIO/csvexportmodel.h"
 #include "KeywordsPresets/presetgroupsmodel.h"
 #include <ftpcoordinator.h>
+#include <apisecretsstorage.h>
 #include "Helpers/filehelpers.h"
 #include "Common/systemenvironment.h"
+#include "Microstocks/microstockapiclients.h"
+#include "Encryption/isecretsstorage.h"
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);
@@ -223,11 +226,10 @@ int main(int argc, char *argv[]) {
     {
         QString time = QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss-zzz");
         QString logFilename = QString("xpiks-qt-%1.log").arg(time);
-
         QString logFilePath = environment.path({Constants::LOGS_DIR, logFilename});
-
         Helpers::Logger &logger = Helpers::Logger::getInstance();
         logger.setLogFilePath(logFilePath);
+        logger.setMemoryOnly(environment.getIsInMemoryOnly());
     }
 #endif
 
@@ -240,8 +242,8 @@ int main(int argc, char *argv[]) {
     LOG_INFO << QSysInfo::productType() << QSysInfo::productVersion() << QSysInfo::currentCpuArchitecture();
     LOG_INFO << "Working directory of Xpiks is:" << QDir::currentPath();
 
-    Models::SettingsModel settingsModel;
-    settingsModel.initializeConfigs(environment);
+    Models::SettingsModel settingsModel(environment);
+    settingsModel.initializeConfigs();
     settingsModel.retrieveAllValues();
     ensureUserIdExists(&settingsModel);
 
@@ -253,6 +255,7 @@ int main(int argc, char *argv[]) {
     Models::ArtItemsModel artItemsModel;
     Models::CombinedArtworksModel combinedArtworksModel;
     Models::UploadInfoRepository uploadInfoRepository(environment);
+    Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
     KeywordsPresets::PresetKeywordsModel presetsModel(environment);
     KeywordsPresets::FilteredPresetKeywordsModel filteredPresetsModel;
     filteredPresetsModel.setSourceModel(&presetsModel);
@@ -261,11 +264,13 @@ int main(int argc, char *argv[]) {
     UndoRedo::UndoRedoManager undoRedoManager;
     Models::ZipArchiver zipArchiver;
     Storage::DatabaseManager databaseManager(environment);
-    Suggestion::KeywordsSuggestor keywordsSuggestor;
+    std::shared_ptr<Encryption::ISecretsStorage> secretsStorage(new libxpks::microstocks::APISecretsStorage());
+    Microstocks::MicrostockAPIClients apiClients(secretsStorage.get());
+    Suggestion::KeywordsSuggestor keywordsSuggestor(apiClients, requestsService, environment);
     Models::FilteredArtItemsProxyModel filteredArtItemsModel;
     filteredArtItemsModel.setSourceModel(&artItemsModel);
-    Models::RecentDirectoriesModel recentDirectorieModel;
-    Models::RecentFilesModel recentFileModel;
+    Models::RecentDirectoriesModel recentDirectorieModel(environment);
+    Models::RecentFilesModel recentFileModel(environment);
     libxpks::net::FtpCoordinator *ftpCoordinator = new libxpks::net::FtpCoordinator(settingsModel.getMaxParallelUploads());
     Models::ArtworkUploader artworkUploader(environment, ftpCoordinator);
     SpellCheck::SpellCheckerService spellCheckerService(environment, &settingsModel);
@@ -284,16 +289,14 @@ int main(int argc, char *argv[]) {
     Models::ArtworkProxyModel artworkProxyModel;
     Translation::TranslationManager translationManager(environment);
     Translation::TranslationService translationService(translationManager);
-    Models::UIManager uiManager(&settingsModel);
+    Models::UIManager uiManager(environment, &settingsModel);
     Models::SessionManager sessionManager(environment);
-    sessionManager.initialize();
     QuickBuffer::QuickBuffer quickBuffer;
     Maintenance::MaintenanceService maintenanceService(environment);
     QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
     QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
     artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
-    Models::SwitcherModel switcherModel;
-    Connectivity::RequestsService requestsService;
+    Models::SwitcherModel switcherModel(environment);
     SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
     MetadataIO::CsvExportModel csvExportModel(environment);
 
@@ -308,7 +311,7 @@ int main(int argc, char *argv[]) {
 #endif
     Connectivity::TelemetryService telemetryService(userId, telemetryEnabled);
 
-    Plugins::PluginManager pluginManager(environment, &databaseManager);
+    Plugins::PluginManager pluginManager(environment, &databaseManager, requestsService, apiClients);
     Plugins::PluginsWithActionsModel pluginsWithActions;
     pluginsWithActions.setSourceModel(&pluginManager);
 
@@ -370,8 +373,8 @@ int main(int argc, char *argv[]) {
 
     // other initializations
     secretsManager.setMasterPasswordHash(settingsModel.getMasterPasswordHash());
-    recentDirectorieModel.initialize(environment);
-    recentFileModel.initialize(environment);
+    recentDirectorieModel.initialize();
+    recentFileModel.initialize();
 
     commandManager.connectEntitiesSignalsSlots();
 
@@ -445,7 +448,7 @@ int main(int argc, char *argv[]) {
     uiManager.addSystemTab(QUICKBUFFER_TAB_ID, "qrc:/CollapserTabs/QuickBufferIcon.qml", "qrc:/CollapserTabs/QuickBufferTab.qml");
     uiManager.addSystemTab(TRANSLATOR_TAB_ID, "qrc:/CollapserTabs/TranslatorIcon.qml", "qrc:/CollapserTabs/TranslatorTab.qml");
     uiManager.initializeSystemTabs();
-    uiManager.initializeState(environment);
+    uiManager.initialize();
 
     LOG_DEBUG << "About to load main view...";
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
@@ -464,7 +467,7 @@ int main(int argc, char *argv[]) {
     uiProvider->setRoot(window->contentItem());
     uiProvider->setUIManager(&uiManager);
 
-    commandManager.afterConstructionCallback(environment);
+    commandManager.afterConstructionCallback();
 
     return app.exec();
 }

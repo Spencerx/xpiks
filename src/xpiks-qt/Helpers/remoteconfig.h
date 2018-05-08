@@ -15,7 +15,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QJsonDocument>
-#include "../Connectivity/connectivityrequest.h"
+#include "../Connectivity/configrequest.h"
 #include "../Common/defines.h"
 
 namespace Models {
@@ -26,15 +26,15 @@ namespace Helpers {
     class RemoteConfig : public QObject {
         Q_OBJECT
     public:
-        RemoteConfig(QObject *parent=0);
+        RemoteConfig(const QString &configUrl, QObject *parent=0);
         virtual ~RemoteConfig();
 
     public:
-        void setConfigUrl(const QString &configUrl) { m_ConfigUrl = configUrl; }
         const QJsonDocument& getConfig() const { return m_Config; }
+        const QString &getUrl() const { return m_ConfigUrl; }
 
     private:
-        friend class Connectivity::ConnectivityRequest;
+        friend class Connectivity::ConfigRequest;
         void setRemoteResponse(const QByteArray &responseData);
 
     signals:

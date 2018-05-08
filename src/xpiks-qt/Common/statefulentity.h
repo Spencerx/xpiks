@@ -23,10 +23,10 @@ namespace Common {
     class StatefulEntity
     {
     public:
-        StatefulEntity(const QString &stateName);
+        StatefulEntity(const QString &stateName, ISystemEnvironment &environment);
 
     public:
-        void init(ISystemEnvironment &environment);
+        void init();
         void sync();
 
     public:
@@ -63,6 +63,7 @@ namespace Common {
         Helpers::LocalConfig m_StateConfig;
         std::shared_ptr<Helpers::JsonObjectMap> m_StateMap;
         QAtomicInt m_InitCounter;
+        bool m_MemoryOnly = false;
     };
 }
 

@@ -10,10 +10,19 @@
 
 #include "requestsworker.h"
 #include "simplecurlrequest.h"
+#include "../Models/proxysettings.h"
 
 namespace Connectivity {
-    RequestsWorker::RequestsWorker(QObject *parent) : QObject(parent)
+    RequestsWorker::RequestsWorker(Models::ProxySettings *proxySettings, QObject *parent) :
+        QObject(parent),
+        m_ProxySettings(proxySettings)
     {
+        Q_ASSERT(proxySettings != nullptr);
+    }
+
+    void RequestsWorker::sendRequestSync(std::shared_ptr<IConnectivityRequest> &item) {
+        LOG_DEBUG << "#";
+        sendRequest(item);
     }
 
     bool RequestsWorker::initWorker() {
@@ -21,22 +30,25 @@ namespace Connectivity {
         return true;
     }
 
-    void RequestsWorker::processOneItem(std::shared_ptr<ConnectivityRequest> &item) {
-        auto &url = item->getURL();
+    void RequestsWorker::sendRequest(std::shared_ptr<IConnectivityRequest> &item) {
+        auto url = item->getResourceURL();
         LOG_INFO << "Request:" << url;
 
         SimpleCurlRequest request(url);
-        request.setProxySettings(item->getProxySettings());
+        request.setProxySettings(m_ProxySettings);
+        request.addRawHeaders(item->getRawHeaders());
 
-        if (item->getNoCache()) {
-            request.setRawHeaders(QStringList() << "Cache-Control: no-cache");
+        Common::flag_t flags = item->getFlags();
+        if (Common::HasFlag(flags, IConnectivityRequest::NoCache)) {
+            request.addRawHeaders(QStringList() << "Cache-Control: no-cache");
         }
 
-        bool success = request.sendRequestSync();
-        if (success) {
-            item->setResponse(request.getResponseData());
-        } else {
-            LOG_WARNING << "Failed to get" << url;
+        const bool success = request.sendRequestSync();
+        if (!success) { LOG_WARNING << "Failed to process" << url; }
+
+        IConnectivityResponse *response = item->getResponse();
+        if (response != nullptr) {
+            response->setResult(success, request.getResponseData());
         }
     }
 }

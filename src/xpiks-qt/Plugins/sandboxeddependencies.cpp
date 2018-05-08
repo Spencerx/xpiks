@@ -44,4 +44,12 @@ namespace Plugins {
 
         return uiManager->getCurrentEditable();
     }
+
+    MicrostockServicesSafe::MicrostockServicesSafe(Connectivity::RequestsService &requestsService,
+                                                   Microstocks::MicrostockAPIClients &apiClients):
+        m_ShutterstockService(&apiClients.getShutterstockClient(), requestsService),
+        m_FotoliaService(&apiClients.getFotoliaClient(), requestsService),
+        m_GettyService(&apiClients.getGettyClient(), requestsService)
+    {
+    }
 }

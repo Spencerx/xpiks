@@ -2,10 +2,14 @@
 #define INTEGRATIONTESTBASE
 
 #include <QString>
-#include <QDebug>
-#include <QDir>
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "testshelpers.h"
+#include <QHash>
+#include <QUrl>
+#include "integrationtestsenvironment.h"
+
+namespace Commands {
+    class CommandManager;
+    class MainDelegator;
+}
 
 #define VERIFY(condition, message) \
     if (!(condition)) {\
@@ -15,42 +19,26 @@
 
 class IntegrationTestBase {
 public:
-    IntegrationTestBase(Commands::CommandManager *commandManager):
-        m_CommandManager(commandManager)
-    {}
-    virtual ~IntegrationTestBase() {}
+    IntegrationTestBase(IntegrationTestsEnvironment &environment,
+                        Commands::CommandManager *commandManager);
+    virtual ~IntegrationTestBase() { }
 
+public:
     virtual QString testName() = 0;
     virtual void setup() = 0;
     virtual int doTest() = 0;
-    virtual void teardown() { m_CommandManager->cleanup(); }
+    virtual void teardown();
 
 protected:
-    Commands::MainDelegator *xpiks() { return m_CommandManager->getDelegator(); }
+    Commands::MainDelegator *xpiks();
 
-    QUrl getFilePathForTest(const QString &prefix) {
-        return QUrl::fromLocalFile(findFullPathForTests(prefix));
-    }
-
-    QUrl getDirPathForTest(const QString &prefix) {
-        QString path = prefix;
-        if (path.startsWith('/')) { path.remove(0, 1); }
-        QDir dir(path);
-        int tries = 6;
-        while (tries--) {
-            if (!dir.exists()) {
-                path = "../" + prefix;
-                dir.setPath(path);
-            } else {
-                return QUrl::fromLocalFile(dir.absolutePath());
-            }
-        }
-
-        return QUrl::fromLocalFile(QDir(prefix).absolutePath());
-    }
+    QUrl setupFilePathForTest(const QString &prefix);
+    QUrl getFilePathForTest(const QString &prefix);
+    QUrl getDirPathForTest(const QString &prefix);
 
 protected:
     Commands::CommandManager *m_CommandManager;
+    IntegrationTestsEnvironment &m_Environment;
 };
 
 #endif // INTEGRATIONTESTBASE

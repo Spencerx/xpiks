@@ -6,8 +6,8 @@
 class ImportLostMetadataTest : public IntegrationTestBase
 {
 public:
-    ImportLostMetadataTest(Commands::CommandManager *commandManager):
-        IntegrationTestBase(commandManager)
+    ImportLostMetadataTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
+        IntegrationTestBase(environment, commandManager)
     {}
 
     // IntegrationTestBase interface

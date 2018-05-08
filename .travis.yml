@@ -72,4 +72,3 @@ before_script:
   - qmake "CONFIG+= debug travis-ci" xpiks-qt.pro
 
 script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi
-

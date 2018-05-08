@@ -75,7 +75,8 @@ HEADERS += \
     Connectivity/curlftpuploader.h \
     Connectivity/ftpuploaderworker.h \
     Connectivity/uploadbatch.h \
-    Connectivity/uploadcontext.h
+    Connectivity/uploadcontext.h \
+    Microstocks/apisecretsstorage.h
 
 SOURCES += \
     MetadataIO/metadatareadingworker.cpp \
@@ -85,4 +86,5 @@ SOURCES += \
     Connectivity/conectivityhelpers.cpp \
     Connectivity/curlftpuploader.cpp \
     Connectivity/ftpcoordinator.cpp \
-    Connectivity/ftpuploaderworker.cpp
+    Connectivity/ftpuploaderworker.cpp \
+    Microstocks/apisecretsstorage.cpp

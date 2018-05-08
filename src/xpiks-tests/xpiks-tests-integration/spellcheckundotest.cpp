@@ -28,7 +28,7 @@ void SpellCheckUndoTest::setup() {
 int SpellCheckUndoTest::doTest() {
     Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << getFilePathForTest("images-for-tests/vector/026.jpg");
+    files << setupFilePathForTest("images-for-tests/vector/026.jpg");
 
     MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
     SignalWaiter waiter;

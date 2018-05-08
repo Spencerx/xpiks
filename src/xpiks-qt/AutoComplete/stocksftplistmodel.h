@@ -26,7 +26,6 @@ namespace AutoComplete {
         StocksFtpListModel(Common::ISystemEnvironment &environment);
 
     public:
-        void initializeConfigs();
         QString getFtpAddress(const QString &stockName) const { return m_StocksHash.value(stockName, ""); }
         const QStringList &getStockNamesList() const { return m_StockNames; }
 
@@ -48,7 +47,6 @@ namespace AutoComplete {
         virtual int operator ()(const QJsonObject &val1, const QJsonObject &val2) override;
 
     private:
-        Common::ISystemEnvironment &m_Environment;
         QHash<QString, QString> m_StocksHash;
         QStringList m_StockNames;
     };

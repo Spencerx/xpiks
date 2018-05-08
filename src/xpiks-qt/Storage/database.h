@@ -59,8 +59,8 @@ namespace Storage {
             Table(sqlite3 *database, const QString &tableName);
 
         public:
-            virtual bool initialize() override;
-            virtual void finalize() override;
+            bool initialize();
+            void finalize();
 
         public:
             virtual const QString &getTableName() const override { return m_TableName; }
@@ -71,7 +71,7 @@ namespace Storage {
             virtual int tryAddMany(const QVector<QPair<QByteArray, QByteArray> > &keyValueList) override;
             virtual bool tryDeleteRecord(const QByteArray &key) override;
             virtual bool tryDeleteMany(const QVector<QByteArray> &keysList) override;
-            virtual void foreachRow(const std::function<bool (QByteArray &, QByteArray &)> &action) override;
+            virtual void foreachRow(const std::function<bool (const QByteArray &, QByteArray &)> &action) override;
 
         private:
             QString m_TableName;
@@ -86,23 +86,25 @@ namespace Storage {
     public:
         virtual bool open(const char *fullDbPath) override;
         virtual void close() override;
-        virtual bool initialize() override;
-        virtual void finalize() override;
         virtual void sync() override;
         virtual std::shared_ptr<IDbTable> getTable(const QString &name) override;
         virtual bool deleteTable(std::shared_ptr<IDbTable> &table) override;
         virtual QStringList retrieveTableNames() override;
 
+    public:
+        bool initialize();
+        void finalize();
+
     private:
         void doClose();
-        bool executeStatement(const char *stmt);
+        void executeStatement(const char *stmt, bool &anyError);
 
     private:
         int m_ID;
         Helpers::AsyncCoordinator *m_FinalizeCoordinator = nullptr;
         sqlite3 *m_Database = nullptr;
         sqlite3_stmt *m_GetTablesStatement = nullptr;
-        std::vector<std::shared_ptr<IDbTable> > m_Tables;
+        std::vector<std::shared_ptr<Database::Table> > m_Tables;
         volatile bool m_IsOpened = false;
     };
 }

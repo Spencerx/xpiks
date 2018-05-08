@@ -40,8 +40,11 @@
 
 namespace Warnings {
     WarningsSettingsModel::WarningsSettingsModel(Common::ISystemEnvironment &environment):
-        Models::AbstractConfigUpdaterModel(OVERWRITE_WARNINGS_CONFIG),
-        m_Environment(environment),
+        Models::AbstractConfigUpdaterModel(
+            environment.path({LOCAL_WARNINGS_SETTINGS_FILE}),
+            Connectivity::ApiManager::getInstance().getWarningSettingsAddr(),
+            OVERWRITE_WARNINGS_CONFIG,
+            environment.getIsInMemoryOnly()),
         m_AllowedFilenameCharacters("._-@#"),
         m_MinMegapixels(DEFAULT_MIN_MEGAPIXELS),
         m_MaxImageFilesizeMB(DEFAULT_MAX_IMAGE_FILESIZE_MB),
@@ -53,14 +56,6 @@ namespace Warnings {
         m_MinWordsCount(DEFAULT_MIN_WORDS_COUNT),
         m_MaxDescriptionLength(DEFAULT_MAX_DESCRIPTION_LENGTH)
     {}
-
-    void WarningsSettingsModel::initializeConfigs() {
-        LOG_DEBUG << "#";
-        QString localConfigPath = m_Environment.path({LOCAL_WARNINGS_SETTINGS_FILE});
-        auto &apiManager = Connectivity::ApiManager::getInstance();
-        QString remoteAddress = apiManager.getWarningSettingsAddr();
-        AbstractConfigUpdaterModel::initializeConfigs(remoteAddress, localConfigPath);
-    }
 
     void WarningsSettingsModel::processRemoteConfig(const QJsonDocument &remoteDocument, bool overwriteLocal) {
         bool overwrite = false;
