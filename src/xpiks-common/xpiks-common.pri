@@ -12,6 +12,8 @@ linux {
 
 DEPS_DIR = $$PWD/../xpiks-qt/deps
 
+DEFINES += DEPS_DIR=$${DEPS_DIR}
+
 win32|linux {
     TR_DIR = translations
 
@@ -49,3 +51,5 @@ win32|linux {
     QMAKE_EXTRA_TARGETS += copywhatsnew copyterms copydicts copytranslations copyfreqtables
     POST_TARGETDEPS += copywhatsnew copyterms copydicts copytranslations copyfreqtables
 }
+
+
