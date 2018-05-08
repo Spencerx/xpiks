@@ -18,8 +18,9 @@ void DbImageCacheTests::addAndRetrieveSmokeTest() {
     DECLARE_AND_INIT;
 
     const QString path = "/path/to/an/image.jpg";
+    const QString thumbPath = "/path/to/random/thumbnail.jpg";
     QMLExtensions::CachedImage cachedImage;
-    cachedImage.m_Filename = path;
+    cachedImage.m_Filename = thumbPath;
     cachedImage.m_LastModified = QDateTime::currentDateTimeUtc();
     cachedImage.m_Size = QSize(1024, 700);
 
@@ -28,6 +29,7 @@ void DbImageCacheTests::addAndRetrieveSmokeTest() {
     QMLExtensions::CachedImage foundImage;
     bool found = imageCache.tryGet(path, foundImage);
     QVERIFY2(found, "Image has not been found in cache");
+    QCOMPARE(foundImage.m_Filename, thumbPath);
 
     FINALIZE;
 }
@@ -36,8 +38,9 @@ void DbImageCacheTests::addAndRetrieveAfterSyncTest() {
     DECLARE_AND_INIT;
 
     const QString path = "/path/to/an/image.jpg";
+    const QString thumbPath = "/path/to/random/thumbnail.jpg";
     QMLExtensions::CachedImage cachedImage;
-    cachedImage.m_Filename = path;
+    cachedImage.m_Filename = thumbPath;
     cachedImage.m_LastModified = QDateTime::currentDateTimeUtc();
     cachedImage.m_Size = QSize(1024, 700);
 
@@ -47,6 +50,7 @@ void DbImageCacheTests::addAndRetrieveAfterSyncTest() {
     QMLExtensions::CachedImage foundImage;
     bool found = imageCache.tryGet(path, foundImage);
     QVERIFY2(found, "Image has not been found in cache after sync");
+    QCOMPARE(foundImage.m_Filename, thumbPath);
 
     FINALIZE;
 }
