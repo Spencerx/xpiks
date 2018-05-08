@@ -2,7 +2,7 @@
 
 Take a look at the [Xpiks Wiki pages](https://github.com/Ribtoks/xpiks/wiki). They contain a lot of topics of how to develop this or that feature as well as architecture overview.
 
-Most useful pages are **[Build instructions](https://github.com/ribtoks/xpiks/wiki/Build-instructions)** and **[Developer's environment](https://github.com/ribtoks/xpiks/wiki/Developer's-environment)**
+Most useful pages are **[Build instructions](https://github.com/ribtoks/xpiks/wiki/Build-instructions)** and **[Developer's environment](https://github.com/ribtoks/xpiks/wiki/Developer's-environment)**.
 
 ### How to contribute
 - [Fork](http://help.github.com/forking/) Xpiks repository on GitHub
@@ -15,6 +15,13 @@ Most useful pages are **[Build instructions](https://github.com/ribtoks/xpiks/wi
 - Push the branch to GitHub (`git push origin your_feature`)
 - Make sure all integration tests are green across all platforms
 - Send a [pull request](https://help.github.com/articles/using-pull-requests) on GitHub
+
+### How to report a bug
+
+- check out an article from user's perspective [How to report a bug](https://xpiksapp.com/how-to-report-a-bug/)
+- gather the logs and/or crash dump (usually this is enough to describe your environment and what have you done)
+- any additional information like screenshots/screencasts of what is working not as expected is very helpful
+- if the bug is related to networking, consider running Xpiks with [detailed upload logging](https://xpiksapp.com/tutorials/misc-troubleshoot-upload/) turned ON
 
 ### C++ Coding guidelines
 
