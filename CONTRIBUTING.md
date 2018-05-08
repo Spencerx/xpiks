@@ -1,8 +1,22 @@
-Project guidelines:
+### Documentation
 
-- After you create a pull request ensure continuous integration bindings are green (build is compilable and tests are passing across all platforms)
+Take a look at the [Xpiks Wiki pages](https://github.com/Ribtoks/xpiks/wiki). They contain a lot of topics of how to develop this or that feature as well as architecture overview.
 
-Coding guidelines:
+Most useful pages are **[Build instructions](https://github.com/ribtoks/xpiks/wiki/Build-instructions)** and **[Developer's environment](https://github.com/ribtoks/xpiks/wiki/Developer's-environment)**
+
+### How to contribute
+- [Fork](http://help.github.com/forking/) Xpiks repository on GitHub
+- Clone your fork locally
+- Configure the upstream repo (`git remote add upstream git@github.com:Ribtoks/xpiks.git`)
+- Create local branch (`git checkout -b your_feature`)
+- Work on your feature
+- Build project using BUILD.md instructions
+- Build and Run tests (`xpiks-tests.pro` project), fix your feature if needed
+- Push the branch to GitHub (`git push origin your_feature`)
+- Make sure all integration tests are green across all platforms
+- Send a [pull request](https://help.github.com/articles/using-pull-requests) on GitHub
+
+### C++ Coding guidelines
 
 - curly bracket opens on the same line as previous statement
 - always put a class into a namespace
@@ -19,18 +33,3 @@ Coding guidelines:
 - log using INFO when you have useful parameters and using DEBUG when just marking execution place
 - write expressive code instead of comments
 - do not commit commented code though sometimes comments are left in order to demonstrate that something was done on purpose
-
-Xpiks architecture:
-
-- take a look at the [Xpiks Wiki pages](https://github.com/Ribtoks/xpiks/wiki). They contain a lot of topics of how to develop this or that feature as well as architecture overview.
-
-How to contribute:
-- [Fork](http://help.github.com/forking/) Xpiks repository on GitHub
-- Clone your fork locally
-- Configure the upstream repo (`git remote add upstream git@github.com:Ribtoks/xpiks.git`)
-- Create local branch (`git checkout -b your_feature`)
-- Work on your feature
-- Build project using BUILD.md instructions
-- Build and Run tests (`xpiks-tests.pro` project), fix your feature if needed
-- Push the branch to GitHub (`git push origin your_feature`)
-- Send a [pull request](https://help.github.com/articles/using-pull-requests) on GitHub
