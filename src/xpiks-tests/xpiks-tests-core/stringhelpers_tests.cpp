@@ -156,9 +156,3 @@ void StringHelpersTests::basicUrlDecodeTest() {
     QCOMPARE(Helpers::stringPercentDecode("file:///path/to/my/file%2"),
              QString("file:///path/to/my/file%2"));
 }
-
-void StringHelpersTests::simpleFilenameTest() {
-    QCOMPARE(Helpers::isSimpleFilename(""), true);
-    QCOMPARE(Helpers::isSimpleFilename("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_."), true);
-    QCOMPARE(Helpers::isSimpleFilename("a b c.jpg"), false);
-}

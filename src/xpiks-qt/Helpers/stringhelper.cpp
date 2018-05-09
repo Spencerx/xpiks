@@ -91,27 +91,6 @@ namespace Helpers {
         return result;
     }
 
-    bool isSimpleFilename(const QString &filename) {
-        bool anyError = false;
-        const int size = filename.length();
-        for (int i = 0; i < size; i++) {
-            QChar c = filename[i];
-            const bool isCorrect =
-                    ((QChar('a') <= c) && (c <= QChar('z'))) ||
-                    ((QChar('A') <= c) && (c <= QChar('Z'))) ||
-                    ((QChar('0') <= c) && (c <= QChar('9'))) ||
-                    (c == QChar('_')) ||
-                    (c == QChar('-')) ||
-                    (c == QChar('.')) ||
-                    (c == QChar('~'));
-            if (!isCorrect) {
-                anyError = true;
-                break;
-            }
-        }
-        return !anyError;
-    }
-
     void foreachPart(const QString &text,
                      const std::function<bool (const QChar &symbol)> &isSeparatorPred,
                      const std::function<bool (const QString &word)> &pred,
