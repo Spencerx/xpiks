@@ -141,5 +141,24 @@ void StringHelpersTests::switcherHashTest() {
     QCOMPARE(Helpers::switcherHash("5c2bd3c9-a063-4974-9fd7-542c0ec5e225"), quint32(1798162191));
     QCOMPARE(Helpers::switcherHash("48eaeb10-1d03-4020-a747-604616cedf28"), quint32(535900959));
     QCOMPARE(Helpers::switcherHash("dc16d9fe-61d6-4564-931b-650e42fcf443"), quint32(3282680053));
+}
 
+void StringHelpersTests::basicUrlDecodeTest() {
+    QCOMPARE(Helpers::stringPercentDecode(""), QString(""));
+    QCOMPARE(Helpers::stringPercentDecode("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"),
+             QString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"));
+    QCOMPARE(Helpers::stringPercentDecode("a%20b"), QString("a b"));
+    QCOMPARE(Helpers::stringPercentDecode("file:///path/to/my/file%20with%26percent.jpg"),
+             QString("file:///path/to/my/file with&percent.jpg"));
+    QCOMPARE(Helpers::stringPercentDecode("%21%23%24%25%26%28%29%2A%2B%2C%2D%2E%2F%3A%3B%3C%3D%3E%3F%40"),
+             QString("!#$%&()*+,-./:;<=>?@"));
+    // wrong format returns the same
+    QCOMPARE(Helpers::stringPercentDecode("file:///path/to/my/file%2"),
+             QString("file:///path/to/my/file%2"));
+}
+
+void StringHelpersTests::simpleFilenameTest() {
+    QCOMPARE(Helpers::isSimpleFilename(""), true);
+    QCOMPARE(Helpers::isSimpleFilename("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_."), true);
+    QCOMPARE(Helpers::isSimpleFilename("a b c.jpg"), false);
 }

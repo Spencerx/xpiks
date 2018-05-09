@@ -24,6 +24,7 @@ class QByteArray;
 
 namespace Helpers {
     QString stringPercentDecode(const QString &from);
+    bool isSimpleFilename(const QString &filename);
     void foreachPart(const QString &text,
                      const std::function<bool (const QChar &symbol)> &isSeparatorPred,
                      const std::function<bool (const QString &word)> &pred,
