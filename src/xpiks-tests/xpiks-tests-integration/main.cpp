@@ -129,6 +129,7 @@
 #include "warningscombinedtest.h"
 #include "csvdefaultexporttest.h"
 #include "loadpluginbasictest.h"
+#include "stockftpautocompletetest.h"
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);
@@ -375,6 +376,15 @@ int main(int argc, char *argv[]) {
     }
     csvExportModel.setRemoteConfigOverride(csvExportPlansPath);
 
+    QString stocksFtpPath;
+    if (!tryFindFullPathForTests("api/v1/stocks_ftp.json", stocksFtpPath)) {
+        if (!tryFindFullPathForTests("xpiks-api/api/v1/stocks_ftp.json", stocksFtpPath)) {
+            // fallback to copy-pasted and probably not enough frequently updated just for the sake of tests
+            tryFindFullPathForTests("configs-for-tests/stocks_ftp.json", stocksFtpPath);
+        }
+    }
+    artworkUploader.accessStocksList().setRemoteOverride(stocksFtpPath);
+
     commandManager.connectEntitiesSignalsSlots();
     commandManager.afterConstructionCallback();
 
@@ -432,6 +442,7 @@ int main(int argc, char *argv[]) {
     integrationTests.append(new WarningsCombinedTest(environment, &commandManager));
     integrationTests.append(new CsvDefaultExportTest(environment, &commandManager));
     integrationTests.append(new LoadPluginBasicTest(environment, &commandManager));
+    integrationTests.append(new StockFtpAutoCompleteTest(environment, &commandManager));
     // always the last one. insert new tests above
     integrationTests.append(new LocalLibrarySearchTest(environment, &commandManager));
 

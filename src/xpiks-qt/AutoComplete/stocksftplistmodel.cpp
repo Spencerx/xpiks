@@ -26,6 +26,10 @@
 #define FTP_ARRAY_KEY QLatin1String("stocks_ftp")
 #define FTP_NAME_KEY QLatin1String("name")
 #define FTP_ADDRESS_KEY QLatin1String("ftp")
+#define FTP_IMAGES_DIR_KEY QLatin1String("images_dir")
+#define FTP_VECTORS_DIR_KEY QLatin1String("vectors_dir")
+#define FTP_VIDEOS_DIR_KEY QLatin1String("videos_dir")
+#define FTP_ZIP_VECTORS_KEY QLatin1String("zip_vector")
 
 namespace AutoComplete {
     StocksFtpListModel::StocksFtpListModel(Common::ISystemEnvironment &environment):
