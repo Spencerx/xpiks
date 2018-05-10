@@ -155,4 +155,5 @@ void StringHelpersTests::basicUrlDecodeTest() {
     // wrong format returns the same
     QCOMPARE(Helpers::stringPercentDecode("file:///path/to/my/file%2"),
              QString("file:///path/to/my/file%2"));
+    QCOMPARE(Helpers::stringPercentDecode("a%2p"), QString("a%2p"));
 }
