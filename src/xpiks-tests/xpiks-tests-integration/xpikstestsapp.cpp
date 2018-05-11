@@ -26,7 +26,7 @@ void XpiksTestsApp::initialize() {
 
 #if defined(Q_OS_WIN)
     #if defined(APPVEYOR)
-        settingsModel.setExifToolPath("c:/projects/xpiks-deps/windows-3rd-party-bin/exiftool.exe");
+        m_SettingsModel.setExifToolPath("c:/projects/xpiks-deps/windows-3rd-party-bin/exiftool.exe");
     #else
         m_SettingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool.exe"));
     #endif
