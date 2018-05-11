@@ -165,7 +165,7 @@ namespace Microstocks {
             QJsonValue zipVectorValue = ftpItem[FTP_ZIP_VECTORS_KEY];
             ftpOptions->m_ZipVector = zipVectorValue.isBool() && zipVectorValue.toBool();
 
-            m_StocksList.emplace_back(ftpOptions);
+            ftpOptionsList.emplace_back(ftpOptions);
         }
 
         if (!ftpOptionsList.empty()) {
