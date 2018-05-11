@@ -51,5 +51,5 @@ void XpiksTestsApp::initialize() {
             tryFindFullPathForTests("configs-for-tests/stocks_ftp.json", stocksFtpPath);
         }
     }
-    m_ArtworkUploader.accessStocksList().setRemoteOverride(stocksFtpPath);
+    m_UploadInfoRepository.accessStocksList().setRemoteOverride(stocksFtpPath);
 }

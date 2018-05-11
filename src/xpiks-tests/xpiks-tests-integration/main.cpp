@@ -185,15 +185,6 @@ int main(int argc, char *argv[]) {
     xpiksTests.startLogging();
     xpiksTests.initialize();
     xpiksTests.start();
-    QString stocksFtpPath;
-    if (!tryFindFullPathForTests("api/v1/stocks_ftp.json", stocksFtpPath)) {
-        if (!tryFindFullPathForTests("xpiks-api/api/v1/stocks_ftp.json", stocksFtpPath)) {
-            // fallback to copy-pasted and probably not enough frequently updated just for the sake of tests
-            tryFindFullPathForTests("configs-for-tests/stocks_ftp.json", stocksFtpPath);
-        }
-    }
-    artworkUploader.accessStocksList().setRemoteOverride(stocksFtpPath);
-
 
     xpiksTests.waitInitialized();
 

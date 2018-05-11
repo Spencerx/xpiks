@@ -83,6 +83,8 @@ Item {
 
         property int artworksSourcesCount: 1
 
+        function setCurrentIndex(index) { }
+
         signal dataChanged()
 
         ListElement {

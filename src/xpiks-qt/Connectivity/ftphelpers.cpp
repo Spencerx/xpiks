@@ -9,7 +9,7 @@
  */
 
 #include "ftphelpers.h"
-#include "uploadcontext.h"
+#include <uploadcontext.h>
 #include <cstdio>
 #include <cstdlib>
 #include <sstream>

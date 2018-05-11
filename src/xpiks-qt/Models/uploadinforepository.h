@@ -105,6 +105,8 @@ namespace Models {
 #ifdef INTEGRATION_TESTS
     public:
         std::shared_ptr<UploadInfo> appendItem() { addItem(); return m_UploadInfos.back(); }
+        std::vector<std::shared_ptr<UploadInfo> > &accessUploadInfos() { return m_UploadInfos; }
+        Microstocks::StocksFtpListModel &accessStocksList() { return m_StocksFtpList; }
 #endif
 
     public:

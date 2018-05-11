@@ -3,7 +3,6 @@
 #include "Mocks/commandmanagermock.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
 #include "../../xpiks-qt/Models/artworksrepository.h"
-#include "../../xpiks-qt/Models/artworkuploader.h"
 #include "../../xpiks-qt/Models/ziparchiver.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
 #include "Mocks/coretestsenvironment.h"

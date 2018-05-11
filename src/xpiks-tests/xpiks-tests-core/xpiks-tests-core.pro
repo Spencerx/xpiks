@@ -23,6 +23,8 @@ win32:INCLUDEPATH += ../../xpiks-qt/Encryption
 INCLUDEPATH += ../../../vendors/hunspell-repo/src
 INCLUDEPATH += ../../../vendors/ssdll/src/ssdll
 INCLUDEPATH += ../../../vendors/libthmbnlr
+INCLUDEPATH += ../../../vendors/libxpks
+INCLUDEPATH += ../../xpiks-qt
 
 DEFINES += HUNSPELL_STATIC
 DEFINES += CORE_TESTS
@@ -134,7 +136,6 @@ SOURCES += main.cpp \
     combinedmodel_tests.cpp \
     ../../xpiks-qt/Helpers/localconfig.cpp \
     ../../xpiks-qt/Models/proxysettings.cpp \
-    ../../xpiks-qt/Models/uploadinforepository.cpp \
     ../../xpiks-qt/Models/settingsmodel.cpp \
     stringhelpers_tests.cpp \
     ../../xpiks-qt/Helpers/stringhelper.cpp \
@@ -204,7 +205,10 @@ SOURCES += main.cpp \
     ../../../vendors/sqlite/sqlite3.c \
     ../../xpiks-qt/QMLExtensions/cachedimage.cpp \
     dbimagecache_tests.cpp \
-    ../../xpiks-qt/QMLExtensions/dbimagecacheindex.cpp
+    ../../xpiks-qt/QMLExtensions/dbimagecacheindex.cpp \
+    ../../xpiks-qt/Microstocks/stocksftplistmodel.cpp \
+    ../../xpiks-qt/Models/abstractconfigupdatermodel.cpp \
+    ../../xpiks-qt/Helpers/remoteconfig.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -260,7 +264,6 @@ HEADERS += \
     ../../xpiks-qt/Helpers/localconfig.h \
     ../../xpiks-qt/Models/proxysettings.h \
     ../../xpiks-qt/Models/uploadinfo.h \
-    ../../xpiks-qt/Models/uploadinforepository.h \
     ../../xpiks-qt/Models/settingsmodel.h \
     stringhelpers_tests.h \
     keywordvalidation_tests.h \
@@ -359,5 +362,8 @@ HEADERS += \
     dbimagecache_tests.h \
     ../../xpiks-qt/QMLExtensions/dbcacheindex.h \
     ../../xpiks-qt/QMLExtensions/previewstorage.h \
-    ../../xpiks-qt/QMLExtensions/dbimagecacheindex.h
+    ../../xpiks-qt/QMLExtensions/dbimagecacheindex.h \
+    ../../xpiks-qt/Microstocks/stocksftplistmodel.h \
+    ../../xpiks-qt/Models/abstractconfigupdatermodel.h \
+    ../../xpiks-qt/Helpers/remoteconfig.h
 
