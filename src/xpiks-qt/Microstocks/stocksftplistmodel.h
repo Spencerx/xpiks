@@ -15,10 +15,20 @@
 #include <QList>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <vector>
 #include "../Models/abstractconfigupdatermodel.h"
 #include "../Common/isystemenvironment.h"
 
-namespace AutoComplete {
+namespace Microstocks {
+    struct StockFtpOptions {
+        QString m_Title;
+        QString m_FtpAddress;
+        QString m_ImagesDir;
+        QString m_VectorsDir;
+        QString m_VideosDir;
+        bool m_ZipVector = false;
+    };
+
     class StocksFtpListModel: public Models::AbstractConfigUpdaterModel
     {
         Q_OBJECT
@@ -26,7 +36,7 @@ namespace AutoComplete {
         StocksFtpListModel(Common::ISystemEnvironment &environment);
 
     public:
-        QString getFtpAddress(const QString &stockName) const { return m_StocksHash.value(stockName, ""); }
+        QString getFtpAddress(const QString &stockName) const;
         const QStringList &getStockNamesList() const { return m_StockNames; }
 
         // AbstractConfigUpdaterModel interface
@@ -47,7 +57,7 @@ namespace AutoComplete {
         virtual int operator ()(const QJsonObject &val1, const QJsonObject &val2) override;
 
     private:
-        QHash<QString, QString> m_StocksHash;
+        std::vector<StockFtpOptions> m_StocksList;
         QStringList m_StockNames;
     };
 }

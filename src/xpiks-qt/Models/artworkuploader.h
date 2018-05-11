@@ -16,7 +16,7 @@
 #include <QFutureWatcher>
 #include "../Connectivity/testconnection.h"
 #include "../AutoComplete/stringsautocompletemodel.h"
-#include "../AutoComplete/stocksftplistmodel.h"
+#include "../Microstocks/stocksftplistmodel.h"
 #include "../Connectivity/uploadwatcher.h"
 #include "../Helpers/ifilenotavailablemodel.h"
 #include "../MetadataIO/artworkssnapshot.h"
@@ -127,7 +127,7 @@ namespace Models {
 #ifdef INTEGRATION_TESTS
     public:
         Connectivity::UploadWatcher *accessWatcher() { return &m_UploadWatcher; }
-        AutoComplete::StocksFtpListModel &accessStocksList() { return m_StocksFtpList; }
+        Microstocks::StocksFtpListModel &accessStocksList() { return m_StocksFtpList; }
 #endif
 
     private:
@@ -142,7 +142,7 @@ namespace Models {
         Connectivity::UploadWatcher m_UploadWatcher;
         Connectivity::IFtpCoordinator *m_FtpCoordinator;
         AutoComplete::StringsAutoCompleteModel m_StocksCompletionSource;
-        AutoComplete::StocksFtpListModel m_StocksFtpList;
+        Microstocks::StocksFtpListModel m_StocksFtpList;
         QFutureWatcher<Connectivity::ContextValidationResult> *m_TestingCredentialWatcher;
         double m_Percent;
         volatile bool m_IsInProgress;

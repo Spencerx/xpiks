@@ -113,7 +113,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/AutoComplete/autocompletemodel.cpp \
     ../../xpiks-qt/AutoComplete/autocompleteservice.cpp \
     ../../xpiks-qt/AutoComplete/autocompleteworker.cpp \
-    ../../xpiks-qt/AutoComplete/stocksftplistmodel.cpp \
+    ../../xpiks-qt/Microstocks/stocksftplistmodel.cpp \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.cpp \
     ../../xpiks-qt/Helpers/jsonhelper.cpp \
     ../../xpiks-qt/Helpers/localconfig.cpp \
@@ -374,7 +374,7 @@ HEADERS += \
     ../../xpiks-qt/AutoComplete/autocompleteservice.h \
     ../../xpiks-qt/AutoComplete/autocompleteworker.h \
     ../../xpiks-qt/AutoComplete/completionquery.h \
-    ../../xpiks-qt/AutoComplete/stocksftplistmodel.h \
+    ../../xpiks-qt/Microstocks/stocksftplistmodel.h \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.h \
     ../../xpiks-qt/Helpers/jsonhelper.h \
     ../../xpiks-qt/Helpers/localconfig.h \

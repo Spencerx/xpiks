@@ -54,7 +54,7 @@ namespace Models {
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::transferFailed,
                          &m_UploadWatcher, &Connectivity::UploadWatcher::reportUploadErrorHandler);
 
-        QObject::connect(&m_StocksFtpList, &AutoComplete::StocksFtpListModel::stocksListUpdated, this, &ArtworkUploader::stocksListUpdated);
+        QObject::connect(&m_StocksFtpList, &Microstocks::StocksFtpListModel::stocksListUpdated, this, &ArtworkUploader::stocksListUpdated);
     }
 
     ArtworkUploader::~ArtworkUploader() {

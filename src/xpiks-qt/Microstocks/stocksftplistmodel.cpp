@@ -31,7 +31,7 @@
 #define FTP_VIDEOS_DIR_KEY QLatin1String("videos_dir")
 #define FTP_ZIP_VECTORS_KEY QLatin1String("zip_vector")
 
-namespace AutoComplete {
+namespace Microstocks {
     StocksFtpListModel::StocksFtpListModel(Common::ISystemEnvironment &environment):
         Models::AbstractConfigUpdaterModel(
             environment.path({LOCAL_STOCKS_LIST_FILE}),
@@ -39,6 +39,18 @@ namespace AutoComplete {
             OVERWRITE_STOCKS_CONFIG,
             environment.getIsInMemoryOnly())
     { }
+
+    QString StocksFtpListModel::getFtpAddress(const QString &stockName) const {
+        auto it = std::find_if(m_StocksList.begin(), m_StocksList.end(),
+                               [&](StockFtpOptions const &current) {
+                return QString::compare(stockName, current.m_Title, Qt::CaseInsensitive) == 0; });
+        QString result;
+        if (it != m_StocksList.end()) {
+            result = it->m_FtpAddress;
+        }
+
+        return result;
+    }
 
     void StocksFtpListModel::processRemoteConfig(const QJsonDocument &remoteDocument, bool overwriteLocal) {
         LOG_DEBUG << "#";
@@ -63,7 +75,7 @@ namespace AutoComplete {
     }
 
     bool StocksFtpListModel::processLocalConfig(const QJsonDocument &document) {
-        Q_ASSERT(m_StocksHash.empty());
+        Q_ASSERT(m_StocksList.empty());
         bool result = parseConfig(document);
         return result;
     }
@@ -106,41 +118,56 @@ namespace AutoComplete {
 
     void StocksFtpListModel::parseFtpArray(const QJsonArray &array) {
         LOG_DEBUG << array.size() << "ftp hosts";
-        QHash<QString, QString> hash;
+        std::vector<StockFtpOptions> ftpOptionsList;
         QStringList keys;
-        int size = array.size();
+        const int size = array.size();
+        ftpOptionsList.reserve(size);
         keys.reserve(size);
 
         for (int i = 0; i < size; ++i) {
             QJsonValue item = array.at(i);
-
             if (!item.isObject()) { continue; }
 
+            StockFtpOptions ftpOptions;
             QJsonObject ftpItem = item.toObject();
-            if (!ftpItem.contains(FTP_ADDRESS_KEY) ||
-                    !ftpItem.contains(FTP_NAME_KEY)) {
-                continue;
-            }
 
             QJsonValue addressValue = ftpItem[FTP_ADDRESS_KEY];
-            QJsonValue nameValue = ftpItem[FTP_NAME_KEY];
+            if (!addressValue.isString()) { continue; }
+            ftpOptions.m_FtpAddress = addressValue.toString();
 
-            if (!addressValue.isString() ||
-                    !nameValue.isString()) {
-                continue;
+            QJsonValue nameValue = ftpItem[FTP_NAME_KEY];
+            if (!nameValue.isString()) { continue; }
+            ftpOptions.m_Title = nameValue.toString();
+
+            QJsonValue imagesDirValue = ftpItem[FTP_IMAGES_DIR_KEY];
+            if (imagesDirValue.isString()) {
+                ftpOptions.m_ImagesDir = imagesDirValue.toString();
             }
 
-            keys.append(nameValue.toString());
-            hash[nameValue.toString()] = addressValue.toString();
+            QJsonValue vectorsDirValue = ftpItem[FTP_VECTORS_DIR_KEY];
+            if (vectorsDirValue.isString()) {
+                ftpOptions.m_VectorsDir = vectorsDirValue.toString();
+            }
+
+            QJsonValue videosDirValue = ftpItem[FTP_VIDEOS_DIR_KEY];
+            if (videosDirValue.isString()) {
+                ftpOptions.m_VideosDir = videosDirValue.toString();
+            }
+
+            QJsonValue zipVectorValue = ftpItem[FTP_ZIP_VECTORS_KEY];
+            ftpOptions.m_ZipVector = zipVectorValue.isBool() && zipVectorValue.toBool();
+
+            keys.append(ftpOptions.m_Title);
+            m_StocksList.push_back(ftpOptions);
         }
 
-        if (!hash.isEmpty()) {
-            LOG_INFO << "Replacing stocks hash with" << hash.size() << "key-values";
-            m_StocksHash.swap(hash);
+        if (!ftpOptionsList.empty()) {
+            LOG_INFO << "Replacing stocks list with" << ftpOptionsList.size() << "items";
+            m_StocksList.swap(ftpOptionsList);
             m_StockNames.swap(keys);
             emit stocksListUpdated();
         } else {
-            LOG_INTEGR_TESTS_OR_DEBUG << "Hash is empty!";
+            LOG_INTEGR_TESTS_OR_DEBUG << "List is empty!";
         }
     }
 
