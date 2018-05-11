@@ -20,8 +20,8 @@ void StockFtpAutoCompleteTest::setup() {
 }
 
 int StockFtpAutoCompleteTest::doTest() {
-    Models::ArtworkUploader *artworkUploader = m_CommandManager->getArtworkUploader();
-    AutoComplete::StringsAutoCompleteModel *acModel = artworkUploader->getStocksCompletionSource();
+    auto *uploadInfos = m_CommandManager->getUploadInfoRepository();
+    AutoComplete::StringsAutoCompleteModel *acModel = uploadInfos->getStocksCompletionSource();
 
     VERIFY(acModel->getCount() > 1, "Stocks AC model is not full");
 
