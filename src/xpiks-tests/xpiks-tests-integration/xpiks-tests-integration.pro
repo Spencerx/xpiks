@@ -550,7 +550,8 @@ HEADERS += \
     integrationtestsenvironment.h \
     stockftpautocompletetest.h \
     ../../xpiks-qt/xpiksapp.h \
-    xpikstestsapp.h
+    xpikstestsapp.h \
+    ../../xpiks-qt/Microstocks/stockftpoptions.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface
