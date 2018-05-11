@@ -537,6 +537,7 @@ namespace Models {
             if ((0 <= m_CurrentIndex) && (m_CurrentIndex < m_UploadInfos.size())) {
                 auto &current = m_UploadInfos.at(m_CurrentIndex);
                 current->setFtpOptions(*ftpOptions);
+                justChanged();
                 QModelIndex currIndex = this->index(m_CurrentIndex);
                 emit dataChanged(currIndex, currIndex);
             }
