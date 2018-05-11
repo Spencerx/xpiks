@@ -207,9 +207,6 @@ namespace Commands {
         void saveSessionInBackground();
 
     public:
-        void requestCloseApplication() const;
-
-    public:
         void restartSpellChecking();
         void disableSpellChecking();
         void disableDuplicatesCheck();

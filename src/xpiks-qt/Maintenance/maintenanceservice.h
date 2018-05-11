@@ -53,6 +53,11 @@ namespace Maintenance {
         void startService();
         void stopService();
 
+#ifdef INTEGRATION_TESTS
+    public:
+        bool hasPendingJobs();
+#endif
+
     public:
         void cleanupUpdatesArtifacts();
         void cleanupDownloadedUpdates(const QString &downloadsPath);

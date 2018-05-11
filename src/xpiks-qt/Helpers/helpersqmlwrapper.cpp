@@ -41,8 +41,6 @@
 namespace Helpers {
     HelpersQmlWrapper::HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel *colorsModel):
         m_Environment(environment),
-        m_IsUpdateDownloaded(false),
-        m_HaveUpgradeConsent(false),
         m_ColorsModel(colorsModel)
     {
         Q_ASSERT(colorsModel != nullptr);
@@ -63,19 +61,6 @@ namespace Helpers {
 
     QString HelpersQmlWrapper::sanitizeKeyword(const QString &keyword) const {
         return doSanitizeKeyword(keyword);
-    }
-
-    void HelpersQmlWrapper::beforeDestruction() {
-        LOG_DEBUG << "emitting signal";
-        emit globalBeforeDestruction();
-        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-        m_CommandManager->beforeDestructionCallback();
-        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-
-        if (m_IsUpdateDownloaded && m_HaveUpgradeConsent) {
-            LOG_INFO << "Installing update" << m_PathToUpdate;
-            Helpers::installUpdate(m_Environment, m_PathToUpdate);
-        }
     }
 
     void HelpersQmlWrapper::revealLogFile() {
@@ -132,14 +117,6 @@ namespace Helpers {
 #endif
     }
 
-    bool HelpersQmlWrapper::getPluginsAvailable() const {
-        bool result = false;
-#ifdef WITH_PLUGINS
-        result = true;
-#endif
-        return result;
-    }
-
     void HelpersQmlWrapper::removeUnavailableFiles() {
         xpiks()->removeUnavailableFiles();
     }
@@ -155,15 +132,6 @@ namespace Helpers {
 
     QString HelpersQmlWrapper::toImagePath(const QString &path) const {
         return Helpers::getImagePath(path);
-    }
-
-    void HelpersQmlWrapper::setUpgradeConsent() {
-        m_HaveUpgradeConsent = true;
-    }
-
-    void HelpersQmlWrapper::upgradeNow() {
-        setUpgradeConsent();
-        emit upgradeInitiated();
     }
 
     QString HelpersQmlWrapper::getAssetForTheme(const QString &assetName, int themeIndex) const {
@@ -246,12 +214,5 @@ namespace Helpers {
         args << QFileInfo(path).absolutePath();
         QProcess::startDetached("xdg-open", args);
 #endif
-    }
-
-    void HelpersQmlWrapper::onUpdateDownloaded(QString pathToUpdate) {
-        m_IsUpdateDownloaded = true;
-        m_PathToUpdate = pathToUpdate;
-        emit updateDownloadedChanged(true);
-        emit updateDownloaded();
     }
 }

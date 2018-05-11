@@ -34,7 +34,6 @@ Item {
     QtObject {
         id: helpersWrapper
         signal globalCloseRequested();
-        signal globalBeforeDestruction();
 
         function sanitizeKeyword(keyword) {
             return keyword;
@@ -43,6 +42,12 @@ Item {
         function isKeywordValid(keyword) {
             return keyword.length >= 2 || keyword === "$"
         }
+    }
+
+    QtObject {
+        id: xpiksApp
+
+        signal globalBeforeDestruction()
     }
 
     QtObject {

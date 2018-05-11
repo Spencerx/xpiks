@@ -226,6 +226,7 @@ namespace Models {
         void unavailableArtworksFound();
         void unavailableVectorsFound();
         void userDictUpdate(const QString &word);
+        void artworkSelectedChanged(bool value);
 
     protected:
         virtual QHash<int, QByteArray> roleNames() const override;

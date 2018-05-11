@@ -72,13 +72,31 @@ namespace Models {
 
     ArtworkMetadata *ArtItemsModel::createArtwork(const QString &filepath, qint64 directoryID) {
         const int id = m_LastID++;
+        ArtworkMetadata *artwork = nullptr;
 
         LOG_INTEGRATION_TESTS << "Creating artwork with ID:" << id << "path:" << filepath;
         if (Helpers::couldBeVideo(filepath)) {
-            return new VideoArtwork(filepath, id, directoryID);
+            artwork = new VideoArtwork(filepath, id, directoryID);
         } else {
-            return new ImageArtwork(filepath, id, directoryID);
+            artwork = new ImageArtwork(filepath, id, directoryID);
         }
+
+        QObject::connect(artwork, &ArtworkMetadata::modifiedChanged,
+                         this, &ArtItemsModel::itemModifiedChanged);
+
+        QObject::connect(artwork, &ArtworkMetadata::backupRequired,
+                         this, &Models::ArtItemsModel::onArtworkBackupRequested);
+
+        QObject::connect(artwork, &ArtworkMetadata::editingPaused,
+                         this, &Models::ArtItemsModel::onArtworkEditingPaused);
+
+        QObject::connect(artwork, &ArtworkMetadata::spellingInfoUpdated,
+                         this, &ArtItemsModel::onArtworkSpellingInfoUpdated);
+
+        QObject::connect(artwork, &ArtworkMetadata::selectedChanged,
+                         this, &ArtItemsModel::artworkSelectedChanged);
+
+        return artwork;
     }
 
     void ArtItemsModel::deleteAllItems() {
@@ -1395,7 +1413,12 @@ namespace Models {
     void ArtItemsModel::destroyInnerItem(ArtworkMetadata *artwork) {
         if (artwork->release()) {
             LOG_INTEGRATION_TESTS << "Destroying metadata" << artwork->getItemID() << "for real";
-            m_CommandManager->disconnectArtworkSignals(artwork);
+
+            bool disconnectStatus = QObject::disconnect(artwork, 0, this, 0);
+            if (disconnectStatus == false) { LOG_WARNING << "Disconnect Artwork from ArtItemsModel returned false"; }
+            disconnectStatus = QObject::disconnect(this, 0, artwork, 0);
+            if (disconnectStatus == false) { LOG_WARNING << "Disconnect ArtItemsModel from Artwork returned false"; }
+
             artwork->deepDisconnect();
             artwork->clearSpellingInfo();
 #ifdef QT_DEBUG

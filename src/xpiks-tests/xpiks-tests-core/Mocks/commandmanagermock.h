@@ -15,7 +15,10 @@ namespace Mocks {
         CommandManagerMock():
             m_AnyCommandProcessed(false),
             m_CanExecuteCommands(true)
-        {}
+        {
+            m_TestsDelegator.setCommandManager(this);
+            this->InjectDependency(&m_TestsDelegator);
+        }
 
     public:
         bool anyCommandProcessed() const { return m_AnyCommandProcessed; }
@@ -47,8 +50,6 @@ namespace Mocks {
 
                     Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(artwork);
 
-                    this->connectArtworkSignals(artwork);
-
                     if (withVector) {
                         image->attachVector(vectorname);
                     }
@@ -78,6 +79,7 @@ namespace Mocks {
         }
 
     private:
+        Commands::MainDelegator m_TestsDelegator;
         bool m_AnyCommandProcessed;
         volatile bool m_CanExecuteCommands;
     };

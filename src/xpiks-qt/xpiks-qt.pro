@@ -193,7 +193,8 @@ SOURCES += main.cpp \
     Suggestion/fotoliasuggestionengine.cpp \
     Suggestion/gettysuggestionengine.cpp \
     Microstocks/microstockservice.cpp \
-    Storage/memorytable.cpp
+    Storage/memorytable.cpp \
+    xpiksapp.cpp
 
 RESOURCES += qml.qrc
 
@@ -466,7 +467,8 @@ HEADERS += \
     Encryption/secretpair.h \
     Encryption/isecretsstorage.h \
     Microstocks/apisecrets.h \
-    Storage/memorytable.h
+    Storage/memorytable.h \
+    xpiksapp.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
