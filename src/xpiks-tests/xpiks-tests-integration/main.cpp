@@ -169,7 +169,7 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
     logger.log(type, logLine);
 
     if ((type == QtFatalMsg) || (type == QtWarningMsg)) {
-        logger.emergencyFlush();
+        logger.abortFlush();
     }
 
     if (type == QtFatalMsg) {

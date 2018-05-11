@@ -46,6 +46,7 @@ namespace Helpers {
     public:
         void log(QtMsgType type, const QString &message);
         void emergencyFlush();
+        void abortFlush();
 #endif
 
     private:

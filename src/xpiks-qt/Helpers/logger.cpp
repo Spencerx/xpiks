@@ -71,7 +71,12 @@ namespace Helpers {
     }
 
     void Logger::emergencyFlush() {
-        doLog("Starting emergency flush.");
+        flushStream(&m_LogsStorage[0]);
+        flushStream(&m_LogsStorage[1]);
+    }
+
+    void Logger::abortFlush() {
+        doLog("Starting abort flush.");
         flushAll();
     }
 #endif
