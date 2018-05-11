@@ -60,7 +60,30 @@ namespace Helpers {
 
         // will make waiting flush() call unblocked if any
         doLog("Logging stopped.");
+        flushAll();
+    }
 
+#ifdef INTEGRATION_TESTS
+    void Logger::log(QtMsgType type, const QString &message) {
+        // basically this thing is here because Travis CI does not like long logs
+        if (m_MemoryOnly && (type == QtDebugMsg)) { return; }
+        log(message);
+    }
+
+    void Logger::emergencyFlush() {
+        doLog("Starting emergency flush.");
+        flushAll();
+    }
+#endif
+
+    void Logger::doLog(const QString &message) {
+        QMutexLocker locker(&m_LogMutex);
+        m_QueueLogTo->append(message);
+        m_AnyLogsToFlush.wakeOne();
+    }
+
+    void Logger::flushAll()
+    {
         QMutexLocker flushLocker(&m_FlushMutex);
         flushStream(m_QueueFlushFrom);
 
@@ -73,25 +96,6 @@ namespace Helpers {
         }
 
         flushStream(m_QueueFlushFrom);
-    }
-
-#ifdef INTEGRATION_TESTS
-    void Logger::log(QtMsgType type, const QString &message) {
-        // basically this thing is here because Travis CI does not like long logs
-        if (m_MemoryOnly && (type == QtDebugMsg)) { return; }
-        log(message);
-    }
-
-    void Logger::emergencyFlush() {
-        flushStream(&m_LogsStorage[0]);
-        flushStream(&m_LogsStorage[1]);
-    }
-#endif
-
-    void Logger::doLog(const QString &message) {
-        QMutexLocker locker(&m_LogMutex);
-        m_QueueLogTo->append(message);
-        m_AnyLogsToFlush.wakeOne();
     }
 
     void Logger::flushStream(QStringList *logItems) {

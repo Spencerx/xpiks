@@ -50,6 +50,7 @@ namespace Helpers {
 
     private:
         void doLog(const QString &message);
+        void flushAll();
         void flushStream(QStringList *logItems);
 
     private:
