@@ -15,12 +15,11 @@
 #include <QStringList>
 #include <QFutureWatcher>
 #include "../Connectivity/testconnection.h"
-#include "../AutoComplete/stringsautocompletemodel.h"
-#include "../Microstocks/stocksftplistmodel.h"
 #include "../Connectivity/uploadwatcher.h"
 #include "../Helpers/ifilenotavailablemodel.h"
 #include "../MetadataIO/artworkssnapshot.h"
 #include "../Common/isystemenvironment.h"
+#include "uploadinforepository.h"
 
 namespace Helpers {
     class TestConnectionResult;
@@ -55,13 +54,13 @@ namespace Models {
     public:
         ArtworkUploader(Common::ISystemEnvironment &environment,
                         Connectivity::IFtpCoordinator *ftpCoordinator,
+                        Models::UploadInfoRepository &uploadInfoRepository,
                         QObject *parent=0);
         virtual ~ArtworkUploader();
 
     public:
         // used to test UI of artwork upload
         // virtual bool getInProgress() const { return true; }
-        AutoComplete::StringsAutoCompleteModel *getStocksCompletionSource() { return &m_StocksCompletionSource; }
         virtual void setCommandManager(Commands::CommandManager *commandManager) override;
 
     signals:
@@ -92,8 +91,6 @@ namespace Models {
 
     private slots:
         void uploaderPercentChanged(double percent);
-        void stocksListUpdated();
-        void updateStocksList();
 
     public:
         Q_INVOKABLE void uploadArtworks();
@@ -101,17 +98,13 @@ namespace Models {
                                           const QString &password, bool disablePassiveMode, bool disableEPSV);
         Q_INVOKABLE bool needCreateArchives() const;
 
-        Q_INVOKABLE QString getFtpAddress(const QString &stockName) const { return m_StocksFtpList.getFtpAddress(stockName); }
         Q_INVOKABLE QString getFtpName(const QString &stockAddress) const;
-
         Q_INVOKABLE QObject *getUploadWatcher();
 
         Q_INVOKABLE void resetModel();
         Q_INVOKABLE void clearModel();
         Q_INVOKABLE void resetProgress();
         Q_INVOKABLE void cancelOperation();
-
-        void initializeStocksList(Helpers::AsyncCoordinator *initCoordinator);
 
     public:
         void setArtworks(MetadataIO::ArtworksSnapshot &snapshot);
@@ -141,9 +134,8 @@ namespace Models {
         MetadataIO::ArtworksSnapshot m_ArtworksSnapshot;
         Connectivity::UploadWatcher m_UploadWatcher;
         Connectivity::IFtpCoordinator *m_FtpCoordinator;
-        AutoComplete::StringsAutoCompleteModel m_StocksCompletionSource;
-        Microstocks::StocksFtpListModel m_StocksFtpList;
         QFutureWatcher<Connectivity::ContextValidationResult> *m_TestingCredentialWatcher;
+        Models::UploadInfoRepository &m_UploadInfos;
         double m_Percent;
         volatile bool m_IsInProgress;
         volatile bool m_HasErrors;

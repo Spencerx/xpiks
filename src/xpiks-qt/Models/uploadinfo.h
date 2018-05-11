@@ -17,6 +17,7 @@
 #include <QString>
 #include <QByteArray>
 #include <cmath>
+#include "../Microstocks/stockftpoptions.h"
 
 #define BOOL_TO_STR(condition) ((condition) ? QLatin1String("true") : QLatin1String("false"))
 
@@ -35,7 +36,10 @@ namespace Models {
             /*DEPRECATED*/FtpPassiveModeField = 6,
             DisableFtpPassiveModeField = 7,
             IsSelectedField = 8,
-            DisableEPSVField = 9
+            DisableEPSVField = 9,
+            ImagesDirField = 10,
+            VectorsDirField = 11,
+            VideosDirField = 12
         };
 
     public:
@@ -50,6 +54,7 @@ namespace Models {
             m_Title = QObject::tr("Untitled");
         }
 
+        // legacy import
         UploadInfo(const QHash<int, QString> &items) :
             m_Percent(0),
             m_ZipBeforeUpload(false),
@@ -88,6 +93,9 @@ namespace Models {
         bool getDisableEPSV() const { return m_DisableEPSV; }
         QString getAnyPassword() { return m_EncodedPassword.isEmpty() ? m_EncodedPasswordBackup : m_EncodedPassword; }
         bool getVectorFirst() const { return m_VectorFirst; }
+        const QString &getImagesDir() const { return m_ImagesDir; }
+        const QString &getVectorsDir() const { return m_VectorsDir; }
+        const QString &getVideosDir() const { return m_VideosDir; }
 
     public:
         bool setTitle(const QString &value) { bool result = m_Title != value; m_Title = value; return result; }
@@ -134,6 +142,29 @@ namespace Models {
             m_VectorFirst = value;
             return result;
         }
+        bool setImagesDir(const QString &value) {
+            bool result = m_ImagesDir != value;
+            m_ImagesDir = value;
+            return result;
+        }
+        bool setVectorsDir(const QString &value) {
+            bool result = m_VectorsDir != value;
+            m_VectorsDir = value;
+            return result;
+        }
+        bool setVideosDir(const QString &value) {
+            bool result = m_VideosDir != value;
+            m_VideosDir = value;
+            return result;
+        }
+        void setFtpOptions(const Microstocks::StockFtpOptions &ftpOptions) {
+            m_Title = ftpOptions.m_Title;
+            m_Host = ftpOptions.m_FtpAddress;
+            m_ImagesDir = ftpOptions.m_ImagesDir;
+            m_VectorsDir = ftpOptions.m_VectorsDir;
+            m_VideosDir = ftpOptions.m_VideosDir;
+            m_ZipBeforeUpload = ftpOptions.m_ZipVector;
+        }
 
     private:
         QMutex m_Mutex;
@@ -141,6 +172,9 @@ namespace Models {
         QString m_Host;
         QString m_Username;
         QString m_EncodedPassword;
+        QString m_ImagesDir;
+        QString m_VectorsDir;
+        QString m_VideosDir;
         // used for backup when MP is incorrect
         QString m_EncodedPasswordBackup;
         volatile double m_Percent;

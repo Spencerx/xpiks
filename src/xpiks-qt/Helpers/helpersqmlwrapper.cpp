@@ -148,8 +148,8 @@ namespace Helpers {
     }
 
     QObject *HelpersQmlWrapper::getFtpACList() {
-        auto *artworkUploader = m_CommandManager->getArtworkUploader();
-        AutoComplete::StringsAutoCompleteModel *model = artworkUploader->getStocksCompletionSource();
+        auto *uploadInfos = m_CommandManager->getUploadInfoRepository();
+        AutoComplete::StringsAutoCompleteModel *model = uploadInfos->getStocksCompletionSource();
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
         return model;
     }

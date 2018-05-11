@@ -16,19 +16,12 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <vector>
+#include <memory>
 #include "../Models/abstractconfigupdatermodel.h"
 #include "../Common/isystemenvironment.h"
+#include "stockftpoptions.h"
 
 namespace Microstocks {
-    struct StockFtpOptions {
-        QString m_Title;
-        QString m_FtpAddress;
-        QString m_ImagesDir;
-        QString m_VectorsDir;
-        QString m_VideosDir;
-        bool m_ZipVector = false;
-    };
-
     class StocksFtpListModel: public Models::AbstractConfigUpdaterModel
     {
         Q_OBJECT
@@ -36,8 +29,8 @@ namespace Microstocks {
         StocksFtpListModel(Common::ISystemEnvironment &environment);
 
     public:
-        QString getFtpAddress(const QString &stockName) const;
-        const QStringList &getStockNamesList() const { return m_StockNames; }
+        std::shared_ptr<StockFtpOptions> findFtpOptions(const QString &title) const;
+        QStringList getStockNamesList() const;
 
         // AbstractConfigUpdaterModel interface
     protected:
@@ -57,8 +50,7 @@ namespace Microstocks {
         virtual int operator ()(const QJsonObject &val1, const QJsonObject &val2) override;
 
     private:
-        std::vector<StockFtpOptions> m_StocksList;
-        QStringList m_StockNames;
+        std::vector<std::shared_ptr<StockFtpOptions> > m_StocksList;
     };
 }
 

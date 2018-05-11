@@ -16,6 +16,8 @@
 #include "../Encryption/secretsmanager.h"
 #include "../Common/defines.h"
 #include "../Models/settingsmodel.h"
+#include "../Helpers/asynccoordinator.h"
+#include "../Connectivity/ftphelpers.h"
 
 #define UPLOAD_INFO_SAVE_TIMEOUT 3000
 #define UPLOAD_INFO_DELAYS_COUNT 10
@@ -30,6 +32,9 @@
 #define FTP_DISABLE_EPSV QLatin1String("noepsv")
 #define FTP_ISSELECTED QLatin1String("selected")
 #define FTP_VECTORS_FIRST QLatin1String("vectorder")
+#define FTP_IMAGES_DIR QLatin1String("imgdir")
+#define FTP_VECTORS_DIR QLatin1String("vecdir")
+#define FTP_VIDEO_DIR QLatin1String("viddir")
 
 #define UPLOAD_INFOS_FILE "uploadinfos.json"
 
@@ -54,6 +59,9 @@ namespace Models {
             object.insert(FTP_DISABLE_EPSV, uploadInfo->getDisableEPSV());
             object.insert(FTP_ISSELECTED, uploadInfo->getIsSelected());
             object.insert(FTP_VECTORS_FIRST, uploadInfo->getVectorFirst());
+            object.insert(FTP_IMAGES_DIR, uploadInfo->getImagesDir());
+            object.insert(FTP_VECTORS_DIR, uploadInfo->getVectorsDir());
+            object.insert(FTP_VIDEO_DIR, uploadInfo->getVideosDir());
 
             uploadInfoArray.append(object);
         }
@@ -115,6 +123,21 @@ namespace Models {
                 destination->setVectorsFirst(vectorFirstValue.toBool(false));
             }
 
+            QJsonValue imagesDirValue = element.value(FTP_IMAGES_DIR);
+            if (imagesDirValue.isString()) {
+                destination->setImagesDir(imagesDirValue.toString());
+            }
+
+            QJsonValue vectorsDirValue = element.value(FTP_VECTORS_DIR);
+            if (vectorsDirValue.isString()) {
+                destination->setVectorsDir(vectorsDirValue.toString());
+            }
+
+            QJsonValue videosDirValue = element.value(FTP_VIDEO_DIR);
+            if (videosDirValue.isString()) {
+                destination->setVideosDir(videosDirValue.toString());
+            }
+
             uploadInfo.swap(destination);
             parsed = true;
         } while(false);
@@ -147,9 +170,17 @@ namespace Models {
         m_Environment(environment),
         m_LocalConfig(environment.path({UPLOAD_INFOS_FILE}),
                       environment.getIsInMemoryOnly()),
+        m_StocksFtpList(environment),
+        m_CurrentIndex(0),
         m_EmptyPasswordsMode(false)
     {
         QObject::connect(this, &UploadInfoRepository::backupRequired, this, &UploadInfoRepository::onBackupRequired);
+
+        QObject::connect(&m_StocksFtpList, &Microstocks::StocksFtpListModel::stocksListUpdated,
+                         this, &UploadInfoRepository::stocksListUpdated);
+
+        QObject::connect(&m_StocksCompletionSource, &AutoComplete::StringsAutoCompleteModel::completionAccepted,
+                         this, &UploadInfoRepository::onCompletionSelected);
     }
 
     UploadInfoRepository::~UploadInfoRepository() { m_UploadInfos.clear();  }
@@ -193,6 +224,23 @@ namespace Models {
         if (!tempInfos.empty()) {
             m_UploadInfos.swap(tempInfos);
         }
+    }
+
+    void UploadInfoRepository::initializeStocksList(Helpers::AsyncCoordinator *initCoordinator) {
+        LOG_DEBUG << "#";
+
+        Helpers::AsyncCoordinatorLocker locker(initCoordinator);
+        Q_UNUSED(locker);
+        Helpers::AsyncCoordinatorUnlocker unlocker(initCoordinator);
+        Q_UNUSED(unlocker);
+
+        m_StocksFtpList.initializeConfigs();
+    }
+
+    void UploadInfoRepository::setCommandManager(Commands::CommandManager *commandManager) {
+        Common::BaseEntity::setCommandManager(commandManager);
+
+        m_StocksFtpList.setCommandManager(commandManager);
     }
 
     void UploadInfoRepository::removeItem(int row) {
@@ -251,6 +299,10 @@ namespace Models {
         emit dataChanged(itemModelIndex, itemModelIndex, QVector<int>() << ZipBeforeUploadRole);
     }
 
+    void UploadInfoRepository::setCurrentIndex(int index) {
+        m_CurrentIndex = index;
+    }
+
     // mp == master password
     void UploadInfoRepository::initializeAccounts(bool mpIsCorrectOrEmpty) {
         this->setEmptyPasswordsMode(!mpIsCorrectOrEmpty);
@@ -263,6 +315,8 @@ namespace Models {
         if (m_EmptyPasswordsMode) {
             this->restoreRealPasswords();
         }
+
+        m_CurrentIndex = 0;
     }
 
     void UploadInfoRepository::backupAndDropRealPasswords() {
@@ -300,6 +354,33 @@ namespace Models {
         }
 
         return uploadInfos;
+    }
+
+    bool UploadInfoRepository::isZippingRequired() const {
+        bool anyZipNeeded = false;
+
+        for (auto &info: m_UploadInfos) {
+            if (info->getIsSelected() && info->getZipBeforeUpload()) {
+                anyZipNeeded = true;
+                LOG_DEBUG << "at least for" << info->getHost();
+                break;
+            }
+        }
+
+        return anyZipNeeded;
+    }
+
+    std::shared_ptr<UploadInfo> UploadInfoRepository::tryFindItemByHost(const QString &stockAddress) {
+        std::shared_ptr<UploadInfo> result;
+
+        for (auto &info: m_UploadInfos) {
+            if (Connectivity::sanitizeHost(info->getHost()) == stockAddress) {
+                result = info;
+                break;
+            }
+        }
+
+        return result;
     }
 
     int UploadInfoRepository::rowCount(const QModelIndex &parent) const {
@@ -448,6 +529,18 @@ namespace Models {
         }
     }
 
+    void UploadInfoRepository::onCompletionSelected(int completionID) {
+        QString title = m_StocksCompletionSource.getCompletion(completionID);
+        LOG_INFO << "Completion selected for" << title;
+        auto ftpOptions = m_StocksFtpList.findFtpOptions(title);
+        if (ftpOptions) {
+            if ((0 <= m_CurrentIndex) && (m_CurrentIndex < m_UploadInfos.size())) {
+                auto &current = m_UploadInfos.at(m_CurrentIndex);
+                current->setFtpOptions(*ftpOptions);
+            }
+        }
+    }
+
     void UploadInfoRepository::onBackupRequired() {
         LOG_DEBUG << "#";
 
@@ -455,6 +548,13 @@ namespace Models {
             auto *settingsModel = m_CommandManager->getSettingsModel();
             settingsModel->clearLegacyUploadInfos();
         }
+    }
+
+    void UploadInfoRepository::stocksListUpdated() {
+        LOG_DEBUG << "#";
+
+        QStringList stocks = m_StocksFtpList.getStockNamesList();
+        m_StocksCompletionSource.setStrings(stocks);
     }
 
     bool UploadInfoRepository::saveUploadInfos() {

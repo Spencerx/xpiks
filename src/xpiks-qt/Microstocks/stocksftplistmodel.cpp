@@ -40,16 +40,26 @@ namespace Microstocks {
             environment.getIsInMemoryOnly())
     { }
 
-    QString StocksFtpListModel::getFtpAddress(const QString &stockName) const {
+    std::shared_ptr<StockFtpOptions> StocksFtpListModel::findFtpOptions(const QString &title) const {
         auto it = std::find_if(m_StocksList.begin(), m_StocksList.end(),
-                               [&](StockFtpOptions const &current) {
-                return QString::compare(stockName, current.m_Title, Qt::CaseInsensitive) == 0; });
-        QString result;
+                               [&](std::shared_ptr<StockFtpOptions> const &current) {
+                return QString::compare(title, current->m_Title, Qt::CaseInsensitive) == 0; });
+
+        std::shared_ptr<StockFtpOptions> result;
         if (it != m_StocksList.end()) {
-            result = it->m_FtpAddress;
+            result = *it;
         }
 
         return result;
+    }
+
+    QStringList StocksFtpListModel::getStockNamesList() const {
+        QStringList names;
+        names.reserve((int)m_StocksList.size());
+        for (auto &stock: m_StocksList) {
+            names.append(stock->m_Title);
+        }
+        return names;
     }
 
     void StocksFtpListModel::processRemoteConfig(const QJsonDocument &remoteDocument, bool overwriteLocal) {
@@ -118,53 +128,49 @@ namespace Microstocks {
 
     void StocksFtpListModel::parseFtpArray(const QJsonArray &array) {
         LOG_DEBUG << array.size() << "ftp hosts";
-        std::vector<StockFtpOptions> ftpOptionsList;
-        QStringList keys;
+        std::vector<std::shared_ptr<StockFtpOptions> > ftpOptionsList;
         const int size = array.size();
         ftpOptionsList.reserve(size);
-        keys.reserve(size);
 
         for (int i = 0; i < size; ++i) {
             QJsonValue item = array.at(i);
             if (!item.isObject()) { continue; }
 
-            StockFtpOptions ftpOptions;
+            std::shared_ptr<StockFtpOptions> ftpOptions(new StockFtpOptions());
             QJsonObject ftpItem = item.toObject();
 
             QJsonValue addressValue = ftpItem[FTP_ADDRESS_KEY];
             if (!addressValue.isString()) { continue; }
-            ftpOptions.m_FtpAddress = addressValue.toString();
+            ftpOptions->m_FtpAddress = addressValue.toString();
 
             QJsonValue nameValue = ftpItem[FTP_NAME_KEY];
             if (!nameValue.isString()) { continue; }
-            ftpOptions.m_Title = nameValue.toString();
+            ftpOptions->m_Title = nameValue.toString();
 
             QJsonValue imagesDirValue = ftpItem[FTP_IMAGES_DIR_KEY];
             if (imagesDirValue.isString()) {
-                ftpOptions.m_ImagesDir = imagesDirValue.toString();
+                ftpOptions->m_ImagesDir = imagesDirValue.toString();
             }
 
             QJsonValue vectorsDirValue = ftpItem[FTP_VECTORS_DIR_KEY];
             if (vectorsDirValue.isString()) {
-                ftpOptions.m_VectorsDir = vectorsDirValue.toString();
+                ftpOptions->m_VectorsDir = vectorsDirValue.toString();
             }
 
             QJsonValue videosDirValue = ftpItem[FTP_VIDEOS_DIR_KEY];
             if (videosDirValue.isString()) {
-                ftpOptions.m_VideosDir = videosDirValue.toString();
+                ftpOptions->m_VideosDir = videosDirValue.toString();
             }
 
             QJsonValue zipVectorValue = ftpItem[FTP_ZIP_VECTORS_KEY];
-            ftpOptions.m_ZipVector = zipVectorValue.isBool() && zipVectorValue.toBool();
+            ftpOptions->m_ZipVector = zipVectorValue.isBool() && zipVectorValue.toBool();
 
-            keys.append(ftpOptions.m_Title);
-            m_StocksList.push_back(ftpOptions);
+            m_StocksList.emplace_back(ftpOptions);
         }
 
         if (!ftpOptionsList.empty()) {
             LOG_INFO << "Replacing stocks list with" << ftpOptionsList.size() << "items";
             m_StocksList.swap(ftpOptionsList);
-            m_StockNames.swap(keys);
             emit stocksListUpdated();
         } else {
             LOG_INTEGR_TESTS_OR_DEBUG << "List is empty!";

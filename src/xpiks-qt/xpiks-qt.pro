@@ -86,7 +86,7 @@ SOURCES += main.cpp \
     AutoComplete/autocompleteworker.cpp \
     AutoComplete/autocompleteservice.cpp \
     Models/abstractconfigupdatermodel.cpp \
-    AutoComplete/stocksftplistmodel.cpp \
+    Microstocks/stocksftplistmodel.cpp \
     Models/imageartwork.cpp \
     Models/proxysettings.cpp \
     QMLExtensions/imagecachingworker.cpp \
@@ -315,7 +315,7 @@ HEADERS += \
     AutoComplete/completionquery.h \
     AutoComplete/autocompleteservice.h \
     Models/abstractconfigupdatermodel.h \
-    AutoComplete/stocksftplistmodel.h \
+    Microstocks/stocksftplistmodel.h \
     Models/imageartwork.h \
     Common/hold.h \
     Models/proxysettings.h \
@@ -468,7 +468,8 @@ HEADERS += \
     Encryption/isecretsstorage.h \
     Microstocks/apisecrets.h \
     Storage/memorytable.h \
-    xpiksapp.h
+    xpiksapp.h \
+    Microstocks/stockftpoptions.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

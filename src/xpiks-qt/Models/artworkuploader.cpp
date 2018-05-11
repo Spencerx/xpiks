@@ -25,7 +25,6 @@
 #include <uploadcontext.h>
 #include "../Models/imageartwork.h"
 #include "../Connectivity/ftphelpers.h"
-#include "../Helpers/asynccoordinator.h"
 
 #ifndef CORE_TESTS
 #include <ftpcoordinator.h>
@@ -34,11 +33,12 @@
 namespace Models {
     ArtworkUploader::ArtworkUploader(Common::ISystemEnvironment &environment,
                                      Connectivity::IFtpCoordinator *ftpCoordinator,
+                                     UploadInfoRepository &uploadInfoRepository,
                                      QObject *parent):
         QObject(parent),
         m_Environment(environment),
         m_FtpCoordinator(ftpCoordinator),
-        m_StocksFtpList(environment),
+        m_UploadInfos(uploadInfoRepository),
         m_Percent(0),
         m_IsInProgress(false),
         m_HasErrors(false)
@@ -53,8 +53,6 @@ namespace Models {
         QObject::connect(m_TestingCredentialWatcher, SIGNAL(finished()), SLOT(credentialsTestingFinished()));
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::transferFailed,
                          &m_UploadWatcher, &Connectivity::UploadWatcher::reportUploadErrorHandler);
-
-        QObject::connect(&m_StocksFtpList, &Microstocks::StocksFtpListModel::stocksListUpdated, this, &ArtworkUploader::stocksListUpdated);
     }
 
     ArtworkUploader::~ArtworkUploader() {
@@ -71,8 +69,6 @@ namespace Models {
         libxpks::net::FtpCoordinator *coordinator = dynamic_cast<libxpks::net::FtpCoordinator *>(m_FtpCoordinator);
         Q_ASSERT(coordinator != NULL);
         coordinator->setCommandManager(commandManager);
-
-        m_StocksFtpList.setCommandManager(commandManager);
     }
 
     void ArtworkUploader::setPercent(double value) {
@@ -121,20 +117,7 @@ namespace Models {
         setPercent(percent);
         LOG_DEBUG << "Overall progress =" << percent;
 
-        UploadInfoRepository *uploadInfoRepository = m_CommandManager->getUploadInfoRepository();
-        uploadInfoRepository->updatePercentages();
-    }
-
-    void ArtworkUploader::stocksListUpdated() {
-        LOG_DEBUG << "#";
-
-        QStringList stocks = m_StocksFtpList.getStockNamesList();
-        m_StocksCompletionSource.setStrings(stocks);
-    }
-
-    void ArtworkUploader::updateStocksList() {
-        LOG_DEBUG << "#";
-        m_StocksFtpList.initializeConfigs();
+        m_UploadInfos.updatePercentages();
     }
 
     void ArtworkUploader::uploadArtworks() {
@@ -166,21 +149,9 @@ namespace Models {
     }
 
     bool ArtworkUploader::needCreateArchives() const {
-        bool anyZipNeeded = false;
-        const UploadInfoRepository *uploadInfoRepository = m_CommandManager->getUploadInfoRepository();
-        auto &infos = uploadInfoRepository->getUploadInfos();
-
-        for (auto &info: infos) {
-            if (info->getIsSelected() && info->getZipBeforeUpload()) {
-                anyZipNeeded = true;
-                LOG_DEBUG << "at least for" << info->getHost();
-                break;
-            }
-        }
-
         bool needCreate = false;
 
-        if (anyZipNeeded) {
+        if (m_UploadInfos.isZippingRequired()) {
             auto &snapshot = this->getArtworksSnapshot();
             auto &artworkList = snapshot.getWeakSnapshot();
             for (auto *artwork: artworkList) {
@@ -203,17 +174,6 @@ namespace Models {
         }
 
         return needCreate;
-    }
-
-    void ArtworkUploader::initializeStocksList(Helpers::AsyncCoordinator *initCoordinator) {
-        LOG_DEBUG << "#";
-
-        Helpers::AsyncCoordinatorLocker locker(initCoordinator);
-        Q_UNUSED(locker);
-        Helpers::AsyncCoordinatorUnlocker unlocker(initCoordinator);
-        Q_UNUSED(unlocker);
-
-        updateStocksList();
     }
 
     void ArtworkUploader::resetModel() {
@@ -257,11 +217,10 @@ namespace Models {
 
         if (snapshot.empty()) { return; }
 
-        UploadInfoRepository *uploadInfoRepository = m_CommandManager->getUploadInfoRepository();
-        std::vector<std::shared_ptr<Models::UploadInfo> > selectedInfos = std::move(uploadInfoRepository->retrieveSelectedUploadInfos());
+        std::vector<std::shared_ptr<Models::UploadInfo> > selectedInfos = std::move(m_UploadInfos.retrieveSelectedUploadInfos());
 
-        uploadInfoRepository->resetPercents();
-        uploadInfoRepository->updatePercentages();
+        m_UploadInfos.resetPercents();
+        m_UploadInfos.updatePercentages();
 
         m_FtpCoordinator->uploadArtworks(snapshot, selectedInfos);
         xpiks()->reportUserAction(Connectivity::UserAction::Upload);
@@ -297,16 +256,13 @@ namespace Models {
     }
 
     QString ArtworkUploader::getFtpName(const QString &stockAddress) const {
-        const UploadInfoRepository *uploadInfoRepository = m_CommandManager->getUploadInfoRepository();
-        auto &infos = uploadInfoRepository->getUploadInfos();
-
-        for (auto &info: infos) {
-            if (Connectivity::sanitizeHost(info->getHost()) == stockAddress) {
-                return info->getTitle();
-            }
+        QString result;
+        auto info = m_UploadInfos.tryFindItemByHost(stockAddress);
+        if (info) {
+            result = info->getTitle();
         }
 
-        return QString();
+        return result;
     }
 
     QObject *ArtworkUploader::getUploadWatcher() {

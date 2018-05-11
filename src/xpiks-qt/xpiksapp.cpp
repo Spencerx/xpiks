@@ -29,7 +29,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_RecentDirectorieModel(environment),
     m_RecentFileModel(environment),
     m_FtpCoordinator(new libxpks::net::FtpCoordinator(m_SettingsModel.getMaxParallelUploads())),
-    m_ArtworkUploader(environment, m_FtpCoordinator),
+    m_ArtworkUploader(environment, m_FtpCoordinator, m_UploadInfoRepository),
     m_SpellCheckerService(environment, &m_SettingsModel),
     m_MetadataIOService(&m_DatabaseManager),
     m_AutoCompleteService(&m_AutoCompleteModel, &m_PresetsModel, &m_SettingsModel),
@@ -227,7 +227,7 @@ void XpiksApp::start() {
     m_TelemetryService.setEndpoint(endpoint);
 
     m_TelemetryService.startReporting();
-    m_ArtworkUploader.initializeStocksList(&m_InitCoordinator);
+    m_UploadInfoRepository.initializeStocksList(&m_InitCoordinator);
     m_WarningsService.initWarningsSettings();
     m_TranslationManager.initializeDictionaries();
     m_UploadInfoRepository.initializeConfig();
