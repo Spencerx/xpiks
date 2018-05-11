@@ -46,10 +46,12 @@ namespace Helpers {
     public:
         void log(QtMsgType type, const QString &message);
         void emergencyFlush();
+        void abortFlush();
 #endif
 
     private:
         void doLog(const QString &message);
+        void flushAll();
         void flushStream(QStringList *logItems);
 
     private:

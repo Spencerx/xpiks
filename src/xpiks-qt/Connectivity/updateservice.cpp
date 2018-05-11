@@ -15,6 +15,7 @@
 #include "../Models/settingsmodel.h"
 #include "../Common/version.h"
 #include "../Models/switchermodel.h"
+#include "../Helpers/updatehelpers.h"
 
 namespace Connectivity {
     UpdateService::UpdateService(Common::ISystemEnvironment &environment,
@@ -58,6 +59,15 @@ namespace Connectivity {
     void UpdateService::stopChecking() {
         LOG_DEBUG << "#";
         emit cancelRequested();
+    }
+
+    void UpdateService::tryToUpgradeXpiks() {
+        const int availableVersion = getAvailableUpdateVersion();
+        if (m_HaveUpgradeConsent && (availableVersion > XPIKS_VERSION_INT)) {
+            const QString pathToUpdate = getPathToUpdate();
+            LOG_INFO << "About to install update from" << pathToUpdate;
+            Helpers::installUpdate(m_Environment, pathToUpdate);
+        }
     }
 
     void UpdateService::doStartChecking(const QString &pathToUpdate) {
@@ -110,6 +120,6 @@ namespace Connectivity {
         setAvailableUpdateVersion(version);
         setPathToUpdate(updatePath);
 
-        emit updateDownloaded(updatePath);
+        emit updateDownloaded();
     }
 }

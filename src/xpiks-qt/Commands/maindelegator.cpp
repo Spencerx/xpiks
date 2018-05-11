@@ -630,13 +630,6 @@ namespace Commands {
     #endif
     }
 
-    void MainDelegator::requestCloseApplication() const {
-        auto *helpersQmlWrapper = m_CommandManager->getHelpersQmlWrapper();
-        if (helpersQmlWrapper != NULL) {
-            helpersQmlWrapper->requestCloseApplication();
-        }
-    }
-
     void MainDelegator::restartSpellChecking() {
         auto *spellCheckerService = m_CommandManager->getSpellCheckerService();
         if (spellCheckerService) {

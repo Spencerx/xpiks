@@ -45,7 +45,10 @@ void RemoveFilesFsTests::removeArtworksSignals() {
     QSignalSpy ArtItemFileDeleted(artItemsModel, SIGNAL(unavailableArtworksFound()));
 
     commandManagerMock.generateAndAddArtworks(itemsToAdd);
-    commandManagerMock.connectEntitiesSignalsSlots();
+
+    QObject::connect(artworksRepository, &Models::ArtworksRepository::filesUnavailable,
+                     artItemsModel, &Models::ArtItemsModel::onFilesUnavailableHandler);
+
     artworksRepositoryMock.removeFileAndEmitSignal();
 
 // signals
@@ -132,7 +135,9 @@ void RemoveFilesFsTests::removeVectorSmokeTest() {
     QSignalSpy artworkRemovedSpy(artItemsModel, SIGNAL(unavailableArtworksFound()));
 
     commandManagerMock.generateAndAddArtworks(itemsToAdd);
-    commandManagerMock.connectEntitiesSignalsSlots();
+
+    QObject::connect(artworksRepository, &Models::ArtworksRepository::filesUnavailable,
+                     artItemsModel, &Models::ArtItemsModel::onFilesUnavailableHandler);
 
     artworksRepositoryMock.removeVectorAndEmitSignal();
 

@@ -246,7 +246,9 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Storage/memorytable.cpp \
     integrationtestsenvironment.cpp \
     integrationtestbase.cpp \
-    stockftpautocompletetest.cpp
+    stockftpautocompletetest.cpp \
+    ../../xpiks-qt/xpiksapp.cpp \
+    xpikstestsapp.cpp
 
 RESOURCES +=
 
@@ -546,7 +548,9 @@ HEADERS += \
     ../../xpiks-qt/Encryption/secretpair.h \
     ../../xpiks-qt/Storage/memorytable.h \
     integrationtestsenvironment.h \
-    stockftpautocompletetest.h
+    stockftpautocompletetest.h \
+    ../../xpiks-qt/xpiksapp.h \
+    xpikstestsapp.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

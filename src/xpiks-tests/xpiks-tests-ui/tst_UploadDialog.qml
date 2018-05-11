@@ -37,11 +37,15 @@ Item {
     QtObject {
         id: helpersWrapper
 
-        signal globalBeforeDestruction()
-
         function getFtpACList() { return ftpListAC }
         function getArtworkUploader() { return artworkUploader }
         function getUploadInfos() { return uploadInfos }
+    }
+
+    QtObject {
+        id: xpiksApp
+
+        signal globalBeforeDestruction()
     }
 
     QtObject {

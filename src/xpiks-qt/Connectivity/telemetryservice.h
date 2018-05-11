@@ -21,9 +21,10 @@ namespace Connectivity {
     class TelemetryService : public QObject {
         Q_OBJECT
     public:
-        TelemetryService(const QString &userId, bool telemetryEnabled, QObject *parent=NULL);
+        TelemetryService(QObject *parent=NULL);
 
     public:
+        void initialize(const QString &userId, bool telemetryEnabled);
         void startReporting();
         void stopReporting(bool immediately=true);
 

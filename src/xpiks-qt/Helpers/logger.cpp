@@ -60,19 +60,7 @@ namespace Helpers {
 
         // will make waiting flush() call unblocked if any
         doLog("Logging stopped.");
-
-        QMutexLocker flushLocker(&m_FlushMutex);
-        flushStream(m_QueueFlushFrom);
-
-        {
-            QMutexLocker logLocker(&m_LogMutex);
-
-            if (!m_QueueLogTo->isEmpty()) {
-                qSwap(m_QueueLogTo, m_QueueFlushFrom);
-            }
-        }
-
-        flushStream(m_QueueFlushFrom);
+        flushAll();
     }
 
 #ifdef INTEGRATION_TESTS
@@ -86,12 +74,33 @@ namespace Helpers {
         flushStream(&m_LogsStorage[0]);
         flushStream(&m_LogsStorage[1]);
     }
+
+    void Logger::abortFlush() {
+        doLog("Starting abort flush.");
+        flushAll();
+    }
 #endif
 
     void Logger::doLog(const QString &message) {
         QMutexLocker locker(&m_LogMutex);
         m_QueueLogTo->append(message);
         m_AnyLogsToFlush.wakeOne();
+    }
+
+    void Logger::flushAll()
+    {
+        QMutexLocker flushLocker(&m_FlushMutex);
+        flushStream(m_QueueFlushFrom);
+
+        {
+            QMutexLocker logLocker(&m_LogMutex);
+
+            if (!m_QueueLogTo->isEmpty()) {
+                qSwap(m_QueueLogTo, m_QueueFlushFrom);
+            }
+        }
+
+        flushStream(m_QueueFlushFrom);
     }
 
     void Logger::flushStream(QStringList *logItems) {

@@ -66,6 +66,16 @@ namespace Maintenance {
         }
     }
 
+#ifdef INTEGRATION_TESTS
+    bool MaintenanceService::hasPendingJobs() {
+        if (m_MaintenanceWorker != nullptr) {
+            return m_MaintenanceWorker->hasPendingJobs();
+        } else {
+            return false;
+        }
+    }
+#endif
+
     void MaintenanceService::cleanupUpdatesArtifacts() {
 #ifdef Q_OS_WIN
         LOG_DEBUG << "#";

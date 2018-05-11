@@ -15,15 +15,18 @@
 #include "../Common/version.h"
 
 namespace Connectivity {
-    TelemetryService::TelemetryService(const QString &userId, bool telemetryEnabled, QObject *parent) :
+    TelemetryService::TelemetryService(QObject *parent) :
         QObject(parent),
         m_TelemetryWorker(nullptr),
-        m_UserAgentId(userId),
         m_InterfaceLanguage("en_US"),
-        m_TelemetryEnabled(telemetryEnabled),
+        m_TelemetryEnabled(false),
         m_RestartRequired(false)
     {
-        LOG_INFO << "Enabled:" << telemetryEnabled;
+    }
+
+    void TelemetryService::initialize(const QString &userId, bool telemetryEnabled) {
+        m_UserAgentId = userId;
+        m_TelemetryEnabled = telemetryEnabled;
     }
 
     void TelemetryService::startReporting() {
