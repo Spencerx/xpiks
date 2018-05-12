@@ -3,7 +3,8 @@
         "v": true
     },
     "donateCampaign1": {
-        "v": false
+        "v": true,
+        "t": 30
     },
     "donateCampaign1Stage2": {
         "v": false
@@ -17,7 +18,7 @@
     },
     "qualityVideoPreviews": {
         "v": true,
-        "t": 30
+        "t": 50
     },
     "autoImport": {
         "v": true
