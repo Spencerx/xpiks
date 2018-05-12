@@ -167,7 +167,6 @@ int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
     IntegrationTestsEnvironment environment(app.arguments());
     environment.ensureSystemDirectoriesExist();
-    XpiksTestsApp xpiksTests(environment);
     // -----------------------------------------------
     std::cout << "Initialized application" << std::endl;
 
@@ -182,6 +181,7 @@ int main(int argc, char *argv[]) {
     }
 #endif
 
+    XpiksTestsApp xpiksTests(environment);
     xpiksTests.startLogging();
     xpiksTests.initialize();
     xpiksTests.start();
