@@ -24,6 +24,8 @@ int StockFtpAutoCompleteTest::doTest() {
     AutoComplete::StringsAutoCompleteModel *acModel = uploadInfos->getStocksCompletionSource();
 
     VERIFY(acModel->getCount() > 1, "Stocks AC model is not full");
+    VERIFY(uploadInfos->accessStocksList().findFtpOptions("Fotolia")->m_ZipVector == true,
+           "Fotolia item does not contain zip attribute");
 
     acModel->setSearchTerm("shttrs");
 
