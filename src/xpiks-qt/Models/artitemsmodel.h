@@ -59,7 +59,6 @@ namespace Models {
 
     public:
         ArtItemsModel(QObject *parent=0);
-
         virtual ~ArtItemsModel();
 
     public:
@@ -84,6 +83,11 @@ namespace Models {
 
     public:
         virtual ArtworkMetadata *createArtwork(const QString &filepath, qint64 directoryID);
+
+    protected:
+        void connectArtworkSignals(ArtworkMetadata *artwork);
+
+    public:
         void deleteAllItems();
 #ifdef INTEGRATION_TESTS
         void fakeDeleteAllItems();

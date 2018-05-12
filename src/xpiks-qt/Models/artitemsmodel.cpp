@@ -81,6 +81,12 @@ namespace Models {
             artwork = new ImageArtwork(filepath, id, directoryID);
         }
 
+        connectArtworkSignals(artwork);
+
+        return artwork;
+    }
+
+    void ArtItemsModel::connectArtworkSignals(ArtworkMetadata *artwork) {
         QObject::connect(artwork, &ArtworkMetadata::modifiedChanged,
                          this, &ArtItemsModel::itemModifiedChanged);
 
@@ -95,8 +101,6 @@ namespace Models {
 
         QObject::connect(artwork, &ArtworkMetadata::selectedChanged,
                          this, &ArtItemsModel::artworkSelectedChanged);
-
-        return artwork;
     }
 
     void ArtItemsModel::deleteAllItems() {
