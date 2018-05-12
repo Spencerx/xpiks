@@ -148,7 +148,6 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     Common::SystemEnvironment environment(app.arguments());
     environment.ensureSystemDirectoriesExist();
-    XpiksApp xpiks(environment);
     // ----------------------------------------------
 
 #ifdef WITH_LOGS
@@ -162,6 +161,7 @@ int main(int argc, char *argv[]) {
     }
 #endif
 
+    XpiksApp xpiks(environment);
     xpiks.startLogging();
 
     LOG_INFO << "Log started. Today is" << QDateTime::currentDateTimeUtc().toString("dd.MM.yyyy");

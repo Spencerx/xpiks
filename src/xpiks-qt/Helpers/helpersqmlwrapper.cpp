@@ -45,7 +45,7 @@ namespace Helpers {
     {
         Q_ASSERT(colorsModel != nullptr);
 
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(INTEGRATION_TESTS)
         m_WinTaskbarButtonApplicable = QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS7;
         if (m_WinTaskbarButtonApplicable) {
             m_TaskbarButton = new QWinTaskbarButton(this);
