@@ -22,7 +22,8 @@ namespace Suggestion {
     LocalLibraryQueryEngine::LocalLibraryQueryEngine(int engineID,
                                                      MetadataIO::MetadataIOService *metadataIOService):
         m_EngineID(engineID),
-        m_MetadataIOService(metadataIOService)
+        m_MetadataIOService(metadataIOService),
+        m_IsEnabled(true)
     {
         Q_ASSERT(metadataIOService != nullptr);
 

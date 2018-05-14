@@ -85,7 +85,7 @@ namespace Suggestion {
         m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(gettyEngine));
 
         // https://github.com/ribtoks/xpiks/issues/463
-        gettyEngine->setIsEnabled(m_SwitcherModel->getGettySuggestionEnabled());
+        gettyEngine->setIsEnabled(m_SwitcherModel.getGettySuggestionEnabled());
 
         std::shared_ptr<FotoliaSuggestionEngine> fotoliaEngine(new FotoliaSuggestionEngine(
                                                                    id++,
@@ -117,7 +117,7 @@ namespace Suggestion {
         Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
 #if !defined(INTEGRATION_TESTS) && !defined(CORE_TESTS)
         const bool sequentialLoading =
-                (m_SwitcherModel->getProgressiveSuggestionPreviewsOn() ||
+                (m_SwitcherModel.getProgressiveSuggestionPreviewsOn() ||
                  settingsModel->getUseProgressiveSuggestionPreviews()) &&
                 (!getIsLocalSearch());
 #else
@@ -244,7 +244,7 @@ namespace Suggestion {
         for (auto &engine: m_QueryEngines) {
             auto gettyEngine = std::dynamic_pointer_cast<GettySuggestionEngine>(engine);
             if (gettyEngine) {
-                gettyEngine->setIsEnabled(m_SwitcherModel->getGettySuggestionEnabled());
+                gettyEngine->setIsEnabled(m_SwitcherModel.getGettySuggestionEnabled());
                 found = true;
                 break;
             }
@@ -252,9 +252,9 @@ namespace Suggestion {
 
         if (!found) {
             LOG_WARNING << "Failed to find Getty engine";
+        } else {
+            emit engineNamesChanged();
         }
-
-        emit engineNamesChanged();
     }
 
     void KeywordsSuggestor::onLanguageChanged() {

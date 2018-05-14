@@ -42,8 +42,8 @@ namespace Suggestion {
         virtual int getID() const override { return m_EngineID; }
         virtual QString getName() const override { return m_Name; }
         virtual int getMaxResultsPerPage() const override { return 100; }
-        virtual bool getIsEnabled() const { return m_IsEnabled; }
-        virtual void setIsEnabled(bool value) { m_IsEnabled = value; }
+        virtual bool getIsEnabled() const override { return m_IsEnabled; }
+        virtual void setIsEnabled(bool value) override { m_IsEnabled = value; }
 
     public:
         virtual void submitQuery(const Microstocks::SearchQuery &query) override {
