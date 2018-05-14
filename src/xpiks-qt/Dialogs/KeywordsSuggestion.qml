@@ -354,7 +354,7 @@ Item {
 
                     ComboBoxPopup {
                         id: sourceComboBox
-                        model: keywordsSuggestor.getEngineNames()
+                        model: keywordsSuggestor.engineNames
                         anchors.right: parent.right
                         width: 200
                         height: 24

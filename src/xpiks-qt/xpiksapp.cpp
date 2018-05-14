@@ -24,7 +24,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_DatabaseManager(environment),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
     m_ApiClients(m_SecretsStorage.get()),
-    m_KeywordsSuggestor(m_ApiClients, m_RequestsService, environment),
+    m_KeywordsSuggestor(m_ApiClients, m_RequestsService, m_SwitcherModel, environment),
     m_RecentDirectorieModel(environment),
     m_RecentFileModel(environment),
     m_ArtworkUploader(environment, m_UploadInfoRepository),
