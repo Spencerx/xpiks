@@ -143,7 +143,6 @@ protected:
     Storage::DatabaseManager m_DatabaseManager;
     std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
     Microstocks::MicrostockAPIClients m_ApiClients;
-    Suggestion::KeywordsSuggestor m_KeywordsSuggestor;
     Models::FilteredArtItemsProxyModel m_FilteredArtItemsModel;
     Models::RecentDirectoriesModel m_RecentDirectorieModel;
     Models::RecentFilesModel m_RecentFileModel;
@@ -173,6 +172,7 @@ protected:
     SpellCheck::DuplicatesReviewModel m_DuplicatesModel;
     MetadataIO::CsvExportModel m_CsvExportModel;
     Connectivity::UpdateService m_UpdateService;
+    Suggestion::KeywordsSuggestor m_KeywordsSuggestor;
     MetadataIO::MetadataIOCoordinator m_MetadataIOCoordinator;
     Connectivity::TelemetryService m_TelemetryService;
     Plugins::PluginManager m_PluginManager;

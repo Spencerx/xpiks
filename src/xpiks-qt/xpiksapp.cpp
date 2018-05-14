@@ -24,7 +24,6 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_DatabaseManager(environment),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
     m_ApiClients(m_SecretsStorage.get()),
-    m_KeywordsSuggestor(m_ApiClients, m_RequestsService, m_SwitcherModel, environment),
     m_RecentDirectorieModel(environment),
     m_RecentFileModel(environment),
     m_ArtworkUploader(environment, m_UploadInfoRepository),
@@ -43,6 +42,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_DuplicatesModel(&m_ColorsModel),
     m_CsvExportModel(environment),
     m_UpdateService(environment, &m_SettingsModel, &m_SwitcherModel, &m_MaintenanceService),
+    m_KeywordsSuggestor(m_ApiClients, m_RequestsService, m_SwitcherModel, environment),
     m_TelemetryService(m_SwitcherModel, m_SettingsModel),
     m_PluginManager(environment, &m_DatabaseManager, m_RequestsService, m_ApiClients),
     m_HelpersQmlWrapper(environment, &m_ColorsModel)
