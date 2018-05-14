@@ -11,7 +11,6 @@
 #include "xpiksapp.h"
 #include <apisecretsstorage.h>
 #include <QQmlContext>
-#include <QUuid>
 #include "Encryption/aes-qt.h"
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
@@ -45,6 +44,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_DuplicatesModel(&m_ColorsModel),
     m_CsvExportModel(environment),
     m_UpdateService(environment, &m_SettingsModel, &m_SwitcherModel, &m_MaintenanceService),
+    m_TelemetryService(m_SwitcherModel, m_SettingsModel),
     m_PluginManager(environment, &m_DatabaseManager, m_RequestsService, m_ApiClients),
     m_HelpersQmlWrapper(environment, &m_ColorsModel)
 {
@@ -90,22 +90,7 @@ void XpiksApp::initialize() {
     m_SettingsModel.initializeConfigs();
     m_SettingsModel.retrieveAllValues();
 
-#ifndef INTEGRATION_TESTS
-    ensureUserIdExists();
-
-    QString userId = m_SettingsModel.getUserAgentId();
-    userId.remove(QRegExp("[{}-]."));
-
-#if defined(QT_NO_DEBUG)
-    const bool telemetryEnabled = settingsModel.getIsTelemetryEnabled();
-#else
-    const bool telemetryEnabled = false;
-#endif
-
-    m_TelemetryService.initialize(userId, telemetryEnabled);
-#else
-    m_TelemetryService.initialize("1234567890", false);
-#endif
+    m_TelemetryService.initialize();
 
     injectDependencies();
 
@@ -294,17 +279,6 @@ void XpiksApp::upgradeNow() {
     LOG_DEBUG << "#";
     m_UpdateService.setHaveUpgradeConsent();
     emit upgradeInitiated();
-}
-
-void XpiksApp::ensureUserIdExists() {
-    QString userID = m_SettingsModel.getUserAgentId();
-    QUuid latest(userID);
-    if (userID.isEmpty()
-            || (latest.isNull())
-            || (latest.version() == QUuid::VerUnknown)) {
-        QUuid uuid = QUuid::createUuid();
-        m_SettingsModel.setUserAgentId(uuid.toString());
-    }
 }
 
 void XpiksApp::injectDependencies() {

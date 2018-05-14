@@ -110,7 +110,6 @@ public:
     Q_INVOKABLE void upgradeNow();
 
 private:
-    void ensureUserIdExists();
     void injectDependencies();
     void afterServicesStarted();
     void executeMaintenanceJobs();
