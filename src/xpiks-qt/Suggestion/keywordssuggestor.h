@@ -78,6 +78,9 @@ namespace Suggestion {
         int getSelectedArtworksCount() const { return m_SelectedArtworksCount; }
         const QString &getLastErrorString() const { return m_LastErrorString; }
         bool getIsLocalSearch() const;
+#ifdef INTEGRATION_TESTS
+        size_t getEnginesCount() const { return m_QueryEngines.size(); }
+#endif
 
     signals:
         void suggestedKeywordsCountChanged();
