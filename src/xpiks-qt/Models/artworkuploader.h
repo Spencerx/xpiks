@@ -20,6 +20,7 @@
 #include "../MetadataIO/artworkssnapshot.h"
 #include "../Common/isystemenvironment.h"
 #include "uploadinforepository.h"
+#include <ftpcoordinator.h>
 
 namespace Helpers {
     class TestConnectionResult;
@@ -53,7 +54,6 @@ namespace Models {
         Q_OBJECT
     public:
         ArtworkUploader(Common::ISystemEnvironment &environment,
-                        Connectivity::IFtpCoordinator *ftpCoordinator,
                         Models::UploadInfoRepository &uploadInfoRepository,
                         QObject *parent=0);
         virtual ~ArtworkUploader();
@@ -61,7 +61,7 @@ namespace Models {
     public:
         // used to test UI of artwork upload
         // virtual bool getInProgress() const { return true; }
-        virtual void setCommandManager(Commands::CommandManager *commandManager) override;
+        void setFtpCoordinator(const std::shared_ptr<libxpks::net::FtpCoordinator> &ftpCoordinator);
 
     signals:
         void inProgressChanged();
@@ -132,7 +132,7 @@ namespace Models {
         Common::ISystemEnvironment &m_Environment;
         MetadataIO::ArtworksSnapshot m_ArtworksSnapshot;
         Connectivity::UploadWatcher m_UploadWatcher;
-        Connectivity::IFtpCoordinator *m_FtpCoordinator;
+        std::shared_ptr<Connectivity::IFtpCoordinator> m_FtpCoordinator;
         QFutureWatcher<Connectivity::ContextValidationResult> *m_TestingCredentialWatcher;
         Models::UploadInfoRepository &m_UploadInfos;
         double m_Percent;

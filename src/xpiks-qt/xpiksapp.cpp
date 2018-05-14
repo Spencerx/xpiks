@@ -27,8 +27,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_KeywordsSuggestor(m_ApiClients, m_RequestsService, environment),
     m_RecentDirectorieModel(environment),
     m_RecentFileModel(environment),
-    m_FtpCoordinator(new libxpks::net::FtpCoordinator(m_SettingsModel.getMaxParallelUploads())),
-    m_ArtworkUploader(environment, m_FtpCoordinator, m_UploadInfoRepository),
+    m_ArtworkUploader(environment, m_UploadInfoRepository),
     m_SpellCheckerService(environment, &m_SettingsModel),
     m_MetadataIOService(&m_DatabaseManager),
     m_AutoCompleteService(&m_AutoCompleteModel, &m_PresetsModel, &m_SettingsModel),
@@ -93,6 +92,9 @@ void XpiksApp::initialize() {
     m_TelemetryService.initialize();
 
     injectDependencies();
+
+    m_FtpCoordinator.reset(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel));
+    m_ArtworkUploader.setFtpCoordinator(m_FtpCoordinator);
 
     // other initializations
     m_SecretsManager.setMasterPasswordHash(m_SettingsModel.getMasterPasswordHash());

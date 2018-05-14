@@ -26,25 +26,24 @@
 #include "../Models/imageartwork.h"
 #include "../Connectivity/ftphelpers.h"
 
-#ifndef CORE_TESTS
-#include <ftpcoordinator.h>
-#endif
-
 namespace Models {
     ArtworkUploader::ArtworkUploader(Common::ISystemEnvironment &environment,
-                                     Connectivity::IFtpCoordinator *ftpCoordinator,
                                      UploadInfoRepository &uploadInfoRepository,
                                      QObject *parent):
         QObject(parent),
         m_Environment(environment),
-        m_FtpCoordinator(ftpCoordinator),
         m_UploadInfos(uploadInfoRepository),
         m_Percent(0),
         m_IsInProgress(false),
         m_HasErrors(false)
     {
-        libxpks::net::FtpCoordinator *coordinator = dynamic_cast<libxpks::net::FtpCoordinator *>(ftpCoordinator);
-        Q_ASSERT(coordinator != nullptr);
+    }
+
+    ArtworkUploader::~ArtworkUploader() {
+        delete m_TestingCredentialWatcher;
+    }
+
+    void ArtworkUploader::setFtpCoordinator(const std::shared_ptr<libxpks::net::FtpCoordinator> &coordinator) {
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadStarted, this, &ArtworkUploader::onUploadStarted);
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadFinished, this, &ArtworkUploader::allFinished);
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::overallProgressChanged, this, &ArtworkUploader::uploaderPercentChanged);
@@ -53,22 +52,8 @@ namespace Models {
         QObject::connect(m_TestingCredentialWatcher, SIGNAL(finished()), SLOT(credentialsTestingFinished()));
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::transferFailed,
                          &m_UploadWatcher, &Connectivity::UploadWatcher::reportUploadErrorHandler);
-    }
 
-    ArtworkUploader::~ArtworkUploader() {
-        delete m_TestingCredentialWatcher;
-
-        if (m_FtpCoordinator != NULL) {
-            delete m_FtpCoordinator;
-        }
-    }
-
-    void ArtworkUploader::setCommandManager(Commands::CommandManager *commandManager) {
-        Common::BaseEntity::setCommandManager(commandManager);
-
-        libxpks::net::FtpCoordinator *coordinator = dynamic_cast<libxpks::net::FtpCoordinator *>(m_FtpCoordinator);
-        Q_ASSERT(coordinator != NULL);
-        coordinator->setCommandManager(commandManager);
+        m_FtpCoordinator = std::dynamic_pointer_cast<Connectivity::IFtpCoordinator>(coordinator);
     }
 
     void ArtworkUploader::setPercent(double value) {
@@ -214,8 +199,13 @@ namespace Models {
 
     void ArtworkUploader::doUploadArtworks(const MetadataIO::ArtworksSnapshot &snapshot) {
         LOG_INFO << snapshot.size() << "artwork(s)";
+        Q_ASSERT(m_FtpCoordinator != nullptr);
 
         if (snapshot.empty()) { return; }
+        if (!m_FtpCoordinator) {
+            LOG_WARNING << "FTP coordinator is not set";
+            return;
+        }
 
         std::vector<std::shared_ptr<Models::UploadInfo> > selectedInfos = std::move(m_UploadInfos.retrieveSelectedUploadInfos());
 

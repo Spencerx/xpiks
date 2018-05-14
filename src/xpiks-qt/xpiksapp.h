@@ -147,7 +147,7 @@ protected:
     Models::FilteredArtItemsProxyModel m_FilteredArtItemsModel;
     Models::RecentDirectoriesModel m_RecentDirectorieModel;
     Models::RecentFilesModel m_RecentFileModel;
-    libxpks::net::FtpCoordinator *m_FtpCoordinator;
+    std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
     Models::ArtworkUploader m_ArtworkUploader;
     SpellCheck::SpellCheckerService m_SpellCheckerService;
     SpellCheck::SpellCheckSuggestionModel m_SpellCheckSuggestionModel;
