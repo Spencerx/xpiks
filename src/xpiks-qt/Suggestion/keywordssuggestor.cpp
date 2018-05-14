@@ -204,10 +204,10 @@ namespace Suggestion {
     }
 
     void KeywordsSuggestor::resultsAvailableHandler() {
-        auto &selectedEngine = getSelectedEngine();
+        auto engine = getSelectedEngine();
         unsetInProgress();
-        if (selectedEngine) {
-            auto &results = selectedEngine->getSuggestions();
+        if (engine) {
+            auto &results = engine->getSuggestions();
             setSuggestedArtworks(results);
         }
     }
@@ -330,7 +330,7 @@ namespace Suggestion {
         if (!m_IsInProgress && !searchTerm.trimmed().isEmpty()) {
             setInProgress();
 
-            auto &engine = getSelectedEngine();
+            auto engine = getSelectedEngine();
             if (engine) {
                 Microstocks::SearchQuery query(searchTerm, resultsType, engine->getMaxResultsPerPage());
                 engine->submitQuery(query);
@@ -346,7 +346,7 @@ namespace Suggestion {
 
     void KeywordsSuggestor::cancelSearch() {
         LOG_DEBUG << "#";
-        auto &engine = getSelectedEngine();
+        auto engine = getSelectedEngine();
         if (engine) {
             engine->cancelQuery();
         }
