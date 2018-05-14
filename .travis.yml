@@ -30,7 +30,6 @@ addons:
 cache:
   apt: true
   directories:
-    - vendors
     - my-apt-cache
 
 before_install:
