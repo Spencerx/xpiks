@@ -43,7 +43,8 @@ namespace Models {
         delete m_TestingCredentialWatcher;
     }
 
-    void ArtworkUploader::setFtpCoordinator(const std::shared_ptr<libxpks::net::FtpCoordinator> &coordinator) {
+    void ArtworkUploader::setFtpCoordinator(const std::shared_ptr<libxpks::net::FtpCoordinator> &ftpCoordinator) {
+        auto *coordinator = ftpCoordinator.get();
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadStarted, this, &ArtworkUploader::onUploadStarted);
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadFinished, this, &ArtworkUploader::allFinished);
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::overallProgressChanged, this, &ArtworkUploader::uploaderPercentChanged);
@@ -53,7 +54,7 @@ namespace Models {
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::transferFailed,
                          &m_UploadWatcher, &Connectivity::UploadWatcher::reportUploadErrorHandler);
 
-        m_FtpCoordinator = std::dynamic_pointer_cast<Connectivity::IFtpCoordinator>(coordinator);
+        m_FtpCoordinator = std::dynamic_pointer_cast<Connectivity::IFtpCoordinator>(ftpCoordinator);
     }
 
     void ArtworkUploader::setPercent(double value) {
