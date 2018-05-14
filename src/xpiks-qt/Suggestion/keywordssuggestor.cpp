@@ -31,6 +31,7 @@
 namespace Suggestion {
     KeywordsSuggestor::KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
                                          Connectivity::RequestsService &requestsService,
+                                         Models::SwitcherModel &switcherModel,
                                          Common::ISystemEnvironment &environment,
                                          QObject *parent):
         QAbstractListModel(parent),
@@ -38,6 +39,7 @@ namespace Suggestion {
         m_State("ksuggest", environment),
         m_ApiClients(apiClients),
         m_RequestsService(requestsService),
+        m_SwitcherModel(switcherModel),
         m_SuggestedKeywords(m_HoldPlaceholder, this),
         m_AllOtherKeywords(m_HoldPlaceholder, this),
         m_SelectedArtworksCount(0),
@@ -50,6 +52,9 @@ namespace Suggestion {
 
         m_LinearTimer.setSingleShot(true);
         QObject::connect(&m_LinearTimer, &QTimer::timeout, this, &KeywordsSuggestor::onLinearTimer);
+
+        QObject::connect(&m_SwitcherModel, &Models::SwitcherModel::switchesUpdated,
+                         this, &KeywordsSuggestor::onSwitchesUpdated);
     }
 
     void KeywordsSuggestor::setExistingKeywords(const QSet<QString> &keywords) {
@@ -61,7 +66,6 @@ namespace Suggestion {
         LOG_DEBUG << "#";
         Q_ASSERT(m_CommandManager != NULL);
         auto *metadataIOService = m_CommandManager->getMetadataIOService();
-        auto *switcherModel = m_CommandManager->getSwitcherModel();
 
         int id = 0;
         std::shared_ptr<ShutterstockSuggestionEngine> shutterstockEngine(new ShutterstockSuggestionEngine(
@@ -72,18 +76,16 @@ namespace Suggestion {
                          this, &KeywordsSuggestor::resultsAvailableHandler);
         m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(shutterstockEngine));
 
-        if (switcherModel->getGettySuggestionEnabled()) {
-            // https://github.com/ribtoks/xpiks/issues/463
-           std::shared_ptr<GettySuggestionEngine> gettyEngine(new GettySuggestionEngine(
-                                                                  id++,
-                                                                  &m_ApiClients.getGettyClient(),
-                                                                  &m_RequestsService));
-           QObject::connect(gettyEngine.get(), &GettySuggestionEngine::resultsAvailable,
-                            this, &KeywordsSuggestor::resultsAvailableHandler);
-           m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(gettyEngine));
-        } else {
-            LOG_DEBUG << "Getty query engine is disabled";
-        }
+        std::shared_ptr<GettySuggestionEngine> gettyEngine(new GettySuggestionEngine(
+                                                               id++,
+                                                               &m_ApiClients.getGettyClient(),
+                                                               &m_RequestsService));
+        QObject::connect(gettyEngine.get(), &GettySuggestionEngine::resultsAvailable,
+                         this, &KeywordsSuggestor::resultsAvailableHandler);
+        m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(gettyEngine));
+
+        // https://github.com/ribtoks/xpiks/issues/463
+        gettyEngine->setIsEnabled(m_SwitcherModel->getGettySuggestionEnabled());
 
         std::shared_ptr<FotoliaSuggestionEngine> fotoliaEngine(new FotoliaSuggestionEngine(
                                                                    id++,
@@ -114,9 +116,8 @@ namespace Suggestion {
 
         Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
 #if !defined(INTEGRATION_TESTS) && !defined(CORE_TESTS)
-        Models::SwitcherModel *switcher = m_CommandManager->getSwitcherModel();
         const bool sequentialLoading =
-                (switcher->getProgressiveSuggestionPreviewsOn() ||
+                (m_SwitcherModel->getProgressiveSuggestionPreviewsOn() ||
                  settingsModel->getUseProgressiveSuggestionPreviews()) &&
                 (!getIsLocalSearch());
 #else
@@ -203,11 +204,12 @@ namespace Suggestion {
     }
 
     void KeywordsSuggestor::resultsAvailableHandler() {
-        Q_ASSERT(0 <= m_SelectedSourceIndex && m_SelectedSourceIndex < (int)m_QueryEngines.size());
-        auto &currentEngine = m_QueryEngines.at(m_SelectedSourceIndex);
+        auto &selectedEngine = getSelectedEngine();
         unsetInProgress();
-        auto &results = currentEngine->getSuggestions();
-        setSuggestedArtworks(results);
+        if (selectedEngine) {
+            auto &results = selectedEngine->getSuggestions();
+            setSuggestedArtworks(results);
+        }
     }
 
     void KeywordsSuggestor::errorsReceivedHandler(const QString &error) {
@@ -235,8 +237,29 @@ namespace Suggestion {
         m_LinearTimer.start(LINEAR_TIMER_INTERVAL);
     }
 
+    void KeywordsSuggestor::onSwitchesUpdated() {
+        LOG_DEBUG << "#";
+        bool found = false;
+
+        for (auto &engine: m_QueryEngines) {
+            auto gettyEngine = std::dynamic_pointer_cast<GettySuggestionEngine>(engine);
+            if (gettyEngine) {
+                gettyEngine->setIsEnabled(m_SwitcherModel->getGettySuggestionEnabled());
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            LOG_WARNING << "Failed to find Getty engine";
+        }
+
+        emit engineNamesChanged();
+    }
+
     void KeywordsSuggestor::onLanguageChanged() {
         setLastErrorString(tr("No results found"));
+        emit engineNamesChanged();
     }
 
     bool KeywordsSuggestor::isLocalSuggestionActive() const {
@@ -307,27 +330,32 @@ namespace Suggestion {
         if (!m_IsInProgress && !searchTerm.trimmed().isEmpty()) {
             setInProgress();
 
-            auto &engine = m_QueryEngines.at(m_SelectedSourceIndex);
-            Microstocks::SearchQuery query(searchTerm, resultsType, engine->getMaxResultsPerPage());
-            engine->submitQuery(query);
+            auto &engine = getSelectedEngine();
+            if (engine) {
+                Microstocks::SearchQuery query(searchTerm, resultsType, engine->getMaxResultsPerPage());
+                engine->submitQuery(query);
 
-            if (std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine) == nullptr) {
-                xpiks()->reportUserAction(Connectivity::UserAction::SuggestionRemote);
-            } else {
-                xpiks()->reportUserAction(Connectivity::UserAction::SuggestionLocal);
+                if (std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine) == nullptr) {
+                    xpiks()->reportUserAction(Connectivity::UserAction::SuggestionRemote);
+                } else {
+                    xpiks()->reportUserAction(Connectivity::UserAction::SuggestionLocal);
+                }
             }
         }
     }
 
     void KeywordsSuggestor::cancelSearch() {
         LOG_DEBUG << "#";
-        auto &engine = m_QueryEngines.at(m_SelectedSourceIndex);
-        engine->cancelQuery();
+        auto &engine = getSelectedEngine();
+        if (engine) {
+            engine->cancelQuery();
+        }
     }
 
     QStringList KeywordsSuggestor::getEngineNames() const {
         QStringList names;
         for (auto &engine: m_QueryEngines) {
+            if (!engine->getIsEnabled()) { continue; }
             names.append(engine->getName());
         }
         return names;
@@ -512,5 +540,25 @@ namespace Suggestion {
             upperBound = m_SelectedArtworksCount / 2;
             lowerBound = upperBound - 2;
         }
+    }
+
+    std::shared_ptr<ISuggestionEngine> KeywordsSuggestor::getSelectedEngine() {
+        const int selectedIndex = m_SelectedSourceIndex;
+        int index = 0;
+        for (auto &engine: m_QueryEngines) {
+            if (engine->getIsEnabled() == false) { continue; }
+            if (index == selectedIndex) { break; }
+            index++;
+        }
+
+        std::shared_ptr<ISuggestionEngine> result;
+
+        if ((0 <= index) && (index < m_QueryEngines.size())) {
+            result = m_QueryEngines[index];
+        }  else {
+            LOG_WARNING << "Failed to find current engine by index" << selectedIndex;
+        }
+
+        return result;
     }
 }

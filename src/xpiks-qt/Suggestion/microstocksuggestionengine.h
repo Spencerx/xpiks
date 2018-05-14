@@ -31,7 +31,8 @@ namespace Suggestion {
             m_Name(name),
             m_Client(client),
             m_RequestsService(requestsService),
-            m_IsCancelled(false)
+            m_IsCancelled(false),
+            m_IsEnabled(true)
         {
             Q_ASSERT(client != nullptr);
             Q_ASSERT(requestsService != nullptr);
@@ -41,9 +42,13 @@ namespace Suggestion {
         virtual int getID() const override { return m_EngineID; }
         virtual QString getName() const override { return m_Name; }
         virtual int getMaxResultsPerPage() const override { return 100; }
+        virtual bool getIsEnabled() const { return m_IsEnabled; }
+        virtual void setIsEnabled(bool value) { m_IsEnabled = value; }
 
     public:
         virtual void submitQuery(const Microstocks::SearchQuery &query) override {
+            Q_ASSERT(m_IsEnabled);
+            if (!m_IsEnabled) { return; }
             m_IsCancelled = false;
             std::shared_ptr<ResponseType> response(new ResponseType(this));
             std::shared_ptr<Connectivity::IConnectivityRequest> request = m_Client->search(query, response);
@@ -74,6 +79,7 @@ namespace Suggestion {
         Microstocks::IMicrostockAPIClient *m_Client;
         Connectivity::RequestsService *m_RequestsService;
         volatile bool m_IsCancelled;
+        bool m_IsEnabled;
     };
 }
 
