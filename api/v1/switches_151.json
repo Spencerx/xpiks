@@ -6,7 +6,8 @@
         "v": true
     },
     "donateCampaign1Stage2": {
-        "v": false
+        "v": true,
+        "t": 30
     },
     "progressiveSuggestionPreviews": {
         "v": true
