@@ -100,6 +100,8 @@ void setHighDpiEnvironmentVariable() {
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,6,0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#else
+    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", QByteArray("1"));
 #endif
 
     SetProcessDPIAware();
