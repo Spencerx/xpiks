@@ -39,7 +39,7 @@
 #include "QMLExtensions/triangleelement.h"
 
 #ifdef Q_OS_WIN
-#include "Windows.h"
+#include "ShellScalingApi.h"
 #endif
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
@@ -104,7 +104,7 @@ void setHighDpiEnvironmentVariable() {
     qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", QByteArray("1"));
 #endif
 
-    SetProcessDPIAware();
+    SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
 #endif
 }
 
