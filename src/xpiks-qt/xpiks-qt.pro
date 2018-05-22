@@ -719,7 +719,7 @@ win32 {
     LIBS += -lmman
 
     # SetProcessDPIAware API
-    LIBS += Shcore.lib
+    LIBS += -lShcore
 }
 
 linux {
