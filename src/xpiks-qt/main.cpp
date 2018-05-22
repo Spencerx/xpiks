@@ -107,7 +107,7 @@ void setHighDpiEnvironmentVariable() {
     qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("1"));
 #endif
 
-    SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+    SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
 #endif
 }
 
