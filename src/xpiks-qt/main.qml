@@ -235,8 +235,8 @@ ApplicationWindow {
     Component.onCompleted: {
         console.debug("onCompleted handler")
         openingTimer.start()
-        //applicationWindow.width = uiManager.getAppWidth(1010)
-        //applicationWindow.height = uiManager.getAppHeight(725)
+        applicationWindow.width = uiManager.getAppWidth(1010)
+        applicationWindow.height = uiManager.getAppHeight(725)
     }
 
     Action {

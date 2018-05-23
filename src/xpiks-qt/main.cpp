@@ -195,14 +195,9 @@ int main(int argc, char *argv[]) {
     uiProvider->setQmlEngine(&engine);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(engine.rootObjects().at(0));
     imageCachingService.setScale(window->effectiveDevicePixelRatio());
+    LOG_INFO << "Effective pixel ratio:" << window->effectiveDevicePixelRatio();
 
-    QScreen *screen = window->screen();
-    QObject::connect(window, &QQuickWindow::screenChanged, &imageCachingService, &QMLExtensions::ImageCachingService::screenChangedHandler);
-    QObject::connect(screen, &QScreen::logicalDotsPerInchChanged, &imageCachingService, &QMLExtensions::ImageCachingService::dpiChanged);
-    QObject::connect(screen, &QScreen::physicalDotsPerInchChanged, &imageCachingService, &QMLExtensions::ImageCachingService::dpiChanged);
-
-    uiProvider->setRoot(window->contentItem());
-
+    xpiks.setupWindow(window);
     xpiks.start();
 
     return app.exec();

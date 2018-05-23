@@ -11,6 +11,8 @@
 #include "xpiksapp.h"
 #include <apisecretsstorage.h>
 #include <QQmlContext>
+#include <QQuickWindow>
+#include <QScreen>
 #include "Encryption/aes-qt.h"
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
@@ -263,6 +265,31 @@ void XpiksApp::stop() {
     m_TelemetryService.reportAction(Connectivity::UserAction::Close);
     m_TelemetryService.stopReporting();
     m_RequestsService.stopService();
+}
+
+void XpiksApp::setupWindow(QQuickWindow *window) {
+    if (window == nullptr) { return; }
+
+    QScreen *screen = window->screen();
+
+    QObject::connect(window, &QQuickWindow::screenChanged,
+                     &m_ImageCachingService, &QMLExtensions::ImageCachingService::screenChangedHandler);
+    QObject::connect(screen, &QScreen::logicalDotsPerInchChanged,
+                     &m_ImageCachingService, &QMLExtensions::ImageCachingService::dpiChanged);
+    QObject::connect(screen, &QScreen::physicalDotsPerInchChanged,
+                     &m_ImageCachingService, &QMLExtensions::ImageCachingService::dpiChanged);
+
+    QObject::connect(window, &QQuickWindow::screenChanged,
+                     &m_UIManager, &Models::UIManager::onScreenChanged);
+    QObject::connect(screen, &QScreen::logicalDotsPerInchChanged,
+                     &m_UIManager, &Models::UIManager::onScreenDpiChanged);
+    QObject::connect(screen, &QScreen::physicalDotsPerInchChanged,
+                     &m_UIManager, &Models::UIManager::onScreenDpiChanged);
+
+    auto *uiProvider = m_PluginManager.getUIProvider();
+    uiProvider->setRoot(window->contentItem());
+
+
 }
 
 void XpiksApp::shutdown() {

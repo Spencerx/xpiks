@@ -80,6 +80,7 @@
 #include "Common/isystemenvironment.h"
 
 class QQmlContext;
+class QQuickWindow;
 
 class XpiksApp: public QObject
 {
@@ -104,6 +105,7 @@ public:
     void setupUI(QQmlContext *context);
     void start();
     void stop();
+    void setupWindow(QQuickWindow *window);
 
 public:
     Q_INVOKABLE void shutdown();
