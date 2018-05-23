@@ -147,5 +147,6 @@
         <file>Graphics/whatsnew/videosupport.png</file>
         <file>Graphics/whatsnew/presetsgroups.png</file>
         <file>Components/DraggableKeywordWrapper.qml</file>
+        <file>Scale.js</file>
     </qresource>
 </RCC>

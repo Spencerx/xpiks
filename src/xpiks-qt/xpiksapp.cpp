@@ -289,7 +289,7 @@ void XpiksApp::setupWindow(QQuickWindow *window) {
     auto *uiProvider = m_PluginManager.getUIProvider();
     uiProvider->setRoot(window->contentItem());
 
-
+    m_UIManager.updateDpi(screen);
 }
 
 void XpiksApp::shutdown() {

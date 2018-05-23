@@ -31,7 +31,8 @@ namespace Models {
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
         m_State("uimanager", environment),
         m_SettingsModel(settingsModel),
-        m_TabID(42)
+        m_TabID(42),
+        m_ScreenDPI(160)
     {
         Q_ASSERT(settingsModel != nullptr);
         QObject::connect(m_SettingsModel, &Models::SettingsModel::keywordSizeScaleChanged, this, &UIManager::keywordHeightChanged);
@@ -243,6 +244,21 @@ namespace Models {
         justChanged();
     }
 
+    void UIManager::updateDpi(QScreen *screen) {
+        if (screen == nullptr) { return; }
+
+        LOG_INFO << "Device pixel ratio:" << screen->devicePixelRatio();
+        LOG_INFO << "Logical dots per inch:" << screen->logicalDotsPerInch();
+
+        qreal dpi;
+#ifdef Q_OS_WIN
+        dpi = screen->logicalDotsPerInch() * screen->devicePixelRatio();
+#else
+        dpi = screen->physicalDotsPerInch() * screen->devicePixelRatio();
+#endif
+        setScreenDpi(dpi);
+    }
+
     void UIManager::onScreenDpiChanged(qreal someDpi) {
         Q_UNUSED(someDpi);
         QScreen *screen = qobject_cast<QScreen*>(sender());
@@ -257,21 +273,6 @@ namespace Models {
                              this, &Models::UIManager::onScreenDpiChanged);
             QObject::connect(screen, &QScreen::physicalDotsPerInchChanged,
                              this, &Models::UIManager::onScreenDpiChanged);
-        }
-    }
-
-    void UIManager::updateDpi(QScreen *screen) {
-        if (screen != nullptr) {
-            LOG_INFO << "Device pixel ratio:" << screen->devicePixelRatio();
-            LOG_INFO << "Logical dots per inch:" << screen->logicalDotsPerInch();
-
-            qreal dpi;
-#ifdef Q_OS_WIN
-            dpi = screen->logicalDotsPerInch() * screen->devicePixelRatio();
-#else
-            dpi = screen->physicalDotsPerInch() * screen->devicePixelRatio();
-#endif
-            setScreenDpi(dpi);
         }
     }
 

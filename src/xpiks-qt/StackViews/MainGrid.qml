@@ -306,7 +306,7 @@ Item {
 
     Rectangle {
         id: toolbar
-        height: 55
+        height: S.dp(55)
         color: uiColors.defaultDarkColor
         // tooltip-related
         z: 2000
@@ -316,13 +316,13 @@ Item {
         anchors.top: parent.top
 
         RowLayout {
-            spacing: 20
+            spacing: S.dp(20)
             anchors.fill: parent
-            anchors.leftMargin: 10
+            anchors.leftMargin: S.dp(10)
 
             Rectangle {
                 id: checkBoxWrapper
-                height: 35
+                height: S.dp(35)
                 anchors.verticalCenter: parent.verticalCenter
                 width: childrenRect.width
                 property bool isHovered: selectAllMA.containsMouse || selectAllCheckbox.hovered || selectionCombobox.hovered

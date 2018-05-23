@@ -22,14 +22,15 @@ import "Dialogs"
 import "StackViews"
 import "Common.js" as Common
 import "Constants/UIConfig.js" as UIConfig
+import "Scale.js" as S
 
 ApplicationWindow {
     id: applicationWindow
     visible: true
-    width: 1010
-    height: 725
-    minimumHeight: 725
-    minimumWidth: 930
+    width: S.dp(uiManager.getAppWidth(1010))
+    height: S.dp(uiManager.getAppHeight(725))
+    minimumHeight: S.dp(725)
+    minimumWidth: S.dp(930)
     title: i18.n + (debug ? "Xpiks (Devel)" : qsTr("Xpiks"))
     property int openedDialogsCount: 0
     property bool showUpdateLink: false
@@ -235,8 +236,6 @@ ApplicationWindow {
     Component.onCompleted: {
         console.debug("onCompleted handler")
         openingTimer.start()
-        applicationWindow.width = uiManager.getAppWidth(1010)
-        applicationWindow.height = uiManager.getAppHeight(725)
     }
 
     Action {

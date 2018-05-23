@@ -93,6 +93,7 @@ namespace Models {
         void initializeSystemTabs();
         void initialize();
         void resetWindowSettings();
+        void updateDpi(QScreen *screen);
 
     signals:
         void tabsListChanged();
@@ -105,9 +106,6 @@ namespace Models {
     public slots:
         void onScreenDpiChanged(qreal someDpi);
         void onScreenChanged(QScreen *screen);
-
-    private:
-        void updateDpi(QScreen *screen);
 
         // DelayedActionEntity implementation
     protected:

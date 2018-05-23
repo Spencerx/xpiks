@@ -13,15 +13,16 @@ import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import "../Constants"
 import "../StyledControls"
+import "../Scale.js" as S
 
 Rectangle {
     id: control
     clip: false
-    height: 35
-    width: 35
+    height: S.dp(35)
+    width: S.dp(35)
 
-    property real iconWidth: 27
-    property real iconHeight: 27
+    property real iconWidth: S.dp(27)
+    property real iconHeight: S.dp(27)
 
     property alias hovered: toolButtonMA.containsMouse
     property alias pressed: toolButtonMA.pressed

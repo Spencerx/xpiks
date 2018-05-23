@@ -16,6 +16,7 @@ import "../StyledControls"
 import "../Dialogs"
 import "../Common.js" as Common
 import "../Constants/UIConfig.js" as UIConfig
+import "../Scale.js" as S
 
 ColumnLayout {
     anchors.fill: parent
@@ -25,32 +26,32 @@ ColumnLayout {
     enabled: mainStackView.areActionsAllowed
 
     StyledBlackButton {
-        height: 30
+        height: S.dp(30)
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
+        anchors.leftMargin: S.dp(10)
+        anchors.rightMargin: S.dp(10)
         text: i18.n + qsTr("Add directory")
         onClicked: chooseDirectoryDialog.open()
         enabled: (applicationWindow.openedDialogsCount == 0)
     }
 
     Item {
-        height: 10
+        height: S.dp(10)
     }
 
     StyledBlackButton {
-        height: 30
+        height: S.dp(30)
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
+        anchors.leftMargin: S.dp(10)
+        anchors.rightMargin: S.dp(10)
         text: i18.n + qsTr("Add files", "button")
         action: addFilesAction
     }
 
     Item {
-        height: 20
+        height: S.dp(20)
     }
 
     Item {
@@ -88,7 +89,7 @@ ColumnLayout {
                 color: isselected ? uiColors.inactiveControlColor : "transparent"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: 50
+                height: S.dp(50)
 
                 MouseArea {
                     id: itemSelectionMA
@@ -108,16 +109,16 @@ ColumnLayout {
                 }
 
                 RowLayout {
-                    spacing: 10
+                    spacing: S.dp(10)
                     anchors.fill: parent
 
                     Item {
                         id: placeholder1
-                        width: 10
+                        width: S.dp(10)
                     }
 
                     Rectangle {
-                        width: 4
+                        width: S.dp(4)
                         height: width
                         radius: width / 2
                         color: uiColors.artworkActiveColor
@@ -145,8 +146,8 @@ ColumnLayout {
                     }
 
                     CloseIcon {
-                        width: 14
-                        height: 14
+                        width: S.dp(14)
+                        height: S.dp(14)
                         anchors.verticalCenter: parent.verticalCenter
                         isActive: false
                         crossOpacity: 1
@@ -164,7 +165,7 @@ ColumnLayout {
 
                     Item {
                         id: placeholder2
-                        width: 10
+                        width: S.dp(10)
                     }
                 }
             }
