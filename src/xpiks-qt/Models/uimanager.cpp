@@ -15,6 +15,8 @@
 #include "artworkmetadata.h"
 #include "../Models/settingsmodel.h"
 
+#include <QScreen>
+
 #define MAX_SAVE_PAUSE_RESTARTS 5
 
 #define DEFAULT_ARTWORK_EDIT_RIGHT_PANE_WIDTH 300
@@ -29,9 +31,7 @@ namespace Models {
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
         m_State("uimanager", environment),
         m_SettingsModel(settingsModel),
-        m_TabID(42),
-        m_SaveTimerId(-1),
-        m_SaveRestartsCount(0)
+        m_TabID(42)
     {
         Q_ASSERT(settingsModel != nullptr);
         QObject::connect(m_SettingsModel, &Models::SettingsModel::keywordSizeScaleChanged, this, &UIManager::keywordHeightChanged);
@@ -46,6 +46,14 @@ namespace Models {
         QObject::connect(&m_TabsModel, &QMLExtensions::TabsModel::cacheRebuilt, &m_InactiveTabs, &QMLExtensions::InactiveTabsModel::onInvalidateRequired);
 
         QObject::connect(&m_InactiveTabs, &QMLExtensions::InactiveTabsModel::tabOpened, &m_ActiveTabs, &QMLExtensions::ActiveTabsModel::onInactiveTabOpened);
+    }
+
+    void UIManager::setScreenDpi(double value) {
+        LOG_INFO << value;
+        if (value != m_ScreenDPI) {
+            m_ScreenDPI = value;
+            emit screenDpiChanged();
+        }
     }
 
     double UIManager::getKeywordHeight() const {
@@ -233,6 +241,38 @@ namespace Models {
         m_State.setValue(Constants::artworkEditRightPaneWidth, DEFAULT_ARTWORK_EDIT_RIGHT_PANE_WIDTH);
 
         justChanged();
+    }
+
+    void UIManager::onScreenDpiChanged(qreal someDpi) {
+        Q_UNUSED(someDpi);
+        QScreen *screen = qobject_cast<QScreen*>(sender());
+        updateDpi(screen);
+    }
+
+    void UIManager::onScreenChanged(QScreen *screen) {
+        updateDpi(screen);
+
+        if (screen != nullptr) {
+            QObject::connect(screen, &QScreen::logicalDotsPerInchChanged,
+                             this, &Models::UIManager::onScreenDpiChanged);
+            QObject::connect(screen, &QScreen::physicalDotsPerInchChanged,
+                             this, &Models::UIManager::onScreenDpiChanged);
+        }
+    }
+
+    void UIManager::updateDpi(QScreen *screen) {
+        if (screen != nullptr) {
+            LOG_INFO << "Device pixel ratio:" << screen->devicePixelRatio();
+            LOG_INFO << "Logical dots per inch:" << screen->logicalDotsPerInch();
+
+            qreal dpi;
+#ifdef Q_OS_WIN
+            dpi = screen->logicalDotsPerInch() * screen->devicePixelRatio();
+#else
+            dpi = screen->physicalDotsPerInch() * screen->devicePixelRatio();
+#endif
+            setScreenDpi(dpi);
+        }
     }
 
     void UIManager::doOnTimer() {
