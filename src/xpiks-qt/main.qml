@@ -26,8 +26,8 @@ import "Constants/UIConfig.js" as UIConfig
 ApplicationWindow {
     id: applicationWindow
     visible: true
-    width: uiManager.getAppWidth(1010)
-    height: uiManager.getAppHeight(725)
+    width: 1010
+    height: 725
     minimumHeight: 725
     minimumWidth: 930
     title: i18.n + (debug ? "Xpiks (Devel)" : qsTr("Xpiks"))
@@ -235,6 +235,8 @@ ApplicationWindow {
     Component.onCompleted: {
         console.debug("onCompleted handler")
         openingTimer.start()
+        //applicationWindow.width = uiManager.getAppWidth(1010)
+        //applicationWindow.height = uiManager.getAppHeight(725)
     }
 
     Action {

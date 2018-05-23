@@ -38,13 +38,6 @@
 #include "QMLExtensions/folderelement.h"
 #include "QMLExtensions/triangleelement.h"
 
-#ifdef Q_OS_WIN
-// Exclude rarely-used stuff from Windows headers
-#define WIN32_LEAN_AND_MEAN
-
-#include "ShellScalingApi.h"
-#endif
-
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);
 
@@ -100,14 +93,13 @@ void initQSettings() {
 
 void setHighDpiEnvironmentVariable() {
 #ifdef Q_OS_WIN
-
-#if QT_VERSION >= QT_VERSION_CHECK(5,6,0)
-    QCoreApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
-#else
-    qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("1"));
-#endif
-
-    SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+    static const char ENV_VAR_QT_DEVICE_PIXEL_RATIO[] = "QT_DEVICE_PIXEL_RATIO";
+    if (!qEnvironmentVariableIsSet(ENV_VAR_QT_DEVICE_PIXEL_RATIO) // legacy in 5.6, but still functional
+            && !qEnvironmentVariableIsSet("QT_AUTO_SCREEN_SCALE_FACTOR")
+            && !qEnvironmentVariableIsSet("QT_SCALE_FACTOR")
+            && !qEnvironmentVariableIsSet("QT_SCREEN_SCALE_FACTORS")) {
+        QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    }
 #endif
 }
 

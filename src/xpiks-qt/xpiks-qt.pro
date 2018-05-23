@@ -717,9 +717,6 @@ win32 {
     }
 
     LIBS += -lmman
-
-    # SetProcessDPIAware API
-    LIBS += -lShcore
 }
 
 linux {
