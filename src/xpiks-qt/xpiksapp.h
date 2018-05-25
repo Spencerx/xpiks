@@ -108,6 +108,7 @@ public:
 public:
     Q_INVOKABLE void shutdown();
     Q_INVOKABLE void upgradeNow();
+    Q_INVOKABLE void debugCrash();
 
 private:
     void injectDependencies();

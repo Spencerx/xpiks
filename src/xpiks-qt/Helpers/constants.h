@@ -49,6 +49,7 @@ namespace Constants {
     const char PLUGINS_DIR[] = "plugins";
     const char VIDEO_CACHE_DIR[] = "videoscache";
     const char STATES_DIR[] = "states";
+    const char CRASHES_DIR[] = "crashes";
     const char DB_DIR[] = "db";
     const char DB_DIR_FAILOVER[] = "db_failover";
     const char METADATA_DB_NAME[] = "metadata.db";

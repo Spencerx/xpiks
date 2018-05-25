@@ -947,6 +947,11 @@ ApplicationWindow {
                                         });
                 }
             }
+
+            MenuItem {
+                text: "Crash"
+                onTriggered: xpiksApp.debugCrash()
+            }
         }
     }
 

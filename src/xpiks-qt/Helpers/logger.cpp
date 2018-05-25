@@ -55,6 +55,19 @@ namespace Helpers {
         flushStream(m_QueueFlushFrom);
     }
 
+    void Logger::emergencyLog(const char * const message) {
+        QFile outFile(m_LogFilepath);
+        if (outFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+            outFile.write(message);
+            outFile.flush();
+        }
+    }
+
+    void Logger::emergencyFlush() {
+        flushStream(&m_LogsStorage[0]);
+        flushStream(&m_LogsStorage[1]);
+    }
+
     void Logger::stop() {
         m_Stopped = true;
 
@@ -68,11 +81,6 @@ namespace Helpers {
         // basically this thing is here because Travis CI does not like long logs
         if (m_MemoryOnly && (type == QtDebugMsg)) { return; }
         log(message);
-    }
-
-    void Logger::emergencyFlush() {
-        flushStream(&m_LogsStorage[0]);
-        flushStream(&m_LogsStorage[1]);
     }
 
     void Logger::abortFlush() {

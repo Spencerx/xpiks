@@ -1,0 +1,20 @@
+#ifndef RESTARTMODEL_H
+#define RESTARTMODEL_H
+
+#include <QObject>
+#include <QStringList>
+
+class RestartModel : public QObject
+{
+    Q_OBJECT
+public:
+    explicit RestartModel(const QStringList &arguments, QObject *parent = 0);
+
+public:
+    Q_INVOKABLE void recover();
+
+private:
+    QStringList m_Arguments;
+};
+
+#endif // RESTARTMODEL_H

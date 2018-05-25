@@ -6,22 +6,14 @@
 #include <QTimer>
 #include <QCoreApplication>
 
+#include <chillout.h>
+
 #include "Connectivity/curlinithelper.h"
 
 #include "../../xpiks-qt/Helpers/logger.h"
 #include "integrationtestsenvironment.h"
 #include "xpikstestsapp.h"
 #include "exiv2iohelpers.h"
-
-#ifdef Q_OS_WIN
-#include "windowscrashhandler.h"
-#endif
-
-#ifdef Q_OS_LINUX
-#include <signal.h>
-#include <exception>
-#include <cstdlib>
-#endif
 
 #include "testshelpers.h"
 
@@ -119,12 +111,28 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
     }
 }
 
-#if defined(Q_OS_LINUX) && defined(QT_DEBUG)
-void linuxAbortHandler(int signalNumber) {
-    Helpers::Logger &logger = Helpers::Logger::getInstance();
-    logger.emergencyFlush();
-}
+void initCrashRecovery(Common::ISystemEnvironment &environment) {
+    auto &chillout = Debug::Chillout::getInstance();
+    QString crashesDirPath = QDir::toNativeSeparators(environment.path({Constants::CRASHES_DIR}));
+#ifdef Q_OS_WIN
+    chillout.init(L"xpiks-tests-integration", crashesDirPath.toStdWString());
+#else
+    chillout.init("xpiks-tests-integration", crashesDirPath.toStdString());
 #endif
+    Helpers::Logger &logger = Helpers::Logger::getInstance();
+
+    chillout.setBacktraceCallback([&logger](const char * const stackTrace) {
+        logger.emergencyLog(stackTrace);
+    });
+
+    chillout.setCrashCallback([&logger, &chillout]() {
+        chillout.backtrace();
+        logger.emergencyFlush();
+#ifdef Q_OS_WIN
+        chillout.createCrashDump(Debug::CrashDumpFull);
+#endif
+    });
+}
 
 void initQSettings() {
     QCoreApplication::setOrganizationName(Constants::ORGANIZATION_NAME);
@@ -133,21 +141,6 @@ void initQSettings() {
 
 int main(int argc, char *argv[]) {
     initQSettings();
-
-#if defined(Q_OS_WIN) && defined(APPVEYOR)
-    WindowsCrashHandler crashHandler;
-    crashHandler.SetProcessExceptionHandlers();
-    crashHandler.SetThreadExceptionHandlers();
-#endif
-
-#if defined(Q_OS_LINUX) && defined(QT_DEBUG)
-    signal(SIGABRT, &linuxAbortHandler);
-    std::set_terminate([](){
-        Helpers::Logger &logger = Helpers::Logger::getInstance();
-        logger.emergencyFlush();
-        std::abort();
-    });
-#endif
 
     std::cout << "Started integration tests" << std::endl;
     std::cout << "Current working directory: " << QDir::currentPath().toStdString() << std::endl;
@@ -167,6 +160,7 @@ int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
     IntegrationTestsEnvironment environment(app.arguments());
     environment.ensureSystemDirectoriesExist();
+    initCrashRecovery(environment);
     // -----------------------------------------------
     std::cout << "Initialized application" << std::endl;
 

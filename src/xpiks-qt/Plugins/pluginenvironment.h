@@ -29,6 +29,7 @@ public:
     virtual QString path(const QStringList &path) override;
     virtual bool ensureDirExists(const QString &name) override;
     virtual bool getIsInMemoryOnly() const override { return m_SystemEnvironment.getIsInMemoryOnly(); }
+    virtual bool getIsRecoveryMode() const override { return m_SystemEnvironment.getIsRecoveryMode(); }
 
 private:
     Common::ISystemEnvironment &m_SystemEnvironment;

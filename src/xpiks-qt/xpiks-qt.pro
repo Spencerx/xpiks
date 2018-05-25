@@ -620,6 +620,7 @@ INCLUDEPATH += ../../vendors/ssdll/src/ssdll
 INCLUDEPATH += ../../vendors/hunspell-repo/src
 INCLUDEPATH += ../../vendors/libthmbnlr
 INCLUDEPATH += ../../vendors/libxpks
+INCLUDEPATH += ../../vendors/chillout/src/chillout
 
 CONFIG(debug, debug|release)  {
     LIBS += -L"$$PWD/../../libs/debug"
@@ -635,6 +636,7 @@ LIBS += -lquazip
 LIBS += -lz
 LIBS += -lthmbnlr
 LIBS += -lxpks
+LIBS += -lchillout
 
 BUILDNO=$$system(git log -n 1 --pretty=format:"%h")
 BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
@@ -657,6 +659,8 @@ CONFIG(debug, debug|release)  {
 macx {
     QMAKE_TARGET_BUNDLE_PREFIX = com.xpiksapp
     QMAKE_BUNDLE = Xpiks
+
+    LIBS += -ldl
 
     INCLUDEPATH += "../../vendors/quazip"
     INCLUDEPATH += "../../vendors/libcurl/include"
@@ -717,6 +721,8 @@ win32 {
     }
 
     LIBS += -lmman
+    # chillout deps
+    LIBS += -lAdvapi32 -lDbgHelp
 }
 
 linux {

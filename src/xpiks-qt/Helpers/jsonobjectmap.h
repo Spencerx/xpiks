@@ -59,7 +59,7 @@ namespace Helpers {
         }
 
         inline void deleteValue(const char *key) { m_Json.remove(QLatin1String(key)); }
-        inline bool containsValue(const char *key) { return m_Json.contains(QLatin1String(key)); }
+        inline bool containsValue(const char *key) const { return m_Json.contains(QLatin1String(key)); }
 
     private:
         QJsonObject m_Json;

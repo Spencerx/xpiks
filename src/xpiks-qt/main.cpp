@@ -38,6 +38,10 @@
 #include "QMLExtensions/folderelement.h"
 #include "QMLExtensions/triangleelement.h"
 
+// -------------------------------------
+
+#include <chillout.h>
+
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);
 
@@ -120,6 +124,34 @@ QString getRunGuardName() {
     return (runGuardName + username);
 }
 
+void initCrashRecovery(Common::ISystemEnvironment &environment) {
+    auto &chillout = Debug::Chillout::getInstance();
+    QString crashesDirPath = QDir::toNativeSeparators(environment.path({Constants::CRASHES_DIR}));
+#ifdef Q_OS_WIN
+    chillout.init(L"xpiks", crashesDirPath.toStdWString());
+#else
+    chillout.init("xpiks", crashesDirPath.toStdString());
+#endif
+    Helpers::Logger &logger = Helpers::Logger::getInstance();
+
+    chillout.setBacktraceCallback([&logger](const char * const stackTrace) {
+        logger.emergencyLog(stackTrace);
+    });
+
+    chillout.setCrashCallback([&logger, &chillout]() {
+        chillout.backtrace();
+        logger.emergencyFlush();
+
+#ifdef Q_OS_WIN
+        QProcess::startDetached("Recoverty.exe", QStringList() << "Xpiks.exe" << "--recovery");
+#endif
+
+#ifdef Q_OS_WIN
+        chillout.createCrashDump(Debug::CrashDumpNormal);
+#endif
+    });
+}
+
 int main(int argc, char *argv[]) {
     const QString runGuardName = getRunGuardName();
     Helpers::RunGuard guard(runGuardName);
@@ -148,6 +180,7 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     Common::SystemEnvironment environment(app.arguments());
     environment.ensureSystemDirectoriesExist();
+    initCrashRecovery(environment);
     // ----------------------------------------------
 
 #ifdef WITH_LOGS

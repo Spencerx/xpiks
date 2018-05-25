@@ -12,6 +12,7 @@
 #include <apisecretsstorage.h>
 #include <QQmlContext>
 #include "Encryption/aes-qt.h"
+#include <signal.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_LogsModel(&m_ColorsModel),
@@ -222,8 +223,6 @@ void XpiksApp::start() {
     m_CsvExportModel.initializeExportPlans(&m_InitCoordinator);
     m_KeywordsSuggestor.initSuggestionEngines();
     m_UpdateService.initialize();
-
-    m_MainDelegator.readSession();
 }
 
 void XpiksApp::stop() {
@@ -281,6 +280,10 @@ void XpiksApp::upgradeNow() {
     LOG_DEBUG << "#";
     m_UpdateService.setHaveUpgradeConsent();
     emit upgradeInitiated();
+}
+
+void XpiksApp::debugCrash() {
+    raise(SIGTERM);
 }
 
 void XpiksApp::injectDependencies() {
@@ -346,11 +349,13 @@ void XpiksApp::afterServicesStarted() {
     m_PluginManager.loadPlugins();
 #endif
 
-    int newFilesAdded = m_MainDelegator.restoreReadSession();
-    if (newFilesAdded > 0) {
-        // immediately save restored session - to beat race between
-        // saving session from Add Command and restoring FULL_DIR flag
-        m_MainDelegator.saveSessionInBackground();
+    if (m_SettingsModel.getSaveSession() || m_SessionManager.getIsEmergencyRestore()) {
+        int newFilesAdded = m_SessionManager.restoreSession(m_ArtworksRepository);
+        if (newFilesAdded > 0) {
+            // immediately save restored session - to beat race between
+            // saving session from Add Command and restoring FULL_DIR flag
+            m_MainDelegator.saveSessionInBackground();
+        }
     }
 
 #if !defined(INTEGRATION_TESTS)

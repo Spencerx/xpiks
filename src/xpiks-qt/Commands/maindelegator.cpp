@@ -519,54 +519,6 @@ namespace Commands {
     #endif
     }
 
-    void MainDelegator::readSession() {
-        LOG_DEBUG << "#";
-        auto *settingsModel = m_CommandManager->getSettingsModel();
-
-        Q_ASSERT(settingsModel != nullptr);
-        if (!settingsModel->getSaveSession()) { return; }
-
-        auto *sessionManager = m_CommandManager->getSessionManager();
-        sessionManager->readSessionFromFile();
-    }
-
-    int MainDelegator::restoreReadSession() {
-        LOG_DEBUG << "#";
-
-        auto *sessionManager = m_CommandManager->getSessionManager();
-        sessionManager->onBeforeRestore();
-
-        auto *settingsModel = m_CommandManager->getSettingsModel();
-        if ((settingsModel == nullptr) || !settingsModel->getSaveSession()) {
-            LOG_DEBUG << "Ignoring the session";
-            return 0;
-        }
-
-        int newFilesCount = 0;
-
-        do
-        {
-            auto &filenames = sessionManager->getFilenames();
-            auto &fullDirectories = sessionManager->getFullDirectories();
-            if (filenames.empty()) {
-                LOG_INFO << "Session was empty";
-                break;
-            }
-
-            auto &vectors = sessionManager->getVectors();
-
-            newFilesCount = restoreFiles(filenames, vectors);
-            if (newFilesCount > 0) {
-                auto *artworksRepository = m_CommandManager->getArtworksRepository();
-                artworksRepository->restoreFullDirectories(fullDirectories);
-            }
-        }
-        while (false);
-        sessionManager->onAfterRestore();
-
-        return newFilesCount;
-    }
-
     int MainDelegator::restoreFiles(const QStringList &filenames, const QStringList &vectors) {
         LOG_INFO << filenames.size() << "file(s)";
 
@@ -597,25 +549,9 @@ namespace Commands {
         return addedCount;
     }
 
-    #ifdef INTEGRATION_TESTS
-    int MainDelegator::restoreSessionForTest() {
-        LOG_DEBUG << "#";
-        readSession();
-
-        int filesRead = restoreReadSession();
-        return filesRead;
-    }
-    #endif
-
     void MainDelegator::saveSessionInBackground() {
     #ifndef CORE_TESTS
         LOG_DEBUG << "#";
-
-        auto *settingsModel = m_CommandManager->getSettingsModel();
-        if (!settingsModel || !settingsModel->getSaveSession()) {
-            LOG_DEBUG << "Session saving is turned OFF";
-            return;
-        }
 
         auto *artItemsModel = m_CommandManager->getArtItemsModel();
         auto *artworksRepository = m_CommandManager->getArtworksRepository();

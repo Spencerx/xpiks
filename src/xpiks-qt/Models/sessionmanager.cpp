@@ -25,35 +25,12 @@
 #define VECTOR_KEY "vector"
 #define DIRECTORY_PATH_KEY "dirpath"
 
-namespace Models {
-    SessionManager::SessionManager(Common::ISystemEnvironment &environment):
-        QObject(),
-        m_Config(environment.path({SESSION_FILE}),
-                 environment.getIsInMemoryOnly()),
-        m_CanRestore(false)
-    {
-    }
-
-    void SessionManager::onBeforeRestore() {
-        LOG_DEBUG << "#";
-        m_CanRestore = true;
-    }
-
-    void SessionManager::onAfterRestore() {
-        m_Filenames.clear();
-        m_Vectors.clear();
-        m_FullDirectories.clear();
-    }
-
-    void SessionManager::saveToFile(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
-                                    const QStringList &directoriesSnapshot) {
-        if (!m_CanRestore) {
-            LOG_INFO << "Session hasn't been initialized yet. Exiting...";
-            return;
-        }
-
+namespace Models {    
+    std::shared_ptr<Helpers::JsonObjectMap> serializeSnapshot(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
+                           const QStringList &directoriesSnapshot) {
         LOG_INFO << filesSnapshot.size() << "artwork(s)" << directoriesSnapshot.size() << "directory(ies)";
 
+        std::shared_ptr<Helpers::JsonObjectMap> sessionMap(new Helpers::JsonObjectMap());
         QJsonArray filesList;
 
         for (auto &item: filesSnapshot) {
@@ -70,7 +47,7 @@ namespace Models {
             filesList.append(jsonObject);
         }
 
-        setValue(OPENED_FILES_KEY, filesList);
+        sessionMap->setValue(OPENED_FILES_KEY, filesList);
 
         QJsonArray directoriesList;
         for (auto item: directoriesSnapshot) {
@@ -79,45 +56,14 @@ namespace Models {
             directoriesList.append(jsonObject);
         }
 
-        setValue(OPENED_DIRECTORIES_KEY, directoriesList);
-
-        QJsonDocument doc;
-        doc.setObject(m_SessionJson);
-
-        m_Config.setConfig(doc);
-
-        Helpers::LocalConfigDropper dropper(&m_Config);
-        Q_UNUSED(dropper);
-
-        QMutexLocker locker(&m_Mutex);
-        Q_UNUSED(locker);
-
-        m_Config.save();
+        sessionMap->setValue(OPENED_DIRECTORIES_KEY, directoriesList);
+        return sessionMap;
     }
 
-    void SessionManager::readSessionFromFile() {
-        LOG_DEBUG << "#";
+    void parseFiles(const Helpers::JsonObjectMap &sessionMap, QStringList &filenames, QStringList &vectors) {
+        if (!sessionMap.containsValue(OPENED_FILES_KEY)) { return; }
 
-        m_Config.initialize();
-        Helpers::LocalConfigDropper dropper(&m_Config);
-        Q_UNUSED(dropper);
-
-        QJsonDocument &doc = m_Config.getConfig();
-        if (doc.isObject()) {
-            m_SessionJson = doc.object();
-        } else {
-            LOG_WARNING << "JSON document doesn't contain an object";
-            return;
-        }
-
-        parseFiles();
-        parseDirectories();
-    }
-
-    void SessionManager::parseFiles() {
-        if (!m_SessionJson.contains(OPENED_FILES_KEY)) { return; }
-
-        QJsonValue openedFilesValue = value(OPENED_FILES_KEY);
+        QJsonValue openedFilesValue = sessionMap.value(OPENED_FILES_KEY);
         if (!openedFilesValue.isArray()) { return; }
 
         QJsonArray filesArray = openedFilesValue.toArray();
@@ -127,27 +73,27 @@ namespace Models {
             return;
         }
 
-        m_Filenames.reserve(filesArray.size());
-        m_Vectors.reserve(filesArray.size()/2);
+        filenames.reserve(filesArray.size());
+        vectors.reserve(filesArray.size()/2);
 
         for (const auto &item: filesArray) {
             QJsonObject obj = item.toObject();
             QString filePath = obj.value(FILE_KEY).toString().trimmed();
             if (filePath.isEmpty()) { continue; }
 
-            m_Filenames.push_back(filePath);
+            filenames.push_back(filePath);
 
             QString vectorPath = obj.value(VECTOR_KEY).toString().trimmed();
             if (!vectorPath.isEmpty()) {
-                m_Vectors.append(vectorPath);
+                vectors.append(vectorPath);
             }
         }
     }
 
-    void SessionManager::parseDirectories() {
-        if (!m_SessionJson.contains(OPENED_DIRECTORIES_KEY)) { return; }
+    void parseDirectories(const Helpers::JsonObjectMap &sessionMap, QStringList &fullDirectories) {
+        if (!sessionMap.containsValue(OPENED_DIRECTORIES_KEY)) { return; }
 
-        QJsonValue openedDirsValue = value(OPENED_DIRECTORIES_KEY);
+        QJsonValue openedDirsValue = sessionMap.value(OPENED_DIRECTORIES_KEY);
         if (!openedDirsValue.isArray()) { return; }
 
         QJsonArray dirsArray = openedDirsValue.toArray();
@@ -157,28 +103,93 @@ namespace Models {
             return;
         }
 
-        m_FullDirectories.reserve(dirsArray.size());
+        fullDirectories.reserve(dirsArray.size());
 
         for (const auto &item: dirsArray) {
             QJsonObject obj = item.toObject();
             QString dirPath = obj.value(DIRECTORY_PATH_KEY).toString().trimmed();
             if (dirPath.isEmpty()) { continue; }
 
-            m_FullDirectories.append(dirPath);
+            fullDirectories.append(dirPath);
         }
     }
 
-#ifdef INTEGRATION_TESTS
-    int SessionManager::itemsCount() const {
-        const QJsonArray &filesArray = value(OPENED_FILES_KEY).toArray();
-        return filesArray.size();
+    SessionManager::SessionManager(Common::ISystemEnvironment &environment):
+        QObject(),
+        m_Config(environment.path({SESSION_FILE}),
+                 environment.getIsInMemoryOnly()),
+        m_EmergencyRestore(environment.getIsRecoveryMode())
+    {
     }
 
+    bool SessionManager::saveToFile(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
+                                    const QStringList &directoriesSnapshot) {
+        auto sessionMap = serializeSnapshot(filesSnapshot, directoriesSnapshot);
+        bool success = false;
+        QJsonDocument doc;        
+        QJsonObject sessionJson = sessionMap->json();
+        doc.setObject(sessionJson);
+
+        {
+            QMutexLocker locker(&m_Mutex);
+            Q_UNUSED(locker);
+
+            do {
+                m_Config.setConfig(doc);
+
+                Helpers::LocalConfigDropper dropper(&m_Config);
+                Q_UNUSED(dropper);
+
+                success = m_Config.save();
+#ifdef INTEGRATION_TESTS
+                m_LastSavedFilesCount = success ? (int)filesSnapshot.size() : m_LastSavedFilesCount;
+#endif
+            } while (false);
+        }
+        return success;
+    }
+
+    int SessionManager::restoreSession(Models::ArtworksRepository &artworksRepository) {
+        LOG_DEBUG << "#";
+
+        QMutexLocker locker(&m_Mutex);
+        Q_UNUSED(locker);
+
+        m_Config.initialize();
+
+        Helpers::LocalConfigDropper dropper(&m_Config);
+        Q_UNUSED(dropper);
+
+        QStringList filenames, vectors, fullDirectories;
+
+        QJsonDocument &doc = m_Config.getConfig();
+        if (doc.isObject()) {
+            QJsonObject object = doc.object();
+            Helpers::JsonObjectMap sessionMap(object);
+
+            parseFiles(sessionMap, filenames, vectors);
+            parseDirectories(sessionMap, fullDirectories);
+        }
+
+        if (filenames.empty()) {
+            LOG_INFO << "Session was empty";
+            return 0;
+        }
+
+        int newFilesCount = xpiks()->restoreFiles(filenames, vectors);
+        if (newFilesCount > 0) {
+            artworksRepository.restoreFullDirectories(fullDirectories);
+        }
+
+        return newFilesCount;
+    }
+
+#ifdef INTEGRATION_TESTS
     void SessionManager::clearSession() {
-        setValue(OPENED_FILES_KEY, QJsonArray());
-        m_Filenames.clear();
-        m_Vectors.clear();
-        m_FullDirectories.clear();
+        std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > emptyFiles;
+        QStringList emptyDirs;
+        bool cleared = saveToFile(emptyFiles, emptyDirs);
+        Q_ASSERT(cleared);
     }
 #endif
 }

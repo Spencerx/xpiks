@@ -14,6 +14,7 @@
 #include <QObject>
 #include "../MetadataIO/artworkssnapshot.h"
 #include "../Common/isystemenvironment.h"
+#include "maintenanceworker.h"
 
 namespace Models {
     class ArtworkMetadata;
@@ -41,8 +42,6 @@ namespace QMLExtensions {
 }
 
 namespace Maintenance {
-    class MaintenanceWorker;
-
     class MaintenanceService: public QObject
     {
         Q_OBJECT
@@ -56,6 +55,7 @@ namespace Maintenance {
 #ifdef INTEGRATION_TESTS
     public:
         bool hasPendingJobs();
+        void cleanup();
 #endif
 
     public:
@@ -76,6 +76,7 @@ namespace Maintenance {
     private:
         Common::ISystemEnvironment &m_Environment;
         MaintenanceWorker *m_MaintenanceWorker;
+        MaintenanceWorker::batch_id_t m_LastSessionBatchId;
     };
 }
 

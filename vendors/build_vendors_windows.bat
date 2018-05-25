@@ -14,7 +14,8 @@ echo "Root directory is %ROOT_DIR%"
 echo "Build mode is %BUILD_MODE%"
 
 rem for Windows 10+ only
-set PRINT_PREFIX="^<ESC^>[32m [32mGreen[0m"
+rem set PRINT_PREFIX="^<ESC^>[32m [32mGreen[0m"
+set PRINT_PREFIX="-"
 set NMAKE_OPTIONS="clean all /f Makefile"
 
 set XPIKS_DEPS_ROOT="%ROOT_DIR%\..\xpiks-deps"
@@ -29,6 +30,14 @@ if "%BUILD_MODE%"=="appveyor" (
 ) else (
   set QMAKE_EXE="C:\Qt\Qt5.6.2\5.6\msvc2015_64\bin\qmake.exe"
 )
+
+rem chillout
+echo "%PRINT_PREFIX% Building chillout..."
+cd %ROOT_DIR%\vendors\chillout\src\chillout
+%QMAKE_EXE% "CONFIG+=%TARGET%" chillout.pro
+nmake.exe "%NMAKE_OPTIONS%"
+copy %TARGET%\chillout.* ..\..\..\..\libs\%TARGET%
+echo "%PRINT_PREFIX% Building chillout... - done"
 
 rem zlib
 echo "%PRINT_PREFIX% Building zlib..."

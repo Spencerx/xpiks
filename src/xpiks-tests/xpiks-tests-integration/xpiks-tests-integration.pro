@@ -559,6 +559,7 @@ INCLUDEPATH += ../../../vendors/ssdll/src/ssdll
 INCLUDEPATH += ../../../vendors/hunspell-repo/src
 INCLUDEPATH += ../../../vendors/libthmbnlr
 INCLUDEPATH += ../../../vendors/libxpks
+INCLUDEPATH += ../../../vendors/chillout/src/chillout
 INCLUDEPATH += ../../xpiks-qt
 
 CONFIG(debug, debug|release)  {
@@ -574,16 +575,12 @@ LIBS += -lface
 LIBS += -lssdll
 LIBS += -lthmbnlr
 LIBS += -lxpks
+LIBS += -lchillout
 
 include(../../xpiks-common/xpiks-common.pri)
 
 BUILDNO=$$system(git log -n 1 --pretty=format:"%h")
 BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
-
-win* {
-   QMAKE_CXXFLAGS_EXCEPTIONS_ON = /EHa
-   QMAKE_CXXFLAGS_STL_ON = /EHa
-}
 
 macx {
     INCLUDEPATH += "../../../vendors/quazip"
@@ -635,14 +632,8 @@ win32 {
         LIBS += -llibcurl
     }
 
-    # StackWalker stuff
+    # chillout dependencies
     LIBS += -lAdvapi32 -lDbgHelp
-    HEADERS += StackWalker.h \
-        windowscrashhandler.h
-    SOURCES += StackWalker.cpp \
-        windowscrashhandler.cpp
-    DEFINES += _UNICODE \
-               _MBCS
 }
 
 linux {
