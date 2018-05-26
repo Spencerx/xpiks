@@ -114,6 +114,7 @@ namespace Models {
 
     private:
         void doReadAllValues();
+        void consolidateSettings();
         void doMoveSettingsFromQSettingsToJson();
         void doResetToDefault();
         void doSaveAllValues();
@@ -251,6 +252,9 @@ namespace Models {
         void setProgressiveSuggestionIncrement(int progressiveSuggestionIncrement);
         void setUseDirectExiftoolExport(bool value);
         void setUseAutoImport(bool value);
+
+    private slots:
+        void onSettingsMigrationRequest() { moveSettingsFromQSettingsToJson(); }
 
     public slots:
         void onRecommendedExiftoolFound(const QString &path);

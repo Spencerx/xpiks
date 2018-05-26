@@ -59,27 +59,29 @@
 #define DEFAULT_USE_PROGRESSIVE_SUGGESTION_PREVIEWS false
 #define DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT 10
 
-#ifdef QT_NO_DEBUG
-    #define DEFAULT_USE_AUTOIMPORT true
-    #define DEFAULT_AUTO_CACHE_IMAGES true
-    #define DEFAULT_VERBOSE_UPLOAD false
-    #define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT false
-    #define DEFAULT_DETECT_DUPLICATES false
-#else
-    #define DEFAULT_DETECT_DUPLICATES true
+#define VERBOSE_UPLOAD_STARTDATE "verboseUploadStart"
 
-    #ifdef INTEGRATION_TESTS
-        // used in INTEGRATION TESTS
-        #define DEFAULT_USE_AUTOIMPORT false
-        #define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT true
-        #define DEFAULT_AUTO_CACHE_IMAGES false
-        #define DEFAULT_VERBOSE_UPLOAD false
-    #else
-        #define DEFAULT_USE_AUTOIMPORT true
-        #define DEFAULT_AUTO_CACHE_IMAGES true
-        #define DEFAULT_VERBOSE_UPLOAD true
-        #define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT false
-    #endif
+#ifdef QT_NO_DEBUG
+#define DEFAULT_USE_AUTOIMPORT true
+#define DEFAULT_AUTO_CACHE_IMAGES true
+#define DEFAULT_VERBOSE_UPLOAD false
+#define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT false
+#define DEFAULT_DETECT_DUPLICATES false
+#else
+#define DEFAULT_DETECT_DUPLICATES true
+
+#ifdef INTEGRATION_TESTS
+// used in INTEGRATION TESTS
+#define DEFAULT_USE_AUTOIMPORT false
+#define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT true
+#define DEFAULT_AUTO_CACHE_IMAGES false
+#define DEFAULT_VERBOSE_UPLOAD false
+#else
+#define DEFAULT_USE_AUTOIMPORT true
+#define DEFAULT_AUTO_CACHE_IMAGES true
+#define DEFAULT_VERBOSE_UPLOAD true
+#define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT false
+#endif
 #endif
 
 #define SETTINGS_SAVING_INTERVAL 3000
@@ -208,7 +210,8 @@ namespace Models {
         LOG_INFO << "Current settings version:" << settingsVersion;
 
         if (settingsVersion < CURRENT_SETTINGS_VERSION) {
-            moveSettingsFromQSettingsToJson();
+            // execute this on the main thread
+            QTimer::singleShot(0, this, &SettingsModel::onSettingsMigrationRequest);
         }
     }
 
@@ -463,7 +466,30 @@ namespace Models {
 
         setAutoCacheImages(m_SettingsMap->boolValue(cacheImagesAutomatically, DEFAULT_AUTO_CACHE_IMAGES));
 
+        consolidateSettings();
         resetChangeStates();
+    }
+
+    void SettingsModel::consolidateSettings() {
+        do {
+            if (getVerboseUpload()) {
+                const QDateTime dtNow = QDateTime::currentDateTime();
+                const QString verboseUploadStart = m_State.getString(VERBOSE_UPLOAD_STARTDATE);
+                const QDateTime verboseUploadStartDateTime = QDateTime::fromString(verboseUploadStart, Qt::ISODate);
+                if (!verboseUploadStartDateTime.isValid()) {
+                    LOG_WARNING << "Cannot parse verbose upload start datetime:" << verboseUploadStart;
+                    break;
+                }
+
+                const qint64 daysPassed = verboseUploadStartDateTime.daysTo(dtNow);
+                LOG_DEBUG << "Verbose upload is ON for" << daysPassed << "day(s)";
+
+                if (daysPassed > 5) {
+                    LOG_INFO << "Resetting stale verbose upload to improve performance";
+                    setVerboseUpload(false);
+                }
+            }
+        } while (false);
     }
 
     void SettingsModel::doMoveSettingsFromQSettingsToJson() {
@@ -607,6 +633,18 @@ namespace Models {
 
         if (!m_MustUseMasterPassword) {
             m_SettingsMap->setValue(masterPasswordHash, "");
+        }
+
+        if (m_VerboseUpload) {
+            if (!m_State.contains(VERBOSE_UPLOAD_STARTDATE)) {
+                const QDateTime dtNow = QDateTime::currentDateTime();
+                QString dateTimeString = dtNow.toString(Qt::ISODate);
+                m_State.setValue(VERBOSE_UPLOAD_STARTDATE, dateTimeString);
+                m_State.sync();
+            }
+        } else {
+            m_State.remove(VERBOSE_UPLOAD_STARTDATE);
+            m_State.sync();
         }
 
         sync();
@@ -1028,14 +1066,12 @@ namespace Models {
         }
     }
 
-    void SettingsModel::setVerboseUpload(bool verboseUpload)
-    {
-        if (m_VerboseUpload == verboseUpload)
-            return;
-
-        m_VerboseUpload = verboseUpload;
-        emit verboseUploadChanged(verboseUpload);
-        justChanged();
+    void SettingsModel::setVerboseUpload(bool verboseUpload) {
+        if (m_VerboseUpload != verboseUpload) {
+            m_VerboseUpload = verboseUpload;
+            emit verboseUploadChanged(verboseUpload);
+            justChanged();
+        }
     }
 
     void SettingsModel::setUseProgressiveSuggestionPreviews(bool useProgressiveSuggestionPreviews)

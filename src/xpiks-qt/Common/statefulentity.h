@@ -58,6 +58,10 @@ namespace Common {
             return m_StateMap->containsValue(key);
         }
 
+        inline void remove(const char *key) const {
+            return m_StateMap->deleteValue(key);
+        }
+
     private:
         QString m_StateName;
         Helpers::LocalConfig m_StateConfig;
