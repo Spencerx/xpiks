@@ -643,8 +643,10 @@ namespace Models {
                 m_State.sync();
             }
         } else {
-            m_State.remove(VERBOSE_UPLOAD_STARTDATE);
-            m_State.sync();
+            if (m_State.contains(VERBOSE_UPLOAD_STARTDATE)) {
+                m_State.remove(VERBOSE_UPLOAD_STARTDATE);
+                m_State.sync();
+            }
         }
 
         sync();
