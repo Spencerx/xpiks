@@ -44,12 +44,11 @@ win32|linux {
     }
 
     copywhatsnew.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/whatsnew.txt)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
-    copyterms.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/terms_and_conditions.txt)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
     copydicts.commands = $(COPY_DIR) \"$$shell_path($$DEPS_DIR/dict)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
     copyfreqtables.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/$$AC_SOURCES_DIR/en_wordlist.tsv)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$AC_SOURCES_DIR/)\"
 
-    QMAKE_EXTRA_TARGETS += copywhatsnew copyterms copydicts copytranslations copyfreqtables
-    POST_TARGETDEPS += copywhatsnew copyterms copydicts copytranslations copyfreqtables
+    QMAKE_EXTRA_TARGETS += copywhatsnew copydicts copytranslations copyfreqtables
+    POST_TARGETDEPS += copywhatsnew copydicts copytranslations copyfreqtables
 }
 
 

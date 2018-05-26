@@ -28,7 +28,6 @@ namespace Constants {
     const char SEARCH_USING_AND[] = "SEARCH_USING_AND";
     const char SEARCH_BY_FILEPATH[] = "SEARCH_BY_FILEPATH";
     const char WHATS_NEW_FILENAME[] = "whatsnew.txt";
-    const char TERMS_AND_CONDITIONS_FILENAME[] = "terms_and_conditions.txt";
     const char DICT_PATH[] = "DICT_PATH";
     const char USER_STATISTICS[] = "USER_STATISTICS";
     const char CHECK_FOR_UPDATES[] = "CHECK_FOR_UPDATES";
@@ -157,7 +156,7 @@ namespace Constants {
     const char detectDuplicates[] = "detectDuplicates";
     const char userAgentId[] = "userAgentId";
     const char installedVersion[] = "installedVersion";
-    const char userConsent[] = "userConsent10";
+    const char userConsent[] = "userConsent11";
     const char selectedLocale[] = "selectedLocale";
     const char selectedThemeIndex[] = "selectedThemeIndex";
     const char useKeywordsAutoComplete[] = "useKeywordsAutoComplete";

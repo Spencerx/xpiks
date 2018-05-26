@@ -679,10 +679,6 @@ macx {
     WHATS_NEW.path = Contents/Resources
     QMAKE_BUNDLE_DATA += WHATS_NEW
 
-    TERMS_AND_CONDITIONS.files = deps/terms_and_conditions.txt
-    TERMS_AND_CONDITIONS.path = Contents/Resources
-    QMAKE_BUNDLE_DATA += TERMS_AND_CONDITIONS
-
     TRANSLATIONS_FILES_LIST = $$system(ls $$PWD/deps/translations/*.qm)
     XPIKS_TRANSLATIONS.files = $$TRANSLATIONS_FILES_LIST
     XPIKS_TRANSLATIONS.path = Contents/Resources/translations
@@ -753,24 +749,6 @@ travis-ci {
     LIBS += -ldl
     DEFINES += TRAVIS_CI
     INCLUDEPATH += "../../vendors/quazip"
-}
-
-linux-qtcreator {
-    message("in QtCreator")
-    BUILDNO = $$system($$PWD/buildno.sh)
-    LIBS += -L/usr/lib64/
-    LIBS += -L/lib/x86_64-linux-gnu/
-    copywhatsnew.commands = $(COPY_FILE) "$$PWD/deps/whatsnew.txt" "$$OUT_PWD/"
-    copyterms.commands = $(COPY_FILE) "$$PWD/deps/terms_and_conditions.txt" "$$OUT_PWD/"
-    QMAKE_EXTRA_TARGETS += copywhatsnew copyterms
-    POST_TARGETDEPS += copywhatsnew copyterms
-}
-
-linux-static {
-    CONFIG += static
-    QTPLUGIN += qt5quick
-    DEFINES += STATIC
-    message("Static build.")
 }
 
 without-video {

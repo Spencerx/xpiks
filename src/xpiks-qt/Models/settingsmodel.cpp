@@ -738,42 +738,6 @@ namespace Models {
         return text;
     }
 
-    QString SettingsModel::getTermsAndConditionsText() const {
-        QString text;
-        QString path;
-
-#if !defined(Q_OS_LINUX)
-        path = QCoreApplication::applicationDirPath();
-
-#if defined(Q_OS_MAC)
-        path += "/../Resources/";
-#endif
-
-        path += QChar('/') + QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME);
-        path = QDir::cleanPath(path);
-#else
-        // path inside appimage
-        path = QCoreApplication::applicationDirPath() + QChar('/') + Constants::TERMS_AND_CONDITIONS_FILENAME;
-#endif
-        QFile file(QDir::cleanPath(path));
-        if (file.open(QIODevice::ReadOnly)) {
-            text = QString::fromUtf8(file.readAll());
-            file.close();
-        } else {
-            LOG_WARNING << "terms_and_conditions.txt file is not found on path" << path;
-
-            path = QDir::current().absoluteFilePath(QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME));
-
-            QFile currDirFile(path);
-            if (currDirFile.open(QIODevice::ReadOnly)) {
-                text = QString::fromUtf8(currDirFile.readAll());
-                currDirFile.close();
-            }
-        }
-
-        return text;
-    }
-
     bool SettingsModel::needToShowWhatsNew() {
         int lastVersion = m_State.getInt(Constants::installedVersion, 0);
         int installedMajorPart = lastVersion / XPIKS_VERSION_MAJOR_DIVISOR;
