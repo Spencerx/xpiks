@@ -4,12 +4,12 @@
 #include <QObject>
 #include <QVector>
 #include <QSemaphore>
-#include <Common/baseentity.h>
 #include <Connectivity/iftpcoordinator.h>
 #include <QAtomicInt>
 #include <QMutex>
 #include <Models/settingsmodel.h>
 #include <MetadataIO/artworkssnapshot.h>
+#include <Encryption/secretsmanager.h>
 
 namespace Models {
     class ArtworkMetadata;
@@ -23,12 +23,13 @@ namespace libxpks {
 
         class FtpCoordinator :
                 public QObject,
-                public Common::BaseEntity,
                 public Connectivity::IFtpCoordinator
         {
             Q_OBJECT
         public:
-            explicit FtpCoordinator(int maxParallelUploads, QObject *parent = 0);
+            explicit FtpCoordinator(Encryption::SecretsManager &secretsManager,
+                                    Models::SettingsModel &settings,
+                                    QObject *parent = 0);
 
         public:
             // IFTPCOORDINATOR
@@ -54,6 +55,8 @@ namespace libxpks {
         private:
             QMutex m_WorkerMutex;
             QSemaphore m_UploadSemaphore;
+            Encryption::SecretsManager &m_SecretsManager;
+            Models::SettingsModel &m_Settings;
             double m_OverallProgress;
             QAtomicInt m_FinishedWorkersCount;
             volatile size_t m_AllWorkersCount;

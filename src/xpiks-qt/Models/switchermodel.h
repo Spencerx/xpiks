@@ -53,6 +53,7 @@ namespace Models {
         bool getGettySuggestionEnabled() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::GettySuggestionEnabled, m_Threshold); }
         bool getUpdateEnabled() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::UpdateEnabled, m_Threshold); }
         bool getKeywordsDragDropEnabled() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::KeywordsDragDropEnabled, m_Threshold); }
+        bool getIsTelemetryEnabled() { return m_Config.isSwitchOn(Connectivity::SwitcherConfig::TelemetryEnabled, m_Threshold); }
 
     public:
         bool getDonateCampaign1LinkClicked() const;

@@ -17,6 +17,7 @@
 #include "../Helpers/localconfig.h"
 #include "../Common/baseentity.h"
 #include "../Common/isystemenvironment.h"
+#include "../Helpers/jsonobjectmap.h"
 
 namespace MetadataIO {
     class ArtworkSessionSnapshot;
@@ -25,6 +26,7 @@ namespace MetadataIO {
 
 namespace Models {
     class ArtworkMetadata;
+    class ArtworksRepository;
 }
 
 namespace Models {
@@ -36,49 +38,24 @@ namespace Models {
         virtual ~SessionManager() {}
 
     public:
-        void onBeforeRestore();
-        void onAfterRestore();
-        void saveToFile(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
+        bool saveToFile(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
                         const QStringList &directoriesSnapshot);
-        void readSessionFromFile();
-
-    private:
-        void parseFiles();
-        void parseDirectories();
+        int restoreSession(Models::ArtworksRepository &artworksRepository);
 
     public:
-        const QStringList &getFilenames() const { return m_Filenames; }
-        const QStringList &getVectors() const { return m_Vectors; }
-        const QStringList &getFullDirectories() const { return m_FullDirectories; }
+        bool getIsEmergencyRestore() const { return m_EmergencyRestore; }
 
 #ifdef INTEGRATION_TESTS
-        int itemsCount() const;
+        int itemsCount() const { return m_LastSavedFilesCount; }
         void clearSession();
+    private:
+        int m_LastSavedFilesCount = 0;
 #endif
 
     private:
-        inline void setValue(const char *key, const QJsonValue &value) {
-            m_SessionJson.insert(QLatin1String(key), value);
-        }
-
-        inline QJsonValue value(const char *key, const QJsonValue &defaultValue = QJsonValue()) const {
-            QJsonValue value = m_SessionJson.value(QLatin1String(key));
-
-            if (value.isUndefined() || value.isNull()) {
-                return defaultValue;
-            }
-
-            return value;
-        }
-
-    private:
         Helpers::LocalConfig m_Config;
-        QJsonObject m_SessionJson;
         QMutex m_Mutex;
-        QStringList m_Filenames;
-        QStringList m_Vectors;
-        QStringList m_FullDirectories;
-        volatile bool m_CanRestore;
+        bool m_EmergencyRestore;
     };
 }
 

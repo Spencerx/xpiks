@@ -15,10 +15,11 @@ namespace Mocks {
         ArtItemsModelMock(): m_BlockUpdates(true) {}
 
     public:
-        virtual Models::ArtworkMetadata *createArtwork(const QString &filepath, qint64 directoryID) {
-            ArtworkMetadataMock *metadata = new ArtworkMetadataMock(filepath, directoryID);
-            metadata->initialize("Test title", "Test description", QStringList() << "keyword1" << "keyword2" << "keyword3");
-            return metadata;
+        virtual Models::ArtworkMetadata *createArtwork(const QString &filepath, qint64 directoryID) override {
+            ArtworkMetadataMock *artwork = new ArtworkMetadataMock(filepath, directoryID);
+            artwork->initialize("Test title", "Test description", QStringList() << "keyword1" << "keyword2" << "keyword3");
+            this->connectArtworkSignals(artwork);
+            return artwork;
         }
         void setUpdatesBlocked(bool value) { m_BlockUpdates = value; }
 

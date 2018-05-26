@@ -307,12 +307,16 @@ namespace SpellCheck {
     }
 
     QString SpellCheckerService::getDictsRoot() const {
-        QString resourcesPath = QCoreApplication::applicationDirPath();
+        QString resourcesPath;
+#ifdef INTEGRATION_TESTS
+        resourcesPath = STRINGIZE(DEPS_DIR);
+#else
+        resourcesPath = QCoreApplication::applicationDirPath();
 #if defined(Q_OS_MAC)
         resourcesPath += "/../Resources/";
-#elif defined(APPVEYOR)
-        resourcesPath += "/../../../xpiks-qt/deps/";
 #endif
+#endif
+
         resourcesPath += "/dict/";
 
         return QDir::cleanPath(resourcesPath);

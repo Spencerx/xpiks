@@ -1,11 +1,10 @@
 @echo off
+rem fake submodule (exists only for appveyor tests)
 
 cd ..\
-mkdir xpiks-deps
+
+git clone --depth=10 --branch=vs2015 https://bitbucket.org/ribtoks/xpiks-deps.git
+
 cd xpiks-deps
 
-git init
-git remote add origin https://bitbucket.org/ribtoks/xpiks-deps.git
-
-git fetch --depth=30 origin master
-git merge 76c80a64ff15d6f67cabf37e4120d1a0c19a5e31
+git checkout 8480212470b7c13b8e133bba09e9dd056c3f0042

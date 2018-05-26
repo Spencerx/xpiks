@@ -75,7 +75,6 @@ std::shared_ptr<Commands::ICommandResult> Commands::AddArtworksCommand::execute(
 
             if (artworksRepository->accountFile(filename, directoryID, directoryFlags)) {
                 Models::ArtworkMetadata *artwork = artItemsModel->createArtwork(filename, directoryID);
-                commandManager->connectArtworkSignals(artwork);
 
                 LOG_INTEGRATION_TESTS << "Added file:" << filename;
 

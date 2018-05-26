@@ -808,7 +808,6 @@ namespace Models {
     int FilteredArtItemsProxyModel::retrieveNumberOfSelectedItems() {
         return getSelectedOriginalIndices().size();
     }
-
 #endif
 
     MetadataIO::ArtworksSnapshot::Container FilteredArtItemsProxyModel::getSearchablePreviewOriginalItems(const QString &searchTerm,

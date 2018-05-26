@@ -52,16 +52,19 @@ namespace Common {
         }
 
         m_InMemoryExperiment = appArguments.contains("--in-memory", Qt::CaseInsensitive);
+        m_IsRecoveryMode = appArguments.contains("--recovery", Qt::CaseInsensitive);
 
         LOG_INFO << "Configs root is" << m_Root;
         LOG_INFO << "Extra files search locations:" << QStandardPaths::standardLocations(XPIKS_DATA_LOCATION_TYPE);
         LOG_INFO << "In-memory experiment:" << m_InMemoryExperiment;
+        LOG_INFO << "Recovery mode:" << m_IsRecoveryMode;
     }
 
     void SystemEnvironment::ensureSystemDirectoriesExist() {
         if (m_InMemoryExperiment) { return; }
         ensureDirExists(Constants::LOGS_DIR);
         ensureDirExists(Constants::STATES_DIR);
+        ensureDirExists(Constants::CRASHES_DIR);
     }
 
     QString SystemEnvironment::path(const QStringList &path) {

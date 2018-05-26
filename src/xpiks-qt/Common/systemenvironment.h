@@ -29,6 +29,7 @@ namespace Common {
         virtual QString path(const QStringList &path) override;
         virtual bool ensureDirExists(const QString &name) override;
         virtual bool getIsInMemoryOnly() const override { return m_InMemoryExperiment; }
+        virtual bool getIsRecoveryMode() const override { return m_IsRecoveryMode; }
 
 #ifdef INTEGRATION_TESTS
     protected:
@@ -39,6 +40,7 @@ namespace Common {
         QString m_Root;
         QString m_SessionTag;
         bool m_InMemoryExperiment = false;
+        bool m_IsRecoveryMode = false;
     };
 }
 

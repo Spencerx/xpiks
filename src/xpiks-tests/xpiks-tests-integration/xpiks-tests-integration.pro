@@ -113,7 +113,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/AutoComplete/autocompletemodel.cpp \
     ../../xpiks-qt/AutoComplete/autocompleteservice.cpp \
     ../../xpiks-qt/AutoComplete/autocompleteworker.cpp \
-    ../../xpiks-qt/AutoComplete/stocksftplistmodel.cpp \
+    ../../xpiks-qt/Microstocks/stocksftplistmodel.cpp \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.cpp \
     ../../xpiks-qt/Helpers/jsonhelper.cpp \
     ../../xpiks-qt/Helpers/localconfig.cpp \
@@ -245,7 +245,10 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Microstocks/microstockservice.cpp \
     ../../xpiks-qt/Storage/memorytable.cpp \
     integrationtestsenvironment.cpp \
-    integrationtestbase.cpp
+    integrationtestbase.cpp \
+    stockftpautocompletetest.cpp \
+    ../../xpiks-qt/xpiksapp.cpp \
+    xpikstestsapp.cpp
 
 RESOURCES +=
 
@@ -373,7 +376,7 @@ HEADERS += \
     ../../xpiks-qt/AutoComplete/autocompleteservice.h \
     ../../xpiks-qt/AutoComplete/autocompleteworker.h \
     ../../xpiks-qt/AutoComplete/completionquery.h \
-    ../../xpiks-qt/AutoComplete/stocksftplistmodel.h \
+    ../../xpiks-qt/Microstocks/stocksftplistmodel.h \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.h \
     ../../xpiks-qt/Helpers/jsonhelper.h \
     ../../xpiks-qt/Helpers/localconfig.h \
@@ -544,7 +547,11 @@ HEADERS += \
     ../../xpiks-qt/Encryption/isecretsstorage.h \
     ../../xpiks-qt/Encryption/secretpair.h \
     ../../xpiks-qt/Storage/memorytable.h \
-    integrationtestsenvironment.h
+    integrationtestsenvironment.h \
+    stockftpautocompletetest.h \
+    ../../xpiks-qt/xpiksapp.h \
+    xpikstestsapp.h \
+    ../../xpiks-qt/Microstocks/stockftpoptions.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface
@@ -552,6 +559,7 @@ INCLUDEPATH += ../../../vendors/ssdll/src/ssdll
 INCLUDEPATH += ../../../vendors/hunspell-repo/src
 INCLUDEPATH += ../../../vendors/libthmbnlr
 INCLUDEPATH += ../../../vendors/libxpks
+INCLUDEPATH += ../../../vendors/chillout/src/chillout
 INCLUDEPATH += ../../xpiks-qt
 
 CONFIG(debug, debug|release)  {
@@ -567,16 +575,12 @@ LIBS += -lface
 LIBS += -lssdll
 LIBS += -lthmbnlr
 LIBS += -lxpks
+LIBS += -lchillout
 
 include(../../xpiks-common/xpiks-common.pri)
 
 BUILDNO=$$system(git log -n 1 --pretty=format:"%h")
 BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
-
-win* {
-   QMAKE_CXXFLAGS_EXCEPTIONS_ON = /EHa
-   QMAKE_CXXFLAGS_STL_ON = /EHa
-}
 
 macx {
     INCLUDEPATH += "../../../vendors/quazip"
@@ -628,14 +632,8 @@ win32 {
         LIBS += -llibcurl
     }
 
-    # StackWalker stuff
+    # chillout dependencies
     LIBS += -lAdvapi32 -lDbgHelp
-    HEADERS += StackWalker.h \
-        windowscrashhandler.h
-    SOURCES += StackWalker.cpp \
-        windowscrashhandler.cpp
-    DEFINES += _UNICODE \
-               _MBCS
 }
 
 linux {

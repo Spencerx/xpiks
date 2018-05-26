@@ -86,7 +86,7 @@ SOURCES += main.cpp \
     AutoComplete/autocompleteworker.cpp \
     AutoComplete/autocompleteservice.cpp \
     Models/abstractconfigupdatermodel.cpp \
-    AutoComplete/stocksftplistmodel.cpp \
+    Microstocks/stocksftplistmodel.cpp \
     Models/imageartwork.cpp \
     Models/proxysettings.cpp \
     QMLExtensions/imagecachingworker.cpp \
@@ -193,7 +193,8 @@ SOURCES += main.cpp \
     Suggestion/fotoliasuggestionengine.cpp \
     Suggestion/gettysuggestionengine.cpp \
     Microstocks/microstockservice.cpp \
-    Storage/memorytable.cpp
+    Storage/memorytable.cpp \
+    xpiksapp.cpp
 
 RESOURCES += qml.qrc
 
@@ -314,7 +315,7 @@ HEADERS += \
     AutoComplete/completionquery.h \
     AutoComplete/autocompleteservice.h \
     Models/abstractconfigupdatermodel.h \
-    AutoComplete/stocksftplistmodel.h \
+    Microstocks/stocksftplistmodel.h \
     Models/imageartwork.h \
     Common/hold.h \
     Models/proxysettings.h \
@@ -466,7 +467,9 @@ HEADERS += \
     Encryption/secretpair.h \
     Encryption/isecretsstorage.h \
     Microstocks/apisecrets.h \
-    Storage/memorytable.h
+    Storage/memorytable.h \
+    xpiksapp.h \
+    Microstocks/stockftpoptions.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
@@ -617,6 +620,7 @@ INCLUDEPATH += ../../vendors/ssdll/src/ssdll
 INCLUDEPATH += ../../vendors/hunspell-repo/src
 INCLUDEPATH += ../../vendors/libthmbnlr
 INCLUDEPATH += ../../vendors/libxpks
+INCLUDEPATH += ../../vendors/chillout/src/chillout
 
 CONFIG(debug, debug|release)  {
     LIBS += -L"$$PWD/../../libs/debug"
@@ -632,6 +636,7 @@ LIBS += -lquazip
 LIBS += -lz
 LIBS += -lthmbnlr
 LIBS += -lxpks
+LIBS += -lchillout
 
 BUILDNO=$$system(git log -n 1 --pretty=format:"%h")
 BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
@@ -652,6 +657,11 @@ CONFIG(debug, debug|release)  {
 }
 
 macx {
+    QMAKE_TARGET_BUNDLE_PREFIX = com.xpiksapp
+    QMAKE_BUNDLE = Xpiks
+
+    LIBS += -ldl
+
     INCLUDEPATH += "../../vendors/quazip"
     INCLUDEPATH += "../../vendors/libcurl/include"
 
@@ -711,6 +721,8 @@ win32 {
     }
 
     LIBS += -lmman
+    # chillout deps
+    LIBS += -lAdvapi32 -lDbgHelp
 }
 
 linux {

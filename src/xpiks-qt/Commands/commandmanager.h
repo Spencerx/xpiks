@@ -137,12 +137,10 @@ namespace Maintenance {
 }
 
 namespace Commands {
-    class CommandManager : public QObject, public ICommandManager
+    class CommandManager : public ICommandManager
     {
-        Q_OBJECT
     public:
         CommandManager();
-        virtual ~CommandManager();
 
     public:
         void InjectDependency(Models::ArtworksRepository *artworkRepository);
@@ -192,43 +190,28 @@ namespace Commands {
         void InjectDependency(Storage::DatabaseManager *databaseManager);
         void InjectDependency(SpellCheck::DuplicatesReviewModel *duplicatesModel);
         void InjectDependency(MetadataIO::CsvExportModel *csvExportModel);
+        void InjectDependency(MainDelegator *delegator);
 
     private:
         int generateNextCommandID() { int id = m_LastCommandID++; return id; }
 
     public:
-        MainDelegator *getDelegator() { return &m_MainDelegator; }
-        const MainDelegator *getDelegator() const { return &m_MainDelegator; }
+        MainDelegator *getDelegator() { return m_MainDelegator; }
+        const MainDelegator *getDelegator() const { return m_MainDelegator; }
 
     public:
         virtual std::shared_ptr<Commands::ICommandResult> processCommand(const std::shared_ptr<ICommandBase> &command) override;
 
-    public:\
-        void connectEntitiesSignalsSlots() const;
-        virtual void connectArtworkSignals(Models::ArtworkMetadata *artwork) const;
-        void disconnectArtworkSignals(Models::ArtworkMetadata *metadata) const;
-
     public:
         void ensureDependenciesInjected();
-        void afterConstructionCallback();
-
-    private:
-        void afterInnerServicesInitialized();
-        void executeMaintenanceJobs();
-
-    public:
-        void beforeDestructionCallback() const;
 
 #ifdef INTEGRATION_TESTS
-        void cleanup();
+public:
+    void cleanup();
 #endif
-
-    private slots:
-        void servicesInitialized(int status);
 
     public:
         // methods for getters
-        Helpers::AsyncCoordinator &getInitCoordinator() { return m_InitCoordinator; }
         virtual Models::ArtworksRepository *getArtworksRepository() const { return m_ArtworksRepository; }
         virtual Models::ArtItemsModel *getArtItemsModel() const { return m_ArtItemsModel; }
         virtual Encryption::SecretsManager *getSecretsManager() const { return m_SecretsManager; }
@@ -278,9 +261,7 @@ namespace Commands {
 #endif
 
     private:
-        MainDelegator m_MainDelegator;
-        Helpers::AsyncCoordinator m_InitCoordinator;
-
+        MainDelegator *m_MainDelegator;
         Models::ArtworksRepository *m_ArtworksRepository;
         Models::ArtItemsModel *m_ArtItemsModel;
         Models::FilteredArtItemsProxyModel *m_FilteredItemsModel;
@@ -328,8 +309,6 @@ namespace Commands {
         SpellCheck::DuplicatesReviewModel *m_DuplicatesModel;
         MetadataIO::CsvExportModel *m_CsvExportModel;
 
-        volatile bool m_ServicesInitialized;
-        volatile bool m_AfterInitCalled;
         volatile int m_LastCommandID;
     };
 }

@@ -60,7 +60,8 @@ namespace Connectivity {
             MetadataAutoImport,
             GettySuggestionEnabled,
             UpdateEnabled,
-            KeywordsDragDropEnabled
+            KeywordsDragDropEnabled,
+            TelemetryEnabled
         };
 
     private:

@@ -42,7 +42,7 @@ Item {
     }
 
     Connections {
-        target: helpersWrapper
+        target: xpiksApp
         onGlobalBeforeDestruction: {
             console.debug("UI:UploadArtworks # globalBeforeDestruction")
             closePopup()
@@ -221,6 +221,8 @@ Item {
                     removeDisplaced: Transition {
                         NumberAnimation { properties: "x,y"; duration: 230 }
                     }
+
+                    onCurrentIndexChanged: { uploadInfos.setCurrentIndex(uploadHostsListView.currentIndex) }
 
                     delegate: Rectangle {
                         id: sourceWrapper
@@ -467,7 +469,6 @@ Item {
                                 var instance = component.createObject(directParent, options);
 
                                 instance.boxDestruction.connect(generalTab.onAutoCompleteClose)
-                                instance.itemSelected.connect(textField.acceptCompletion)
                                 generalTab.autoCompleteBox = instance
 
                                 ftpListAC.isActive = true
@@ -524,14 +525,6 @@ Item {
                                     onActiveFocusChanged: {
                                         if (!activeFocus) {
                                             ftpListAC.cancelCompletion()
-                                        }
-                                    }
-
-                                    function acceptCompletion(completionID) {
-                                        if (uploadHostsListView.currentItem) {
-                                            var completion = ftpListAC.getCompletion(completionID);
-                                            uploadHostsListView.currentItem.myData.edittitle = completion
-                                            uploadHostsListView.currentItem.myData.edithost = artworkUploader.getFtpAddress(completion)
                                         }
                                     }
 

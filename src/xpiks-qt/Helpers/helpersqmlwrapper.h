@@ -33,15 +33,12 @@ namespace Helpers {
     class HelpersQmlWrapper : public QObject, public Common::BaseEntity
     {
         Q_OBJECT
-        Q_PROPERTY(bool pluginsAvailable READ getPluginsAvailable CONSTANT)
-        Q_PROPERTY(bool isUpdateDownloaded READ getIsUpdateDownloaded NOTIFY updateDownloadedChanged)
     public:
         HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel *colorsModel);
 
     public:
         Q_INVOKABLE bool isKeywordValid(const QString &keyword) const;
         Q_INVOKABLE QString sanitizeKeyword(const QString &keyword) const;
-        Q_INVOKABLE void beforeDestruction();
         Q_INVOKABLE void revealLogFile();
         Q_INVOKABLE void reportOpen();
         Q_INVOKABLE void setProgressIndicator(QQuickWindow *window);
@@ -53,12 +50,7 @@ namespace Helpers {
         Q_INVOKABLE bool isVector(const QString &path) const;
         Q_INVOKABLE bool isVideo(const QString &path) const;
         Q_INVOKABLE QString toImagePath(const QString &path) const;
-        Q_INVOKABLE void setUpgradeConsent();
-        Q_INVOKABLE void upgradeNow();
         Q_INVOKABLE QString getAssetForTheme(const QString &assetName, int themeIndex) const;
-
-    public:
-        void requestCloseApplication() { emit globalCloseRequested(); }
 
     public:
         Q_INVOKABLE QObject *getLogsModel();
@@ -70,20 +62,10 @@ namespace Helpers {
         Q_INVOKABLE QObject *getUploadInfos();
         Q_INVOKABLE QObject *getSpellCheckSuggestionsModel();
 
-    public:
-        bool getPluginsAvailable() const;
-        bool getIsUpdateDownloaded() const { return m_IsUpdateDownloaded; }
-        bool getUpgradeConsent() const { return m_HaveUpgradeConsent; }
-
    private:
         void revealFile(const QString &path);
 
-    public slots:
-        void onUpdateDownloaded(QString pathToUpdate);
-
     signals:
-        void globalCloseRequested();
-        void globalBeforeDestruction();
         void updateAvailable(QString updateLink);
         void updateDownloaded();
         void updateDownloadedChanged(bool value);
@@ -95,9 +77,6 @@ namespace Helpers {
         bool m_WinTaskbarButtonApplicable;
 #endif
         Common::ISystemEnvironment &m_Environment;
-        bool m_IsUpdateDownloaded;
-        bool m_HaveUpgradeConsent;
-        QString m_PathToUpdate;
         QMLExtensions::ColorsModel *m_ColorsModel;
     };
 }

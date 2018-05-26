@@ -25,7 +25,8 @@
 namespace Maintenance {
     MaintenanceService::MaintenanceService(Common::ISystemEnvironment &environment):
         m_Environment(environment),
-        m_MaintenanceWorker(NULL)
+        m_MaintenanceWorker(NULL),
+        m_LastSessionBatchId(INVALID_BATCH_ID)
     {
     }
 
@@ -65,6 +66,20 @@ namespace Maintenance {
             LOG_WARNING << "MaintenanceWorker is NULL";
         }
     }
+
+#ifdef INTEGRATION_TESTS
+    bool MaintenanceService::hasPendingJobs() {
+        if (m_MaintenanceWorker != nullptr) {
+            return m_MaintenanceWorker->hasPendingJobs();
+        } else {
+            return false;
+        }
+    }
+
+    void MaintenanceService::cleanup() {
+        m_MaintenanceWorker->cancelBatch(m_LastSessionBatchId);
+    }
+#endif
 
     void MaintenanceService::cleanupUpdatesArtifacts() {
 #ifdef Q_OS_WIN
@@ -114,7 +129,7 @@ namespace Maintenance {
         LOG_DEBUG << "#";
 
         std::shared_ptr<IMaintenanceItem> jobItem(new SaveSessionJobItem(sessionSnapshot, sessionManager));
-        m_MaintenanceWorker->submitItem(jobItem);
+        m_LastSessionBatchId = m_MaintenanceWorker->submitItem(jobItem);
     }
 
     void MaintenanceService::cleanupOldXpksBackups(const QString &directory) {

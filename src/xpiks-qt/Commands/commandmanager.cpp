@@ -68,7 +68,6 @@
 #include "../MetadataIO/csvexportmodel.h"
 
 Commands::CommandManager::CommandManager():
-    QObject(),
     m_ArtworksRepository(NULL),
     m_ArtItemsModel(NULL),
     m_FilteredItemsModel(NULL),
@@ -115,20 +114,10 @@ Commands::CommandManager::CommandManager():
     m_DuplicatesModel(NULL),
     m_CsvExportModel(NULL),
     m_DatabaseManager(NULL),
-    m_ServicesInitialized(false),
-    m_AfterInitCalled(false),
+    m_MainDelegator(NULL),
     m_LastCommandID(0)
 {
-    m_MainDelegator.setCommandManager(this);
 
-    QObject::connect(&m_InitCoordinator, &Helpers::AsyncCoordinator::statusReported,
-                     this, &Commands::CommandManager::servicesInitialized);
-}
-
-Commands::CommandManager::~CommandManager() {
-#ifndef CORE_TESTS
-    m_LogsModel->stopLogging();
-#endif
 }
 
 void Commands::CommandManager::InjectDependency(Models::ArtworksRepository *artworkRepository) {
@@ -150,13 +139,13 @@ void Commands::CommandManager::InjectDependency(Models::FilteredArtItemsProxyMod
 void Commands::CommandManager::InjectDependency(Models::CombinedArtworksModel *combinedArtworksModel) {
     Q_ASSERT(combinedArtworksModel != NULL); m_CombinedArtworksModel = combinedArtworksModel;
     m_CombinedArtworksModel->setCommandManager(this);
-    m_MainDelegator.addAvailabilityListener(combinedArtworksModel);
+    m_MainDelegator->addAvailabilityListener(combinedArtworksModel);
 }
 
 void Commands::CommandManager::InjectDependency(Models::ArtworkUploader *artworkUploader) {
     Q_ASSERT(artworkUploader != NULL); m_ArtworkUploader = artworkUploader;
     m_ArtworkUploader->setCommandManager(this);
-    m_MainDelegator.addAvailabilityListener(m_ArtworkUploader);
+    m_MainDelegator->addAvailabilityListener(m_ArtworkUploader);
 }
 
 void Commands::CommandManager::InjectDependency(Models::UploadInfoRepository *uploadInfoRepository) {
@@ -182,7 +171,7 @@ void Commands::CommandManager::InjectDependency(UndoRedo::UndoRedoManager *undoR
 void Commands::CommandManager::InjectDependency(Models::ZipArchiver *zipArchiver) {
     Q_ASSERT(zipArchiver != NULL); m_ZipArchiver = zipArchiver;
     m_ZipArchiver->setCommandManager(this);
-    m_MainDelegator.addAvailabilityListener(zipArchiver);
+    m_MainDelegator->addAvailabilityListener(zipArchiver);
 }
 
 void Commands::CommandManager::InjectDependency(Suggestion::KeywordsSuggestor *keywordsSuggestor) {
@@ -350,6 +339,10 @@ void Commands::CommandManager::InjectDependency(MetadataIO::CsvExportModel *csvE
     m_CsvExportModel->setCommandManager(this);
 }
 
+void Commands::CommandManager::InjectDependency(MainDelegator *delegator) {
+    m_MainDelegator = delegator;
+}
+
 std::shared_ptr<Commands::ICommandResult> Commands::CommandManager::processCommand(const std::shared_ptr<ICommandBase> &command)
 {
     int id = generateNextCommandID();
@@ -358,210 +351,6 @@ std::shared_ptr<Commands::ICommandResult> Commands::CommandManager::processComma
 
     result->afterExecCallback(this);
     return result;
-}
-
-void Commands::CommandManager::connectEntitiesSignalsSlots() const {
-    if (m_SecretsManager != NULL && m_UploadInfoRepository != NULL) {
-        QObject::connect(m_SecretsManager, &Encryption::SecretsManager::beforeMasterPasswordChange,
-                         m_UploadInfoRepository, &Models::UploadInfoRepository::onBeforeMasterPasswordChanged);
-
-        QObject::connect(m_SecretsManager, &Encryption::SecretsManager::afterMasterPasswordReset,
-                         m_UploadInfoRepository, &Models::UploadInfoRepository::onAfterMasterPasswordReset);
-    }
-
-    if (m_ArtItemsModel != NULL && m_FilteredItemsModel != NULL) {
-        QObject::connect(m_ArtItemsModel, &Models::ArtItemsModel::selectedArtworksRemoved,
-                         m_FilteredItemsModel, &Models::FilteredArtItemsProxyModel::onSelectedArtworksRemoved);
-    }
-
-    if (m_SettingsModel != NULL && m_FilteredItemsModel != NULL) {
-        QObject::connect(m_SettingsModel, &Models::SettingsModel::settingsUpdated,
-                         m_FilteredItemsModel, &Models::FilteredArtItemsProxyModel::onSettingsUpdated);
-    }
-
-    if (m_SpellCheckerService != NULL && m_FilteredItemsModel != NULL) {
-        QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckerService::serviceAvailable,
-                         m_FilteredItemsModel, &Models::FilteredArtItemsProxyModel::onSpellCheckerAvailable);
-    }
-
-    if (m_ArtworksRepository != NULL && m_ArtItemsModel != NULL) {
-        QObject::connect(m_ArtworksRepository, &Models::ArtworksRepository::filesUnavailable,
-                         m_ArtItemsModel, &Models::ArtItemsModel::onFilesUnavailableHandler);
-    }
-
-    if (m_ArtItemsModel != NULL && m_UndoRedoManager != NULL) {
-        QObject::connect(m_UndoRedoManager, &UndoRedo::UndoRedoManager::undoStackEmpty,
-                         m_ArtItemsModel, &Models::ArtItemsModel::onUndoStackEmpty);
-    }
-
-    if (m_ArtworksRepository != NULL && m_UndoRedoManager != NULL) {
-        QObject::connect(m_UndoRedoManager, &UndoRedo::UndoRedoManager::undoStackEmpty,
-                         m_ArtworksRepository, &Models::ArtworksRepository::onUndoStackEmpty);
-    }
-
-#ifndef CORE_TESTS
-    if (m_SettingsModel != NULL && m_TelemetryService != NULL) {
-        QObject::connect(m_SettingsModel, &Models::SettingsModel::userStatisticsChanged,
-                         m_TelemetryService, &Connectivity::TelemetryService::changeReporting);
-    }
-
-    if (m_LanguagesModel != NULL && m_KeywordsSuggestor != NULL) {
-        QObject::connect(m_LanguagesModel, &Models::LanguagesModel::languageChanged,
-                         m_KeywordsSuggestor, &Suggestion::KeywordsSuggestor::onLanguageChanged);
-    }
-
-    if (m_HelpersQmlWrapper != NULL && m_UpdateService != NULL) {
-        QObject::connect(m_UpdateService, &Connectivity::UpdateService::updateAvailable,
-                         m_HelpersQmlWrapper, &Helpers::HelpersQmlWrapper::updateAvailable);
-
-        QObject::connect(m_UpdateService, &Connectivity::UpdateService::updateDownloaded,
-                         m_HelpersQmlWrapper, &Helpers::HelpersQmlWrapper::onUpdateDownloaded);
-    }
-
-    if (m_WarningsModel != NULL && m_WarningsService != NULL) {
-        QObject::connect(m_WarningsService, &Warnings::WarningsService::queueIsEmpty,
-                         m_WarningsModel, &Warnings::WarningsModel::onWarningsUpdateRequired);
-    }
-
-    if (m_SettingsModel != nullptr && m_MetadataIOCoordinator != nullptr) {
-        QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::recommendedExiftoolFound,
-                         m_SettingsModel, &Models::SettingsModel::onRecommendedExiftoolFound);
-    }
-
-    if (m_MetadataIOCoordinator != nullptr && m_ArtItemsModel != nullptr) {
-        QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
-                         m_ArtItemsModel, &Models::ArtItemsModel::modifiedArtworksCountChanged);
-
-        QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
-                         m_ArtItemsModel, &Models::ArtItemsModel::modifiedArtworksCountChanged);
-    }
-#endif
-
-    if (m_SpellCheckerService != NULL && m_ArtItemsModel != NULL) {
-        QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,
-                         m_ArtItemsModel, &Models::ArtItemsModel::userDictUpdateHandler);
-        QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictCleared,
-                         m_ArtItemsModel, &Models::ArtItemsModel::userDictClearedHandler);
-    }
-
-    if (m_SpellCheckerService != NULL && m_CombinedArtworksModel != NULL) {
-        QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,
-                         m_CombinedArtworksModel, &Models::CombinedArtworksModel::userDictUpdateHandler);
-        QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictCleared,
-                         m_CombinedArtworksModel, &Models::CombinedArtworksModel::userDictClearedHandler);
-    }
-
-    if (m_ArtItemsModel != NULL && m_ArtworkProxyModel != NULL) {
-        QObject::connect(m_ArtItemsModel, &Models::ArtItemsModel::fileWithIndexUnavailable,
-                         m_ArtworkProxyModel, &Models::ArtworkProxyModel::itemUnavailableHandler);
-    }
-
-    if (m_SpellCheckerService != NULL && m_ArtworkProxyModel != NULL) {
-        QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,
-                         m_ArtworkProxyModel, &Models::ArtworkProxyModel::userDictUpdateHandler);
-        QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictCleared,
-                         m_ArtworkProxyModel, &Models::ArtworkProxyModel::userDictClearedHandler);
-    }
-
-    if (m_WarningsModel != NULL && m_ArtworkProxyModel != NULL) {
-        QObject::connect(m_ArtworkProxyModel, &Models::ArtworkProxyModel::warningsCouldHaveChanged,
-                         m_WarningsModel, &Warnings::WarningsModel::onWarningsCouldHaveChanged);
-    }
-
-    if (m_DuplicatesModel != NULL && m_ArtworkProxyModel != NULL) {
-        QObject::connect(m_ArtworkProxyModel, &Models::ArtworkProxyModel::duplicatesCouldHaveChanged,
-                         m_DuplicatesModel, &SpellCheck::DuplicatesReviewModel::onDuplicatesCouldHaveChanged);
-    }
-
-    if (m_SpellCheckerService != NULL && m_QuickBuffer != NULL) {
-        QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,
-                         m_QuickBuffer, &QuickBuffer::QuickBuffer::userDictUpdateHandler);
-        QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictCleared,
-                         m_QuickBuffer, &QuickBuffer::QuickBuffer::userDictClearedHandler);
-    }
-
-#ifdef WITH_PLUGINS
-    if (m_PluginManager != NULL && m_UIManager != NULL) {
-        QObject::connect(m_UIManager, &Models::UIManager::currentEditableChanged,
-                         m_PluginManager, &Plugins::PluginManager::onCurrentEditableChanged);
-    }
-
-    if (m_PluginManager != NULL && m_UndoRedoManager) {
-        QObject::connect(m_UndoRedoManager, &UndoRedo::UndoRedoManager::actionUndone,
-                         m_PluginManager, &Plugins::PluginManager::onLastActionUndone);
-    }
-
-    if (m_PluginManager != NULL && m_PresetsModel != NULL) {
-        QObject::connect(m_PresetsModel, &KeywordsPresets::PresetKeywordsModel::presetsUpdated,
-                         m_PluginManager, &Plugins::PluginManager::onPresetsUpdated);
-    }
-#endif
-}
-
-/*virtual*/
-void Commands::CommandManager::connectArtworkSignals(Models::ArtworkMetadata *artwork) const {
-#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
-    if (m_ArtItemsModel)
-#else
-    Q_ASSERT(m_ArtItemsModel != nullptr);
-#endif
-    {
-        LOG_INTEGRATION_TESTS << "Connecting to ArtItemsModel...";
-
-        QObject::connect(artwork, &Models::ArtworkMetadata::modifiedChanged,
-                         m_ArtItemsModel, &Models::ArtItemsModel::itemModifiedChanged);
-
-        QObject::connect(artwork, &Models::ArtworkMetadata::backupRequired,
-                         m_ArtItemsModel, &Models::ArtItemsModel::onArtworkBackupRequested);
-
-        QObject::connect(artwork, &Models::ArtworkMetadata::editingPaused,
-                         m_ArtItemsModel, &Models::ArtItemsModel::onArtworkEditingPaused);
-
-        QObject::connect(artwork, &Models::ArtworkMetadata::spellingInfoUpdated,
-                         m_ArtItemsModel, &Models::ArtItemsModel::onArtworkSpellingInfoUpdated);
-    }
-
-#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
-    if (m_FilteredItemsModel)
-#else
-    Q_ASSERT(m_FilteredItemsModel != nullptr);
-#endif
-    {
-        LOG_INTEGRATION_TESTS << "Connecting to FilteredItemsModel...";
-
-        QObject::connect(artwork, &Models::ArtworkMetadata::selectedChanged,
-                         m_FilteredItemsModel, &Models::FilteredArtItemsProxyModel::itemSelectedChanged);
-    }
-}
-
-void Commands::CommandManager::disconnectArtworkSignals(Models::ArtworkMetadata *metadata) const {
-    bool disconnectStatus = false;
-
-#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
-    if (m_ArtItemsModel)
-#else
-    Q_ASSERT(m_ArtItemsModel != nullptr);
-#endif
-    {
-        LOG_INTEGRATION_TESTS << "Disconnecting from ArtItemsModel...";
-        disconnectStatus = QObject::disconnect(metadata, 0, m_ArtItemsModel, 0);
-        if (disconnectStatus == false) { LOG_WARNING << "Disconnect Artwork from ArtItemsModel returned false"; }
-        disconnectStatus = QObject::disconnect(m_ArtItemsModel, 0, metadata, 0);
-        if (disconnectStatus == false) { LOG_WARNING << "Disconnect ArtItemsModel from Artwork returned false"; }
-    }
-
-#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
-    if (m_FilteredItemsModel)
-#else
-    Q_ASSERT(m_FilteredItemsModel != nullptr);
-#endif
-    {
-        LOG_INTEGRATION_TESTS << "Disconnecting from FilteredItemsModel...";
-        disconnectStatus = QObject::disconnect(metadata, 0, m_FilteredItemsModel, 0);
-        if (disconnectStatus == false) { LOG_WARNING << "Disconnect Artwork from FilteredModel returned false"; }
-        disconnectStatus = QObject::disconnect(m_FilteredItemsModel, 0, metadata, 0);
-        if (disconnectStatus == false) { LOG_WARNING << "Disconnect FilteredModel from Artwork returned false"; }
-    }
 }
 
 void Commands::CommandManager::ensureDependenciesInjected() {
@@ -622,166 +411,13 @@ void Commands::CommandManager::ensureDependenciesInjected() {
 #endif
 }
 
-void Commands::CommandManager::afterConstructionCallback() {
-    if (m_AfterInitCalled) {
-        LOG_WARNING << "Attempt to call afterConstructionCallback() second time";
-        return;
-    }
-
-#ifndef CORE_TESTS
-    m_RequestsService->startService();
-#endif
-
-#if !defined(CORE_TESTS)
-    m_SwitcherModel->initialize();
-    m_SwitcherModel->updateConfigs();
-#endif
-
-    const int waitSeconds = 5;
-    Helpers::AsyncCoordinatorStarter deferredStarter(&m_InitCoordinator, waitSeconds);
-    Q_UNUSED(deferredStarter);
-
-    m_AfterInitCalled = true;
-    std::shared_ptr<Common::ServiceStartParams> emptyParams;
-    std::shared_ptr<Common::ServiceStartParams> coordinatorParams(
-                new Helpers::AsyncCoordinatorStartParams(&m_InitCoordinator));
-
-#ifndef CORE_TESTS
-    bool dbInitialized = m_DatabaseManager->initialize();
-    Q_ASSERT(dbInitialized);
-    if (!dbInitialized) {
-        LOG_WARNING << "Failed to initialize the DB. Xpiks will crash soon";
-    }
-
-    m_MaintenanceService->startService();
-    m_ImageCachingService->startService(coordinatorParams);
-    m_VideoCachingService->startService();
-    m_MetadataIOService->startService();
-#endif
-    m_SpellCheckerService->startService(coordinatorParams);
-    m_WarningsService->startService(emptyParams);
-    m_AutoCompleteService->startService(coordinatorParams);
-    m_TranslationService->startService(coordinatorParams);
-
-    QCoreApplication::processEvents();
-
-#ifndef CORE_TESTS
-    const QString reportingEndpoint =
-        QLatin1String(
-            "cc39a47f60e1ed812e2403b33678dd1c529f1cc43f66494998ec478a4d13496269a3dfa01f882941766dba246c76b12b2a0308e20afd84371c41cf513260f8eb8b71f8c472cafb1abf712c071938ec0791bbf769ab9625c3b64827f511fa3fbb");
-    QString endpoint = Encryption::decodeText(reportingEndpoint, "reporting");
-    m_TelemetryService->setEndpoint(endpoint);
-
-    m_TelemetryService->startReporting();
-    m_ArtworkUploader->initializeStocksList(&m_InitCoordinator);
-    m_WarningsService->initWarningsSettings();
-    m_TranslationManager->initializeDictionaries();
-    m_UploadInfoRepository->initializeConfig();
-    m_PresetsModel->initializePresets();
-    m_CsvExportModel->initializeExportPlans(&m_InitCoordinator);
-    m_KeywordsSuggestor->initSuggestionEngines();
-    m_UpdateService->initialize();
-#endif
-
-    m_MainDelegator.readSession();
-}
-
-void Commands::CommandManager::afterInnerServicesInitialized() {
-    LOG_DEBUG << "#";
-
-#ifndef CORE_TESTS
-#ifdef WITH_PLUGINS
-    m_PluginManager->loadPlugins();
-#endif
-#endif
-
-    int newFilesAdded = m_MainDelegator.restoreReadSession();
-    if (newFilesAdded > 0) {
-        // immediately save restored session - to beat race between
-        // saving session from Add Command and restoring FULL_DIR flag
-        m_MainDelegator.saveSessionInBackground();
-    }
-
-#if !defined(CORE_TESTS) && !defined(INTEGRATION_TESTS)
-    m_SwitcherModel->afterInitializedCallback();
-#endif
-
-#ifndef CORE_TESTS
-    m_UpdateService->startChecking();
-#endif
-
-    executeMaintenanceJobs();
-}
-
-void Commands::CommandManager::executeMaintenanceJobs() {
-#if !defined(CORE_TESTS)
-    // integration test just don't have old ones
-    m_MetadataIOCoordinator->autoDiscoverExiftool();
-
-#if !defined(INTEGRATION_TESTS)
-    m_MaintenanceService->moveSettings(m_SettingsModel);
-#ifdef QT_DEBUG
-    m_MaintenanceService->upgradeImagesCache(m_ImageCachingService);
-#endif
-
-    m_MaintenanceService->cleanupLogs();
-    m_MaintenanceService->cleanupUpdatesArtifacts();
-#endif
-
-#endif
-}
-
-void Commands::CommandManager::beforeDestructionCallback() const {
-    LOG_DEBUG << "Shutting down...";
-    if (!m_AfterInitCalled) {
-        return;
-    }
-
-#ifndef CORE_TESTS
-    #ifdef WITH_PLUGINS
-
-    m_PluginManager->unloadPlugins();
-
-    #endif
-#endif
-
-    m_MainDelegator.clearCurrentItem();
-
-    m_ArtworksRepository->stopListeningToUnavailableFiles();
-
-    m_ArtItemsModel->disconnect();
-    m_ArtItemsModel->deleteAllItems();
-    m_FilteredItemsModel->disconnect();
-
-#ifndef CORE_TESTS
-    m_ImageCachingService->stopService();
-    m_VideoCachingService->stopService();
-    m_UpdateService->stopChecking();
-    m_MetadataIOService->stopService();
-#endif
-    m_SpellCheckerService->stopService();
-    m_WarningsService->stopService();
-    m_AutoCompleteService->stopService();
-    m_TranslationService->stopService();
-
-    m_SettingsModel->syncronizeSettings();
-
-#ifndef CORE_TESTS
-    m_MaintenanceService->stopService();
-    m_DatabaseManager->prepareToFinalize();
-
-    // we have a second for important? stuff
-    m_TelemetryService->reportAction(Connectivity::UserAction::Close);
-    m_TelemetryService->stopReporting();
-    m_RequestsService->stopService();
-#endif
-}
 
 #ifdef INTEGRATION_TESTS
 void Commands::CommandManager::cleanup() {
     LOG_INTEGRATION_TESTS << "#";
     m_SpellCheckerService->cancelCurrentBatch();
     m_WarningsService->cancelCurrentBatch();
+    m_MaintenanceService->cleanup();
     m_ArtworksUpdateHub->clear();
     m_AutoCompleteModel->clear();
 
@@ -798,19 +434,3 @@ void Commands::CommandManager::cleanup() {
     m_MetadataIOCoordinator->clear();
 }
 #endif
-
-void Commands::CommandManager::servicesInitialized(int status) {
-    LOG_DEBUG << "#";
-    Q_ASSERT(m_ServicesInitialized == false);
-
-    Helpers::AsyncCoordinator::CoordinationStatus coordStatus = (Helpers::AsyncCoordinator::CoordinationStatus)status;
-
-    if (m_ServicesInitialized == false) {
-        m_ServicesInitialized = true;
-
-        if (coordStatus == Helpers::AsyncCoordinator::AllDone ||
-                coordStatus == Helpers::AsyncCoordinator::Timeout) {
-            this->afterInnerServicesInitialized();
-        }
-    }
-}

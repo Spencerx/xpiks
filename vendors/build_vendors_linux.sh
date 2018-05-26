@@ -65,6 +65,14 @@ make lib-face ${MAKE_FLAGS}
 cp libface.a ${ROOT_DIR}/libs/${TARGET}
 echo -e "${PRINT_PREFIX} Building cpp-libface... - done."
 
+### chillout
+echo -e "${PRINT_PREFIX} Building chillout..."
+cd ${ROOT_DIR}/vendors/chillout/src/chillout
+qmake "CONFIG+=${TARGET}" chillout.pro
+make ${MAKE_FLAGS}
+cp libchillout.a ${ROOT_DIR}/libs/${TARGET}
+echo -e "${PRINT_PREFIX} Building chillout... - done."
+
 ### ssdll
 echo -e "${PRINT_PREFIX} Building ssdll..."
 cd ${ROOT_DIR}/vendors/ssdll/src/ssdll/
