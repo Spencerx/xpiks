@@ -308,9 +308,11 @@ namespace Models {
         }
 
         Encryption::SecretsManager *secretsManager = m_CommandManager->getSecretsManager();
-        Models::UploadInfoRepository *uploadInfoRepository = m_CommandManager->getUploadInfoRepository();
         secretsManager->setMasterPasswordHash(getMasterPasswordHash());
+#ifndef CORE_TESTS
+        Models::UploadInfoRepository *uploadInfoRepository = m_CommandManager->getUploadInfoRepository();
         uploadInfoRepository->initFromString(getLegacyUploadHosts());
+#endif
     }
 
     ProxySettings *SettingsModel::retrieveProxySettings() {

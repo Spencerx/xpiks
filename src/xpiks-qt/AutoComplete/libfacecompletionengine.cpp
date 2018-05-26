@@ -38,18 +38,15 @@ namespace AutoComplete {
         QString resourcesPath;
         QString wordlistPath;
 
+
+#if defined(INTEGRATION_TESTS)
+        resourcesPath = STRINGIZE(DEPS_DIR);
+#else
         resourcesPath = QCoreApplication::applicationDirPath();
 
-#if defined(Q_OS_MAC)
-    #if defined(INTEGRATION_TESTS)
-        resourcesPath += "/../../../xpiks-qt/deps/";
-    #else
+    #if defined(Q_OS_MAC)
         resourcesPath += "/../Resources/";
     #endif
-#elif defined(APPVEYOR)
-        resourcesPath += "/../../../xpiks-qt/deps/";
-#elif defined(TRAVIS_CI)
-        resourcesPath += "/../../xpiks-qt/deps/";
 #endif
         resourcesPath += "/ac_sources/";
 

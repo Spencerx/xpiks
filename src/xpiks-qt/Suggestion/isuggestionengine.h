@@ -23,6 +23,8 @@ namespace Suggestion {
         virtual QString getName() const = 0;
         virtual int getID() const = 0;
         virtual int getMaxResultsPerPage() const = 0;
+        virtual bool getIsEnabled() const = 0;
+        virtual void setIsEnabled(bool value) = 0;
         virtual void submitQuery(const Microstocks::SearchQuery &query) = 0;
         virtual void cancelQuery() = 0;
     };

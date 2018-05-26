@@ -14,6 +14,8 @@
 #include <QObject>
 #include <QString>
 #include "analyticsuserevent.h"
+#include "../Models/switchermodel.h"
+#include "../Models/settingsmodel.h"
 
 namespace Connectivity {
     class TelemetryWorker;
@@ -21,14 +23,20 @@ namespace Connectivity {
     class TelemetryService : public QObject {
         Q_OBJECT
     public:
-        TelemetryService(const QString &userId, bool telemetryEnabled, QObject *parent=NULL);
+        TelemetryService(Models::SwitcherModel &switcher,
+                         Models::SettingsModel &settingsModel,
+                         QObject *parent=NULL);
 
     public:
+        void initialize();
         void startReporting();
         void stopReporting(bool immediately=true);
 
     private:
+        void ensureUserIdExists();
         void doStartReporting();
+        bool getIsTelemetryEnabled();
+        void doReportAction(UserAction action);
 
     public:
         void reportAction(UserAction action);
@@ -46,11 +54,11 @@ namespace Connectivity {
 
     private:
         TelemetryWorker *m_TelemetryWorker;
+        Models::SwitcherModel &m_Switcher;
+        Models::SettingsModel &m_SettingsModel;
         QString m_ReportingEndpoint;
         QString m_UserAgentId;
         QString m_InterfaceLanguage;
-        volatile bool m_TelemetryEnabled;
-        volatile bool m_RestartRequired;
     };
 }
 

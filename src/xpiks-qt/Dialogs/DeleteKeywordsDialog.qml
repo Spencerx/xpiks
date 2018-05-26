@@ -43,7 +43,7 @@ Item {
     }
 
     Connections {
-        target: helpersWrapper
+        target: xpiksApp
         onGlobalBeforeDestruction: {
             console.debug("UI:DeleteKeywordsDialog # global
 CloseRequested")

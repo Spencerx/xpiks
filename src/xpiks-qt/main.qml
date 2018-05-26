@@ -63,7 +63,7 @@ ApplicationWindow {
 
     function shutdownEverything() {
         applicationWindow.visibility = "Minimized"
-        helpersWrapper.beforeDestruction();
+        xpiksApp.shutdown();
         saveAppGeometry()
         closingTimer.start()
     }
@@ -251,10 +251,9 @@ ApplicationWindow {
     Action {
         id: upgradeAction
         text: i18.n + qsTr("&Upgrade Now!")
-        enabled: helpersWrapper.isUpdateDownloaded && (applicationWindow.openedDialogsCount == 0)
+        enabled: xpiksApp.isUpdateDownloaded && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
-            helpersWrapper.setUpgradeConsent()
-            closeHandler({accepted: false})
+            xpiksApp.upgradeNow()
         }
     }
 
@@ -581,7 +580,7 @@ ApplicationWindow {
 
             MenuItem {
                 action: upgradeAction
-                visible: helpersWrapper.isUpdateDownloaded
+                visible: xpiksApp.isUpdateDownloaded
             }
 
             MenuItem { action: openSettingsAction }
@@ -692,8 +691,8 @@ ApplicationWindow {
             Menu {
                 title: i18.n + qsTr("&Plugins")
                 id: pluginsMenu
-                enabled: helpersWrapper.pluginsAvailable
-                visible: helpersWrapper.pluginsAvailable
+                enabled: xpiksApp.pluginsAvailable
+                visible: xpiksApp.pluginsAvailable
 
                 Instantiator {
                     model: pluginsWithActions
@@ -947,6 +946,11 @@ ApplicationWindow {
                                             callbackObject: callbackObject
                                         });
                 }
+            }
+
+            MenuItem {
+                text: "Crash"
+                onTriggered: xpiksApp.debugCrash()
             }
         }
     }
@@ -1256,6 +1260,10 @@ ApplicationWindow {
                 upgradeTimer.start()
             }
         }
+    }
+
+    Connections {
+        target: xpiksApp
 
         onUpgradeInitiated: {
             console.debug("UI:onUpgradeInitiated handler")

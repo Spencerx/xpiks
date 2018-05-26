@@ -40,6 +40,8 @@ namespace Suggestion {
         virtual QString getName() const override { return tr("Local files"); }
         virtual int getID() const override { return m_EngineID; }
         virtual int getMaxResultsPerPage() const override { return 200; }
+        virtual bool getIsEnabled() const override { return m_IsEnabled; }
+        virtual void setIsEnabled(bool value) { m_IsEnabled = value; }
 
     public:
         virtual void submitQuery(const Microstocks::SearchQuery &query) override;
@@ -56,6 +58,7 @@ namespace Suggestion {
         LocalLibraryQuery m_Query;
         MetadataIO::MetadataIOService *m_MetadataIOService;
         std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
+        bool m_IsEnabled;
     };
 }
 

@@ -65,9 +65,11 @@ namespace Models {
         } else
 #endif
         {
+#ifndef CORE_TESTS
             Q_ASSERT(m_CommandManager != NULL);
             Connectivity::RequestsService *requestsService = m_CommandManager->getRequestsService();
             requestsService->receiveConfig(&m_RemoteConfig);
+#endif
         }
     }
 

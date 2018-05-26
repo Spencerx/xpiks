@@ -196,18 +196,10 @@ namespace Commands {
         void saveArtworksBackups(const MetadataIO::WeakArtworksSnapshot &artworks) const;
         void reportUserAction(Connectivity::UserAction userAction) const;
 
-        void readSession();
-        int restoreReadSession();
         int restoreFiles(const QStringList &filenames, const QStringList &vectors);
 
     public:
-#ifdef INTEGRATION_TESTS
-        int restoreSessionForTest();
-#endif
         void saveSessionInBackground();
-
-    public:
-        void requestCloseApplication() const;
 
     public:
         void restartSpellChecking();

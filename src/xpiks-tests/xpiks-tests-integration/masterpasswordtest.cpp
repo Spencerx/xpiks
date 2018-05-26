@@ -30,7 +30,7 @@ int MasterPasswordTest::doTest() {
     const QString masterPassword = "brand new mp";
 
     Models::UploadInfoRepository *uploadRepo = m_CommandManager->getUploadInfoRepository();
-    auto &uploadInfos = uploadRepo->getUploadInfos();
+    auto &uploadInfos = uploadRepo->accessUploadInfos();
 
     QString pswd1 = uploadRepo->data(uploadRepo->index(0), Models::UploadInfoRepository::PasswordRole).toString();
     QString pswd2 = uploadRepo->data(uploadRepo->index(1), Models::UploadInfoRepository::PasswordRole).toString();

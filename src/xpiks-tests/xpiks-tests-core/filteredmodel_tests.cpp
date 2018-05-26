@@ -3,7 +3,6 @@
 #include "Mocks/commandmanagermock.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
 #include "../../xpiks-qt/Models/artworksrepository.h"
-#include "../../xpiks-qt/Models/artworkuploader.h"
 #include "../../xpiks-qt/Models/ziparchiver.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
 #include "Mocks/coretestsenvironment.h"
@@ -107,35 +106,69 @@ void FilteredModelTests::invertSelectionForOddCountTest(){
 void FilteredModelTests::removeMetadataMarksAsModifiedTest() {
     DECLARE_MODELS_AND_GENERATE(1);
 
-    auto *metadata = artItemsModelMock.getMockArtwork(0);
+    auto *artwork = artItemsModelMock.getMockArtwork(0);
 
-    QVERIFY(!metadata->isModified());
+    QVERIFY(!artwork->isModified());
 
-    metadata->set("title", "description", QStringList() << "keyword1" << "keyword2");
-    metadata->setIsSelected(true);
+    artwork->set("title", "description", QStringList() << "keyword1" << "keyword2");
+    artwork->setIsSelected(true);
     filteredItemsModel.removeMetadataInSelected();
 
-    QVERIFY(metadata->isModified());
+    QVERIFY(artwork->isModified());
 }
 
 void FilteredModelTests::removeMetadataDeletesMetadataTest() {
     DECLARE_MODELS_AND_GENERATE(10);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
-        metadata->set("title", "description", QStringList() << "keyword1" << "keyword2");
-        metadata->setIsSelected(true);
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
+        artwork->set("title", "description", QStringList() << "keyword1" << "keyword2");
+        artwork->setIsSelected(true);
     }
 
     filteredItemsModel.removeMetadataInSelected();
 
     for (int i = 0; i < 10; ++i) {
-        Mocks::ArtworkMetadataMock *metadata = artItemsModelMock.getMockArtwork(i);
-        QVERIFY(metadata->isDescriptionEmpty());
-        QVERIFY(metadata->isTitleEmpty());
-        QVERIFY(metadata->areKeywordsEmpty());
-        QVERIFY(metadata->isModified());
+        Mocks::ArtworkMetadataMock *artwork = artItemsModelMock.getMockArtwork(i);
+        QVERIFY(artwork->isDescriptionEmpty());
+        QVERIFY(artwork->isTitleEmpty());
+        QVERIFY(artwork->areKeywordsEmpty());
+        QVERIFY(artwork->isModified());
     }
+}
+
+void FilteredModelTests::selectedCountAddTest() {
+    DECLARE_MODELS_AND_GENERATE(10);
+    QObject::connect(&artItemsModelMock, &Models::ArtItemsModel::artworkSelectedChanged,
+                     &filteredItemsModel, &Models::FilteredArtItemsProxyModel::itemSelectedChanged);
+
+    QCOMPARE(filteredItemsModel.getSelectedArtworksCount(), 0);
+
+    for (int i = 0; i < 10; i += 2) {
+        Mocks::ArtworkMetadataMock *artwork = artItemsModelMock.getMockArtwork(i);
+        artwork->setIsSelected(true);
+    }
+
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    QCOMPARE(filteredItemsModel.getSelectedArtworksCount(), 5);
+}
+
+void FilteredModelTests::selectedCountSubtractTest() {
+    DECLARE_MODELS_AND_GENERATE(10);
+    QObject::connect(&artItemsModelMock, &Models::ArtItemsModel::artworkSelectedChanged,
+                     &filteredItemsModel, &Models::FilteredArtItemsProxyModel::itemSelectedChanged);
+
+    QCOMPARE(filteredItemsModel.getSelectedArtworksCount(), 0);
+
+    filteredItemsModel.selectFilteredArtworks();
+
+    for (int i = 0; i < 10; i += 2) {
+        Mocks::ArtworkMetadataMock *artwork = artItemsModelMock.getMockArtwork(i);
+        artwork->setIsSelected(false);
+    }
+
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    QCOMPARE(filteredItemsModel.getSelectedArtworksCount(), 5);
 }
 
 void FilteredModelTests::findSelectedIndexTest() {
@@ -152,33 +185,33 @@ void FilteredModelTests::findSelectedIndexTest() {
 void FilteredModelTests::clearKeywordsTest() {
     DECLARE_MODELS_AND_GENERATE(1);
 
-    Mocks::ArtworkMetadataMock *metadata = artItemsModelMock.getMockArtwork(0);
-    metadata->set("title", "description", QStringList() << "keyword1" << "keyword2");
+    Mocks::ArtworkMetadataMock *artwork = artItemsModelMock.getMockArtwork(0);
+    artwork->set("title", "description", QStringList() << "keyword1" << "keyword2");
 
     filteredItemsModel.clearKeywords(0);
 
-    QVERIFY(!metadata->isDescriptionEmpty());
-    QVERIFY(!metadata->isTitleEmpty());
-    QVERIFY(metadata->areKeywordsEmpty());
-    QVERIFY(metadata->isModified());
+    QVERIFY(!artwork->isDescriptionEmpty());
+    QVERIFY(!artwork->isTitleEmpty());
+    QVERIFY(artwork->areKeywordsEmpty());
+    QVERIFY(artwork->isModified());
 }
 
 void FilteredModelTests::detachVectorFromSelectedTest() {
     DECLARE_MODELS_AND_GENERATE(10);
 
     for (int i = 0; i < 10; ++i) {
-        Mocks::ArtworkMetadataMock *metadata = artItemsModelMock.getMockArtwork(i);
-        metadata->set("title", "description", QStringList() << "keyword1" << "keyword2");
-        metadata->attachVector(QString(metadata->getFilepath()).replace(".jpg", ".eps"));
-        metadata->setIsSelected(true);
+        Mocks::ArtworkMetadataMock *artwork = artItemsModelMock.getMockArtwork(i);
+        artwork->set("title", "description", QStringList() << "keyword1" << "keyword2");
+        artwork->attachVector(QString(artwork->getFilepath()).replace(".jpg", ".eps"));
+        artwork->setIsSelected(true);
     }
 
     filteredItemsModel.detachVectorFromSelected();
 
     for (int i = 0; i < 10; ++i) {
-        Mocks::ArtworkMetadataMock *metadata = artItemsModelMock.getMockArtwork(i);
-        QVERIFY(!metadata->isModified());
-        QVERIFY(!metadata->hasVectorAttached());
+        Mocks::ArtworkMetadataMock *artwork = artItemsModelMock.getMockArtwork(i);
+        QVERIFY(!artwork->isModified());
+        QVERIFY(!artwork->hasVectorAttached());
     }
 }
 
@@ -188,12 +221,12 @@ void FilteredModelTests::setSelectedForZippingTest() {
     commandManagerMock.InjectDependency(&zipArchiver);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
-        metadata->set("title", "description", QStringList() << "keyword1" << "keyword2");
-        metadata->attachVector("/path/to/random/vector.eps");
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
+        artwork->set("title", "description", QStringList() << "keyword1" << "keyword2");
+        artwork->attachVector("/path/to/random/vector.eps");
 
         if (i % 2) {
-            metadata->setIsSelected(true);
+            artwork->setIsSelected(true);
         }
     }
 
@@ -207,11 +240,11 @@ void FilteredModelTests::filterModifiedItemsTest() {
     DECLARE_MODELS_AND_GENERATE(10);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
-        metadata->set("title", "description", QStringList() << "keyword1" << "keyword2");
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
+        artwork->set("title", "description", QStringList() << "keyword1" << "keyword2");
 
         if (i % 2) {
-            metadata->setModified();
+            artwork->setModified();
         }
     }
 
@@ -223,12 +256,12 @@ void FilteredModelTests::filterEmptyItemsTest() {
     DECLARE_MODELS_AND_GENERATE(10);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
 
         if (i % 2) {
-            metadata->set("title", "description", QStringList() << "keyword1" << "keyword2");
+            artwork->set("title", "description", QStringList() << "keyword1" << "keyword2");
         } else {
-            metadata->set("", "", QStringList());
+            artwork->set("", "", QStringList());
         }
     }
 
@@ -241,15 +274,15 @@ void FilteredModelTests::filterKeywordsUsingAndTest() {
     settingsModel.setSearchUsingAnd(true);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
 
         if (i % 2 == 0) {
-            metadata->set("title", "description", QStringList() << "keyword1" << "keyword2" << "mess2");
+            artwork->set("title", "description", QStringList() << "keyword1" << "keyword2" << "mess2");
             if (i % 4 == 0) {
-                metadata->setModified();
+                artwork->setModified();
             }
         } else {
-            metadata->set("", "", QStringList());
+            artwork->set("", "", QStringList());
         }
     }
 
@@ -264,12 +297,12 @@ void FilteredModelTests::filterKeywordsUsingOrTest() {
     DECLARE_MODELS_AND_GENERATE(10);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
 
         if (i % 2 == 0) {
-            metadata->set("title", "description", QStringList() << "keyword1" << "mess1");
+            artwork->set("title", "description", QStringList() << "keyword1" << "mess1");
         } else {
-            metadata->set("title", "description", QStringList() << "keyword2" << "mess2");
+            artwork->set("title", "description", QStringList() << "keyword2" << "mess2");
         }
     }
 
@@ -284,12 +317,12 @@ void FilteredModelTests::filterStrictKeywordTest() {
     DECLARE_MODELS_AND_GENERATE(10);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
 
         if (i % 2 == 0) {
-            metadata->set("title", "description", QStringList() << "keyword1" << "mess1");
+            artwork->set("title", "description", QStringList() << "keyword1" << "mess1");
         } else {
-            metadata->set("title", "description", QStringList() << "keyword2" << "mess2");
+            artwork->set("title", "description", QStringList() << "keyword2" << "mess2");
         }
     }
 
@@ -308,12 +341,12 @@ void FilteredModelTests::filterDescriptionTest() {
     DECLARE_MODELS_AND_GENERATE(10);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
 
         if (i % 2) {
-            metadata->set("title", "description", QStringList() << "keyword1" << "keyword2");
+            artwork->set("title", "description", QStringList() << "keyword1" << "keyword2");
         } else {
-            metadata->set("", "", QStringList());
+            artwork->set("", "", QStringList());
         }
     }
 
@@ -335,12 +368,12 @@ void FilteredModelTests::filterTitleTest() {
     DECLARE_MODELS_AND_GENERATE(10);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
 
         if (i % 2) {
-            metadata->set("title", "description", QStringList() << "keyword1" << "keyword2");
+            artwork->set("title", "description", QStringList() << "keyword1" << "keyword2");
         } else {
-            metadata->set("", "", QStringList());
+            artwork->set("", "", QStringList());
         }
     }
 
@@ -362,12 +395,12 @@ void FilteredModelTests::filterDescriptionAndKeywordsTest() {
     DECLARE_MODELS_AND_GENERATE(10);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
 
         if (i % 2 == 0) {
-            metadata->set("title", "description", QStringList() << "keyword1" << "mess1");
+            artwork->set("title", "description", QStringList() << "keyword1" << "mess1");
         } else {
-            metadata->set("title", "description", QStringList() << "keyword2" << "mess2");
+            artwork->set("title", "description", QStringList() << "keyword2" << "mess2");
         }
     }
 
@@ -390,12 +423,12 @@ void FilteredModelTests::filterTitleAndKeywordsTest() {
     DECLARE_MODELS_AND_GENERATE(10);
 
     for (int i = 0; i < 10; ++i) {
-        auto *metadata = artItemsModelMock.getMockArtwork(i);
+        auto *artwork = artItemsModelMock.getMockArtwork(i);
 
         if (i % 2 == 0) {
-            metadata->set("title", "description", QStringList() << "keyword1" << "mess1");
+            artwork->set("title", "description", QStringList() << "keyword1" << "mess1");
         } else {
-            metadata->set("title", "description", QStringList() << "keyword2" << "mess2");
+            artwork->set("title", "description", QStringList() << "keyword2" << "mess2");
         }
     }
 
@@ -416,8 +449,8 @@ void FilteredModelTests::filterTitleAndKeywordsTest() {
 
 void FilteredModelTests::clearEmptyKeywordsTest() {
     DECLARE_MODELS_AND_GENERATE(1);
-    Models::ArtworkMetadata *metadata = artItemsModelMock.getArtwork(0);
-    metadata->clearKeywords();
+    Models::ArtworkMetadata *artwork = artItemsModelMock.getArtwork(0);
+    artwork->clearKeywords();
 
     commandManagerMock.resetAnyCommandProcessed();
     filteredItemsModel.clearKeywords(0);

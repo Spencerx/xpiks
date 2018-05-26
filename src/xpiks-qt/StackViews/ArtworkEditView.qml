@@ -370,7 +370,7 @@ Rectangle {
     }
 
     Connections {
-        target: helpersWrapper
+        target: xpiksApp
         onGlobalBeforeDestruction: {
             console.debug("UI:EditArtworkHorizontalDialog # globalBeforeDestruction")
 

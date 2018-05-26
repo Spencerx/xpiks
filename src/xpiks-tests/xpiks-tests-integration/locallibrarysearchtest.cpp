@@ -43,7 +43,7 @@ int LocalLibrarySearchTest::doTest() {
 
     Suggestion::KeywordsSuggestor *suggestor = m_CommandManager->getKeywordsSuggestor();
 
-    suggestor->setSelectedSourceIndex(suggestor->getEngineNames().size() - 1); // local search is the last one
+    suggestor->setSelectedSourceIndex(suggestor->getEnginesCount() - 1); // local search is the last one
     VERIFY(suggestor->getIsLocalSearch(), "Local search cannot be chosen");
 
     // 0 was meant to be "any search result"

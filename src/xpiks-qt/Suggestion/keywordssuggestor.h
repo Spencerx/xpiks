@@ -27,6 +27,7 @@
 #include "isuggestionengine.h"
 #include "../Microstocks/microstockapiclients.h"
 #include "../Connectivity/requestsservice.h"
+#include "../Models/switchermodel.h"
 
 namespace Suggestion {
     class KeywordsSuggestor:
@@ -42,10 +43,12 @@ namespace Suggestion {
         Q_PROPERTY(QString lastErrorString READ getLastErrorString WRITE setLastErrorString NOTIFY lastErrorStringChanged)
         Q_PROPERTY(bool isLocalSearch READ getIsLocalSearch NOTIFY isLocalSearchChanged)
         Q_PROPERTY(int searchTypeIndex READ getSearchTypeIndex WRITE setSearchTypeIndex NOTIFY searchTypeIndexChanged)
+        Q_PROPERTY(QStringList engineNames READ getEngineNames NOTIFY engineNamesChanged)
 
     public:
         KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
                           Connectivity::RequestsService &requestsService,
+                          Models::SwitcherModel &switcherModel,
                           Common::ISystemEnvironment &environment,
                           QObject *parent=NULL);
 
@@ -75,6 +78,9 @@ namespace Suggestion {
         int getSelectedArtworksCount() const { return m_SelectedArtworksCount; }
         const QString &getLastErrorString() const { return m_LastErrorString; }
         bool getIsLocalSearch() const;
+#ifdef INTEGRATION_TESTS
+        size_t getEnginesCount() const { return m_QueryEngines.size(); }
+#endif
 
     signals:
         void suggestedKeywordsCountChanged();
@@ -86,11 +92,13 @@ namespace Suggestion {
         void lastErrorStringChanged();
         void isLocalSearchChanged();
         void searchTypeIndexChanged();
+        void engineNamesChanged();
 
     private slots:
         void resultsAvailableHandler();
         void errorsReceivedHandler(const QString &error);
         void onLinearTimer();
+        void onSwitchesUpdated();
 
     public slots:
         void onLanguageChanged();
@@ -111,7 +119,7 @@ namespace Suggestion {
         Q_INVOKABLE void cancelSearch();
         Q_INVOKABLE void close() { clear(); }
         Q_INVOKABLE QStringList getSuggestedKeywords() { return m_SuggestedKeywords.getKeywords(); }
-        Q_INVOKABLE QStringList getEngineNames() const;
+        /*Q_INVOKABLE*/ QStringList getEngineNames() const;
         Q_INVOKABLE QString getSuggestedKeywordsString() { return m_SuggestedKeywords.getKeywordsString(); }
         Q_INVOKABLE void clearSuggested();
         Q_INVOKABLE void resetSelection();
@@ -146,12 +154,14 @@ namespace Suggestion {
         QSet<QString> getSelectedArtworksKeywords() const;
         void updateSuggestedKeywords();
         void calculateBounds(int &lowerBound, int &upperBound) const;
+        std::shared_ptr<ISuggestionEngine> getSelectedEngine();
 
     private:
         Common::StatefulEntity m_State;
         Microstocks::MicrostockAPIClients &m_ApiClients;
         Connectivity::RequestsService &m_RequestsService;
-        std::vector<std::shared_ptr<ISuggestionEngine>> m_QueryEngines;
+        Models::SwitcherModel &m_SwitcherModel;
+        std::vector<std::shared_ptr<ISuggestionEngine> > m_QueryEngines;
         std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
         QString m_LastErrorString;
         QHash<QString, int> m_KeywordsHash;

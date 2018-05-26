@@ -13,3 +13,6 @@
 [submodule "src/xpiks-tests/plugins-for-tests/helloworld"]
 	path = src/xpiks-tests/plugins-for-tests/helloworld
 	url = https://github.com/ribtoks/xpiks-helloworld-plugin.git
+[submodule "vendors/chillout"]
+	path = vendors/chillout
+	url = https://github.com/ribtoks/chillout.git

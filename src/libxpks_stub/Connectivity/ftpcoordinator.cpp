@@ -28,9 +28,13 @@
 
 namespace libxpks {
     namespace net {
-        FtpCoordinator::FtpCoordinator(int maxParallelUploads, QObject *parent) :
+        FtpCoordinator::FtpCoordinator(Encryption::SecretsManager &secretsManager,
+                                       Models::SettingsModel &settings,
+                                       QObject *parent) :
             QObject(parent),
-            m_UploadSemaphore(maxParallelUploads),
+            m_UploadSemaphore(settings.getMaxParallelUploads()),
+            m_SecretsManager(secretsManager),
+            m_Settings(settings),
             m_OverallProgress(0.0),
             m_FinishedWorkersCount(0),
             m_AllWorkersCount(0),
@@ -48,12 +52,10 @@ namespace libxpks {
                 return;
             }
 
-            Encryption::SecretsManager *secretsManager = m_CommandManager->getSecretsManager();
-            Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
             std::vector<std::shared_ptr<UploadBatch> > batches = std::move(generateUploadBatches(artworksToUpload,
                                                                                                  uploadInfos,
-                                                                                                 secretsManager,
-                                                                                                 settingsModel));
+                                                                                                 &m_SecretsManager,
+                                                                                                 &m_Settings));
 
             Q_ASSERT(batches.size() == uploadInfos.size());
 

@@ -22,6 +22,12 @@
 #include "../Common/delayedactionentity.h"
 #include "../Helpers/localconfig.h"
 #include "../Common/isystemenvironment.h"
+#include "../AutoComplete/stringsautocompletemodel.h"
+#include "../Microstocks/stocksftplistmodel.h"
+
+namespace Helpers {
+    class AsyncCoordinator;
+}
 
 namespace Models {
     class UploadInfo;
@@ -37,8 +43,6 @@ namespace Models {
     public:
         UploadInfoRepository(Common::ISystemEnvironment &environment, QObject *parent = 0);
         virtual ~UploadInfoRepository();
-
-        void initFromString(const QString &savedString);
 
     public:
         enum UploadInfoRepository_Roles {
@@ -68,11 +72,13 @@ namespace Models {
 
     public:
         int getInfosCount() const { return (int)m_UploadInfos.size(); }
+        AutoComplete::StringsAutoCompleteModel *getStocksCompletionSource() { return &m_StocksCompletionSource; }
 
     public:
-        void initializeConfig();
-
-    private:
+        void initFromString(const QString &savedString);
+        void initializeConfig();        
+        void initializeStocksList(Helpers::AsyncCoordinator *initCoordinator);
+        virtual void setCommandManager(Commands::CommandManager *commandManager) override;
 
     public:
         Q_INVOKABLE void removeItem(int row);
@@ -80,6 +86,7 @@ namespace Models {
         Q_INVOKABLE int getSelectedInfosCount() const;
         Q_INVOKABLE QString getAgenciesWithMissingDetails();
         Q_INVOKABLE void updateProperties(int itemIndex);
+        Q_INVOKABLE void setCurrentIndex(int index);
 
         Q_INVOKABLE void initializeAccounts(bool mpIsCorrectOrEmpty);
         Q_INVOKABLE void finalizeAccounts();
@@ -98,11 +105,16 @@ namespace Models {
 #ifdef INTEGRATION_TESTS
     public:
         std::shared_ptr<UploadInfo> appendItem() { addItem(); return m_UploadInfos.back(); }
+        std::vector<std::shared_ptr<UploadInfo> > &accessUploadInfos() { return m_UploadInfos; }
+        Microstocks::StocksFtpListModel &accessStocksList() { return m_StocksFtpList; }
 #endif
 
     public:
-        const std::vector<std::shared_ptr<UploadInfo > > &getUploadInfos() const { return m_UploadInfos; }
         std::vector<std::shared_ptr<UploadInfo> > retrieveSelectedUploadInfos() const;
+
+    public:
+        bool isZippingRequired() const;
+        std::shared_ptr<UploadInfo> tryFindItemByHost(const QString &stockAddress);
 
     public:
         virtual int rowCount(const QModelIndex &parent=QModelIndex()) const override;
@@ -117,9 +129,11 @@ namespace Models {
     public slots:
         void onBeforeMasterPasswordChanged(const QString &oldMasterPassword, const QString &newMasterPassword);
         void onAfterMasterPasswordReset();
+        void onCompletionSelected(int completionID);
 
     private slots:
         void onBackupRequired();
+        void stocksListUpdated();
 
     protected:
         bool saveUploadInfos();
@@ -138,6 +152,9 @@ namespace Models {
         Common::ISystemEnvironment &m_Environment;
         std::vector<std::shared_ptr<UploadInfo> > m_UploadInfos;
         Helpers::LocalConfig m_LocalConfig;
+        AutoComplete::StringsAutoCompleteModel m_StocksCompletionSource;
+        Microstocks::StocksFtpListModel m_StocksFtpList;
+        int m_CurrentIndex;
         // when MP is cancelled before Upload dialog
         // all passwords should be empty
         bool m_EmptyPasswordsMode;

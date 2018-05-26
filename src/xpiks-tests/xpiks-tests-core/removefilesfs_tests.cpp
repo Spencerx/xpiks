@@ -7,12 +7,10 @@
 #include "Mocks/artitemsmodelmock.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
 #include "../../xpiks-qt/Models/artworksrepository.h"
-#include "../../xpiks-qt/Models/artworkuploader.h"
 #include "../../xpiks-qt/Models/artworkelement.h"
 #include "../../xpiks-qt/Models/combinedartworksmodel.h"
 #include "../../xpiks-qt/Models/ziparchiver.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/artworkuploader.h"
 #include "removefilesfs_tests.h"
 
 #define DECLARE_MODELS_AND_GENERATE_(count) \
@@ -45,7 +43,10 @@ void RemoveFilesFsTests::removeArtworksSignals() {
     QSignalSpy ArtItemFileDeleted(artItemsModel, SIGNAL(unavailableArtworksFound()));
 
     commandManagerMock.generateAndAddArtworks(itemsToAdd);
-    commandManagerMock.connectEntitiesSignalsSlots();
+
+    QObject::connect(artworksRepository, &Models::ArtworksRepository::filesUnavailable,
+                     artItemsModel, &Models::ArtItemsModel::onFilesUnavailableHandler);
+
     artworksRepositoryMock.removeFileAndEmitSignal();
 
 // signals
@@ -132,7 +133,9 @@ void RemoveFilesFsTests::removeVectorSmokeTest() {
     QSignalSpy artworkRemovedSpy(artItemsModel, SIGNAL(unavailableArtworksFound()));
 
     commandManagerMock.generateAndAddArtworks(itemsToAdd);
-    commandManagerMock.connectEntitiesSignalsSlots();
+
+    QObject::connect(artworksRepository, &Models::ArtworksRepository::filesUnavailable,
+                     artItemsModel, &Models::ArtItemsModel::onFilesUnavailableHandler);
 
     artworksRepositoryMock.removeVectorAndEmitSignal();
 

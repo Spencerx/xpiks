@@ -44,6 +44,11 @@ namespace Connectivity {
         void startChecking();
         void stopChecking();
 
+    public:
+        void setHaveUpgradeConsent() { m_HaveUpgradeConsent = true; }
+        void tryToUpgradeXpiks();
+        bool getIsUpdateDownloaded() { return !getPathToUpdate().isEmpty(); }
+
     private:
         void doStartChecking(const QString &pathToUpdate);
         void updateSettings();
@@ -70,7 +75,7 @@ namespace Connectivity {
 
     signals:
         void updateAvailable(QString updateLink);
-        void updateDownloaded(QString pathToUpdate);
+        void updateDownloaded();
         void cancelRequested();
 
     private:
@@ -80,6 +85,7 @@ namespace Connectivity {
         Models::SwitcherModel *m_SwitcherModel;
         Maintenance::MaintenanceService *m_MaintenanceService;
         Common::StatefulEntity m_State;
+        bool m_HaveUpgradeConsent = false;
     };
 }
 

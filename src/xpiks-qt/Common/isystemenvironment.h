@@ -22,6 +22,7 @@ namespace Common {
         virtual QString path(const QStringList &path) = 0;
         virtual bool ensureDirExists(const QString &name) = 0;
         virtual bool getIsInMemoryOnly() const = 0;
+        virtual bool getIsRecoveryMode() const = 0;
     };
 }
 

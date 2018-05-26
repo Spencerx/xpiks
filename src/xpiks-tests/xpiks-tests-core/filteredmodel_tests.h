@@ -16,6 +16,8 @@ private slots:
     void invertSelectionForOddCountTest();
     void removeMetadataMarksAsModifiedTest();
     void removeMetadataDeletesMetadataTest();
+    void selectedCountAddTest();
+    void selectedCountSubtractTest();
     void findSelectedIndexTest();
     void clearKeywordsTest();
     void detachVectorFromSelectedTest();
