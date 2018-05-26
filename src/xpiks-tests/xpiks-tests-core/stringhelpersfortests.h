@@ -5,5 +5,6 @@
 
 QString getRandomString(int length, bool exactSize=false);
 QString getRandomString(const QString &alphabet, int length);
+QString getRandomByteString(int length);
 
 #endif // STRINGHELPERSFORTESTS_H

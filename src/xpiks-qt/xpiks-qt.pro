@@ -194,7 +194,8 @@ SOURCES += main.cpp \
     Suggestion/gettysuggestionengine.cpp \
     Microstocks/microstockservice.cpp \
     Storage/memorytable.cpp \
-    xpiksapp.cpp
+    xpiksapp.cpp \
+    Encryption/obfuscation.cpp
 
 RESOURCES += qml.qrc
 
@@ -469,7 +470,8 @@ HEADERS += \
     Microstocks/apisecrets.h \
     Storage/memorytable.h \
     xpiksapp.h \
-    Microstocks/stockftpoptions.h
+    Microstocks/stockftpoptions.h \
+    Encryption/obfuscation.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
@@ -644,15 +646,14 @@ BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
 include(../xpiks-common/xpiks-common.pri)
 
 DEFINES += WITH_UPDATES
+    DEFINES += WITH_LOGS
 
 CONFIG(debug, debug|release)  {
     message("Building debug")
     DEFINES += WITH_PLUGINS
-    DEFINES += WITH_LOGS
     DEFINES += WITH_STDOUT_LOGS
     #QMAKE_CXXFLAGS += -fsanitize=thread
 } else {
-    DEFINES += WITH_LOGS
     message("Building release")
 }
 
@@ -736,10 +737,6 @@ linux {
 
     #QML_IMPORT_PATH += /usr/lib/x86_64-linux-gnu/qt5/imports/
     #LIBS += -L/lib/x86_64-linux-gnu/
-}
-
-appveyor {
-    DEFINES += WITH_LOGS
 }
 
 travis-ci {

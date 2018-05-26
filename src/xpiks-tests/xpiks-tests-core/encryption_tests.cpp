@@ -3,6 +3,7 @@
 #include <QTime>
 #include "../../xpiks-qt/Encryption/aes-qt.h"
 #include "stringhelpersfortests.h"
+#include "../../xpiks-qt/Encryption/obfuscation.h"
 
 void EncryptionTests::simpleEncodeDecodeTest() {
     QString text = QString::fromUtf8("simple text");
@@ -107,5 +108,21 @@ void EncryptionTests::bigRandomTestForSmallValues() {
                   .toStdString().c_str());
             break;
         }
+    }
+}
+
+void EncryptionTests::rot13basicTest() {
+    int iterations = 10000;
+
+    while (iterations--) {
+        QString randomString = getRandomString(qrand() % 1000);
+        QCOMPARE(Encryption::rot13plus(Encryption::rot13plus(randomString)), randomString);
+    }
+
+    iterations = 15000;
+
+    while (iterations--) {
+        QString randomString = getRandomByteString(qrand() % 1000);
+        QCOMPARE(Encryption::rot13plus(Encryption::rot13plus(randomString)), randomString);
     }
 }

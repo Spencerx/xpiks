@@ -25,6 +25,7 @@
 #include <string>
 #include <ctime>
 #include "../Common/defines.h"
+#include "../Encryption/obfuscation.h"
 
 #define MIN_FIRE_SIZE 20
 #define LOGGING_TIMEOUT 5
@@ -95,6 +96,14 @@ namespace Helpers {
         m_AnyLogsToFlush.wakeOne();
     }
 
+    QString Logger::prepareLine(const QString &lineToWrite) {
+#ifdef QT_DEBUG
+        return lineToWrite;
+#else
+        return Encryption::rot13plus(lineToWrite);
+#endif
+    }
+
     void Logger::flushAll()
     {
         QMutexLocker flushLocker(&m_FlushMutex);
@@ -125,7 +134,8 @@ namespace Helpers {
                 int size = logItems->size();
                 for (int i = 0; i < size; ++i) {
                     const QString &line = logItems->at(i);
-                    ts << line;
+                    QString prepared = prepareLine(line);
+                    ts << prepared;
                     endl(ts);
                 }
             }

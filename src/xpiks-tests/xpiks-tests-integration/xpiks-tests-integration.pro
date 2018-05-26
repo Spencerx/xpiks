@@ -248,7 +248,8 @@ SOURCES += main.cpp \
     integrationtestbase.cpp \
     stockftpautocompletetest.cpp \
     ../../xpiks-qt/xpiksapp.cpp \
-    xpikstestsapp.cpp
+    xpikstestsapp.cpp \
+    ../../xpiks-qt/Encryption/obfuscation.cpp
 
 RESOURCES +=
 
@@ -551,7 +552,8 @@ HEADERS += \
     stockftpautocompletetest.h \
     ../../xpiks-qt/xpiksapp.h \
     xpikstestsapp.h \
-    ../../xpiks-qt/Microstocks/stockftpoptions.h
+    ../../xpiks-qt/Microstocks/stockftpoptions.h \
+    ../../xpiks-qt/Encryption/obfuscation.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

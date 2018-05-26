@@ -21,6 +21,7 @@
 #include "../Helpers/logger.h"
 #include "../Helpers/loghighlighter.h"
 #include "../Common/defines.h"
+#include "../Encryption/obfuscation.h"
 
 namespace Models {
 
@@ -72,13 +73,18 @@ namespace Models {
             // advanced users will open logs it notepad
             int numberOfLines = moreLogs ? 1000 : 100;
             QString text = QString::fromUtf8(f.readAll());
-            result = Helpers::getLastNLines(text, numberOfLines);
             f.close();
+            result = Helpers::getLastNLines(text, numberOfLines);
         }
 #else
         Q_UNUSED(moreLogs);
         result = QString::fromLatin1("Logs are not available in this version");
 #endif
+
+#ifndef QT_DEBUG
+        result = Encryption::rot13plus(result);
+#endif
+
         return result;
 
     }
