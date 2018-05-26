@@ -19,19 +19,7 @@ namespace Encryption {
             QChar c = result[i];
             ushort u = c.unicode();
 
-            /*if (c >= QChar('a') && c <= QChar('m')) {
-                u += 13;
-            } else if (c >= QChar('n') && c <= QChar('z')) {
-                u -= 13;
-            } else if (c >= QChar('A') && c <= QChar('M')) {
-                u += 13;
-            } else if (c >= QChar('N') && c <= QChar('Z')) {
-                u -= 13;
-            } else if (c >= QChar('0') && c <= QChar('4')) {
-                u += 5;
-            } else if (c >= QChar('5') && c <= QChar('9')) {
-                u -= 5;
-            } else */if (c >= QChar('!') && c <= QChar('~')) {
+            if (c >= QChar('!') && c <= QChar('~')) {
                 u = '!' + (u - '!' + 47) % 94;
             }
 
