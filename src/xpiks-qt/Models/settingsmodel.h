@@ -77,7 +77,6 @@ namespace Models {
         Q_PROPERTY(QString appVersion READ getAppVersion CONSTANT)
 
         Q_PROPERTY(QString whatsNewText READ getWhatsNewText CONSTANT)
-        Q_PROPERTY(QString termsAndConditionsText READ getTermsAndConditionsText CONSTANT)
 
     public:
         explicit SettingsModel(Common::ISystemEnvironment &environment, QObject *parent = 0);
