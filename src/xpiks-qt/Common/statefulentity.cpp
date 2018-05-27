@@ -16,11 +16,10 @@
 namespace Common {
     StatefulEntity::StatefulEntity(const QString &stateName, ISystemEnvironment &environment):
         m_StateName(stateName),
-        m_FilePath(environment.path({Constants::STATES_DIR,
-                                     QString("%1.json").arg(stateName)})),
+        m_Config(environment.path({Constants::STATES_DIR, QString("%1.json").arg(stateName)}),
+                 environment.getIsInMemoryOnly()),
         m_StateMap(new Helpers::JsonObjectMap()),
-        m_InitCounter(0),
-        m_MemoryOnly(environment.getIsInMemoryOnly())
+        m_InitCounter(0)
     {
         Q_ASSERT(!stateName.endsWith(".json", Qt::CaseInsensitive));
     }
@@ -29,7 +28,7 @@ namespace Common {
         LOG_DEBUG << m_StateName;
 
         if (m_InitCounter.fetchAndAddOrdered(1) == 0) {
-            m_StateMap = Helpers::LocalConfig(m_FilePath, m_MemoryOnly).readMap();
+            m_StateMap = m_Config.readMap();
         } else {
             LOG_WARNING << "Attempt to initialize state" << m_StateName << "twice";
             Q_ASSERT(false);
@@ -37,10 +36,10 @@ namespace Common {
     }
 
     void StatefulEntity::sync() {
-        LOG_DEBUG << m_StateName << "in memory:" << m_MemoryOnly;
+        LOG_DEBUG << m_StateName;
 
         if (m_InitCounter.loadAcquire() > 0) {
-            Helpers::LocalConfig(m_FilePath, m_MemoryOnly).writeMap(m_StateMap);
+            m_Config.writeMap(m_StateMap);
         } else {
             LOG_WARNING << "State" << m_StateName << "is not initialized!";
             Q_ASSERT(false);
