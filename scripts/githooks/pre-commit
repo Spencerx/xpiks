@@ -1,0 +1,29 @@
+#!/bin/sh
+
+CORE_MAIN="src/xpiks-tests/xpiks-tests-core/main.cpp"
+
+git diff --cached --name-only | if grep --quiet "$CORE_MAIN"
+then
+    if grep -q "//QTEST_CLASS(" "$CORE_MAIN"
+    then
+	cat <<EOF
+Error: Attempt to commit commented CORE tests.
+Please remove comments in file ${CORE_MAIN}
+EOF
+	exit 1
+    fi
+fi   
+
+INTEGRATION_MAIN="src/xpiks-tests/xpiks-tests-integration/main.cpp"
+
+git diff --cached --name-only | if grep --quiet "$INTEGRATION_MAIN"
+then
+    if grep -q "//integrationTests.append(new" "$INTEGRATION_MAIN"
+    then
+	cat <<EOF
+Error: Attempt to commit commented INTEGRATION tests.
+Please remove comments in file ${INTEGRATION_MAIN}
+EOF
+	exit 1
+    fi
+fi   
