@@ -120,9 +120,12 @@ namespace Models {
                  environment.getIsInMemoryOnly()),
         m_EmergencyRestore(environment.getIsRecoveryMode())
     {
+        if (environment.getIsInMemoryOnly()) {
+            LOG_WARNING << "Session restoration will not work in read-only mode";
+        }
     }
 
-    bool SessionManager::saveToFile(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
+    bool SessionManager::save(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
                                     const QStringList &directoriesSnapshot) {
         auto sessionMap = serializeSnapshot(filesSnapshot, directoriesSnapshot);
         bool success = false;
@@ -171,7 +174,7 @@ namespace Models {
     void SessionManager::clearSession() {
         std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > emptyFiles;
         QStringList emptyDirs;
-        bool cleared = saveToFile(emptyFiles, emptyDirs);
+        bool cleared = save(emptyFiles, emptyDirs);
         Q_ASSERT(cleared);
     }
 #endif
