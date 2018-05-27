@@ -27,7 +27,7 @@
 
 #define SETTINGS_FILE "settings.json"
 
-#define EXPERIMENTAL_KEY QLatin1String("experimental")
+#define EXPERIMENTAL_KEY "experimental"
 
 #define CURRENT_SETTINGS_VERSION 1
 
@@ -185,23 +185,16 @@ namespace Models {
     void SettingsModel::initializeConfigs() {
         LOG_DEBUG << "#";
 
-        m_Config.initialize();
         m_State.init();
 
-        QJsonDocument &doc = m_Config.getConfig();
-        if (doc.isObject()) {
-            QJsonObject settingsJson = doc.object();
-            m_SettingsMap.reset(new Helpers::JsonObjectMap(settingsJson));
+        m_SettingsMap = m_Config.readMap();
 
-            if (settingsJson.contains(EXPERIMENTAL_KEY)) {
-                QJsonValue experimental = settingsJson[EXPERIMENTAL_KEY];
-                if (experimental.isObject()) {
-                    QJsonObject experimentalJson = experimental.toObject();
-                    m_ExperimentalMap.reset(new Helpers::JsonObjectMap(experimentalJson));
-                }
+        if (m_SettingsMap->containsValue(EXPERIMENTAL_KEY)) {
+            QJsonValue experimental = m_SettingsMap->value(EXPERIMENTAL_KEY);
+            if (experimental.isObject()) {
+                QJsonObject experimentalJson = experimental.toObject();
+                m_ExperimentalMap.reset(new Helpers::JsonObjectMap(experimentalJson));
             }
-        } else {
-            LOG_WARNING << "JSON document doesn't contain an object";
         }
     }
 
@@ -1102,17 +1095,13 @@ namespace Models {
     void SettingsModel::sync() {
         LOG_DEBUG << "Syncing settings";
 
-        Helpers::LocalConfigDropper dropper(&m_Config);
-        Q_UNUSED(dropper);
-
         QJsonObject settingsJson = m_SettingsMap->json();
         settingsJson[EXPERIMENTAL_KEY] = m_ExperimentalMap->json();
 
         QJsonDocument doc;
         doc.setObject(settingsJson);
 
-        m_Config.setConfig(doc);
-        m_Config.save();
+        m_Config.writeConfig(doc);
     }
 
     QString SettingsModel::serializeProxyForSettings(ProxySettings &settings) {

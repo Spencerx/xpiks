@@ -64,7 +64,7 @@ namespace Common {
 
     private:
         QString m_StateName;
-        Helpers::LocalConfig m_StateConfig;
+        QString m_FilePath;
         std::shared_ptr<Helpers::JsonObjectMap> m_StateMap;
         QAtomicInt m_InitCounter;
         bool m_MemoryOnly = false;

@@ -16,9 +16,8 @@
 namespace Common {
     StatefulEntity::StatefulEntity(const QString &stateName, ISystemEnvironment &environment):
         m_StateName(stateName),
-        m_StateConfig(environment.path({Constants::STATES_DIR,
-                                        QString("%1.json").arg(stateName)}),
-                      environment.getIsInMemoryOnly()),
+        m_FilePath(environment.path({Constants::STATES_DIR,
+                                     QString("%1.json").arg(stateName)})),
         m_StateMap(new Helpers::JsonObjectMap()),
         m_InitCounter(0),
         m_MemoryOnly(environment.getIsInMemoryOnly())
@@ -30,13 +29,7 @@ namespace Common {
         LOG_DEBUG << m_StateName;
 
         if (m_InitCounter.fetchAndAddOrdered(1) == 0) {
-            m_StateConfig.initialize();
-
-            QJsonDocument &doc = m_StateConfig.getConfig();
-            if (doc.isObject()) {
-                QJsonObject json = doc.object();
-                m_StateMap.reset(new Helpers::JsonObjectMap(json));
-            }
+            m_StateMap = Helpers::LocalConfig(m_FilePath, m_MemoryOnly).readMap();
         } else {
             LOG_WARNING << "Attempt to initialize state" << m_StateName << "twice";
             Q_ASSERT(false);
@@ -46,18 +39,8 @@ namespace Common {
     void StatefulEntity::sync() {
         LOG_DEBUG << m_StateName << "in memory:" << m_MemoryOnly;
 
-        if (m_MemoryOnly) { return; }
-
         if (m_InitCounter.loadAcquire() > 0) {
-            // do not use dropper
-            // Helpers::LocalConfigDropper dropper(&m_StateConfig);
-
-            QJsonDocument doc;
-            QJsonObject json = m_StateMap->json();
-            doc.setObject(json);
-
-            m_StateConfig.setConfig(doc);
-            m_StateConfig.save();
+            Helpers::LocalConfig(m_FilePath, m_MemoryOnly).writeMap(m_StateMap);
         } else {
             LOG_WARNING << "State" << m_StateName << "is not initialized!";
             Q_ASSERT(false);

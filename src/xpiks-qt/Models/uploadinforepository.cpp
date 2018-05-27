@@ -214,12 +214,13 @@ namespace Models {
 
     void UploadInfoRepository::initializeConfig() {
         LOG_DEBUG << "#";
-        m_LocalConfig.initialize();
-        const QJsonDocument &localDocument = m_LocalConfig.getConfig();
+        QJsonDocument config = m_LocalConfig.readConfig();
 
         decltype(m_UploadInfos) tempInfos;
-        parseUploadInfos(localDocument.object(), tempInfos);
-        LOG_INFO << "Parsed" << tempInfos.size() << "upload host(s)";
+        if (config.isObject()) {
+            parseUploadInfos(config.object(), tempInfos);
+            LOG_INFO << "Parsed" << tempInfos.size() << "upload host(s)";
+        }
 
         if (!tempInfos.empty()) {
             m_UploadInfos.swap(tempInfos);
@@ -534,7 +535,7 @@ namespace Models {
         LOG_INFO << "Completion selected for" << title;
         auto ftpOptions = m_StocksFtpList.findFtpOptions(title);
         if (ftpOptions) {
-            if ((0 <= m_CurrentIndex) && (m_CurrentIndex < m_UploadInfos.size())) {
+            if ((0 <= m_CurrentIndex) && (m_CurrentIndex < (int)m_UploadInfos.size())) {
                 auto &current = m_UploadInfos.at(m_CurrentIndex);
                 current->setFtpOptions(*ftpOptions);
                 justChanged();
@@ -569,12 +570,7 @@ namespace Models {
 
         QJsonDocument doc;
         doc.setObject(uploadInfosObject);
-
-        Helpers::LocalConfigDropper dropper(&m_LocalConfig);
-        Q_UNUSED(dropper);
-
-        m_LocalConfig.setConfig(doc);
-        bool success = m_LocalConfig.save();
+        bool success = m_LocalConfig.writeConfig(doc);
         return success;
     }
 
