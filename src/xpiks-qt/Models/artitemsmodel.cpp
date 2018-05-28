@@ -331,12 +331,12 @@ namespace Models {
     void ArtItemsModel::suggestCorrections(int metadataIndex) {
         if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
             using namespace Common;
-            Common::flag_t flags = 0;
+            Common::SuggestionFlags flags = Common::SuggestionFlags::None;
             Common::SetFlag(flags, SuggestionFlags::Description);
             Common::SetFlag(flags, SuggestionFlags::Title);
             Common::SetFlag(flags, SuggestionFlags::Keywords);
             ArtworkMetadata *metadata = accessArtwork(metadataIndex);
-            xpiks()->setupSpellCheckSuggestions(metadata, metadataIndex, (SuggestionFlags)flags);
+            xpiks()->setupSpellCheckSuggestions(metadata, metadataIndex, flags);
         }
     }
 

@@ -77,14 +77,14 @@ namespace Plugins {
         void triggerActionSafe(int actionID) const;
         void removePlugin();
 
-        void notifyPlugin(PluginNotificationFlags flag, const QVariant &data, void *pointer);
+        void notifyPlugin(Common::PluginNotificationFlags flag, const QVariant &data, void *pointer);
 
     private:
         XpiksPluginInterface *m_PluginInterface;
         PluginEnvironment m_PluginEnvironment;
         PluginDatabaseManager m_PluginDatabaseManager;
         PluginActionsModel m_ActionsModel;
-        Common::flag_t m_NotificationFlags;
+        Common::PluginNotificationFlags m_NotificationFlags;
         UIProviderSafe m_UIProviderSafe;
         QString m_PluginFilepath;
         int m_PluginID;

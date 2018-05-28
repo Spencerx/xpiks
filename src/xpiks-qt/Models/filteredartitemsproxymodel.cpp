@@ -522,7 +522,7 @@ namespace Models {
 
     void FilteredArtItemsProxyModel::suggestCorrectionsForSelected() const {
         using namespace Common;
-        flag_t flags = 0;
+        SuggestionFlags flags = SuggestionFlags::None;
         Common::SetFlag(flags, SuggestionFlags::Description);
         Common::SetFlag(flags, SuggestionFlags::Title);
         Common::SetFlag(flags, SuggestionFlags::Keywords);
@@ -530,7 +530,7 @@ namespace Models {
         auto itemsForSuggestions = getFilteredOriginalItems<std::pair<Common::IMetadataOperator *, int> >(
                     [](ArtworkMetadata *artwork) { return artwork->isSelected(); },
                     [] (ArtworkMetadata *metadata, int index, int) { return std::pair<Common::IMetadataOperator *, int>(metadata, index); });
-        xpiks()->setupSpellCheckSuggestions(itemsForSuggestions, (SuggestionFlags)flags);
+        xpiks()->setupSpellCheckSuggestions(itemsForSuggestions, flags);
     }
 
     void FilteredArtItemsProxyModel::generateCompletions(const QString &prefix, int index) {

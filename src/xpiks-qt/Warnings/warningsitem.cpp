@@ -67,10 +67,12 @@ namespace Warnings {
 
     void WarningsItem::submitWarnings() {
         if (m_CheckingFlags == Common::WarningsCheckFlags::All) {
-            m_CheckableItem->setWarningsFlags((Common::flag_t)m_FlagsToSet);
+            m_CheckableItem->setWarningsFlags(m_FlagsToSet);
         } else {
-            m_CheckableItem->dropWarningsFlags((Common::flag_t)m_FlagsToDrop);
-            m_CheckableItem->addWarningsFlags((Common::flag_t)m_FlagsToSet);
+            Common::WarningFlags flags = m_CheckableItem->getWarningsFlags();
+            Common::UnsetFlag(flags, m_FlagsToDrop);
+            Common::SetFlag(flags, m_FlagsToSet);
+            m_CheckableItem->setWarningsFlags(flags);
         }
     }
 
@@ -294,14 +296,14 @@ namespace Warnings {
 
     void WarningsItem::accountFlag(Common::WarningFlags flag, bool value) {
         if (value) {
-            m_FlagsToSet |= flag;
+            Common::SetFlag(m_FlagsToSet, flag);
         }
 
-        m_FlagsToDrop |= flag;
+        Common::SetFlag(m_FlagsToDrop, flag);
     }
 
     void WarningsItem::dropFlag(Common::WarningFlags flag) {
-        m_FlagsToDrop |= flag;
+        Common::SetFlag(m_FlagsToDrop, flag);
     }
 
     QStringList WarningsItem::getDescriptionWords() const {

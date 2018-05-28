@@ -29,13 +29,6 @@
 #include "../Microstocks/imicrostockservices.h"
 
 namespace Plugins {
-    enum struct PluginNotificationFlags: Common::flag_t {
-        None = 0,
-        CurrentEditableChanged = 1 << 0,
-        ActionUndone = 1 << 1,
-        PresetsUpdated = 1 << 2
-    };
-
     class XpiksPluginInterface {
     public:
         virtual ~XpiksPluginInterface() {}
@@ -60,8 +53,8 @@ namespace Plugins {
         // notification handlers
     public:
         // properties of which plugin wants to be notified
-        virtual Common::flag_t getDesiredNotificationFlags() const { return (Common::flag_t)PluginNotificationFlags::None; }
-        virtual void onPropertyChanged(PluginNotificationFlags flag, const QVariant &data, void *pointer) { Q_UNUSED(flag); Q_UNUSED(data); Q_UNUSED(pointer); }
+        virtual Common::PluginNotificationFlags getDesiredNotificationFlags() const { return  Common::PluginNotificationFlags::None; }
+        virtual void onPropertyChanged(Common::PluginNotificationFlags flag, const QVariant &data, void *pointer) { Q_UNUSED(flag); Q_UNUSED(data); Q_UNUSED(pointer); }
 
     public:
         virtual void injectCommandManager(Commands::ICommandManager *commandManager) { Q_UNUSED(commandManager); }
