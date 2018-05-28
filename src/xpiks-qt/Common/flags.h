@@ -39,7 +39,7 @@ namespace Common {
     template<typename FlagType>
     typename std::enable_if<enable_bitmask_operators<FlagType>::enable, typename std::underlying_type<FlagType>::type>::type
     operator~(FlagType a) {
-        return ~(static_cast<std::underlying_type<FlagType>::type>(a));
+        return ~(static_cast<typename std::underlying_type<FlagType>::type>(a));
     }
 
     template<typename FlagType>
