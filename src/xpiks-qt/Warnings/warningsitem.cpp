@@ -35,8 +35,8 @@ namespace Warnings {
     WarningsItem::WarningsItem(Models::ArtworkMetadata *checkableItem, Common::WarningsCheckFlags checkingFlags):
         m_CheckableItem(checkableItem),
         m_CheckingFlags(checkingFlags),
-        m_FlagsToSet((Common::WarningFlags)0),
-        m_FlagsToDrop((Common::WarningFlags)0)
+        m_FlagsToSet(Common::WarningFlags::None),
+        m_FlagsToDrop(Common::WarningFlags::None)
     {
         checkableItem->acquire();
     }
