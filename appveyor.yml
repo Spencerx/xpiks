@@ -63,8 +63,8 @@ before_build:
   - git checkout FETCH_HEAD -- api
 
 build_script:
-  - if not defined UI_TESTS vendors\checkout_deps_windows.bat
-  - if not defined UI_TESTS vendors\build_vendors_windows.bat appveyor
+  - if not defined UI_TESTS scripts\build\checkout_deps_windows.bat
+  - if not defined UI_TESTS scripts\build\build_vendors_windows.bat appveyor
   - cmd: 'echo %cd%'
   - cmd: 'cd src'
   - if defined XPIKS_BINARY cd xpiks-qt

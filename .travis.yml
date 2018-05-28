@@ -57,13 +57,13 @@ before_script:
   - if [ -n "$UI_TESTS" ]; then export DISPLAY=:99.0; fi
   - if [ -n "$UI_TESTS" ]; then sh -e /etc/init.d/xvfb start; fi
   - if [ -n "$UI_TESTS" ]; then sleep 3; fi # give xvfb some time to start
-  - chmod +x vendors/build_vendors_linux.sh
-  - chmod +x src/xpiks-tests/get_code_cov.sh
+  - chmod +x scripts/build/build_vendors_linux.sh
+  - chmod +x scripts/ci/get_code_cov.sh
   - git fetch origin gh-pages
   - git checkout FETCH_HEAD -- api
 
 script:
-  - if [ -z "${UI_TESTS+xxx}" ]; then bash vendors/build_vendors_linux.sh travis-ci; fi
+  - if [ -z "${UI_TESTS+xxx}" ]; then "$TRAVIS_BUILD_DIR/scripts/build/build_vendors_linux.sh" travis-ci; fi
   - cd src/
   - ls -la ../libs/*
   - echo "-------"
@@ -93,7 +93,7 @@ script:
   - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration > tests.log; fi
   - if [ -n "$INTEGRATION_TESTS" ]; then ./xpiks-tests-integration --in-memory > tests_in_memory.log; fi
   - if [ -n "$UI_TESTS" ]; then ./xpiks-tests-ui; fi
-  - if [ -z "${XPIKS_BINARY+xxx}" ]; then ../get_code_cov.sh "$PWD/../../"; fi
+  - if [ -z "${XPIKS_BINARY+xxx}" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/get_code_cov.sh" "$PWD/../../"; fi
 
 after_success:
   - if [ -n "$INTEGRATION_TESTS" ]; then cat tests.log; fi
