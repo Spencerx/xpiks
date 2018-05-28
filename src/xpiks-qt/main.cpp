@@ -138,13 +138,25 @@ void initCrashRecovery(Common::ISystemEnvironment &environment) {
         logger.emergencyLog(stackTrace);
     });
 
-    chillout.setCrashCallback([&logger, &chillout]() {
+#if defined(Q_OS_WIN)
+    QString recoveryApp = "Recoverty.exe";
+    QStringList recoveryArgs = QStringList() << "Xpiks.exe" << "--recovery";
+#elif defined(Q_OS_MAC)
+    QString recoveryApp = "./Recoverty";
+    QString xpiksBundlePath = QCoreApplication::applicationFilePath();
+    xpiksBundlePath.truncate(xpiksBundlePath.lastIndexOf(".app") + 4);
+    LOG_DEBUG << "Path to Xpiks bundle is" << xpiksBundlePath;
+    QStringList recoveryArgs = QStringList() << "open" <<  xpiksBundlePath << "--args --recovery";
+#else
+    QString recoveryApp = "Recoverty.exe";
+    QStringList recoveryArgs = QStringList() << "Xpiks.exe" << "--recovery";
+#endif
+
+    chillout.setCrashCallback([&logger, &chillout, recoveryApp, recoveryArgs]() {
         chillout.backtrace();
         logger.emergencyFlush();
 
-#ifdef Q_OS_WIN
-        QProcess::startDetached("Recoverty.exe", QStringList() << "Xpiks.exe" << "--recovery");
-#endif
+        QProcess::startDetached(recoveryApp, recoveryArgs);
 
 #ifdef Q_OS_WIN
         chillout.createCrashDump(Debug::CrashDumpNormal);

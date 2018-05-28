@@ -688,6 +688,10 @@ macx {
     FREQ_TABLES.files = deps/ac_sources/en_wordlist.tsv
     FREQ_TABLES.path = Contents/Resources/ac_sources
     QMAKE_BUNDLE_DATA += FREQ_TABLES
+
+    RECOVERTY.files = deps/recoverty/Recoverty
+    RECOVERTY.path = Contents/MacOS/
+    QMAKE_BUNDLE_DATA += RECOVERTY
 }
 
 win32 {
