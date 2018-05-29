@@ -18,6 +18,14 @@ Window {
         }
     }
 
+    Text {
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 20
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: debug
+        text: restartModel.arguments
+    }
+
     Timer {
         id: closingTimer
         interval: 1000

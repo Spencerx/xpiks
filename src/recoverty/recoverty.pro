@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 QMAKE_MAC_SDK = macosx10.11
-CONFIG -= app_bundle
+#CONFIG -= app_bundle
 
 QT += qml quick svg
 CONFIG += c++11

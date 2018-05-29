@@ -142,11 +142,12 @@ void initCrashRecovery(Common::ISystemEnvironment &environment) {
     QString recoveryApp = "Recoverty.exe";
     QStringList recoveryArgs = QStringList() << "Xpiks.exe" << "--recovery";
 #elif defined(Q_OS_MAC)
-    QString recoveryApp = "./Recoverty";
+    QString recoveryApp = "open";
     QString xpiksBundlePath = QCoreApplication::applicationFilePath();
     xpiksBundlePath.truncate(xpiksBundlePath.lastIndexOf(".app") + 4);
     LOG_DEBUG << "Path to Xpiks bundle is" << xpiksBundlePath;
-    QStringList recoveryArgs = QStringList() << "open" <<  xpiksBundlePath << "--args --recovery";
+    QStringList recoveryArgs = QStringList() << "Recoverty.app" << "--args"
+                                             << "open" <<  xpiksBundlePath << "--args" << "--recovery";
 #else
     QString recoveryApp = "Recoverty.exe";
     QStringList recoveryArgs = QStringList() << "Xpiks.exe" << "--recovery";
