@@ -122,9 +122,10 @@ namespace Models {
         justChanged();
     }
 
-    int UIManager::getAppPosX(int defaultPosX) {
+    int UIManager::getAppPosX(int defaultPosX, int maxPosX) {
+        Q_ASSERT(defaultPosX < maxPosX);
         int posX = m_State.getInt(Constants::appWindowX, defaultPosX);
-        if (posX == -1) { posX = defaultPosX; }
+        if ((posX < 0) || (posX >= maxPosX)) { posX = defaultPosX; }
         return posX;
     }
 
@@ -134,9 +135,10 @@ namespace Models {
         justChanged();
     }
 
-    int UIManager::getAppPosY(int defaultPosY) {
+    int UIManager::getAppPosY(int defaultPosY, int maxPosY) {
+        Q_ASSERT(defaultPosY < maxPosY);
         int posY = m_State.getInt(Constants::appWindowY, defaultPosY);
-        if (posY == -1) { posY = defaultPosY; }
+        if ((posY < 0) || (posY >= maxPosY)) { posY = defaultPosY; }
         return posY;
     }
 

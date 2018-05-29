@@ -42,8 +42,12 @@ ApplicationWindow {
     onVisibleChanged: {
         if (needToCenter) {
             needToCenter = false
-            applicationWindow.x = uiManager.getAppPosX((Screen.width - applicationWindow.width) / 2)
-            applicationWindow.y = uiManager.getAppPosY((Screen.height - applicationWindow.height) / 2)
+            applicationWindow.x = uiManager.getAppPosX(
+                        (Screen.width - applicationWindow.width) / 2, // default
+                        (Screen.desktopAvailableWidth - applicationWindow.width)) // max
+            applicationWindow.y = uiManager.getAppPosY(
+                        (Screen.height - applicationWindow.height) / 2, // default
+                        (Screen.desktopAvailableHeight - applicationWindow.height)) // max
         }
     }
 

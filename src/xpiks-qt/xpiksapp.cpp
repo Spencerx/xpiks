@@ -287,8 +287,6 @@ void XpiksApp::setupWindow(QQuickWindow *window) {
 
     auto *uiProvider = m_PluginManager.getUIProvider();
     uiProvider->setRoot(window->contentItem());
-
-
 }
 
 void XpiksApp::shutdown() {

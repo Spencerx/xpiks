@@ -78,9 +78,9 @@ namespace Models {
         Q_INVOKABLE void setAppWidth(int width);
         Q_INVOKABLE int getAppHeight(int defaultHeight);
         Q_INVOKABLE void setAppHeight(int height);
-        Q_INVOKABLE int getAppPosX(int defaultPosX);
+        Q_INVOKABLE int getAppPosX(int defaultPosX, int maxPosX);
         Q_INVOKABLE void setAppPosX(int x);
-        Q_INVOKABLE int getAppPosY(int defaultPosY);
+        Q_INVOKABLE int getAppPosY(int defaultPosY, int maxPosY);
         Q_INVOKABLE void setAppPosY(int y);
 
     public:
