@@ -139,7 +139,7 @@ namespace Models {
         emit artworksSourcesCountChanged();
     }
 
-    bool ArtworksRepository::accountFile(const QString &filepath, qint64 &directoryID, Common::flag_t directoryFlags) {
+    bool ArtworksRepository::accountFile(const QString &filepath, qint64 &directoryID, Common::DirectoryFlags directoryFlags) {
         bool wasModified = false, wasAdded = false;
         QString absolutePath;
 

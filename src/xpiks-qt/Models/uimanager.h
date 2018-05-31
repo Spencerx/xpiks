@@ -25,6 +25,8 @@
 #include "../Common/delayedactionentity.h"
 #include "../Common/isystemenvironment.h"
 
+class QScreen;
+
 namespace Models {
     class ArtworkMetadata;
     class ArtworkProxyBase;
@@ -39,6 +41,7 @@ namespace Models {
         Q_PROPERTY(bool hasCurrentEditable READ getHasCurrentEditable NOTIFY currentEditableChanged)
         Q_PROPERTY(double keywordHeight READ getKeywordHeight NOTIFY keywordHeightChanged)
         Q_PROPERTY(int artworkEditRightPaneWidth READ getArtworkEditRightPaneWidth WRITE setArtworkEditRightPaneWidth NOTIFY artworkEditRightPaneWidthChanged)
+        Q_PROPERTY(double screenDpi READ getScreenDpi NOTIFY screenDpiChanged)
 
     public:
         explicit UIManager(Common::ISystemEnvironment &environment, Models::SettingsModel *settingsModel,
@@ -46,8 +49,10 @@ namespace Models {
 
     private:
         int generateNextTabID() { int id = m_TabID++; return id; }
+        void setScreenDpi(double value);
 
     public:
+        double getScreenDpi() const { return m_ScreenDPI; }
         void initTabs();
         bool getHasCurrentEditable() const { return m_CurrentEditable.operator bool(); }
         double getKeywordHeight() const;
@@ -73,9 +78,9 @@ namespace Models {
         Q_INVOKABLE void setAppWidth(int width);
         Q_INVOKABLE int getAppHeight(int defaultHeight);
         Q_INVOKABLE void setAppHeight(int height);
-        Q_INVOKABLE int getAppPosX(int defaultPosX);
+        Q_INVOKABLE int getAppPosX(int defaultPosX, int maxPosX);
         Q_INVOKABLE void setAppPosX(int x);
-        Q_INVOKABLE int getAppPosY(int defaultPosY);
+        Q_INVOKABLE int getAppPosY(int defaultPosY, int maxPosY);
         Q_INVOKABLE void setAppPosY(int y);
 
     public:
@@ -95,6 +100,14 @@ namespace Models {
         void currentEditableChanged();
         void keywordHeightChanged(double value);
         void artworkEditRightPaneWidthChanged();
+        void screenDpiChanged();
+
+    public slots:
+        void onScreenDpiChanged(qreal someDpi);
+        void onScreenChanged(QScreen *screen);
+
+    private:
+        void updateDpi(QScreen *screen);
 
         // DelayedActionEntity implementation
     protected:
@@ -114,9 +127,7 @@ namespace Models {
         QHash<int, QSet<int> > m_PluginIDToTabIDs;
         QHash<int, QObject*> m_TabIDsToModel;
         volatile int m_TabID;
-
-        int m_SaveTimerId;
-        int m_SaveRestartsCount;
+        double m_ScreenDPI;
     };
 }
 

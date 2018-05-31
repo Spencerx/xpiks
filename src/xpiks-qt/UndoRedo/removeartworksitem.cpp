@@ -58,7 +58,7 @@ void UndoRedo::RemoveArtworksHistoryItem::undo(const Commands::ICommandManager *
             artItemsModel->beginAccountingFiles(startRow, endRow);
         }
 
-        Common::flag_t directoryFlags = 0;
+        Common::DirectoryFlags directoryFlags = Common::DirectoryFlags::None;
         if (m_RemovedAsDirectory) { Common::SetFlag(directoryFlags, Common::DirectoryFlags::IsAddedAsDirectory); }
 
         int count = endRow - startRow + 1;

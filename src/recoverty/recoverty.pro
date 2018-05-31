@@ -1,6 +1,7 @@
 TEMPLATE = app
 
 QMAKE_MAC_SDK = macosx10.11
+#CONFIG -= app_bundle
 
 QT += qml quick svg
 CONFIG += c++11
@@ -16,8 +17,13 @@ DEFINES += QT_NO_CAST_TO_ASCII \
            QT_RESTRICTED_CAST_FROM_ASCII \
            QT_NO_CAST_FROM_BYTEARRAY
 
+DESTDIR = ../xpiks-qt/deps/recoverty/
+
 SOURCES += main.cpp \
     restartmodel.cpp
+
+HEADERS += \
+    restartmodel.h
 
 RESOURCES += qml.qrc
 
@@ -26,6 +32,3 @@ QML_IMPORT_PATH =
 
 # Default rules for deployment.
 include(deployment.pri)
-
-HEADERS += \
-    restartmodel.h

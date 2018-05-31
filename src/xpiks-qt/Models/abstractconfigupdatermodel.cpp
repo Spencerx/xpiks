@@ -46,21 +46,18 @@ namespace Models {
 
     void AbstractConfigUpdaterModel::processRemoteConfig(const QJsonDocument &remoteDocument, bool overwriteLocal) {
         LOG_DEBUG << "#";
-        QJsonDocument &localDocument = m_LocalConfig.getConfig();
-        Helpers::mergeJson(remoteDocument, localDocument, overwriteLocal, *this);
-        m_LocalConfig.save();
+        QJsonDocument document = m_LocalConfig.readConfig();
+        Helpers::mergeJson(remoteDocument, document, overwriteLocal, *this);
+        m_LocalConfig.writeConfig(document);
 
-        processMergedConfig(localDocument);
+        processMergedConfig(document);
     }
 
     void AbstractConfigUpdaterModel::initRemoteConfig() {
 #ifdef INTEGRATION_TESTS
         if (!m_RemoteOverrideLocalPath.isEmpty()) {
             LOG_DEBUG << "Using remote override" << m_RemoteOverrideLocalPath;
-            Helpers::LocalConfig m_RemoteOverrideConfig(m_RemoteOverrideLocalPath, m_MemoryOnly);
-            m_RemoteOverrideConfig.initialize();
-
-            const QJsonDocument &localDocument = m_RemoteOverrideConfig.getConfig();
+            QJsonDocument localDocument = Helpers::LocalConfig(m_RemoteOverrideLocalPath).readConfig();
             processRemoteConfig(localDocument, m_ForceOverwrite);
         } else
 #endif
@@ -74,8 +71,7 @@ namespace Models {
     }
 
     void AbstractConfigUpdaterModel::initLocalConfig() {
-        m_LocalConfig.initialize();
-        const QJsonDocument &localDocument = m_LocalConfig.getConfig();
+        QJsonDocument localDocument = m_LocalConfig.readConfig();
         processLocalConfig(localDocument);
     }
 }

@@ -44,7 +44,7 @@ namespace Models {
     public:
         struct RepoDir {
             RepoDir (QString absolutePath, qint64 id, int count):
-                m_AbsolutePath(absolutePath), m_ID(id), m_FilesCount(count), m_DirectoryFlags(0)
+                m_AbsolutePath(absolutePath), m_ID(id), m_FilesCount(count), m_DirectoryFlags(Common::DirectoryFlags::None)
             { }
             RepoDir() = default;
 
@@ -61,7 +61,7 @@ namespace Models {
             QString m_AbsolutePath = QString("");
             qint64 m_ID = 0;
             int m_FilesCount = 0;
-            Common::flag_t m_DirectoryFlags = 0;
+            Common::DirectoryFlags m_DirectoryFlags = Common::DirectoryFlags::None;
         };
 
     public:
@@ -109,7 +109,7 @@ namespace Models {
         void onAvailabilityTimer();
 
     public:
-        bool accountFile(const QString &filepath, qint64 &directoryID, Common::flag_t directoryFlags = 0);
+        bool accountFile(const QString &filepath, qint64 &directoryID, Common::DirectoryFlags directoryFlags = Common::DirectoryFlags::None);
         void accountVector(const QString &vectorPath);
         bool removeFile(const QString &filepath, qint64 directoryID);
         void removeVector(const QString &vectorPath);

@@ -137,7 +137,7 @@ namespace Plugins {
         // TODO: cleanup the data or not?
     }
 
-    void PluginWrapper::notifyPlugin(PluginNotificationFlags flag, const QVariant &data, void *pointer) {
+    void PluginWrapper::notifyPlugin(Common::PluginNotificationFlags flag, const QVariant &data, void *pointer) {
         if (getIsEnabled()) {
             if (Common::HasFlag(m_NotificationFlags, flag)) {
                 m_PluginInterface->onPropertyChanged(flag, data, pointer);

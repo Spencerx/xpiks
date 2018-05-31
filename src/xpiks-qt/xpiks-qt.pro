@@ -13,7 +13,7 @@ CONFIG(release, debug|release)  {
     CONFIG += separate_debug_info
 }
 
-VERSION = 1.5.1.1
+VERSION = 1.5.2.0
 QMAKE_TARGET_PRODUCT = Xpiks
 QMAKE_TARGET_DESCRIPTION = "Cross-Platform Image Keywording Software"
 QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2014-2018 Taras Kushnir"
@@ -194,7 +194,8 @@ SOURCES += main.cpp \
     Suggestion/gettysuggestionengine.cpp \
     Microstocks/microstockservice.cpp \
     Storage/memorytable.cpp \
-    xpiksapp.cpp
+    xpiksapp.cpp \
+    Encryption/obfuscation.cpp
 
 RESOURCES += qml.qrc
 
@@ -469,7 +470,8 @@ HEADERS += \
     Microstocks/apisecrets.h \
     Storage/memorytable.h \
     xpiksapp.h \
-    Microstocks/stockftpoptions.h
+    Microstocks/stockftpoptions.h \
+    Encryption/obfuscation.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
@@ -644,15 +646,14 @@ BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
 include(../xpiks-common/xpiks-common.pri)
 
 DEFINES += WITH_UPDATES
+    DEFINES += WITH_LOGS
 
 CONFIG(debug, debug|release)  {
     message("Building debug")
     DEFINES += WITH_PLUGINS
-    DEFINES += WITH_LOGS
     DEFINES += WITH_STDOUT_LOGS
     #QMAKE_CXXFLAGS += -fsanitize=thread
 } else {
-    DEFINES += WITH_LOGS
     message("Building release")
 }
 
@@ -679,10 +680,6 @@ macx {
     WHATS_NEW.path = Contents/Resources
     QMAKE_BUNDLE_DATA += WHATS_NEW
 
-    TERMS_AND_CONDITIONS.files = deps/terms_and_conditions.txt
-    TERMS_AND_CONDITIONS.path = Contents/Resources
-    QMAKE_BUNDLE_DATA += TERMS_AND_CONDITIONS
-
     TRANSLATIONS_FILES_LIST = $$system(ls $$PWD/deps/translations/*.qm)
     XPIKS_TRANSLATIONS.files = $$TRANSLATIONS_FILES_LIST
     XPIKS_TRANSLATIONS.path = Contents/Resources/translations
@@ -691,6 +688,10 @@ macx {
     FREQ_TABLES.files = deps/ac_sources/en_wordlist.tsv
     FREQ_TABLES.path = Contents/Resources/ac_sources
     QMAKE_BUNDLE_DATA += FREQ_TABLES
+
+    RECOVERTY.files = deps/recoverty/Recoverty.app
+    RECOVERTY.path = Contents/MacOS/
+    QMAKE_BUNDLE_DATA += RECOVERTY
 }
 
 win32 {
@@ -728,7 +729,7 @@ win32 {
 linux {
     message("for Linux")
     INCLUDEPATH += "../../vendors/quazip"
-    BUILDNO = $$system($$PWD/buildno.sh)
+    BUILDNO = $$system($$PWD/../../scripts/build/buildno.sh)
 
     LIBS += -ldl
 
@@ -742,10 +743,6 @@ linux {
     #LIBS += -L/lib/x86_64-linux-gnu/
 }
 
-appveyor {
-    DEFINES += WITH_LOGS
-}
-
 travis-ci {
     message("for Travis CI")
     LIBS -= -lz
@@ -753,24 +750,6 @@ travis-ci {
     LIBS += -ldl
     DEFINES += TRAVIS_CI
     INCLUDEPATH += "../../vendors/quazip"
-}
-
-linux-qtcreator {
-    message("in QtCreator")
-    BUILDNO = $$system($$PWD/buildno.sh)
-    LIBS += -L/usr/lib64/
-    LIBS += -L/lib/x86_64-linux-gnu/
-    copywhatsnew.commands = $(COPY_FILE) "$$PWD/deps/whatsnew.txt" "$$OUT_PWD/"
-    copyterms.commands = $(COPY_FILE) "$$PWD/deps/terms_and_conditions.txt" "$$OUT_PWD/"
-    QMAKE_EXTRA_TARGETS += copywhatsnew copyterms
-    POST_TARGETDEPS += copywhatsnew copyterms
-}
-
-linux-static {
-    CONFIG += static
-    QTPLUGIN += qt5quick
-    DEFINES += STATIC
-    message("Static build.")
 }
 
 without-video {

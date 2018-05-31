@@ -32,6 +32,7 @@ namespace Models {
                                      QObject *parent):
         QObject(parent),
         m_Environment(environment),
+        m_TestingCredentialWatcher(nullptr),
         m_UploadInfos(uploadInfoRepository),
         m_Percent(0),
         m_IsInProgress(false),
@@ -40,7 +41,9 @@ namespace Models {
     }
 
     ArtworkUploader::~ArtworkUploader() {
-        delete m_TestingCredentialWatcher;
+        if (m_TestingCredentialWatcher != nullptr) {
+            delete m_TestingCredentialWatcher;
+        }
     }
 
     void ArtworkUploader::setFtpCoordinator(const std::shared_ptr<libxpks::net::FtpCoordinator> &ftpCoordinator) {

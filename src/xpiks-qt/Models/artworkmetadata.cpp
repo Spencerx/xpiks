@@ -43,7 +43,7 @@ namespace Models {
         m_DirectoryID(directoryID),
         m_MetadataFlags(0),
         m_LastKnownIndex(INVALID_INDEX),
-        m_WarningsFlags(0)
+        m_WarningsFlags(Common::WarningFlags::None)
     {
         m_MetadataModel.setSpellCheckInfo(&m_SpellCheckInfo);
 

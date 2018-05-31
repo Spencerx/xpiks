@@ -553,7 +553,7 @@ namespace Suggestion {
 
         std::shared_ptr<ISuggestionEngine> result;
 
-        if ((0 <= index) && (index < m_QueryEngines.size())) {
+        if ((0 <= index) && (index < (int)m_QueryEngines.size())) {
             result = m_QueryEngines[index];
         }  else {
             LOG_WARNING << "Failed to find current engine by index" << selectedIndex;

@@ -269,6 +269,7 @@ int main(int argc, char *argv[]) {
     qDeleteAll(integrationTests);
 
     qInfo() << "--------------------------";
+    qInfo() << "In memory run:" << environment.getIsInMemoryOnly();
     qInfo() << "Integration Tests Results:" << succeededTestsCount << "succeeded," << failedTestsCount << "failed";
     qInfo() << "Tests return code" << result;
 

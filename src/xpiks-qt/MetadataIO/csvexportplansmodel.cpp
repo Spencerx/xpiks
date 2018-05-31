@@ -194,12 +194,7 @@ namespace MetadataIO {
         doc.setObject(plansObject);
 
         Helpers::LocalConfig &localConfig = getLocalConfig();
-
-        Helpers::LocalConfigDropper dropper(&localConfig);
-        Q_UNUSED(dropper);
-
-        localConfig.setConfig(doc);
-        localConfig.save();
+        localConfig.writeConfig(doc);
     }
 
     bool CsvExportPlansModel::processLocalConfig(const QJsonDocument &document) {

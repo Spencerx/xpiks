@@ -12,7 +12,7 @@ void WarningsCheckTests::emptyKeywordsTest() {
     artwork.initialize();
     Mocks::WarningsSettingsMock warningsSettings;
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -26,7 +26,7 @@ void WarningsCheckTests::tooFewKeywordsTest() {
     Mocks::WarningsSettingsMock warningsSettings;
 
     artwork.appendKeyword("random");
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -61,7 +61,7 @@ void WarningsCheckTests::spellingKeywordsTest() {
     auto &rawKeywords = artwork.getBasicModel()->getRawKeywords();
     rawKeywords[0].m_IsCorrect = false;
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -77,7 +77,7 @@ void WarningsCheckTests::spellingKeywordsChangesWhenRemovedTest() {
     auto &rawKeywords = artwork.getBasicModel()->getRawKeywords();
     rawKeywords[0].m_IsCorrect = false;
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -101,7 +101,7 @@ void WarningsCheckTests::spellingDescriptionTest() {
     artwork.setDescription("valid and crp test");
     artwork.getBasicModel()->getSpellCheckInfo()->setDescriptionErrors(QSet<QString>() << "crp");
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -117,7 +117,7 @@ void WarningsCheckTests::spellingDescriptionChangesTest() {
     artwork.setDescription("valid and crp test");
     artwork.getBasicModel()->getSpellCheckInfo()->setDescriptionErrors(QSet<QString>() << "crp");
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -137,7 +137,7 @@ void WarningsCheckTests::emptyDescriptionTest() {
     artwork.initialize();
     Mocks::WarningsSettingsMock warningsSettings;
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -150,7 +150,7 @@ void WarningsCheckTests::descriptionLengthChangesTest() {
     artwork.initialize();
     Mocks::WarningsSettingsMock warningsSettings;
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -175,7 +175,7 @@ void WarningsCheckTests::descriptionTooBigTest() {
     artwork.initialize();
     Mocks::WarningsSettingsMock warningsSettings;
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     artwork.setDescription(getRandomString(warningsSettings.getMaxDescriptionLength() + 1, true));
 
@@ -191,7 +191,7 @@ void WarningsCheckTests::emptyTitleTest() {
     artwork.initialize();
     Mocks::WarningsSettingsMock warningsSettings;
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -204,7 +204,7 @@ void WarningsCheckTests::titleLengthChangesTest() {
     artwork.initialize();
     Mocks::WarningsSettingsMock warningsSettings;
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -232,7 +232,7 @@ void WarningsCheckTests::spellingTitleTest() {
     artwork.setTitle("one two three");
     artwork.getSpellCheckInfo()->setTitleErrors(QSet<QString>() << "two");
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -248,7 +248,7 @@ void WarningsCheckTests::spellingTitleChangesWhenRemovedTest() {
     artwork.setTitle("one two three");
     artwork.getSpellCheckInfo()->setTitleErrors(QSet<QString>() << "two");
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
 
@@ -319,7 +319,7 @@ void WarningsCheckTests::descriptionTooBigChangesTest() {
     artwork.initialize();
     Mocks::WarningsSettingsMock warningsSettings;
 
-    QVERIFY(artwork.getWarningsFlags() == 0);
+    QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
     artwork.setDescription(getRandomString(warningsSettings.getMaxDescriptionLength() + 1, true));
 

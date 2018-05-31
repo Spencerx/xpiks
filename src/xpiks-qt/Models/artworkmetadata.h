@@ -129,10 +129,8 @@ namespace Models {
 
     public:
         void setCurrentIndex(size_t index) { m_LastKnownIndex = index; }
-        Common::flag_t getWarningsFlags() const { return m_WarningsFlags; }
-        void setWarningsFlags(Common::flag_t flags) { m_WarningsFlags = flags; }
-        void addWarningsFlags(Common::flag_t flags) { m_WarningsFlags |= flags; }
-        void dropWarningsFlags(Common::flag_t flagsToDrop) { m_WarningsFlags &= (~flagsToDrop); }
+        Common::WarningFlags getWarningsFlags() const { return m_WarningsFlags; }
+        void setWarningsFlags(Common::WarningFlags flags) { m_WarningsFlags = flags; }
 
     public:
         Common::BasicMetadataModel *getBasicModel() { return &m_MetadataModel; }
@@ -266,7 +264,7 @@ namespace Models {
         qint64 m_DirectoryID;
         volatile Common::flag_t m_MetadataFlags;
         volatile size_t m_LastKnownIndex; // optimistic guess on current index of this item in artitemsmodel
-        volatile Common::flag_t m_WarningsFlags;
+        volatile Common::WarningFlags m_WarningsFlags;
     };
 
     class ArtworkMetadataLocker
