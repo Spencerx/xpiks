@@ -31,7 +31,8 @@ namespace Models {
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
         m_State("uimanager", environment),
         m_SettingsModel(settingsModel),
-        m_TabID(42)
+        m_TabID(42),
+        m_ScreenDPI(96.0)
     {
         Q_ASSERT(settingsModel != nullptr);
         QObject::connect(m_SettingsModel, &Models::SettingsModel::keywordSizeScaleChanged, this, &UIManager::keywordHeightChanged);
