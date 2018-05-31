@@ -69,6 +69,12 @@ int RestoreSessionTest::doTest() {
     LOG_DEBUG << "About to restore...";
 
     int restoredCount = sessionManager->restoreSession(*artworksRepository);
+
+    if (this->getIsInMemoryOnly()) {
+        VERIFY(restoredCount == 0, "Session restore should not work for memory-only mode");
+        return 0;
+    }
+
     VERIFY(addedCount == restoredCount, "Failed to properly restore");
     ioCoordinator->continueReading(true);
 

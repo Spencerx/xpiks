@@ -19,3 +19,12 @@ QString getRandomString(const QString &alphabet, int length) {
 
     return result;
 }
+
+QString getRandomByteString(int length) {
+    QString result;
+    result.reserve(length);
+    while (length--) {
+        result.append(QChar(ushort(qrand() % 0xffff)));
+    }
+    return result;
+}

@@ -35,6 +35,7 @@ protected:
     QUrl setupFilePathForTest(const QString &prefix);
     QUrl getFilePathForTest(const QString &prefix);
     QUrl getDirPathForTest(const QString &prefix);
+    bool getIsInMemoryOnly() const { return m_Environment.getIsInMemoryOnly(); }
 
 protected:
     Commands::CommandManager *m_CommandManager;

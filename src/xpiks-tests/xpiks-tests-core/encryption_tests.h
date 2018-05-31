@@ -17,6 +17,7 @@ private slots:
     void realTest();
     void bigRandomTest();
     void bigRandomTestForSmallValues();
+    void rot13basicTest();
 };
 
 #endif // RC6_TESTS

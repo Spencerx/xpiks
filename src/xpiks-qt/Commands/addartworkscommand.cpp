@@ -66,7 +66,7 @@ std::shared_ptr<Commands::ICommandResult> Commands::AddArtworksCommand::execute(
         artItemsModel->beginAccountingFiles(newFilesCount);
 
         const int count = m_FilePathes.count();
-        Common::flag_t directoryFlags = 0;
+        Common::DirectoryFlags directoryFlags = Common::DirectoryFlags::None;
         if (getIsFullDirectoryFlag()) { Common::SetFlag(directoryFlags, Common::DirectoryFlags::IsAddedAsDirectory); }
 
         for (int i = 0; i < count; ++i) {

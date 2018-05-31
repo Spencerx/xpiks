@@ -60,10 +60,10 @@ namespace Models {
         return sessionMap;
     }
 
-    void parseFiles(const Helpers::JsonObjectMap &sessionMap, QStringList &filenames, QStringList &vectors) {
-        if (!sessionMap.containsValue(OPENED_FILES_KEY)) { return; }
+    void parseFiles(const std::shared_ptr<Helpers::JsonObjectMap> &sessionMap, QStringList &filenames, QStringList &vectors) {
+        if (!sessionMap->containsValue(OPENED_FILES_KEY)) { return; }
 
-        QJsonValue openedFilesValue = sessionMap.value(OPENED_FILES_KEY);
+        QJsonValue openedFilesValue = sessionMap->value(OPENED_FILES_KEY);
         if (!openedFilesValue.isArray()) { return; }
 
         QJsonArray filesArray = openedFilesValue.toArray();
@@ -90,10 +90,10 @@ namespace Models {
         }
     }
 
-    void parseDirectories(const Helpers::JsonObjectMap &sessionMap, QStringList &fullDirectories) {
-        if (!sessionMap.containsValue(OPENED_DIRECTORIES_KEY)) { return; }
+    void parseDirectories(const std::shared_ptr<Helpers::JsonObjectMap> &sessionMap, QStringList &fullDirectories) {
+        if (!sessionMap->containsValue(OPENED_DIRECTORIES_KEY)) { return; }
 
-        QJsonValue openedDirsValue = sessionMap.value(OPENED_DIRECTORIES_KEY);
+        QJsonValue openedDirsValue = sessionMap->value(OPENED_DIRECTORIES_KEY);
         if (!openedDirsValue.isArray()) { return; }
 
         QJsonArray dirsArray = openedDirsValue.toArray();
@@ -120,32 +120,28 @@ namespace Models {
                  environment.getIsInMemoryOnly()),
         m_EmergencyRestore(environment.getIsRecoveryMode())
     {
+        if (environment.getIsInMemoryOnly()) {
+            LOG_WARNING << "Session restoration will not work in read-only mode";
+        }
     }
 
-    bool SessionManager::saveToFile(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
+    bool SessionManager::save(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
                                     const QStringList &directoriesSnapshot) {
         auto sessionMap = serializeSnapshot(filesSnapshot, directoriesSnapshot);
         bool success = false;
-        QJsonDocument doc;        
-        QJsonObject sessionJson = sessionMap->json();
-        doc.setObject(sessionJson);
 
         {
             QMutexLocker locker(&m_Mutex);
             Q_UNUSED(locker);
 
             do {
-                m_Config.setConfig(doc);
-
-                Helpers::LocalConfigDropper dropper(&m_Config);
-                Q_UNUSED(dropper);
-
-                success = m_Config.save();
+                success = m_Config.writeMap(sessionMap);
 #ifdef INTEGRATION_TESTS
                 m_LastSavedFilesCount = success ? (int)filesSnapshot.size() : m_LastSavedFilesCount;
 #endif
             } while (false);
         }
+
         return success;
     }
 
@@ -155,21 +151,11 @@ namespace Models {
         QMutexLocker locker(&m_Mutex);
         Q_UNUSED(locker);
 
-        m_Config.initialize();
-
-        Helpers::LocalConfigDropper dropper(&m_Config);
-        Q_UNUSED(dropper);
-
         QStringList filenames, vectors, fullDirectories;
+        std::shared_ptr<Helpers::JsonObjectMap> sessionMap = m_Config.readMap();
 
-        QJsonDocument &doc = m_Config.getConfig();
-        if (doc.isObject()) {
-            QJsonObject object = doc.object();
-            Helpers::JsonObjectMap sessionMap(object);
-
-            parseFiles(sessionMap, filenames, vectors);
-            parseDirectories(sessionMap, fullDirectories);
-        }
+        parseFiles(sessionMap, filenames, vectors);
+        parseDirectories(sessionMap, fullDirectories);
 
         if (filenames.empty()) {
             LOG_INFO << "Session was empty";
@@ -188,7 +174,7 @@ namespace Models {
     void SessionManager::clearSession() {
         std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > emptyFiles;
         QStringList emptyDirs;
-        bool cleared = saveToFile(emptyFiles, emptyDirs);
+        bool cleared = save(emptyFiles, emptyDirs);
         Q_ASSERT(cleared);
     }
 #endif

@@ -69,7 +69,7 @@ int CsvDefaultExportTest::doTest() {
 
     QDir outputDir(directoryPath);
     QFileInfoList csvFiles = outputDir.entryInfoList(QStringList() << "*.csv");
-    VERIFY(csvFiles.length() == defaultPlans.size(), "Number of csv files is different");
+    VERIFY(csvFiles.length() == (int)defaultPlans.size(), "Number of csv files is different");
     for (auto &file: csvFiles) {
         qDebug() << "Checking" << file.absoluteFilePath();
         VERIFY(file.size() > 0, "CSV filesize is zero");

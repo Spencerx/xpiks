@@ -42,8 +42,12 @@ ApplicationWindow {
     onVisibleChanged: {
         if (needToCenter) {
             needToCenter = false
-            applicationWindow.x = uiManager.getAppPosX((Screen.width - applicationWindow.width) / 2)
-            applicationWindow.y = uiManager.getAppPosY((Screen.height - applicationWindow.height) / 2)
+            applicationWindow.x = uiManager.getAppPosX(
+                        (Screen.width - applicationWindow.width) / 2, // default
+                        (Screen.desktopAvailableWidth - applicationWindow.width)) // max
+            applicationWindow.y = uiManager.getAppPosY(
+                        (Screen.height - applicationWindow.height) / 2, // default
+                        (Screen.desktopAvailableHeight - applicationWindow.height)) // max
         }
     }
 
@@ -110,16 +114,7 @@ ApplicationWindow {
             }
 
             if (settingsModel.needToShowTermsAndConditions()) {
-                var licenseText = settingsModel.termsAndConditionsText;
-                if (licenseText.length > 0) {
-                    Common.launchDialog("Dialogs/TermsAndConditionsDialog.qml",
-                                        applicationWindow,
-                                        {
-                                            termsText: licenseText
-                                        })
-                } else {
-                    licenseMissingDialog.open()
-                }
+                Common.launchDialog("Dialogs/TermsAndConditionsDialog.qml", applicationWindow, {})
             } else {
                 helpersWrapper.reportOpen()
             }
@@ -853,14 +848,7 @@ ApplicationWindow {
             MenuItem {
                 text: "Terms and Conditions"
                 onTriggered: {
-                    var licenseText = settingsModel.termsAndConditionsText;
-                    if (licenseText.length > 0) {
-                        Common.launchDialog("Dialogs/TermsAndConditionsDialog.qml",
-                                            applicationWindow,
-                                            {
-                                                termsText: licenseText
-                                            })
-                    }
+                    Common.launchDialog("Dialogs/TermsAndConditionsDialog.qml", applicationWindow, {})
                 }
             }
 
@@ -1008,7 +996,7 @@ ApplicationWindow {
     }
 
     MessageDialog {
-        id: licenseMissingDialog
+        id: corruptedInstallationDialog
         title: i18.n + qsTr("Warning")
         text: i18.n + qsTr("Xpiks installation is corrupted.\nPlease reinstall Xpiks and try again.")
         onAccepted: shutdownEverything()

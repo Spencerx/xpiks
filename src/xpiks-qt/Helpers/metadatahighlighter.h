@@ -26,7 +26,7 @@ namespace Helpers {
     {
     public:
         MetadataHighlighter(const QString &textToHighlight,
-                            Common::IFlagsProvider *flagsProvider,
+                            Common::IFlagsProvider<Common::SearchFlags> *flagsProvider,
                             QMLExtensions::ColorsModel *colorsModel,
                             QTextDocument *document=0);
 
@@ -36,7 +36,7 @@ namespace Helpers {
     private:
         QMLExtensions::ColorsModel *m_ColorsModel;
         QString m_TextToHighlight;
-        Common::IFlagsProvider *m_FlagsProvider;
+        Common::IFlagsProvider<Common::SearchFlags> *m_FlagsProvider;
         QTextCharFormat m_Format;
     };
 }

@@ -27,7 +27,7 @@
 
 #define SETTINGS_FILE "settings.json"
 
-#define EXPERIMENTAL_KEY QLatin1String("experimental")
+#define EXPERIMENTAL_KEY "experimental"
 
 #define CURRENT_SETTINGS_VERSION 1
 
@@ -59,27 +59,29 @@
 #define DEFAULT_USE_PROGRESSIVE_SUGGESTION_PREVIEWS false
 #define DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT 10
 
-#ifdef QT_NO_DEBUG
-    #define DEFAULT_USE_AUTOIMPORT true
-    #define DEFAULT_AUTO_CACHE_IMAGES true
-    #define DEFAULT_VERBOSE_UPLOAD false
-    #define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT false
-    #define DEFAULT_DETECT_DUPLICATES false
-#else
-    #define DEFAULT_DETECT_DUPLICATES true
+#define VERBOSE_UPLOAD_STARTDATE "verboseUploadStart"
 
-    #ifdef INTEGRATION_TESTS
-        // used in INTEGRATION TESTS
-        #define DEFAULT_USE_AUTOIMPORT false
-        #define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT true
-        #define DEFAULT_AUTO_CACHE_IMAGES false
-        #define DEFAULT_VERBOSE_UPLOAD false
-    #else
-        #define DEFAULT_USE_AUTOIMPORT true
-        #define DEFAULT_AUTO_CACHE_IMAGES true
-        #define DEFAULT_VERBOSE_UPLOAD true
-        #define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT false
-    #endif
+#ifdef QT_NO_DEBUG
+#define DEFAULT_USE_AUTOIMPORT true
+#define DEFAULT_AUTO_CACHE_IMAGES true
+#define DEFAULT_VERBOSE_UPLOAD false
+#define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT false
+#define DEFAULT_DETECT_DUPLICATES false
+#else
+#define DEFAULT_DETECT_DUPLICATES true
+
+#ifdef INTEGRATION_TESTS
+// used in INTEGRATION TESTS
+#define DEFAULT_USE_AUTOIMPORT false
+#define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT true
+#define DEFAULT_AUTO_CACHE_IMAGES false
+#define DEFAULT_VERBOSE_UPLOAD false
+#else
+#define DEFAULT_USE_AUTOIMPORT true
+#define DEFAULT_AUTO_CACHE_IMAGES true
+#define DEFAULT_VERBOSE_UPLOAD true
+#define DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT false
+#endif
 #endif
 
 #define SETTINGS_SAVING_INTERVAL 3000
@@ -183,23 +185,16 @@ namespace Models {
     void SettingsModel::initializeConfigs() {
         LOG_DEBUG << "#";
 
-        m_Config.initialize();
         m_State.init();
 
-        QJsonDocument &doc = m_Config.getConfig();
-        if (doc.isObject()) {
-            QJsonObject settingsJson = doc.object();
-            m_SettingsMap.reset(new Helpers::JsonObjectMap(settingsJson));
+        m_SettingsMap = m_Config.readMap();
 
-            if (settingsJson.contains(EXPERIMENTAL_KEY)) {
-                QJsonValue experimental = settingsJson[EXPERIMENTAL_KEY];
-                if (experimental.isObject()) {
-                    QJsonObject experimentalJson = experimental.toObject();
-                    m_ExperimentalMap.reset(new Helpers::JsonObjectMap(experimentalJson));
-                }
+        if (m_SettingsMap->containsValue(EXPERIMENTAL_KEY)) {
+            QJsonValue experimental = m_SettingsMap->value(EXPERIMENTAL_KEY);
+            if (experimental.isObject()) {
+                QJsonObject experimentalJson = experimental.toObject();
+                m_ExperimentalMap.reset(new Helpers::JsonObjectMap(experimentalJson));
             }
-        } else {
-            LOG_WARNING << "JSON document doesn't contain an object";
         }
     }
 
@@ -208,7 +203,8 @@ namespace Models {
         LOG_INFO << "Current settings version:" << settingsVersion;
 
         if (settingsVersion < CURRENT_SETTINGS_VERSION) {
-            moveSettingsFromQSettingsToJson();
+            // execute this on the main thread
+            QTimer::singleShot(0, this, &SettingsModel::onSettingsMigrationRequest);
         }
     }
 
@@ -463,7 +459,30 @@ namespace Models {
 
         setAutoCacheImages(m_SettingsMap->boolValue(cacheImagesAutomatically, DEFAULT_AUTO_CACHE_IMAGES));
 
+        consolidateSettings();
         resetChangeStates();
+    }
+
+    void SettingsModel::consolidateSettings() {
+        do {
+            if (getVerboseUpload()) {
+                const QDateTime dtNow = QDateTime::currentDateTime();
+                const QString verboseUploadStart = m_State.getString(VERBOSE_UPLOAD_STARTDATE);
+                const QDateTime verboseUploadStartDateTime = QDateTime::fromString(verboseUploadStart, Qt::ISODate);
+                if (!verboseUploadStartDateTime.isValid()) {
+                    LOG_WARNING << "Cannot parse verbose upload start datetime:" << verboseUploadStart;
+                    break;
+                }
+
+                const qint64 daysPassed = verboseUploadStartDateTime.daysTo(dtNow);
+                LOG_DEBUG << "Verbose upload is ON for" << daysPassed << "day(s)";
+
+                if (daysPassed > 5) {
+                    LOG_INFO << "Resetting stale verbose upload to improve performance";
+                    setVerboseUpload(false);
+                }
+            }
+        } while (false);
     }
 
     void SettingsModel::doMoveSettingsFromQSettingsToJson() {
@@ -609,6 +628,20 @@ namespace Models {
             m_SettingsMap->setValue(masterPasswordHash, "");
         }
 
+        if (m_VerboseUpload) {
+            if (!m_State.contains(VERBOSE_UPLOAD_STARTDATE)) {
+                const QDateTime dtNow = QDateTime::currentDateTime();
+                QString dateTimeString = dtNow.toString(Qt::ISODate);
+                m_State.setValue(VERBOSE_UPLOAD_STARTDATE, dateTimeString);
+                m_State.sync();
+            }
+        } else {
+            if (m_State.contains(VERBOSE_UPLOAD_STARTDATE)) {
+                m_State.remove(VERBOSE_UPLOAD_STARTDATE);
+                m_State.sync();
+            }
+        }
+
         sync();
     }
 
@@ -695,42 +728,6 @@ namespace Models {
                 currDirFile.close();
             }
         }
-        return text;
-    }
-
-    QString SettingsModel::getTermsAndConditionsText() const {
-        QString text;
-        QString path;
-
-#if !defined(Q_OS_LINUX)
-        path = QCoreApplication::applicationDirPath();
-
-#if defined(Q_OS_MAC)
-        path += "/../Resources/";
-#endif
-
-        path += QChar('/') + QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME);
-        path = QDir::cleanPath(path);
-#else
-        // path inside appimage
-        path = QCoreApplication::applicationDirPath() + QChar('/') + Constants::TERMS_AND_CONDITIONS_FILENAME;
-#endif
-        QFile file(QDir::cleanPath(path));
-        if (file.open(QIODevice::ReadOnly)) {
-            text = QString::fromUtf8(file.readAll());
-            file.close();
-        } else {
-            LOG_WARNING << "terms_and_conditions.txt file is not found on path" << path;
-
-            path = QDir::current().absoluteFilePath(QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME));
-
-            QFile currDirFile(path);
-            if (currDirFile.open(QIODevice::ReadOnly)) {
-                text = QString::fromUtf8(currDirFile.readAll());
-                currDirFile.close();
-            }
-        }
-
         return text;
     }
 
@@ -1028,14 +1025,12 @@ namespace Models {
         }
     }
 
-    void SettingsModel::setVerboseUpload(bool verboseUpload)
-    {
-        if (m_VerboseUpload == verboseUpload)
-            return;
-
-        m_VerboseUpload = verboseUpload;
-        emit verboseUploadChanged(verboseUpload);
-        justChanged();
+    void SettingsModel::setVerboseUpload(bool verboseUpload) {
+        if (m_VerboseUpload != verboseUpload) {
+            m_VerboseUpload = verboseUpload;
+            emit verboseUploadChanged(verboseUpload);
+            justChanged();
+        }
     }
 
     void SettingsModel::setUseProgressiveSuggestionPreviews(bool useProgressiveSuggestionPreviews)
@@ -1100,17 +1095,13 @@ namespace Models {
     void SettingsModel::sync() {
         LOG_DEBUG << "Syncing settings";
 
-        Helpers::LocalConfigDropper dropper(&m_Config);
-        Q_UNUSED(dropper);
-
         QJsonObject settingsJson = m_SettingsMap->json();
         settingsJson[EXPERIMENTAL_KEY] = m_ExperimentalMap->json();
 
         QJsonDocument doc;
         doc.setObject(settingsJson);
 
-        m_Config.setConfig(doc);
-        m_Config.save();
+        m_Config.writeConfig(doc);
     }
 
     QString SettingsModel::serializeProxyForSettings(ProxySettings &settings) {

@@ -208,7 +208,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/QMLExtensions/dbimagecacheindex.cpp \
     ../../xpiks-qt/Microstocks/stocksftplistmodel.cpp \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.cpp \
-    ../../xpiks-qt/Helpers/remoteconfig.cpp
+    ../../xpiks-qt/Helpers/remoteconfig.cpp \
+    ../../xpiks-qt/Encryption/obfuscation.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -365,5 +366,6 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/dbimagecacheindex.h \
     ../../xpiks-qt/Microstocks/stocksftplistmodel.h \
     ../../xpiks-qt/Models/abstractconfigupdatermodel.h \
-    ../../xpiks-qt/Helpers/remoteconfig.h
+    ../../xpiks-qt/Helpers/remoteconfig.h \
+    ../../xpiks-qt/Encryption/obfuscation.h
 

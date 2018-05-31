@@ -138,13 +138,26 @@ void initCrashRecovery(Common::ISystemEnvironment &environment) {
         logger.emergencyLog(stackTrace);
     });
 
-    chillout.setCrashCallback([&logger, &chillout]() {
+#if defined(Q_OS_WIN)
+    QString recoveryApp = "Recoverty.exe";
+    QStringList recoveryArgs = QStringList() << "Xpiks.exe" << "--recovery";
+#elif defined(Q_OS_MAC)
+    QString recoveryApp = "open";
+    QString xpiksBundlePath = QCoreApplication::applicationFilePath();
+    xpiksBundlePath.truncate(xpiksBundlePath.lastIndexOf(".app") + 4);
+    LOG_DEBUG << "Path to Xpiks bundle is" << xpiksBundlePath;
+    QStringList recoveryArgs = QStringList() << "Recoverty.app" << "--args"
+                                             << "open" <<  xpiksBundlePath << "--args" << "--recovery";
+#else
+    QString recoveryApp = "Recoverty.exe";
+    QStringList recoveryArgs = QStringList() << "Xpiks.exe" << "--recovery";
+#endif
+
+    chillout.setCrashCallback([&logger, &chillout, recoveryApp, recoveryArgs]() {
         chillout.backtrace();
         logger.emergencyFlush();
 
-#ifdef Q_OS_WIN
-        QProcess::startDetached("Recoverty.exe", QStringList() << "Xpiks.exe" << "--recovery");
-#endif
+        QProcess::startDetached(recoveryApp, recoveryArgs);
 
 #ifdef Q_OS_WIN
         chillout.createCrashDump(Debug::CrashDumpNormal);
@@ -228,14 +241,9 @@ int main(int argc, char *argv[]) {
     uiProvider->setQmlEngine(&engine);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(engine.rootObjects().at(0));
     imageCachingService.setScale(window->effectiveDevicePixelRatio());
+    LOG_INFO << "Effective pixel ratio:" << window->effectiveDevicePixelRatio();
 
-    QScreen *screen = window->screen();
-    QObject::connect(window, &QQuickWindow::screenChanged, &imageCachingService, &QMLExtensions::ImageCachingService::screenChangedHandler);
-    QObject::connect(screen, &QScreen::logicalDotsPerInchChanged, &imageCachingService, &QMLExtensions::ImageCachingService::dpiChanged);
-    QObject::connect(screen, &QScreen::physicalDotsPerInchChanged, &imageCachingService, &QMLExtensions::ImageCachingService::dpiChanged);
-
-    uiProvider->setRoot(window->contentItem());
-
+    xpiks.setupWindow(window);
     xpiks.start();
 
     return app.exec();

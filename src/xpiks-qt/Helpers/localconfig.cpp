@@ -20,21 +20,46 @@ namespace Helpers {
         Q_ASSERT(!m_FilePath.isEmpty());
     }
 
-    void LocalConfig::initialize() {
+    QJsonDocument LocalConfig::readConfig() {
+        QJsonDocument config;
+
         QFile file(m_FilePath);
 
         if (file.open(QIODevice::ReadOnly)) {
             QString text = QString::fromUtf8(file.readAll());
             file.close();
-            m_Config = QJsonDocument::fromJson(text.toUtf8());
+            config = QJsonDocument::fromJson(text.toUtf8());
         } else {
             LOG_WARNING << "Opening file" << m_FilePath << "failed";
         }
+
+        return config;
     }
 
-    bool LocalConfig::save() {
-        LOG_DEBUG << "memory-only:" << m_MemoryOnly;
+    std::shared_ptr<JsonObjectMap> LocalConfig::readMap() {
+        std::shared_ptr<JsonObjectMap> stateMap;
+        QJsonDocument config = readConfig();
+        if (config.isObject()) {
+            QJsonObject json = config.object();
+            stateMap.reset(new Helpers::JsonObjectMap(json));
+        } else {
+            stateMap.reset(new Helpers::JsonObjectMap());
+        }
+        return stateMap;
+    }
 
+    bool LocalConfig::writeMap(const std::shared_ptr<JsonObjectMap> &map) {
+        if (m_MemoryOnly) { return true; }
+        if (m_FilePath.isEmpty()) { return false; }
+
+        QJsonDocument doc;
+        QJsonObject json = map->json();
+        doc.setObject(json);
+        bool success = writeConfig(doc);
+        return success;
+    }
+
+    bool LocalConfig::writeConfig(const QJsonDocument &config) {
         if (m_MemoryOnly) { return true; }
         if (m_FilePath.isEmpty()) { return false; }
 
@@ -42,7 +67,7 @@ namespace Helpers {
         QFile file(m_FilePath);
 
         if (file.open(QIODevice::WriteOnly)) {
-            file.write(m_Config.toJson(QJsonDocument::Indented));
+            file.write(config.toJson(QJsonDocument::Indented));
             file.close();
             success = true;
         } else {
@@ -51,11 +76,4 @@ namespace Helpers {
 
         return success;
     }
-
-    void LocalConfig::dropConfig() {
-        if (m_MemoryOnly) { return; }
-        m_Config = QJsonDocument();
-        Q_ASSERT(m_Config.isEmpty());
-    }
 }
-

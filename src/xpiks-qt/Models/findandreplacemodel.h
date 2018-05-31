@@ -23,7 +23,7 @@ namespace Models {
     class FindAndReplaceModel:
         public QAbstractListModel,
         public Common::BaseEntity,
-        public Common::IFlagsProvider
+        public Common::IFlagsProvider<Common::SearchFlags>
     {
         Q_OBJECT
         Q_PROPERTY(QString replaceFrom READ getReplaceFrom WRITE setReplaceFrom NOTIFY replaceFromChanged)
@@ -41,7 +41,7 @@ namespace Models {
         virtual ~FindAndReplaceModel() {}
 
     public:
-        virtual Common::flag_t getFlags() const override { return (Common::flag_t)m_Flags; }
+        virtual Common::SearchFlags getFlags() const override { return m_Flags; }
         const QString &getReplaceFrom() const{ return m_ReplaceFrom; }
         const QString &getReplaceTo() const { return m_ReplaceTo; }
         int getArtworksCount() const { return (int)m_ArtworksSnapshot.size(); }

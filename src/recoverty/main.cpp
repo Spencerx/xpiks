@@ -18,6 +18,12 @@ int main(int argc, char *argv[]) {
     QQmlApplicationEngine engine;
     QQmlContext *rootContext = engine.rootContext();
     rootContext->setContextProperty("restartModel", &restartModel);
+#ifdef QT_DEBUG
+    QVariant isDebug(true);
+#else
+    QVariant isDebug(false);
+#endif
+    rootContext->setContextProperty("debug", isDebug);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

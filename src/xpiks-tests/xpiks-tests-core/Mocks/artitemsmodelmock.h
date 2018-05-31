@@ -27,8 +27,8 @@ namespace Mocks {
 
         void removeAll() { this->removeArtworks(QVector<QPair<int, int> >() << qMakePair(0, rowCount() - 1)); }
 
-        virtual void updateItemsAtIndices(const QVector<int> &indices) {  if (!m_BlockUpdates) { Models::ArtItemsModel::updateItemsAtIndices(indices); } }
-        virtual void updateItemsInRanges(const QVector<QPair<int, int> > &ranges) { if (!m_BlockUpdates) { Models::ArtItemsModel::updateItemsInRanges(ranges); } }
+        virtual void updateItemsAtIndices(const QVector<int> &indices) override {  if (!m_BlockUpdates) { Models::ArtItemsModel::updateItemsAtIndices(indices); } }
+        virtual void updateItemsInRanges(const QVector<QPair<int, int> > &ranges) override { if (!m_BlockUpdates) { Models::ArtItemsModel::updateItemsInRanges(ranges); } }
 
         void foreachArtwork(std::function<void (int index, ArtworkMetadataMock *metadata)> action) {
             int size = getArtworksCount();

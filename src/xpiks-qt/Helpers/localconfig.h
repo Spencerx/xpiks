@@ -15,42 +15,25 @@
 #include <QJsonDocument>
 #include <QFile>
 #include "../Common/defines.h"
+#include "jsonobjectmap.h"
+#include <memory>
 
 namespace Helpers {
     class LocalConfig {
     public:
-        LocalConfig(const QString &filepath, bool memoryOnly);
+        LocalConfig(const QString &filepath, bool memoryOnly=false);
 
     public:
-        QJsonDocument& getConfig() { return m_Config; }
-        const QJsonDocument& getConfig() const { return m_Config; }
-        const QString &getPath() const { return m_FilePath; }
-        void setConfig(const QJsonDocument &config) { m_Config = config; }
-        void initialize();
-        bool save();
-        void dropConfig();
+        QJsonDocument readConfig();
+        std::shared_ptr<JsonObjectMap> readMap();
+
+    public:
+        bool writeMap(const std::shared_ptr<JsonObjectMap> &map);
+        bool writeConfig(const QJsonDocument &config);
 
     private:
         QString m_FilePath;
-        QJsonDocument m_Config;
         bool m_MemoryOnly;
-    };
-
-    class LocalConfigDropper {
-    public:
-        LocalConfigDropper(LocalConfig *config):
-            m_Config(config)
-        {
-        }
-
-        virtual ~LocalConfigDropper() {
-            if (m_Config != nullptr) {
-                m_Config->dropConfig();
-            }
-        }
-
-    private:
-        LocalConfig *m_Config;
     };
 }
 
