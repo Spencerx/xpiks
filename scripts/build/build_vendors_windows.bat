@@ -8,6 +8,7 @@ if "%BUILD_MODE%"=="debug" set TARGET="debug"
 if "%BUILD_MODE%"=="appveyor" set TARGET="debug"
 if "%BUILD_MODE%"=="release" set TARGET="release"
 if "%BUILD_MODE%"=="fulldebug" set TARGET="debug"
+if "%BUILD_MODE%"=="fullrelease" set TARGET="release"
 
 SET ROOT_DIR="%cd%"
 echo "Root directory is %ROOT_DIR%"
@@ -98,7 +99,10 @@ set XPKS_ROOT="%ROOT_DIR%\..\libxpks"
 set THMBNLR_ROOT="%ROOT_DIR%\..\libthmbnlr"
 
 if not "%BUILD_MODE%"=="appveyor" (
-   if "%BUILD_MODE%"=="fulldebug" (
+  set "TRUE="
+  IF "%BUILD_MODE%"=="fulldebug" set TRUE=1
+  IF "%BUILD_MODE%"=="fullrelease" set TRUE=1
+  IF defined TRUE (
       rem libxpks
       echo "%PRINT_PREFIX% Building real libxpks..."
       copy %ROOT_DIR%\libs\%TARGET%\*curl* %XPKS_ROOT%\libs\%TARGET%
