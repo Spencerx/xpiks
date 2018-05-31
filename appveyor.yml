@@ -1,5 +1,5 @@
 # version format
-version: 1.5.{build}-{branch}
+version: 1.5.{build}
 
 os: Visual Studio 2015
 
@@ -44,7 +44,7 @@ clone_depth: 3                      # clone entire repository history if not def
 #  - vendors -> appveyor.yml
 
 matrix:
-  fast_finish: true
+  fast_finish: false
   allow_failures:
     - configuration: release
 
@@ -65,60 +65,17 @@ before_build:
 build_script:
   - if not defined UI_TESTS scripts\build\checkout_deps_windows.bat
   - if not defined UI_TESTS scripts\build\build_vendors_windows.bat appveyor
-  - cmd: 'echo %cd%'
-  - cmd: 'cd src'
-  - if defined XPIKS_BINARY cd xpiks-qt
-  - if defined XPIKS_BINARY qmake "CONFIG+=%configuration% appveyor" xpiks-qt.pro
-  - if defined CORE_TESTS cd xpiks-tests\xpiks-tests-core
-  - if defined CORE_TESTS qmake "CONFIG+=%configuration% appveyor" xpiks-tests-core.pro
-  - if defined INTEGRATION_TESTS cd xpiks-tests\plugins-for-tests\helloworld\xpiks-helloworld-plugin
-  - if defined INTEGRATION_TESTS qmake "CONFIG+=%configuration% appveyor" xpiks-helloworld-plugin.pro
-  - if defined INTEGRATION_TESTS nmake.exe
-  - if defined INTEGRATION_TESTS cd ..\..\..\..\
-  - if defined INTEGRATION_TESTS cd xpiks-tests\xpiks-tests-integration
-  - if defined INTEGRATION_TESTS qmake "CONFIG+=%configuration% appveyor" xpiks-tests-integration.pro
-  - if defined UI_TESTS cd xpiks-tests\ui-tests-stubs
-  - if defined UI_TESTS qmake "CONFIG+=%configuration% appveyor" ui-tests-stubs.pro
-  - if defined UI_TESTS nmake.exe
-  - if defined UI_TESTS cd ..\xpiks-tests-ui
-  - if defined UI_TESTS qmake "CONFIG+=%configuration% appveyor" xpiks-tests-ui.pro
-  - nmake.exe
-
-after_build:
-  - cmd: 'echo %cd%'
-  - if defined XPIKS_BINARY cd %configuration%
-  - if defined XPIKS_BINARY windeployqt.exe --debug --qmldir=../../xpiks-qt/CollapserTabs/ --qmldir=../../xpiks-qt/Components/ --qmldir=../../xpiks-qt/Constants/ --qmldir=../../xpiks-qt/Dialogs/ --qmldir=../../xpiks-qt/StackViews/ --qmldir=../../xpiks-qt/StyledControls/ --qmldir=../../xpiks-qt/ Xpiks.exe
-  - if defined XPIKS_BINARY xcopy /Y /s c:\projects\xpiks\src\xpiks-qt\deps .
-  - if defined XPIKS_BINARY copy /Y ..\..\..\libs\%configuration%\libcurl*.dll .
-  - if defined XPIKS_BINARY copy /Y ..\..\..\libs\%configuration%\quazip*.dll .
-  - if defined XPIKS_BINARY copy /Y ..\..\..\libs\%configuration%\ssdll.dll .
-  - if defined XPIKS_BINARY copy /Y ..\..\..\libs\%configuration%\mman.dll .
-  - if defined XPIKS_BINARY copy /Y ..\..\..\libs\%configuration%\face.dll .
-  - if defined XPIKS_BINARY copy /Y ..\..\..\libs\%configuration%\z.dll .
-  - if defined XPIKS_BINARY del *.obj
-  - if defined XPIKS_BINARY del *.cpp
-  - if defined XPIKS_BINARY cd ..
-  - if defined XPIKS_BINARY 7z a xpiks-qt-%configuration%.zip %configuration%
-  - if defined XPIKS_BINARY appveyor PushArtifact xpiks-qt-%configuration%.zip
-
-before_test:
-  - cmd: 'echo %cd%'
-  - if defined CORE_TESTS copy ..\..\..\libs\%configuration%\*.dll .
-  - if defined INTEGRATION_TESTS copy ..\..\..\libs\%configuration%\*.dll .
-
-test_script:
-  - cmd: 'echo %cd%'
-  - if defined CORE_TESTS %configuration%\xpiks-tests-core.exe
-  - if defined INTEGRATION_TESTS %configuration%\xpiks-tests-integration.exe > tests.log
-  - if defined INTEGRATION_TESTS %configuration%\xpiks-tests-integration.exe --in-memory  > tests_in_memory.log
-  - if defined UI_TESTS %configuration%\xpiks-tests-ui.exe
+  - if defined XPIKS_BINARY scripts\ci\appveyor-xpiks.bat
+  - if defined CORE_TESTS scripts\ci\appveyor-core-tests.bat build
+  - if defined INTEGRATION_TESTS scripts\ci\appveyor-integration-tests.bat build
+  - if defined UI_TESTS scripts\ci\appveyor-ui-tests.bat build
   
-on_success:
-  - if defined INTEGRATION_TESTS type tests.log
+test_script:
+  - if defined CORE_TESTS scripts\ci\appveyor-core-tests.bat run
+  - if defined INTEGRATION_TESTS scripts\ci\appveyor-integration-tests.bat run
+  - if defined UI_TESTS scripts\ci\appveyor-ui-tests.bat run
 
 on_failure:
-  - if defined INTEGRATION_TESTS type tests.log
-  - if defined INTEGRATION_TESTS type tests_in_memory.log
   - ps: Get-ChildItem .\*.dmp | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
   - if defined INTEGRATION_TESTS appveyor PushArtifact %configuration%\xpiks-tests-integration.exe
   - if defined INTEGRATION_TESTS appveyor PushArtifact %configuration%\xpiks-tests-integration.pdb
