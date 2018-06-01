@@ -645,13 +645,13 @@ BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
 
 include(../xpiks-common/xpiks-common.pri)
 
-#DEFINES += WITH_UPDATES
+DEFINES += WITH_UPDATES
 DEFINES += WITH_LOGS
-DEFINES += WITH_PLUGINS
 
 CONFIG(debug, debug|release)  {
     message("Building debug")
     DEFINES += WITH_STDOUT_LOGS
+    DEFINES += WITH_PLUGINS
     #QMAKE_CXXFLAGS += -fsanitize=thread
 } else {
     message("Building release")
