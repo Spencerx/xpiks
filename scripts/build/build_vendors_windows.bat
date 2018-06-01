@@ -95,7 +95,7 @@ nmake.exe "%NMAKE_OPTIONS%"
 copy %TARGET%\hunspell.* ..\..\libs\%TARGET%
 echo "%PRINT_PREFIX% Building hunspell... - done"
 
-cd %XPKS_ROOT%\src\recoverty
+cd %ROOT_DIR%\src\recoverty
 %QMAKE_EXE% "CONFIG+=%TARGET%" recoverty.pro
 nmake.exe "%NMAKE_OPTIONS%"
 echo "%PRINT_PREFIX% Building recoverty... - done"
