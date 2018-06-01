@@ -9,6 +9,12 @@ case ${BUILD_MODE} in
     debug|travis-ci)
         TARGET="debug"
         ;;
+    fullrelease)
+        TARGET="release"
+        ;;
+    fulldebug)
+        TARGET="debug"
+        ;;
     *)
         echo "$(basename ${0}) error: Invalid command arguments"
         echo "    usage: $(basename ${0}) <debug|release|travis-ci> [optional make flags]"
@@ -35,7 +41,7 @@ if [ ${BUILD_MODE} != "travis-ci" ]
 then
     ### submodule
     echo -e "${PRINT_PREFIX} Checking out submodules..."
-    git submodule init && git submodule update --recursive
+    git submodule update --init --recursive
     echo -e "${PRINT_PREFIX} Checking out submodules... - done."
 
     ### translations
@@ -43,13 +49,42 @@ then
     cd ${ROOT_DIR}/src/xpiks-qt/deps/translations/
     make ${MAKE_FLAGS}
     echo -e "${PRINT_PREFIX} Generating translations... - done."
+fi
 
+if [ ${BUILD_MODE} == "fulldebug" ] || [ ${BUILD_MODE} == "fullrelease" ]
+then
+    echo "Full mode"
+    ### libthmbnlr
+    echo -e "${PRINT_PREFIX} Building libthmbnlr..."
+    cd ${ROOT_DIR}/../libthmbnlr/src/libthmbnlr
+    qmake "CONFIG+=${TARGET}" libthmbnlr.pro
+    make ${MAKE_FLAGS}	
+	cp libthmbnlr.a ${ROOT_DIR}/libs/${TARGET}
+    echo -e "${PRINT_PREFIX} Building libthmbnlr... - done."
+		
+	### libxpks
+	echo -e "${PRINT_PREFIX} Building libxpks..."
+	cd ${ROOT_DIR}/../libxpks/src/xpks
+	qmake "CONFIG+=${TARGET}" xpks.pro
+	make ${MAKE_FLAGS}
+	cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
+	echo -e "${PRINT_PREFIX} Building libxpks... - done."
+else
+    echo "Normal mode"
     ### libthmbnlr
     echo -e "${PRINT_PREFIX} Building libthmbnlr..."
     cd ${ROOT_DIR}/vendors/libthmbnlr
     qmake "CONFIG+=${TARGET}" thmbnlr.pro
     make ${MAKE_FLAGS}
     echo -e "${PRINT_PREFIX} Building libthmbnlr... - done."
+		
+	### libxpks
+	echo -e "${PRINT_PREFIX} Building libxpks..."
+	cd ${ROOT_DIR}/src/libxpks_stub
+	qmake "CONFIG+=${TARGET}" libxpks_stub.pro
+	make ${MAKE_FLAGS}
+	cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
+	echo -e "${PRINT_PREFIX} Building libxpks... - done."
 fi
 
 ### tiny-aes
@@ -104,12 +139,11 @@ qmake "CONFIG+=${TARGET}" hunspell.pro
 make ${MAKE_FLAGS}
 echo -e "${PRINT_PREFIX} Building hunspell... - done."
 
-### libxpks
-echo -e "${PRINT_PREFIX} Building libxpks..."
-cd ${ROOT_DIR}/src/libxpks_stub
-qmake "CONFIG+=${TARGET}" libxpks_stub.pro
+### recoverty
+echo -e "${PRINT_PREFIX} Building recoverty..."
+cd ${ROOT_DIR}/src/recoverty/
+qmake "CONFIG+=${TARGET}" recoverty.pro
 make ${MAKE_FLAGS}
-cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
-echo -e "${PRINT_PREFIX} Building libxpks... - done."
+echo -e "${PRINT_PREFIX} Building recoverty... - done."
 
 echo -e "${PRINT_PREFIX} Vendors preparation for ${BUILD_MODE}: done."

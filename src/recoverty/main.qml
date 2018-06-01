@@ -38,7 +38,7 @@ Window {
             }
 
             Text {
-                text: "Oh no! Xpiks crashed!"
+                text: qsTr("Oh no! %1 crashed!").arg(restartModel.appName)
                 font.bold: true
                 font.pixelSize: 25
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -113,13 +113,13 @@ Window {
             }
         }
 
-        /*Text {
+        Text {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             anchors.horizontalCenter: parent.horizontalCenter
             visible: debug
             text: restartModel.arguments
-        }*/
+        }
 
         Timer {
             id: closingTimer

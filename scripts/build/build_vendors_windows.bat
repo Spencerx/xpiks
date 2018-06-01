@@ -120,6 +120,11 @@ if not "%BUILD_MODE%"=="appveyor" (
       nmake.exe "%NMAKE_OPTIONS%"
       copy %TARGET%\thmbnlr.* %ROOT_DIR%\libs\%TARGET%
       echo "%PRINT_PREFIX% Building libthmbnlr... - done"
+	  
+	  cd %XPKS_ROOT%\src\recoverty
+      %QMAKE_EXE% "CONFIG+=%TARGET%" recoverty.pro
+      nmake.exe "%NMAKE_OPTIONS%"
+      echo "%PRINT_PREFIX% Building recoverty... - done"
     ) else (
       rem libxpks
       echo "%PRINT_PREFIX% Building stub libxpks..."
