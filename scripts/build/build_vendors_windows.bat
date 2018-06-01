@@ -95,6 +95,11 @@ nmake.exe "%NMAKE_OPTIONS%"
 copy %TARGET%\hunspell.* ..\..\libs\%TARGET%
 echo "%PRINT_PREFIX% Building hunspell... - done"
 
+cd %XPKS_ROOT%\src\recoverty
+%QMAKE_EXE% "CONFIG+=%TARGET%" recoverty.pro
+nmake.exe "%NMAKE_OPTIONS%"
+echo "%PRINT_PREFIX% Building recoverty... - done"
+
 set XPKS_ROOT="%ROOT_DIR%\..\libxpks"
 set THMBNLR_ROOT="%ROOT_DIR%\..\libthmbnlr"
 
@@ -119,12 +124,7 @@ if not "%BUILD_MODE%"=="appveyor" (
       %QMAKE_EXE% "CONFIG+=%TARGET%" libthmbnlr.pro
       nmake.exe "%NMAKE_OPTIONS%"
       copy %TARGET%\thmbnlr.* %ROOT_DIR%\libs\%TARGET%
-      echo "%PRINT_PREFIX% Building libthmbnlr... - done"
-	  
-	  cd %XPKS_ROOT%\src\recoverty
-      %QMAKE_EXE% "CONFIG+=%TARGET%" recoverty.pro
-      nmake.exe "%NMAKE_OPTIONS%"
-      echo "%PRINT_PREFIX% Building recoverty... - done"
+      echo "%PRINT_PREFIX% Building libthmbnlr... - done"	  
     ) else (
       rem libxpks
       echo "%PRINT_PREFIX% Building stub libxpks..."
