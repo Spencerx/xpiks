@@ -131,5 +131,6 @@ Window {
                 restartModel.recover()
                 Qt.quit()
             }
-        }}
+        }
+    }
 }
