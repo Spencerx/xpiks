@@ -113,13 +113,14 @@ Window {
             }
         }
 
-        Text {
+        /*Text {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             anchors.horizontalCenter: parent.horizontalCenter
             visible: debug
+            enabled: debug
             text: restartModel.arguments
-        }
+        }*/
 
         Timer {
             id: closingTimer
