@@ -19,6 +19,8 @@ DEFINES += QT_NO_CAST_TO_ASCII \
 
 DESTDIR = ../xpiks-qt/deps/recoverty/
 
+ICON = recoverty.icns
+
 SOURCES += main.cpp \
     restartmodel.cpp
 
