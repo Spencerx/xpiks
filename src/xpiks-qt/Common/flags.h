@@ -17,6 +17,9 @@
 namespace Common {
     typedef uint32_t flag_t;
 
+#ifndef Q_OS_WIN32
+    // visual studio 2013 bug
+
     template<typename FlagType>
     struct enable_bitmask_operators {
         static constexpr bool enable=false;
@@ -55,6 +58,7 @@ namespace Common {
         typedef typename std::underlying_type<FlagType>::type underlying;
         return static_cast<FlagType>(static_cast<underlying>(a) & b);
     }
+#endif
 
     enum struct CombinedEditFlags: flag_t {
         None = 0,
@@ -66,22 +70,12 @@ namespace Common {
         EditEverything = EditTitle | EditDescription | EditKeywords
     };
 
-    template<>
-    struct enable_bitmask_operators<CombinedEditFlags> {
-        static constexpr bool enable = true;
-    };
-
     enum struct SuggestionFlags: flag_t {
         None = 0,
         Title = 1 << 0,
         Description = 1 << 1,
         Keywords = 1 << 2,
         All = Title | Description | Keywords
-    };
-
-    template<>
-    struct enable_bitmask_operators<SuggestionFlags> {
-        static constexpr bool enable = true;
     };
 
     enum struct SpellCheckFlags: flag_t {
@@ -91,21 +85,11 @@ namespace Common {
         All = Title | Description | Keywords
     };
 
-    template<>
-    struct enable_bitmask_operators<SpellCheckFlags> {
-        static constexpr bool enable = true;
-    };
-
     enum struct KeywordReplaceResult: flag_t {
         Succeeded = 0,
         FailedIndex = 1,
         FailedDuplicate = 2,
         Unknown = 1 << 20
-    };
-
-    template<>
-    struct enable_bitmask_operators<KeywordReplaceResult> {
-        static constexpr bool enable = true;
     };
 
     enum struct SearchFlags: flag_t {
@@ -129,21 +113,11 @@ namespace Common {
         AnyTermsEverything = Everything
     };
 
-    template<>
-    struct enable_bitmask_operators<SearchFlags> {
-        static constexpr bool enable = true;
-    };
-
     enum struct DirectoryFlags: flag_t {
         None = 0,
         IsSelected = 1 << 0,
         IsAddedAsDirectory = 1 << 1,
         IsRemoved = 1 << 2
-    };
-
-    template<>
-    struct enable_bitmask_operators<DirectoryFlags> {
-        static constexpr bool enable = true;
     };
 
     enum struct WarningFlags: flag_t {
@@ -171,11 +145,6 @@ namespace Common {
         VideoIsTooShort = 1 << 20
     };
 
-    template<>
-    struct enable_bitmask_operators<WarningFlags> {
-        static constexpr bool enable = true;
-    };
-
     enum struct WarningsCheckFlags: flag_t {
         None = 0,
         Keywords = 1 << 0,
@@ -187,21 +156,11 @@ namespace Common {
         All = Metadata | FileProperties
     };
 
-    template<>
-    struct enable_bitmask_operators<WarningsCheckFlags> {
-        static constexpr bool enable = true;
-    };
-
     enum struct WordAnalysisFlags: flag_t {
         None = 0,
         Spelling = 1 << 0,
         Stemming = 1 << 1,
         All = Spelling | Stemming
-    };
-
-    template<>
-    struct enable_bitmask_operators<WordAnalysisFlags> {
-        static constexpr bool enable = true;
     };
 
     enum struct PluginNotificationFlags: Common::flag_t {
@@ -211,10 +170,59 @@ namespace Common {
         PresetsUpdated = 1 << 2
     };
 
+#ifndef Q_OS_WIN32
+    // visual studio 2013 bug
+
+    template<>
+    struct enable_bitmask_operators<CombinedEditFlags> {
+        static constexpr bool enable = true;
+    };
+
     template<>
     struct enable_bitmask_operators<PluginNotificationFlags> {
         static constexpr bool enable = true;
+    };    
+
+    template<>
+    struct enable_bitmask_operators<SuggestionFlags> {
+        static constexpr bool enable = true;
     };
+
+    template<>
+    struct enable_bitmask_operators<SpellCheckFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<KeywordReplaceResult> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<SearchFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<DirectoryFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<WarningFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<WarningsCheckFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<WordAnalysisFlags> {
+        static constexpr bool enable = true;
+    };
+#endif
 
     // --------------------------------------------
 
