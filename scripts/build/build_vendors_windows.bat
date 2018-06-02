@@ -10,6 +10,8 @@ if "%BUILD_MODE%"=="release" set TARGET="release"
 if "%BUILD_MODE%"=="fulldebug" set TARGET="debug"
 if "%BUILD_MODE%"=="fullrelease" set TARGET="release"
 
+set ARCH=x64
+
 SET ROOT_DIR="%cd%"
 echo "Root directory is %ROOT_DIR%"
 echo "Build mode is %BUILD_MODE%"
@@ -20,12 +22,11 @@ set PRINT_PREFIX="-"
 set NMAKE_OPTIONS="clean all /f Makefile"
 
 set XPIKS_DEPS_ROOT="%ROOT_DIR%\..\xpiks-deps"
-set XPIKS_DEPS_LIBS="%XPIKS_DEPS_ROOT%\windows-libs\%TARGET%-x64"
+set XPIKS_DEPS_LIBS="%XPIKS_DEPS_ROOT%\windows-libs\%TARGET%-%ARCH%"
 
 if "%BUILD_MODE%"=="appveyor" (
    set PRINT_PREFIX=""
    set QMAKE_EXE="qmake"
-   set ARCH="x64"
    rem call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%
    git submodule update --init --recursive
 ) else (
@@ -147,7 +148,7 @@ if not "%BUILD_MODE%"=="appveyor" (
   echo "%PRINT_PREFIX% xpiks-deps root is %XPIKS_DEPS_LIBS%"
 
   rem ffmpeg
-  xcopy /s %XPIKS_DEPS_ROOT%\windows-libs\ffmpeg-x64\%TARGET% %ROOT_DIR%\libs\%TARGET%
+  xcopy /s %XPIKS_DEPS_ROOT%\windows-libs\ffmpeg-%ARCH%\%TARGET% %ROOT_DIR%\libs\%TARGET%
   
   rem xpiks deps
   copy %XPIKS_DEPS_LIBS%\*curl* %ROOT_DIR%\libs\%TARGET%
