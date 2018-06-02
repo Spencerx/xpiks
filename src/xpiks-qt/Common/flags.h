@@ -13,6 +13,7 @@
 
 #include <type_traits>
 #include <QObject>
+#include <cstdint>
 
 namespace Common {
     typedef uint32_t flag_t;
@@ -181,7 +182,7 @@ namespace Common {
     template<>
     struct enable_bitmask_operators<PluginNotificationFlags> {
         static constexpr bool enable = true;
-    };    
+    };
 
     template<>
     struct enable_bitmask_operators<SuggestionFlags> {
@@ -222,12 +223,52 @@ namespace Common {
     struct enable_bitmask_operators<WordAnalysisFlags> {
         static constexpr bool enable = true;
     };
+#else
+#define ENUM_OR(ENUM_TYPE) inline ENUM_TYPE operator | (ENUM_TYPE a, ENUM_TYPE b) { \
+    using T = std::underlying_type_t <ENUM_TYPE>; \
+    return (ENUM_TYPE)(static_cast<T>(a) | static_cast<T>(b)); \
+}
+
+#define ENUM_AND(ENUM_TYPE) inline ENUM_TYPE operator & (ENUM_TYPE a, ENUM_TYPE b) { \
+    using T = std::underlying_type_t <ENUM_TYPE>; \
+    return (ENUM_TYPE)(static_cast<T>(a) & static_cast<T>(b)); \
+    } \
+    inline ENUM_TYPE operator & (ENUM_TYPE a, std::underlying_type_t <ENUM_TYPE> b) { \
+        using T = std::underlying_type_t <ENUM_TYPE>; \
+        return (ENUM_TYPE)(static_cast<T>(a) & b); \
+    }
+
+#define ENUM_NOT(ENUM_TYPE) inline std::underlying_type_t <ENUM_TYPE> operator ~ (ENUM_TYPE a) { \
+    using T = std::underlying_type_t <ENUM_TYPE>; \
+    return ~(static_cast<T>(a)); \
+}
+
+    ENUM_OR(SuggestionFlags)
+    ENUM_OR(CombinedEditFlags)
+    ENUM_OR(SearchFlags)
+    ENUM_OR(DirectoryFlags)
+    ENUM_OR(WordAnalysisFlags)
+    ENUM_OR(WarningFlags)
+
+    ENUM_AND(CombinedEditFlags)
+    ENUM_AND(SearchFlags)
+    ENUM_AND(DirectoryFlags)
+    ENUM_AND(WordAnalysisFlags)
+    ENUM_AND(SpellCheckFlags)
+    ENUM_AND(SuggestionFlags)
+    ENUM_AND(WarningFlags)
+    ENUM_AND(PluginNotificationFlags)
+
+    ENUM_NOT(DirectoryFlags)
+    ENUM_NOT(SearchFlags)
+    ENUM_NOT(CombinedEditFlags)
+    ENUM_NOT(WarningFlags)
 #endif
 
     // --------------------------------------------
 
     template<typename FlagValue, typename FlagType>
-    constexpr bool HasFlag(FlagValue value, FlagType flag) {
+    bool HasFlag(FlagValue value, FlagType flag) {
         return (value & flag) == flag;
     }
 
