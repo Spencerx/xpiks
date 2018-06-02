@@ -268,7 +268,7 @@ namespace Common {
     // --------------------------------------------
 
     template<typename FlagValue, typename FlagType>
-    bool HasFlag(FlagValue value, FlagType flag) {
+    constexpr bool HasFlag(FlagValue value, FlagType flag) {
         return (value & flag) == flag;
     }
 
