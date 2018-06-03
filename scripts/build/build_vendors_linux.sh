@@ -88,6 +88,7 @@ echo -e "${PRINT_PREFIX} Renaming tiny-aes... - done."
 echo -e "${PRINT_PREFIX} Building cpp-libface..."
 cd ${ROOT_DIR}/vendors/cpp-libface/libface-project
 qmake "CONFIG+=${TARGET}" libface.pro
+make ${MAKE_FLAGS}
 cp libface.so.1.0.0 ${ROOT_DIR}/libs/${TARGET}
 cd ${ROOT_DIR}/libs/${TARGET}
 ln -s libface.so.1.0.0 libface.so
