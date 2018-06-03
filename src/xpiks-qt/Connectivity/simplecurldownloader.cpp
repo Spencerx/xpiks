@@ -13,7 +13,7 @@
 #include <QTemporaryFile>
 #include <cstdio>
 #include <curl/curl.h>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Models/proxysettings.h"
 #include "ftphelpers.h"
 

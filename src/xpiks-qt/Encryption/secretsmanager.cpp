@@ -12,7 +12,7 @@
 #include "aes-qt.h"
 #include <QCryptographicHash>
 #include <QTime>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 void shuffleString(QString &str) {
     qsrand(QTime::currentTime().msec());

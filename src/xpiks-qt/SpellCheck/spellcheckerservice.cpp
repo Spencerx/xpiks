@@ -9,10 +9,11 @@
  */
 
 #include "spellcheckerservice.h"
+#include <QThread>
 #include "../Models/artworkmetadata.h"
 #include "spellcheckworker.h"
 #include "spellcheckitem.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Common/flags.h"
 
 namespace SpellCheck {

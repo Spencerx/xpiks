@@ -12,6 +12,7 @@
 #include "../Translation/translationmanager.h"
 #include "initializedictionariesjobitem.h"
 #include "../Helpers/asynccoordinator.h"
+#include "../Common/logging.h"
 
 namespace Maintenance {
     InitializeDictionariesJobItem::InitializeDictionariesJobItem(Translation::TranslationManager *translationManager, Helpers::AsyncCoordinator *initCoordinator):

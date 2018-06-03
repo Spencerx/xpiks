@@ -12,7 +12,7 @@
 #include <QDir>
 #include <QJsonValue>
 #include "apimanager.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Connectivity {
 

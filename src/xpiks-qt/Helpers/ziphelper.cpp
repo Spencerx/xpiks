@@ -12,7 +12,7 @@
 #include <QFileInfo>
 #include <quazip/JlCompress.h>
 #include "filehelpers.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Helpers {
     QStringList zipFiles(QStringList filepathes) {

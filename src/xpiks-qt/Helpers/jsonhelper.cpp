@@ -9,6 +9,7 @@
  */
 
 #include "jsonhelper.h"
+#include "../Common/logging.h"
 
 namespace Helpers {
     bool mergeJsonArrays(const QJsonArray &arrayFrom, QJsonArray &arrayTo, CompareValuesJson &comparer);

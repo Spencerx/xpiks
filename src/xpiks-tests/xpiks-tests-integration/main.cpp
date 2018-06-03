@@ -4,6 +4,7 @@
 
 #include <QDebug>
 #include <QTimer>
+#include <QThread>
 #include <QCoreApplication>
 
 #include <chillout.h>

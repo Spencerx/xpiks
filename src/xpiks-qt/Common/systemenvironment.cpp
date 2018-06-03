@@ -11,7 +11,9 @@
 #include "systemenvironment.h"
 #include <QCoreApplication>
 #include <QStandardPaths>
+#include <QDateTime>
 #include <QDir>
+#include "logging.h"
 #include "defines.h"
 #include "../Helpers/filehelpers.h"
 #include "../Helpers/constants.h"

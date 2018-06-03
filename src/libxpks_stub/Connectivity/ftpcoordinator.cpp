@@ -8,7 +8,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "ftpcoordinator.h"
+#include <ftpcoordinator.h>
 #include <QStringList>
 #include <QSharedData>
 #include <QThread>
@@ -19,7 +19,7 @@
 #include <Commands/commandmanager.h>
 #include <Models/settingsmodel.h>
 #include "curlftpuploader.h"
-#include "uploadcontext.h"
+#include <uploadcontext.h>
 #include "ftpuploaderworker.h"
 #include <Common/defines.h>
 #include "conectivityhelpers.h"

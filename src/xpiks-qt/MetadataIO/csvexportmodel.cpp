@@ -13,6 +13,7 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QTimerEvent>
+#include <QThread>
 #include "csvexportworker.h"
 
 #define MAX_SAVE_PAUSE_RESTARTS 5

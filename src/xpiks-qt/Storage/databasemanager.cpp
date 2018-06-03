@@ -11,6 +11,7 @@
 #include "databasemanager.h"
 #include <QDir>
 #include "../Helpers/constants.h"
+#include "../Common/logging.h"
 
 namespace Storage {
     DatabaseManager::DatabaseManager(Common::ISystemEnvironment &environment):

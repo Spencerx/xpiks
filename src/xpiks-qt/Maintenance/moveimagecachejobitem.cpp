@@ -10,7 +10,7 @@
 
 #include "moveimagecachejobitem.h"
 #include "../QMLExtensions/imagecachingservice.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Maintenance {
     MoveImageCacheJobItem::MoveImageCacheJobItem(QMLExtensions::ImageCachingService *imageCachingService):

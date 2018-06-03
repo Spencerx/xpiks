@@ -9,7 +9,7 @@
  */
 
 #include "keywordsautocompletemodel.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace AutoComplete {
     KeywordsCompletionsModel::KeywordsCompletionsModel() {

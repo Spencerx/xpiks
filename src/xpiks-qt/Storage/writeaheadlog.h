@@ -15,7 +15,7 @@
 #include <QHash>
 #include <QDataStream>
 #include "idatabase.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Storage {
     template<class TKey, class TValue>

@@ -10,7 +10,7 @@
 
 #include "shutterstockapiclient.h"
 #include <QUrlQuery>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Encryption/aes-qt.h"
 #include "../Connectivity/simpleapirequest.h"
 #include "apisecrets.h"

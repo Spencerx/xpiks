@@ -8,7 +8,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "writingorchestrator.h"
+#include <writingorchestrator.h>
 #include <QVector>
 #include <QThread>
 #include <Helpers/indiceshelper.h>

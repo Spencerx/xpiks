@@ -11,7 +11,8 @@
 #include "updateservice.h"
 #include "updatescheckerworker.h"
 #include <QString>
-#include "../Common/defines.h"
+#include <QThread>
+#include "../Common/logging.h"
 #include "../Models/settingsmodel.h"
 #include "../Common/version.h"
 #include "../Models/switchermodel.h"

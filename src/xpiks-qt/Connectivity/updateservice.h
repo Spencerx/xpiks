@@ -15,6 +15,7 @@
 #include "../Common/statefulentity.h"
 #include "../Helpers/constants.h"
 #include "../Common/isystemenvironment.h"
+#include "../Common/logging.h"
 
 namespace Models {
     class SettingsModel;

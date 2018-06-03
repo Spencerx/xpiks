@@ -14,7 +14,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QJsonObject>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Suggestion {
     void parseJsonResults(const QJsonArray &jsonArray, std::vector<std::shared_ptr<SuggestionArtwork> > &suggestionArtworks) {

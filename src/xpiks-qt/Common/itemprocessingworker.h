@@ -20,6 +20,7 @@
 #include <algorithm>
 #include "../Common/flags.h"
 #include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Helpers/threadhelpers.h"
 
 namespace Common {

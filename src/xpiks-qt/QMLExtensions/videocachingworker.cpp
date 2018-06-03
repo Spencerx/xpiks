@@ -11,6 +11,7 @@
 #include "videocachingworker.h"
 #include <QDir>
 #include <QImage>
+#include <QThread>
 #include <QCryptographicHash>
 #include <vector>
 #include <cstdint>

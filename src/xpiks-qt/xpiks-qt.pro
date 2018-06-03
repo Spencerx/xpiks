@@ -471,7 +471,8 @@ HEADERS += \
     Storage/memorytable.h \
     xpiksapp.h \
     Microstocks/stockftpoptions.h \
-    Encryption/obfuscation.h
+    Encryption/obfuscation.h \
+    Common/logging.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

@@ -2,7 +2,7 @@
 #define UPLOADCONTEXT
 
 #include <QString>
-#include <Common/defines.h>
+#include <Common/logging.h>
 
 namespace Models {
     class ProxySettings;

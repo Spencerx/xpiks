@@ -11,7 +11,7 @@
 #ifndef DELAYEDACTIONENTITY_H
 #define DELAYEDACTIONENTITY_H
 
-#include "defines.h"
+#include "logging.h"
 #include <QtGlobal>
 #include <QTimerEvent>
 

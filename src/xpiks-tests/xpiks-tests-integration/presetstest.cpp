@@ -1,8 +1,9 @@
 #include "presetstest.h"
+#include <QDir>
+#include <QThread>
 #include "../../xpiks-qt/KeywordsPresets/presetkeywordsmodel.h"
 #include "../../xpiks-qt/KeywordsPresets/presetkeywordsmodelconfig.h"
 #include "../../xpiks-qt/Commands/commandmanager.h"
-#include <QDir>
 
 QString PresetsTest::testName() {
     return QLatin1String("PresetsTest");

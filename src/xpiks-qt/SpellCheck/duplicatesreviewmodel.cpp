@@ -18,6 +18,7 @@
 #include "../Common/keyword.h"
 #include "../Models/videoartwork.h"
 #include "../Models/imageartwork.h"
+#include "../Common/defines.h"
 
 namespace SpellCheck {
     DuplicatesReviewModel::DuplicatesReviewModel(QMLExtensions::ColorsModel *colorsModel):

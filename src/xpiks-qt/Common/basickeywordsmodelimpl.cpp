@@ -19,7 +19,7 @@
 #include "../Helpers/keywordshelpers.h"
 #include "../Helpers/stringhelper.h"
 #include "flags.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Helpers/indiceshelper.h"
 #include "../Common/flags.h"
 

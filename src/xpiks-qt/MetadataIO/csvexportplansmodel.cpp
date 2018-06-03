@@ -13,6 +13,7 @@
 #include <QThread>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include "../Common/logging.h"
 #include "../Helpers/asynccoordinator.h"
 #include "../Connectivity/apimanager.h"
 

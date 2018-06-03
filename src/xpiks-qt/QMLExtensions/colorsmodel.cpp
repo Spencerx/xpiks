@@ -16,7 +16,7 @@
 
 #include <unordered_map>
 
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 
 #define DEFAULT_DARK_COLOR "defaultDarkColor"

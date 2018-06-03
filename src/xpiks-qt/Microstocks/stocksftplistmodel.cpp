@@ -15,7 +15,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include "../Models/abstractconfigupdatermodel.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Helpers/localconfig.h"
 #include "../Connectivity/apimanager.h"
 

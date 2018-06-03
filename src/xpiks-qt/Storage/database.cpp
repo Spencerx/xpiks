@@ -16,7 +16,7 @@
 #include <climits>
 #include <algorithm>
 #include "../../vendors/sqlite/sqlite3.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Helpers/stringhelper.h"
 #include "../Helpers/constants.h"
 #include "../Helpers/asynccoordinator.h"

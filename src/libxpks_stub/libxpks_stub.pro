@@ -34,6 +34,7 @@ CONFIG(debug, debug|release)  {
 }
 
 INCLUDEPATH += ../xpiks-qt
+INCLUDEPATH += ../../vendors/libxpks
 
 LIBS += -lcurl
 
@@ -68,15 +69,10 @@ unix {
 HEADERS += \
     MetadataIO/metadatareadingworker.h \
     MetadataIO/metadatawritingworker.h \
-    MetadataIO/readingorchestrator.h \
-    MetadataIO/writingorchestrator.h \
-    Connectivity/ftpcoordinator.h \
     Connectivity/conectivityhelpers.h \
     Connectivity/curlftpuploader.h \
     Connectivity/ftpuploaderworker.h \
-    Connectivity/uploadbatch.h \
-    Connectivity/uploadcontext.h \
-    Microstocks/apisecretsstorage.h
+    Connectivity/uploadbatch.h
 
 SOURCES += \
     MetadataIO/metadatareadingworker.cpp \

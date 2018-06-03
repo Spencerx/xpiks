@@ -13,7 +13,7 @@
 #include <QJsonParseError>
 #include <QJsonValue>
 #include <QJsonObject>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Suggestion {
     void parseJsonResults(const QJsonObject &jsonObject, int count,

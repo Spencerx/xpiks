@@ -1,5 +1,6 @@
 #include "xpikstestsapp.h"
 #include "testshelpers.h"
+#include <QThread>
 
 XpiksTestsApp::XpiksTestsApp(Common::ISystemEnvironment &environment):
     XpiksApp(environment)

@@ -11,6 +11,7 @@
 #include "localconfig.h"
 #include <QDir>
 #include <QStandardPaths>
+#include "../Common/logging.h"
 
 namespace Helpers {
     LocalConfig::LocalConfig(const QString &filepath, bool memoryOnly):

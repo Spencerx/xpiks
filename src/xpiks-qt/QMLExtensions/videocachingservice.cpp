@@ -9,6 +9,7 @@
  */
 
 #include "videocachingservice.h"
+#include <QThread>
 #include <vector>
 #include <memory>
 #include "videocachingworker.h"
@@ -16,7 +17,7 @@
 #include "../QMLExtensions/videocacherequest.h"
 #include "../Commands/commandmanager.h"
 #include "../Models/switchermodel.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace QMLExtensions {
     VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent) :

@@ -14,7 +14,6 @@
 #include <Models/artworkmetadata.h>
 #include <Models/uploadinfo.h>
 #include <Encryption/secretsmanager.h>
-#include "uploadcontext.h"
 #include "uploadbatch.h"
 #include <Helpers/filehelpers.h>
 #include <Models/imageartwork.h>

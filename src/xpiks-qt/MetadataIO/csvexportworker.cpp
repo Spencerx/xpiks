@@ -12,6 +12,7 @@
 #include <QDir>
 #include <QFile>
 #include <QDateTime>
+#include <QThread>
 #include <QRegularExpression>
 #include "csvexportplansmodel.h"
 #include "../Models/artworkmetadata.h"

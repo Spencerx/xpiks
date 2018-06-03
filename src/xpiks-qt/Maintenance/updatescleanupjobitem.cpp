@@ -12,7 +12,7 @@
 #include <QCoreApplication>
 #include <QDirIterator>
 #include <QFile>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "updatescleanupjobitem.h"
 
 namespace Maintenance {

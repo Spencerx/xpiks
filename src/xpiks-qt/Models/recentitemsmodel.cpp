@@ -11,7 +11,7 @@
 #include "recentitemsmodel.h"
 #include <QDataStream>
 #include <QUrl>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Models {
     RecentItemsModel::RecentItemsModel(int items):

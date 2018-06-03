@@ -16,7 +16,7 @@
 #include <QVector>
 #include <QList>
 #include "../Helpers/indiceshelper.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 #define RANGES_LENGTH_FOR_RESET 40
 

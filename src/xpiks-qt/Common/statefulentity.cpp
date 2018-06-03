@@ -12,6 +12,7 @@
 #include <QDir>
 #include "../Helpers/constants.h"
 #include "../Helpers/filehelpers.h"
+#include "../Common/logging.h"
 
 namespace Common {
     StatefulEntity::StatefulEntity(const QString &stateName, ISystemEnvironment &environment):

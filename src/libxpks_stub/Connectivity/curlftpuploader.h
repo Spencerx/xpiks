@@ -16,7 +16,7 @@
 #include <QStringList>
 #include <QVector>
 #include <memory>
-#include "uploadcontext.h"
+#include <uploadcontext.h>
 
 namespace libxpks {
     namespace net {

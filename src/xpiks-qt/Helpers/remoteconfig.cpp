@@ -10,7 +10,7 @@
 
 #include "remoteconfig.h"
 #include <QThread>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Connectivity/simplecurlrequest.h"
 #include "../Models/proxysettings.h"
 

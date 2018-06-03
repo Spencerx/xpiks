@@ -11,7 +11,8 @@
 #include "switchermodel.h"
 #include <QDir>
 #include <QUuid>
-#include "../Common/defines.h"
+#include <QDateTime>
+#include "../Common/logging.h"
 #include "../Helpers/stringhelper.h"
 
 namespace Models {

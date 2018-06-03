@@ -12,6 +12,7 @@
 #include <QDir>
 #include <QFile>
 #include <QImage>
+#include <QThread>
 #include <QString>
 #include <QFileInfo>
 #include <QByteArray>

@@ -9,7 +9,8 @@
  */
 
 #include "warningscheckingworker.h"
-#include "../Common/defines.h"
+#include <QThread>
+#include "../Common/logging.h"
 #include "../Common/flags.h"
 #include "warningssettingsmodel.h"
 #include "warningsitem.h"

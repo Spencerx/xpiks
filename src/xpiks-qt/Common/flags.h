@@ -15,7 +15,7 @@
 #include <QObject>
 #include <cstdint>
 
-#if defiend(Q_OS_WIN32) && defined(Q_PROCESSOR_X86_32) && (_MSC_VER == 1800)
+#if defined(Q_OS_WIN32) && defined(Q_PROCESSOR_X86_32) && (_MSC_VER == 1800)
 #define XPIKS_TYPED_ENUMS_WORKAROUND
 #endif
 

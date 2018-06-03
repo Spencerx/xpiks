@@ -15,7 +15,7 @@
 #include <QVector>
 #include <memory>
 #include <vector>
-#include "uploadcontext.h"
+#include <uploadcontext.h>
 
 namespace Models {
     class ArtworkMetadata;

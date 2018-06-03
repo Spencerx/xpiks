@@ -11,6 +11,7 @@
 #include "../Connectivity/apimanager.h"
 #include <QStandardPaths>
 #include <QDir>
+#include "../Common/logging.h"
 
 #define OVERWRITE_WARNINGS_CONFIG false
 #define LOCAL_WARNINGS_SETTINGS_FILE QLatin1String("warnings_settings.json")

@@ -11,7 +11,7 @@
 #include "xpkscleanupjob.h"
 #include <QFile>
 #include <QDirIterator>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Helpers/constants.h"
 
 namespace Maintenance {

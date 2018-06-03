@@ -14,7 +14,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QJsonArray>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Suggestion {
     void parseUrl(const QJsonValue &previewObject, QString &url) {

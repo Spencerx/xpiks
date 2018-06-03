@@ -14,7 +14,7 @@
 #include <cstring>
 #include <cstdlib>
 #include "../Models/proxysettings.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "ftphelpers.h"
 
 struct MemoryStruct {

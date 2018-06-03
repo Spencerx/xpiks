@@ -10,6 +10,7 @@
 
 #include "warningsservice.h"
 #include <QVector>
+#include <QThread>
 #include "../Common/defines.h"
 #include "warningscheckingworker.h"
 #include "../Commands/commandmanager.h"

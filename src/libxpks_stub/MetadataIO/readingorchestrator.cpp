@@ -8,7 +8,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "readingorchestrator.h"
+#include <readingorchestrator.h>
 #include <QThread>
 #include <QVector>
 #include <QMutexLocker>

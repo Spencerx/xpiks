@@ -18,7 +18,7 @@
 #include <QQmlContext>
 #include <QQuickWindow>
 #include <QHash>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Plugins {
     UIProvider::UIProvider(QObject *parent):

@@ -16,7 +16,7 @@
 #include <QPair>
 #include "historyitem.h"
 #include "../Helpers/indiceshelper.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace UndoRedo {
    class AddArtworksHistoryItem : public HistoryItem

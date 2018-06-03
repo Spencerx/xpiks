@@ -10,7 +10,7 @@
 
 #include "stringsautocompletemodel.h"
 #include "../Helpers/stringhelper.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace AutoComplete {
     StringFilterProxyModel::StringFilterProxyModel():

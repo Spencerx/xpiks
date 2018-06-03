@@ -9,7 +9,7 @@
  */
 
 #include "tabsmodel.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include <algorithm>
 
 namespace QMLExtensions {

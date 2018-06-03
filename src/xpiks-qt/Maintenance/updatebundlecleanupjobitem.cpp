@@ -10,7 +10,7 @@
 
 #include "updatebundlecleanupjobitem.h"
 #include <QDirIterator>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Maintenance {
     UpdateBundleCleanupJobItem::UpdateBundleCleanupJobItem(const QString &updatesDirectoryPath):
