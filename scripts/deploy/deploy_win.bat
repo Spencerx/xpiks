@@ -72,9 +72,13 @@ rem copy /Y %XPIKS_LIBS_DIR%\libexpat.dll .
 copy /Y %XPIKS_LIBS_DIR%\z.dll %DEPLOY_DIR_NAME%\
 copy /Y %XPIKS_LIBS_DIR%\thmbnlr.dll %DEPLOY_DIR_NAME%\
 copy /Y %XPIKS_DEPS_PATH%\windows-3rd-party-bin\exiftool.exe %DEPLOY_DIR_NAME%\
+
+echo "Cleaning up..."
+
 rem -------------------------------
 copy /Y %MINISTALLER_PATH%\src\ministaller.exe %DEPLOY_DIR_NAME%\
-
+copy /Y %DEPLOY_DIR_NAME%\recoverty\* %DEPLOY_DIR_NAME%\
+rmdir %DEPLOY_DIR_NAME%\recoverty\ /s /q
 del %DEPLOY_DIR_NAME%\*.obj
 del %DEPLOY_DIR_NAME%\*.cpp
 del %DEPLOY_DIR_NAME%\*.lib
