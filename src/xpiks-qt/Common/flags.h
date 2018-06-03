@@ -261,6 +261,7 @@ namespace Common {
     ENUM_AND(SpellCheckFlags)
     ENUM_AND(SuggestionFlags)
     ENUM_AND(WarningFlags)
+    ENUM_AND(WarningsCheckFlags)
     ENUM_AND(PluginNotificationFlags)
 
     ENUM_NOT(DirectoryFlags)

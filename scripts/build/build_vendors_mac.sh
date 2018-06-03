@@ -53,7 +53,7 @@ then
     cd ${ROOT_DIR}/../libthmbnlr/src/libthmbnlr
     qmake "CONFIG+=${TARGET}" libthmbnlr.pro
     make ${MAKE_FLAGS}	
-	cp libthmbnlr.a ${ROOT_DIR}/libs/${TARGET}
+    cp libthmbnlr.a ${ROOT_DIR}/libs/${TARGET}
     echo -e "${PRINT_PREFIX} Building libthmbnlr... - done."
 		
     ### libxpks
@@ -107,11 +107,7 @@ echo -e "${PRINT_PREFIX} Building ssdll..."
 cd ${ROOT_DIR}/vendors/ssdll/src/ssdll/
 qmake "CONFIG+=${TARGET}" ssdll.pro
 make ${MAKE_FLAGS}
-cp libssdll.*dylib ${ROOT_DIR}/libs/${TARGET}
-# cd ${ROOT_DIR}/libs/${TARGET}
-# ln -s libssdll.so.1.0.0 libssdll.so
-# ln -s libssdll.so.1.0.0 libssdll.so.1
-# ln -s libssdll.so.1.0.0 libssdll.so.1.0
+cp -a libssdll.*dylib ${ROOT_DIR}/libs/${TARGET}
 echo -e "${PRINT_PREFIX} Building ssdll... - done."
 
 ### quazip
@@ -119,11 +115,7 @@ echo -e "${PRINT_PREFIX} Building quazip..."
 cd ${ROOT_DIR}/vendors/quazip/quazip/
 qmake "CONFIG+=${TARGET}" quazip.pro
 make ${MAKE_FLAGS}
-cp libquazip.*dylib ${ROOT_DIR}/libs/${TARGET}
-# cd ${ROOT_DIR}/libs/${TARGET}
-# ln -s libquazip.so.1.0.0 libquazip.so
-# ln -s libquazip.so.1.0.0 libquazip.so.1
-# ln -s libquazip.so.1.0.0 libquazip.so.1.0
+cp -a libquazip.*dylib ${ROOT_DIR}/libs/${TARGET}
 echo -e "${PRINT_PREFIX} Building quazip... - done."
 
 ### hunspell

@@ -136,10 +136,12 @@ namespace Models {
         }
         endResetModel();
 
+#ifdef QT_DEBUG
         for (auto *item: artworksToDelete) {
             item->deepDisconnect();
             m_DestroyedList.push_back(item);
         }
+#endif
     }
 #endif
 
