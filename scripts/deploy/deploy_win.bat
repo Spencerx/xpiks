@@ -79,6 +79,7 @@ rem -------------------------------
 copy /Y %MINISTALLER_PATH%\src\ministaller.exe %DEPLOY_DIR_NAME%\
 copy /Y %DEPLOY_DIR_NAME%\recoverty\* %DEPLOY_DIR_NAME%\
 rmdir %DEPLOY_DIR_NAME%\recoverty\ /s /q
+rmdir %DEPLOY_DIR_NAME%\exiftool\ /s /q
 del %DEPLOY_DIR_NAME%\*.obj
 del %DEPLOY_DIR_NAME%\*.cpp
 del %DEPLOY_DIR_NAME%\*.lib
