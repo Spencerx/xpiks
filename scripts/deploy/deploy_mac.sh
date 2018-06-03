@@ -1,22 +1,41 @@
 #!/bin/bash
 
-if [ ! -f ../deps/exiftool/exiftool ]; then
-    echo "Exiftool not found! Please put latest production release into the ../deps/ dir"
-    exit
-fi
+dir_resolve()
+{
+    cd "$1" 2>/dev/null || return $?  # cd to desired directory; if fail, quell any error messages but return exit status
+    echo "`pwd -P`" # output full, link-resolved path
+}
+
+XPIKS_ROOT=$(git rev-parse --show-toplevel)
+
+XPIKS_DEPS_DIR="${XPIKS_ROOT}/src/xpiks-qt/deps"
+XPIKS_QT_DIR="${XPIKS_ROOT}/src/xpiks-qt"
+BUILD_DIR="${XPIKS_ROOT}/src/build-xpiks-qt-Desktop_Qt_5_6_2_clang_64bit-Release"
+
+QT_BIN_DIR=~/Qt5.6.2/5.6/clang_64/bin
+DEPLOY_TOOL="$QT_BIN_DIR/macdeployqt"
+
+LIBS_PATH="${XPIKS_ROOT}/libs/release"
 
 APP_NAME=Xpiks
 VERSION="1.5.2"
 VOL_NAME="Xpiks"
 
+# ----------------------------------------
+
+if [ ! -f "${XPIKS_DEPS_DIR}/exiftool/exiftool" ]; then
+    echo "Exiftool not found! Please put latest production release into the ../deps/ dir"
+    exit
+fi
+
 DMG_BACKGROUND_IMG="dmg-background.jpg"
-DMG_BACKGROUND_PATH="../deps/$DMG_BACKGROUND_IMG"
+DMG_BACKGROUND_PATH="${XPIKS_DEPS_DIR}/$DMG_BACKGROUND_IMG"
 
 DMG_TMP="${APP_NAME}-v${VERSION}.tmp.dmg"
 DMG_FINAL="${APP_NAME}-v${VERSION}.dmg"
-STAGING_DIR="./osx-release-staging"
 
-BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_6_2_clang_64bit-Release"
+STAGING_DIR_NAME="osx-release-staging"
+STAGING_DIR="`dir_resolve \"${STAGING_DIR_NAME}\"`"
 
 if [ ! -d "$BUILD_DIR" ]; then
     echo "Build directory not found: $BUILD_DIR"
@@ -34,10 +53,6 @@ mkdir -p "$STAGING_DIR"
 cp -rpfv "$BUILD_DIR/${APP_NAME}.app" "${STAGING_DIR}"
 
 pushd "$STAGING_DIR"
-
-QT_BIN_DIR=~/Qt5.6.2/5.6/clang_64/bin
-DEPLOY_TOOL="$QT_BIN_DIR/macdeployqt"
-XPIKS_QT_DIR="../.."
 
 QML_IMPORTS="-qmldir=$XPIKS_QT_DIR/ -qmldir=$XPIKS_QT_DIR/Components/ -qmldir=$XPIKS_QT_DIR/Constants/ -qmldir=$XPIKS_QT_DIR/Dialogs/ -qmldir=$XPIKS_QT_DIR/StyledControls/ -qmldir=$XPIKS_QT_DIR/StackViews/ -qmldir=$XPIKS_QT_DIR/CollapserTabs/"
 
@@ -64,8 +79,6 @@ LIBS_TO_DEPLOY=(
 
 FRAMEWORKS_DIR="$STAGING_DIR/${APP_NAME}.app/Contents/Frameworks"
 pushd "$FRAMEWORKS_DIR"
-
-LIBS_PATH="../../../../../../../libs/release"
 
 for lib in "${LIBS_TO_DEPLOY[@]}"
 do
@@ -101,7 +114,7 @@ popd
 RESOURCES_DIR="$STAGING_DIR/${APP_NAME}.app/Contents/Resources"
 
 echo "Copying exiftool distribution"
-EXIFTOOL_FROM_DIR="../deps/exiftool"
+EXIFTOOL_FROM_DIR="${XPIKS_DEPS_DIR}/exiftool"
 EXIFTOOL_TO_DIR="$RESOURCES_DIR/exiftool"
 
 if [ ! -d "$EXIFTOOL_TO_DIR" ]; then
@@ -144,7 +157,6 @@ echo "Add link to /Applications"
 pushd /Volumes/"${VOL_NAME}"
 ln -s /Applications
 popd
-
 
 # add a background image
 mkdir /Volumes/"${VOL_NAME}"/.background

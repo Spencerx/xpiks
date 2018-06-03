@@ -52,14 +52,14 @@ then
     make ${MAKE_FLAGS}	
 	cp libthmbnlr.a ${ROOT_DIR}/libs/${TARGET}
     echo -e "${PRINT_PREFIX} Building libthmbnlr... - done."
-		
-	### libxpks
-	echo -e "${PRINT_PREFIX} Building libxpks..."
-	cd ${ROOT_DIR}/../libxpks/src/xpks
-	qmake "CONFIG+=${TARGET}" xpks.pro
-	make ${MAKE_FLAGS}
-	cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
-	echo -e "${PRINT_PREFIX} Building libxpks... - done."
+    
+    ### libxpks
+    echo -e "${PRINT_PREFIX} Building libxpks..."
+    cd ${ROOT_DIR}/../libxpks/src/xpks
+    qmake "CONFIG+=${TARGET}" xpks.pro
+    make ${MAKE_FLAGS}
+    cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
+    echo -e "${PRINT_PREFIX} Building libxpks... - done."
 else
     echo "Normal mode"
     ### libthmbnlr
@@ -69,13 +69,13 @@ else
     make ${MAKE_FLAGS}
     echo -e "${PRINT_PREFIX} Building libthmbnlr... - done."
 		
-	### libxpks
-	echo -e "${PRINT_PREFIX} Building libxpks..."
-	cd ${ROOT_DIR}/src/libxpks_stub
-	qmake "CONFIG+=${TARGET}" libxpks_stub.pro
-	make ${MAKE_FLAGS}
-	cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
-	echo -e "${PRINT_PREFIX} Building libxpks... - done."
+    ### libxpks
+    echo -e "${PRINT_PREFIX} Building libxpks..."
+    cd ${ROOT_DIR}/src/libxpks_stub
+    qmake "CONFIG+=${TARGET}" libxpks_stub.pro
+    make ${MAKE_FLAGS}
+    cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
+    echo -e "${PRINT_PREFIX} Building libxpks... - done."
 fi
 
 ### tiny-aes
