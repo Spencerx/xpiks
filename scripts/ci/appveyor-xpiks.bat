@@ -13,8 +13,11 @@ echo "Build finished for branch %APPVEYOR_REPO_BRANCH%"
 
 popd
 
+echo %cd%
+
 if "%APPVEYOR_REPO_BRANCH%" == "master" (
-    cd scripts\deploy
+    pushd scripts\deploy
     deploy_win.bat
     appveyor PushArtifact Xpiks-v%APPVEYOR_BUILD_VERSION%.zip
+    popd
 )

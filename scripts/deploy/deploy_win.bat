@@ -10,7 +10,7 @@ set XPIKS_ROOT=%cd%\..\..
 set XPIKS_DEPS_PATH=%XPIKS_ROOT%\..\xpiks-deps
 set MINISTALLER_PATH=%XPIKS_ROOT%\..\ministaller
 set ARTIFACTS_PATH=%XPIKS_ROOT%\src\build-xpiks-qt-Desktop_Qt_5_6_2_MSVC2015_64bit-Release
-set ZIPPER="C:\Program Files\7-Zip\7z"
+set SEVEN_ZIP="C:\Program Files\7-Zip\7z"
 set QT_BIN_DIR=C:\Qt\Qt5.6.2\5.6\msvc2015_64\bin
 set XPIKS_QT_DIR=../../src/xpiks-qt
 set WINDEPLOYQTTOOL=%QT_BIN_DIR%\windeployqt.exe
@@ -24,7 +24,7 @@ echo "Deploying from Appveyor"
 
 set XPIKS_VERSION=%APPVEYOR_BUILD_VERSION%
 set BUILD_CONFIGURATION=debug
-set ZIPPER=7z
+set SEVEN_ZIP=7z
 set WINDEPLOYQTTOOL=windeployqt.exe
 set ARTIFACTS_PATH=%XPIKS_ROOT%\src\xpiks-qt
 
@@ -78,7 +78,7 @@ copy /Y %MINISTALLER_PATH%\src\ministaller.exe %DEPLOY_DIR_NAME%\
 del %DEPLOY_DIR_NAME%\*.obj
 del %DEPLOY_DIR_NAME%\*.cpp
 del %DEPLOY_DIR_NAME%\*.lib
-del %DEPLOY_DIR_NAME%\*.pdb
+if not defined APPVEYOR del %DEPLOY_DIR_NAME%\*.pdb
 del %DEPLOY_DIR_NAME%\vcredist_%XPIKS_PLATFORM%.exe
 del %DEPLOY_DIR_NAME%\libexiv2.dll
 del %DEPLOY_DIR_NAME%\libexpat.dll
@@ -88,7 +88,7 @@ rem need to remove exiftool/ dir as well
 
 echo 'Packing binaries...'
 
-%ZIPPER% a %APP_NAME%-v%XPIKS_VERSION%.zip Xpiks
+%SEVEN_ZIP% a %APP_NAME%-v%XPIKS_VERSION%.zip Xpiks
 
 ren Xpiks %APP_NAME%-v%XPIKS_VERSION%-tmp
 
