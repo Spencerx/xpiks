@@ -53,7 +53,7 @@ copy /Y %ARTIFACTS_PATH%\%BUILD_CONFIGURATION%\%APP_NAME%.exe %DEPLOY_DIR_NAME%\
 set SRC_DEPS_DIR=%XPIKS_ROOT%\src\xpiks-qt\deps
 
 pushd %SRC_DEPS_DIR%\translations
-%LRELEASETOOL% *.ts
+for %%F in (*.ts) do %LRELEASETOOL% %%~sF
 popd
 
 echo "Copying additional files..."
