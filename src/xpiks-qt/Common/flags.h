@@ -15,10 +15,14 @@
 #include <QObject>
 #include <cstdint>
 
+#if defiend(Q_OS_WIN32) && defined(Q_PROCESSOR_X86_32) && (_MSC_VER == 1800)
+#define XPIKS_TYPED_ENUMS_WORKAROUND
+#endif
+
 namespace Common {
     typedef uint32_t flag_t;
 
-#ifndef Q_OS_WIN32
+#if !defined(XPIKS_TYPED_ENUMS_WORKAROUND)
     // visual studio 2013 bug
 
     template<typename FlagType>
@@ -171,7 +175,7 @@ namespace Common {
         PresetsUpdated = 1 << 2
     };
 
-#ifndef Q_OS_WIN32
+#if !defined(XPIKS_TYPED_ENUMS_WORKAROUND)
     // visual studio 2013 bug
 
     template<>
