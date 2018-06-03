@@ -43,15 +43,12 @@ win32|linux {
         POST_TARGETDEPS += create_ac_sources
     }
 
-    RECOVERTY_DIR = recoverty
-
     copywhatsnew.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/whatsnew.txt)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
     copydicts.commands = $(COPY_DIR) \"$$shell_path($$DEPS_DIR/dict)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
     copyfreqtables.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/$$AC_SOURCES_DIR/en_wordlist.tsv)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$AC_SOURCES_DIR/)\"
-    copyrecoverty.commands = $(COPY_DIR) \"$$shell_path($$DEPS_DIR/$$RECOVERTY_DIR)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
 
-    QMAKE_EXTRA_TARGETS += copywhatsnew copydicts copytranslations copyfreqtables copyrecoverty
-    POST_TARGETDEPS += copywhatsnew copydicts copytranslations copyfreqtables copyrecoverty
+    QMAKE_EXTRA_TARGETS += copywhatsnew copydicts copytranslations copyfreqtables
+    POST_TARGETDEPS += copywhatsnew copydicts copytranslations copyfreqtables
 }
 
 

@@ -725,6 +725,12 @@ win32 {
     LIBS += -lmman
     # chillout deps
     LIBS += -lAdvapi32 -lDbgHelp
+
+    # recoverty steps
+    RECOVERTY_DIR = recoverty
+    copyrecoverty.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/$$RECOVERTY_DIR/Recoverty*)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
+    QMAKE_EXTRA_TARGETS += copyrecoverty
+    POST_TARGETDEPS += copyrecoverty
 }
 
 linux {
