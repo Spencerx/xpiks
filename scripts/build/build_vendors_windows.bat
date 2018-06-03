@@ -99,6 +99,7 @@ echo "%PRINT_PREFIX% Building hunspell... - done"
 cd %ROOT_DIR%\src\recoverty
 %QMAKE_EXE% "CONFIG+=%TARGET%" recoverty.pro
 nmake.exe "%NMAKE_OPTIONS%"
+copy %TARGET%\Recoverty.* ..\xpiks-qt\deps
 echo "%PRINT_PREFIX% Building recoverty... - done"
 
 set XPKS_ROOT="%ROOT_DIR%\..\libxpks"
