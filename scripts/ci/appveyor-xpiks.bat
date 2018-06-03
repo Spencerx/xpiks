@@ -26,8 +26,9 @@ if "%APPVEYOR_REPO_BRANCH%" == "master" (
     del *.obj
     del *.cpp
     cd ..
-    7z a xpiks-qt-%configuration%.zip %configuration%
-    appveyor PushArtifact xpiks-qt-%configuration%-%APPVEYOR_BUILD_VERSION%.zip
+    set ARCHIVE_NAME=xpiks-qt-%configuration%-%APPVEYOR_BUILD_VERSION%.zip
+    7z a %ARCHIVE_NAME% %configuration%
+    appveyor PushArtifact %ARCHIVE_NAME%
 )
 
 popd
