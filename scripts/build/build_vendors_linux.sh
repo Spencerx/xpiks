@@ -144,6 +144,9 @@ echo -e "${PRINT_PREFIX} Building recoverty..."
 cd ${ROOT_DIR}/src/recoverty/
 qmake "CONFIG+=${TARGET}" recoverty.pro
 make ${MAKE_FLAGS}
+RECOVERTY_DIR=${ROOT_DIR}/src/xpiks-qt/deps/recoverty
+mkdir -p ${RECOVERTY_DIR}
+cp Recoverty ${RECOVERTY_DIR}/
 echo -e "${PRINT_PREFIX} Building recoverty... - done."
 
 echo -e "${PRINT_PREFIX} Vendors preparation for ${BUILD_MODE}: done."
