@@ -1,6 +1,7 @@
 @echo off
 echo 'Starting deployment...'
 
+rem other options: x32
 set XPIKS_PLATFORM=x64
 set XPIKS_VERSION=1.5.2
 set APP_NAME=Xpiks
@@ -14,6 +15,7 @@ set SEVEN_ZIP="C:\Program Files\7-Zip\7z"
 set QT_BIN_DIR=C:\Qt\Qt5.6.2\5.6\msvc2015_64\bin
 set XPIKS_QT_DIR=../../src/xpiks-qt
 set WINDEPLOYQTTOOL=%QT_BIN_DIR%\windeployqt.exe
+set LRELEASETOOL=%QT_BIN_DIR%\lrelease.exe
 
 rem deploy dir should be "Xpiks" in order to have it nicely zipped in the end
 set DEPLOY_DIR_NAME=Xpiks
@@ -26,6 +28,7 @@ set XPIKS_VERSION=%APPVEYOR_BUILD_VERSION%
 set BUILD_CONFIGURATION=debug
 set SEVEN_ZIP=7z
 set WINDEPLOYQTTOOL=windeployqt.exe
+set LRELEASETOOL=lrelease.exe
 set ARTIFACTS_PATH=%XPIKS_ROOT%\src\xpiks-qt
 
 rem -----------------------------------------
@@ -48,6 +51,10 @@ copy /Y %ARTIFACTS_PATH%\%BUILD_CONFIGURATION%\%APP_NAME%.exe %DEPLOY_DIR_NAME%\
 %WINDEPLOYQTTOOL% --%BUILD_CONFIGURATION% --verbose=2 --qmldir=%XPIKS_QT_DIR%/CollapserTabs/ --qmldir=%XPIKS_QT_DIR%/Components/ --qmldir=%XPIKS_QT_DIR%/Constants/ --qmldir=%XPIKS_QT_DIR%/Dialogs/ --qmldir=%XPIKS_QT_DIR%/StackViews/ --qmldir=%XPIKS_QT_DIR%/StyledControls/ --qmldir=%XPIKS_QT_DIR%/ %DEPLOY_DIR_NAME%\%APP_NAME%.exe
 
 set SRC_DEPS_DIR=%XPIKS_ROOT%\src\xpiks-qt\deps
+
+pushd %SRC_DEPS_DIR%\translations
+%LRELEASETOOL% *.ts
+popd
 
 echo "Copying additional files..."
 xcopy /Y /s %SRC_DEPS_DIR% %DEPLOY_DIR_NAME%\

@@ -1,5 +1,4 @@
 #!/bin/bash
-# simple script for unix base system for vendors preparation
 BUILD_MODE=${1}
 
 case ${BUILD_MODE} in
@@ -21,6 +20,10 @@ case ${BUILD_MODE} in
         exit 1
         ;;
 esac
+
+QT_BIN_DIR=~/Qt5.6.2/5.6/clang_64/bin
+
+export PATH="${PATH}:${QT_BIN_DIR}"
 
 shift
 MAKE_FLAGS="${*}" # do we need argument validation?
@@ -53,13 +56,13 @@ then
 	cp libthmbnlr.a ${ROOT_DIR}/libs/${TARGET}
     echo -e "${PRINT_PREFIX} Building libthmbnlr... - done."
 		
-	### libxpks
-	echo -e "${PRINT_PREFIX} Building libxpks..."
-	cd ${ROOT_DIR}/../libxpks/src/xpks
-	qmake "CONFIG+=${TARGET}" xpks.pro
-	make ${MAKE_FLAGS}
-	cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
-	echo -e "${PRINT_PREFIX} Building libxpks... - done."
+    ### libxpks
+    echo -e "${PRINT_PREFIX} Building libxpks..."
+    cd ${ROOT_DIR}/../libxpks/src/xpks
+    qmake "CONFIG+=${TARGET}" xpks.pro
+    make ${MAKE_FLAGS}
+    cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
+    echo -e "${PRINT_PREFIX} Building libxpks... - done."
 else
     echo "Normal mode"
     ### libthmbnlr
@@ -69,13 +72,13 @@ else
     make ${MAKE_FLAGS}
     echo -e "${PRINT_PREFIX} Building libthmbnlr... - done."
 		
-	### libxpks
-	echo -e "${PRINT_PREFIX} Building libxpks..."
-	cd ${ROOT_DIR}/src/libxpks_stub
-	qmake "CONFIG+=${TARGET}" libxpks_stub.pro
-	make ${MAKE_FLAGS}
-	cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
-	echo -e "${PRINT_PREFIX} Building libxpks... - done."
+    ### libxpks
+    echo -e "${PRINT_PREFIX} Building libxpks..."
+    cd ${ROOT_DIR}/src/libxpks_stub
+    qmake "CONFIG+=${TARGET}" libxpks_stub.pro
+    make ${MAKE_FLAGS}
+    cp libxpks.a ${ROOT_DIR}/libs/${TARGET}
+    echo -e "${PRINT_PREFIX} Building libxpks... - done."
 fi
 
 ### tiny-aes
@@ -104,11 +107,11 @@ echo -e "${PRINT_PREFIX} Building ssdll..."
 cd ${ROOT_DIR}/vendors/ssdll/src/ssdll/
 qmake "CONFIG+=${TARGET}" ssdll.pro
 make ${MAKE_FLAGS}
-cp libssdll.so.1.0.0 ${ROOT_DIR}/libs/${TARGET}
-cd ${ROOT_DIR}/libs/${TARGET}
-ln -s libssdll.so.1.0.0 libssdll.so
-ln -s libssdll.so.1.0.0 libssdll.so.1
-ln -s libssdll.so.1.0.0 libssdll.so.1.0
+cp libssdll.*dylib ${ROOT_DIR}/libs/${TARGET}
+# cd ${ROOT_DIR}/libs/${TARGET}
+# ln -s libssdll.so.1.0.0 libssdll.so
+# ln -s libssdll.so.1.0.0 libssdll.so.1
+# ln -s libssdll.so.1.0.0 libssdll.so.1.0
 echo -e "${PRINT_PREFIX} Building ssdll... - done."
 
 ### quazip
@@ -116,11 +119,11 @@ echo -e "${PRINT_PREFIX} Building quazip..."
 cd ${ROOT_DIR}/vendors/quazip/quazip/
 qmake "CONFIG+=${TARGET}" quazip.pro
 make ${MAKE_FLAGS}
-cp libquazip.so.1.0.0 ${ROOT_DIR}/libs/${TARGET}
-cd ${ROOT_DIR}/libs/${TARGET}
-ln -s libquazip.so.1.0.0 libquazip.so
-ln -s libquazip.so.1.0.0 libquazip.so.1
-ln -s libquazip.so.1.0.0 libquazip.so.1.0
+cp libquazip.*dylib ${ROOT_DIR}/libs/${TARGET}
+# cd ${ROOT_DIR}/libs/${TARGET}
+# ln -s libquazip.so.1.0.0 libquazip.so
+# ln -s libquazip.so.1.0.0 libquazip.so.1
+# ln -s libquazip.so.1.0.0 libquazip.so.1.0
 echo -e "${PRINT_PREFIX} Building quazip... - done."
 
 ### hunspell
@@ -135,9 +138,6 @@ echo -e "${PRINT_PREFIX} Building recoverty..."
 cd ${ROOT_DIR}/src/recoverty/
 qmake "CONFIG+=${TARGET}" recoverty.pro
 make ${MAKE_FLAGS}
-RECOVERTY_DIR=${ROOT_DIR}/src/xpiks-qt/deps/recoverty
-mkdir -p ${RECOVERTY_DIR}
-cp Recoverty ${RECOVERTY_DIR}/
 echo -e "${PRINT_PREFIX} Building recoverty... - done."
 
 echo -e "${PRINT_PREFIX} Vendors preparation for ${BUILD_MODE}: done."
