@@ -72,7 +72,8 @@ HEADERS += \
     Connectivity/conectivityhelpers.h \
     Connectivity/curlftpuploader.h \
     Connectivity/ftpuploaderworker.h \
-    Connectivity/uploadbatch.h
+    Connectivity/uploadbatch.h \
+    ../../vendors/libxpks/ftpcoordinator.h
 
 SOURCES += \
     MetadataIO/metadatareadingworker.cpp \

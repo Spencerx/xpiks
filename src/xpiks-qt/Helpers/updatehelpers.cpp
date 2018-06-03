@@ -14,7 +14,8 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <QFileInfo>
-#include "../Common/defines.h"
+#include <QDateTime>
+#include "../Common/logging.h"
 
 #ifdef Q_OS_OSX
 
