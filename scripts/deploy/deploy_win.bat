@@ -52,8 +52,10 @@ copy /Y %ARTIFACTS_PATH%\%BUILD_CONFIGURATION%\%APP_NAME%.exe %DEPLOY_DIR_NAME%\
 
 set SRC_DEPS_DIR=%XPIKS_ROOT%\src\xpiks-qt\deps
 
+echo 'Generating translations...'
+
 pushd %SRC_DEPS_DIR%\translations
-for %%F in (*.ts) do %LRELEASETOOL% %%~sF
+for %%F in (*.ts) do %LRELEASETOOL% %%F
 popd
 
 echo "Copying additional files..."
@@ -90,6 +92,8 @@ rmdir %DEPLOY_DIR_NAME%\exiftool\ /s /q
 del %DEPLOY_DIR_NAME%\*.obj
 del %DEPLOY_DIR_NAME%\*.cpp
 del %DEPLOY_DIR_NAME%\*.lib
+del %DEPLOY_DIR_NAME%\*.res
+del %DEPLOY_DIR_NAME%\*.ilk
 if not defined APPVEYOR del %DEPLOY_DIR_NAME%\*.pdb
 del %DEPLOY_DIR_NAME%\vcredist_%XPIKS_PLATFORM%.exe
 del %DEPLOY_DIR_NAME%\libexiv2.dll
