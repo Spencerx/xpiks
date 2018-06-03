@@ -1,3 +1,4 @@
+@echo off
 echo 'Starting deployment...'
 
 set XPIKS_PLATFORM=x64
@@ -12,11 +13,24 @@ set ARTIFACTS_PATH=%XPIKS_ROOT%\src\build-xpiks-qt-Desktop_Qt_5_6_2_MSVC2015_64b
 set ZIPPER="C:\Program Files\7-Zip\7z"
 set QT_BIN_DIR=C:\Qt\Qt5.6.2\5.6\msvc2015_64\bin
 set XPIKS_QT_DIR=../../src/xpiks-qt
+set WINDEPLOYQTTOOL=%QT_BIN_DIR%\windeployqt.exe
 
 rem deploy dir should be "Xpiks" in order to have it nicely zipped in the end
 set DEPLOY_DIR_NAME=Xpiks
 
+if not defined APPVEYOR goto :deploy
+
+echo "Deploying from Appveyor"
+
+set XPIKS_VERSION=%APPVEYOR_BUILD_VERSION%
+set BUILD_CONFIGURATION=debug
+set ZIPPER=7z
+set WINDEPLOYQTTOOL=windeployqt.exe
+set ARTIFACTS_PATH=%XPIKS_ROOT%\src\xpiks-qt
+
 rem -----------------------------------------
+
+:deploy
 
 echo "Cleaning up old artifacts..."
 rmdir xpiks-qt-v%XPIKS_VERSION%-tmp
@@ -31,7 +45,7 @@ set FFMPEG_LIBS=%XPIKS_DEPS_PATH%\windows-libs\ffmpeg-%XPIKS_PLATFORM%\%BUILD_CO
 mkdir %DEPLOY_DIR_NAME%
 copy /Y %ARTIFACTS_PATH%\%BUILD_CONFIGURATION%\%APP_NAME%.exe %DEPLOY_DIR_NAME%\
 
-%QT_BIN_DIR%\windeployqt.exe --%BUILD_CONFIGURATION% --verbose=2 --qmldir=%XPIKS_QT_DIR%/CollapserTabs/ --qmldir=%XPIKS_QT_DIR%/Components/ --qmldir=%XPIKS_QT_DIR%/Constants/ --qmldir=%XPIKS_QT_DIR%/Dialogs/ --qmldir=%XPIKS_QT_DIR%/StackViews/ --qmldir=%XPIKS_QT_DIR%/StyledControls/ --qmldir=%XPIKS_QT_DIR%/ %DEPLOY_DIR_NAME%\%APP_NAME%.exe
+%WINDEPLOYQTTOOL% --%BUILD_CONFIGURATION% --verbose=2 --qmldir=%XPIKS_QT_DIR%/CollapserTabs/ --qmldir=%XPIKS_QT_DIR%/Components/ --qmldir=%XPIKS_QT_DIR%/Constants/ --qmldir=%XPIKS_QT_DIR%/Dialogs/ --qmldir=%XPIKS_QT_DIR%/StackViews/ --qmldir=%XPIKS_QT_DIR%/StyledControls/ --qmldir=%XPIKS_QT_DIR%/ %DEPLOY_DIR_NAME%\%APP_NAME%.exe
 
 set SRC_DEPS_DIR=%XPIKS_ROOT%\src\xpiks-qt\deps
 

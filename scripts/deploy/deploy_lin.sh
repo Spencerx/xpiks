@@ -1,20 +1,20 @@
 #!/bin/bash
 
 APP_NAME=Xpiks
-VERSION="1.5.1"
+VERSION="1.5.2"
 APPDIR_NAME="Xpiks"
 
 STAGING_DIR="./${APP_NAME}.AppDir"
 
 DEPLOY_TOOL=linuxdeploy
 
-BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_9_3_GCC_64bit-Release"
+BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_6_2_GCC_64bit-Release"
 LIBS_PROFILE=release
 
 XPIKS_QT_DIR=".."
 REPO_ROOT="../../.."
 
-QT_BIN_PATH=/home/ktar/Qt5.9.3/5.9.3/gcc_64/bin
+QT_BIN_PATH=/home/ktar/Qt5.6.2/5.6.2/gcc_64/bin
 
 echo "------------------------------"
 echo "Working in $(pwd)"
