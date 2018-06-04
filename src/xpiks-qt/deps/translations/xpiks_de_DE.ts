@@ -2007,29 +2007,29 @@ https://git.ffmpeg.org/ffmpeg.git.
 Application and its original content, features, and functionality are owned by Taras Kushnir and are protected by international copyright.
 
 This terms and conditions can be amended in future and users will be notified on such occasions.</source>
-      <translation type="unfinished">The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+      <translation>Dieses Programm wird OHNE JEDE GEWÄHRLEISTUNG (EINSCHLIESSLICH DER GEWÄHRLEISTUNG DES DESIGNS, DER HANDELSÜBLICHKEIT UND DER EIGNUNG FÜR EINEN BESTIMMTEN ZWECK) zur Verfügung gestellt.
 
-By accessing and using Xpiks (heretofore called the 'application' or the 'program'), you accept and agree to be bound by the terms and provision of this agreement. In addition, when using this particular application, you shall be subject to any posted guidelines or rules applicable to such application. If you do not agree to abide by the above, please do not use this application.
+Durch die Verwendung des Xpiks (nachstehend als "Applikation" oder "Programm" bezeichnet) erkennen Sie diese Bestimmungen an. Wenn Sie diese Applikation nutzen, unterliegen Sie außerdem allen veröffentlichten Richtlinien oder Regeln, die für dieses Programm gelten.
+Wenn Sie nicht zustimmen, verwenden Sie die Software bitte nicht.
 
-Xpiks has an option to save credentials of FTP uploads. When you enter such sensitive data, Xpiks always encrypts it. Also you have option to encrypt it with your own password (Master Password). These encrypted credentials are only stored locally.
+Im Xpiks ist es möglich FTP-Zugangsdaten zu speichern. Wenn Sie solche sensible Daten eingeben, verschlüsselt das Programm sie immer. Darüber hinaus haben Sie die Möglichkeit sie mit einem Passwort (Master Password) verschlüsseln. Diese verschlüsselten Anmeldeinformationen werden nur lokal gespeichert.
 
-Xpiks is distributed under Mozilla Public License, v. 2.0. Xpiks source code is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+Der Xpiks wird Ihnen unter den Bedingungen der Mozilla Public License v. 2.0 (MPLv2.0) zur Verfügung gestellt. Der Quellcode kann auch unter MPLv2.0 genutzt werden. Wenn die eine Kopie der MPL kommt nicht dazu, können Sie sie unter http://mozilla.org/MPL/2.0/ herunterladen.
 
-This software uses code of FFmpeg (http://ffmpeg.org) licensed under the LGPLv2.1 (http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) and its source can be downloaded at
-https://git.ffmpeg.org/ffmpeg.git.
+Das Programm verwendet den FFmpeg Code (http://ffmpeg.org), der unter LGPLv2.1 (http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) steht. Der FFmpeg Code kann unter http://mozilla.org/MPL/2.0/ heruntergeladen werden.
 
-Application and its original content, features, and functionality are owned by Taras Kushnir and are protected by international copyright.
+Die Applikation, ihre Inhalte und Funktionen sind Eigentum von Taras Kushnir und ist durch das Urheberrecht geschützt.
 
-This terms and conditions can be amended in future and users will be notified on such occasions.</translation>
+Diese Allgemeinen Geschäftsbedingungen können in Zukunft geändert werden. Über Änderungen werden die Benutzer informiert.</translation>
     </message>
     <message>
       <location filename="../../Dialogs/TermsAndConditionsDialog.qml" line="149"/>
       <source>In order to monitor quality of the application functioning, it can automatically send anonymous usage statistics data. This data is used to monitor issues with Xpiks and to prioritize future work. Such analytics data is never shared with any third-parties and is saved in a secure manner.
 
 Please select 'Health report' checkbox if you agree to send anonymous health report.</source>
-      <translation type="unfinished">In order to monitor quality of the application functioning, it can automatically send anonymous usage statistics data. This data is used to monitor issues with Xpiks and to prioritize future work. Such analytics data is never shared with any third-parties and is saved in a secure manner.
+      <translation>Zum Zweck der Qualitätsüberwachung kann das Programm automatisch anonyme Nutzungsstatistiken senden. Diese Daten werden benutzt um Probleme im Xpiks zu beheben und neue Funktionen zu priorisieren. Diese Statistiken werden keinesfalls an Dritte weitergegeben und auf sichere Art und Weise gespeichert werden.
 
-Please select 'Health report' checkbox if you agree to send anonymous health report.</translation>
+Aktivieren Sie biite die Checkbox "Aktivitätsbericht", wenn Sie zustimmen, anonyme Nutzungsstatistiken zu senden.</translation>
     </message>
     <message>
       <location filename="../../Dialogs/TermsAndConditionsDialog.qml" line="170"/>
