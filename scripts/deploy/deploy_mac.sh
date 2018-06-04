@@ -110,6 +110,17 @@ done
 
 popd
 
+RECOVERTY_BUNDLE_PATH="${STAGING_DIR}/${APP_NAME}.app/Contents/MacOS/Recoverty.app"
+# fix Recoverty rpath
+install_name_tool -rpath "/Users/ktar/Qt5.6.2/5.6/clang_64/lib" "@loader_path/../../../../Frameworks" "${RECOVERTY_BUNDLE_PATH}/Contents/MacOS/Recoverty"
+# make use of deployed resources of Xpiks
+cat << EOF > "${RECOVERTY_BUNDLE_PATH}/Contents/Resources/qt.conf"
+[Paths]
+Plugins = ../../../PlugIns
+Imports = ../../../Resources/qml
+Qml2Imports = ../../../Resources/qml
+EOF
+
 RESOURCES_DIR="$STAGING_DIR/${APP_NAME}.app/Contents/Resources"
 
 echo "Copying exiftool distribution"
