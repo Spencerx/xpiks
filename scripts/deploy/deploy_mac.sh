@@ -34,8 +34,7 @@ DMG_BACKGROUND_PATH="${XPIKS_DEPS_DIR}/$DMG_BACKGROUND_IMG"
 DMG_TMP="${APP_NAME}-v${VERSION}.tmp.dmg"
 DMG_FINAL="${APP_NAME}-v${VERSION}.dmg"
 
-STAGING_DIR_NAME="osx-release-staging"
-STAGING_DIR="`dir_resolve \"${STAGING_DIR_NAME}\"`"
+STAGING_DIR="./osx-release-staging"
 
 if [ ! -d "$BUILD_DIR" ]; then
     echo "Build directory not found: $BUILD_DIR"
