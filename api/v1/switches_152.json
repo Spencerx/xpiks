@@ -7,7 +7,7 @@
     },
     "donateCampaign1Stage2": {
         "v": true,
-        "t": 60
+        "t": 40
     },
     "progressiveSuggestionPreviews": {
         "v": true
@@ -17,7 +17,7 @@
     },
     "qualityVideoPreviews": {
         "v": true,
-        "t": 50
+        "t": 30
     },
     "autoImport": {
         "v": true
@@ -26,8 +26,7 @@
         "v": true
     },
     "updateEnabled": {
-        "v": true,
-        "t": 10
+        "v": false
     },
     "keywordsDragDropEnabled": {
         "v": true
