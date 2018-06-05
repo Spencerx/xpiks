@@ -150,8 +150,9 @@ void initCrashRecovery(Common::ISystemEnvironment &environment) {
     QStringList recoveryArgs = QStringList() << recovertyPath << "--args"
                                              << "open" <<  xpiksBundlePath << "--args" << "--recovery";
 #else
-    QString recoveryApp = "recoverty/Recoverty";
-    QStringList recoveryArgs = QStringList() << "../Xpiks" << "--recovery";
+    QString xpiksDirPath = QCoreApplication::applicationDirPath();
+    QString recoveryApp = QDir::cleanPath(xpiksDirPath + "/recoverty/Recoverty");
+    QStringList recoveryArgs = QStringList() << QCoreApplication::applicationFilePath() << "--recovery";
 #endif
 
     chillout.setCrashCallback([&logger, &chillout, recoveryApp, recoveryArgs]() {
