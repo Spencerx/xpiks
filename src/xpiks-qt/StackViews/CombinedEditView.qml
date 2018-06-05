@@ -427,7 +427,10 @@ Rectangle {
             StyledButton {
                 width: 100
                 text: i18.n + qsTr("Cancel")
-                onClicked: closePopup()
+                onClicked: {
+                    flv.onBeforeClose()
+                    closePopup()
+                }
             }
 
             StyledButton {

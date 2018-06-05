@@ -49,6 +49,7 @@ Rectangle {
         canShowChangesSaved = false
         changesText.visible = false
         closeAutoComplete()
+        flv.submitCurrentKeyword()
 
         var originalIndex = filteredArtItemsModel.getOriginalIndex(itemIndex)
         var metadata = filteredArtItemsModel.getArtworkMetadata(itemIndex)
