@@ -23,6 +23,7 @@ set NMAKE_OPTIONS="clean all /f Makefile"
 
 set XPIKS_DEPS_ROOT="%ROOT_DIR%\..\xpiks-deps"
 set XPIKS_DEPS_LIBS="%XPIKS_DEPS_ROOT%\windows-libs\%TARGET%-%ARCH%"
+set LIBS_DIR="%ROOT_DIR%\libs\%TARGET%"
 
 if "%BUILD_MODE%"=="appveyor" (
    set PRINT_PREFIX=""
@@ -38,7 +39,7 @@ echo "%PRINT_PREFIX% Building chillout..."
 cd %ROOT_DIR%\vendors\chillout\src\chillout
 %QMAKE_EXE% "CONFIG+=%TARGET%" chillout.pro
 nmake.exe "%NMAKE_OPTIONS%"
-copy %TARGET%\chillout.* ..\..\..\..\libs\%TARGET%
+copy %TARGET%\chillout.* %LIBS_DIR%
 echo "%PRINT_PREFIX% Building chillout... - done"
 
 rem zlib
@@ -47,7 +48,7 @@ move %XPIKS_DEPS_ROOT%\zlib-1.2.11 %ROOT_DIR%\vendors
 cd %ROOT_DIR%\vendors\zlib-project
 %QMAKE_EXE% "CONFIG+=%TARGET%" zlib.pro
 nmake.exe "%NMAKE_OPTIONS%"
-copy %TARGET%\z.* ..\..\libs\%TARGET%
+copy %TARGET%\z.* %LIBS_DIR%
 echo "%PRINT_PREFIX% Building zlib... - done"
 
 rem mman
@@ -55,7 +56,7 @@ echo "%PRINT_PREFIX% Building mman..."
 cd %ROOT_DIR%\vendors\cpp-libface\mman-win32
 %QMAKE_EXE% "CONFIG+=%TARGET%" mman-win32.pro
 nmake.exe "%NMAKE_OPTIONS%"
-copy %TARGET%\mman.* ..\..\..\libs\%TARGET%
+copy %TARGET%\mman.* %LIBS_DIR%
 echo "%PRINT_PREFIX% Building mman... - done"
 
 rem tiny-aes
@@ -69,7 +70,7 @@ echo "%PRINT_PREFIX% Building cpp-libface..."
 cd %ROOT_DIR%\vendors\cpp-libface\libface-project
 %QMAKE_EXE% "CONFIG+=%TARGET%" libface.pro
 nmake.exe "%NMAKE_OPTIONS%"
-copy %TARGET%\face.* ..\..\..\libs\%TARGET%
+copy %TARGET%\face.* %LIBS_DIR%
 echo "%PRINT_PREFIX% Building cpp-libface... - done"
 
 rem ssdll
@@ -77,7 +78,7 @@ echo "%PRINT_PREFIX% Building ssdll..."
 cd %ROOT_DIR%\vendors\ssdll\src\ssdll
 %QMAKE_EXE% "CONFIG+=%TARGET% %BUILD_MODE%" ssdll.pro
 nmake.exe "%NMAKE_OPTIONS%"
-copy %TARGET%\ssdll.* ..\..\..\..\libs\%TARGET%
+copy %TARGET%\ssdll.* %LIBS_DIR%
 echo "%PRINT_PREFIX% Building ssdll... - done"
 
 rem quazip
@@ -85,7 +86,7 @@ echo "%PRINT_PREFIX% Building quazip..."
 cd %ROOT_DIR%\vendors\quazip\quazip
 %QMAKE_EXE% "CONFIG+=%TARGET%" quazip.pro
 nmake.exe "%NMAKE_OPTIONS%"
-copy %TARGET%\quazip* ..\..\..\libs\%TARGET%
+copy %TARGET%\quazip* %LIBS_DIR%
 echo "%PRINT_PREFIX% Building quazip... - done"
 
 rem hunspell
@@ -93,9 +94,10 @@ echo "%PRINT_PREFIX% Building hunspell..."
 cd %ROOT_DIR%\vendors\hunspell
 %QMAKE_EXE% "CONFIG+=%TARGET%" hunspell.pro
 nmake.exe "%NMAKE_OPTIONS%"
-copy %TARGET%\hunspell.* ..\..\libs\%TARGET%
+copy %TARGET%\hunspell.* %LIBS_DIR%
 echo "%PRINT_PREFIX% Building hunspell... - done"
 
+echo "%PRINT_PREFIX% Building recoverty..."
 cd %ROOT_DIR%\src\recoverty
 %QMAKE_EXE% "CONFIG+=%TARGET%" recoverty.pro
 nmake.exe "%NMAKE_OPTIONS%"
@@ -118,7 +120,7 @@ if not "%BUILD_MODE%"=="appveyor" (
       cd %XPKS_ROOT%\src\xpks
       %QMAKE_EXE% "CONFIG+=%TARGET%" xpks.pro
       nmake.exe "%NMAKE_OPTIONS%"
-      copy %TARGET%\xpks.* %ROOT_DIR%\libs\%TARGET%
+      copy %TARGET%\xpks.* %LIBS_DIR%
       echo "%PRINT_PREFIX% Building libxpks... - done"
 
       rem libthmbnlr
@@ -126,7 +128,7 @@ if not "%BUILD_MODE%"=="appveyor" (
       cd "%THMBNLR_ROOT%\src\libthmbnlr"
       %QMAKE_EXE% "CONFIG+=%TARGET%" libthmbnlr.pro
       nmake.exe "%NMAKE_OPTIONS%"
-      copy %TARGET%\thmbnlr.* %ROOT_DIR%\libs\%TARGET%
+      copy %TARGET%\thmbnlr.* %LIBS_DIR%
       echo "%PRINT_PREFIX% Building libthmbnlr... - done"	  
     ) else (
       rem libxpks
@@ -134,7 +136,7 @@ if not "%BUILD_MODE%"=="appveyor" (
       cd %ROOT_DIR%\src\libxpks_stub
       %QMAKE_EXE% "CONFIG+=%TARGET%" libxpks_stub.pro
       nmake.exe "%NMAKE_OPTIONS%"
-      copy %TARGET%\xpks.* ..\..\libs\%TARGET%
+      copy %TARGET%\xpks.* %LIBS_DIR%
       echo "%PRINT_PREFIX% Building libxpks... - done"
 
       rem libthmbnlr
@@ -142,7 +144,7 @@ if not "%BUILD_MODE%"=="appveyor" (
       cd "%ROOT_DIR%\vendors\libthmbnlr"
       %QMAKE_EXE% "CONFIG+=%TARGET%" thmbnlr.pro
       nmake.exe "%NMAKE_OPTIONS%"
-      copy %TARGET%\thmbnlr.* %ROOT_DIR%\libs\%TARGET%    
+      copy %TARGET%\thmbnlr.* %LIBS_DIR%
       echo "%PRINT_PREFIX% Building libthmbnlr... - done"
     )
 ) else (
@@ -150,15 +152,15 @@ if not "%BUILD_MODE%"=="appveyor" (
   echo "%PRINT_PREFIX% xpiks-deps root is %XPIKS_DEPS_LIBS%"
 
   rem ffmpeg
-  xcopy /s %XPIKS_DEPS_ROOT%\windows-libs\ffmpeg-%ARCH%\%TARGET% %ROOT_DIR%\libs\%TARGET%
+  xcopy /s %XPIKS_DEPS_ROOT%\windows-libs\ffmpeg-%ARCH%\%TARGET% %LIBS_DIR%
   
   rem xpiks deps
-  copy %XPIKS_DEPS_LIBS%\*curl* %ROOT_DIR%\libs\%TARGET%
-  copy %XPIKS_DEPS_LIBS%\thmbnlr.* %ROOT_DIR%\libs\%TARGET%
-  copy %XPIKS_DEPS_LIBS%\xpks.* %ROOT_DIR%\libs\%TARGET%
+  copy %XPIKS_DEPS_LIBS%\*curl* %LIBS_DIR%
+  copy %XPIKS_DEPS_LIBS%\thmbnlr.* %LIBS_DIR%
+  copy %XPIKS_DEPS_LIBS%\xpks.* %LIBS_DIR%
   rem integration tests deps
-  copy %XPIKS_DEPS_LIBS%\libexpat.* %ROOT_DIR%\libs\%TARGET%
-  copy %XPIKS_DEPS_LIBS%\libexiv2.* %ROOT_DIR%\libs\%TARGET%
+  copy %XPIKS_DEPS_LIBS%\libexpat.* %LIBS_DIR%
+  copy %XPIKS_DEPS_LIBS%\libexiv2.* %LIBS_DIR%
 )
 
 echo "%PRINT_PREFIX% Vendors preparation for %BUILD_MODE%: done"
