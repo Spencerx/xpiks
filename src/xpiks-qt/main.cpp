@@ -23,6 +23,10 @@
 #include <QQmlApplicationEngine>
 #include <QDesktopWidget>
 
+#ifdef Q_OS_LINUX
+#include <unistd.h>
+#endif
+
 // -------------------------------------
 
 #include "Common/defines.h"
@@ -151,15 +155,25 @@ void initCrashRecovery(Common::ISystemEnvironment &environment) {
                                              << "open" <<  xpiksBundlePath << "--args" << "--recovery";
 #else
     QString xpiksDirPath = QCoreApplication::applicationDirPath();
-    QString recoveryApp = QDir::cleanPath(xpiksDirPath + "/recoverty/Recoverty");
-    QStringList recoveryArgs = QStringList() << QCoreApplication::applicationFilePath() << "--recovery";
+    std::string recoveryApp = QDir::cleanPath(xpiksDirPath + "/recoverty/Recoverty").toStdString();
+    std::vector<std::string> recoveryArgs = {
+        QCoreApplication::applicationFilePath().toStdString(),
+        std::string("--recovery") };
 #endif
 
     chillout.setCrashCallback([&logger, &chillout, recoveryApp, recoveryArgs]() {
         chillout.backtrace();
         logger.emergencyFlush();
 
+#ifndef Q_OS_LINUX
         QProcess::startDetached(recoveryApp, recoveryArgs);
+#else
+        // Xpiks runs in AppImage and if Xpiks dies there's no way
+        // Recoverty can start and even restart Xpiks later
+        // therefore need to replace it's process using execl()
+        execl(recoveryApp.c_str(), recoveryApp.c_str(),
+              recoveryArgs[0].c_str(), recoveryArgs[1].c_str(), (char*)nullptr);
+#endif
 
 #ifdef Q_OS_WIN
         chillout.createCrashDump(Debug::CrashDumpNormal);

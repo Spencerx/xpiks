@@ -9,7 +9,16 @@ Window {
     visible: true
     width: 565
     height: 424
-    title: "Recoverty"
+    title: "Recoverty"    
+    property bool needToCenter: true
+
+    onVisibleChanged: {
+            if (needToCenter) {
+                needToCenter = false
+                applicationWindow.x = (Screen.width - applicationWindow.width) / 2 // default
+                applicationWindow.y = (Screen.height - applicationWindow.height) / 2 // default
+            }
+        }
 
     Rectangle {
         anchors.fill: parent
