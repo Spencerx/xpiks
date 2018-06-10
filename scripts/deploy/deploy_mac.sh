@@ -47,7 +47,10 @@ if [ -d "/Volumes/${VOL_NAME}" ]; then
 fi
 
 rm -v -rf "${STAGING_DIR}" "${DMG_TMP}" "${DMG_FINAL}"
+echo "Previous deployment leftovers removed"
 mkdir -p "$STAGING_DIR"
+
+sleep 2s
 
 cp -rpfv "$BUILD_DIR/${APP_NAME}.app" "${STAGING_DIR}"
 
@@ -86,25 +89,26 @@ do
 
     LIBENTRY="${lib%.0.0.dylib}.dylib"
     
-    install_name_tool -change $LIBENTRY "@executable_path/../Frameworks/$LIBENTRY" "../MacOS/$APP_NAME"
+    install_name_tool -change $LIBENTRY "@rpath/$LIBENTRY" "../MacOS/$APP_NAME"
 
     ln -s "$lib" "$LIBENTRY"
 done
 
-# just copying
+# FFMPEG
 
 for lib in "${FFMPEG_LIBS[@]}"
 do
     echo "Copying $lib..."
     cp -v "$LIBS_PATH/$lib" .
     
-    install_name_tool -change $lib "@executable_path/../Frameworks/$lib" "../MacOS/$APP_NAME"
+    install_name_tool -change $lib "@rpath/$lib" "../MacOS/$APP_NAME"
     # brew fix
-    install_name_tool -change "/usr/local/lib/$lib" "@executable_path/../Frameworks/$lib" "../MacOS/$APP_NAME"
+    install_name_tool -change "/usr/local/lib/$lib" "@rpath/$lib" "../MacOS/$APP_NAME"
 
     for depend_lib in "${FFMPEG_LIBS[@]}"
     do
-        install_name_tool -change "/usr/local/lib/$depend_lib" "@executable_path/../Frameworks/$depend_lib" "$lib"
+        echo "Fixing dependent $depend_lib..."
+        install_name_tool -change "/usr/local/lib/$depend_lib" "@loader_path/$depend_lib" "$lib"
     done
 done
 
