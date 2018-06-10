@@ -116,7 +116,7 @@ popd
 
 RECOVERTY_BUNDLE_PATH="${STAGING_DIR}/${APP_NAME}.app/Contents/MacOS/Recoverty.app"
 # fix Recoverty rpath
-install_name_tool -rpath "/Users/ktar/Qt5.6.2/5.6/clang_64/lib" "@loader_path/../../../../Frameworks" "${RECOVERTY_BUNDLE_PATH}/Contents/MacOS/Recoverty"
+install_name_tool -add_rpath "@executable_path/../../../../Frameworks" "${RECOVERTY_BUNDLE_PATH}/Contents/MacOS/Recoverty"
 # make use of deployed resources of Xpiks
 cat << EOF > "${RECOVERTY_BUNDLE_PATH}/Contents/Resources/qt.conf"
 [Paths]
