@@ -21,15 +21,16 @@
 #include <QSortFilterProxyModel>
 #include <vector>
 
+#include "recentdirectoriesmodel.h"
 #include "../Common/abstractlistmodel.h"
 #include "../Common/baseentity.h"
 #include "../Common/flags.h"
 
 namespace Models {
-    class ArtworksRepository : public Common::AbstractListModel, public Common::BaseEntity {
+    class ArtworksRepository : public Common::AbstractListModel {
         Q_OBJECT
     public:
-        ArtworksRepository(QObject *parent = 0);
+        ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent = 0);
         virtual ~ArtworksRepository() {}
 
     public:
@@ -86,6 +87,7 @@ namespace Models {
         void artworksSourcesCountChanged();
         void fileChanged(const QString &path);
         void filesUnavailable();
+        void selectionChanged();
 
 #ifdef CORE_TESTS
     public:
@@ -167,6 +169,7 @@ namespace Models {
 
     private:
         std::vector<RepoDir> m_DirectoriesList;
+        RecentDirectoriesModel &m_RecentDirectories;
         QSet<QString> m_FilesSet;
         QFileSystemWatcher m_FilesWatcher;
         QTimer m_Timer;

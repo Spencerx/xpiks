@@ -23,7 +23,7 @@ namespace Commands {
     {
     }
 
-    std::shared_ptr<ICommandResult> DeleteKeywordsCommand::execute(const ICommandManager *commandManagerInterface) const {
+    std::shared_ptr<ICommandResult> DeleteKeywordsCommand::execute(const ICommandManager *commandManagerInterface) {
         LOG_INFO << m_KeywordsSet.size() << "keyword(s) to remove from" << m_RawSnapshot.size() << "item(s)";
         LOG_INFO << "Case sensitive:" << m_CaseSensitive;
         QVector<int> indicesToUpdate;
@@ -65,7 +65,7 @@ namespace Commands {
         return result;
     }
 
-    void DeleteKeywordsCommandResult::afterExecCallback(const ICommandManager *commandManagerInterface) const {
+    void DeleteKeywordsCommandResult::afterExecCallback(const ICommandManager *commandManagerInterface) {
         CommandManager *commandManager = (CommandManager*)commandManagerInterface;
         auto *xpiks = commandManager->getDelegator();
 

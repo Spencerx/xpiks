@@ -19,6 +19,8 @@
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_LogsModel(&m_ColorsModel),
     m_SettingsModel(environment),
+    m_RecentDirectorieModel(environment),
+    m_ArtworksRepository(m_RecentDirectorieModel),
     m_FilteredArtworksRepository(&m_ArtworksRepository),
     m_UploadInfoRepository(environment),
     m_RequestsService(m_SettingsModel.getProxySettings()),
@@ -27,7 +29,6 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_DatabaseManager(environment),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
     m_ApiClients(m_SecretsStorage.get()),
-    m_RecentDirectorieModel(environment),
     m_RecentFileModel(environment),
     m_ArtworkUploader(environment, m_UploadInfoRepository),
     m_SpellCheckerService(environment, &m_SettingsModel),
@@ -424,6 +425,8 @@ void XpiksApp::connectEntitiesSignalsSlots() {
 
     QObject::connect(&m_ArtworksRepository, &Models::ArtworksRepository::filesUnavailable,
                      &m_ArtItemsModel, &Models::ArtItemsModel::onFilesUnavailableHandler);
+    QObject::connect(&m_ArtworksRepository, &Models::ArtworksRepository::selectionChanged,
+                     &m_FilteredArtItemsModel, &Models::FilteredArtItemsProxyModel::onDirectoriesSelectionChanged);
 
     QObject::connect(&m_UndoRedoManager, &UndoRedo::UndoRedoManager::undoStackEmpty,
                      &m_ArtItemsModel, &Models::ArtItemsModel::onUndoStackEmpty);

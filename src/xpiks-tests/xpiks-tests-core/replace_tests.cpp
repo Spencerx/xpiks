@@ -3,6 +3,8 @@
 #include <QtAlgorithms>
 #include "Mocks/artitemsmodelmock.h"
 #include "Mocks/commandmanagermock.h"
+#include "Mocks/coretestsenvironment.h"
+#include "Mocks/artworksrepositorymock.h"
 #include "../../xpiks-qt/Commands/findandreplacecommand.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
 #include "../../xpiks-qt/Models/artworksrepository.h"
@@ -10,9 +12,10 @@
 #include "../../xpiks-qt/Common/flags.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
+    Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock; \
     Mocks::ArtItemsModelMock artItemsModelMock; \
-    Models::ArtworksRepository artworksRepository; \
+    Mocks::ArtworksRepositoryMock artworksRepository(environment); \
     Models::FilteredArtItemsProxyModel filteredItemsModel; \
     commandManagerMock.InjectDependency(&artworksRepository); \
     commandManagerMock.InjectDependency(&artItemsModelMock); \

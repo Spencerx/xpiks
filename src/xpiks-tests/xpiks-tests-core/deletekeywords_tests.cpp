@@ -2,14 +2,17 @@
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artitemsmodelmock.h"
 #include "Mocks/artworkmetadatamock.h"
+#include "Mocks/coretestsenvironment.h"
+#include "Mocks/artworksrepositorymock.h"
 #include "../../xpiks-qt/Models/deletekeywordsviewmodel.h"
 #include "../../xpiks-qt/Models/artworksrepository.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
+    Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock; \
     Mocks::ArtItemsModelMock artItemsModelMock; \
-    Models::ArtworksRepository artworksRepository; \
+    Mocks::ArtworksRepositoryMock artworksRepository(environment); \
     Models::FilteredArtItemsProxyModel filteredItemsModel; \
     Models::DeleteKeywordsViewModel deleteKeywordsModel; \
     commandManagerMock.InjectDependency(&artworksRepository); \

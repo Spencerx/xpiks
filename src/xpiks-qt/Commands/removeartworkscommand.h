@@ -28,7 +28,7 @@ namespace Commands {
         }
 
     public:
-        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) const override;
+        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
 
     private:
         QVector<QPair<int, int> > m_RangesToRemove;

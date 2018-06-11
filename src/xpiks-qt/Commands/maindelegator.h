@@ -164,7 +164,6 @@ namespace Commands {
         void updateArtworksAtIndices(const QVector<int> &indices) const;
         void updateArtworks(const MetadataIO::WeakArtworksSnapshot &artworks) const;
         void updateArtworks(const MetadataIO::ArtworksSnapshot::Container &artworks);
-        void addToRecentDirectories(const QString &path) const;
         void addToRecentFiles(const QString &path) const;
         void addToRecentFiles(const QStringList &filenames) const;
         void autoDiscoverExiftool() const;

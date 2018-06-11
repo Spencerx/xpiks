@@ -19,8 +19,9 @@
 #include "../Models/filteredartitemsproxymodel.h"
 
 namespace Models {
-    ArtworksRepository::ArtworksRepository(QObject *parent) :
+    ArtworksRepository::ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent) :
         AbstractListModel(parent),
+        m_RecentDirectories(recentDirectories),
         m_LastUnavailableFilesCount(0),
         m_LastID(0)
     {
@@ -141,17 +142,17 @@ namespace Models {
 
     bool ArtworksRepository::accountFile(const QString &filepath, qint64 &directoryID, Common::DirectoryFlags directoryFlags) {
         bool wasModified = false, wasAdded = false;
-        QString absolutePath;
+        QString directoryPath;
 
-        if (this->checkFileExists(filepath, absolutePath) &&
+        if (this->checkFileExists(filepath, directoryPath) &&
                 !m_FilesSet.contains(filepath)) {
             int occurances = 0;
             size_t index = 0;
-            bool alreadyExists = tryFindDirectory(absolutePath, index);
+            bool alreadyExists = tryFindDirectory(directoryPath, index);
             if (!alreadyExists) {
                 qint64 id = generateNextID();
-                LOG_INFO << "Adding new directory" << absolutePath << "with index" << m_DirectoriesList.size() << "and id" << id;
-                m_DirectoriesList.emplace_back(absolutePath, id, 0);
+                LOG_INFO << "Adding new directory" << directoryPath << "with index" << m_DirectoriesList.size() << "and id" << id;
+                m_DirectoriesList.emplace_back(directoryPath, id, 0);
                 auto &item = m_DirectoriesList.back();
                 item.setIsSelectedFlag(true);
                 index = m_DirectoriesList.size() - 1;
@@ -174,13 +175,7 @@ namespace Models {
         }
 
         if (wasAdded) {
-#ifdef CORE_TESTS
-            if (m_CommandManager != nullptr)
-#endif
-            {
-                xpiks()->addToRecentDirectories(absolutePath);
-                xpiks()->cleanupOldXpksBackups(absolutePath);
-            }
+            m_RecentDirectories.pushItem(directoryPath);
         }
 
         return wasModified;
@@ -424,12 +419,7 @@ namespace Models {
         }
 
         if (anyChange) {
-#ifndef CORE_TESTS
-            LOG_DEBUG << "Updating artworks";
-            auto *filteredArtItemsModel = m_CommandManager->getFilteredArtItemsModel();
-            Q_ASSERT(filteredArtItemsModel != NULL);
-            filteredArtItemsModel->updateFilter();
-#endif
+            emit selectionChanged();
         }
 
         emit artworksSourcesCountChanged();
@@ -463,12 +453,7 @@ namespace Models {
 
         if (changeSelectedState(row, newValue, oldValue)) {
             updateSelectedState();
-#ifndef CORE_TESTS
-            LOG_DEBUG << "Updating artworks";
-            auto *filteredArtItemsModel = m_CommandManager->getFilteredArtItemsModel();
-            Q_ASSERT(filteredArtItemsModel != NULL);
-            filteredArtItemsModel->updateFilter();
-#endif
+            emit selectionChanged();
         }
     }
 

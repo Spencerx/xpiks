@@ -5,6 +5,7 @@
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/artitemsmodelmock.h"
+#include "Mocks/coretestsenvironment.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
 #include "../../xpiks-qt/Models/artworksrepository.h"
 #include "../../xpiks-qt/Models/artworkelement.h"
@@ -14,9 +15,10 @@
 #include "removefilesfs_tests.h"
 
 #define DECLARE_MODELS_AND_GENERATE_(count) \
+    Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock;\
     Mocks::ArtItemsModelMock artItemsModelMock;\
-    Models::ArtworksRepository artworksRepository;\
+    Mocks::ArtworksRepositoryMock artworksRepository(environment);\
     Models::FilteredArtItemsProxyModel filteredItemsModel;\
     commandManagerMock.InjectDependency(&artworksRepository);\
     commandManagerMock.InjectDependency(&artItemsModelMock);\
@@ -31,7 +33,8 @@
 void RemoveFilesFsTests::removeArtworksSignals() {
     Mocks::CommandManagerMock commandManagerMock;
     Mocks::ArtItemsModelMock artItemsMock;
-    Mocks::ArtworksRepositoryMock artworksRepositoryMock;
+    Mocks::CoreTestsEnvironment environment;
+    Mocks::ArtworksRepositoryMock artworksRepositoryMock(environment);
 
     Models::ArtworksRepository *artworksRepository = &artworksRepositoryMock;
     Models::ArtItemsModel *artItemsModel = &artItemsMock;
@@ -120,7 +123,8 @@ void RemoveFilesFsTests::removeArtworksAllItems() {
 void RemoveFilesFsTests::removeVectorSmokeTest() {
     Mocks::CommandManagerMock commandManagerMock;
     Mocks::ArtItemsModelMock artItemsMock;
-    Mocks::ArtworksRepositoryMock artworksRepositoryMock;
+    Mocks::CoreTestsEnvironment environment;
+    Mocks::ArtworksRepositoryMock artworksRepositoryMock(environment);
 
     Models::ArtworksRepository *artworksRepository = &artworksRepositoryMock;
     Models::ArtItemsModel *artItemsModel = &artItemsMock;

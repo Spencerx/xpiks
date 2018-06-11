@@ -21,7 +21,7 @@ Commands::PasteKeywordsCommand::~PasteKeywordsCommand() {
     LOG_DEBUG << "#";
 }
 
-std::shared_ptr<Commands::ICommandResult> Commands::PasteKeywordsCommand::execute(const ICommandManager *commandManagerInterface) const {
+std::shared_ptr<Commands::ICommandResult> Commands::PasteKeywordsCommand::execute(const ICommandManager *commandManagerInterface) {
     LOG_INFO << "Pasting" << m_KeywordsList.length() << "keywords to" << m_RawSnapshot.size() << "item(s)";
 
     CommandManager *commandManager = (CommandManager*)commandManagerInterface;
@@ -65,7 +65,7 @@ std::shared_ptr<Commands::ICommandResult> Commands::PasteKeywordsCommand::execut
     return result;
 }
 
-void Commands::PasteKeywordsCommandResult::afterExecCallback(const Commands::ICommandManager *commandManagerInterface) const {
+void Commands::PasteKeywordsCommandResult::afterExecCallback(const Commands::ICommandManager *commandManagerInterface) {
     CommandManager *commandManager = (CommandManager*)commandManagerInterface;
     Models::ArtItemsModel *artItemsModel = commandManager->getArtItemsModel();
     artItemsModel->updateItems(m_IndicesToUpdate,

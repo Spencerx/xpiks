@@ -19,7 +19,7 @@ namespace Commands {
     ExpandPresetCommand::~ExpandPresetCommand() {
     }
 
-    std::shared_ptr<ICommandResult> ExpandPresetCommand::execute(const ICommandManager *commandManagerInterface) const {
+    std::shared_ptr<ICommandResult> ExpandPresetCommand::execute(const ICommandManager *commandManagerInterface) {
         LOG_INFO << "Expand preset" << m_PresetID;
 
         CommandManager *commandManager = (CommandManager*)commandManagerInterface;
@@ -68,7 +68,7 @@ namespace Commands {
         return result;
     }
 
-    void ExpandPresetCommandResult::afterExecCallback(const ICommandManager *commandManagerInterface) const {
+    void ExpandPresetCommandResult::afterExecCallback(const ICommandManager *commandManagerInterface) {
         CommandManager *commandManager = (CommandManager*)commandManagerInterface;
         Models::ArtItemsModel *artItemsModel = commandManager->getArtItemsModel();
         artItemsModel->updateItems(QVector<int>() << m_IndexToUpdate,

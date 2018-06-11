@@ -108,6 +108,7 @@ namespace Models {
         void onSelectedArtworksRemoved(int value);
         void onSpellCheckerAvailable(bool afterRestart);
         void onSettingsUpdated();
+        void onDirectoriesSelectionChanged() { updateFilter(); }
 
     signals:
         void searchTermChanged(const QString &searchTerm);

@@ -131,6 +131,7 @@ protected:
     QMLExtensions::ColorsModel m_ColorsModel;
     Models::LogsModel m_LogsModel;
     Models::SettingsModel m_SettingsModel;
+    Models::RecentDirectoriesModel m_RecentDirectorieModel;
     Models::ArtworksRepository m_ArtworksRepository;
     Models::FilteredArtworksRepository m_FilteredArtworksRepository;
     Models::ArtItemsModel m_ArtItemsModel;
@@ -147,7 +148,6 @@ protected:
     std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
     Microstocks::MicrostockAPIClients m_ApiClients;
     Models::FilteredArtItemsProxyModel m_FilteredArtItemsModel;
-    Models::RecentDirectoriesModel m_RecentDirectorieModel;
     Models::RecentFilesModel m_RecentFileModel;
     std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
     Models::ArtworkUploader m_ArtworkUploader;

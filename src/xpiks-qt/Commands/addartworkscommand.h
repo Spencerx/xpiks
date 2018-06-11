@@ -13,11 +13,18 @@
 
 #include <QStringList>
 #include <QHash>
+#include <QSet>
 #include "commandbase.h"
 #include "../Common/flags.h"
+#include "../MetadataIO/artworkssnapshot.h"
 
 namespace MetadataIO {
     class ArtworksSnapshot;
+}
+
+namespace Models {
+    class ArtworksRepository;
+    class ArtItemsModel;
 }
 
 namespace Commands {
@@ -50,9 +57,13 @@ namespace Commands {
         virtual ~AddArtworksCommand();
 
     public:
-        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) const override;
+        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
 
     private:
+        void addFilesToAdd(int newFilesCount,
+                           Models::ArtworksRepository *artworksRepository,
+                           Models::ArtItemsModel *artItemsModel);
+        void cleanupOldBackups(QSet<qint64> &directoryIDs, Models::ArtworksRepository *artworksRepository);
         int afterAddedHandler(CommandManager *commandManager,
                               const MetadataIO::ArtworksSnapshot &artworksToImport,
                               QStringList filesToWatch,
@@ -60,6 +71,9 @@ namespace Commands {
         void decomposeVectors(QHash<QString, QHash<QString, QString> > &vectors) const;
 
     public:
+        MetadataIO::ArtworksSnapshot m_ArtworksToImport;
+        QSet<qint64> m_DirectoryIDs;
+        QStringList m_FilesToWatch;
         QStringList m_FilePathes;
         QStringList m_VectorsPathes;
         Common::flag_t m_Flags;
@@ -67,7 +81,15 @@ namespace Commands {
 
     class AddArtworksCommandResult : public CommandResult {
     public:
-        AddArtworksCommandResult(int addedFilesCount, int attachedVectorsCount, int importID, bool autoImport):
+        AddArtworksCommandResult(
+                Models::ArtworksRepository &artworksRepository,
+                QSet<qint64> directoryIDs,
+                int addedFilesCount,
+                int attachedVectorsCount,
+                int importID,
+                bool autoImport):
+            m_ArtworksRepository(artworksRepository),
+            m_DirectoryIDs(directoryIDs),
             m_NewFilesAdded(addedFilesCount),
             m_AttachedVectorsCount(attachedVectorsCount),
             m_ImportID(importID),
@@ -75,9 +97,11 @@ namespace Commands {
         { }
 
     public:
-        virtual void afterExecCallback(const ICommandManager *commandManagerInterface) const override;
+        virtual void afterExecCallback(const ICommandManager *commandManagerInterface) override;
 
     public:
+        Models::ArtworksRepository &m_ArtworksRepository;
+        QSet<qint64> m_DirectoryIDs;
         int m_NewFilesAdded;
         int m_AttachedVectorsCount;
         int m_ImportID;

@@ -20,7 +20,7 @@ namespace Commands {
     class ICommandResult {
     public:
         virtual ~ICommandResult() {}
-        virtual void afterExecCallback(const ICommandManager *commandManager) const { Q_UNUSED(commandManager); }
+        virtual void afterExecCallback(const ICommandManager *commandManager) { Q_UNUSED(commandManager); }
         virtual int getStatus() const = 0;
     };
 
@@ -28,7 +28,7 @@ namespace Commands {
     public:
         virtual ~ICommandBase() {}
 
-        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManager) const = 0;
+        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManager) = 0;
         virtual int getCommandType() const = 0;
         virtual int getCommandID() const = 0;
         virtual void assignCommandID(int commandID) = 0;
