@@ -3,18 +3,22 @@
 #include "addcommand_tests.h"
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworksrepositorymock.h"
+#include "Mocks/coretestsenvironment.h"
 #include "../../xpiks-qt/Commands/addartworkscommand.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
 
-void AddCommandTests::addNoArtworksToEmptyRepositoryTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Mocks::ArtItemsModelMock *artItemsModel = &artItemsMock;
+#define DECLARE_MODELS \
+    Mocks::CommandManagerMock commandManagerMock;\
+    Mocks::ArtItemsModelMock artItemsMock;\
+    Mocks::CoreTestsEnvironment environment;\
+    Mocks::ArtworksRepositoryMock artworksRepository(environment);\
+    commandManagerMock.InjectDependency(&artworksRepository);\
+    Mocks::ArtItemsModelMock *artItemsModel = &artItemsMock;\
     commandManagerMock.InjectDependency(artItemsModel);
+
+void AddCommandTests::addNoArtworksToEmptyRepositoryTest() {
+    DECLARE_MODELS;
 
     QSignalSpy artItemsBeginInsertSpy(&artItemsMock, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)));
     QSignalSpy artItemsEndInsertSpy(&artItemsMock, SIGNAL(rowsInserted(QModelIndex,int,int)));
@@ -37,14 +41,7 @@ void AddCommandTests::addNoArtworksToEmptyRepositoryTest() {
 }
 
 void AddCommandTests::addOneArtworkToEmptyRepositoryTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Mocks::ArtItemsModelMock *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
+    DECLARE_MODELS;
 
     QSignalSpy artItemsBeginInsertSpy(&artItemsMock, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)));
     QSignalSpy artItemsEndInsertSpy(&artItemsMock, SIGNAL(rowsInserted(QModelIndex,int,int)));
@@ -83,14 +80,7 @@ void AddCommandTests::addOneArtworkToEmptyRepositoryTest() {
 }
 
 void AddCommandTests::addAndAttachVectorsTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Mocks::ArtItemsModelMock *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
+    DECLARE_MODELS;
 
     QStringList filenames, vectors;
     filenames << "/path/to/somefile.jpg" << "/another/path/to/some/other/file.jpg";
@@ -109,14 +99,7 @@ void AddCommandTests::addAndAttachVectorsTest() {
 }
 
 void AddCommandTests::addAndAttachVectorsLaterTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Mocks::ArtItemsModelMock *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
+    DECLARE_MODELS;
 
     QStringList filenames, vectors;
     filenames << "/path/to/somefile.jpg" << "/another/path/to/some/other/file.jpg";
@@ -146,14 +129,7 @@ void AddCommandTests::addAndAttachVectorsLaterTest() {
 }
 
 void AddCommandTests::addAndDontAttachVectorsOtherDirTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Mocks::ArtItemsModelMock *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
+    DECLARE_MODELS;
 
     QStringList filenames, vectors;
     filenames << "/path/to/somefile.jpg" << "/another/path/to/some/other/file.jpg";
@@ -172,14 +148,7 @@ void AddCommandTests::addAndDontAttachVectorsOtherDirTest() {
 }
 
 void AddCommandTests::addAndDontAttachVectorsEmptyDirTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Mocks::ArtItemsModelMock *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
+    DECLARE_MODELS;
 
     QStringList filenames, vectors;
     filenames << "/path/to/somefile.jpg" << "/another/path/to/some/other/file.jpg";
@@ -198,14 +167,7 @@ void AddCommandTests::addAndDontAttachVectorsEmptyDirTest() {
 }
 
 void AddCommandTests::addAndDontAttachVectorsStartsWithTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Mocks::ArtItemsModelMock *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
+    DECLARE_MODELS;
 
     QStringList filenames, vectors;
     filenames << "/path/to/somefile.jpg" << "/another/path/to/some/other/file.jpg";
@@ -224,14 +186,7 @@ void AddCommandTests::addAndDontAttachVectorsStartsWithTest() {
 }
 
 void AddCommandTests::addAndAttachFromSingleDirectoryTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Mocks::ArtItemsModelMock *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
+    DECLARE_MODELS;
 
     QStringList filenames, vectors;
     filenames << "/path/to/somefile1.jpg" << "/path/to/somefile2.jpg" << "/another/path/to/somefile1.jpg" << "/another/path/to/somefile2.jpg";
@@ -250,14 +205,7 @@ void AddCommandTests::addAndAttachFromSingleDirectoryTest() {
 }
 
 void AddCommandTests::addSingleDirectoryAndAttachLaterTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Mocks::ArtItemsModelMock *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
+    DECLARE_MODELS;
 
     QStringList filenames, vectors;
     filenames << "/path/to/somefile1.jpg" << "/path/to/somefile2.jpg" << "/another/path/to/somefile1.jpg" << "/another/path/to/somefile2.jpg";

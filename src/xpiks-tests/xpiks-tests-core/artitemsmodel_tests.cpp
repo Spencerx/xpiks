@@ -2,6 +2,7 @@
 #include <QSignalSpy>
 #include "Mocks/artitemsmodelmock.h"
 #include "Mocks/commandmanagermock.h"
+#include "Mocks/artworksrepositorymock.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
 #include "../../xpiks-qt/Models/artworksrepository.h"
 #include "../../xpiks-qt/QuickBuffer/quickbuffer.h"
@@ -13,7 +14,7 @@
     Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock;\
     Mocks::ArtItemsModelMock artItemsModelMock;\
-    Models::ArtworksRepository artworksRepository;\
+    Mocks::ArtworksRepositoryMock artworksRepository(environment);\
     Models::FilteredArtItemsProxyModel filteredItemsModel;\
     commandManagerMock.InjectDependency(&artworksRepository);\
     commandManagerMock.InjectDependency(&artItemsModelMock);\

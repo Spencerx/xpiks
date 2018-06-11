@@ -122,7 +122,6 @@ Commands::CommandManager::CommandManager():
 
 void Commands::CommandManager::InjectDependency(Models::ArtworksRepository *artworkRepository) {
     Q_ASSERT(artworkRepository != NULL); m_ArtworksRepository = artworkRepository;
-    m_ArtworksRepository->setCommandManager(this);
 }
 
 void Commands::CommandManager::InjectDependency(Models::ArtItemsModel *artItemsModel) {

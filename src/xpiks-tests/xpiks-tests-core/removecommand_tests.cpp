@@ -4,18 +4,22 @@
 #include "removecommand_tests.h"
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworksrepositorymock.h"
+#include "Mocks/coretestsenvironment.h"
 #include "../../xpiks-qt/Commands/removeartworkscommand.h"
 #include "../../xpiks-qt/Models/artworksrepository.h"
 
-void RemoveCommandTests::removeArtworksFromEmptyRepository() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Models::ArtItemsModel *artItemsModel = &artItemsMock;
+#define DECLARE_MODELS \
+    Mocks::CommandManagerMock commandManagerMock;\
+    Mocks::ArtItemsModelMock artItemsMock;\
+    Mocks::CoreTestsEnvironment environment;\
+    Mocks::ArtworksRepositoryMock artworksRepository(environment);\
+    commandManagerMock.InjectDependency(&artworksRepository);\
+    Models::ArtItemsModel *artItemsModel = &artItemsMock;\
     commandManagerMock.InjectDependency(artItemsModel);
+
+void RemoveCommandTests::removeArtworksFromEmptyRepository() {
+    DECLARE_MODELS;
 
     QVector<QPair<int, int> > indicesToRemove;
     indicesToRemove.append(qMakePair(0, 2));
@@ -48,14 +52,7 @@ void RemoveCommandTests::removeArtworksFromEmptyRepository() {
 }
 
 void RemoveCommandTests::removeAllArtworksFromRepository() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
-
-    Models::ArtworksRepository artworksRepository;
-    commandManagerMock.InjectDependency(&artworksRepository);
-
-    Models::ArtItemsModel *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
+    DECLARE_MODELS;
 
     int itemsToAdd = 5;
     commandManagerMock.generateAndAddArtworks(itemsToAdd);

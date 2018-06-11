@@ -8,12 +8,13 @@
 #include "../../xpiks-qt/Helpers/threadhelpers.h"
 #include "../../xpiks-qt/Models/artworkproxymodel.h"
 #include "Mocks/coretestsenvironment.h"
+#include "Mocks/artworksrepositorymock.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock; \
     Mocks::ArtItemsModelMock artItemsModelMock; \
-    Models::ArtworksRepository artworksRepository; \
+    Mocks::ArtworksRepositoryMock artworksRepository(environment); \
     Models::FilteredArtItemsProxyModel filteredItemsModel; \
     commandManagerMock.InjectDependency(&artworksRepository); \
     commandManagerMock.InjectDependency(&artItemsModelMock); \

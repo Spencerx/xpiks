@@ -10,12 +10,13 @@
 #include "../../xpiks-qt/Models/uimanager.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
 #include "Mocks/coretestsenvironment.h"
+#include "Mocks/artworksrepositorymock.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock;\
     Mocks::ArtItemsModelMock artItemsModelMock;\
-    Models::ArtworksRepository artworksRepository;\
+    Mocks::ArtworksRepositoryMock artworksRepository(environment);\
     QuickBuffer::QuickBuffer quickBuffer;\
     Models::SettingsModel settingsModel(environment);\
     Models::UIManager uiManager(environment, &settingsModel);\

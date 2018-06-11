@@ -13,9 +13,10 @@
 #include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \
+    Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock;\
     Mocks::ArtItemsModelMock artItemsModelMock;\
-    Models::ArtworksRepository artworksRepository;\
+    Mocks::ArtworksRepositoryMock artworksRepository(environment);\
     Models::FilteredArtItemsProxyModel filteredItemsModel;\
     commandManagerMock.InjectDependency(&artworksRepository);\
     commandManagerMock.InjectDependency(&artItemsModelMock);\
@@ -27,7 +28,7 @@
     Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock; \
     Mocks::ArtItemsModelMock artItemsMock; \
-    Mocks::ArtworksRepositoryMock artworksRepository; \
+    Mocks::ArtworksRepositoryMock artworksRepository(environment); \
     commandManagerMock.InjectDependency(&artworksRepository); \
     Models::ArtItemsModel *artItemsModel = &artItemsMock; \
     commandManagerMock.InjectDependency(artItemsModel); \
@@ -38,6 +39,12 @@
     settingsModel.setAutoFindVectors(false); \
     commandManagerMock.generateAndAddArtworksEx(count, dirsCount, false); \
     QCOMPARE((int)artworksRepository.accessRepos().size(), dirsCount);
+
+#define DECLARE_BASIC_MODELS\
+    Mocks::CommandManagerMock commandManagerMock;\
+    Mocks::CoreTestsEnvironment environment;\
+    Mocks::ArtworksRepositoryMock repository(environment);\
+    commandManagerMock.InjectDependency(&repository);
 
 #define CHECK_ONLY_SELECTED(selectedIndex) \
     { \
@@ -66,9 +73,7 @@
     QCOMPARE(artworksRepository.accessRepos()[index].getIsSelectedFlag(), false);
 
 void ArtworkRepositoryTests::simpleAccountFileTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename = "C:/path/to/some/file";
@@ -87,10 +92,7 @@ void ArtworkRepositoryTests::simpleAccountFileTest() {
 }
 
 void ArtworkRepositoryTests::accountSameFileTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
-
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename = "C:/path/to/some/file";
@@ -111,9 +113,7 @@ void ArtworkRepositoryTests::accountSameFileTest() {
 }
 
 void ArtworkRepositoryTests::addFilesFromOneDirectoryTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);;
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filenameTemplate = "C:/path/to/some/file%1.jpg";
@@ -139,9 +139,7 @@ void ArtworkRepositoryTests::addFilesFromOneDirectoryTest() {
 }
 
 void ArtworkRepositoryTests::addAndRemoveSameFileTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename = "C:/path/to/some/file";
@@ -161,9 +159,7 @@ void ArtworkRepositoryTests::addAndRemoveSameFileTest() {
 }
 
 void ArtworkRepositoryTests::removeNotExistingFileTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename1 = "C:/path/to/some/file1";
@@ -186,9 +182,7 @@ void ArtworkRepositoryTests::removeNotExistingFileTest() {
 }
 
 void ArtworkRepositoryTests::brandNewDirectoriesCountTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename1 = "C:/path/to/some/file1";
@@ -208,9 +202,7 @@ void ArtworkRepositoryTests::brandNewDirectoriesCountTest() {
 }
 
 void ArtworkRepositoryTests::differentNewDirectoriesCountTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename1 = "C:/path/to/some/file1";
@@ -230,9 +222,7 @@ void ArtworkRepositoryTests::differentNewDirectoriesCountTest() {
 }
 
 void ArtworkRepositoryTests::newFilesCountTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename1 = "C:/path/to/some/file1";
@@ -252,9 +242,7 @@ void ArtworkRepositoryTests::newFilesCountTest() {
 }
 
 void ArtworkRepositoryTests::noNewDirectoriesCountTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename1 = "C:/path/to/some/file1";
@@ -276,9 +264,7 @@ void ArtworkRepositoryTests::noNewDirectoriesCountTest() {
 }
 
 void ArtworkRepositoryTests::noNewFilesCountTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename1 = "C:/path/to/some/file1";
@@ -302,9 +288,8 @@ void ArtworkRepositoryTests::noNewFilesCountTest() {
 }
 
 void ArtworkRepositoryTests::endAccountingWithNoNewFilesTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
+
     QSignalSpy endSpy(&repository, SIGNAL(rowsInserted(QModelIndex,int,int)));
 
     repository.endAccountingFiles(false);
@@ -312,9 +297,7 @@ void ArtworkRepositoryTests::endAccountingWithNoNewFilesTest() {
 }
 
 void ArtworkRepositoryTests::startAccountingNewFilesEmitsTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename1 = "C:/path/to/some/file1";
@@ -338,9 +321,7 @@ void ArtworkRepositoryTests::startAccountingNewFilesEmitsTest() {
 }
 
 void ArtworkRepositoryTests::selectFolderTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Models::ArtworksRepository repository;
-    commandManagerMock.InjectDependency(&repository);
+    DECLARE_BASIC_MODELS;
 
 #ifdef Q_OS_WIN
     QString filename1 = "C:/path1/to/some/file";

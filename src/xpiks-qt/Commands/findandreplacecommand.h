@@ -39,7 +39,7 @@ namespace Commands {
         virtual ~FindAndReplaceCommand();
 
     public:
-        std::shared_ptr<Commands::ICommandResult> execute(const ICommandManager *commandManagerInterface) const;
+        std::shared_ptr<Commands::ICommandResult> execute(const ICommandManager *commandManagerInterface);
 
     private:
         MetadataIO::ArtworksSnapshot::Container m_RawSnapshot;
@@ -60,7 +60,7 @@ namespace Commands {
         { }
 
     public:
-        virtual void afterExecCallback(const ICommandManager *commandManagerInterface) const override;
+        virtual void afterExecCallback(const ICommandManager *commandManagerInterface) override;
 
 #ifndef CORE_TESTS
 

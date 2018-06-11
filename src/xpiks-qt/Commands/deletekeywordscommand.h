@@ -33,7 +33,7 @@ namespace Commands {
         virtual ~DeleteKeywordsCommand() {}
 
     public:
-        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) const override;
+        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
 
     private:
         MetadataIO::ArtworksSnapshot::Container m_RawSnapshot;
@@ -51,7 +51,7 @@ namespace Commands {
         }
 
     public:
-        virtual void afterExecCallback(const ICommandManager *commandManagerInterface) const override;
+        virtual void afterExecCallback(const ICommandManager *commandManagerInterface) override;
 
 #ifndef CORE_TESTS
     private:

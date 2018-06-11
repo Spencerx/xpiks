@@ -276,13 +276,6 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::addToRecentDirectories(const QString &path) const {
-        auto *recentDirectories = m_CommandManager->getRecentDirectories();
-        if (recentDirectories) {
-            recentDirectories->pushItem(path);
-        }
-    }
-
     void MainDelegator::addToRecentFiles(const QString &path) const {
         auto *recentFiles = m_CommandManager->getRecentFiles();
         if (recentFiles) {

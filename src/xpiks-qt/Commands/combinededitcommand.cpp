@@ -52,7 +52,7 @@ Commands::CombinedEditCommand::~CombinedEditCommand() {
     LOG_DEBUG << "#";
 }
 
-std::shared_ptr<Commands::ICommandResult> Commands::CombinedEditCommand::execute(const ICommandManager *commandManagerInterface) const {
+std::shared_ptr<Commands::ICommandResult> Commands::CombinedEditCommand::execute(const ICommandManager *commandManagerInterface) {
     LOG_INFO << "flags =" << combinedFlagsToString(m_EditFlags) << ", artworks count =" << m_RawSnapshot.size();
     QVector<int> indicesToUpdate;
     std::vector<UndoRedo::ArtworkMetadataBackup> artworksBackups;
@@ -128,7 +128,7 @@ void Commands::CombinedEditCommand::setTitle(Models::ArtworkMetadata *metadata) 
     }
 }
 
-void Commands::CombinedEditCommandResult::afterExecCallback(const Commands::ICommandManager *commandManagerInterface) const {
+void Commands::CombinedEditCommandResult::afterExecCallback(const Commands::ICommandManager *commandManagerInterface) {
     CommandManager *commandManager = (CommandManager*)commandManagerInterface;
     auto *xpiks = commandManager->getDelegator();
 

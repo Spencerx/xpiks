@@ -21,7 +21,7 @@
     Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock; \
     Mocks::ArtItemsModelMock artItemsMock; \
-    Mocks::ArtworksRepositoryMock artworksRepository; \
+    Mocks::ArtworksRepositoryMock artworksRepository(environment); \
     commandManagerMock.InjectDependency(&artworksRepository); \
     Models::ArtItemsModel *artItemsModel = &artItemsMock; \
     commandManagerMock.InjectDependency(artItemsModel); \

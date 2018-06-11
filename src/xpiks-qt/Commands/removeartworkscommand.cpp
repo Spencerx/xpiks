@@ -23,7 +23,7 @@
 #include "../Models/imageartwork.h"
 
 namespace Commands {
-    std::shared_ptr<ICommandResult> RemoveArtworksCommand::execute(const ICommandManager *commandManagerInterface) const {
+    std::shared_ptr<ICommandResult> RemoveArtworksCommand::execute(const ICommandManager *commandManagerInterface) {
         LOG_INFO << "removing" << m_RangesToRemove.length() << "ranges received";
         CommandManager *commandManager = (CommandManager*)commandManagerInterface;
         auto *xpiks = commandManager->getDelegator();
