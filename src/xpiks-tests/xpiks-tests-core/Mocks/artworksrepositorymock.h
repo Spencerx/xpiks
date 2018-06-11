@@ -12,7 +12,9 @@ namespace Mocks {
         ArtworksRepositoryMock(Common::ISystemEnvironment &environment):
             Models::ArtworksRepository(m_RecentDirectories),
             m_RecentDirectories(environment)
-        { }
+        {
+            m_RecentDirectories.initialize();
+        }
 
         void removeFileAndEmitSignal() {
             insertIntoUnavailable(*getFilesSet().begin());
