@@ -30,7 +30,7 @@ namespace Filesystem {
             }
         }
 
-        extractFiles(urls);
+        extractFiles(directories);
     }
 
     void DirectoriesCollection::extractFiles(const QStringList &directories) {
