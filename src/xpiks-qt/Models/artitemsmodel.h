@@ -21,6 +21,7 @@
 #include <QQuickTextDocument>
 #include <deque>
 #include <vector>
+#include <tuple>
 #include <memory>
 #include "../Common/abstractlistmodel.h"
 #include "../Common/baseentity.h"
@@ -29,6 +30,8 @@
 #include "../KeywordsPresets/ipresetsmanager.h"
 #include "../Helpers/ifilenotavailablemodel.h"
 #include "artworksrepository.h"
+#include "../MetadataIO/artworkssnapshot.h"
+#include "../Filesystem/ifilescollection.h"
 
 namespace Common {
     class BasicMetadataModel;
@@ -58,7 +61,7 @@ namespace Models {
 #endif
 
     public:
-        ArtItemsModel(QObject *parent=0);
+        ArtItemsModel(ArtworksRepository &repository, QObject *parent=0);
         virtual ~ArtItemsModel();
 
     public:
@@ -82,9 +85,17 @@ namespace Models {
         };
 
     public:
-        virtual ArtworkMetadata *createArtwork(const QString &filepath, qint64 directoryID);
+        std::tuple<MetadataIO::ArtworksSnapshot, int> addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
+                                                               Common::AddFilesFlags flags);
+        std::unique_ptr<MetadataIO::SessionSnapshot> snapshotAll();
 
     protected:
+        int getNextID();
+        int attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
+                           const MetadataIO::ArtworksSnapshot &snapshot,
+                           int initialCount,
+                           bool autoAttach);
+        virtual ArtworkMetadata *createArtwork(const QString &filepath, qint64 directoryID);
         void connectArtworkSignals(ArtworkMetadata *artwork);
 
     public:
@@ -188,7 +199,6 @@ namespace Models {
         void appendArtwork(ArtworkMetadata *artwork);
         void removeArtworks(const QVector<QPair<int, int> > &ranges);
         ArtworkMetadata *getArtwork(size_t index) const;
-        void raiseArtworksAdded(int importID, int imagesCount, int vectorsCount);
         void raiseArtworksReimported(int importID, int artworksCount);
         void raiseArtworksChanged(bool navigateToCurrent);
         virtual void updateItemsAtIndices(const QVector<int> &indices);
@@ -223,7 +233,6 @@ namespace Models {
     signals:
         void modifiedArtworksCountChanged();
         void artworksChanged(bool needToMoveCurrentItem);
-        void artworksAdded(int importID, int imagesCount, int vectorsCount);
         void artworksReimported(int importID, int artworksCount);
         void selectedArtworksRemoved(int count);
         void fileWithIndexUnavailable(size_t index);
@@ -266,6 +275,7 @@ namespace Models {
         const ArtworksContainer &getArtworkList() const { return m_ArtworkList; }
 
     private:
+        ArtworksRepository &m_ArtworksRepository;
         ArtworksContainer m_ArtworkList;
         ArtworksContainer m_FinalizationList;
 #ifdef QT_DEBUG

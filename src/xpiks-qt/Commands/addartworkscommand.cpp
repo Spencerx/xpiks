@@ -28,19 +28,6 @@
 #include "../MetadataIO/metadataiocoordinator.h"
 #include "../Maintenance/maintenanceservice.h"
 
-void accountVectors(Models::ArtworksRepository *artworksRepository, const MetadataIO::WeakArtworksSnapshot &artworks) {
-    LOG_DEBUG << "#";
-
-    size_t size = artworks.size();
-    for (size_t i = 0; i < size; ++i) {
-        Models::ArtworkMetadata *metadata = artworks.at(i);
-        Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork *>(metadata);
-        if ((imageArtwork != nullptr) && imageArtwork->hasVectorAttached()) {
-            artworksRepository->accountVector(imageArtwork->getAttachedVectorPath());
-        }
-    }
-}
-
 Commands::AddArtworksCommand::~AddArtworksCommand() {
     LOG_DEBUG << "#";
 }
@@ -69,14 +56,7 @@ std::shared_ptr<Commands::ICommandResult> Commands::AddArtworksCommand::execute(
 
     int attachedCount = artItemsModel->attachVectors(vectorsHash, modifiedIndices);
 
-    if (getAutoFindVectorsFlag()) {
-        QVector<int> autoAttachedIndices;
-        attachedCount = Helpers::findAndAttachVectors(m_ArtworksToImport.getWeakSnapshot(), autoAttachedIndices);
 
-        foreach (int index, autoAttachedIndices) {
-            modifiedIndices.append(initialCount + index);
-        }
-    }
 
     int importID = 0;
 
@@ -84,7 +64,7 @@ std::shared_ptr<Commands::ICommandResult> Commands::AddArtworksCommand::execute(
         importID = afterAddedHandler(commandManager, m_ArtworksToImport, m_FilesToWatch, initialCount, newFilesCount);
     }
 
-    artItemsModel->updateItems(modifiedIndices, QVector<int>() << Models::ArtItemsModel::HasVectorAttachedRole);
+    artItemsModel->updateItems(modifiedIndices, );
 
     std::shared_ptr<AddArtworksCommandResult> result(new AddArtworksCommandResult(
                                                          *artworksRepository,
@@ -96,41 +76,6 @@ std::shared_ptr<Commands::ICommandResult> Commands::AddArtworksCommand::execute(
     return result;
 }
 
-void Commands::AddArtworksCommand::addFilesToAdd(int newFilesCount,
-                                                 Models::ArtworksRepository *artworksRepository,
-                                                 Models::ArtItemsModel *artItemsModel) {
-    LOG_INFO << newFilesCount << "new files found";
-    if (newFilesCount == 0) { return; }
-
-    const bool filesWereAccounted = artworksRepository->beginAccountingFiles(m_FilePathes);
-    artItemsModel->beginAccountingFiles(newFilesCount);
-
-    const int count = m_FilePathes.count();
-    Common::DirectoryFlags directoryFlags = Common::DirectoryFlags::None;
-    if (getIsFullDirectoryFlag()) { Common::SetFlag(directoryFlags, Common::DirectoryFlags::IsAddedAsDirectory); }
-
-    for (int i = 0; i < count; ++i) {
-        const QString &filename = m_FilePathes[i];
-        qint64 directoryID = 0;
-
-        if (artworksRepository->accountFile(filename, directoryID, directoryFlags)) {
-            Models::ArtworkMetadata *artwork = artItemsModel->createArtwork(filename, directoryID);
-            m_DirectoryIDs.insert(directoryID);
-
-            LOG_INTEGRATION_TESTS << "Added file:" << filename;
-
-            artItemsModel->appendArtwork(artwork);
-            m_ArtworksToImport.append(artwork);
-            m_FilesToWatch.append(filename);
-        } else {
-            LOG_INFO << "Rejected file:" << filename;
-        }
-    }
-
-    artItemsModel->endAccountingFiles();
-    artworksRepository->endAccountingFiles(filesWereAccounted);
-}
-
 int Commands::AddArtworksCommand::afterAddedHandler(CommandManager *commandManager, const MetadataIO::ArtworksSnapshot &artworksToImport, QStringList filesToWatch, int initialCount, int newFilesCount) const {
     Models::ArtworksRepository *artworksRepository = commandManager->getArtworksRepository();
     auto *xpiks = commandManager->getDelegator();
@@ -139,8 +84,7 @@ int Commands::AddArtworksCommand::afterAddedHandler(CommandManager *commandManag
     accountVectors(artworksRepository, artworksToImport.getWeakSnapshot());
     artworksRepository->refresh();
 
-    std::unique_ptr<UndoRedo::IHistoryItem> addArtworksItem(new UndoRedo::AddArtworksHistoryItem(getCommandID(), initialCount, newFilesCount));
-    xpiks->recordHistoryItem(addArtworksItem);
+
 
     // Generating previews was in the metadata io coordinator
     // called _after_ the reading to make reading (in Xpiks)
@@ -155,22 +99,7 @@ int Commands::AddArtworksCommand::afterAddedHandler(CommandManager *commandManag
     return importID;
 }
 
-void Commands::AddArtworksCommand::decomposeVectors(QHash<QString, QHash<QString, QString> > &vectors) const {
-    int size = m_VectorsPathes.size();
-    LOG_DEBUG << size << "item(s)";
 
-    for (int i = 0; i < size; ++i) {
-        const QString &path = m_VectorsPathes.at(i);
-        QFileInfo fi(path);
-        const QString &absolutePath = fi.absolutePath();
-
-        if (!vectors.contains(absolutePath)) {
-            vectors.insert(absolutePath, QHash<QString, QString>());
-        }
-
-        vectors[absolutePath].insert(fi.baseName().toLower(), path);
-    }
-}
 
 void Commands::AddArtworksCommandResult::afterExecCallback(const Commands::ICommandManager *commandManagerInterface) {
     CommandManager *commandManager = (CommandManager*)commandManagerInterface;

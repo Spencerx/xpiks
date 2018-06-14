@@ -27,6 +27,17 @@ namespace Models {
         deserializeItems(recentFiles);
     }
 
+    void RecentFilesModel::add(const MetadataIO::ArtworksSnapshot &snapshot) {
+        int maxFiles = getMaxRecentItems();
+        const int length = (int)snapshot.size();
+        int first = qMax(0, length - maxFiles);
+
+        for (; first < length; ++first) {
+            auto *artwork = snapshot.get(first);
+            pushItem(artwork->getFilepath());
+        }
+    }
+
     void RecentFilesModel::sync() {
         QString recentFiles = serializeItems();
         m_State.setValue(Constants::recentFiles, recentFiles);

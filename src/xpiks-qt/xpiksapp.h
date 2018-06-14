@@ -111,8 +111,11 @@ public:
     Q_INVOKABLE void shutdown();
     Q_INVOKABLE void upgradeNow();
     Q_INVOKABLE void debugCrash();
+    Q_INVOKABLE void addFiles(const QList<QUrl> &urls);
+    Q_INVOKABLE void addDirectories(const QList<QUrl> &urls);
 
 private:
+    void doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);
     void injectDependencies();
     void afterServicesStarted();
     void executeMaintenanceJobs();
@@ -123,6 +126,7 @@ signals:
     void globalBeforeDestruction();
     void upgradeInitiated();
     void isUpdateDownloadedChanged();
+    void artworksAdded(int importID, int imagesCount, int vectorsCount);
 
 private slots:
     void servicesInitialized(int status);

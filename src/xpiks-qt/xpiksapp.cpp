@@ -15,6 +15,9 @@
 #include <QScreen>
 #include "Encryption/aes-qt.h"
 #include <signal.h>
+#include "Filesystem/filescollection.h"
+#include "Filesystem/directoriescollection.h"
+#include "UndoRedo/addartworksitem.h"
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_LogsModel(&m_ColorsModel),
@@ -310,6 +313,59 @@ void XpiksApp::upgradeNow() {
 
 void XpiksApp::debugCrash() {
     raise(SIGTERM);
+}
+
+void XpiksApp::addFiles(const QList<QUrl> &urls) {
+    Common::AddFilesFlags flags = 0;
+    Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
+
+    std::shared_ptr<Filesystem::IFilesCollection> files(
+                new Filesystem::FilesCollection(urls));
+
+    doAddFiles(files, flags);
+}
+
+void XpiksApp::addDirectories(const QList<QUrl> &urls) {
+    Common::AddFilesFlags flags = 0;
+    Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
+    Common::SetFlag(flags, Common::AddFilesFlags::FlagIsFullDirectory);
+
+    std::shared_ptr<Filesystem::IFilesCollection> directories(
+                new Filesystem::DirectoriesCollection(urls));
+
+    doAddFiles(directories, flags);
+}
+
+void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
+    const int count = m_ArtItemsModel.getArtworksCount();
+    auto addResult = m_ArtItemsModel.addFiles(files, flags);
+    auto snapshot = std::get<0>(addResult);
+
+    quint32 batchID = m_MetadataIOService.readArtworks(snapshot);
+    int importID = m_MetadataIOCoordinator.readMetadataExifTool(snapshot, batchID);
+
+    m_ImageCachingService.generatePreviews(snapshot);
+    m_VideoCachingService.generateThumbnails(snapshot);
+
+    m_RecentFileModel.add(snapshot);
+
+    if (!Common::HasFlag(flags, Common::AddFilesFlags::FlagIsSessionRestore)) {
+        m_MaintenanceService.saveSession(m_ArtItemsModel.snapshotAll(), &m_SessionManager);
+    }
+
+    std::unique_ptr<UndoRedo::IHistoryItem> addArtworksItem(
+                new UndoRedo::AddArtworksHistoryItem(count, snapshot.size()));
+    m_UndoRedoManager.recordHistoryItem(addArtworksItem);
+
+    const bool autoImportEnabled = m_SettingsModel.getUseAutoImport() && m_SwitcherModel.getUseAutoImport();
+    if (autoImportEnabled) {
+        LOG_DEBUG << "Autoimport is ON. Proceeding...";
+        m_MetadataIOCoordinator.continueReading(false);
+    }
+
+    emit artworksAdded(importID, snapshot.size(), std::get<1>(addResult));
+
+    m_ArtworksRepository.cleanupOldBackups(snapshot, m_MaintenanceService);
 }
 
 void XpiksApp::injectDependencies() {

@@ -19,9 +19,9 @@ namespace Filesystem {
         virtual ~IFilesCollection() {}
 
     public:
-        virtual QStringList getImages() = 0;
-        virtual QStringList getVectors() = 0;
-        virtual QStringList getVideos() = 0;
+        virtual const QStringList &getImages() = 0;
+        virtual const QStringList &getVectors() = 0;
+        virtual const QStringList &getVideos() = 0;
     };
 }
 

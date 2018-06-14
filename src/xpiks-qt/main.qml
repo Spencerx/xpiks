@@ -1217,6 +1217,14 @@ ApplicationWindow {
             unavailableVectorsDialog.open()
         }
 
+        onArtworksReimported: {
+            launchImportDialog(importID, artworksCount, 0, true)
+        }
+    }
+
+    Connections {
+        target: xpiksApp
+
         onArtworksAdded: {
             if ((imagesCount === 0) && (vectorsCount === 0)) {
                 noNewFilesDialog.open();
@@ -1224,10 +1232,6 @@ ApplicationWindow {
             }
 
             launchImportDialog(importID, imagesCount, vectorsCount, false)
-        }
-
-        onArtworksReimported: {
-            launchImportDialog(importID, artworksCount, 0, true)
         }
     }
 

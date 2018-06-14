@@ -175,6 +175,13 @@ namespace Common {
         PresetsUpdated = 1 << 2
     };
 
+    enum struct AddFilesFlags: Common::flag_t {
+        FlagAutoFindVectors = 1 << 0,
+        FlagIsFullDirectory = 1 << 1,
+        FlagIsSessionRestore = 1 << 2,
+        FlagAutoImport = 1 << 3
+    };
+
 #if !defined(XPIKS_TYPED_ENUMS_WORKAROUND)
     // visual studio 2013 bug
 
@@ -225,6 +232,11 @@ namespace Common {
 
     template<>
     struct enable_bitmask_operators<WordAnalysisFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<AddFilesFlags> {
         static constexpr bool enable = true;
     };
 #else

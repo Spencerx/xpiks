@@ -283,19 +283,6 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::addToRecentFiles(const QStringList &filenames) const {
-        auto *recentFiles = m_CommandManager->getRecentFiles();
-        if (recentFiles) {
-            int maxFiles = recentFiles->getMaxRecentItems();
-            const int length = filenames.length();
-            int first = qMax(0, length - maxFiles);
-
-            for (; first < length; ++first) {
-                recentFiles->pushItem(filenames[first]);
-            }
-        }
-    }
-
     void MainDelegator::autoDiscoverExiftool() const {
     #ifndef CORE_TESTS
         auto *metadataIOCoordinator = m_CommandManager->getMetadataIOCoordinator();
@@ -540,23 +527,6 @@ namespace Commands {
 
         int addedCount = addArtworksResult->m_NewFilesAdded;
         return addedCount;
-    }
-
-    void MainDelegator::saveSessionInBackground() {
-    #ifndef CORE_TESTS
-        LOG_DEBUG << "#";
-
-        auto *artItemsModel = m_CommandManager->getArtItemsModel();
-        auto *artworksRepository = m_CommandManager->getArtworksRepository();
-
-        auto artworkList = artItemsModel->getArtworkList();
-        QStringList fullDirectoriesSnapshot = artworksRepository->retrieveFullDirectories();
-        std::unique_ptr<MetadataIO::SessionSnapshot> sessionSnapshot(new MetadataIO::SessionSnapshot(artworkList, fullDirectoriesSnapshot));
-
-        auto *maintenanceService = m_CommandManager->getMaintenanceService();
-        auto *sessionManager = m_CommandManager->getSessionManager();
-        maintenanceService->saveSession(sessionSnapshot, sessionManager);
-    #endif
     }
 
     void MainDelegator::restartSpellChecking() {

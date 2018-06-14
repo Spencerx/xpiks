@@ -27,9 +27,9 @@ namespace Filesystem {
 
         // IFilesCollection interface
     public:
-        virtual QStringList getImages() override { return m_Images; }
-        virtual QStringList getVectors() override { return m_Vectors; }
-        virtual QStringList getVideos() override { return m_Videos; }
+        virtual const QStringList &getImages() override { return m_Images; }
+        virtual const QStringList &getVectors() override { return m_Vectors; }
+        virtual const QStringList &getVideos() override { return m_Videos; }
 
     private:
         QStringList m_Images;

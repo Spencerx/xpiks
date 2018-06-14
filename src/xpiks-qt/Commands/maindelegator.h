@@ -165,7 +165,6 @@ namespace Commands {
         void updateArtworks(const MetadataIO::WeakArtworksSnapshot &artworks) const;
         void updateArtworks(const MetadataIO::ArtworksSnapshot::Container &artworks);
         void addToRecentFiles(const QString &path) const;
-        void addToRecentFiles(const QStringList &filenames) const;
         void autoDiscoverExiftool() const;
         void cleanupOldXpksBackups(const QString &directory) const;
 
@@ -196,9 +195,6 @@ namespace Commands {
         void reportUserAction(Connectivity::UserAction userAction) const;
 
         int restoreFiles(const QStringList &filenames, const QStringList &vectors);
-
-    public:
-        void saveSessionInBackground();
 
     public:
         void restartSpellChecking();

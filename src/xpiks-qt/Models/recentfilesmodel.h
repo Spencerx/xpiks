@@ -14,6 +14,7 @@
 #include "recentitemsmodel.h"
 #include "../Common/statefulentity.h"
 #include "../Common/isystemenvironment.h"
+#include "../MetadataIO/artworkssnapshot.h"
 
 namespace Models {
     class RecentFilesModel : public RecentItemsModel
@@ -24,6 +25,9 @@ namespace Models {
 
     public:
         virtual void initialize() override;
+
+    public:
+        void add(const MetadataIO::ArtworksSnapshot &snapshot);
 
     protected:
         virtual void sync() override;

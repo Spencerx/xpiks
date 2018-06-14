@@ -45,11 +45,14 @@
 #include "../AutoComplete/completionitem.h"
 #include "../Models/switchermodel.h"
 #include "../Models/recentfilesmodel.h"
+#include "../Helpers/artworkshelpers.h"
+#include "../UndoRedo/addartworksitem.h"
 
 namespace Models {
-    ArtItemsModel::ArtItemsModel(QObject *parent):
+    ArtItemsModel::ArtItemsModel(ArtworksRepository &repository, QObject *parent):
         AbstractListModel(parent),
         Common::BaseEntity(),
+        m_ArtworksRepository(repository),
         // all items before 1024 are reserved for internal models
         m_LastID(1024)
     {}
@@ -70,18 +73,100 @@ namespace Models {
 #endif
     }
 
+    std::tuple<MetadataIO::ArtworksSnapshot, int> ArtItemsModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
+                                                         Common::AddFilesFlags flags) {
+        const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
+        MetadataIO::ArtworksSnapshot snapshot;
+        snapshot.reserve(newFilesCount);
+        qint64 directoryID = 0;
+        const int count = getArtworksCount();
+
+        beginAccountingFiles(newFilesCount);
+        {
+            for (auto &file: filesCollection->getImages()) {
+                if (m_ArtworksRepository.accountFile(file, directoryID, directoryFlags)) {
+                    snapshot.append(new ImageArtwork(file, getNextID(), directoryID));
+                }
+            }
+
+            for (auto &file: filesCollection->getVideos()) {
+                if (m_ArtworksRepository.accountFile(file, directoryID, directoryFlags)) {
+                    snapshot.append(new VideoArtwork(file, getNextID(), directoryID));
+                }
+            }
+
+            auto &artworks = snapshot.getWeakSnapshot();
+            for (auto &artwork: artworks) {
+                appendArtwork(artwork);
+                connectArtworkSignals(artwork);
+                LOG_INTEGRATION_TESTS << "Added file:" << artwork->getFilepath();
+            }
+        }
+        endAccountingFiles();
+
+        const bool autoAttach = Common::HasFlag(flags, Common::AddFilesFlags::FlagAutoFindVectors);
+        int attachedCount = attachVectors(filesCollection, snapshot, count, autoAttach);
+        m_ArtworksRepository.addFiles(snapshot);
+
+        raiseArtworksAdded(m_ImportID, m_NewFilesAdded, m_AttachedVectorsCount);
+
+        return std::make_tuple(snapshot, attachedCount);
+    }
+
+    std::unique_ptr<MetadataIO::SessionSnapshot> ArtItemsModel::snapshotAll() {
+        std::unique_ptr<MetadataIO::SessionSnapshot> sessionSnapshot(
+                    new MetadataIO::SessionSnapshot(
+                        m_ArtworkList,
+                        m_ArtworksRepository.retrieveFullDirectories()));
+        return sessionSnapshot;
+    }
+
+    int ArtItemsModel::getNextID() {
+        return m_LastID++;
+    }
+
+    int ArtItemsModel::attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
+                                     const MetadataIO::ArtworksSnapshot &snapshot,
+                                     int initialCount,
+                                     bool autoAttach) {
+        QHash<QString, QHash<QString, QString> > vectors;
+        for (auto &path: filesCollection->getVectors()) {
+            QFileInfo fi(path);
+            const QString &absolutePath = fi.absolutePath();
+
+            if (!vectors.contains(absolutePath)) {
+                vectors.insert(absolutePath, QHash<QString, QString>());
+            }
+
+            vectors[absolutePath].insert(fi.baseName().toLower(), path);
+        }
+
+        QVector<int> indicesToUpdate;
+        int attachedCount = this->attachVectors(vectors, indicesToUpdate);
+
+        if (autoAttach) {
+            QVector<int> autoAttachedIndices;
+            attachedCount += Helpers::findAndAttachVectors(snapshot.getWeakSnapshot(), autoAttachedIndices);
+
+            foreach (int index, autoAttachedIndices) {
+                indicesToUpdate.append(initialCount + index);
+            }
+        }
+
+        this->updateItems(indicesToUpdate, QVector<int>() << Models::ArtItemsModel::HasVectorAttachedRole);
+        return attachedCount;
+    }
+
     ArtworkMetadata *ArtItemsModel::createArtwork(const QString &filepath, qint64 directoryID) {
-        const int id = m_LastID++;
         ArtworkMetadata *artwork = nullptr;
 
         LOG_INTEGRATION_TESTS << "Creating artwork with ID:" << id << "path:" << filepath;
         if (Helpers::couldBeVideo(filepath)) {
             artwork = new VideoArtwork(filepath, id, directoryID);
         } else {
-            artwork = new ImageArtwork(filepath, id, directoryID);
+            artwork =
         }
 
-        connectArtworkSignals(artwork);
 
         return artwork;
     }
@@ -1020,7 +1105,6 @@ namespace Models {
 
     void ArtItemsModel::beginAccountingFiles(int filesCount) {
         int rowsCount = rowCount();
-
         beginInsertRows(QModelIndex(), rowsCount, rowsCount + filesCount - 1);
     }
 

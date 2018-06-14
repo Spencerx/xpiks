@@ -43,11 +43,6 @@ namespace Models {
         return empty;
     }
 
-    void ArtworksRepository::refresh() {
-        emit dataChanged(index(0), index(rowCount() - 1), QVector<int>());
-        emit refreshRequired();
-    }
-
     void ArtworksRepository::stopListeningToUnavailableFiles() {
         LOG_DEBUG << "#";
 
@@ -110,12 +105,19 @@ namespace Models {
         return count;
     }
 
-    int ArtworksRepository::getNewFilesCount(const QStringList &items) const {
+    int ArtworksRepository::getNewFilesCount(const std::shared_ptr<Filesystem::IFilesCollection> &files) const {
         int count = 0;
-        QSet<QString> itemsSet = QSet<QString>::fromList(items);
 
-        foreach (const QString &filepath, itemsSet) {
-            if (!m_FilesSet.contains(filepath)) {
+        auto imagesSet = files->getImages().toSet();
+        for (auto &image: imagesSet) {
+            if (!m_FilesSet.contains(image)) {
+                count++;
+            }
+        }
+
+        auto videosSet = files->getVideos().toSet();
+        for (auto &video: videosSet) {
+            if (!m_FilesSet.contains(video)) {
                 count++;
             }
         }
@@ -176,6 +178,9 @@ namespace Models {
 
         if (wasAdded) {
             m_RecentDirectories.pushItem(directoryPath);
+            beginInsertRows(QModelIndex(), m_DirectoriesList.size() - 1, m_DirectoriesList.size() - 1);
+            // ...
+            endInsertRows();
         }
 
         return wasModified;
@@ -242,14 +247,37 @@ namespace Models {
         m_LastUnavailableFilesCount = 0;
     }
 
-    void ArtworksRepository::watchFilePaths(const QStringList &filePaths) {
-#ifndef CORE_TESTS
-        if (!filePaths.empty()) {
-            m_FilesWatcher.addPaths(filePaths);
+    void ArtworksRepository::addFiles(const MetadataIO::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << snapshot.size() << "item(s)";
+        if (snapshot.empty()) { return; }
+
+        QStringList filepaths;
+        filepaths.reserve(snapshot.size());
+        for (auto *artwork: snapshot.getWeakSnapshot()) {
+            filepaths.append(artwork->getFilePath());
+
+            Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork *>(artwork);
+            if ((imageArtwork != nullptr) && imageArtwork->hasVectorAttached()) {
+                accountVector(imageArtwork->getAttachedVectorPath());
+            }
         }
-#else
-        Q_UNUSED(filePaths);
-#endif
+
+        m_FilesWatcher.addPaths(filepaths);
+
+        auto first = this->index(0);
+        auto last = this->index(rowCount() - 1);
+        emit dataChanged(first, last);
+
+        emit refreshRequired();
+    }
+
+    void ArtworksRepository::cleanupOldBackups(const MetadataIO::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService) {
+        QString directoryPath;
+        for (auto *artwork: snapshot.getWeakSnapshot()) {
+            if (tryGetDirectoryPath(artwork->getDirectoryID(), directoryPath)) {
+                maintenanceService.cleanupOldXpksBackups(directoryPath);
+            }
+        }
     }
 
     void ArtworksRepository::unwatchFilePaths(const QStringList &filePaths) {

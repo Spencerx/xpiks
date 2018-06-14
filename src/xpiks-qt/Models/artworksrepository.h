@@ -25,6 +25,9 @@
 #include "../Common/abstractlistmodel.h"
 #include "../Common/baseentity.h"
 #include "../Common/flags.h"
+#include "../Filesystem/ifilescollection.h"
+#include "../MetadataIO/artworkssnapshot.h"
+#include "../Maintenance/maintenanceservice.h"
 
 namespace Models {
     class ArtworksRepository : public Common::AbstractListModel {
@@ -67,17 +70,12 @@ namespace Models {
 
     public:
         int isEmpty(int index) const;
-        void refresh();
         void resetLastUnavailableFilesCount() { m_LastUnavailableFilesCount = 0; }
         void stopListeningToUnavailableFiles();
 
     public:
-        bool beginAccountingFiles(const QStringList &items);
-        void endAccountingFiles(bool filesWereAccounted);
-
-    public:
         virtual int getNewDirectoriesCount(const QStringList &items) const;
-        int getNewFilesCount(const QStringList &items) const;
+        int getNewFilesCount(const std::shared_ptr<Filesystem::IFilesCollection> &files) const;
         bool canPurgeUnavailableFiles() const { return m_UnavailableFiles.size() == m_LastUnavailableFilesCount; }
         bool isDirectorySelected(qint64 directoryID) const;
 
@@ -117,7 +115,8 @@ namespace Models {
         void removeVector(const QString &vectorPath);
         void cleanupEmptyDirectories();
         void purgeUnavailableFiles();
-        void watchFilePaths(const QStringList &filePaths);
+        void addFiles(const MetadataIO::ArtworksSnapshot &snapshot);
+        void cleanupOldBackups(const MetadataIO::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService);
         void unwatchFilePaths(const QStringList &filePaths);
         void updateFilesCounts();
         void updateSelectedState();
