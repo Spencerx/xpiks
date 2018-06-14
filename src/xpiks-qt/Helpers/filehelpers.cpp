@@ -187,26 +187,5 @@ void Helpers::extractFilesFromDirectory(const QString &directory, QStringList &f
 }
 
 void Helpers::splitMediaFiles(const QStringList &rawFilenames, QStringList &filenames, QStringList &vectors) {
-    LOG_INFO << rawFilenames.length() << "file(s)";
-    filenames.reserve(rawFilenames.length());
-    vectors.reserve(rawFilenames.length());
 
-    foreach(const QString &filepath, rawFilenames) {
-        QFileInfo fi(filepath);
-        const QString suffix = fi.suffix().toLower();
-
-        if (Helpers::isImageExtension(suffix) ||
-                Helpers::isVideoExtension(suffix)) {
-            filenames.append(filepath);
-        } else if (suffix == QLatin1String("png")) {
-            LOG_WARNING << "PNG is unsupported file format";
-        } else {
-            if (suffix == QLatin1String("eps") ||
-                suffix == QLatin1String("ai")) {
-                vectors.append(filepath);
-            } else if (suffix != QLatin1String(Constants::METADATA_BACKUP_SUFFIX)) {
-                LOG_WARNING << "Unsupported extension of file" << filepath;
-            }
-        }
-    }
 }

@@ -195,7 +195,9 @@ SOURCES += main.cpp \
     Microstocks/microstockservice.cpp \
     Storage/memorytable.cpp \
     xpiksapp.cpp \
-    Encryption/obfuscation.cpp
+    Encryption/obfuscation.cpp \
+    Filesystem/filescollection.cpp \
+    Filesystem/directoriescollection.cpp
 
 RESOURCES += qml.qrc
 
@@ -472,7 +474,10 @@ HEADERS += \
     xpiksapp.h \
     Microstocks/stockftpoptions.h \
     Encryption/obfuscation.h \
-    Common/logging.h
+    Common/logging.h \
+    Filesystem/filescollection.h \
+    Filesystem/ifilescollection.h \
+    Filesystem/directoriescollection.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
