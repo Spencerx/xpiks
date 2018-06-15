@@ -156,7 +156,6 @@ namespace Commands {
         void setArtworksForUpload(MetadataIO::ArtworksSnapshot &artworks) const;
         void setArtworksForZipping(MetadataIO::ArtworksSnapshot &artworks) const;
         void setArtworksForCsvExport(MetadataIO::ArtworksSnapshot::Container &rawSnapshot) const;
-        int readMetadata(const MetadataIO::ArtworksSnapshot &snapshot) const;
         int reimportMetadata(const MetadataIO::ArtworksSnapshot &snapshot) const;
         void writeMetadata(const MetadataIO::WeakArtworksSnapshot &artworks, bool useBackups) const;
         void wipeAllMetadata(const MetadataIO::ArtworksSnapshot &artworks, bool useBackups) const;

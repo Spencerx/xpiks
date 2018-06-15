@@ -17,7 +17,9 @@
 #include <signal.h>
 #include "Filesystem/filescollection.h"
 #include "Filesystem/directoriescollection.h"
+#include "Filesystem/filesdirectoriescollection.h"
 #include "UndoRedo/addartworksitem.h"
+#include "Commands/savesessioncommand.h"
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_LogsModel(&m_ColorsModel),
@@ -336,6 +338,16 @@ void XpiksApp::addDirectories(const QList<QUrl> &urls) {
     doAddFiles(directories, flags);
 }
 
+void XpiksApp::dropItems(const QList<QUrl> &urls) {
+    Common::AddFilesFlags flags = 0;
+    Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
+
+    std::shared_ptr<Filesystem::IFilesCollection> files(
+                new Filesystem::FilesDirectoriesCollection(urls));
+
+    doAddFiles(files, flags);
+}
+
 void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
     const int count = m_ArtItemsModel.getArtworksCount();
     auto addResult = m_ArtItemsModel.addFiles(files, flags);
@@ -349,13 +361,19 @@ void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &f
 
     m_RecentFileModel.add(snapshot);
 
+    auto saveSessionCommand = std::make_shared<Commands::ICommand>(
+                new Commands::SaveSessionCommand(m_MaintenanceService,
+                                                 m_ArtItemsModel,
+                                                 m_SessionManager));
+
     if (!Common::HasFlag(flags, Common::AddFilesFlags::FlagIsSessionRestore)) {
-        m_MaintenanceService.saveSession(m_ArtItemsModel.snapshotAll(), &m_SessionManager);
+        saveSessionCommand->execute();
     }
 
-    std::unique_ptr<UndoRedo::IHistoryItem> addArtworksItem(
-                new UndoRedo::AddArtworksHistoryItem(count, snapshot.size()));
-    m_UndoRedoManager.recordHistoryItem(addArtworksItem);
+    m_UndoRedoManager.recordHistoryItem(std::make_unique<UndoRedo::IHistoryItem>(
+                                            new UndoRedo::AddArtworksHistoryItem(
+                                                m_ArtItemsModel, count, snapshot.size(),
+                                                saveSessionCommand)));
 
     const bool autoImportEnabled = m_SettingsModel.getUseAutoImport() && m_SwitcherModel.getUseAutoImport();
     if (autoImportEnabled) {

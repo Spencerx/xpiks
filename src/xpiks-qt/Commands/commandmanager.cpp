@@ -342,13 +342,10 @@ void Commands::CommandManager::InjectDependency(MainDelegator *delegator) {
     m_MainDelegator = delegator;
 }
 
-std::shared_ptr<Commands::ICommandResult> Commands::CommandManager::processCommand(const std::shared_ptr<ICommandBase> &command)
-{
-    int id = generateNextCommandID();
-    command->assignCommandID(id);
-    std::shared_ptr<Commands::ICommandResult> result = command->execute(this);
-
-    result->afterExecCallback(this);
+std::shared_ptr<Commands::ICommandResult> Commands::CommandManager::processCommand(const std::shared_ptr<ICommandBase> &command) {
+    Q_ASSERT(command);
+    const int id = generateNextCommandID();
+    std::shared_ptr<Commands::ICommandResult> result = command->execute(id);
     return result;
 }
 

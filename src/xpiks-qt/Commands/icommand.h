@@ -12,26 +12,29 @@
 #define ICOMMANDBASE_H
 
 #include <memory>
-#include <QtGlobal>
 
 namespace Commands {
     class ICommandManager;
 
-    class ICommandResult {
+    class CommandResult {
     public:
-        virtual ~ICommandResult() {}
-        virtual void afterExecCallback(const ICommandManager *commandManager) { Q_UNUSED(commandManager); }
-        virtual int getStatus() const = 0;
+        virtual ~CommandResult() {}
+        virtual int getStatus() const { return 0; }
     };
 
-    class ICommandBase {
+    class ICommand {
     public:
-        virtual ~ICommandBase() {}
+        virtual ~ICommand() {}
+        virtual std::shared_ptr<CommandResult> execute() { return std::make_shared(new CommandResult()); }
+    };
 
-        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManager) = 0;
-        virtual int getCommandType() const = 0;
-        virtual int getCommandID() const = 0;
-        virtual void assignCommandID(int commandID) = 0;
+    class IAppCommand: public ICommand {
+    public:
+        virtual ~IAppCommand() {}
+        virtual std::shared_ptr<CommandResult> execute(int commandID) {
+            Q_UNUSED(commandID);
+            return ICommand::execute();
+        }
     };
 }
 

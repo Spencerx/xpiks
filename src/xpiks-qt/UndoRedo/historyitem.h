@@ -29,6 +29,10 @@ namespace UndoRedo {
 
     class HistoryItem : public IHistoryItem
     {
+        enum {
+            UNKNOWN_COMMAND_ID = -1
+        };
+
     public:
         HistoryItem(HistoryActionType actionType, int commandID) :
             m_ActionType(actionType),

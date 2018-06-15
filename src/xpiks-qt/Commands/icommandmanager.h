@@ -13,19 +13,15 @@
 
 #include <memory>
 
-#include "../Common/iservicebase.h"
-#include "../Common/ibasicartwork.h"
-#include "../Common/flags.h"
-
 namespace Commands {
-    class ICommandBase;
+    class IAppCommand;
     class ICommandResult;
 
     class ICommandManager {
     public:
         virtual ~ICommandManager() {}
 
-        virtual std::shared_ptr<Commands::ICommandResult> processCommand(const std::shared_ptr<ICommandBase> &command) = 0;
+        virtual std::shared_ptr<Commands::ICommandResult> processCommand(const std::shared_ptr<IAppCommand> &command) = 0;
     };
 }
 

@@ -434,37 +434,6 @@ namespace Models {
         }
     }
 
-    int ArtItemsModel::dropFiles(const QList<QUrl> &urls) {
-        LOG_INFO << "Dropped" << urls.count() << "items(s)";
-        QList<QUrl> directories, files;
-        directories.reserve(urls.count()/2);
-        files.reserve(urls.count());
-
-        foreach(const QUrl &url, urls) {
-            bool isDirectory = QDir(url.toLocalFile()).exists();
-
-            if (isDirectory) {
-                directories.append(url);
-            } else {
-                files.append(url);
-            }
-        }
-
-        QStringList filesToImport;
-        filesToImport.reserve(files.size() + directories.size() * 10);
-
-        foreach(const QUrl &fileUrl, files) {
-            filesToImport.append(fileUrl.toLocalFile());
-        }
-
-        foreach(const QUrl &dirUrl, directories) {
-            Helpers::extractFilesFromDirectory(dirUrl.toLocalFile(), filesToImport);
-        }
-
-        int importedCount = doAddFiles(filesToImport);
-        return importedCount;
-    }
-
     void ArtItemsModel::setSelectedItemsSaved(const QVector<int> &selectedIndices) {
         LOG_INFO << "Setting selected" << selectedIndices.length() << "item(s) saved";
         foreach(int index, selectedIndices) {
@@ -804,36 +773,6 @@ namespace Models {
             artworks.push_back(artwork);
             xpiks()->setupDuplicatesModel(artworks);
         }
-    }
-
-    int ArtItemsModel::addLocalArtworks(const QList<QUrl> &artworksPaths) {
-        LOG_DEBUG << artworksPaths;
-        QStringList fileList;
-        fileList.reserve(artworksPaths.length());
-
-        foreach(const QUrl &url, artworksPaths) {
-            fileList.append(url.toLocalFile());
-        }
-
-        int filesAddedCount = doAddFiles(fileList);
-        return filesAddedCount;
-    }
-
-    int ArtItemsModel::addLocalDirectories(const QList<QUrl> &directories) {
-        LOG_DEBUG << directories;
-        QStringList directoriesList;
-        directoriesList.reserve(directories.length());
-
-        foreach(const QUrl &url, directories) {
-            if (url.isLocalFile()) {
-                directoriesList.append(url.toLocalFile());
-            } else {
-                directoriesList.append(url.path());
-            }
-        }
-
-        int addedFilesCount = doAddDirectories(directoriesList);
-        return addedFilesCount;
     }
 
     bool ArtItemsModel::hasModifiedArtworks() const {
@@ -1355,49 +1294,6 @@ namespace Models {
         QModelIndex topLeft = this->index(metadataIndex);
         QModelIndex bottomRight = this->index(metadataIndex);
         emit dataChanged(topLeft, bottomRight, roles);
-    }
-
-    int ArtItemsModel::doAddDirectories(const QStringList &directories) {
-        LOG_INFO << directories;
-        int filesCount = 0;
-        QStringList files;
-
-        foreach(const QString &directory, directories) {
-            Helpers::extractFilesFromDirectory(directory, files);
-        }
-
-        if (files.count() > 0) {
-            const bool isFullDirectory = true;
-            filesCount = doAddFiles(files, isFullDirectory);
-        }
-
-        return filesCount;
-    }
-
-    int ArtItemsModel::doAddFiles(const QStringList &rawFilenames, bool isFullDirectory) {
-        QStringList filenames, vectors;
-        Helpers::splitMediaFiles(rawFilenames, filenames, vectors);
-
-        Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-        bool autoFindVectors = settingsModel->getAutoFindVectors();
-
-        Common::flag_t flags = 0;
-        Common::ApplyFlag(flags, autoFindVectors, Commands::AddArtworksCommand::FlagAutoFindVectors);
-        Common::ApplyFlag(flags, isFullDirectory, Commands::AddArtworksCommand::FlagIsFullDirectory);
-
-        bool autoImportEnabled = settingsModel->getUseAutoImport();
-#if !defined(CORE_TESTS)
-        Models::SwitcherModel *switcherModel = m_CommandManager->getSwitcherModel();
-        autoImportEnabled = autoImportEnabled && switcherModel->getUseAutoImport();
-#endif
-        Common::ApplyFlag(flags, autoImportEnabled, Commands::AddArtworksCommand::FlagAutoImport);
-
-        std::shared_ptr<Commands::AddArtworksCommand> addArtworksCommand(new Commands::AddArtworksCommand(filenames, vectors, flags));
-        std::shared_ptr<Commands::ICommandResult> result = m_CommandManager->processCommand(addArtworksCommand);
-        std::shared_ptr<Commands::AddArtworksCommandResult> addArtworksResult = std::dynamic_pointer_cast<Commands::AddArtworksCommandResult>(result);
-
-        int newFilesCount = addArtworksResult->m_NewFilesAdded;
-        return newFilesCount;
     }
 
     void ArtItemsModel::doCombineArtwork(int index) {

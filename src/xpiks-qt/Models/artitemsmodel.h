@@ -126,7 +126,6 @@ namespace Models {
         Q_INVOKABLE void backupItem(int metadataIndex);
 
         Q_INVOKABLE void combineArtwork(int index) { doCombineArtwork(index); }
-        Q_INVOKABLE int dropFiles(const QList<QUrl> &urls);
 
         /*Q_INVOKABLE*/ void setSelectedItemsSaved(const QVector<int> &selectedIndices);
 
@@ -162,8 +161,6 @@ namespace Models {
         Q_INVOKABLE bool acceptCompletionAsPreset(int metadataIndex, int completionID);
         Q_INVOKABLE void initSuggestion(int metadataIndex);
         Q_INVOKABLE void setupDuplicatesModel(int metadataIndex);
-        Q_INVOKABLE int addLocalArtworks(const QList<QUrl> &artworksPaths);
-        Q_INVOKABLE int addLocalDirectories(const QList<QUrl> &directories);
         Q_INVOKABLE bool hasModifiedArtworks() const;
 
     public:
@@ -223,8 +220,6 @@ namespace Models {
 
     private:
         void updateItemAtIndex(int metadataIndex);
-        int doAddDirectories(const QStringList &directories);
-        int doAddFiles(const QStringList &filepath, bool isFullDirectory = false);
 
     private:
         void doCombineArtwork(int index);

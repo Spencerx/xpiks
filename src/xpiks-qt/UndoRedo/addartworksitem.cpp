@@ -8,19 +8,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <QList>
 #include "addartworksitem.h"
-#include "../Commands/commandmanager.h"
 #include "../Models/artitemsmodel.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
-void UndoRedo::AddArtworksHistoryItem::undo(const Commands::ICommandManager *commandManagerInterface) {
+void UndoRedo::AddArtworksHistoryItem::undo() {
     LOG_INFO << "#";
-
-    Commands::CommandManager *commandManager = (Commands::CommandManager*)commandManagerInterface;
-
-    Models::ArtItemsModel *artItemsModel = commandManager->getArtItemsModel();
-    artItemsModel->removeArtworks(m_AddedRanges);
-
-    commandManager->getDelegator()->saveSessionInBackground();
+    m_ArtItemsModel.removeArtworks(m_AddedRanges);
+    m_SaveSessionCommand->execute();
 }

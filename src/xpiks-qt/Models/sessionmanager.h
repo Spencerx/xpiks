@@ -15,7 +15,6 @@
 #include <QMutex>
 #include <memory>
 #include "../Helpers/localconfig.h"
-#include "../Common/baseentity.h"
 #include "../Common/isystemenvironment.h"
 #include "../Helpers/jsonobjectmap.h"
 
@@ -30,7 +29,7 @@ namespace Models {
 }
 
 namespace Models {
-    class SessionManager: public QObject, public Common::BaseEntity
+    class SessionManager: public QObject
     {
         Q_OBJECT
     public:

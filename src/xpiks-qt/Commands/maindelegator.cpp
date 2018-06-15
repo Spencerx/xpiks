@@ -153,29 +153,6 @@ namespace Commands {
     #endif
     }
 
-    int MainDelegator::readMetadata(const MetadataIO::ArtworksSnapshot &snapshot) const {
-        LOG_DEBUG << "#";
-        int importID = 0;
-
-    #ifndef CORE_TESTS
-        auto *metadataIOService = m_CommandManager->getMetadataIOService();
-        auto *metadataIOCoordinator = m_CommandManager->getMetadataIOCoordinator();
-        quint32 batchID = INVALID_BATCH_ID;
-
-        if (metadataIOService != nullptr) {
-            batchID = metadataIOService->readArtworks(snapshot);
-        }
-
-        if (metadataIOCoordinator != nullptr) {
-            importID = metadataIOCoordinator->readMetadataExifTool(snapshot, batchID);
-        }
-    #else
-        Q_UNUSED(snapshot);
-    #endif
-
-        return importID;
-    }
-
     int MainDelegator::reimportMetadata(const MetadataIO::ArtworksSnapshot &snapshot) const {
         LOG_DEBUG << "#";
         int importID = 0;

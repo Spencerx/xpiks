@@ -17,21 +17,30 @@
 #include "historyitem.h"
 #include "../Helpers/indiceshelper.h"
 #include "../Common/logging.h"
+#include "../Commands/icommand.h"
+
+namespace Models {
+    class ArtItemsModel;
+}
 
 namespace UndoRedo {
    class AddArtworksHistoryItem : public HistoryItem
     {
     public:
-        AddArtworksHistoryItem(int commandID, int firstIndex, int count) :
-           HistoryItem(HistoryActionType::AddArtworks, commandID)
+        AddArtworksHistoryItem(Models::ArtItemsModel &artItemsModel, int firstIndex, int count,
+                               const std::shared_ptr<Commands::ICommand> &saveSessionCommand) :
+           HistoryItem(HistoryActionType::AddArtworks, UNKNOWN_COMMAND_ID),
+           m_ArtItemsModel(artItemsModel),
+           m_SaveSessionCommand(saveSessionCommand)
         {
             Q_ASSERT(count > 0);
             m_AddedRanges.append(qMakePair(firstIndex, firstIndex + count - 1));
         }
 
-        AddArtworksHistoryItem(int commandID, const QVector<QPair<int, int> > &rangesAdded) :
+        AddArtworksHistoryItem(Models::ArtItemsModel &artItemsModel, const QVector<QPair<int, int> > &rangesAdded) :
            HistoryItem(HistoryActionType::AddArtworks, commandID),
-           m_AddedRanges(rangesAdded)
+           m_AddedRanges(rangesAdded),
+           m_ArtItemsModel(artItemsModel)
         {
             Q_ASSERT(!rangesAdded.empty());
         }
@@ -39,7 +48,7 @@ namespace UndoRedo {
        virtual ~AddArtworksHistoryItem() { LOG_DEBUG << "#"; }
 
    public:
-        virtual void undo(const Commands::ICommandManager *commandManagerInterface) override;
+        virtual void undo() override;
 
    public:
         virtual QString getDescription() const override {
@@ -50,6 +59,8 @@ namespace UndoRedo {
 
     private:
         QVector<QPair<int, int> > m_AddedRanges;
+        Models::ArtItemsModel &m_ArtItemsModel;
+        std::shared_ptr<Commands::ICommand> m_SaveSessionCommand;
     };
 }
 

@@ -33,7 +33,6 @@ SOURCES += main.cpp \
     Helpers/stringhelper.cpp \
     Commands/commandmanager.cpp \
     UndoRedo/undoredomanager.cpp \
-    Commands/addartworkscommand.cpp \
     UndoRedo/addartworksitem.cpp \
     Commands/removeartworkscommand.cpp \
     UndoRedo/removeartworksitem.cpp \
@@ -197,7 +196,9 @@ SOURCES += main.cpp \
     xpiksapp.cpp \
     Encryption/obfuscation.cpp \
     Filesystem/filescollection.cpp \
-    Filesystem/directoriescollection.cpp
+    Filesystem/directoriescollection.cpp \
+    Commands/savesessioncommand.cpp \
+    Filesystem/filesdirectoriescollection.cpp
 
 RESOURCES += qml.qrc
 
@@ -246,8 +247,6 @@ HEADERS += \
     UndoRedo/historyitem.h \
     UndoRedo/undoredomanager.h \
     UndoRedo/addartworksitem.h \
-    Commands/commandbase.h \
-    Commands/addartworkscommand.h \
     Common/baseentity.h \
     Commands/removeartworkscommand.h \
     UndoRedo/removeartworksitem.h \
@@ -288,7 +287,6 @@ HEADERS += \
     Connectivity/ftphelpers.h \
     Plugins/xpiksplugininterface.h \
     Commands/icommandmanager.h \
-    Commands/icommandbase.h \
     UndoRedo/ihistoryitem.h \
     UndoRedo/iundoredomanager.h \
     Plugins/pluginmanager.h \
@@ -477,7 +475,10 @@ HEADERS += \
     Common/logging.h \
     Filesystem/filescollection.h \
     Filesystem/ifilescollection.h \
-    Filesystem/directoriescollection.h
+    Filesystem/directoriescollection.h \
+    Commands/icommand.h \
+    Commands/savesessioncommand.h \
+    Filesystem/filesdirectoriescollection.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
