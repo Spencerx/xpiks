@@ -116,6 +116,7 @@ namespace Models {
         void cleanupEmptyDirectories();
         void purgeUnavailableFiles();
         void addFiles(const MetadataIO::ArtworksSnapshot &snapshot);
+        bool removeFiles(const MetadataIO::ArtworksSnapshot &snapshot);
         void cleanupOldBackups(const MetadataIO::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService);
         void unwatchFilePaths(const QStringList &filePaths);
         void updateFilesCounts();

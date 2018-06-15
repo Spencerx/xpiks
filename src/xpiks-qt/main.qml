@@ -1095,7 +1095,7 @@ ApplicationWindow {
 
         onAccepted: {
             console.debug("You chose: " + chooseArtworksDialog.fileUrls)
-            var filesAdded = artItemsModel.addLocalArtworks(chooseArtworksDialog.fileUrls)
+            var filesAdded = xpiksApp.addFiles(chooseArtworksDialog.fileUrls)
             if (filesAdded > 0) {
                 console.debug("" + filesAdded + ' files via Open File(s)')
             } else {
@@ -1118,7 +1118,7 @@ ApplicationWindow {
 
         onAccepted: {
             console.debug("You chose: " + chooseDirectoryDialog.fileUrls)
-            var filesAdded = artItemsModel.addLocalDirectories(chooseDirectoryDialog.fileUrls)
+            var filesAdded = xpiksApp.addDirectories(chooseDirectoryDialog.fileUrls)
             console.debug("" + filesAdded + ' files via Open Directory')
             if (filesAdded === 0) {
                 noNewFilesDialog.open()
@@ -1311,7 +1311,7 @@ ApplicationWindow {
             anchors.fill: parent
             onDropped: {
                 if (drop.hasUrls) {
-                    var filesCount = artItemsModel.dropFiles(drop.urls)
+                    var filesCount = xpiksApp.dropItems((drop.urls)
                     console.debug(filesCount + ' files added via drag&drop')
                 }
             }

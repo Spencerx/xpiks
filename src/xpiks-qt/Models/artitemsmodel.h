@@ -87,10 +87,12 @@ namespace Models {
     public:
         std::tuple<MetadataIO::ArtworksSnapshot, int> addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                                                Common::AddFilesFlags flags);
+        std::tuple<MetadataIO::ArtworksSnapshot, bool> removeFiles(const QVector<int> &indices);
         std::unique_ptr<MetadataIO::SessionSnapshot> snapshotAll();
 
     protected:
         int getNextID();
+        MetadataIO::ArtworksSnapshot removeArtworks(const QVector<QPair<int, int> > &ranges);
         int attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                            const MetadataIO::ArtworksSnapshot &snapshot,
                            int initialCount,
@@ -242,7 +244,6 @@ namespace Models {
     protected:
         virtual int getRangesLengthForReset() const override;
         virtual void removeInnerItem(int row) override;
-        virtual void removeInnerItemRange(int start, int end) override;
 
     private:
         void destroyInnerItem(ArtworkMetadata *artwork);

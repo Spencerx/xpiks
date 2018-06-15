@@ -191,7 +191,7 @@ namespace Models {
     }
 
     bool ArtworksRepository::removeFile(const QString &filepath, qint64 directoryID) {
-        bool result = false;
+        bool removed = false;
 
         if (m_FilesSet.contains(filepath)) {
             size_t existingIndex = 0;
@@ -204,13 +204,13 @@ namespace Models {
                 m_FilesWatcher.removePath(filepath);
                 m_FilesSet.remove(filepath);
 
-                result = true;
+                removed = true;
             } else {
                 Q_ASSERT(false);
             }
         }
 
-        return result;
+        return removed;
     }
 
     void ArtworksRepository::removeVector(const QString &vectorPath) {
@@ -264,11 +264,40 @@ namespace Models {
 
         m_FilesWatcher.addPaths(filepaths);
 
-        auto first = this->index(0);
-        auto last = this->index(rowCount() - 1);
-        emit dataChanged(first, last);
-
+        emit dataChanged(this->index(0), this->index(rowCount() - 1));
         emit refreshRequired();
+    }
+
+    bool ArtworksRepository::removeFiles(const MetadataIO::ArtworksSnapshot &snapshot) {
+        QStringList filepaths;
+        QStringList removedAttachedVectors;
+        filepaths.reserve(snapshot.size());
+        removedAttachedVectors.reserve(snapshot.size()/2);
+
+        for (auto *artwork: snapshot.getWeakSnapshot()) {
+            filepaths.append(artwork->getFilePath());
+
+            Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(artwork);
+
+            if (image != NULL && image->hasVectorAttached()) {
+                removedAttachedVectors.append(image->getAttachedVectorPath());
+            }
+        }
+
+        unwatchFilePaths(filepaths);
+        unwatchFilePaths(removedAttachedVectors);
+
+        const size_t beforeSelectedCount = retrieveSelectedDirsCount();
+        const auto removedSelectedDirectoryIds = consolidateSelectionForEmpty();
+        const size_t afterSelectedCount = retrieveSelectedDirsCount();
+        // current selection logic: if all directories become deselected after some action, all become selected
+        // this if statement is supposed to check if this has happened
+        const bool unselectAll = (afterSelectedCount + removedSelectedDirectoryIds.size()) != beforeSelectedCount;
+
+        emit dataChanged(this->index(0), this->index(rowCount() - 1));
+        emit refreshRequired();
+
+        return unselectAll;
     }
 
     void ArtworksRepository::cleanupOldBackups(const MetadataIO::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService) {
@@ -281,13 +310,9 @@ namespace Models {
     }
 
     void ArtworksRepository::unwatchFilePaths(const QStringList &filePaths) {
-#ifndef CORE_TESTS
         if (!filePaths.empty()) {
             m_FilesWatcher.removePaths(filePaths);
         }
-#else
-        Q_UNUSED(filePaths);
-#endif
     }
 
     void ArtworksRepository::updateFilesCounts() {

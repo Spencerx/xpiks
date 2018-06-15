@@ -13,22 +13,21 @@
 
 #include <QVector>
 #include <QPair>
-#include "commandbase.h"
+#include "icommand.h"
 #include "../Helpers/indiceshelper.h"
 
 namespace Commands {
-    class RemoveArtworksCommand : public CommandBase
+    class RemoveArtworksCommand : public IAppCommand
     {
     public:
         RemoveArtworksCommand(const QVector<QPair<int, int> > &rangesToRemove, bool removeAsDirectory):
-            CommandBase(CommandType::RemoveArtworks),
             m_RangesToRemove(rangesToRemove),
             m_RemoveAsDirectory(removeAsDirectory)
         {
         }
 
     public:
-        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
+        virtual std::shared_ptr<CommandResult> execute(int commandId) override;
 
     private:
         QVector<QPair<int, int> > m_RangesToRemove;

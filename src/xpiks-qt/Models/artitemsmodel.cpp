@@ -113,6 +113,19 @@ namespace Models {
         return std::make_tuple(snapshot, attachedCount);
     }
 
+    std::tuple<MetadataIO::ArtworksSnapshot, bool> ArtItemsModel::removeFiles(const QVector<int> &indices) {
+        QVector<QPair<int, int> > ranges;
+        QVector<int> sortedIndices(indices);
+        qSort(sortedIndices);
+        Helpers::indicesToRanges(sortedIndices, ranges);
+        auto snapshot = removeArtworks(ranges);
+        bool unselectAll = m_ArtworksRepository.removeFiles(snapshot);
+
+        updateModifiedCount();
+
+        return std::make_tuple(snapshot, unselectAll);
+    }
+
     std::unique_ptr<MetadataIO::SessionSnapshot> ArtItemsModel::snapshotAll() {
         std::unique_ptr<MetadataIO::SessionSnapshot> sessionSnapshot(
                     new MetadataIO::SessionSnapshot(
@@ -123,6 +136,41 @@ namespace Models {
 
     int ArtItemsModel::getNextID() {
         return m_LastID++;
+    }
+
+    MetadataIO::ArtworksSnapshot ArtItemsModel::removeArtworks(const QVector<QPair<int, int> > &ranges) {
+        MetadataIO::ArtworksSnapshot snapshot;
+        int selectedCount = 0;
+
+        for (auto &r: ranges) {
+            Q_ASSERT(r.first >= 0 && r.first < getArtworksCount());
+            Q_ASSERT(r.second >= 0 && r.second < getArtworksCount());
+            Q_ASSERT(r.first <= r.second);
+
+            auto itBegin = m_ArtworkList.begin() + r.first;
+            auto itEnd = m_ArtworkList.begin() + (r.second + 1);
+
+            std::vector<ArtworkMetadata *> itemsToDelete(itBegin, itEnd);
+            m_ArtworkList.erase(itBegin, itEnd);
+
+            std::vector<ArtworkMetadata *>::iterator it = itemsToDelete.begin();
+            std::vector<ArtworkMetadata *>::iterator itemsEnd = itemsToDelete.end();
+            for (; it < itemsEnd; it++) {
+                ArtworkMetadata *artwork = *it;
+                snapshot.append(artwork);
+                m_ArtworksRepository.removeFile(artwork->getFilepath(), artwork->getDirectoryID());
+                if (artwork->isSelected()) {
+                    selectedCount++;
+                }
+
+                LOG_INTEGRATION_TESTS << "File removed:" << artwork->getFilepath();
+                destroyInnerItem(artwork);
+            }
+        }
+
+        if (selectedCount > 0) {
+            emit selectedArtworksRemoved(selectedCount);
+        }
     }
 
     int ArtItemsModel::attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
@@ -1360,40 +1408,6 @@ namespace Models {
 
         LOG_INFO << "File removed:" << metadata->getFilepath();
         destroyInnerItem(metadata);
-    }
-
-    void ArtItemsModel::removeInnerItemRange(int start, int end) {
-        Q_ASSERT(start >= 0 && start < getArtworksCount());
-        Q_ASSERT(end >= 0 && end < getArtworksCount());
-        Q_ASSERT(start <= end);
-
-        ArtworksRepository *artworkRepository = m_CommandManager->getArtworksRepository();
-
-        auto itBegin = m_ArtworkList.begin() + start;
-        auto itEnd = m_ArtworkList.begin() + (end + 1);
-
-        std::vector<ArtworkMetadata *> itemsToDelete(itBegin, itEnd);
-        m_ArtworkList.erase(itBegin, itEnd);
-
-        int selectedItems = 0;
-
-        std::vector<ArtworkMetadata *>::iterator it = itemsToDelete.begin();
-        std::vector<ArtworkMetadata *>::iterator itemsEnd = itemsToDelete.end();
-        for (; it < itemsEnd; it++) {
-            ArtworkMetadata *metadata = *it;
-
-            artworkRepository->removeFile(metadata->getFilepath(), metadata->getDirectoryID());
-            if (metadata->isSelected()) {
-                selectedItems++;
-            }
-
-            LOG_INFO << "File removed:" << metadata->getFilepath();
-            destroyInnerItem(metadata);
-        }
-
-        if (selectedItems > 0) {
-            emit selectedArtworksRemoved(selectedItems);
-        }
     }
 
     void ArtItemsModel::destroyInnerItem(ArtworkMetadata *artwork) {
