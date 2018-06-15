@@ -18,8 +18,11 @@
 #include "Filesystem/filescollection.h"
 #include "Filesystem/directoriescollection.h"
 #include "Filesystem/filesdirectoriescollection.h"
-#include "UndoRedo/addartworksitem.h"
 #include "Commands/savesessioncommand.h"
+#include "UndoRedo/removeartworksitem.h"
+#include "UndoRedo/removedirectoryitem.h"
+#include "Commands/addfilescommand.h"
+#include "Commands/cleanuplegacybackupscommand.h"
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_LogsModel(&m_ColorsModel),
@@ -318,6 +321,7 @@ void XpiksApp::debugCrash() {
 }
 
 void XpiksApp::addFiles(const QList<QUrl> &urls) {
+    LOG_DEBUG << urls.size() << "urls";
     Common::AddFilesFlags flags = 0;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
 
@@ -328,6 +332,7 @@ void XpiksApp::addFiles(const QList<QUrl> &urls) {
 }
 
 void XpiksApp::addDirectories(const QList<QUrl> &urls) {
+    LOG_DEBUG << urls.size() << "urls";
     Common::AddFilesFlags flags = 0;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
     Common::SetFlag(flags, Common::AddFilesFlags::FlagIsFullDirectory);
@@ -339,6 +344,7 @@ void XpiksApp::addDirectories(const QList<QUrl> &urls) {
 }
 
 void XpiksApp::dropItems(const QList<QUrl> &urls) {
+    LOG_DEBUG << urls.size() << "urls";
     Common::AddFilesFlags flags = 0;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
 
@@ -348,42 +354,45 @@ void XpiksApp::dropItems(const QList<QUrl> &urls) {
     doAddFiles(files, flags);
 }
 
+void XpiksApp::removeSelectedArtworks() {
+    LOG_DEBUG << "#";
+    auto removeResult = m_FilteredArtItemsModel.removeSelectedArtworks();
+    Commands::SaveSessionCommand(m_MaintenanceService, m_ArtItemsModel, m_SessionManager).execute();
+    m_UndoRedoManager.recordHistoryItem(
+                std::make_unique<UndoRedo::IHistoryItem>(
+                    new UndoRedo::RemoveArtworksHistoryItem()));
+}
+
+void XpiksApp::removeDirectory(int index) {
+    int originalIndex = m_FilteredArtworksRepository.getOriginalIndex(index);
+    auto removeResult = m_ArtItemsModel.removeArtworksDirectory(originalIndex);
+    Commands::SaveSessionCommand(m_MaintenanceService, m_ArtItemsModel, m_SessionManager).execute();
+    m_UndoRedoManager.recordHistoryItem(
+                std::make_unique<UndoRedo::IHistoryItem>(
+                    new UndoRedo::RemoveDirectoryHistoryItem()));
+}
+
 void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
-    const int count = m_ArtItemsModel.getArtworksCount();
-    auto addResult = m_ArtItemsModel.addFiles(files, flags);
-    auto snapshot = std::get<0>(addResult);
-
-    quint32 batchID = m_MetadataIOService.readArtworks(snapshot);
-    int importID = m_MetadataIOCoordinator.readMetadataExifTool(snapshot, batchID);
-
-    m_ImageCachingService.generatePreviews(snapshot);
-    m_VideoCachingService.generateThumbnails(snapshot);
-
-    m_RecentFileModel.add(snapshot);
-
-    auto saveSessionCommand = std::make_shared<Commands::ICommand>(
-                new Commands::SaveSessionCommand(m_MaintenanceService,
-                                                 m_ArtItemsModel,
-                                                 m_SessionManager));
-
-    if (!Common::HasFlag(flags, Common::AddFilesFlags::FlagIsSessionRestore)) {
-        saveSessionCommand->execute();
-    }
-
-    m_UndoRedoManager.recordHistoryItem(std::make_unique<UndoRedo::IHistoryItem>(
-                                            new UndoRedo::AddArtworksHistoryItem(
-                                                m_ArtItemsModel, count, snapshot.size(),
-                                                saveSessionCommand)));
-
-    const bool autoImportEnabled = m_SettingsModel.getUseAutoImport() && m_SwitcherModel.getUseAutoImport();
-    if (autoImportEnabled) {
-        LOG_DEBUG << "Autoimport is ON. Proceeding...";
-        m_MetadataIOCoordinator.continueReading(false);
-    }
-
-    emit artworksAdded(importID, snapshot.size(), std::get<1>(addResult));
-
-    m_ArtworksRepository.cleanupOldBackups(snapshot, m_MaintenanceService);
+    Commands::AddFilesCommand(files,
+                              flags,
+                              std::make_shared<Commands::ICommand>(
+                                  new Commands::SaveSessionCommand(m_MaintenanceService,
+                                                                   m_ArtItemsModel,
+                                                                   m_SessionManager)),
+                              std::make_shared<Commands::ICommand>(
+                                  new Commands::CleanupLegacyBackupsCommand(files,
+                                                                            m_MaintenanceService)),
+                              m_ArtItemsModel,
+                              m_ArtworksRepository,
+                              m_SettingsModel,
+                              m_SwitcherModel,
+                              m_MetadataIOService,
+                              m_MetadataIOCoordinator,
+                              m_ImageCachingService,
+                              m_VideoCachingService,
+                              m_RecentFileModel,
+                              m_UndoRedoManager)
+            .execute();
 }
 
 void XpiksApp::injectDependencies() {

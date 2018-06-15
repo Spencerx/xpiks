@@ -130,11 +130,11 @@ namespace Models {
         artItemsModel->setSelectedItemsSaved(indices);
     }
 
-    void FilteredArtItemsProxyModel::removeSelectedArtworks() {
+    ArtItemsModel::ArtworksRemoveResult FilteredArtItemsProxyModel::removeSelectedArtworks() {
         LOG_DEBUG << "#";
         QVector<int> indices = getSelectedOriginalIndices();
         ArtItemsModel *artItemsModel = getArtItemsModel();
-        artItemsModel->removeSelectedArtworks(indices);
+        return artItemsModel->removeFiles(indices);
     }
 
     void FilteredArtItemsProxyModel::updateSelectedArtworks() {

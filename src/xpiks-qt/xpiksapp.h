@@ -111,9 +111,15 @@ public:
     Q_INVOKABLE void shutdown();
     Q_INVOKABLE void upgradeNow();
     Q_INVOKABLE void debugCrash();
+
+public:
     Q_INVOKABLE void addFiles(const QList<QUrl> &urls);
     Q_INVOKABLE void addDirectories(const QList<QUrl> &urls);
     Q_INVOKABLE void dropItems(const QList<QUrl> &urls);
+
+public:
+    Q_INVOKABLE void removeSelectedArtworks();
+    Q_INVOKABLE void removeDirectory(int index);
 
 private:
     void doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);

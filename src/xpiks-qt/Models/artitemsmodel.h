@@ -46,7 +46,6 @@ namespace Models {
     class ArtworkElement;
 
     class ArtItemsModel:
-        public Common::AbstractListModel,
         public Common::BaseEntity,
         public Common::IArtworksSource,
         public Helpers::IFileNotAvailableModel
@@ -59,6 +58,19 @@ namespace Models {
 #else
         typedef std::vector<ArtworkMetadata *> ArtworksContainer;
 #endif
+
+    public:
+        struct ArtworksAddResult {
+            MetadataIO::ArtworksSnapshot m_Snapshot;
+            int m_AttachedVectorsCount;
+        };
+
+        struct ArtworksRemoveResult {
+            MetadataIO::ArtworksSnapshot m_Snapshot;
+            QVector<int> m_Indices;
+            QSet<qint64> m_DirectoriesIDs;
+            bool m_UnselectAll;
+        };
 
     public:
         ArtItemsModel(ArtworksRepository &repository, QObject *parent=0);
@@ -85,9 +97,9 @@ namespace Models {
         };
 
     public:
-        std::tuple<MetadataIO::ArtworksSnapshot, int> addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
+        ArtworksAddResult addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                                                Common::AddFilesFlags flags);
-        std::tuple<MetadataIO::ArtworksSnapshot, bool> removeFiles(const QVector<int> &indices);
+        ArtworksRemoveResult removeFiles(const QVector<int> &indices);
         std::unique_ptr<MetadataIO::SessionSnapshot> snapshotAll();
 
     protected:
@@ -97,7 +109,6 @@ namespace Models {
                            const MetadataIO::ArtworksSnapshot &snapshot,
                            int initialCount,
                            bool autoAttach);
-        virtual ArtworkMetadata *createArtwork(const QString &filepath, qint64 directoryID);
         void connectArtworkSignals(ArtworkMetadata *artwork);
 
     public:
@@ -108,8 +119,6 @@ namespace Models {
 
     public:
         int getModifiedArtworksCount();
-
-        void updateModifiedCount() { emit modifiedArtworksCountChanged(); }
         void updateItems(const QVector<int> &indices, const QVector<int> &roles);
         void forceUnselectAllItems() const;
         virtual bool removeUnavailableItems() override;
@@ -130,8 +139,6 @@ namespace Models {
         Q_INVOKABLE void combineArtwork(int index) { doCombineArtwork(index); }
 
         /*Q_INVOKABLE*/ void setSelectedItemsSaved(const QVector<int> &selectedIndices);
-
-        /*Q_INVOKABLE*/ void removeSelectedArtworks(QVector<int> &selectedIndices);
 
         /*Q_INVOKABLE*/ void updateSelectedArtworks(const QVector<int> &selectedIndices);
         /*Q_INVOKABLE*/ void updateSelectedArtworksEx(const QVector<int> &selectedIndices, const QVector<int> roles);
@@ -196,7 +203,6 @@ namespace Models {
         void syncArtworksIndices();
         void insertArtwork(int index, ArtworkMetadata *artwork);
         void appendArtwork(ArtworkMetadata *artwork);
-        void removeArtworks(const QVector<QPair<int, int> > &ranges);
         ArtworkMetadata *getArtwork(size_t index) const;
         void raiseArtworksReimported(int importID, int artworksCount);
         void raiseArtworksChanged(bool navigateToCurrent);
@@ -240,10 +246,6 @@ namespace Models {
 
     protected:
         virtual QHash<int, QByteArray> roleNames() const override;
-
-    protected:
-        virtual int getRangesLengthForReset() const override;
-        virtual void removeInnerItem(int row) override;
 
     private:
         void destroyInnerItem(ArtworkMetadata *artwork);

@@ -13,19 +13,13 @@
 
 #include <QString>
 
-namespace Commands {
-    class ICommandManager;
-}
-
 namespace UndoRedo {
-
     class IHistoryItem {
     public:
         virtual ~IHistoryItem() {}
 
         virtual void undo() = 0;
         virtual QString getDescription() const = 0;
-        virtual int getActionType() const = 0;
         virtual int getCommandID() const = 0;
     };
 }

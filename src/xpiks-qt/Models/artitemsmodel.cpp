@@ -73,7 +73,7 @@ namespace Models {
 #endif
     }
 
-    std::tuple<MetadataIO::ArtworksSnapshot, int> ArtItemsModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
+    ArtItemsModel::ArtworksAddResult ArtItemsModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                                          Common::AddFilesFlags flags) {
         const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
         MetadataIO::ArtworksSnapshot snapshot;
@@ -108,22 +108,26 @@ namespace Models {
         int attachedCount = attachVectors(filesCollection, snapshot, count, autoAttach);
         m_ArtworksRepository.addFiles(snapshot);
 
-        raiseArtworksAdded(m_ImportID, m_NewFilesAdded, m_AttachedVectorsCount);
-
-        return std::make_tuple(snapshot, attachedCount);
+        return {
+            snapshot,
+                    attachedCount
+        };
     }
 
-    std::tuple<MetadataIO::ArtworksSnapshot, bool> ArtItemsModel::removeFiles(const QVector<int> &indices) {
+    ArtItemsModel::ArtworksRemoveResult ArtItemsModel::removeFiles(const QVector<int> &indices) {
         QVector<QPair<int, int> > ranges;
         QVector<int> sortedIndices(indices);
         qSort(sortedIndices);
         Helpers::indicesToRanges(sortedIndices, ranges);
         auto snapshot = removeArtworks(ranges);
-        bool unselectAll = m_ArtworksRepository.removeFiles(snapshot);
-
-        updateModifiedCount();
-
-        return std::make_tuple(snapshot, unselectAll);
+        auto removeResult = m_ArtworksRepository.removeFiles(snapshot);
+        emit modifiedArtworksCountChanged();
+        return {
+            snapshot,
+                    sortedIndices,
+                    std::get<0>(removeResult), // directories ids set
+                    std::get<1>(removeResult) // unselect all
+        };
     }
 
     std::unique_ptr<MetadataIO::SessionSnapshot> ArtItemsModel::snapshotAll() {
@@ -203,20 +207,6 @@ namespace Models {
 
         this->updateItems(indicesToUpdate, QVector<int>() << Models::ArtItemsModel::HasVectorAttachedRole);
         return attachedCount;
-    }
-
-    ArtworkMetadata *ArtItemsModel::createArtwork(const QString &filepath, qint64 directoryID) {
-        ArtworkMetadata *artwork = nullptr;
-
-        LOG_INTEGRATION_TESTS << "Creating artwork with ID:" << id << "path:" << filepath;
-        if (Helpers::couldBeVideo(filepath)) {
-            artwork = new VideoArtwork(filepath, id, directoryID);
-        } else {
-            artwork =
-        }
-
-
-        return artwork;
     }
 
     void ArtItemsModel::connectArtworkSignals(ArtworkMetadata *artwork) {
@@ -310,9 +300,8 @@ namespace Models {
     bool ArtItemsModel::removeUnavailableItems() {
         LOG_DEBUG << "#";
         QVector<int> indicesToRemove;
-        QVector<QPair<int, int> > rangesToRemove;
 
-        size_t size = m_ArtworkList.size();
+        const size_t size = m_ArtworkList.size();
         for (size_t i = 0; i < size; ++i) {
             if (accessArtwork(i)->isUnavailable()) {
                 indicesToRemove.append((int)i);
@@ -320,13 +309,12 @@ namespace Models {
             }
         }
 
-        Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
-        doRemoveItemsInRanges(rangesToRemove);
-
+        this->removeFiles(indicesToRemove);
         return !indicesToRemove.empty();
     }
 
     void ArtItemsModel::generateAboutToBeRemoved() {
+        LOG_DEBUG << "#";
         size_t size = m_ArtworkList.size();
 
         for (size_t i = 0; i < size; ++i) {
@@ -345,16 +333,13 @@ namespace Models {
 
     void ArtItemsModel::removeArtworksDirectory(int index) {
         LOG_INFO << "Remove artworks directory at" << index;
-        Models::ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
-        const QString &directory = artworksRepository->getDirectoryPath(index);
-        const bool isFullDirectory = artworksRepository->getIsFullDirectory(index);
+        const QString &directory = m_ArtworksRepository.getDirectoryPath(index);
+        const bool isFullDirectory = m_ArtworksRepository.getIsFullDirectory(index);
         LOG_CORE_TESTS << "Removing directory:" << directory << "; full:" << isFullDirectory;
 
-        QDir dir(directory);
-        QString directoryAbsolutePath = dir.absolutePath();
-
+        const QString directoryAbsolutePath = QDir(directory).absolutePath();
         QVector<int> indicesToRemove;
-        size_t size = m_ArtworkList.size();
+        const size_t size = m_ArtworkList.size();
         indicesToRemove.reserve((int)size);
 
         for (size_t i = 0; i < size; ++i) {
@@ -364,9 +349,7 @@ namespace Models {
             }
         }
 
-        doRemoveItemsFromRanges(indicesToRemove, isFullDirectory);
-
-        emit modifiedArtworksCountChanged();
+        return removeFiles(indicesToRemove);
     }
 
     void ArtItemsModel::removeKeywordAt(int metadataIndex, int keywordIndex) {
@@ -492,12 +475,8 @@ namespace Models {
         Helpers::indicesToRanges(selectedIndices, rangesToUpdate);
         AbstractListModel::updateItemsInRanges(rangesToUpdate, QVector<int>() << IsModifiedRole);
 
-        updateModifiedCount();
+        emit modifiedArtworksCountChanged();
         emit artworksChanged(false);
-    }
-
-    void ArtItemsModel::removeSelectedArtworks(QVector<int> &selectedIndices) {
-        doRemoveItemsFromRanges(selectedIndices);
     }
 
     void ArtItemsModel::updateSelectedArtworks(const QVector<int> &selectedIndices) {
@@ -1131,11 +1110,6 @@ namespace Models {
         artwork->setCurrentIndex(m_ArtworkList.size() - 1);
     }
 
-    void ArtItemsModel::removeArtworks(const QVector<QPair<int, int> > &ranges) {
-        LOG_DEBUG << ranges.count() << "range(s)";
-        doRemoveItemsInRanges(ranges);
-    }
-
     ArtworkMetadata *ArtItemsModel::getArtwork(size_t index) const {
         ArtworkMetadata *result = NULL;
 
@@ -1382,42 +1356,14 @@ namespace Models {
         return roles;
     }
 
-    int ArtItemsModel::getRangesLengthForReset() const {
-#ifdef QT_DEBUG
-        return 10;
-#else
-        return 50;
-#endif
-    }
-
-    void ArtItemsModel::removeInnerItem(int row) {
-        Q_ASSERT(row >= 0 && row < getArtworksCount());
-        ArtworkMetadata *metadata = accessArtwork(row);
-        m_ArtworkList.erase(m_ArtworkList.begin() + row);
-        ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
-        artworksRepository->removeFile(metadata->getFilepath(), metadata->getDirectoryID());
-
-        ImageArtwork *image = dynamic_cast<ImageArtwork*>(metadata);
-        if ((image != nullptr) && image->hasVectorAttached()) {
-            artworksRepository->removeVector(image->getAttachedVectorPath());
-        }
-
-        if (metadata->isSelected()) {
-            emit selectedArtworksRemoved(1);
-        }
-
-        LOG_INFO << "File removed:" << metadata->getFilepath();
-        destroyInnerItem(metadata);
-    }
-
     void ArtItemsModel::destroyInnerItem(ArtworkMetadata *artwork) {
         if (artwork->release()) {
             LOG_INTEGRATION_TESTS << "Destroying metadata" << artwork->getItemID() << "for real";
 
             bool disconnectStatus = QObject::disconnect(artwork, 0, this, 0);
-            if (disconnectStatus == false) { LOG_WARNING << "Disconnect Artwork from ArtItemsModel returned false"; }
+            if (disconnectStatus == false) { LOG_DEBUG << "Disconnect Artwork from ArtItemsModel returned false"; }
             disconnectStatus = QObject::disconnect(this, 0, artwork, 0);
-            if (disconnectStatus == false) { LOG_WARNING << "Disconnect ArtItemsModel from Artwork returned false"; }
+            if (disconnectStatus == false) { LOG_DEBUG << "Disconnect ArtItemsModel from Artwork returned false"; }
 
             artwork->deepDisconnect();
             artwork->clearSpellingInfo();

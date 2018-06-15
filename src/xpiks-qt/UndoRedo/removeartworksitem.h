@@ -18,25 +18,13 @@
 #include <QStringList>
 #include <QSet>
 #include "historyitem.h"
+#include "../Models/artitemsmodel.h"
 
 namespace UndoRedo {
     class RemoveArtworksHistoryItem : public HistoryItem
     {
     public:
-        RemoveArtworksHistoryItem(int commandID, const QVector<int> &removedArtworksIndices,
-                                  const QStringList &removedArtworksFilepathes,
-                                  const QStringList &removedAttachedVectors,
-                                  const QSet<qint64> &removedSelectedDirectoryIds,
-                                  bool unselectAll,
-                                  bool removedAsDirectory = false):
-            HistoryItem(HistoryActionType::RemovedArtworks, commandID),
-            m_RemovedArtworksIndices(removedArtworksIndices),
-            m_RemovedArtworksPathes(removedArtworksFilepathes),
-            m_RemovedAttachedVectors(removedAttachedVectors),
-            m_RemovedSelectedDirectoryIds(removedSelectedDirectoryIds),
-            m_UnselectAll(unselectAll),
-            m_RemovedAsDirectory(removedAsDirectory)
-        {}
+        RemoveArtworksHistoryItem(const Models::ArtItemsModel::ArtworksRemoveResult &removeResult);
 
         virtual ~RemoveArtworksHistoryItem() { }
 

@@ -13,20 +13,7 @@
 
 #include "ihistoryitem.h"
 
-class QString;
-
-namespace Commands {
-    class CommandManager;
-}
-
 namespace UndoRedo {
-
-    enum struct HistoryActionType {
-        AddArtworks,
-        RemovedArtworks,
-        ModifyArtworks
-    };
-
     class HistoryItem : public IHistoryItem
     {
         enum {
@@ -34,18 +21,15 @@ namespace UndoRedo {
         };
 
     public:
-        HistoryItem(HistoryActionType actionType, int commandID) :
-            m_ActionType(actionType),
+        HistoryItem(int commandID=UNKNOWN_COMMAND_ID):
             m_CommandID(commandID)
-        {}
+        { }
         virtual ~HistoryItem() {}
 
     public:
-        virtual int getActionType() const override { return (int)m_ActionType; }
         virtual int getCommandID() const override { return m_CommandID; }
 
     private:
-        HistoryActionType m_ActionType;
         int m_CommandID;
     };
 }

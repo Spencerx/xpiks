@@ -268,7 +268,7 @@ namespace Models {
         emit refreshRequired();
     }
 
-    bool ArtworksRepository::removeFiles(const MetadataIO::ArtworksSnapshot &snapshot) {
+    std::tuple<QSet<qint64>, bool> ArtworksRepository::removeFiles(const MetadataIO::ArtworksSnapshot &snapshot) {
         QStringList filepaths;
         QStringList removedAttachedVectors;
         filepaths.reserve(snapshot.size());
@@ -297,7 +297,7 @@ namespace Models {
         emit dataChanged(this->index(0), this->index(rowCount() - 1));
         emit refreshRequired();
 
-        return unselectAll;
+        return std::make_tuple(removedSelectedDirectoryIds, unselectAll);
     }
 
     void ArtworksRepository::cleanupOldBackups(const MetadataIO::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService) {

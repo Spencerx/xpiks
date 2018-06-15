@@ -61,7 +61,7 @@ namespace Models {
         Q_INVOKABLE void selectDirectory(int directoryIndex);
         Q_INVOKABLE void combineSelectedArtworks();
         Q_INVOKABLE void setSelectedItemsSaved();
-        Q_INVOKABLE void removeSelectedArtworks();
+        ArtItemsModel::ArtworksRemoveResult removeSelectedArtworks();
         Q_INVOKABLE void updateSelectedArtworks();
         /*Q_INVOKABLE*/ void updateSelectedArtworksEx(const QVector<int> &roles);
         Q_INVOKABLE void saveSelectedArtworks(bool overwriteAll, bool useBackups);
