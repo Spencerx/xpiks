@@ -35,15 +35,11 @@ namespace Filesystem {
         }
 
         FilesCollection filesCollection(files);
+        const auto &filesData = filesCollection.getFiles();
+        m_Files.insert(m_Files.end(), filesData.begin(), filesData.end());
+
         DirectoriesCollection dirsCollection(directories);
-
-        m_Images.append(filesCollection.getImages());
-        m_Images.append(dirsCollection.getImages());
-
-        m_Vectors.append(filesCollection.getVectors());
-        m_Vectors.append(dirsCollection.getVectors());
-
-        m_Videos.append(filesCollection.getVideos());
-        m_Videos.append(dirsCollection.getVideos());
+        const auto &dirsData = dirsCollection.getFiles();
+        m_Files.insert(m_Files.end(), dirsData.begin(), dirsData.end());
     }
 }

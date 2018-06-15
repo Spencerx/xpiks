@@ -27,14 +27,10 @@ namespace Filesystem {
 
         // IFilesCollection interface
     public:
-        virtual const QStringList &getImages() override { return m_Images; }
-        virtual const QStringList &getVectors() override { return m_Vectors; }
-        virtual const QStringList &getVideos() override { return m_Videos; }
+        virtual const std::vector<ArtworkFile> &getFiles() { return m_Files; }
 
     private:
-        QStringList m_Images;
-        QStringList m_Videos;
-        QStringList m_Vectors;
+        std::vector<ArtworkFile> m_Files;
     };
 }
 

@@ -12,6 +12,7 @@
 #define ADDFILESCOMMAND_H
 
 #include <memory>
+#include <QObject>
 #include "icommand.h"
 #include "../Common/flags.h"
 #include "../Filesystem/ifilescollection.h"
@@ -39,8 +40,9 @@ namespace UndoRedo {
 }
 
 namespace Commands {
-    class AddFilesCommand: public ICommand
+    class AddFilesCommand: public QObject, public ICommand
     {
+        Q_OBJECT
     public:
         AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> &files,
                         Common::AddFilesFlags flags,
@@ -56,6 +58,7 @@ namespace Commands {
                         QMLExtensions::VideoCachingService &videoCachingService,
                         Models::RecentFilesModel &recentFileModel,
                         UndoRedo::UndoRedoManager &undoRedoManager):
+            QObject(),
             m_Files(std::move(files)),
             m_Flags(flags),
             m_SaveSessionCommand(std::move(saveSessionCommand)),
@@ -75,6 +78,9 @@ namespace Commands {
         // ICommand interface
     public:
         virtual std::shared_ptr<CommandResult> execute() override;
+
+    signals:
+        void artworksAdded(int importID, int imagesCount, int vectorsCount);
 
     private:
         std::shared_ptr<Filesystem::IFilesCollection> m_Files;

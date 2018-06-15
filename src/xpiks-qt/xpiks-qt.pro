@@ -200,7 +200,8 @@ SOURCES += main.cpp \
     Commands/savesessioncommand.cpp \
     Filesystem/filesdirectoriescollection.cpp \
     Commands/addfilescommand.cpp \
-    Commands/cleanuplegacybackupscommand.cpp
+    Commands/cleanuplegacybackupscommand.cpp \
+    Commands/insertartworkscommand.cpp
 
 RESOURCES += qml.qrc
 
@@ -482,7 +483,8 @@ HEADERS += \
     Commands/savesessioncommand.h \
     Filesystem/filesdirectoriescollection.h \
     Commands/addfilescommand.h \
-    Commands/cleanuplegacybackupscommand.h
+    Commands/cleanuplegacybackupscommand.h \
+    Commands/insertartworkscommand.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

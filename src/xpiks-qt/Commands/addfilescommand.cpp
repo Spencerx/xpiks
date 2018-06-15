@@ -14,6 +14,8 @@
 #include "../MetadataIO/metadataiocoordinator.h"
 #include "../UndoRedo/addartworksitem.h"
 #include "../Common/logging.h"
+#include "../QMLExtensions/imagecachingservice.h"
+#include "../QMLExtensions/videocachingservice.h"
 
 namespace Commands {
     std::shared_ptr<Commands::CommandResult> AddFilesCommand::execute() {

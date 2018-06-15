@@ -29,7 +29,7 @@ namespace UndoRedo {
     public:
         AddArtworksHistoryItem(Models::ArtItemsModel &artItemsModel, int firstIndex, int count,
                                const std::shared_ptr<Commands::ICommand> &saveSessionCommand) :
-           HistoryItem(HistoryActionType::AddArtworks, UNKNOWN_COMMAND_ID),
+           HistoryItem(),
            m_ArtItemsModel(artItemsModel),
            m_SaveSessionCommand(saveSessionCommand)
         {
@@ -38,7 +38,7 @@ namespace UndoRedo {
         }
 
         AddArtworksHistoryItem(Models::ArtItemsModel &artItemsModel, const QVector<QPair<int, int> > &rangesAdded) :
-           HistoryItem(HistoryActionType::AddArtworks, commandID),
+           HistoryItem(),
            m_AddedRanges(rangesAdded),
            m_ArtItemsModel(artItemsModel)
         {

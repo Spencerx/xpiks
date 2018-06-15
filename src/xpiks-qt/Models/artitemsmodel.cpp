@@ -55,7 +55,7 @@ namespace Models {
         m_ArtworksRepository(repository),
         // all items before 1024 are reserved for internal models
         m_LastID(1024)
-    {}
+    { }
 
     ArtItemsModel::~ArtItemsModel() {
         for (auto *artwork: m_ArtworkList) {
@@ -74,7 +74,7 @@ namespace Models {
     }
 
     ArtItemsModel::ArtworksAddResult ArtItemsModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
-                                                         Common::AddFilesFlags flags) {
+                                                             Common::AddFilesFlags flags) {
         const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
         MetadataIO::ArtworksSnapshot snapshot;
         snapshot.reserve(newFilesCount);
@@ -83,23 +83,18 @@ namespace Models {
 
         beginAccountingFiles(newFilesCount);
         {
-            for (auto &file: filesCollection->getImages()) {
-                if (m_ArtworksRepository.accountFile(file, directoryID, directoryFlags)) {
-                    snapshot.append(new ImageArtwork(file, getNextID(), directoryID));
-                }
-            }
+            for (auto &file: filesCollection->getFiles()) {
+                if (m_ArtworksRepository.accountFile(file.m_Path, directoryID, directoryFlags)) {
+                    ArtworkMetadata *artwork = nullptr;
+                    if (file.m_Type == Filesystem::ArtworkFileType::Image) {
+                        artwork = new ImageArtwork(file.m_Path, getNextID(), directoryID);
+                    } else if (file.m_Type == Filesystem::ArtworkFileType::Video) {
+                        artwork = new VideoArtwork(file, getNextID(), directoryID);
+                    }
 
-            for (auto &file: filesCollection->getVideos()) {
-                if (m_ArtworksRepository.accountFile(file, directoryID, directoryFlags)) {
-                    snapshot.append(new VideoArtwork(file, getNextID(), directoryID));
+                    appendArtwork(artwork);
+                    connectArtworkSignals(artwork);
                 }
-            }
-
-            auto &artworks = snapshot.getWeakSnapshot();
-            for (auto &artwork: artworks) {
-                appendArtwork(artwork);
-                connectArtworkSignals(artwork);
-                LOG_INTEGRATION_TESTS << "Added file:" << artwork->getFilepath();
             }
         }
         endAccountingFiles();
@@ -107,6 +102,8 @@ namespace Models {
         const bool autoAttach = Common::HasFlag(flags, Common::AddFilesFlags::FlagAutoFindVectors);
         int attachedCount = attachVectors(filesCollection, snapshot, count, autoAttach);
         m_ArtworksRepository.addFiles(snapshot);
+
+        //syncArtworksIndices();
 
         return {
             snapshot,
@@ -175,6 +172,8 @@ namespace Models {
         if (selectedCount > 0) {
             emit selectedArtworksRemoved(selectedCount);
         }
+
+        return snapshot;
     }
 
     int ArtItemsModel::attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
@@ -1108,6 +1107,7 @@ namespace Models {
         Q_ASSERT(artwork != NULL);
         m_ArtworkList.push_back(artwork);
         artwork->setCurrentIndex(m_ArtworkList.size() - 1);
+        LOG_INTEGRATION_TESTS << "Added file:" << artwork->getFilepath();
     }
 
     ArtworkMetadata *ArtItemsModel::getArtwork(size_t index) const {

@@ -68,7 +68,7 @@ namespace Models {
         struct ArtworksRemoveResult {
             MetadataIO::ArtworksSnapshot m_Snapshot;
             QVector<int> m_Indices;
-            QSet<qint64> m_DirectoriesIDs;
+            QSet<qint64> m_SelectedDirectoryIds;
             bool m_UnselectAll;
         };
 
@@ -98,7 +98,7 @@ namespace Models {
 
     public:
         ArtworksAddResult addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
-                                                               Common::AddFilesFlags flags);
+                                   Common::AddFilesFlags flags);
         ArtworksRemoveResult removeFiles(const QVector<int> &indices);
         std::unique_ptr<MetadataIO::SessionSnapshot> snapshotAll();
 

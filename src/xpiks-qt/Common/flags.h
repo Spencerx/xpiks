@@ -179,7 +179,8 @@ namespace Common {
         FlagAutoFindVectors = 1 << 0,
         FlagIsFullDirectory = 1 << 1,
         FlagIsSessionRestore = 1 << 2,
-        FlagAutoImport = 1 << 3
+        FlagAutoImport = 1 << 3,
+        FlagIsRemoveUndo = 1 << 4
     };
 
 #if !defined(XPIKS_TYPED_ENUMS_WORKAROUND)

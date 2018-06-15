@@ -16,9 +16,7 @@
 
 namespace Filesystem {
     FilesCollection::FilesCollection(const QList<QUrl> &urls) {
-        m_Images.reserve(urls.length());
-        m_Vectors.reserve(urls.length()/2);
-        m_Videos.reserve(urls.length()/2);
+        m_Files.reserve(urls.length());
 
         QStringList files;
         files.reserve(urls.length());
@@ -31,10 +29,7 @@ namespace Filesystem {
     }
 
     FilesCollection::FilesCollection(const QStringList &files) {
-        m_Images.reserve(files.length());
-        m_Vectors.reserve(files.length()/2);
-        m_Videos.reserve(files.length()/2);
-
+        m_Files.reserve(files.length());
         sortRawFiles(files);
     }
 
@@ -46,11 +41,11 @@ namespace Filesystem {
             const QString suffix = fi.suffix().toLower();
 
             if (Helpers::isImageExtension(suffix)) {
-                m_Images.append(filepath);
+                m_Files.emplace_back(filepath, Filesystem::ArtworkFileType::Image);
             } else if (Helpers::isVectorExtension(suffix)) {
-                m_Vectors.append(filepath);
+                m_Files.emplace_back(filepath, Filesystem::ArtworkFileType::Vector);
             } else if (Helpers::isVideoExtension(suffix)) {
-                m_Videos.append(filepath);
+                m_Files.emplace_back(filepath, Filesystem::ArtworkFileType::Video);
             } else if (suffix == QLatin1String("png")) {
                 LOG_WARNING << "PNG is unsupported file format";
             } else if (suffix != QLatin1String(Constants::METADATA_BACKUP_SUFFIX)) {

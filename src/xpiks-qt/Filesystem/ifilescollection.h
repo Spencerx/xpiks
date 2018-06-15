@@ -11,17 +11,32 @@
 #ifndef IFILESCOLLECTION_H
 #define IFILESCOLLECTION_H
 
-#include <QStringList>
+#include <QString>
+#include <vector>
 
 namespace Filesystem {
+    enum struct ArtworkFileType {
+        Image,
+        Video,
+        Vector
+    };
+
+    struct ArtworkFile {
+        ArtworkFile(const QString &path, ArtworkFileType type):
+            m_Path(path),
+            m_Type(type)
+        { }
+
+        QString m_Path;
+        ArtworkFileType m_Type;
+    };
+
     class IFilesCollection {
     public:
         virtual ~IFilesCollection() {}
 
     public:
-        virtual const QStringList &getImages() = 0;
-        virtual const QStringList &getVectors() = 0;
-        virtual const QStringList &getVideos() = 0;
+        virtual const std::vector<ArtworkFile> &getFiles() = 0;
     };
 }
 

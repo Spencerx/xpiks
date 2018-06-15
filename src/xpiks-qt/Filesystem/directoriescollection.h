@@ -29,9 +29,7 @@ namespace Filesystem {
 
         // IFilesCollection interface
     public:
-        virtual const QStringList &getImages() override { return m_Files->getImages(); }
-        virtual const QStringList &getVectors() override { return m_Files->getVectors(); }
-        virtual const QStringList &getVideos() override { return m_Files->getVideos(); }
+        virtual const std::vector<ArtworkFile> &getFiles() { return m_Files->getFiles(); }
 
     private:
         std::shared_ptr<FilesCollection> m_Files;
