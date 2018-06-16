@@ -120,16 +120,6 @@ namespace Models {
     public:
         void fillFromQuickBuffer(size_t metadataIndex);
 
-    public slots:
-        void itemModifiedChanged(bool) { updateModifiedCount(); }
-        void onFilesUnavailableHandler();
-        void onArtworkBackupRequested();
-        void onArtworkEditingPaused();
-        void onArtworkSpellingInfoUpdated();
-        void onUndoStackEmpty();
-        void userDictUpdateHandler(const QStringList &keywords, bool overwritten);
-        void userDictClearedHandler();
-
     public:
         void syncArtworksIndices();
         void insertArtwork(int index, ArtworkMetadata *artwork);
@@ -161,17 +151,6 @@ namespace Models {
 
     private:
         void doCombineArtwork(int index);
-
-    signals:
-        void modifiedArtworksCountChanged();
-        void artworksChanged(bool needToMoveCurrentItem);
-        void artworksReimported(int importID, int artworksCount);
-        void selectedArtworksRemoved(int count);
-        void fileWithIndexUnavailable(size_t index);
-        void unavailableArtworksFound();
-        void unavailableVectorsFound();
-        void userDictUpdate(const QString &word);
-        void artworkSelectedChanged(bool value);
 
     private:
         void destroyInnerItem(ArtworkMetadata *artwork);

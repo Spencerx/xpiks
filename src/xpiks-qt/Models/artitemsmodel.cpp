@@ -65,66 +65,6 @@ namespace Models {
 
     ArtItemsModel::ArtworksRemoveResult ArtItemsModel::removeFiles(const Helpers::IndicesRanges &ranges) {
         auto snapshot = removeArtworks(ranges);
-        auto removeResult = m_ArtworksRepository.removeFiles(snapshot);
-        emit modifiedArtworksCountChanged();
-        return {
-                    std::get<0>(removeResult), // directories ids set
-                    std::get<1>(removeResult) // unselect all
-        };
-    }
-
-    std::unique_ptr<MetadataIO::SessionSnapshot> ArtItemsModel::snapshotAll() {
-
-    }
-
-    ArtworkMetadata *ArtItemsModel::createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID) {
-
-    }
-
-    int ArtItemsModel::getNextID() {
-        return m_LastID++;
-    }
-
-    void ArtItemsModel::removeArtworks(const Helpers::IndicesRanges &ranges) {
-        int selectedCount = 0;
-        QModelIndex dummy;
-        const bool willReset = ranges.length() > 20;
-        if (willReset) { emit beginResetModel(); }
-
-        for (auto &r: ranges.getRanges()) {
-            Q_ASSERT(r.first >= 0 && r.first < getArtworksCount());
-            Q_ASSERT(r.second >= 0 && r.second < getArtworksCount());
-
-            auto itBegin = m_ArtworkList.begin() + r.first;
-            auto itEnd = m_ArtworkList.begin() + (r.second + 1);
-
-            std::vector<ArtworkMetadata *> itemsToDelete(itBegin, itEnd);
-            if (!willReset) { emit beginRemoveRows(dummy, r.first, r.last); }
-            {
-                m_ArtworkList.erase(itBegin, itEnd);
-            }
-            if (!willReset) { emit endRemoveRows(); }
-
-            std::vector<ArtworkMetadata *>::iterator it = itemsToDelete.begin();
-            std::vector<ArtworkMetadata *>::iterator itemsEnd = itemsToDelete.end();
-            for (; it < itemsEnd; it++) {
-                ArtworkMetadata *artwork = *it;
-                snapshot.append(artwork);
-                m_ArtworksRepository.removeFile(artwork->getFilepath(), artwork->getDirectoryID());
-                if (artwork->isSelected()) {
-                    selectedCount++;
-                }
-
-                LOG_INTEGRATION_TESTS << "File removed:" << artwork->getFilepath();
-                destroyInnerItem(artwork);
-            }
-        }
-
-        if (willReset) { emit endResetModel(); }
-        syncArtworksIndices();
-        if (selectedCount > 0) {
-            emit selectedArtworksRemoved(selectedCount);
-        }
     }
 
 
@@ -1055,31 +995,7 @@ namespace Models {
     }
 
     void ArtItemsModel::destroyInnerItem(ArtworkMetadata *artwork) {
-        if (artwork->release()) {
-            LOG_INTEGRATION_TESTS << "Destroying metadata" << artwork->getItemID() << "for real";
 
-            bool disconnectStatus = QObject::disconnect(artwork, 0, this, 0);
-            if (disconnectStatus == false) { LOG_DEBUG << "Disconnect Artwork from ArtItemsModel returned false"; }
-            disconnectStatus = QObject::disconnect(this, 0, artwork, 0);
-            if (disconnectStatus == false) { LOG_DEBUG << "Disconnect ArtItemsModel from Artwork returned false"; }
-
-            artwork->deepDisconnect();
-            artwork->clearSpellingInfo();
-#ifdef QT_DEBUG
-            m_DestroyedList.push_back(artwork);
-#else
-            artwork->deleteLater();
-#endif
-        } else {
-            LOG_DEBUG << "Metadata #" << artwork->getItemID() << "is locked. Postponing destruction...";
-
-            artwork->disconnect();
-            auto *metadataModel = artwork->getBasicModel();
-            metadataModel->disconnect();
-            metadataModel->clearModel();
-
-            m_FinalizationList.push_back(artwork);
-        }
     }
 
     void ArtItemsModel::doRemoveItemsFromRanges(QVector<int> &indicesToRemove, bool isFullDirectory) {

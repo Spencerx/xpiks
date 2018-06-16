@@ -83,12 +83,15 @@ namespace Models {
     public:
         ArtworksAddResult addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                    Common::AddFilesFlags flags);
+        ArtworksRemoveResult removeFiles(const Helpers::IndicesRanges &ranges);
+        void deleteRemovedFiles();
         void deleteAllItems();
 #ifdef INTEGRATION_TESTS
         void fakeDeleteAllItems();
 #endif
 
     private:
+        MetadataIO::ArtworksSnapshot deleteItems(const Helpers::IndicesRanges &ranges);
         int attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                            const MetadataIO::ArtworksSnapshot &snapshot,
                            int initialCount,
@@ -103,12 +106,34 @@ namespace Models {
         virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
         virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
 
+    signals:
+        void modifiedArtworksCountChanged();
+        void artworksChanged(bool needToMoveCurrentItem);
+        void artworksReimported(int importID, int artworksCount);
+        void selectedArtworksRemoved(int count);
+        void fileWithIndexUnavailable(size_t index);
+        void unavailableArtworksFound();
+        void unavailableVectorsFound();
+        void userDictUpdate(const QString &word);
+        void artworkSelectedChanged(bool value);
+
+    public slots:
+        void itemModifiedChanged(bool) { updateModifiedCount(); }
+        void onFilesUnavailableHandler();
+        void onArtworkBackupRequested();
+        void onArtworkEditingPaused();
+        void onArtworkSpellingInfoUpdated();
+        void onUndoStackEmpty();
+        void userDictUpdateHandler(const QStringList &keywords, bool overwritten);
+        void userDictClearedHandler();
+
     protected:
         virtual QHash<int, QByteArray> roleNames() const override;
         virtual ArtworkMetadata *createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID);
 
     private:
         Models::ArtworkMetadata *accessArtwork(size_t index) const;
+        void destroyArtwork(ArtworkMetadata *artwork);
         int getNextID();
 
     private:
@@ -142,6 +167,8 @@ namespace Models {
 
         void foreachArtwork(std::function<bool (ArtworkMetadata *)> pred,
                             std::function<void (ArtworkMetadata *, size_t)> action) const;
+        void foreachArtwork(const Helpers::IndicesRanges &ranges,
+                            std::function<void (ArtworkMetadata *, size_t)> action);
 
     private:
         ArtworksRepository &m_ArtworksRepository;

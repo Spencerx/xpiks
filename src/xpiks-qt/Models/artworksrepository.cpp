@@ -258,13 +258,13 @@ namespace Models {
         emit refreshRequired();
     }
 
-    std::tuple<QSet<qint64>, bool> ArtworksRepository::removeFiles(const MetadataIO::ArtworksSnapshot &snapshot) {
+    std::tuple<QSet<qint64>, bool> ArtworksRepository::removeFiles(const MetadataIO::WeakArtworksSnapshot &snapshot) {
         QStringList filepaths;
         QStringList removedAttachedVectors;
         filepaths.reserve(snapshot.size());
         removedAttachedVectors.reserve(snapshot.size()/2);
 
-        for (auto *artwork: snapshot.getWeakSnapshot()) {
+        for (auto *artwork: snapshot) {
             filepaths.append(artwork->getFilePath());
 
             Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(artwork);

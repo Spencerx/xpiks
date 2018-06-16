@@ -101,6 +101,40 @@ namespace Models {
         };
     }
 
+    ArtworksListModel::ArtworksRemoveResult ArtworksListModel::removeFiles(const Helpers::IndicesRanges &ranges) {
+        int selectedCount = 0;
+        foreachArtwork(ranges, [this, &selectedCount](ArtworkMetadata *artwork, size_t) {
+            artwork->setRemoved();
+            if (artwork->isSelected()) {
+                artwork->resetSelected();
+                selectedCount++;
+            }
+        });
+
+        if (selectedCount > 0) {
+            emit selectedArtworksRemoved(selectedCount);
+        }
+
+        MetadataIO::WeakArtworksSnapshot snapshot = selectArtworks(
+                    [](ArtworkMetadata *artwork) { return artwork->isRemoved(); },
+                [](ArtworkMetadata *artwork, size_t) { return artwork; });
+
+        auto removeResult = m_ArtworksRepository.removeFiles(snapshot);
+        emit modifiedArtworksCountChanged();
+        return {
+            std::get<0>(removeResult), // directories ids set
+            std::get<1>(removeResult) // unselect all
+        };
+    }
+
+    void ArtworksListModel::deleteRemovedFiles() {
+        LOG_DEBUG << "#";
+        std::vector<int> removedIndices = this->selectArtworks(
+                    [](ArtworkMetadata *artwork){ return artwork->isRemoved(); },
+                [](ArtworkMetadata *, size_t index) { return (int)index; });
+        deleteItems(Helpers::IndicesRanges(removedIndices));
+    }
+
     void ArtworksListModel::deleteAllItems() {
         LOG_DEBUG << "#";
         // should be called only from beforeDestruction() !
@@ -115,8 +149,43 @@ namespace Models {
         endResetModel();
 
         for (auto *artwork: artworksToDestroy) {
-            destroyInnerItem(artwork);
+            destroyArtwork(artwork);
         }
+    }
+
+    MetadataIO::ArtworksSnapshot ArtworksListModel::deleteItems(const Helpers::IndicesRanges &ranges) {
+        LOG_DEBUG << "#";
+        QModelIndex dummy;
+        const bool willReset = ranges.length() > 20;
+        if (willReset) { emit beginResetModel(); }
+
+        for (auto &r: ranges.getRanges()) {
+            Q_ASSERT(r.first >= 0 && r.first < getArtworksCount());
+            Q_ASSERT(r.second >= 0 && r.second < getArtworksCount());
+
+            auto itBegin = m_ArtworkList.begin() + r.first;
+            auto itEnd = m_ArtworkList.begin() + (r.second + 1);
+
+            std::vector<ArtworkMetadata *> itemsToDelete(itBegin, itEnd);
+            if (!willReset) { emit beginRemoveRows(dummy, r.first, r.last); }
+            {
+                m_ArtworkList.erase(itBegin, itEnd);
+            }
+            if (!willReset) { emit endRemoveRows(); }
+
+            std::vector<ArtworkMetadata *>::iterator it = itemsToDelete.begin();
+            std::vector<ArtworkMetadata *>::iterator itemsEnd = itemsToDelete.end();
+            for (; it < itemsEnd; it++) {
+                ArtworkMetadata *artwork = *it;
+                Q_ASSERT(artwork->isRemoved());
+                m_ArtworksRepository.removeFile(artwork->getFilepath(), artwork->getDirectoryID());
+                LOG_INTEGRATION_TESTS << "File removed:" << artwork->getFilepath();
+                destroyArtwork(artwork);
+            }
+        }
+
+        if (willReset) { emit endResetModel(); }
+        syncArtworksIndices();
     }
 
     int ArtworksListModel::attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
@@ -343,6 +412,34 @@ namespace Models {
         return artwork;
     }
 
+    void ArtworksListModel::destroyArtwork(ArtworkMetadata *artwork) {
+        if (artwork->release()) {
+            LOG_INTEGRATION_TESTS << "Destroying metadata" << artwork->getItemID() << "for real";
+
+            bool disconnectStatus = QObject::disconnect(artwork, 0, this, 0);
+            if (disconnectStatus == false) { LOG_DEBUG << "Disconnect Artwork from ArtItemsModel returned false"; }
+            disconnectStatus = QObject::disconnect(this, 0, artwork, 0);
+            if (disconnectStatus == false) { LOG_DEBUG << "Disconnect ArtItemsModel from Artwork returned false"; }
+
+            artwork->deepDisconnect();
+            artwork->clearSpellingInfo();
+#ifdef QT_DEBUG
+            m_DestroyedList.push_back(artwork);
+#else
+            artwork->deleteLater();
+#endif
+        } else {
+            LOG_DEBUG << "Metadata #" << artwork->getItemID() << "is locked. Postponing destruction...";
+
+            artwork->disconnect();
+            auto *metadataModel = artwork->getBasicModel();
+            metadataModel->disconnect();
+            metadataModel->clearModel();
+
+            m_FinalizationList.push_back(artwork);
+        }
+    }
+
     int ArtworksListModel::getNextID() {
         return m_LastID++;
     }
@@ -354,6 +451,15 @@ namespace Models {
             i++;
             if (pred(artwork)) {
                 action(artwork, i);
+            }
+        }
+    }
+
+    void ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
+                                           std::function<void (ArtworkMetadata *, size_t)> action) {
+        for (auto &r: ranges.getRanges()) {
+            for (int i = r.first; i <= r.second; r++) {
+                action(m_ArtworkList[i], i);
             }
         }
     }
