@@ -16,10 +16,9 @@
 #include "icommand.h"
 #include "../Common/flags.h"
 #include "../Filesystem/ifilescollection.h"
-#include "../UndoRedo/ihistoryitem.h"
 
 namespace Models {
-    class ArtItemsModel;
+    class ArtworksListModel;
     class RecentFilesModel;
     class ArtworksRepository;
     class SettingsModel;
@@ -65,7 +64,7 @@ namespace Commands {
             m_Flags(flags),
             m_SaveSessionCommand(std::move(saveSessionCommand)),
             m_ClearLegacyBackupsCommand(std::move(clearLegacyBackupsCommand)),
-            m_ArtItemsModel(artItemsModel),
+            m_ArtworksListModel(artItemsModel),
             m_ArtworksRepository(artworksRepository),
             m_SettingsModel(settingsModel),
             m_SwitcherModel(switcherModel),
@@ -102,7 +101,7 @@ namespace Commands {
         int m_CommandID;
         std::shared_ptr<Commands::ICommand> m_SaveSessionCommand;
         std::shared_ptr<Commands::ICommand> m_ClearLegacyBackupsCommand;
-        Models::ArtItemsModel &m_ArtItemsModel;
+        Models::ArtworksListModel &m_ArtworksListModel;
         Models::ArtworksRepository &m_ArtworksRepository;
         Models::SettingsModel &m_SettingsModel;
         Models::SwitcherModel &m_SwitcherModel;

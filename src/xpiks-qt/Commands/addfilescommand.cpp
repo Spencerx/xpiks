@@ -9,10 +9,9 @@
  */
 
 #include "addfilescommand.h"
-#include "../Models/artitemsmodel.h"
+#include "../Models/artworkslistmodel.h"
 #include "../MetadataIO/metadataioservice.h"
 #include "../MetadataIO/metadataiocoordinator.h"
-#include "../UndoRedo/addartworksitem.h"
 #include "../Common/logging.h"
 #include "../Helpers/indicesranges.h"
 #include "../QMLExtensions/imagecachingservice.h"
@@ -23,7 +22,7 @@ namespace Commands {
         LOG_DEBUG << "#";
         m_CommandID = commandID;
 
-        m_OriginalCount = m_ArtItemsModel.getArtworksCount();
+        m_OriginalCount = m_ArtworksListModel.getArtworksCount();
         m_AddedCount = addFiles();
 
         // clean resources if this will be stored in undo manager
@@ -34,7 +33,7 @@ namespace Commands {
     }
 
     int AddFilesCommand::addFiles() {
-        auto addResult = m_ArtItemsModel.addFiles(m_Files, m_Flags);
+        auto addResult = m_ArtworksListModel.addFiles(m_Files, m_Flags);
 
         quint32 batchID = m_MetadataIOService.readArtworks(addResult.m_Snapshot);
         int importID = m_MetadataIOCoordinator.readMetadataExifTool(addResult.m_Snapshot, batchID);
@@ -66,7 +65,7 @@ namespace Commands {
 
     void AddFilesCommand::undo() {
         LOG_DEBUG << "#";
-        m_ArtItemsModel.removeArtworks(Helpers::IndicesRanges(m_OriginalCount, m_AddedCount));
+        m_ArtworksListModel.removeFiles(Helpers::IndicesRanges(m_OriginalCount, m_AddedCount));
         saveSession();
     }
 }

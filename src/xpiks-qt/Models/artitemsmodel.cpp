@@ -154,27 +154,6 @@ namespace Models {
         updateItemsInRanges(QVector<QPair<int, int> >() << qMakePair(0, (int)getArtworksCount() - 1));
     }
 
-    void ArtItemsModel::removeArtworksDirectory(int index) {
-        LOG_INFO << "Remove artworks directory at" << index;
-        const QString &directory = m_ArtworksRepository.getDirectoryPath(index);
-        const bool isFullDirectory = m_ArtworksRepository.getIsFullDirectory(index);
-        LOG_CORE_TESTS << "Removing directory:" << directory << "; full:" << isFullDirectory;
-
-        const QString directoryAbsolutePath = QDir(directory).absolutePath();
-        QVector<int> indicesToRemove;
-        const size_t size = m_ArtworkList.size();
-        indicesToRemove.reserve((int)size);
-
-        for (size_t i = 0; i < size; ++i) {
-            ArtworkMetadata *metadata = accessArtwork(i);
-            if (metadata->isInDirectory(directoryAbsolutePath)) {
-                indicesToRemove.append((int)i);
-            }
-        }
-
-        return removeFiles(indicesToRemove);
-    }
-
     void ArtItemsModel::removeKeywordAt(int metadataIndex, int keywordIndex) {
         LOG_INFO << "metadata index" << metadataIndex << "| keyword index" << keywordIndex;
         if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
@@ -670,35 +649,7 @@ namespace Models {
     }
 
     void ArtItemsModel::onFilesUnavailableHandler() {
-        LOG_DEBUG << "#";
-        Models::ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
-        size_t count = getArtworksCount();
 
-        bool anyArtworkUnavailable = false;
-        bool anyVectorUnavailable = false;
-
-        for (size_t i = 0; i < count; ++i) {
-            ArtworkMetadata *artwork = accessArtwork(i);
-            ImageArtwork *image = dynamic_cast<ImageArtwork *>(artwork);
-            const QString &path = artwork->getFilepath();
-
-            if (artworksRepository->isFileUnavailable(path)) {
-                artwork->setUnavailable();
-                anyArtworkUnavailable = true;
-            } else if (image != NULL && image->hasVectorAttached()) {
-                const QString &vectorPath = image->getAttachedVectorPath();
-                if (artworksRepository->isFileUnavailable(vectorPath)) {
-                    image->detachVector();
-                    anyVectorUnavailable = true;
-                }
-            }
-        }
-
-        if (anyArtworkUnavailable) {
-            emit unavailableArtworksFound();
-        } else if (anyVectorUnavailable) {
-            emit unavailableVectorsFound();
-        }
     }
 
     void ArtItemsModel::onArtworkBackupRequested() {
@@ -728,19 +679,6 @@ namespace Models {
         }
     }
 
-    void ArtItemsModel::onUndoStackEmpty() {
-        LOG_DEBUG << "#";
-        if (m_ArtworkList.empty()) {
-            if (!m_FinalizationList.empty()) {
-                LOG_DEBUG << "Clearing the finalization list";
-                for (auto *item: m_FinalizationList) {
-                    item->deepDisconnect();
-                    item->deleteLater();
-                }
-                m_FinalizationList.clear();
-            }
-        }
-    }
 
     void ArtItemsModel::userDictUpdateHandler(const QStringList &keywords, bool overwritten) {
         LOG_DEBUG << "#";
@@ -919,69 +857,13 @@ namespace Models {
     }
 
     void ArtItemsModel::processUpdateRequests(const std::vector<std::shared_ptr<QMLExtensions::ArtworkUpdateRequest> > &updateRequests) {
-        LOG_INFO << updateRequests.size() << "requests to process";
 
-        QVector<int> indicesToUpdate;
-        indicesToUpdate.reserve((int)updateRequests.size());
-        QSet<int> rolesToUpdateSet;
-        int cacheMisses = 0;
-
-        for (auto &request: updateRequests) {
-            size_t index = request->getLastKnownIndex();
-            auto *artwork = getArtwork(index);
-
-            if ((artwork != nullptr) && (artwork->getItemID() == request->getArtworkID())) {
-                indicesToUpdate << (int)index;
-                rolesToUpdateSet.unite(request->getRolesToUpdate());
-            } else {
-                LOG_INTEGRATION_TESTS << "Cache miss. Found" << (artwork ? artwork->getItemID() : -1) << "instead of" << request->getArtworkID();
-                request->setCacheMiss();
-                cacheMisses++;
-            }
-        }
-
-        LOG_INFO << cacheMisses << "cache misses out of" << updateRequests.size();
-
-        QVector<int> rolesToUpdate = rolesToUpdateSet.toList().toVector();
-        this->updateItemsAtIndicesEx(indicesToUpdate, rolesToUpdate);
     }
 
     void ArtItemsModel::updateArtworks(const QSet<qint64> &artworkIDs, const QVector<int> &rolesToUpdate) {
-        LOG_INFO << artworkIDs.size() << "artworks to find by IDs";
-        if (artworkIDs.isEmpty()) { return; }
 
-        QVector<int> indicesToUpdate;
-        indicesToUpdate.reserve(artworkIDs.size());
-
-        int i = 0;
-        for (auto *artwork: m_ArtworkList) {
-            if (artworkIDs.contains(artwork->getItemID())) {
-                indicesToUpdate << i;
-            }
-
-            i++;
-        }
-
-        updateItemsAtIndicesEx(indicesToUpdate, rolesToUpdate);
     }
 
-    Common::IBasicArtwork *ArtItemsModel::getBasicArtwork(int index) const {
-        Common::IBasicArtwork *result = NULL;
-
-        if (0 <= index && index < getArtworksCount()) {
-            result = accessArtwork(index);
-        }
-
-        return result;
-    }
-
-    void ArtItemsModel::updateItemAtIndex(int metadataIndex) {
-        QVector<int> roles;
-        fillStandardRoles(roles);
-        QModelIndex topLeft = this->index(metadataIndex);
-        QModelIndex bottomRight = this->index(metadataIndex);
-        emit dataChanged(topLeft, bottomRight, roles);
-    }
 
     void ArtItemsModel::doCombineArtwork(int index) {
         LOG_DEBUG << "index" << index;

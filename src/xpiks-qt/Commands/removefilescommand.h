@@ -12,17 +12,22 @@
 #define REMOVEFILESCOMMAND_H
 
 #include "icommand.h"
-#include "../Models/artitemsmodel.h"
 #include "../Filesystem/ifilescollection.h"
+#include "../Models/artworkslistmodel.h"
+
+namespace Models {
+    class ArtworksRepository;
+}
 
 namespace Commands {
     class RemoveFilesCommand: public IUndoCommand
     {
     public:
-        RemoveFilesCommand();
+        RemoveFilesCommand(Models::ArtworksListModel &artworksList,
+                           Models::ArtworksRepository &artworksRepository);
 
     protected:
-        virtual Models::ArtItemsModel::ArtworksRemoveResult removeFiles() = 0;
+        virtual Models::ArtworksListModel::ArtworksRemoveResult removeFiles() = 0;
 
         // IAppCommand interface
     public:
@@ -31,13 +36,18 @@ namespace Commands {
         // IUndoCommand interface
     public:
         virtual void undo() override;
-        virtual QString getDescription() const override;
+        virtual QString getDescription() const override {
+            return m_RemoveResult.m_RemovedCount != 1 ?
+                        QObject::tr("%1 items removed").arg(m_RemoveResult.m_RemovedCount) :
+                        QObject::tr("1 item removed");
+        }
         virtual int getCommandID() const override { return m_CommandID; }
 
     private:
-
         int m_CommandID = 0;
-        int m_RemovedCount = 0;
+        Models::ArtworksListModel::ArtworksRemoveResult m_RemoveResult;
+        Models::ArtworksListModel &m_ArtworksList;
+        Models::ArtworksRepository &m_ArtworksRepository;
     };
 }
 

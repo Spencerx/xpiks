@@ -24,7 +24,6 @@
 
 #include "recentdirectoriesmodel.h"
 #include "../Common/abstractlistmodel.h"
-#include "../Common/baseentity.h"
 #include "../Common/flags.h"
 #include "../Filesystem/ifilescollection.h"
 #include "../MetadataIO/artworkssnapshot.h"

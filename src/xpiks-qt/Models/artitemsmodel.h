@@ -67,12 +67,9 @@ namespace Models {
     public:
         void updateItems(const QVector<int> &indices, const QVector<int> &roles);
         void forceUnselectAllItems() const;
-        virtual bool removeUnavailableItems() override;
-        void generateAboutToBeRemoved();
 
     public:
         Q_INVOKABLE void updateAllItems();
-        /*Q_INVOKABLE*/ void removeArtworksDirectory(int index);
         Q_INVOKABLE void removeKeywordAt(int metadataIndex, int keywordIndex);
         Q_INVOKABLE void removeLastKeyword(int metadataIndex);
         Q_INVOKABLE bool appendKeyword(int metadataIndex, const QString &keyword);
@@ -136,10 +133,6 @@ namespace Models {
         void resetSpellCheckResults();
         void resetDuplicatesInfo();
 
-    public:
-        // update hub related
-        void processUpdateRequests(const std::vector<std::shared_ptr<QMLExtensions::ArtworkUpdateRequest> > &updateRequests);
-        void updateArtworks(const QSet<qint64> &artworkIDs, const QVector<int> &rolesToUpdate);
 
     public:
         // IARTWORKSSOURCE

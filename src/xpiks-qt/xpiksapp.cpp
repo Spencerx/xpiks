@@ -61,12 +61,12 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_CommandManager(m_UndoRedoManager)
 {
     m_FilteredPresetsModel.setSourceModel(&m_PresetsModel);
-    m_FilteredArtItemsModel.setSourceModel(&m_ArtItemsModel);
+    m_FilteredArtworksListModel.setSourceModel(&m_ArtworksListModel);
 
-    m_WarningsModel.setSourceModel(&m_ArtItemsModel);
+    m_WarningsModel.setSourceModel(&m_ArtworksListModel);
     m_WarningsModel.setWarningsSettingsModel(m_WarningsService.getWarningsSettingsModel());
 
-    m_ArtworksUpdateHub.setStandardRoles(m_ArtItemsModel.getArtworkStandardRoles());
+    m_ArtworksUpdateHub.setStandardRoles(m_ArtworksListModel.getArtworkStandardRoles());
 
     m_PluginsWithActions.setSourceModel(&m_PluginManager);
 
@@ -131,14 +131,14 @@ void XpiksApp::initialize() {
 }
 
 void XpiksApp::setupUI(QQmlContext *context) {
-    context->setContextProperty("artItemsModel", &m_ArtItemsModel);
+    context->setContextProperty("ArtworksListModel", &m_ArtworksListModel);
     context->setContextProperty("artworkRepository", &m_FilteredArtworksRepository);
     context->setContextProperty("combinedArtworks", &m_CombinedArtworksModel);
     context->setContextProperty("secretsManager", &m_SecretsManager);
     context->setContextProperty("undoRedoManager", &m_UndoRedoManager);
     context->setContextProperty("keywordsSuggestor", &m_KeywordsSuggestor);
     context->setContextProperty("settingsModel", &m_SettingsModel);
-    context->setContextProperty("filteredArtItemsModel", &m_FilteredArtItemsModel);
+    context->setContextProperty("filteredArtworksListModel", &m_FilteredArtworksListModel);
     context->setContextProperty("helpersWrapper", &m_HelpersQmlWrapper);
     context->setContextProperty("recentDirectories", &m_RecentDirectorieModel);
     context->setContextProperty("recentFiles", &m_RecentFileModel);
@@ -253,9 +253,9 @@ void XpiksApp::stop() {
 
     m_ArtworksRepository.stopListeningToUnavailableFiles();
 
-    m_ArtItemsModel.disconnect();
-    m_ArtItemsModel.deleteAllItems();
-    m_FilteredArtItemsModel.disconnect();
+    m_ArtworksListModel.disconnect();
+    m_ArtworksListModel.deleteAllItems();
+    m_FilteredArtworksListModel.disconnect();
 
     m_ImageCachingService.stopService();
     m_VideoCachingService.stopService();
@@ -359,8 +359,8 @@ void XpiksApp::dropItems(const QList<QUrl> &urls) {
 
 void XpiksApp::removeSelectedArtworks() {
     LOG_DEBUG << "#";
-    auto removeResult = m_FilteredArtItemsModel.removeSelectedArtworks();
-    Commands::SaveSessionCommand(m_MaintenanceService, m_ArtItemsModel, m_SessionManager).execute();
+    auto removeResult = m_FilteredArtworksListModel.removeSelectedArtworks();
+    Commands::SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager).execute();
     m_UndoRedoManager.recordHistoryItem(
                 std::make_unique<UndoRedo::IHistoryItem>(
                     new UndoRedo::RemoveArtworksHistoryItem()));
@@ -368,8 +368,8 @@ void XpiksApp::removeSelectedArtworks() {
 
 void XpiksApp::removeDirectory(int index) {
     int originalIndex = m_FilteredArtworksRepository.getOriginalIndex(index);
-    auto removeResult = m_ArtItemsModel.removeArtworksDirectory(originalIndex);
-    Commands::SaveSessionCommand(m_MaintenanceService, m_ArtItemsModel, m_SessionManager).execute();
+    auto removeResult = m_ArtworksListModel.removeArtworksDirectory(originalIndex);
+    Commands::SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager).execute();
     m_UndoRedoManager.recordHistoryItem(
                 std::make_unique<UndoRedo::IHistoryItem>(
                     new UndoRedo::RemoveDirectoryHistoryItem()));
@@ -378,14 +378,14 @@ void XpiksApp::removeDirectory(int index) {
 void XpiksApp::removeUnavailableFiles() {
     LOG_DEBUG << "#";
     m_CombinedArtworksModel.generateAboutToBeRemoved();
-    m_ArtItemsModel.generateAboutToBeRemoved();
+    m_ArtworksListModel.generateAboutToBeRemoved();
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
     for (auto &listener: m_AvailabilityListeners) {
         listener->removeUnavailableItems();
     }
 
-    m_ArtItemsModel.removeUnavailableItems();
+    m_ArtworksListModel.removeUnavailableItems();
 
     m_UndoRedoManager.discardLastAction();
 
@@ -399,7 +399,7 @@ void XpiksApp::removeUnavailableFiles() {
 void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
     auto saveSessionCommand = std::make_shared<Commands::ICommand>(
                 new Commands::SaveSessionCommand(m_MaintenanceService,
-                                                 m_ArtItemsModel,
+                                                 m_ArtworksListModel,
                                                  m_SessionManager));
 
     auto cleanBackupsCommand = std::make_shared<Commands::ICommand>(
@@ -411,7 +411,7 @@ void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &f
                                               flags,
                                               saveSessionCommand,
                                               cleanBackupsCommand,
-                                              m_ArtItemsModel,
+                                              m_ArtworksListModel,
                                               m_ArtworksRepository,
                                               m_SettingsModel,
                                               m_SwitcherModel,
@@ -469,24 +469,24 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_SecretsManager, &Encryption::SecretsManager::afterMasterPasswordReset,
                      &m_UploadInfoRepository, &Models::UploadInfoRepository::onAfterMasterPasswordReset);
 
-    QObject::connect(&m_ArtItemsModel, &Models::ArtItemsModel::selectedArtworksRemoved,
-                     &m_FilteredArtItemsModel, &Models::FilteredArtItemsProxyModel::onSelectedArtworksRemoved);
-    QObject::connect(&m_ArtItemsModel, &Models::ArtItemsModel::artworkSelectedChanged,
-                     &m_FilteredArtItemsModel, &Models::FilteredArtItemsProxyModel::itemSelectedChanged);
+    QObject::connect(&m_ArtworksListModel, &Models::ArtworksListModel::selectedArtworksRemoved,
+                     &m_FilteredArtworksListModel, &Models::FilteredArtItemsProxyModel::onSelectedArtworksRemoved);
+    QObject::connect(&m_ArtworksListModel, &Models::ArtworksListModel::artworkSelectedChanged,
+                     &m_FilteredArtworksListModel, &Models::FilteredArtItemsProxyModel::itemSelectedChanged);
 
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::settingsUpdated,
-                     &m_FilteredArtItemsModel, &Models::FilteredArtItemsProxyModel::onSettingsUpdated);
+                     &m_FilteredArtworksListModel, &Models::FilteredArtItemsProxyModel::onSettingsUpdated);
 
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::serviceAvailable,
-                     &m_FilteredArtItemsModel, &Models::FilteredArtItemsProxyModel::onSpellCheckerAvailable);
+                     &m_FilteredArtworksListModel, &Models::FilteredArtItemsProxyModel::onSpellCheckerAvailable);
 
     QObject::connect(&m_ArtworksRepository, &Models::ArtworksRepository::filesUnavailable,
-                     &m_ArtItemsModel, &Models::ArtItemsModel::onFilesUnavailableHandler);
+                     &m_ArtworksListModel, &Models::ArtworksListModel::onFilesUnavailableHandler);
     QObject::connect(&m_ArtworksRepository, &Models::ArtworksRepository::selectionChanged,
-                     &m_FilteredArtItemsModel, &Models::FilteredArtItemsProxyModel::onDirectoriesSelectionChanged);
+                     &m_FilteredArtworksListModel, &Models::FilteredArtItemsProxyModel::onDirectoriesSelectionChanged);
 
     QObject::connect(&m_UndoRedoManager, &UndoRedo::UndoRedoManager::undoStackEmpty,
-                     &m_ArtItemsModel, &Models::ArtItemsModel::onUndoStackEmpty);
+                     &m_ArtworksListModel, &Models::ArtworksListModel::onUndoStackEmpty);
 
     QObject::connect(&m_UndoRedoManager, &UndoRedo::UndoRedoManager::undoStackEmpty,
                      &m_ArtworksRepository, &Models::ArtworksRepository::onUndoStackEmpty);
@@ -511,22 +511,22 @@ void XpiksApp::connectEntitiesSignalsSlots() {
                      &m_SettingsModel, &Models::SettingsModel::onRecommendedExiftoolFound);
 
     QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
-                     &m_ArtItemsModel, &Models::ArtItemsModel::modifiedArtworksCountChanged);
+                     &m_ArtworksListModel, &Models::ArtworksListModel::modifiedArtworksCountChanged);
 
     QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
-                     &m_ArtItemsModel, &Models::ArtItemsModel::modifiedArtworksCountChanged);
+                     &m_ArtworksListModel, &Models::ArtworksListModel::modifiedArtworksCountChanged);
 
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,
-                     &m_ArtItemsModel, &Models::ArtItemsModel::userDictUpdateHandler);
+                     &m_ArtworksListModel, &Models::ArtworksListModel::userDictUpdateHandler);
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictCleared,
-                     &m_ArtItemsModel, &Models::ArtItemsModel::userDictClearedHandler);
+                     &m_ArtworksListModel, &Models::ArtworksListModel::userDictClearedHandler);
 
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,
                      &m_CombinedArtworksModel, &Models::CombinedArtworksModel::userDictUpdateHandler);
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictCleared,
                      &m_CombinedArtworksModel, &Models::CombinedArtworksModel::userDictClearedHandler);
 
-    QObject::connect(&m_ArtItemsModel, &Models::ArtItemsModel::fileWithIndexUnavailable,
+    QObject::connect(&m_ArtworksListModel, &Models::ArtworksListModel::fileWithIndexUnavailable,
                      &m_ArtworkProxyModel, &Models::ArtworkProxyModel::itemUnavailableHandler);
 
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,

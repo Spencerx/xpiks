@@ -15,6 +15,7 @@
 #include <functional>
 #include <deque>
 #include <vector>
+#include "../QMLExtensions/artworkupdaterequest.h"
 #include "artworkmetadata.h"
 #include "../Helpers/ifilenotavailablemodel.h"
 #include "../MetadataIO/artworkssnapshot.h"
@@ -61,7 +62,6 @@ namespace Models {
             RolesNumber
         };
 
-    public:
         struct ArtworksAddResult {
             MetadataIO::ArtworksSnapshot m_Snapshot;
             int m_AttachedVectorsCount;
@@ -69,28 +69,40 @@ namespace Models {
 
         struct ArtworksRemoveResult {
             QSet<qint64> m_SelectedDirectoryIds;
+            int m_RemovedCount;
             bool m_UnselectAll;
         };
 
     public:
         size_t getArtworksCount() const { return m_ArtworkList.size(); }
         int getModifiedArtworksCount();
+        QVector<int> getArtworkStandardRoles() const;
 
     public:
+        // general purpose collective methods
         void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles);
         std::unique_ptr<MetadataIO::SessionSnapshot> snapshotAll();
+        void generateAboutToBeRemoved();
+        void unlockAllForIO();
 
     public:
+        // update hub related
+        void processUpdateRequests(const std::vector<std::shared_ptr<QMLExtensions::ArtworkUpdateRequest> > &updateRequests);
+        void updateArtworksByIDs(const QSet<qint64> &artworkIDs, const QVector<int> &rolesToUpdate);
+
+    public:
+        // add-remove items methods
         ArtworksAddResult addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                    Common::AddFilesFlags flags);
         ArtworksRemoveResult removeFiles(const Helpers::IndicesRanges &ranges);
-        void deleteRemovedFiles();
+        ArtworksRemoveResult removeFilesFromDirectory(int directoryIndex);
+        void restoreRemoved();
+        void deleteRemovedItems();
+        void deleteUnavailableItems();
         void deleteAllItems();
-#ifdef INTEGRATION_TESTS
-        void fakeDeleteAllItems();
-#endif
 
     private:
+        // general purpose internal methods
         MetadataIO::ArtworksSnapshot deleteItems(const Helpers::IndicesRanges &ranges);
         int attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                            const MetadataIO::ArtworksSnapshot &snapshot,
@@ -99,9 +111,11 @@ namespace Models {
         int attachKnownVectors(const QHash<QString, QHash<QString, QString> > &vectorsPaths,
                                QVector<int> &indicesToUpdate) const;
         void connectArtworkSignals(ArtworkMetadata *artwork);
+        void syncArtworksIndices();
 
     public:
-        virtual int rowCount(const QModelIndex &parent=QModelIndex()) const { return (int)getArtworksCount(); }
+        // qabstractlistmodel methods
+        virtual int rowCount(const QModelIndex &) const { return (int)getArtworksCount(); }
         virtual QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
         virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
         virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
@@ -118,7 +132,7 @@ namespace Models {
         void artworkSelectedChanged(bool value);
 
     public slots:
-        void itemModifiedChanged(bool) { updateModifiedCount(); }
+        void itemModifiedChanged(bool) { emit modifiedArtworksCountChanged(); }
         void onFilesUnavailableHandler();
         void onArtworkBackupRequested();
         void onArtworkEditingPaused();
@@ -133,6 +147,7 @@ namespace Models {
 
     private:
         Models::ArtworkMetadata *accessArtwork(size_t index) const;
+        Models::ArtworkMetadata *getArtwork(size_t index) const;
         void destroyArtwork(ArtworkMetadata *artwork);
         int getNextID();
 
@@ -141,9 +156,9 @@ namespace Models {
         std::vector<T> selectArtworks(std::function<bool (ArtworkMetadata *)> pred,
                                       std::function<T(ArtworkMetadata *, size_t)> mapper) const {
             std::vector<T> result;
-            size_t i = 0;
-            for (auto *artwork: m_ArtworkList) {
-                i++;
+            const size_t size = m_ArtworkList.size();
+            for (size_t i = 0; i < size; i++) {
+                auto *artwork = accessArtwork(i);
                 if (pred(artwork)) {
                     result.push_back(mapper(artwork, i));
                 }
@@ -153,22 +168,33 @@ namespace Models {
 
         template<typename T>
         std::vector<T> selectAvailableArtworks(std::function<T(ArtworkMetadata *, size_t)> mapper) const {
-            std::vector<T> result;
-            size_t i = 0;
-            for (auto *artwork: m_ArtworkList) {
-                i++;
-                if (!artwork->isRemoved() &&
-                        !artwork->isUnavailable()) {
-                    result.push_back(mapper(artwork, i));
-                }
-            }
-            return result;
+            return selectArtworks([](ArtworkMetadata *artwork) {
+                return !artwork->isUnavailable() && !artwork->isRemoved();
+            }, mapper);
         }
 
         void foreachArtwork(std::function<bool (ArtworkMetadata *)> pred,
                             std::function<void (ArtworkMetadata *, size_t)> action) const;
         void foreachArtwork(const Helpers::IndicesRanges &ranges,
-                            std::function<void (ArtworkMetadata *, size_t)> action);
+                            std::function<void (ArtworkMetadata *, size_t)> action) const;
+
+        template<typename T>
+        void foreachArtworkAs(std::function<bool (T *)> pred,
+                              std::function<void (T *, size_t)> action) const {
+            const size_t size = m_ArtworkList.size();
+            for (size_t i = 0; i < size; i++) {
+                auto *artwork = accessArtwork(i);
+                T *t = dynamic_cast<T*>(artwork);
+                if ((t != nullptr) && pred(t)) {
+                    action(t, i);
+                }
+            }
+        }
+
+#ifdef INTEGRATION_TESTS
+    public:
+        void fakeDeleteAllItems();
+#endif
 
     private:
         ArtworksRepository &m_ArtworksRepository;

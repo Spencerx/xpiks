@@ -16,7 +16,7 @@
 #include "QMLExtensions/imagecachingservice.h"
 #include "QMLExtensions/videocachingservice.h"
 
-#include "Models/artitemsmodel.h"
+#include "Models/artworkslistmodel.h"
 #include "Models/artworkproxymodel.h"
 #include "Models/artworksrepository.h"
 #include "Models/artworkuploader.h"
@@ -146,7 +146,7 @@ protected:
     Models::RecentDirectoriesModel m_RecentDirectorieModel;
     Models::ArtworksRepository m_ArtworksRepository;
     Models::FilteredArtworksRepository m_FilteredArtworksRepository;
-    Models::ArtItemsModel m_ArtItemsModel;
+    Models::ArtworksListModel m_ArtworksListModel;
     Models::CombinedArtworksModel m_CombinedArtworksModel;
     Models::UploadInfoRepository m_UploadInfoRepository;
     Connectivity::RequestsService m_RequestsService;

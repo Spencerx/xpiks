@@ -16,7 +16,6 @@
 #include <QList>
 #include <functional>
 #include "../Common/flags.h"
-#include "../Common/baseentity.h"
 #include "../MetadataIO/artworkssnapshot.h"
 
 namespace Models {
@@ -26,8 +25,7 @@ namespace Models {
     class ArtItemsModel;
 
     class FilteredArtItemsProxyModel:
-            public QSortFilterProxyModel,
-            public Common::BaseEntity
+            public QSortFilterProxyModel
     {
         Q_OBJECT
         Q_PROPERTY(QString searchTerm READ getSearchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
