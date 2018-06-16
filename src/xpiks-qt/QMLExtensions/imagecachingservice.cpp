@@ -103,7 +103,7 @@ namespace QMLExtensions {
         this->cacheImage(key, QSize(DEFAULT_THUMB_WIDTH * m_Scale, DEFAULT_THUMB_HEIGHT * m_Scale));
     }
 
-    void ImageCachingService::generatePreviews(const MetadataIO::ArtworksSnapshot &snapshot) {
+    void ImageCachingService::generatePreviews(const Artworks::ArtworksSnapshot &snapshot) {
         if (m_IsCancelled) { return; }
 
         Q_ASSERT(m_CachingWorker != NULL);
@@ -118,7 +118,7 @@ namespace QMLExtensions {
 
         for (size_t i = 0; i < size; i++) {
             auto *artwork = snapshot.get(i);
-            Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork*>(artwork);
+            Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             if (imageArtwork != nullptr) {
                 requests.emplace_back(new ImageCacheRequest(artwork->getThumbnailPath(),
                                                             m_DefaultSize,

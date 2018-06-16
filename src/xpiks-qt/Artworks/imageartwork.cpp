@@ -13,7 +13,7 @@
 #include "../MetadataIO/cachedartwork.h"
 #include "../MetadataIO/originalmetadata.h"
 
-namespace Models {
+namespace Artworks {
     ImageArtwork::ImageArtwork(const QString &filepath, qint64 ID, qint64 directoryID):
         ArtworkMetadata(filepath, ID, directoryID),
         m_ImageFlags(0)

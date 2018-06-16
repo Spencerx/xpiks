@@ -17,12 +17,11 @@
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../Helpers/keywordshelpers.h"
 #include "../Helpers/stringhelper.h"
-#include "flags.h"
 #include "defines.h"
 #include "../Helpers/indiceshelper.h"
 #include "basickeywordsmodelimpl.h"
 
-namespace Common {
+namespace Artworks {
     BasicKeywordsModel::BasicKeywordsModel(Hold &hold, QObject *parent):
         AbstractListModel(parent),
         m_Hold(hold),

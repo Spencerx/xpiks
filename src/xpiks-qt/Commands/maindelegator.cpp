@@ -13,7 +13,7 @@
 #include "../Models/ziparchiver.h"
 #include "../Suggestion/keywordssuggestor.h"
 #include "../Commands/addartworkscommand.h"
-#include "../Models/filteredartitemsproxymodel.h"
+#include "../Models/filteredartworkslistmodel.h"
 #include "../Models/recentdirectoriesmodel.h"
 #include "../Models/recentfilesmodel.h"
 #include "../Models/artworkelement.h"
@@ -92,11 +92,11 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::combineArtwork(Models::ArtworkMetadata *metadata, int index) const {
+    void MainDelegator::combineArtwork(Artworks::ArtworkMetadata *metadata, int index) const {
         LOG_INFO << "one item with index" << index;
         auto *combinedArtworksModel = m_CommandManager->getCombinedArtworksModel();
         if (combinedArtworksModel) {
-            MetadataIO::WeakArtworksSnapshot items;
+            Artworks::WeakArtworksSnapshot items;
             items.push_back(metadata);
 
             combinedArtworksModel->resetModel();
@@ -104,7 +104,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::combineArtworks(MetadataIO::WeakArtworksSnapshot &artworks) const {
+    void MainDelegator::combineArtworks(Artworks::WeakArtworksSnapshot &artworks) const {
         LOG_INFO << artworks.size() << "artworks";
         auto *combinedArtworksModel = m_CommandManager->getCombinedArtworksModel();
         if (combinedArtworksModel) {
@@ -113,7 +113,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::deleteKeywordsFromArtworks(MetadataIO::WeakArtworksSnapshot &artworks) const {
+    void MainDelegator::deleteKeywordsFromArtworks(Artworks::WeakArtworksSnapshot &artworks) const {
         LOG_INFO << artworks.size() << "artworks";
         auto *deleteKeywordsViewModel = m_CommandManager->getDeleteKeywordsModel();
         if (deleteKeywordsViewModel != NULL) {
@@ -121,7 +121,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::setArtworksForUpload(MetadataIO::ArtworksSnapshot &artworks) const {
+    void MainDelegator::setArtworksForUpload(Artworks::ArtworksSnapshot &artworks) const {
     #ifndef CORE_TESTS
         LOG_INFO << artworks.size() << "artworks";
         auto *artworkUploader = m_CommandManager->getArtworkUploader();
@@ -133,7 +133,7 @@ namespace Commands {
     #endif
     }
 
-    void MainDelegator::setArtworksForZipping(MetadataIO::ArtworksSnapshot &artworks) const {
+    void MainDelegator::setArtworksForZipping(Artworks::ArtworksSnapshot &artworks) const {
         LOG_INFO << artworks.size() << "artworks";
         auto *zipArchiver = m_CommandManager->getZipArchiver();
         if (zipArchiver) {
@@ -141,7 +141,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::setArtworksForCsvExport(MetadataIO::ArtworksSnapshot::Container &rawSnapshot) const {
+    void MainDelegator::setArtworksForCsvExport(Artworks::ArtworksSnapshot::Container &rawSnapshot) const {
     #ifndef CORE_TESTS
         LOG_INFO << rawSnapshot.size() << "artworks";
         auto *csvExportModel = m_CommandManager->getCsvExportModel();
@@ -153,7 +153,7 @@ namespace Commands {
     #endif
     }
 
-    int MainDelegator::reimportMetadata(const MetadataIO::ArtworksSnapshot &snapshot) const {
+    int MainDelegator::reimportMetadata(const Artworks::ArtworksSnapshot &snapshot) const {
         LOG_DEBUG << "#";
         int importID = 0;
 
@@ -169,7 +169,7 @@ namespace Commands {
         return importID;
     }
 
-    void MainDelegator::writeMetadata(const MetadataIO::WeakArtworksSnapshot &artworks, bool useBackups) const {
+    void MainDelegator::writeMetadata(const Artworks::WeakArtworksSnapshot &artworks, bool useBackups) const {
         LOG_DEBUG << "#";
 
     #ifndef CORE_TESTS
@@ -190,7 +190,7 @@ namespace Commands {
     #endif
     }
 
-    void MainDelegator::wipeAllMetadata(const MetadataIO::ArtworksSnapshot &artworks, bool useBackups) const {
+    void MainDelegator::wipeAllMetadata(const Artworks::ArtworksSnapshot &artworks, bool useBackups) const {
         LOG_DEBUG << "#";
 
     #ifndef CORE_TESTS
@@ -206,7 +206,7 @@ namespace Commands {
     #endif
     }
 
-    void MainDelegator::addToLibrary(const MetadataIO::WeakArtworksSnapshot &artworks) const {
+    void MainDelegator::addToLibrary(const Artworks::WeakArtworksSnapshot &artworks) const {
         LOG_DEBUG << "#";
 
     #ifndef CORE_TESTS
@@ -226,7 +226,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::updateArtworks(const MetadataIO::WeakArtworksSnapshot &artworks) const {
+    void MainDelegator::updateArtworks(const Artworks::WeakArtworksSnapshot &artworks) const {
         auto *artItemsModel = m_CommandManager->getArtItemsModel();
         if (artItemsModel != nullptr) {
             QVector<int> indices;
@@ -239,13 +239,13 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::updateArtworks(const MetadataIO::ArtworksSnapshot::Container &artworks) {
+    void MainDelegator::updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks) {
         auto *artItemsModel = m_CommandManager->getArtItemsModel();
         if (artItemsModel != nullptr) {
             QVector<int> indices;
             indices.reserve((int)artworks.size());
             for (auto &locker: artworks) {
-                Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+                Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
                 indices.push_back((int)artwork->getLastKnownIndex());
             }
 
@@ -278,7 +278,7 @@ namespace Commands {
     #endif
     }
 
-    void MainDelegator::generatePreviews(const MetadataIO::ArtworksSnapshot &snapshot) const {
+    void MainDelegator::generatePreviews(const Artworks::ArtworksSnapshot &snapshot) const {
     #ifndef CORE_TESTS
         auto *imageCachingService = m_CommandManager->getImageCachingService();
         if (imageCachingService != NULL) {
@@ -303,7 +303,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::submitForSpellCheck(const MetadataIO::WeakArtworksSnapshot &items) const {
+    void MainDelegator::submitForSpellCheck(const Artworks::WeakArtworksSnapshot &items) const {
         const Common::WordAnalysisFlags wordAnalysisFlags = getWordAnalysisFlags();
         auto *spellCheckerService = m_CommandManager->getSpellCheckerService();
         if ((wordAnalysisFlags != Common::WordAnalysisFlags::None) &&
@@ -373,7 +373,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::submitKeywordsForWarningsCheck(Models::ArtworkMetadata *item) const {
+    void MainDelegator::submitKeywordsForWarningsCheck(Artworks::ArtworkMetadata *item) const {
         Q_ASSERT(item != NULL);
         this->submitForWarningsCheck(item, Common::WarningsCheckFlags::Keywords);
     }
@@ -385,14 +385,14 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::setupDuplicatesModel(const std::vector<Models::ArtworkMetadata*> &items) const {
+    void MainDelegator::setupDuplicatesModel(const std::vector<Artworks::ArtworkMetadata*> &items) const {
         auto *duplicatesModel = m_CommandManager->getDuplicatesReviewModel();
         if (duplicatesModel != nullptr) {
             duplicatesModel->setupModel(items);
         }
     }
 
-    void MainDelegator::submitForWarningsCheck(Models::ArtworkMetadata *item, Common::WarningsCheckFlags flags) const {
+    void MainDelegator::submitForWarningsCheck(Artworks::ArtworkMetadata *item, Common::WarningsCheckFlags flags) const {
         Q_ASSERT(item != NULL);
 
         auto *warningsService = m_CommandManager->getWarningsService();
@@ -413,7 +413,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::submitForWarningsCheck(const MetadataIO::WeakArtworksSnapshot &items) const {
+    void MainDelegator::submitForWarningsCheck(const Artworks::WeakArtworksSnapshot &items) const {
         auto *warningsService = m_CommandManager->getWarningsService();
 
         if (warningsService != NULL) {
@@ -444,7 +444,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::saveArtworkBackup(Models::ArtworkMetadata *metadata) const {
+    void MainDelegator::saveArtworkBackup(Artworks::ArtworkMetadata *metadata) const {
         Q_ASSERT(metadata != NULL);
     #ifndef CORE_TESTS
         auto *metadataIOService = m_CommandManager->getMetadataIOService();
@@ -454,7 +454,7 @@ namespace Commands {
     #endif
     }
 
-    void MainDelegator::saveArtworksBackups(const MetadataIO::WeakArtworksSnapshot &artworks) const {
+    void MainDelegator::saveArtworksBackups(const Artworks::WeakArtworksSnapshot &artworks) const {
     #ifndef CORE_TESTS
         auto *metadataIOService = m_CommandManager->getMetadataIOService();
         if (metadataIOService != NULL) {
@@ -571,7 +571,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::registerCurrentItem(Models::ArtworkMetadata *artwork) const {
+    void MainDelegator::registerCurrentItem(Artworks::ArtworkMetadata *artwork) const {
         auto *uiManager = m_CommandManager->getUIManager();
         if (uiManager != nullptr) {
             std::shared_ptr<QuickBuffer::ICurrentEditable> currentItem(new QuickBuffer::CurrentEditableArtwork(

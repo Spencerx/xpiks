@@ -27,7 +27,7 @@ namespace Commands {
         public CommandBase
     {
     public:
-        FindAndReplaceCommand(const MetadataIO::ArtworksSnapshot::Container &rawSnapshot,
+        FindAndReplaceCommand(const Artworks::ArtworksSnapshot::Container &rawSnapshot,
         const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags):
             CommandBase(CommandType::FindAndReplace),
             m_RawSnapshot(std::move(rawSnapshot)),
@@ -42,7 +42,7 @@ namespace Commands {
         std::shared_ptr<Commands::ICommandResult> execute(const ICommandManager *commandManagerInterface);
 
     private:
-        MetadataIO::ArtworksSnapshot::Container m_RawSnapshot;
+        Artworks::ArtworksSnapshot::Container m_RawSnapshot;
         QString m_ReplaceWhat;
         QString m_ReplaceTo;
         Common::SearchFlags m_Flags;
@@ -53,7 +53,7 @@ namespace Commands {
     {
     public:
         FindAndReplaceCommandResult(
-                MetadataIO::WeakArtworksSnapshot &itemsToSave,
+                Artworks::WeakArtworksSnapshot &itemsToSave,
                 const QVector<int> &indicesToUpdate):
             m_ItemsToSave(std::move(itemsToSave)),
             m_IndicesToUpdate(indicesToUpdate)
@@ -69,7 +69,7 @@ namespace Commands {
 
     public:
 #endif
-        MetadataIO::WeakArtworksSnapshot m_ItemsToSave;
+        Artworks::WeakArtworksSnapshot m_ItemsToSave;
         QVector<int> m_IndicesToUpdate;
     };
 }

@@ -15,7 +15,7 @@
 #include <QStringList>
 #include <QHash>
 #include <QReadWriteLock>
-#include "flags.h"
+#include "../Common/flags.h"
 #include "imetadataoperator.h"
 
 namespace SpellCheck {
@@ -25,10 +25,10 @@ namespace SpellCheck {
     class SpellCheckItemInfo;
 }
 
-namespace Common {
+namespace Artworks {
     class BasicMetadataModel :
             public BasicKeywordsModel,
-            public Common::IMetadataOperator
+            public IMetadataOperator
     {
         Q_OBJECT
         Q_PROPERTY(bool hasTitleSpellErrors READ hasTitleSpellError NOTIFY titleSpellingChanged)

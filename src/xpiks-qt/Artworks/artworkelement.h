@@ -16,7 +16,7 @@
 #include "artworkmetadata.h"
 #include "../Common/flags.h"
 
-namespace Models {
+namespace Artworks {
     class ArtworkElement: public ArtworkMetadataLocker
     {
     public:

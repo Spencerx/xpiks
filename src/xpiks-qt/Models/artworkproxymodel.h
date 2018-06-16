@@ -27,7 +27,7 @@
 #include "../Common/flags.h"
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../Common/hold.h"
-#include "../Models/artworkelement.h"
+#include "../Artworks/artworkelement.h"
 #include "artworkproxybase.h"
 #include "keyvaluelist.h"
 
@@ -163,7 +163,7 @@ namespace Models {
 
     private:
         ArtworkPropertiesMap m_PropertiesMap;
-        Models::ArtworkMetadata *m_ArtworkMetadata;
+        Artworks::ArtworkMetadata *m_ArtworkMetadata;
     };
 }
 

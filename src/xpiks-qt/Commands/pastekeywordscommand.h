@@ -26,7 +26,7 @@ namespace Commands {
     class PasteKeywordsCommand : public CommandBase
     {
     public:
-        PasteKeywordsCommand(MetadataIO::ArtworksSnapshot::Container &rawSnapshot,
+        PasteKeywordsCommand(Artworks::ArtworksSnapshot::Container &rawSnapshot,
                              const QStringList &keywords) :
             CommandBase(CommandType::PasteKeywords),
             m_RawSnapshot(std::move(rawSnapshot)),
@@ -39,7 +39,7 @@ namespace Commands {
         virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
 
     private:
-        MetadataIO::ArtworksSnapshot::Container m_RawSnapshot;
+        Artworks::ArtworksSnapshot::Container m_RawSnapshot;
         QStringList m_KeywordsList;
     };
 

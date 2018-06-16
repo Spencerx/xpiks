@@ -55,7 +55,7 @@ namespace Models {
                          this, &CombinedArtworksModel::keywordsSpellingChanged);
     }
 
-    void CombinedArtworksModel::setArtworks(MetadataIO::WeakArtworksSnapshot &artworks) {
+    void CombinedArtworksModel::setArtworks(Artworks::WeakArtworksSnapshot &artworks) {
         ArtworksViewModel::setArtworks(artworks);
 
         recombineArtworks();
@@ -328,7 +328,7 @@ namespace Models {
     }
 
     void CombinedArtworksModel::processCombinedEditCommand() {
-        MetadataIO::ArtworksSnapshot::Container rawSnapshot(getRawSnapshot());
+        Artworks::ArtworksSnapshot::Container rawSnapshot(getRawSnapshot());
 
         std::shared_ptr<Commands::CombinedEditCommand> combinedEditCommand(new Commands::CombinedEditCommand(
                 m_EditFlags,

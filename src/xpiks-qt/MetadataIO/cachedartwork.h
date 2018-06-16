@@ -33,7 +33,7 @@ namespace MetadataIO {
         };
 
         CachedArtwork();
-        CachedArtwork(Models::ArtworkMetadata *metadata);
+        CachedArtwork(Artworks::ArtworkMetadata *metadata);
         CachedArtwork(const CachedArtwork &from);
         CachedArtwork &operator=(const CachedArtwork &other);
 

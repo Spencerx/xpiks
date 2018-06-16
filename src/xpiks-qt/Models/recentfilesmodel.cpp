@@ -27,7 +27,7 @@ namespace Models {
         deserializeItems(recentFiles);
     }
 
-    void RecentFilesModel::add(const MetadataIO::ArtworksSnapshot &snapshot) {
+    void RecentFilesModel::add(const Artworks::ArtworksSnapshot &snapshot) {
         int maxFiles = getMaxRecentItems();
         const int length = (int)snapshot.size();
         int first = qMax(0, length - maxFiles);

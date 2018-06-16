@@ -69,7 +69,7 @@ namespace MetadataIO {
     }
 
     void MetadataIOWorker::processReadWriteItem(std::shared_ptr<MetadataReadWriteTask> &item) {
-        Models::ArtworkMetadata *artworkMetadata = item->getArtworkMetadata();
+        Artworks::ArtworkMetadata *artworkMetadata = item->getArtworkMetadata();
         Q_ASSERT(artworkMetadata != nullptr);
         if (artworkMetadata == nullptr) { return; }
 

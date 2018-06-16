@@ -17,7 +17,7 @@
 #include <QDateTime>
 #include "../Common/flags.h"
 
-namespace Models {
+namespace Artworks {
     class ImageArtwork: public ArtworkMetadata
     {
         Q_OBJECT

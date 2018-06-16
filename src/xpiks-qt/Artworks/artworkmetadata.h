@@ -37,7 +37,7 @@ namespace MetadataIO {
 
 class QTextDocument;
 
-namespace Models {
+namespace Artworks {
     class SettingsModel;
 
     class ArtworkMetadata:
@@ -276,7 +276,7 @@ namespace Models {
     class ArtworkMetadataLocker
     {
     public:
-        ArtworkMetadataLocker(Models::ArtworkMetadata *metadata):
+        ArtworkMetadataLocker(Artworks::ArtworkMetadata *metadata):
             m_ArtworkMetadata(metadata)
         {
             if (m_ArtworkMetadata != nullptr) {
@@ -301,6 +301,6 @@ namespace Models {
     };
 }
 
-Q_DECLARE_METATYPE(Models::ArtworkMetadata *)
+Q_DECLARE_METATYPE(Artworks::ArtworkMetadata *)
 
 #endif // IMAGEMETADATA_H

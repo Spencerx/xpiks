@@ -22,9 +22,7 @@ namespace Commands {
 
     std::shared_ptr<CommandResult> RemoveFilesCommand::execute(int commandID) {
         m_CommandID = commandID;
-
         m_RemoveResult = removeFiles();
-
         return ICommand::execute();
     }
 

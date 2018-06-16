@@ -43,7 +43,7 @@ namespace MetadataIO {
         csvFile.write("\r\n");
     }
 
-    QString retrieveArtworkProperty(Models::ArtworkMetadata *artwork, CsvExportPropertyType property) {
+    QString retrieveArtworkProperty(Artworks::ArtworkMetadata *artwork, CsvExportPropertyType property) {
         switch (property) {
         case Empty: return QString();
         case Filename: return artwork->getBaseFilename();
@@ -62,7 +62,7 @@ namespace MetadataIO {
         Q_ASSERT(propertiesSize != 0);
 
         for (auto &locker: artworks) {
-            Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
 
             QString value = retrieveArtworkProperty(artwork, properties[0].m_PropertyType);
             csvFile.write(DOUBLE_QUOTE);

@@ -31,7 +31,7 @@ namespace QMLExtensions {
         };
 
     public:
-        VideoCacheRequest(Models::VideoArtwork *videoArtwork, bool recache, bool quickThumbnail=true, bool withDelay=false, bool allowGoodQuality=false):
+        VideoCacheRequest(Artworks::VideoArtwork *videoArtwork, bool recache, bool quickThumbnail=true, bool withDelay=false, bool allowGoodQuality=false):
             m_VideoArtwork(videoArtwork),
             m_Flags(0)
         {
@@ -67,10 +67,10 @@ namespace QMLExtensions {
         void setGoodQualityRequest() { Common::ApplyFlag(m_Flags, false, QuickThumbnailFlag); }
         void setThumbnailPath(const QString &path) { m_VideoArtwork->setThumbnailPath(path); }
         void setVideoMetadata(const libthmbnlr::VideoFileMetadata &metadata) { m_VideoArtwork->setVideoMetadata(metadata); }
-        Models::VideoArtwork *getArtwork() { return m_VideoArtwork; }
+        Artworks::VideoArtwork *getArtwork() { return m_VideoArtwork; }
 
     private:
-        Models::VideoArtwork *m_VideoArtwork;
+        Artworks::VideoArtwork *m_VideoArtwork;
         Common::flag_t m_Flags;
     };
 }

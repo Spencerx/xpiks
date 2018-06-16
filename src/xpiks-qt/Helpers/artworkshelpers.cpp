@@ -15,7 +15,7 @@
 #include "filehelpers.h"
 
 namespace Helpers {
-    void splitImagesVideo(const QVector<Models::ArtworkMetadata *> &artworks, QVector<Models::ArtworkMetadata *> &imageArtworks, QVector<Models::ArtworkMetadata *> &videoArtworks) {
+    void splitImagesVideo(const QVector<Artworks::ArtworkMetadata *> &artworks, QVector<Artworks::ArtworkMetadata *> &imageArtworks, QVector<Artworks::ArtworkMetadata *> &videoArtworks) {
         int size = artworks.size();
         imageArtworks.reserve(size / 2);
         videoArtworks.reserve(size / 2);
@@ -24,11 +24,11 @@ namespace Helpers {
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
-            Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork*>(artwork);
+            Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             if (imageArtwork != nullptr) {
                 imageArtworks.append(artwork);
             } else {
-                Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork*>(artwork);
+                Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(artwork);
                 if (videoArtwork != nullptr) {
                     videoArtworks.append(artwork);
                 } else {
@@ -39,24 +39,24 @@ namespace Helpers {
         }
     }
 
-    void splitImagesVideo(const std::vector<std::shared_ptr<Models::ArtworkMetadataLocker> > &rawSnapshot,
-                          std::vector<std::shared_ptr<Models::ArtworkMetadataLocker> > &imagesRawSnapshot,
-                          std::vector<std::shared_ptr<Models::ArtworkMetadataLocker> > &videoRawSnapshot) {
+    void splitImagesVideo(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot,
+                          std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &imagesRawSnapshot,
+                          std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &videoRawSnapshot) {
         const size_t size = rawSnapshot.size();
         imagesRawSnapshot.reserve(size / 2);
         videoRawSnapshot.reserve(size / 2);
 
         for (auto &locker: rawSnapshot) {
-            Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
 
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
-            Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork*>(artwork);
+            Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             if (imageArtwork != nullptr) {
                 imagesRawSnapshot.push_back(locker);
             } else {
-                Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork*>(artwork);
+                Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(artwork);
                 if (videoArtwork != nullptr) {
                     videoRawSnapshot.push_back(locker);
                 } else {
@@ -67,16 +67,16 @@ namespace Helpers {
         }
     }
 
-    int retrieveImagesCount(const std::vector<std::shared_ptr<Models::ArtworkMetadataLocker> > &rawSnapshot) {
+    int retrieveImagesCount(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot) {
         int count = 0;
 
         for (auto &locker: rawSnapshot) {
-            Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
 
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
-            Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork*>(artwork);
+            Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             if (imageArtwork != nullptr) {
                 count++;
             }
@@ -85,16 +85,16 @@ namespace Helpers {
         return count;
     }
 
-    int retrieveVideosCount(const std::vector<std::shared_ptr<Models::ArtworkMetadataLocker> > &rawSnapshot) {
+    int retrieveVideosCount(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot) {
         int count = 0;
 
         for (auto &locker: rawSnapshot) {
-            Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
 
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
-            Models::VideoArtwork *imageArtwork = dynamic_cast<Models::VideoArtwork*>(artwork);
+            Artworks::VideoArtwork *imageArtwork = dynamic_cast<Artworks::VideoArtwork*>(artwork);
             if (imageArtwork != nullptr) {
                 count++;
             }
@@ -103,15 +103,15 @@ namespace Helpers {
         return count;
     }
 
-    int findAndAttachVectors(const MetadataIO::WeakArtworksSnapshot &artworksList, QVector<int> &modifiedIndices) {
+    int findAndAttachVectors(const Artworks::WeakArtworksSnapshot &artworksList, QVector<int> &modifiedIndices) {
         LOG_DEBUG << "#";
         int attachedCount = 0;
         const size_t size = artworksList.size();
         modifiedIndices.reserve((int)size);
 
         for (size_t i = 0; i < size; ++i) {
-            Models::ArtworkMetadata *artwork = artworksList.at(i);
-            Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork *>(artwork);
+            Artworks::ArtworkMetadata *artwork = artworksList.at(i);
+            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
 
             if (image == NULL) { continue; }
 

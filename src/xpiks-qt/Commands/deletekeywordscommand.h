@@ -27,7 +27,7 @@ namespace Commands {
     class DeleteKeywordsCommand : public CommandBase
     {
     public:
-        DeleteKeywordsCommand(MetadataIO::ArtworksSnapshot::Container &rawSnapshot,
+        DeleteKeywordsCommand(Artworks::ArtworksSnapshot::Container &rawSnapshot,
                               const QSet<QString> &keywordsSet,
                               bool caseSensitive);
         virtual ~DeleteKeywordsCommand() {}
@@ -36,14 +36,14 @@ namespace Commands {
         virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
 
     private:
-        MetadataIO::ArtworksSnapshot::Container m_RawSnapshot;
+        Artworks::ArtworksSnapshot::Container m_RawSnapshot;
         QSet<QString> m_KeywordsSet;
         bool m_CaseSensitive;
     };
 
     class DeleteKeywordsCommandResult : public CommandResult {
     public:
-        DeleteKeywordsCommandResult(MetadataIO::WeakArtworksSnapshot &affectedItems,
+        DeleteKeywordsCommandResult(Artworks::WeakArtworksSnapshot &affectedItems,
                                     const QVector<int> &indicesToUpdate):
             m_AffectedItems(std::move(affectedItems)),
             m_IndicesToUpdate(indicesToUpdate)
@@ -58,7 +58,7 @@ namespace Commands {
 #else
     public:
 #endif
-        MetadataIO::WeakArtworksSnapshot m_AffectedItems;
+        Artworks::WeakArtworksSnapshot m_AffectedItems;
         QVector<int> m_IndicesToUpdate;
     };
 }

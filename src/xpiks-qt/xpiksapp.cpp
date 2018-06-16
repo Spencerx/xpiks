@@ -470,20 +470,20 @@ void XpiksApp::connectEntitiesSignalsSlots() {
                      &m_UploadInfoRepository, &Models::UploadInfoRepository::onAfterMasterPasswordReset);
 
     QObject::connect(&m_ArtworksListModel, &Models::ArtworksListModel::selectedArtworksRemoved,
-                     &m_FilteredArtworksListModel, &Models::FilteredArtItemsProxyModel::onSelectedArtworksRemoved);
+                     &m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::onSelectedArtworksRemoved);
     QObject::connect(&m_ArtworksListModel, &Models::ArtworksListModel::artworkSelectedChanged,
-                     &m_FilteredArtworksListModel, &Models::FilteredArtItemsProxyModel::itemSelectedChanged);
+                     &m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::itemSelectedChanged);
 
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::settingsUpdated,
-                     &m_FilteredArtworksListModel, &Models::FilteredArtItemsProxyModel::onSettingsUpdated);
+                     &m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::onSettingsUpdated);
 
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::serviceAvailable,
-                     &m_FilteredArtworksListModel, &Models::FilteredArtItemsProxyModel::onSpellCheckerAvailable);
+                     &m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::onSpellCheckerAvailable);
 
     QObject::connect(&m_ArtworksRepository, &Models::ArtworksRepository::filesUnavailable,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onFilesUnavailableHandler);
     QObject::connect(&m_ArtworksRepository, &Models::ArtworksRepository::selectionChanged,
-                     &m_FilteredArtworksListModel, &Models::FilteredArtItemsProxyModel::onDirectoriesSelectionChanged);
+                     &m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::onDirectoriesSelectionChanged);
 
     QObject::connect(&m_UndoRedoManager, &UndoRedo::UndoRedoManager::undoStackEmpty,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onUndoStackEmpty);

@@ -15,7 +15,6 @@
 #include <QDir>
 #include <QFileInfo>
 #include "../Helpers/keywordshelpers.h"
-#include "settingsmodel.h"
 #include "../SpellCheck/spellsuggestionsitem.h"
 #include "../SpellCheck/spellcheckitem.h"
 #include "../SpellCheck/spellcheckiteminfo.h"
@@ -33,7 +32,7 @@
   #define INVALID_INDEX (~(size_t)0)
 #endif
 
-namespace Models {
+namespace Artworks {
     ArtworkMetadata::ArtworkMetadata(const QString &filepath, qint64 ID, qint64 directoryID):
         Common::DelayedActionEntity(ARTWORK_EDITING_PAUSE, MAX_EDITING_PAUSE_RESTARTS),
         m_MetadataModel(m_Hold),

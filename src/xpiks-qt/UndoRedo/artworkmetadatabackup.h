@@ -14,18 +14,18 @@
 #include <QStringList>
 #include <QString>
 
-namespace Models { class ArtworkMetadata; }
+namespace Artworks { class ArtworkMetadata; }
 
 namespace UndoRedo {
     class ArtworkMetadataBackup
     {
     public:
-        ArtworkMetadataBackup(Models::ArtworkMetadata *metadata);
+        ArtworkMetadataBackup(Artworks::ArtworkMetadata *artwork);
         ArtworkMetadataBackup(const ArtworkMetadataBackup &copy);
         virtual ~ArtworkMetadataBackup() {}
 
     public:
-        void restore(Models::ArtworkMetadata *metadata) const;
+        void restore(Artworks::ArtworkMetadata *artwork) const;
 
     private:
         QString m_Description;

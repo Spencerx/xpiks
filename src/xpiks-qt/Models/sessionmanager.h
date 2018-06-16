@@ -37,7 +37,7 @@ namespace Models {
         virtual ~SessionManager() {}
 
     public:
-        bool save(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
+        bool save(std::vector<std::shared_ptr<Artworks::ArtworkSessionSnapshot> > &filesSnapshot,
                         const QStringList &directoriesSnapshot);
         int restoreSession(Models::ArtworksRepository &artworksRepository);
 

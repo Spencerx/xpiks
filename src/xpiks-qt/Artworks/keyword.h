@@ -12,9 +12,8 @@
 #define KEYWORD_H
 
 #include <QString>
-#include <QStringList>
 
-namespace Common {
+namespace Artworks {
     struct Keyword {
         Keyword():
             m_IsCorrect(true),

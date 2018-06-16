@@ -64,7 +64,7 @@ namespace Models {
         Q_INVOKABLE void resetModel();
 
     public:
-        void setArtworks(MetadataIO::ArtworksSnapshot &snapshot);
+        void setArtworks(Artworks::ArtworksSnapshot &snapshot);
         void resetArtworks();
 
     protected:
@@ -78,10 +78,10 @@ namespace Models {
 #else
     protected:
 #endif
-        const MetadataIO::ArtworksSnapshot &getArtworksSnapshot() const { return m_ArtworksSnapshot; }
+        const Artworks::ArtworksSnapshot &getArtworksSnapshot() const { return m_ArtworksSnapshot; }
 
     private:
-        MetadataIO::ArtworksSnapshot m_ArtworksSnapshot;
+        Artworks::ArtworksSnapshot m_ArtworksSnapshot;
         QFutureWatcher<QStringList> *m_ArchiveCreator;
         QAtomicInt m_ProcessedArtworksCount;
         volatile bool m_IsInProgress;

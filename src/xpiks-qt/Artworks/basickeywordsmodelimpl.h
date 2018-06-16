@@ -19,11 +19,10 @@
 #include <QVector>
 #include <QHash>
 #include <vector>
-#include "baseentity.h"
 #include "keyword.h"
-#include "flags.h"
+#include "../Common/flags.h"
 #include "imetadataoperator.h"
-#include "wordanalysisresult.h"
+#include "../Common/wordanalysisresult.h"
 
 namespace SpellCheck {
     class SpellCheckQueryItem;
@@ -32,7 +31,7 @@ namespace SpellCheck {
     class SpellCheckItemInfo;
 }
 
-namespace Common {
+namespace Artworks {
     class BasicKeywordsModel;
 
     class BasicKeywordsModelImpl

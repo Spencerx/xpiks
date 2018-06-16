@@ -101,7 +101,7 @@ namespace Models {
         emit percentChanged();
     }
 
-    void ZipArchiver::setArtworks(MetadataIO::ArtworksSnapshot &snapshot) {
+    void ZipArchiver::setArtworks(Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
         m_ArtworksSnapshot = std::move(snapshot);
         emit itemsCountChanged();
@@ -117,7 +117,7 @@ namespace Models {
         LOG_DEBUG << "#";
 
         auto &artworksListOld = getArtworksSnapshot();
-        MetadataIO::ArtworksSnapshot::Container artworksListNew;
+        Artworks::ArtworksSnapshot::Container artworksListNew;
 
         const size_t size = artworksListOld.size();
         for (size_t i = 0; i < size; ++i) {

@@ -39,7 +39,7 @@ namespace UndoRedo {
         Models::ArtItemsModel *artItemsModel = commandManager->getArtItemsModel();
         Models::ArtworksRepository *artworksRepository = commandManager->getArtworksRepository();
 
-        MetadataIO::ArtworksSnapshot artworksToImport;
+        Artworks::ArtworksSnapshot artworksToImport;
         artworksToImport.reserve(m_RemovedArtworksIndices.length());
         QStringList watchList;
         watchList.reserve(m_RemovedArtworksIndices.length());
@@ -74,7 +74,7 @@ namespace UndoRedo {
                 const QString &filepath = m_RemovedArtworksPathes[j + usedCount];
                 qint64 directoryID = 0;
                 if (artworksRepository->accountFile(filepath, directoryID, directoryFlags)) {
-                    Models::ArtworkMetadata *artwork = artItemsModel->createArtwork(filepath, directoryID);
+                    Artworks::ArtworkMetadata *artwork = artItemsModel->createArtwork(filepath, directoryID);
 
                     artItemsModel->insertArtwork(j + startRow, artwork);
                     artworksToImport.append(artwork);
@@ -82,7 +82,7 @@ namespace UndoRedo {
 
                     const QString &vectorPath = m_RemovedAttachedVectors.at(j);
                     if (!vectorPath.isEmpty()) {
-                        Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(artwork);
+                        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
                         if (image != NULL) {
                             image->attachVector(vectorPath);
                             attachedVectors++;

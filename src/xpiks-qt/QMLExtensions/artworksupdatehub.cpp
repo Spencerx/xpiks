@@ -48,7 +48,7 @@ namespace QMLExtensions {
         emit updateRequested();
     }
 
-    void ArtworksUpdateHub::updateArtwork(Models::ArtworkMetadata *artwork) {
+    void ArtworksUpdateHub::updateArtwork(Artworks::ArtworkMetadata *artwork) {
         Q_ASSERT(artwork != nullptr);
         this->updateArtwork(artwork->getItemID(), artwork->getLastKnownIndex(), m_StandardRoles);
     }

@@ -189,7 +189,7 @@ namespace Models {
         m_FtpCoordinator->cancelUpload();
     }
 
-    void ArtworkUploader::setArtworks(MetadataIO::ArtworksSnapshot &snapshot) {
+    void ArtworkUploader::setArtworks(Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
         m_ArtworksSnapshot = std::move(snapshot);
         emit itemsCountChanged();
@@ -201,7 +201,7 @@ namespace Models {
         emit itemsCountChanged();
     }
 
-    void ArtworkUploader::doUploadArtworks(const MetadataIO::ArtworksSnapshot &snapshot) {
+    void ArtworkUploader::doUploadArtworks(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_INFO << snapshot.size() << "artwork(s)";
         Q_ASSERT(m_FtpCoordinator != nullptr);
 
@@ -224,7 +224,7 @@ namespace Models {
         LOG_DEBUG << "#";
 
         auto &artworksListOld = getArtworksSnapshot();
-        MetadataIO::ArtworksSnapshot::Container artworksListNew;
+        Artworks::ArtworksSnapshot::Container artworksListNew;
 
         const size_t size = artworksListOld.size();
         for (size_t i = 0; i < size; ++i) {

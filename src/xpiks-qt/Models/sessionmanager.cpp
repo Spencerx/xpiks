@@ -26,7 +26,7 @@
 #define DIRECTORY_PATH_KEY "dirpath"
 
 namespace Models {    
-    std::shared_ptr<Helpers::JsonObjectMap> serializeSnapshot(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
+    std::shared_ptr<Helpers::JsonObjectMap> serializeSnapshot(std::vector<std::shared_ptr<Artworks::ArtworkSessionSnapshot> > &filesSnapshot,
                            const QStringList &directoriesSnapshot) {
         LOG_INFO << filesSnapshot.size() << "artwork(s)" << directoriesSnapshot.size() << "directory(ies)";
 
@@ -125,7 +125,7 @@ namespace Models {
         }
     }
 
-    bool SessionManager::save(std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &filesSnapshot,
+    bool SessionManager::save(std::vector<std::shared_ptr<Artworks::ArtworkSessionSnapshot> > &filesSnapshot,
                                     const QStringList &directoriesSnapshot) {
         auto sessionMap = serializeSnapshot(filesSnapshot, directoriesSnapshot);
         bool success = false;
@@ -172,7 +172,7 @@ namespace Models {
 
 #ifdef INTEGRATION_TESTS
     void SessionManager::clearSession() {
-        std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > emptyFiles;
+        std::vector<std::shared_ptr<Artworks::ArtworkSessionSnapshot> > emptyFiles;
         QStringList emptyDirs;
         bool cleared = save(emptyFiles, emptyDirs);
         Q_ASSERT(cleared);

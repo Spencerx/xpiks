@@ -48,7 +48,7 @@ namespace MetadataIO {
         void waitWorkerIdle();
 
     public:
-        void writeArtwork(Models::ArtworkMetadata *metadata);
+        void writeArtwork(Artworks::ArtworkMetadata *metadata);
         quint32 readArtworks(const ArtworksSnapshot &snapshot) const;
         void writeArtworks(const WeakArtworksSnapshot &artworks) const;
         void addArtworks(const WeakArtworksSnapshot &artworks) const;

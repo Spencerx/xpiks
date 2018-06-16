@@ -13,15 +13,15 @@
 #include "../Models/imageartwork.h"
 
 namespace Filesystem {
-    IndexedFilesCollection::IndexedFilesCollection(const MetadataIO::ArtworksSnapshot &snapshot,
+    IndexedFilesCollection::IndexedFilesCollection(const Artworks::ArtworksSnapshot &snapshot,
                                                    std::vector<int> &indices)
     {
         Q_ASSERT(snapshot.size() == indices.size());
         const size_t size = indices.size();
         m_Files.reserve(size);
         for (size_t i = 0; i < size; i++) {
-            Models::ArtworkMetadata *artwork = snapshot.get(i);
-            Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(artwork);
+            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             const bool isImage = image != nullptr;
             m_Files.emplace_back(artwork->getFilepath(),
                                  isImage ? ArtworkFileType::Image : ArtworkFileType::Video,

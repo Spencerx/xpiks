@@ -17,7 +17,7 @@
 #include "../Common/flags.h"
 #include "keyword.h"
 
-namespace Common {
+namespace Artworks {
     class BasicKeywordsModel;
 
     class IMetadataOperator {

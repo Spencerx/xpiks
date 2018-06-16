@@ -25,7 +25,7 @@ namespace Models {
     {
     }
 
-    void DeleteKeywordsViewModel::setArtworks(MetadataIO::WeakArtworksSnapshot &artworks) {
+    void DeleteKeywordsViewModel::setArtworks(Artworks::WeakArtworksSnapshot &artworks) {
         LOG_DEBUG << "#";
         ArtworksViewModel::setArtworks(artworks);
         recombineKeywords();
@@ -120,7 +120,7 @@ namespace Models {
 
         if (m_KeywordsToDeleteModel.getKeywordsCount() == 0) { return; }
 
-        MetadataIO::ArtworksSnapshot::Container rawSnapshot(getRawSnapshot());
+        Artworks::ArtworksSnapshot::Container rawSnapshot(getRawSnapshot());
         auto keywordsList = m_KeywordsToDeleteModel.getKeywords();
 
         if (!m_CaseSensitive) {

@@ -17,10 +17,10 @@
 #include "../Common/defines.h"
 
 namespace Helpers {
-    bool fitsSpecialKeywords(const QString &searchTerm, Models::ArtworkMetadata *metadata) {
+    bool fitsSpecialKeywords(const QString &searchTerm, Artworks::ArtworkMetadata *metadata) {
         bool hasMatch = false;
 
-        const Models::ImageArtwork *image = dynamic_cast<const Models::ImageArtwork*>(metadata);
+        const Artworks::ImageArtwork *image = dynamic_cast<const Artworks::ImageArtwork*>(metadata);
         if (image == NULL) { return hasMatch; }
 
         if (searchTerm == QLatin1String("x:modified")) {
@@ -38,7 +38,7 @@ namespace Helpers {
         return hasMatch;
     }
 
-    bool containsAnyPartsSearch(const QString &mainSearchTerm, Models::ArtworkMetadata *metadata, Common::SearchFlags searchFlags) {
+    bool containsAnyPartsSearch(const QString &mainSearchTerm, Artworks::ArtworkMetadata *metadata, Common::SearchFlags searchFlags) {
         bool hasMatch = false;
         QStringList searchTerms;
 
@@ -110,7 +110,7 @@ namespace Helpers {
         return hasMatch;
     }
 
-    bool containsAllPartsSearch(const QString &mainSearchTerm, Models::ArtworkMetadata *metadata, Common::SearchFlags searchFlags) {
+    bool containsAllPartsSearch(const QString &mainSearchTerm, Artworks::ArtworkMetadata *metadata, Common::SearchFlags searchFlags) {
         bool hasMatch = false;
         QStringList searchTerms;
 
@@ -183,7 +183,7 @@ namespace Helpers {
         return hasMatch;
     }
 
-    bool hasSearchMatch(const QString &searchTerm, Models::ArtworkMetadata *metadata, Common::SearchFlags searchFlags) {
+    bool hasSearchMatch(const QString &searchTerm, Artworks::ArtworkMetadata *metadata, Common::SearchFlags searchFlags) {
         bool hasMatch = false;
 
         const bool searchUsingAnd = Common::HasFlag(searchFlags, Common::SearchFlags::AllTerms);

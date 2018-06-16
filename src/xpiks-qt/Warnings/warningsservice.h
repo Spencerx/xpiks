@@ -26,7 +26,7 @@ namespace Warnings {
     class WarningsService:
         public QObject,
         public Common::BaseEntity,
-        public Common::IServiceBase<Models::ArtworkMetadata, Common::WarningsCheckFlags>
+        public Common::IServiceBase<Artworks::ArtworkMetadata, Common::WarningsCheckFlags>
     {
         Q_OBJECT
 
@@ -46,9 +46,9 @@ namespace Warnings {
         virtual bool isAvailable() const override { return true; }
         virtual bool isBusy() const override;
 
-        virtual void submitItem(Models::ArtworkMetadata *item) override;
-        virtual void submitItem(Models::ArtworkMetadata *item, Common::WarningsCheckFlags flags) override;
-        virtual void submitItems(const MetadataIO::WeakArtworksSnapshot &items) override;
+        virtual void submitItem(Artworks::ArtworkMetadata *item) override;
+        virtual void submitItem(Artworks::ArtworkMetadata *item, Common::WarningsCheckFlags flags) override;
+        virtual void submitItems(const Artworks::WeakArtworksSnapshot &items) override;
         virtual void setCommandManager(Commands::CommandManager *commandManager) override;
 
     private slots:

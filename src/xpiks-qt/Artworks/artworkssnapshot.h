@@ -13,14 +13,14 @@
 
 #include <QString>
 #include <deque>
-#include "../Models/artworkmetadata.h"
-#include "../Models/imageartwork.h"
+#include "artworkmetadata.h"
+#include "imageartwork.h"
 
-namespace MetadataIO {
+namespace Artworks {
     class ArtworkSessionSnapshot
     {
     public:
-        ArtworkSessionSnapshot(Models::ArtworkMetadata *metadata);
+        ArtworkSessionSnapshot(ArtworkMetadata *metadata);
 
     public:
         const QString &getArtworkFilePath() const { return m_ArtworkPath; }
@@ -33,7 +33,7 @@ namespace MetadataIO {
 
     class SessionSnapshot {
     public:
-        SessionSnapshot(const std::deque<Models::ArtworkMetadata *> &artworksList, const QStringList &fullDirectories);
+        SessionSnapshot(const std::deque<ArtworkMetadata *> &artworksList, const QStringList &fullDirectories);
 
         SessionSnapshot(SessionSnapshot &&other) {
             m_ArtworksSnapshot.swap(other.m_ArtworksSnapshot);
@@ -50,26 +50,26 @@ namespace MetadataIO {
         }
 
     public:
-        std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > &getSnapshot() { return m_ArtworksSnapshot; }
+        std::vector<std::shared_ptr<ArtworkSessionSnapshot> > &getSnapshot() { return m_ArtworksSnapshot; }
         const QStringList &getDirectoriesSnapshot() { return m_DirectoriesSnapshot; }
 
     private:
-        std::vector<std::shared_ptr<MetadataIO::ArtworkSessionSnapshot> > m_ArtworksSnapshot;
+        std::vector<std::shared_ptr<ArtworkSessionSnapshot> > m_ArtworksSnapshot;
         QStringList m_DirectoriesSnapshot;
     };
 
     // designed to be used only temporarily
     // artworks are not locked and therefore can be deleted
-    typedef std::vector<Models::ArtworkMetadata*> WeakArtworksSnapshot;
+    typedef std::vector<ArtworkMetadata*> WeakArtworksSnapshot;
 
     class ArtworksSnapshot {
     public:
-        typedef std::vector<std::shared_ptr<Models::ArtworkMetadataLocker> > Container;
+        typedef std::vector<std::shared_ptr<ArtworkMetadataLocker> > Container;
 
     public:
         ArtworksSnapshot() { }
         ArtworksSnapshot(const WeakArtworksSnapshot &artworks);
-        ArtworksSnapshot(const std::deque<Models::ArtworkMetadata *> &artworks);
+        ArtworksSnapshot(const std::deque<ArtworkMetadata *> &artworks);
         ArtworksSnapshot(Container &rawSnapshot);
         ArtworksSnapshot(ArtworksSnapshot &&other);
         ArtworksSnapshot &operator=(ArtworksSnapshot &&other);
@@ -84,17 +84,17 @@ namespace MetadataIO {
 
     public:
         void reserve(size_t size) { m_ArtworksSnapshot.reserve(size); m_RawArtworks.reserve((int)size); }
-        void append(Models::ArtworkMetadata *artwork) {
-            m_ArtworksSnapshot.emplace_back(new Models::ArtworkMetadataLocker(artwork));
+        void append(ArtworkMetadata *artwork) {
+            m_ArtworksSnapshot.emplace_back(new ArtworkMetadataLocker(artwork));
             m_RawArtworks.push_back(artwork);
         }
         void append(const WeakArtworksSnapshot &artworks);
-        void append(const std::deque<Models::ArtworkMetadata *> &artworks);
+        void append(const std::deque<ArtworkMetadata *> &artworks);
         void set(Container &rawSnapshot);
         void copy(const ArtworksSnapshot &other);
         void remove(size_t index);
-        Models::ArtworkMetadata *get(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i)->getArtworkMetadata(); }
-        const std::shared_ptr<Models::ArtworkMetadataLocker> &at(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i); }
+        ArtworkMetadata *get(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i)->getArtworkMetadata(); }
+        const std::shared_ptr<ArtworkMetadataLocker> &at(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i); }
         void clear();
         bool empty() const { Q_ASSERT(m_ArtworksSnapshot.size() == m_RawArtworks.size()); return m_ArtworksSnapshot.empty(); }
 

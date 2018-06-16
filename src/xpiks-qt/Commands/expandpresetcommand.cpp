@@ -29,10 +29,10 @@ namespace Commands {
 
         int indexToUpdate = -1;
         std::vector<UndoRedo::ArtworkMetadataBackup> artworksBackups;
-        MetadataIO::WeakArtworksSnapshot affectedArtworks;
+        Artworks::WeakArtworksSnapshot affectedArtworks;
 
         if (presetsModel->tryGetPreset(m_PresetID, keywords)) {
-            Models::ArtworkMetadata *artwork = m_ArtworkLocker.getArtworkMetadata();
+            Artworks::ArtworkMetadata *artwork = m_ArtworkLocker.getArtworkMetadata();
 
             indexToUpdate = (int)artwork->getLastKnownIndex();
             artworksBackups.emplace_back(artwork);

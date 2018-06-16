@@ -22,7 +22,7 @@ namespace libthmbnlr {
     struct VideoFileMetadata;
 }
 
-namespace Models {
+namespace Artworks {
     class VideoArtwork: public ArtworkMetadata
     {
         Q_OBJECT

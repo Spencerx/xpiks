@@ -84,7 +84,7 @@ namespace MetadataIO {
         m_MetadataIOWorker->waitIdle();
     }
 
-    void MetadataIOService::writeArtwork(Models::ArtworkMetadata *metadata) {
+    void MetadataIOService::writeArtwork(Artworks::ArtworkMetadata *metadata) {
         Q_ASSERT(metadata != nullptr);
         if (m_IsStopped) { return; }
         LOG_DEBUG << "Saving" << metadata->getItemID();
@@ -104,7 +104,7 @@ namespace MetadataIO {
         auto &items = snapshot.getRawData();
 
         for (auto &item: items) {
-            Models::ArtworkMetadata *artwork = item->getArtworkMetadata();
+            Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
             jobs.emplace_back(new MetadataReadWriteTask(artwork, MetadataReadWriteTask::Read));
         }
 
@@ -123,7 +123,7 @@ namespace MetadataIO {
 
         size_t size = artworks.size();
         for (size_t i = 0; i < size; ++i) {
-            Models::ArtworkMetadata *artwork = artworks.at(i);
+            Artworks::ArtworkMetadata *artwork = artworks.at(i);
             jobs.emplace_back(new MetadataReadWriteTask(artwork, MetadataReadWriteTask::Write));
         }
 
@@ -139,7 +139,7 @@ namespace MetadataIO {
 
         size_t size = artworks.size();
         for (size_t i = 0; i < size; ++i) {
-            Models::ArtworkMetadata *artwork = artworks.at(i);
+            Artworks::ArtworkMetadata *artwork = artworks.at(i);
             jobs.emplace_back(new MetadataReadWriteTask(artwork, MetadataReadWriteTask::Add));
         }
 

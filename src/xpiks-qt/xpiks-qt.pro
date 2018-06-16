@@ -33,7 +33,6 @@ SOURCES += main.cpp \
     Helpers/stringhelper.cpp \
     Commands/commandmanager.cpp \
     UndoRedo/undoredomanager.cpp \
-    Commands/removeartworkscommand.cpp \
     UndoRedo/removeartworksitem.cpp \
     UndoRedo/artworkmetadatabackup.cpp \
     UndoRedo/modifyartworkshistoryitem.cpp \
@@ -48,7 +47,6 @@ SOURCES += main.cpp \
     Helpers/loggingworker.cpp \
     Helpers/logger.cpp \
     Models/logsmodel.cpp \
-    Models/filteredartitemsproxymodel.cpp \
     Helpers/helpersqmlwrapper.cpp \
     Models/recentdirectoriesmodel.cpp \
     Connectivity/updateservice.cpp \
@@ -204,7 +202,19 @@ SOURCES += main.cpp \
     Helpers/indicesranges.cpp \
     Commands/removefilescommand.cpp \
     Filesystem/indexedfilescollection.cpp \
-    Models/artworkslistmodel.cpp
+    Models/artworkslistmodel.cpp \
+    Commands/removeselectedfilescommand.cpp \
+    Commands/removedirectorycommand.cpp \
+    Models/filteredartworkslistmodel.cpp \
+    Artworks/artworkssnapshot.cpp \
+    Artworks/artworkmetadata.cpp \
+    Artworks/imageartwork.cpp \
+    Artworks/videoartwork.cpp \
+    Artworks/artworkslistmodel.cpp \
+    Models/artworkslistmodel.cpp \
+    Artworks/basickeywordsmodel.cpp \
+    Artworks/basickeywordsmodelimpl.cpp \
+    Artworks/basicmetadatamodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -252,7 +262,6 @@ HEADERS += \
     Commands/commandmanager.h \
     UndoRedo/historyitem.h \
     UndoRedo/undoredomanager.h \
-    Commands/removeartworkscommand.h \
     UndoRedo/removeartworksitem.h \
     UndoRedo/artworkmetadatabackup.h \
     UndoRedo/modifyartworkshistoryitem.h \
@@ -267,7 +276,6 @@ HEADERS += \
     Models/settingsmodel.h \
     Helpers/loggingworker.h \
     Common/defines.h \
-    Models/filteredartitemsproxymodel.h \
     Common/flags.h \
     Helpers/helpersqmlwrapper.h \
     Models/recentdirectoriesmodel.h \
@@ -298,8 +306,6 @@ HEADERS += \
     Plugins/pluginactionsmodel.h \
     Plugins/uiprovider.h \
     Plugins/iuiprovider.h \
-    Common/ibasicartwork.h \
-    Common/iartworkssource.h \
     Warnings/warningsservice.h \
     Common/iservicebase.h \
     Helpers/loghighlighter.h \
@@ -488,7 +494,23 @@ HEADERS += \
     Helpers/indicesranges.h \
     Commands/removefilescommand.h \
     Filesystem/indexedfilescollection.h \
-    Models/artworkslistmodel.h
+    Models/artworkslistmodel.h \
+    Commands/removeselectedfilescommand.h \
+    Commands/removedirectorycommand.h \
+    Models/filteredartworkslistmodel.h \
+    Artworks/artworkssnapshot.h \
+    Artworks/artworkmetadata.h \
+    Artworks/imageartwork.h \
+    Artworks/videoartwork.h \
+    Artworks/iartworkssource.h \
+    Artworks/artworkelement.h \
+    Artworks/artworkslistmodel.h \
+    Models/artworkslistmodel.h \
+    Artworks/basickeywordsmodel.h \
+    Artworks/basickeywordsmodelimpl.h \
+    Artworks/basicmetadatamodel.h \
+    Artworks/imetadataoperator.h \
+    Artworks/keyword.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

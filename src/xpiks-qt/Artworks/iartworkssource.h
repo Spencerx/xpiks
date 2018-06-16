@@ -8,18 +8,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef FILTERHELPERS_H
-#define FILTERHELPERS_H
+#ifndef ARTWORKSSOURCE_H
+#define ARTWORKSSOURCE_H
 
-#include <QString>
-#include "../Common/flags.h"
+#include "artworkssnapshot.h"
 
-namespace Models {
-    class ArtworkMetadata;
-}
+namespace Artworks {
+    class IArtworksSource
+    {
+    public:
+        virtual ~IArtworksSource() {}
+        virtual Artworks::WeakArtworksSnapshot getArtworks() = 0;
+    };}
 
-namespace Helpers {
-    bool hasSearchMatch(const QString &searchTerm, Artworks::ArtworkMetadata *metadata, Common::SearchFlags searchFlags);
-}
-
-#endif // FILTERHELPERS_H
+#endif // ARTWORKSSOURCE_H

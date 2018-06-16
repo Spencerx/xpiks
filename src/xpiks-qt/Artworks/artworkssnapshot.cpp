@@ -10,25 +10,25 @@
 
 #include "artworkssnapshot.h"
 
-namespace MetadataIO {
-    ArtworkSessionSnapshot::ArtworkSessionSnapshot(Models::ArtworkMetadata *metadata) {
+namespace Artworks {
+    ArtworkSessionSnapshot::ArtworkSessionSnapshot(ArtworkMetadata *metadata) {
         Q_ASSERT(metadata != nullptr);
         m_ArtworkPath = metadata->getFilepath();
 
-        Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(metadata);
+        ImageArtwork *image = dynamic_cast<ImageArtwork*>(metadata);
         if (image != nullptr && image->hasVectorAttached()){
             m_VectorPath = image->getAttachedVectorPath();
         }
     }
 
-    SessionSnapshot::SessionSnapshot(const std::deque<Models::ArtworkMetadata *> &artworksList, const QStringList &fullDirectories):
+    SessionSnapshot::SessionSnapshot(const std::deque<ArtworkMetadata *> &artworksList, const QStringList &fullDirectories):
         m_DirectoriesSnapshot(fullDirectories)
     {
         LOG_DEBUG << "Creating snapshot of" << artworksList.size() << "artwork(s) and" << m_DirectoriesSnapshot.size() << "full directory(ies)";
 
         m_ArtworksSnapshot.reserve(artworksList.size());
         for (const auto &artwork: artworksList) {
-            m_ArtworksSnapshot.emplace_back(new MetadataIO::ArtworkSessionSnapshot(artwork));
+            m_ArtworksSnapshot.emplace_back(new ArtworkSessionSnapshot(artwork));
         }
     }
 
@@ -36,7 +36,7 @@ namespace MetadataIO {
         append(artworks);
     }
 
-    ArtworksSnapshot::ArtworksSnapshot(const std::deque<Models::ArtworkMetadata *> &artworks) {
+    ArtworksSnapshot::ArtworksSnapshot(const std::deque<ArtworkMetadata *> &artworks) {
        append(artworks);
     }
 
@@ -82,16 +82,16 @@ namespace MetadataIO {
         LOG_DEBUG << "Appending snapshot of" << artworks.size() << "artwork(s)";
         m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + artworks.size());
         for (auto &item: artworks) {
-            m_ArtworksSnapshot.emplace_back(new Models::ArtworkMetadataLocker(item));
+            m_ArtworksSnapshot.emplace_back(new ArtworkMetadataLocker(item));
         }
     }
 
-    void ArtworksSnapshot::append(const std::deque<Models::ArtworkMetadata *> &artworks) {
+    void ArtworksSnapshot::append(const std::deque<ArtworkMetadata *> &artworks) {
         LOG_DEBUG << "Appending snapshot of" << artworks.size() << "artwork(s)";
         m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + artworks.size());
         m_RawArtworks.reserve(m_RawArtworks.size() + (int)artworks.size());
         for (auto &item: artworks) {
-            m_ArtworksSnapshot.emplace_back(new Models::ArtworkMetadataLocker(item));
+            m_ArtworksSnapshot.emplace_back(new ArtworkMetadataLocker(item));
             m_RawArtworks.push_back(item);
         }
     }

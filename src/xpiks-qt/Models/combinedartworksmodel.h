@@ -53,7 +53,7 @@ namespace Models {
         virtual ~CombinedArtworksModel() {}
 
     public:
-        virtual void setArtworks(MetadataIO::WeakArtworksSnapshot &artworks) override;
+        virtual void setArtworks(Artworks::WeakArtworksSnapshot &artworks) override;
 
     private:
         enum CombinedEditModifiedFlags {

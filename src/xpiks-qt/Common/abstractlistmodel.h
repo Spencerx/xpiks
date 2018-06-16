@@ -15,10 +15,10 @@
 
 #include <QVector>
 #include <QList>
-#include "../Helpers/indiceshelper.h"
+#include "../Helpers/indicesranges.h"
 #include "../Common/logging.h"
 
-#define RANGES_LENGTH_FOR_RESET 40
+#define RANGES_LENGTH_FOR_RESET 20
 
 namespace Common {
     class AbstractListModel : public QAbstractListModel {
@@ -27,39 +27,12 @@ namespace Common {
         AbstractListModel(QObject *parent = 0) : QAbstractListModel(parent) {}
         virtual ~AbstractListModel() {}
 
-    public:
-        virtual void removeItemsFromRanges(const QVector<QPair<int, int> > &ranges) {
-            int rangesLength = Helpers::getRangesLength(ranges);
-            LOG_INFO << "Ranges length:" << rangesLength;
-            doRemoveItemsFromRanges(ranges, rangesLength);
-        }
-
     protected:
-        void updateItemsInRanges(const QVector<QPair<int, int> > &ranges, const QVector<int> &roles) {
-            int rangesCount = ranges.count();
-            for (int i = 0; i < rangesCount; ++i) {
-                int startRow = ranges[i].first;
-                int endRow = ranges[i].second;
-
-                QModelIndex topLeft = index(startRow);
-                QModelIndex bottomRight = index(endRow);
-                emit dataChanged(topLeft, bottomRight, roles);
-            }
-        }
-
-        virtual void removeInnerItem(int row) = 0;
-
-        virtual int getRangesLengthForReset() const { return RANGES_LENGTH_FOR_RESET; }
-
-        virtual void removeInnerItemRange(int startRow, int endRow) {
-            for (int row = endRow; row >= startRow; --row) { removeInnerItem(row); }
-        }
-
-        void doRemoveItemsFromRanges(const QVector<QPair<int, int> > &ranges, int rangesLength) {
+        virtual void removeItems(const Helpers::IndicesRanges &ranges) {
             const int rangesCount = ranges.count();
             const int rangesLengthForReset = getRangesLengthForReset();
 
-            const bool willResetModel = rangesLength >= rangesLengthForReset;
+            const bool willResetModel = ranges.length() >= rangesLengthForReset;
 
             if (willResetModel) {
                 beginResetModel();
@@ -85,6 +58,23 @@ namespace Common {
             if (willResetModel) {
                 endResetModel();
             }
+        }
+
+    protected:
+        void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles) {
+            for (auto &r: ranges) {
+                QModelIndex topLeft = index(r.first);
+                QModelIndex bottomRight = index(r.second);
+                emit dataChanged(topLeft, bottomRight, roles);
+            }
+        }
+
+        virtual void removeInnerItem(int row) = 0;
+
+        virtual int getRangesLengthForReset() const { return RANGES_LENGTH_FOR_RESET; }
+
+        virtual void removeInnerItemRange(int startRow, int endRow) {
+            for (int row = endRow; row >= startRow; --row) { removeInnerItem(row); }
         }
     };
 }

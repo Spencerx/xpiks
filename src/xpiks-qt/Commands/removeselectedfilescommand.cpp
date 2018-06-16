@@ -8,18 +8,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef FILTERHELPERS_H
-#define FILTERHELPERS_H
+#include "removeselectedfilescommand.h"
 
-#include <QString>
-#include "../Common/flags.h"
+namespace Commands {
+    RemoveSelectedFilesCommand::RemoveSelectedFilesCommand()
+    {
 
-namespace Models {
-    class ArtworkMetadata;
+    }
 }
-
-namespace Helpers {
-    bool hasSearchMatch(const QString &searchTerm, Artworks::ArtworkMetadata *metadata, Common::SearchFlags searchFlags);
-}
-
-#endif // FILTERHELPERS_H

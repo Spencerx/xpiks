@@ -26,7 +26,7 @@ namespace Commands {
     class ExpandPresetCommand : public CommandBase
     {
     public:
-        ExpandPresetCommand(Models::ArtworkMetadata *artwork,
+        ExpandPresetCommand(Artworks::ArtworkMetadata *artwork,
                             KeywordsPresets::ID_t presetID, int keywordIndex = -1):
             CommandBase(CommandType::ExpandPreset),
             m_ArtworkLocker(artwork),
@@ -40,7 +40,7 @@ namespace Commands {
         virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
 
     private:
-        Models::ArtworkMetadataLocker m_ArtworkLocker;
+        Artworks::ArtworkMetadataLocker m_ArtworkLocker;
         KeywordsPresets::ID_t m_PresetID;
         int m_KeywordIndex;
     };

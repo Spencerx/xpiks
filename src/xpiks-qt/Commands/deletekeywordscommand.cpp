@@ -14,7 +14,7 @@
 #include "../Common/defines.h"
 
 namespace Commands {
-    DeleteKeywordsCommand::DeleteKeywordsCommand(MetadataIO::ArtworksSnapshot::Container &rawSnapshot,
+    DeleteKeywordsCommand::DeleteKeywordsCommand(Artworks::ArtworksSnapshot::Container &rawSnapshot,
                                                  const QSet<QString> &keywordsSet, bool caseSensitive):
         CommandBase(CommandType::DeleteKeywords),
         m_RawSnapshot(std::move(rawSnapshot)),
@@ -28,7 +28,7 @@ namespace Commands {
         LOG_INFO << "Case sensitive:" << m_CaseSensitive;
         QVector<int> indicesToUpdate;
         std::vector<UndoRedo::ArtworkMetadataBackup> artworksBackups;
-        MetadataIO::WeakArtworksSnapshot affectedItems;
+        Artworks::WeakArtworksSnapshot affectedItems;
 
         CommandManager *commandManager = (CommandManager*)commandManagerInterface;
         auto *xpiks = commandManager->getDelegator();
@@ -40,7 +40,7 @@ namespace Commands {
 
         for (size_t i = 0; i < size; ++i) {
             auto &locker = m_RawSnapshot.at(i);
-            Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
 
             artworksBackups.emplace_back(artwork);
 

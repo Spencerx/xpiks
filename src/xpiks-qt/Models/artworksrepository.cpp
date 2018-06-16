@@ -16,7 +16,7 @@
 #include "../Common/defines.h"
 #include "../Helpers/indiceshelper.h"
 #include "../Commands/commandmanager.h"
-#include "../Models/filteredartitemsproxymodel.h"
+#include "../Models/filteredartworkslistmodel.h"
 
 namespace Models {
     ArtworksRepository::ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent) :
@@ -237,7 +237,7 @@ namespace Models {
         m_LastUnavailableFilesCount = 0;
     }
 
-    void ArtworksRepository::addFiles(const MetadataIO::ArtworksSnapshot &snapshot) {
+    void ArtworksRepository::addFiles(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << snapshot.size() << "item(s)";
         if (snapshot.empty()) { return; }
 
@@ -246,7 +246,7 @@ namespace Models {
         for (auto *artwork: snapshot.getWeakSnapshot()) {
             filepaths.append(artwork->getFilePath());
 
-            Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork *>(artwork);
+            Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork *>(artwork);
             if ((imageArtwork != nullptr) && imageArtwork->hasVectorAttached()) {
                 filepaths.append(imageArtwork->getAttachedVectorPath());
             }
@@ -258,7 +258,7 @@ namespace Models {
         emit refreshRequired();
     }
 
-    std::tuple<QSet<qint64>, bool> ArtworksRepository::removeFiles(const MetadataIO::WeakArtworksSnapshot &snapshot) {
+    std::tuple<QSet<qint64>, bool> ArtworksRepository::removeFiles(const Artworks::WeakArtworksSnapshot &snapshot) {
         QStringList filepaths;
         QStringList removedAttachedVectors;
         filepaths.reserve(snapshot.size());
@@ -267,7 +267,7 @@ namespace Models {
         for (auto *artwork: snapshot) {
             filepaths.append(artwork->getFilePath());
 
-            Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(artwork);
+            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
 
             if (image != NULL && image->hasVectorAttached()) {
                 removedAttachedVectors.append(image->getAttachedVectorPath());
@@ -290,7 +290,7 @@ namespace Models {
         return std::make_tuple(removedSelectedDirectoryIds, unselectAll);
     }
 
-    void ArtworksRepository::cleanupOldBackups(const MetadataIO::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService) {
+    void ArtworksRepository::cleanupOldBackups(const Artworks::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService) {
         QString directoryPath;
         for (auto *artwork: snapshot.getWeakSnapshot()) {
             if (tryGetDirectoryPath(artwork->getDirectoryID(), directoryPath)) {

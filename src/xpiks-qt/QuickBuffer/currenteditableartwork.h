@@ -27,7 +27,7 @@ namespace QuickBuffer {
     class CurrentEditableArtwork : public ICurrentEditable
     {
     public:
-        CurrentEditableArtwork(Models::ArtworkMetadata *artworkMetadata, size_t originalIndex, Commands::CommandManager * const commandManager);
+        CurrentEditableArtwork(Artworks::ArtworkMetadata *artworkMetadata, size_t originalIndex, Commands::CommandManager * const commandManager);
         virtual ~CurrentEditableArtwork();
 
     public:
@@ -59,7 +59,7 @@ namespace QuickBuffer {
 
     private:
         Commands::CommandManager * const m_CommandManager;
-        Models::ArtworkMetadata *m_ArtworkMetadata;
+        Artworks::ArtworkMetadata *m_ArtworkMetadata;
         size_t m_OriginalIndex;
     };
 }

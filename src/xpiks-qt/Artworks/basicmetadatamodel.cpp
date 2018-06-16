@@ -17,12 +17,11 @@
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../Helpers/keywordshelpers.h"
 #include "../Helpers/stringhelper.h"
-#include "flags.h"
 #include "../Common/defines.h"
 #include "../Helpers/indiceshelper.h"
 #include "../Common/flags.h"
 
-namespace Common {
+namespace Artworks {
     BasicMetadataModel::BasicMetadataModel(Hold &hold, QObject *parent):
         BasicKeywordsModel(hold, parent),
         m_SpellCheckInfo(NULL)

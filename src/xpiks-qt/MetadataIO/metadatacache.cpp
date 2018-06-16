@@ -120,7 +120,7 @@ namespace MetadataIO {
 
 #endif
 
-    bool MetadataCache::read(Models::ArtworkMetadata *artwork, CachedArtwork &cachedArtwork) {
+    bool MetadataCache::read(Artworks::ArtworkMetadata *artwork, CachedArtwork &cachedArtwork) {
         Q_ASSERT(artwork != nullptr);
         if (artwork == nullptr) { return false; }
         if (!m_DbCacheIndex) { return false; }
@@ -152,7 +152,7 @@ namespace MetadataIO {
         return found;
     }
 
-    void MetadataCache::save(Models::ArtworkMetadata *metadata, bool overwrite) {
+    void MetadataCache::save(Artworks::ArtworkMetadata *metadata, bool overwrite) {
         Q_ASSERT(metadata != nullptr);
         if (metadata == nullptr) { return; }
         if (!m_DbCacheIndex) { return; }

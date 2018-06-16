@@ -56,7 +56,7 @@ std::shared_ptr<Commands::ICommandResult> Commands::CombinedEditCommand::execute
     LOG_INFO << "flags =" << combinedFlagsToString(m_EditFlags) << ", artworks count =" << m_RawSnapshot.size();
     QVector<int> indicesToUpdate;
     std::vector<UndoRedo::ArtworkMetadataBackup> artworksBackups;
-    MetadataIO::WeakArtworksSnapshot itemsToSave, affectedItems;
+    Artworks::WeakArtworksSnapshot itemsToSave, affectedItems;
 
     CommandManager *commandManager = (CommandManager*)commandManagerInterface;
     auto *xpiks = commandManager->getDelegator();
@@ -69,7 +69,7 @@ std::shared_ptr<Commands::ICommandResult> Commands::CombinedEditCommand::execute
 
     for (size_t i = 0; i < size; ++i) {
         auto &locker = m_RawSnapshot.at(i);
-        Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+        Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
 
         artworksBackups.emplace_back(artwork);
         indicesToUpdate.append((int)artwork->getLastKnownIndex());
@@ -93,7 +93,7 @@ std::shared_ptr<Commands::ICommandResult> Commands::CombinedEditCommand::execute
     return result;
 }
 
-void Commands::CombinedEditCommand::setKeywords(Models::ArtworkMetadata *metadata) const {
+void Commands::CombinedEditCommand::setKeywords(Artworks::ArtworkMetadata *metadata) const {
     if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditKeywords)) {
         if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::AppendKeywords)) {
             metadata->appendKeywords(m_Keywords);
@@ -108,7 +108,7 @@ void Commands::CombinedEditCommand::setKeywords(Models::ArtworkMetadata *metadat
     }
 }
 
-void Commands::CombinedEditCommand::setDescription(Models::ArtworkMetadata *metadata) const {
+void Commands::CombinedEditCommand::setDescription(Artworks::ArtworkMetadata *metadata) const {
     if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditDescription)) {
         if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::Clear)) {
             metadata->setDescription("");
@@ -118,7 +118,7 @@ void Commands::CombinedEditCommand::setDescription(Models::ArtworkMetadata *meta
     }
 }
 
-void Commands::CombinedEditCommand::setTitle(Models::ArtworkMetadata *metadata) const {
+void Commands::CombinedEditCommand::setTitle(Artworks::ArtworkMetadata *metadata) const {
     if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditTitle)) {
         if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::Clear)) {
             metadata->setTitle("");

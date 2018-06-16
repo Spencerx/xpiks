@@ -9,17 +9,17 @@
  */
 
 #include "artworkmetadatabackup.h"
-#include "../Models/artworkmetadata.h"
-#include "../Models/imageartwork.h"
+#include "../Artworks/artworkmetadata.h"
+#include "../Artworks/imageartwork.h"
 #include "../Common/defines.h"
 
-UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(Models::ArtworkMetadata *metadata) {
-    m_Description = metadata->getDescription();
-    m_Title = metadata->getTitle();
-    m_KeywordsList = metadata->getKeywords();
-    m_IsModified = metadata->isModified();
+UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(Artworks::ArtworkMetadata *artwork) {
+    m_Description = artwork->getDescription();
+    m_Title = artwork->getTitle();
+    m_KeywordsList = artwork->getKeywords();
+    m_IsModified = artwork->isModified();
 
-    Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork *>(metadata);
+    Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
     if (image != NULL && image->hasVectorAttached()) {
         m_AttachedVector = image->getAttachedVectorPath();
     }
@@ -34,15 +34,15 @@ UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(const UndoRedo::ArtworkMe
 {
 }
 
-void UndoRedo::ArtworkMetadataBackup::restore(Models::ArtworkMetadata *metadata) const {
-    metadata->setDescription(m_Description);
-    metadata->setTitle(m_Title);
-    metadata->setKeywords(m_KeywordsList);
-    if (m_IsModified) { metadata->setModified(); }
-    else { metadata->resetModified(); }
+void UndoRedo::ArtworkMetadataBackup::restore(Artworks::ArtworkMetadata *artwork) const {
+    artwork->setDescription(m_Description);
+    artwork->setTitle(m_Title);
+    artwork->setKeywords(m_KeywordsList);
+    if (m_IsModified) { artwork->setModified(); }
+    else { artwork->resetModified(); }
 
     if (!m_AttachedVector.isEmpty()) {
-        Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork *>(metadata);
+        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
         if (image != NULL) {
             image->attachVector(m_AttachedVector);
         } else {

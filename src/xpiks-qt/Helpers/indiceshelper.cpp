@@ -44,8 +44,8 @@ namespace Helpers {
     }
 
     template
-    int splitIntoChunks<Models::ArtworkMetadata*>(const QVector<Models::ArtworkMetadata*> &items,
-    int chunksCount, QVector<QVector<Models::ArtworkMetadata*> > &chunks);
+    int splitIntoChunks<Artworks::ArtworkMetadata*>(const QVector<Artworks::ArtworkMetadata*> &items,
+    int chunksCount, QVector<QVector<Artworks::ArtworkMetadata*> > &chunks);
 
 #ifdef CORE_TESTS
     template

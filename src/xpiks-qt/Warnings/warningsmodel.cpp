@@ -21,12 +21,12 @@
 
 namespace Warnings {
     void describeWarningFlags(Common::WarningFlags warningsFlags,
-                              Models::ArtworkMetadata *metadata,
+                              Artworks::ArtworkMetadata *metadata,
                               const WarningsSettingsModel *settingsModel,
                               QStringList &descriptions) {
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::SizeLessThanMinimum)) {
-            Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(metadata);
+            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(metadata);
 #ifdef QT_DEBUG
             Q_ASSERT(image != NULL);
             {
@@ -170,7 +170,7 @@ namespace Warnings {
             Q_ASSERT(artItemsModel != NULL);
             QModelIndex originalIndex = mapToSource(this->index(index, 0));
             int row = originalIndex.row();
-            Models::ArtworkMetadata *metadata = artItemsModel->getArtwork(row);
+            Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(row);
 
             if (metadata != NULL) {
                 Common::WarningFlags warningsFlags = metadata->getWarningsFlags();
@@ -237,7 +237,7 @@ namespace Warnings {
         QAbstractItemModel *sourceItemModel = sourceModel();
         Models::ArtItemsModel *artItemsModel = dynamic_cast<Models::ArtItemsModel *>(sourceItemModel);
         Q_ASSERT(artItemsModel != NULL);
-        Models::ArtworkMetadata *metadata = artItemsModel->getArtwork(sourceRow);
+        Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(sourceRow);
 
         bool rowIsOk = false;
 

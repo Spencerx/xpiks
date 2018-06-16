@@ -13,7 +13,7 @@
 #include "artworksrepository.h"
 #include "../Helpers/artworkshelpers.h"
 
-namespace Models {
+namespace Artworks {
     ArtworksListModel::ArtworksListModel(ArtworksRepository &repository, QObject *parent):
         QAbstractListModel(parent),
         m_ArtworksRepository(repository),
@@ -125,7 +125,7 @@ namespace Models {
     ArtworksListModel::ArtworksAddResult ArtworksListModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                                                      Common::AddFilesFlags flags) {
         const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
-        MetadataIO::ArtworksSnapshot snapshot;
+        Artworks::ArtworksSnapshot snapshot;
         snapshot.reserve(newFilesCount);
         qint64 directoryID = 0;
         const int count = getArtworksCount();
@@ -174,7 +174,7 @@ namespace Models {
         emit modifiedArtworksCountChanged();
         emit artworksChanged(true);
 
-        MetadataIO::WeakArtworksSnapshot snapshot = selectArtworks(
+        Artworks::WeakArtworksSnapshot snapshot = selectArtworks(
                     [](ArtworkMetadata *artwork) { return artwork->isRemoved(); },
                 [](ArtworkMetadata *artwork, size_t) { return artwork; });
 
@@ -243,13 +243,16 @@ namespace Models {
         }
     }
 
-    MetadataIO::ArtworksSnapshot ArtworksListModel::deleteItems(const Helpers::IndicesRanges &ranges) {
+    Artworks::ArtworksSnapshot ArtworksListModel::deleteItems(const Helpers::IndicesRanges &ranges) {
         LOG_DEBUG << ranges.size() << "range(s)";
         QModelIndex dummy;
         const bool willReset = ranges.length() > 20;
         if (willReset) { emit beginResetModel(); }
+        auto &rangesArray = ranges.getRanges();
+        const int size = (int)rangesArray.size();
 
-        for (auto &r: ranges.getRanges()) {
+        for (int i = size - 1; i >= 0; i--) {
+            auto &r = rangesArray.at(i);
             Q_ASSERT(r.first >= 0 && r.first < getArtworksCount());
             Q_ASSERT(r.second >= 0 && r.second < getArtworksCount());
 
@@ -279,7 +282,7 @@ namespace Models {
     }
 
     int ArtworksListModel::attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
-                                         const MetadataIO::ArtworksSnapshot &snapshot,
+                                         const Artworks::ArtworksSnapshot &snapshot,
                                          int initialCount,
                                          bool autoAttach) {
         QHash<QString, QHash<QString, QString> > vectors;

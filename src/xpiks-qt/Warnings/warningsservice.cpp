@@ -120,7 +120,7 @@ namespace Warnings {
         return isBusy;
     }
 
-    void WarningsService::submitItem(Models::ArtworkMetadata *item) {
+    void WarningsService::submitItem(Artworks::ArtworkMetadata *item) {
         if (m_WarningsWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
@@ -130,7 +130,7 @@ namespace Warnings {
         m_WarningsWorker->submitItem(wItem);
     }
 
-    void WarningsService::submitItem(Models::ArtworkMetadata *item, Common::WarningsCheckFlags flags) {
+    void WarningsService::submitItem(Artworks::ArtworkMetadata *item, Common::WarningsCheckFlags flags) {
         if (m_WarningsWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
@@ -140,7 +140,7 @@ namespace Warnings {
         m_WarningsWorker->submitItem(wItem);
     }
 
-    void WarningsService::submitItems(const MetadataIO::WeakArtworksSnapshot &items) {
+    void WarningsService::submitItems(const Artworks::WeakArtworksSnapshot &items) {
         if (m_WarningsWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
@@ -150,7 +150,7 @@ namespace Warnings {
         itemsToSubmit.reserve(size);
 
         for (size_t i = 0; i < size; ++i) {
-            Models::ArtworkMetadata *item = items.at(i);
+            Artworks::ArtworkMetadata *item = items.at(i);
             itemsToSubmit.emplace_back(new WarningsItem(item));
         }
 

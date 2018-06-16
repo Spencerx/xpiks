@@ -59,7 +59,7 @@ namespace QMLExtensions {
         }
     }
 
-    void VideoCachingService::generateThumbnails(const MetadataIO::ArtworksSnapshot &snapshot) {
+    void VideoCachingService::generateThumbnails(const Artworks::ArtworksSnapshot &snapshot) {
         Q_ASSERT(m_CachingWorker != nullptr);
         LOG_INFO << snapshot.size() << "artworks";
 
@@ -77,7 +77,7 @@ namespace QMLExtensions {
 
         for (size_t i = 0; i < size; i++) {
             auto *artwork = snapshot.get(i);
-            Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork *>(artwork);
+            Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork *>(artwork);
             if (videoArtwork != nullptr) {
                 const bool quickThumbnail = true, dontRecache = false;
                 requests.emplace_back(new VideoCacheRequest(videoArtwork,
@@ -91,7 +91,7 @@ namespace QMLExtensions {
         m_CachingWorker->submitSeparator();
     }
 
-    void VideoCachingService::generateThumbnail(Models::VideoArtwork *videoArtwork) {
+    void VideoCachingService::generateThumbnail(Artworks::VideoArtwork *videoArtwork) {
         Q_ASSERT(videoArtwork != nullptr);
         if (videoArtwork == nullptr) { return; }
         LOG_DEBUG << "#" << videoArtwork->getItemID();

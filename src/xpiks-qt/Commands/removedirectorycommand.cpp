@@ -8,20 +8,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef IARTWORKSSOURCE
-#define IARTWORKSSOURCE
+#include "removedirectorycommand.h"
 
-#include "ibasicartwork.h"
+namespace Commands {
+    RemoveDirectoryCommand::RemoveDirectoryCommand()
+    {
 
-namespace Common {
-    class IArtworksSource {
-    public:
-        virtual ~IArtworksSource() {}
-
-        virtual IBasicArtwork *getBasicArtwork(int index) const = 0;
-        virtual int getArtworksCount() const = 0;
-    };
+    }
 }
-
-#endif // IARTWORKSSOURCE
-

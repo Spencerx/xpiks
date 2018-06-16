@@ -35,7 +35,7 @@ namespace SpellCheck {
             Q_ASSERT(basicModel != nullptr);
         }
 
-        MetadataDuplicatesItem(Models::ArtworkMetadata *artwork):
+        MetadataDuplicatesItem(Artworks::ArtworkMetadata *artwork):
             m_BasicModel(nullptr),
             m_ArtworkMetadata(artwork)
         {
@@ -44,7 +44,7 @@ namespace SpellCheck {
         }
 
         Common::BasicMetadataModel *m_BasicModel;
-        Models::ArtworkMetadata *m_ArtworkMetadata;
+        Artworks::ArtworkMetadata *m_ArtworkMetadata;
     };
 
     class DuplicatesReviewModel: public QAbstractListModel
@@ -66,7 +66,7 @@ namespace SpellCheck {
 
     public:
         void setupModel(Common::BasicMetadataModel *basicModel);
-        void setupModel(const std::vector<Models::ArtworkMetadata *> &items);
+        void setupModel(const std::vector<Artworks::ArtworkMetadata *> &items);
         void clearDuplicates();
 
     public:

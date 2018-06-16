@@ -16,13 +16,13 @@
 #include <deque>
 #include <vector>
 #include "../QMLExtensions/artworkupdaterequest.h"
-#include "artworkmetadata.h"
+#include "../Artworks/artworkmetadata.h"
 #include "../Helpers/ifilenotavailablemodel.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
 #include "../Filesystem/ifilescollection.h"
 #include "../Helpers/indicesranges.h"
 
-namespace Models {
+namespace Artworks {
     class ArtworksRepository;
 
     class ArtworksListModel:
@@ -63,7 +63,7 @@ namespace Models {
         };
 
         struct ArtworksAddResult {
-            MetadataIO::ArtworksSnapshot m_Snapshot;
+            Artworks::ArtworksSnapshot m_Snapshot;
             int m_AttachedVectorsCount;
         };
 
@@ -103,9 +103,9 @@ namespace Models {
 
     private:
         // general purpose internal methods
-        MetadataIO::ArtworksSnapshot deleteItems(const Helpers::IndicesRanges &ranges);
+        Artworks::ArtworksSnapshot deleteItems(const Helpers::IndicesRanges &ranges);
         int attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
-                           const MetadataIO::ArtworksSnapshot &snapshot,
+                           const Artworks::ArtworksSnapshot &snapshot,
                            int initialCount,
                            bool autoAttach);
         int attachKnownVectors(const QHash<QString, QHash<QString, QString> > &vectorsPaths,
@@ -146,8 +146,8 @@ namespace Models {
         virtual ArtworkMetadata *createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID);
 
     private:
-        Models::ArtworkMetadata *accessArtwork(size_t index) const;
-        Models::ArtworkMetadata *getArtwork(size_t index) const;
+        Artworks::ArtworkMetadata *accessArtwork(size_t index) const;
+        Artworks::ArtworkMetadata *getArtwork(size_t index) const;
         void destroyArtwork(ArtworkMetadata *artwork);
         int getNextID();
 

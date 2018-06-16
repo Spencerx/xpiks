@@ -228,7 +228,7 @@ namespace QMLExtensions {
     bool VideoCachingWorker::checkLockedIO(std::shared_ptr<VideoCacheRequest> &item) {
         bool isLocked = false;
 
-        Models::VideoArtwork *video = item->getArtwork();
+        Artworks::VideoArtwork *video = item->getArtwork();
         Q_ASSERT(video != nullptr);
         if (video->isLockedIO()) {
             LOG_DEBUG << "video is locked for IO";

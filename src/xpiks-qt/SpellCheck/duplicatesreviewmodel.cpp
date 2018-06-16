@@ -36,7 +36,7 @@ namespace SpellCheck {
         endResetModel();
     }
 
-    void DuplicatesReviewModel::setupModel(const std::vector<Models::ArtworkMetadata *> &items) {
+    void DuplicatesReviewModel::setupModel(const std::vector<Artworks::ArtworkMetadata *> &items) {
         Q_ASSERT(m_DuplicatesList.empty());
         beginResetModel();
         {
@@ -305,13 +305,13 @@ namespace SpellCheck {
             return (int)(item.m_ArtworkMetadata != nullptr ? item.m_ArtworkMetadata->getLastKnownIndex() : 0);
         }
         case HasVectorAttachedRole: {
-            Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork *>(item.m_ArtworkMetadata);
+            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(item.m_ArtworkMetadata);
             return (image != NULL) && image->hasVectorAttached();
         }
         case BaseFilenameRole:
             return item.m_ArtworkMetadata != nullptr ? item.m_ArtworkMetadata->getBaseFilename() : "";
         case IsVideoRole: {
-            bool isVideo = dynamic_cast<Models::VideoArtwork*>(item.m_ArtworkMetadata) != nullptr;
+            bool isVideo = dynamic_cast<Artworks::VideoArtwork*>(item.m_ArtworkMetadata) != nullptr;
             return isVideo;
         }
         case TriggerRole: {

@@ -29,7 +29,7 @@ namespace Commands {
     {
     public:
         CombinedEditCommand(Common::CombinedEditFlags editFlags,
-                            MetadataIO::ArtworksSnapshot::Container &rawSnapshot,
+                            Artworks::ArtworksSnapshot::Container &rawSnapshot,
                             const QString &description, const QString &title,
                             const QStringList &keywords) :
             CommandBase(CommandType::CombinedEdit),
@@ -41,7 +41,7 @@ namespace Commands {
         { }
 
         CombinedEditCommand(Common::CombinedEditFlags editFlags,
-                            MetadataIO::ArtworksSnapshot::Container &rawSnapshot) :
+                            Artworks::ArtworksSnapshot::Container &rawSnapshot) :
             CommandBase(CommandType::CombinedEdit),
             m_RawSnapshot(std::move(rawSnapshot)),
             m_EditFlags(editFlags)
@@ -53,12 +53,12 @@ namespace Commands {
         virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
 
     private:
-        void setKeywords(Models::ArtworkMetadata *metadata) const;
-        void setDescription(Models::ArtworkMetadata *metadata) const;
-        void setTitle(Models::ArtworkMetadata *metadata) const;
+        void setKeywords(Artworks::ArtworkMetadata *metadata) const;
+        void setDescription(Artworks::ArtworkMetadata *metadata) const;
+        void setTitle(Artworks::ArtworkMetadata *metadata) const;
 
     private:
-        MetadataIO::ArtworksSnapshot::Container m_RawSnapshot;
+        Artworks::ArtworksSnapshot::Container m_RawSnapshot;
         QString m_ArtworkDescription;
         QString m_ArtworkTitle;
         QStringList m_Keywords;
@@ -67,8 +67,8 @@ namespace Commands {
 
     class CombinedEditCommandResult : public CommandResult {
     public:
-        CombinedEditCommandResult(MetadataIO::WeakArtworksSnapshot &affectedItems,
-                                  MetadataIO::WeakArtworksSnapshot &itemsToSave,
+        CombinedEditCommandResult(Artworks::WeakArtworksSnapshot &affectedItems,
+                                  Artworks::WeakArtworksSnapshot &itemsToSave,
                                   const QVector<int> &indicesToUpdate) :
             m_AffectedItems(std::move(affectedItems)),
             m_ItemsToSave(std::move(itemsToSave)),
@@ -84,8 +84,8 @@ namespace Commands {
 #else
     public:
 #endif
-        MetadataIO::WeakArtworksSnapshot m_AffectedItems;
-        MetadataIO::WeakArtworksSnapshot m_ItemsToSave;
+        Artworks::WeakArtworksSnapshot m_AffectedItems;
+        Artworks::WeakArtworksSnapshot m_ItemsToSave;
         QVector<int> m_IndicesToUpdate;
     };
 }

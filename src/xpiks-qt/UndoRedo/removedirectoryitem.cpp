@@ -11,7 +11,7 @@
 #include "removedirectoryitem.h"
 #include "../Helpers/filehelpers.h"
 #include "../Models/artworksrepository.h"
-#include "../Models/filteredartitemsproxymodel.h"
+#include "../Models/filteredartworkslistmodel.h"
 #include "../Commands/commandmanager.h"
 #include "../Models/settingsmodel.h"
 
@@ -85,7 +85,7 @@ void UndoRedo::RemoveDirectoryHistoryItem::undo(const Commands::ICommandManager 
         artworksRepository->refresh();
 
 #ifndef CORE_TESTS
-        Models::FilteredArtItemsProxyModel *filteredArtItemProxyModel = commandManager->getFilteredArtItemsModel();
+        Models::FilteredArtworksListModel *filteredArtItemProxyModel = commandManager->getFilteredArtItemsModel();
         filteredArtItemProxyModel->updateFilter();
 #endif
 

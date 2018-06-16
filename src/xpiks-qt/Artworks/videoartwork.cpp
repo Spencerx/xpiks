@@ -15,7 +15,7 @@
 #include "../MetadataIO/originalmetadata.h"
 #include <videofilemetadata.h>
 
-namespace Models {
+namespace Artworks {
     VideoArtwork::VideoArtwork(const QString &filepath, qint64 ID, qint64 directoryID):
         ArtworkMetadata(filepath, ID, directoryID),
         m_VideoFlags(0),

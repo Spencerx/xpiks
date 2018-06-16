@@ -11,7 +11,7 @@
 #include "findandreplacecommand.h"
 #include <QObject>
 #include "commandmanager.h"
-#include "../Models/filteredartitemsproxymodel.h"
+#include "../Models/filteredartworkslistmodel.h"
 #include "../Models/artworkmetadata.h"
 #include "../Models/previewartworkelement.h"
 #include "../UndoRedo/artworkmetadatabackup.h"
@@ -30,7 +30,7 @@ namespace Commands {
         std::vector<UndoRedo::ArtworkMetadataBackup> artworksBackups;
 
         QVector<int> indicesToUpdate;
-        MetadataIO::WeakArtworksSnapshot itemsToSave;
+        Artworks::WeakArtworksSnapshot itemsToSave;
 
         size_t size = m_RawSnapshot.size();
         itemsToSave.reserve(size);
@@ -41,7 +41,7 @@ namespace Commands {
             Q_ASSERT(element);
             if (!element->getIsSelected()) { continue; }
 
-            Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
 
             artworksBackups.emplace_back(artwork);
 

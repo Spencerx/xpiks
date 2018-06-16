@@ -34,7 +34,7 @@ namespace Models {
     }
 
     bool ArtworkProxyModel::getIsVideo() const {
-        Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork*>(m_ArtworkMetadata);
+        Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
         bool isVideo = videoArtwork != nullptr;
         return isVideo;
     }
@@ -388,7 +388,7 @@ namespace Models {
         LOG_DEBUG << "index:" << lastKnownIndex;
 
 #ifndef CORE_TESTS
-        Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork*>(m_ArtworkMetadata);
+        Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
         if (videoArtwork != nullptr) {
             if (!videoArtwork->isThumbnailGenerated()) {
                 auto *videoCachingService = m_CommandManager->getVideoCachingService();

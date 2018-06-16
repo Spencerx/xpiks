@@ -18,12 +18,11 @@
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../Helpers/keywordshelpers.h"
 #include "../Helpers/stringhelper.h"
-#include "flags.h"
 #include "../Common/logging.h"
 #include "../Helpers/indiceshelper.h"
 #include "../Common/flags.h"
 
-namespace Common {
+namespace Artworks {
     BasicKeywordsModelImpl::BasicKeywordsModelImpl()
     {}
 

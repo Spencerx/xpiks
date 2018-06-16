@@ -178,7 +178,7 @@ namespace Models {
         PreviewArtworkElement *accessPreviewElement(size_t index) const;
 
     private:
-        MetadataIO::ArtworksSnapshot m_ArtworksSnapshot;
+        Artworks::ArtworksSnapshot m_ArtworksSnapshot;
         QString m_ReplaceFrom;
         QString m_ReplaceTo;
         QMLExtensions::ColorsModel *m_ColorsModel;

@@ -71,8 +71,8 @@ namespace Models {
 
     void ArtworkPropertiesMap::updateProperties(ArtworkMetadata *metadata) {
         Q_ASSERT(metadata != nullptr);
-        Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork*>(metadata);
-        Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork*>(metadata);
+        Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(metadata);
+        Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(metadata);
 
         beginResetModel();
         {

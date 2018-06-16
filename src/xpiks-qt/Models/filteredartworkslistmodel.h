@@ -16,16 +16,17 @@
 #include <QList>
 #include <functional>
 #include "../Common/flags.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include "../Artworks/iartworkssource.h"
 
 namespace Models {
     class ArtworkMetadata;
     class ArtworkElement;
     class PreviewArtworkElement;
-    class ArtItemsModel;
+    class ArtworksListModel;
 
-    class FilteredArtItemsProxyModel:
-            public QSortFilterProxyModel
+    class FilteredArtworksListModel:
+            public QSortFilterProxyModel,
+            public Artworks::IArtworksSource
     {
         Q_OBJECT
         Q_PROPERTY(QString searchTerm READ getSearchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
@@ -33,7 +34,7 @@ namespace Models {
         Q_PROPERTY(bool s READ getGlobalSelectionChanged NOTIFY allItemsSelectedChanged)
 
     public:
-        FilteredArtItemsProxyModel(QObject *parent=0);
+        FilteredArtworksListModel(ArtworksListModel &artworksListModel, QObject *parent=0);
 
     public:
         const QString &getSearchTerm() const { return m_SearchTerm; }
@@ -43,11 +44,15 @@ namespace Models {
         bool getGlobalSelectionChanged() const { return false; }
         void spellCheckAllItems();
 
-        MetadataIO::ArtworksSnapshot::Container getSearchablePreviewOriginalItems(const QString &searchTerm, Common::SearchFlags flags) const;
+        Artworks::ArtworksSnapshot::Container getSearchablePreviewOriginalItems(const QString &searchTerm, Common::SearchFlags flags) const;
 
 #ifdef CORE_TESTS
         int retrieveNumberOfSelectedItems();
 #endif
+
+        // IArtworksSource interface
+    public:
+        virtual Artworks::WeakArtworksSnapshot getArtworks() override { return getSelectedOriginalItems(); }
 
     public:
         Q_INVOKABLE int getOriginalIndex(int index) const;
@@ -115,26 +120,24 @@ namespace Models {
         void allItemsSelectedChanged();
 
     private:
-        void removeMetadataInItems(MetadataIO::ArtworksSnapshot::Container &itemsToClear, Common::CombinedEditFlags flags) const;
+        void removeMetadataInItems(Artworks::ArtworksSnapshot::Container &itemsToClear, Common::CombinedEditFlags flags) const;
         void removeKeywordsInItem(ArtworkMetadata *artwork);
         void setFilteredItemsSelected(bool selected);
         void setFilteredItemsSelectedEx(const std::function<bool (ArtworkMetadata *)> pred, bool selected, bool unselectFirst);
         void invertFilteredItemsSelected();
 
-        MetadataIO::WeakArtworksSnapshot getSelectedOriginalItems() const;
-        MetadataIO::ArtworksSnapshot::Container getSelectedArtworksSnapshot() const;
+        Artworks::WeakArtworksSnapshot getSelectedOriginalItems() const;
+        Artworks::ArtworksSnapshot::Container getSelectedArtworksSnapshot() const;
 
         template<typename T>
         std::vector<T> getFilteredOriginalItems(std::function<bool (ArtworkMetadata *)> pred,
                                                 std::function<T(ArtworkMetadata *, int, int)> mapper) const;
 
-        MetadataIO::WeakArtworksSnapshot getAllOriginalItems() const;
+        Artworks::WeakArtworksSnapshot getAllOriginalItems() const;
 
         std::vector<int> getSelectedOriginalIndices() const;
         std::vector<int> getSelectedIndices() const;
         void forceUnselectAllItems();
-        ArtItemsModel *getArtItemsModel() const;
-
         void updateSearchFlags();
 
     protected:
@@ -142,6 +145,7 @@ namespace Models {
         virtual bool lessThan(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const override;
 
     private:
+        ArtworksListModel &m_ArtworksListModel;
         // ignore default regexp from proxymodel
         QString m_SearchTerm;
         Common::SearchFlags m_SearchFlags;

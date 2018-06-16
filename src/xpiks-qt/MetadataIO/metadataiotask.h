@@ -15,11 +15,11 @@
 #include "../Suggestion/locallibraryquery.h"
 
 namespace MetadataIO {
-    class MetadataIOTaskBase: public Models::ArtworkMetadataLocker
+    class MetadataIOTaskBase: public Artworks::ArtworkMetadataLocker
     {
     public:
-        MetadataIOTaskBase(Models::ArtworkMetadata *metadata):
-            Models::ArtworkMetadataLocker(metadata)
+        MetadataIOTaskBase(Artworks::ArtworkMetadata *metadata):
+            Artworks::ArtworkMetadataLocker(metadata)
         {
         }
     };
@@ -48,7 +48,7 @@ namespace MetadataIO {
         };
 
     public:
-        MetadataReadWriteTask(Models::ArtworkMetadata *metadata, ReadWriteAction readWriteAction):
+        MetadataReadWriteTask(Artworks::ArtworkMetadata *metadata, ReadWriteAction readWriteAction):
             MetadataIOTaskBase(metadata),
             m_ReadWriteAction(readWriteAction)
         {}

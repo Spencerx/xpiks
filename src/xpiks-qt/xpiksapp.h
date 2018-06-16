@@ -22,7 +22,7 @@
 #include "Models/artworkuploader.h"
 #include "Models/combinedartworksmodel.h"
 #include "Models/deletekeywordsviewmodel.h"
-#include "Models/filteredartitemsproxymodel.h"
+#include "Models/filteredartworkslistmodel.h"
 #include "Models/findandreplacemodel.h"
 #include "Models/languagesmodel.h"
 #include "Models/logsmodel.h"
@@ -159,7 +159,7 @@ protected:
     Storage::DatabaseManager m_DatabaseManager;
     std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
     Microstocks::MicrostockAPIClients m_ApiClients;
-    Models::FilteredArtItemsProxyModel m_FilteredArtItemsModel;
+    Models::FilteredArtworksListModel m_FilteredArtItemsModel;
     Models::RecentFilesModel m_RecentFileModel;
     std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
     Models::ArtworkUploader m_ArtworkUploader;

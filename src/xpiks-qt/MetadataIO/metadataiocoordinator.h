@@ -114,7 +114,7 @@ namespace MetadataIO {
         int getNextImportID();
         void initializeImport(const ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);
         void readingFinishedHandler(bool ignoreBackups);
-        void afterImportHandler(const QVector<Models::ArtworkMetadata*> &itemsToRead, bool ignoreBackups);
+        void afterImportHandler(const QVector<Artworks::ArtworkMetadata*> &itemsToRead, bool ignoreBackups);
 
     private:
         MetadataReadingHub m_ReadingHub;

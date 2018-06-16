@@ -38,7 +38,7 @@ namespace QMLExtensions {
 
     public:
         void updateArtwork(qint64 artworkID, size_t lastKnownIndex, const QSet<int> &rolesToUpdate = QSet<int>());
-        void updateArtwork(Models::ArtworkMetadata *artwork);
+        void updateArtwork(Artworks::ArtworkMetadata *artwork);
         void forceUpdate();
 
 #ifdef INTEGRATION_TESTS

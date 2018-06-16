@@ -26,16 +26,16 @@
 #include <writingorchestrator.h>
 #include "../Models/switchermodel.h"
 #include "../QMLExtensions/artworksupdatehub.h"
-#include "../Models/filteredartitemsproxymodel.h"
+#include "../Models/filteredartworkslistmodel.h"
 #include "../QMLExtensions/videocachingservice.h"
 
 namespace MetadataIO {
-    void lockForIO(const MetadataIO::ArtworksSnapshot &snapshot) {
+    void lockForIO(const Artworks::ArtworksSnapshot &snapshot) {
         const size_t size = snapshot.size();
         LOG_DEBUG << size << "item(s)";
 
         for (size_t i = 0; i < size; i++) {
-            Models::ArtworkMetadata *artwork = snapshot.get(i);
+            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
             artwork->setIsLockedIO(true);
         }
     }
@@ -182,7 +182,7 @@ namespace MetadataIO {
     void MetadataIOCoordinator::writingWorkersFinished(int status) {
         LOG_DEBUG << status;
 
-        Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
+        Models::FilteredArtworksListModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
         filteredModel->updateSelectedArtworksEx(QVector<int>() << Models::ArtItemsModel::IsModifiedRole);
 
         Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();

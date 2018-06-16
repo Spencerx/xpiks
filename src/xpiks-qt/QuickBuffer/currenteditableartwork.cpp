@@ -19,7 +19,7 @@
 #include "../Commands/maindelegator.h"
 
 namespace QuickBuffer {
-    CurrentEditableArtwork::CurrentEditableArtwork(Models::ArtworkMetadata *artworkMetadata, size_t originalIndex, Commands::CommandManager * const commandManager):
+    CurrentEditableArtwork::CurrentEditableArtwork(Artworks::ArtworkMetadata *artworkMetadata, size_t originalIndex, Commands::CommandManager * const commandManager):
         m_CommandManager(commandManager),
         m_OriginalIndex(originalIndex)
     {
@@ -93,8 +93,8 @@ namespace QuickBuffer {
         QStringList keywords;
 
         if (presetsModel->tryGetPreset(presetID, keywords)) {
-            MetadataIO::ArtworksSnapshot::Container artworksList;
-            artworksList.emplace_back(new Models::ArtworkMetadataLocker(m_ArtworkMetadata));
+            Artworks::ArtworksSnapshot::Container artworksList;
+            artworksList.emplace_back(new Artworks::ArtworkMetadataLocker(m_ArtworkMetadata));
 
             for (auto &keyword: keywords) {
                 keyword = keyword.toLower();

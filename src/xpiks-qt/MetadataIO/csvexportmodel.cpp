@@ -255,7 +255,7 @@ namespace MetadataIO {
         m_ExportPlansModel.setCommandManager(commandManager);
     }
 
-    void CsvExportModel::setupModel(MetadataIO::ArtworksSnapshot::Container &rawSnapshot) {
+    void CsvExportModel::setupModel(Artworks::ArtworksSnapshot::Container &rawSnapshot) {
         m_ArtworksToExport.set(rawSnapshot);
         emit artworksCountChanged();
     }

@@ -14,16 +14,15 @@
 #include <vector>
 #include <functional>
 #include "../Common/abstractlistmodel.h"
-#include "artworkelement.h"
-#include "../Common/baseentity.h"
-#include "artworkmetadata.h"
+#include "../Artworks/artworkelement.h"
+#include "../Artworks/artworkmetadata.h"
 #include "../Helpers/ifilenotavailablemodel.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
+#include "../Artworks/iartworkssource.h"
 
 namespace Models {
     class ArtworksViewModel:
             public Common::AbstractListModel,
-            public virtual Common::BaseEntity,
             public Helpers::IFileNotAvailableModel
     {
         Q_OBJECT
@@ -39,17 +38,18 @@ namespace Models {
         };
 
     public:
-        ArtworksViewModel(QObject *parent=NULL);
+        ArtworksViewModel(Artworks::IArtworksSource &artworksSource, QObject *parent=NULL);
         virtual ~ArtworksViewModel() { }
 
-    public:
-        virtual void setArtworks(MetadataIO::WeakArtworksSnapshot &weakSnapshot);
+    private:
+        virtual void setArtworks(Artworks::WeakArtworksSnapshot &weakSnapshot);
 
     public:
         int getArtworksCount() const { return (int)m_ArtworksSnapshot.size(); }
         int getSelectedArtworksCount() const;
 
     public:
+        Q_INVOKABLE void pullArtworks();
         Q_INVOKABLE void setArtworkSelected(int index, bool value);
         Q_INVOKABLE void removeSelectedArtworks() { doRemoveSelectedArtworks(); }
         Q_INVOKABLE void resetModel() { doResetModel(); }
@@ -60,22 +60,22 @@ namespace Models {
 #else
     protected:
 #endif
-        ArtworkElement *accessItem(size_t index) const;
+        Artworks::ArtworkElement *accessItem(size_t index) const;
         bool getIsSelected(size_t i) const;
         void setIsSelected(size_t i, bool value);
 
     protected:
         bool isEmpty() const { return m_ArtworksSnapshot.empty(); }
-        ArtworkMetadata *getArtworkMetadata(size_t i) const;
+        Artworks::ArtworkMetadata *getArtworkMetadata(size_t i) const;
         virtual bool doRemoveSelectedArtworks();
         virtual void doResetModel();
-        void processArtworks(std::function<bool (const ArtworkElement *element)> pred,
+        void processArtworks(std::function<bool (const Artworks::ArtworkElement *element)> pred,
                              std::function<void (size_t, ArtworkMetadata *)> action) const;
-        void processArtworksEx(std::function<bool (const ArtworkElement *element)> pred,
-                               std::function<bool (size_t, ArtworkMetadata *)> action) const;
+        void processArtworksEx(std::function<bool (const Artworks::ArtworkElement *element)> pred,
+                               std::function<bool (size_t, Artworks::ArtworkMetadata *)> action) const;
 
     protected:
-        const MetadataIO::ArtworksSnapshot::Container &getRawSnapshot() const { return m_ArtworksSnapshot.getRawData(); }
+        const Artworks::ArtworksSnapshot::Container &getRawSnapshot() const { return m_ArtworksSnapshot.getRawData(); }
 
     signals:
         void artworksCountChanged();
@@ -97,7 +97,8 @@ namespace Models {
         virtual void removeInnerItem(int row) override;
 
     private:
-        MetadataIO::ArtworksSnapshot m_ArtworksSnapshot;
+        Artworks::IArtworksSource &m_ArtworksSource;
+        Artworks::ArtworksSnapshot m_ArtworksSnapshot;
     };
 }
 

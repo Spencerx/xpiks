@@ -46,8 +46,8 @@ namespace QMLExtensions {
         void stopService();
 
     public:
-        void generateThumbnails(const MetadataIO::ArtworksSnapshot &snapshot);
-        void generateThumbnail(Models::VideoArtwork *videoArtwork);
+        void generateThumbnails(const Artworks::ArtworksSnapshot &snapshot);
+        void generateThumbnail(Artworks::VideoArtwork *videoArtwork);
         void waitWorkerIdle();
 
     private:

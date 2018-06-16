@@ -25,12 +25,12 @@ void UndoRedo::ModifyArtworksHistoryItem::undo(const Commands::ICommandManager *
     Models::ArtItemsModel *artItemsModel = commandManager->getArtItemsModel();
     int count = m_Indices.count();
 
-    MetadataIO::WeakArtworksSnapshot itemsToSave;
+    Artworks::WeakArtworksSnapshot itemsToSave;
     itemsToSave.reserve(count);
 
     for (int i = 0; i < count; ++i) {
         int index = m_Indices[i];
-        Models::ArtworkMetadata *artwork = artItemsModel->getArtwork(index);
+        Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(index);
         if (artwork != NULL) {
             const ArtworkMetadataBackup &backup = m_ArtworksBackups.at(i);
             backup.restore(artwork);

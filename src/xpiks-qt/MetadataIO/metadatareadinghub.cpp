@@ -122,7 +122,7 @@ namespace MetadataIO {
 
         auto &items = m_ArtworksToRead.getRawData();
         for (auto &item: items) {
-            Models::ArtworkMetadata *artwork = item->getArtworkMetadata();
+            Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
             const QString &filepath = artwork->getFilepath();
 
             const size_t index = filepathToIndexMap.value(filepath, size);

@@ -27,7 +27,7 @@ namespace MetadataIO {
         initSerializationVersion();
     }
 
-    CachedArtwork::CachedArtwork(Models::ArtworkMetadata *metadata):
+    CachedArtwork::CachedArtwork(Artworks::ArtworkMetadata *metadata):
         m_Version(0),
         m_Flags(0),
         m_CategoryID_1(0),
@@ -44,13 +44,13 @@ namespace MetadataIO {
         m_Keywords = metadata->getKeywords();
         m_ThumbnailPath = metadata->getThumbnailPath();
 
-        Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(metadata);
+        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(metadata);
         if (image != nullptr) {
             m_ArtworkType = image->hasVectorAttached() ? Vector : Image;
             m_AttachedVector = image->getAttachedVectorPath();
             m_CreationTime = image->getDateTimeOriginal();
         } else {
-            Models::VideoArtwork *video = dynamic_cast<Models::VideoArtwork*>(metadata);
+            Artworks::VideoArtwork *video = dynamic_cast<Artworks::VideoArtwork*>(metadata);
             Q_ASSERT(video != nullptr);
             m_ArtworkType = Video;
             m_CodecName = video->getCodecName();

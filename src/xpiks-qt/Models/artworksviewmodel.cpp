@@ -12,24 +12,25 @@
 #include <QVector>
 #include "../Helpers/indiceshelper.h"
 #include "../Common/defines.h"
-#include "imageartwork.h"
-#include "videoartwork.h"
+#include "../Artworks/imageartwork.h"
+#include "../Artworks/videoartwork.h"
 
 namespace Models {
-    ArtworksViewModel::ArtworksViewModel(QObject *parent):
-        AbstractListModel(parent)
+    ArtworksViewModel::ArtworksViewModel(Artworks::IArtworksSource &artworksSource, QObject *parent):
+        AbstractListModel(parent),
+        m_ArtworksSource(artworksSource)
     {
     }
 
-    void ArtworksViewModel::setArtworks(MetadataIO::WeakArtworksSnapshot &weakSnapshot) {
+    void ArtworksViewModel::setArtworks(Artworks::WeakArtworksSnapshot &weakSnapshot) {
         LOG_INFO << weakSnapshot.size() << "artworks";
         if (weakSnapshot.empty()) { return; }
 
-        MetadataIO::ArtworksSnapshot::Container rawSnapshot;
+        Artworks::ArtworksSnapshot::Container rawSnapshot;
         rawSnapshot.reserve(weakSnapshot.size());
 
         for (auto *artwork: weakSnapshot) {
-            rawSnapshot.emplace_back(new ArtworkElement(artwork));
+            rawSnapshot.emplace_back(new Artworks::ArtworkElement(artwork));
         }
 
         beginResetModel();
@@ -53,6 +54,11 @@ namespace Models {
         return selectedCount;
     }
 
+    void ArtworksViewModel::pullArtworks() {
+        LOG_DEBUG << "#";
+        this->setArtworks(m_ArtworksSource.getArtworks());
+    }
+
     void ArtworksViewModel::setArtworkSelected(int index, bool value) {
         if (index < 0 || index >= (int)m_ArtworksSnapshot.size()) {
             return;
@@ -74,10 +80,10 @@ namespace Models {
         emit dataChanged(this->index(0), this->index(rowCount() - 1), QVector<int>() << IsSelectedRole);
     }
 
-    ArtworkElement *ArtworksViewModel::accessItem(size_t index) const {
+    Artworks::ArtworkElement *ArtworksViewModel::accessItem(size_t index) const {
         Q_ASSERT(index < m_ArtworksSnapshot.size());
         auto &locker = m_ArtworksSnapshot.at(index);
-        auto element = std::dynamic_pointer_cast<ArtworkElement>(locker);
+        auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
         Q_ASSERT(element);
         return element.get();
     }
@@ -97,7 +103,7 @@ namespace Models {
         element->setIsSelected(value);
     }
 
-    ArtworkMetadata *ArtworksViewModel::getArtworkMetadata(size_t i) const {
+    Artworks::ArtworkMetadata *ArtworksViewModel::getArtworkMetadata(size_t i) const {
         Q_ASSERT((i >= 0) && (i < m_ArtworksSnapshot.size()));
         return m_ArtworksSnapshot.get(i);
     }
@@ -107,8 +113,8 @@ namespace Models {
         LOG_DEBUG << "#";
 
         const size_t size = m_ArtworksSnapshot.size();
-        QVector<int> indicesToRemove;
-        indicesToRemove.reserve((int)size);
+        std::vector<int> indicesToRemove;
+        indicesToRemove.reserve(size);
 
         for (size_t i = 0; i < size; ++i) {
             if (getIsSelected(i)) {
@@ -119,10 +125,7 @@ namespace Models {
         const bool anyItemToRemove = !indicesToRemove.empty();
         if (anyItemToRemove) {
             LOG_INFO << "Removing" << indicesToRemove.size() << "item(s)";
-
-            QVector<QPair<int, int> > rangesToRemove;
-            Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
-            removeItemsFromRanges(rangesToRemove);
+            removeItems(Helpers::IndicesRanges(indicesToRemove));
 
             if (m_ArtworksSnapshot.empty()) {
                 emit requestCloseWindow();
@@ -152,7 +155,7 @@ namespace Models {
         const size_t size = rawSnapshot.size();
         for (size_t i = 0; i < size; i++) {
             auto &item = rawSnapshot.at(i);
-            const std::shared_ptr<ArtworkElement> element = std::dynamic_pointer_cast<ArtworkElement>(item);
+            const auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(item);
             Q_ASSERT(element);
 
             if (pred(element.get())) {
@@ -161,8 +164,8 @@ namespace Models {
         }
     }
 
-    void ArtworksViewModel::processArtworksEx(std::function<bool (const ArtworkElement *element)> pred,
-                                              std::function<bool (size_t, ArtworkMetadata *)> action) const {
+    void ArtworksViewModel::processArtworksEx(std::function<bool (const Artworks::ArtworkElement *element)> pred,
+                                              std::function<bool (size_t, Artworks::ArtworkMetadata *)> action) const {
         LOG_DEBUG << "#";
         bool canContinue = false;
 
@@ -170,7 +173,7 @@ namespace Models {
         const size_t size = rawSnapshot.size();
         for (size_t i = 0; i < size; i++) {
             auto &locker = rawSnapshot.at(i);
-            std::shared_ptr<ArtworkElement> element = std::dynamic_pointer_cast<ArtworkElement>(locker);
+            auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
             Q_ASSERT(element);
 
             if (pred(element.get())) {
@@ -197,12 +200,12 @@ namespace Models {
         case FilepathRole: return artwork->getFilepath();
         case IsSelectedRole: return accessItem(row)->getIsSelected();
         case HasVectorAttachedRole: {
-            auto *imageArtwork = dynamic_cast<ImageArtwork*>(artwork);
+            auto *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             return (imageArtwork != nullptr) && (imageArtwork->hasVectorAttached());
         }
         case ThumbnailPathRole: return artwork->getThumbnailPath();
         case IsVideoRole: {
-            auto *videoArtwork = dynamic_cast<VideoArtwork*>(artwork);
+            auto *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(artwork);
             return videoArtwork != nullptr;
         }
         default: return QVariant();
@@ -223,7 +226,7 @@ namespace Models {
         LOG_DEBUG << "#";
 
         bool anyUnavailable = false;
-        QVector<int> indicesToRemove;
+        std::vector<int> indicesToRemove;
         const size_t size = m_ArtworksSnapshot.size();
 
         for (size_t i = 0; i < size; i++) {
@@ -237,10 +240,7 @@ namespace Models {
 
         if (anyUnavailable) {
             LOG_INFO << "Found" << indicesToRemove.length() << "unavailable item(s)";
-            QVector<QPair<int, int> > rangesToRemove;
-            Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
-
-            removeItemsFromRanges(rangesToRemove);
+            removeItems(Helpers::IndicesRanges(indicesToRemove));
 
             if (m_ArtworksSnapshot.empty()) {
                 emit requestCloseWindow();

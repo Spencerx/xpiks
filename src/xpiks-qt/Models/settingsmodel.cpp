@@ -15,7 +15,7 @@
 #include "../Maintenance/maintenanceservice.h"
 #include "../MetadataIO/metadataiocoordinator.h"
 #include "../Commands/commandmanager.h"
-#include "filteredartitemsproxymodel.h"
+#include "filteredartworkslistmodel.h"
 
 #ifdef Q_OS_MAC
 #  define DEFAULT_EXIFTOOL "/usr/bin/exiftool"

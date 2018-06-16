@@ -206,7 +206,7 @@ namespace Models {
         if (metadataIndex >= 0
             && metadataIndex < getArtworksCount()
             && !keywords.empty()) {
-            MetadataIO::ArtworksSnapshot::Container rawArtworkSnapshot;
+            Artworks::ArtworksSnapshot::Container rawArtworkSnapshot;
             QVector<int> selectedIndices;
 
             // TODO: to be changed in future to the dialog
@@ -238,7 +238,7 @@ namespace Models {
         if (metadataIndex >= 0
             && metadataIndex < getArtworksCount()
             && !keywords.empty()) {
-            MetadataIO::ArtworksSnapshot::Container rawSnapshot;
+            Artworks::ArtworksSnapshot::Container rawSnapshot;
 
             ArtworkMetadata *metadata = accessArtwork(metadataIndex);
             rawSnapshot.emplace_back(new ArtworkMetadataLocker(metadata));
@@ -466,7 +466,7 @@ namespace Models {
             QStringList keywords;
             Helpers::splitKeywords(rawKeywords.trimmed(), separators, keywords);
 
-            MetadataIO::ArtworksSnapshot::Container items;
+            Artworks::ArtworksSnapshot::Container items;
             items.emplace_back(new ArtworkMetadataLocker(metadata));
 
             Common::CombinedEditFlags flags = Common::CombinedEditFlags::None;
@@ -627,7 +627,7 @@ namespace Models {
             ArtworkMetadata *artwork = accessArtwork(metadataIndex);
             auto *quickBuffer = m_CommandManager->getQuickBuffer();
 
-            MetadataIO::ArtworksSnapshot::Container items;
+            Artworks::ArtworksSnapshot::Container items;
             items.emplace_back(new ArtworkMetadataLocker(artwork));
 
             Common::CombinedEditFlags flags = Common::CombinedEditFlags::None;

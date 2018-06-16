@@ -32,7 +32,7 @@ namespace Warnings {
         return result;
     }
 
-    WarningsItem::WarningsItem(Models::ArtworkMetadata *checkableItem, Common::WarningsCheckFlags checkingFlags):
+    WarningsItem::WarningsItem(Artworks::ArtworkMetadata *checkableItem, Common::WarningsCheckFlags checkingFlags):
         m_CheckableItem(checkableItem),
         m_CheckingFlags(checkingFlags),
         m_FlagsToSet(Common::WarningFlags::None),
@@ -77,8 +77,8 @@ namespace Warnings {
     }
 
     void WarningsItem::checkImageProperties(IWarningsSettings *warningsSettings) {
-        Models::ArtworkMetadata *item = m_CheckableItem;
-        Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork *>(item);
+        Artworks::ArtworkMetadata *item = m_CheckableItem;
+        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(item);
         if (image == nullptr) {
             dropFlag(Common::WarningFlags::SizeLessThanMinimum);
             dropFlag(Common::WarningFlags::ImageFileIsTooBig);
@@ -102,8 +102,8 @@ namespace Warnings {
     }
 
     void WarningsItem::checkVideoProperties(IWarningsSettings *warningsSettings) {
-        Models::ArtworkMetadata *item = m_CheckableItem;
-        Models::VideoArtwork *video = dynamic_cast<Models::VideoArtwork *>(item);
+        Artworks::ArtworkMetadata *item = m_CheckableItem;
+        Artworks::VideoArtwork *video = dynamic_cast<Artworks::VideoArtwork *>(item);
 
         if (video == nullptr) {
             dropFlag(Common::WarningFlags::VideoFileIsTooBig);

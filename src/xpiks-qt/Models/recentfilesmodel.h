@@ -27,7 +27,7 @@ namespace Models {
         virtual void initialize() override;
 
     public:
-        void add(const MetadataIO::ArtworksSnapshot &snapshot);
+        void add(const Artworks::ArtworksSnapshot &snapshot);
 
     protected:
         virtual void sync() override;

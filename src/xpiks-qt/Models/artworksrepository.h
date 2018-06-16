@@ -26,7 +26,7 @@
 #include "../Common/abstractlistmodel.h"
 #include "../Common/flags.h"
 #include "../Filesystem/ifilescollection.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
 #include "../Maintenance/maintenanceservice.h"
 
 namespace Models {
@@ -114,9 +114,9 @@ namespace Models {
         void removeVector(const QString &vectorPath);
         void cleanupEmptyDirectories();
         void purgeUnavailableFiles();
-        void addFiles(const MetadataIO::ArtworksSnapshot &snapshot);
-        std::tuple<QSet<qint64>, bool> removeFiles(const MetadataIO::WeakArtworksSnapshot &snapshot);
-        void cleanupOldBackups(const MetadataIO::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService);
+        void addFiles(const Artworks::ArtworksSnapshot &snapshot);
+        std::tuple<QSet<qint64>, bool> removeFiles(const Artworks::WeakArtworksSnapshot &snapshot);
+        void cleanupOldBackups(const Artworks::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService);
         void unwatchFilePaths(const QStringList &filePaths);
         void updateFilesCounts();
         void updateSelectedState();

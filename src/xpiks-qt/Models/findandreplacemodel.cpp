@@ -15,7 +15,7 @@
 #include "../Models/settingsmodel.h"
 #include "../Commands/commandmanager.h"
 #include "../Helpers/filterhelpers.h"
-#include "../Models/filteredartitemsproxymodel.h"
+#include "../Models/filteredartworkslistmodel.h"
 #include "../Models/previewartworkelement.h"
 #include "../Helpers/metadatahighlighter.h"
 #include "../Commands/findandreplacecommand.h"
@@ -77,7 +77,7 @@ namespace Models {
 
         normalizeSearchCriteria();
 
-        Models::FilteredArtItemsProxyModel *filteredItemsModel = m_CommandManager->getFilteredArtItemsModel();
+        Models::FilteredArtworksListModel *filteredItemsModel = m_CommandManager->getFilteredArtItemsModel();
         auto rawSnapshot = filteredItemsModel->getSearchablePreviewOriginalItems(m_ReplaceFrom, m_Flags);
         m_ArtworksSnapshot.set(rawSnapshot);
 
@@ -86,7 +86,7 @@ namespace Models {
         for (auto &locker: m_ArtworksSnapshot.getRawData()) {
             std::shared_ptr<PreviewArtworkElement> preview = std::dynamic_pointer_cast<PreviewArtworkElement>(locker);
             Q_ASSERT(preview);
-            Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
             bool hasMatch = false;
             Common::SearchFlags flags = Common::SearchFlags::None;
 
@@ -144,7 +144,7 @@ namespace Models {
         case HasKeywordsMatchRole:
             return item->hasKeywordsMatch();
         case IsVideoRole: {
-            Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork*>(item->getArtworkMetadata());
+            Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(item->getArtworkMetadata());
             return videoArtwork != nullptr;
         }
         default:
@@ -213,7 +213,7 @@ namespace Models {
         }
 
         Models::PreviewArtworkElement *item = accessPreviewElement(index);
-        Models::ArtworkMetadata *artwork = item->getArtworkMetadata();
+        Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
 
         if (item->hasTitleMatch()) {
             text = filterText(artwork->getTitle());
@@ -237,7 +237,7 @@ namespace Models {
         }
 
         Models::PreviewArtworkElement *item = accessPreviewElement(index);
-        Models::ArtworkMetadata *artwork = item->getArtworkMetadata();
+        Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
 
         if (item->hasDescriptionMatch()) {
             text = filterText(artwork->getDescription());
@@ -261,7 +261,7 @@ namespace Models {
         }
 
         Models::PreviewArtworkElement *item = accessPreviewElement(index);
-        Models::ArtworkMetadata *artwork = item->getArtworkMetadata();
+        Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
         QStringList list = artwork->getKeywords();
 
         if (item->hasKeywordsMatch()) {

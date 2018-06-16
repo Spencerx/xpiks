@@ -48,7 +48,7 @@ namespace Models {
         void caseSensitiveChanged();
 
     public:
-        virtual void setArtworks(MetadataIO::WeakArtworksSnapshot &artworks) override;
+        virtual void setArtworks(Artworks::WeakArtworksSnapshot &artworks) override;
         virtual bool removeUnavailableItems() override;
 
 #ifdef CORE_TESTS

@@ -29,7 +29,7 @@ std::shared_ptr<Commands::ICommandResult> Commands::PasteKeywordsCommand::execut
 
     QVector<int> indicesToUpdate;
     std::vector<UndoRedo::ArtworkMetadataBackup> artworksBackups;
-    MetadataIO::WeakArtworksSnapshot affectedArtworks;
+    Artworks::WeakArtworksSnapshot affectedArtworks;
     const size_t size = m_RawSnapshot.size();
     indicesToUpdate.reserve((int)size);
     artworksBackups.reserve(size);
@@ -37,7 +37,7 @@ std::shared_ptr<Commands::ICommandResult> Commands::PasteKeywordsCommand::execut
 
     for (size_t i = 0; i < size; ++i) {
         auto &item = m_RawSnapshot.at(i);
-        Models::ArtworkMetadata *artwork = item->getArtworkMetadata();
+        Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
 
         indicesToUpdate.append((int)artwork->getLastKnownIndex());
         artworksBackups.emplace_back(artwork);

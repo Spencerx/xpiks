@@ -107,7 +107,7 @@ namespace Models {
         Q_INVOKABLE void cancelOperation();
 
     public:
-        void setArtworks(MetadataIO::ArtworksSnapshot &snapshot);
+        void setArtworks(Artworks::ArtworksSnapshot &snapshot);
         void resetArtworks();
 
 #ifdef CORE_TESTS
@@ -115,7 +115,7 @@ namespace Models {
 #else
     protected:
 #endif
-        const MetadataIO::ArtworksSnapshot &getArtworksSnapshot() const { return m_ArtworksSnapshot; }
+        const Artworks::ArtworksSnapshot &getArtworksSnapshot() const { return m_ArtworksSnapshot; }
 
 #ifdef INTEGRATION_TESTS
     public:
@@ -123,14 +123,14 @@ namespace Models {
 #endif
 
     private:
-        void doUploadArtworks(const MetadataIO::ArtworksSnapshot &snapshot);
+        void doUploadArtworks(const Artworks::ArtworksSnapshot &snapshot);
 
     protected:
         virtual bool removeUnavailableItems() override;
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        MetadataIO::ArtworksSnapshot m_ArtworksSnapshot;
+        Artworks::ArtworksSnapshot m_ArtworksSnapshot;
         Connectivity::UploadWatcher m_UploadWatcher;
         std::shared_ptr<Connectivity::IFtpCoordinator> m_FtpCoordinator;
         QFutureWatcher<Connectivity::ContextValidationResult> *m_TestingCredentialWatcher;

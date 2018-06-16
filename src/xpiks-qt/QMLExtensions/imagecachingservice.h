@@ -57,7 +57,7 @@ namespace QMLExtensions {
         void setScale(qreal scale);
         void cacheImage(const QString &key, const QSize &requestedSize, bool recache=false);
         void cacheImage(const QString &key);
-        void generatePreviews(const MetadataIO::ArtworksSnapshot &snapshot);
+        void generatePreviews(const Artworks::ArtworksSnapshot &snapshot);
         bool tryGetCachedImage(const QString &key, const QSize &requestedSize, QString &cached, bool &needsUpdate);
 
     private:

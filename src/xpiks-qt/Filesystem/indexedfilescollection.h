@@ -21,7 +21,7 @@ namespace Filesystem {
     class IndexedFilesCollection: public IFilesCollection
     {
     public:
-        IndexedFilesCollection(const MetadataIO::ArtworksSnapshot &snapshot, std::vector<int> &indices);
+        IndexedFilesCollection(const Artworks::ArtworksSnapshot &snapshot, std::vector<int> &indices);
 
         // IFilesCollection interface
     public:
