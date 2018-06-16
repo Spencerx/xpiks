@@ -22,6 +22,28 @@ void XpiksTestsApp::waitInitialized() {
     });
 }
 
+void XpiksTestsApp::cleanup() {
+    LOG_INTEGRATION_TESTS << "#";
+
+    m_SpellCheckerService.cancelCurrentBatch();
+    m_WarningsService.cancelCurrentBatch();
+    m_MaintenanceService.cleanup();
+    m_ArtworksUpdateHub.clear();
+    m_AutoCompleteModel.clear();
+
+    m_CsvExportModel.clearModel();
+    m_CsvExportModel.resetModel();
+    m_CombinedArtworksModel.resetModel();
+    m_ZipArchiver.resetModel();
+    m_ArtworkUploader.resetModel();
+    m_ArtworksRepository.resetEverything();
+    m_ArtItemsModel.deleteAllItems();
+    m_SettingsModel.resetToDefault();
+    m_SpellCheckerService.clearUserDictionary();
+    m_SessionManager.clearSession();
+    m_MetadataIOCoordinator.clear();
+}
+
 void XpiksTestsApp::initialize() {
     XpiksApp::initialize();
 

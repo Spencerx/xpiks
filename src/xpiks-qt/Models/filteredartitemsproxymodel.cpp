@@ -130,9 +130,9 @@ namespace Models {
         artItemsModel->setSelectedItemsSaved(indices);
     }
 
-    ArtItemsModel::ArtworksRemoveResult FilteredArtItemsProxyModel::removeSelectedArtworks() {
+    void FilteredArtItemsProxyModel::removeSelectedArtworks() {
         LOG_DEBUG << "#";
-        QVector<int> indices = getSelectedOriginalIndices();
+        std::vector<int> indices = getSelectedOriginalIndices();
         ArtItemsModel *artItemsModel = getArtItemsModel();
         return artItemsModel->removeFiles(indices);
     }
@@ -691,10 +691,12 @@ namespace Models {
             QModelIndex originalIndex = this->mapToSource(proxyIndex);
 
             int index = originalIndex.row();
-            ArtworkMetadata *metadata = artItemsModel->getArtwork(index);
+            ArtworkMetadata *artwork = artItemsModel->getArtwork(index);
 
-            if (metadata != NULL && pred(metadata)) {
-                filteredArtworks.push_back(mapper(metadata, index, row));
+            if (artwork != NULL &&
+                    !artwork->isRemoved() &&
+                    pred(artwork)) {
+                filteredArtworks.push_back(mapper(artwork, index, row));
             }
         }
 
@@ -711,20 +713,20 @@ namespace Models {
         return items;
     }
 
-    QVector<int> FilteredArtItemsProxyModel::getSelectedOriginalIndices() const {
+    std::vector<int> FilteredArtItemsProxyModel::getSelectedOriginalIndices() const {
         std::vector<int> items = getFilteredOriginalItems<int>(
             [](ArtworkMetadata *artwork) { return artwork->isSelected(); },
             [] (ArtworkMetadata *, int index, int) { return index; });
 
-        return QVector<int>::fromStdVector(items);
+        return items;
     }
 
-    QVector<int> FilteredArtItemsProxyModel::getSelectedIndices() const {
+    std::vector<int> FilteredArtItemsProxyModel::getSelectedIndices() const {
         std::vector<int> items = getFilteredOriginalItems<int>(
             [](ArtworkMetadata *artwork) { return artwork->isSelected(); },
             [] (ArtworkMetadata *, int, int originalIndex) { return originalIndex; });
 
-        return QVector<int>::fromStdVector(items);
+        return items;
     }
 
     void FilteredArtItemsProxyModel::forceUnselectAllItems() {
@@ -748,22 +750,22 @@ namespace Models {
         Q_UNUSED(sourceParent);
 
         ArtItemsModel *artItemsModel = getArtItemsModel();
-        ArtworkMetadata *metadata = artItemsModel->getArtwork(sourceRow);
+        ArtworkMetadata *artwork = artItemsModel->getArtwork(sourceRow);
 
         bool hasMatch = false;
+        if (artwork == nullptr) { return false; }
+        if (artwork->isRemoved()) { return false; }
 
-        if (metadata != NULL) {
-            ArtworksRepository *repository = m_CommandManager->getArtworksRepository();
-            Q_ASSERT(repository != NULL);
-            qint64 directoryID = metadata->getDirectoryID();
+        ArtworksRepository *repository = m_CommandManager->getArtworksRepository();
+        Q_ASSERT(repository != NULL);
+        qint64 directoryID = artwork->getDirectoryID();
 
-            bool directoryIsIncluded = repository->isDirectorySelected(directoryID);
-            if (directoryIsIncluded) {
-                hasMatch = true;
+        bool directoryIsIncluded = repository->isDirectorySelected(directoryID);
+        if (directoryIsIncluded) {
+            hasMatch = true;
 
-                if (!m_SearchTerm.trimmed().isEmpty()) {
-                    hasMatch = Helpers::hasSearchMatch(m_SearchTerm, metadata, m_SearchFlags);
-                }
+            if (!m_SearchTerm.trimmed().isEmpty()) {
+                hasMatch = Helpers::hasSearchMatch(m_SearchTerm, artwork, m_SearchFlags);
             }
         }
 

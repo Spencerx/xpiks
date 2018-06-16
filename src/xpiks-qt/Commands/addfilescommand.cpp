@@ -14,12 +14,26 @@
 #include "../MetadataIO/metadataiocoordinator.h"
 #include "../UndoRedo/addartworksitem.h"
 #include "../Common/logging.h"
+#include "../Helpers/indicesranges.h"
 #include "../QMLExtensions/imagecachingservice.h"
 #include "../QMLExtensions/videocachingservice.h"
 
 namespace Commands {
-    std::shared_ptr<Commands::CommandResult> AddFilesCommand::execute() {
-        const int count = m_ArtItemsModel.getArtworksCount();
+    std::shared_ptr<Commands::CommandResult> AddFilesCommand::execute(int commandID) {
+        LOG_DEBUG << "#";
+        m_CommandID = commandID;
+
+        m_OriginalCount = m_ArtItemsModel.getArtworksCount();
+        m_AddedCount = addFiles();
+
+        // clean resources if this will be stored in undo manager
+        m_Files.reset();
+        m_ClearLegacyBackupsCommand.reset();
+
+        return IAppCommand::execute();
+    }
+
+    int AddFilesCommand::addFiles() {
         auto addResult = m_ArtItemsModel.addFiles(m_Files, m_Flags);
 
         quint32 batchID = m_MetadataIOService.readArtworks(addResult.m_Snapshot);
@@ -29,15 +43,7 @@ namespace Commands {
         m_VideoCachingService.generateThumbnails(addResult.m_Snapshot);
 
         m_RecentFileModel.add(addResult.m_Snapshot);
-
-        if (!Common::HasFlag(m_Flags, Common::AddFilesFlags::FlagIsSessionRestore)) {
-            m_SaveSessionCommand->execute();
-        }
-
-        m_UndoRedoManager.recordHistoryItem(std::make_unique<UndoRedo::IHistoryItem>(
-                                                new UndoRedo::AddArtworksHistoryItem(
-                                                    m_ArtItemsModel, count, addResult.m_Snapshot.size(),
-                                                    m_SaveSessionCommand)));
+        saveSession();
 
         const bool autoImportEnabled = m_SettingsModel.getUseAutoImport() && m_SwitcherModel.getUseAutoImport();
         if (autoImportEnabled) {
@@ -47,10 +53,20 @@ namespace Commands {
 
         emit artworksAdded(importID, addResult.m_Snapshot.size(), addResult.m_AttachedVectorsCount);
 
-        if (m_ClearLegacyBackupsCommand) {
-            m_ClearLegacyBackupsCommand->execute();
-        }
+        m_ClearLegacyBackupsCommand->execute();
 
-        return ICommand::execute();
+        return addResult.m_Snapshot.size();
+    }
+
+    void AddFilesCommand::saveSession() {
+        if (!Common::HasFlag(m_Flags, Common::AddFilesFlags::FlagIsSessionRestore)) {
+            m_SaveSessionCommand->execute();
+        }
+    }
+
+    void AddFilesCommand::undo() {
+        LOG_DEBUG << "#";
+        m_ArtItemsModel.removeArtworks(Helpers::IndicesRanges(m_OriginalCount, m_AddedCount));
+        saveSession();
     }
 }

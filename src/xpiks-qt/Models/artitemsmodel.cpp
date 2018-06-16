@@ -52,107 +52,58 @@ namespace Models {
     ArtItemsModel::ArtItemsModel(ArtworksRepository &repository, QObject *parent):
         AbstractListModel(parent),
         Common::BaseEntity(),
-        m_ArtworksRepository(repository),
-        // all items before 1024 are reserved for internal models
-        m_LastID(1024)
     { }
 
     ArtItemsModel::~ArtItemsModel() {
-        for (auto *artwork: m_ArtworkList) {
-            if (artwork->release()) {
-                delete artwork;
-            } else {
-                m_FinalizationList.push_back(artwork);
-            }
-        }
 
-#if defined(QT_DEBUG) && !defined(INTEGRATION_TESTS)
-        // do not delete in release in order not to crash
-        // if artwork locks were still kept by other entities
-        qDeleteAll(m_FinalizationList);
-#endif
     }
 
     ArtItemsModel::ArtworksAddResult ArtItemsModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                                              Common::AddFilesFlags flags) {
-        const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
-        MetadataIO::ArtworksSnapshot snapshot;
-        snapshot.reserve(newFilesCount);
-        qint64 directoryID = 0;
-        const int count = getArtworksCount();
 
-        beginAccountingFiles(newFilesCount);
-        {
-            for (auto &file: filesCollection->getFiles()) {
-                if (m_ArtworksRepository.accountFile(file.m_Path, directoryID, directoryFlags)) {
-                    ArtworkMetadata *artwork = nullptr;
-                    if (file.m_Type == Filesystem::ArtworkFileType::Image) {
-                        artwork = new ImageArtwork(file.m_Path, getNextID(), directoryID);
-                    } else if (file.m_Type == Filesystem::ArtworkFileType::Video) {
-                        artwork = new VideoArtwork(file, getNextID(), directoryID);
-                    }
-
-                    appendArtwork(artwork);
-                    connectArtworkSignals(artwork);
-                }
-            }
-        }
-        endAccountingFiles();
-
-        const bool autoAttach = Common::HasFlag(flags, Common::AddFilesFlags::FlagAutoFindVectors);
-        int attachedCount = attachVectors(filesCollection, snapshot, count, autoAttach);
-        m_ArtworksRepository.addFiles(snapshot);
-
-        //syncArtworksIndices();
-
-        return {
-            snapshot,
-                    attachedCount
-        };
     }
 
-    ArtItemsModel::ArtworksRemoveResult ArtItemsModel::removeFiles(const QVector<int> &indices) {
-        QVector<QPair<int, int> > ranges;
-        QVector<int> sortedIndices(indices);
-        qSort(sortedIndices);
-        Helpers::indicesToRanges(sortedIndices, ranges);
+    ArtItemsModel::ArtworksRemoveResult ArtItemsModel::removeFiles(const Helpers::IndicesRanges &ranges) {
         auto snapshot = removeArtworks(ranges);
         auto removeResult = m_ArtworksRepository.removeFiles(snapshot);
         emit modifiedArtworksCountChanged();
         return {
-            snapshot,
-                    sortedIndices,
                     std::get<0>(removeResult), // directories ids set
                     std::get<1>(removeResult) // unselect all
         };
     }
 
     std::unique_ptr<MetadataIO::SessionSnapshot> ArtItemsModel::snapshotAll() {
-        std::unique_ptr<MetadataIO::SessionSnapshot> sessionSnapshot(
-                    new MetadataIO::SessionSnapshot(
-                        m_ArtworkList,
-                        m_ArtworksRepository.retrieveFullDirectories()));
-        return sessionSnapshot;
+
+    }
+
+    ArtworkMetadata *ArtItemsModel::createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID) {
+
     }
 
     int ArtItemsModel::getNextID() {
         return m_LastID++;
     }
 
-    MetadataIO::ArtworksSnapshot ArtItemsModel::removeArtworks(const QVector<QPair<int, int> > &ranges) {
-        MetadataIO::ArtworksSnapshot snapshot;
+    void ArtItemsModel::removeArtworks(const Helpers::IndicesRanges &ranges) {
         int selectedCount = 0;
+        QModelIndex dummy;
+        const bool willReset = ranges.length() > 20;
+        if (willReset) { emit beginResetModel(); }
 
-        for (auto &r: ranges) {
+        for (auto &r: ranges.getRanges()) {
             Q_ASSERT(r.first >= 0 && r.first < getArtworksCount());
             Q_ASSERT(r.second >= 0 && r.second < getArtworksCount());
-            Q_ASSERT(r.first <= r.second);
 
             auto itBegin = m_ArtworkList.begin() + r.first;
             auto itEnd = m_ArtworkList.begin() + (r.second + 1);
 
             std::vector<ArtworkMetadata *> itemsToDelete(itBegin, itEnd);
-            m_ArtworkList.erase(itBegin, itEnd);
+            if (!willReset) { emit beginRemoveRows(dummy, r.first, r.last); }
+            {
+                m_ArtworkList.erase(itBegin, itEnd);
+            }
+            if (!willReset) { emit endRemoveRows(); }
 
             std::vector<ArtworkMetadata *>::iterator it = itemsToDelete.begin();
             std::vector<ArtworkMetadata *>::iterator itemsEnd = itemsToDelete.end();
@@ -169,81 +120,14 @@ namespace Models {
             }
         }
 
+        if (willReset) { emit endResetModel(); }
+        syncArtworksIndices();
         if (selectedCount > 0) {
             emit selectedArtworksRemoved(selectedCount);
         }
-
-        return snapshot;
     }
 
-    int ArtItemsModel::attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
-                                     const MetadataIO::ArtworksSnapshot &snapshot,
-                                     int initialCount,
-                                     bool autoAttach) {
-        QHash<QString, QHash<QString, QString> > vectors;
-        for (auto &path: filesCollection->getVectors()) {
-            QFileInfo fi(path);
-            const QString &absolutePath = fi.absolutePath();
 
-            if (!vectors.contains(absolutePath)) {
-                vectors.insert(absolutePath, QHash<QString, QString>());
-            }
-
-            vectors[absolutePath].insert(fi.baseName().toLower(), path);
-        }
-
-        QVector<int> indicesToUpdate;
-        int attachedCount = this->attachVectors(vectors, indicesToUpdate);
-
-        if (autoAttach) {
-            QVector<int> autoAttachedIndices;
-            attachedCount += Helpers::findAndAttachVectors(snapshot.getWeakSnapshot(), autoAttachedIndices);
-
-            foreach (int index, autoAttachedIndices) {
-                indicesToUpdate.append(initialCount + index);
-            }
-        }
-
-        this->updateItems(indicesToUpdate, QVector<int>() << Models::ArtItemsModel::HasVectorAttachedRole);
-        return attachedCount;
-    }
-
-    void ArtItemsModel::connectArtworkSignals(ArtworkMetadata *artwork) {
-        QObject::connect(artwork, &ArtworkMetadata::modifiedChanged,
-                         this, &ArtItemsModel::itemModifiedChanged);
-
-        QObject::connect(artwork, &ArtworkMetadata::backupRequired,
-                         this, &Models::ArtItemsModel::onArtworkBackupRequested);
-
-        QObject::connect(artwork, &ArtworkMetadata::editingPaused,
-                         this, &Models::ArtItemsModel::onArtworkEditingPaused);
-
-        QObject::connect(artwork, &ArtworkMetadata::spellingInfoUpdated,
-                         this, &ArtItemsModel::onArtworkSpellingInfoUpdated);
-
-        QObject::connect(artwork, &ArtworkMetadata::selectedChanged,
-                         this, &ArtItemsModel::artworkSelectedChanged);
-    }
-
-    void ArtItemsModel::deleteAllItems() {
-        LOG_DEBUG << "#";
-        // should be called only from beforeDestruction() !
-        // will not cause sync issues on shutdown if no items
-        decltype(m_ArtworkList) artworksToDestroy;
-
-        beginResetModel();
-        {
-            artworksToDestroy.swap(m_ArtworkList);
-            m_ArtworkList.clear();
-        }
-        endResetModel();
-
-        size_t size = artworksToDestroy.size();
-        for (size_t i = 0; i < size; ++i) {
-            ArtworkMetadata *metadata = artworksToDestroy.at(i);
-            destroyInnerItem(metadata);
-        }
-    }
 
 #ifdef INTEGRATION_TESTS
     void ArtItemsModel::fakeDeleteAllItems() {
@@ -845,106 +729,6 @@ namespace Models {
         }
     }
 
-    int ArtItemsModel::rowCount(const QModelIndex &parent) const {
-        Q_UNUSED(parent);
-        return (int)getArtworksCount();
-    }
-
-    QVariant ArtItemsModel::data(const QModelIndex &index, int role) const {
-        int row = index.row();
-
-        if (row < 0 || row >= getArtworksCount()) {
-            return QVariant();
-        }
-
-        ArtworkMetadata *artwork = accessArtwork(row);
-        switch (role) {
-            case ArtworkDescriptionRole:
-                return artwork->getDescription();
-            case ArtworkFilenameRole:
-                return artwork->getFilepath();
-            case ArtworkTitleRole:
-                return artwork->getTitle();
-            case KeywordsStringRole: {
-                Common::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
-                return keywordsModel->getKeywordsString();
-            }
-            case IsModifiedRole:
-                return artwork->isModified();
-            case IsSelectedRole:
-                return artwork->isSelected();
-            case KeywordsCountRole: {
-                Common::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
-                return keywordsModel->getKeywordsCount();
-            }
-            case HasVectorAttachedRole: {
-                ImageArtwork *image = dynamic_cast<ImageArtwork *>(artwork);
-                return (image != NULL) && image->hasVectorAttached();
-            }
-            case BaseFilenameRole:
-                return artwork->getBaseFilename();
-            case IsVideoRole: {
-                bool isVideo = dynamic_cast<VideoArtwork*>(artwork) != nullptr;
-                return isVideo;
-            }
-            case ArtworkThumbnailRole:
-                return artwork->getThumbnailPath();
-            case IsReadOnlyRole:
-                return artwork->isReadOnly();
-            default:
-                return QVariant();
-        }
-    }
-
-    Qt::ItemFlags ArtItemsModel::flags(const QModelIndex &index) const {
-        int row = index.row();
-
-        if (row < 0 || row >= getArtworksCount()) {
-            return Qt::ItemIsEnabled;
-        }
-
-        return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
-    }
-
-    bool ArtItemsModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-        int row = index.row();
-
-        if (row < 0 || row >= getArtworksCount()) {
-            return false;
-        }
-
-        ArtworkMetadata *metadata = accessArtwork(row);
-        if (metadata->isLockedForEditing()) { return false; }
-
-        int roleToUpdate = 0;
-        bool needToUpdate = false;
-        switch (role) {
-            case EditArtworkDescriptionRole:
-            LOG_FOR_DEBUG << "item" << row << "description" << value;
-                needToUpdate = metadata->setDescription(value.toString());
-                roleToUpdate = ArtworkDescriptionRole;
-                break;
-            case EditArtworkTitleRole:
-            LOG_FOR_DEBUG << "item" << row << "title" << value;
-                needToUpdate = metadata->setTitle(value.toString());
-                roleToUpdate = ArtworkTitleRole;
-                break;
-            case EditIsSelectedRole:
-            LOG_FOR_DEBUG << "item" << row << "isSelected" << value;
-                needToUpdate = metadata->setIsSelected(value.toBool());
-                roleToUpdate = IsSelectedRole;
-                break;
-            default:
-                return false;
-        }
-
-        if (needToUpdate) {
-            emit dataChanged(index, index, QVector<int>() << IsModifiedRole << roleToUpdate);
-        }
-
-        return true;
-    }
-
     void ArtItemsModel::onFilesUnavailableHandler() {
         LOG_DEBUG << "#";
         Models::ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
@@ -1068,27 +852,6 @@ namespace Models {
         emit artworksChanged(true);
     }
 
-    void ArtItemsModel::beginAccountingFiles(int filesCount) {
-        int rowsCount = rowCount();
-        beginInsertRows(QModelIndex(), rowsCount, rowsCount + filesCount - 1);
-    }
-
-    void ArtItemsModel::beginAccountingFiles(int start, int end) {
-        beginInsertRows(QModelIndex(), start, end);
-    }
-
-    void ArtItemsModel::endAccountingFiles() {
-        endInsertRows();
-    }
-
-    void ArtItemsModel::beginAccountingManyFiles() {
-        beginResetModel();
-    }
-
-    void ArtItemsModel::endAccountingManyFiles() {
-        endResetModel();
-    }
-
     void ArtItemsModel::syncArtworksIndices() {
         const size_t size = m_ArtworkList.size();
         for (size_t i = 0; i < size; i++) {
@@ -1184,45 +947,7 @@ namespace Models {
     }
 
     int ArtItemsModel::attachVectors(const QHash<QString, QHash<QString, QString> > &vectorsPaths, QVector<int> &indicesToUpdate) const {
-        LOG_DEBUG << "#";
-        if (vectorsPaths.isEmpty()) { return 0; }
 
-        int attachedVectors = 0;
-        QString defaultPath;
-        Models::ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
-
-        size_t size = getArtworksCount();
-        indicesToUpdate.reserve((int)size);
-
-        for (size_t i = 0; i < size; ++i) {
-            ArtworkMetadata *metadata = accessArtwork(i);
-            ImageArtwork *image = dynamic_cast<ImageArtwork *>(metadata);
-            if (image == NULL) {
-                continue;
-            }
-
-            const QString &filepath = image->getFilepath();
-            QFileInfo fi(filepath);
-
-            const QString &directory = fi.absolutePath();
-            if (vectorsPaths.contains(directory)) {
-                const QHash<QString, QString> &innerHash = vectorsPaths[directory];
-
-                const QString &filename = fi.baseName().toLower();
-
-                QString vectorsPath = innerHash.value(filename, defaultPath);
-                if (!vectorsPath.isEmpty()) {
-                    image->attachVector(vectorsPath);
-                    artworksRepository->accountVector(vectorsPath);
-                    indicesToUpdate.append((int)i);
-                    attachedVectors++;
-                }
-            }
-        }
-
-        LOG_INFO << "Found matches to" << attachedVectors << "file(s)";
-
-        return attachedVectors;
     }
 
     void ArtItemsModel::unlockAllForIO() {
@@ -1327,33 +1052,6 @@ namespace Models {
 
             xpiks()->combineArtwork(metadata, index);
         }
-    }
-
-    ArtworkMetadata *ArtItemsModel::accessArtwork(size_t index) const {
-        Q_ASSERT(index < m_ArtworkList.size());
-        ArtworkMetadata *metadata = m_ArtworkList.at(index);
-        metadata->setCurrentIndex(index);
-        return metadata;
-    }
-
-    QHash<int, QByteArray> ArtItemsModel::roleNames() const {
-        QHash<int, QByteArray> roles;
-        roles[ArtworkDescriptionRole] = "description";
-        roles[EditArtworkDescriptionRole] = "editdescription";
-        roles[ArtworkTitleRole] = "title";
-        roles[EditArtworkTitleRole] = "edittitle";
-        roles[ArtworkFilenameRole] = "filename";
-        roles[KeywordsStringRole] = "keywordsstring";
-        roles[IsModifiedRole] = "ismodified";
-        roles[IsSelectedRole] = "isselected";
-        roles[EditIsSelectedRole] = "editisselected";
-        roles[KeywordsCountRole] = "keywordscount";
-        roles[HasVectorAttachedRole] = "hasvectorattached";
-        roles[BaseFilenameRole] = "basefilename";
-        roles[ArtworkThumbnailRole] = "thumbpath";
-        roles[IsVideoRole] = "isvideo";
-        roles[IsReadOnlyRole] = "isreadonly";
-        return roles;
     }
 
     void ArtItemsModel::destroyInnerItem(ArtworkMetadata *artwork) {

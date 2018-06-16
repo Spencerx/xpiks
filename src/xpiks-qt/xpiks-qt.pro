@@ -33,7 +33,6 @@ SOURCES += main.cpp \
     Helpers/stringhelper.cpp \
     Commands/commandmanager.cpp \
     UndoRedo/undoredomanager.cpp \
-    UndoRedo/addartworksitem.cpp \
     Commands/removeartworkscommand.cpp \
     UndoRedo/removeartworksitem.cpp \
     UndoRedo/artworkmetadatabackup.cpp \
@@ -201,7 +200,11 @@ SOURCES += main.cpp \
     Filesystem/filesdirectoriescollection.cpp \
     Commands/addfilescommand.cpp \
     Commands/cleanuplegacybackupscommand.cpp \
-    Commands/insertartworkscommand.cpp
+    Commands/insertartworkscommand.cpp \
+    Helpers/indicesranges.cpp \
+    Commands/removefilescommand.cpp \
+    Filesystem/indexedfilescollection.cpp \
+    Models/artworkslistmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -249,8 +252,6 @@ HEADERS += \
     Commands/commandmanager.h \
     UndoRedo/historyitem.h \
     UndoRedo/undoredomanager.h \
-    UndoRedo/addartworksitem.h \
-    Common/baseentity.h \
     Commands/removeartworkscommand.h \
     UndoRedo/removeartworksitem.h \
     UndoRedo/artworkmetadatabackup.h \
@@ -290,7 +291,6 @@ HEADERS += \
     Connectivity/ftphelpers.h \
     Plugins/xpiksplugininterface.h \
     Commands/icommandmanager.h \
-    UndoRedo/ihistoryitem.h \
     UndoRedo/iundoredomanager.h \
     Plugins/pluginmanager.h \
     Plugins/pluginwrapper.h \
@@ -484,7 +484,11 @@ HEADERS += \
     Filesystem/filesdirectoriescollection.h \
     Commands/addfilescommand.h \
     Commands/cleanuplegacybackupscommand.h \
-    Commands/insertartworkscommand.h
+    Commands/insertartworkscommand.h \
+    Helpers/indicesranges.h \
+    Commands/removefilescommand.h \
+    Filesystem/indexedfilescollection.h \
+    Models/artworkslistmodel.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

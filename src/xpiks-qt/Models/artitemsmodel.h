@@ -19,12 +19,12 @@
 #include <QSize>
 #include <QHash>
 #include <QQuickTextDocument>
+
 #include <deque>
 #include <vector>
 #include <tuple>
 #include <memory>
-#include "../Common/abstractlistmodel.h"
-#include "../Common/baseentity.h"
+
 #include "../Common/ibasicartwork.h"
 #include "../Common/iartworkssource.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
@@ -32,6 +32,7 @@
 #include "artworksrepository.h"
 #include "../MetadataIO/artworkssnapshot.h"
 #include "../Filesystem/ifilescollection.h"
+#include "../Helpers/indicesranges.h"
 
 namespace Common {
     class BasicMetadataModel;
@@ -46,84 +47,28 @@ namespace Models {
     class ArtworkElement;
 
     class ArtItemsModel:
-        public Common::BaseEntity,
-        public Common::IArtworksSource,
-        public Helpers::IFileNotAvailableModel
+            public QAbstractListModel,
+            public Common::IArtworksSource,
+            public Helpers::IFileNotAvailableModel
     {
-    Q_OBJECT
-    Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
-
-#ifndef CORE_TESTS
-        typedef std::deque<ArtworkMetadata *> ArtworksContainer;
-#else
-        typedef std::vector<ArtworkMetadata *> ArtworksContainer;
-#endif
 
     public:
-        struct ArtworksAddResult {
-            MetadataIO::ArtworksSnapshot m_Snapshot;
-            int m_AttachedVectorsCount;
-        };
 
-        struct ArtworksRemoveResult {
-            MetadataIO::ArtworksSnapshot m_Snapshot;
-            QVector<int> m_Indices;
-            QSet<qint64> m_SelectedDirectoryIds;
-            bool m_UnselectAll;
-        };
+        ArtworksRemoveResult removeFiles(const Helpers::IndicesRanges &ranges);
+
+
+
+    private:
+        void removeArtworks(const Helpers::IndicesRanges &ranges);
+
 
     public:
-        ArtItemsModel(ArtworksRepository &repository, QObject *parent=0);
-        virtual ~ArtItemsModel();
 
     public:
-        enum ArtItemsModel_Roles {
-            ArtworkDescriptionRole = Qt::UserRole + 1,
-            EditArtworkDescriptionRole,
-            ArtworkFilenameRole,
-            ArtworkTitleRole,
-            EditArtworkTitleRole,
-            KeywordsStringRole,
-            KeywordsCountRole,
-            IsModifiedRole,
-            IsSelectedRole,
-            EditIsSelectedRole,
-            HasVectorAttachedRole,
-            BaseFilenameRole,
-            IsVideoRole,
-            ArtworkThumbnailRole,
-            IsReadOnlyRole,
-            RolesNumber
-        };
-
-    public:
-        ArtworksAddResult addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
-                                   Common::AddFilesFlags flags);
-        ArtworksRemoveResult removeFiles(const QVector<int> &indices);
-        std::unique_ptr<MetadataIO::SessionSnapshot> snapshotAll();
-
-    protected:
-        int getNextID();
-        MetadataIO::ArtworksSnapshot removeArtworks(const QVector<QPair<int, int> > &ranges);
-        int attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
-                           const MetadataIO::ArtworksSnapshot &snapshot,
-                           int initialCount,
-                           bool autoAttach);
-        void connectArtworkSignals(ArtworkMetadata *artwork);
-
-    public:
-        void deleteAllItems();
-#ifdef INTEGRATION_TESTS
-        void fakeDeleteAllItems();
-#endif
-
-    public:
-        int getModifiedArtworksCount();
         void updateItems(const QVector<int> &indices, const QVector<int> &roles);
         void forceUnselectAllItems() const;
         virtual bool removeUnavailableItems() override;
         void generateAboutToBeRemoved();
-        int getMinChangedItemsCountForReset() const { return getRangesLengthForReset(); }
 
     public:
         Q_INVOKABLE void updateAllItems();
@@ -175,12 +120,6 @@ namespace Models {
     public:
         void fillFromQuickBuffer(size_t metadataIndex);
 
-    public:
-        virtual int rowCount(const QModelIndex &parent=QModelIndex()) const override;
-        virtual QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
-        virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
-        virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
-
     public slots:
         void itemModifiedChanged(bool) { updateModifiedCount(); }
         void onFilesUnavailableHandler();
@@ -190,14 +129,6 @@ namespace Models {
         void onUndoStackEmpty();
         void userDictUpdateHandler(const QStringList &keywords, bool overwritten);
         void userDictClearedHandler();
-
-    public:
-        virtual void removeItemsFromRanges(const QVector<QPair<int, int> > &ranges) override;
-        void beginAccountingFiles(int filesCount);
-        void beginAccountingFiles(int start, int end);
-        void endAccountingFiles();
-        void beginAccountingManyFiles();
-        void endAccountingManyFiles();
 
     public:
         void syncArtworksIndices();
@@ -211,7 +142,6 @@ namespace Models {
         virtual void updateItemsInRanges(const QVector<QPair<int, int> > &ranges);
         void updateItemsInRangesEx(const QVector<QPair<int, int> > &ranges, const QVector<int> &roles);
         void setAllItemsSelected(bool selected);
-        int attachVectors(const QHash<QString, QHash<QString, QString> > &vectorsPaths, QVector<int> &indicesToUpdate) const;
         void unlockAllForIO();
         void resetSpellCheckResults();
         void resetDuplicatesInfo();
@@ -231,7 +161,6 @@ namespace Models {
 
     private:
         void doCombineArtwork(int index);
-        Models::ArtworkMetadata *accessArtwork(size_t index) const;
 
     signals:
         void modifiedArtworksCountChanged();
@@ -243,9 +172,6 @@ namespace Models {
         void unavailableVectorsFound();
         void userDictUpdate(const QString &word);
         void artworkSelectedChanged(bool value);
-
-    protected:
-        virtual QHash<int, QByteArray> roleNames() const override;
 
     private:
         void destroyInnerItem(ArtworkMetadata *artwork);
@@ -272,15 +198,7 @@ namespace Models {
     public:
         const ArtworksContainer &getArtworkList() const { return m_ArtworkList; }
 
-    private:
-        ArtworksRepository &m_ArtworksRepository;
-        ArtworksContainer m_ArtworkList;
-        ArtworksContainer m_FinalizationList;
-#ifdef QT_DEBUG
-        ArtworksContainer m_DestroyedList;
-#endif
-        qint64 m_LastID;
-    };
+
 }
 
 #endif // ARTSITEMSMODEL_H

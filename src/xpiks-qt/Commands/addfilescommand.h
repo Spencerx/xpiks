@@ -16,6 +16,7 @@
 #include "icommand.h"
 #include "../Common/flags.h"
 #include "../Filesystem/ifilescollection.h"
+#include "../UndoRedo/ihistoryitem.h"
 
 namespace Models {
     class ArtItemsModel;
@@ -40,7 +41,9 @@ namespace UndoRedo {
 }
 
 namespace Commands {
-    class AddFilesCommand: public QObject, public ICommand
+    class AddFilesCommand:
+            public QObject,
+            public IUndoCommand
     {
         Q_OBJECT
     public:
@@ -56,8 +59,7 @@ namespace Commands {
                         MetadataIO::MetadataIOCoordinator &metadataIOCoordinator,
                         QMLExtensions::ImageCachingService &imageCachingService,
                         QMLExtensions::VideoCachingService &videoCachingService,
-                        Models::RecentFilesModel &recentFileModel,
-                        UndoRedo::UndoRedoManager &undoRedoManager):
+                        Models::RecentFilesModel &recentFileModel):
             QObject(),
             m_Files(std::move(files)),
             m_Flags(flags),
@@ -71,20 +73,33 @@ namespace Commands {
             m_MetadataIOCoordinator(metadataIOCoordinator),
             m_ImageCachingService(imageCachingService),
             m_VideoCachingService(videoCachingService),
-            m_RecentFileModel(recentFileModel),
-            m_UndoRedoManager(undoRedoManager)
+            m_RecentFileModel(recentFileModel)
         { }
 
         // ICommand interface
     public:
-        virtual std::shared_ptr<CommandResult> execute() override;
+        virtual std::shared_ptr<CommandResult> execute(int commandID) override;
+
+    private:
+        int addFiles();
+        void saveSession();
+
+        // IHistoryItem interface
+    public:
+        virtual void undo() override;
+        virtual QString getDescription() const override {
+            return m_AddedCount != 1 ? QObject::tr("%1 items added").arg(m_AddedCount) :
+                                       QObject::tr("1 item added");
+        }
+        virtual int getCommandID() const override { return m_CommandID; }
 
     signals:
         void artworksAdded(int importID, int imagesCount, int vectorsCount);
 
     private:
         std::shared_ptr<Filesystem::IFilesCollection> m_Files;
-        Common::AddFilesFlags m_Flags;
+        Common::AddFilesFlags m_Flags = Common::AddFilesFlags::None;
+        int m_CommandID;
         std::shared_ptr<Commands::ICommand> m_SaveSessionCommand;
         std::shared_ptr<Commands::ICommand> m_ClearLegacyBackupsCommand;
         Models::ArtItemsModel &m_ArtItemsModel;
@@ -96,7 +111,9 @@ namespace Commands {
         QMLExtensions::ImageCachingService &m_ImageCachingService;
         QMLExtensions::VideoCachingService &m_VideoCachingService;
         Models::RecentFilesModel &m_RecentFileModel;
-        UndoRedo::UndoRedoManager &m_UndoRedoManager;
+        // undo
+        int m_OriginalCount = 0;
+        int m_AddedCount = 0;
     };
 }
 

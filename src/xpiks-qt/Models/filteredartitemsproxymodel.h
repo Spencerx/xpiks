@@ -61,7 +61,7 @@ namespace Models {
         Q_INVOKABLE void selectDirectory(int directoryIndex);
         Q_INVOKABLE void combineSelectedArtworks();
         Q_INVOKABLE void setSelectedItemsSaved();
-        ArtItemsModel::ArtworksRemoveResult removeSelectedArtworks();
+        void removeSelectedArtworks();
         Q_INVOKABLE void updateSelectedArtworks();
         /*Q_INVOKABLE*/ void updateSelectedArtworksEx(const QVector<int> &roles);
         Q_INVOKABLE void saveSelectedArtworks(bool overwriteAll, bool useBackups);
@@ -132,8 +132,8 @@ namespace Models {
 
         MetadataIO::WeakArtworksSnapshot getAllOriginalItems() const;
 
-        QVector<int> getSelectedOriginalIndices() const;
-        QVector<int> getSelectedIndices() const;
+        std::vector<int> getSelectedOriginalIndices() const;
+        std::vector<int> getSelectedIndices() const;
         void forceUnselectAllItems();
         ArtItemsModel *getArtItemsModel() const;
 

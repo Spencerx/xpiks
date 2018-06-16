@@ -8,12 +8,19 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "addartworksitem.h"
-#include "../Models/artitemsmodel.h"
-#include "../Common/logging.h"
+#include "removefilescommand.h"
 
-void UndoRedo::AddArtworksHistoryItem::undo() {
-    LOG_INFO << "#";
-    m_ArtItemsModel.removeArtworks(m_AddedRanges);
-    m_SaveSessionCommand->execute();
+namespace Commands {
+    RemoveFilesCommand::RemoveFilesCommand()
+    {
+
+    }
+
+    std::shared_ptr<CommandResult> RemoveFilesCommand::execute(int commandID) {
+        m_CommandID = commandID;
+
+        auto removeResult = removeFiles();
+
+        return ICommand::execute();
+    }
 }

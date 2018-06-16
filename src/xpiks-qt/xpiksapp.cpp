@@ -57,7 +57,8 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_KeywordsSuggestor(m_ApiClients, m_RequestsService, m_SwitcherModel, environment),
     m_TelemetryService(m_SwitcherModel, m_SettingsModel),
     m_PluginManager(environment, &m_DatabaseManager, m_RequestsService, m_ApiClients),
-    m_HelpersQmlWrapper(environment, &m_ColorsModel)
+    m_HelpersQmlWrapper(environment, &m_ColorsModel),
+    m_CommandManager(m_UndoRedoManager)
 {
     m_FilteredPresetsModel.setSourceModel(&m_PresetsModel);
     m_FilteredArtItemsModel.setSourceModel(&m_ArtItemsModel);
@@ -103,8 +104,6 @@ void XpiksApp::initialize() {
 
     m_TelemetryService.initialize();
 
-    injectDependencies();
-
     m_FtpCoordinator.reset(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel));
     m_ArtworkUploader.setFtpCoordinator(m_FtpCoordinator);
 
@@ -125,6 +124,10 @@ void XpiksApp::initialize() {
     m_ColorsModel.applyTheme(m_SettingsModel.getSelectedThemeIndex());
 
     m_PluginManager.getUIProvider()->setUIManager(&m_UIManager);
+
+    m_AvailabilityListeners.append(&m_CombinedArtworksModel);
+    m_AvailabilityListeners.append(&m_ArtworkUploader);
+    m_AvailabilityListeners.append(&m_ZipArchiver);
 }
 
 void XpiksApp::setupUI(QQmlContext *context) {
@@ -372,83 +375,54 @@ void XpiksApp::removeDirectory(int index) {
                     new UndoRedo::RemoveDirectoryHistoryItem()));
 }
 
-void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
-    Commands::AddFilesCommand(files,
-                              flags,
-                              std::make_shared<Commands::ICommand>(
-                                  new Commands::SaveSessionCommand(m_MaintenanceService,
-                                                                   m_ArtItemsModel,
-                                                                   m_SessionManager)),
-                              std::make_shared<Commands::ICommand>(
-                                  new Commands::CleanupLegacyBackupsCommand(files,
-                                                                            m_MaintenanceService)),
-                              m_ArtItemsModel,
-                              m_ArtworksRepository,
-                              m_SettingsModel,
-                              m_SwitcherModel,
-                              m_MetadataIOService,
-                              m_MetadataIOCoordinator,
-                              m_ImageCachingService,
-                              m_VideoCachingService,
-                              m_RecentFileModel,
-                              m_UndoRedoManager)
-            .execute();
+void XpiksApp::removeUnavailableFiles() {
+    LOG_DEBUG << "#";
+    m_CombinedArtworksModel.generateAboutToBeRemoved();
+    m_ArtItemsModel.generateAboutToBeRemoved();
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+    for (auto &listener: m_AvailabilityListeners) {
+        listener->removeUnavailableItems();
+    }
+
+    m_ArtItemsModel.removeUnavailableItems();
+
+    m_UndoRedoManager.discardLastAction();
+
+    if (m_ArtworksRepository.canPurgeUnavailableFiles()) {
+        m_ArtworksRepository.purgeUnavailableFiles();
+    } else {
+        LOG_INFO << "Unavailable files purging postponed";
+    }
 }
 
-void XpiksApp::injectDependencies() {
-    m_MainDelegator.setCommandManager(&m_CommandManager);
-    m_CommandManager.InjectDependency(&m_MainDelegator);
+void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
+    auto saveSessionCommand = std::make_shared<Commands::ICommand>(
+                new Commands::SaveSessionCommand(m_MaintenanceService,
+                                                 m_ArtItemsModel,
+                                                 m_SessionManager));
 
-    m_CommandManager.InjectDependency(&m_ArtworksRepository);
-    m_CommandManager.InjectDependency(&m_ArtItemsModel);
-    m_CommandManager.InjectDependency(&m_FilteredArtItemsModel);
-    m_CommandManager.InjectDependency(&m_CombinedArtworksModel);
-    m_CommandManager.InjectDependency(&m_ArtworkUploader);
-    m_CommandManager.InjectDependency(&m_UploadInfoRepository);
-    m_CommandManager.InjectDependency(&m_WarningsService);
-    m_CommandManager.InjectDependency(&m_SecretsManager);
-    m_CommandManager.InjectDependency(&m_UndoRedoManager);
-    m_CommandManager.InjectDependency(&m_ZipArchiver);
-    m_CommandManager.InjectDependency(&m_KeywordsSuggestor);
-    m_CommandManager.InjectDependency(&m_SettingsModel);
-    m_CommandManager.InjectDependency(&m_RecentDirectorieModel);
-    m_CommandManager.InjectDependency(&m_RecentFileModel);
-    m_CommandManager.InjectDependency(&m_SpellCheckerService);
-    m_CommandManager.InjectDependency(&m_SpellCheckSuggestionModel);
-    m_CommandManager.InjectDependency(&m_MetadataIOService);
-    m_CommandManager.InjectDependency(&m_TelemetryService);
-    m_CommandManager.InjectDependency(&m_UpdateService);
-    m_CommandManager.InjectDependency(&m_LogsModel);
-    m_CommandManager.InjectDependency(&m_MetadataIOCoordinator);
-    m_CommandManager.InjectDependency(&m_PluginManager);
-    m_CommandManager.InjectDependency(&m_LanguagesModel);
-    m_CommandManager.InjectDependency(&m_ColorsModel);
-    m_CommandManager.InjectDependency(&m_AutoCompleteService);
-    m_CommandManager.InjectDependency(&m_AutoCompleteModel);
-    m_CommandManager.InjectDependency(&m_ImageCachingService);
-    m_CommandManager.InjectDependency(&m_ReplaceModel);
-    m_CommandManager.InjectDependency(&m_DeleteKeywordsModel);
-    m_CommandManager.InjectDependency(&m_HelpersQmlWrapper);
-    m_CommandManager.InjectDependency(&m_PresetsModel);
-    m_CommandManager.InjectDependency(&m_TranslationManager);
-    m_CommandManager.InjectDependency(&m_TranslationService);
-    m_CommandManager.InjectDependency(&m_UIManager);
-    m_CommandManager.InjectDependency(&m_ArtworkProxyModel);
-    m_CommandManager.InjectDependency(&m_SessionManager);
-    m_CommandManager.InjectDependency(&m_WarningsModel);
-    m_CommandManager.InjectDependency(&m_QuickBuffer);
-    m_CommandManager.InjectDependency(&m_MaintenanceService);
-    m_CommandManager.InjectDependency(&m_VideoCachingService);
-    m_CommandManager.InjectDependency(&m_ArtworksUpdateHub);
-    m_CommandManager.InjectDependency(&m_SwitcherModel);
-    m_CommandManager.InjectDependency(&m_RequestsService);
-    m_CommandManager.InjectDependency(&m_DatabaseManager);
-    m_CommandManager.InjectDependency(&m_DuplicatesModel);
-    m_CommandManager.InjectDependency(&m_CsvExportModel);
+    auto cleanBackupsCommand = std::make_shared<Commands::ICommand>(
+                new Commands::CleanupLegacyBackupsCommand(files,
+                                                          m_MaintenanceService));
 
-    m_UserDictEditModel.setCommandManager(&m_CommandManager);
+    auto addFilesCommand = std::make_shared(
+                new Commands::AddFilesCommand(files,
+                                              flags,
+                                              saveSessionCommand,
+                                              cleanBackupsCommand,
+                                              m_ArtItemsModel,
+                                              m_ArtworksRepository,
+                                              m_SettingsModel,
+                                              m_SwitcherModel,
+                                              m_MetadataIOService,
+                                              m_MetadataIOCoordinator,
+                                              m_ImageCachingService,
+                                              m_VideoCachingService,
+                                              m_RecentFileModel));
 
-    m_CommandManager.ensureDependenciesInjected();
+    m_CommandManager.processCommand(
+                std::dynamic_pointer_cast<Commands::IAppCommand>(addFilesCommand));
 }
 
 void XpiksApp::afterServicesStarted() {

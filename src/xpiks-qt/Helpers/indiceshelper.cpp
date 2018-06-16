@@ -52,35 +52,6 @@ namespace Helpers {
     int splitIntoChunks<int>(const QVector<int> &items, int chunksCount, QVector<QVector<int> > &chunks);
 #endif
 
-    void indicesToRanges(const QVector<int> &indices, QVector<QPair<int, int> > &ranges) {
-        if (indices.empty()) { return; }
-
-        int currentStart = indices[0];
-        int indicesCount = indices.count();
-        ranges.reserve(indicesCount/3);
-
-        for (int i = 1; i < indicesCount; ++i) {
-            if (indices[i] - indices[i - 1] > 1) {
-                ranges.append(qMakePair(currentStart, indices[i - 1]));
-                currentStart = indices[i];
-            }
-        }
-
-        ranges.append(qMakePair(currentStart, indices[indicesCount - 1]));
-    }
-
-    int getRangesLength(const QVector<QPair<int, int> > &ranges) {
-        int sum = 0;
-
-        int length = ranges.length();
-        for (int i = 0; i < length; ++i) {
-            const QPair<int, int> &pair = ranges[i];
-            sum += pair.second - pair.first + 1;
-        }
-
-        return sum;
-    }
-
     bool segmentsOverlap(const std::pair<int, int> &a, const std::pair<int, int> &b) {
         if (a.first <= b.first) {
             return b.first <= a.second;

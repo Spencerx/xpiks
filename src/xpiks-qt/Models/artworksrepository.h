@@ -111,7 +111,6 @@ namespace Models {
 
     public:
         bool accountFile(const QString &filepath, qint64 &directoryID, Common::DirectoryFlags directoryFlags = Common::DirectoryFlags::None);
-        void accountVector(const QString &vectorPath);
         bool removeFile(const QString &filepath, qint64 directoryID);
         void removeVector(const QString &vectorPath);
         void cleanupEmptyDirectories();

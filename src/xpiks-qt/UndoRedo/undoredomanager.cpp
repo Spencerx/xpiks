@@ -10,11 +10,10 @@
 
 #include "undoredomanager.h"
 #include "../Common/defines.h"
+#include "../Common/logging.h"
 
-UndoRedo::UndoRedoManager::~UndoRedoManager() { }
-
-void UndoRedo::UndoRedoManager::recordHistoryItem(std::unique_ptr<IHistoryItem> &historyItem) {
-    LOG_INFO << "History item about to be recorded:" << historyItem->getActionType();
+void UndoRedo::UndoRedoManager::recordHistoryItem(std::shared_ptr<Commands::IUndoCommand> &historyItem) {
+    LOG_INFO << "History item about to be recorded";
 
     QMutexLocker locker(&m_Mutex);
 
@@ -37,14 +36,14 @@ bool UndoRedo::UndoRedoManager::undoLastAction() {
     anyItem = !m_HistoryStack.empty();
 
     if (anyItem) {
-        std::unique_ptr<UndoRedo::IHistoryItem> historyItem(std::move(m_HistoryStack.top()));
+        std::shared_ptr<Commands::IUndoCommand> historyItem(std::move(m_HistoryStack.top()));
         m_HistoryStack.pop();
         m_Mutex.unlock();
 
         emit canUndoChanged();
         emit undoDescriptionChanged();
         int commandID = historyItem->getCommandID();
-        historyItem->undo(m_CommandManager);
+        historyItem->undo();
         emit actionUndone(commandID);
     } else {
         m_Mutex.unlock();
@@ -58,11 +57,7 @@ void UndoRedo::UndoRedoManager::discardLastAction() {
     LOG_DEBUG << "#";
     m_Mutex.lock();
 
-    bool anyItem = false;
-    anyItem = !m_HistoryStack.empty();
-
-    if (anyItem) {
-        std::unique_ptr<UndoRedo::IHistoryItem> historyItem(std::move(m_HistoryStack.top()));
+    if (!m_HistoryStack.empty()) {
         m_HistoryStack.pop();
         bool isNowEmpty = m_HistoryStack.empty();
 

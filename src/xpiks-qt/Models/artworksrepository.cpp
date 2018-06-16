@@ -108,16 +108,10 @@ namespace Models {
     int ArtworksRepository::getNewFilesCount(const std::shared_ptr<Filesystem::IFilesCollection> &files) const {
         int count = 0;
 
-        auto imagesSet = files->getImages().toSet();
-        for (auto &image: imagesSet) {
-            if (!m_FilesSet.contains(image)) {
-                count++;
-            }
-        }
+        for (auto &file: files->getFiles()) {
+            if (file.m_Type == Filesystem::ArtworkFileType::Vector) { continue; }
 
-        auto videosSet = files->getVideos().toSet();
-        for (auto &video: videosSet) {
-            if (!m_FilesSet.contains(video)) {
+            if (!m_FilesSet.contains(file.m_Path)) {
                 count++;
             }
         }
@@ -184,10 +178,6 @@ namespace Models {
         }
 
         return wasModified;
-    }
-
-    void ArtworksRepository::accountVector(const QString &vectorPath) {
-        watchFilePath(vectorPath);
     }
 
     bool ArtworksRepository::removeFile(const QString &filepath, qint64 directoryID) {
@@ -258,7 +248,7 @@ namespace Models {
 
             Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork *>(artwork);
             if ((imageArtwork != nullptr) && imageArtwork->hasVectorAttached()) {
-                accountVector(imageArtwork->getAttachedVectorPath());
+                filepaths.append(imageArtwork->getAttachedVectorPath());
             }
         }
 

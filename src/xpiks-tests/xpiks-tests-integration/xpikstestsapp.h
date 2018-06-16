@@ -13,6 +13,7 @@ public:
 
 public:
     void waitInitialized();
+    void cleanup();
 
 public:
     virtual void initialize() override;

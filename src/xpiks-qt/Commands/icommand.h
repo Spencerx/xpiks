@@ -12,6 +12,7 @@
 #define ICOMMANDBASE_H
 
 #include <memory>
+#include <QString>
 
 namespace Commands {
     class ICommandManager;
@@ -35,6 +36,14 @@ namespace Commands {
             Q_UNUSED(commandID);
             return ICommand::execute();
         }
+    };
+
+    class IUndoCommand: public IAppCommand {
+    public:
+        virtual ~IUndoCommand() {}
+        virtual void undo() = 0;
+        virtual QString getDescription() const = 0;
+        virtual int getCommandID() const = 0;
     };
 }
 

@@ -76,6 +76,7 @@
 #include "Plugins/uiprovider.h"
 
 #include "Helpers/helpersqmlwrapper.h"
+#include "Helpers/ifilenotavailablemodel.h"
 
 #include "Common/isystemenvironment.h"
 
@@ -120,10 +121,10 @@ public:
 public:
     Q_INVOKABLE void removeSelectedArtworks();
     Q_INVOKABLE void removeDirectory(int index);
+    Q_INVOKABLE void removeUnavailableFiles();
 
 private:
     void doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);
-    void injectDependencies();
     void afterServicesStarted();
     void executeMaintenanceJobs();
     void connectEntitiesSignalsSlots();
@@ -196,6 +197,7 @@ protected:
 
     Commands::MainDelegator m_MainDelegator;
     Helpers::AsyncCoordinator m_InitCoordinator;
+    QVector<Helpers::IFileNotAvailableModel*> m_AvailabilityListeners;
     volatile bool m_ServicesInitialized = false;
     volatile bool m_AfterInitCalled = false;
 };

@@ -16,7 +16,6 @@
 #include <memory>
 #include <QMutex>
 #include "../Commands/commandmanager.h"
-#include "../Common/baseentity.h"
 #include "iundoredomanager.h"
 
 namespace UndoRedo {
@@ -24,7 +23,6 @@ namespace UndoRedo {
 
     class UndoRedoManager:
             public QObject,
-            public Common::BaseEntity,
             public IUndoRedoManager
     {
         Q_OBJECT
@@ -32,11 +30,8 @@ namespace UndoRedo {
         Q_PROPERTY(QString undoDescription READ getUndoDescription NOTIFY undoDescriptionChanged)
     public:
         UndoRedoManager(QObject *parent=0):
-            QObject(parent),
-            Common::BaseEntity()
-        {}
-
-        virtual ~UndoRedoManager();
+            QObject(parent)
+        { }
 
     public:
         bool getCanUndo() const { return !m_HistoryStack.empty(); }
@@ -52,13 +47,13 @@ namespace UndoRedo {
         QString getUndoDescription() const { return m_HistoryStack.empty() ? "" : m_HistoryStack.top()->getDescription(); }
 
     public:
-        virtual void recordHistoryItem(std::unique_ptr<UndoRedo::IHistoryItem> &historyItem) override;
+        virtual void recordHistoryItem(std::shared_ptr<Commands::IUndoCommand> &historyItem) override;
         Q_INVOKABLE bool undoLastAction();
         Q_INVOKABLE void discardLastAction();
 
     private:
         // stack for future todos
-        std::stack<std::unique_ptr<IHistoryItem> > m_HistoryStack;
+        std::stack<std::shared_ptr<Commands::IUndoCommand> > m_HistoryStack;
         QMutex m_Mutex;
     };
 }

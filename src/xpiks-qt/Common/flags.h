@@ -176,6 +176,7 @@ namespace Common {
     };
 
     enum struct AddFilesFlags: Common::flag_t {
+        None = 0,
         FlagAutoFindVectors = 1 << 0,
         FlagIsFullDirectory = 1 << 1,
         FlagIsSessionRestore = 1 << 2,

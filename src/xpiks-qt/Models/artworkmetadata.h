@@ -62,7 +62,8 @@ namespace Models {
             FlagIsLockedForEditing = 1 << 5,
             FlagIsLockedIO = 1 << 6,
             FlagIsReimportPending = 1 << 7,
-            FlagIsReadOnly = 1 << 8
+            FlagIsReadOnly = 1 << 8,
+            FlagIsRemoved = 1 << 9
         };
 
 #define PROTECT_FLAGS_READ QReadLocker rlocker(&m_FlagsLock); Q_UNUSED(rlocker);
@@ -77,6 +78,7 @@ namespace Models {
         inline bool getIsLockedIOFlag() { PROTECT_FLAGS_READ; return Common::HasFlag(m_MetadataFlags, FlagIsLockedIO); }
         inline bool getIsReimportPendingFlag() { PROTECT_FLAGS_READ; return Common::HasFlag(m_MetadataFlags, FlagIsReimportPending); }
         inline bool getIsReadOnlyFlag() { PROTECT_FLAGS_READ; return Common::HasFlag(m_MetadataFlags, FlagIsReadOnly); }
+        inline bool getIsRemovedFlag() { PROTECT_FLAGS_READ; return Common::HasFlag(m_MetadataFlags, FlagIsRemoved); }
 
         inline void setIsModifiedFlag(bool value) { PROTECT_FLAGS_WRITE; Common::ApplyFlag(m_MetadataFlags, value, FlagIsModified); }
         inline void setIsSelectedFlag(bool value) { PROTECT_FLAGS_WRITE; Common::ApplyFlag(m_MetadataFlags, value, FlagsIsSelected); }
@@ -87,6 +89,7 @@ namespace Models {
         inline void setIsLockedIOFlag(bool value) { PROTECT_FLAGS_WRITE; Common::ApplyFlag(m_MetadataFlags, value, FlagIsLockedIO); }
         inline void setIsReimportPendingFlag(bool value) { PROTECT_FLAGS_WRITE; Common::ApplyFlag(m_MetadataFlags, value, FlagIsReimportPending); }
         inline void setIsReadOnlyFlag(bool value) { PROTECT_FLAGS_WRITE; Common::ApplyFlag(m_MetadataFlags, value, FlagIsReadOnly); }
+        inline void setIsRemovedFlag(bool value) { PROTECT_FLAGS_WRITE; Common::ApplyFlag(m_MetadataFlags, value, FlagIsRemoved); }
 
 #undef PROTECT_FLAGS_READ
 #undef PROTECT_FLAGS_WRITE
@@ -122,6 +125,7 @@ namespace Models {
         bool isUnavailable() { return getIsUnavailableFlag(); }
         bool isInitialized() { return getIsInitializedFlag(); }
         bool isAlmostInitialized() { return getIsAlmostInitializedFlag(); }
+        bool isRemoved() { return getIsRemovedFlag(); }
         size_t getLastKnownIndex() const { return m_LastKnownIndex; }
         virtual qint64 getFileSize() const { return m_FileSize; }
         virtual Common::ID_t getItemID() const override { return m_ID; }
@@ -203,6 +207,8 @@ namespace Models {
     public:
         void markModified();
         void setUnavailable() { setIsUnavailableFlag(true); }
+        void setRemoved() { setIsRemovedFlag(true); }
+        void resetRemoved() { setIsRemovedFlag(false); }
         void resetModified() { setIsModifiedFlag(false); }
         void requestFocus(int directionSign) { emit focusRequested(directionSign); }
         virtual bool expandPreset(size_t keywordIndex, const QStringList &presetList) override;
