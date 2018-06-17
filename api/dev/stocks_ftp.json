@@ -61,6 +61,10 @@
         {
             "name": "Crestock",
             "ftp": "ftp.crestock.com"
+        },
+        {
+            "name": "Adobe Stock",
+            "ftp": "ftp.contributor.adobestock.com"
         }
     ]
 }

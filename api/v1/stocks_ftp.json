@@ -7,11 +7,13 @@
         },
         {
             "name": "Fotolia",
-            "ftp": "ftp://submit.fotolia.com"
+            "ftp": "ftp://submit.fotolia.com",
+            "zip_vector": true
         },
         {
             "name": "Depositphotos",
-            "ftp": "ftp.depositphotos.com"
+            "ftp": "ftp.depositphotos.com",
+            "zip_vector": true
         },
         {
             "name": "123rf",
@@ -23,19 +25,26 @@
         },
         {
             "name": "Dreamtimes",
-            "ftp": "ftp://upload.dreamstime.com"
+            "ftp": "ftp://upload.dreamstime.com",
+            "vectors_dir": "additional"
         },
         {
             "name": "CanStock",
-            "ftp": "ftp.canstockphoto.com"
+            "ftp": "ftp.canstockphoto.com",
+            "zip_vector": true
         },
         {
             "name": "ColourBox",
-            "ftp": "ftp.skyfish.com"
+            "ftp": "ftp.skyfish.com",
+            "images_dir": "stock/images",
+            "vectors_dir": "stock/vector",
+            "videos_dir": "stock/video"
         },
         {
             "name": "Alamy",
-            "ftp": "ftp://upload.alamy.com"
+            "ftp": "ftp://upload.alamy.com",
+            "images_dir": "Stock",
+            "vectors_dir": "Vector"
         },
         {
             "name": "iClipart",
