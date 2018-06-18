@@ -14,17 +14,18 @@
 #include <QObject>
 #include <QAtomicInt>
 #include "../Common/readerwriterqueue.h"
-#include "artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
 #include "originalmetadata.h"
 #include "../Helpers/asynccoordinator.h"
-#include "../Common/baseentity.h"
 
 namespace MetadataIO {
-    class MetadataReadingHub: public QObject, public Common::BaseEntity
+    class MetadataIOService;
+
+    class MetadataReadingHub: public QObject
     {
         Q_OBJECT
     public:
-        MetadataReadingHub();
+        MetadataReadingHub(MetadataIOService &metadataIOService);
 
     public:
         void initializeImport(const ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);
@@ -52,8 +53,9 @@ namespace MetadataIO {
         void initializeArtworks(bool ignoreBackups, bool isCancelled);
 
     private:
-        ArtworksSnapshot m_ArtworksToRead;
+        Artworks::ArtworksSnapshot m_ArtworksToRead;
         Helpers::AsyncCoordinator m_AsyncCoordinator;
+        MetadataIOService m_MetadataIOService;
         Common::ReaderWriterQueue<OriginalMetadata> m_ImportQueue;
         int m_ImportID;
         quint32 m_StorageReadBatchID;

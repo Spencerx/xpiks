@@ -12,18 +12,15 @@
 #define ARTWORKPROXYBASE_H
 
 #include <QQuickTextDocument>
-#include "../Common/baseentity.h"
-#include "../Common/ibasicartwork.h"
-#include "../Common/basicmetadatamodel.h"
-#include "../Common/imetadataoperator.h"
+#include "../Artworks/basicmetadatamodel.h"
+#include "../Artworks/imetadataoperator.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
 #include "../QuickBuffer/currenteditableproxyartwork.h"
 
 class QSyntaxHighlighter;
 
 namespace Models {
-    class ArtworkProxyBase:
-            public virtual Common::BaseEntity
+    class ArtworkProxyBase
     {
     public:
         virtual ~ArtworkProxyBase() {}

@@ -56,6 +56,7 @@ namespace Models {
 
     void ArtworksViewModel::pullArtworks() {
         LOG_DEBUG << "#";
+        doResetModel();
         this->setArtworks(m_ArtworksSource.getArtworks());
     }
 

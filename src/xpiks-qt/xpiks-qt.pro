@@ -198,7 +198,6 @@ SOURCES += main.cpp \
     Filesystem/filesdirectoriescollection.cpp \
     Commands/addfilescommand.cpp \
     Commands/cleanuplegacybackupscommand.cpp \
-    Commands/insertartworkscommand.cpp \
     Helpers/indicesranges.cpp \
     Commands/removefilescommand.cpp \
     Filesystem/indexedfilescollection.cpp \
@@ -490,7 +489,6 @@ HEADERS += \
     Filesystem/filesdirectoriescollection.h \
     Commands/addfilescommand.h \
     Commands/cleanuplegacybackupscommand.h \
-    Commands/insertartworkscommand.h \
     Helpers/indicesranges.h \
     Commands/removefilescommand.h \
     Filesystem/indexedfilescollection.h \
@@ -510,7 +508,8 @@ HEADERS += \
     Artworks/basickeywordsmodelimpl.h \
     Artworks/basicmetadatamodel.h \
     Artworks/imetadataoperator.h \
-    Artworks/keyword.h
+    Artworks/keyword.h \
+    Models/selectedartworksconsumer.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

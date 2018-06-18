@@ -21,11 +21,11 @@
 #include <memory>
 #include <vector>
 #include "artworksviewmodel.h"
-#include "../Common/basicmetadatamodel.h"
+#include "../Artworks/basicmetadatamodel.h"
 #include "../Common/flags.h"
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../Common/hold.h"
-#include "../Models/artworkelement.h"
+#include "../Artworks/artworkelement.h"
 #include "artworkproxybase.h"
 #include "../Common/delayedactionentity.h"
 
@@ -48,11 +48,10 @@ namespace Models {
         Q_PROPERTY(bool appendKeywords READ getAppendKeywords WRITE setAppendKeywords NOTIFY appendKeywordsChanged)
 
     public:
-        CombinedArtworksModel(QObject *parent=0);
-
+        CombinedArtworksModel(Artworks::IArtworksSource &selectedArtworksSource, QObject *parent=0);
         virtual ~CombinedArtworksModel() {}
 
-    public:
+    protected:
         virtual void setArtworks(Artworks::WeakArtworksSnapshot &artworks) override;
 
     private:

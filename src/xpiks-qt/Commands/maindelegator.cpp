@@ -92,67 +92,6 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::combineArtwork(Artworks::ArtworkMetadata *metadata, int index) const {
-        LOG_INFO << "one item with index" << index;
-        auto *combinedArtworksModel = m_CommandManager->getCombinedArtworksModel();
-        if (combinedArtworksModel) {
-            Artworks::WeakArtworksSnapshot items;
-            items.push_back(metadata);
-
-            combinedArtworksModel->resetModel();
-            combinedArtworksModel->setArtworks(items);
-        }
-    }
-
-    void MainDelegator::combineArtworks(Artworks::WeakArtworksSnapshot &artworks) const {
-        LOG_INFO << artworks.size() << "artworks";
-        auto *combinedArtworksModel = m_CommandManager->getCombinedArtworksModel();
-        if (combinedArtworksModel) {
-            combinedArtworksModel->resetModel();
-            combinedArtworksModel->setArtworks(artworks);
-        }
-    }
-
-    void MainDelegator::deleteKeywordsFromArtworks(Artworks::WeakArtworksSnapshot &artworks) const {
-        LOG_INFO << artworks.size() << "artworks";
-        auto *deleteKeywordsViewModel = m_CommandManager->getDeleteKeywordsModel();
-        if (deleteKeywordsViewModel != NULL) {
-            deleteKeywordsViewModel->setArtworks(artworks);
-        }
-    }
-
-    void MainDelegator::setArtworksForUpload(Artworks::ArtworksSnapshot &artworks) const {
-    #ifndef CORE_TESTS
-        LOG_INFO << artworks.size() << "artworks";
-        auto *artworkUploader = m_CommandManager->getArtworkUploader();
-        if (artworkUploader) {
-            artworkUploader->setArtworks(artworks);
-        }
-    #else
-        Q_UNUSED(artworks);
-    #endif
-    }
-
-    void MainDelegator::setArtworksForZipping(Artworks::ArtworksSnapshot &artworks) const {
-        LOG_INFO << artworks.size() << "artworks";
-        auto *zipArchiver = m_CommandManager->getZipArchiver();
-        if (zipArchiver) {
-            zipArchiver->setArtworks(artworks);
-        }
-    }
-
-    void MainDelegator::setArtworksForCsvExport(Artworks::ArtworksSnapshot::Container &rawSnapshot) const {
-    #ifndef CORE_TESTS
-        LOG_INFO << rawSnapshot.size() << "artworks";
-        auto *csvExportModel = m_CommandManager->getCsvExportModel();
-        if (csvExportModel) {
-            csvExportModel->setupModel(rawSnapshot);
-        }
-    #else
-        Q_UNUSED(rawSnapshot);
-    #endif
-    }
-
     int MainDelegator::reimportMetadata(const Artworks::ArtworksSnapshot &snapshot) const {
         LOG_DEBUG << "#";
         int importID = 0;
@@ -206,19 +145,6 @@ namespace Commands {
     #endif
     }
 
-    void MainDelegator::addToLibrary(const Artworks::WeakArtworksSnapshot &artworks) const {
-        LOG_DEBUG << "#";
-
-    #ifndef CORE_TESTS
-        auto *metadataIOService = m_CommandManager->getMetadataIOService();
-        if (metadataIOService != nullptr) {
-            metadataIOService->addArtworks(artworks);
-        }
-    #else
-        Q_UNUSED(artworks);
-    #endif
-    }
-
     void MainDelegator::updateArtworksAtIndices(const QVector<int> &indices) const {
         auto *artItemsModel = m_CommandManager->getArtItemsModel();
         if (artItemsModel) {
@@ -253,13 +179,6 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::addToRecentFiles(const QString &path) const {
-        auto *recentFiles = m_CommandManager->getRecentFiles();
-        if (recentFiles) {
-            recentFiles->pushItem(path);
-        }
-    }
-
     void MainDelegator::autoDiscoverExiftool() const {
     #ifndef CORE_TESTS
         auto *metadataIOCoordinator = m_CommandManager->getMetadataIOCoordinator();
@@ -275,22 +194,6 @@ namespace Commands {
         if (maintenanceService != nullptr) {
             maintenanceService->cleanupOldXpksBackups(directory);
         }
-    #endif
-    }
-
-    void MainDelegator::generatePreviews(const Artworks::ArtworksSnapshot &snapshot) const {
-    #ifndef CORE_TESTS
-        auto *imageCachingService = m_CommandManager->getImageCachingService();
-        if (imageCachingService != NULL) {
-            imageCachingService->generatePreviews(snapshot);
-        }
-
-        auto *videoCachingService = m_CommandManager->getVideoCachingService();
-        if (videoCachingService != NULL) {
-            videoCachingService->generateThumbnails(snapshot);
-        }
-    #else
-        Q_UNUSED(snapshot);
     #endif
     }
 

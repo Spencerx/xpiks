@@ -15,11 +15,11 @@
 #include <vector>
 #include <memory>
 #include "csvexportproperties.h"
-#include "artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
 #include "csvexportplansmodel.h"
-#include "../Common/baseentity.h"
 #include "../Common/delayedactionentity.h"
 #include "../Common/isystemenvironment.h"
+#include "../Artworks/iartworkssource.h"
 
 class QTimerEvent;
 
@@ -71,28 +71,22 @@ namespace MetadataIO {
 
     class CsvExportModel:
             public QAbstractListModel,
-            public Common::BaseEntity,
             public Common::DelayedActionEntity
     {
         Q_OBJECT
         Q_PROPERTY(bool isExporting READ getIsExporting WRITE setIsExporting NOTIFY isExportingChanged)
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
     public:
-        CsvExportModel(Common::ISystemEnvironment &environment);
+        CsvExportModel(Common::ISystemEnvironment &environment,
+                       Artworks::IArtworksSource &selectedArtworksSource);
 
     public:
         const std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() const { return m_ExportPlans; }
         bool getIsExporting() const { return m_IsExporting; }
         int getArtworksCount() const { return (int)m_ArtworksToExport.size(); }
-
-    public:
         void setIsExporting(bool value);
 
     public:
-        virtual void setCommandManager(Commands::CommandManager *commandManager) override;
-
-    public:
-        void setupModel(ArtworksSnapshot::Container &rawSnapshot);
         void initializeExportPlans(Helpers::AsyncCoordinator *initCoordinator);
 
 #ifdef INTEGRATION_TESTS
@@ -118,6 +112,7 @@ namespace MetadataIO {
         virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     public:
+        Q_INVOKABLE void pullArtworks();
         Q_INVOKABLE void startExport();
         Q_INVOKABLE void clearModel();
         Q_INVOKABLE void removePlanAt(int row);
@@ -129,6 +124,7 @@ namespace MetadataIO {
         Q_INVOKABLE void setOutputDirectory(const QUrl &url);
 
     private:
+        void setArtworks(Artworks::WeakArtworksSnapshot &snapshot);
         void saveExportPlans();
         int retrieveSelectedPlansCount();
 
@@ -168,7 +164,8 @@ namespace MetadataIO {
         CsvExportColumnsModel m_CurrentColumnsModel;
         CsvExportPlansModel m_ExportPlansModel;
         std::vector<std::shared_ptr<CsvExportPlan> > m_ExportPlans;
-        ArtworksSnapshot m_ArtworksToExport;
+        Artworks::ArtworksSnapshot m_ArtworksToExport;
+        Artworks::IArtworksSource &m_SelectedArtworksSource;
         QString m_ExportDirectory;
         int m_SaveTimerId;
         int m_SaveRestartsCount;

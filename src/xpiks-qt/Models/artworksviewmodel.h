@@ -41,7 +41,7 @@ namespace Models {
         ArtworksViewModel(Artworks::IArtworksSource &artworksSource, QObject *parent=NULL);
         virtual ~ArtworksViewModel() { }
 
-    private:
+    protected:
         virtual void setArtworks(Artworks::WeakArtworksSnapshot &weakSnapshot);
 
     public:

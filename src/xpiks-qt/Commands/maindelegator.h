@@ -150,25 +150,16 @@ namespace Commands {
                              const QString &newMasterPassword,
                              const std::vector<std::shared_ptr<Models::UploadInfo> > &uploadInfos) const;
 
-        void combineArtwork(Artworks::ArtworkMetadata *metadata, int index) const;
-        void combineArtworks(Artworks::WeakArtworksSnapshot &artworks) const;
-        void deleteKeywordsFromArtworks(Artworks::WeakArtworksSnapshot &artworks) const;
-        void setArtworksForUpload(Artworks::ArtworksSnapshot &artworks) const;
-        void setArtworksForZipping(Artworks::ArtworksSnapshot &artworks) const;
-        void setArtworksForCsvExport(Artworks::ArtworksSnapshot::Container &rawSnapshot) const;
         int reimportMetadata(const Artworks::ArtworksSnapshot &snapshot) const;
         void writeMetadata(const Artworks::WeakArtworksSnapshot &artworks, bool useBackups) const;
         void wipeAllMetadata(const Artworks::ArtworksSnapshot &artworks, bool useBackups) const;
-        void addToLibrary(const Artworks::WeakArtworksSnapshot &artworks) const;
         void updateArtworksAtIndices(const QVector<int> &indices) const;
         void updateArtworks(const Artworks::WeakArtworksSnapshot &artworks) const;
         void updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks);
-        void addToRecentFiles(const QString &path) const;
         void autoDiscoverExiftool() const;
         void cleanupOldXpksBackups(const QString &directory) const;
 
     public:
-        void generatePreviews(const Artworks::ArtworksSnapshot &snapshot) const;
         void submitKeywordForSpellCheck(Common::BasicKeywordsModel *item, int keywordIndex) const;
         void submitForSpellCheck(const Artworks::WeakArtworksSnapshot &items) const;
         void submitForSpellCheck(const std::vector<Common::BasicKeywordsModel *> &items) const;

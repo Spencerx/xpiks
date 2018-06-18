@@ -13,18 +13,18 @@
 #include <QFileInfo>
 #include <QRegExp>
 #include <QDir>
-#include "../Models/artworkmetadata.h"
-#include "../Models/imageartwork.h"
+#include "../Artworks/artworkmetadata.h"
+#include "../Artworks/imageartwork.h"
 #include "../Helpers/filehelpers.h"
 #include "../Common/defines.h"
-#include "../MetadataIO/artworkssnapshot.h"
 
 #ifndef CORE_TESTS
 #include "../Helpers/ziphelper.h"
 #endif
 
 namespace Models {
-    ZipArchiver::ZipArchiver():
+    ZipArchiver::ZipArchiver(Artworks::IArtworksSource &selectedArtworksSource):
+        SelectedArtworksConsumer(selectedArtworksSource),
         m_IsInProgress(false),
         m_HasErrors(false)
     {
@@ -101,9 +101,9 @@ namespace Models {
         emit percentChanged();
     }
 
-    void ZipArchiver::setArtworks(Artworks::ArtworksSnapshot &snapshot) {
+    void ZipArchiver::setArtworks(Artworks::WeakArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
-        m_ArtworksSnapshot = std::move(snapshot);
+        m_ArtworksSnapshot.set(snapshot);
         emit itemsCountChanged();
     }
 
@@ -153,7 +153,7 @@ namespace Models {
             QFileInfo fi(filepath);
             QString basename = fi.baseName();
 
-            ImageArtwork *image = dynamic_cast<ImageArtwork*>(artwork);
+            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             if (image != NULL) {
                 if (image->hasVectorAttached()) {
                     LOG_INTEGRATION_TESTS << filepath << "is zipping candidate";

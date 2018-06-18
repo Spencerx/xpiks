@@ -91,6 +91,7 @@ namespace Artworks {
         void append(const WeakArtworksSnapshot &artworks);
         void append(const std::deque<ArtworkMetadata *> &artworks);
         void set(Container &rawSnapshot);
+        void set(WeakArtworksSnapshot &rawSnapshot);
         void copy(const ArtworksSnapshot &other);
         void remove(size_t index);
         ArtworkMetadata *get(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i)->getArtworkMetadata(); }

@@ -14,8 +14,7 @@
 #include <QQmlEngine>
 #include <QHash>
 #include "../Common/hold.h"
-#include "../Common/baseentity.h"
-#include "../Common/basickeywordsmodel.h"
+#include "../Artworks/basickeywordsmodel.h"
 #include "../Models/artworksviewmodel.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
 
@@ -28,7 +27,7 @@ namespace Models {
         Q_PROPERTY(bool caseSensitive READ getCaseSensitive WRITE setCaseSensitive NOTIFY caseSensitiveChanged)
 
     public:
-        DeleteKeywordsViewModel(QObject *parent=nullptr);
+        DeleteKeywordsViewModel(Artworks::IArtworksSource &selectedArtworksSource, QObject *parent=nullptr);
         virtual ~DeleteKeywordsViewModel() {}
 
     public:

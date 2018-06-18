@@ -58,15 +58,6 @@ namespace Models {
 
     }
 
-    ArtItemsModel::ArtworksAddResult ArtItemsModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
-                                                             Common::AddFilesFlags flags) {
-
-    }
-
-    ArtItemsModel::ArtworksRemoveResult ArtItemsModel::removeFiles(const Helpers::IndicesRanges &ranges) {
-        auto snapshot = removeArtworks(ranges);
-    }
-
 
 
 #ifdef INTEGRATION_TESTS

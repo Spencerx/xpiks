@@ -12,10 +12,9 @@
 #include "../Helpers/indiceshelper.h"
 #include "../Commands/combinededitcommand.h"
 #include "../Commands/commandmanager.h"
-#include "../Commands/commandbase.h"
 #include "../Suggestion/keywordssuggestor.h"
-#include "artworkmetadata.h"
-#include "artworkelement.h"
+#include "../Artworks/artworkmetadata.h"
+#include "../Artworks/artworkelement.h"
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../Common/defines.h"
 #include "../QMLExtensions/colorsmodel.h"
@@ -23,8 +22,8 @@
 #define MAX_EDITING_PAUSE_RESTARTS 12
 
 namespace Models {
-    CombinedArtworksModel::CombinedArtworksModel(QObject *parent):
-        ArtworksViewModel(parent),
+    CombinedArtworksModel::CombinedArtworksModel(Artworks::IArtworksSource &selectedArtworksSource, QObject *parent):
+        ArtworksViewModel(selectedArtworksSource, parent),
         ArtworkProxyBase(),
         Common::DelayedActionEntity(1000, MAX_EDITING_PAUSE_RESTARTS),
         m_CommonKeywordsModel(m_HoldPlaceholder, this),

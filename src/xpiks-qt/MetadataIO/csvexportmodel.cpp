@@ -226,10 +226,12 @@ namespace MetadataIO {
 
     /*------------------------------------------------------*/
 
-    CsvExportModel::CsvExportModel(Common::ISystemEnvironment &environment):
+    CsvExportModel::CsvExportModel(Common::ISystemEnvironment &environment,
+                                   Artworks::IArtworksSource &selectedArtworksSource):
         Common::BaseEntity(),
         Common::DelayedActionEntity(3000, MAX_SAVE_PAUSE_RESTARTS),
         m_ExportPlansModel(environment),
+        m_SelectedArtworksSource(selectedArtworksSource),
         m_SaveTimerId(-1),
         m_SaveRestartsCount(0),
         m_IsExporting(false)
@@ -253,11 +255,6 @@ namespace MetadataIO {
         Common::BaseEntity::setCommandManager(commandManager);
 
         m_ExportPlansModel.setCommandManager(commandManager);
-    }
-
-    void CsvExportModel::setupModel(Artworks::ArtworksSnapshot::Container &rawSnapshot) {
-        m_ArtworksToExport.set(rawSnapshot);
-        emit artworksCountChanged();
     }
 
     void CsvExportModel::initializeExportPlans(Helpers::AsyncCoordinator *initCoordinator) {
@@ -346,6 +343,11 @@ namespace MetadataIO {
         }
 
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+    }
+
+    void CsvExportModel::pullArtworks() {
+        LOG_DEBUG << "#";
+        this->setArtworks(m_SelectedArtworksSource.getArtworks());
     }
 
     void CsvExportModel::startExport() {
@@ -447,6 +449,11 @@ namespace MetadataIO {
         if (localFile != m_ExportDirectory) {
             m_ExportDirectory = localFile;
         }
+    }
+
+    void CsvExportModel::setArtworks(Artworks::WeakArtworksSnapshot &snapshot) {
+         m_ArtworksToExport.set(snapshot);
+         emit artworksCountChanged();
     }
 
     void CsvExportModel::saveExportPlans() {

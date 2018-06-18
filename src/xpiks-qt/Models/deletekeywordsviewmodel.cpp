@@ -11,14 +11,15 @@
 #include "deletekeywordsviewmodel.h"
 #include <QTime>
 #include "../Helpers/indiceshelper.h"
-#include "artworkelement.h"
+#include "../Artworks/artworkelement.h"
 #include "../Commands/commandmanager.h"
 #include "../Commands/deletekeywordscommand.h"
 #include "../Common/defines.h"
 
 namespace Models {
-    DeleteKeywordsViewModel::DeleteKeywordsViewModel(QObject *parent):
-        Models::ArtworksViewModel(parent),
+    DeleteKeywordsViewModel::DeleteKeywordsViewModel(Artworks::IArtworksSource &selectedArtworksSource, QObject *parent):
+        Models::ArtworksViewModel(selectedArtworksSource,
+                                  parent),
         m_KeywordsToDeleteModel(m_HoldForDeleters),
         m_CommonKeywordsModel(m_HoldForCommon),
         m_CaseSensitive(false)

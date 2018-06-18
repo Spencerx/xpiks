@@ -11,7 +11,7 @@
 #include "artworksupdatehub.h"
 #include "artworkupdaterequest.h"
 #include "../Commands/commandmanager.h"
-#include "../Models/artitemsmodel.h"
+#include "../Models/artworkslistmodel.h"
 #include "../Models/artworkproxymodel.h"
 #include "../Common/defines.h"
 
@@ -20,9 +20,9 @@
 #define UPDATE_TIMER_DELAY 400
 
 namespace QMLExtensions {
-    ArtworksUpdateHub::ArtworksUpdateHub(QObject *parent) :
+    ArtworksUpdateHub::ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel, QObject *parent) :
         QObject(parent),
-        Common::BaseEntity(),
+        m_ArtworksListModel(artworksListModel),
         m_TimerRestartedCount(0)
     {
         m_UpdateTimer.setSingleShot(true);
@@ -38,10 +38,10 @@ namespace QMLExtensions {
     }
 
     void ArtworksUpdateHub::updateArtwork(qint64 artworkID, size_t lastKnownIndex, const QSet<int> &rolesToUpdate) {
+        std::shared_ptr<ArtworkUpdateRequest> updateRequest(
+                    new ArtworkUpdateRequest(artworkID, lastKnownIndex, rolesToUpdate));
         {
             QMutexLocker locker(&m_Lock);
-
-            std::shared_ptr<ArtworkUpdateRequest> updateRequest(new ArtworkUpdateRequest(artworkID, lastKnownIndex, rolesToUpdate));
             m_UpdateRequests.emplace_back(updateRequest);
         }
 
@@ -53,13 +53,22 @@ namespace QMLExtensions {
         this->updateArtwork(artwork->getItemID(), artwork->getLastKnownIndex(), m_StandardRoles);
     }
 
-    void ArtworksUpdateHub::forceUpdate() {
-        LOG_DEBUG << "#";
+    void ArtworksUpdateHub::updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, bool fastUpdate) const {
+        decltype(m_UpdateRequests) requests;
+        requests.reserve(artworks.size());
+        for (auto &artwork: artworks) {
+            std::shared_ptr<ArtworkUpdateRequest> updateRequest(
+                        new ArtworkUpdateRequest(
+                            artwork->getItemID(),
+                            artwork->getLastKnownIndex(),
+                            m_StandardRoles,
+                            fastUpdate));
+            requests.emplace_back(updateRequest);
+        }
 
         {
             QMutexLocker locker(&m_Lock);
-            Q_UNUSED(locker);
-            m_TimerRestartedCount += MAX_UPDATE_TIMER_DELAYS;
+            m_UpdateRequests.insert(m_UpdateRequests.end(), requests.begin(), requests.end());
         }
 
         emit updateRequested();
@@ -76,6 +85,10 @@ namespace QMLExtensions {
 
     void ArtworksUpdateHub::onUpdateRequested() {
         LOG_DEBUG << "#";
+        /*
+         * Force update might be dangerous because it is possible
+         * that restart count will be high but timer is not started
+         */
 
         if (m_TimerRestartedCount < MAX_UPDATE_TIMER_DELAYS) {
             m_UpdateTimer.start(UPDATE_TIMER_DELAY);
@@ -100,8 +113,7 @@ namespace QMLExtensions {
             m_TimerRestartedCount = 0;
         }
 
-        Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
-        artItemsModel->processUpdateRequests(requests);
+        m_ArtworksListModel.processUpdateRequests(requests);
 
         QSet<qint64> artworkIDsToUpdate;
         QSet<int> commonRoles;
@@ -112,6 +124,7 @@ namespace QMLExtensions {
 
         for (auto &request: requests) {
             if (!request->isCacheMiss()) { continue; }
+            if (request->isFastUpdate()) { continue; }
 
             // allow cache miss requests to be postponed 1 time
             // in order to gather more of them and process in 1 go later
@@ -135,6 +148,6 @@ namespace QMLExtensions {
         }
 
         QVector<int> roles = commonRoles.toList().toVector();
-        artItemsModel->updateArtworks(artworkIDsToUpdate, roles);
+        m_ArtworksListModel.updateArtworksByIDs(artworkIDsToUpdate, roles);
     }
 }

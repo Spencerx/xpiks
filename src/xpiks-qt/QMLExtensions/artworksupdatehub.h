@@ -17,21 +17,25 @@
 #include <QSet>
 #include <vector>
 #include <memory>
-#include "../Common/baseentity.h"
 #include "artworksupdatehub.h"
+#include "../Artworks/artworkssnapshot.h"
+
+namespace Artworks {
+    class ArtworkMetadata;
+}
 
 namespace Models {
-    class ArtworkMetadata;
+    class ArtworksListModel;
 }
 
 namespace QMLExtensions {
     class ArtworkUpdateRequest;
 
-    class ArtworksUpdateHub : public QObject, public Common::BaseEntity
+    class ArtworksUpdateHub : public QObject
     {
         Q_OBJECT
     public:
-        explicit ArtworksUpdateHub(QObject *parent = 0);
+        explicit ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel, QObject *parent = 0);
 
     public:
         void setStandardRoles(const QVector<int> &roles);
@@ -39,7 +43,7 @@ namespace QMLExtensions {
     public:
         void updateArtwork(qint64 artworkID, size_t lastKnownIndex, const QSet<int> &rolesToUpdate = QSet<int>());
         void updateArtwork(Artworks::ArtworkMetadata *artwork);
-        void forceUpdate();
+        void updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, bool fastUpdate=false) const;
 
 #ifdef INTEGRATION_TESTS
     public:
@@ -56,6 +60,7 @@ namespace QMLExtensions {
     private:
         QMutex m_Lock;
         QSet<int> m_StandardRoles;
+        Models::ArtworksListModel &m_ArtworksListModel;
         std::vector<std::shared_ptr<ArtworkUpdateRequest> > m_UpdateRequests;
         QTimer m_UpdateTimer;
         int m_TimerRestartedCount;

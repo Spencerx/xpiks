@@ -17,8 +17,9 @@
 #include "../Connectivity/testconnection.h"
 #include "../Connectivity/uploadwatcher.h"
 #include "../Helpers/ifilenotavailablemodel.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
 #include "../Common/isystemenvironment.h"
+#include "selectedartworksconsumer.h"
 #include "uploadinforepository.h"
 #include <ftpcoordinator.h>
 
@@ -43,8 +44,7 @@ namespace Models {
     class ArtworkMetadata;
 
     class ArtworkUploader:
-            public QObject,
-            public Common::BaseEntity,
+            public SelectedArtworksConsumer,
             public Helpers::IFileNotAvailableModel
     {
         Q_PROPERTY(int percent READ getUIPercent NOTIFY percentChanged)
@@ -55,6 +55,7 @@ namespace Models {
     public:
         ArtworkUploader(Common::ISystemEnvironment &environment,
                         Models::UploadInfoRepository &uploadInfoRepository,
+                        Artworks::IArtworksSource &selectedArtworksSource,
                         QObject *parent=0);
         virtual ~ArtworkUploader();
 
@@ -106,8 +107,8 @@ namespace Models {
         Q_INVOKABLE void resetProgress();
         Q_INVOKABLE void cancelOperation();
 
-    public:
-        void setArtworks(Artworks::ArtworksSnapshot &snapshot);
+    protected:
+        virtual void setArtworks(Artworks::WeakArtworksSnapshot &snapshot) override;
         void resetArtworks();
 
 #ifdef CORE_TESTS

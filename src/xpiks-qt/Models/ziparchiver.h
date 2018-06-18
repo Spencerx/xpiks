@@ -14,17 +14,16 @@
 #include <QFutureWatcher>
 #include <QPair>
 #include <QVector>
-#include "../Common/baseentity.h"
 #include "../Helpers/ifilenotavailablemodel.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
+#include "selectedartworksconsumer.h"
 
 class QStringList;
 class QString;
 
 namespace Models {
     class ZipArchiver:
-            public QObject,
-            public Common::BaseEntity,
+            public SelectedArtworksConsumer,
             public Helpers::IFileNotAvailableModel
     {
         Q_PROPERTY(int percent READ getPercent NOTIFY percentChanged)
@@ -33,7 +32,7 @@ namespace Models {
         Q_PROPERTY(int itemsCount READ getItemsCount NOTIFY itemsCountChanged)
         Q_OBJECT
     public:
-        ZipArchiver();
+        ZipArchiver(Artworks::IArtworksSource &selectedArtworksSource);
         virtual ~ZipArchiver() { delete m_ArchiveCreator; }
 
     public:
@@ -63,8 +62,8 @@ namespace Models {
         Q_INVOKABLE void archiveArtworks();
         Q_INVOKABLE void resetModel();
 
-    public:
-        void setArtworks(Artworks::ArtworksSnapshot &snapshot);
+    protected:
+        virtual void setArtworks(Artworks::WeakArtworksSnapshot &snapshot) override;
         void resetArtworks();
 
     protected:

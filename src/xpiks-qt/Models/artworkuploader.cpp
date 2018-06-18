@@ -28,7 +28,7 @@
 
 namespace Models {
     ArtworkUploader::ArtworkUploader(Common::ISystemEnvironment &environment,
-                                     UploadInfoRepository &uploadInfoRepository,
+                                     UploadInfoRepository &uploadInfoRepository, Artworks::IArtworksSource &selectedArtworksSource,
                                      QObject *parent):
         QObject(parent),
         m_Environment(environment),
@@ -189,9 +189,9 @@ namespace Models {
         m_FtpCoordinator->cancelUpload();
     }
 
-    void ArtworkUploader::setArtworks(Artworks::ArtworksSnapshot &snapshot) {
+    void ArtworkUploader::setArtworks(Artworks::WeakArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
-        m_ArtworksSnapshot = std::move(snapshot);
+        m_ArtworksSnapshot.set(snapshot);
         emit itemsCountChanged();
     }
 

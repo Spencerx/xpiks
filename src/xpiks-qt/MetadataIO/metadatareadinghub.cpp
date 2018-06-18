@@ -10,12 +10,14 @@
 
 #include "metadatareadinghub.h"
 #include "metadataioservice.h"
-#include "../Models/artworkmetadata.h"
+#include "../Artworks/artworkmetadata.h"
 #include "../Commands/commandmanager.h"
 #include "../Common/defines.h"
+#include "../MetadataIO/metadataioservice.h"
 
 namespace MetadataIO {
-    MetadataReadingHub::MetadataReadingHub():
+    MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService):
+        m_MetadataIOService(metadataIOService),
         m_ImportID(0),
         m_StorageReadBatchID(0),
         m_IgnoreBackupsAtImport(false),
@@ -86,7 +88,7 @@ namespace MetadataIO {
         const auto &itemsToRead = m_ArtworksToRead.getWeakSnapshot();
 
         if (!isCancelled) {
-            xpiks()->addToLibrary(itemsToRead);
+            m_MetadataIOService.addArtworks(itemsToRead);
         }
 
         xpiks()->updateArtworks(itemsToRead);

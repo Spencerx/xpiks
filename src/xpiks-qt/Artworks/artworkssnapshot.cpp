@@ -108,6 +108,12 @@ namespace Artworks {
         m_ArtworksSnapshot = std::move(rawSnapshot);
     }
 
+    void ArtworksSnapshot::set(WeakArtworksSnapshot &rawSnapshot) {
+        clear();
+        LOG_DEBUG << "Setting snapshot of" << rawSnapshot.size() << "artwork(s)";
+        append(rawSnapshot);
+    }
+
     void ArtworksSnapshot::copy(const ArtworksSnapshot &other) {
         clear();
         LOG_DEBUG << "Copying snapshot of" << other.m_ArtworksSnapshot.size() << "item(s)";
