@@ -385,7 +385,7 @@ void XpiksApp::removeUnavailableFiles() {
         listener->removeUnavailableItems();
     }
 
-    m_ArtworksListModel.removeUnavailableItems();
+    m_ArtworksListModel.deleteUnavailableItems();
 
     m_UndoRedoManager.discardLastAction();
 

@@ -28,12 +28,18 @@ namespace Models {
     class ArtworksListModel;
 }
 
-namespace QMLExtensions {
+namespace Services {
     class ArtworkUpdateRequest;
 
     class ArtworksUpdateHub : public QObject
     {
         Q_OBJECT
+    public:
+        enum UpdateMode {
+            FastUpdate,
+            FullUpdate
+        };
+
     public:
         explicit ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel, QObject *parent = 0);
 
@@ -43,7 +49,8 @@ namespace QMLExtensions {
     public:
         void updateArtwork(qint64 artworkID, size_t lastKnownIndex, const QSet<int> &rolesToUpdate = QSet<int>());
         void updateArtwork(Artworks::ArtworkMetadata *artwork);
-        void updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, bool fastUpdate=false) const;
+        void updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, UpdateMode updateMode=FastUpdate) const;
+        void updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks, UpdateMode updateMode=FastUpdate) const;
 
 #ifdef INTEGRATION_TESTS
     public:

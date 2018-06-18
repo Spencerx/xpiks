@@ -13,6 +13,7 @@
 
 #include <QString>
 #include <deque>
+#include <memory>
 #include "artworkmetadata.h"
 #include "imageartwork.h"
 
@@ -90,6 +91,7 @@ namespace Artworks {
         }
         void append(const WeakArtworksSnapshot &artworks);
         void append(const std::deque<ArtworkMetadata *> &artworks);
+        void append(Container &rawSnapshot);
         void set(Container &rawSnapshot);
         void set(WeakArtworksSnapshot &rawSnapshot);
         void copy(const ArtworksSnapshot &other);

@@ -18,6 +18,10 @@
 #include "originalmetadata.h"
 #include "../Helpers/asynccoordinator.h"
 
+namespace QMLExtensions {
+    class ArtworksUpdateHub;
+}
+
 namespace MetadataIO {
     class MetadataIOService;
 
@@ -25,15 +29,15 @@ namespace MetadataIO {
     {
         Q_OBJECT
     public:
-        MetadataReadingHub(MetadataIOService &metadataIOService);
+        MetadataReadingHub(MetadataIOService &metadataIOService, QMLExtensions::ArtworksUpdateHub &updateHub);
 
     public:
-        void initializeImport(const ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);
+        void initializeImport(const Artworks::ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);
         void finalizeImport();
 
     public:
         Helpers::AsyncCoordinator *getCoordinator() { return &m_AsyncCoordinator; }
-        const ArtworksSnapshot &getSnapshot() const { return m_ArtworksToRead; }
+        const Artworks::ArtworksSnapshot &getSnapshot() const { return m_ArtworksToRead; }
 
     public:
         void proceedImport(bool ignoreBackups);
@@ -55,7 +59,8 @@ namespace MetadataIO {
     private:
         Artworks::ArtworksSnapshot m_ArtworksToRead;
         Helpers::AsyncCoordinator m_AsyncCoordinator;
-        MetadataIOService m_MetadataIOService;
+        MetadataIOService &m_MetadataIOService;
+        QMLExtensions::ArtworksUpdateHub &m_ArtworksUpdateHub;
         Common::ReaderWriterQueue<OriginalMetadata> m_ImportQueue;
         int m_ImportID;
         quint32 m_StorageReadBatchID;

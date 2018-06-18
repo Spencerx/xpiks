@@ -13,7 +13,7 @@
 
 #include <QSet>
 
-namespace QMLExtensions {
+namespace Services {
     class ArtworkUpdateRequest {
     public:
         ArtworkUpdateRequest(qint64 artworkID, size_t lastKnownIndex, const QSet<int> &rolesToUpdate, bool fastUpdate=false):

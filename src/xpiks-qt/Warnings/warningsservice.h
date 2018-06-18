@@ -12,12 +12,11 @@
 #define WARNINGSSERVICE_H
 
 #include <QObject>
-#include "../Common/baseentity.h"
 #include "../Common/iservicebase.h"
-#include "../Models/artworkmetadata.h"
+#include "../Artworks/artworkmetadata.h"
 #include "../Common/flags.h"
 #include "warningssettingsmodel.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
 #include "../Common/isystemenvironment.h"
 
 namespace Warnings {
@@ -25,7 +24,6 @@ namespace Warnings {
 
     class WarningsService:
         public QObject,
-        public Common::BaseEntity,
         public Common::IServiceBase<Artworks::ArtworkMetadata, Common::WarningsCheckFlags>
     {
         Q_OBJECT

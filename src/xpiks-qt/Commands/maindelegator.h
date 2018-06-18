@@ -143,7 +143,6 @@ namespace Commands {
 
     public:
         void recordHistoryItem(std::unique_ptr<UndoRedo::IHistoryItem> &historyItem) const;
-        void removeUnavailableFiles();
 
     public:
         void recodePasswords(const QString &oldMasterPassword,
@@ -153,9 +152,6 @@ namespace Commands {
         int reimportMetadata(const Artworks::ArtworksSnapshot &snapshot) const;
         void writeMetadata(const Artworks::WeakArtworksSnapshot &artworks, bool useBackups) const;
         void wipeAllMetadata(const Artworks::ArtworksSnapshot &artworks, bool useBackups) const;
-        void updateArtworksAtIndices(const QVector<int> &indices) const;
-        void updateArtworks(const Artworks::WeakArtworksSnapshot &artworks) const;
-        void updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks);
         void autoDiscoverExiftool() const;
         void cleanupOldXpksBackups(const QString &directory) const;
 

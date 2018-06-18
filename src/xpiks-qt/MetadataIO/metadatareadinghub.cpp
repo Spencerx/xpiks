@@ -14,10 +14,12 @@
 #include "../Commands/commandmanager.h"
 #include "../Common/defines.h"
 #include "../MetadataIO/metadataioservice.h"
+#include "../QMLExtensions/artworksupdatehub.h"
 
 namespace MetadataIO {
-    MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService):
+    MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService, QMLExtensions::ArtworksUpdateHub &updateHub):
         m_MetadataIOService(metadataIOService),
+        m_ArtworksUpdateHub(updateHub),
         m_ImportID(0),
         m_StorageReadBatchID(0),
         m_IgnoreBackupsAtImport(false),
@@ -27,7 +29,7 @@ namespace MetadataIO {
                          this, &MetadataReadingHub::onCanInitialize);
     }
 
-    void MetadataReadingHub::initializeImport(const ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID) {
+    void MetadataReadingHub::initializeImport(const Artworks::ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID) {
         m_ArtworksToRead = artworksToRead;
         m_ImportQueue.reservePush(artworksToRead.size());
         m_ImportID = importID;
@@ -91,7 +93,7 @@ namespace MetadataIO {
             m_MetadataIOService.addArtworks(itemsToRead);
         }
 
-        xpiks()->updateArtworks(itemsToRead);
+        m_ArtworksUpdateHub.updateArtworks(itemsToRead, QMLExtensions::ArtworksUpdateHub::FastUpdate);
         xpiks()->submitForSpellCheck(itemsToRead);
         xpiks()->submitForWarningsCheck(itemsToRead);
 

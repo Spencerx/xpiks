@@ -19,7 +19,7 @@
 #define MAX_UPDATE_TIMER_DELAYS 2
 #define UPDATE_TIMER_DELAY 400
 
-namespace QMLExtensions {
+namespace Services {
     ArtworksUpdateHub::ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel, QObject *parent) :
         QObject(parent),
         m_ArtworksListModel(artworksListModel),
@@ -53,7 +53,7 @@ namespace QMLExtensions {
         this->updateArtwork(artwork->getItemID(), artwork->getLastKnownIndex(), m_StandardRoles);
     }
 
-    void ArtworksUpdateHub::updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, bool fastUpdate) const {
+    void ArtworksUpdateHub::updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, UpdateMode updateMode) const {
         decltype(m_UpdateRequests) requests;
         requests.reserve(artworks.size());
         for (auto &artwork: artworks) {
@@ -62,7 +62,29 @@ namespace QMLExtensions {
                             artwork->getItemID(),
                             artwork->getLastKnownIndex(),
                             m_StandardRoles,
-                            fastUpdate));
+                            updateMode == FastUpdate));
+            requests.emplace_back(updateRequest);
+        }
+
+        {
+            QMutexLocker locker(&m_Lock);
+            m_UpdateRequests.insert(m_UpdateRequests.end(), requests.begin(), requests.end());
+        }
+
+        emit updateRequested();
+    }
+
+    void ArtworksUpdateHub::updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks, UpdateMode updateMode) const {
+        decltype(m_UpdateRequests) requests;
+        requests.reserve(artworks.size());
+        for (auto &locker: artworks) {
+            auto *artwork = locker->getArtworkMetadata();
+            std::shared_ptr<ArtworkUpdateRequest> updateRequest(
+                        new ArtworkUpdateRequest(
+                            artwork->getItemID(),
+                            artwork->getLastKnownIndex(),
+                            m_StandardRoles,
+                            updateMode == FastUpdate));
             requests.emplace_back(updateRequest);
         }
 

@@ -10,8 +10,7 @@
 
 #include "spellcheckerservice.h"
 #include <QThread>
-#include "../Models/artworkmetadata.h"
-#include "spellcheckworker.h"
+#include "../Artworks/artworkmetadata.h"
 #include "spellcheckitem.h"
 #include "../Common/logging.h"
 #include "../Common/flags.h"
@@ -116,7 +115,7 @@ namespace SpellCheck {
         m_SpellCheckWorker->submitItem(item);
     }
 
-    void SpellCheckerService::submitItems(const std::vector<Common::BasicKeywordsModel *> &itemsToCheck) {
+    Common::ItemProcessingWorker::batch_id_t SpellCheckerService::submitItems(const std::vector<Common::BasicKeywordsModel *> &itemsToCheck) {
         if (m_SpellCheckWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 

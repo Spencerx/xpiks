@@ -96,21 +96,24 @@ namespace Artworks {
         }
     }
 
-    void ArtworksSnapshot::set(Container &rawSnapshot) {
-        clear();
-        LOG_DEBUG << "Setting snapshot of" << rawSnapshot.size() << "artwork(s)";
+    void ArtworksSnapshot::append(ArtworksSnapshot::Container &rawSnapshot) {
+        LOG_DEBUG << "Appending snapshot of" << rawSnapshot.size() << "artwork(s)";
 
-        m_RawArtworks.reserve((int)rawSnapshot.size());
+        m_RawArtworks.reserve(m_RawArtworks.size() + rawSnapshot.size());
+        m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + rawSnapshot.size());
         for (auto &item: rawSnapshot) {
             m_RawArtworks.push_back(item->getArtworkMetadata());
+            m_ArtworksSnapshot.push_back(item);
         }
+    }
 
-        m_ArtworksSnapshot = std::move(rawSnapshot);
+    void ArtworksSnapshot::set(Container &rawSnapshot) {
+        clear();
+        append(rawSnapshot);
     }
 
     void ArtworksSnapshot::set(WeakArtworksSnapshot &rawSnapshot) {
         clear();
-        LOG_DEBUG << "Setting snapshot of" << rawSnapshot.size() << "artwork(s)";
         append(rawSnapshot);
     }
 

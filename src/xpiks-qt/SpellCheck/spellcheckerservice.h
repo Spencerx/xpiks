@@ -14,22 +14,19 @@
 #include <QObject>
 #include <QString>
 #include <QVector>
-#include "../Common/basickeywordsmodel.h"
+#include "../Artworks/basickeywordsmodel.h"
 #include "../Common/iservicebase.h"
 #include "../Common/flags.h"
 #include "../Models/settingsmodel.h"
 #include "../Common/isystemenvironment.h"
+#include "spellcheckworker.h"
 
 namespace Models {
     class ArtworkMetadata;
 }
 
 namespace SpellCheck {
-    class SpellCheckWorker;
-
-    class SpellCheckerService:
-        public QObject,
-        public Common::IServiceBase<Common::BasicKeywordsModel, Common::SpellCheckFlags>
+    class SpellCheckerService: public QObject
     {
         Q_OBJECT
         Q_PROPERTY(int userDictWordsNumber READ getUserDictWordsNumber NOTIFY userDictWordsNumberChanged)
@@ -40,15 +37,15 @@ namespace SpellCheck {
         virtual ~SpellCheckerService();
 
     public:
-        virtual void startService(const std::shared_ptr<Common::ServiceStartParams> &params) override;
-        virtual void stopService() override;
+        void startService(const std::shared_ptr<Common::ServiceStartParams> &params);
+        void stopService();
 
-        virtual bool isAvailable() const override { return true; }
-        virtual bool isBusy() const override;
+        bool isAvailable() const { return true; }
+        bool isBusy() const;
 
-        virtual void submitItem(Common::BasicKeywordsModel *itemToCheck) override;
-        virtual void submitItem(Common::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags) override;
-        virtual void submitItems(const std::vector<Common::BasicKeywordsModel *> &itemsToCheck) override;
+        void submitItem(Common::BasicKeywordsModel *itemToCheck);
+        void submitItem(Common::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags);
+        SpellCheckWorker::batch_id_t submitItems(const std::vector<Common::BasicKeywordsModel *> &itemsToCheck);
         void submitItems(const std::vector<Common::BasicKeywordsModel *> &itemsToCheck, const QStringList &wordsToCheck);
         void submitKeyword(Common::BasicKeywordsModel *itemToCheck, int keywordIndex);
         virtual QStringList suggestCorrections(const QString &word) const;

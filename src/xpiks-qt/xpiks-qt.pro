@@ -213,7 +213,9 @@ SOURCES += main.cpp \
     Models/artworkslistmodel.cpp \
     Artworks/basickeywordsmodel.cpp \
     Artworks/basickeywordsmodelimpl.cpp \
-    Artworks/basicmetadatamodel.cpp
+    Artworks/basicmetadatamodel.cpp \
+    Services/artworksupdatehub.cpp \
+    Services/artworksinspectionhub.cpp
 
 RESOURCES += qml.qrc
 
@@ -509,7 +511,10 @@ HEADERS += \
     Artworks/basicmetadatamodel.h \
     Artworks/imetadataoperator.h \
     Artworks/keyword.h \
-    Models/selectedartworksconsumer.h
+    Models/selectedartworksconsumer.h \
+    Services/artworksupdatehub.h \
+    Services/artworkupdaterequest.h \
+    Services/artworksinspectionhub.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

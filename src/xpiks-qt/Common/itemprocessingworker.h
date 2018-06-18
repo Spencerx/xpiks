@@ -29,7 +29,26 @@ namespace Common {
     {
     public:
         typedef quint32 batch_id_t;
-        typedef std::tuple<std::shared_ptr<T>, Common::flag_t, batch_id_t> ItemType;
+        class WorkItem {
+        public:
+            WorkItem(std::shared_ptr<T> &item, Common::flag_t flags, batch_id_t id):
+                m_Item(std::move(item)),
+                m_Flags(flags),
+                m_ID(id)
+            {}
+            WorkItem(Common::flag_t flags):
+                m_Flags(flags)
+            {}
+            WorkItem(){}
+
+        public:
+            bool isStopper() const { return (m_Item.get() == nullptr) && (Common::HasFlag(m_Flags, FlagIsStopper)); }
+
+        public:
+            std::shared_ptr<T> m_Item;
+            Common::flag_t m_Flags = 0;
+            batch_id_t m_ID = INVALID_BATCH_ID;
+        };
 
     public:
         ItemProcessingWorker(int delayPeriod = 0xffffffff):
@@ -63,7 +82,7 @@ namespace Common {
                 Common::SetFlag(flags, FlagIsSeparator);
 
                 bool wasEmpty = m_Queue.empty();
-                m_Queue.emplace_back(std::shared_ptr<T>(), flags, INVALID_BATCH_ID);
+                m_Queue.emplace_back(WorkItem(flags));
 
                 if (wasEmpty) {
                     m_WaitAnyItem.wakeOne();
@@ -164,8 +183,8 @@ namespace Common {
             m_QueueMutex.lock();
             {
                 m_Queue.erase(std::remove_if(m_Queue.begin(), m_Queue.end(),
-                                             [&batchID](const ItemType &item) {
-                    return std::get<2>(item) == batchID;
+                                             [&batchID](const WorkItem &item) {
+                    return item.m_ID == batchID;
                 }),
                               m_Queue.end());
 
@@ -211,7 +230,7 @@ namespace Common {
                 Common::flag_t flags = 0;
                 Common::SetFlag(flags, FlagIsStopper);
 
-                m_Queue.emplace_back(std::shared_ptr<T>(), flags, INVALID_BATCH_ID);
+                m_Queue.emplace_back(WorkItem(flags));
                 m_WaitAnyItem.wakeOne();
             }
             m_QueueMutex.unlock();
@@ -226,6 +245,7 @@ namespace Common {
         virtual void processOneItem(std::shared_ptr<T> &item) = 0;
         virtual void onQueueIsEmpty() = 0;
         virtual void workerStopped() = 0;
+        virtual void onBatchProcessed(batch_id_t batchID) { Q_UNUSED(batchID); }
 
         virtual void processOneItemEx(std::shared_ptr<T> &item, batch_id_t batchID, Common::flag_t flags) {
             Q_UNUSED(flags);
@@ -243,9 +263,7 @@ namespace Common {
                 }
 
                 bool noMoreItems = false;
-                std::shared_ptr<T> item;
-                Common::flag_t flags = 0;
-                batch_id_t batchID = INVALID_BATCH_ID;
+                WorkItem workItem;
 
                 m_QueueMutex.lock();
                 {
@@ -256,22 +274,18 @@ namespace Common {
                         }
                     }
 
-                    auto &nextItem = m_Queue.front();
-                    item = std::get<0>(nextItem);
-                    flags = std::get<1>(nextItem);
-                    batchID = std::get<2>(nextItem);
+                    workItem = m_Queue.front();
                     m_Queue.pop_front();
-
                     noMoreItems = m_Queue.empty();
                 }
                 m_QueueMutex.unlock();
 
-                if ((item.get() == nullptr) && getIsStopperFlag(flags)) { break; }
+                if (workItem.isStopper()) { break; }
 
                 m_IdleEvent.reset();
                 {
                     try {
-                        processOneItemEx(item, batchID, flags);
+                        processOneItemEx(workItem.m_Item, workItem.m_ID, workItem.m_Flags);
                     }
                     catch (...) {
                         LOG_WARNING << "Exception while processing item!";
@@ -279,9 +293,9 @@ namespace Common {
                 }
                 m_IdleEvent.set();
 
-                if (noMoreItems) {
-                    onQueueIsEmpty();
-                }
+                onBatchProcessed(workItem.m_ID);
+
+                if (noMoreItems) { onQueueIsEmpty(); }
             }
         }
 
@@ -295,7 +309,7 @@ namespace Common {
         Helpers::ManualResetEvent m_IdleEvent;
         QWaitCondition m_WaitAnyItem;
         QMutex m_QueueMutex;
-        std::deque<ItemType> m_Queue;
+        std::deque<WorkItem> m_Queue;
         batch_id_t m_BatchID;
         unsigned int m_DelayPeriod;
         volatile bool m_Cancel;
