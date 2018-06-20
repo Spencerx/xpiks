@@ -23,7 +23,7 @@
 #include "../Helpers/threadhelpers.h"
 
 namespace Common {
-    template<typename ItemType, typename ResultType>
+    template<typename ItemType, typename ResultType=void>
     class ItemProcessingWorker
     {
     public:
@@ -82,8 +82,6 @@ namespace Common {
             FlagIsStopper = 1 << 1,
             FlagIsMilestone = 1 << 2
         };
-
-    protected:
 
     public:
         void submitSeparator() {
@@ -252,10 +250,16 @@ namespace Common {
 
     protected:
         virtual bool initWorker() { return true; }
-        virtual std::shared_ptr<ResultType> processOneItem(WorkItem &workItem) = 0;
+
+        virtual std::shared_ptr<ResultType> processWorkItem(WorkItem &workItem) {
+            processOneItem(workItem.m_Item);
+            return std::shared_ptr<ResultType>();
+        }
+
+        virtual void processOneItem(std::shared_ptr<ItemType> &item) { Q_UNUSED(item); }
         virtual void onQueueIsEmpty() { /* DO NOTHING */ }
         virtual void onWorkerStopped() { /* DO NOTHING */ }
-        virtual void onResultsAvailable(const std::deque<WorkResult> &results) { Q_UNUSED(results); }
+        virtual void onResultsAvailable(std::deque<WorkResult> &results) { Q_UNUSED(results); }
 
         void runWorkerLoop() {
             m_IdleEvent.set();
@@ -289,8 +293,8 @@ namespace Common {
                 m_IdleEvent.reset();
                 {
                     try {
-                        auto result = processOneItem(workItem);
-                        m_Results.emplace_back(result, workItem.m_ID);
+                        auto result = processWorkItem(workItem);
+                        saveResult(result);
                     }
                     catch (...) {
                         LOG_WARNING << "Exception while processing item!";
@@ -303,7 +307,14 @@ namespace Common {
             }
         }
 
+        void saveResult(std::shared_ptr<ResultType> &result) {
+            if (result) {
+                m_Results.emplace_back(result, workItem.m_ID);
+            }
+        }
+
         void reportResults() {
+            if (m_Results.empty()) { return; }
             decltype(m_Results) results;
             results.swap(m_Results);
             onResultsAvailable(results);
