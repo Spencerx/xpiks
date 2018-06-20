@@ -515,7 +515,8 @@ HEADERS += \
     Services/artworksupdatehub.h \
     Services/artworkupdaterequest.h \
     Services/artworksinspectionhub.h \
-    Helpers/cpphelpers.h
+    Helpers/cpphelpers.h \
+    Artworks/artworksprocessingworker.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

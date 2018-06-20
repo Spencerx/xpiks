@@ -52,12 +52,6 @@ namespace SpellCheck {
         volatile bool m_IsDuplicate;
     };
 
-    class ISpellCheckItem
-    {
-    public:
-        virtual ~ISpellCheckItem() {}
-    };
-
     class SpellCheckItemBase:
         public QObject, public ISpellCheckItem
     {
@@ -71,7 +65,7 @@ namespace SpellCheck {
             QObject(),
             m_NeedsSuggestions(false),
             m_WordAnalysisFlag(wordAnalysisFlag)
-            {}
+        { }
 
     public:
         const std::vector<std::shared_ptr<SpellCheckQueryItem> > &getQueries() const { return m_QueryItems; }
@@ -97,8 +91,7 @@ namespace SpellCheck {
         Common::WordAnalysisFlags m_WordAnalysisFlag;
     };
 
-    class SpellCheckItem:
-        public SpellCheckItemBase
+    class SpellCheckItem: public SpellCheckItemBase
     {
     Q_OBJECT
 

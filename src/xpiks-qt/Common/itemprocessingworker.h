@@ -25,9 +25,17 @@
 namespace Common {
     template<typename ItemType, typename ResultType=void>
     class ItemProcessingWorker
-    {
+    {        
+    private:
+        enum WorkerFlags {
+            FlagIsSeparator = 1 << 0,
+            FlagIsStopper = 1 << 1,
+            FlagIsMilestone = 1 << 2
+        };
+
     public:
         typedef quint32 batch_id_t;
+
         class WorkItem {
         public:
             WorkItem(std::shared_ptr<ItemType> &item, Common::flag_t flags, batch_id_t id):
@@ -68,20 +76,13 @@ namespace Common {
         };
 
     public:
-        ItemProcessingWorker(int delayPeriod = 0xffffffff):
+        ItemProcessingWorker(int batchMaxSize = 0xffffffff):
             m_BatchID(1),
-            m_MilestoneSize(delayPeriod),
+            m_MilestoneSize(batchMaxSize),
             m_Cancel(false)
         { }
 
         virtual ~ItemProcessingWorker() { }
-
-    private:
-        enum WorkerFlags {
-            FlagIsSeparator = 1 << 0,
-            FlagIsStopper = 1 << 1,
-            FlagIsMilestone = 1 << 2
-        };
 
     public:
         void submitSeparator() {
@@ -259,7 +260,7 @@ namespace Common {
         virtual void processOneItem(std::shared_ptr<ItemType> &item) { Q_UNUSED(item); }
         virtual void onQueueIsEmpty() { /* DO NOTHING */ }
         virtual void onWorkerStopped() { /* DO NOTHING */ }
-        virtual void onResultsAvailable(std::deque<WorkResult> &results) { Q_UNUSED(results); }
+        virtual void onResultsAvailable(std::vector<ResultType> &results) { Q_UNUSED(results); }
 
         void runWorkerLoop() {
             m_IdleEvent.set();
@@ -331,7 +332,7 @@ namespace Common {
         QWaitCondition m_WaitAnyItem;
         QMutex m_QueueMutex;
         std::deque<WorkItem> m_Queue;
-        std::deque<WorkResult> m_Results;
+        std::vector<WorkResult> m_Results;
         batch_id_t m_BatchID;
         unsigned int m_MilestoneSize;
         volatile bool m_Cancel;
