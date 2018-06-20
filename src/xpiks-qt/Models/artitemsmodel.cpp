@@ -135,7 +135,7 @@ namespace Models {
             ArtworkMetadata *metadata = accessArtwork(i);
 
             if (metadata->isUnavailable()) {
-                Common::BasicKeywordsModel *keywordsModel = metadata->getBasicModel();
+                Artworks::BasicKeywordsModel *keywordsModel = metadata->getBasicModel();
                 keywordsModel->notifyAboutToBeRemoved();
             }
         }
@@ -298,8 +298,8 @@ namespace Models {
         return item;
     }
 
-    Common::BasicMetadataModel *ArtItemsModel::getBasicModel(int index) const {
-        Common::BasicMetadataModel *keywordsModel = NULL;
+    Artworks::BasicMetadataModel *ArtItemsModel::getBasicModel(int index) const {
+        Artworks::BasicMetadataModel *keywordsModel = NULL;
 
         if (0 <= index && index < getArtworksCount()) {
             keywordsModel = accessArtwork(index)->getBasicModel();
@@ -678,7 +678,7 @@ namespace Models {
 
         Q_ASSERT(!keywords.isEmpty());
 
-        std::vector<Common::BasicKeywordsModel *> itemsToCheck;
+        std::vector<Artworks::BasicKeywordsModel *> itemsToCheck;
         itemsToCheck.reserve(size);
 
         for (size_t i = 0; i < size; i++) {
@@ -703,7 +703,7 @@ namespace Models {
 
     void ArtItemsModel::userDictClearedHandler() {
         size_t size = m_ArtworkList.size();
-        std::vector<Common::BasicKeywordsModel *> itemsToCheck;
+        std::vector<Artworks::BasicKeywordsModel *> itemsToCheck;
         itemsToCheck.reserve(size);
 
         for (size_t i = 0; i < size; i++) {

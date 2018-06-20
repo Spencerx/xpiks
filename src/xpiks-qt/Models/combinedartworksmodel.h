@@ -192,11 +192,11 @@ namespace Models {
 
 #ifdef INTEGRATION_TESTS
     public:
-        Common::BasicMetadataModel *retrieveBasicMetadataModel() { return getBasicMetadataModel(); }
+        Artworks::BasicMetadataModel *retrieveBasicMetadataModel() { return getBasicMetadataModel(); }
 #endif
 
     protected:
-        virtual Common::BasicMetadataModel *getBasicMetadataModel() override { return &m_CommonKeywordsModel; }
+        virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_CommonKeywordsModel; }
         virtual Common::IMetadataOperator *getMetadataOperator() override { return &m_CommonKeywordsModel; }
 
     protected:
@@ -220,7 +220,7 @@ namespace Models {
 
     private:
         Common::Hold m_HoldPlaceholder;
-        Common::BasicMetadataModel m_CommonKeywordsModel;
+        Artworks::BasicMetadataModel m_CommonKeywordsModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
         Common::CombinedEditFlags m_EditFlags;
         Common::flag_t m_ModifiedFlags;

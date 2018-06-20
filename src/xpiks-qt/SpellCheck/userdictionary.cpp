@@ -12,6 +12,7 @@
 #include <QFile>
 #include "../Common/logging.h"
 #include "../Helpers/constants.h"
+#include "../Helpers/stringhelper.h"
 
 namespace SpellCheck {
     UserDictionary::UserDictionary(Common::ISystemEnvironment &environment):
@@ -58,43 +59,80 @@ namespace SpellCheck {
         return m_WordsList;
     }
 
-    bool UserDictionary::contains(const QString &word) const {
+    bool UserDictionary::contains(const QString &word) {
         QMutexLocker locker(&m_Mutex);
         Q_UNUSED(locker);
-
         return m_WordsSet.contains(word.toLower());
     }
 
     void UserDictionary::addWords(const QStringList &words) {
-        QMutexLocker locker(&m_Mutex);
-        Q_UNUSED(locker);
+        {
+            QMutexLocker locker(&m_Mutex);
+            Q_UNUSED(locker);
 
-        addWordsUnsafe(words);
+            addWordsUnsafe(words);
+        }
+        emit sizeChanged();
     }
 
     void UserDictionary::reset(const QStringList &words) {
-        QMutexLocker locker(&m_Mutex);
-        Q_UNUSED(locker);
+        LOG_DEBUG << "#";
+        {
+            QMutexLocker locker(&m_Mutex);
+            Q_UNUSED(locker);
 
-        clearUnsafe();
-        addWordsUnsafe(words);
+            clearUnsafe();
+            addWordsUnsafe(words);
+        }
+        emit sizeChanged();
     }
 
     void UserDictionary::addWord(const QString &word) {
-        QMutexLocker locker(&m_Mutex);
-        Q_UNUSED(locker);
-        addWordUnsafe(word);
+        LOG_INFO << word;
+        {
+            QMutexLocker locker(&m_Mutex);
+            Q_UNUSED(locker);
+
+            QStringList parts;
+            Helpers::splitText(word, parts);
+
+            for (auto &part: parts) {
+                addWordUnsafe(part);
+            }
+        }
+        emit sizeChanged();
     }
 
     void UserDictionary::clear() {
+        {
+            QMutexLocker locker(&m_Mutex);
+            Q_UNUSED(locker);
+            clearUnsafe();
+        }
+        emit sizeChanged();
+    }
+
+    bool UserDictionary::empty() {
         QMutexLocker locker(&m_Mutex);
         Q_UNUSED(locker);
-        clearUnsafe();
+        return m_WordsSet.isEmpty();
+    }
+
+    int UserDictionary::size()  {
+        QMutexLocker locker(&m_Mutex);
+        Q_UNUSED(locker);
+        return m_WordsList.size();
     }
 
     void UserDictionary::addWordsUnsafe(const QStringList &words) {
+        QStringList parts;
+
         foreach (const QString &word, words) {
-            addWordUnsafe(word);
+            Helpers::splitText(word, parts);
+        }
+
+        for (auto &part: parts) {
+            addWordUnsafe(part);
         }
     }
 

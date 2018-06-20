@@ -11,6 +11,7 @@
 #ifndef USERDICTIONARY_H
 #define USERDICTIONARY_H
 
+#include <QObject>
 #include <QMutex>
 #include <QString>
 #include <QSet>
@@ -18,7 +19,8 @@
 #include "../Common/isystemenvironment.h"
 
 namespace SpellCheck {
-    class UserDictionary {
+    class UserDictionary: public QObject {
+        Q_OBJECT
     public:
         UserDictionary(Common::ISystemEnvironment &environment);
 
@@ -28,15 +30,18 @@ namespace SpellCheck {
 
     public:
         QStringList getWords();
-        bool contains(const QString &word) const;
+        bool contains(const QString &word);
 
         void addWords(const QStringList &words);
         void reset(const QStringList &words);
         void addWord(const QString &word);
 
         void clear();
-        bool empty() const { return m_WordsSet.isEmpty(); }
-        int size() const { return m_WordsList.size(); }
+        bool empty();
+        int size();
+
+    signals:
+        void sizeChanged();
 
     private:
         void addWordsUnsafe(const QStringList &words);

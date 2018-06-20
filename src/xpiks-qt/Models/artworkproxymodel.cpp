@@ -95,7 +95,7 @@ namespace Models {
     void ArtworkProxyModel::afterSpellingErrorsFixedHandler() {
         LOG_DEBUG << "#";
 #ifdef QT_DEBUG
-        auto *basicModel = qobject_cast<Common::BasicMetadataModel*>(sender());
+        auto *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(sender());
         Q_ASSERT(basicModel == getBasicMetadataModel());
 #endif
         // if squeezing took place after replace
@@ -105,7 +105,7 @@ namespace Models {
     void ArtworkProxyModel::onDescriptionSpellingChanged() {
         LOG_DEBUG << "#";
 #ifdef QT_DEBUG
-        auto *basicModel = qobject_cast<Common::BasicMetadataModel*>(sender());
+        auto *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(sender());
         Q_ASSERT(basicModel == getBasicMetadataModel());
 #endif
 
@@ -115,7 +115,7 @@ namespace Models {
     void ArtworkProxyModel::onTitleSpellingChanged() {
         LOG_DEBUG << "#";
 #ifdef QT_DEBUG
-        auto *basicModel = qobject_cast<Common::BasicMetadataModel*>(sender());
+        auto *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(sender());
         Q_ASSERT(basicModel == getBasicMetadataModel());
 #endif
 
@@ -342,22 +342,22 @@ namespace Models {
     void ArtworkProxyModel::connectArtworkSignals(ArtworkMetadata *artwork) {
         auto *basicModel = artwork->getBasicModel();
 
-        QObject::connect(basicModel, &Common::BasicMetadataModel::descriptionSpellingChanged,
+        QObject::connect(basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
                          this, &ArtworkProxyModel::onDescriptionSpellingChanged);
-        QObject::connect(basicModel, &Common::BasicMetadataModel::titleSpellingChanged,
+        QObject::connect(basicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                          this, &ArtworkProxyModel::onTitleSpellingChanged);
 
-        QObject::connect(basicModel, &Common::BasicMetadataModel::completionsAvailable,
+        QObject::connect(basicModel, &Artworks::BasicMetadataModel::completionsAvailable,
                          this, &ArtworkProxyModel::completionsAvailable);
 
-        QObject::connect(basicModel, &Common::BasicMetadataModel::afterSpellingErrorsFixed,
+        QObject::connect(basicModel, &Artworks::BasicMetadataModel::afterSpellingErrorsFixed,
                          this, &ArtworkProxyModel::afterSpellingErrorsFixedHandler);
 
-        QObject::connect(basicModel, &Common::BasicMetadataModel::descriptionSpellingChanged,
+        QObject::connect(basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
                          this, &ArtworkProxyModel::descriptionSpellingChanged);
-        QObject::connect(basicModel, &Common::BasicMetadataModel::titleSpellingChanged,
+        QObject::connect(basicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                          this, &ArtworkProxyModel::titleSpellingChanged);
-        QObject::connect(basicModel, &Common::BasicMetadataModel::keywordsSpellingChanged,
+        QObject::connect(basicModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
                          this, &ArtworkProxyModel::keywordsSpellingChanged);
 
         QObject::connect(artwork, SIGNAL(thumbnailUpdated()),

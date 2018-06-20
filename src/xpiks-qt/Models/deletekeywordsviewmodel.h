@@ -88,8 +88,8 @@ namespace Models {
     private:
         Common::Hold m_HoldForDeleters;
         Common::Hold m_HoldForCommon;
-        Common::BasicKeywordsModel m_KeywordsToDeleteModel;
-        Common::BasicKeywordsModel m_CommonKeywordsModel;
+        Artworks::BasicKeywordsModel m_KeywordsToDeleteModel;
+        Artworks::BasicKeywordsModel m_CommonKeywordsModel;
         bool m_CaseSensitive;
     };
 }

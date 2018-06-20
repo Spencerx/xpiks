@@ -85,11 +85,11 @@ namespace QuickBuffer {
 
     public:
         bool getIsEmpty();
-        void setFromBasicModel(Common::BasicMetadataModel *model);
+        void setFromBasicModel(Artworks::BasicMetadataModel *model);
         void setFromSuggestionArtwork(const std::shared_ptr<Suggestion::SuggestionArtwork> &from);
 
     protected:
-        virtual Common::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }
+        virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }
         virtual Common::IMetadataOperator *getMetadataOperator() override { return &m_BasicModel; }
 
     protected:
@@ -105,7 +105,7 @@ namespace QuickBuffer {
 
     private:
         Common::Hold m_HoldPlaceholder;
-        Common::BasicMetadataModel m_BasicModel;
+        Artworks::BasicMetadataModel m_BasicModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
     };
 }

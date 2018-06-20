@@ -21,23 +21,11 @@
 #define IMPOSSIBLE_DESCRIPTION_INDEX 200000
 
 namespace SpellCheck {
-    SpellCheckItemBase::~SpellCheckItemBase() {}
-
-    void SpellCheckItemBase::accountResults() {
-        for (auto &item: m_QueryItems) {
-            m_SpellCheckResults.insert(item->m_Word,
-                                       Common::WordAnalysisResult(item->m_Stem, item->m_IsCorrect, item->m_IsDuplicate));
-        }
-    }
-
-    void SpellCheckItemBase::appendItem(const std::shared_ptr<SpellCheckQueryItem> &item) {
-        m_QueryItems.push_back(item);
-    }
-
-    SpellCheckItem::SpellCheckItem(Common::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlag, int keywordIndex):
-        SpellCheckItemBase(wordAnalysisFlag),
+    SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlag, int keywordIndex):
         m_SpellCheckable(spellCheckable),
         m_SpellCheckFlags(spellCheckFlags),
+        m_WordAnalysisFlag(wordAnalysisFlag),
+        m_NeedsSuggestions(false),
         m_OnlyOneKeyword(true)
     {
         Q_ASSERT(Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Keywords));
@@ -48,22 +36,23 @@ namespace SpellCheck {
         QString keyword = m_SpellCheckable->retrieveKeyword(keywordIndex);
         if (!keyword.contains(QChar::Space)) {
             std::shared_ptr<SpellCheckQueryItem> queryItem(new SpellCheckQueryItem(keywordIndex, keyword));
-            appendItem(queryItem);
+            m_QueryItems.emplace_back(queryItem);
         } else {
             QStringList parts = keyword.split(QChar::Space, QString::SkipEmptyParts);
             foreach(const QString &part, parts) {
                 QString item = part.trimmed();
                 std::shared_ptr<SpellCheckQueryItem> queryItem(new SpellCheckQueryItem(keywordIndex, item));
 
-                appendItem(queryItem);
+                m_QueryItems.emplace_back(queryItem);
             }
         }
     }
 
-    SpellCheckItem::SpellCheckItem(Common::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlags):
-        SpellCheckItemBase(wordAnalysisFlags),
+    SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlags):
         m_SpellCheckable(spellCheckable),
         m_SpellCheckFlags(spellCheckFlags),
+        m_WordAnalysisFlag(wordAnalysisFlag),
+        m_NeedsSuggestions(false),
         m_OnlyOneKeyword(false)
     {
         Q_ASSERT(spellCheckable != NULL);
@@ -73,33 +62,31 @@ namespace SpellCheck {
 
         if (Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Keywords)) {
             QStringList keywords = spellCheckable->getKeywords();
-            reserve(keywords.length());
             addWords(keywords, 0, alwaysTrue);
         }
 
         if (Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Description)) {
-            Common::BasicMetadataModel *metadataModel = dynamic_cast<Common::BasicMetadataModel*>(spellCheckable);
+            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(spellCheckable);
             if (metadataModel != nullptr) {
                 QStringList descriptionWords = metadataModel->getDescriptionWords();
-                reserve(descriptionWords.length());
                 addWords(descriptionWords, IMPOSSIBLE_DESCRIPTION_INDEX, alwaysTrue);
             }
         }
 
         if (Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Title)) {
-            Common::BasicMetadataModel *metadataModel = dynamic_cast<Common::BasicMetadataModel*>(spellCheckable);
+            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(spellCheckable);
             if (metadataModel != nullptr) {
                 QStringList titleWords = metadataModel->getTitleWords();
-                reserve(titleWords.length());
                 addWords(titleWords, IMPOSSIBLE_TITLE_INDEX, alwaysTrue);
             }
         }
     }
 
-    SpellCheckItem::SpellCheckItem(Common::BasicKeywordsModel *spellCheckable, const QStringList &keywordsToCheck, Common::WordAnalysisFlags wordAnalysisFlags):
-        SpellCheckItemBase(wordAnalysisFlags),
+    SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, const QStringList &keywordsToCheck, Common::WordAnalysisFlags wordAnalysisFlags):
         m_SpellCheckable(spellCheckable),
         m_SpellCheckFlags(Common::SpellCheckFlags::All),
+        m_WordAnalysisFlag(wordAnalysisFlag),
+        m_NeedsSuggestions(false),
         m_OnlyOneKeyword(false)
     {
         Q_ASSERT(spellCheckable != NULL);
@@ -119,7 +106,6 @@ namespace SpellCheck {
                                                                  };
 
         QStringList keywords = spellCheckable->getKeywords();
-        reserve(keywords.length());
         addWords(keywords, 0, containsFunc);
 
         std::function<bool (const QString &word)> sameKeywordFunc = [&keywordsToCheck](const QString &word) {
@@ -135,14 +121,12 @@ namespace SpellCheck {
                                                                         return match;
                                                                     };
 
-        Common::BasicMetadataModel *metadataModel = dynamic_cast<Common::BasicMetadataModel*>(spellCheckable);
+        Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(spellCheckable);
         if (metadataModel != nullptr) {
             QStringList descriptionWords = metadataModel->getDescriptionWords();
-            reserve(descriptionWords.length());
             addWords(descriptionWords, IMPOSSIBLE_DESCRIPTION_INDEX, sameKeywordFunc);
 
             QStringList titleWords = metadataModel->getTitleWords();
-            reserve(titleWords.length());
             addWords(titleWords, IMPOSSIBLE_TITLE_INDEX, sameKeywordFunc);
         }
     }
@@ -158,12 +142,13 @@ namespace SpellCheck {
 
     void SpellCheckItem::addWords(const QStringList &words, int startingIndex, const std::function<bool (const QString &word)> &pred) {
         int index = startingIndex;
+        m_QueryItems.reserve(m_QueryItems.size() + words.size());
 
         foreach(const QString &word, words) {
             if (!word.contains(QChar::Space)) {
                 if (pred(word)) {
                     std::shared_ptr<SpellCheckQueryItem> queryItem(new SpellCheckQueryItem(index, word));
-                    appendItem(queryItem);
+                    m_QueryItems.emplace_back(queryItem);
                 }
             } else {
                 QStringList parts = word.split(QChar::Space, QString::SkipEmptyParts);
@@ -173,7 +158,7 @@ namespace SpellCheck {
                     if (item.length() >= 2) {
                         if (pred(item)) {
                             std::shared_ptr<SpellCheckQueryItem> queryItem(new SpellCheckQueryItem(index, item));
-                            appendItem(queryItem);
+                            m_QueryItems.emplace_back(queryItem);
                         }
                     }
                 }
@@ -194,7 +179,7 @@ namespace SpellCheck {
 
         if (Common::HasFlag(m_SpellCheckFlags, Common::SpellCheckFlags::Description) ||
             Common::HasFlag(m_SpellCheckFlags, Common::SpellCheckFlags::Title)) {
-            Common::BasicMetadataModel *metadataModel = dynamic_cast<Common::BasicMetadataModel*>(m_SpellCheckable);
+            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(m_SpellCheckable);
             if (metadataModel != nullptr) {
                 metadataModel->setSpellCheckResults(getHash(), m_SpellCheckFlags);
             }
@@ -204,24 +189,10 @@ namespace SpellCheck {
         emit resultsReady(m_SpellCheckFlags, index);
     }
 
-    ModifyUserDictItem::ModifyUserDictItem(const QString &keyword):
-        m_ClearFlag(false)
-    {
-        Helpers::splitText(keyword, m_KeywordsToAdd);
-        m_KeywordsToAdd.removeDuplicates();
-    }
-
-    ModifyUserDictItem::ModifyUserDictItem(bool clearFlag):
-        m_ClearFlag(clearFlag)
-    { }
-
-    ModifyUserDictItem::ModifyUserDictItem(const QStringList &keywords):
-        m_ClearFlag(true)
-    {
-        for (auto &keyword : keywords) {
-            Helpers::splitText(keyword, m_KeywordsToAdd);
+    void SpellCheckItem::accountResults() {
+        for (auto &item: m_QueryItems) {
+            m_SpellCheckResults.insert(item->m_Word,
+                                       Common::WordAnalysisResult(item->m_Stem, item->m_IsCorrect, item->m_IsDuplicate));
         }
-
-        m_KeywordsToAdd.removeDuplicates();
     }
 }

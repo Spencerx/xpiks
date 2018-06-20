@@ -137,8 +137,8 @@ namespace Artworks {
         void setWarningsFlags(Common::WarningFlags flags) { m_WarningsFlags = flags; }
 
     public:
-        Common::BasicMetadataModel *getBasicModel() { return &m_MetadataModel; }
-        const Common::BasicMetadataModel *getBasicModel() const { return &m_MetadataModel; }
+        BasicMetadataModel *getBasicModel() { return &m_MetadataModel; }
+        const BasicMetadataModel *getBasicModel() const { return &m_MetadataModel; }
 
         bool isLockedForEditing() { return getIsLockedForEditingFlag(); }
         void setIsLockedForEditing(bool value) { setIsLockedForEditingFlag(value); }
@@ -187,7 +187,7 @@ namespace Artworks {
         virtual QStringList retrieveMisspelledDescriptionWords() override;
         virtual bool processFailedKeywordReplacements(const std::vector<std::shared_ptr<SpellCheck::KeywordSpellSuggestions> > &candidatesForRemoval) override;
         virtual void afterReplaceCallback() override;
-        virtual Common::BasicKeywordsModel *getBasicKeywordsModel() override;
+        virtual BasicKeywordsModel *getBasicKeywordsModel() override;
 
     public:
         void acquire() { m_Hold.acquire(); }
@@ -261,7 +261,7 @@ namespace Artworks {
     private:
         Common::Hold m_Hold;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
-        Common::BasicMetadataModel m_MetadataModel;
+        BasicMetadataModel m_MetadataModel;
         QReadWriteLock m_FlagsLock;
         QMutex m_InitMutex;
         qint64 m_FileSize;  // in bytes

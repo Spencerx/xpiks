@@ -142,7 +142,7 @@ namespace Models {
         Q_INVOKABLE bool acceptCompletionAsPreset(int completionID);
 
     protected:
-        virtual Common::BasicMetadataModel *getBasicMetadataModel() override {
+        virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override {
             Q_ASSERT(m_ArtworkMetadata != nullptr);
             return m_ArtworkMetadata->getBasicModel();
         }

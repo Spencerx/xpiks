@@ -27,7 +27,7 @@ namespace SpellCheck {
         Q_ASSERT(colorsModel != nullptr);
     }
 
-    void DuplicatesReviewModel::setupModel(Common::BasicMetadataModel *basicModel) {
+    void DuplicatesReviewModel::setupModel(Artworks::BasicMetadataModel *basicModel) {
         Q_ASSERT(m_DuplicatesList.empty());
         beginResetModel();
         {
@@ -70,7 +70,7 @@ namespace SpellCheck {
                     m_ColorsModel,
                     spellCheckInfo->getTitleErrors());
 
-        QObject::connect(basicModel, &Common::BasicMetadataModel::hasDuplicatesChanged,
+        QObject::connect(basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
                          highlighter, &DuplicatesHighlighter::rehighlight);
 
         //QObject::connect(this, &DuplicatesReviewModel::rehighlightRequired,
@@ -97,7 +97,7 @@ namespace SpellCheck {
                     m_ColorsModel,
                     spellCheckInfo->getDescriptionErrors());
 
-        QObject::connect(basicModel, &Common::BasicMetadataModel::hasDuplicatesChanged,
+        QObject::connect(basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
                          highlighter, &DuplicatesHighlighter::rehighlight);
 
         //QObject::connect(this, &DuplicatesReviewModel::rehighlightRequired,
@@ -126,7 +126,7 @@ namespace SpellCheck {
                     nullptr, // highlight all words
                     hasKeywordsDuplicates);
 
-        QObject::connect(basicModel, &Common::BasicMetadataModel::hasDuplicatesChanged,
+        QObject::connect(basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
                          highlighter, &DuplicatesHighlighter::keywordsDuplicatesChanged);
 
         Q_UNUSED(highlighter);
@@ -211,7 +211,7 @@ namespace SpellCheck {
         if ((index < 0) || (index >= (int)m_DuplicatesList.size())) { return QString(); }
 
         auto &item = m_DuplicatesList.at(index);
-        Common::BasicMetadataModel *basicModel = item.m_BasicModel;
+        Artworks::BasicMetadataModel *basicModel = item.m_BasicModel;
         std::vector<Common::KeywordItem> duplicatedKeywords = basicModel->retrieveDuplicatedKeywords();
 
         QString text;

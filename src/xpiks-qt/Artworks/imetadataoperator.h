@@ -41,7 +41,7 @@ namespace Artworks {
         virtual bool moveKeyword(size_t from, size_t to) = 0;
         //virtual const QHash<QString, QStringList> getDuplicatesModel() = 0;
 
-        virtual Common::BasicKeywordsModel *getBasicKeywordsModel() = 0;
+        virtual BasicKeywordsModel *getBasicKeywordsModel() = 0;
 
         // former ispellcheckable here
         virtual Common::KeywordReplaceResult fixKeywordSpelling(size_t index, const QString &existing, const QString &replacement) = 0;

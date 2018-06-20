@@ -113,7 +113,7 @@ namespace AutoComplete {
         stopService();
     }
 
-    void AutoCompleteService::generateCompletions(const QString &prefix, Common::BasicKeywordsModel *basicModel) {
+    void AutoCompleteService::generateCompletions(const QString &prefix, Artworks::BasicKeywordsModel *basicModel) {
         if (m_AutoCompleteWorker == NULL) {
             LOG_WARNING << "Worker is NULL";
             return;

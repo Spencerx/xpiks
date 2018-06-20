@@ -160,7 +160,7 @@ namespace SpellCheck {
         }
 
         if (anyChanged) {
-             std::vector<Common::BasicKeywordsModel *> itemsToSubmit;
+             std::vector<Artworks::BasicKeywordsModel *> itemsToSubmit;
              itemsToSubmit.reserve(m_ItemsPairs.size());
 
              for (auto &pair: m_ItemsPairs) {

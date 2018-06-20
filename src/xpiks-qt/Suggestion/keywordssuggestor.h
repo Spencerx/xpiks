@@ -167,8 +167,8 @@ namespace Suggestion {
         QHash<QString, int> m_KeywordsHash;
         QSet<QString> m_ExistingKeywords;
         Common::FakeHold m_HoldPlaceholder;
-        Common::BasicKeywordsModel m_SuggestedKeywords;
-        Common::BasicKeywordsModel m_AllOtherKeywords;
+        Artworks::BasicKeywordsModel m_SuggestedKeywords;
+        Artworks::BasicKeywordsModel m_AllOtherKeywords;
         // hack to load previews gradually
         QTimer m_LinearTimer;
         volatile int m_LoadedPreviewsNumber;

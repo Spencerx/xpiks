@@ -135,12 +135,12 @@ namespace SpellCheck {
 
     QSyntaxHighlighter *SpellCheckItemInfo::createHighlighterForDescription(QTextDocument *document,
                                                                             QMLExtensions::ColorsModel *colorsModel,
-                                                                            Common::BasicMetadataModel *basicModel) {
+                                                                            Artworks::BasicMetadataModel *basicModel) {
         // is freed by the document
 #ifndef CORE_TESTS
         SpellCheckErrorsHighlighter *highlighter = new SpellCheckErrorsHighlighter(document, colorsModel, &m_DescriptionErrors);
         if (basicModel != nullptr) {
-            QObject::connect(basicModel, &Common::BasicMetadataModel::descriptionSpellingChanged,
+            QObject::connect(basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
                              highlighter, &SpellCheckErrorsHighlighter::rehighlight);
         }
 
@@ -158,12 +158,12 @@ namespace SpellCheck {
 
     QSyntaxHighlighter *SpellCheckItemInfo::createHighlighterForTitle(QTextDocument *document,
                                                                       QMLExtensions::ColorsModel *colorsModel,
-                                                                      Common::BasicMetadataModel *basicModel) {
+                                                                      Artworks::BasicMetadataModel *basicModel) {
 #ifndef CORE_TESTS
         // is freed by the document
         SpellCheckErrorsHighlighter *highlighter = new SpellCheckErrorsHighlighter(document, colorsModel, &m_TitleErrors);
         if (basicModel != nullptr) {
-            QObject::connect(basicModel, &Common::BasicMetadataModel::titleSpellingChanged,
+            QObject::connect(basicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                              highlighter, &SpellCheckErrorsHighlighter::rehighlight);
         }
 

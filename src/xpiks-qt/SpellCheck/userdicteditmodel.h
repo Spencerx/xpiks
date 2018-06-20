@@ -54,12 +54,12 @@ namespace SpellCheck {
 
 
     protected:
-        virtual Common::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }
+        virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }
         virtual Common::IMetadataOperator *getMetadataOperator() override { return &m_BasicModel; }
 
     private:
         Common::Hold m_HoldPlaceholder;
-        Common::BasicMetadataModel m_BasicModel;
+        Artworks::BasicMetadataModel m_BasicModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
     };
 }

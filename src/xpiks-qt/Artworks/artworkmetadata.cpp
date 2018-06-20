@@ -46,7 +46,7 @@ namespace Artworks {
     {
         m_MetadataModel.setSpellCheckInfo(&m_SpellCheckInfo);
 
-        QObject::connect(&m_MetadataModel, &Common::BasicMetadataModel::spellingInfoUpdated, this, &ArtworkMetadata::spellingInfoUpdated);
+        QObject::connect(&m_MetadataModel, &BasicMetadataModel::spellingInfoUpdated, this, &ArtworkMetadata::spellingInfoUpdated);
 
         QFileInfo fi(filepath);
         setIsReadOnlyFlag(!fi.isWritable());
@@ -494,7 +494,7 @@ namespace Artworks {
         m_MetadataModel.afterReplaceCallback();
     }
 
-    Common::BasicKeywordsModel *ArtworkMetadata::getBasicKeywordsModel() {
+    BasicKeywordsModel *ArtworkMetadata::getBasicKeywordsModel() {
         return &m_MetadataModel;
     }
 

@@ -58,7 +58,7 @@ namespace SpellCheck {
     }
 
     void DuplicatesHighlighter::keywordsDuplicatesChanged() {
-        Common::BasicKeywordsModel *basicModel = qobject_cast<Common::BasicKeywordsModel *>(sender());
+        Artworks::BasicKeywordsModel *basicModel = qobject_cast<Artworks::BasicKeywordsModel *>(sender());
         Q_ASSERT(basicModel != nullptr);
         if (basicModel != nullptr) {
             m_HighlighAll = basicModel->hasKeywordsDuplicates();

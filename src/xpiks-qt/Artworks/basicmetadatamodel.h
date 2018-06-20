@@ -61,7 +61,7 @@ namespace Artworks {
         virtual std::vector<KeywordItem> retrieveMisspelledKeywords() override;
         virtual Common::KeywordReplaceResult fixKeywordSpelling(size_t index, const QString &existing, const QString &replacement) override;
         virtual void afterReplaceCallback() override;
-        virtual Common::BasicKeywordsModel *getBasicKeywordsModel() override;
+        virtual BasicKeywordsModel *getBasicKeywordsModel() override;
         virtual QStringList getDescriptionWords();
         virtual QStringList getTitleWords();
         virtual bool expandPreset(size_t keywordIndex, const QStringList &presetList) override;

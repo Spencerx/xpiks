@@ -28,7 +28,7 @@ class QTextCodec;
 namespace SpellCheck {
     class UserDictionary;
 
-    class SpellCheckWorker: public QObject, public Common::ItemProcessingWorker<ISpellCheckItem>
+    class SpellCheckWorker: public QObject, public Common::ItemProcessingWorker<SpellCheckItem>
     {
         Q_OBJECT
 
@@ -48,13 +48,13 @@ namespace SpellCheck {
     protected:
         virtual bool initWorker() override;        
         virtual std::shared_ptr<ResultType> processWorkItem(WorkItem &workItem) override;
-        //virtual void processOneItem(std::shared_ptr<ISpellCheckItem> &item) override;
-
-    private:
-        void processQueryItem(std::shared_ptr<SpellCheckItem> &item);
-        void processChangeUserDict(std::shared_ptr<ModifyUserDictItem> &item);
+        void processSpellingQuery(std::shared_ptr<SpellCheckItem> &item);
 
     protected:
+        virtual void onQueueIsEmpty() override {
+            /* Notify on emptiness only for batches with separator */
+            /* emit queueIsEmpty(); */
+        }
         virtual void workerStopped() override { emit stopped(); }
 
     public slots:
@@ -64,9 +64,6 @@ namespace SpellCheck {
     signals:
         void stopped();
         void queueIsEmpty();
-        void wordsNumberChanged(int number);
-        void userDictUpdate(const QStringList &keywords, bool overwritten);
-        void userDictCleared();
 
 #ifdef INTEGRATION_TESTS
     public:
@@ -83,10 +80,6 @@ namespace SpellCheck {
         bool isHunspellSpellingCorrect(const QString &word) const;
         void findSemanticDuplicates(const std::vector<std::shared_ptr<SpellCheckQueryItem> > &queries);
         void findSuggestions(const QString &word);
-        void initUserDictionary();
-        void cleanUserDict();
-        void changeUserDict(const QStringList &words, bool overwrite);
-        void signalUserDictWordsCount();
 
     private:
         Common::ISystemEnvironment &m_Environment;

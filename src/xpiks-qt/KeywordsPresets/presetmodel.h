@@ -58,7 +58,7 @@ namespace KeywordsPresets {
         inline bool getIsNameDuplicateFlag() const { return Common::HasFlag(m_Flags, FlagIsNameDupcate); }
         inline void setIsNameDuplicateFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagIsNameDupcate); }
 
-        Common::BasicKeywordsModel m_KeywordsModel;
+        Artworks::BasicKeywordsModel m_KeywordsModel;
         QString m_PresetName;
         ID_t m_ID;
         int m_GroupID;

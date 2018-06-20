@@ -559,7 +559,7 @@ namespace KeywordsPresets {
 
         if (0 <= index && index < getPresetsCount()) {
             auto *preset = m_PresetsList.at(index);
-            Common::BasicKeywordsModel &keywordsModel = preset->m_KeywordsModel;
+            Artworks::BasicKeywordsModel &keywordsModel = preset->m_KeywordsModel;
 
             QVector<QChar> separators;
             separators << QChar(',');

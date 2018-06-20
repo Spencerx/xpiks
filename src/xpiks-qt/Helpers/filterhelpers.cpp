@@ -61,7 +61,7 @@ namespace Helpers {
 
         int length = searchTerms.length();
 
-        Common::BasicKeywordsModel *keywordsModel = metadata->getBasicModel();
+        Artworks::BasicKeywordsModel *keywordsModel = metadata->getBasicModel();
 
         for (int i = 0; i < length; ++i) {
             const QString &searchTerm = searchTerms.at(i);
@@ -134,7 +134,7 @@ namespace Helpers {
         bool anyError = false;
         int length = searchTerms.length();
 
-        Common::BasicKeywordsModel *keywordsModel = metadata->getBasicModel();
+        Artworks::BasicKeywordsModel *keywordsModel = metadata->getBasicModel();
 
         for (int i = 0; i < length; ++i) {
             QString searchTerm = searchTerms[i];

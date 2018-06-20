@@ -164,6 +164,6 @@ namespace Artworks {
     };
 }
 
-Q_DECLARE_METATYPE(Common::BasicKeywordsModel *)
+Q_DECLARE_METATYPE(Artworks::BasicKeywordsModel *)
 
 #endif // BASICKEYWORDSMODEL_H

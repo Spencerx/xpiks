@@ -50,7 +50,7 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::TooManyKeywords)) {
-            Common::BasicKeywordsModel *keywordsModel = metadata->getBasicModel();
+            Artworks::BasicKeywordsModel *keywordsModel = metadata->getBasicModel();
             descriptions.append(QObject::tr("There are too many keywords (%1)").arg(keywordsModel->getKeywordsCount()));
         }
 

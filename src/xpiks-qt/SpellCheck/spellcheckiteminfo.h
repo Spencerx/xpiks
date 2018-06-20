@@ -63,10 +63,10 @@ namespace SpellCheck {
         void removeWordsFromErrors(const QStringList &words);
         QSyntaxHighlighter *createHighlighterForDescription(QTextDocument *document,
                                                             QMLExtensions::ColorsModel *colorsModel,
-                                                            Common::BasicMetadataModel *basicModel);
+                                                            Artworks::BasicMetadataModel *basicModel);
         QSyntaxHighlighter *createHighlighterForTitle(QTextDocument *document,
                                                       QMLExtensions::ColorsModel *colorsModel,
-                                                      Common::BasicMetadataModel *basicModel);
+                                                      Artworks::BasicMetadataModel *basicModel);
 
         bool hasDescriptionError(const QString &word) { return m_DescriptionErrors.hasWrongSpelling(word); }
         bool hasTitleError(const QString &word) { return m_TitleErrors.hasWrongSpelling(word); }

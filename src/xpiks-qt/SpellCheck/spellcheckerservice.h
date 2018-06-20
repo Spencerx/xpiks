@@ -44,11 +44,11 @@ namespace SpellCheck {
         bool isAvailable() const { return true; }
         bool isBusy() const;
 
-        void submitItem(Common::BasicKeywordsModel *itemToCheck);
-        void submitItem(Common::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags);
-        SpellCheckWorker::batch_id_t submitItems(const std::vector<Common::BasicKeywordsModel *> &itemsToCheck);
-        void submitItems(const std::vector<Common::BasicKeywordsModel *> &itemsToCheck, const QStringList &wordsToCheck);
-        void submitKeyword(Common::BasicKeywordsModel *itemToCheck, int keywordIndex);
+        void submitItem(Artworks::BasicKeywordsModel *itemToCheck);
+        void submitItem(Artworks::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags);
+        SpellCheckWorker::batch_id_t submitItems(const std::vector<Artworks::BasicKeywordsModel *> &itemsToCheck);
+        void submitItems(const std::vector<Artworks::BasicKeywordsModel *> &itemsToCheck, const QStringList &wordsToCheck);
+        void submitKeyword(Artworks::BasicKeywordsModel *itemToCheck, int keywordIndex);
         virtual QStringList suggestCorrections(const QString &word) const;
         void restartWorker();
         int getUserDictWordsNumber();
@@ -80,7 +80,6 @@ namespace SpellCheck {
     private slots:
         void workerFinished();
         void workerDestroyed(QObject *object);
-        void wordsNumberChangedHandler(int number);
 
     private:
         Common::WordAnalysisFlags getWordAnalysisFlags() const;

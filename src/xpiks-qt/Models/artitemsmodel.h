@@ -87,7 +87,7 @@ namespace Models {
 
         /*Q_INVOKABLE*/ ArtworkMetadata *getArtworkMetadata(int index) const;
 
-        /*Q_INVOKABLE*/ Common::BasicMetadataModel *getBasicModel(int index) const;
+        /*Q_INVOKABLE*/ Artworks::BasicMetadataModel *getBasicModel(int index) const;
 
         Q_INVOKABLE QSize retrieveImageSize(int metadataIndex) const;
         Q_INVOKABLE QString retrieveFileSize(int metadataIndex) const;

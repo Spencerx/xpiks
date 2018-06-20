@@ -20,7 +20,8 @@
 #include "../Common/flags.h"
 #include "../Common/wordanalysisresult.h"
 
-namespace Common {
+namespace Artworks {
+    class ArtworkMetadata;
     class BasicKeywordsModel;
 }
 
@@ -52,86 +53,46 @@ namespace SpellCheck {
         volatile bool m_IsDuplicate;
     };
 
-    class SpellCheckItemBase: public QObject
+    class SpellCheckItem: public QObject
     {
         Q_OBJECT
-
     public:
-        virtual ~SpellCheckItemBase();
-
-    protected:
-        SpellCheckItemBase(Common::WordAnalysisFlags wordAnalysisFlag):
-            QObject(),
-            m_NeedsSuggestions(false),
-            m_WordAnalysisFlag(wordAnalysisFlag)
-        { }
-
-    public:
-        const std::vector<std::shared_ptr<SpellCheckQueryItem> > &getQueries() const { return m_QueryItems; }
-        Common::WordAnalysisFlags getWordAnalysisFlags() const { return m_WordAnalysisFlag; }
-
-        const QHash<QString, Common::WordAnalysisResult> &getHash() const {
-            return m_SpellCheckResults;
-        }
-        virtual void submitSpellCheckResult() = 0;
-
-        bool needsSuggestions() const { return m_NeedsSuggestions; }
-        void requestSuggestions() { m_NeedsSuggestions = true; }
-        void accountResults();
-
-    protected:
-        void reserve(int n) { m_QueryItems.reserve(m_QueryItems.size() + n); }
-        void appendItem(const std::shared_ptr<SpellCheckQueryItem> &item);
-
-    private:
-        std::vector<std::shared_ptr<SpellCheckQueryItem> > m_QueryItems;
-        QHash<QString, Common::WordAnalysisResult> m_SpellCheckResults;
-        volatile bool m_NeedsSuggestions;
-        Common::WordAnalysisFlags m_WordAnalysisFlag;
-    };
-
-    class SpellCheckItem: public SpellCheckItemBase
-    {
-    Q_OBJECT
-
-    public:
-        SpellCheckItem(Common::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlags, int keywordIndex);
-        SpellCheckItem(Common::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlags);
-        SpellCheckItem(Common::BasicKeywordsModel *spellCheckable, const QStringList &keywordsToCheck, Common::WordAnalysisFlags wordAnalysisFlags);
+        /*
+         * This class contains BasicKeywordsModel instead of ArtworkMetadata because
+         * spelling is also checked in classes that are not Artworks like
+         * Combined model, QuickBuffer etc.
+         */
+        SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlags, int keywordIndex);
+        SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlags);
+        SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, const QStringList &keywordsToCheck, Common::WordAnalysisFlags wordAnalysisFlags);
         virtual ~SpellCheckItem();
 
     private:
         void addWords(const QStringList &words, int startingIndex, const std::function<bool (const QString &word)> &pred);
 
+    public:
+        void submitSpellCheckResult();
+        void accountResults();
+        void requestSuggestions() { m_NeedsSuggestions = true; }
+
+    public:
+        bool getIsOnlyOneKeyword() const { return m_OnlyOneKeyword; }
+        bool needsSuggestions() const { return m_NeedsSuggestions; }
+        const std::vector<std::shared_ptr<SpellCheckQueryItem> > &getQueries() const { return m_QueryItems; }
+        Common::WordAnalysisFlags getWordAnalysisFlags() const { return m_WordAnalysisFlag; }
+        const QHash<QString, Common::WordAnalysisResult> &getHash() const { return m_SpellCheckResults; }
+
     signals:
         void resultsReady(Common::SpellCheckFlags flags, int index);
 
-    public:
-        virtual void submitSpellCheckResult();
-
-        bool getIsOnlyOneKeyword() const { return m_OnlyOneKeyword; }
-
     private:
-        Common::BasicKeywordsModel *m_SpellCheckable;
+        Artworks::BasicKeywordsModel *m_SpellCheckable;
+        std::vector<std::shared_ptr<SpellCheckQueryItem> > m_QueryItems;
+        QHash<QString, Common::WordAnalysisResult> m_SpellCheckResults;
+        Common::WordAnalysisFlags m_WordAnalysisFlag;
         Common::SpellCheckFlags m_SpellCheckFlags;
+        volatile bool m_NeedsSuggestions;
         volatile bool m_OnlyOneKeyword;
-    };
-
-    class ModifyUserDictItem
-    {
-    public:
-        ModifyUserDictItem(const QString &keyword);
-        ModifyUserDictItem(bool clearFlag);
-        ModifyUserDictItem(const QStringList &keywords);
-        virtual ~ModifyUserDictItem() {}
-
-    public:
-        const QStringList &getKeywordsToAdd() const { return m_KeywordsToAdd; }
-        bool getClearFlag() const { return m_ClearFlag; }
-
-    private:
-        QStringList m_KeywordsToAdd;
-        bool m_ClearFlag;
     };
 }
 

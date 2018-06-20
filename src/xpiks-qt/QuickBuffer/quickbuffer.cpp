@@ -28,17 +28,17 @@ namespace QuickBuffer {
     {
         m_BasicModel.setSpellCheckInfo(&m_SpellCheckInfo);
 
-        QObject::connect(&m_BasicModel, &Common::BasicMetadataModel::titleSpellingChanged,
+        QObject::connect(&m_BasicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                          this, &QuickBuffer::titleSpellingChanged);
-        QObject::connect(&m_BasicModel, &Common::BasicMetadataModel::descriptionSpellingChanged,
+        QObject::connect(&m_BasicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
                          this, &QuickBuffer::descriptionSpellingChanged);
-        QObject::connect(&m_BasicModel, &Common::BasicMetadataModel::keywordsSpellingChanged,
+        QObject::connect(&m_BasicModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
                          this, &QuickBuffer::keywordsSpellingChanged);
 
 //        QObject::connect(&m_BasicModel, SIGNAL(completionsAvailable()),
 //                         this, SIGNAL(completionsAvailable()));
 
-        QObject::connect(&m_BasicModel, &Common::BasicMetadataModel::afterSpellingErrorsFixed,
+        QObject::connect(&m_BasicModel, &Artworks::BasicMetadataModel::afterSpellingErrorsFixed,
                          this, &QuickBuffer::afterSpellingErrorsFixedHandler);
     }
 
@@ -166,7 +166,7 @@ namespace QuickBuffer {
         return result;
     }
 
-    void QuickBuffer::setFromBasicModel(Common::BasicMetadataModel *model) {
+    void QuickBuffer::setFromBasicModel(Artworks::BasicMetadataModel *model) {
         LOG_DEBUG << "#";
         Q_ASSERT(model != nullptr);
 

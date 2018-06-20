@@ -28,7 +28,7 @@ class QQuickTextDocument;
 
 namespace SpellCheck {
     struct MetadataDuplicatesItem {
-        MetadataDuplicatesItem(Common::BasicMetadataModel *basicModel):
+        MetadataDuplicatesItem(Artworks::BasicMetadataModel *basicModel):
             m_BasicModel(basicModel),
             m_ArtworkMetadata(nullptr)
         {
@@ -43,7 +43,7 @@ namespace SpellCheck {
             m_BasicModel = artwork->getBasicModel();
         }
 
-        Common::BasicMetadataModel *m_BasicModel;
+        Artworks::BasicMetadataModel *m_BasicModel;
         Artworks::ArtworkMetadata *m_ArtworkMetadata;
     };
 
@@ -65,7 +65,7 @@ namespace SpellCheck {
         };
 
     public:
-        void setupModel(Common::BasicMetadataModel *basicModel);
+        void setupModel(Artworks::BasicMetadataModel *basicModel);
         void setupModel(const std::vector<Artworks::ArtworkMetadata *> &items);
         void clearDuplicates();
 

@@ -94,30 +94,19 @@ namespace SpellCheck {
         return initResult;
     }
 
-    void SpellCheckWorker::processOneItemEx(std::shared_ptr<ISpellCheckItem> &item, batch_id_t batchID, Common::flag_t flags) {
-        if (getIsSeparatorFlag(flags)) {
+    std::shared_ptr<ResultType> SpellCheckWorker::processWorkItem(WorkItem &workItem) {
+        if (workItem.isSeparator()) {
             emit queueIsEmpty();
         } else {
-            ItemProcessingWorker::processOneItemEx(item, batchID, flags);
+            this->processSpellingQuery(workItem.m_Item);
 
-            if (getIsMilestone(flags)) {
+            if (workItem.isMilestone()) {
                 QThread::msleep(SPELLCHECK_WORKER_SLEEP_DELAY);
             }
         }
     }
 
-    void SpellCheckWorker::processOneItem(std::shared_ptr<ISpellCheckItem> &item) {
-        auto queryItem = std::dynamic_pointer_cast<SpellCheckItem>(item);
-        auto addWordItem = std::dynamic_pointer_cast<ModifyUserDictItem>(item);
-
-        if (queryItem) {
-            processQueryItem(queryItem);
-        } else if (addWordItem) {
-            processChangeUserDict(addWordItem);
-        }
-    }
-
-    void SpellCheckWorker::processQueryItem(std::shared_ptr<SpellCheckItem> &item) {
+    void SpellCheckWorker::processSpellingQuery(std::shared_ptr<SpellCheckItem> &item) {
         const bool neededSuggestions = item->needsSuggestions();
         auto &queryItems = item->getQueries();
         const auto wordAnalysisFlags = item->getWordAnalysisFlags();
@@ -160,23 +149,6 @@ namespace SpellCheck {
             item->requestSuggestions();
             this->submitItem(item);
         }
-    }
-
-    void SpellCheckWorker::processChangeUserDict(std::shared_ptr<ModifyUserDictItem> &item) {
-        LOG_INTEGRATION_TESTS << item->getKeywordsToAdd();
-
-        auto clearflag = item->getClearFlag();
-        QStringList words = item->getKeywordsToAdd();
-
-        if (clearflag && words.empty()) { //clear dict
-            cleanUserDict();
-        } else if (!clearflag && !words.empty()) {//append
-            changeUserDict(words, false);
-        } else if (clearflag && !words.empty()) { //overwrite
-            changeUserDict(words, true);
-        }
-
-        signalUserDictWordsCount();
     }
 
     QStringList SpellCheckWorker::retrieveCorrections(const QString &word) {
@@ -382,52 +354,5 @@ namespace SpellCheck {
             m_Suggestions.insert(word, suggestions);
             m_SuggestionsLock.unlock();
         }
-    }
-
-    void SpellCheckWorker::initUserDictionary() {
-        LOG_DEBUG << "#";
-        m_UserDictionary.initialize(m_);
-        signalUserDictWordsCount();
-        if (!m_UserDictionary.empty()) {
-            emit userDictUpdate(m_UserDictionary.getWords(), false);
-        }
-    }
-
-    void SpellCheckWorker::cleanUserDict() {
-        LOG_DEBUG << "#";
-
-        m_UserDictionary.clear();
-        m_UserDictionary.save();
-        emit userDictCleared();
-    }
-
-    void SpellCheckWorker::changeUserDict(const QStringList &words, bool overwrite) {
-        LOG_INFO << "Words to add:" << words;
-
-        QStringList wordsToAdd;
-
-        for (auto &word: words) {
-            const bool isOk = checkWordSpelling(word);
-            if (overwrite || !isOk) {
-                wordsToAdd.append(word);
-            }
-        }
-
-        LOG_INTEGRATION_TESTS << "Real words to add:" << wordsToAdd;
-
-        if (overwrite) {
-            m_UserDictionary.reset(wordsToAdd);
-        } else {
-            m_UserDictionary.addWords(wordsToAdd);
-        }
-
-        m_UserDictionary.save();
-
-        emit userDictUpdate(wordsToAdd, overwrite);
-    }
-
-    void SpellCheckWorker::signalUserDictWordsCount() {
-        LOG_DEBUG << m_UserDictionary.size();
-        emit wordsNumberChanged(m_UserDictionary.size());
     }
 }

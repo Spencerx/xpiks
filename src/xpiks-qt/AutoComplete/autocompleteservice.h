@@ -56,7 +56,7 @@ namespace AutoComplete {
 
     public:
         void restartWorker();
-        void generateCompletions(const QString &prefix, Common::BasicKeywordsModel *basicModel);
+        void generateCompletions(const QString &prefix, Artworks::BasicKeywordsModel *basicModel);
 
     private slots:
         void workerFinished();

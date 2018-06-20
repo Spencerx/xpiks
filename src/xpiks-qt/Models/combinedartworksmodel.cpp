@@ -32,25 +32,25 @@ namespace Models {
     {
         m_CommonKeywordsModel.setSpellCheckInfo(&m_SpellCheckInfo);
 
-        QObject::connect(&m_CommonKeywordsModel, &Common::BasicMetadataModel::titleSpellingChanged,
+        QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                          this, &CombinedArtworksModel::onTitleSpellingChanged);
-        QObject::connect(&m_CommonKeywordsModel, &Common::BasicMetadataModel::descriptionSpellingChanged,
+        QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
                          this, &CombinedArtworksModel::onDescriptionSpellingChanged);
 
-        QObject::connect(&m_CommonKeywordsModel, &Common::BasicMetadataModel::completionsAvailable,
+        QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::completionsAvailable,
                          this, &CombinedArtworksModel::completionsAvailable);
 
-        QObject::connect(&m_CommonKeywordsModel, &Common::BasicMetadataModel::afterSpellingErrorsFixed,
+        QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::afterSpellingErrorsFixed,
                          this, &CombinedArtworksModel::spellCheckErrorsFixedHandler);
 
         QObject::connect(this, &CombinedArtworksModel::editingPaused,
                          this, &CombinedArtworksModel::onEditingPaused);
 
-        QObject::connect(&m_CommonKeywordsModel, &Common::BasicMetadataModel::descriptionSpellingChanged,
+        QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
                          this, &CombinedArtworksModel::descriptionSpellingChanged);
-        QObject::connect(&m_CommonKeywordsModel, &Common::BasicMetadataModel::titleSpellingChanged,
+        QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                          this, &CombinedArtworksModel::titleSpellingChanged);
-        QObject::connect(&m_CommonKeywordsModel, &Common::BasicMetadataModel::keywordsSpellingChanged,
+        QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
                          this, &CombinedArtworksModel::keywordsSpellingChanged);
     }
 

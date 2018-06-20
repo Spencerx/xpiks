@@ -156,7 +156,7 @@ namespace Warnings {
     void WarningsItem::checkKeywords(IWarningsSettings *warningsSettings) {
         LOG_INTEGRATION_TESTS << "#";
         Q_UNUSED(warningsSettings);
-        Common::BasicKeywordsModel *keywordsModel = m_CheckableItem->getBasicModel();
+        Artworks::BasicKeywordsModel *keywordsModel = m_CheckableItem->getBasicModel();
 
         const int keywordsCount = keywordsModel->getKeywordsCount();
 

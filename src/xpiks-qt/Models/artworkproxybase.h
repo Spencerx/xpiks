@@ -46,7 +46,7 @@ namespace Models {
         virtual void signalKeywordsCountChanged() = 0;
 
     protected:
-        virtual Common::BasicMetadataModel *getBasicMetadataModel() = 0;
+        virtual Artworks::BasicMetadataModel *getBasicMetadataModel() = 0;
         virtual Common::IMetadataOperator *getMetadataOperator() = 0;
 
     protected:

@@ -197,7 +197,7 @@ namespace Commands {
     #endif
     }
 
-    void MainDelegator::submitKeywordForSpellCheck(Common::BasicKeywordsModel *item, int keywordIndex) const {
+    void MainDelegator::submitKeywordForSpellCheck(Artworks::BasicKeywordsModel *item, int keywordIndex) const {
         Q_ASSERT(item != NULL);
         auto *spellCheckerService = m_CommandManager->getSpellCheckerService();
         const Common::WordAnalysisFlags wordAnalysisFlags = getWordAnalysisFlags();
@@ -212,7 +212,7 @@ namespace Commands {
         if ((wordAnalysisFlags != Common::WordAnalysisFlags::None) &&
                 (spellCheckerService != NULL) &&
                 !items.empty()) {
-            std::vector<Common::BasicKeywordsModel *> itemsToSubmit;
+            std::vector<Artworks::BasicKeywordsModel *> itemsToSubmit;
             size_t count = items.size();
             itemsToSubmit.reserve(count);
 
@@ -224,7 +224,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::submitForSpellCheck(const std::vector<Common::BasicKeywordsModel *> &items) const {
+    void MainDelegator::submitForSpellCheck(const std::vector<Artworks::BasicKeywordsModel *> &items) const {
         auto *spellCheckerService = m_CommandManager->getSpellCheckerService();
         const Common::WordAnalysisFlags wordAnalysisFlags = getWordAnalysisFlags();
         if ((wordAnalysisFlags != Common::WordAnalysisFlags::None) && (spellCheckerService != NULL)) {
@@ -232,7 +232,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::submitItemForSpellCheck(Common::BasicKeywordsModel *item, Common::SpellCheckFlags flags) const {
+    void MainDelegator::submitItemForSpellCheck(Artworks::BasicKeywordsModel *item, Common::SpellCheckFlags flags) const {
         Q_ASSERT(item != NULL);
         const Common::WordAnalysisFlags wordAnalysisFlags = getWordAnalysisFlags();
         auto *spellCheckerService = m_CommandManager->getSpellCheckerService();
@@ -241,7 +241,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::checkSemanticDuplicates(Common::BasicKeywordsModel *item) const {
+    void MainDelegator::checkSemanticDuplicates(Artworks::BasicKeywordsModel *item) const {
         Q_ASSERT(item != NULL);
         const Common::WordAnalysisFlags wordAnalysisFlags = getWordAnalysisFlags();
         auto *spellCheckerService = m_CommandManager->getSpellCheckerService();
@@ -267,7 +267,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::submitForSpellCheck(const std::vector<Common::BasicKeywordsModel *> &items,
+    void MainDelegator::submitForSpellCheck(const std::vector<Artworks::BasicKeywordsModel *> &items,
                                                        const QStringList &wordsToCheck) const {
         auto *spellCheckerService = m_CommandManager->getSpellCheckerService();
         Common::WordAnalysisFlags wordAnalysisFlags = getWordAnalysisFlags();
@@ -281,7 +281,7 @@ namespace Commands {
         this->submitForWarningsCheck(item, Common::WarningsCheckFlags::Keywords);
     }
 
-    void MainDelegator::setupDuplicatesModel(Common::BasicMetadataModel *item) {
+    void MainDelegator::setupDuplicatesModel(Artworks::BasicMetadataModel *item) {
         auto *duplicatesModel = m_CommandManager->getDuplicatesReviewModel();
         if (duplicatesModel != nullptr) {
             duplicatesModel->setupModel(item);
@@ -432,7 +432,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::generateCompletions(const QString &prefix, Common::BasicKeywordsModel *source) const {
+    void MainDelegator::generateCompletions(const QString &prefix, Artworks::BasicKeywordsModel *source) const {
     #ifndef CORE_TESTS
         auto *autoCompleteService = m_CommandManager->getAutoCompleteService();
         if (autoCompleteService != NULL) {

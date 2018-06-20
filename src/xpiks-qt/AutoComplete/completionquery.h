@@ -39,7 +39,7 @@ namespace AutoComplete {
 
     class CompletionQuery {
     public:
-        CompletionQuery(const QString &prefix, Common::BasicKeywordsModel *basicModel):
+        CompletionQuery(const QString &prefix, Artworks::BasicKeywordsModel *basicModel):
             m_BasicKeywordsModel(basicModel),
             m_Prefix(prefix),
             m_CompletionFlags(0)
@@ -76,10 +76,10 @@ namespace AutoComplete {
         void setCompleteKeywords(bool value) { setCompleteKeywordsFlag(value); }
         void setCompletePresets(bool value) { setCompletePresetsFlag(value); }
         void setCompletions(std::vector<CompletionResult> &completions) { m_Completions.swap(completions); }
-        Common::BasicKeywordsModel *getBasicModel() { return m_BasicKeywordsModel; }
+        Artworks::BasicKeywordsModel *getBasicModel() { return m_BasicKeywordsModel; }
 
     private:
-        Common::BasicKeywordsModel *m_BasicKeywordsModel;
+        Artworks::BasicKeywordsModel *m_BasicKeywordsModel;
         QString m_Prefix;
         std::vector<CompletionResult> m_Completions;
         // QString m_Context;

@@ -156,15 +156,15 @@ namespace Commands {
         void cleanupOldXpksBackups(const QString &directory) const;
 
     public:
-        void submitKeywordForSpellCheck(Common::BasicKeywordsModel *item, int keywordIndex) const;
+        void submitKeywordForSpellCheck(Artworks::BasicKeywordsModel *item, int keywordIndex) const;
         void submitForSpellCheck(const Artworks::WeakArtworksSnapshot &items) const;
-        void submitForSpellCheck(const std::vector<Common::BasicKeywordsModel *> &items) const;
-        void submitItemForSpellCheck(Common::BasicKeywordsModel *item, Common::SpellCheckFlags flags = Common::SpellCheckFlags::All) const;
-        void checkSemanticDuplicates(Common::BasicKeywordsModel *item) const;
+        void submitForSpellCheck(const std::vector<Artworks::BasicKeywordsModel *> &items) const;
+        void submitItemForSpellCheck(Artworks::BasicKeywordsModel *item, Common::SpellCheckFlags flags = Common::SpellCheckFlags::All) const;
+        void checkSemanticDuplicates(Artworks::BasicKeywordsModel *item) const;
         void setupSpellCheckSuggestions(Common::IMetadataOperator *item, int index, Common::SuggestionFlags flags) const;
         void setupSpellCheckSuggestions(std::vector<std::pair<Common::IMetadataOperator *, int> > &itemPairs, Common::SuggestionFlags flags) const;
-        void submitForSpellCheck(const std::vector<Common::BasicKeywordsModel *> &items, const QStringList &wordsToCheck) const;
-        void setupDuplicatesModel(Common::BasicMetadataModel *item);
+        void submitForSpellCheck(const std::vector<Artworks::BasicKeywordsModel *> &items, const QStringList &wordsToCheck) const;
+        void setupDuplicatesModel(Artworks::BasicMetadataModel *item);
         void setupDuplicatesModel(const std::vector<Artworks::ArtworkMetadata *> &items) const;
 
     public:
@@ -186,7 +186,7 @@ namespace Commands {
         void restartSpellChecking();
         void disableSpellChecking();
         void disableDuplicatesCheck();
-        void generateCompletions(const QString &prefix, Common::BasicKeywordsModel *source) const;
+        void generateCompletions(const QString &prefix, Artworks::BasicKeywordsModel *source) const;
 
     public:
         void registerCurrentItem(Artworks::ArtworkMetadata *artwork) const;

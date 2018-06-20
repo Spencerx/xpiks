@@ -394,7 +394,7 @@ namespace Models {
         if (!overwritten) {
             info->removeWordsFromErrors(keywords);
             // special case after words added to dict
-            std::vector<Common::BasicKeywordsModel *> items;
+            std::vector<Artworks::BasicKeywordsModel *> items;
             items.push_back(metadataModel);
             xpiks()->submitForSpellCheck(items, keywords);
         }

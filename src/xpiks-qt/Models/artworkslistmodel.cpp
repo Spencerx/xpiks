@@ -73,7 +73,7 @@ namespace Artworks {
         LOG_DEBUG << "#";
         foreachArtwork([](ArtworkMetadata *artwork) { return artwork->isUnavailable(); },
         [](ArtworkMetadata *artwork, size_t) {
-            Common::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
+            Artworks::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
             keywordsModel->notifyAboutToBeRemoved();
         });
     }
@@ -393,7 +393,7 @@ namespace Artworks {
             case ArtworkTitleRole:
                 return artwork->getTitle();
             case KeywordsStringRole: {
-                Common::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
+                Artworks::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
                 return keywordsModel->getKeywordsString();
             }
             case IsModifiedRole:
@@ -401,7 +401,7 @@ namespace Artworks {
             case IsSelectedRole:
                 return artwork->isSelected();
             case KeywordsCountRole: {
-                Common::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
+                Artworks::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
                 return keywordsModel->getKeywordsCount();
             }
             case HasVectorAttachedRole: {
