@@ -104,7 +104,7 @@ namespace SpellCheck {
         } else {
             ItemProcessingWorker::processOneItemEx(item, batchID, flags);
 
-            if (getWithDelayFlag(flags)) {
+            if (getIsMilestone(flags)) {
                 QThread::msleep(SPELLCHECK_WORKER_SLEEP_DELAY);
             }
         }

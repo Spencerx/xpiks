@@ -11,6 +11,7 @@
 #include "artworksinspectionhub.h"
 #include "../SpellCheck/spellcheckerservice.h"
 #include "../Warnings/warningsservice.h"
+#include "../Helpers/cpphelpers.h"
 
 #define MAX_UPDATE_TIMER_DELAYS 2
 #define UPDATE_TIMER_DELAY 200
@@ -21,44 +22,44 @@ namespace Services {
                                                  QObject *parent):
         QObject(parent),
         m_SpellCheckService(spellcheckService),
-        m_WarningsService(warningsService),
-        m_TimerRestartedCount(0)
+        m_WarningsService(warningsService)
     {
-        m_UpdateTimer.setSingleShot(true);
-
-        QObject::connect(&m_UpdateTimer, SIGNAL(timeout()), this, SLOT(onUpdateTimer()));
-        QObject::connect(this, SIGNAL(updateRequested()), this, SLOT(onUpdateRequested()));
     }
 
     void ArtworksInspectionHub::checkArtworks(const Artworks::WeakArtworksSnapshot &artworks) const {
-        m_Artworks.append(artworks);
-        emit updateRequested();
-    }
+        if (artworks.empty()) { return; }
+        LOG_INFO << artworks.size() << "artworks";
 
-    void ArtworksInspectionHub::checkArtworks(const Artworks::ArtworksSnapshot::Container &artworks) const {
-        m_Artworks.append(artworks);
-        emit updateRequested();
-    }
-
-    void ArtworksInspectionHub::onUpdateRequested() {
-        LOG_DEBUG << "#";
-        /*
-         * Force update might be dangerous because it is possible
-         * that restart count will be high but timer is not started
-         */
-
-        if (m_TimerRestartedCount < MAX_UPDATE_TIMER_DELAYS) {
-            m_UpdateTimer.start(UPDATE_TIMER_DELAY);
-
-            QMutexLocker locker(&m_Lock);
-            Q_UNUSED(locker);
-            m_TimerRestartedCount++;
-        } else {
-            LOG_INFO << "Maximum backup delays occured, forcing update";
-            Q_ASSERT(m_UpdateTimer.isActive());
+        const Common::WordAnalysisFlags wordAnalysisFlags = getWordAnalysisFlags();
+        if (wordAnalysisFlags != Common::WordAnalysisFlags::None) {
+            auto itemsToSubmit = Helpers::map(artworks, [](Artworks::ArtworkMetadata* a) { return a->getBasicModel(); });
+            m_SpellCheckService.submitItems(itemsToSubmit);
         }
     }
 
-    void ArtworksInspectionHub::onUpdateTimer() {
+    void ArtworksInspectionHub::checkArtworks(const Artworks::ArtworksSnapshot::Container &artworks) const {
+        if (artworks.empty()) { return; }
+        LOG_INFO << artworks.size() << "artworks";
+
+        const Common::WordAnalysisFlags wordAnalysisFlags = getWordAnalysisFlags();
+        if (wordAnalysisFlags != Common::WordAnalysisFlags::None) {
+            auto itemsToSubmit = Helpers::map(artworks, [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+                    return locker->getArtworkMetadata()->getBasicModel(); });
+            m_SpellCheckService.submitItems(itemsToSubmit);
+        }
+    }
+
+    Common::WordAnalysisFlags ArtworksInspectionHub::getWordAnalysisFlags() const {
+        Common::WordAnalysisFlags result = Common::WordAnalysisFlags::None;
+
+        if (m_SettingsModel.getUseSpellCheck()) {
+            Common::SetFlag(result, Common::WordAnalysisFlags::Spelling);
+        }
+
+        if (m_SettingsModel.getDetectDuplicates()) {
+            Common::SetFlag(result, Common::WordAnalysisFlags::Stemming);
+        }
+
+        return result;
     }
 }

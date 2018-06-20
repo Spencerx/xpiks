@@ -17,7 +17,7 @@
 #include <cstdint>
 #include "../Helpers/constants.h"
 #include "imagecachingservice.h"
-#include "artworksupdatehub.h"
+#include "../Services/artworksupdatehub.h"
 #include "../MetadataIO/metadataioservice.h"
 #include "../Models/artitemsmodel.h"
 #include "../Commands/commandmanager.h"
@@ -68,7 +68,7 @@ namespace QMLExtensions {
         } else {
             ItemProcessingWorker::processOneItemEx(item, batchID, flags);
 
-            if (getWithDelayFlag(flags)) {
+            if (getIsMilestone(flags)) {
                 // force context switch for more imporant tasks
                 QThread::msleep(VIDEO_WORKER_SLEEP_DELAY);
             }

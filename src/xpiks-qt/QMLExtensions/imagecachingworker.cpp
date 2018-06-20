@@ -74,7 +74,7 @@ namespace QMLExtensions {
         } else {
             ItemProcessingWorker::processOneItemEx(item, batchID, flags);
 
-            if (getWithDelayFlag(flags)) {
+            if (getIsMilestone(flags)) {
                 // force context switch for more imporant tasks
                 QThread::msleep(IMAGE_CACHING_WORKER_SLEEP_DELAY);
             }

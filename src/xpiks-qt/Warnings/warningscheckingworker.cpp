@@ -39,7 +39,7 @@ namespace Warnings {
         } else {
             ItemProcessingWorker::processOneItemEx(item, batchID, flags);
 
-            if (getWithDelayFlag(flags)) {
+            if (getIsMilestone(flags)) {
                 QThread::msleep(WARNINGS_WORKER_SLEEP_INTERVAL);
             }
         }

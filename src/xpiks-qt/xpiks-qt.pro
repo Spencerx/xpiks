@@ -514,7 +514,8 @@ HEADERS += \
     Models/selectedartworksconsumer.h \
     Services/artworksupdatehub.h \
     Services/artworkupdaterequest.h \
-    Services/artworksinspectionhub.h
+    Services/artworksinspectionhub.h \
+    Helpers/cpphelpers.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

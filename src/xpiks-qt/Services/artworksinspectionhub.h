@@ -22,6 +22,10 @@ namespace Warnings {
     class WarningsService;
 }
 
+namespace Models {
+    class SettingsModel;
+}
+
 namespace Services {
     class ArtworksInspectionHub : public QObject
     {
@@ -35,19 +39,13 @@ namespace Services {
         void checkArtworks(const Artworks::WeakArtworksSnapshot &artworks) const;
         void checkArtworks(const Artworks::ArtworksSnapshot::Container &artworks) const;
 
-    signals:
-        void updateRequested();
-
-    private slots:
-        void onUpdateRequested();
-        void onUpdateTimer();
+    private:
+        Common::WordAnalysisFlags getWordAnalysisFlags() const;
 
     private:
-        QMutex m_Lock;
         SpellCheck::SpellCheckerService &m_SpellCheckService;
         Warnings::WarningsService &m_WarningsService;
-        QTimer m_UpdateTimer;
-        int m_TimerRestartedCount;
+        Models::SettingsModel &m_SettingsModel;
     };
 }
 

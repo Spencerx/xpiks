@@ -1,6 +1,8 @@
 src/xpiks-qt/build*
 *.pro.user
+.qmake.stash
 *.autosave
+*.bak
 src/xpiks-tests/build-*
 build-*
 .DS_Store
@@ -18,3 +20,8 @@ installer/packages/xpiks/data/
 *.qm
 UiTestsStubPlugin/
 *.qmlc
+*.jsc
+*.dmg
+*.dylib
+*.orig
+
