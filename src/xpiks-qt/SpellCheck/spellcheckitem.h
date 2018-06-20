@@ -86,7 +86,7 @@ namespace SpellCheck {
         void resultsReady(Common::SpellCheckFlags flags, int index);
 
     private:
-        Artworks::BasicKeywordsModel *m_SpellCheckable;
+        Artworks::BasicKeywordsModel *m_BasicModel;
         std::vector<std::shared_ptr<SpellCheckQueryItem> > m_QueryItems;
         QHash<QString, Common::WordAnalysisResult> m_SpellCheckResults;
         Common::WordAnalysisFlags m_WordAnalysisFlag;

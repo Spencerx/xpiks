@@ -22,7 +22,7 @@
 
 namespace SpellCheck {
     SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlag, int keywordIndex):
-        m_SpellCheckable(spellCheckable),
+        m_BasicModel(spellCheckable),
         m_SpellCheckFlags(spellCheckFlags),
         m_WordAnalysisFlag(wordAnalysisFlag),
         m_NeedsSuggestions(false),
@@ -33,7 +33,7 @@ namespace SpellCheck {
 
         spellCheckable->acquire();
 
-        QString keyword = m_SpellCheckable->retrieveKeyword(keywordIndex);
+        QString keyword = m_BasicModel->retrieveKeyword(keywordIndex);
         if (!keyword.contains(QChar::Space)) {
             std::shared_ptr<SpellCheckQueryItem> queryItem(new SpellCheckQueryItem(keywordIndex, keyword));
             m_QueryItems.emplace_back(queryItem);
@@ -49,7 +49,7 @@ namespace SpellCheck {
     }
 
     SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlags):
-        m_SpellCheckable(spellCheckable),
+        m_BasicModel(spellCheckable),
         m_SpellCheckFlags(spellCheckFlags),
         m_WordAnalysisFlag(wordAnalysisFlag),
         m_NeedsSuggestions(false),
@@ -83,7 +83,7 @@ namespace SpellCheck {
     }
 
     SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, const QStringList &keywordsToCheck, Common::WordAnalysisFlags wordAnalysisFlags):
-        m_SpellCheckable(spellCheckable),
+        m_BasicModel(spellCheckable),
         m_SpellCheckFlags(Common::SpellCheckFlags::All),
         m_WordAnalysisFlag(wordAnalysisFlag),
         m_NeedsSuggestions(false),
@@ -134,8 +134,8 @@ namespace SpellCheck {
     SpellCheckItem::~SpellCheckItem() {
         LOG_INTEGRATION_TESTS << "Actually deleting SpellCheckItem";
 
-        Q_ASSERT(m_SpellCheckable != nullptr);
-        if (m_SpellCheckable->release()) {
+        Q_ASSERT(m_BasicModel != nullptr);
+        if (m_BasicModel->release()) {
             LOG_WARNING << "Item could have been removed";
         }
     }
@@ -174,12 +174,12 @@ namespace SpellCheck {
 
         // can be empty in case of clear command
         if (Common::HasFlag(m_SpellCheckFlags, Common::SpellCheckFlags::Keywords) && !items.empty()) {
-            m_SpellCheckable->setKeywordsSpellCheckResults(items);
+            m_BasicModel->setKeywordsSpellCheckResults(items);
         }
 
         if (Common::HasFlag(m_SpellCheckFlags, Common::SpellCheckFlags::Description) ||
             Common::HasFlag(m_SpellCheckFlags, Common::SpellCheckFlags::Title)) {
-            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(m_SpellCheckable);
+            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(m_BasicModel);
             if (metadataModel != nullptr) {
                 metadataModel->setSpellCheckResults(getHash(), m_SpellCheckFlags);
             }
@@ -192,7 +192,9 @@ namespace SpellCheck {
     void SpellCheckItem::accountResults() {
         for (auto &item: m_QueryItems) {
             m_SpellCheckResults.insert(item->m_Word,
-                                       Common::WordAnalysisResult(item->m_Stem, item->m_IsCorrect, item->m_IsDuplicate));
+                                       Common::WordAnalysisResult(item->m_Stem,
+                                                                  item->m_IsCorrect,
+                                                                  item->m_IsDuplicate));
         }
     }
 }
