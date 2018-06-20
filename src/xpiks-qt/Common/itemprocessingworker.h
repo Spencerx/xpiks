@@ -23,7 +23,7 @@
 #include "../Helpers/threadhelpers.h"
 
 namespace Common {
-    template<typename ItemType>
+    template<typename ItemType, typename ResultType>
     class ItemProcessingWorker
     {
     public:
@@ -40,13 +40,31 @@ namespace Common {
             {}
             WorkItem(){}
 
+        private:
+            inline bool getIsSeparatorFlag() const { return Common::HasFlag(m_Flags, FlagIsSeparator); }
+            inline bool getIsStopperFlag() const { return Common::HasFlag(m_Flags, FlagIsStopper); }
+            inline bool getIsMilestoneFlag() const { return Common::HasFlag(m_Flags, FlagIsMilestone); }
+
         public:
-            bool isStopper() const { return (m_Item.get() == nullptr) && (Common::HasFlag(m_Flags, FlagIsStopper)); }
+            bool isStopper() const { return (m_Item.get() == nullptr) && getIsStopperFlag(); }
+            bool isSeparator() const { return getIsSeparatorFlag(); }
+            bool isMilestone() const { return getIsMilestoneFlag(); }
 
         public:
             std::shared_ptr<ItemType> m_Item;
             Common::flag_t m_Flags = 0;
             batch_id_t m_ID = INVALID_BATCH_ID;
+        };
+
+        class WorkResult {
+        public:
+            WorkResult(std::shared_ptr<ResultType> &result, batch_id_t batchID):
+                m_Result(std::move(result)),
+                m_BatchID(batchID)
+            { }
+        public:
+            std::shared_ptr<ResultType> m_Result;
+            batch_id_t m_BatchID;
         };
 
     public:
@@ -66,9 +84,6 @@ namespace Common {
         };
 
     protected:
-        inline bool getIsSeparatorFlag(Common::flag_t flags) const { return Common::HasFlag(flags, FlagIsSeparator); }
-        inline bool getIsStopperFlag(Common::flag_t flags) const { return Common::HasFlag(flags, FlagIsStopper); }
-        inline bool getIsMilestone(Common::flag_t flags) const { return Common::HasFlag(flags, FlagIsMilestone); }
 
     public:
         void submitSeparator() {
@@ -210,7 +225,7 @@ namespace Common {
                 m_Cancel = true;
             }
 
-            workerStopped();
+            onWorkerStopped();
         }
 
         void stopWorking(bool immediately=true) {
@@ -237,16 +252,10 @@ namespace Common {
 
     protected:
         virtual bool initWorker() = 0;
-        virtual void processOneItem(std::shared_ptr<ItemType> &item) = 0;
+        virtual std::shared_ptr<ResultType> processOneItem(WorkItem &workItem) = 0;
         virtual void onQueueIsEmpty() = 0;
-        virtual void workerStopped() = 0;
-        virtual void onBatchProcessed(batch_id_t batchID) { Q_UNUSED(batchID); }
-
-        virtual void processOneItemEx(std::shared_ptr<ItemType> &item, batch_id_t batchID, Common::flag_t flags) {
-            Q_UNUSED(flags);
-            Q_UNUSED(batchID);
-            processOneItem(item);
-        }
+        virtual void onResultsAvailable(const std::deque<WorkResult> &results);
+        virtual void onWorkerStopped() = 0;
 
         void runWorkerLoop() {
             m_IdleEvent.set();
@@ -280,7 +289,8 @@ namespace Common {
                 m_IdleEvent.reset();
                 {
                     try {
-                        processOneItemEx(workItem.m_Item, workItem.m_ID, workItem.m_Flags);
+                        auto result = processOneItem(workItem);
+                        m_Results.emplace_back(result, workItem.m_ID);
                     }
                     catch (...) {
                         LOG_WARNING << "Exception while processing item!";
@@ -288,10 +298,15 @@ namespace Common {
                 }
                 m_IdleEvent.set();
 
-                onBatchProcessed(workItem.m_ID);
-
                 if (noMoreItems) { onQueueIsEmpty(); }
+                if (noMoreItems || workItem.isSeparator()) { reportResults(); }
             }
+        }
+
+        void reportResults() {
+            decltype(m_Results) results;
+            results.swap(m_Results);
+            onResultsAvailable(results);
         }
 
     private:
@@ -305,6 +320,7 @@ namespace Common {
         QWaitCondition m_WaitAnyItem;
         QMutex m_QueueMutex;
         std::deque<WorkItem> m_Queue;
+        std::deque<WorkResult> m_Results;
         batch_id_t m_BatchID;
         unsigned int m_MilestoneSize;
         volatile bool m_Cancel;
