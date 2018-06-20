@@ -20,10 +20,11 @@ namespace Helpers {
     std::vector<OutType> map(const std::vector<InType> &v, const std::function<OutType (const InType&)> &mapper) {
         std::vector<OutType> result;
         result.reserve(v.size());
-        std::transform(v.begin(), v.end(),
-                       result.begin(),
-                       std::back_inserter(result),
-                       mapper);
+        auto itEnd = v.end();
+        auto it = v.begin();
+        while (it != itEnd) {
+            result.emplace_back(mapper(*it++));
+        }
         return result;
     }
 }

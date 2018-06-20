@@ -251,11 +251,11 @@ namespace Common {
         }
 
     protected:
-        virtual bool initWorker() = 0;
+        virtual bool initWorker() { return true; }
         virtual std::shared_ptr<ResultType> processOneItem(WorkItem &workItem) = 0;
-        virtual void onQueueIsEmpty() = 0;
-        virtual void onResultsAvailable(const std::deque<WorkResult> &results);
-        virtual void onWorkerStopped() = 0;
+        virtual void onQueueIsEmpty() { /* DO NOTHING */ }
+        virtual void onWorkerStopped() { /* DO NOTHING */ }
+        virtual void onResultsAvailable(const std::deque<WorkResult> &results) { Q_UNUSED(results); }
 
         void runWorkerLoop() {
             m_IdleEvent.set();
