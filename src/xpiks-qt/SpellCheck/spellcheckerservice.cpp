@@ -18,7 +18,7 @@
 namespace SpellCheck {
     SpellCheckerService::SpellCheckerService(Common::ISystemEnvironment &environment, Models::SettingsModel *settingsModel):
         m_Environment(environment),
-        m_SpellCheckWorker(NULL),
+        m_UserDictionary(environment),
         m_SettingsModel(settingsModel),
         m_RestartRequired(false),
         m_IsStopped(false)

@@ -26,49 +26,17 @@ class Hunspell;
 class QTextCodec;
 
 namespace SpellCheck {
-    class UserDictionary {
-    public:
-        const QStringList &getWords() const { return m_WordsList; }
+    class UserDictionary;
 
-        bool contains(const QString &word) const { return m_WordsSet.contains(word.toLower()); }
-
-        void addWord(const QString &word) {
-            QString wordToAdd = word.toLower();
-            if (!m_WordsSet.contains(wordToAdd)) {
-                m_WordsSet.insert(wordToAdd);
-                m_WordsList.append(word);
-            }
-        }
-
-        void addWords(const QStringList &words) {
-            foreach (const QString &word, words) {
-                addWord(word);
-            }
-        }
-
-        void reset(const QStringList &words) {
-            clear();
-            addWords(words);
-        }
-
-        void clear() { m_WordsList.clear(); m_WordsSet.clear(); }
-        bool empty() const { return m_WordsSet.isEmpty(); }
-        int size() const { return m_WordsList.size(); }
-
-    private:
-        QSet<QString> m_WordsSet;
-        QStringList m_WordsList;
-    };
-
-    class SpellCheckWorker : public QObject, public Common::ItemProcessingWorker<ISpellCheckItem>
+    class SpellCheckWorker: public QObject, public Common::ItemProcessingWorker<ISpellCheckItem>
     {
         Q_OBJECT
 
     public:
         SpellCheckWorker(const QString &dictsRoot,
                          Common::ISystemEnvironment &environment,
+                         UserDictionary &userDictionary,
                          Helpers::AsyncCoordinator *initCoordinator,
-                         Models::SettingsModel *settingsModel,
                          QObject *parent=0);
         virtual ~SpellCheckWorker();
 
@@ -78,19 +46,15 @@ namespace SpellCheck {
         int getUserDictionarySize() const { return m_UserDictionary.size(); }
 
     protected:
-        virtual bool initWorker() override;
-        virtual void processOneItemEx(std::shared_ptr<ISpellCheckItem> &item, batch_id_t batchID, Common::flag_t flags) override;
-        virtual void processOneItem(std::shared_ptr<ISpellCheckItem> &item) override;
+        virtual bool initWorker() override;        
+        virtual std::shared_ptr<ResultType> processWorkItem(WorkItem &workItem) override;
+        //virtual void processOneItem(std::shared_ptr<ISpellCheckItem> &item) override;
 
     private:
         void processQueryItem(std::shared_ptr<SpellCheckItem> &item);
         void processChangeUserDict(std::shared_ptr<ModifyUserDictItem> &item);
 
     protected:
-        virtual void onQueueIsEmpty() override {
-            /* Notify on emptiness only for batches with separator */
-            /* emit queueIsEmpty(); */
-        }
         virtual void workerStopped() override { emit stopped(); }
 
     public slots:
@@ -127,17 +91,15 @@ namespace SpellCheck {
     private:
         Common::ISystemEnvironment &m_Environment;
         Helpers::AsyncCoordinator *m_InitCoordinator;
-        Models::SettingsModel *m_SettingsModel;
         QHash<QString, QStringList> m_Suggestions;
         QSet<QString> m_WrongWords;
-        UserDictionary m_UserDictionary;
+        UserDictionary &m_UserDictionary;
         QReadWriteLock m_SuggestionsLock;
         QString m_DictsRoot;
         QString m_Encoding;
         Hunspell *m_Hunspell;
         // Coded does not need destruction
         QTextCodec *m_Codec;
-        QString m_UserDictionaryPath;
     };
 }
 

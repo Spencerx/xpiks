@@ -28,8 +28,12 @@ namespace Common {
     {        
     private:
         enum WorkerFlags {
+            // separators are used to flush pending changes
             FlagIsSeparator = 1 << 0,
+            // stopper is used to break worker processing loop
             FlagIsStopper = 1 << 1,
+            // milestones are used in big batches to sleep
+            // in order not to create high CPU pressure
             FlagIsMilestone = 1 << 2
         };
 
@@ -295,7 +299,7 @@ namespace Common {
                 {
                     try {
                         auto result = processWorkItem(workItem);
-                        saveResult(result);
+                        saveResult(result, workItem);
                     }
                     catch (...) {
                         LOG_WARNING << "Exception while processing item!";
@@ -308,7 +312,7 @@ namespace Common {
             }
         }
 
-        void saveResult(std::shared_ptr<ResultType> &result) {
+        void saveResult(std::shared_ptr<ResultType> &result, WorkItem &workItem) {
             if (result) {
                 m_Results.emplace_back(result, workItem.m_ID);
             }

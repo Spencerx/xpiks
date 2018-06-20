@@ -9,12 +9,12 @@
  */
 
 #include "spellcheckitem.h"
-#include "../Models/artworkmetadata.h"
+#include "../Artworks/artworkmetadata.h"
 #include <QStringList>
 #include "../Helpers/indiceshelper.h"
 #include "../Common/flags.h"
 #include "../Common/defines.h"
-#include "../Common/basicmetadatamodel.h"
+#include "../Artworks/basicmetadatamodel.h"
 #include "../Helpers/stringhelper.h"
 
 #define IMPOSSIBLE_TITLE_INDEX 100000

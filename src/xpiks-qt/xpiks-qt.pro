@@ -215,7 +215,8 @@ SOURCES += main.cpp \
     Artworks/basickeywordsmodelimpl.cpp \
     Artworks/basicmetadatamodel.cpp \
     Services/artworksupdatehub.cpp \
-    Services/artworksinspectionhub.cpp
+    Services/artworksinspectionhub.cpp \
+    SpellCheck/userdictionary.cpp
 
 RESOURCES += qml.qrc
 
@@ -516,7 +517,8 @@ HEADERS += \
     Services/artworkupdaterequest.h \
     Services/artworksinspectionhub.h \
     Helpers/cpphelpers.h \
-    Artworks/artworksprocessingworker.h
+    Artworks/artworksprocessingworker.h \
+    SpellCheck/userdictionary.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

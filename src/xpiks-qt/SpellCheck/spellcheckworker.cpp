@@ -34,21 +34,19 @@
 namespace SpellCheck {
     SpellCheckWorker::SpellCheckWorker(const QString &dictsRoot,
                                        Common::ISystemEnvironment &environment,
+                                       UserDictionary &userDictionary,
                                        Helpers::AsyncCoordinator *initCoordinator,
-                                       Models::SettingsModel *settingsModel,
                                        QObject *parent):
         QObject(parent),
         ItemProcessingWorker(SPELLCHECK_DELAY_PERIOD),
         m_Environment(environment),
         m_InitCoordinator(initCoordinator),
-        m_SettingsModel(settingsModel),
+        m_UserDictionary(userDictionary),
         m_DictsRoot(dictsRoot),
         m_Hunspell(NULL),
-        m_Codec(NULL),
-        m_UserDictionaryPath("")
+        m_Codec(NULL)
     {
         Q_ASSERT(!dictsRoot.isEmpty());
-        Q_ASSERT(settingsModel);
     }
 
     SpellCheckWorker::~SpellCheckWorker() {
@@ -92,8 +90,6 @@ namespace SpellCheck {
         } else {
             LOG_WARNING << "DIC or AFF file not found." << dicPath << "||" << affPath;
         }
-
-        initUserDictionary();
 
         return initResult;
     }
@@ -168,10 +164,6 @@ namespace SpellCheck {
 
     void SpellCheckWorker::processChangeUserDict(std::shared_ptr<ModifyUserDictItem> &item) {
         LOG_INTEGRATION_TESTS << item->getKeywordsToAdd();
-
-        if (m_UserDictionaryPath.isEmpty()) {
-            LOG_WARNING << "User dictionary not set.";
-        }
 
         auto clearflag = item->getClearFlag();
         QStringList words = item->getKeywordsToAdd();
@@ -394,40 +386,19 @@ namespace SpellCheck {
 
     void SpellCheckWorker::initUserDictionary() {
         LOG_DEBUG << "#";
-
-        m_UserDictionaryPath = m_Environment.path({Constants::USER_DICT_FILENAME});
-        QFile userDictonaryFile(m_UserDictionaryPath);
-
-        if (userDictonaryFile.open(QIODevice::ReadOnly)) {
-            QTextStream stream(&userDictonaryFile);
-            for (QString word = stream.readLine(); !word.isEmpty(); word = stream.readLine()) {
-                m_UserDictionary.addWord(word);
-            }
-
-            signalUserDictWordsCount();
-            if (!m_UserDictionary.empty()) {
-                emit userDictUpdate(m_UserDictionary.getWords(), false);
-            }
-        } else {
-            LOG_WARNING << "Cannot open" << m_UserDictionaryPath;
+        m_UserDictionary.initialize(m_);
+        signalUserDictWordsCount();
+        if (!m_UserDictionary.empty()) {
+            emit userDictUpdate(m_UserDictionary.getWords(), false);
         }
-
-        LOG_INFO << "User Dictionary contains:" << m_UserDictionary.size() << "item(s)";
     }
-
 
     void SpellCheckWorker::cleanUserDict() {
         LOG_DEBUG << "#";
 
         m_UserDictionary.clear();
+        m_UserDictionary.save();
         emit userDictCleared();
-
-        QFile userDictonaryFile(m_UserDictionaryPath);
-        if (userDictonaryFile.open(QIODevice::ReadWrite)) {
-            userDictonaryFile.resize(0);
-        } else {
-            LOG_INFO << "Unable to trunkate user dictionary file:" << m_UserDictionaryPath;
-        }
     }
 
     void SpellCheckWorker::changeUserDict(const QStringList &words, bool overwrite) {
@@ -445,24 +416,14 @@ namespace SpellCheck {
         LOG_INTEGRATION_TESTS << "Real words to add:" << wordsToAdd;
 
         if (overwrite) {
-            m_UserDictionary.clear();
+            m_UserDictionary.reset(wordsToAdd);
+        } else {
+            m_UserDictionary.addWords(wordsToAdd);
         }
 
-        m_UserDictionary.addWords(wordsToAdd);
+        m_UserDictionary.save();
 
         emit userDictUpdate(wordsToAdd, overwrite);
-
-        QFile userDictonaryFile(m_UserDictionaryPath);
-        auto mode = overwrite? QIODevice::WriteOnly : QIODevice::Append;
-        if (userDictonaryFile.open(mode)) {
-            QTextStream stream(&userDictonaryFile);
-
-            for (const QString &word: wordsToAdd) {
-                stream << word << endl;
-            }
-        } else {
-            LOG_WARNING << "Unable to open user dictionary";
-        }
     }
 
     void SpellCheckWorker::signalUserDictWordsCount() {

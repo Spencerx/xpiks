@@ -52,10 +52,9 @@ namespace SpellCheck {
         volatile bool m_IsDuplicate;
     };
 
-    class SpellCheckItemBase:
-        public QObject, public ISpellCheckItem
+    class SpellCheckItemBase: public QObject
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
         virtual ~SpellCheckItemBase();
@@ -118,8 +117,7 @@ namespace SpellCheck {
         volatile bool m_OnlyOneKeyword;
     };
 
-    class ModifyUserDictItem:
-        public ISpellCheckItem
+    class ModifyUserDictItem
     {
     public:
         ModifyUserDictItem(const QString &keyword);

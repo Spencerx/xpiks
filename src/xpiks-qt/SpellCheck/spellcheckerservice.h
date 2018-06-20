@@ -20,8 +20,9 @@
 #include "../Models/settingsmodel.h"
 #include "../Common/isystemenvironment.h"
 #include "spellcheckworker.h"
+#include "userdictionary.h"
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
 }
 
@@ -88,6 +89,7 @@ namespace SpellCheck {
     private:
         Common::ISystemEnvironment &m_Environment;
         SpellCheckWorker *m_SpellCheckWorker;
+        UserDictionary m_UserDictionary;
         Models::SettingsModel *m_SettingsModel;
         QString m_DictionariesPath;
         volatile bool m_RestartRequired;
