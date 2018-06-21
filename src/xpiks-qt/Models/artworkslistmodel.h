@@ -15,15 +15,17 @@
 #include <functional>
 #include <deque>
 #include <vector>
-#include "../QMLExtensions/artworkupdaterequest.h"
 #include "../Artworks/artworkmetadata.h"
 #include "../Helpers/ifilenotavailablemodel.h"
 #include "../Artworks/artworkssnapshot.h"
 #include "../Filesystem/ifilescollection.h"
 #include "../Helpers/indicesranges.h"
 
+class QQuickTextDocument;
+
 namespace Artworks {
     class ArtworksRepository;
+    class BasicMetadataModel;
 
     class ArtworksListModel:
             public QAbstractListModel,
@@ -120,6 +122,25 @@ namespace Artworks {
         virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
         virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
 
+    public:
+        ArtworkMetadata *getArtworkMetadata(int index) const;
+        Artworks::BasicMetadataModel *getBasicModel(int index) const;
+
+    public:
+        void removeKeywordAt(int artworkIndex, int keywordIndex);
+        void removeLastKeyword(int artworkIndex);
+        bool appendKeyword(int artworkIndex, const QString &keyword);
+        void pasteKeywords(int artworkIndex, const QStringList &keywords);
+        void addSuggestedKeywords(int artworkIndex, const QStringList &keywords);
+        void setItemsSaved(const Helpers::IndicesRanges &ranges);
+        void editKeyword(int artworkIndex, int keywordIndex, const QString &replacement);
+        void plainTextEdit(int artworkIndex, const QString &rawKeywords, bool spaceIsSeparator=false);
+        void detachVectorsFromArtworks(const QVector<int> &indices);
+        void expandPreset(int artworkIndex, int keywordIndex, unsigned int presetID);
+        void expandLastAsPreset(int artworkIndex);
+        void addPreset(int artworkIndex, unsigned int presetID);
+        bool acceptCompletionAsPreset(int artworkIndex, int completionID);
+
     signals:
         void modifiedArtworksCountChanged();
         void artworksChanged(bool needToMoveCurrentItem);
@@ -128,7 +149,6 @@ namespace Artworks {
         void fileWithIndexUnavailable(size_t index);
         void unavailableArtworksFound();
         void unavailableVectorsFound();
-        void userDictUpdate(const QString &word);
         void artworkSelectedChanged(bool value);
 
     public slots:

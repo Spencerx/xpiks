@@ -145,99 +145,6 @@ namespace Models {
         updateItemsInRanges(QVector<QPair<int, int> >() << qMakePair(0, (int)getArtworksCount() - 1));
     }
 
-    void ArtItemsModel::removeKeywordAt(int metadataIndex, int keywordIndex) {
-        LOG_INFO << "metadata index" << metadataIndex << "| keyword index" << keywordIndex;
-        if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
-            ArtworkMetadata *metadata = accessArtwork(metadataIndex);
-            QString removed;
-
-            if (metadata->removeKeywordAt(keywordIndex, removed)) {
-                QModelIndex index = this->index(metadataIndex);
-                emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
-            }
-        }
-    }
-
-    void ArtItemsModel::removeLastKeyword(int metadataIndex) {
-        LOG_INFO << "index" << metadataIndex;
-        if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
-            ArtworkMetadata *metadata = accessArtwork(metadataIndex);
-            QString removed;
-
-            if (metadata->removeLastKeyword(removed)) {
-                QModelIndex index = this->index(metadataIndex);
-                emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
-            }
-        }
-    }
-
-    bool ArtItemsModel::appendKeyword(int metadataIndex, const QString &keyword) {
-        bool added = false;
-        LOG_INFO << "metadata index" << metadataIndex << "| keyword" << keyword;
-
-        if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
-            ArtworkMetadata *metadata = accessArtwork(metadataIndex);
-
-            if (metadata->appendKeyword(keyword)) {
-                QModelIndex index = this->index(metadataIndex);
-                emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
-                auto *keywordsModel = metadata->getBasicModel();
-
-                xpiks()->submitKeywordForSpellCheck(keywordsModel, keywordsModel->getKeywordsCount() - 1);
-
-                added = true;
-            }
-        }
-
-        return added;
-    }
-
-    void ArtItemsModel::pasteKeywords(int metadataIndex, const QStringList &keywords) {
-        LOG_INFO << "item index" << metadataIndex << "|" << keywords;
-        if (metadataIndex >= 0
-            && metadataIndex < getArtworksCount()
-            && !keywords.empty()) {
-            Artworks::ArtworksSnapshot::Container rawArtworkSnapshot;
-            QVector<int> selectedIndices;
-
-            // TODO: to be changed in future to the dialog
-            // getSelectedItemsIndices(selectedIndices);
-            // if (!metadata->getIsSelected()) {
-            selectedIndices.append(metadataIndex);
-            // }
-            rawArtworkSnapshot.reserve(selectedIndices.size());
-
-            bool onlyOneKeyword = keywords.length() == 1;
-
-            if (onlyOneKeyword) {
-                LOG_INFO << "Pasting only one keyword. Leaving it in the edit box.";
-                return;
-            }
-
-            foreach(int index, selectedIndices) {
-                ArtworkMetadata *metadata = accessArtwork(index);
-                rawArtworkSnapshot.emplace_back(new ArtworkMetadataLocker(metadata));
-            }
-
-            std::shared_ptr<Commands::PasteKeywordsCommand> pasteCommand(new Commands::PasteKeywordsCommand(rawArtworkSnapshot, keywords));
-            m_CommandManager->processCommand(pasteCommand);
-        }
-    }
-
-    void ArtItemsModel::addSuggestedKeywords(int metadataIndex, const QStringList &keywords) {
-        LOG_DEBUG << "item index" << metadataIndex;
-        if (metadataIndex >= 0
-            && metadataIndex < getArtworksCount()
-            && !keywords.empty()) {
-            Artworks::ArtworksSnapshot::Container rawSnapshot;
-
-            ArtworkMetadata *metadata = accessArtwork(metadataIndex);
-            rawSnapshot.emplace_back(new ArtworkMetadataLocker(metadata));
-
-            std::shared_ptr<Commands::PasteKeywordsCommand> pasteCommand(new Commands::PasteKeywordsCommand(rawSnapshot, keywords));
-            m_CommandManager->processCommand(pasteCommand);
-        }
-    }
 
     void ArtItemsModel::suggestCorrections(int metadataIndex) {
         if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
@@ -259,17 +166,7 @@ namespace Models {
     }
 
     void ArtItemsModel::setSelectedItemsSaved(const QVector<int> &selectedIndices) {
-        LOG_INFO << "Setting selected" << selectedIndices.length() << "item(s) saved";
-        foreach(int index, selectedIndices) {
-            accessArtwork(index)->resetModified();
-        }
 
-        QVector<QPair<int, int> > rangesToUpdate;
-        Helpers::indicesToRanges(selectedIndices, rangesToUpdate);
-        AbstractListModel::updateItemsInRanges(rangesToUpdate, QVector<int>() << IsModifiedRole);
-
-        emit modifiedArtworksCountChanged();
-        emit artworksChanged(false);
     }
 
     void ArtItemsModel::updateSelectedArtworks(const QVector<int> &selectedIndices) {
@@ -408,28 +305,6 @@ namespace Models {
         Models::RecentFilesModel *recentFiles = m_CommandManager->getRecentFiles();
         int filesAdded = doAddFiles(recentFiles->getAllRecentFiles());
         return filesAdded;
-    }
-
-    void ArtItemsModel::initDescriptionHighlighting(int metadataIndex, QQuickTextDocument *document) {
-        if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
-            ArtworkMetadata *metadata = accessArtwork(metadataIndex);
-            auto *metadataModel = metadata->getBasicModel();
-            SpellCheck::SpellCheckItemInfo *info = metadataModel->getSpellCheckInfo();
-            QMLExtensions::ColorsModel *colorsModel = m_CommandManager->getColorsModel();
-            info->createHighlighterForDescription(document->textDocument(), colorsModel, metadataModel);
-            metadataModel->notifyDescriptionSpellingChanged();
-        }
-    }
-
-    void ArtItemsModel::initTitleHighlighting(int metadataIndex, QQuickTextDocument *document) {
-        if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
-            ArtworkMetadata *metadata = accessArtwork(metadataIndex);
-            auto *metadataModel = metadata->getBasicModel();
-            SpellCheck::SpellCheckItemInfo *info = metadataModel->getSpellCheckInfo();
-            QMLExtensions::ColorsModel *colorsModel = m_CommandManager->getColorsModel();
-            info->createHighlighterForTitle(document->textDocument(), colorsModel, metadataModel);
-            metadataModel->notifyTitleSpellingChanged();
-        }
     }
 
     void ArtItemsModel::editKeyword(int metadataIndex, int keywordIndex, const QString &replacement) {

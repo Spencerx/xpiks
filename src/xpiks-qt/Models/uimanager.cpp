@@ -12,8 +12,9 @@
 #include "../Common/defines.h"
 #include "../QuickBuffer/currenteditableartwork.h"
 #include "../QuickBuffer/currenteditableproxyartwork.h"
-#include "artworkmetadata.h"
+#include "../Artworks/artworkmetadata.h"
 #include "../Models/settingsmodel.h"
+#include "../Models/artworkslistmodel.h"
 
 #include <QScreen>
 
@@ -26,7 +27,7 @@
 #define DEFAULT_APP_POSITION -1
 
 namespace Models {
-    UIManager::UIManager(Common::ISystemEnvironment &environment, SettingsModel *settingsModel, QObject *parent) :
+    UIManager::UIManager(Common::ISystemEnvironment &environment, SettingsModel &settingsModel, QObject *parent) :
         QObject(parent),
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
         m_State("uimanager", environment),
@@ -34,8 +35,8 @@ namespace Models {
         m_TabID(42),
         m_ScreenDPI(96.0)
     {
-        Q_ASSERT(settingsModel != nullptr);
-        QObject::connect(m_SettingsModel, &Models::SettingsModel::keywordSizeScaleChanged, this, &UIManager::keywordHeightChanged);
+        QObject::connect(&m_SettingsModel, &Models::SettingsModel::keywordSizeScaleChanged,
+                         this, &UIManager::keywordHeightChanged);
 
         m_ActiveTabs.setSourceModel(&m_TabsModel);
         m_InactiveTabs.setSourceModel(&m_TabsModel);
@@ -147,6 +148,24 @@ namespace Models {
         LOG_DEBUG << y;
         m_State.setValue(Constants::appWindowY, y);
         justChanged();
+    }
+
+    void UIManager::initDescriptionHighlighting(int artworkIndex, QQuickTextDocument *document) {
+        auto *basicModel = m_ArtworksList.getBasicModel(artworkIndex);
+        if (basicModel != nullptr) {
+            SpellCheck::SpellCheckItemInfo *info = basicModel->getSpellCheckInfo();
+            info->createHighlighterForDescription(document->textDocument(), m_ColorsModel, basicModel);
+            basicModel->notifyDescriptionSpellingChanged();
+        }
+    }
+
+    void UIManager::initTitleHighlighting(int artworkIndex, QQuickTextDocument *document) {
+        auto *basicModel = m_ArtworksList.getBasicModel(artworkIndex);
+        if (basicModel != nullptr) {
+            SpellCheck::SpellCheckItemInfo *info = basicModel->getSpellCheckInfo();
+            info->createHighlighterForTitle(document->textDocument(), m_ColorsModel, basicModel);
+            basicModel->notifyDescriptionSpellingChanged();
+        }
     }
 
     void UIManager::activateQuickBufferTab() {

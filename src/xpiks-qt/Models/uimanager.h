@@ -18,7 +18,6 @@
 #include <QString>
 #include <QStringList>
 #include "../QuickBuffer/icurrenteditable.h"
-#include "../Models/artworkelement.h"
 #include "../QMLExtensions/tabsmodel.h"
 #include "../Common/statefulentity.h"
 #include "../Helpers/constants.h"
@@ -26,11 +25,20 @@
 #include "../Common/isystemenvironment.h"
 
 class QScreen;
+class QQuickTextDocument;
+
+namespace Artworks {
+    class ArtworkMetadata;
+}
+
+namespace QMLExtensions {
+    class ColorsModel;
+}
 
 namespace Models {
-    class ArtworkMetadata;
     class ArtworkProxyBase;
     class SettingsModel;
+    class ArtworksListModel;
 
     class UIManager:
             public QObject,
@@ -44,7 +52,7 @@ namespace Models {
         Q_PROPERTY(double screenDpi READ getScreenDpi NOTIFY screenDpiChanged)
 
     public:
-        explicit UIManager(Common::ISystemEnvironment &environment, Models::SettingsModel *settingsModel,
+        explicit UIManager(Common::ISystemEnvironment &environment, SettingsModel &settingsModel,
                            QObject *parent = 0);
 
     private:
@@ -74,6 +82,8 @@ namespace Models {
     public:
         int getArtworkEditRightPaneWidth();
         void setArtworkEditRightPaneWidth(int value);
+
+    public:
         Q_INVOKABLE int getAppWidth(int defaultWidth);
         Q_INVOKABLE void setAppWidth(int width);
         Q_INVOKABLE int getAppHeight(int defaultHeight);
@@ -84,6 +94,8 @@ namespace Models {
         Q_INVOKABLE void setAppPosY(int y);
 
     public:
+        Q_INVOKABLE void initDescriptionHighlighting(int artworkIndex, QQuickTextDocument *document);
+        Q_INVOKABLE void initTitleHighlighting(int artworkIndex, QQuickTextDocument *document);
         Q_INVOKABLE void activateQuickBufferTab();
 
     public:
@@ -119,7 +131,9 @@ namespace Models {
 
     private:
         Common::StatefulEntity m_State;
-        Models::SettingsModel *m_SettingsModel;
+        QMLExtensions::ColorsModel &m_ColorsModel;
+        Models::SettingsModel &m_SettingsModel;
+        Models::ArtworksListModel &m_ArtworksList;
         QMLExtensions::TabsModel m_TabsModel;
         QMLExtensions::ActiveTabsModel m_ActiveTabs;
         QMLExtensions::InactiveTabsModel m_InactiveTabs;

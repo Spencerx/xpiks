@@ -10,6 +10,9 @@
 
 #include "artworkslistmodel.h"
 #include <QDir>
+#include <QtQml>
+#include "../Artworks/imageartwork.h"
+#include "../Artworks/videoartwork.h"
 #include "artworksrepository.h"
 #include "../Helpers/artworkshelpers.h"
 
@@ -470,6 +473,130 @@ namespace Artworks {
         }
 
         return true;
+    }
+
+    ArtworkMetadata *ArtworksListModel::getArtworkMetadata(int index) const {
+        ArtworkMetadata *item = NULL;
+
+        if (0 <= index && index < getArtworksCount()) {
+            item = accessArtwork(index);
+            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        }
+
+        return item;
+    }
+
+    BasicMetadataModel *ArtworksListModel::getBasicModel(int index) const {
+        BasicMetadataModel *keywordsModel = NULL;
+
+        if (0 <= index && index < getArtworksCount()) {
+            keywordsModel = accessArtwork(index)->getBasicModel();
+            QQmlEngine::setObjectOwnership(keywordsModel, QQmlEngine::CppOwnership);
+        }
+
+        return keywordsModel;
+    }
+
+    void ArtworksListModel::removeKeywordAt(int artworkIndex, int keywordIndex) {
+        LOG_INFO << "metadata index" << artworkIndex << "| keyword index" << keywordIndex;
+        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        if (artwork != nullptr) {
+            QString removed;
+
+            if (artwork->removeKeywordAt(keywordIndex, removed)) {
+                QModelIndex index = this->index(artworkIndex);
+                emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
+            }
+        }
+    }
+
+    void ArtworksListModel::removeLastKeyword(int artworkIndex) {
+        LOG_INFO << "index" << artworkIndex;
+        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        if (artwork != nullptr) {
+            QString removed;
+
+            if (artwork->removeLastKeyword(removed)) {
+                QModelIndex index = this->index(artworkIndex);
+                emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
+            }
+        }
+    }
+
+    bool ArtworksListModel::appendKeyword(int artworkIndex, const QString &keyword) {
+        bool added = false;
+        LOG_INFO << "metadata index" << artworkIndex << "| keyword" << keyword;
+
+        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        if (artwork != nullptr) {
+            if (artwork->appendKeyword(keyword)) {
+                QModelIndex index = this->index(artworkIndex);
+                emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
+                auto *keywordsModel = artwork->getBasicModel();
+
+                //xpiks()->submitKeywordForSpellCheck(keywordsModel, keywordsModel->getKeywordsCount() - 1);
+
+                added = true;
+            }
+        }
+
+        return added;
+    }
+
+    void ArtworksListModel::pasteKeywords(int artworkIndex, const QStringList &keywords) {
+        LOG_INFO << "item index" << artworkIndex << "|" << keywords;
+        if (artworkIndex >= 0
+            && artworkIndex < getArtworksCount()
+            && !keywords.empty()) {
+            Artworks::ArtworksSnapshot::Container rawArtworkSnapshot;
+            QVector<int> selectedIndices;
+
+            // TODO: to be changed in future to the dialog
+            // getSelectedItemsIndices(selectedIndices);
+            // if (!metadata->getIsSelected()) {
+            selectedIndices.append(artworkIndex);
+            // }
+            rawArtworkSnapshot.reserve(selectedIndices.size());
+
+            bool onlyOneKeyword = keywords.length() == 1;
+
+            if (onlyOneKeyword) {
+                LOG_INFO << "Pasting only one keyword. Leaving it in the edit box.";
+                return;
+            }
+
+            foreach(int index, selectedIndices) {
+                ArtworkMetadata *metadata = accessArtwork(index);
+                rawArtworkSnapshot.emplace_back(new ArtworkMetadataLocker(metadata));
+            }
+
+            std::shared_ptr<Commands::PasteKeywordsCommand> pasteCommand(new Commands::PasteKeywordsCommand(rawArtworkSnapshot, keywords));
+            m_CommandManager->processCommand(pasteCommand);
+        }
+    }
+
+    void ArtworksListModel::addSuggestedKeywords(int artworkIndex, const QStringList &keywords) {
+        LOG_DEBUG << "item index" << artworkIndex;
+        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        if (artwork != nullptr && !keywords.empty()) {
+            Artworks::ArtworksSnapshot::Container rawSnapshot;
+            rawSnapshot.emplace_back(new ArtworkMetadataLocker(artwork));
+
+            std::shared_ptr<Commands::PasteKeywordsCommand> pasteCommand(new Commands::PasteKeywordsCommand(rawSnapshot, keywords));
+            m_CommandManager->processCommand(pasteCommand);
+        }
+    }
+
+    void ArtworksListModel::setItemsSaved(const Helpers::IndicesRanges &ranges) {
+        LOG_DEBUG << "#";
+        foreachArtwork(ranges, [](ArtworkMetadata *artwork, size_t) {
+            artwork->resetModified();
+        });
+
+        this->updateItems(ranges, QVector<int>() << IsModifiedRole);
+
+        emit modifiedArtworksCountChanged();
+        emit artworksChanged(false);
     }
 
     void ArtworksListModel::onFilesUnavailableHandler() {
