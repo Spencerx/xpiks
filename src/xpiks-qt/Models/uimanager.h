@@ -27,10 +27,6 @@
 class QScreen;
 class QQuickTextDocument;
 
-namespace Artworks {
-    class ArtworkMetadata;
-}
-
 namespace QMLExtensions {
     class ColorsModel;
 }
@@ -52,7 +48,8 @@ namespace Models {
         Q_PROPERTY(double screenDpi READ getScreenDpi NOTIFY screenDpiChanged)
 
     public:
-        explicit UIManager(Common::ISystemEnvironment &environment, SettingsModel &settingsModel,
+        explicit UIManager(Common::ISystemEnvironment &environment,
+                           SettingsModel &settingsModel,
                            QObject *parent = 0);
 
     private:
@@ -94,8 +91,8 @@ namespace Models {
         Q_INVOKABLE void setAppPosY(int y);
 
     public:
-        Q_INVOKABLE void initDescriptionHighlighting(int artworkIndex, QQuickTextDocument *document);
-        Q_INVOKABLE void initTitleHighlighting(int artworkIndex, QQuickTextDocument *document);
+        Q_INVOKABLE void initDescriptionHighlighting(QObject *basicModelObject, QQuickTextDocument *document);
+        Q_INVOKABLE void initTitleHighlighting(QObject *basicModelObject, QQuickTextDocument *document);
         Q_INVOKABLE void activateQuickBufferTab();
 
     public:
@@ -133,7 +130,6 @@ namespace Models {
         Common::StatefulEntity m_State;
         QMLExtensions::ColorsModel &m_ColorsModel;
         Models::SettingsModel &m_SettingsModel;
-        Models::ArtworksListModel &m_ArtworksList;
         QMLExtensions::TabsModel m_TabsModel;
         QMLExtensions::ActiveTabsModel m_ActiveTabs;
         QMLExtensions::InactiveTabsModel m_InactiveTabs;

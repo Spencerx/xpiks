@@ -228,7 +228,7 @@ namespace Models {
         case 3: {
             // select Images
             this->setFilteredItemsSelectedEx([](ArtworkMetadata *artwork) {
-                ImageArtwork *image = dynamic_cast<ImageArtwork*>(artwork);
+                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
                 return (image != nullptr) ? !image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
             break;
@@ -236,7 +236,7 @@ namespace Models {
         case 4: {
             // select Vectors
             this->setFilteredItemsSelectedEx([](ArtworkMetadata *artwork) {
-                ImageArtwork *image = dynamic_cast<ImageArtwork*>(artwork);
+                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
                 return (image != nullptr) ? image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
             break;
@@ -316,29 +316,17 @@ namespace Models {
 
     void FilteredArtworksListModel::focusPreviousItem(int index) {
         LOG_INFO << "index:" << index;
-        if (0 < index && index < rowCount()) {
-            QModelIndex nextQIndex = this->index(index - 1, 0);
-            QModelIndex sourceIndex = mapToSource(nextQIndex);
-            ArtItemsModel *artItemsModel = getArtItemsModel();
-            ArtworkMetadata *metadata = artItemsModel->getArtwork(sourceIndex.row());
-
-            if (metadata != NULL) {
-                metadata->requestFocus(-1);
-            }
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtworkMetadata(getOriginalIndex(index - 1));
+        if (artwork != nullptr) {
+            artwork->requestFocus(-1);
         }
     }
 
     void FilteredArtworksListModel::focusCurrentItemKeywords(int index) {
         LOG_INFO << "index:" << index;
-        if ((0 <= index) && (index < rowCount())) {
-            QModelIndex qIndex = this->index(index, 0);
-            QModelIndex sourceIndex = mapToSource(qIndex);
-            ArtItemsModel *artItemsModel = getArtItemsModel();
-            ArtworkMetadata *metadata = artItemsModel->getArtwork(sourceIndex.row());
-
-            if (metadata != NULL) {
-                metadata->requestFocus(-1);
-            }
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtworkMetadata(getOriginalIndex(index));
+        if (artwork != nullptr) {
+            artwork->requestFocus(-1);
         }
     }
 
@@ -357,44 +345,36 @@ namespace Models {
             invalidate();
         }
 
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        artItemsModel->updateAllItems();
+        m_ArtworksListModel.updateItems(ArtworksListModel::SelectionType::All);
     }
 
     void FilteredArtworksListModel::detachVectorFromSelected() {
         LOG_DEBUG << "#";
         QVector<int> indices = getSelectedOriginalIndices();
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        artItemsModel->detachVectorsFromArtworks(indices);
+        m_ArtworksListModel.detachVectorsFromArtworks(Helpers::IndicesRanges(indices));
     }
 
     void FilteredArtworksListModel::detachVectorFromArtwork(int index) {
         LOG_DEBUG << index;
         int originalIndex = getOriginalIndex(index);
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        artItemsModel->detachVectorsFromArtworks(QVector<int>() << originalIndex);
+        m_ArtworksListModel.detachVectorsFromArtworks(Helpers::IndicesRanges(originalIndex, 1));
     }
 
     QObject *FilteredArtworksListModel::getArtworkMetadata(int index) {
         int originalIndex = getOriginalIndex(index);
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        QObject *item = artItemsModel->getArtworkMetadata(originalIndex);
-
+        QObject *item = m_ArtworksListModel.getArtworkObject(originalIndex);
         return item;
     }
 
     QObject *FilteredArtworksListModel::getBasicModel(int index) {
         int originalIndex = getOriginalIndex(index);
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        QObject *item = artItemsModel->getBasicModel(originalIndex);
-
+        QObject *item = m_ArtworksListModel.getBasicModelObject(originalIndex);
         return item;
     }
 
     QString FilteredArtworksListModel::getKeywordsString(int index) {
         int originalIndex = getOriginalIndex(index);
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        ArtworkMetadata *artwork = artItemsModel->getArtwork(originalIndex);
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
         QString keywords;
         if (artwork != nullptr) {
             keywords = artwork->getKeywordsString();
@@ -404,16 +384,12 @@ namespace Models {
 
     bool FilteredArtworksListModel::hasTitleWordSpellError(int index, const QString &word) {
         bool result = false;
-
-        if (0 <= index && index < rowCount()) {
-            int originalIndex = getOriginalIndex(index);
-            LOG_INFO << originalIndex << word;
-            ArtItemsModel *artItemsModel = getArtItemsModel();
-            ArtworkMetadata *metadata = artItemsModel->getArtwork(originalIndex);
-            if (metadata != NULL) {
-                auto *keywordsModel = metadata->getBasicModel();
-                result = keywordsModel->hasTitleWordSpellError(word);
-            }
+        int originalIndex = getOriginalIndex(index);
+        LOG_INFO << originalIndex << word;
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
+        if (artwork != NULL) {
+            auto *keywordsModel = artwork->getBasicModel();
+            result = keywordsModel->hasTitleWordSpellError(word);
         }
 
         return result;
@@ -421,16 +397,12 @@ namespace Models {
 
     bool FilteredArtworksListModel::hasDescriptionWordSpellError(int index, const QString &word) {
         bool result = false;
-
-        if (0 <= index && index < rowCount()) {
-            int originalIndex = getOriginalIndex(index);
-            LOG_INFO << originalIndex << word;
-            ArtItemsModel *artItemsModel = getArtItemsModel();
-            ArtworkMetadata *metadata = artItemsModel->getArtwork(originalIndex);
-            if (metadata != NULL) {
-                auto *keywordsModel = metadata->getBasicModel();
-                result = keywordsModel->hasDescriptionWordSpellError(word);
-            }
+        int originalIndex = getOriginalIndex(index);
+        LOG_INFO << originalIndex << word;
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
+        if (artwork != NULL) {
+            auto *keywordsModel = artwork->getBasicModel();
+            result = keywordsModel->hasDescriptionWordSpellError(word);
         }
 
         return result;
@@ -441,8 +413,8 @@ namespace Models {
 
         if (0 <= index && index < rowCount()) {
             int originalIndex = getOriginalIndex(index);
-            ArtItemsModel *artItemsModel = getArtItemsModel();
-            ArtworkMetadata *artwork = artItemsModel->getArtwork(originalIndex);
+            m_ArtworksListModel.setCurrentIndex(index);
+            ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
 
             if (artwork != NULL) {
                 xpiks()->registerCurrentItem(artwork);

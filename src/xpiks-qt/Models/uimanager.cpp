@@ -12,7 +12,7 @@
 #include "../Common/defines.h"
 #include "../QuickBuffer/currenteditableartwork.h"
 #include "../QuickBuffer/currenteditableproxyartwork.h"
-#include "../Artworks/artworkmetadata.h"
+#include "../Artworks/basicmetadatamodel.h"
 #include "../Models/settingsmodel.h"
 #include "../Models/artworkslistmodel.h"
 
@@ -27,7 +27,9 @@
 #define DEFAULT_APP_POSITION -1
 
 namespace Models {
-    UIManager::UIManager(Common::ISystemEnvironment &environment, SettingsModel &settingsModel, QObject *parent) :
+    UIManager::UIManager(Common::ISystemEnvironment &environment,
+                         SettingsModel &settingsModel,
+                         QObject *parent) :
         QObject(parent),
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
         m_State("uimanager", environment),
@@ -150,20 +152,20 @@ namespace Models {
         justChanged();
     }
 
-    void UIManager::initDescriptionHighlighting(int artworkIndex, QQuickTextDocument *document) {
-        auto *basicModel = m_ArtworksList.getBasicModel(artworkIndex);
+    void UIManager::initDescriptionHighlighting(QObject *basicModelObject, QQuickTextDocument *document) {
+        Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(basicModelObject);
         if (basicModel != nullptr) {
             SpellCheck::SpellCheckItemInfo *info = basicModel->getSpellCheckInfo();
-            info->createHighlighterForDescription(document->textDocument(), m_ColorsModel, basicModel);
+            info->createHighlighterForDescription(document->textDocument(), &m_ColorsModel, basicModel);
             basicModel->notifyDescriptionSpellingChanged();
         }
     }
 
-    void UIManager::initTitleHighlighting(int artworkIndex, QQuickTextDocument *document) {
-        auto *basicModel = m_ArtworksList.getBasicModel(artworkIndex);
+    void UIManager::initTitleHighlighting(QObject *basicModelObject, QQuickTextDocument *document) {
+        Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(basicModelObject);
         if (basicModel != nullptr) {
             SpellCheck::SpellCheckItemInfo *info = basicModel->getSpellCheckInfo();
-            info->createHighlighterForTitle(document->textDocument(), m_ColorsModel, basicModel);
+            info->createHighlighterForTitle(document->textDocument(), &m_ColorsModel, basicModel);
             basicModel->notifyDescriptionSpellingChanged();
         }
     }

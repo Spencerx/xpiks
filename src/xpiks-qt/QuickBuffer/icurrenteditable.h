@@ -12,7 +12,6 @@
 #define ICURRENTEDITABLE_H
 
 #include <QString>
-#include "../Common/ibasicartwork.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
 
 namespace QuickBuffer {

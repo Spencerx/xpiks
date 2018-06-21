@@ -20,6 +20,7 @@
 #include "../Artworks/artworkssnapshot.h"
 #include "../Filesystem/ifilescollection.h"
 #include "../Helpers/indicesranges.h"
+#include "../Artworks/icurrentartworksource.h"
 
 class QQuickTextDocument;
 
@@ -45,16 +46,13 @@ namespace Models {
 
     class ArtworksListModel:
             public QAbstractListModel,
-            public Helpers::IFileNotAvailableModel
+            public Helpers::IFileNotAvailableModel,
+            public Artworks::ICurrentArtworkSource
     {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
 
-#ifndef CORE_TESTS
         typedef std::deque<Artworks::ArtworkMetadata *> ArtworksContainer;
-#else
-        typedef std::vector<Artworks::ArtworkMetadata *> ArtworksContainer;
-#endif
 
     public:
         ArtworksListModel(ArtworksRepository &repository,
@@ -67,6 +65,7 @@ namespace Models {
 
     public:
         enum class SelectionType {
+            All,
             Modified,
             Selected
         };
@@ -107,11 +106,16 @@ namespace Models {
         int getModifiedArtworksCount();
         QVector<int> getArtworkStandardRoles() const;
 
+        // icurrentartworksource
+    public:
+        virtual Artworks::ArtworkMetadata *getCurrentArtwork() override { return getArtwork(m_CurrentItemIndex); }
+        void setCurrentIndex(size_t index) { m_CurrentItemIndex = index; }
+
     public:
         // general purpose collective methods
         void selectArtworksFromDirectory(int directoryIndex);
         void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles);
-        void updateItems(SelectionType selectionType, const QVector<int> &roles);
+        void updateItems(SelectionType selectionType, const QVector<int> &roles = QVector<int>());
         std::unique_ptr<Artworks::SessionSnapshot> snapshotAll();
         void generateAboutToBeRemoved();
         void unlockAllForIO();
@@ -152,8 +156,8 @@ namespace Models {
         virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
 
     public:
-        Artworks::ArtworkMetadata *getArtworkMetadata(int index) const;
-        Artworks::BasicMetadataModel *getBasicModel(int index) const;
+        Artworks::ArtworkMetadata *getArtworkObject(int index) const;
+        Artworks::BasicMetadataModel *getBasicModelObject(int index) const;
 
     public:
         bool removeKeywordAt(int artworkIndex, int keywordIndex);
@@ -267,6 +271,7 @@ namespace Models {
     private:
         ArtworksContainer m_ArtworkList;
         qint64 m_LastID;
+        size_t m_CurrentItemIndex;
         ArtworksRepository &m_ArtworksRepository;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;

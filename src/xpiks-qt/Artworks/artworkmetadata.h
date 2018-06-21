@@ -21,10 +21,9 @@
 #include <QTimer>
 #include <QMutex>
 #include <QQmlEngine>
-#include "../Common/basicmetadatamodel.h"
+#include "basicmetadatamodel.h"
 #include "../Common/flags.h"
-#include "../Common/ibasicartwork.h"
-#include "../Common/imetadataoperator.h"
+#include "imetadataoperator.h"
 #include "../Common/hold.h"
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../UndoRedo/artworkmetadatabackup.h"
@@ -43,7 +42,6 @@ namespace Artworks {
     class ArtworkMetadata:
             public QObject,
             public Common::DelayedActionEntity,
-            public Common::IBasicArtwork,
             public Common::IMetadataOperator
     {
         Q_OBJECT

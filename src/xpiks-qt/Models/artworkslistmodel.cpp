@@ -33,6 +33,7 @@ namespace Models {
         QAbstractListModel(parent),
         // all items before 1024 are reserved for internal models
         m_LastID(1024),
+        m_CurrentItemIndex(0),
         m_ArtworksRepository(repository),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
@@ -103,6 +104,9 @@ namespace Models {
     void ArtworksListModel::updateItems(ArtworksListModel::SelectionType selectionType, const QVector<int> &roles) {
         std::function<bool (Artworks::ArtworkMetadata *)> pred;
         switch (selectionType) {
+        case SelectionType::All:
+            this->updateItems(Helpers::IndicesRanges(getArtworksCount()), roles);
+            return;
         case SelectionType::Modified:
             pred = [](Artworks::ArtworkMetadata *artwork) { return artwork->isModified(); };
             break;
@@ -528,8 +532,8 @@ namespace Models {
         return true;
     }
 
-    ArtworkMetadata *ArtworksListModel::getArtworkMetadata(int index) const {
-        ArtworkMetadata *item = NULL;
+    ArtworkMetadata *ArtworksListModel::getBasicModelObject(int index) const {
+        Artworks::ArtworkMetadata *item = NULL;
 
         if (0 <= index && index < getArtworksCount()) {
             item = accessArtwork(index);
@@ -539,8 +543,8 @@ namespace Models {
         return item;
     }
 
-    BasicMetadataModel *ArtworksListModel::getBasicModel(int index) const {
-        BasicMetadataModel *keywordsModel = NULL;
+    Artworks::BasicMetadataModel *ArtworksListModel::getBasicModelObject(int index) const {
+        Artworks::BasicMetadataModel *keywordsModel = NULL;
 
         if (0 <= index && index < getArtworksCount()) {
             keywordsModel = accessArtwork(index)->getBasicModel();
@@ -553,10 +557,10 @@ namespace Models {
     bool ArtworksListModel::removeKeywordAt(int artworkIndex, int keywordIndex) {
         LOG_INFO << "metadata index" << artworkIndex << "| keyword index" << keywordIndex;
         bool success = false;
-        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
+            setCurrentIndex(artworkIndex);
             QString removed;
-
             if (artwork->removeKeywordAt(keywordIndex, removed)) {
                 success = true;
                 QModelIndex index = this->index(artworkIndex);
@@ -572,8 +576,8 @@ namespace Models {
         bool success = false;
         ArtworkMetadata *artwork = accessArtwork(artworkIndex);
         if (artwork != nullptr) {
+            setCurrentIndex(artworkIndex);
             QString removed;
-
             if (artwork->removeLastKeyword(removed)) {
                 success = true;
                 QModelIndex index = this->index(artworkIndex);
@@ -588,8 +592,9 @@ namespace Models {
         bool added = false;
         LOG_INFO << "metadata index" << artworkIndex << "| keyword" << keyword;
 
-        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
+            setCurrentIndex(artworkIndex);
             if (artwork->appendKeyword(keyword)) {
                 added = true;
                 QModelIndex index = this->index(artworkIndex);
@@ -606,6 +611,7 @@ namespace Models {
         if (artworkIndex >= 0
             && artworkIndex < getArtworksCount()
             && !keywords.empty()) {
+            setCurrentIndex(artworkIndex);
             Artworks::ArtworksSnapshot::Container rawArtworkSnapshot;
             QVector<int> selectedIndices;
 
@@ -635,8 +641,9 @@ namespace Models {
 
     void ArtworksListModel::addSuggestedKeywords(int artworkIndex, const QStringList &keywords) {
         LOG_DEBUG << "item index" << artworkIndex;
-        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr && !keywords.empty()) {
+            setCurrentIndex(artworkIndex);
             Artworks::ArtworksSnapshot::Container rawSnapshot;
             rawSnapshot.emplace_back(new ArtworkMetadataLocker(artwork));
 
@@ -660,8 +667,9 @@ namespace Models {
     bool ArtworksListModel::editKeyword(int artworkIndex, int keywordIndex, const QString &replacement) {
         LOG_INFO << "metadata index:" << artworkIndex;
         bool edited = false;
-        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
+            setCurrentIndex(artworkIndex);
             if (artwork->editKeyword(keywordIndex, replacement)) {
                 edited = true;
                 QModelIndex index = this->index(artworkIndex);
@@ -674,8 +682,9 @@ namespace Models {
 
     void ArtworksListModel::plainTextEdit(int artworkIndex, const QString &rawKeywords, bool spaceIsSeparator) {
         LOG_DEBUG << "Plain text edit for item" << artworkIndex;
-        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
-        if (artwork) {
+        ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        if (artwork != nullptr) {
+            setCurrentIndex(artworkIndex);
             QVector<QChar> separators;
             separators << QChar(',');
             if (spaceIsSeparator) { separators << QChar::Space; }
@@ -713,8 +722,9 @@ namespace Models {
     void ArtworksListModel::expandPreset(int artworkIndex, int keywordIndex, unsigned int presetID) {
         LOG_INFO << "item" << artworkIndex << "keyword" << keywordIndex << "preset" << presetID;
 
-        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
+            setCurrentIndex(artworkIndex);
             std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(
                         new Commands::ExpandPresetCommand(artwork,
                                                           (KeywordsPresets::ID_t)presetID,
@@ -727,8 +737,9 @@ namespace Models {
     void ArtworksListModel::expandLastAsPreset(int artworkIndex) {
         LOG_INFO << "item" << artworkIndex;
 
-        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
+            setCurrentIndex(artworkIndex);
             auto *basicModel = artwork->getBasicModel();
             int keywordIndex = basicModel->getKeywordsCount() - 1;
             QString lastKeyword = basicModel->retrieveKeyword(keywordIndex);
@@ -746,8 +757,9 @@ namespace Models {
     void ArtworksListModel::addPreset(int artworkIndex, unsigned int presetID) {
         LOG_INFO << "item" << artworkIndex << "preset" << presetID;
 
-        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
+            setCurrentIndex(artworkIndex);
             std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(
                         new Commands::ExpandPresetCommand(artwork, presetID));
             std::shared_ptr<Commands::CommandResult> result = m_CommandManager.processCommand(expandPresetCommand);
@@ -759,8 +771,9 @@ namespace Models {
         LOG_INFO << "item" << artworkIndex << "completionID" << completionID;
         bool accepted = false;
 
-        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
+            setCurrentIndex(artworkIndex);
             std::shared_ptr<AutoComplete::CompletionItem> completionItem = m_CompletionSource.getAcceptedCompletion(completionID);
             if (!completionItem) {
                 LOG_WARNING << "Completion is not available anymore";
@@ -865,7 +878,11 @@ namespace Models {
 
     ArtworkMetadata *ArtworksListModel::getArtwork(size_t index) const {
         Q_ASSERT(index < m_ArtworkList.size());
-        return m_ArtworkList.at(index);
+        if (index < m_ArtworkList.size()) {
+            return accessArtwork(index);
+        }
+
+        return nullptr;
     }
 
     void ArtworksListModel::destroyArtwork(Artworks::ArtworkMetadata *artwork) {

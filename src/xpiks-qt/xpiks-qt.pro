@@ -520,7 +520,8 @@ HEADERS += \
     Artworks/artworksprocessingworker.h \
     SpellCheck/userdictionary.h \
     Artworks/iartworksservice.h \
-    AutoComplete/icompletionsource.h
+    AutoComplete/icompletionsource.h \
+    Artworks/icurrentartworksource.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
