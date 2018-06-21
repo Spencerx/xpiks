@@ -17,6 +17,7 @@
 #include <QMutex>
 #include <QSize>
 #include "../Common/flags.h"
+#include "../Common/types.h"
 
 namespace libthmbnlr {
     struct VideoFileMetadata;
@@ -27,7 +28,7 @@ namespace Artworks {
     {
         Q_OBJECT
     public:
-        VideoArtwork(const QString &filepath, qint64 ID, qint64 directoryID);
+        VideoArtwork(const QString &filepath, Common::ID_t ID, qint64 directoryID);
 
     private:
         enum VideoArtworkFlags {

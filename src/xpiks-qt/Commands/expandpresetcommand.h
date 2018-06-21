@@ -37,7 +37,7 @@ namespace Commands {
         virtual ~ExpandPresetCommand();
 
     public:
-        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
+        virtual std::shared_ptr<CommandResult> execute(const ICommandManager *commandManagerInterface) override;
 
     private:
         Artworks::ArtworkMetadataLocker m_ArtworkLocker;

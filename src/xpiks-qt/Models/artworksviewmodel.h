@@ -42,7 +42,7 @@ namespace Models {
         virtual ~ArtworksViewModel() { }
 
     protected:
-        virtual void setArtworks(Artworks::WeakArtworksSnapshot &weakSnapshot);
+        virtual void setArtworks(Artworks::WeakArtworksSnapshot &weakSnapshot) override;
 
     public:
         int getArtworksCount() const { return (int)m_ArtworksSnapshot.size(); }

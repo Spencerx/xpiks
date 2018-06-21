@@ -64,7 +64,7 @@ namespace Commands {
             xpiks->recordHistoryItem(modifyArtworksItem);
         }
 
-        std::shared_ptr<ICommandResult> result(new FindAndReplaceCommandResult(itemsToSave, indicesToUpdate));
+        std::shared_ptr<CommandResult> result(new FindAndReplaceCommandResult(itemsToSave, indicesToUpdate));
         return result;
     }
 

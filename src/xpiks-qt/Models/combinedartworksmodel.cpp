@@ -88,13 +88,6 @@ namespace Models {
         xpiks()->submitItemForSpellCheck(&m_CommonKeywordsModel);
     }
 
-    void CombinedArtworksModel::acceptSuggestedKeywords(const QStringList &keywords) {
-        LOG_INFO << keywords.size() << "keyword(s)";
-        foreach(const QString &keyword, keywords) {
-            this->appendKeyword(keyword);
-        }
-    }
-
     void CombinedArtworksModel::setDescription(const QString &value) {
         if (doSetDescription(value)) {
             signalDescriptionChanged();
@@ -518,7 +511,7 @@ namespace Models {
         justChanged();
     }
 
-    qint64 CombinedArtworksModel::getSpecialItemID() {
+    Common::ID_t CombinedArtworksModel::getSpecialItemID() {
         return SPECIAL_ID_COMBINED_MODEL;
     }
 

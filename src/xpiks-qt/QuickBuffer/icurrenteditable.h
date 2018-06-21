@@ -13,6 +13,7 @@
 
 #include <QString>
 #include "../KeywordsPresets/ipresetsmanager.h"
+#include "../Common/types.h"
 
 namespace QuickBuffer {
     class ICurrentEditable {

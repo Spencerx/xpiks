@@ -58,10 +58,13 @@ namespace Models {
         Q_INVOKABLE int getOriginalIndex(int index) const;
         Q_INVOKABLE int getDerivedIndex(int originalIndex) const;
 
+    public:
         Q_INVOKABLE void invertSelectionArtworks() { invertFilteredItemsSelected(); }
         Q_INVOKABLE void selectFilteredArtworks() { setFilteredItemsSelected(true); }
         Q_INVOKABLE void unselectFilteredArtworks() { setFilteredItemsSelected(false); }
         Q_INVOKABLE void selectDirectory(int directoryIndex);
+
+    public:
         //Q_INVOKABLE void combineSelectedArtworks();
         Q_INVOKABLE void setSelectedItemsSaved();
         void removeSelectedArtworks();

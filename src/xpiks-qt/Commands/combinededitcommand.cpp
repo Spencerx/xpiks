@@ -15,133 +15,137 @@
 #include "../Commands/commandmanager.h"
 #include "../UndoRedo/artworkmetadatabackup.h"
 #include "../UndoRedo/modifyartworkshistoryitem.h"
-#include "../Models/artworkmetadata.h"
+#include "../Artworks/artworkmetadata.h"
 #include "../Common/flags.h"
 #include "../Models/settingsmodel.h"
 #include "../Common/defines.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
+#include "../Artworks/iartworksservice.h"
 
-QString combinedFlagsToString(Common::CombinedEditFlags flags) {
-    using namespace Common;
+namespace Commands {
+    QString combinedFlagsToString(Common::CombinedEditFlags flags) {
+        using namespace Common;
 
-    if (flags == CombinedEditFlags::EditEverything) {
-        return QLatin1String("EditEverything");
-    }
-
-    QStringList flagsStr;
-    if (Common::HasFlag(flags, CombinedEditFlags::EditDescription)) {
-        flagsStr.append("EditDescription");
-    }
-
-    if (Common::HasFlag(flags, CombinedEditFlags::EditTitle)) {
-        flagsStr.append("EditTitle");
-    }
-
-    if (Common::HasFlag(flags, CombinedEditFlags::EditKeywords)) {
-        flagsStr.append("EditKeywords");
-    }
-
-    if (Common::HasFlag(flags, CombinedEditFlags::Clear)) {
-        flagsStr.append("Clear");
-    }
-
-    return flagsStr.join('|');
-}
-
-Commands::CombinedEditCommand::~CombinedEditCommand() {
-    LOG_DEBUG << "#";
-}
-
-std::shared_ptr<Commands::CommandResult> Commands::CombinedEditCommand::execute(const ICommandManager *commandManagerInterface) {
-    LOG_INFO << "flags =" << combinedFlagsToString(m_EditFlags) << ", artworks count =" << m_RawSnapshot.size();
-    QVector<int> indicesToUpdate;
-    std::vector<UndoRedo::ArtworkMetadataBackup> artworksBackups;
-    Artworks::WeakArtworksSnapshot itemsToSave, affectedItems;
-
-    CommandManager *commandManager = (CommandManager*)commandManagerInterface;
-    auto *xpiks = commandManager->getDelegator();
-
-    size_t size = m_RawSnapshot.size();
-    indicesToUpdate.reserve((int)size);
-    artworksBackups.reserve(size);
-    itemsToSave.reserve(size);
-    affectedItems.reserve((int)size);
-
-    for (size_t i = 0; i < size; ++i) {
-        auto &locker = m_RawSnapshot.at(i);
-        Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
-
-        artworksBackups.emplace_back(artwork);
-        indicesToUpdate.append((int)artwork->getLastKnownIndex());
-
-        setKeywords(artwork);
-        setDescription(artwork);
-        setTitle(artwork);
-
-        itemsToSave.push_back(artwork);
-        affectedItems.push_back(artwork);
-    }
-
-    std::unique_ptr<UndoRedo::IHistoryItem> modifyArtworksItem(
-                new UndoRedo::ModifyArtworksHistoryItem(
-                    getCommandID(),
-                    artworksBackups, indicesToUpdate,
-                    UndoRedo::CombinedEditModificationType));
-    xpiks->recordHistoryItem(modifyArtworksItem);
-
-    std::shared_ptr<ICommandResult> result(new CombinedEditCommandResult(affectedItems, itemsToSave, indicesToUpdate));
-    return result;
-}
-
-void Commands::CombinedEditCommand::setKeywords(Artworks::ArtworkMetadata *metadata) const {
-    if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditKeywords)) {
-        if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::AppendKeywords)) {
-            metadata->appendKeywords(m_Keywords);
+        if (flags == CombinedEditFlags::EditEverything) {
+            return QLatin1String("EditEverything");
         }
-        else {
-            if (Common::HasFlag(m_EditFlags,Common:: CombinedEditFlags::Clear)) {
-                metadata->clearKeywords();
-            } else {
-                metadata->setKeywords(m_Keywords);
+
+        QStringList flagsStr;
+        if (Common::HasFlag(flags, CombinedEditFlags::EditDescription)) {
+            flagsStr.append("EditDescription");
+        }
+
+        if (Common::HasFlag(flags, CombinedEditFlags::EditTitle)) {
+            flagsStr.append("EditTitle");
+        }
+
+        if (Common::HasFlag(flags, CombinedEditFlags::EditKeywords)) {
+            flagsStr.append("EditKeywords");
+        }
+
+        if (Common::HasFlag(flags, CombinedEditFlags::Clear)) {
+            flagsStr.append("Clear");
+        }
+
+        return flagsStr.join('|');
+    }
+
+    QString getModificationTypeDescription(CombinedEditCommand::ModificationType type) {
+        switch (type) {
+        case CombinedEditCommand::PasteModificationType:
+            return QObject::tr("Paste");
+        case CombinedEditCommand::CombinedEditModificationType:
+            return QObject::tr("Multiple edit");
+        default:
+            return QLatin1String("");
+        }
+    }
+
+    CombinedEditCommand::~CombinedEditCommand() {
+        LOG_DEBUG << "#";
+    }
+
+    std::shared_ptr<CommandResult> CombinedEditCommand::execute(int commandID) {
+        m_CommandID = commandID;
+        LOG_INFO << "flags =" << combinedFlagsToString(m_EditFlags) << ", artworks count =" << m_RawSnapshot.size();
+        const size_t size = m_RawSnapshot.size();
+        m_ArtworksBackups.reserve(size);
+
+        for (size_t i = 0; i < size; ++i) {
+            auto &locker = m_RawSnapshot.at(i);
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+
+            m_ArtworksBackups.emplace_back(UndoRedo::ArtworkMetadataBackup(artwork));
+
+            setKeywords(artwork);
+            setDescription(artwork);
+            setTitle(artwork);
+        }
+
+        if (m_BackupService) {
+            m_BackupService->submitArtworks();
+        }
+
+        return IUndoCommand::execute(commandID);
+    }
+
+    QString CombinedEditCommand::getDescription() const {
+        size_t count = m_ArtworksBackups.size();
+        QString typeStr = getModificationTypeDescription(m_ModificationType);
+        return count > 1 ? QObject::tr("(%1)  %2 items modified").arg(typeStr).arg(count) :
+                             QObject::tr("(%1)  1 item modified").arg(typeStr);
+    }
+
+    void CombinedEditCommand::setKeywords(Artworks::ArtworkMetadata *artwork) const {
+        if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditKeywords)) {
+            if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::AppendKeywords)) {
+                artwork->appendKeywords(m_Keywords);
+            }
+            else {
+                if (Common::HasFlag(m_EditFlags,Common:: CombinedEditFlags::Clear)) {
+                    artwork->clearKeywords();
+                } else {
+                    artwork->setKeywords(m_Keywords);
+                }
             }
         }
     }
-}
 
-void Commands::CombinedEditCommand::setDescription(Artworks::ArtworkMetadata *metadata) const {
-    if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditDescription)) {
-        if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::Clear)) {
-            metadata->setDescription("");
-        } else {
-            metadata->setDescription(m_ArtworkDescription);
+    void CombinedEditCommand::setDescription(Artworks::ArtworkMetadata *artwork) const {
+        if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditDescription)) {
+            if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::Clear)) {
+                artwork->setDescription("");
+            } else {
+                artwork->setDescription(m_ArtworkDescription);
+            }
         }
     }
-}
 
-void Commands::CombinedEditCommand::setTitle(Artworks::ArtworkMetadata *metadata) const {
-    if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditTitle)) {
-        if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::Clear)) {
-            metadata->setTitle("");
-        } else {
-            metadata->setTitle(m_ArtworkTitle);
+    void CombinedEditCommand::setTitle(Artworks::ArtworkMetadata *artwork) const {
+        if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditTitle)) {
+            if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::Clear)) {
+                artwork->setTitle("");
+            } else {
+                artwork->setTitle(m_ArtworkTitle);
+            }
         }
     }
-}
 
-void Commands::CombinedEditCommandResult::afterExecCallback(const Commands::ICommandManager *commandManagerInterface) {
-    CommandManager *commandManager = (CommandManager*)commandManagerInterface;
-    auto *xpiks = commandManager->getDelegator();
+    void CombinedEditCommandResult::afterExecCallback(const ICommandManager *commandManagerInterface) {
+        CommandManager *commandManager = (CommandManager*)commandManagerInterface;
+        auto *xpiks = commandManager->getDelegator();
 
-    if (!m_IndicesToUpdate.isEmpty()) {
-        xpiks->updateArtworksAtIndices(m_IndicesToUpdate);
-    }
+        if (!m_IndicesToUpdate.isEmpty()) {
+            xpiks->updateArtworksAtIndices(m_IndicesToUpdate);
+        }
 
-    if (!m_ItemsToSave.empty()) {
-        xpiks->saveArtworksBackups(m_ItemsToSave);
-    }
+        if (!m_ItemsToSave.empty()) {
+            xpiks->saveArtworksBackups(m_ItemsToSave);
+        }
 
-    if (!m_AffectedItems.empty()) {
-        xpiks->submitForSpellCheck(m_AffectedItems);
-        xpiks->submitForWarningsCheck(m_AffectedItems);
+        if (!m_AffectedItems.empty()) {
+            xpiks->submitForSpellCheck(m_AffectedItems);
+            xpiks->submitForWarningsCheck(m_AffectedItems);
+        }
     }
 }

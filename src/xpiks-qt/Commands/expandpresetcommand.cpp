@@ -19,7 +19,7 @@ namespace Commands {
     ExpandPresetCommand::~ExpandPresetCommand() {
     }
 
-    std::shared_ptr<ICommandResult> ExpandPresetCommand::execute(const ICommandManager *commandManagerInterface) {
+    std::shared_ptr<CommandResult> ExpandPresetCommand::execute(const ICommandManager *commandManagerInterface) {
         LOG_INFO << "Expand preset" << m_PresetID;
 
         CommandManager *commandManager = (CommandManager*)commandManagerInterface;

@@ -28,6 +28,7 @@
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../UndoRedo/artworkmetadatabackup.h"
 #include "../Common/delayedactionentity.h"
+#include "../Common/types.h"
 
 namespace MetadataIO {
     struct CachedArtwork;

@@ -14,14 +14,13 @@
 #include <type_traits>
 #include <QObject>
 #include <cstdint>
+#include "types.h"
 
 #if defined(Q_OS_WIN32) && defined(Q_PROCESSOR_X86_32) && (_MSC_VER == 1800)
 #define XPIKS_TYPED_ENUMS_WORKAROUND
 #endif
 
 namespace Common {
-    typedef uint32_t flag_t;
-
 #if !defined(XPIKS_TYPED_ENUMS_WORKAROUND)
     // visual studio 2013 bug
 

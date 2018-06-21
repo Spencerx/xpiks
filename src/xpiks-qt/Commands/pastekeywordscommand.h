@@ -36,7 +36,7 @@ namespace Commands {
         virtual ~PasteKeywordsCommand();
 
     public:
-        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
+        virtual std::shared_ptr<CommandResult> execute(const ICommandManager *commandManagerInterface) override;
 
     private:
         Artworks::ArtworksSnapshot::Container m_RawSnapshot;

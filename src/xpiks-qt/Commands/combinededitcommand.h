@@ -14,79 +14,65 @@
 #include <QStringList>
 #include <QString>
 #include <vector>
-#include <QVector>
-#include "commandbase.h"
+#include <memory>
+#include "icommand.h"
 #include "../Common/flags.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
+#include "../UndoRedo/artworkmetadatabackup.h"
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
+    class IArtworksService;
 }
 
 namespace Commands {
-
-    class CombinedEditCommand: public CommandBase
+    class CombinedEditCommand: public IUndoCommand
     {
+        enum ModificationType {
+            PasteModificationType,
+            CombinedEditModificationType
+        };
+
     public:
         CombinedEditCommand(Common::CombinedEditFlags editFlags,
-                            Artworks::ArtworksSnapshot::Container &rawSnapshot,
-                            const QString &description, const QString &title,
-                            const QStringList &keywords) :
-            CommandBase(CommandType::CombinedEdit),
+                            Artworks::ArtworksSnapshot &rawSnapshot,
+                            const QString &description,
+                            const QString &title,
+                            const QStringList &keywords,
+                            const std::shared_ptr<Artworks::IArtworksService> &backupService,
+                            const std::shared_ptr<Artworks::IArtworksService> &inspectionService):
             m_RawSnapshot(std::move(rawSnapshot)),
             m_ArtworkDescription(description),
             m_ArtworkTitle(title),
             m_Keywords(keywords),
-            m_EditFlags(editFlags)
-        { }
-
-        CombinedEditCommand(Common::CombinedEditFlags editFlags,
-                            Artworks::ArtworksSnapshot::Container &rawSnapshot) :
-            CommandBase(CommandType::CombinedEdit),
-            m_RawSnapshot(std::move(rawSnapshot)),
-            m_EditFlags(editFlags)
+            m_EditFlags(editFlags),
+            m_BackupService(backupService),
+            m_InspectionService(inspectionService)
         { }
 
         virtual ~CombinedEditCommand();
 
     public:
-        virtual std::shared_ptr<ICommandResult> execute(const ICommandManager *commandManagerInterface) override;
+        virtual std::shared_ptr<CommandResult> execute(int commandID) override;
+        virtual void undo() override;
+        virtual QString getDescription() const override;
+        virtual int getCommandID() const { return m_CommandID; }
 
     private:
-        void setKeywords(Artworks::ArtworkMetadata *metadata) const;
-        void setDescription(Artworks::ArtworkMetadata *metadata) const;
-        void setTitle(Artworks::ArtworkMetadata *metadata) const;
+        void setKeywords(Artworks::ArtworkMetadata *artwork) const;
+        void setDescription(Artworks::ArtworkMetadata *artwork) const;
+        void setTitle(Artworks::ArtworkMetadata *artwork) const;
 
     private:
-        Artworks::ArtworksSnapshot::Container m_RawSnapshot;
+        Artworks::ArtworksSnapshot m_Snapshot;
+        std::vector<UndoRedo::ArtworkMetadataBackup> m_ArtworksBackups;
         QString m_ArtworkDescription;
         QString m_ArtworkTitle;
         QStringList m_Keywords;
         Common::CombinedEditFlags m_EditFlags;
-    };
-
-    class CombinedEditCommandResult : public CommandResult {
-    public:
-        CombinedEditCommandResult(Artworks::WeakArtworksSnapshot &affectedItems,
-                                  Artworks::WeakArtworksSnapshot &itemsToSave,
-                                  const QVector<int> &indicesToUpdate) :
-            m_AffectedItems(std::move(affectedItems)),
-            m_ItemsToSave(std::move(itemsToSave)),
-            m_IndicesToUpdate(indicesToUpdate)
-        {
-        }
-
-    public:
-        virtual void afterExecCallback(const ICommandManager *commandManagerInterface) override;
-
-#ifndef CORE_TESTS
-    private:
-#else
-    public:
-#endif
-        Artworks::WeakArtworksSnapshot m_AffectedItems;
-        Artworks::WeakArtworksSnapshot m_ItemsToSave;
-        QVector<int> m_IndicesToUpdate;
+        std::shared_ptr<Artworks::IArtworksService> m_BackupService;
+        std::shared_ptr<Artworks::IArtworksService> m_InspectionService;
+        int m_CommandID;
     };
 }
 

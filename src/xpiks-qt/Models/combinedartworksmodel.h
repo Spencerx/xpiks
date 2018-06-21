@@ -84,13 +84,10 @@ namespace Models {
         bool isSpellingFixed() const { return getSpellingFixedFlag(); }
 
     private:
-        void initKeywords(const QStringList &ek) { m_CommonKeywordsModel.setKeywords(ek); setKeywordsModified(false); }
+        void initKeywords(const QStringList &keywords) { m_CommonKeywordsModel.setKeywords(keywords); setKeywordsModified(false); }
         void initDescription(const QString &description) { setDescription(description); setDescriptionModified(false); }
         void initTitle(const QString &title) { setTitle(title); setTitleModified(false); }
         void recombineArtworks();
-
-    public:
-        virtual void acceptSuggestedKeywords(const QStringList &keywords);
 
     public:
         virtual void setDescription(const QString &value) override;
@@ -203,7 +200,7 @@ namespace Models {
         virtual void doJustEdited() override;
 
     protected:
-        virtual qint64 getSpecialItemID() override;
+        virtual Common::ID_t getSpecialItemID() override;
         virtual bool doRemoveSelectedArtworks() override;
         virtual void doResetModel() override;
 

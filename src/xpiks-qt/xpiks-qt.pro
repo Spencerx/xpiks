@@ -521,7 +521,8 @@ HEADERS += \
     SpellCheck/userdictionary.h \
     Artworks/iartworksservice.h \
     AutoComplete/icompletionsource.h \
-    Artworks/icurrentartworksource.h
+    Artworks/icurrentartworksource.h \
+    Common/types.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

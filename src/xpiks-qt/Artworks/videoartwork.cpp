@@ -16,7 +16,7 @@
 #include <videofilemetadata.h>
 
 namespace Artworks {
-    VideoArtwork::VideoArtwork(const QString &filepath, qint64 ID, qint64 directoryID):
+    VideoArtwork::VideoArtwork(const QString &filepath, Common::ID_t ID, qint64 directoryID):
         ArtworkMetadata(filepath, ID, directoryID),
         m_VideoFlags(0),
         m_Duration(0.0),

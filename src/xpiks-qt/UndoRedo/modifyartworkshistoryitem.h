@@ -19,12 +19,6 @@
 #include "artworkmetadatabackup.h"
 
 namespace UndoRedo {
-    enum ModificationType {
-        PasteModificationType,
-        CombinedEditModificationType
-    };
-
-    QString getModificationTypeDescription(ModificationType type);
 
     class ModifyArtworksHistoryItem : public HistoryItem
     {
@@ -47,12 +41,7 @@ namespace UndoRedo {
          virtual void undo(const Commands::ICommandManager *commandManagerInterface) override;
 
     public:
-         virtual QString getDescription() const override {
-             size_t count = m_ArtworksBackups.size();
-             QString typeStr = getModificationTypeDescription(m_ModificationType);
-             return count > 1 ? QObject::tr("(%1)  %2 items modified").arg(typeStr).arg(count) :
-                                  QObject::tr("(%1)  1 item modified").arg(typeStr);
-         }
+
 
 
     private:

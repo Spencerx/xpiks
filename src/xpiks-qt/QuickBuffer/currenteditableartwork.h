@@ -12,26 +12,25 @@
 #define CURRENTITEMARTWORK_H
 
 #include "icurrenteditable.h"
-#include "../Common/ibasicartwork.h"
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
 }
 
 namespace Commands {
-    class CommandManager;
-    class MainDelegator;
+    class ICommandManager;
 }
 
 namespace QuickBuffer {
     class CurrentEditableArtwork : public ICurrentEditable
     {
     public:
-        CurrentEditableArtwork(Artworks::ArtworkMetadata *artworkMetadata, size_t originalIndex, Commands::CommandManager * const commandManager);
+        CurrentEditableArtwork(Artworks::ArtworkMetadata *artworkMetadata,
+                               Commands::ICommandManager &commandManager);
         virtual ~CurrentEditableArtwork();
 
     public:
-        size_t getOriginalIndex() const { return m_OriginalIndex; }
+        size_t getOriginalIndex() const;
 
         // ICurrentEditable interface
     public:
@@ -55,12 +54,8 @@ namespace QuickBuffer {
         virtual void update() override;
 
     private:
-        Commands::MainDelegator *xpiks();
-
-    private:
-        Commands::CommandManager * const m_CommandManager;
+        Commands::ICommandManager * const m_CommandManager;
         Artworks::ArtworkMetadata *m_ArtworkMetadata;
-        size_t m_OriginalIndex;
     };
 }
 

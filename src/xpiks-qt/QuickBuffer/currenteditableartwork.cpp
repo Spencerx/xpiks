@@ -9,19 +9,19 @@
  */
 
 #include "currenteditableartwork.h"
-#include "../Models/artworkmetadata.h"
+#include "../Artworks/artworkmetadata.h"
 #include "../Common/defines.h"
 #include "../Commands/commandmanager.h"
 #include "../KeywordsPresets/presetkeywordsmodel.h"
 #include "../Commands/expandpresetcommand.h"
-#include "../Models/artworkelement.h"
+#include "../Artworks/artworkelement.h"
 #include "../Commands/deletekeywordscommand.h"
 #include "../Commands/maindelegator.h"
 
 namespace QuickBuffer {
-    CurrentEditableArtwork::CurrentEditableArtwork(Artworks::ArtworkMetadata *artworkMetadata, size_t originalIndex, Commands::CommandManager * const commandManager):
-        m_CommandManager(commandManager),
-        m_OriginalIndex(originalIndex)
+    CurrentEditableArtwork::CurrentEditableArtwork(Artworks::ArtworkMetadata *artworkMetadata,
+                                                   Commands::CommandManager &commandManager):
+        m_CommandManager(commandManager)
     {
         Q_ASSERT(commandManager != nullptr);
         Q_ASSERT(artworkMetadata != nullptr);
@@ -34,6 +34,10 @@ namespace QuickBuffer {
         if (m_ArtworkMetadata->release()) {
             LOG_WARNING << "Item #" << m_ArtworkMetadata->getItemID() << "could have been removed";
         }
+    }
+
+    size_t CurrentEditableArtwork::getOriginalIndex() const {
+        return m_ArtworkMetadata->getLastKnownIndex();
     }
 
     Common::ID_t CurrentEditableArtwork::getItemID() {
@@ -118,9 +122,5 @@ namespace QuickBuffer {
 
     void CurrentEditableArtwork::update() {
         xpiks()->updateArtworksAtIndices(QVector<int>() << (int)m_OriginalIndex);
-    }
-
-    Commands::MainDelegator *CurrentEditableArtwork::xpiks() {
-        return m_CommandManager->getDelegator();
     }
 }

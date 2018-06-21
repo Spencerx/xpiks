@@ -11,18 +11,22 @@
 #ifndef ARTWORKPROXYBASE_H
 #define ARTWORKPROXYBASE_H
 
-#include <QQuickTextDocument>
 #include "../Artworks/basicmetadatamodel.h"
 #include "../Artworks/imetadataoperator.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
 #include "../QuickBuffer/currenteditableproxyartwork.h"
+#include "../Common/types.h"
 
-class QSyntaxHighlighter;
+namespace AutoComplete {
+    class ICompletionSource;
+}
 
 namespace Models {
     class ArtworkProxyBase
     {
     public:
+        ArtworkProxyBase(AutoComplete::ICompletionSource &completionSource,
+                         KeywordsPresets::IPresetsManager &presetsManager);
         virtual ~ArtworkProxyBase() {}
 
     public:
@@ -50,6 +54,9 @@ namespace Models {
         virtual Common::IMetadataOperator *getMetadataOperator() = 0;
 
     protected:
+        virtual void submitForInspection() = 0;
+
+    protected:
         virtual Common::ID_t getSpecialItemID();
 
     protected:
@@ -62,12 +69,8 @@ namespace Models {
         bool doMoveKeyword(int from, int to);
         bool doClearKeywords();
         QString doGetKeywordsString();
-        void doSuggestCorrections();
-        void doSetupDuplicatesModel();
 
     protected:
-        QSyntaxHighlighter *doCreateDescriptionHighligher(QQuickTextDocument *document);
-        QSyntaxHighlighter *doCreateTitleHighlighter(QQuickTextDocument *document);
         void doPlainTextEdit(const QString &rawKeywords, bool spaceIsSeparator);
         bool getHasTitleWordSpellError(const QString &word);
         bool getHasDescriptionWordSpellError(const QString &word);
@@ -83,22 +86,19 @@ namespace Models {
         bool doRemovePreset(KeywordsPresets::ID_t presetID);
 
     protected:
-        void doInitSuggestion();
-        void doRegisterAsCurrentItem();
         void doHandleUserDictChanged(const QStringList &keywords, bool overwritten);
         void doHandleUserDictCleared();
         void doCopyToQuickBuffer();
         bool hasKeywords(const QStringList &keywordsList);
         virtual void doJustEdited();
-        void doCheckSemanticDuplicates();
-        void doGenerateCompletions(const QString &prefix);
         bool doAcceptCompletionAsPreset(int completionID);
 
     private:
-        void spellCheckEverything();
-        void spellCheckKeywords();
-
         friend class QuickBuffer::CurrentEditableProxyArtwork;
+
+    protected:
+        AutoComplete::ICompletionSource &m_CompletionSource;
+        KeywordsPresets::IPresetsManager &m_PresetsManager;
     };
 }
 

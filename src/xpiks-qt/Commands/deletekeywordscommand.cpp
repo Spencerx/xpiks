@@ -23,7 +23,7 @@ namespace Commands {
     {
     }
 
-    std::shared_ptr<ICommandResult> DeleteKeywordsCommand::execute(const ICommandManager *commandManagerInterface) {
+    std::shared_ptr<CommandResult> DeleteKeywordsCommand::execute(const ICommandManager *commandManagerInterface) {
         LOG_INFO << m_KeywordsSet.size() << "keyword(s) to remove from" << m_RawSnapshot.size() << "item(s)";
         LOG_INFO << "Case sensitive:" << m_CaseSensitive;
         QVector<int> indicesToUpdate;
@@ -61,7 +61,7 @@ namespace Commands {
             xpiks->recordHistoryItem(modifyArtworksItem);
         }
 
-        std::shared_ptr<ICommandResult> result(new DeleteKeywordsCommandResult(affectedItems, indicesToUpdate));
+        std::shared_ptr<CommandResult> result(new DeleteKeywordsCommandResult(affectedItems, indicesToUpdate));
         return result;
     }
 
