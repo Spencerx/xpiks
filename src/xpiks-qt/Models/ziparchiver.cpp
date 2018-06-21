@@ -17,6 +17,7 @@
 #include "../Artworks/imageartwork.h"
 #include "../Helpers/filehelpers.h"
 #include "../Common/defines.h"
+#include "../Helpers/cpphelpers.h"
 
 #ifndef CORE_TESTS
 #include "../Helpers/ziphelper.h"
@@ -103,7 +104,11 @@ namespace Models {
 
     void ZipArchiver::setArtworks(Artworks::WeakArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
-        m_ArtworksSnapshot.set(snapshot);
+        m_ArtworksSnapshot.set(
+                    Helpers::filter(snapshot, [](Artworks::ArtworkMetadata *artwork) {
+                        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+                        return (image != NULL) && image->hasVectorAttached();
+                    }));
         emit itemsCountChanged();
     }
 

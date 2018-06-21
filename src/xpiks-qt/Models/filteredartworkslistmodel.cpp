@@ -84,71 +84,27 @@ namespace Models {
     }
 
     void FilteredArtworksListModel::selectDirectory(int directoryIndex) {
-        LOG_DEBUG << "directory index:" << directoryIndex;
-
-        QVector<int> directoryItems;
-        int size = this->rowCount();
-        directoryItems.reserve(size);
-
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        const ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
-        const QString &directory = artworksRepository->getDirectoryPath(directoryIndex);
-
-        LOG_DEBUG << directory;
-
-        QDir dir(directory);
-        QString directoryAbsolutePath = dir.absolutePath();
-
-        for (int row = 0; row < size; ++row) {
-            QModelIndex proxyIndex = this->index(row, 0);
-            QModelIndex originalIndex = this->mapToSource(proxyIndex);
-
-            int index = originalIndex.row();
-            ArtworkMetadata *metadata = artItemsModel->getArtwork(index);
-            Q_ASSERT(metadata != NULL);
-
-            if (metadata->isInDirectory(directoryAbsolutePath)) {
-                directoryItems.append(index);
-                metadata->setIsSelected(!metadata->isSelected());
-            }
-        }
-
-        artItemsModel->updateItems(directoryItems, QVector<int>() << ArtItemsModel::IsSelectedRole);
-        emit allItemsSelectedChanged();
-    }
-
-    void FilteredArtworksListModel::combineSelectedArtworks() {
         LOG_DEBUG << "#";
-        auto artworksList = getSelectedOriginalItems();
-        xpiks()->combineArtworks(artworksList);
+        m_ArtworksListModel.selectArtworksFromDirectory(directoryIndex);
+        emit allItemsSelectedChanged();
     }
 
     void FilteredArtworksListModel::setSelectedItemsSaved() {
         LOG_DEBUG << "#";
-        QVector<int> indices = getSelectedOriginalIndices();
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        artItemsModel->setSelectedItemsSaved(indices);
+        std::vector<int> indices = getSelectedOriginalIndices();
+        Helpers::IndicesRanges ranges(indices);
+        m_ArtworksListModel.setItemsSaved(ranges);
     }
 
     void FilteredArtworksListModel::removeSelectedArtworks() {
         LOG_DEBUG << "#";
-        std::vector<int> indices = getSelectedOriginalIndices();
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        return artItemsModel->removeFiles(indices);
+        //m_ArtworksListModel.removeFiles()
     }
 
     void FilteredArtworksListModel::updateSelectedArtworks() {
         LOG_DEBUG << "#";
         QVector<int> indices = getSelectedOriginalIndices();
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        artItemsModel->updateSelectedArtworks(indices);
-    }
-
-    void FilteredArtworksListModel::updateSelectedArtworksEx(const QVector<int> &roles) {
-        LOG_DEBUG << "#";
-        QVector<int> indices = getSelectedOriginalIndices();
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        artItemsModel->updateSelectedArtworksEx(indices, roles);
+        m_ArtworksListModel.updateItems(Helpers::IndicesRanges(indices), roles);
     }
 
     void FilteredArtworksListModel::saveSelectedArtworks(bool overwriteAll, bool useBackups) {

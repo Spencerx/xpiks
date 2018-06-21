@@ -21,7 +21,7 @@ Commands::PasteKeywordsCommand::~PasteKeywordsCommand() {
     LOG_DEBUG << "#";
 }
 
-std::shared_ptr<Commands::ICommandResult> Commands::PasteKeywordsCommand::execute(const ICommandManager *commandManagerInterface) {
+std::shared_ptr<Commands::CommandResult> Commands::PasteKeywordsCommand::execute(const ICommandManager *commandManagerInterface) {
     LOG_INFO << "Pasting" << m_KeywordsList.length() << "keywords to" << m_RawSnapshot.size() << "item(s)";
 
     CommandManager *commandManager = (CommandManager*)commandManagerInterface;

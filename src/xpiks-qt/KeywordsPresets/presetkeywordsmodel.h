@@ -17,7 +17,6 @@
 #include <QReadWriteLock>
 #include <QAtomicInt>
 #include <functional>
-#include "../Common/baseentity.h"
 #include "../Common/abstractlistmodel.h"
 #include "../Common/delayedactionentity.h"
 #include "ipresetsmanager.h"
@@ -31,7 +30,6 @@ namespace KeywordsPresets {
 
     class PresetKeywordsModel:
             public QAbstractListModel,
-            public Common::BaseEntity,
             public Common::DelayedActionEntity,
             public IPresetsManager
     {

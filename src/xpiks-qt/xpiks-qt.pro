@@ -518,7 +518,9 @@ HEADERS += \
     Services/artworksinspectionhub.h \
     Helpers/cpphelpers.h \
     Artworks/artworksprocessingworker.h \
-    SpellCheck/userdictionary.h
+    SpellCheck/userdictionary.h \
+    Artworks/iartworksservice.h \
+    AutoComplete/icompletionsource.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

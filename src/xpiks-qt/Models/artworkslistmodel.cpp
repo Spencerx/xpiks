@@ -11,18 +11,36 @@
 #include "artworkslistmodel.h"
 #include <QDir>
 #include <QtQml>
+#include "../Artworks/basickeywordsmodel.h"
 #include "../Artworks/imageartwork.h"
 #include "../Artworks/videoartwork.h"
 #include "artworksrepository.h"
 #include "../Helpers/artworkshelpers.h"
+#include "../Helpers/stringhelper.h"
+#include "../Commands/icommandmanager.h"
+#include "../KeywordsPresets/ipresetsmanager.h"
+#include "../Artworks/iartworksservice.h"
+#include "../Commands/expandpresetcommand.h"
+#include "../AutoComplete/icompletionsource.h"
 
-namespace Artworks {
-    ArtworksListModel::ArtworksListModel(ArtworksRepository &repository, QObject *parent):
+namespace Models {
+    ArtworksListModel::ArtworksListModel(ArtworksRepository &repository,
+                                         Commands::ICommandManager &commandManager,
+                                         KeywordsPresets::IPresetsManager &presetsManager,
+                                         Artworks::IArtworksService &inspectionService,
+                                         AutoComplete::ICompletionSource &completionSource,
+                                         QObject *parent):
         QAbstractListModel(parent),
-        m_ArtworksRepository(repository),
         // all items before 1024 are reserved for internal models
-        m_LastID(1024)
+        m_LastID(1024),
+        m_ArtworksRepository(repository),
+        m_CommandManager(commandManager),
+        m_PresetsManager(presetsManager),
+        m_InspectionService(inspectionService),
+        m_CompletionSource(completionSource)
     {
+        QObject::connect(&m_ArtworksRepository, &ArtworksRepository::filesUnavailable,
+                         this, &ArtworksListModel::onFilesUnavailableHandler);
     }
 
     ArtworksListModel::~ArtworksListModel() {
@@ -53,7 +71,25 @@ namespace Artworks {
 
     QVector<int> ArtworksListModel::getArtworkStandardRoles() const {
         return QVector<int>() << ArtworkDescriptionRole << IsModifiedRole <<
-            ArtworkTitleRole << KeywordsCountRole << HasVectorAttachedRole;
+                                 ArtworkTitleRole << KeywordsCountRole << HasVectorAttachedRole;
+    }
+
+    void ArtworksListModel::selectArtworksFromDirectory(int directoryIndex) {
+        LOG_INFO << "Select directory at" << directoryIndex;
+        const QString &directory = m_ArtworksRepository.getDirectoryPath(directoryIndex);
+        LOG_FOR_TESTS << "Select directory:" << directory;
+
+        const QString directoryAbsolutePath = QDir(directory).absolutePath();
+        std::vector<int> indices = this->selectArtworks(
+                    [&directoryAbsolutePath](Artworks::ArtworkMetadata *artwork) {
+                return artwork->isInDirectory(directoryAbsolutePath); },
+                [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
+
+        Helpers::IndicesRanges ranges(indices);
+
+        this->foreachArtwork(ranges, [](Artworks::ArtworkMetadata *artwork, size_t) {
+            artwork->setIsSelected(true); });
+        this->updateItems(ranges, QVector<int>() << IsSelectedRole);
     }
 
     void ArtworksListModel::updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles) {
@@ -64,9 +100,26 @@ namespace Artworks {
         }
     }
 
-    std::unique_ptr<MetadataIO::SessionSnapshot> ArtworksListModel::snapshotAll() {
-        std::unique_ptr<MetadataIO::SessionSnapshot> sessionSnapshot(
-                    new MetadataIO::SessionSnapshot(
+    void ArtworksListModel::updateItems(ArtworksListModel::SelectionType selectionType, const QVector<int> &roles) {
+        std::function<bool (Artworks::ArtworkMetadata *)> pred;
+        switch (selectionType) {
+        case SelectionType::Modified:
+            pred = [](Artworks::ArtworkMetadata *artwork) { return artwork->isModified(); };
+            break;
+        case SelectionType::Selected:
+            pred = [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); };
+            break;
+        default:
+            return;
+        }
+
+        auto indices = selectArtworks(pred, [](Artworks::ArtworkMetadata*, size_t i) { return (int)i; });
+        this->updateItems(Helpers::IndicesRanges(indices), roles);
+    }
+
+    std::unique_ptr<Artworks::SessionSnapshot> ArtworksListModel::snapshotAll() {
+        std::unique_ptr<Artworks::SessionSnapshot> sessionSnapshot(
+                    new Artworks::SessionSnapshot(
                         selectAvailableArtworks([](ArtworkMetadata *artwork, size_t) {return artwork;}),
                         m_ArtworksRepository.retrieveFullDirectories()));
         return sessionSnapshot;
@@ -332,7 +385,7 @@ namespace Artworks {
 
         for (size_t i = 0; i < size; ++i) {
             ArtworkMetadata *metadata = accessArtwork(i);
-            ImageArtwork *image = dynamic_cast<ImageArtwork *>(metadata);
+            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(metadata);
             if (image == NULL) { continue; }
 
             const QString &filepath = image->getFilepath();
@@ -358,20 +411,20 @@ namespace Artworks {
         return attachedVectors;
     }
 
-    void ArtworksListModel::connectArtworkSignals(ArtworkMetadata *artwork) {
-        QObject::connect(artwork, &ArtworkMetadata::modifiedChanged,
+    void ArtworksListModel::connectArtworkSignals(Artworks::ArtworkMetadata *artwork) {
+        QObject::connect(artwork, &Artworks::ArtworkMetadata::modifiedChanged,
                          this, &ArtworksListModel::itemModifiedChanged);
 
-        QObject::connect(artwork, &ArtworkMetadata::backupRequired,
-                         this, &Models::ArtworksListModel::onArtworkBackupRequested);
+        QObject::connect(artwork, &Artworks::ArtworkMetadata::backupRequired,
+                         this, &ArtworksListModel::onArtworkBackupRequested);
 
-        QObject::connect(artwork, &ArtworkMetadata::editingPaused,
-                         this, &Models::ArtworksListModel::onArtworkEditingPaused);
+        QObject::connect(artwork, &Artworks::ArtworkMetadata::editingPaused,
+                         this, &ArtworksListModel::onArtworkEditingPaused);
 
-        QObject::connect(artwork, &ArtworkMetadata::spellingInfoUpdated,
+        QObject::connect(artwork, &Artworks::ArtworkMetadata::spellingInfoUpdated,
                          this, &ArtworksListModel::onArtworkSpellingInfoUpdated);
 
-        QObject::connect(artwork, &ArtworkMetadata::selectedChanged,
+        QObject::connect(artwork, &Artworks::ArtworkMetadata::selectedChanged,
                          this, &ArtworksListModel::artworkSelectedChanged);
     }
 
@@ -408,7 +461,7 @@ namespace Artworks {
                 return keywordsModel->getKeywordsCount();
             }
             case HasVectorAttachedRole: {
-                ImageArtwork *image = dynamic_cast<ImageArtwork *>(artwork);
+                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
                 return (image != NULL) && image->hasVectorAttached();
             }
             case BaseFilenameRole:
@@ -497,30 +550,38 @@ namespace Artworks {
         return keywordsModel;
     }
 
-    void ArtworksListModel::removeKeywordAt(int artworkIndex, int keywordIndex) {
+    bool ArtworksListModel::removeKeywordAt(int artworkIndex, int keywordIndex) {
         LOG_INFO << "metadata index" << artworkIndex << "| keyword index" << keywordIndex;
+        bool success = false;
         ArtworkMetadata *artwork = accessArtwork(artworkIndex);
         if (artwork != nullptr) {
             QString removed;
 
             if (artwork->removeKeywordAt(keywordIndex, removed)) {
+                success = true;
                 QModelIndex index = this->index(artworkIndex);
                 emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
+                m_InspectionService.submitArtwork(artwork);
             }
         }
+        return success;
     }
 
-    void ArtworksListModel::removeLastKeyword(int artworkIndex) {
+    bool ArtworksListModel::removeLastKeyword(int artworkIndex) {
         LOG_INFO << "index" << artworkIndex;
+        bool success = false;
         ArtworkMetadata *artwork = accessArtwork(artworkIndex);
         if (artwork != nullptr) {
             QString removed;
 
             if (artwork->removeLastKeyword(removed)) {
+                success = true;
                 QModelIndex index = this->index(artworkIndex);
                 emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
+                m_InspectionService.submitArtwork(artwork);
             }
         }
+        return success;
     }
 
     bool ArtworksListModel::appendKeyword(int artworkIndex, const QString &keyword) {
@@ -530,13 +591,10 @@ namespace Artworks {
         ArtworkMetadata *artwork = accessArtwork(artworkIndex);
         if (artwork != nullptr) {
             if (artwork->appendKeyword(keyword)) {
+                added = true;
                 QModelIndex index = this->index(artworkIndex);
                 emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
-                auto *keywordsModel = artwork->getBasicModel();
-
-                //xpiks()->submitKeywordForSpellCheck(keywordsModel, keywordsModel->getKeywordsCount() - 1);
-
-                added = true;
+                m_InspectionService.submitArtwork(artwork);
             }
         }
 
@@ -571,7 +629,7 @@ namespace Artworks {
             }
 
             std::shared_ptr<Commands::PasteKeywordsCommand> pasteCommand(new Commands::PasteKeywordsCommand(rawArtworkSnapshot, keywords));
-            m_CommandManager->processCommand(pasteCommand);
+            m_CommandManager.processCommand(pasteCommand);
         }
     }
 
@@ -583,7 +641,7 @@ namespace Artworks {
             rawSnapshot.emplace_back(new ArtworkMetadataLocker(artwork));
 
             std::shared_ptr<Commands::PasteKeywordsCommand> pasteCommand(new Commands::PasteKeywordsCommand(rawSnapshot, keywords));
-            m_CommandManager->processCommand(pasteCommand);
+            m_CommandManager.processCommand(pasteCommand);
         }
     }
 
@@ -599,6 +657,134 @@ namespace Artworks {
         emit artworksChanged(false);
     }
 
+    bool ArtworksListModel::editKeyword(int artworkIndex, int keywordIndex, const QString &replacement) {
+        LOG_INFO << "metadata index:" << artworkIndex;
+        bool edited = false;
+        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        if (artwork != nullptr) {
+            if (artwork->editKeyword(keywordIndex, replacement)) {
+                edited = true;
+                QModelIndex index = this->index(artworkIndex);
+                emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
+                m_InspectionService.submitArtwork(artwork);
+            }
+        }
+        return edited;
+    }
+
+    void ArtworksListModel::plainTextEdit(int artworkIndex, const QString &rawKeywords, bool spaceIsSeparator) {
+        LOG_DEBUG << "Plain text edit for item" << artworkIndex;
+        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        if (artwork) {
+            QVector<QChar> separators;
+            separators << QChar(',');
+            if (spaceIsSeparator) { separators << QChar::Space; }
+            QStringList keywords;
+            Helpers::splitKeywords(rawKeywords.trimmed(), separators, keywords);
+
+            Artworks::ArtworksSnapshot::Container items;
+            items.emplace_back(new ArtworkMetadataLocker(artwork));
+
+            Common::CombinedEditFlags flags = Common::CombinedEditFlags::None;
+            Common::SetFlag(flags, Common::CombinedEditFlags::EditKeywords);
+            std::shared_ptr<Commands::CombinedEditCommand> combinedEditCommand(new Commands::CombinedEditCommand(
+                    flags,
+                    items,
+                    "", "",
+                    keywords));
+
+            m_CommandManager.processCommand(combinedEditCommand);
+            updateItemAtIndex(artworkIndex);
+        }
+    }
+
+    void ArtworksListModel::detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges) {
+        foreachArtworkAs<Artworks::ImageArtwork>(ranges,
+                                       [](Artworks::ImageArtwork *image) { return image->hasVectorAttached(); },
+        [this](Artworks::ImageArtwork *image, size_t) {
+            this->m_ArtworksRepository.removeVector(
+                        image->getAttachedVectorPath());
+            image->detachVector();
+        });
+
+        updateItems(ranges, QVector<int>() << HasVectorAttachedRole);
+    }
+
+    void ArtworksListModel::expandPreset(int artworkIndex, int keywordIndex, unsigned int presetID) {
+        LOG_INFO << "item" << artworkIndex << "keyword" << keywordIndex << "preset" << presetID;
+
+        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        if (artwork != nullptr) {
+            std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(
+                        new Commands::ExpandPresetCommand(artwork,
+                                                          (KeywordsPresets::ID_t)presetID,
+                                                          keywordIndex));
+            auto result = m_CommandManager.processCommand(expandPresetCommand);
+            Q_UNUSED(result);
+        }
+    }
+
+    void ArtworksListModel::expandLastAsPreset(int artworkIndex) {
+        LOG_INFO << "item" << artworkIndex;
+
+        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        if (artwork != nullptr) {
+            auto *basicModel = artwork->getBasicModel();
+            int keywordIndex = basicModel->getKeywordsCount() - 1;
+            QString lastKeyword = basicModel->retrieveKeyword(keywordIndex);
+
+            KeywordsPresets::ID_t presetID;
+            if (m_PresetsManager.tryFindSinglePresetByName(lastKeyword, false, presetID)) {
+                std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(
+                            new Commands::ExpandPresetCommand(artwork, presetID, keywordIndex));
+                std::shared_ptr<Commands::CommandResult> result = m_CommandManager.processCommand(expandPresetCommand);
+                Q_UNUSED(result);
+            }
+        }
+    }
+
+    void ArtworksListModel::addPreset(int artworkIndex, unsigned int presetID) {
+        LOG_INFO << "item" << artworkIndex << "preset" << presetID;
+
+        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        if (artwork != nullptr) {
+            std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(
+                        new Commands::ExpandPresetCommand(artwork, presetID));
+            std::shared_ptr<Commands::CommandResult> result = m_CommandManager.processCommand(expandPresetCommand);
+            Q_UNUSED(result);
+        }
+    }
+
+    bool ArtworksListModel::acceptCompletionAsPreset(int artworkIndex, int completionID) {
+        LOG_INFO << "item" << artworkIndex << "completionID" << completionID;
+        bool accepted = false;
+
+        ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        if (artwork != nullptr) {
+            std::shared_ptr<AutoComplete::CompletionItem> completionItem = m_CompletionSource.getAcceptedCompletion(completionID);
+            if (!completionItem) {
+                LOG_WARNING << "Completion is not available anymore";
+                return false;
+            }
+
+            const int presetID = completionItem->getPresetID();
+
+            if (completionItem->isPreset() ||
+                    (completionItem->canBePreset() && completionItem->shouldExpandPreset())) {
+                std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(new Commands::ExpandPresetCommand(artwork, presetID));
+                std::shared_ptr<Commands::CommandResult> result = m_CommandManager.processCommand(expandPresetCommand);
+                Q_UNUSED(result);
+                accepted = true;
+            }/* --------- this is handled in the edit field -----------
+                else if (completionItem->isKeyword()) {
+                this->appendKeyword(metadataIndex, completionItem->getCompletion());
+                accepted = true;
+            }*/
+        }
+
+        return accepted;
+    }
+
     void ArtworksListModel::onFilesUnavailableHandler() {
         LOG_DEBUG << "#";
         bool anyArtworkUnavailable = false;
@@ -609,10 +795,10 @@ namespace Artworks {
         [&anyArtworkUnavailable](ArtworkMetadata *artwork, size_t) {
             artwork->setUnavailable(); anyArtworkUnavailable = true; });
 
-        foreachArtworkAs<ImageArtwork>([this](ImageArtwork *image) {
-            return image->hasVectorAttached() &&
+        foreachArtworkAs<Artworks::ImageArtwork>(Helpers::IndicesRanges(getArtworksCount()),
+                    [this](Artworks::ImageArtwork *image) { return image->hasVectorAttached() &&
                     this->m_ArtworksRepository.isFileUnavailable(image->getAttachedVectorPath()); },
-        [&anyVectorUnavailable](ImageArtwork *image, size_t) {
+        [&anyVectorUnavailable](Artworks::ImageArtwork *image, size_t) {
             image->detachVector(); anyVectorUnavailable = true; });
 
         if (anyArtworkUnavailable) {
@@ -624,6 +810,9 @@ namespace Artworks {
 
     void ArtworksListModel::onUndoStackEmpty() {
         LOG_DEBUG << "#";
+
+        deleteRemovedItems();
+
         if (m_ArtworkList.empty()) {
             if (!m_FinalizationList.empty()) {
                 LOG_DEBUG << "Clearing the finalization list";
@@ -634,8 +823,6 @@ namespace Artworks {
                 m_FinalizationList.clear();
             }
         }
-
-        deleteRemovedItems();
     }
 
     QHash<int, QByteArray> ArtworksListModel::roleNames() const {
@@ -681,7 +868,7 @@ namespace Artworks {
         return m_ArtworkList.at(index);
     }
 
-    void ArtworksListModel::destroyArtwork(ArtworkMetadata *artwork) {
+    void ArtworksListModel::destroyArtwork(Artworks::ArtworkMetadata *artwork) {
         if (artwork->release()) {
             LOG_INTEGRATION_TESTS << "Destroying metadata" << artwork->getItemID() << "for real";
 
@@ -713,23 +900,30 @@ namespace Artworks {
         return m_LastID++;
     }
 
-    void ArtworksListModel::foreachArtwork(std::function<bool (ArtworkMetadata *)> pred,
+    void ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
+                                           std::function<bool (ArtworkMetadata *)> pred,
                                            std::function<void (ArtworkMetadata *, size_t)> action) const {
-        const size_t size = m_ArtworkList.size();
-        for (size_t i = 0; i < size; i++) {
-            auto *artwork = accessArtwork(i);
-            if (pred(artwork)) {
-                action(artwork, i);
+        for (auto &r: ranges.getRanges()) {
+            for (int i = r.first; i <= r.second; r++) {
+                auto *artwork = accessArtwork(i);
+                if (pred(artwork)) {
+                    action(artwork, i);
+                }
             }
         }
     }
 
+    void ArtworksListModel::foreachArtwork(std::function<bool (ArtworkMetadata *)> pred,
+                                           std::function<void (ArtworkMetadata *, size_t)> action) const {
+        foreachArtwork(Helpers::IndicesRanges(0, getArtworksCount()),
+                       pred,
+                       action);
+    }
+
     void ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
                                            std::function<void (ArtworkMetadata *, size_t)> action) const {
-        for (auto &r: ranges.getRanges()) {
-            for (int i = r.first; i <= r.second; r++) {
-                action(accessArtwork(i), i);
-            }
-        }
+        foreachArtwork(ranges,
+                       [](ArtworkMetadata *){ return true; },
+                       action);
     }
 }

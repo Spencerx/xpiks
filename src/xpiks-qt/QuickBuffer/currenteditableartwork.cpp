@@ -69,7 +69,7 @@ namespace QuickBuffer {
         LOG_INFO << "preset" << presetID;
 
         std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(new Commands::ExpandPresetCommand(m_ArtworkMetadata, presetID));
-        std::shared_ptr<Commands::ICommandResult> result = m_CommandManager->processCommand(expandPresetCommand);
+        std::shared_ptr<Commands::CommandResult> result = m_CommandManager->processCommand(expandPresetCommand);
         success = result->getStatus() == 0;
 
         return success;
@@ -80,7 +80,7 @@ namespace QuickBuffer {
         LOG_INFO << "keyword" << keywordIndex << "preset" << presetID;
 
         std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(new Commands::ExpandPresetCommand(m_ArtworkMetadata, presetID, keywordIndex));
-        std::shared_ptr<Commands::ICommandResult> result = m_CommandManager->processCommand(expandPresetCommand);
+        std::shared_ptr<Commands::CommandResult> result = m_CommandManager->processCommand(expandPresetCommand);
         success = result->getStatus() == 0;
 
         return success;

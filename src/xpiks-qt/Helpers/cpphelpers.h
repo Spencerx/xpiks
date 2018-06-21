@@ -27,6 +27,21 @@ namespace Helpers {
         }
         return result;
     }
+
+    template<typename T>
+    std::vector<T> filter(const std::vector<T> &v, const std::function<bool (const T&)> &pred) {
+        std::vector<T> result;
+        result.reserve(v.size());
+        auto itEnd = v.end();
+        auto it = v.begin();
+        while (it != itEnd) {
+            if (pred(*it)) {
+                result.push_back(*it);
+            }
+            it++;
+        }
+        return result;
+    }
 }
 
 #endif // LINQHELPERS_H

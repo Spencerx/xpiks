@@ -24,6 +24,7 @@ namespace Helpers {
         IndicesRanges(const std::vector<int> &indices);
         IndicesRanges(const QVector<int> &indices);
         IndicesRanges(int start, int count);
+        IndicesRanges(size_t count);
         IndicesRanges(const IndicesRanges& other);
 
     public:

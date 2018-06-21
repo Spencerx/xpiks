@@ -19,9 +19,13 @@
 #include <vector>
 #include <memory>
 #include "completionquery.h"
+#include "icompletionsource.h"
 
 namespace AutoComplete {
-    class KeywordsCompletionsModel: public QAbstractListModel {
+    class KeywordsCompletionsModel:
+            public QAbstractListModel,
+            public ICompletionSource
+    {
         Q_OBJECT
     public:
         KeywordsCompletionsModel();
@@ -37,7 +41,7 @@ namespace AutoComplete {
         void setPresetsMembership(const std::vector<CompletionResult> &completions);
 
     public:
-        std::shared_ptr<CompletionItem> getAcceptedCompletion(int completionID);
+        virtual std::shared_ptr<CompletionItem> getAcceptedCompletion(int completionID) override;
         QString getCompletion(int completionID);
         void sync();
         void clear();

@@ -62,15 +62,14 @@ namespace Models {
         Q_INVOKABLE void selectFilteredArtworks() { setFilteredItemsSelected(true); }
         Q_INVOKABLE void unselectFilteredArtworks() { setFilteredItemsSelected(false); }
         Q_INVOKABLE void selectDirectory(int directoryIndex);
-        Q_INVOKABLE void combineSelectedArtworks();
+        //Q_INVOKABLE void combineSelectedArtworks();
         Q_INVOKABLE void setSelectedItemsSaved();
         void removeSelectedArtworks();
         Q_INVOKABLE void updateSelectedArtworks();
-        /*Q_INVOKABLE*/ void updateSelectedArtworksEx(const QVector<int> &roles);
         Q_INVOKABLE void saveSelectedArtworks(bool overwriteAll, bool useBackups);
         Q_INVOKABLE void wipeMetadataFromSelectedArtworks(bool useBackups);
-        Q_INVOKABLE void setSelectedForUpload();
-        Q_INVOKABLE void setSelectedForZipping();
+        //Q_INVOKABLE void setSelectedForUpload();
+        //Q_INVOKABLE void setSelectedForZipping();
         Q_INVOKABLE bool areSelectedArtworksSaved();
         Q_INVOKABLE void spellCheckSelected();
         Q_INVOKABLE int getModifiedSelectedCount(bool overwriteAll=false);

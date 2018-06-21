@@ -52,7 +52,7 @@ Commands::CombinedEditCommand::~CombinedEditCommand() {
     LOG_DEBUG << "#";
 }
 
-std::shared_ptr<Commands::ICommandResult> Commands::CombinedEditCommand::execute(const ICommandManager *commandManagerInterface) {
+std::shared_ptr<Commands::CommandResult> Commands::CombinedEditCommand::execute(const ICommandManager *commandManagerInterface) {
     LOG_INFO << "flags =" << combinedFlagsToString(m_EditFlags) << ", artworks count =" << m_RawSnapshot.size();
     QVector<int> indicesToUpdate;
     std::vector<UndoRedo::ArtworkMetadataBackup> artworksBackups;

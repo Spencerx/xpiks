@@ -39,7 +39,7 @@ namespace Commands {
         virtual ~FindAndReplaceCommand();
 
     public:
-        std::shared_ptr<Commands::ICommandResult> execute(const ICommandManager *commandManagerInterface);
+        std::shared_ptr<Commands::CommandResult> execute(const ICommandManager *commandManagerInterface);
 
     private:
         Artworks::ArtworksSnapshot::Container m_RawSnapshot;

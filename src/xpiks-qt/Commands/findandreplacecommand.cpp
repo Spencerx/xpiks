@@ -22,7 +22,7 @@
 namespace Commands {
     FindAndReplaceCommand::~FindAndReplaceCommand() { LOG_DEBUG << "#"; }
 
-    std::shared_ptr<Commands::ICommandResult> FindAndReplaceCommand::execute(const ICommandManager *commandManagerInterface) {
+    std::shared_ptr<Commands::CommandResult> FindAndReplaceCommand::execute(const ICommandManager *commandManagerInterface) {
         LOG_INFO << "Replacing [" << m_ReplaceWhat << "] to [" << m_ReplaceTo << "] in" << m_RawSnapshot.size() << "item(s)";
         CommandManager *commandManager = (CommandManager *)commandManagerInterface;
         auto *xpiks = commandManager->getDelegator();

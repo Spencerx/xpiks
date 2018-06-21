@@ -401,7 +401,7 @@ namespace Commands {
     #endif
 
         std::shared_ptr<Commands::AddArtworksCommand> addArtworksCommand(new Commands::AddArtworksCommand(filenames, vectors, flags));
-        std::shared_ptr<Commands::ICommandResult> result = m_CommandManager->processCommand(addArtworksCommand);
+        std::shared_ptr<Commands::CommandResult> result = m_CommandManager->processCommand(addArtworksCommand);
         std::shared_ptr<Commands::AddArtworksCommandResult> addArtworksResult =
             std::dynamic_pointer_cast<Commands::AddArtworksCommandResult>(result);
 

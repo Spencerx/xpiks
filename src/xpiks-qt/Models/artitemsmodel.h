@@ -166,11 +166,6 @@ namespace Models {
     public:
         ArtworkMetadata *findArtworkByFilepath(const QString &filepath);
 #endif
-
-    public:
-        const ArtworksContainer &getArtworkList() const { return m_ArtworkList; }
-
-
 }
 
 #endif // ARTSITEMSMODEL_H

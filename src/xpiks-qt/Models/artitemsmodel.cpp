@@ -308,144 +308,27 @@ namespace Models {
     }
 
     void ArtItemsModel::editKeyword(int metadataIndex, int keywordIndex, const QString &replacement) {
-        LOG_INFO << "metadata index:" << metadataIndex;
-        if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
-            ArtworkMetadata *metadata = accessArtwork(metadataIndex);
-            if (metadata->editKeyword(keywordIndex, replacement)) {
-                QModelIndex index = this->index(metadataIndex);
-                emit dataChanged(index, index, QVector<int>() << IsModifiedRole << KeywordsCountRole);
 
-                auto *keywordsModel = metadata->getBasicModel();
-                xpiks()->submitKeywordForSpellCheck(keywordsModel, keywordIndex);
-            }
-        }
     }
 
     void ArtItemsModel::plainTextEdit(int metadataIndex, const QString &rawKeywords, bool spaceIsSeparator) {
-        LOG_DEBUG << "Plain text edit for item" << metadataIndex;
-        if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
-            ArtworkMetadata *metadata = accessArtwork(metadataIndex);
 
-            QVector<QChar> separators;
-            separators << QChar(',');
-            if (spaceIsSeparator) { separators << QChar::Space; }
-            QStringList keywords;
-            Helpers::splitKeywords(rawKeywords.trimmed(), separators, keywords);
-
-            Artworks::ArtworksSnapshot::Container items;
-            items.emplace_back(new ArtworkMetadataLocker(metadata));
-
-            Common::CombinedEditFlags flags = Common::CombinedEditFlags::None;
-            Common::SetFlag(flags, Common::CombinedEditFlags::EditKeywords);
-            std::shared_ptr<Commands::CombinedEditCommand> combinedEditCommand(new Commands::CombinedEditCommand(
-                    flags,
-                    items,
-                    "", "",
-                    keywords));
-
-            m_CommandManager->processCommand(combinedEditCommand);
-            updateItemAtIndex(metadataIndex);
-        }
-    }
-
-    void ArtItemsModel::detachVectorsFromArtworks(const QVector<int> &indices) {
-        LOG_INFO << indices.size() << "indices";
-        QVector<int> indicesToUpdate;
-        indicesToUpdate.reserve(indices.length());
-        Models::ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
-
-        for(int index: indices) {
-            ArtworkMetadata *metadata = accessArtwork(index);
-            ImageArtwork *image = dynamic_cast<ImageArtwork *>(metadata);
-
-            if (image != NULL) {
-                const QString vectorPath = image->getAttachedVectorPath();
-                image->detachVector();
-                artworksRepository->removeVector(vectorPath);
-                indicesToUpdate.append(index);
-            }
-        }
-
-        LOG_INFO << indicesToUpdate.length() << "item(s) affected";
-
-        if (!indicesToUpdate.isEmpty()) {
-            QVector<QPair<int, int> > rangesToUpdate;
-            Helpers::indicesToRanges(indicesToUpdate, rangesToUpdate);
-            AbstractListModel::updateItemsInRanges(rangesToUpdate, QVector<int>() << HasVectorAttachedRole);
-        }
     }
 
     void ArtItemsModel::expandPreset(int artworkIndex, int keywordIndex, unsigned int presetID) {
-        LOG_INFO << "item" << artworkIndex << "keyword" << keywordIndex << "preset" << presetID;
 
-        if (0 <= artworkIndex && artworkIndex < getArtworksCount()) {
-            ArtworkMetadata *artwork = accessArtwork(artworkIndex);
-            std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(new Commands::ExpandPresetCommand(artwork, (KeywordsPresets::ID_t)presetID, keywordIndex));
-            std::shared_ptr<Commands::ICommandResult> result = m_CommandManager->processCommand(expandPresetCommand);
-            Q_UNUSED(result);
-        }
     }
 
     void ArtItemsModel::expandLastAsPreset(int metadataIndex) {
-        LOG_INFO << "item" << metadataIndex;
 
-        if (0 <= metadataIndex && metadataIndex < getArtworksCount()) {
-            ArtworkMetadata *artwork = accessArtwork(metadataIndex);
-            auto *basicModel = artwork->getBasicModel();
-            int keywordIndex = basicModel->getKeywordsCount() - 1;
-            QString lastKeyword = basicModel->retrieveKeyword(keywordIndex);
-
-            auto *presetsModel = m_CommandManager->getPresetsModel();
-            KeywordsPresets::ID_t presetID;
-            if (presetsModel->tryFindSinglePresetByName(lastKeyword, false, presetID)) {
-                std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(new Commands::ExpandPresetCommand(artwork, presetID, keywordIndex));
-                std::shared_ptr<Commands::ICommandResult> result = m_CommandManager->processCommand(expandPresetCommand);
-                Q_UNUSED(result);
-            }
-        }
     }
 
     void ArtItemsModel::addPreset(int metadataIndex, unsigned int presetID) {
-        LOG_INFO << "item" << metadataIndex << "preset" << presetID;
 
-        if (0 <= metadataIndex && metadataIndex < rowCount()) {
-            ArtworkMetadata *artwork = accessArtwork(metadataIndex);
-            std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(new Commands::ExpandPresetCommand(artwork, presetID));
-            std::shared_ptr<Commands::ICommandResult> result = m_CommandManager->processCommand(expandPresetCommand);
-            Q_UNUSED(result);
-        }
     }
 
     bool ArtItemsModel::acceptCompletionAsPreset(int metadataIndex, int completionID) {
-        LOG_INFO << "item" << metadataIndex << "completionID" << completionID;
-        bool accepted = false;
 
-        if (0 <= metadataIndex && metadataIndex < rowCount()) {
-            ArtworkMetadata *artwork = accessArtwork(metadataIndex);
-
-            AutoComplete::KeywordsAutoCompleteModel *acModel = m_CommandManager->getAutoCompleteModel();
-            std::shared_ptr<AutoComplete::CompletionItem> completionItem = acModel->getAcceptedCompletion(completionID);
-            if (!completionItem) {
-                LOG_WARNING << "Completion is not available anymore";
-                return false;
-            }
-
-            const int presetID = completionItem->getPresetID();
-
-            if (completionItem->isPreset() ||
-                    (completionItem->canBePreset() && completionItem->shouldExpandPreset())) {
-                std::shared_ptr<Commands::ExpandPresetCommand> expandPresetCommand(new Commands::ExpandPresetCommand(artwork, presetID));
-                std::shared_ptr<Commands::ICommandResult> result = m_CommandManager->processCommand(expandPresetCommand);
-                Q_UNUSED(result);
-                accepted = true;
-            }/* --------- this is handled in the edit field -----------
-                else if (completionItem->isKeyword()) {
-                this->appendKeyword(metadataIndex, completionItem->getCompletion());
-                accepted = true;
-            }*/
-        }
-
-        return accepted;
     }
 
     void ArtItemsModel::initSuggestion(int metadataIndex) {
