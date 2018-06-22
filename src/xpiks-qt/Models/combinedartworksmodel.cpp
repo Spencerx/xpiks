@@ -10,7 +10,7 @@
 
 #include "combinedartworksmodel.h"
 #include "../Helpers/indiceshelper.h"
-#include "../Commands/combinededitcommand.h"
+#include "../Commands/modifyartworkscommand.h"
 #include "../Commands/commandmanager.h"
 #include "../Suggestion/keywordssuggestor.h"
 #include "../Artworks/artworkmetadata.h"
@@ -322,7 +322,7 @@ namespace Models {
     void CombinedArtworksModel::processCombinedEditCommand() {
         Artworks::ArtworksSnapshot::Container rawSnapshot(getRawSnapshot());
 
-        std::shared_ptr<Commands::CombinedEditCommand> combinedEditCommand(new Commands::CombinedEditCommand(
+        std::shared_ptr<Commands::ModifyArtworksCommand> combinedEditCommand(new Commands::ModifyArtworksCommand(
                 m_EditFlags,
                 rawSnapshot,
                 m_CommonKeywordsModel.getDescription(),

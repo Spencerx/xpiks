@@ -14,6 +14,7 @@
 #include <QString>
 #include <deque>
 #include <memory>
+#include <initializer_list>
 #include "artworkmetadata.h"
 #include "imageartwork.h"
 
@@ -70,6 +71,7 @@ namespace Artworks {
     public:
         ArtworksSnapshot() { }
         ArtworksSnapshot(const WeakArtworksSnapshot &artworks);
+        ArtworksSnapshot(std::initialize_list<ArtworkMetadata *> artworks);
         ArtworksSnapshot(const std::deque<ArtworkMetadata *> &artworks);
         ArtworksSnapshot(Container &rawSnapshot);
         ArtworksSnapshot(ArtworksSnapshot &&other);

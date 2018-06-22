@@ -36,8 +36,6 @@ SOURCES += main.cpp \
     UndoRedo/removeartworksitem.cpp \
     UndoRedo/artworkmetadatabackup.cpp \
     UndoRedo/modifyartworkshistoryitem.cpp \
-    Commands/combinededitcommand.cpp \
-    Commands/pastekeywordscommand.cpp \
     Helpers/runguard.cpp \
     Encryption/aes-qt.cpp \
     Models/ziparchiver.cpp \
@@ -114,7 +112,6 @@ SOURCES += main.cpp \
     Translation/translationquery.cpp \
     Models/uimanager.cpp \
     Plugins/sandboxeddependencies.cpp \
-    Commands/expandpresetcommand.cpp \
     QuickBuffer/currenteditableartwork.cpp \
     QuickBuffer/currenteditableproxyartwork.cpp \
     QuickBuffer/quickbuffer.cpp \
@@ -217,10 +214,14 @@ SOURCES += main.cpp \
     Services/artworksupdatehub.cpp \
     Services/artworksinspectionhub.cpp \
     SpellCheck/userdictionary.cpp \
-    Commands/savebackupscommand.cpp \
-    Commands/compositecommand.cpp \
-    Commands/generatethumbnailscommand.cpp \
-    Commands/readmetadatacommand.cpp
+    Commands/savebackupstemplate.cpp \
+    Commands/readmetadatatemplate.cpp \
+    Commands/autoimportmetadatacommand.cpp \
+    Commands/addtorecenttemplate.cpp \
+    Commands/compositecommandtemplate.cpp \
+    Commands/editartworkstemplate.cpp \
+    Commands/expandpresettemplate.cpp \
+    Commands/generatethumbnailstemplate.cpp
 
 RESOURCES += qml.qrc
 
@@ -271,8 +272,6 @@ HEADERS += \
     UndoRedo/removeartworksitem.h \
     UndoRedo/artworkmetadatabackup.h \
     UndoRedo/modifyartworkshistoryitem.h \
-    Commands/combinededitcommand.h \
-    Commands/pastekeywordscommand.h \
     Helpers/runguard.h \
     Models/ziparchiver.h \
     Helpers/ziphelper.h \
@@ -368,7 +367,6 @@ HEADERS += \
     Translation/translationquery.h \
     Models/uimanager.h \
     Plugins/sandboxeddependencies.h \
-    Commands/expandpresetcommand.h \
     QuickBuffer/icurrenteditable.h \
     QuickBuffer/currenteditableartwork.h \
     QuickBuffer/currenteditableproxyartwork.h \
@@ -527,10 +525,17 @@ HEADERS += \
     AutoComplete/icompletionsource.h \
     Artworks/icurrentartworksource.h \
     Common/types.h \
-    Commands/savebackupscommand.h \
-    Commands/compositecommand.h \
-    Commands/generatethumbnailscommand.h \
-    Commands/readmetadatacommand.h
+    Commands/artworkscommand.h \
+    Commands/savebackupstemplate.h \
+    Commands/iartworkscommandtemplate.h \
+    Commands/readmetadatatemplate.h \
+    Commands/autoimportmetadatacommand.h \
+    Commands/addtorecenttemplate.h \
+    Commands/compositecommandtemplate.h \
+    Commands/editartworkstemplate.h \
+    Commands/expandpresettemplate.h \
+    Commands/generatethumbnailstemplate.h \
+    Commands/modifyartworkscommand.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

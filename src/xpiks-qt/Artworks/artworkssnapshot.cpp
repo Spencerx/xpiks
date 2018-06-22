@@ -36,6 +36,11 @@ namespace Artworks {
         append(artworks);
     }
 
+    ArtworksSnapshot::ArtworksSnapshot(std::initialize_list<ArtworkMetadata *> artworks) {
+        std::vector<ArtworkMetadata*> v(artworks.begin(), artworks.end());
+        append(v);
+    }
+
     ArtworksSnapshot::ArtworksSnapshot(const std::deque<ArtworkMetadata *> &artworks) {
        append(artworks);
     }

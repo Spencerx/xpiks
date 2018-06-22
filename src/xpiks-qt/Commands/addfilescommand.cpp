@@ -14,48 +14,40 @@
 #include "../Helpers/indicesranges.h"
 
 namespace Commands {
-    std::shared_ptr<Commands::CommandResult> AddFilesCommand::execute(int commandID) {
+    AddFilesCommand::AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> &files,
+                                     Common::AddFilesFlags flags,
+                                     Models::ArtworksListModel &artworksListModel,
+                                     std::shared_ptr<IArtworksCommandTemplate> &addedArtworksCommand):
+        QObject(),
+        m_Files(std::move(files)),
+        m_Flags(flags),
+        m_ArtworksListModel(artworksListModel),
+        m_AddedArtworksCommand(std::move(addedArtworksCommand))
+    { }
+
+    void AddFilesCommand::execute() {
         LOG_DEBUG << "#";
-        m_CommandID = commandID;
-
         m_OriginalCount = m_ArtworksListModel.getArtworksCount();
-        m_AddedCount = addFiles();
 
-        // clean resources if this will be stored in undo manager
-        m_Files.reset();
-        m_ClearLegacyBackupsCommand.reset();
-
-        return IAppCommand::execute();
-    }
-
-    int AddFilesCommand::addFiles() {
         auto addResult = m_ArtworksListModel.addFiles(m_Files, m_Flags);
+        m_AddedCount = addResult.m_Snapshot->size();
 
-        m_RecentFileModel.add(addResult.m_Snapshot);
-        saveSession();
-
-        const bool autoImportEnabled = m_SettingsModel.getUseAutoImport() && m_SwitcherModel.getUseAutoImport();
-        if (autoImportEnabled) {
-            LOG_DEBUG << "Autoimport is ON. Proceeding...";
-            m_MetadataIOCoordinator.continueReading(false);
+        if (m_AddedArtworksCommand) {
+            m_AddedArtworksCommand->execute(*addResult.m_Snapshot.get());
         }
 
         emit artworksAdded(importID, addResult.m_Snapshot.size(), addResult.m_AttachedVectorsCount);
 
-        m_ClearLegacyBackupsCommand->execute();
-
-        return addResult.m_Snapshot.size();
+        // clean resources if this will be stored in undo manager
+        m_Files.reset();
     }
 
-    void AddFilesCommand::saveSession() {
-        if (!Common::HasFlag(m_Flags, Common::AddFilesFlags::FlagIsSessionRestore)) {
-            m_SaveSessionCommand->execute();
-        }
+    int AddFilesCommand::addFiles() {
+        return addResult.m_Snapshot.size();
     }
 
     void AddFilesCommand::undo() {
         LOG_DEBUG << "#";
         m_ArtworksListModel.removeFiles(Helpers::IndicesRanges(m_OriginalCount, m_AddedCount));
-        saveSession();
     }
 }

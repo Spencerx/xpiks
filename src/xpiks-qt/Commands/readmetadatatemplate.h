@@ -8,35 +8,32 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef SAVEBACKUPSCOMMAND_H
-#define SAVEBACKUPSCOMMAND_H
+#ifndef READMETADATACOMMAND_H
+#define READMETADATACOMMAND_H
 
-#include "icommand.h"
 #include <memory>
+#include "iartworkscommandtemplate.h"
 
 namespace MetadataIO {
     class MetadataIOService;
-}
-
-namespace Artworks {
-    class ArtworksSnapshot;
+    class MetadataIOCoordinator;
 }
 
 namespace Commands {
-    class SaveBackupsCommand : public ICommand
+    class ReadMetadataTemplate: public IArtworksCommandTemplate
     {
     public:
-        SaveBackupsCommand(const std::shared_ptr<Artworks::ArtworksSnapshot> &snapshot,
-                           MetadataIO::MetadataIOService &metadataIOService);
+        ReadMetadataTemplate(MetadataIO::MetadataIOService &metadataIOService,
+                             MetadataIO::MetadataIOCoordinator &metadataIOCoordinator);
 
         // ICommand interface
     public:
-        virtual void execute() override;
+        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
-        std::shared_ptr<Artworks::ArtworksSnapshot> m_Snapshot;
         MetadataIO::MetadataIOService &m_MetadataIOService;
+        MetadataIO::MetadataIOCoordinator &m_MetadataIOCoordinator;
     };
 }
 
-#endif // SAVEBACKUPSCOMMAND_H
+#endif // READMETADATACOMMAND_H

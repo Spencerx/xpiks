@@ -16,8 +16,8 @@
 #include <QSet>
 #include <QString>
 #include <vector>
-#include "../Models/artworkelement.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include "../Artworks/artworkelement.h"
+#include "../Artworks/artworkssnapshot.h"
 
 namespace Models {
     class ArtworkMetadata;

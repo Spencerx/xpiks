@@ -13,57 +13,28 @@
 
 #include <memory>
 #include <QObject>
-#include "icommand.h"
+#include "iartworkscommandtemplate.h"
 #include "../Common/flags.h"
 #include "../Filesystem/ifilescollection.h"
 
 namespace Models {
     class ArtworksListModel;
-    class RecentFilesModel;
-    class ArtworksRepository;
-    class SettingsModel;
-    class SwitcherModel;
-}
-
-namespace UndoRedo {
-    class UndoRedoManager;
 }
 
 namespace Commands {
     class AddFilesCommand:
-            public QObject,
-            public IUndoCommand
+            public QObject
     {
         Q_OBJECT
     public:
         AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> &files,
                         Common::AddFilesFlags flags,
-                        std::shared_ptr<Commands::ICommand> &saveSessionCommand,
-                        std::shared_ptr<Commands::ICommand> &clearLegacyBackupsCommand,
                         Models::ArtworksListModel &artworksListModel,
-                        Models::ArtworksRepository &artworksRepository,
-                        Models::SettingsModel &settingsModel,
-                        Models::SwitcherModel &switcherModel,
-                        Models::RecentFilesModel &recentFileModel):
-            QObject(),
-            m_Files(std::move(files)),
-            m_Flags(flags),
-            m_SaveSessionCommand(std::move(saveSessionCommand)),
-            m_ClearLegacyBackupsCommand(std::move(clearLegacyBackupsCommand)),
-            m_ArtworksListModel(artworksListModel),
-            m_ArtworksRepository(artworksRepository),
-            m_SettingsModel(settingsModel),
-            m_SwitcherModel(switcherModel),
-            m_RecentFileModel(recentFileModel)
-        { }
+                        std::shared_ptr<IArtworksCommandTemplate> &addedArtworksCommand);
 
         // ICommand interface
     public:
-        virtual std::shared_ptr<CommandResult> execute(int commandID) override;
-
-    private:
-        int addFiles();
-        void saveSession();
+        virtual void execute() override;
 
         // IHistoryItem interface
     public:
@@ -72,7 +43,6 @@ namespace Commands {
             return m_AddedCount != 1 ? QObject::tr("%1 items added").arg(m_AddedCount) :
                                        QObject::tr("1 item added");
         }
-        virtual int getCommandID() const override { return m_CommandID; }
 
     signals:
         void artworksAdded(int importID, int imagesCount, int vectorsCount);
@@ -80,14 +50,8 @@ namespace Commands {
     private:
         std::shared_ptr<Filesystem::IFilesCollection> m_Files;
         Common::AddFilesFlags m_Flags = Common::AddFilesFlags::None;
-        int m_CommandID;
-        std::shared_ptr<Commands::ICommand> m_SaveSessionCommand;
-        std::shared_ptr<Commands::ICommand> m_ClearLegacyBackupsCommand;
         Models::ArtworksListModel &m_ArtworksListModel;
-        Models::ArtworksRepository &m_ArtworksRepository;
-        Models::SettingsModel &m_SettingsModel;
-        Models::SwitcherModel &m_SwitcherModel;
-        Models::RecentFilesModel &m_RecentFileModel;
+        std::shared_ptr<IArtworksCommandTemplate> m_AddedArtworksCommand;
         // undo
         int m_OriginalCount = 0;
         int m_AddedCount = 0;

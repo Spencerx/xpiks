@@ -14,6 +14,7 @@
 #include "../Common/defines.h"
 
 UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(Artworks::ArtworkMetadata *artwork) {
+    m_ArtworkID = artwork->getItemID();
     m_Description = artwork->getDescription();
     m_Title = artwork->getTitle();
     m_KeywordsList = artwork->getKeywords();
@@ -26,6 +27,7 @@ UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(Artworks::ArtworkMetadata
 }
 
 UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(const UndoRedo::ArtworkMetadataBackup &copy):
+    m_ArtworkID(copy.m_ArtworkID),
     m_Description(copy.m_Description),
     m_Title(copy.m_Title),
     m_AttachedVector(copy.m_AttachedVector),
@@ -35,6 +37,11 @@ UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(const UndoRedo::ArtworkMe
 }
 
 void UndoRedo::ArtworkMetadataBackup::restore(Artworks::ArtworkMetadata *artwork) const {
+    Q_ASSERT(m_ArtworkID == artwork->getItemID());
+    if (m_ArtworkID != artwork->getItemID()) {
+        LOG_WARNING << "Cannot restore to different artwork";
+        return;
+    }
     artwork->setDescription(m_Description);
     artwork->setTitle(m_Title);
     artwork->setKeywords(m_KeywordsList);

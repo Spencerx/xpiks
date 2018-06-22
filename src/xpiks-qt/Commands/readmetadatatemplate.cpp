@@ -8,24 +8,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "readmetadatacommand.h"
+#include "readmetadatatemplate.h"
 #include "../MetadataIO/metadataioservice.h"
 #include "../MetadataIO/metadataiocoordinator.h"
 #include "../Artworks/artworkssnapshot.h"
 
 namespace Commands {
-    ReadMetadataCommand::ReadMetadataCommand(const std::shared_ptr<Artworks::ArtworksSnapshot> &snapshot,
-                                             MetadataIO::MetadataIOService &metadataIOService,
-                                             MetadataIO::MetadataIOCoordinator &metadataIOCoordinator):
-        m_Snapshot(snapshot),
+    ReadMetadataTemplate::ReadMetadataTemplate(MetadataIO::MetadataIOService &metadataIOService,
+                                               MetadataIO::MetadataIOCoordinator &metadataIOCoordinator):
         m_MetadataIOService(metadataIOService),
         m_MetadataIOCoordinator(metadataIOCoordinator)
     {
     }
 
-    void ReadMetadataCommand::execute() {
-        quint32 batchID = m_MetadataIOService.readArtworks(*m_Snapshot.get());
-        int importID = m_MetadataIOCoordinator.readMetadataExifTool(*m_Snapshot.get(), batchID);
+    void ReadMetadataTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+        quint32 batchID = m_MetadataIOService.readArtworks(snapshot);
+        int importID = m_MetadataIOCoordinator.readMetadataExifTool(snapshot, batchID);
         Q_UNUSED(importID);
     }
 }

@@ -8,23 +8,21 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "generatethumbnailscommand.h"
+#include "generatethumbnailstemplate.h"
 #include "../Artworks/artworkssnapshot.h"
 #include "../QMLExtensions/imagecachingservice.h"
 #include "../QMLExtensions/videocachingservice.h"
 
 namespace Commands {
-    GenerateThumbnailsCommand::GenerateThumbnailsCommand(const std::shared_ptr<Artworks::ArtworksSnapshot> &snapshot,
-                                                         QMLExtensions::ImageCachingService &imageCachingService,
+    GenerateThumbnailsTemplate::GenerateThumbnailsTemplate(QMLExtensions::ImageCachingService &imageCachingService,
                                                          QMLExtensions::VideoCachingService &videoCachingService):
-        m_Snapshot(snapshot),
         m_ImageCachingService(imageCachingService),
         m_VideoCachingService(videoCachingService)
     {
     }
 
-    void GenerateThumbnailsCommand::execute() {
-        m_ImageCachingService.generatePreviews(*m_Snapshot.get());
-        m_VideoCachingService.generateThumbnails(*m_Snapshot.get());
+    void GenerateThumbnailsTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+        m_ImageCachingService.generatePreviews(snapshot);
+        m_VideoCachingService.generateThumbnails(snapshot);
     }
 }

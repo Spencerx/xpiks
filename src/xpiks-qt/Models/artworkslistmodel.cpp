@@ -20,8 +20,12 @@
 #include "../Commands/icommandmanager.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
 #include "../Artworks/iartworksservice.h"
-#include "../Commands/expandpresetcommand.h"
+#include "../Commands/expandpresettemplate.h"
+#include "../Commands/editartworkstemplate.h"
 #include "../AutoComplete/icompletionsource.h"
+#include "../Commands/artworkscommand.h"
+#include "../Commands/modifyartworkscommand.h"
+#include "../Commands/compositecommandtemplate.h"
 
 namespace Models {
     ArtworksListModel::ArtworksListModel(ArtworksRepository &repository,
@@ -645,10 +649,15 @@ namespace Models {
         ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr && !keywords.empty()) {
             setCurrentIndex(artworkIndex);
-            Artworks::ArtworksSnapshot::Container rawSnapshot;
-            rawSnapshot.emplace_back(new ArtworkMetadataLocker(artwork));
+            Artworks::ArtworksSnapshot snapshot({artwork});
+            using namespace Commands;
 
-            std::shared_ptr<Commands::PasteKeywordsCommand> pasteCommand(new Commands::PasteKeywordsCommand(rawSnapshot, keywords));
+            std::shared_ptr<ICommand> pasteCommand(
+                        new ModifyArtworksCommand(snapshot,
+                            std::shared_ptr<IArtworksCommandTemplate>(
+                                new CompositeCommandTemplate({new EditArtworksTemplate("", "",
+                                                                 keywords,
+                                                                 Common::CombinedEditFlags::AppendKeywords)}))));
             m_CommandManager.processCommand(pasteCommand);
         }
     }

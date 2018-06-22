@@ -30,7 +30,7 @@
 #include "../Models/settingsmodel.h"
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../Common/flags.h"
-#include "../Commands/combinededitcommand.h"
+#include "../Commands/modifyartworkscommand.h"
 #include "../Common/defines.h"
 #include "../QMLExtensions/colorsmodel.h"
 #include "imageartwork.h"
@@ -389,7 +389,7 @@ namespace Models {
             if (!description.isEmpty()) { Common::SetFlag(flags, Common::CombinedEditFlags::EditDescription); }
             if (!keywords.empty()) { Common::SetFlag(flags, Common::CombinedEditFlags::EditKeywords); }
 
-            std::shared_ptr<Commands::CombinedEditCommand> combinedEditCommand(new Commands::CombinedEditCommand(
+            std::shared_ptr<Commands::ModifyArtworksCommand> combinedEditCommand(new Commands::ModifyArtworksCommand(
                                                                                    flags, items, description, title, keywords));
 
             m_CommandManager->processCommand(combinedEditCommand);

@@ -8,29 +8,29 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef COMPOSITECOMMAND_H
-#define COMPOSITECOMMAND_H
+#ifndef SAVEBACKUPSCOMMAND_H
+#define SAVEBACKUPSCOMMAND_H
 
+#include "iartworkscommandtemplate.h"
 #include <memory>
-#include <vector>
-#include <initializer_list>
-#include "icommand.h"
+
+namespace MetadataIO {
+    class MetadataIOService;
+}
 
 namespace Commands {
-    class CompositeCommand: public ICommand
+    class SaveBackupsTemplate: public IArtworksCommandTemplate
     {
     public:
-        CompositeCommand(std::initializer_list<std::shared_ptr<ICommand> > list);
+        SaveBackupsTemplate(MetadataIO::MetadataIOService &metadataIOService);
 
         // ICommand interface
     public:
-        virtual void execute() override;
-        virtual void undo() override;
-        virtual bool canUndo() override;
+        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
-        std::vector<std::shared_ptr<ICommand> > m_Commands;
+        MetadataIO::MetadataIOService &m_MetadataIOService;
     };
 }
 
-#endif // COMPOSITECOMMAND_H
+#endif // SAVEBACKUPSCOMMAND_H

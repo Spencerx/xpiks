@@ -13,6 +13,7 @@
 
 #include <QStringList>
 #include <QString>
+#include "../Common/types.h"
 
 namespace Artworks { class ArtworkMetadata; }
 
@@ -28,6 +29,7 @@ namespace UndoRedo {
         void restore(Artworks::ArtworkMetadata *artwork) const;
 
     private:
+        Common::ID_t m_ArtworkID;
         QString m_Description;
         QString m_Title;
         QString m_AttachedVector;

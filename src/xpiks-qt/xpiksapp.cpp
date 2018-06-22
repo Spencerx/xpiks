@@ -23,6 +23,12 @@
 #include "UndoRedo/removedirectoryitem.h"
 #include "Commands/addfilescommand.h"
 #include "Commands/cleanuplegacybackupscommand.h"
+#include "Commands/readmetadatatemplate.h"
+#include "Commands/artworkscommand.h"
+#include "Commands/addtorecenttemplate.h"
+#include "Commands/autoimportmetadatacommand.h"
+#include "Commands/compositecommandtemplate.h"
+#include "Commands/generatethumbnailstemplate.h"
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_LogsModel(&m_ColorsModel),
@@ -397,32 +403,24 @@ void XpiksApp::removeUnavailableFiles() {
 }
 
 void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
-    auto saveSessionCommand = std::make_shared<Commands::ICommand>(
-                new Commands::SaveSessionCommand(m_MaintenanceService,
-                                                 m_ArtworksListModel,
-                                                 m_SessionManager));
+    using namespace Commands;
 
-    auto cleanBackupsCommand = std::make_shared<Commands::ICommand>(
-                new Commands::CleanupLegacyBackupsCommand(files,
-                                                          m_MaintenanceService));
+    auto afterAddCommand = std::make_shared<CompositeCommandTemplate>(
+    {
+                    new ReadMetadataTemplate(m_MetadataIOService, m_MetadataIOCoordinator),
+                    new GenerateThumbnailsTemplate(m_ImageCachingService, m_VideoCachingService),
+                    new AutoImportMetadataCommand(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel),
+                    new AddToRecentTemplate(m_RecentFileModel),
+                    new SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager),
+                    new CleanupLegacyBackupsCommand(files, m_MaintenanceService)
+                });
 
-    auto addFilesCommand = std::make_shared(
-                new Commands::AddFilesCommand(files,
-                                              flags,
-                                              saveSessionCommand,
-                                              cleanBackupsCommand,
-                                              m_ArtworksListModel,
-                                              m_ArtworksRepository,
-                                              m_SettingsModel,
-                                              m_SwitcherModel,
-                                              m_MetadataIOService,
-                                              m_MetadataIOCoordinator,
-                                              m_ImageCachingService,
-                                              m_VideoCachingService,
-                                              m_RecentFileModel));
+    auto addFilesCommand = std::make_shared<AddFilesCommand>(
+                files, flags, m_ArtworksListModel,
+                std::dynamic_pointer_cast<IArtworksCommandTemplate>(afterAddCommand));
 
     m_CommandManager.processCommand(
-                std::dynamic_pointer_cast<Commands::IAppCommand>(addFilesCommand));
+                std::dynamic_pointer_cast<Commands::ICommand>(addFilesCommand));
 }
 
 void XpiksApp::afterServicesStarted() {

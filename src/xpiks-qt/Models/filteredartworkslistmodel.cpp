@@ -16,7 +16,7 @@
 #include "artworkelement.h"
 #include "settingsmodel.h"
 #include "../Commands/commandmanager.h"
-#include "../Commands/combinededitcommand.h"
+#include "../Commands/modifyartworkscommand.h"
 #include "../Common/flags.h"
 #include "../Helpers/indiceshelper.h"
 #include "../Common/defines.h"
@@ -506,7 +506,7 @@ namespace Models {
 
     void FilteredArtworksListModel::removeMetadataInItems(Artworks::ArtworksSnapshot::Container &itemsToClear, Common::CombinedEditFlags flags) const {
         LOG_INFO << itemsToClear.size() << "item(s) with flags =" << (int)flags;
-        std::shared_ptr<Commands::CombinedEditCommand> combinedEditCommand(new Commands::CombinedEditCommand(
+        std::shared_ptr<Commands::ModifyArtworksCommand> combinedEditCommand(new Commands::ModifyArtworksCommand(
                 flags,
                 itemsToClear));
 

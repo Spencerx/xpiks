@@ -8,18 +8,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "savebackupscommand.h"
+#include "savebackupstemplate.h"
 #include "../MetadataIO/metadataioservice.h"
 
 namespace Commands {
-    SaveBackupsCommand::SaveBackupsCommand(const std::shared_ptr<Artworks::ArtworksSnapshot> &snapshot,
-                                           MetadataIO::MetadataIOService &metadataIOService):
-        m_Snapshot(snapshot),
+    SaveBackupsTemplate::SaveBackupsTemplate(MetadataIO::MetadataIOService &metadataIOService):
         m_MetadataIOService(metadataIOService)
     {
     }
 
-    void SaveBackupsCommand::execute() {
-        m_MetadataIOService.writeArtworks(m_Snapshot->getWeakSnapshot());
+    void SaveBackupsTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+        m_MetadataIOService.writeArtworks(snapshot->getWeakSnapshot());
     }
 }

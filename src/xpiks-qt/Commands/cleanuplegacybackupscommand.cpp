@@ -25,7 +25,7 @@ namespace Commands {
         m_Directories = dirs.toList();
     }
 
-    std::shared_ptr<CommandResult> CleanupLegacyBackupsCommand::execute() {
+    void CleanupLegacyBackupsCommand::execute() {
         for (auto &dir: m_Directories) {
             m_MaintenanceService.cleanupOldXpksBackups(dir);
         }

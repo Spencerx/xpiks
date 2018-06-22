@@ -15,13 +15,14 @@
 #include <QStringList>
 #include "icommand.h"
 #include "../Filesystem/ifilescollection.h"
+#include "iartworkscommandtemplate.h"
 
 namespace Maintenance {
     class MaintenanceService;
 }
 
 namespace Commands {
-    class CleanupLegacyBackupsCommand: public ICommand
+    class CleanupLegacyBackupsCommand: public ICommand, public IArtworksCommandTemplate
     {
     public:
         CleanupLegacyBackupsCommand(const std::shared_ptr<Filesystem::IFilesCollection> &files,
@@ -29,7 +30,11 @@ namespace Commands {
 
         // ICommand interface
     public:
-        virtual std::shared_ptr<CommandResult> execute() override;
+        virtual void execute() override;
+
+        // IArtworksCommandTemplate interface
+    public:
+        virtual void execute(Artworks::ArtworksSnapshot &) override { execute(); }
 
     public:
         QStringList m_Directories;
