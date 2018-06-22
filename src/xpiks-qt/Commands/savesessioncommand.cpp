@@ -9,22 +9,25 @@
  */
 
 #include "savesessioncommand.h"
-#include "../Models/artitemsmodel.h"
+#include "../Models/artworkslistmodel.h"
 #include "../Maintenance/maintenanceservice.h"
 #include "../Models/sessionmanager.h"
 
 namespace Commands {
     SaveSessionCommand::SaveSessionCommand(Maintenance::MaintenanceService &maintenanceService,
-                                           Models::ArtItemsModel &artItemsModel,
+                                           Models::ArtworksListModel &artworksListModel,
                                            Models::SessionManager &sessionManager):
         m_MaintenanceService(maintenanceService),
-        m_ArtItemsModel(artItemsModel),
+        m_ArtworksListModel(artworksListModel),
         m_SessionManager(sessionManager)
     {
     }
 
-    std::shared_ptr<CommandResult> SaveSessionCommand::execute() {
-        m_MaintenanceService.saveSession(m_ArtItemsModel.snapshotAll(), &m_SessionManager);
-        return ICommand::execute();
+    void SaveSessionCommand::undo() {
+        execute();
+    }
+
+    void SaveSessionCommand::execute() {
+        m_MaintenanceService.saveSession(ArtworksListModel.snapshotAll(), &m_SessionManager);
     }
 }

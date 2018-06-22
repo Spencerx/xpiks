@@ -25,16 +25,6 @@ namespace Models {
     class SwitcherModel;
 }
 
-namespace MetadataIO {
-    class MetadataIOService;
-    class MetadataIOCoordinator;
-}
-
-namespace QMLExtensions {
-    class ImageCachingService;
-    class VideoCachingService;
-}
-
 namespace UndoRedo {
     class UndoRedoManager;
 }
@@ -54,10 +44,6 @@ namespace Commands {
                         Models::ArtworksRepository &artworksRepository,
                         Models::SettingsModel &settingsModel,
                         Models::SwitcherModel &switcherModel,
-                        MetadataIO::MetadataIOService &metadataIOService,
-                        MetadataIO::MetadataIOCoordinator &metadataIOCoordinator,
-                        QMLExtensions::ImageCachingService &imageCachingService,
-                        QMLExtensions::VideoCachingService &videoCachingService,
                         Models::RecentFilesModel &recentFileModel):
             QObject(),
             m_Files(std::move(files)),
@@ -68,10 +54,6 @@ namespace Commands {
             m_ArtworksRepository(artworksRepository),
             m_SettingsModel(settingsModel),
             m_SwitcherModel(switcherModel),
-            m_MetadataIOService(metadataIOService),
-            m_MetadataIOCoordinator(metadataIOCoordinator),
-            m_ImageCachingService(imageCachingService),
-            m_VideoCachingService(videoCachingService),
             m_RecentFileModel(recentFileModel)
         { }
 
@@ -105,10 +87,6 @@ namespace Commands {
         Models::ArtworksRepository &m_ArtworksRepository;
         Models::SettingsModel &m_SettingsModel;
         Models::SwitcherModel &m_SwitcherModel;
-        MetadataIO::MetadataIOService &m_MetadataIOService;
-        MetadataIO::MetadataIOCoordinator &m_MetadataIOCoordinator;
-        QMLExtensions::ImageCachingService &m_ImageCachingService;
-        QMLExtensions::VideoCachingService &m_VideoCachingService;
         Models::RecentFilesModel &m_RecentFileModel;
         // undo
         int m_OriginalCount = 0;

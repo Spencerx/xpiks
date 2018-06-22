@@ -216,7 +216,11 @@ SOURCES += main.cpp \
     Artworks/basicmetadatamodel.cpp \
     Services/artworksupdatehub.cpp \
     Services/artworksinspectionhub.cpp \
-    SpellCheck/userdictionary.cpp
+    SpellCheck/userdictionary.cpp \
+    Commands/savebackupscommand.cpp \
+    Commands/compositecommand.cpp \
+    Commands/generatethumbnailscommand.cpp \
+    Commands/readmetadatacommand.cpp
 
 RESOURCES += qml.qrc
 
@@ -522,7 +526,11 @@ HEADERS += \
     Artworks/iartworksservice.h \
     AutoComplete/icompletionsource.h \
     Artworks/icurrentartworksource.h \
-    Common/types.h
+    Common/types.h \
+    Commands/savebackupscommand.h \
+    Commands/compositecommand.h \
+    Commands/generatethumbnailscommand.h \
+    Commands/readmetadatacommand.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

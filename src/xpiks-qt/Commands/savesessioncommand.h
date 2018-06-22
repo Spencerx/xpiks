@@ -14,7 +14,7 @@
 #include "icommand.h"
 
 namespace Models {
-    class ArtItemsModel;
+    class ArtworksListModel;
     class SessionManager;
 }
 
@@ -27,16 +27,17 @@ namespace Commands {
     {
     public:
         SaveSessionCommand(Maintenance::MaintenanceService &maintenanceService,
-                           Models::ArtItemsModel &artItemsModel,
+                           Models::ArtworksListModel &artworksListModel,
                            Models::SessionManager &sessionManager);
 
         // ICommand interface
     public:
-        virtual std::shared_ptr<CommandResult> execute() override;
+        virtual void execute() override;
+        virtual void undo() override;
 
     private:
         Maintenance::MaintenanceService &m_MaintenanceService;
-        Models::ArtItemsModel &m_ArtItemsModel;
+        Models::ArtworksListModel &m_ArtworksListModel;
         Models::SessionManager &m_SessionManager;
     };
 }

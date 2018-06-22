@@ -41,19 +41,18 @@ namespace UndoRedo {
         void undoDescriptionChanged();
         void itemRecorded();
         void undoStackEmpty();
-        void actionUndone(int commandID);
 
     private:
         QString getUndoDescription() const { return m_HistoryStack.empty() ? "" : m_HistoryStack.top()->getDescription(); }
 
     public:
-        virtual void recordHistoryItem(std::shared_ptr<Commands::IUndoCommand> &historyItem) override;
+        virtual void recordHistoryItem(std::shared_ptr<Commands::ICommand> &historyItem) override;
         Q_INVOKABLE bool undoLastAction();
         Q_INVOKABLE void discardLastAction();
 
     private:
         // stack for future todos
-        std::stack<std::shared_ptr<Commands::IUndoCommand> > m_HistoryStack;
+        std::stack<std::shared_ptr<Commands::ICommand> > m_HistoryStack;
         QMutex m_Mutex;
     };
 }

@@ -12,7 +12,7 @@
 #include "../Common/defines.h"
 #include "../Common/logging.h"
 
-void UndoRedo::UndoRedoManager::recordHistoryItem(std::shared_ptr<Commands::IUndoCommand> &historyItem) {
+void UndoRedo::UndoRedoManager::recordHistoryItem(std::shared_ptr<Commands::ICommand> &historyItem) {
     LOG_INFO << "History item about to be recorded";
 
     QMutexLocker locker(&m_Mutex);
@@ -36,15 +36,13 @@ bool UndoRedo::UndoRedoManager::undoLastAction() {
     anyItem = !m_HistoryStack.empty();
 
     if (anyItem) {
-        std::shared_ptr<Commands::IUndoCommand> historyItem(std::move(m_HistoryStack.top()));
+        std::shared_ptr<Commands::ICommand> historyItem(std::move(m_HistoryStack.top()));
         m_HistoryStack.pop();
         m_Mutex.unlock();
 
         emit canUndoChanged();
         emit undoDescriptionChanged();
-        int commandID = historyItem->getCommandID();
         historyItem->undo();
-        emit actionUndone(commandID);
     } else {
         m_Mutex.unlock();
         LOG_WARNING << "No item for undo";

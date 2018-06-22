@@ -19,13 +19,11 @@ namespace Commands {
     {
     }
 
-    std::shared_ptr<Commands::CommandResult> CommandManager::processCommand(const std::shared_ptr<Commands::IAppCommand> &command) {
+    void CommandManager::processCommand(const std::shared_ptr<ICommand> &command) {
         Q_ASSERT(command);
-        const int id = generateNextCommandID();
-        std::shared_ptr<Commands::CommandResult> result = command->execute(id);
-        auto undoCommand = std::dynamic_pointer_cast<Commands::IUndoCommand>(command);
-        if (undoCommand) {
-            m_UndoRedoManager.recordHistoryItem(undoCommand);
+        command->execute();
+        if (command->canUndo()) {
+            m_UndoRedoManager.recordHistoryItem(command);
         }
         return result;
     }

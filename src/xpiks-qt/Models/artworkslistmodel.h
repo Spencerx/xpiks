@@ -91,7 +91,7 @@ namespace Models {
         };
 
         struct ArtworksAddResult {
-            Artworks::ArtworksSnapshot m_Snapshot;
+            std::shared_ptr<Artworks::ArtworksSnapshot> m_Snapshot;
             int m_AttachedVectorsCount;
         };
 

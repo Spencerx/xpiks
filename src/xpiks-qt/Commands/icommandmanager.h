@@ -14,14 +14,13 @@
 #include <memory>
 
 namespace Commands {
-    class IAppCommand;
-    class CommandResult;
+    class ICommand;
 
     class ICommandManager {
     public:
         virtual ~ICommandManager() {}
 
-        virtual std::shared_ptr<Commands::CommandResult> processCommand(const std::shared_ptr<IAppCommand> &command) = 0;
+        virtual void processCommand(const std::shared_ptr<ICommand> &command) = 0;
     };
 }
 

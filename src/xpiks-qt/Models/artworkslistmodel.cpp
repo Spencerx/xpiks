@@ -185,7 +185,7 @@ namespace Models {
     ArtworksListModel::ArtworksAddResult ArtworksListModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                                                      Common::AddFilesFlags flags) {
         const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
-        Artworks::ArtworksSnapshot snapshot;
+        auto snapshot = std::make_shared<Artworks::ArtworksSnapshot>();
         snapshot.reserve(newFilesCount);
         qint64 directoryID = 0;
         const int count = getArtworksCount();
@@ -197,7 +197,8 @@ namespace Models {
 
                 if (m_ArtworksRepository.accountFile(file.m_Path, directoryID, directoryFlags)) {
                     ArtworkMetadata *artwork = createArtwork(file, directoryID);
-                    appendArtwork(artwork);
+                    m_ArtworkList.push_back(artwork);
+                    snapshot->append(artwork);
                     connectArtworkSignals(artwork);
                 }
             }
@@ -206,7 +207,7 @@ namespace Models {
 
         const bool autoAttach = Common::HasFlag(flags, Common::AddFilesFlags::FlagAutoFindVectors);
         const int attachedCount = attachVectors(filesCollection, snapshot, count, autoAttach);
-        m_ArtworksRepository.addFiles(snapshot);
+        m_ArtworksRepository.addFiles(*snapshot.get());
 
         // TODO: fix this:
         //syncArtworksIndices();

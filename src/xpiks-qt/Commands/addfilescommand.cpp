@@ -10,12 +10,8 @@
 
 #include "addfilescommand.h"
 #include "../Models/artworkslistmodel.h"
-#include "../MetadataIO/metadataioservice.h"
-#include "../MetadataIO/metadataiocoordinator.h"
 #include "../Common/logging.h"
 #include "../Helpers/indicesranges.h"
-#include "../QMLExtensions/imagecachingservice.h"
-#include "../QMLExtensions/videocachingservice.h"
 
 namespace Commands {
     std::shared_ptr<Commands::CommandResult> AddFilesCommand::execute(int commandID) {
@@ -34,12 +30,6 @@ namespace Commands {
 
     int AddFilesCommand::addFiles() {
         auto addResult = m_ArtworksListModel.addFiles(m_Files, m_Flags);
-
-        quint32 batchID = m_MetadataIOService.readArtworks(addResult.m_Snapshot);
-        int importID = m_MetadataIOCoordinator.readMetadataExifTool(addResult.m_Snapshot, batchID);
-
-        m_ImageCachingService.generatePreviews(addResult.m_Snapshot);
-        m_VideoCachingService.generateThumbnails(addResult.m_Snapshot);
 
         m_RecentFileModel.add(addResult.m_Snapshot);
         saveSession();

@@ -67,8 +67,7 @@ namespace Artworks {
         return *this;
     }
 
-    ArtworksSnapshot::ArtworksSnapshot(const ArtworksSnapshot &other)
-    {
+    ArtworksSnapshot::ArtworksSnapshot(const ArtworksSnapshot &other) {
         copy(other);
     }
 

@@ -23,14 +23,10 @@ namespace Commands {
     public:
         CommandManager(UndoRedo::UndoRedoManager &undoRedoManager);
 
-    private:
-        int generateNextCommandID() { int id = m_LastCommandID++; return id; }
-
     public:
-        virtual std::shared_ptr<Commands::CommandResult> processCommand(const std::shared_ptr<IAppCommand> &command) override;
+        virtual void processCommand(const std::shared_ptr<ICommand> &command) override;
 
     private:
-        volatile int m_LastCommandID;
         UndoRedo::UndoRedoManager &m_UndoRedoManager;
     };
 }

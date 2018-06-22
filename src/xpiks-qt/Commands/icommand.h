@@ -11,39 +11,17 @@
 #ifndef ICOMMANDBASE_H
 #define ICOMMANDBASE_H
 
-#include <memory>
 #include <QString>
 
 namespace Commands {
-    class ICommandManager;
-
-    class CommandResult {
-    public:
-        virtual ~CommandResult() {}
-        virtual int getStatus() const { return 0; }
-    };
-
     class ICommand {
     public:
         virtual ~ICommand() {}
-        virtual std::shared_ptr<CommandResult> execute() { return std::make_shared(new CommandResult()); }
-    };
-
-    class IAppCommand: public ICommand {
     public:
-        virtual ~IAppCommand() {}
-        virtual std::shared_ptr<CommandResult> execute(int commandID) {
-            Q_UNUSED(commandID);
-            return ICommand::execute();
-        }
-    };
-
-    class IUndoCommand: public IAppCommand {
-    public:
-        virtual ~IUndoCommand() {}
-        virtual void undo() = 0;
-        virtual QString getDescription() const = 0;
-        virtual int getCommandID() const = 0;
+        virtual void execute() = 0;
+        virtual void undo() { /*BUMP*/ }
+        virtual bool canUndo() { return false; }
+        virtual QString getDescription() const { return QString(); }
     };
 }
 

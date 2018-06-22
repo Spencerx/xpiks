@@ -95,7 +95,7 @@ namespace MetadataIO {
         emit cacheSyncRequest();
     }
 
-    quint32 MetadataIOService::readArtworks(const ArtworksSnapshot &snapshot) const {
+    quint32 MetadataIOService::readArtworks(const Artworks::ArtworksSnapshot &snapshot) const {
         LOG_INFO << snapshot.size() << "artwork(s)";
         if (m_IsStopped) { return 0; }
         std::vector<std::shared_ptr<MetadataIOTaskBase> > jobs;
@@ -115,7 +115,7 @@ namespace MetadataIO {
         return batchID;
     }
 
-    void MetadataIOService::writeArtworks(const WeakArtworksSnapshot &artworks) const {
+    void MetadataIOService::writeArtworks(const Artworks::WeakArtworksSnapshot &artworks) const {
         LOG_INFO << artworks.size() << "artwork(s)";
         if (m_IsStopped) { return; }
         std::vector<std::shared_ptr<MetadataIOTaskBase> > jobs;
@@ -131,7 +131,7 @@ namespace MetadataIO {
         m_MetadataIOWorker->submitSeparator();
     }
 
-    void MetadataIOService::addArtworks(const WeakArtworksSnapshot &artworks) const {
+    void MetadataIOService::addArtworks(const Artworks::WeakArtworksSnapshot &artworks) const {
         LOG_INFO << artworks.size() << "artwork(s)";
         if (m_IsStopped) { return; }
         std::vector<std::shared_ptr<MetadataIOTaskBase> > jobs;

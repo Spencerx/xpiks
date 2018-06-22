@@ -13,9 +13,8 @@
 
 #include <QObject>
 #include <QVector>
-#include "../Common/baseentity.h"
 #include "../Suggestion/locallibraryquery.h"
-#include "artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
 #include "../Common/delayedactionentity.h"
 
 namespace Models {
@@ -31,7 +30,6 @@ namespace MetadataIO {
 
     class MetadataIOService:
             public QObject,
-            public Common::BaseEntity,
             public Common::DelayedActionEntity
     {
         Q_OBJECT
@@ -49,9 +47,9 @@ namespace MetadataIO {
 
     public:
         void writeArtwork(Artworks::ArtworkMetadata *metadata);
-        quint32 readArtworks(const ArtworksSnapshot &snapshot) const;
-        void writeArtworks(const WeakArtworksSnapshot &artworks) const;
-        void addArtworks(const WeakArtworksSnapshot &artworks) const;
+        quint32 readArtworks(const Artworks::ArtworksSnapshot &snapshot) const;
+        void writeArtworks(const Artworks::WeakArtworksSnapshot &artworks) const;
+        void addArtworks(const Artworks::WeakArtworksSnapshot &artworks) const;
 
     public:
         void searchArtworks(Suggestion::LocalLibraryQuery *query);
