@@ -64,7 +64,7 @@ namespace Common {
     }
 #endif
 
-    enum struct CombinedEditFlags: flag_t {
+    enum struct ArtworkEditFlags: flag_t {
         None = 0,
         EditTitle = 1 << 0,
         EditDescription = 1 << 1,
@@ -72,6 +72,13 @@ namespace Common {
         AppendKeywords = 1 << 3,
         Clear = 1 << 4,
         EditEverything = EditTitle | EditDescription | EditKeywords
+    };
+
+    enum struct KeywordEditFlags: flag_t {
+        None = 0,
+        Remove = 1 << 0,
+        RemoveLast = 1 << 1,
+        Replace = 1 << 2
     };
 
     enum struct SuggestionFlags: flag_t {
@@ -187,7 +194,7 @@ namespace Common {
     // visual studio 2013 bug
 
     template<>
-    struct enable_bitmask_operators<CombinedEditFlags> {
+    struct enable_bitmask_operators<ArtworkEditFlags> {
         static constexpr bool enable = true;
     };
 
@@ -238,6 +245,11 @@ namespace Common {
 
     template<>
     struct enable_bitmask_operators<AddFilesFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<KeywordEditFlags> {
         static constexpr bool enable = true;
     };
 #else

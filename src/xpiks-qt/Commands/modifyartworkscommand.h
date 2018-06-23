@@ -25,6 +25,8 @@ namespace Commands {
         { }
 
     public:
+        virtual bool canUndo() override { return true; }
+
         virtual QString getDescription() const override {
             return m_Count > 1 ? QObject::tr("%1 items modified").arg(m_Count) :
                                  QObject::tr("1 item modified");

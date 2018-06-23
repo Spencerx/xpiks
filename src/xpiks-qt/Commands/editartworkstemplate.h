@@ -26,8 +26,8 @@ namespace Commands {
     public:
         EditArtworksTemplate(const QString &title,
                              const QString &description,
-                             const QString &keywords,
-                             Common::CombinedEditFlags editFlags);
+                             const QStringList &keywords,
+                             Common::ArtworkEditFlags editFlags);
 
         // IArtworksCommandTemplate interface
     public:
@@ -35,15 +35,15 @@ namespace Commands {
         virtual void undo(Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
-        void setKeywords(Artworks::ArtworkMetadata *artwork) const;
-        void setDescription(Artworks::ArtworkMetadata *artwork) const;
-        void setTitle(Artworks::ArtworkMetadata *artwork) const;
+        void editKeywords(Artworks::ArtworkMetadata *artwork) const;
+        void editDescription(Artworks::ArtworkMetadata *artwork) const;
+        void editTitle(Artworks::ArtworkMetadata *artwork) const;
 
     private:
         QString m_Description;
         QString m_Title;
         QStringList m_Keywords;
-        Common::CombinedEditFlags m_EditFlags;
+        Common::ArtworkEditFlags m_EditFlags;
         std::vector<UndoRedo::ArtworkMetadataBackup> m_ArtworksBackups;
     };
 }

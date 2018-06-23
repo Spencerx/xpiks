@@ -379,15 +379,15 @@ namespace Models {
             Artworks::ArtworksSnapshot::Container items;
             items.emplace_back(new ArtworkMetadataLocker(artwork));
 
-            Common::CombinedEditFlags flags = Common::CombinedEditFlags::None;
+            Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::None;
 
             QString title = quickBuffer->getTitle();
             QString description = quickBuffer->getDescription();
             QStringList keywords = quickBuffer->getKeywords();
 
-            if (!title.isEmpty()) { Common::SetFlag(flags, Common::CombinedEditFlags::EditTitle); }
-            if (!description.isEmpty()) { Common::SetFlag(flags, Common::CombinedEditFlags::EditDescription); }
-            if (!keywords.empty()) { Common::SetFlag(flags, Common::CombinedEditFlags::EditKeywords); }
+            if (!title.isEmpty()) { Common::SetFlag(flags, Common::ArtworkEditFlags::EditTitle); }
+            if (!description.isEmpty()) { Common::SetFlag(flags, Common::ArtworkEditFlags::EditDescription); }
+            if (!keywords.empty()) { Common::SetFlag(flags, Common::ArtworkEditFlags::EditKeywords); }
 
             std::shared_ptr<Commands::ModifyArtworksCommand> combinedEditCommand(new Commands::ModifyArtworksCommand(
                                                                                    flags, items, description, title, keywords));

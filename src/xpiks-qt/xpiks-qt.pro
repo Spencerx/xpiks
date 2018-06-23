@@ -224,7 +224,8 @@ SOURCES += main.cpp \
     Commands/generatethumbnailstemplate.cpp \
     Commands/artworksupdatetemplate.cpp \
     Commands/inspectartworkstemplate.cpp \
-    Commands/backupartworkstemplate.cpp
+    Commands/backupartworkstemplate.cpp \
+    Commands/keywordedittemplate.cpp
 
 RESOURCES += qml.qrc
 
@@ -541,7 +542,9 @@ HEADERS += \
     Commands/modifyartworkscommand.h \
     Commands/artworksupdatetemplate.h \
     Commands/inspectartworkstemplate.h \
-    Commands/backupartworkstemplate.h
+    Commands/backupartworkstemplate.h \
+    Commands/keywordedittemplate.h \
+    Commands/emptycommand.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

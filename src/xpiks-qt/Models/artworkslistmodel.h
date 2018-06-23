@@ -25,7 +25,7 @@
 class QQuickTextDocument;
 
 namespace Commands {
-    class ICommandManager;
+    class ICommand;
     class IArtworksCommandTemplate;
 }
 
@@ -61,10 +61,6 @@ namespace Models {
 
     public:
         ArtworksListModel(ArtworksRepository &repository,
-                          Commands::ICommandManager &commandManager,
-                          KeywordsPresets::IPresetsManager &presetsManager,
-                          Artworks::IArtworksService &inspectionService,
-                          AutoComplete::ICompletionSource &completionSource,
                           QObject *parent=0);
         virtual ~ArtworksListModel();
 
@@ -156,7 +152,8 @@ namespace Models {
                                QVector<int> &indicesToUpdate) const;
         void connectArtworkSignals(Artworks::ArtworkMetadata *artwork);
         void syncArtworksIndices();
-        void afterArtworkEdit(Artworks::ArtworkMetadata *artwork);
+        void setItemsSaved(const Helpers::IndicesRanges &ranges);
+        void detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges);
 
     public:
         // qabstractlistmodel methods
@@ -170,19 +167,22 @@ namespace Models {
         Artworks::BasicMetadataModel *getBasicModelObject(int index) const;
 
     public:
-        bool removeKeywordAt(int artworkIndex, int keywordIndex);
-        bool removeLastKeyword(int artworkIndex);
-        bool appendKeyword(int artworkIndex, const QString &keyword);
-        void pasteKeywords(int artworkIndex, const QStringList &keywords);
-        void addSuggestedKeywords(int artworkIndex, const QStringList &keywords);
-        void setItemsSaved(const Helpers::IndicesRanges &ranges);
-        bool editKeyword(int artworkIndex, int keywordIndex, const QString &replacement);
-        void plainTextEdit(int artworkIndex, const QString &rawKeywords, bool spaceIsSeparator=false);
-        void detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges);
-        void expandPreset(int artworkIndex, int keywordIndex, unsigned int presetID);
-        void expandLastAsPreset(int artworkIndex);
-        void addPreset(int artworkIndex, unsigned int presetID);
-        bool acceptCompletionAsPreset(int artworkIndex, int completionID);
+        std::shared_ptr<Commands::ICommand> removeKeywordAt(int artworkIndex, int keywordIndex);
+        std::shared_ptr<Commands::ICommand> removeLastKeyword(int artworkIndex);
+        std::shared_ptr<Commands::ICommand> appendKeyword(int artworkIndex, const QString &keyword);
+        std::shared_ptr<Commands::ICommand> pasteKeywords(int artworkIndex, const QStringList &keywords);
+        std::shared_ptr<Commands::ICommand> addSuggestedKeywords(int artworkIndex, const QStringList &keywords);
+        std::shared_ptr<Commands::ICommand> editKeyword(int artworkIndex, int keywordIndex, const QString &replacement);
+        std::shared_ptr<Commands::ICommand> plainTextEdit(int artworkIndex, const QString &rawKeywords, bool spaceIsSeparator=false);
+        std::shared_ptr<Commands::ICommand> expandPreset(int artworkIndex, int keywordIndex,
+                                                         unsigned int presetID, KeywordsPresets::IPresetsManager &presetsManager);
+        std::shared_ptr<Commands::ICommand> expandLastAsPreset(int artworkIndex,
+                                                               KeywordsPresets::IPresetsManager &presetsManager);
+        std::shared_ptr<Commands::ICommand> addPreset(int artworkIndex, unsigned int presetID,
+                                                      KeywordsPresets::IPresetsManager &presetsManager);
+        std::shared_ptr<Commands::ICommand> acceptCompletionAsPreset(int artworkIndex, int completionID,
+                                                                     KeywordsPresets::IPresetsManager &presetsManager,
+                                                                     AutoComplete::ICompletionSource &completionsSource);
 
     signals:
         void modifiedArtworksCountChanged();
@@ -283,9 +283,6 @@ namespace Models {
         qint64 m_LastID;
         size_t m_CurrentItemIndex;
         ArtworksRepository &m_ArtworksRepository;
-        Commands::ICommandManager &m_CommandManager;
-        KeywordsPresets::IPresetsManager &m_PresetsManager;
-        AutoComplete::ICompletionSource &m_CompletionSource;
         std::shared_ptr<Commands::IArtworksCommandTemplate> m_InspectionTemplate;
         std::shared_ptr<Commands::IArtworksCommandTemplate> m_BackupTemplate;
         std::shared_ptr<Commands::IArtworksCommandTemplate> m_UpdateTemplate;

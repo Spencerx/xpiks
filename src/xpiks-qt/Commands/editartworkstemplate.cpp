@@ -14,27 +14,27 @@
 #include "../Artworks/artworkssnapshot.h"
 
 namespace Commands {
-    QString combinedFlagsToString(Common::CombinedEditFlags flags) {
+    QString combinedFlagsToString(Common::ArtworkEditFlags flags) {
         using namespace Common;
 
-        if (flags == CombinedEditFlags::EditEverything) {
+        if (flags == ArtworkEditFlags::EditEverything) {
             return QLatin1String("EditEverything");
         }
 
         QStringList flagsStr;
-        if (Common::HasFlag(flags, CombinedEditFlags::EditDescription)) {
+        if (Common::HasFlag(flags, ArtworkEditFlags::EditDescription)) {
             flagsStr.append("EditDescription");
         }
 
-        if (Common::HasFlag(flags, CombinedEditFlags::EditTitle)) {
+        if (Common::HasFlag(flags, ArtworkEditFlags::EditTitle)) {
             flagsStr.append("EditTitle");
         }
 
-        if (Common::HasFlag(flags, CombinedEditFlags::EditKeywords)) {
+        if (Common::HasFlag(flags, ArtworkEditFlags::EditKeywords)) {
             flagsStr.append("EditKeywords");
         }
 
-        if (Common::HasFlag(flags, CombinedEditFlags::Clear)) {
+        if (Common::HasFlag(flags, ArtworkEditFlags::Clear)) {
             flagsStr.append("Clear");
         }
 
@@ -43,8 +43,8 @@ namespace Commands {
 
     EditArtworksTemplate::EditArtworksTemplate(const QString &title,
                                                const QString &description,
-                                               const QString &keywords,
-                                               Common::CombinedEditFlags editFlags):
+                                               const QStringList &keywords,
+                                               Common::ArtworkEditFlags editFlags):
         m_Title(title),
         m_Description(description),
         m_Keywords(keywords),
@@ -62,9 +62,9 @@ namespace Commands {
 
             m_ArtworksBackups.emplace_back(UndoRedo::ArtworkMetadataBackup(artwork));
 
-            setKeywords(artwork);
-            setDescription(artwork);
-            setTitle(artwork);
+            editKeywords(artwork);
+            editDescription(artwork);
+            editTitle(artwork);
         }
     }
 
@@ -79,13 +79,13 @@ namespace Commands {
         }
     }
 
-    void EditArtworksTemplate::setKeywords(Artworks::ArtworkMetadata *artwork) const {
-        if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditKeywords)) {
-            if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::AppendKeywords)) {
+    void EditArtworksTemplate::editKeywords(Artworks::ArtworkMetadata *artwork) const {
+        if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::EditKeywords)) {
+            if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::AppendKeywords)) {
                 artwork->appendKeywords(m_Keywords);
             }
             else {
-                if (Common::HasFlag(m_EditFlags,Common:: CombinedEditFlags::Clear)) {
+                if (Common::HasFlag(m_EditFlags,Common:: ArtworkEditFlags::Clear)) {
                     artwork->clearKeywords();
                 } else {
                     artwork->setKeywords(m_Keywords);
@@ -94,9 +94,9 @@ namespace Commands {
         }
     }
 
-    void EditArtworksTemplate::setDescription(Artworks::ArtworkMetadata *artwork) const {
-        if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditDescription)) {
-            if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::Clear)) {
+    void EditArtworksTemplate::editDescription(Artworks::ArtworkMetadata *artwork) const {
+        if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::EditDescription)) {
+            if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::Clear)) {
                 artwork->setDescription("");
             } else {
                 artwork->setDescription(m_Description);
@@ -104,9 +104,9 @@ namespace Commands {
         }
     }
 
-    void EditArtworksTemplate::setTitle(Artworks::ArtworkMetadata *artwork) const {
-        if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditTitle)) {
-            if (Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::Clear)) {
+    void EditArtworksTemplate::editTitle(Artworks::ArtworkMetadata *artwork) const {
+        if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::EditTitle)) {
+            if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::Clear)) {
                 artwork->setTitle("");
             } else {
                 artwork->setTitle(m_Title);

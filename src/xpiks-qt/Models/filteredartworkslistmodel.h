@@ -122,7 +122,7 @@ namespace Models {
         void allItemsSelectedChanged();
 
     private:
-        void removeMetadataInItems(Artworks::ArtworksSnapshot::Container &itemsToClear, Common::CombinedEditFlags flags) const;
+        void removeMetadataInItems(Artworks::ArtworksSnapshot::Container &itemsToClear, Common::ArtworkEditFlags flags) const;
         void removeKeywordsInItem(ArtworkMetadata *artwork);
         void setFilteredItemsSelected(bool selected);
         void setFilteredItemsSelectedEx(const std::function<bool (ArtworkMetadata *)> pred, bool selected, bool unselectFirst);

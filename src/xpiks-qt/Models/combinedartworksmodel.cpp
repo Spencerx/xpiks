@@ -27,7 +27,7 @@ namespace Models {
         ArtworkProxyBase(),
         Common::DelayedActionEntity(1000, MAX_EDITING_PAUSE_RESTARTS),
         m_CommonKeywordsModel(m_HoldPlaceholder, this),
-        m_EditFlags(Common::CombinedEditFlags::None),
+        m_EditFlags(Common::ArtworkEditFlags::None),
         m_ModifiedFlags(0)
     {
         m_CommonKeywordsModel.setSpellCheckInfo(&m_SpellCheckInfo);
@@ -109,7 +109,7 @@ namespace Models {
 
     void CombinedArtworksModel::setChangeDescription(bool value) {
         LOG_INFO << value;
-        auto flag = Common::CombinedEditFlags::EditDescription;
+        auto flag = Common::ArtworkEditFlags::EditDescription;
         if (Common::HasFlag(m_EditFlags, flag) != value) {
             Common::ApplyFlag(m_EditFlags, value, flag);
             emit changeDescriptionChanged();
@@ -118,7 +118,7 @@ namespace Models {
 
     void CombinedArtworksModel::setChangeTitle(bool value) {
         LOG_INFO << value;
-        auto flag = Common::CombinedEditFlags::EditTitle;
+        auto flag = Common::ArtworkEditFlags::EditTitle;
         if (Common::HasFlag(m_EditFlags, flag) != value) {
             Common::ApplyFlag(m_EditFlags, value, flag);
             emit changeTitleChanged();
@@ -127,7 +127,7 @@ namespace Models {
 
     void CombinedArtworksModel::setChangeKeywords(bool value) {
         LOG_INFO << value;
-        auto flag = Common::CombinedEditFlags::EditKeywords;
+        auto flag = Common::ArtworkEditFlags::EditKeywords;
         if (Common::HasFlag(m_EditFlags, flag) != value) {
             Common::ApplyFlag(m_EditFlags, value, flag);
             emit changeKeywordsChanged();
@@ -136,7 +136,7 @@ namespace Models {
 
     void CombinedArtworksModel::setAppendKeywords(bool value) {
         LOG_INFO << value;
-        auto flag = Common::CombinedEditFlags::AppendKeywords;
+        auto flag = Common::ArtworkEditFlags::AppendKeywords;
         if (Common::HasFlag(m_EditFlags, flag) != value) {
             Common::ApplyFlag(m_EditFlags, value, flag);
             emit appendKeywordsChanged();
@@ -535,7 +535,7 @@ namespace Models {
 
         // TEMPORARY (enable everything on initial launch) --
         m_ModifiedFlags = 0;
-        m_EditFlags = Common::CombinedEditFlags::None;
+        m_EditFlags = Common::ArtworkEditFlags::None;
         enableAllFields();
         // TEMPORARY (enable everything on initial launch) --
 

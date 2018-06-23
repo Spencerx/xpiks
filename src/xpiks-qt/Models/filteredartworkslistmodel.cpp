@@ -280,12 +280,12 @@ namespace Models {
     void FilteredArtworksListModel::removeMetadataInSelected() const {
         LOG_DEBUG << "#";
         auto selectedArtworks = getSelectedArtworksSnapshot();
-        Common::CombinedEditFlags flags = Common::CombinedEditFlags::None;
+        Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::None;
         using namespace Common;
-        Common::SetFlag(flags, CombinedEditFlags::EditDescription);
-        Common::SetFlag(flags, CombinedEditFlags::EditKeywords);
-        Common::SetFlag(flags, CombinedEditFlags::EditTitle);
-        Common::SetFlag(flags, CombinedEditFlags::Clear);
+        Common::SetFlag(flags, ArtworkEditFlags::EditDescription);
+        Common::SetFlag(flags, ArtworkEditFlags::EditKeywords);
+        Common::SetFlag(flags, ArtworkEditFlags::EditTitle);
+        Common::SetFlag(flags, ArtworkEditFlags::Clear);
         removeMetadataInItems(selectedArtworks, flags);
     }
 
@@ -504,7 +504,7 @@ namespace Models {
         invalidateFilter();
     }
 
-    void FilteredArtworksListModel::removeMetadataInItems(Artworks::ArtworksSnapshot::Container &itemsToClear, Common::CombinedEditFlags flags) const {
+    void FilteredArtworksListModel::removeMetadataInItems(Artworks::ArtworksSnapshot::Container &itemsToClear, Common::ArtworkEditFlags flags) const {
         LOG_INFO << itemsToClear.size() << "item(s) with flags =" << (int)flags;
         std::shared_ptr<Commands::ModifyArtworksCommand> combinedEditCommand(new Commands::ModifyArtworksCommand(
                 flags,
@@ -514,9 +514,9 @@ namespace Models {
     }
 
     void FilteredArtworksListModel::removeKeywordsInItem(ArtworkMetadata *artwork) {
-        Common::CombinedEditFlags flags = Common::CombinedEditFlags::None;
-        Common::SetFlag(flags, Common::CombinedEditFlags::EditKeywords);
-        Common::SetFlag(flags, Common::CombinedEditFlags::Clear);
+        Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::None;
+        Common::SetFlag(flags, Common::ArtworkEditFlags::EditKeywords);
+        Common::SetFlag(flags, Common::ArtworkEditFlags::Clear);
 
         Artworks::ArtworksSnapshot::Container items;
 

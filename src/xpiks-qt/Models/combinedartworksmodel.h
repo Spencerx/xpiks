@@ -94,16 +94,16 @@ namespace Models {
         virtual void setTitle(const QString &value) override;
         virtual void setKeywords(const QStringList &keywords) override;
 
-        bool getChangeDescription() const { return Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditDescription); }
+        bool getChangeDescription() const { return Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::EditDescription); }
         void setChangeDescription(bool value);
 
-        bool getChangeTitle() const { return Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditTitle); }
+        bool getChangeTitle() const { return Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::EditTitle); }
         void setChangeTitle(bool value);
 
-        bool getChangeKeywords() const { return Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::EditKeywords); }
+        bool getChangeKeywords() const { return Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::EditKeywords); }
         void setChangeKeywords(bool value);
 
-        bool getAppendKeywords() const { return Common::HasFlag(m_EditFlags, Common::CombinedEditFlags::AppendKeywords); }
+        bool getAppendKeywords() const { return Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::AppendKeywords); }
         void setAppendKeywords(bool value);
 
     signals:
@@ -219,7 +219,7 @@ namespace Models {
         Common::Hold m_HoldPlaceholder;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
-        Common::CombinedEditFlags m_EditFlags;
+        Common::ArtworkEditFlags m_EditFlags;
         Common::flag_t m_ModifiedFlags;
     };
 }
