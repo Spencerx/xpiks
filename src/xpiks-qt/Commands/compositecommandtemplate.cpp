@@ -9,6 +9,7 @@
  */
 
 #include "compositecommandtemplate.h"
+#include "../Common/logging.h"
 
 namespace Commands {
     CompositeCommandTemplate::CompositeCommandTemplate(
@@ -17,14 +18,20 @@ namespace Commands {
     }
 
     void CompositeCommandTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "#";
         for (auto &t: m_Templates) {
-            t->execute(snapshot);
+            if (t) {
+                t->execute(snapshot);
+            }
         }
     }
 
     void CompositeCommandTemplate::undo(Artworks::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "#";
         for (auto &t: m_Templates) {
-            t->undo(snapshot);
+            if (t) {
+                t->undo(snapshot);
+            }
         }
     }
 }

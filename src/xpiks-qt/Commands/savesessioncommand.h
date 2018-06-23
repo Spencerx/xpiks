@@ -34,7 +34,7 @@ namespace Commands {
         // ICommand interface
     public:
         virtual void execute() override;
-        virtual void undo() override;
+        virtual void undo() override { execute(); }
 
         // IArtworksCommandTemplate interface
     public:

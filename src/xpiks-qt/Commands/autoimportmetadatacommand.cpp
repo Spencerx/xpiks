@@ -24,6 +24,7 @@ namespace Commands {
     }
 
     void AutoImportMetadataCommand::execute() {
+        LOG_DEBUG << "#";
         if (m_SettingsModel.getUseAutoImport() && m_SwitcherModel.getUseAutoImport()) {
             LOG_DEBUG << "Autoimport is ON. Proceeding...";
             m_MetadataIOCoordinator.continueReading(false);

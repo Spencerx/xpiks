@@ -23,6 +23,7 @@ namespace Commands {
     }
 
     void ExpandPresetTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "#";
         Q_ASSERT(snapshot.size() == 1);
         QStringList keywords;
 
@@ -35,17 +36,19 @@ namespace Commands {
             } else {
                 artwork->appendKeywords(keywords);
             }
+        } else {
+            LOG_INFO << "Not found preset" << m_PresetID;
         }
     }
 
     void ExpandPresetTemplate::undo(Artworks::ArtworksSnapshot &snapshot) {
-        Q_ASSERT(snapshot.size() == m_ArtworksBackups.size());
+        Q_ASSERT(snapshot.size() >= m_ArtworksBackups.size());
         Q_ASSERT(snapshot.size() == 1);
         LOG_DEBUG << "#";
-        const size_t size = snapshot.size();
+        const size_t size = m_ArtworksBackups.size();
         for (size_t i = 0; i < size; i++) {
-            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
             auto &backup = m_ArtworksBackups.at(i);
+            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
             backup.restore(artwork);
         }
     }

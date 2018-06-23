@@ -8,17 +8,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "addtorecenttemplate.h"
-#include "../Models/recentfilesmodel.h"
+#include "backupartworkstemplate.h"
+#include "../MetadataIO/metadataioservice.h"
 
 namespace Commands {
-    AddToRecentTemplate::AddToRecentTemplate(Models::RecentFilesModel &recentFilesModel):
-        m_RecentFilesModel(recentFilesModel)
+    BackupArtworksTemplate::BackupArtworksTemplate(MetadataIO::MetadataIOService &metadataIOService):
+        m_MetadataIOService(metadataIOService)
     {
     }
 
-    void AddToRecentTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+    void BackupArtworksTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
-        m_RecentFilesModel.add(snapshot);
+        m_MetadataIOService.writeArtworks(snapshot.getWeakSnapshot());
     }
 }

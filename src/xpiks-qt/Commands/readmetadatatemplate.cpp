@@ -22,6 +22,7 @@ namespace Commands {
     }
 
     void ReadMetadataTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "#";
         quint32 batchID = m_MetadataIOService.readArtworks(snapshot);
         int importID = m_MetadataIOCoordinator.readMetadataExifTool(snapshot, batchID);
         Q_UNUSED(importID);

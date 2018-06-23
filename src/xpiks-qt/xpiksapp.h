@@ -128,6 +128,7 @@ private:
     void afterServicesStarted();
     void executeMaintenanceJobs();
     void connectEntitiesSignalsSlots();
+    void injectActionsTemplates();
 
 signals:
     void globalCloseRequested();

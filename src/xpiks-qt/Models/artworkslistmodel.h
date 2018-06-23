@@ -26,6 +26,7 @@ class QQuickTextDocument;
 
 namespace Commands {
     class ICommandManager;
+    class IArtworksCommandTemplate;
 }
 
 namespace KeywordsPresets {
@@ -39,6 +40,10 @@ namespace Artworks {
 
 namespace AutoComplete {
     class ICompletionSource;
+}
+
+namespace Services {
+    class ArtworkUpdateRequest;
 }
 
 namespace Models {
@@ -91,7 +96,7 @@ namespace Models {
         };
 
         struct ArtworksAddResult {
-            std::shared_ptr<Artworks::ArtworksSnapshot> m_Snapshot;
+            Artworks::ArtworksSnapshot m_Snapshot;
             int m_AttachedVectorsCount;
         };
 
@@ -121,8 +126,12 @@ namespace Models {
         void unlockAllForIO();
 
     public:
+        void setBackupActionTemplate(const std::shared_ptr<Commands::IArtworksCommandTemplate> &actionTemplate);
+        void setInspectActionTemplate(const std::shared_ptr<Commands::IArtworksCommandTemplate> &actionTemplate);
+
+    public:
         // update hub related
-        void processUpdateRequests(const std::vector<std::shared_ptr<QMLExtensions::ArtworkUpdateRequest> > &updateRequests);
+        void processUpdateRequests(const std::vector<std::shared_ptr<Services::ArtworkUpdateRequest> > &updateRequests);
         void updateArtworksByIDs(const QSet<qint64> &artworkIDs, const QVector<int> &rolesToUpdate);
 
     public:
@@ -147,6 +156,7 @@ namespace Models {
                                QVector<int> &indicesToUpdate) const;
         void connectArtworkSignals(Artworks::ArtworkMetadata *artwork);
         void syncArtworksIndices();
+        void afterArtworkEdit(Artworks::ArtworkMetadata *artwork);
 
     public:
         // qabstractlistmodel methods
@@ -275,8 +285,10 @@ namespace Models {
         ArtworksRepository &m_ArtworksRepository;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
-        Artworks::IArtworksService &m_InspectionService;
         AutoComplete::ICompletionSource &m_CompletionSource;
+        std::shared_ptr<Commands::IArtworksCommandTemplate> m_InspectionTemplate;
+        std::shared_ptr<Commands::IArtworksCommandTemplate> m_BackupTemplate;
+        std::shared_ptr<Commands::IArtworksCommandTemplate> m_UpdateTemplate;
         ArtworksContainer m_FinalizationList;
 #ifdef QT_DEBUG
         ArtworksContainer m_DestroyedList;

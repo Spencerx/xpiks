@@ -221,7 +221,10 @@ SOURCES += main.cpp \
     Commands/compositecommandtemplate.cpp \
     Commands/editartworkstemplate.cpp \
     Commands/expandpresettemplate.cpp \
-    Commands/generatethumbnailstemplate.cpp
+    Commands/generatethumbnailstemplate.cpp \
+    Commands/artworksupdatetemplate.cpp \
+    Commands/inspectartworkstemplate.cpp \
+    Commands/backupartworkstemplate.cpp
 
 RESOURCES += qml.qrc
 
@@ -535,7 +538,10 @@ HEADERS += \
     Commands/editartworkstemplate.h \
     Commands/expandpresettemplate.h \
     Commands/generatethumbnailstemplate.h \
-    Commands/modifyartworkscommand.h
+    Commands/modifyartworkscommand.h \
+    Commands/artworksupdatetemplate.h \
+    Commands/inspectartworkstemplate.h \
+    Commands/backupartworkstemplate.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

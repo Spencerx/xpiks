@@ -22,6 +22,7 @@ namespace Commands {
     }
 
     void GenerateThumbnailsTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "#";
         m_ImageCachingService.generatePreviews(snapshot);
         m_VideoCachingService.generateThumbnails(snapshot);
     }

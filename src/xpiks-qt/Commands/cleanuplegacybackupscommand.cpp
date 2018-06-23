@@ -26,6 +26,7 @@ namespace Commands {
     }
 
     void CleanupLegacyBackupsCommand::execute() {
+        LOG_DEBUG << "#";
         for (auto &dir: m_Directories) {
             m_MaintenanceService.cleanupOldXpksBackups(dir);
         }

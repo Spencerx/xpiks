@@ -29,6 +29,9 @@
 #include "Commands/autoimportmetadatacommand.h"
 #include "Commands/compositecommandtemplate.h"
 #include "Commands/generatethumbnailstemplate.h"
+#include "Commands/artworksupdatetemplate.h"
+#include "Commands/inspectartworkstemplate.h"
+#include "Commands/backupartworkstemplate.h"
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_LogsModel(&m_ColorsModel),
@@ -119,6 +122,7 @@ void XpiksApp::initialize() {
     m_RecentFileModel.initialize();
 
     connectEntitiesSignalsSlots();
+    injectActionsTemplates();
 
     m_LanguagesModel.initFirstLanguage();
     m_LanguagesModel.loadLanguages();
@@ -551,6 +555,18 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_PresetsModel, &KeywordsPresets::PresetKeywordsModel::presetsUpdated,
                      &m_PluginManager, &Plugins::PluginManager::onPresetsUpdated);
 #endif
+}
+
+void XpiksApp::injectActionsTemplates() {
+    LOG_DEBUG << "#";
+    using namespace Commands;
+    auto inspectionTemplate = std::make_shared<IArtworksCommandTemplate>(
+                new InspectArtworksTemplate(m_SpellCheckerService));
+    auto backupTemplate = std::make_shared<IArtworksCommandTemplate>(
+                new BackupArtworksTemplate(m_MetadataIOService));
+
+    m_ArtworksListModel.setBackupActionTemplate(backupTemplate);
+    m_ArtworksListModel.setInspectActionTemplate(inspectionTemplate);
 }
 
 void XpiksApp::servicesInitialized(int status) {

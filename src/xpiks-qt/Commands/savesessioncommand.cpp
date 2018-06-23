@@ -23,11 +23,8 @@ namespace Commands {
     {
     }
 
-    void SaveSessionCommand::undo() {
-        execute();
-    }
-
     void SaveSessionCommand::execute() {
+        LOG_DEBUG << "#";
         m_MaintenanceService.saveSession(ArtworksListModel.snapshotAll(), &m_SessionManager);
     }
 }
