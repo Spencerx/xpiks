@@ -11,17 +11,22 @@
 #ifndef REMOVEDIRECTORYCOMMAND_H
 #define REMOVEDIRECTORYCOMMAND_H
 
-#include "removefilescommand.h"
+#include "removefilescommandbase.h"
 
 namespace Commands {
-    class RemoveDirectoryCommand: public RemoveFilesCommand
+    class RemoveDirectoryCommand: public RemoveFilesCommandBase
     {
     public:
-        RemoveDirectoryCommand();
+        RemoveDirectoryCommand(int directoryID,
+                               Models::ArtworksListModel &artworksList,
+                               Models::ArtworksRepository &artworksRepository);
 
-        // RemoveFilesCommand interface
-    protected:
-        virtual Models::ArtworksListModel::ArtworksRemoveResult removeFiles() override;
+        // ICommand interface
+    public:
+        virtual void execute() override;
+
+    private:
+        int m_DirectoryID;
     };
 }
 

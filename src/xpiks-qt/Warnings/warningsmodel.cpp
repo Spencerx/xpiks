@@ -11,11 +11,11 @@
 #include "warningsmodel.h"
 #include <QObject>
 #include <QStringList>
-#include "../Models/artitemsmodel.h"
-#include "../Models/artworkmetadata.h"
+#include "../Models/artworkslistmodel.h"
+#include "../Artworks/artworkmetadata.h"
 #include "../Common/flags.h"
-#include "../Models/imageartwork.h"
-#include "../Common/basickeywordsmodel.h"
+#include "../Artworks/imageartwork.h"
+#include "../Artworks/basickeywordsmodel.h"
 #include "../Helpers/indiceshelper.h"
 #include "warningssettingsmodel.h"
 
@@ -133,48 +133,36 @@ namespace Warnings {
         }
     }
 
-    WarningsModel::WarningsModel(QObject *parent):
+    WarningsModel::WarningsModel(Models::ArtworksListModel &artworksListModel, WarningsSettingsModel &settings, QObject *parent):
         QSortFilterProxyModel(parent),
-        m_WarningsSettingsModel(nullptr),
+        m_WarningsSettingsModel(settings),
+        m_ArtworksListModel(artworksListModel),
         m_ShowOnlySelected(false)
     {
-    }
-
-    void WarningsModel::setWarningsSettingsModel(const WarningsSettingsModel *warningsSettingsModel) {
-        Q_ASSERT(warningsSettingsModel != nullptr);
-        m_WarningsSettingsModel = warningsSettingsModel;
-
-#ifndef CORE_TESTS
+        setSourceModel(m_ArtworksListModel);
         QObject::connect(warningsSettingsModel, &WarningsSettingsModel::settingsUpdated,
                          this, &WarningsModel::warningsSettingsUpdated);
-#endif
     }
 
     int WarningsModel::getMinKeywordsCount() const {
         int count = 0;
 
         if (m_WarningsSettingsModel != nullptr) {
-            count = m_WarningsSettingsModel->getMinKeywordsCount();
+            count = m_WarningsSettingsModel.getMinKeywordsCount();
         }
 
         return count;
     }
 
     QStringList WarningsModel::describeWarnings(int index) const {
-        Q_ASSERT(m_WarningsSettingsModel != nullptr);
         QStringList descriptions;
 
         if (0 <= index && index < rowCount()) {
-            QAbstractItemModel *sourceItemModel = sourceModel();
-            Models::ArtItemsModel *artItemsModel = dynamic_cast<Models::ArtItemsModel *>(sourceItemModel);
-            Q_ASSERT(artItemsModel != NULL);
-            QModelIndex originalIndex = mapToSource(this->index(index, 0));
-            int row = originalIndex.row();
-            Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(row);
-
-            if (metadata != NULL) {
-                Common::WarningFlags warningsFlags = metadata->getWarningsFlags();
-                describeWarningFlags(warningsFlags, metadata, m_WarningsSettingsModel, descriptions);
+            int originalIndex = getOriginalIndex(index);
+            Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
+            if (artwork != NULL) {
+                Common::WarningFlags warningsFlags = artwork->getWarningsFlags();
+                describeWarningFlags(warningsFlags, artwork, m_WarningsSettingsModel, descriptions);
             }
         }
 
@@ -233,36 +221,30 @@ namespace Warnings {
 
     bool WarningsModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
         Q_UNUSED(sourceParent);
-
-        QAbstractItemModel *sourceItemModel = sourceModel();
-        Models::ArtItemsModel *artItemsModel = dynamic_cast<Models::ArtItemsModel *>(sourceItemModel);
-        Q_ASSERT(artItemsModel != NULL);
-        Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(sourceRow);
-
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(sourceRow);
         bool rowIsOk = false;
-
-        if (metadata != NULL) {
-            auto warningsFlags = metadata->getWarningsFlags();
+        if (artwork != nullptr && !artwork->isRemoved()) {
+            auto warningsFlags = artwork->getWarningsFlags();
             const bool anyWarnings = warningsFlags != Common::WarningFlags::None;
 
             rowIsOk = anyWarnings;
 
             if (m_ShowOnlySelected) {
-                rowIsOk = metadata->isSelected() && anyWarnings;
+                rowIsOk = artwork->isSelected() && anyWarnings;
             }
         }
 
         return rowIsOk;
     }
 
-    void WarningsModel::setSourceModel(QAbstractItemModel *sourceModel) {
-        QSortFilterProxyModel::setSourceModel(sourceModel);
+    void WarningsModel::setSourceModel(Models::ArtworksListModel &artworksListModel) {
+        QSortFilterProxyModel::setSourceModel(&artworksListModel);
 
-        QObject::connect(sourceModel, &QAbstractItemModel::rowsRemoved,
+        QObject::connect(&artworksListModel, &QAbstractItemModel::rowsRemoved,
                          this, &WarningsModel::sourceRowsRemoved);
-        QObject::connect(sourceModel, &QAbstractItemModel::rowsInserted,
+        QObject::connect(&artworksListModel, &QAbstractItemModel::rowsInserted,
                          this, &WarningsModel::sourceRowsInserted);
-        QObject::connect(sourceModel, &QAbstractItemModel::modelReset,
+        QObject::connect(&artworksListModel, &QAbstractItemModel::modelReset,
                          this, &WarningsModel::sourceModelReset);
     }
 

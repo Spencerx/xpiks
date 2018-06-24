@@ -12,10 +12,16 @@
 #include "../SpellCheck/spellcheckerservice.h"
 #include "../Artworks/artworkssnapshot.h"
 #include "../Helpers/cpphelpers.h"
+#include "../Models/settingsmodel.h"
+#include "../Warnings/warningsservice.h"
 
 namespace Commands {
-    InspectArtworksTemplate::InspectArtworksTemplate(SpellCheck::SpellCheckerService &spellCheckService):
-        m_SpellCheckService(spellCheckService)
+    InspectArtworksTemplate::InspectArtworksTemplate(SpellCheck::SpellCheckerService &spellCheckService,
+                                                     Warnings::WarningsService &warningsService,
+                                                     Models::SettingsModel &settingsModel):
+        m_SpellCheckService(spellCheckService),
+        m_WarningsService(warningsService),
+        m_SettingsModel(settingsModel)
     {
     }
 
@@ -24,6 +30,11 @@ namespace Commands {
         auto itemsToCheck = Helpers::map(snapshot.getWeakSnapshot(), [](const Artworks::ArtworkMetadata *artwork) {
            return artwork->getBasicModel();
         });
-        m_SpellCheckService.submitItems(itemsToCheck);
+
+        if (m_SettingsModel.getUseSpellCheck()) {
+            m_SpellCheckService.submitItems(itemsToCheck);
+        } else {
+            m_WarningsService.submitItems(itemsToCheck);
+        }
     }
 }

@@ -196,10 +196,8 @@ SOURCES += main.cpp \
     Commands/addfilescommand.cpp \
     Commands/cleanuplegacybackupscommand.cpp \
     Helpers/indicesranges.cpp \
-    Commands/removefilescommand.cpp \
     Filesystem/indexedfilescollection.cpp \
     Models/artworkslistmodel.cpp \
-    Commands/removeselectedfilescommand.cpp \
     Commands/removedirectorycommand.cpp \
     Models/filteredartworkslistmodel.cpp \
     Artworks/artworkssnapshot.cpp \
@@ -225,7 +223,9 @@ SOURCES += main.cpp \
     Commands/artworksupdatetemplate.cpp \
     Commands/inspectartworkstemplate.cpp \
     Commands/backupartworkstemplate.cpp \
-    Commands/keywordedittemplate.cpp
+    Commands/keywordedittemplate.cpp \
+    Commands/removefilescommandbase.cpp \
+    Commands/removefilescommand.cpp
 
 RESOURCES += qml.qrc
 
@@ -499,10 +499,8 @@ HEADERS += \
     Commands/addfilescommand.h \
     Commands/cleanuplegacybackupscommand.h \
     Helpers/indicesranges.h \
-    Commands/removefilescommand.h \
     Filesystem/indexedfilescollection.h \
     Models/artworkslistmodel.h \
-    Commands/removeselectedfilescommand.h \
     Commands/removedirectorycommand.h \
     Models/filteredartworkslistmodel.h \
     Artworks/artworkssnapshot.h \
@@ -544,7 +542,9 @@ HEADERS += \
     Commands/inspectartworkstemplate.h \
     Commands/backupartworkstemplate.h \
     Commands/keywordedittemplate.h \
-    Commands/emptycommand.h
+    Commands/emptycommand.h \
+    Commands/removefilescommandbase.h \
+    Commands/removefilescommand.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

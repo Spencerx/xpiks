@@ -17,12 +17,12 @@ namespace Commands {
     AddFilesCommand::AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> &files,
                                      Common::AddFilesFlags flags,
                                      Models::ArtworksListModel &artworksListModel,
-                                     std::shared_ptr<IArtworksCommandTemplate> &addedArtworksCommand):
+                                     std::shared_ptr<IArtworksCommandTemplate> &addedArtworksTemplate):
         QObject(),
         m_Files(std::move(files)),
         m_Flags(flags),
         m_ArtworksListModel(artworksListModel),
-        m_AddedArtworksCommand(std::move(addedArtworksCommand))
+        m_AddedArtworksTemplate(std::move(addedArtworksTemplate))
     { }
 
     void AddFilesCommand::execute() {
@@ -32,11 +32,11 @@ namespace Commands {
         auto addResult = m_ArtworksListModel.addFiles(m_Files, m_Flags);
         m_AddedCount = addResult.m_Snapshot->size();
 
-        if (m_AddedArtworksCommand) {
-            m_AddedArtworksCommand->execute(*addResult.m_Snapshot.get());
+        if (m_AddedArtworksTemplate) {
+            m_AddedArtworksTemplate->execute(addResult.m_Snapshot);
         }
 
-        emit artworksAdded(importID, addResult.m_Snapshot.size(), addResult.m_AttachedVectorsCount);
+        emit artworksAdded(addResult.m_Snapshot.size(), addResult.m_AttachedVectorsCount);
 
         // clean resources if this will be stored in undo manager
         m_Files.reset();
@@ -49,5 +49,7 @@ namespace Commands {
     void AddFilesCommand::undo() {
         LOG_DEBUG << "#";
         m_ArtworksListModel.removeFiles(Helpers::IndicesRanges(m_OriginalCount, m_AddedCount));
+        // TODO: update warnings
+        //m_AddedArtworksCommand->execute();
     }
 }

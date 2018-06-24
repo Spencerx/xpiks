@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <QObject>
+#include "icommand.h"
 #include "iartworkscommandtemplate.h"
 #include "../Common/flags.h"
 #include "../Filesystem/ifilescollection.h"
@@ -23,14 +24,15 @@ namespace Models {
 
 namespace Commands {
     class AddFilesCommand:
-            public QObject
+            public QObject,
+            public ICommand
     {
         Q_OBJECT
     public:
         AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> &files,
                         Common::AddFilesFlags flags,
                         Models::ArtworksListModel &artworksListModel,
-                        std::shared_ptr<IArtworksCommandTemplate> &addedArtworksCommand);
+                        std::shared_ptr<IArtworksCommandTemplate> &addedArtworksTemplate);
 
         // ICommand interface
     public:
@@ -38,6 +40,7 @@ namespace Commands {
 
         // IHistoryItem interface
     public:
+        virtual void canUndo() override { return true; }
         virtual void undo() override;
         virtual QString getDescription() const override {
             return m_AddedCount != 1 ? QObject::tr("%1 items added").arg(m_AddedCount) :
@@ -45,13 +48,13 @@ namespace Commands {
         }
 
     signals:
-        void artworksAdded(int importID, int imagesCount, int vectorsCount);
+        void artworksAdded(int imagesCount, int vectorsCount);
 
     private:
         std::shared_ptr<Filesystem::IFilesCollection> m_Files;
         Common::AddFilesFlags m_Flags = Common::AddFilesFlags::None;
         Models::ArtworksListModel &m_ArtworksListModel;
-        std::shared_ptr<IArtworksCommandTemplate> m_AddedArtworksCommand;
+        std::shared_ptr<IArtworksCommandTemplate> m_AddedArtworksTemplate;
         // undo
         int m_OriginalCount = 0;
         int m_AddedCount = 0;

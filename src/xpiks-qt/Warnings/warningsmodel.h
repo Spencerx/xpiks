@@ -14,22 +14,23 @@
 #include <QSortFilterProxyModel>
 #include <QStringList>
 #include <QVector>
-#include "../Common/baseentity.h"
-#include "../Models/artitemsmodel.h"
+
+namespace Models {
+    class ArtworksListModel;
+}
 
 namespace Warnings {
     class WarningsSettingsModel;
 
-    class WarningsModel: public QSortFilterProxyModel, public Common::BaseEntity
+    class WarningsModel: public QSortFilterProxyModel
     {
         Q_OBJECT
         Q_PROPERTY(int warningsCount READ getWarningsCount NOTIFY warningsCountChanged)
         Q_PROPERTY(int minKeywordsCount READ getMinKeywordsCount NOTIFY warningsSettingsUpdated)
     public:
-        WarningsModel(QObject *parent=0);
-
-    public:
-        void setWarningsSettingsModel(const WarningsSettingsModel *warningsSettingsModel);
+        WarningsModel(Models::ArtworksListModel &artworksListModel,
+                      WarningsSettingsModel &warningsSettings,
+                      QObject *parent=0);
 
     public:
         int getWarningsCount() const { return rowCount(); }
@@ -66,12 +67,15 @@ namespace Warnings {
         virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
     public:
-        virtual void setSourceModel(QAbstractItemModel *sourceModel) override;
         virtual QVariant data(const QModelIndex &index, int role) const override;
         virtual QHash<int, QByteArray> roleNames() const override;
 
     private:
-        const WarningsSettingsModel *m_WarningsSettingsModel;
+        void setSourceModel(Models::ArtworksListModel &artworksListModel);
+
+    private:
+        WarningsSettingsModel &m_WarningsSettingsModel;
+        Models::ArtworksListModel &m_ArtworksListModel;
         QVector<int> m_PendingUpdates;
         bool m_ShowOnlySelected;
     };

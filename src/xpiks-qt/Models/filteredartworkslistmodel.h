@@ -18,6 +18,10 @@
 #include "../Common/flags.h"
 #include "../Artworks/iartworkssource.h"
 
+namespace Commands {
+    class ICommandManager;
+}
+
 namespace Models {
     class ArtworkMetadata;
     class ArtworkElement;
@@ -34,7 +38,9 @@ namespace Models {
         Q_PROPERTY(bool s READ getGlobalSelectionChanged NOTIFY allItemsSelectedChanged)
 
     public:
-        FilteredArtworksListModel(ArtworksListModel &artworksListModel, QObject *parent=0);
+        FilteredArtworksListModel(ArtworksListModel &artworksListModel,
+                                  Commands::ICommandManager &commandManager,
+                                  QObject *parent=0);
 
     public:
         const QString &getSearchTerm() const { return m_SearchTerm; }
@@ -65,20 +71,35 @@ namespace Models {
         Q_INVOKABLE void selectDirectory(int directoryIndex);
 
     public:
-        //Q_INVOKABLE void combineSelectedArtworks();
+        Q_INVOKABLE void removeKeywordAt(int proxyIndex, int keywordIndex);
+        Q_INVOKABLE void removeLastKeyword(int proxyIndex);
+        Q_INVOKABLE bool appendKeyword(int proxyIndex, const QString &keyword);
+        Q_INVOKABLE void pasteKeywords(int proxyIndex, const QStringList &keywords);
+        Q_INVOKABLE void addSuggestedKeywords(int proxyIndex, const QStringList &keywords);
+        Q_INVOKABLE void editKeyword(int proxyIndex, int keywordIndex, const QString &replacement);
+        Q_INVOKABLE void plainTextEdit(int proxyIndex, const QString &rawKeywords, bool spaceIsSeparator=false);
+        Q_INVOKABLE void expandPreset(int proxyIndex, int keywordIndex, unsigned int presetID);
+        Q_INVOKABLE void expandLastAsPreset(int proxyIndex);
+        Q_INVOKABLE void addPreset(int proxyIndex, unsigned int presetID);
+        Q_INVOKABLE bool acceptCompletionAsPreset(int proxyIndex, int completionID);
+
+    public:
+        Q_INVOKABLE QSize retrieveImageSize(int proxyIndex) const;
+        Q_INVOKABLE QString retrieveFileSize(int proxyIndex) const;
+        Q_INVOKABLE QString getArtworkFilepath(int proxyIndex) const;
+        Q_INVOKABLE QString getAttachedVectorPath(int proxyIndex) const;
+        Q_INVOKABLE QString getArtworkDateTaken(int proxyIndex) const;
+
+    public:
         Q_INVOKABLE void setSelectedItemsSaved();
         void removeSelectedArtworks();
         Q_INVOKABLE void updateSelectedArtworks();
         Q_INVOKABLE void saveSelectedArtworks(bool overwriteAll, bool useBackups);
         Q_INVOKABLE void wipeMetadataFromSelectedArtworks(bool useBackups);
-        //Q_INVOKABLE void setSelectedForUpload();
-        //Q_INVOKABLE void setSelectedForZipping();
         Q_INVOKABLE bool areSelectedArtworksSaved();
         Q_INVOKABLE void spellCheckSelected();
         Q_INVOKABLE int getModifiedSelectedCount(bool overwriteAll=false);
         Q_INVOKABLE void removeArtworksDirectory(int index);
-        Q_INVOKABLE void deleteKeywordsFromSelected();
-        Q_INVOKABLE void setSelectedForCsvExport();
         Q_INVOKABLE void selectArtworksEx(int comboboxSelectionIndex);
 
         Q_INVOKABLE int getItemsCount() const { return rowCount(); }
@@ -148,6 +169,7 @@ namespace Models {
 
     private:
         ArtworksListModel &m_ArtworksListModel;
+        Commands::ICommandManager &m_CommandManager;
         // ignore default regexp from proxymodel
         QString m_SearchTerm;
         Common::SearchFlags m_SearchFlags;

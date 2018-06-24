@@ -8,47 +8,27 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef REMOVEFILESCOMMAND_H
-#define REMOVEFILESCOMMAND_H
+#ifndef REMOVESELECTEDFILESCOMMAND_H
+#define REMOVESELECTEDFILESCOMMAND_H
 
-#include "icommand.h"
-#include "../Filesystem/ifilescollection.h"
-#include "../Models/artworkslistmodel.h"
-
-namespace Models {
-    class ArtworksRepository;
-}
+#include "removefilescommandbase.h"
+#include "../Helpers/indiceshelper.h"
 
 namespace Commands {
-    class RemoveFilesCommand: public IUndoCommand
+    class RemoveFilesCommand: public RemoveFilesCommandBase
     {
     public:
-        RemoveFilesCommand(Models::ArtworksListModel &artworksList,
+        RemoveFilesCommand(Helpers::IndicesRanges &ranges,
+                           Models::ArtworksListModel &artworksList,
                            Models::ArtworksRepository &artworksRepository);
 
-    protected:
-        virtual Models::ArtworksListModel::ArtworksRemoveResult removeFiles() = 0;
-
-        // IAppCommand interface
+        // ICommand interface
     public:
-        virtual std::shared_ptr<CommandResult> execute(int commandID) override;
-
-        // IUndoCommand interface
-    public:
-        virtual void undo() override;
-        virtual QString getDescription() const override {
-            return m_RemoveResult.m_RemovedCount != 1 ?
-                        QObject::tr("%1 items removed").arg(m_RemoveResult.m_RemovedCount) :
-                        QObject::tr("1 item removed");
-        }
-        virtual int getCommandID() const override { return m_CommandID; }
+        virtual void execute() override;
 
     private:
-        int m_CommandID = 0;
-        Models::ArtworksListModel::ArtworksRemoveResult m_RemoveResult;
-        Models::ArtworksListModel &m_ArtworksList;
-        Models::ArtworksRepository &m_ArtworksRepository;
+        Helpers::IndicesRanges m_Ranges;
     };
 }
 
-#endif // REMOVEFILESCOMMAND_H
+#endif // REMOVESELECTEDFILESCOMMAND_H

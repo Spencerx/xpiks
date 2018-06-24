@@ -262,7 +262,7 @@ namespace Artworks {
 
     bool ArtworkMetadata::editKeyword(size_t index, const QString &replacement) {
         if (!getIsInitializedFlag()) {
-            LOG_WARNING << "#" << m_ID << "attempt to edit keyword int not initialized artwork";
+            LOG_WARNING << "#" << m_ID << "attempt to edit keyword in not initialized artwork";
             return false;
         }
 

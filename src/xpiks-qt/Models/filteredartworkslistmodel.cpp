@@ -11,9 +11,8 @@
 #include "filteredartworkslistmodel.h"
 #include <QDir>
 #include "artworkslistmodel.h"
-#include "artworkmetadata.h"
-#include "artworksrepository.h"
-#include "artworkelement.h"
+#include "../Artworks/artworkmetadata.h"
+#include "../Artworks/artworkelement.h"
 #include "settingsmodel.h"
 #include "../Commands/commandmanager.h"
 #include "../Commands/modifyartworkscommand.h"
@@ -23,12 +22,15 @@
 #include "../Helpers/filterhelpers.h"
 #include "../Models/previewartworkelement.h"
 #include "../QuickBuffer/quickbuffer.h"
-#include "videoartwork.h"
+#include "../Artworks/videoartwork.h"
 
 namespace Models {
-    FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel, QObject *parent):
+    FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel,
+                                                         Commands::ICommandManager &commandManager,
+                                                         QObject *parent):
         QSortFilterProxyModel(parent),
         m_ArtworksListModel(artworksListModel),
+        m_CommandManager(commandManager),
         m_SelectedArtworksCount(0),
         m_SortingEnabled(false) {
         // m_SortingEnabled = true;
@@ -125,27 +127,6 @@ namespace Models {
         auto selectedArtworks = getSelectedArtworksSnapshot();
         Artworks::ArtworksSnapshot snapshot(selectedArtworks);
         xpiks()->wipeAllMetadata(snapshot, useBackups);
-    }
-
-    void FilteredArtworksListModel::setSelectedForUpload() {
-        LOG_DEBUG << "#";
-        auto selectedArtworks = getSelectedArtworksSnapshot();
-        Artworks::ArtworksSnapshot snapshot(selectedArtworks);
-        xpiks()->setArtworksForUpload(snapshot);
-    }
-
-    void FilteredArtworksListModel::setSelectedForZipping() {
-        LOG_DEBUG << "#";
-        auto itemsForZipping = getFilteredOriginalItems<ArtworkMetadata *>(
-                    [](ArtworkMetadata *artwork) {
-                if (!artwork->isSelected()) { return false; }
-                ImageArtwork *image = dynamic_cast<ImageArtwork*>(artwork);
-                return (image != nullptr) && (image->hasVectorAttached());
-            },
-                [] (ArtworkMetadata *artwork, int, int) { return artwork; });
-
-        Artworks::ArtworksSnapshot snapshot(itemsForZipping);
-        xpiks()->setArtworksForZipping(snapshot);
     }
 
     bool FilteredArtworksListModel::areSelectedArtworksSaved() {
@@ -670,19 +651,14 @@ namespace Models {
     bool FilteredArtworksListModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
         Q_UNUSED(sourceParent);
 
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        ArtworkMetadata *artwork = artItemsModel->getArtwork(sourceRow);
+        ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(sourceRow);
 
-        bool hasMatch = false;
         if (artwork == nullptr) { return false; }
         if (artwork->isRemoved()) { return false; }
 
-        ArtworksRepository *repository = m_CommandManager->getArtworksRepository();
-        Q_ASSERT(repository != NULL);
-        qint64 directoryID = artwork->getDirectoryID();
+        bool hasMatch = false;
 
-        bool directoryIsIncluded = repository->isDirectorySelected(directoryID);
-        if (directoryIsIncluded) {
+        if (m_ArtworksListModel.isInSelectedDirectory(sourceRow)) {
             hasMatch = true;
 
             if (!m_SearchTerm.trimmed().isEmpty()) {
@@ -698,10 +674,8 @@ namespace Models {
             return QSortFilterProxyModel::lessThan(sourceLeft, sourceRight);
         }
 
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-
-        ArtworkMetadata *leftMetadata = artItemsModel->getArtwork(sourceLeft.row());
-        ArtworkMetadata *rightMetadata = artItemsModel->getArtwork(sourceRight.row());
+        ArtworkMetadata *leftMetadata = m_ArtworksListModel.getArtwork(sourceLeft.row());
+        ArtworkMetadata *rightMetadata = m_ArtworksListModel.getArtwork(sourceRight.row());
 
         bool result = false;
 

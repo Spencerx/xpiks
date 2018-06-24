@@ -13,14 +13,27 @@
 
 #include "icommand.h"
 #include "iartworkscommandtemplate.h"
+#include "../Artworks/artworkssnapshot.h"
 #include <memory>
+
+namespace Artworks {
+    class ArtworkMetadata;
+}
 
 namespace Commands {
     class ArtworksCommand: ICommand {
     public:
         ArtworksCommand(Artworks::ArtworksSnapshot &snapshot,
                         std::shared_ptr<IArtworksCommandTemplate> &artworkTemplate):
-            m_Snapshot(snapshot),
+            m_Snapshot(std::move(snapshot)),
+            m_ArtworkTemplate(std::move(artworkTemplate))
+        {
+            Q_ASSERT(m_ArtworkTemplate);
+        }
+
+        ArtworksCommand(Artworks::ArtworkMetadata *artwork,
+                        std::shared_ptr<IArtworksCommandTemplate> &artworkTemplate):
+            m_Snapshot({artwork}),
             m_ArtworkTemplate(std::move(artworkTemplate))
         {
             Q_ASSERT(m_ArtworkTemplate);
@@ -32,7 +45,7 @@ namespace Commands {
         virtual void undo() override { return m_ArtworkTemplate->undo(m_Snapshot); }
 
     private:
-        Artworks::ArtworksSnapshot &m_Snapshot;
+        Artworks::ArtworksSnapshot m_Snapshot;
         std::shared_ptr<IArtworksCommandTemplate> m_ArtworkTemplate;
     };
 }

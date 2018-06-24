@@ -11,8 +11,15 @@
 #include "removedirectorycommand.h"
 
 namespace Commands {
-    RemoveDirectoryCommand::RemoveDirectoryCommand()
+    RemoveDirectoryCommand::RemoveDirectoryCommand(int directoryID,
+                                                   Models::ArtworksListModel &artworksList,
+                                                   Models::ArtworksRepository &artworksRepository):
+        RemoveFilesCommandBase(artworksList, artworksRepository),
+        m_DirectoryID(directoryID)
     {
+    }
 
+    void RemoveDirectoryCommand::execute() {
+        m_RemoveResult = m_ArtworksList.removeFilesFromDirectory(m_DirectoryID);
     }
 }

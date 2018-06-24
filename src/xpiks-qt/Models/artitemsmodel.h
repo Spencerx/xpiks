@@ -69,13 +69,6 @@ namespace Models {
         void forceUnselectAllItems() const;
 
     public:
-        Q_INVOKABLE void updateAllItems();
-        Q_INVOKABLE void removeKeywordAt(int metadataIndex, int keywordIndex);
-        Q_INVOKABLE void removeLastKeyword(int metadataIndex);
-        Q_INVOKABLE bool appendKeyword(int metadataIndex, const QString &keyword);
-        Q_INVOKABLE void pasteKeywords(int metadataIndex, const QStringList &keywords);
-        Q_INVOKABLE void addSuggestedKeywords(int metadataIndex, const QStringList &keywords);
-        Q_INVOKABLE void suggestCorrections(int metadataIndex);
         Q_INVOKABLE void backupItem(int metadataIndex);
 
         Q_INVOKABLE void combineArtwork(int index) { doCombineArtwork(index); }
@@ -89,27 +82,15 @@ namespace Models {
 
         /*Q_INVOKABLE*/ Artworks::BasicMetadataModel *getBasicModel(int index) const;
 
-        Q_INVOKABLE QSize retrieveImageSize(int metadataIndex) const;
-        Q_INVOKABLE QString retrieveFileSize(int metadataIndex) const;
-        Q_INVOKABLE QString getArtworkFilepath(int index) const;
-        Q_INVOKABLE QString getAttachedVectorPath(int metadataIndex) const;
-        Q_INVOKABLE QString getArtworkDateTaken(int metadataIndex) const;
+
 
         Q_INVOKABLE int addRecentDirectory(const QString &directory);
         Q_INVOKABLE int addRecentFile(const QString &file);
         Q_INVOKABLE int addAllRecentFiles();
-        Q_INVOKABLE void initDescriptionHighlighting(int metadataIndex, QQuickTextDocument *document);
-        Q_INVOKABLE void initTitleHighlighting(int metadataIndex, QQuickTextDocument *document);
 
-        Q_INVOKABLE void editKeyword(int metadataIndex, int keywordIndex, const QString &replacement);
-        Q_INVOKABLE void plainTextEdit(int metadataIndex, const QString &rawKeywords, bool spaceIsSeparator=false);
 
         /*Q_INVOKABLE*/ void detachVectorsFromArtworks(const QVector<int> &indices);
 
-        Q_INVOKABLE void expandPreset(int artworkIndex, int keywordIndex, unsigned int presetID);
-        Q_INVOKABLE void expandLastAsPreset(int metadataIndex);
-        Q_INVOKABLE void addPreset(int metadataIndex, unsigned int presetID);
-        Q_INVOKABLE bool acceptCompletionAsPreset(int metadataIndex, int completionID);
         Q_INVOKABLE void initSuggestion(int metadataIndex);
         Q_INVOKABLE void setupDuplicatesModel(int metadataIndex);
         Q_INVOKABLE bool hasModifiedArtworks() const;

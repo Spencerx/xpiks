@@ -28,7 +28,7 @@ namespace Commands {
         // IArtworksCommandTemplate interface
     public:
         virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(Artworks::ArtworksSnapshot &) override;
+        virtual void undo(Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
         int m_KeywordIndex;

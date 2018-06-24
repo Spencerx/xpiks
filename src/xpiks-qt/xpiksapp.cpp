@@ -409,22 +409,23 @@ void XpiksApp::removeUnavailableFiles() {
 void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
     using namespace Commands;
 
-    auto afterAddCommand = std::make_shared<CompositeCommandTemplate>(
+    auto afterAddActions = std::make_shared<CompositeCommandTemplate>(
     {
                     new ReadMetadataTemplate(m_MetadataIOService, m_MetadataIOCoordinator),
                     new GenerateThumbnailsTemplate(m_ImageCachingService, m_VideoCachingService),
                     new AutoImportMetadataCommand(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel),
                     new AddToRecentTemplate(m_RecentFileModel),
                     new SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager),
+                    new InspectArtworksTemplate(m_SpellCheckerService, m_WarningsService, m_SettingsModel),
                     new CleanupLegacyBackupsCommand(files, m_MaintenanceService)
                 });
 
     auto addFilesCommand = std::make_shared<AddFilesCommand>(
                 files, flags, m_ArtworksListModel,
-                std::dynamic_pointer_cast<IArtworksCommandTemplate>(afterAddCommand));
+                std::dynamic_pointer_cast<IArtworksCommandTemplate>(afterAddActions));
 
     m_CommandManager.processCommand(
-                std::dynamic_pointer_cast<Commands::ICommand>(addFilesCommand));
+                std::dynamic_pointer_cast<ICommand>(addFilesCommand));
 }
 
 void XpiksApp::afterServicesStarted() {
@@ -561,7 +562,7 @@ void XpiksApp::injectActionsTemplates() {
     LOG_DEBUG << "#";
     using namespace Commands;
     auto inspectionTemplate = std::make_shared<IArtworksCommandTemplate>(
-                new InspectArtworksTemplate(m_SpellCheckerService));
+                new InspectArtworksTemplate(m_SpellCheckerService, m_WarningsService, m_SettingsModel));
     auto backupTemplate = std::make_shared<IArtworksCommandTemplate>(
                 new BackupArtworksTemplate(m_MetadataIOService));
 

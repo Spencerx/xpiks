@@ -24,6 +24,12 @@ namespace Commands {
             m_Count(snapshot.size())
         { }
 
+        ModifyArtworksCommand(Artworks::ArtworkMetadata *artwork,
+                              std::shared_ptr<IArtworksCommandTemplate> &editTemplate):
+            ArtworksCommand(artwork, editTemplate),
+            m_Count(1)
+        { }
+
     public:
         virtual bool canUndo() override { return true; }
 

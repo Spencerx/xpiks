@@ -92,6 +92,10 @@ namespace Models {
         };
 
         struct ArtworksAddResult {
+            ArtworksAddResult(Artworks::ArtworksSnapshot &snapshot, int attachedVectorsCount):
+                m_Snapshot(std::move(snapshot)),
+                m_AttachedVectorsCount(attachedVectorsCount)
+            { }
             Artworks::ArtworksSnapshot m_Snapshot;
             int m_AttachedVectorsCount;
         };
@@ -120,6 +124,7 @@ namespace Models {
         std::unique_ptr<Artworks::SessionSnapshot> snapshotAll();
         void generateAboutToBeRemoved();
         void unlockAllForIO();
+        bool isInSelectedDirectory(int artworkIndex);
 
     public:
         void setBackupActionTemplate(const std::shared_ptr<Commands::IArtworksCommandTemplate> &actionTemplate);
@@ -151,7 +156,7 @@ namespace Models {
         int attachKnownVectors(const QHash<QString, QHash<QString, QString> > &vectorsPaths,
                                QVector<int> &indicesToUpdate) const;
         void connectArtworkSignals(Artworks::ArtworkMetadata *artwork);
-        void syncArtworksIndices();
+        void syncArtworksIndices(int startIndex=0, int count=-1);
         void setItemsSaved(const Helpers::IndicesRanges &ranges);
         void detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges);
 
@@ -165,6 +170,7 @@ namespace Models {
     public:
         Artworks::ArtworkMetadata *getArtworkObject(int index) const;
         Artworks::BasicMetadataModel *getBasicModelObject(int index) const;
+        Artworks::ArtworkMetadata *getArtwork(size_t index) const;
 
     public:
         std::shared_ptr<Commands::ICommand> removeKeywordAt(int artworkIndex, int keywordIndex);
@@ -195,7 +201,6 @@ namespace Models {
         void artworkSelectedChanged(bool value);
 
     public slots:
-        void itemModifiedChanged(bool) { emit modifiedArtworksCountChanged(); }
         void onFilesUnavailableHandler();
         void onArtworkBackupRequested();
         void onArtworkEditingPaused();
@@ -210,7 +215,6 @@ namespace Models {
 
     private:
         Artworks::ArtworkMetadata *accessArtwork(size_t index) const;
-        Artworks::ArtworkMetadata *getArtwork(size_t index) const;
         void destroyArtwork(Artworks::ArtworkMetadata *artwork);
         int getNextID();
 

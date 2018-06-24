@@ -17,11 +17,21 @@ namespace SpellCheck {
     class SpellCheckerService;
 }
 
+namespace Warnings {
+    class WarningsService;
+}
+
+namespace Models {
+    class SettingsModel;
+}
+
 namespace Commands {
     class InspectArtworksTemplate: public IArtworksCommandTemplate
     {
     public:
-        InspectArtworksTemplate(SpellCheck::SpellCheckerService &spellCheckService);
+        InspectArtworksTemplate(SpellCheck::SpellCheckerService &spellCheckService,
+                                Warnings::WarningsService &warningsService,
+                                Models::SettingsModel &settingsModel);
 
         // IArtworksCommandTemplate interface
     public:
@@ -30,6 +40,8 @@ namespace Commands {
 
     private:
         SpellCheck::SpellCheckerService &m_SpellCheckService;
+        Warnings::WarningsService &m_WarningsService;
+        Models::SettingsModel &m_SettingsModel;
     };
 }
 

@@ -13,27 +13,15 @@
 #include "../Models/artworksrepository.h"
 
 namespace Commands {
-    RemoveFilesCommand::RemoveFilesCommand(Models::ArtworksListModel &artworksList,
+    RemoveFilesCommand::RemoveFilesCommand(Helpers::IndicesRanges &ranges,
+                                           Models::ArtworksListModel &artworksList,
                                            Models::ArtworksRepository &artworksRepository):
-        m_ArtworksList(artworksList),
-        m_ArtworksRepository(artworksRepository)
+        RemoveFilesCommandBase(artworksList, artworksRepository),
+        m_Ranges(std::move(ranges))
     {
     }
 
-    std::shared_ptr<CommandResult> RemoveFilesCommand::execute(int commandID) {
-        m_CommandID = commandID;
-        m_RemoveResult = removeFiles();
-        return ICommand::execute();
-    }
-
-    void RemoveFilesCommand::undo() {
-        LOG_DEBUG << "#";
-        if (m_RemoveResult.m_UnselectAll && m_ArtworksRepository.allAreSelected()) {
-            m_ArtworksRepository.unselectAllDirectories();
-        }
-
-        m_ArtworksList.restoreRemoved();
-
-        m_ArtworksRepository.restoreDirectoriesSelection(m_RemoveResult.m_SelectedDirectoryIds);
+    void RemoveFilesCommand::execute() {
+        m_RemoveResult = m_ArtworksList.removeFiles(m_Ranges);
     }
 }

@@ -61,6 +61,18 @@ namespace Helpers {
     {
     }
 
+    IndicesRanges::IndicesRanges(IndicesRanges &&other)
+    {
+        m_Ranges.swap(other.m_Ranges);
+    }
+
+    IndicesRanges &IndicesRanges::operator=(IndicesRanges &&other) {
+        if (this != &other) {
+            m_Ranges.swap(other.m_Ranges);
+        }
+        return *this;
+    }
+
     int IndicesRanges::length() const {
         int sum = 0;
         for (auto &pair: m_Ranges) {

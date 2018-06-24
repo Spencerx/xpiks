@@ -23,6 +23,7 @@ namespace Commands {
     }
 
     void KeywordEditTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+        Q_ASSERT(snapshot.size() == 1);
         LOG_INFO << "artworks count =" << snapshot.size();
         const size_t size = snapshot.size();
         m_ArtworksBackups.reserve(size);
@@ -44,6 +45,17 @@ namespace Commands {
                 artwork->editKeyword(m_KeywordIndex, m_NextValue);
                 break;
             }
+        }
+    }
+
+    void KeywordEditTemplate::undo(Artworks::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "#";
+        Q_ASSERT(snapshot.size() >= m_ArtworksBackups.size());
+        const size_t size = m_ArtworksBackups.size();
+        for (size_t i = 0; i < size; i++) {
+            auto &backup = m_ArtworksBackups.at(i);
+            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            backup.restore(artwork);
         }
     }
 }
