@@ -960,12 +960,12 @@ namespace Models {
         return roles;
     }
 
-    ArtworkMetadata *ArtworksListModel::createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID) {
-        ArtworkMetadata *artwork = nullptr;
+    Artworks::ArtworkMetadata *ArtworksListModel::createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID) {
+        Artworks::ArtworkMetadata *artwork = nullptr;
         if (file.m_Type == Filesystem::ArtworkFileType::Image) {
-            artwork = new ImageArtwork(file.m_Path, getNextID(), directoryID);
+            artwork = new Artworks::ImageArtwork(file.m_Path, getNextID(), directoryID);
         } else if (file.m_Type == Filesystem::ArtworkFileType::Video) {
-            artwork = new VideoArtwork(file, getNextID(), directoryID);
+            artwork = new Artworks::VideoArtwork(file, getNextID(), directoryID);
         }
         Q_ASSERT(artwork != nullptr);
         return artwork;

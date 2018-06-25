@@ -544,7 +544,9 @@ HEADERS += \
     Commands/keywordedittemplate.h \
     Commands/emptycommand.h \
     Commands/removefilescommandbase.h \
-    Commands/removefilescommand.h
+    Commands/removefilescommand.h \
+    Commands/commandchannel.h \
+    Commands/commandsink.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
