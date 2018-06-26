@@ -481,7 +481,7 @@ void XpiksApp::connectEntitiesSignalsSlots() {
                      &m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::onSettingsUpdated);
 
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::serviceAvailable,
-                     &m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::onSpellCheckerAvailable);
+                     &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckerAvailable);
 
     QObject::connect(&m_ArtworksRepository, &Models::ArtworksRepository::selectionChanged,
                      &m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::onDirectoriesSelectionChanged);

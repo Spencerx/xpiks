@@ -503,6 +503,17 @@ namespace Artworks {
         }
     }
 
+    void ArtworkMetadata::requestFocus(ArtworkMetadata::FocusRequestType requestType) {
+        int directionSign = 0;
+        if (requestType == FocusFromPrev) {
+            directionSign = +1;
+        } else if (requestType == FocusFromNext) {
+            directionSign = -1;
+        }
+
+        emit focusRequested(directionSign);
+    }
+
     bool ArtworkMetadata::expandPreset(size_t keywordIndex, const QStringList &presetList)  {
         bool result = m_MetadataModel.expandPreset(keywordIndex, presetList);
         if (result) {

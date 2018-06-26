@@ -121,7 +121,8 @@ namespace Models {
     public:
         // general purpose collective methods
         void selectArtworksFromDirectory(int directoryIndex);
-        void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles);
+        void unselectAllItems();
+        void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles = QVector<int>());
         void updateItems(SelectionType selectionType, const QVector<int> &roles = QVector<int>());
         std::unique_ptr<Artworks::SessionSnapshot> snapshotAll();
         void generateAboutToBeRemoved();
@@ -129,7 +130,9 @@ namespace Models {
         bool isInSelectedDirectory(int artworkIndex);
 
     public:
-        void setEditCommandTemplate(const std::shared_ptr<Commands::ICommandTemplate<Artworks::ArtworksSnapshot>> &actionTemplate);
+        // commands
+        void setBackupTemplate(const std::shared_ptr<IArtworksCommandTemplate> &actionTemplate);
+        void setInspectionTemplate(const std::shared_ptr<IArtworksCommandTemplate> &actionTemplate);
 
     public:
         // update hub related
@@ -206,6 +209,7 @@ namespace Models {
         void onFilesUnavailableHandler();
         void onArtworkEditingPaused();
         void onUndoStackEmpty();
+        void onSpellCheckerAvailable(bool afterRestart);
         void userDictUpdateHandler(const QStringList &keywords, bool overwritten);
         void userDictClearedHandler();
 
@@ -220,9 +224,9 @@ namespace Models {
 
     private:
         template<typename T>
-        std::vector<T> selectArtworks(const Helpers::IndicesRanges &ranges,
-                                      std::function<bool (ArtworkMetadata *)> pred,
-                                      std::function<T(ArtworkMetadata *, size_t)> mapper) const {
+        std::vector<T> filterArtworks(const Helpers::IndicesRanges &ranges,
+                                      std::function<bool (Artworks::ArtworkMetadata *)> pred,
+                                      std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
             std::vector<T> result;
             result.reserve(ranges.size());
             for (auto &r: ranges.getRanges()) {
@@ -240,16 +244,16 @@ namespace Models {
 
 
         template<typename T>
-        std::vector<T> selectArtworks(std::function<bool (Artworks::ArtworkMetadata *)> pred,
+        std::vector<T> filterArtworks(std::function<bool (Artworks::ArtworkMetadata *)> pred,
                                       std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
-            return selectArtworks(Helpers::IndicesRanges(getArtworksCount()),
+            return filterArtworks(Helpers::IndicesRanges(getArtworksCount()),
                                   pred,
                                   mapper);
         }
 
         template<typename T>
-        std::vector<T> selectAvailableArtworks(std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
-            return selectArtworks([](ArtworkMetadata *artwork) {
+        std::vector<T> filterAvailableArtworks(std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
+            return filterArtworks([](Artworks::ArtworkMetadata *artwork) {
                 return !artwork->isUnavailable() && !artwork->isRemoved();
             }, mapper);
         }
@@ -287,7 +291,8 @@ namespace Models {
         qint64 m_LastID;
         size_t m_CurrentItemIndex;
         ArtworksRepository &m_ArtworksRepository;
-        std::shared_ptr<IArtworksCommandTemplate> m_EditTemplate;
+        std::shared_ptr<IArtworksCommandTemplate> m_InspectionTemplate;
+        std::shared_ptr<IArtworksCommandTemplate> m_BackupTemplate;
         ArtworksContainer m_FinalizationList;
 #ifdef QT_DEBUG
         ArtworksContainer m_DestroyedList;

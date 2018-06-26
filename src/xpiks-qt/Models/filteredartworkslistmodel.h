@@ -35,6 +35,7 @@ namespace Models {
     class ArtworkElement;
     class PreviewArtworkElement;
     class ArtworksListModel;
+    class SettingsModel;
 
     class FilteredArtworksListModel:
             public QSortFilterProxyModel,
@@ -58,7 +59,6 @@ namespace Models {
 
         int getSelectedArtworksCount() const { return m_SelectedArtworksCount; }
         bool getGlobalSelectionChanged() const { return false; }
-        void spellCheckAllItems();
 
         Artworks::ArtworksSnapshot::Container getSearchablePreviewOriginalItems(const QString &searchTerm, Common::SearchFlags flags) const;
 
@@ -71,19 +71,36 @@ namespace Models {
         virtual Artworks::WeakArtworksSnapshot getArtworks() override { return getSelectedOriginalItems(); }
 
     public:
-        Q_INVOKABLE int getOriginalIndex(int index) const;
+        // indexing
+        Q_INVOKABLE int getOriginalIndex(int proxyIndex) const;
         Q_INVOKABLE int getDerivedIndex(int originalIndex) const;
+        Q_INVOKABLE QObject *getArtworkObject(int proxyIndex);
+        Q_INVOKABLE QObject *getBasicModelObject(int proxyIndex);
 
     public:
-        Q_INVOKABLE void invertSelectionArtworks() { invertFilteredItemsSelected(); }
+        // selection
+        Q_INVOKABLE void invertSelectionArtworks();
         Q_INVOKABLE void selectFilteredArtworks() { setFilteredItemsSelected(true); }
         Q_INVOKABLE void unselectFilteredArtworks() { setFilteredItemsSelected(false); }
         Q_INVOKABLE void selectDirectory(int directoryIndex);
+        Q_INVOKABLE void setSelectedItemsSaved();
+        Q_INVOKABLE bool areSelectedArtworksSaved();
+        Q_INVOKABLE int getModifiedSelectedCount(bool overwriteAll=false);
+        Q_INVOKABLE int findSelectedItemIndex() const;
+        Q_INVOKABLE void selectArtworksEx(int comboboxSelectionIndex);
 
     public:
+        // ui actions
+        Q_INVOKABLE void focusNextItem(int proxyIndex);
+        Q_INVOKABLE void focusPreviousItem(int proxyIndex);
+        Q_INVOKABLE void focusCurrentItemKeywords(int proxyIndex);
+        Q_INVOKABLE void toggleSorted();
+
+    public:
+        // edit actions
         Q_INVOKABLE void removeKeywordAt(int proxyIndex, int keywordIndex);
         Q_INVOKABLE void removeLastKeyword(int proxyIndex);
-        Q_INVOKABLE bool appendKeyword(int proxyIndex, const QString &keyword);
+        Q_INVOKABLE void appendKeyword(int proxyIndex, const QString &keyword);
         Q_INVOKABLE void pasteKeywords(int proxyIndex, const QStringList &keywords);
         Q_INVOKABLE void addSuggestedKeywords(int proxyIndex, const QStringList &keywords);
         Q_INVOKABLE void editKeyword(int proxyIndex, int keywordIndex, const QString &replacement);
@@ -91,53 +108,45 @@ namespace Models {
         Q_INVOKABLE void expandPreset(int proxyIndex, int keywordIndex, unsigned int presetID);
         Q_INVOKABLE void expandLastAsPreset(int proxyIndex);
         Q_INVOKABLE void addPreset(int proxyIndex, unsigned int presetID);
-        Q_INVOKABLE bool acceptCompletionAsPreset(int proxyIndex, int completionID);
+        Q_INVOKABLE void acceptCompletionAsPreset(int proxyIndex, int completionID);
 
     public:
+        // other modifications
         Q_INVOKABLE void removeMetadataInSelected() const;
+        Q_INVOKABLE void clearKeywords(int proxyIndex);
+        Q_INVOKABLE void detachVectorFromSelected();
+        Q_INVOKABLE void detachVectorFromArtwork(int proxyIndex);
 
     public:
-        Q_INVOKABLE void setSelectedItemsSaved();
-        void removeSelectedArtworks();
-        Q_INVOKABLE void updateSelectedArtworks();
-        Q_INVOKABLE void saveSelectedArtworks(bool overwriteAll, bool useBackups);
-        Q_INVOKABLE void wipeMetadataFromSelectedArtworks(bool useBackups);
-        Q_INVOKABLE bool areSelectedArtworksSaved();
-        Q_INVOKABLE void spellCheckSelected();
-        Q_INVOKABLE int getModifiedSelectedCount(bool overwriteAll=false);
-        Q_INVOKABLE void removeArtworksDirectory(int index);
-        Q_INVOKABLE void selectArtworksEx(int comboboxSelectionIndex);
-
+        // other readonly
         Q_INVOKABLE int getItemsCount() const { return rowCount(); }
-        //Q_INVOKABLE void reimportMetadataForSelected();
-        Q_INVOKABLE int findSelectedItemIndex() const;
-        Q_INVOKABLE void clearKeywords(int index);
-
         Q_INVOKABLE void updateFilter() { invalidateFilter(); emit afterInvalidateFilter(); }
-        Q_INVOKABLE void focusNextItem(int index);
-        Q_INVOKABLE void focusPreviousItem(int index);
-        Q_INVOKABLE void focusCurrentItemKeywords(int index);
-        Q_INVOKABLE void toggleSorted();
-        Q_INVOKABLE void detachVectorFromSelected();
-        Q_INVOKABLE void detachVectorFromArtwork(int index);
-        Q_INVOKABLE QObject *getArtworkMetadata(int index);
-        Q_INVOKABLE QObject *getBasicModel(int index);
-        Q_INVOKABLE QString getKeywordsString(int index);
+        Q_INVOKABLE QString getKeywordsString(int proxyIndex);
+        Q_INVOKABLE bool hasTitleWordSpellError(int proxyIndex, const QString &word);
+        Q_INVOKABLE bool hasDescriptionWordSpellError(int proxyIndex, const QString &word);
 
-        Q_INVOKABLE bool hasTitleWordSpellError(int index, const QString &word);
-        Q_INVOKABLE bool hasDescriptionWordSpellError(int index, const QString &word);
+    public:
+        //void removeSelectedArtworks();
+        Q_INVOKABLE void saveSelectedArtworks(bool overwriteAll, bool useBackups);
+        //Q_INVOKABLE void wipeMetadataFromSelectedArtworks(bool useBackups);
+        //Q_INVOKABLE void removeArtworksDirectory(int index);
+
+        //Q_INVOKABLE void reimportMetadataForSelected();
+
+
+
+
 
         Q_INVOKABLE void registerCurrentItem(int index) const;
         Q_INVOKABLE void copyToQuickBuffer(int index) const;
         Q_INVOKABLE void fillFromQuickBuffer(int index) const;
-        Q_INVOKABLE void suggestCorrectionsForSelected() const;
-        Q_INVOKABLE void generateCompletions(const QString &prefix, int index);
-        Q_INVOKABLE void reviewDuplicatesInSelected() const;
+        //Q_INVOKABLE void suggestCorrectionsForSelected() const;
+        //Q_INVOKABLE void generateCompletions(const QString &prefix, int index);
+        //Q_INVOKABLE void reviewDuplicatesInSelected() const;
 
     public slots:
         void itemSelectedChanged(bool value);
         void onSelectedArtworksRemoved(int value);
-        void onSpellCheckerAvailable(bool afterRestart);
         void onSettingsUpdated();
         void onDirectoriesSelectionChanged() { updateFilter(); }
 
@@ -148,23 +157,18 @@ namespace Models {
         void allItemsSelectedChanged();
 
     private:
-        void removeMetadataInItems(Artworks::ArtworksSnapshot::Container &itemsToClear, Common::ArtworkEditFlags flags) const;
-        void removeKeywordsInItem(ArtworkMetadata *artwork);
         void setFilteredItemsSelected(bool selected);
-        void setFilteredItemsSelectedEx(const std::function<bool (ArtworkMetadata *)> pred, bool selected, bool unselectFirst);
-        void invertFilteredItemsSelected();
+        void setFilteredItemsSelectedEx(const std::function<bool (ArtworkMetadata *)> pred,
+                                        bool selected,
+                                        bool unselectAllFirst);
 
         Artworks::WeakArtworksSnapshot getSelectedOriginalItems() const;
-        Artworks::ArtworksSnapshot::Container getSelectedArtworksSnapshot() const;
 
         template<typename T>
-        std::vector<T> getFilteredOriginalItems(std::function<bool (ArtworkMetadata *)> pred,
-                                                std::function<T(ArtworkMetadata *, int, int)> mapper) const;
-
-        Artworks::WeakArtworksSnapshot getAllOriginalItems() const;
+        std::vector<T> filterItems(std::function<bool (Artworks::ArtworkMetadata *)> pred,
+                                   std::function<T(Artworks::ArtworkMetadata *, int, int)> mapper) const;
 
         std::vector<int> getSelectedOriginalIndices() const;
-        std::vector<int> getSelectedIndices() const;
         void forceUnselectAllItems();
         void updateSearchFlags();
 
@@ -177,6 +181,7 @@ namespace Models {
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         AutoComplete::ICompletionSource &m_CompletionSource;
+        Models::SettingsModel &m_SettingsModel;
         // ignore default regexp from proxymodel
         QString m_SearchTerm;
         Common::SearchFlags m_SearchFlags;

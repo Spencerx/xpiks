@@ -993,7 +993,6 @@ Item {
                         width: 120
                         enabled: !artworkUploader.inProgress
                         onClicked: {
-                            filteredArtItemsModel.updateSelectedArtworks()
                             closePopup()
                         }
                     }

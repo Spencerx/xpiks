@@ -51,6 +51,12 @@ namespace Artworks {
         ArtworkMetadata(const QString &filepath, Common::ID_t ID, qint64 directoryID);
         virtual ~ArtworkMetadata();
 
+    public:
+        enum FocusRequestType {
+            FocusFromPrev,
+            FocusFromNext
+        };
+
     private:
         enum MetadataFlags {
             FlagIsModified = 1 << 0,
@@ -209,7 +215,7 @@ namespace Artworks {
         void setRemoved() { setIsRemovedFlag(true); }
         void resetRemoved() { setIsRemovedFlag(false); }
         void resetModified() { setIsModifiedFlag(false); }
-        void requestFocus(int directionSign) { emit focusRequested(directionSign); }
+        void requestFocus(FocusRequestType requestType);
         virtual bool expandPreset(size_t keywordIndex, const QStringList &presetList) override;
         virtual bool appendPreset(const QStringList &presetList) override;
         virtual bool hasKeywords(const QStringList &keywordsList) override;

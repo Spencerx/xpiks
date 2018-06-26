@@ -42,16 +42,6 @@ namespace Models {
         m_SearchFlags = Common::SearchFlags::AnyTermsEverything;
     }
 
-    void FilteredArtworksListModel::updateSearchFlags() {
-        SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-        bool searchUsingAnd = settingsModel->getSearchUsingAnd();
-        bool searchByFilepath = settingsModel->getSearchByFilepath();
-        // default search is not case sensitive
-        m_SearchFlags = searchUsingAnd ? Common::SearchFlags::AllTermsEverything :
-                                    Common::SearchFlags::AnyTermsEverything;
-        Common::ApplyFlag(m_SearchFlags, searchByFilepath, Common::SearchFlags::Filepath);
-    }
-
     void FilteredArtworksListModel::setSearchTerm(const QString &value) {
         LOG_INFO << value;
         bool anyChangesNeeded = value != m_SearchTerm;
@@ -67,17 +57,9 @@ namespace Models {
         forceUnselectAllItems();
     }
 
-    void FilteredArtworksListModel::spellCheckAllItems() {
-        LOG_DEBUG << "#";
-        auto allArtworks = getAllOriginalItems();
-        xpiks()->submitForSpellCheck(allArtworks);
-        xpiks()->reportUserAction(Connectivity::UserAction::SpellCheck);
-    }
-
-    int FilteredArtworksListModel::getOriginalIndex(int index) const {
-        QModelIndex originalIndex = mapToSource(this->index(index, 0));
+    int FilteredArtworksListModel::getOriginalIndex(int proxyIndex) const {
+        QModelIndex originalIndex = mapToSource(this->index(proxyIndex, 0));
         int row = originalIndex.row();
-
         return row;
     }
 
@@ -89,92 +71,43 @@ namespace Models {
         return row;
     }
 
+    QObject *FilteredArtworksListModel::getArtworkObject(int proxyIndex) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        QObject *item = m_ArtworksListModel.getArtworkObject(originalIndex);
+        return item;
+    }
+
+    QObject *FilteredArtworksListModel::getBasicModelObject(int proxyIndex) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        QObject *item = m_ArtworksListModel.getBasicModelObject(originalIndex);
+        return item;
+    }
+
+    void FilteredArtworksListModel::invertSelectionArtworks() {
+        LOG_DEBUG << "#";
+
+        std::vector<int> indices;
+        const int size = this->rowCount();
+        indices.reserve(size);
+
+        for (int row = 0; row < size; ++row) {
+            int index = getOriginalIndex(row);
+            Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(index);
+            if (artwork != NULL) {
+                artwork->invertSelection();
+                indices << index;
+            }
+        }
+
+        m_ArtworksListModel.updateItems(Helpers::IndicesRanges(indices),
+                                        QVector<int>() << ArtworksListModel::IsSelectedRole);
+        emit allItemsSelectedChanged();
+    }
+
     void FilteredArtworksListModel::selectDirectory(int directoryIndex) {
         LOG_DEBUG << "#";
         m_ArtworksListModel.selectArtworksFromDirectory(directoryIndex);
         emit allItemsSelectedChanged();
-    }
-
-    void FilteredArtworksListModel::removeKeywordAt(int proxyIndex, int keywordIndex) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.removeKeywordAt(originalIndex, keywordIndex);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::removeLastKeyword(int proxyIndex) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.removeLastKeyword(originalIndex);
-        m_CommandManager.processCommand(command);
-    }
-
-    bool FilteredArtworksListModel::appendKeyword(int proxyIndex, const QString &keyword) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.appendKeyword(originalIndex, keyword);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::pasteKeywords(int proxyIndex, const QStringList &keywords) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.pasteKeywords(originalIndex, keywords);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::addSuggestedKeywords(int proxyIndex, const QStringList &keywords) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.addSuggestedKeywords(originalIndex, keywords);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::editKeyword(int proxyIndex, int keywordIndex, const QString &replacement) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.editKeyword(originalIndex, keywordIndex, replacement);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::plainTextEdit(int proxyIndex, const QString &rawKeywords, bool spaceIsSeparator) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.plainTextEdit(originalIndex, rawKeywords, spaceIsSeparator);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::expandPreset(int proxyIndex, int keywordIndex, unsigned int presetID) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.expandPreset(originalIndex, keywordIndex, presetID, m_PresetsManager);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::expandLastAsPreset(int proxyIndex) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.expandLastAsPreset(originalIndex, m_PresetsManager);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::addPreset(int proxyIndex, unsigned int presetID) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.addPreset(originalIndex, presetID, m_PresetsManager);
-        m_CommandManager.processCommand(command);
-    }
-
-    bool FilteredArtworksListModel::acceptCompletionAsPreset(int proxyIndex, int completionID) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.acceptCompletionAsPreset(originalIndex, completionID,
-                                                                    m_PresetsManager, m_CompletionSource);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::removeMetadataInSelected() const {
-        LOG_DEBUG << "#";
-        auto selectedIndices = getSelectedOriginalIndices();
-        using namespace Common;
-        Common::ArtworkEditFlags flags = ArtworkEditFlags::None;
-        Common::SetFlag(flags, ArtworkEditFlags::EditDescription);
-        Common::SetFlag(flags, ArtworkEditFlags::EditKeywords);
-        Common::SetFlag(flags, ArtworkEditFlags::EditTitle);
-        Common::SetFlag(flags, ArtworkEditFlags::Clear);
-        auto command = m_ArtworksListModel.removeMetadata(
-                           Helpers::IndicesRanges(selectedIndices),
-                           flags);
-        m_CommandManager.processCommand(command);
     }
 
     void FilteredArtworksListModel::setSelectedItemsSaved() {
@@ -182,37 +115,6 @@ namespace Models {
         std::vector<int> indices = getSelectedOriginalIndices();
         Helpers::IndicesRanges ranges(indices);
         m_ArtworksListModel.setItemsSaved(ranges);
-    }
-
-    void FilteredArtworksListModel::removeSelectedArtworks() {
-        LOG_DEBUG << "#";
-        //m_ArtworksListModel.removeFiles()
-    }
-
-    void FilteredArtworksListModel::updateSelectedArtworks() {
-        LOG_DEBUG << "#";
-        QVector<int> indices = getSelectedOriginalIndices();
-        m_ArtworksListModel.updateItems(Helpers::IndicesRanges(indices), roles);
-    }
-
-    void FilteredArtworksListModel::saveSelectedArtworks(bool overwriteAll, bool useBackups) {
-        LOG_INFO << "ovewriteAll:" << overwriteAll << "useBackups:" << useBackups;
-        // former patchSelectedArtworks
-        auto itemsToSave = getFilteredOriginalItems<ArtworkMetadata*>(
-                    [&overwriteAll](ArtworkMetadata *artwork) {
-                return artwork->isSelected() && !artwork->isReadOnly() && (artwork->isModified() || overwriteAll);
-    },
-                [] (ArtworkMetadata *artwork, int, int) { return artwork; });
-
-        xpiks()->writeMetadata(itemsToSave, useBackups);
-    }
-
-    void FilteredArtworksListModel::wipeMetadataFromSelectedArtworks(bool useBackups) {
-        LOG_INFO << "useBackups:" << useBackups;
-
-        auto selectedArtworks = getSelectedArtworksSnapshot();
-        Artworks::ArtworksSnapshot snapshot(selectedArtworks);
-        xpiks()->wipeAllMetadata(snapshot, useBackups);
     }
 
     bool FilteredArtworksListModel::areSelectedArtworksSaved() {
@@ -231,18 +133,11 @@ namespace Models {
         return !anyModified;
     }
 
-    void FilteredArtworksListModel::spellCheckSelected() {
-        LOG_DEBUG << "#";
-        auto selectedArtworks = getSelectedOriginalItems();
-        xpiks()->submitForSpellCheck(selectedArtworks);
-        xpiks()->reportUserAction(Connectivity::UserAction::SpellCheck);
-    }
-
     int FilteredArtworksListModel::getModifiedSelectedCount(bool overwriteAll) {
         auto selectedArtworks = getSelectedOriginalItems();
         int modifiedCount = 0;
 
-        for (ArtworkMetadata *artwork: selectedArtworks) {
+        for (Artworks::ArtworkMetadata *artwork: selectedArtworks) {
             if (!artwork->isReadOnly() && (artwork->isModified() || overwriteAll)) {
                 modifiedCount++;
             }
@@ -251,23 +146,18 @@ namespace Models {
         return modifiedCount;
     }
 
-    void FilteredArtworksListModel::removeArtworksDirectory(int index) {
-        LOG_DEBUG << "#";
-        ArtItemsModel *artItemsModel = getArtItemsModel();
+    int FilteredArtworksListModel::findSelectedItemIndex() const {
+        int index = -1;
 
-        artItemsModel->removeArtworksDirectory(index);
-        emit selectedArtworksCountChanged();
-    }
+        std::vector<int> items = filterItems<int>(
+            [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
+            [] (Artworks::ArtworkMetadata *, int, int originalIndex) { return originalIndex; });
 
-    void FilteredArtworksListModel::deleteKeywordsFromSelected() {
-        auto selectedItems = getSelectedOriginalItems();
-        xpiks()->deleteKeywordsFromArtworks(selectedItems);
-    }
+        if (items.size() == 1) {
+            index = items.front();
+        }
 
-    void FilteredArtworksListModel::setSelectedForCsvExport() {
-        LOG_DEBUG << "#";
-        auto selectedArtworks = getSelectedArtworksSnapshot();
-        xpiks()->setArtworksForCsvExport(selectedArtworks);
+        return index;
     }
 
     void FilteredArtworksListModel::selectArtworksEx(int comboboxSelectionIndex) {
@@ -287,14 +177,14 @@ namespace Models {
         }
         case 2: {
             // select Modified
-            this->setFilteredItemsSelectedEx([](ArtworkMetadata *artwork) {
+            this->setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata *artwork) {
                 return artwork->isModified();
             }, isSelected, unselectFirst);
             break;
         }
         case 3: {
             // select Images
-            this->setFilteredItemsSelectedEx([](ArtworkMetadata *artwork) {
+            this->setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata *artwork) {
                 Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
                 return (image != nullptr) ? !image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
@@ -302,7 +192,7 @@ namespace Models {
         }
         case 4: {
             // select Vectors
-            this->setFilteredItemsSelectedEx([](ArtworkMetadata *artwork) {
+            this->setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata *artwork) {
                 Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
                 return (image != nullptr) ? image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
@@ -310,7 +200,7 @@ namespace Models {
         }
         case 5: {
             // select Videos
-            this->setFilteredItemsSelectedEx([](ArtworkMetadata *artwork) {
+            this->setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata *artwork) {
                 return dynamic_cast<VideoArtwork*>(artwork) != nullptr;
             }, isSelected, unselectFirst);
             break;
@@ -320,68 +210,27 @@ namespace Models {
         }
     }
 
-    void FilteredArtworksListModel::reimportMetadataForSelected() {
-        LOG_DEBUG << "#";
-        auto selectedArtworks = getSelectedOriginalItems();
-
-        for (auto *artwork: selectedArtworks) {
-            artwork->prepareForReimport();
-        }
-
-        int importID = xpiks()->reimportMetadata(selectedArtworks);
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        artItemsModel->raiseArtworksReimported(importID, (int)selectedArtworks.size());
-    }
-
-    int FilteredArtworksListModel::findSelectedItemIndex() const {
-        int index = -1;
-
-        QVector<int> indices = getSelectedIndices();
-        if (indices.length() == 1) {
-            index = indices.first();
-        }
-
-        return index;
-    }
-
-    void FilteredArtworksListModel::clearKeywords(int index) {
-        LOG_INFO << "index:" << index;
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        int originalIndex = getOriginalIndex(index);
-        ArtworkMetadata *metadata = artItemsModel->getArtwork(originalIndex);
-
-        if ((metadata != NULL) && (!metadata->areKeywordsEmpty())) {
-            removeKeywordsInItem(metadata);
+    void FilteredArtworksListModel::focusNextItem(int proxyIndex) {
+        LOG_INFO << "index:" << proxyIndex;
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(getOriginalIndex(proxyIndex + 1));
+        if (artwork != NULL) {
+            artwork->requestFocus(Artworks::ArtworkMetadata::FocusFromPrev);
         }
     }
 
-    void FilteredArtworksListModel::focusNextItem(int index) {
-        LOG_INFO << "index:" << index;
-        if (0 <= index && index < rowCount() - 1) {
-            QModelIndex nextQIndex = this->index(index + 1, 0);
-            QModelIndex sourceIndex = mapToSource(nextQIndex);
-            ArtItemsModel *artItemsModel = getArtItemsModel();
-            ArtworkMetadata *metadata = artItemsModel->getArtwork(sourceIndex.row());
-
-            if (metadata != NULL) {
-                metadata->requestFocus(+1);
-            }
-        }
-    }
-
-    void FilteredArtworksListModel::focusPreviousItem(int index) {
-        LOG_INFO << "index:" << index;
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtworkMetadata(getOriginalIndex(index - 1));
+    void FilteredArtworksListModel::focusPreviousItem(int proxyIndex) {
+        LOG_INFO << "index:" << proxyIndex;
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(getOriginalIndex(proxyIndex - 1));
         if (artwork != nullptr) {
-            artwork->requestFocus(-1);
+            artwork->requestFocus(Artworks::ArtworkMetadata::FocusFromNext);
         }
     }
 
-    void FilteredArtworksListModel::focusCurrentItemKeywords(int index) {
-        LOG_INFO << "index:" << index;
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtworkMetadata(getOriginalIndex(index));
+    void FilteredArtworksListModel::focusCurrentItemKeywords(int proxyIndex) {
+        LOG_INFO << "index:" << proxyIndex;
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(getOriginalIndex(proxyIndex));
         if (artwork != nullptr) {
-            artwork->requestFocus(-1);
+            artwork->requestFocus(Artworks::ArtworkMetadata::FocusFromNext);
         }
     }
 
@@ -403,32 +252,125 @@ namespace Models {
         m_ArtworksListModel.updateItems(ArtworksListModel::SelectionType::All);
     }
 
+    void FilteredArtworksListModel::removeKeywordAt(int proxyIndex, int keywordIndex) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.removeKeywordAt(originalIndex, keywordIndex);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::removeLastKeyword(int proxyIndex) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.removeLastKeyword(originalIndex);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::appendKeyword(int proxyIndex, const QString &keyword) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.appendKeyword(originalIndex, keyword);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::pasteKeywords(int proxyIndex, const QStringList &keywords) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.pasteKeywords(originalIndex, keywords);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::addSuggestedKeywords(int proxyIndex, const QStringList &keywords) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.addSuggestedKeywords(originalIndex, keywords);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::editKeyword(int proxyIndex, int keywordIndex, const QString &replacement) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.editKeyword(originalIndex, keywordIndex, replacement);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::plainTextEdit(int proxyIndex, const QString &rawKeywords, bool spaceIsSeparator) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.plainTextEdit(originalIndex, rawKeywords, spaceIsSeparator);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::expandPreset(int proxyIndex, int keywordIndex, unsigned int presetID) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.expandPreset(originalIndex, keywordIndex, presetID, m_PresetsManager);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::expandLastAsPreset(int proxyIndex) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.expandLastAsPreset(originalIndex, m_PresetsManager);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::addPreset(int proxyIndex, unsigned int presetID) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.addPreset(originalIndex, presetID, m_PresetsManager);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::acceptCompletionAsPreset(int proxyIndex, int completionID) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.acceptCompletionAsPreset(originalIndex, completionID,
+                                                                    m_PresetsManager, m_CompletionSource);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::removeMetadataInSelected() const {
+        LOG_DEBUG << "#";
+        auto selectedIndices = getSelectedOriginalIndices();
+        using namespace Common;
+        Common::ArtworkEditFlags flags = ArtworkEditFlags::Clear |
+                                         ArtworkEditFlags::EditDescription |
+                                         ArtworkEditFlags::EditKeywords |
+                                         ArtworkEditFlags::EditTitle;
+
+        auto command = m_ArtworksListModel.removeMetadata(
+                           Helpers::IndicesRanges(selectedIndices),
+                           flags);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::clearKeywords(int proxyIndex) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        using namespace Common;
+        Common::ArtworkEditFlags flags = ArtworkEditFlags::Clear |
+                                         ArtworkEditFlags::EditKeywords;
+
+        auto command = m_ArtworksListModel.removeMetadata(
+                           Helpers::IndicesRanges({proxyIndex}),
+                           flags);
+        m_CommandManager.processCommand(command);
+    }
+
     void FilteredArtworksListModel::detachVectorFromSelected() {
         LOG_DEBUG << "#";
         QVector<int> indices = getSelectedOriginalIndices();
         m_ArtworksListModel.detachVectorsFromArtworks(Helpers::IndicesRanges(indices));
     }
 
-    void FilteredArtworksListModel::detachVectorFromArtwork(int index) {
-        LOG_DEBUG << index;
-        int originalIndex = getOriginalIndex(index);
+    void FilteredArtworksListModel::detachVectorFromArtwork(int proxyIndex) {
+        LOG_DEBUG << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
         m_ArtworksListModel.detachVectorsFromArtworks(Helpers::IndicesRanges(originalIndex, 1));
     }
 
-    QObject *FilteredArtworksListModel::getArtworkMetadata(int index) {
-        int originalIndex = getOriginalIndex(index);
-        QObject *item = m_ArtworksListModel.getArtworkObject(originalIndex);
-        return item;
-    }
-
-    QObject *FilteredArtworksListModel::getBasicModel(int index) {
-        int originalIndex = getOriginalIndex(index);
-        QObject *item = m_ArtworksListModel.getBasicModelObject(originalIndex);
-        return item;
-    }
-
-    QString FilteredArtworksListModel::getKeywordsString(int index) {
-        int originalIndex = getOriginalIndex(index);
+    QString FilteredArtworksListModel::getKeywordsString(int proxyIndex) {
+        int originalIndex = getOriginalIndex(proxyIndex);
         Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
         QString keywords;
         if (artwork != nullptr) {
@@ -437,9 +379,9 @@ namespace Models {
         return keywords;
     }
 
-    bool FilteredArtworksListModel::hasTitleWordSpellError(int index, const QString &word) {
+    bool FilteredArtworksListModel::hasTitleWordSpellError(int proxyIndex, const QString &word) {
         bool result = false;
-        int originalIndex = getOriginalIndex(index);
+        int originalIndex = getOriginalIndex(proxyIndex);
         LOG_INFO << originalIndex << word;
         Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
         if (artwork != NULL) {
@@ -450,9 +392,9 @@ namespace Models {
         return result;
     }
 
-    bool FilteredArtworksListModel::hasDescriptionWordSpellError(int index, const QString &word) {
+    bool FilteredArtworksListModel::hasDescriptionWordSpellError(int proxyIndex, const QString &word) {
         bool result = false;
-        int originalIndex = getOriginalIndex(index);
+        int originalIndex = getOriginalIndex(proxyIndex);
         LOG_INFO << originalIndex << word;
         Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
         if (artwork != NULL) {
@@ -461,6 +403,65 @@ namespace Models {
         }
 
         return result;
+    }
+
+    void FilteredArtworksListModel::removeSelectedArtworks() {
+        LOG_DEBUG << "#";
+        //m_ArtworksListModel.removeFiles()
+    }
+
+    void FilteredArtworksListModel::saveSelectedArtworks(bool overwriteAll, bool useBackups) {
+        LOG_INFO << "ovewriteAll:" << overwriteAll << "useBackups:" << useBackups;
+        // former patchSelectedArtworks
+        auto itemsToSave = filterItems<ArtworkMetadata*>(
+                    [&overwriteAll](ArtworkMetadata *artwork) {
+                return artwork->isSelected() && !artwork->isReadOnly() && (artwork->isModified() || overwriteAll);
+    },
+                [] (Artworks::ArtworkMetadata *artwork, int, int) { return artwork; });
+
+        xpiks()->writeMetadata(itemsToSave, useBackups);
+    }
+
+    void FilteredArtworksListModel::wipeMetadataFromSelectedArtworks(bool useBackups) {
+        LOG_INFO << "useBackups:" << useBackups;
+
+        auto selectedArtworks = getSelectedArtworksSnapshot();
+        Artworks::ArtworksSnapshot snapshot(selectedArtworks);
+        xpiks()->wipeAllMetadata(snapshot, useBackups);
+    }
+
+
+
+    void FilteredArtworksListModel::removeArtworksDirectory(int index) {
+        LOG_DEBUG << "#";
+        ArtItemsModel *artItemsModel = getArtItemsModel();
+
+        artItemsModel->removeArtworksDirectory(index);
+        emit selectedArtworksCountChanged();
+    }
+
+    void FilteredArtworksListModel::deleteKeywordsFromSelected() {
+        auto selectedItems = getSelectedOriginalItems();
+        xpiks()->deleteKeywordsFromArtworks(selectedItems);
+    }
+
+    void FilteredArtworksListModel::setSelectedForCsvExport() {
+        LOG_DEBUG << "#";
+        auto selectedArtworks = getSelectedArtworksSnapshot();
+        xpiks()->setArtworksForCsvExport(selectedArtworks);
+    }
+
+    void FilteredArtworksListModel::reimportMetadataForSelected() {
+        LOG_DEBUG << "#";
+        auto selectedArtworks = getSelectedOriginalItems();
+
+        for (auto *artwork: selectedArtworks) {
+            artwork->prepareForReimport();
+        }
+
+        int importID = xpiks()->reimportMetadata(selectedArtworks);
+        ArtItemsModel *artItemsModel = getArtItemsModel();
+        artItemsModel->raiseArtworksReimported(importID, (int)selectedArtworks.size());
     }
 
     void FilteredArtworksListModel::registerCurrentItem(int index) const {
@@ -510,9 +511,9 @@ namespace Models {
         Common::SetFlag(flags, SuggestionFlags::Title);
         Common::SetFlag(flags, SuggestionFlags::Keywords);
 
-        auto itemsForSuggestions = getFilteredOriginalItems<std::pair<Common::IMetadataOperator *, int> >(
-                    [](ArtworkMetadata *artwork) { return artwork->isSelected(); },
-                    [] (ArtworkMetadata *metadata, int index, int) { return std::pair<Common::IMetadataOperator *, int>(metadata, index); });
+        auto itemsForSuggestions = filterItems<std::pair<Common::IMetadataOperator *, int> >(
+                    [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
+                    [] (Artworks::ArtworkMetadata *metadata, int index, int) { return std::pair<Common::IMetadataOperator *, int>(metadata, index); });
         xpiks()->setupSpellCheckSuggestions(itemsForSuggestions, flags);
     }
 
@@ -528,9 +529,9 @@ namespace Models {
     }
 
     void FilteredArtworksListModel::reviewDuplicatesInSelected() const {
-        auto itemsForSuggestions = getFilteredOriginalItems<ArtworkMetadata *>(
-                    [](ArtworkMetadata *artwork) { return artwork->hasDuplicates(); },
-                    [] (ArtworkMetadata *artwork, int, int) { return artwork; });
+        auto itemsForSuggestions = filterItems<ArtworkMetadata *>(
+                    [](Artworks::ArtworkMetadata *artwork) { return artwork->hasDuplicates(); },
+                    [] (Artworks::ArtworkMetadata *artwork, int, int) { return artwork; });
         xpiks()->setupDuplicatesModel(itemsForSuggestions);
     }
 
@@ -546,140 +547,72 @@ namespace Models {
         emit selectedArtworksCountChanged();
     }
 
-    void FilteredArtworksListModel::onSpellCheckerAvailable(bool afterRestart) {
-        LOG_INFO << "after restart:" << afterRestart;
-        if (afterRestart) {
-            this->spellCheckAllItems();
-        }
-    }
-
     void FilteredArtworksListModel::onSettingsUpdated() {
         LOG_DEBUG << "#";
         updateSearchFlags();
         invalidateFilter();
     }
 
-    void FilteredArtworksListModel::removeMetadataInItems(Artworks::ArtworksSnapshot::Container &itemsToClear, Common::ArtworkEditFlags flags) const {
-        LOG_INFO << itemsToClear.size() << "item(s) with flags =" << (int)flags;
-        std::shared_ptr<Commands::ModifyArtworksCommand> combinedEditCommand(new Commands::ModifyArtworksCommand(
-                flags,
-                itemsToClear));
-
-        m_CommandManager->processCommand(combinedEditCommand);
-    }
-
-    void FilteredArtworksListModel::removeKeywordsInItem(ArtworkMetadata *artwork) {
-        Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::None;
-        Common::SetFlag(flags, Common::ArtworkEditFlags::EditKeywords);
-        Common::SetFlag(flags, Common::ArtworkEditFlags::Clear);
-
-        Artworks::ArtworksSnapshot::Container items;
-
-        items.emplace_back(new ArtworkMetadataLocker(artwork));
-
-        removeMetadataInItems(items, flags);
-    }
-
     void FilteredArtworksListModel::setFilteredItemsSelected(bool selected) {
         setFilteredItemsSelectedEx([](ArtworkMetadata*) { return true; }, selected, false);
     }
 
-    void FilteredArtworksListModel::setFilteredItemsSelectedEx(const std::function<bool (ArtworkMetadata *)> pred, bool selected, bool unselectFirst) {
+    void FilteredArtworksListModel::setFilteredItemsSelectedEx(const std::function<bool (ArtworkMetadata *)> pred, bool selected, bool unselectAllFirst) {
         LOG_INFO << selected;
-        ArtItemsModel *artItemsModel = getArtItemsModel();
 
-        QVector<int> indices;
-        int size = this->rowCount();
+        std::vector<int> indices;
+        const int size = this->rowCount();
         indices.reserve(size);
         int selectedCount = 0;
 
         for (int row = 0; row < size; ++row) {
-            QModelIndex proxyIndex = this->index(row, 0);
-            QModelIndex originalIndex = this->mapToSource(proxyIndex);
+            int index = getOriginalIndex(row);
+            Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(index);
+            if (artwork == nullptr) { continue; }
 
-            int index = originalIndex.row();
-            ArtworkMetadata *artwork = artItemsModel->getArtwork(index);
-            if (artwork != NULL) {
-                if (unselectFirst) {
-                    artwork->setIsSelected(false);
-                }
-
-                if (pred(artwork)) {
-                    artwork->setIsSelected(selected);
-                    selectedCount++;
-                }
-
-                indices << index;
+            if (unselectAllFirst) {
+                artwork->setIsSelected(false);
             }
+
+            if (pred(artwork)) {
+                artwork->setIsSelected(selected);
+                selectedCount++;
+            }
+
+            indices.push_back(index);
         }
 
         LOG_DEBUG << "Set selected" << selectedCount << "item(s) to" << selected;
-        artItemsModel->updateItems(indices, QVector<int>() << ArtItemsModel::IsSelectedRole);
+        m_ArtworksListModel.updateItems(Helpers::IndicesRanges(indices),
+                                        QVector<int>() << ArtworksListModel::IsSelectedRole);
         emit allItemsSelectedChanged();
 
         xpiks()->clearCurrentItem();
     }
 
-    void FilteredArtworksListModel::invertFilteredItemsSelected() {
-        LOG_DEBUG << "#";
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        QVector<int> indices;
-        int size = this->rowCount();
-        indices.reserve(size);
-
-        for (int row = 0; row < size; ++row) {
-            QModelIndex proxyIndex = this->index(row, 0);
-            QModelIndex originalIndex = this->mapToSource(proxyIndex);
-
-            int index = originalIndex.row();
-            ArtworkMetadata *metadata = artItemsModel->getArtwork(index);
-            if (metadata != NULL) {
-                metadata->invertSelection();
-                indices << index;
-            }
-        }
-
-        artItemsModel->updateItems(indices, QVector<int>() << ArtItemsModel::IsSelectedRole);
-        emit allItemsSelectedChanged();
-    }
-
     Artworks::WeakArtworksSnapshot FilteredArtworksListModel::getSelectedOriginalItems() const {
-        Artworks::WeakArtworksSnapshot items = getFilteredOriginalItems<ArtworkMetadata *>(
-            [](ArtworkMetadata *metadata) { return metadata->isSelected(); },
-            [] (ArtworkMetadata *metadata, int, int) { return metadata; });
+        Artworks::WeakArtworksSnapshot items = filterItems<ArtworkMetadata *>(
+            [](Artworks::ArtworkMetadata *metadata) { return metadata->isSelected(); },
+            [] (Artworks::ArtworkMetadata *metadata, int, int) { return metadata; });
 
         return items;
     }
 
-    Artworks::ArtworksSnapshot::Container FilteredArtworksListModel::getSelectedArtworksSnapshot() const {
-        return getFilteredOriginalItems<std::shared_ptr<ArtworkMetadataLocker> >(
-            [](ArtworkMetadata *metadata) { return metadata->isSelected(); },
-            [] (ArtworkMetadata *metadata, int, int) {
-            return std::shared_ptr<ArtworkMetadataLocker>(new ArtworkMetadataLocker(metadata));
-    });
-}
-
     template<typename T>
-    std::vector<T> FilteredArtworksListModel::getFilteredOriginalItems(std::function<bool (ArtworkMetadata *)> pred,
-                                                                        std::function<T(ArtworkMetadata *, int, int)> mapper) const {
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-
+    std::vector<T> FilteredArtworksListModel::filterItems(std::function<bool (Artworks::ArtworkMetadata *)> pred,
+                                                          std::function<T(Artworks::ArtworkMetadata *, int, int)> mapper) const {
         std::vector<T> filteredArtworks;
-        int size = this->rowCount();
-
+        const int size = this->rowCount();
         filteredArtworks.reserve(size);
 
-        for (int row = 0; row < size; ++row) {
-            QModelIndex proxyIndex = this->index(row, 0);
-            QModelIndex originalIndex = this->mapToSource(proxyIndex);
+        for (int proxyIndex = 0; proxyIndex < size; ++proxyIndex) {
+            int originalIndex = getOriginalIndex(proxyIndex);
+            Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
+            if (artwork == nullptr) { continue; }
+            Q_ASSERT(!artwork->isRemoved());
 
-            int index = originalIndex.row();
-            ArtworkMetadata *artwork = artItemsModel->getArtwork(index);
-
-            if (artwork != NULL &&
-                    !artwork->isRemoved() &&
-                    pred(artwork)) {
-                filteredArtworks.push_back(mapper(artwork, index, row));
+            if (pred(artwork)) {
+                filteredArtworks.push_back(mapper(artwork, originalIndex, proxyIndex));
             }
         }
 
@@ -688,38 +621,30 @@ namespace Models {
         return filteredArtworks;
     }
 
-    Artworks::WeakArtworksSnapshot FilteredArtworksListModel::getAllOriginalItems() const {
-        Artworks::WeakArtworksSnapshot items = getFilteredOriginalItems<ArtworkMetadata *>(
-            [](ArtworkMetadata *) { return true; },
-            [] (ArtworkMetadata *artwork, int, int) { return artwork; });
-
-        return items;
-    }
-
     std::vector<int> FilteredArtworksListModel::getSelectedOriginalIndices() const {
-        std::vector<int> items = getFilteredOriginalItems<int>(
-            [](ArtworkMetadata *artwork) { return artwork->isSelected(); },
-            [] (ArtworkMetadata *, int index, int) { return index; });
-
-        return items;
-    }
-
-    std::vector<int> FilteredArtworksListModel::getSelectedIndices() const {
-        std::vector<int> items = getFilteredOriginalItems<int>(
-            [](ArtworkMetadata *artwork) { return artwork->isSelected(); },
-            [] (ArtworkMetadata *, int, int originalIndex) { return originalIndex; });
+        std::vector<int> items = filterItems<int>(
+            [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
+            [] (Artworks::ArtworkMetadata *, int index, int) { return index; });
 
         return items;
     }
 
     void FilteredArtworksListModel::forceUnselectAllItems() {
         LOG_DEBUG << "#";
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        artItemsModel->forceUnselectAllItems();
+        m_ArtworksListModel.unselectAllItems();
         m_SelectedArtworksCount = 0;
         emit selectedArtworksCountChanged();
         emit allItemsSelectedChanged();
         xpiks()->clearCurrentItem();
+    }
+
+    void FilteredArtworksListModel::updateSearchFlags() {
+        bool searchUsingAnd = m_SettingsModel.getSearchUsingAnd();
+        bool searchByFilepath = m_SettingsModel.getSearchByFilepath();
+        // default search is not case sensitive
+        m_SearchFlags = searchUsingAnd ? Common::SearchFlags::AllTermsEverything :
+                                    Common::SearchFlags::AnyTermsEverything;
+        Common::ApplyFlag(m_SearchFlags, searchByFilepath, Common::SearchFlags::Filepath);
     }
 
     bool FilteredArtworksListModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
@@ -783,11 +708,11 @@ namespace Models {
 
     Artworks::ArtworksSnapshot::Container FilteredArtworksListModel::getSearchablePreviewOriginalItems(const QString &searchTerm,
                                                                                                           Common::SearchFlags flags) const {
-        return getFilteredOriginalItems<std::shared_ptr<ArtworkMetadataLocker> >(
+        return filterItems<std::shared_ptr<ArtworkMetadataLocker> >(
             [&searchTerm, flags](ArtworkMetadata *artwork) {
             return Helpers::hasSearchMatch(searchTerm, artwork, flags);
         },
-            [] (ArtworkMetadata *artwork, int, int) {
+            [] (Artworks::ArtworkMetadata *artwork, int, int) {
             return std::shared_ptr<ArtworkMetadataLocker>(new PreviewArtworkElement(artwork)); });
     }
 }
