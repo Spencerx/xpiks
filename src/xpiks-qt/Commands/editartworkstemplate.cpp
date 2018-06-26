@@ -52,7 +52,12 @@ namespace Commands {
     {
     }
 
-    void EditArtworksTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+    EditArtworksTemplate::EditArtworksTemplate(Common::ArtworkEditFlags editFlags):
+        m_EditFlags(editFlags)
+    {
+    }
+
+    void EditArtworksTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_INFO << "flags =" << combinedFlagsToString(m_EditFlags) << ", artworks count =" << snapshot.size();
         const size_t size = snapshot.size();
         m_ArtworksBackups.reserve(size);
@@ -68,7 +73,7 @@ namespace Commands {
         }
     }
 
-    void EditArtworksTemplate::undo(Artworks::ArtworksSnapshot &snapshot) {
+    void EditArtworksTemplate::undo(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
         Q_ASSERT(snapshot.size() == m_ArtworksBackups.size());
         const size_t size = snapshot.size();

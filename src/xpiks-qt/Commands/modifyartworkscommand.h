@@ -12,27 +12,27 @@
 #define COMBINEDEDITCOMMAND_H
 
 #include <QObject>
-#include "artworkscommand.h"
+#include "templatedcommand.h"
+#include "../Artworks/artworkssnapshot.h"
 
 namespace Commands {
-    class ModifyArtworksCommand: public ArtworksCommand
+    class ModifyArtworksCommand: public TemplatedCommand<Artworks::ArtworksSnapshot>
     {
     public:
-        ModifyArtworksCommand(const std::shared_ptr<Artworks::ArtworksSnapshot> &snapshot,
-                            std::shared_ptr<IArtworksCommandTemplate> &editTemplate):
-            ArtworksCommand(snapshot, editTemplate),
+        ModifyArtworksCommand(Artworks::ArtworksSnapshot &&snapshot,
+                            std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
+            TemplatedCommand(snapshot, editTemplate),
             m_Count(snapshot.size())
         { }
 
         ModifyArtworksCommand(Artworks::ArtworkMetadata *artwork,
-                              std::shared_ptr<IArtworksCommandTemplate> &editTemplate):
-            ArtworksCommand(artwork, editTemplate),
+                              std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
+            TemplatedCommand(Artworks::ArtworksSnapshot({artwork}), editTemplate),
             m_Count(1)
         { }
 
     public:
         virtual bool canUndo() override { return true; }
-
         virtual QString getDescription() const override {
             return m_Count > 1 ? QObject::tr("%1 items modified").arg(m_Count) :
                                  QObject::tr("1 item modified");

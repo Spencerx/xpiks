@@ -49,9 +49,10 @@ namespace Artworks {
         set(rawSnapshot);
     }
 
-    ArtworksSnapshot::ArtworksSnapshot(ArtworksSnapshot &&other) {
-        m_ArtworksSnapshot.swap(other.m_ArtworksSnapshot);
-        m_RawArtworks.swap(other.m_RawArtworks);
+    ArtworksSnapshot::ArtworksSnapshot(ArtworksSnapshot &&other):
+        m_ArtworksSnapshot(std::move(other.m_ArtworksSnapshot)),
+        m_RawArtworks(std::move(other.m_RawArtworks))
+    {
     }
 
     ArtworksSnapshot &ArtworksSnapshot::operator=(ArtworksSnapshot &&other) {

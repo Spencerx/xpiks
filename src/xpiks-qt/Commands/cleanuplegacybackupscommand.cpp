@@ -15,7 +15,8 @@
 
 namespace Commands {
     CleanupLegacyBackupsCommand::CleanupLegacyBackupsCommand(const std::shared_ptr<Filesystem::IFilesCollection> &files,
-                                                             Maintenance::MaintenanceService &maintenanceService)
+                                                             Maintenance::MaintenanceService &maintenanceService):
+        m_MaintenanceService(maintenanceService)
     {
         QSet<QString> dirs;
         for (auto &f: files->getImages()) {

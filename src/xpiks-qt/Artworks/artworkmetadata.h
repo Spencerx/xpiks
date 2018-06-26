@@ -240,10 +240,8 @@ namespace Artworks {
         void modifiedChanged(bool newValue);
         void selectedChanged(bool newValue);
         void focusRequested(int directionSign);
-        void backupRequired();
         void editingPaused();
         void aboutToBeRemoved();
-        void spellingInfoUpdated();
         void thumbnailUpdated();
 
     protected:

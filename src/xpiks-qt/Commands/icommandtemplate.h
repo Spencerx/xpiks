@@ -8,23 +8,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef COMMANDSINK_H
-#define COMMANDSINK_H
-
-#include <type_traits>
-#include "icommand.h"
+#ifndef ICOMMANDTEMPLATE_H
+#define ICOMMANDTEMPLATE_H
 
 namespace Commands {
-    class CommandsSink {
-
+    template<typename T>
+    class ICommandTemplate {
     public:
-        CommandsSink() {
-        }
-
-    public:
-        template<class T>
-        void process(const std::shared_ptr<T> &command);
+        virtual ~ICommandTemplate() {}
+        virtual void execute(const T &param) = 0;
+        virtual void undo(const T&) { }
     };
 }
 
-#endif // COMMANDSINK_H
+#endif // ICOMMANDTEMPLATE_H

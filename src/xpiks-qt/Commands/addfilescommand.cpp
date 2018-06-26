@@ -17,7 +17,7 @@ namespace Commands {
     AddFilesCommand::AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> &files,
                                      Common::AddFilesFlags flags,
                                      Models::ArtworksListModel &artworksListModel,
-                                     std::shared_ptr<IArtworksCommandTemplate> &addedArtworksTemplate):
+                                     std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot> > &addedArtworksTemplate):
         QObject(),
         m_Files(std::move(files)),
         m_Flags(flags),

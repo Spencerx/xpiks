@@ -11,22 +11,26 @@
 #ifndef BACKUPARTWORKSTEMPLATE_H
 #define BACKUPARTWORKSTEMPLATE_H
 
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 
 namespace MetadataIO {
     class MetadataIOService;
 }
 
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
 namespace Commands {
-    class BackupArtworksTemplate: public IArtworksCommandTemplate
+    class BackupArtworksTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         BackupArtworksTemplate(MetadataIO::MetadataIOService &metadataIOService);
 
         // IArtworksCommandTemplate interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(Artworks::ArtworksSnapshot &snapshot) override { execute(snapshot); }
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override { execute(snapshot); }
 
     private:
         MetadataIO::MetadataIOService &m_MetadataIOService;

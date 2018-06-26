@@ -22,7 +22,7 @@ namespace Commands {
     {
     }
 
-    void KeywordEditTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+    void KeywordEditTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
         Q_ASSERT(snapshot.size() == 1);
         LOG_INFO << "artworks count =" << snapshot.size();
         const size_t size = snapshot.size();
@@ -48,7 +48,7 @@ namespace Commands {
         }
     }
 
-    void KeywordEditTemplate::undo(Artworks::ArtworksSnapshot &snapshot) {
+    void KeywordEditTemplate::undo(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
         Q_ASSERT(snapshot.size() >= m_ArtworksBackups.size());
         const size_t size = m_ArtworksBackups.size();

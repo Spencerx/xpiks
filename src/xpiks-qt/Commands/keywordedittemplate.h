@@ -11,14 +11,18 @@
 #ifndef KEYWORDEDITTEMPLATE_H
 #define KEYWORDEDITTEMPLATE_H
 
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 #include <QString>
 #include <vector>
 #include "../UndoRedo/artworkmetadatabackup.h"
 #include "../Common/flags.h"
 
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
 namespace Commands {
-    class KeywordEditTemplate: public IArtworksCommandTemplate
+    class KeywordEditTemplate: public Artworks::ArtworksSnapshot
     {
     public:
         KeywordEditTemplate(Common::KeywordEditFlags editFlags,
@@ -27,8 +31,8 @@ namespace Commands {
 
         // IArtworksCommandTemplate interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
         int m_KeywordIndex;

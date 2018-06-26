@@ -11,28 +11,30 @@
 #ifndef EDITARTWORKSTEMPLATE_H
 #define EDITARTWORKSTEMPLATE_H
 
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 #include <QString>
 #include "../Common/flags.h"
 #include "../UndoRedo/artworkmetadatabackup.h"
 
 namespace Artworks {
     class ArtworkMetadata;
+    class ArtworksSnapshot;
 }
 
 namespace Commands {
-    class EditArtworksTemplate: public IArtworksCommandTemplate
+    class EditArtworksTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         EditArtworksTemplate(const QString &title,
                              const QString &description,
                              const QStringList &keywords,
                              Common::ArtworkEditFlags editFlags);
+        EditArtworksTemplate(Common::ArtworkEditFlags editFlags);
 
         // IArtworksCommandTemplate interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
         void editKeywords(Artworks::ArtworkMetadata *artwork) const;

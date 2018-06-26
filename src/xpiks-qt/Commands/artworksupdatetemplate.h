@@ -11,15 +11,19 @@
 #ifndef ARTWORKSUPDATETEMPLATE_H
 #define ARTWORKSUPDATETEMPLATE_H
 
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 #include <QVector>
 
 namespace Models {
     class ArtworksListModel;
 }
 
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
 namespace Commands {
-    class ArtworksUpdateTemplate: public IArtworksCommandTemplate
+    class ArtworksUpdateTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         ArtworksUpdateTemplate(Models::ArtworksListModel &artworksListModel,
@@ -27,8 +31,8 @@ namespace Commands {
 
         // IArtworksCommandTemplate interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(Artworks::ArtworksSnapshot &snapshot) override { execute(snapshot); }
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override { execute(snapshot); }
 
     private:
         Models::ArtworksListModel &m_ArtworksListModel;

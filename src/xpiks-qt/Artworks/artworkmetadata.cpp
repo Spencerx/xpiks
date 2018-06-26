@@ -46,8 +46,6 @@ namespace Artworks {
     {
         m_MetadataModel.setSpellCheckInfo(&m_SpellCheckInfo);
 
-        QObject::connect(&m_MetadataModel, &BasicMetadataModel::spellingInfoUpdated, this, &ArtworkMetadata::spellingInfoUpdated);
-
         QFileInfo fi(filepath);
         setIsReadOnlyFlag(!fi.isWritable());
     }
@@ -556,7 +554,6 @@ namespace Artworks {
     }
 
     void ArtworkMetadata::doOnTimer() {
-        emit backupRequired();
         emit editingPaused();
     }
 }

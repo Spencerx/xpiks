@@ -10,6 +10,7 @@
 
 #include "addtorecenttemplate.h"
 #include "../Models/recentfilesmodel.h"
+#include "../Common/logging.h"
 
 namespace Commands {
     AddToRecentTemplate::AddToRecentTemplate(Models::RecentFilesModel &recentFilesModel):
@@ -17,7 +18,7 @@ namespace Commands {
     {
     }
 
-    void AddToRecentTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+    void AddToRecentTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
         m_RecentFilesModel.add(snapshot);
     }

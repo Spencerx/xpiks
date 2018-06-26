@@ -12,7 +12,7 @@
 #define SAVESESSIONCOMMAND_H
 
 #include "icommand.h"
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 
 namespace Models {
     class ArtworksListModel;
@@ -23,8 +23,12 @@ namespace Maintenance {
     class MaintenanceService;
 }
 
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
 namespace Commands {
-    class SaveSessionCommand: public ICommand, public IArtworksCommandTemplate
+    class SaveSessionCommand: public ICommand, public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         SaveSessionCommand(Maintenance::MaintenanceService &maintenanceService,

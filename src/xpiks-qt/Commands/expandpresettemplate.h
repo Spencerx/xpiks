@@ -11,12 +11,16 @@
 #ifndef EXPANDPRESETTEMPLATE_H
 #define EXPANDPRESETTEMPLATE_H
 
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 #include "../KeywordsPresets/ipresetsmanager.h"
 #include "../UndoRedo/artworkmetadatabackup.h"
 
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
 namespace Commands {
-    class ExpandPresetTemplate: public IArtworksCommandTemplate
+    class ExpandPresetTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         ExpandPresetTemplate(KeywordsPresets::IPresetsManager &presetsManager,
@@ -25,8 +29,8 @@ namespace Commands {
 
         // IArtworksCommandTemplate interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
         std::vector<UndoRedo::ArtworkMetadataBackup> m_ArtworksBackups;

@@ -11,21 +11,25 @@
 #ifndef ADDTORECENTTEMPLATE_H
 #define ADDTORECENTTEMPLATE_H
 
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
+
+namespace Artworks {
+    class ArtworksSnapshot;
+}
 
 namespace Models {
     class RecentFilesModel;
 }
 
 namespace Commands {
-    class AddToRecentTemplate: public IArtworksCommandTemplate
+    class AddToRecentTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         AddToRecentTemplate(Models::RecentFilesModel &recentFilesModel);
 
         // IArtworksCommandTemplate interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
         Models::RecentFilesModel &m_RecentFilesModel;

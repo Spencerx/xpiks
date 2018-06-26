@@ -14,9 +14,10 @@
 #include <memory>
 #include <QObject>
 #include "icommand.h"
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 #include "../Common/flags.h"
 #include "../Filesystem/ifilescollection.h"
+#include "../Artworks/artworkssnapshot.h"
 
 namespace Models {
     class ArtworksListModel;
@@ -32,7 +33,7 @@ namespace Commands {
         AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> &files,
                         Common::AddFilesFlags flags,
                         Models::ArtworksListModel &artworksListModel,
-                        std::shared_ptr<IArtworksCommandTemplate> &addedArtworksTemplate);
+                        std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &addedArtworksTemplate);
 
         // ICommand interface
     public:
@@ -54,7 +55,7 @@ namespace Commands {
         std::shared_ptr<Filesystem::IFilesCollection> m_Files;
         Common::AddFilesFlags m_Flags = Common::AddFilesFlags::None;
         Models::ArtworksListModel &m_ArtworksListModel;
-        std::shared_ptr<IArtworksCommandTemplate> m_AddedArtworksTemplate;
+        std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> m_AddedArtworksTemplate;
         // undo
         int m_OriginalCount = 0;
         int m_AddedCount = 0;

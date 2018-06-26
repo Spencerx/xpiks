@@ -21,12 +21,12 @@
 #include "../Filesystem/ifilescollection.h"
 #include "../Helpers/indicesranges.h"
 #include "../Artworks/icurrentartworksource.h"
+#include "../Commands/icommandtemplate.h"
 
 class QQuickTextDocument;
 
 namespace Commands {
     class ICommand;
-    class IArtworksCommandTemplate;
 }
 
 namespace KeywordsPresets {
@@ -49,6 +49,8 @@ namespace Services {
 namespace Models {
     class ArtworksRepository;
 
+    using IArtworksCommandTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
+
     class ArtworksListModel:
             public QAbstractListModel,
             public Helpers::IFileNotAvailableModel,
@@ -57,7 +59,7 @@ namespace Models {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
 
-        typedef std::deque<Artworks::ArtworkMetadata *> ArtworksContainer;
+        using ArtworksContainer = std::deque<Artworks::ArtworkMetadata *>;
 
     public:
         ArtworksListModel(ArtworksRepository &repository,
@@ -109,7 +111,7 @@ namespace Models {
     public:
         size_t getArtworksCount() const { return m_ArtworkList.size(); }
         int getModifiedArtworksCount();
-        QVector<int> getArtworkStandardRoles() const;
+        QVector<int> getStandardUpdateRoles() const;
 
         // icurrentartworksource
     public:
@@ -127,8 +129,7 @@ namespace Models {
         bool isInSelectedDirectory(int artworkIndex);
 
     public:
-        void setBackupActionTemplate(const std::shared_ptr<Commands::IArtworksCommandTemplate> &actionTemplate);
-        void setInspectActionTemplate(const std::shared_ptr<Commands::IArtworksCommandTemplate> &actionTemplate);
+        void setEditCommandTemplate(const std::shared_ptr<Commands::ICommandTemplate<Artworks::ArtworksSnapshot>> &actionTemplate);
 
     public:
         // update hub related
@@ -189,6 +190,7 @@ namespace Models {
         std::shared_ptr<Commands::ICommand> acceptCompletionAsPreset(int artworkIndex, int completionID,
                                                                      KeywordsPresets::IPresetsManager &presetsManager,
                                                                      AutoComplete::ICompletionSource &completionsSource);
+        std::shared_ptr<Commands::ICommand> removeMetadata(const Helpers::IndicesRanges &ranges, Common::ArtworkEditFlags flags);
 
     signals:
         void modifiedArtworksCountChanged();
@@ -202,9 +204,7 @@ namespace Models {
 
     public slots:
         void onFilesUnavailableHandler();
-        void onArtworkBackupRequested();
         void onArtworkEditingPaused();
-        void onArtworkSpellingInfoUpdated();
         void onUndoStackEmpty();
         void userDictUpdateHandler(const QStringList &keywords, bool overwritten);
         void userDictClearedHandler();
@@ -287,9 +287,7 @@ namespace Models {
         qint64 m_LastID;
         size_t m_CurrentItemIndex;
         ArtworksRepository &m_ArtworksRepository;
-        std::shared_ptr<Commands::IArtworksCommandTemplate> m_InspectionTemplate;
-        std::shared_ptr<Commands::IArtworksCommandTemplate> m_BackupTemplate;
-        std::shared_ptr<Commands::IArtworksCommandTemplate> m_UpdateTemplate;
+        std::shared_ptr<IArtworksCommandTemplate> m_EditTemplate;
         ArtworksContainer m_FinalizationList;
 #ifdef QT_DEBUG
         ArtworksContainer m_DestroyedList;

@@ -20,11 +20,11 @@ namespace Commands {
         m_Roles(roles)
     {
         if (m_Roles.isEmpty()) {
-            m_Roles = artworksListModel.getArtworkStandardRoles();
+            m_Roles = artworksListModel.getStandardUpdateRoles();
         }
     }
 
-    void ArtworksUpdateTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+    void ArtworksUpdateTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
         auto indices = Helpers::map(snapshot.getWeakSnapshot(),
                                     [](const Artworks::ArtworkMetadata *artwork) {
             return artwork->getLastKnownIndex();

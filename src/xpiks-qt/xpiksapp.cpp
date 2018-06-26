@@ -24,7 +24,7 @@
 #include "Commands/addfilescommand.h"
 #include "Commands/cleanuplegacybackupscommand.h"
 #include "Commands/readmetadatatemplate.h"
-#include "Commands/artworkscommand.h"
+#include "Commands/templatedcommand.h"
 #include "Commands/addtorecenttemplate.h"
 #include "Commands/autoimportmetadatacommand.h"
 #include "Commands/compositecommandtemplate.h"
@@ -75,7 +75,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_WarningsModel.setSourceModel(&m_ArtworksListModel);
     m_WarningsModel.setWarningsSettingsModel(m_WarningsService.getWarningsSettingsModel());
 
-    m_ArtworksUpdateHub.setStandardRoles(m_ArtworksListModel.getArtworkStandardRoles());
+    m_ArtworksUpdateHub.setStandardRoles(m_ArtworksListModel.getStandardUpdateRoles());
 
     m_PluginsWithActions.setSourceModel(&m_PluginManager);
 
@@ -560,14 +560,15 @@ void XpiksApp::connectEntitiesSignalsSlots() {
 
 void XpiksApp::injectActionsTemplates() {
     LOG_DEBUG << "#";
-    using namespace Commands;
-    auto inspectionTemplate = std::make_shared<IArtworksCommandTemplate>(
+    using ArtworkTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
+    auto inspectionTemplate = std::make_shared<ArtworkTemplate>(
                 new InspectArtworksTemplate(m_SpellCheckerService, m_WarningsService, m_SettingsModel));
-    auto backupTemplate = std::make_shared<IArtworksCommandTemplate>(
+    auto backupTemplate = std::make_shared<ArtworkTemplate>(
                 new BackupArtworksTemplate(m_MetadataIOService));
 
-    m_ArtworksListModel.setBackupActionTemplate(backupTemplate);
-    m_ArtworksListModel.setInspectActionTemplate(inspectionTemplate);
+    m_ArtworksListModel.setEditCommandTemplate(
+                std::shared_ptr<ArtworkTemplate>(
+                    new Commands::CompositeCommandTemplate({inspectionTemplate, backupTemplate})));
 }
 
 void XpiksApp::servicesInitialized(int status) {

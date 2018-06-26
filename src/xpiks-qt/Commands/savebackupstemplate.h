@@ -11,22 +11,26 @@
 #ifndef SAVEBACKUPSCOMMAND_H
 #define SAVEBACKUPSCOMMAND_H
 
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 #include <memory>
 
 namespace MetadataIO {
     class MetadataIOService;
 }
 
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
 namespace Commands {
-    class SaveBackupsTemplate: public IArtworksCommandTemplate
+    class SaveBackupsTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         SaveBackupsTemplate(MetadataIO::MetadataIOService &metadataIOService);
 
         // ICommand interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
         MetadataIO::MetadataIOService &m_MetadataIOService;

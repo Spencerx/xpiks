@@ -11,7 +11,7 @@
 #ifndef SPELLCHECKARTWORKSTEMPLATE_H
 #define SPELLCHECKARTWORKSTEMPLATE_H
 
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 
 namespace SpellCheck {
     class SpellCheckerService;
@@ -25,8 +25,12 @@ namespace Models {
     class SettingsModel;
 }
 
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
 namespace Commands {
-    class InspectArtworksTemplate: public IArtworksCommandTemplate
+    class InspectArtworksTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         InspectArtworksTemplate(SpellCheck::SpellCheckerService &spellCheckService,
@@ -35,8 +39,8 @@ namespace Commands {
 
         // IArtworksCommandTemplate interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(Artworks::ArtworksSnapshot &) override { execute(snapshot); }
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void undo(const Artworks::ArtworksSnapshot &) override { execute(snapshot); }
 
     private:
         SpellCheck::SpellCheckerService &m_SpellCheckService;

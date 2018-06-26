@@ -25,7 +25,7 @@ namespace Commands {
     {
     }
 
-    void InspectArtworksTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+    void InspectArtworksTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
         auto itemsToCheck = Helpers::map(snapshot.getWeakSnapshot(), [](const Artworks::ArtworkMetadata *artwork) {
            return artwork->getBasicModel();

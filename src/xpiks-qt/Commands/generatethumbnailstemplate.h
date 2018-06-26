@@ -11,7 +11,7 @@
 #ifndef GENERATETHUMBNAILSCOMMAND_H
 #define GENERATETHUMBNAILSCOMMAND_H
 
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 #include <memory>
 
 namespace QMLExtensions {
@@ -24,7 +24,7 @@ namespace Artworks {
 }
 
 namespace Commands {
-    class GenerateThumbnailsTemplate: public IArtworksCommandTemplate
+    class GenerateThumbnailsTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         GenerateThumbnailsTemplate(QMLExtensions::ImageCachingService &imageCachingService,
@@ -32,7 +32,7 @@ namespace Commands {
 
         // ICommand interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
         QMLExtensions::ImageCachingService &m_ImageCachingService;

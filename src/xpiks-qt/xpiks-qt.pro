@@ -216,7 +216,6 @@ SOURCES += main.cpp \
     Commands/readmetadatatemplate.cpp \
     Commands/autoimportmetadatacommand.cpp \
     Commands/addtorecenttemplate.cpp \
-    Commands/compositecommandtemplate.cpp \
     Commands/editartworkstemplate.cpp \
     Commands/expandpresettemplate.cpp \
     Commands/generatethumbnailstemplate.cpp \
@@ -527,9 +526,7 @@ HEADERS += \
     AutoComplete/icompletionsource.h \
     Artworks/icurrentartworksource.h \
     Common/types.h \
-    Commands/artworkscommand.h \
     Commands/savebackupstemplate.h \
-    Commands/iartworkscommandtemplate.h \
     Commands/readmetadatatemplate.h \
     Commands/autoimportmetadatacommand.h \
     Commands/addtorecenttemplate.h \
@@ -545,8 +542,8 @@ HEADERS += \
     Commands/emptycommand.h \
     Commands/removefilescommandbase.h \
     Commands/removefilescommand.h \
-    Commands/commandchannel.h \
-    Commands/commandsink.h
+    Commands/icommandtemplate.h \
+    Commands/templatedcommand.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

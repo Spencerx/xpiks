@@ -22,6 +22,14 @@ namespace Commands {
     class ICommandManager;
 }
 
+namespace KeywordsPresets {
+    class IPresetsManager;
+}
+
+namespace AutoComplete {
+    class ICompletionSource;
+}
+
 namespace Models {
     class ArtworkMetadata;
     class ArtworkElement;
@@ -40,6 +48,8 @@ namespace Models {
     public:
         FilteredArtworksListModel(ArtworksListModel &artworksListModel,
                                   Commands::ICommandManager &commandManager,
+                                  KeywordsPresets::IPresetsManager &presetsManager,
+                                  AutoComplete::ICompletionSource &completionSource,
                                   QObject *parent=0);
 
     public:
@@ -84,11 +94,7 @@ namespace Models {
         Q_INVOKABLE bool acceptCompletionAsPreset(int proxyIndex, int completionID);
 
     public:
-        Q_INVOKABLE QSize retrieveImageSize(int proxyIndex) const;
-        Q_INVOKABLE QString retrieveFileSize(int proxyIndex) const;
-        Q_INVOKABLE QString getArtworkFilepath(int proxyIndex) const;
-        Q_INVOKABLE QString getAttachedVectorPath(int proxyIndex) const;
-        Q_INVOKABLE QString getArtworkDateTaken(int proxyIndex) const;
+        Q_INVOKABLE void removeMetadataInSelected() const;
 
     public:
         Q_INVOKABLE void setSelectedItemsSaved();
@@ -103,9 +109,8 @@ namespace Models {
         Q_INVOKABLE void selectArtworksEx(int comboboxSelectionIndex);
 
         Q_INVOKABLE int getItemsCount() const { return rowCount(); }
-        Q_INVOKABLE void reimportMetadataForSelected();
+        //Q_INVOKABLE void reimportMetadataForSelected();
         Q_INVOKABLE int findSelectedItemIndex() const;
-        Q_INVOKABLE void removeMetadataInSelected() const;
         Q_INVOKABLE void clearKeywords(int index);
 
         Q_INVOKABLE void updateFilter() { invalidateFilter(); emit afterInvalidateFilter(); }
@@ -170,6 +175,8 @@ namespace Models {
     private:
         ArtworksListModel &m_ArtworksListModel;
         Commands::ICommandManager &m_CommandManager;
+        KeywordsPresets::IPresetsManager &m_PresetsManager;
+        AutoComplete::ICompletionSource &m_CompletionSource;
         // ignore default regexp from proxymodel
         QString m_SearchTerm;
         Common::SearchFlags m_SearchFlags;

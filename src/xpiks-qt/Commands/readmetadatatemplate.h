@@ -12,7 +12,8 @@
 #define READMETADATACOMMAND_H
 
 #include <memory>
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
+#include "../Artworks/artworkssnapshot.h"
 
 namespace MetadataIO {
     class MetadataIOService;
@@ -20,7 +21,7 @@ namespace MetadataIO {
 }
 
 namespace Commands {
-    class ReadMetadataTemplate: public IArtworksCommandTemplate
+    class ReadMetadataTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         ReadMetadataTemplate(MetadataIO::MetadataIOService &metadataIOService,
@@ -28,7 +29,7 @@ namespace Commands {
 
         // ICommand interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
         MetadataIO::MetadataIOService &m_MetadataIOService;

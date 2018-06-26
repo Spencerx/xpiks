@@ -14,21 +14,38 @@
 #include <memory>
 #include <vector>
 #include <initializer_list>
-#include "iartworkscommandtemplate.h"
+#include "icommandtemplate.h"
 
 namespace Commands {
-    class CompositeCommandTemplate: IArtworksCommandTemplate
+    template<typename T>
+    class CompositeCommandTemplate: ICommandTemplate<T>
     {
     public:
-        CompositeCommandTemplate(std::initializer_list<std::shared_ptr<IArtworksCommandTemplate> > list);
+        CompositeCommandTemplate(std::initializer_list<std::shared_ptr<ICommandTemplate<T>> > list):
+            m_Templates(list)
+        {
+        }
 
         // IArtworksCommandTemplate interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void execute(const T &argument) override {
+            for (auto &t: m_Templates) {
+                if (t) {
+                    t->execute(argument);
+                }
+            }
+        }
+
+        virtual void undo(const T &argument) override {
+            for (auto &t: m_Templates) {
+                if (t) {
+                    t->undo(argument);
+                }
+            }
+        }
 
     private:
-        std::vector<std::shared_ptr<IArtworksCommandTemplate> > m_Templates;
+        std::vector<std::shared_ptr<ICommandTemplate<T>> > m_Templates;
     };
 }
 

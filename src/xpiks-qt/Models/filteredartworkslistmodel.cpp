@@ -27,10 +27,14 @@
 namespace Models {
     FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel,
                                                          Commands::ICommandManager &commandManager,
+                                                         KeywordsPresets::IPresetsManager &presetsManager,
+                                                         AutoComplete::ICompletionSource &completionSource,
                                                          QObject *parent):
         QSortFilterProxyModel(parent),
         m_ArtworksListModel(artworksListModel),
         m_CommandManager(commandManager),
+        m_PresetsManager(presetsManager),
+        m_CompletionSource(completionSource),
         m_SelectedArtworksCount(0),
         m_SortingEnabled(false) {
         // m_SortingEnabled = true;
@@ -89,6 +93,88 @@ namespace Models {
         LOG_DEBUG << "#";
         m_ArtworksListModel.selectArtworksFromDirectory(directoryIndex);
         emit allItemsSelectedChanged();
+    }
+
+    void FilteredArtworksListModel::removeKeywordAt(int proxyIndex, int keywordIndex) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.removeKeywordAt(originalIndex, keywordIndex);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::removeLastKeyword(int proxyIndex) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.removeLastKeyword(originalIndex);
+        m_CommandManager.processCommand(command);
+    }
+
+    bool FilteredArtworksListModel::appendKeyword(int proxyIndex, const QString &keyword) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.appendKeyword(originalIndex, keyword);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::pasteKeywords(int proxyIndex, const QStringList &keywords) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.pasteKeywords(originalIndex, keywords);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::addSuggestedKeywords(int proxyIndex, const QStringList &keywords) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.addSuggestedKeywords(originalIndex, keywords);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::editKeyword(int proxyIndex, int keywordIndex, const QString &replacement) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.editKeyword(originalIndex, keywordIndex, replacement);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::plainTextEdit(int proxyIndex, const QString &rawKeywords, bool spaceIsSeparator) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.plainTextEdit(originalIndex, rawKeywords, spaceIsSeparator);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::expandPreset(int proxyIndex, int keywordIndex, unsigned int presetID) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.expandPreset(originalIndex, keywordIndex, presetID, m_PresetsManager);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::expandLastAsPreset(int proxyIndex) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.expandLastAsPreset(originalIndex, m_PresetsManager);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::addPreset(int proxyIndex, unsigned int presetID) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.addPreset(originalIndex, presetID, m_PresetsManager);
+        m_CommandManager.processCommand(command);
+    }
+
+    bool FilteredArtworksListModel::acceptCompletionAsPreset(int proxyIndex, int completionID) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.acceptCompletionAsPreset(originalIndex, completionID,
+                                                                    m_PresetsManager, m_CompletionSource);
+        m_CommandManager.processCommand(command);
+    }
+
+    void FilteredArtworksListModel::removeMetadataInSelected() const {
+        LOG_DEBUG << "#";
+        auto selectedIndices = getSelectedOriginalIndices();
+        using namespace Common;
+        Common::ArtworkEditFlags flags = ArtworkEditFlags::None;
+        Common::SetFlag(flags, ArtworkEditFlags::EditDescription);
+        Common::SetFlag(flags, ArtworkEditFlags::EditKeywords);
+        Common::SetFlag(flags, ArtworkEditFlags::EditTitle);
+        Common::SetFlag(flags, ArtworkEditFlags::Clear);
+        auto command = m_ArtworksListModel.removeMetadata(
+                           Helpers::IndicesRanges(selectedIndices),
+                           flags);
+        m_CommandManager.processCommand(command);
     }
 
     void FilteredArtworksListModel::setSelectedItemsSaved() {
@@ -256,18 +342,6 @@ namespace Models {
         }
 
         return index;
-    }
-
-    void FilteredArtworksListModel::removeMetadataInSelected() const {
-        LOG_DEBUG << "#";
-        auto selectedArtworks = getSelectedArtworksSnapshot();
-        Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::None;
-        using namespace Common;
-        Common::SetFlag(flags, ArtworkEditFlags::EditDescription);
-        Common::SetFlag(flags, ArtworkEditFlags::EditKeywords);
-        Common::SetFlag(flags, ArtworkEditFlags::EditTitle);
-        Common::SetFlag(flags, ArtworkEditFlags::Clear);
-        removeMetadataInItems(selectedArtworks, flags);
     }
 
     void FilteredArtworksListModel::clearKeywords(int index) {

@@ -22,7 +22,7 @@ namespace Commands {
     {
     }
 
-    void ExpandPresetTemplate::execute(Artworks::ArtworksSnapshot &snapshot) {
+    void ExpandPresetTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
         Q_ASSERT(snapshot.size() == 1);
         QStringList keywords;
@@ -41,7 +41,7 @@ namespace Commands {
         }
     }
 
-    void ExpandPresetTemplate::undo(Artworks::ArtworksSnapshot &snapshot) {
+    void ExpandPresetTemplate::undo(const Artworks::ArtworksSnapshot &snapshot) {
         Q_ASSERT(snapshot.size() >= m_ArtworksBackups.size());
         Q_ASSERT(snapshot.size() == 1);
         LOG_DEBUG << "#";
