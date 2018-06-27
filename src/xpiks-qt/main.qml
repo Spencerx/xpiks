@@ -1311,7 +1311,7 @@ ApplicationWindow {
             anchors.fill: parent
             onDropped: {
                 if (drop.hasUrls) {
-                    var filesCount = xpiksApp.dropItems((drop.urls)
+                    var filesCount = xpiksApp.dropItems(drop.urls)
                     console.debug(filesCount + ' files added via drag&drop')
                 }
             }
