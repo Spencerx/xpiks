@@ -41,6 +41,7 @@
 #include "QMLExtensions/cachingimageprovider.h"
 #include "QMLExtensions/folderelement.h"
 #include "QMLExtensions/triangleelement.h"
+#include "QMLExtensions/uicommandid.h"
 
 // -------------------------------------
 
@@ -233,6 +234,7 @@ int main(int argc, char *argv[]) {
 
     xpiks.initialize();
 
+    qmlRegisterType<QMLExtensions::UICommandID>("xpiks", 1, 0, "UICommand");
     qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
     qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
     qmlRegisterType<QMLExtensions::FolderElement>("xpiks", 1, 0, "FolderElement");

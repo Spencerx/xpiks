@@ -17,7 +17,8 @@
 #include "../Artworks/artworkelement.h"
 #include "../SpellCheck/spellcheckiteminfo.h"
 #include "../Common/defines.h"
-#include "../QMLExtensions/colorsmodel.h"
+#include "../QMLExtensions/appdispatcher.h"
+#include "../QMLExtensions/uicommandid.h"
 
 #define MAX_EDITING_PAUSE_RESTARTS 12
 
@@ -52,6 +53,12 @@ namespace Models {
                          this, &CombinedArtworksModel::titleSpellingChanged);
         QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
                          this, &CombinedArtworksModel::keywordsSpellingChanged);
+    }
+
+    void CombinedArtworksModel::registerUICommands(QMLExtensions::IAppDispatcher &dispatcher) {
+        dispatcher.registerCommand(
+                    QMLExtensions::UICommandID::EditSelectedArtworks,
+                    )
     }
 
     void CombinedArtworksModel::setArtworks(Artworks::WeakArtworksSnapshot &artworks) {
@@ -223,36 +230,6 @@ namespace Models {
 
     void CombinedArtworksModel::setupDuplicatesModel() {
         doSetupDuplicatesModel();
-    }
-
-    void CombinedArtworksModel::initDescriptionHighlighting(QQuickTextDocument *document) {
-        SpellCheck::SpellCheckItemInfo *info = m_CommonKeywordsModel.getSpellCheckInfo();
-
-        if (info == NULL) {
-            Q_ASSERT(false);
-            // OneItem edits will use artwork's spellcheckinfo
-            // combined edit will use this one
-            info = &m_SpellCheckInfo;
-        }
-
-        QMLExtensions::ColorsModel *colorsModel = m_CommandManager->getColorsModel();
-        info->createHighlighterForDescription(document->textDocument(), colorsModel, &m_CommonKeywordsModel);
-        m_CommonKeywordsModel.notifyDescriptionSpellingChanged();
-    }
-
-    void CombinedArtworksModel::initTitleHighlighting(QQuickTextDocument *document) {
-        SpellCheck::SpellCheckItemInfo *info = m_CommonKeywordsModel.getSpellCheckInfo();
-
-        if (info == NULL) {
-            Q_ASSERT(false);
-            // OneItem edits will use artwork's spellcheckinfo
-            // combined edit will use this one
-            info = &m_SpellCheckInfo;
-        }
-
-        QMLExtensions::ColorsModel *colorsModel = m_CommandManager->getColorsModel();
-        info->createHighlighterForTitle(document->textDocument(), colorsModel, &m_CommonKeywordsModel);
-        m_CommonKeywordsModel.notifyTitleSpellingChanged();
     }
 
     void CombinedArtworksModel::assignFromSelected() {

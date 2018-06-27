@@ -29,6 +29,10 @@
 #include "artworkproxybase.h"
 #include "../Common/delayedactionentity.h"
 
+namespace QMLExtensions {
+    class IAppDispatcher;
+}
+
 namespace Models {
     class CombinedArtworksModel:
             public ArtworksViewModel,
@@ -50,6 +54,9 @@ namespace Models {
     public:
         CombinedArtworksModel(Artworks::IArtworksSource &selectedArtworksSource, QObject *parent=0);
         virtual ~CombinedArtworksModel() {}
+
+    public:
+        void registerUICommands(QMLExtensions::IAppDispatcher &dispatcher);
 
     protected:
         virtual void setArtworks(Artworks::WeakArtworksSnapshot &artworks) override;
@@ -153,8 +160,6 @@ namespace Models {
 
         Q_INVOKABLE void suggestCorrections();
         Q_INVOKABLE void setupDuplicatesModel();
-        Q_INVOKABLE void initDescriptionHighlighting(QQuickTextDocument *document);
-        Q_INVOKABLE void initTitleHighlighting(QQuickTextDocument *document);
         Q_INVOKABLE void assignFromSelected();
         Q_INVOKABLE void plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator=false);
 

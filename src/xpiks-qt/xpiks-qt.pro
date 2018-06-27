@@ -223,7 +223,44 @@ SOURCES += main.cpp \
     Commands/backupartworkstemplate.cpp \
     Commands/keywordedittemplate.cpp \
     Commands/removefilescommandbase.cpp \
-    Commands/removefilescommand.cpp
+    Commands/removefilescommand.cpp \
+    QMLExtensions/appdispatcher.cpp \
+    Commands/Services/autoimportmetadatacommand.cpp \
+    Commands/Services/backupartworkstemplate.cpp \
+    Commands/Services/cleanuplegacybackupscommand.cpp \
+    Commands/Services/generatethumbnailstemplate.cpp \
+    Commands/Services/inspectartworkstemplate.cpp \
+    Commands/Services/savebackupstemplate.cpp \
+    Commands/Services/savesessioncommand.cpp \
+    Commands/Files/addfilescommand.cpp \
+    Commands/Files/addtorecenttemplate.cpp \
+    Commands/Files/removedirectorycommand.cpp \
+    Commands/Files/removefilescommand.cpp \
+    Commands/Files/removefilescommandbase.cpp \
+    Commands/Editing/deletekeywordscommand.cpp \
+    Commands/Editing/editartworkstemplate.cpp \
+    Commands/Editing/expandpresettemplate.cpp \
+    Commands/Editing/findandreplacecommand.cpp \
+    Commands/Editing/keywordedittemplate.cpp \
+    Commands/Editing/readmetadatatemplate.cpp \
+    Models/Artworks/artworkslistmodel.cpp \
+    Models/Artworks/artworksrepository.cpp \
+    Models/Artworks/artworksviewmodel.cpp \
+    Models/Artworks/filteredartworkslistmodel.cpp \
+    Models/Connectivity/abstractconfigupdatermodel.cpp \
+    Models/Connectivity/artworkuploader.cpp \
+    Models/Connectivity/proxysettings.cpp \
+    Models/Connectivity/uploadinforepository.cpp \
+    Models/Connectivity/ziparchiver.cpp \
+    Models/Editing/artworkproxybase.cpp \
+    Models/Editing/artworkproxymodel.cpp \
+    Models/Editing/combinedartworksmodel.cpp \
+    Models/Editing/deletekeywordsviewmodel.cpp \
+    Models/Editing/findandreplacemodel.cpp \
+    Models/Session/recentdirectoriesmodel.cpp \
+    Models/Session/recentfilesmodel.cpp \
+    Models/Session/recentitemsmodel.cpp \
+    Models/Session/sessionmanager.cpp
 
 RESOURCES += qml.qrc
 
@@ -541,7 +578,60 @@ HEADERS += \
     Commands/removefilescommandbase.h \
     Commands/removefilescommand.h \
     Commands/icommandtemplate.h \
-    Commands/templatedcommand.h
+    Commands/templatedcommand.h \
+    QMLExtensions/appdispatcher.h \
+    QMLExtensions/uicommandid.h \
+    Commands/iuicommandtemplate.h \
+    Commands/templateduicommand.h \
+    QMLExtensions/iappdispatcher.h \
+    Commands/Services/autoimportmetadatacommand.h \
+    Commands/Services/backupartworkstemplate.h \
+    Commands/Services/cleanuplegacybackupscommand.h \
+    Commands/Services/generatethumbnailstemplate.h \
+    Commands/Services/inspectartworkstemplate.h \
+    Commands/Services/savebackupstemplate.h \
+    Commands/Services/savesessioncommand.h \
+    Commands/Files/addfilescommand.h \
+    Commands/Files/addtorecenttemplate.h \
+    Commands/Files/removedirectorycommand.h \
+    Commands/Files/removefilescommand.h \
+    Commands/Files/removefilescommandbase.h \
+    Commands/Base/compositecommandtemplate.h \
+    Commands/Base/emptycommand.h \
+    Commands/Base/icommand.h \
+    Commands/Base/icommandmanager.h \
+    Commands/Base/icommandtemplate.h \
+    Commands/Base/iuicommandtemplate.h \
+    Commands/Base/templatedcommand.h \
+    Commands/Base/templateduicommand.h \
+    Commands/Editing/deletekeywordscommand.h \
+    Commands/Editing/editartworkstemplate.h \
+    Commands/Editing/expandpresettemplate.h \
+    Commands/Editing/findandreplacecommand.h \
+    Commands/Editing/keywordedittemplate.h \
+    Commands/Editing/modifyartworkscommand.h \
+    Commands/Editing/readmetadatatemplate.h \
+    Models/Artworks/artworkslistmodel.h \
+    Models/Artworks/artworksrepository.h \
+    Models/Artworks/artworksviewmodel.h \
+    Models/Artworks/filteredartworkslistmodel.h \
+    Models/Artworks/selectedartworksconsumer.h \
+    Models/Connectivity/abstractconfigupdatermodel.h \
+    Models/Connectivity/artworkuploader.h \
+    Models/Connectivity/proxysettings.h \
+    Models/Connectivity/uploadinfo.h \
+    Models/Connectivity/uploadinforepository.h \
+    Models/Connectivity/ziparchiver.h \
+    Models/Editing/artworkproxybase.h \
+    Models/Editing/artworkproxymodel.h \
+    Models/Editing/combinedartworksmodel.h \
+    Models/Editing/deletekeywordsviewmodel.h \
+    Models/Editing/findandreplacemodel.h \
+    Models/Editing/previewartworkelement.h \
+    Models/Session/recentdirectoriesmodel.h \
+    Models/Session/recentfilesmodel.h \
+    Models/Session/recentitemsmodel.h \
+    Models/Session/sessionmanager.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
