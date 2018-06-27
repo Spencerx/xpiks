@@ -27,14 +27,11 @@ namespace Commands {
 
     void InspectArtworksTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
-        auto itemsToCheck = Helpers::map(snapshot.getWeakSnapshot(), [](const Artworks::ArtworkMetadata *artwork) {
-           return artwork->getBasicModel();
-        });
 
         if (m_SettingsModel.getUseSpellCheck()) {
-            m_SpellCheckService.submitItems(itemsToCheck);
+            m_SpellCheckService.submitItems(snapshot.getWeakSnapshot());
         } else {
-            m_WarningsService.submitItems(itemsToCheck);
+            m_WarningsService.submitItems(snapshot.getWeakSnapshot());
         }
     }
 }

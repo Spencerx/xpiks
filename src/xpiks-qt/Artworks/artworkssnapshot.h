@@ -62,7 +62,7 @@ namespace Artworks {
 
     // designed to be used only temporarily
     // artworks are not locked and therefore can be deleted
-    typedef std::vector<ArtworkMetadata*> WeakArtworksSnapshot;
+    using WeakArtworksSnapshot = std::vector<ArtworkMetadata*>;
 
     class ArtworksSnapshot {
     public:

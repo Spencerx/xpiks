@@ -112,7 +112,6 @@ namespace Artworks {
         virtual std::vector<KeywordItem> retrieveDuplicatedKeywords();
         virtual Common::KeywordReplaceResult fixKeywordSpelling(size_t index, const QString &existing, const QString &replacement);
         virtual bool processFailedKeywordReplacements(const std::vector<std::shared_ptr<SpellCheck::KeywordSpellSuggestions> > &candidatesForRemoval);
-        virtual void connectSignals(SpellCheck::SpellCheckItem *item);
         virtual void afterReplaceCallback();
 
     public:

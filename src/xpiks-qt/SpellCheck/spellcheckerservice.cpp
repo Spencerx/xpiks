@@ -31,19 +31,19 @@ namespace SpellCheck {
         if (m_SpellCheckWorker != nullptr) {}
     }
 
-    void SpellCheckerService::startService(const std::shared_ptr<Common::ServiceStartParams> &params) {
+    void SpellCheckerService::startService(const std::shared_ptr<Helpers::AsyncCoordinatorStartParams> &params, Warnings::WarningsService &warningsService) {
         if (m_SpellCheckWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
         }
 
-        auto coordinatorParams = std::dynamic_pointer_cast<Helpers::AsyncCoordinatorStartParams>(params);
         Helpers::AsyncCoordinator *coordinator = nullptr;
-        if (coordinatorParams) { coordinator = coordinatorParams->m_Coordinator; }
+        if (params) { coordinator = params->m_Coordinator; }
 
         m_SpellCheckWorker = new SpellCheckWorker(getDictsRoot(),
                                                   m_Environment,
                                                   m_UserDictionary,
+                                                  warningsService,
                                                   coordinator);
         Helpers::AsyncCoordinatorLocker locker(coordinator);
         Q_UNUSED(locker);
@@ -109,15 +109,14 @@ namespace SpellCheck {
             spi->disconnect();
             spi->deleteLater();
         });
-        itemToCheck->connectSignals(item.get());
         m_SpellCheckWorker->submitItem(item);
     }
 
-    Common::ItemProcessingWorker::batch_id_t SpellCheckerService::submitItems(const std::vector<Artworks::BasicKeywordsModel *> &itemsToCheck) {
+    Common::ItemProcessingWorker::batch_id_t SpellCheckerService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck) {
         if (m_SpellCheckWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
-        std::vector<std::shared_ptr<ISpellCheckItem> > items;
+        std::vector<std::shared_ptr<SpellCheckItem> > items;
         const size_t size = itemsToCheck.size();
 
         items.reserve(size);
@@ -129,13 +128,12 @@ namespace SpellCheck {
 
         const Common::WordAnalysisFlags flags = getWordAnalysisFlags();
 
-        for (size_t i = 0; i < size; ++i) {
-            auto *itemToCheck = itemsToCheck.at(i);
+        for (auto itemToCheck: itemsToCheck) {
             Q_ASSERT(itemToCheck != nullptr);
-            std::shared_ptr<SpellCheckItem> item(new SpellCheckItem(itemToCheck, Common::SpellCheckFlags::All, flags),
-                deleter);
-            itemToCheck->connectSignals(item.get());
-            items.emplace_back(std::dynamic_pointer_cast<ISpellCheckItem>(item));
+            std::shared_ptr<SpellCheckItem> item(
+                        new ArtworkSpellCheckItem(itemToCheck, Common::SpellCheckFlags::All, flags),
+                        deleter);
+            items.emplace_back(item);
         }
 
         LOG_INFO << size << "item(s)";
@@ -145,12 +143,12 @@ namespace SpellCheck {
     }
 
     // used for spellchecking after adding a word to user dictionary
-    void SpellCheckerService::submitItems(const std::vector<Artworks::BasicKeywordsModel *> &itemsToCheck,
+    void SpellCheckerService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck,
                                           const QStringList &wordsToCheck) {
         if (m_SpellCheckWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
-        std::vector<std::shared_ptr<ISpellCheckItem> > items;
+        std::vector<std::shared_ptr<SpellCheckItem> > items;
         const size_t size = itemsToCheck.size();
 
         items.reserve(size);
@@ -162,35 +160,17 @@ namespace SpellCheck {
 
         const Common::WordAnalysisFlags flags = getWordAnalysisFlags();
 
-        for (size_t i = 0; i < size; ++i) {
-            auto *itemToCheck = itemsToCheck.at(i);
-            std::shared_ptr<SpellCheckItem> item(new SpellCheckItem(itemToCheck, wordsToCheck, flags),
-                                                 deleter);
-            itemToCheck->connectSignals(item.get());
-            items.emplace_back(std::dynamic_pointer_cast<ISpellCheckItem>(item));
+        for (auto itemToCheck: itemsToCheck) {
+            std::shared_ptr<SpellCheckItem> item(
+                        new ArtworkSpellCheckItem(itemToCheck, wordsToCheck, flags),
+                        deleter);
+            items.emplace_back(item);
         }
 
         LOG_INFO << size << "item(s)";
 
         m_SpellCheckWorker->submitItems(items);
         m_SpellCheckWorker->submitSeparator();
-    }
-
-    void SpellCheckerService::submitKeyword(Artworks::BasicKeywordsModel *itemToCheck, int keywordIndex) {
-        Q_ASSERT(itemToCheck != nullptr);
-        LOG_INFO << "index:" << keywordIndex;
-        if (m_SpellCheckWorker == NULL) { return; }
-        if (m_IsStopped) { return; }
-
-        const Common::WordAnalysisFlags flags = getWordAnalysisFlags();
-
-        std::shared_ptr<SpellCheckItem> item(new SpellCheckItem(itemToCheck, Common::SpellCheckFlags::Keywords, flags, keywordIndex),
-            [](SpellCheckItem *spi) {
-            LOG_INTEGRATION_TESTS << "Delete later for keyword spelling item";
-            spi->deleteLater();
-        });
-        itemToCheck->connectSignals(item.get());
-        m_SpellCheckWorker->submitFirst(item);
     }
 
     QStringList SpellCheckerService::suggestCorrections(const QString &word) const {

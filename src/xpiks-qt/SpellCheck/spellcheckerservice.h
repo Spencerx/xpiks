@@ -26,6 +26,14 @@ namespace Artworks {
     class ArtworkMetadata;
 }
 
+namespace Helpers {
+    class AsyncCoordinatorStartParams;
+}
+
+namespace Warnings {
+    class WarningsService;
+}
+
 namespace SpellCheck {
     class SpellCheckerService: public QObject
     {
@@ -38,7 +46,8 @@ namespace SpellCheck {
         virtual ~SpellCheckerService();
 
     public:
-        void startService(const std::shared_ptr<Common::ServiceStartParams> &params);
+        void startService(const std::shared_ptr<Helpers::AsyncCoordinatorStartParams> &params,
+                          Warnings::WarningsService &warningsService);
         void stopService();
 
         bool isAvailable() const { return true; }
@@ -46,9 +55,8 @@ namespace SpellCheck {
 
         void submitItem(Artworks::BasicKeywordsModel *itemToCheck);
         void submitItem(Artworks::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags);
-        SpellCheckWorker::batch_id_t submitItems(const std::vector<Artworks::BasicKeywordsModel *> &itemsToCheck);
-        void submitItems(const std::vector<Artworks::BasicKeywordsModel *> &itemsToCheck, const QStringList &wordsToCheck);
-        void submitKeyword(Artworks::BasicKeywordsModel *itemToCheck, int keywordIndex);
+        SpellCheckWorker::batch_id_t submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck);
+        void submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck, const QStringList &wordsToCheck);
         virtual QStringList suggestCorrections(const QString &word) const;
         void restartWorker();
         int getUserDictWordsNumber();

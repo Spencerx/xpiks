@@ -40,7 +40,7 @@ namespace Commands {
         // IArtworksCommandTemplate interface
     public:
         virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(const Artworks::ArtworksSnapshot &) override { execute(snapshot); }
+        virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override { execute(snapshot); }
 
     private:
         SpellCheck::SpellCheckerService &m_SpellCheckService;

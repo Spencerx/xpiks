@@ -210,7 +210,6 @@ SOURCES += main.cpp \
     Artworks/basickeywordsmodelimpl.cpp \
     Artworks/basicmetadatamodel.cpp \
     Services/artworksupdatehub.cpp \
-    Services/artworksinspectionhub.cpp \
     SpellCheck/userdictionary.cpp \
     Commands/savebackupstemplate.cpp \
     Commands/readmetadatatemplate.cpp \
@@ -518,7 +517,6 @@ HEADERS += \
     Models/selectedartworksconsumer.h \
     Services/artworksupdatehub.h \
     Services/artworkupdaterequest.h \
-    Services/artworksinspectionhub.h \
     Helpers/cpphelpers.h \
     Artworks/artworksprocessingworker.h \
     SpellCheck/userdictionary.h \

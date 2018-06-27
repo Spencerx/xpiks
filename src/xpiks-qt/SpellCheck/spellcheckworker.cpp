@@ -18,11 +18,14 @@
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QThread>
+#include <hunspell/hunspell.hxx>
 #include "spellcheckitem.h"
 #include "../Common/defines.h"
 #include "../Common/flags.h"
 #include "../Helpers/stringhelper.h"
-#include <hunspell/hunspell.hxx>
+#include "../Artworks/artworkmetadata.h"
+#include "../Warnings/warningsservice.h"
+#include "../Helpers/cpphelpers.h"
 
 #define EN_HUNSPELL_DIC "en_US.dic"
 #define EN_HUNSPELL_AFF "en_US.aff"
@@ -35,6 +38,7 @@ namespace SpellCheck {
     SpellCheckWorker::SpellCheckWorker(const QString &dictsRoot,
                                        Common::ISystemEnvironment &environment,
                                        UserDictionary &userDictionary,
+                                       Warnings::WarningsService &warningsService,
                                        Helpers::AsyncCoordinator *initCoordinator,
                                        QObject *parent):
         QObject(parent),
@@ -42,6 +46,7 @@ namespace SpellCheck {
         m_Environment(environment),
         m_InitCoordinator(initCoordinator),
         m_UserDictionary(userDictionary),
+        m_WarningsService(warningsService),
         m_DictsRoot(dictsRoot),
         m_Hunspell(NULL),
         m_Codec(NULL)
@@ -94,7 +99,7 @@ namespace SpellCheck {
         return initResult;
     }
 
-    std::shared_ptr<ResultType> SpellCheckWorker::processWorkItem(WorkItem &workItem) {
+    std::shared_ptr<Artworks::ArtworkMetadataLocker> SpellCheckWorker::processWorkItem(WorkItem &workItem) {
         if (workItem.isSeparator()) {
             emit queueIsEmpty();
         } else {
@@ -104,6 +109,13 @@ namespace SpellCheck {
                 QThread::msleep(SPELLCHECK_WORKER_SLEEP_DELAY);
             }
         }
+
+        std::shared_ptr<Artworks::ArtworkMetadataLocker> result;
+        auto artworkItem = std::dynamic_pointer_cast<ArtworkSpellCheckItem>(workItem.m_Item);
+        if (artworkItem) {
+            result.reset(new Artworks::ArtworkMetadataLocker(artworkItem->getArtwork()));
+        }
+        return result;
     }
 
     void SpellCheckWorker::processSpellingQuery(std::shared_ptr<SpellCheckItem> &item) {
@@ -149,6 +161,15 @@ namespace SpellCheck {
             item->requestSuggestions();
             this->submitItem(item);
         }
+    }
+
+    void SpellCheckWorker::onResultsAvailable(std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &results) {
+        m_WarningsService.submitItems(
+                    Helpers::map(
+                        results,
+                        [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+            return locker->getArtworkMetadata();
+        }));
     }
 
     QStringList SpellCheckWorker::retrieveCorrections(const QString &word) {

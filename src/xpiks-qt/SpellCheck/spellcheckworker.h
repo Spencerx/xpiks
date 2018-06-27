@@ -25,10 +25,20 @@
 class Hunspell;
 class QTextCodec;
 
+namespace Artworks {
+    class ArtworkMetadataLocker;
+}
+
+namespace Warnings {
+    class WarningsService;
+}
+
 namespace SpellCheck {
     class UserDictionary;
 
-    class SpellCheckWorker: public QObject, public Common::ItemProcessingWorker<SpellCheckItem>
+    class SpellCheckWorker:
+            public QObject,
+            public Common::ItemProcessingWorker<SpellCheckItem, Artworks::ArtworkMetadataLocker>
     {
         Q_OBJECT
 
@@ -36,6 +46,7 @@ namespace SpellCheck {
         SpellCheckWorker(const QString &dictsRoot,
                          Common::ISystemEnvironment &environment,
                          UserDictionary &userDictionary,
+                         Warnings::WarningsService &warningsService,
                          Helpers::AsyncCoordinator *initCoordinator,
                          QObject *parent=0);
         virtual ~SpellCheckWorker();
@@ -47,7 +58,7 @@ namespace SpellCheck {
 
     protected:
         virtual bool initWorker() override;        
-        virtual std::shared_ptr<ResultType> processWorkItem(WorkItem &workItem) override;
+        virtual std::shared_ptr<Artworks::ArtworkMetadataLocker> processWorkItem(WorkItem &workItem) override;
         void processSpellingQuery(std::shared_ptr<SpellCheckItem> &item);
 
     protected:
@@ -55,6 +66,7 @@ namespace SpellCheck {
             /* Notify on emptiness only for batches with separator */
             /* emit queueIsEmpty(); */
         }
+        virtual void onResultsAvailable(std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker>> &results);
         virtual void workerStopped() override { emit stopped(); }
 
     public slots:
@@ -84,9 +96,10 @@ namespace SpellCheck {
     private:
         Common::ISystemEnvironment &m_Environment;
         Helpers::AsyncCoordinator *m_InitCoordinator;
+        UserDictionary &m_UserDictionary;
+        Warnings::WarningsService &m_WarningsService;
         QHash<QString, QStringList> m_Suggestions;
         QSet<QString> m_WrongWords;
-        UserDictionary &m_UserDictionary;
         QReadWriteLock m_SuggestionsLock;
         QString m_DictsRoot;
         QString m_Encoding;

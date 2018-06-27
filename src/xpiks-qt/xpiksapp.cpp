@@ -38,7 +38,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_SettingsModel(environment),
     m_RecentDirectorieModel(environment),
     m_ArtworksRepository(m_RecentDirectorieModel),
-    m_FilteredArtworksRepository(&m_ArtworksRepository),
+    m_FilteredArtworksRepository(m_ArtworksListModel),
     m_UploadInfoRepository(environment),
     m_RequestsService(m_SettingsModel.getProxySettings()),
     m_PresetsModel(environment),
@@ -70,7 +70,6 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_CommandManager(m_UndoRedoManager)
 {
     m_FilteredPresetsModel.setSourceModel(&m_PresetsModel);
-    m_FilteredArtworksListModel.setSourceModel(&m_ArtworksListModel);
 
     m_WarningsModel.setSourceModel(&m_ArtworksListModel);
     m_WarningsModel.setWarningsSettingsModel(m_WarningsService.getWarningsSettingsModel());
@@ -211,8 +210,7 @@ void XpiksApp::start() {
 
     m_AfterInitCalled = true;
     std::shared_ptr<Common::ServiceStartParams> emptyParams;
-    std::shared_ptr<Common::ServiceStartParams> coordinatorParams(
-                new Helpers::AsyncCoordinatorStartParams(&m_InitCoordinator));
+    auto coordinatorParams = std::make_shared(new Helpers::AsyncCoordinatorStartParams(&m_InitCoordinator));
 
     bool dbInitialized = m_DatabaseManager.initialize();
     Q_ASSERT(dbInitialized);
@@ -225,7 +223,7 @@ void XpiksApp::start() {
     m_VideoCachingService.startService();
     m_MetadataIOService.startService();
 
-    m_SpellCheckerService.startService(coordinatorParams);
+    m_SpellCheckerService.startService(coordinatorParams, m_WarningsService);
     m_WarningsService.startService(emptyParams);
     m_AutoCompleteService.startService(coordinatorParams);
     m_TranslationService.startService(coordinatorParams);

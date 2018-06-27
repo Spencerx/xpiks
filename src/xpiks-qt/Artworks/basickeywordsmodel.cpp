@@ -435,11 +435,6 @@ namespace Artworks {
         return anyReplaced;
     }
 
-    void BasicKeywordsModel::connectSignals(SpellCheck::SpellCheckItem *item) {
-        QObject::connect(item, &SpellCheck::SpellCheckItem::resultsReady,
-                         this, &BasicKeywordsModel::onSpellCheckRequestReady);
-    }
-
     void BasicKeywordsModel::afterReplaceCallback() {
         LOG_DEBUG << "#";
         emit notifyKeywordsSpellingChanged();

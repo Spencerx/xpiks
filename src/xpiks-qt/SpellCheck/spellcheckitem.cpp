@@ -17,46 +17,30 @@
 #include "../Artworks/basicmetadatamodel.h"
 #include "../Helpers/stringhelper.h"
 
+/*
+ * When spellcheck results are propagated back, they are updated in artwork
+ * based on index of a keyword. So in order to distinguish keywords from title
+ * and description, this workaround with "int_max" indices is used
+ */
 #define IMPOSSIBLE_TITLE_INDEX 100000
 #define IMPOSSIBLE_DESCRIPTION_INDEX 200000
 
 namespace SpellCheck {
-    SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlag, int keywordIndex):
+    SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable,
+                                   Common::SpellCheckFlags spellCheckFlags,
+                                   Common::WordAnalysisFlags wordAnalysisFlags):
+        QObject(),
         m_BasicModel(spellCheckable),
         m_SpellCheckFlags(spellCheckFlags),
-        m_WordAnalysisFlag(wordAnalysisFlag),
-        m_NeedsSuggestions(false),
-        m_OnlyOneKeyword(true)
-    {
-        Q_ASSERT(Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Keywords));
-        Q_ASSERT(spellCheckable != NULL);
-
-        spellCheckable->acquire();
-
-        QString keyword = m_BasicModel->retrieveKeyword(keywordIndex);
-        if (!keyword.contains(QChar::Space)) {
-            std::shared_ptr<SpellCheckQueryItem> queryItem(new SpellCheckQueryItem(keywordIndex, keyword));
-            m_QueryItems.emplace_back(queryItem);
-        } else {
-            QStringList parts = keyword.split(QChar::Space, QString::SkipEmptyParts);
-            foreach(const QString &part, parts) {
-                QString item = part.trimmed();
-                std::shared_ptr<SpellCheckQueryItem> queryItem(new SpellCheckQueryItem(keywordIndex, item));
-
-                m_QueryItems.emplace_back(queryItem);
-            }
-        }
-    }
-
-    SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, Common::SpellCheckFlags spellCheckFlags, Common::WordAnalysisFlags wordAnalysisFlags):
-        m_BasicModel(spellCheckable),
-        m_SpellCheckFlags(spellCheckFlags),
-        m_WordAnalysisFlag(wordAnalysisFlag),
+        m_WordAnalysisFlags(wordAnalysisFlags),
         m_NeedsSuggestions(false),
         m_OnlyOneKeyword(false)
     {
-        Q_ASSERT(spellCheckable != NULL);
-        spellCheckable->acquire();
+        Q_ASSERT(m_BasicModel != NULL);
+        m_BasicModel->acquire();
+
+        QObject::connect(this, &SpellCheck::SpellCheckItem::resultsReady,
+                         m_BasicModel, &Artworks::BasicKeywordsModel::onSpellCheckRequestReady);
 
         std::function<bool (const QString &word)> alwaysTrue = [](const QString &) {return true; };
 
@@ -82,15 +66,21 @@ namespace SpellCheck {
         }
     }
 
-    SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable, const QStringList &keywordsToCheck, Common::WordAnalysisFlags wordAnalysisFlags):
+    SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable,
+                                   const QStringList &keywordsToCheck,
+                                   Common::WordAnalysisFlags wordAnalysisFlags):
+        QObject(),
         m_BasicModel(spellCheckable),
         m_SpellCheckFlags(Common::SpellCheckFlags::All),
-        m_WordAnalysisFlag(wordAnalysisFlag),
+        m_WordAnalysisFlags(wordAnalysisFlags),
         m_NeedsSuggestions(false),
         m_OnlyOneKeyword(false)
     {
-        Q_ASSERT(spellCheckable != NULL);
-        spellCheckable->acquire();
+        Q_ASSERT(m_BasicModel != NULL);
+        m_BasicModel->acquire();
+
+        QObject::connect(this, &SpellCheck::SpellCheckItem::resultsReady,
+                         m_BasicModel, &Artworks::BasicKeywordsModel::onSpellCheckRequestReady);
 
         std::function<bool (const QString &word)> containsFunc = [&keywordsToCheck](const QString &word) {
                                                                      bool contains = false;
@@ -121,7 +111,7 @@ namespace SpellCheck {
                                                                         return match;
                                                                     };
 
-        Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(spellCheckable);
+        Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(m_BasicModel);
         if (metadataModel != nullptr) {
             QStringList descriptionWords = metadataModel->getDescriptionWords();
             addWords(descriptionWords, IMPOSSIBLE_DESCRIPTION_INDEX, sameKeywordFunc);
@@ -196,5 +186,21 @@ namespace SpellCheck {
                                                                   item->m_IsCorrect,
                                                                   item->m_IsDuplicate));
         }
+    }
+
+    ArtworkSpellCheckItem::ArtworkSpellCheckItem(Artworks::ArtworkMetadata *artwork,
+                                                 Common::SpellCheckFlags spellCheckFlags,
+                                                 Common::WordAnalysisFlags wordAnalysisFlags):
+        SpellCheckItem(artwork->getBasicModel(), spellCheckFlags, wordAnalysisFlags)
+    {
+        m_Artwork = artwork;
+    }
+
+    ArtworkSpellCheckItem::ArtworkSpellCheckItem(Artworks::ArtworkMetadata *artwork,
+                                                 const QStringList &keywordsToCheck,
+                                                 Common::WordAnalysisFlags wordAnalysisFlags) :
+        SpellCheckItem(artwork->getBasicModel(), keywordsToCheck, wordAnalysisFlags)
+    {
+        m_Artwork = artwork;
     }
 }

@@ -18,8 +18,7 @@
 #include <QHash>
 #include <QSet>
 #include <QTimer>
-#include "../Common/baseentity.h"
-#include "../Common/basickeywordsmodel.h"
+#include "../Artworks/basickeywordsmodel.h"
 #include "suggestionartwork.h"
 #include "../Common/hold.h"
 #include "../Common/statefulentity.h"
