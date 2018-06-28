@@ -77,7 +77,7 @@ namespace Models {
                                std::function<bool (size_t, Artworks::ArtworkMetadata *)> action) const;
 
     protected:
-        const Artworks::ArtworksSnapshot::Container &getRawSnapshot() const { return m_ArtworksSnapshot.getRawData(); }
+        const Artworks::ArtworksSnapshot &getSnapshot() const { return m_ArtworksSnapshot; }
 
     signals:
         void artworksCountChanged();

@@ -17,7 +17,6 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
-#include "../QuickBuffer/icurrenteditable.h"
 #include "../QMLExtensions/tabsmodel.h"
 #include "../Common/statefulentity.h"
 #include "../Helpers/constants.h"
@@ -42,7 +41,6 @@ namespace Models {
 
     {
         Q_OBJECT
-        Q_PROPERTY(bool hasCurrentEditable READ getHasCurrentEditable NOTIFY currentEditableChanged)
         Q_PROPERTY(double keywordHeight READ getKeywordHeight NOTIFY keywordHeightChanged)
         Q_PROPERTY(int artworkEditRightPaneWidth READ getArtworkEditRightPaneWidth WRITE setArtworkEditRightPaneWidth NOTIFY artworkEditRightPaneWidthChanged)
         Q_PROPERTY(double screenDpi READ getScreenDpi NOTIFY screenDpiChanged)
@@ -59,12 +57,7 @@ namespace Models {
     public:
         double getScreenDpi() const { return m_ScreenDPI; }
         void initTabs();
-        bool getHasCurrentEditable() const { return m_CurrentEditable.operator bool(); }
         double getKeywordHeight() const;
-        std::shared_ptr<QuickBuffer::ICurrentEditable> getCurrentEditable() const { return m_CurrentEditable; }
-
-    public:
-        void registerCurrentItem(std::shared_ptr<QuickBuffer::ICurrentEditable> &currentItem);
 
     public:
         QMLExtensions::TabsModel *getTabsModel() { return &m_TabsModel; }
@@ -72,7 +65,6 @@ namespace Models {
         QMLExtensions::InactiveTabsModel *getInactiveTabs() { return &m_InactiveTabs; }
 
     public:
-        Q_INVOKABLE void clearCurrentItem();
         Q_INVOKABLE QObject *retrieveTabsModel(int tabID);
         Q_INVOKABLE void sync();
 
@@ -133,7 +125,6 @@ namespace Models {
         QMLExtensions::TabsModel m_TabsModel;
         QMLExtensions::ActiveTabsModel m_ActiveTabs;
         QMLExtensions::InactiveTabsModel m_InactiveTabs;
-        std::shared_ptr<QuickBuffer::ICurrentEditable> m_CurrentEditable;
         QHash<int, QSet<int> > m_PluginIDToTabIDs;
         QHash<int, QObject*> m_TabIDsToModel;
         volatile int m_TabID;

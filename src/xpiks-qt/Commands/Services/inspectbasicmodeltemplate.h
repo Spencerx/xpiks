@@ -8,8 +8,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef SPELLCHECKARTWORKSTEMPLATE_H
-#define SPELLCHECKARTWORKSTEMPLATE_H
+#ifndef INSPECTBASICMODELTEMPLATE_H
+#define INSPECTBASICMODELTEMPLATE_H
 
 #include <Commands/Base/icommandtemplate.h>
 
@@ -26,27 +26,24 @@ namespace Models {
 }
 
 namespace Artworks {
-    class ArtworksSnapshot;
+    class BasicKeywordsModel;
 }
 
 namespace Commands {
-    class InspectArtworksTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
+    class InspectBasicModelTemplate: public ICommandTemplate<Artworks::BasicKeywordsModel*>
     {
     public:
-        InspectArtworksTemplate(SpellCheck::SpellCheckerService &spellCheckService,
-                                Warnings::WarningsService &warningsService,
-                                Models::SettingsModel &settingsModel);
+        InspectBasicModelTemplate(SpellCheck::SpellCheckerService &spellCheckService,
+                                  Models::SettingsModel &settingsModel);
 
-        // IArtworksCommandTemplate interface
     public:
-        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override { execute(snapshot); }
+        virtual void execute(const Artworks::BasicKeywordsModel *&basicModel) override;
+        virtual void undo(const Artworks::BasicKeywordsModel *&basicModel) override { execute(basicModel); }
 
     private:
         SpellCheck::SpellCheckerService &m_SpellCheckService;
-        Warnings::WarningsService &m_WarningsService;
         Models::SettingsModel &m_SettingsModel;
     };
 }
 
-#endif // SPELLCHECKARTWORKSTEMPLATE_H
+#endif // INSPECTBASICMODELTEMPLATE_H

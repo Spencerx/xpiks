@@ -24,7 +24,7 @@ namespace Commands {
 namespace Models {
     class ICurrentEditable {
     public:
-        virtual ~ICurrentEditable() {}
+        virtual ~ICurrentEditable() { }
 
         virtual Common::ID_t getItemID() = 0;
 

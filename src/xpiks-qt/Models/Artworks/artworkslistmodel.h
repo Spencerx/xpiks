@@ -22,6 +22,7 @@
 #include <Helpers/indicesranges.h>
 #include <Artworks/icurrentartworksource.h>
 #include <Commands/Base/icommandtemplate.h>
+#include <Models/Editing/icurrenteditable.h>
 
 class QQuickTextDocument;
 
@@ -113,11 +114,6 @@ namespace Models {
         int getModifiedArtworksCount();
         QVector<int> getStandardUpdateRoles() const;
 
-        // icurrentartworksource
-    public:
-        virtual Artworks::ArtworkMetadata *getCurrentArtwork() override { return getArtwork(m_CurrentItemIndex); }
-        void setCurrentIndex(size_t index) { m_CurrentItemIndex = index; }
-
     public:
         // general purpose collective methods
         void selectArtworksFromDirectory(int directoryIndex);
@@ -163,6 +159,7 @@ namespace Models {
         void syncArtworksIndices(int startIndex=0, int count=-1);
         void setItemsSaved(const Helpers::IndicesRanges &ranges);
         void detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges);
+        void setCurrentIndex(size_t index);
 
     public:
         // qabstractlistmodel methods
@@ -175,6 +172,7 @@ namespace Models {
         Artworks::ArtworkMetadata *getArtworkObject(int index) const;
         Artworks::BasicMetadataModel *getBasicModelObject(int index) const;
         Artworks::ArtworkMetadata *getArtwork(size_t index) const;
+        std::shared_ptr<ICurrentEditable> getCurrentEditable() const;
 
     public:
         std::shared_ptr<Commands::ICommand> removeKeywordAt(int artworkIndex, int keywordIndex);
@@ -204,6 +202,7 @@ namespace Models {
         void unavailableArtworksFound();
         void unavailableVectorsFound();
         void artworkSelectedChanged(bool value);
+        void currentArtworkChanged();
 
     public slots:
         void onFilesUnavailableHandler();

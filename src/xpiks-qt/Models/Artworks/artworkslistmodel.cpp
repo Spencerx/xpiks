@@ -30,6 +30,7 @@
 #include <Services/artworkupdaterequest.h>
 #include <Commands/Editing/keywordedittemplate.h>
 #include <Commands/Base/emptycommand.h>
+#include <Models/Editing/currenteditableartwork.h>
 
 namespace Models {
     using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
@@ -481,6 +482,13 @@ namespace Models {
         updateItems(ranges, QVector<int>() << HasVectorAttachedRole);
     }
 
+    void ArtworksListModel::setCurrentIndex(size_t index) {
+         if (m_CurrentItemIndex != index) {
+             m_CurrentItemIndex = index;
+             emit currentArtworkChanged();
+         }
+    }
+
     QVariant ArtworksListModel::data(const QModelIndex &index, int role) const {
         int row = index.row();
 
@@ -576,7 +584,7 @@ namespace Models {
         return true;
     }
 
-    ArtworkMetadata *ArtworksListModel::getBasicModelObject(int index) const {
+    Artworks::ArtworkMetadata *ArtworksListModel::getBasicModelObject(int index) const {
         Artworks::ArtworkMetadata *item = NULL;
 
         if (0 <= index && index < getArtworksCount()) {
@@ -598,13 +606,24 @@ namespace Models {
         return keywordsModel;
     }
 
-    ArtworkMetadata *ArtworksListModel::getArtwork(size_t index) const {
+    Artworks::ArtworkMetadata *ArtworksListModel::getArtwork(size_t index) const {
         Q_ASSERT(index < m_ArtworkList.size());
         if (index < m_ArtworkList.size()) {
             return accessArtwork(index);
         }
 
         return nullptr;
+    }
+
+    std::shared_ptr<ICurrentEditable> ArtworksListModel::getCurrentEditable() const {
+        Artworks::ArtworkMetadata *artwork = getArtwork(m_CurrentItemIndex);
+        if (artwork != nullptr) {
+            return std::make_shared<CurrentEditableArtwork>(
+                        artwork,
+                        m_InspectionTemplate,
+                        std::make_shared<ArtworksUpdateTemplate>(*this, getStandardUpdateRoles()));
+        }
+        return std::shared_ptr<ICurrentEditable>();
     }
 
     std::shared_ptr<Commands::ICommand> ArtworksListModel::removeKeywordAt(int artworkIndex, int keywordIndex) {

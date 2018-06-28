@@ -33,6 +33,18 @@ namespace QMLExtensions {
     class IAppDispatcher;
 }
 
+namespace Commands {
+    class ICommandManager;
+}
+
+namespace KeywordsPresets {
+    class IPresetsManager;
+}
+
+namespace AutoComplete {
+    class ICompletionSource;
+}
+
 namespace Models {
     class CombinedArtworksModel:
             public ArtworksViewModel,
@@ -52,7 +64,11 @@ namespace Models {
         Q_PROPERTY(bool appendKeywords READ getAppendKeywords WRITE setAppendKeywords NOTIFY appendKeywordsChanged)
 
     public:
-        CombinedArtworksModel(Artworks::IArtworksSource &selectedArtworksSource, QObject *parent=0);
+        CombinedArtworksModel(Artworks::IArtworksSource &selectedArtworksSource,
+                              Commands::ICommandManager &commandManager,
+                              KeywordsPresets::IPresetsManager &presetsManager,
+                              AutoComplete::ICompletionSource &completionSource,
+                              QObject *parent=0);
         virtual ~CombinedArtworksModel() {}
 
     public:
@@ -168,26 +184,20 @@ namespace Models {
         Q_INVOKABLE void expandPreset(int keywordIndex, unsigned int presetID);
         Q_INVOKABLE void expandLastKeywordAsPreset();
         Q_INVOKABLE void addPreset(unsigned int presetID);
-        Q_INVOKABLE void initSuggestion();
-        Q_INVOKABLE void registerAsCurrentItem();
-        Q_INVOKABLE void copyToQuickBuffer();
-        Q_INVOKABLE void generateCompletions(const QString &prefix);
         Q_INVOKABLE bool acceptCompletionAsPreset(int completionID);
 
     private:
-        void processCombinedEditCommand();
         void enableAllFields();
         void assignFromOneArtwork();
         void assignFromManyArtworks();
-        void recombineArtworks(std::function<bool (const ArtworkElement *)> pred);
-        bool findNonEmptyData(std::function<bool (const ArtworkElement *)> pred, int &index, ArtworkMetadata *&artworkMetadata);
+        void recombineArtworks(std::function<bool (const Artworks::ArtworkElement *)> pred);
+        bool findNonEmptyData(std::function<bool (const Artworks::ArtworkElement *)> pred, int &index,
+                              Artworks::ArtworkMetadata *&artworkMetadata);
 
     public slots:
         void onDescriptionSpellingChanged();
         void onTitleSpellingChanged();
         void spellCheckErrorsFixedHandler();
-
-    public slots:
         void userDictUpdateHandler(const QStringList &keywords, bool overwritten);
         void userDictClearedHandler();
         void onEditingPaused();
@@ -222,6 +232,9 @@ namespace Models {
 
     private:
         Common::Hold m_HoldPlaceholder;
+        Commands::ICommandManager &m_CommandManager;
+        KeywordsPresets::IPresetsManager &m_PresetsManager;
+        AutoComplete::ICompletionSource &m_CompletionSource;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
         Common::ArtworkEditFlags m_EditFlags;

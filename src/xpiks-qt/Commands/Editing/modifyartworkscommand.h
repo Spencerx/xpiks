@@ -12,15 +12,15 @@
 #define COMBINEDEDITCOMMAND_H
 
 #include <QObject>
-#include "templatedcommand.h"
-#include "../Artworks/artworkssnapshot.h"
+#include <Commands/Base/templatedcommand.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace Commands {
     class ModifyArtworksCommand: public TemplatedCommand<Artworks::ArtworksSnapshot>
     {
     public:
         ModifyArtworksCommand(Artworks::ArtworksSnapshot &&snapshot,
-                            std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
+                              std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
             TemplatedCommand(snapshot, editTemplate),
             m_Count(snapshot.size())
         { }

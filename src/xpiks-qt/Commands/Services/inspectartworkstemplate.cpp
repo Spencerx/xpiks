@@ -9,11 +9,11 @@
  */
 
 #include "inspectartworkstemplate.h"
-#include "../SpellCheck/spellcheckerservice.h"
-#include "../Artworks/artworkssnapshot.h"
-#include "../Helpers/cpphelpers.h"
-#include "../Models/settingsmodel.h"
-#include "../Warnings/warningsservice.h"
+#include <SpellCheck/spellcheckerservice.h>
+#include <Artworks/artworkssnapshot.h>
+#include <Helpers/cpphelpers.h>
+#include <Models/settingsmodel.h>
+#include <Warnings/warningsservice.h>
 
 namespace Commands {
     InspectArtworksTemplate::InspectArtworksTemplate(SpellCheck::SpellCheckerService &spellCheckService,

@@ -213,7 +213,9 @@ SOURCES += main.cpp \
     Common/systemenvironment.cpp \
     Models/Editing/currenteditableartwork.cpp \
     Models/Editing/currenteditableproxyartwork.cpp \
-    Commands/Editing/deletekeywordstemplate.cpp
+    Commands/Editing/deletekeywordstemplate.cpp \
+    Models/Editing/currenteditablemodel.cpp \
+    Commands/Services/inspectbasicmodeltemplate.cpp
 
 RESOURCES += qml.qrc
 
@@ -444,7 +446,6 @@ HEADERS += \
     SpellCheck/userdictionary.h \
     Artworks/iartworksservice.h \
     AutoComplete/icompletionsource.h \
-    Artworks/icurrentartworksource.h \
     QMLExtensions/appdispatcher.h \
     QMLExtensions/uicommandid.h \
     QMLExtensions/iappdispatcher.h \
@@ -525,7 +526,9 @@ HEADERS += \
     Models/Editing/currenteditableproxyartwork.h \
     Models/Editing/icurrenteditable.h \
     Commands/Editing/deletekeywordstemplate.h \
-    Commands/Base/simplecommand.h
+    Commands/Base/simplecommand.h \
+    Models/Editing/currenteditablemodel.h \
+    Commands/Services/inspectbasicmodeltemplate.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

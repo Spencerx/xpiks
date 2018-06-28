@@ -11,6 +11,7 @@
 #include "combinedartworksmodel.h"
 #include <Helpers/indiceshelper.h>
 #include <Commands/Editing/modifyartworkscommand.h>
+#include <Commands/Editing/editartworkstemplate.h>
 #include <Commands/commandmanager.h>
 #include <Suggestion/keywordssuggestor.h>
 #include <Artworks/artworkmetadata.h>
@@ -20,14 +21,22 @@
 #include <QMLExtensions/appdispatcher.h>
 #include <QMLExtensions/uicommandid.h>
 #include <Commands/Base/simpleuicommandtemplate.h>
+#include <KeywordsPresets/ipresetsmanager.h>
 
 #define MAX_EDITING_PAUSE_RESTARTS 12
 
 namespace Models {
-    CombinedArtworksModel::CombinedArtworksModel(Artworks::IArtworksSource &selectedArtworksSource, QObject *parent):
+    CombinedArtworksModel::CombinedArtworksModel(Artworks::IArtworksSource &selectedArtworksSource,
+                                                 Commands::ICommandManager &commandManager,
+                                                 KeywordsPresets::IPresetsManager &presetsManager,
+                                                 AutoComplete::ICompletionSource &completionSource,
+                                                 QObject *parent):
         ArtworksViewModel(selectedArtworksSource, parent),
         ArtworkProxyBase(),
         Common::DelayedActionEntity(1000, MAX_EDITING_PAUSE_RESTARTS),
+        m_CommandManager(commandManager),
+        m_PresetsManager(presetsManager),
+        m_CompletionSource(completionSource),
         m_CommonKeywordsModel(m_HoldPlaceholder, this),
         m_EditFlags(Common::ArtworkEditFlags::None),
         m_ModifiedFlags(0)
@@ -83,9 +92,7 @@ namespace Models {
         LOG_DEBUG << "Before recombine title:" << getTitle();
         LOG_DEBUG << "Before recombine keywords:" << getKeywordsString();
 
-        if (isEmpty()) {
-            return;
-        }
+        if (isEmpty()) { return; }
 
         if (getArtworksCount() == 1) {
             assignFromOneArtwork();
@@ -159,7 +166,6 @@ namespace Models {
     QStringList CombinedArtworksModel::getKeywords() {
         return m_CommonKeywordsModel.getKeywords();
     }
-
 #endif
 
     void CombinedArtworksModel::editKeyword(int index, const QString &replacement) {
@@ -188,7 +194,7 @@ namespace Models {
     }
 
     bool CombinedArtworksModel::appendKeyword(const QString &keyword) {
-        bool added = doAppendKeyword(keyword);
+        const bool added = doAppendKeyword(keyword);
         if (added) {
             setKeywordsModified(true);
         }
@@ -217,7 +223,15 @@ namespace Models {
         }
 
         if (needToSave) {
-            processCombinedEditCommand();
+            using namespace Commands;
+            m_CommandManager.processCommand(
+                        std::make_shared<ModifyArtworksCommand>(
+                            getSnapshot(),
+                            std::make_shared<EditArtworksTemplate>(
+                                m_CommonKeywordsModel.getTitle(),
+                                m_CommonKeywordsModel.getDescription(),
+                                m_CommonKeywordsModel.getKeywords(),
+                                m_EditFlags)));
         } else {
             LOG_DEBUG << "nothing to save";
         }
@@ -229,17 +243,9 @@ namespace Models {
         }
     }
 
-    void CombinedArtworksModel::suggestCorrections() {
-        doSuggestCorrections();
-    }
-
-    void CombinedArtworksModel::setupDuplicatesModel() {
-        doSetupDuplicatesModel();
-    }
-
     void CombinedArtworksModel::assignFromSelected() {
         LOG_DEBUG << "#";
-        recombineArtworks([](const ArtworkElement *item) { return item->getIsSelected(); });
+        recombineArtworks([](const Artworks::ArtworkElement *item) { return item->getIsSelected(); });
 
         LOG_DEBUG << "After recombine description:" << getDescription();
         LOG_DEBUG << "After recombine title:" << getTitle();
@@ -262,28 +268,19 @@ namespace Models {
     }
 
     void CombinedArtworksModel::expandPreset(int keywordIndex, unsigned int presetID) {
-        if (doExpandPreset(keywordIndex, (KeywordsPresets::ID_t)presetID)) {
+        if (doExpandPreset(keywordIndex, (KeywordsPresets::ID_t)presetID, m_PresetsManager)) {
             setKeywordsModified(true);
         }
     }
 
     void CombinedArtworksModel::expandLastKeywordAsPreset() {
-        doExpandLastKeywordAsPreset();
+        doExpandLastKeywordAsPreset(m_PresetsManager);
     }
 
     void CombinedArtworksModel::addPreset(unsigned int presetID) {
-        if (doAddPreset((KeywordsPresets::ID_t)presetID)) {
+        if (doAppendPreset((KeywordsPresets::ID_t)presetID, m_PresetsManager)) {
             setKeywordsModified(true);
         }
-    }
-
-    void CombinedArtworksModel::initSuggestion() {
-        doInitSuggestion();
-    }
-
-    void CombinedArtworksModel::registerAsCurrentItem() {
-        LOG_DEBUG << "#";
-        doRegisterAsCurrentItem();
     }
 
     void CombinedArtworksModel::copyToQuickBuffer() {
@@ -291,27 +288,10 @@ namespace Models {
         doCopyToQuickBuffer();
     }
 
-    void CombinedArtworksModel::generateCompletions(const QString &prefix) {
-        LOG_DEBUG << prefix;
-        doGenerateCompletions(prefix);
-    }
-
     bool CombinedArtworksModel::acceptCompletionAsPreset(int completionID) {
         LOG_DEBUG << completionID;
-        return doAcceptCompletionAsPreset(completionID);
-    }
-
-    void CombinedArtworksModel::processCombinedEditCommand() {
-        Artworks::ArtworksSnapshot::Container rawSnapshot(getRawSnapshot());
-
-        std::shared_ptr<Commands::ModifyArtworksCommand> combinedEditCommand(new Commands::ModifyArtworksCommand(
-                m_EditFlags,
-                rawSnapshot,
-                m_CommonKeywordsModel.getDescription(),
-                m_CommonKeywordsModel.getTitle(),
-                m_CommonKeywordsModel.getKeywords()));
-
-        m_CommandManager->processCommand(combinedEditCommand);
+        const bool accepted = doAcceptCompletionAsPreset(completionID, m_CompletionSource, m_PresetsManager);
+        return accepted;
     }
 
     void CombinedArtworksModel::enableAllFields() {
@@ -323,23 +303,23 @@ namespace Models {
     void CombinedArtworksModel::assignFromOneArtwork() {
         LOG_DEBUG << "#";
         Q_ASSERT(getArtworksCount() == 1);
-        ArtworkMetadata *metadata = getArtworkMetadata(0);
+        Artworks::ArtworkMetadata *artwork = getArtworkMetadata(0);
 
         if (!isDescriptionModified()) {
-            initDescription(metadata->getDescription());
+            initDescription(artwork->getDescription());
         }
 
         if (!isTitleModified()) {
-            initTitle(metadata->getTitle());
+            initTitle(artwork->getTitle());
         }
 
         if (!areKeywordsModified()) {
-            initKeywords(metadata->getKeywords());
+            initKeywords(artwork->getKeywords());
         }
     }
 
     void CombinedArtworksModel::assignFromManyArtworks() {
-        recombineArtworks([](const ArtworkElement *) { return true; });
+        recombineArtworks([](const Artworks::ArtworkElement *) { return true; });
     }
 
     void CombinedArtworksModel::recombineArtworks(std::function<bool (const ArtworkElement *)> pred) {
@@ -353,7 +333,7 @@ namespace Models {
         QStringList firstItemKeywords;
         int firstItemKeywordsCount = 0;
         int firstNonEmptyIndex = 0;
-        ArtworkMetadata *firstNonEmpty = nullptr;
+        Artworks::ArtworkMetadata *firstNonEmpty = nullptr;
 
         if (findNonEmptyData(pred, firstNonEmptyIndex, firstNonEmpty)) {
             description = firstNonEmpty->getDescription();
@@ -366,7 +346,7 @@ namespace Models {
         }
 
         processArtworks(pred,
-                        [&](size_t index, ArtworkMetadata *metadata) {
+                        [&](size_t index, Artworks::ArtworkMetadata *metadata) {
             if ((int)index == firstNonEmptyIndex) { return; }
 
             QString currDescription = metadata->getDescription();
@@ -416,21 +396,21 @@ namespace Models {
     bool CombinedArtworksModel::findNonEmptyData(std::function<bool (const ArtworkElement *)> pred, int &index,  ArtworkMetadata *&artworkMetadata) {
         bool found = false, foundOther = false;
         int nonEmptyKeywordsIndex = -1, nonEmptyOtherIndex = -1;
-        ArtworkMetadata *nonEmptyKeywordsMetadata = nullptr;
-        ArtworkMetadata *nonEmptyOtherMetadata = nullptr;
+        Artworks::ArtworkMetadata *nonEmptyKeywordsArtwork = nullptr;
+        Artworks::ArtworkMetadata *nonEmptyOtherMetadata = nullptr;
 
         processArtworksEx(pred,
-                        [&](size_t index, ArtworkMetadata *metadata) -> bool {
-            if (!metadata->areKeywordsEmpty()) {
+                        [&](size_t index, Artworks::ArtworkMetadata *artworks) -> bool {
+            if (!artworks->areKeywordsEmpty()) {
                 nonEmptyKeywordsIndex = (int)index;
-                nonEmptyKeywordsMetadata = metadata;
+                nonEmptyKeywordsArtwork = artworks;
                 found = true;
             } else {
                 if (!foundOther) {
-                    if (!metadata->getDescription().trimmed().isEmpty() ||
-                            !metadata->getTitle().trimmed().isEmpty()) {
+                    if (!artworks->getDescription().trimmed().isEmpty() ||
+                            !artworks->getTitle().trimmed().isEmpty()) {
                         nonEmptyOtherIndex = (int)index;
-                        nonEmptyOtherMetadata = metadata;
+                        nonEmptyOtherMetadata = artworks;
                         foundOther = true;
                     }
                 }
@@ -442,7 +422,7 @@ namespace Models {
 
         if (found) {
             LOG_INFO << "Found artwork with non-empty keywords at" << nonEmptyKeywordsIndex;
-            artworkMetadata = nonEmptyKeywordsMetadata;
+            artworkMetadata = nonEmptyKeywordsArtwork;
             index = nonEmptyKeywordsIndex;
         } else if (foundOther) {
             LOG_INFO << "Found artwork with non-empty other data at" << nonEmptyOtherIndex;

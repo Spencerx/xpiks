@@ -10,11 +10,9 @@
 
 #include "uimanager.h"
 #include "../Common/defines.h"
-#include "../QuickBuffer/currenteditableartwork.h"
-#include "../QuickBuffer/currenteditableproxyartwork.h"
 #include "../Artworks/basicmetadatamodel.h"
 #include "../Models/settingsmodel.h"
-#include "../Models/artworkslistmodel.h"
+#include <Models/Artworks/artworkslistmodel.h>
 
 #include <QScreen>
 
@@ -64,18 +62,6 @@ namespace Models {
         double keywordScale = m_SettingsModel->getKeywordSizeScale();
         double height = 20.0 * keywordScale + (keywordScale - 1.0) * 10.0;
         return height;
-    }
-
-    void UIManager::registerCurrentItem(std::shared_ptr<QuickBuffer::ICurrentEditable> &currentItem) {
-        LOG_DEBUG << "#";
-        m_CurrentEditable = std::move(currentItem);
-        emit currentEditableChanged();
-    }
-
-    void UIManager::clearCurrentItem() {
-        LOG_DEBUG << "#";
-        m_CurrentEditable.reset();
-        emit currentEditableChanged();
     }
 
     QObject *UIManager::retrieveTabsModel(int tabID) {
