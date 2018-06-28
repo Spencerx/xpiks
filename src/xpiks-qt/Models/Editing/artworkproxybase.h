@@ -11,11 +11,11 @@
 #ifndef ARTWORKPROXYBASE_H
 #define ARTWORKPROXYBASE_H
 
-#include "../Artworks/basicmetadatamodel.h"
-#include "../Artworks/imetadataoperator.h"
-#include "../KeywordsPresets/ipresetsmanager.h"
-#include "../QuickBuffer/currenteditableproxyartwork.h"
-#include "../Common/types.h"
+#include <Artworks/basicmetadatamodel.h>
+#include <Artworks/imetadataoperator.h>
+#include "currenteditableproxyartwork.h"
+#include <KeywordsPresets/ipresetsmanager.h>
+#include <Common/types.h>
 
 namespace AutoComplete {
     class ICompletionSource;
@@ -25,9 +25,8 @@ namespace Models {
     class ArtworkProxyBase
     {
     public:
-        ArtworkProxyBase(AutoComplete::ICompletionSource &completionSource,
-                         KeywordsPresets::IPresetsManager &presetsManager);
-        virtual ~ArtworkProxyBase() {}
+        ArtworkProxyBase();
+        virtual ~ArtworkProxyBase() { }
 
     public:
         QString getDescription();
@@ -61,7 +60,7 @@ namespace Models {
 
     protected:
         bool doEditKeyword(int index, const QString &replacement);
-        bool doRemoveKeywordAt(int keywordIndex, QString &keyword);
+        bool doRemoveKeywordAt(int index, QString &keyword);
         bool doRemoveLastKeyword(QString &keyword);
         bool doAppendKeyword(const QString &keyword);
         size_t doAppendKeywords(const QStringList &keywords);
@@ -79,11 +78,13 @@ namespace Models {
         bool getHasKeywordsSpellError();
 
     protected:
-        bool doExpandPreset(int keywordIndex, KeywordsPresets::ID_t presetID);
-        bool doAppendPreset(KeywordsPresets::ID_t presetID);
-        bool doExpandLastKeywordAsPreset();
-        bool doAddPreset(KeywordsPresets::ID_t presetID);
-        bool doRemovePreset(KeywordsPresets::ID_t presetID);
+        bool doExpandPreset(int keywordIndex,
+                            KeywordsPresets::ID_t presetID,
+                            KeywordsPresets::IPresetsManager &presetsManager);
+        bool doAppendPreset(KeywordsPresets::ID_t presetID,
+                            KeywordsPresets::IPresetsManager &presetsManager);
+        bool doExpandLastKeywordAsPreset(KeywordsPresets::IPresetsManager &presetsManager);
+        bool doRemovePreset(KeywordsPresets::ID_t presetID, KeywordsPresets::IPresetsManager &presetsManager);
 
     protected:
         void doHandleUserDictChanged(const QStringList &keywords, bool overwritten);
@@ -91,14 +92,12 @@ namespace Models {
         void doCopyToQuickBuffer();
         bool hasKeywords(const QStringList &keywordsList);
         virtual void doJustEdited();
-        bool doAcceptCompletionAsPreset(int completionID);
+        bool doAcceptCompletionAsPreset(int completionID,
+                                        AutoComplete::ICompletionSource &completionSource,
+                                        KeywordsPresets::IPresetsManager &presetsManager);
 
     private:
-        friend class QuickBuffer::CurrentEditableProxyArtwork;
-
-    protected:
-        AutoComplete::ICompletionSource &m_CompletionSource;
-        KeywordsPresets::IPresetsManager &m_PresetsManager;
+        friend class CurrentEditableProxyArtwork;
     };
 }
 

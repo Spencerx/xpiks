@@ -15,13 +15,13 @@
 #include <functional>
 #include <deque>
 #include <vector>
-#include "../Artworks/artworkmetadata.h"
-#include "../Helpers/ifilenotavailablemodel.h"
-#include "../Artworks/artworkssnapshot.h"
-#include "../Filesystem/ifilescollection.h"
-#include "../Helpers/indicesranges.h"
-#include "../Artworks/icurrentartworksource.h"
-#include "../Commands/icommandtemplate.h"
+#include <Artworks/artworkmetadata.h>
+#include <Helpers/ifilenotavailablemodel.h>
+#include <Artworks/artworkssnapshot.h>
+#include <Filesystem/ifilescollection.h>
+#include <Helpers/indicesranges.h>
+#include <Artworks/icurrentartworksource.h>
+#include <Commands/Base/icommandtemplate.h>
 
 class QQuickTextDocument;
 

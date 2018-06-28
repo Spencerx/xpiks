@@ -13,12 +13,12 @@
 
 #include <vector>
 #include <functional>
-#include "../Common/abstractlistmodel.h"
-#include "../Artworks/artworkelement.h"
-#include "../Artworks/artworkmetadata.h"
-#include "../Helpers/ifilenotavailablemodel.h"
-#include "../Artworks/artworkssnapshot.h"
-#include "../Artworks/iartworkssource.h"
+#include <Common/abstractlistmodel.h>
+#include <Artworks/artworkelement.h>
+#include <Artworks/artworkmetadata.h>
+#include <Helpers/ifilenotavailablemodel.h>
+#include <Artworks/artworkssnapshot.h>
+#include <Artworks/iartworkssource.h>
 
 namespace Models {
     class ArtworksViewModel:
@@ -49,7 +49,9 @@ namespace Models {
         int getSelectedArtworksCount() const;
 
     public:
-        Q_INVOKABLE void pullArtworks();
+        void pullArtworks();
+
+    public:
         Q_INVOKABLE void setArtworkSelected(int index, bool value);
         Q_INVOKABLE void removeSelectedArtworks() { doRemoveSelectedArtworks(); }
         Q_INVOKABLE void resetModel() { doResetModel(); }

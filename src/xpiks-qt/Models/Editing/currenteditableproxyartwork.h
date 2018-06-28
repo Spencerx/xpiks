@@ -17,11 +17,11 @@ namespace Models {
     class ArtworkProxyBase;
 }
 
-namespace QuickBuffer {
+namespace Models {
     class CurrentEditableProxyArtwork : public ICurrentEditable
     {
     public:
-        CurrentEditableProxyArtwork(Models::ArtworkProxyBase *artworkProxy);
+        CurrentEditableProxyArtwork(Models::ArtworkProxyBase &artworkProxy);
 
         // ICurrentEditable interface
     public:
@@ -35,17 +35,21 @@ namespace QuickBuffer {
         virtual void setDescription(const QString &description) override;
         virtual void setKeywords(const QStringList &keywords) override;
 
-        virtual bool appendPreset(KeywordsPresets::ID_t presetID) override;
-        virtual bool expandPreset(int keywordIndex, KeywordsPresets::ID_t presetID) override;
-        virtual bool removePreset(KeywordsPresets::ID_t presetID) override;
-
         virtual bool hasKeywords(const QStringList &keywordsList) override;
 
-        virtual void spellCheck() override;
-        virtual void update() override { /* BUMP */ }
+        virtual std::shared_ptr<Commands::ICommand> appendPreset(KeywordsPresets::ID_t presetID,
+                                                                 KeywordsPresets::IPresetsManager &presetsManager) override;
+        virtual std::shared_ptr<Commands::ICommand> expandPreset(int keywordIndex,
+                                                                 KeywordsPresets::ID_t presetID,
+                                                                 KeywordsPresets::IPresetsManager &presetsManager) override;
+        virtual std::shared_ptr<Commands::ICommand> removePreset(KeywordsPresets::ID_t presetID,
+                                                                 KeywordsPresets::IPresetsManager &presetsManager) override;
+
+        virtual std::shared_ptr<Commands::ICommand> inspect() override;
+        virtual std::shared_ptr<Commands::ICommand> update() override;
 
     private:
-        Models::ArtworkProxyBase *m_ArtworkProxy;
+        Models::ArtworkProxyBase &m_ArtworkProxy;
     };
 }
 

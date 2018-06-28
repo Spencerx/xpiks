@@ -11,21 +11,17 @@
 #ifndef SELECTEDARTWORKSCONSUMER_H
 #define SELECTEDARTWORKSCONSUMER_H
 
-#include <QObject>
-#include "../Artworks/iartworkssource.h"
+#include <Artworks/iartworkssource.h>
 
 namespace Models {
-    class SelectedArtworksConsumer: public QObject {
-        Q_OBJECT
-
+    class SelectedArtworksConsumer {
     public:
-        SelectedArtworksConsumer(Artworks::IArtworksSource &selectedArtworksSource, QObject *parent=nullptr):
-            QObject(parent),
+        SelectedArtworksConsumer(Artworks::IArtworksSource &selectedArtworksSource):
             m_SelectedArtworksSource(selectedArtworksSource)
-        {}
+        { }
 
     public:
-        Q_INVOKABLE void pullArtworks() { setArtworks(m_SelectedArtworksSource.getArtworks()); }
+        void pullArtworks() { setArtworks(m_SelectedArtworksSource.getArtworks()); }
 
     protected:
         virtual void setArtworks(Artworks::WeakArtworksSnapshot &snapshot) = 0;

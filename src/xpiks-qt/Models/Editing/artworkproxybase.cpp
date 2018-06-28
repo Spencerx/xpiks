@@ -9,16 +9,15 @@
  */
 
 #include "artworkproxybase.h"
-#include "../Commands/commandmanager.h"
-#include "../Suggestion/keywordssuggestor.h"
-#include "../QuickBuffer/quickbuffer.h"
-#include "../Helpers/stringhelper.h"
-#include "../AutoComplete/completionitem.h"
-#include "../AutoComplete/keywordsautocompletemodel.h"
+#include <Artworks/imetadataoperator.h>
+#include <Suggestion/keywordssuggestor.h>
+#include <QuickBuffer/quickbuffer.h>
+#include <Helpers/stringhelper.h>
+#include <AutoComplete/completionitem.h>
+#include <AutoComplete/keywordsautocompletemodel.h>
 
 namespace Models {
-    ArtworkProxyBase::ArtworkProxyBase(AutoComplete::ICompletionSource &completionSource,
-                                       KeywordsPresets::IPresetsManager &presetsManager):
+    ArtworkProxyBase::ArtworkProxyBase():
         m_CompletionSource(completionSource),
         m_PresetsManager(presetsManager)
     {
@@ -62,6 +61,7 @@ namespace Models {
         doSetKeywords(keywords);
         signalKeywordsCountChanged();
         doJustEdited();
+        submitForInspection();
     }
 
     bool ArtworkProxyBase::doSetDescription(const QString &description) {
@@ -69,6 +69,7 @@ namespace Models {
         bool result = metadataOperator->setDescription(description);
         if (result) {
             doJustEdited();
+            submitForInspection();
         }
 
         return result;
@@ -79,6 +80,7 @@ namespace Models {
         bool result = metadataOperator->setTitle(title);
         if (result) {
             doJustEdited();
+            submitForInspection();
         }
 
         return result;
@@ -87,8 +89,8 @@ namespace Models {
     void ArtworkProxyBase::doSetKeywords(const QStringList &keywords) {
         auto *metadataOperator = getMetadataOperator();
         metadataOperator->setKeywords(keywords);
-
-        spellCheckKeywords();
+        doJustEdited();
+        submitForInspection();
     }
 
     Common::ID_t ArtworkProxyBase::getSpecialItemID() {
@@ -109,10 +111,10 @@ namespace Models {
         return result;
     }
 
-    bool ArtworkProxyBase::doRemoveKeywordAt(int keywordIndex, QString &keyword) {
-        LOG_INFO << "keyword index:" << keywordIndex;
+    bool ArtworkProxyBase::doRemoveKeywordAt(int index, QString &keyword) {
+        LOG_INFO << "keyword index:" << index;
         auto *metadataOperator = getMetadataOperator();
-        bool result = metadataOperator->removeKeywordAt(keywordIndex, keyword);
+        bool result = metadataOperator->removeKeywordAt(index, keyword);
         if (result) {
             LOG_INFO << "Removed keyword:" << keyword << "keywords count:" << getKeywordsCount();
             signalKeywordsCountChanged();
@@ -170,7 +172,7 @@ namespace Models {
     bool ArtworkProxyBase::doRemoveKeywords(const QSet<QString> &keywords, bool caseSensitive) {
         LOG_INFO << "case sensitive:" << caseSensitive;
         auto *metadataOperator = getMetadataOperator();
-        bool result = metadataOperator->removeKeywords(keywords, caseSensitive);
+        const bool result = metadataOperator->removeKeywords(keywords, caseSensitive);
         if (result) {
             signalKeywordsCountChanged();
             submitForInspection();
@@ -183,7 +185,7 @@ namespace Models {
     bool ArtworkProxyBase::doMoveKeyword(int from, int to) {
         LOG_INFO << from << "-->" << to;
         auto *metadataOperator = getMetadataOperator();
-        bool result = metadataOperator->moveKeyword(from, to);
+        const bool result = metadataOperator->moveKeyword(from, to);
         if (result) {
             doJustEdited();
         }
@@ -194,7 +196,7 @@ namespace Models {
     bool ArtworkProxyBase::doClearKeywords() {
         LOG_DEBUG << "#";
         auto *metadataOperator = getMetadataOperator();
-        bool result = metadataOperator->clearKeywords();
+        const bool result = metadataOperator->clearKeywords();
         if (result) {
             signalKeywordsCountChanged();
             submitForInspection();
@@ -220,13 +222,7 @@ namespace Models {
         QStringList keywords;
         Helpers::splitKeywords(rawKeywords.trimmed(), separators, keywords);
 
-        auto *metadataOperator = getMetadataOperator();
-        metadataOperator->setKeywords(keywords);
-
-        spellCheckKeywords();
-
-        signalKeywordsCountChanged();
-        doJustEdited();
+        doSetKeywords(keywords);
     }
 
     bool ArtworkProxyBase::getHasTitleWordSpellError(const QString &word) {
@@ -254,12 +250,14 @@ namespace Models {
         return keywordsModel->hasKeywordsSpellError();
     }
 
-    bool ArtworkProxyBase::doExpandPreset(int keywordIndex, KeywordsPresets::ID_t presetID) {
+    bool ArtworkProxyBase::doExpandPreset(int keywordIndex,
+                                          KeywordsPresets::ID_t presetID,
+                                          KeywordsPresets::IPresetsManager &presetsManager) {
         bool success = false;
         LOG_INFO << "keyword" << keywordIndex << "preset" << presetID;
         QStringList keywords;
 
-        if (m_PresetsManager.tryGetPreset(presetID, keywords)) {
+        if (presetsManager.tryGetPreset(presetID, keywords)) {
             auto *metadataOperator = getMetadataOperator();
             if (metadataOperator->expandPreset(keywordIndex, keywords)) {
                 signalKeywordsCountChanged();
@@ -272,12 +270,13 @@ namespace Models {
         return success;
     }
 
-    bool ArtworkProxyBase::doAppendPreset(KeywordsPresets::ID_t presetID) {
+    bool ArtworkProxyBase::doAppendPreset(KeywordsPresets::ID_t presetID,
+                                          KeywordsPresets::IPresetsManager &presetsManager) {
         bool success = false;
         LOG_INFO << "preset ID" << presetID;
         QStringList keywords;
 
-        if (m_PresetsManager.tryGetPreset(presetID, keywords)) {
+        if (presetsManager.tryGetPreset(presetID, keywords)) {
             auto *metadataOperator = getMetadataOperator();
             if (metadataOperator->appendPreset(keywords)) {
                 signalKeywordsCountChanged();
@@ -290,18 +289,17 @@ namespace Models {
         return success;
     }
 
-    bool ArtworkProxyBase::doExpandLastKeywordAsPreset() {
+    bool ArtworkProxyBase::doExpandLastKeywordAsPreset(KeywordsPresets::IPresetsManager &presetsManager) {
         LOG_DEBUG << "#";
         bool success = false;
 
         auto *keywordsModel = getBasicMetadataModel();
         int keywordIndex = keywordsModel->getKeywordsCount() - 1;
         QString lastKeyword = keywordsModel->retrieveKeyword(keywordIndex);
-        auto *presetsModel = m_CommandManager->getPresetsModel();
         KeywordsPresets::ID_t presetID = 0;
 
-        if (presetsModel->tryFindSinglePresetByName(lastKeyword, false, presetID)) {
-            success = doExpandPreset(keywordIndex, presetID);
+        if (presetsManager.tryFindSinglePresetByName(lastKeyword, false, presetID)) {
+            success = doExpandPreset(keywordIndex, presetID, presetsManager);
         } else {
             LOG_DEBUG << "Preset not found";
         }
@@ -309,24 +307,12 @@ namespace Models {
         return success;
     }
 
-    bool ArtworkProxyBase::doAddPreset(KeywordsPresets::ID_t presetID) {
+    bool ArtworkProxyBase::doRemovePreset(KeywordsPresets::ID_t presetID, KeywordsPresets::IPresetsManager &presetsManager) {
         LOG_INFO << presetID;
         bool success = false;
         QStringList keywords;
 
-        if (m_PresetsManager.tryGetPreset(presetID, keywords)) {
-            success = doAppendKeywords(keywords) > 0;
-        }
-
-        return success;
-    }
-
-    bool ArtworkProxyBase::doRemovePreset(KeywordsPresets::ID_t presetID) {
-        LOG_INFO << presetID;
-        bool success = false;
-        QStringList keywords;
-
-        if (m_PresetsManager.tryGetPreset(presetID, keywords)) {
+        if (presetsManager.tryGetPreset(presetID, keywords)) {
             for (auto &keyword: keywords) {
                 keyword = keyword.toLower();
             }
@@ -380,10 +366,12 @@ namespace Models {
         /*metadataOperator->justEdited();*/
     }
 
-    bool ArtworkProxyBase::doAcceptCompletionAsPreset(int completionID) {
+    bool ArtworkProxyBase::doAcceptCompletionAsPreset(int completionID,
+                                                      AutoComplete::ICompletionSource &completionSource,
+                                                      KeywordsPresets::IPresetsManager &presetsManager) {
         bool accepted = false;
 
-        std::shared_ptr<AutoComplete::CompletionItem> completionItem = m_CompletionSource.getAcceptedCompletion(completionID);
+        auto completionItem = completionSource.getAcceptedCompletion(completionID);
         if (!completionItem) {
             LOG_WARNING << "Completion is not available anymore";
             return false;
@@ -392,7 +380,7 @@ namespace Models {
         const int presetID = completionItem->getPresetID();
 
         if (completionItem->isPreset() || (completionItem->canBePreset() && completionItem->shouldExpandPreset())) {
-            accepted = doAddPreset(presetID);
+            accepted = doAppendPreset(presetID, presetsManager);
         }/* --------- this is handled in the edit field -----------
             else if (completionItem->isKeyword()) {
             doAppendKeyword(completionItem->getCompletion());

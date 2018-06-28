@@ -9,16 +9,17 @@
  */
 
 #include "combinedartworksmodel.h"
-#include "../Helpers/indiceshelper.h"
-#include "../Commands/modifyartworkscommand.h"
-#include "../Commands/commandmanager.h"
-#include "../Suggestion/keywordssuggestor.h"
-#include "../Artworks/artworkmetadata.h"
-#include "../Artworks/artworkelement.h"
-#include "../SpellCheck/spellcheckiteminfo.h"
-#include "../Common/defines.h"
-#include "../QMLExtensions/appdispatcher.h"
-#include "../QMLExtensions/uicommandid.h"
+#include <Helpers/indiceshelper.h>
+#include <Commands/Editing/modifyartworkscommand.h>
+#include <Commands/commandmanager.h>
+#include <Suggestion/keywordssuggestor.h>
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/artworkelement.h>
+#include <SpellCheck/spellcheckiteminfo.h>
+#include <Common/defines.h>
+#include <QMLExtensions/appdispatcher.h>
+#include <QMLExtensions/uicommandid.h>
+#include <Commands/Base/simpleuicommandtemplate.h>
 
 #define MAX_EDITING_PAUSE_RESTARTS 12
 
@@ -58,7 +59,11 @@ namespace Models {
     void CombinedArtworksModel::registerUICommands(QMLExtensions::IAppDispatcher &dispatcher) {
         dispatcher.registerCommand(
                     QMLExtensions::UICommandID::EditSelectedArtworks,
-                    )
+                    std::shared_ptr<Commands::IUICommandTemplate>(
+                        new Commands::SimpleUICommandTemplate([this](const QJSValue&){
+            this->pullArtworks();
+            // TODO: register as current
+        })));
     }
 
     void CombinedArtworksModel::setArtworks(Artworks::WeakArtworksSnapshot &artworks) {

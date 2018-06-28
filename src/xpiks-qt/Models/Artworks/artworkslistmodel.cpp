@@ -11,25 +11,25 @@
 #include "artworkslistmodel.h"
 #include <QDir>
 #include <QtQml>
-#include "../Artworks/basickeywordsmodel.h"
-#include "../Artworks/imageartwork.h"
-#include "../Artworks/videoartwork.h"
-#include "artworksrepository.h"
-#include "../Helpers/artworkshelpers.h"
-#include "../Helpers/stringhelper.h"
-#include "../Commands/icommandmanager.h"
-#include "../KeywordsPresets/ipresetsmanager.h"
-#include "../Artworks/iartworksservice.h"
-#include "../Commands/expandpresettemplate.h"
-#include "../Commands/editartworkstemplate.h"
-#include "../AutoComplete/icompletionsource.h"
-#include "../Commands/templatedcommand.h"
-#include "../Commands/modifyartworkscommand.h"
-#include "../Commands/compositecommandtemplate.h"
-#include "../Commands/artworksupdatetemplate.h"
-#include "../Services/artworkupdaterequest.h"
-#include "../Commands/keywordedittemplate.h"
-#include "../Commands/emptycommand.h"
+#include <Artworks/basickeywordsmodel.h>
+#include <Artworks/imageartwork.h>
+#include <Artworks/videoartwork.h>
+#include "artworksrepository.h>
+#include <Helpers/artworkshelpers.h>
+#include <Helpers/stringhelper.h>
+#include <Commands/Base/icommandmanager.h>
+#include <KeywordsPresets/ipresetsmanager.h>
+#include <Artworks/iartworksservice.h>
+#include <Commands/Editing/expandpresettemplate.h>
+#include <Commands/Editing/editartworkstemplate.h>
+#include <AutoComplete/icompletionsource.h>
+#include <Commands/Base/templatedcommand.h>
+#include <Commands/Editing/modifyartworkscommand.h>
+#include <Commands/Base/compositecommandtemplate.h>
+#include <Commands/artworksupdatetemplate.h>
+#include <Services/artworkupdaterequest.h>
+#include <Commands/Editing/keywordedittemplate.h>
+#include <Commands/Base/emptycommand.h>
 
 namespace Models {
     using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
@@ -834,7 +834,7 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::addPreset(int artworkIndex, unsigned int presetID, KeywordsPresets::IPresetsManager &presetsManager) {
         LOG_INFO << "item" << artworkIndex << "preset" << presetID;
         std::shared_ptr<Commands::ICommand> command;
-        ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
@@ -858,7 +858,7 @@ namespace Models {
                                                                                     AutoComplete::ICompletionSource &completionsSource) {
         LOG_INFO << "item" << artworkIndex << "completionID" << completionID;
         std::shared_ptr<Commands::ICommand> command(new Commands::EmptyCommand());
-        ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
 

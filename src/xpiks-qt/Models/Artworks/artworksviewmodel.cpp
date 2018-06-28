@@ -8,12 +8,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "artworksviewmodel.h"
+#include "artworksviewmodel.h>
 #include <QVector>
-#include "../Helpers/indiceshelper.h"
-#include "../Common/defines.h"
-#include "../Artworks/imageartwork.h"
-#include "../Artworks/videoartwork.h"
+#include <Helpers/indiceshelper.h>
+#include <Common/defines.h>
+#include <Artworks/imageartwork.h>
+#include <Artworks/videoartwork.h>
 
 namespace Models {
     ArtworksViewModel::ArtworksViewModel(Artworks::IArtworksSource &artworksSource, QObject *parent):

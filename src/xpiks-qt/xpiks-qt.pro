@@ -88,8 +88,6 @@ SOURCES += main.cpp \
     Translation/translationworker.cpp \
     Translation/translationquery.cpp \
     Plugins/sandboxeddependencies.cpp \
-    QuickBuffer/currenteditableartwork.cpp \
-    QuickBuffer/currenteditableproxyartwork.cpp \
     QuickBuffer/quickbuffer.cpp \
     SpellCheck/userdicteditmodel.cpp \
     Helpers/asynccoordinator.cpp \
@@ -180,7 +178,6 @@ SOURCES += main.cpp \
     Commands/Files/removedirectorycommand.cpp \
     Commands/Files/removefilescommand.cpp \
     Commands/Files/removefilescommandbase.cpp \
-    Commands/Editing/deletekeywordscommand.cpp \
     Commands/Editing/editartworkstemplate.cpp \
     Commands/Editing/expandpresettemplate.cpp \
     Commands/Editing/findandreplacecommand.cpp \
@@ -213,7 +210,10 @@ SOURCES += main.cpp \
     Models/switchermodel.cpp \
     Models/uimanager.cpp \
     Common/statefulentity.cpp \
-    Common/systemenvironment.cpp
+    Common/systemenvironment.cpp \
+    Models/Editing/currenteditableartwork.cpp \
+    Models/Editing/currenteditableproxyartwork.cpp \
+    Commands/Editing/deletekeywordstemplate.cpp
 
 RESOURCES += qml.qrc
 
@@ -323,9 +323,6 @@ HEADERS += \
     Translation/translationworker.h \
     Translation/translationquery.h \
     Plugins/sandboxeddependencies.h \
-    QuickBuffer/icurrenteditable.h \
-    QuickBuffer/currenteditableartwork.h \
-    QuickBuffer/currenteditableproxyartwork.h \
     QuickBuffer/quickbuffer.h \
     KeywordsPresets/ipresetsmanager.h \
     SpellCheck/userdicteditmodel.h \
@@ -471,7 +468,6 @@ HEADERS += \
     Commands/Base/iuicommandtemplate.h \
     Commands/Base/templatedcommand.h \
     Commands/Base/templateduicommand.h \
-    Commands/Editing/deletekeywordscommand.h \
     Commands/Editing/editartworkstemplate.h \
     Commands/Editing/expandpresettemplate.h \
     Commands/Editing/findandreplacecommand.h \
@@ -523,7 +519,13 @@ HEADERS += \
     Common/systemenvironment.h \
     Common/types.h \
     Common/version.h \
-    Common/wordanalysisresult.h
+    Common/wordanalysisresult.h \
+    Commands/Base/simpleuicommandtemplate.h \
+    Models/Editing/currenteditableartwork.h \
+    Models/Editing/currenteditableproxyartwork.h \
+    Models/Editing/icurrenteditable.h \
+    Commands/Editing/deletekeywordstemplate.h \
+    Commands/Base/simplecommand.h
 
 DISTFILES += \
     Components/CloseIcon.qml \
@@ -668,6 +670,7 @@ SOURCES += *.qml \
           StackViews/*.qml
 }
 
+INCLUDEPATH += ./
 INCLUDEPATH += ../../vendors/tiny-aes
 INCLUDEPATH += ../../vendors/cpp-libface
 INCLUDEPATH += ../../vendors/ssdll/src/ssdll
