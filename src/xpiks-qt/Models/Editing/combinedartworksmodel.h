@@ -31,7 +31,7 @@
 #include <Models/Editing/icurrenteditable.h>
 
 namespace QMLExtensions {
-    class IAppDispatcher;
+    class IUICommandDispatcher;
 }
 
 namespace Commands {
@@ -74,7 +74,7 @@ namespace Models {
         virtual ~CombinedArtworksModel() {}
 
     public:
-        void registerUICommands(QMLExtensions::IAppDispatcher &dispatcher);
+        void registerUICommands(QMLExtensions::IUICommandDispatcher &dispatcher);
         void setInspectionTemplate(const std::shared_ptr<Commands::InspectBasicModelTemplate> &actionTemplate);
         std::shared_ptr<ICurrentEditable> getCurrentEditable() const;
 

@@ -449,7 +449,6 @@ HEADERS += \
     AutoComplete/icompletionsource.h \
     QMLExtensions/appdispatcher.h \
     QMLExtensions/uicommandid.h \
-    QMLExtensions/iappdispatcher.h \
     Commands/Services/autoimportmetadatacommand.h \
     Commands/Services/backupartworkstemplate.h \
     Commands/Services/cleanuplegacybackupscommand.h \
@@ -530,7 +529,9 @@ HEADERS += \
     Commands/Base/simplecommand.h \
     Models/Editing/currenteditablemodel.h \
     Commands/Services/inspectbasicmodeltemplate.h \
-    Commands/Services/updatevideothumbnailtemplate.h
+    Commands/Services/updatevideothumbnailtemplate.h \
+    QMLExtensions/iuicommanddispatcher.h \
+    Commands/messages.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

@@ -66,7 +66,7 @@ namespace Models {
                          this, &CombinedArtworksModel::keywordsSpellingChanged);
     }
 
-    void CombinedArtworksModel::registerUICommands(QMLExtensions::IAppDispatcher &dispatcher) {
+    void CombinedArtworksModel::registerUICommands(QMLExtensions::IUICommandDispatcher &dispatcher) {
         dispatcher.registerCommand(
                     QMLExtensions::UICommandID::EditSelectedArtworks,
                     std::shared_ptr<Commands::IUICommandTemplate>(

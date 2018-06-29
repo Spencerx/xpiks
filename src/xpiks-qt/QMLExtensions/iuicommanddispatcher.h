@@ -18,9 +18,9 @@ namespace Commands {
 }
 
 namespace QMLExtensions {
-    class IAppDispatcher {
+    class IUICommandDispatcher {
     public:
-        virtual ~IAppDispatcher() {}
+        virtual ~IUICommandDispatcher() {}
         virtual void registerCommand(int commandID, const std::shared_ptr<Commands::IUICommandTemplate> &command) = 0;
     };
 }

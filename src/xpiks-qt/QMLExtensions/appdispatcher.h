@@ -14,7 +14,7 @@
 #include <QJSValue>
 #include <QObject>
 #include <unordered_map>
-#include "iappdispatcher.h"
+#include "iuicommanddispatcher.h"
 
 namespace Commands {
     class ICommandManager;

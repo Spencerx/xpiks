@@ -13,7 +13,7 @@
 
 #include "icommand.h"
 #include "icommandtemplate.h"
-#include "../Artworks/artworkssnapshot.h"
+#include <Artworks/artworkssnapshot.h>
 #include <memory>
 #include <type_traits>
 
