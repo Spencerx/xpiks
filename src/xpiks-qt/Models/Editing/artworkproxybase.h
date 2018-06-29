@@ -54,6 +54,7 @@ namespace Models {
 
     protected:
         virtual void submitForInspection() = 0;
+        virtual void doJustEdited() { }
 
     protected:
         virtual Common::ID_t getSpecialItemID();
@@ -91,7 +92,6 @@ namespace Models {
         void doHandleUserDictCleared();
         void doCopyToQuickBuffer();
         bool hasKeywords(const QStringList &keywordsList);
-        virtual void doJustEdited();
         bool doAcceptCompletionAsPreset(int completionID,
                                         AutoComplete::ICompletionSource &completionSource,
                                         KeywordsPresets::IPresetsManager &presetsManager);

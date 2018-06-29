@@ -28,6 +28,7 @@
 #include <Artworks/artworkelement.h>
 #include "artworkproxybase.h"
 #include <Common/delayedactionentity.h>
+#include <Models/Editing/icurrenteditable.h>
 
 namespace QMLExtensions {
     class IAppDispatcher;
@@ -35,6 +36,7 @@ namespace QMLExtensions {
 
 namespace Commands {
     class ICommandManager;
+    class InspectBasicModelTemplate;
 }
 
 namespace KeywordsPresets {
@@ -73,6 +75,8 @@ namespace Models {
 
     public:
         void registerUICommands(QMLExtensions::IAppDispatcher &dispatcher);
+        void setInspectionTemplate(const std::shared_ptr<Commands::InspectBasicModelTemplate> &actionTemplate);
+        std::shared_ptr<ICurrentEditable> getCurrentEditable() const;
 
     protected:
         virtual void setArtworks(Artworks::WeakArtworksSnapshot &artworks) override;
@@ -143,6 +147,7 @@ namespace Models {
         void titleSpellingChanged();
         void descriptionSpellingChanged();
         void keywordsSpellingChanged();
+        void currentEditableChanged();
 
     protected:
         virtual void signalDescriptionChanged() override { emit descriptionChanged(); }
@@ -213,6 +218,7 @@ namespace Models {
 
     protected:
         virtual void doJustEdited() override;
+        virtual void submitForInspection() override;
 
     protected:
         virtual Common::ID_t getSpecialItemID() override;
@@ -237,6 +243,7 @@ namespace Models {
         AutoComplete::ICompletionSource &m_CompletionSource;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
+        std::shared_ptr<Commands::InspectBasicModelTemplate> m_InspectionTemplate;
         Common::ArtworkEditFlags m_EditFlags;
         Common::flag_t m_ModifiedFlags;
     };

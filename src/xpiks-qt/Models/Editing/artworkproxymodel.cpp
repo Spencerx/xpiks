@@ -11,20 +11,30 @@
 #include "artworkproxymodel.h"
 #include <QImageReader>
 #include <QSyntaxHighlighter>
-#include "../Commands/commandmanager.h"
-#include "../Warnings/warningsservice.h"
-#include "imageartwork.h"
-#include "../Models/artitemsmodel.h"
-#include "../Models/videoartwork.h"
-#include "../Helpers/filehelpers.h"
-#include "../QMLExtensions/videocachingservice.h"
-#include "../QMLExtensions/artworksupdatehub.h"
+#include <Commands/Base/icommandmanager.h>
+#include <Common/defines.h>
+#include <Warnings/warningsservice.h>
+#include <Artworks/imageartwork.h>
+#include <Models/Artworks/artworkslistmodel.h>
+#include <Artworks/videoartwork.h>
+#include <Helpers/filehelpers.h>
+#include <QMLExtensions/videocachingservice.h>
+#include <Services/artworksupdatehub.h>
+#include <Models/Editing/currenteditableproxyartwork.h>
+#include <Commands/Base/templatedcommand.h>
+#include <Commands/Base/compositecommandtemplate.h>
 
 namespace Models {
-    ArtworkProxyModel::ArtworkProxyModel(QObject *parent) :
+    ArtworkProxyModel::ArtworkProxyModel(Commands::ICommandManager &commandManager,
+                                         KeywordsPresets::IPresetsManager &presetsManager,
+                                         AutoComplete::ICompletionSource &completionSource,
+                                         QObject *parent) :
         QObject(parent),
         ArtworkProxyBase(),
-        m_ArtworkMetadata(nullptr)
+        m_ArtworkMetadata(nullptr),
+        m_CommandManager(commandManager),
+        m_PresetsManager(presetsManager),
+        m_CompletionSource(completionSource)
     {
     }
 
@@ -37,6 +47,22 @@ namespace Models {
         Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
         bool isVideo = videoArtwork != nullptr;
         return isVideo;
+    }
+
+    std::shared_ptr<ICurrentEditable> ArtworkProxyModel::getCurrentEditable() {
+        return std::make_shared<CurrentEditableProxyArtwork>(*this);
+    }
+
+    void ArtworkProxyModel::setUpdateArtworksTemplate(const std::shared_ptr<ArtworkProxyModel::IArtworksCommandTemplate> &actionTemplate) {
+        m_UpdateArtworksTemplate = actionTemplate;
+    }
+
+    void ArtworkProxyModel::setThumbnailUpdateTemplate(const std::shared_ptr<ArtworkProxyModel::IArtworksCommandTemplate> &actionTemplate) {
+        m_ThumbnailUpdateTemplate = actionTemplate;
+    }
+
+    void ArtworkProxyModel::setInspectionTemplate(const std::shared_ptr<ArtworkProxyModel::IArtworksCommandTemplate> &actionTemplate) {
+        m_InspectionTemplate = actionTemplate;
     }
 
     void ArtworkProxyModel::setDescription(const QString &description)  {
@@ -167,34 +193,6 @@ namespace Models {
         return doGetKeywordsString();
     }
 
-    void ArtworkProxyModel::suggestCorrections() {
-        doSuggestCorrections();
-    }
-
-    void ArtworkProxyModel::setupDuplicatesModel() {
-       doSetupDuplicatesModel();
-    }
-
-    void ArtworkProxyModel::initDescriptionHighlighting(QQuickTextDocument *document) {
-        auto *highlighter = doCreateDescriptionHighligher(document);
-
-        QObject::connect(this, &ArtworkProxyModel::descriptionSpellingChanged,
-                         highlighter, &QSyntaxHighlighter::rehighlight);
-
-        auto *basicModel = getBasicMetadataModel();
-        basicModel->notifyDescriptionSpellingChanged();
-    }
-
-    void ArtworkProxyModel::initTitleHighlighting(QQuickTextDocument *document) {
-        auto *highlighter = doCreateTitleHighlighter(document);
-
-        QObject::connect(this, &ArtworkProxyModel::titleSpellingChanged,
-                         highlighter, &QSyntaxHighlighter::rehighlight);
-
-        auto *basicModel = getBasicMetadataModel();
-        basicModel->notifyTitleSpellingChanged();
-    }
-
     void ArtworkProxyModel::plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {
         doPlainTextEdit(rawKeywords, spaceIsSeparator);
     }
@@ -238,7 +236,7 @@ namespace Models {
 
     QSize ArtworkProxyModel::retrieveImageSize() const {
         Q_ASSERT(getIsValid());
-        ImageArtwork *image = dynamic_cast<ImageArtwork *>(m_ArtworkMetadata);
+        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(m_ArtworkMetadata);
 
         if (image == NULL) {
             return QSize();
@@ -273,7 +271,7 @@ namespace Models {
 
     QString ArtworkProxyModel::getDateTaken() const {
         Q_ASSERT(getIsValid());
-        ImageArtwork *image = dynamic_cast<ImageArtwork *>(m_ArtworkMetadata);
+        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(m_ArtworkMetadata);
         if (image != NULL) {
             return image->getDateTaken();
         } else {
@@ -283,7 +281,7 @@ namespace Models {
 
     QString ArtworkProxyModel::getAttachedVectorPath() const {
         Q_ASSERT(getIsValid());
-        ImageArtwork *image = dynamic_cast<ImageArtwork *>(m_ArtworkMetadata);
+        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(m_ArtworkMetadata);
         if (image != NULL) {
             return image->getAttachedVectorPath();
         } else {
@@ -292,24 +290,15 @@ namespace Models {
     }
 
     void ArtworkProxyModel::expandPreset(int keywordIndex, unsigned int presetID) {
-        doExpandPreset(keywordIndex, (KeywordsPresets::ID_t)presetID);
+        doExpandPreset(keywordIndex, (KeywordsPresets::ID_t)presetID, m_PresetsManager);
     }
 
     void ArtworkProxyModel::expandLastKeywordAsPreset() {
-        doExpandLastKeywordAsPreset();
+        doExpandLastKeywordAsPreset(m_PresetsManager);
     }
 
     void ArtworkProxyModel::addPreset(unsigned int presetID) {
-        doAddPreset((KeywordsPresets::ID_t)presetID);
-    }
-
-    void ArtworkProxyModel::initSuggestion() {
-        doInitSuggestion();
-    }
-
-    void ArtworkProxyModel::registerAsCurrentItem() {
-        LOG_DEBUG << "#";
-        doRegisterAsCurrentItem();
+        doAppendPreset((KeywordsPresets::ID_t)presetID, m_PresetsManager);
     }
 
     void ArtworkProxyModel::copyToQuickBuffer() {
@@ -324,7 +313,7 @@ namespace Models {
 
     bool ArtworkProxyModel::acceptCompletionAsPreset(int completionID) {
         LOG_DEBUG << completionID;
-        return doAcceptCompletionAsPreset(completionID);
+        return doAcceptCompletionAsPreset(completionID, m_CompletionSource, m_PresetsManager);
     }
 
     Common::ID_t ArtworkProxyModel::getSpecialItemID() {
@@ -337,6 +326,15 @@ namespace Models {
         }
 
         return result;
+    }
+
+    void ArtworkProxyModel::submitForInspection() {
+        Q_ASSERT(m_ArtworkMetadata != nullptr);
+        if (m_ArtworkMetadata == nullptr) { return; }
+        m_CommandManager.processCommand(
+                    std::make_shared<Commands::TemplatedCommand<Artworks::ArtworksSnapshot>>(
+                        Artworks::ArtworksSnapshot(m_ArtworkMetadata),
+                        m_InspectionTemplate));
     }
 
     void ArtworkProxyModel::connectArtworkSignals(ArtworkMetadata *artwork) {
@@ -373,6 +371,7 @@ namespace Models {
         emit titleSpellingChanged();
         emit descriptionSpellingChanged();
         emit keywordsSpellingChanged();
+        emit currentEditableChanged();
 
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         m_PropertiesMap.updateProperties(m_ArtworkMetadata);
@@ -384,28 +383,15 @@ namespace Models {
         LOG_DEBUG << "#";
         if (m_ArtworkMetadata == nullptr) { return; }
 
-        size_t lastKnownIndex = m_ArtworkMetadata->getLastKnownIndex();
-        LOG_DEBUG << "index:" << lastKnownIndex;
-
-#ifndef CORE_TESTS
-        Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
-        if (videoArtwork != nullptr) {
-            if (!videoArtwork->isThumbnailGenerated()) {
-                auto *videoCachingService = m_CommandManager->getVideoCachingService();
-                videoCachingService->generateThumbnail(videoArtwork);
-            } else {
-                auto *updateHub = m_CommandManager->getArtworksUpdateHub();
-                updateHub->updateArtwork(videoArtwork->getItemID(),
-                                         videoArtwork->getLastKnownIndex(),
-                                         QSet<int>() << ArtItemsModel::ArtworkThumbnailRole);
-            }
-        }
-#endif
-
-        xpiks()->updateArtworksAtIndices(QVector<int>() << (int)lastKnownIndex);
-
-        xpiks()->submitForWarningsCheck(m_ArtworkMetadata);
-        xpiks()->checkSemanticDuplicates(m_ArtworkMetadata->getBasicModel());
+        using namespace Commands;
+        m_CommandManager.processCommand(
+                    std::make_shared<TemplatedCommand<Artworks::ArtworksSnapshot>>(
+                        Artworks::ArtworksSnapshot(m_ArtworkMetadata),
+                        std::make_shared<CompositeCommandTemplate>({
+                                                                       m_ThumbnailUpdateTemplate,
+                                                                       m_UpdateArtworksTemplate,
+                                                                       m_InspectionTemplate
+                                                                   })));
 
         emit warningsCouldHaveChanged(lastKnownIndex);
         emit duplicatesCouldHaveChanged(lastKnownIndex);

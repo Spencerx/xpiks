@@ -61,7 +61,6 @@ namespace Models {
         doSetKeywords(keywords);
         signalKeywordsCountChanged();
         doJustEdited();
-        submitForInspection();
     }
 
     bool ArtworkProxyBase::doSetDescription(const QString &description) {
@@ -69,7 +68,6 @@ namespace Models {
         bool result = metadataOperator->setDescription(description);
         if (result) {
             doJustEdited();
-            submitForInspection();
         }
 
         return result;
@@ -80,7 +78,6 @@ namespace Models {
         bool result = metadataOperator->setTitle(title);
         if (result) {
             doJustEdited();
-            submitForInspection();
         }
 
         return result;
@@ -90,7 +87,6 @@ namespace Models {
         auto *metadataOperator = getMetadataOperator();
         metadataOperator->setKeywords(keywords);
         doJustEdited();
-        submitForInspection();
     }
 
     Common::ID_t ArtworkProxyBase::getSpecialItemID() {
@@ -102,7 +98,6 @@ namespace Models {
         auto *metadataOperator = getMetadataOperator();
         bool result = metadataOperator->editKeyword(index, replacement);
         if (result) {
-            submitForInspection();
             doJustEdited();
         } else {
             LOG_INFO << "Failed to edit to" << replacement;
@@ -118,7 +113,6 @@ namespace Models {
         if (result) {
             LOG_INFO << "Removed keyword:" << keyword << "keywords count:" << getKeywordsCount();
             signalKeywordsCountChanged();
-            submitForInspection();
             doJustEdited();
         }
 
@@ -132,7 +126,6 @@ namespace Models {
         if (result) {
             LOG_INFO << "Removed keyword:" << keyword << "keywords count:" << getKeywordsCount();
             signalKeywordsCountChanged();
-            submitForInspection();
             doJustEdited();
         }
 
@@ -145,7 +138,6 @@ namespace Models {
         bool result = metadataOperator->appendKeyword(keyword);
         if (result) {
             signalKeywordsCountChanged();
-            submitForInspection();
             doJustEdited();
         } else {
             LOG_INFO << "Failed to append:" << keyword;
@@ -162,7 +154,6 @@ namespace Models {
 
         if (appendedCount > 0) {
             signalKeywordsCountChanged();
-            submitForInspection();
             doJustEdited();
         }
 
@@ -175,7 +166,6 @@ namespace Models {
         const bool result = metadataOperator->removeKeywords(keywords, caseSensitive);
         if (result) {
             signalKeywordsCountChanged();
-            submitForInspection();
             doJustEdited();
         }
 
@@ -199,7 +189,6 @@ namespace Models {
         const bool result = metadataOperator->clearKeywords();
         if (result) {
             signalKeywordsCountChanged();
-            submitForInspection();
             doJustEdited();
         }
 
@@ -360,10 +349,6 @@ namespace Models {
         auto *metadataOperator = getMetadataOperator();
         bool result = metadataOperator->hasKeywords(keywordsList);
         return result;
-    }
-
-    void ArtworkProxyBase::doJustEdited() {
-        /*metadataOperator->justEdited();*/
     }
 
     bool ArtworkProxyBase::doAcceptCompletionAsPreset(int completionID,

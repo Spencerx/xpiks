@@ -15,7 +15,6 @@
 #include <QVector>
 #include <memory>
 #include <vector>
-#include "../Common/baseentity.h"
 #include "../Common/isystemenvironment.h"
 
 namespace Models {

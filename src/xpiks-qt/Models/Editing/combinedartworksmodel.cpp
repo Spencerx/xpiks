@@ -22,6 +22,7 @@
 #include <QMLExtensions/uicommandid.h>
 #include <Commands/Base/simpleuicommandtemplate.h>
 #include <KeywordsPresets/ipresetsmanager.h>
+#include <Models/Editing/currenteditableproxyartwork.h>
 
 #define MAX_EDITING_PAUSE_RESTARTS 12
 
@@ -73,6 +74,14 @@ namespace Models {
             this->pullArtworks();
             // TODO: register as current
         })));
+    }
+
+    void CombinedArtworksModel::setInspectionTemplate(const std::shared_ptr<Commands::InspectBasicModelTemplate> &actionTemplate) {
+        m_InspectionTemplate = actionTemplate;
+    }
+
+    std::shared_ptr<ICurrentEditable> CombinedArtworksModel::getCurrentEditable() const {
+        return std::make_shared<CurrentEditableProxyArtwork>(*this);
     }
 
     void CombinedArtworksModel::setArtworks(Artworks::WeakArtworksSnapshot &artworks) {
@@ -466,11 +475,18 @@ namespace Models {
 
     void CombinedArtworksModel::onEditingPaused() {
         LOG_INTEGR_TESTS_OR_DEBUG << "#";
-        xpiks()->submitItemForSpellCheck(&m_CommonKeywordsModel);
+        submitForInspection();
     }
 
     void CombinedArtworksModel::doJustEdited() {
         justChanged();
+    }
+
+    void CombinedArtworksModel::submitForInspection() {
+        m_CommandManager.processCommand(
+                    std::make_shared<Commands::TemplatedCommand<Artworks::BasicKeywordsModel*>(
+                        &m_CommonKeywordsModel,
+                        m_InspectionTemplate));
     }
 
     Common::ID_t CombinedArtworksModel::getSpecialItemID() {

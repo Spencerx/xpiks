@@ -17,6 +17,8 @@
 
 namespace Models {
     class ArtworksListModel;
+    class CombinedArtworksModel;
+    class ArtworkProxyModel;
 
     class CurrentEditableModel : public QObject
     {
@@ -24,7 +26,10 @@ namespace Models {
         Q_PROPERTY(bool isAvailable READ getIsAvailable NOTIFY currentEditableChanged)
 
     public:
-        explicit CurrentEditableModel(ArtworksListModel &artworksList, QObject *parent = 0);
+        explicit CurrentEditableModel(ArtworksListModel &artworksList,
+                                      CombinedArtworksModel &combinedArtworksModel,
+                                      ArtworkProxyModel &artworkProxyModel,
+                                      QObject *parent = 0);
 
     public:
         bool getIsAvailable() const { return m_CurrentEditable.operator bool(); }
@@ -38,10 +43,14 @@ namespace Models {
 
     public slots:
         void onCurrentArtworkChanged();
+        void onCombinedEditableChanged();
+        void onProxyEditableChanged();
 
     private:
         std::shared_ptr<Models::ICurrentEditable> m_CurrentEditable;
         ArtworksListModel &m_ArtworksListModel;
+        CombinedArtworksModel &m_CombinedArtworksModel;
+        ArtworkProxyModel &m_ArtworkProxyModel;
     };
 }
 

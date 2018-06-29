@@ -11,7 +11,7 @@
 #ifndef SAVEBACKUPSCOMMAND_H
 #define SAVEBACKUPSCOMMAND_H
 
-#include "icommandtemplate.h"
+#include <Commands/Base/icommandtemplate.h>
 #include <memory>
 
 namespace MetadataIO {

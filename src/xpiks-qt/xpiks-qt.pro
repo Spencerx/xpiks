@@ -215,7 +215,8 @@ SOURCES += main.cpp \
     Models/Editing/currenteditableproxyartwork.cpp \
     Commands/Editing/deletekeywordstemplate.cpp \
     Models/Editing/currenteditablemodel.cpp \
-    Commands/Services/inspectbasicmodeltemplate.cpp
+    Commands/Services/inspectbasicmodeltemplate.cpp \
+    Commands/Services/updatevideothumbnailtemplate.cpp
 
 RESOURCES += qml.qrc
 
@@ -528,7 +529,8 @@ HEADERS += \
     Commands/Editing/deletekeywordstemplate.h \
     Commands/Base/simplecommand.h \
     Models/Editing/currenteditablemodel.h \
-    Commands/Services/inspectbasicmodeltemplate.h
+    Commands/Services/inspectbasicmodeltemplate.h \
+    Commands/Services/updatevideothumbnailtemplate.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

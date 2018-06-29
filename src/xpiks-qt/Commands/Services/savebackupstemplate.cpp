@@ -9,7 +9,7 @@
  */
 
 #include "savebackupstemplate.h"
-#include "../MetadataIO/metadataioservice.h"
+#include <MetadataIO/metadataioservice.h>
 
 namespace Commands {
     SaveBackupsTemplate::SaveBackupsTemplate(MetadataIO::MetadataIOService &metadataIOService):
