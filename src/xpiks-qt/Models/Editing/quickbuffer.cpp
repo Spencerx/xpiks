@@ -10,21 +10,28 @@
 
 #include "quickbuffer.h"
 #include <QSyntaxHighlighter>
-#include "../Commands/commandmanager.h"
-#include "icurrenteditable.h"
-#include "../Models/uimanager.h"
-#include "../QuickBuffer/currenteditableartwork.h"
-#include "../Models/artitemsmodel.h"
+#include <Commands/Base/icommandmanager.h>
+#include <Models/Editing/icurrenteditable.h>
+#include <Models/Editing/currenteditablemodel.h>
+#include <Commands/Editing/modifyartworkscommand.h>
+#include <Commands/Base/compositecommandtemplate.h>
+#include <Commands/Editing/editartworkstemplate.h>
 
 #define MAX_EDITING_PAUSE_RESTARTS 10
 #define QUICKBUFFER_EDITING_PAUSE 1000
 
-namespace QuickBuffer {
-    QuickBuffer::QuickBuffer(QObject *parent) :
+namespace Models {
+    QuickBuffer::QuickBuffer(Commands::AppMessages &messages,
+                             CurrentEditableModel &currentEditableModel,
+                             Commands::ICommandManager &commandManager,
+                             QObject *parent) :
         QObject(parent),
         ArtworkProxyBase(),
         Common::DelayedActionEntity(QUICKBUFFER_EDITING_PAUSE, MAX_EDITING_PAUSE_RESTARTS),
-        m_BasicModel(m_HoldPlaceholder, this)
+        m_BasicModel(m_HoldPlaceholder, this),
+        m_CurrentEditableModel(currentEditableModel),
+        m_Messages(messages),
+        m_CommandManager(commandManager)
     {
         m_BasicModel.setSpellCheckInfo(&m_SpellCheckInfo);
 
@@ -96,20 +103,6 @@ namespace QuickBuffer {
         return doGetKeywordsString();
     }
 
-    void QuickBuffer::initDescriptionHighlighting(QQuickTextDocument *document) {
-        QSyntaxHighlighter *highlighter = doCreateDescriptionHighligher(document);
-
-        QObject::connect(this, &QuickBuffer::descriptionSpellingChanged,
-                         highlighter, &QSyntaxHighlighter::rehighlight);
-    }
-
-    void QuickBuffer::initTitleHighlighting(QQuickTextDocument *document) {
-        QSyntaxHighlighter *highlighter = doCreateTitleHighlighter(document);
-
-        QObject::connect(this, &QuickBuffer::titleSpellingChanged,
-                         highlighter, &QSyntaxHighlighter::rehighlight);
-    }
-
     bool QuickBuffer::hasTitleWordSpellError(const QString &word) {
         return getHasTitleWordSpellError(word);
     }
@@ -119,6 +112,7 @@ namespace QuickBuffer {
     }
 
     void QuickBuffer::resetModel() {
+        LOG_DEBUG << "#";
         m_BasicModel.clearModel();
         emit isEmptyChanged();
     }
@@ -126,32 +120,10 @@ namespace QuickBuffer {
     bool QuickBuffer::copyToCurrentEditable() {
         LOG_DEBUG << "#";
         bool result = false;
-        auto *uiManager = m_CommandManager->getUIManager();
-        auto currentEditable = uiManager->getCurrentEditable();
-
-        auto editableArtwork = std::dynamic_pointer_cast<CurrentEditableArtwork>(currentEditable);
-        if (editableArtwork) {
-            auto *artItemsModel = m_CommandManager->getArtItemsModel();
-            artItemsModel->fillFromQuickBuffer(editableArtwork->getOriginalIndex());
-            result = true;
-        } else if (currentEditable) {
-            auto *model = getBasicMetadataModel();
-
-            if (!model->isTitleEmpty()) {
-                currentEditable->setTitle(getTitle());
-            }
-
-            if (!model->isDescriptionEmpty()) {
-                currentEditable->setDescription(getDescription());
-            }
-
-            if (!model->areKeywordsEmpty()) {
-                currentEditable->setKeywords(getKeywords());
-            }
-
-            currentEditable->spellCheck();
-            currentEditable->update();
-
+        auto currentEditable = m_CurrentEditableModel.getCurrentEditable();
+        if (currentEditable) {
+            auto command = currentEditable->applyEdits(getTitle(), getDescription(), getKeywords());
+            m_CommandManager.processCommand(command);
             result = true;
         } else {
             LOG_WARNING << "Nothing registered as current item";

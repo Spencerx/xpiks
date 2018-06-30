@@ -10,28 +10,30 @@
 
 #include "filteredartworkslistmodel.h"
 #include <QDir>
-#include "artworkslistmodel.h"
-#include "../Artworks/artworkmetadata.h"
-#include "../Artworks/artworkelement.h"
-#include "settingsmodel.h"
-#include "../Commands/commandmanager.h"
-#include "../Commands/modifyartworkscommand.h"
-#include "../Common/flags.h"
-#include "../Helpers/indiceshelper.h"
-#include "../Common/defines.h"
-#include "../Helpers/filterhelpers.h"
-#include "../Models/previewartworkelement.h"
-#include "../QuickBuffer/quickbuffer.h"
-#include "../Artworks/videoartwork.h"
+#include "artworkslistmodel.h>
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/artworkelement.h>
+#include <Models/settingsmodel.h>
+#include <Commands/commandmanager.h>
+#include <Commands/Editing/modifyartworkscommand.h>
+#include <Common/flags.h>
+#include <Helpers/indiceshelper.h>
+#include <Common/defines.h>
+#include <Helpers/filterhelpers.h>
+#include <Models/Editing/previewartworkelement.h>
+#include <QuickBuffer/quickbuffer.h>
+#include <Artworks/videoartwork.h>
 
 namespace Models {
     FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel,
+                                                         Commands::AppMessages &messages,
                                                          Commands::ICommandManager &commandManager,
                                                          KeywordsPresets::IPresetsManager &presetsManager,
                                                          AutoComplete::ICompletionSource &completionSource,
                                                          QObject *parent):
         QSortFilterProxyModel(parent),
         m_ArtworksListModel(artworksListModel),
+        m_Messages(messages),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_CompletionSource(completionSource),
@@ -405,6 +407,20 @@ namespace Models {
         return result;
     }
 
+    void FilteredArtworksListModel::registerCurrentItem(int proxyIndex) const {
+        LOG_INFO << proxyIndex;
+
+        if (0 <= proxyIndex && proxyIndex < rowCount()) {
+            int originalIndex = getOriginalIndex(proxyIndex);
+            m_ArtworksListModel.setCurrentIndex(proxyIndex);
+            ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
+
+            if (artwork != NULL) {
+                xpiks()->registerCurrentItem(artwork);
+            }
+        }
+    }
+
     void FilteredArtworksListModel::removeSelectedArtworks() {
         LOG_DEBUG << "#";
         //m_ArtworksListModel.removeFiles()
@@ -462,20 +478,6 @@ namespace Models {
         int importID = xpiks()->reimportMetadata(selectedArtworks);
         ArtItemsModel *artItemsModel = getArtItemsModel();
         artItemsModel->raiseArtworksReimported(importID, (int)selectedArtworks.size());
-    }
-
-    void FilteredArtworksListModel::registerCurrentItem(int index) const {
-        LOG_INFO << index;
-
-        if (0 <= index && index < rowCount()) {
-            int originalIndex = getOriginalIndex(index);
-            m_ArtworksListModel.setCurrentIndex(index);
-            ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
-
-            if (artwork != NULL) {
-                xpiks()->registerCurrentItem(artwork);
-            }
-        }
     }
 
     void FilteredArtworksListModel::copyToQuickBuffer(int index) const {

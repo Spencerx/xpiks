@@ -20,9 +20,8 @@
 #include <Artworks/artworkssnapshot.h>
 #include <Filesystem/ifilescollection.h>
 #include <Helpers/indicesranges.h>
-#include <Artworks/icurrentartworksource.h>
 #include <Commands/Base/icommandtemplate.h>
-#include <Models/Editing/icurrenteditable.h>
+#include <Commands/appmessages.h>
 
 class QQuickTextDocument;
 
@@ -54,8 +53,7 @@ namespace Models {
 
     class ArtworksListModel:
             public QAbstractListModel,
-            public Helpers::IFileNotAvailableModel,
-            public Artworks::ICurrentArtworkSource
+            public Helpers::IFileNotAvailableModel
     {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
@@ -64,6 +62,7 @@ namespace Models {
 
     public:
         ArtworksListModel(ArtworksRepository &repository,
+                          Commands::AppMessages &messages,
                           QObject *parent=0);
         virtual ~ArtworksListModel();
 
@@ -126,11 +125,6 @@ namespace Models {
         bool isInSelectedDirectory(int artworkIndex);
 
     public:
-        // commands
-        void setBackupTemplate(const std::shared_ptr<IArtworksCommandTemplate> &actionTemplate);
-        void setInspectionTemplate(const std::shared_ptr<IArtworksCommandTemplate> &actionTemplate);
-
-    public:
         // update hub related
         void processUpdateRequests(const std::vector<std::shared_ptr<Services::ArtworkUpdateRequest> > &updateRequests);
         void updateArtworksByIDs(const QSet<qint64> &artworkIDs, const QVector<int> &rolesToUpdate);
@@ -160,6 +154,7 @@ namespace Models {
         void setItemsSaved(const Helpers::IndicesRanges &ranges);
         void detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges);
         void setCurrentIndex(size_t index);
+        void registerListeners();
 
     public:
         // qabstractlistmodel methods
@@ -202,7 +197,6 @@ namespace Models {
         void unavailableArtworksFound();
         void unavailableVectorsFound();
         void artworkSelectedChanged(bool value);
-        void currentArtworkChanged();
 
     public slots:
         void onFilesUnavailableHandler();
@@ -290,8 +284,7 @@ namespace Models {
         qint64 m_LastID;
         size_t m_CurrentItemIndex;
         ArtworksRepository &m_ArtworksRepository;
-        std::shared_ptr<IArtworksCommandTemplate> m_InspectionTemplate;
-        std::shared_ptr<IArtworksCommandTemplate> m_BackupTemplate;
+        Commands::AppMessages &m_Messages;
         ArtworksContainer m_FinalizationList;
 #ifdef QT_DEBUG
         ArtworksContainer m_DestroyedList;

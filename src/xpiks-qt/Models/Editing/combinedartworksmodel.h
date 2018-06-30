@@ -147,7 +147,6 @@ namespace Models {
         void titleSpellingChanged();
         void descriptionSpellingChanged();
         void keywordsSpellingChanged();
-        void currentEditableChanged();
 
     protected:
         virtual void signalDescriptionChanged() override { emit descriptionChanged(); }

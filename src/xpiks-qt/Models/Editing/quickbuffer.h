@@ -13,14 +13,21 @@
 
 #include <QObject>
 #include <QQmlEngine>
-#include "../Models/artworkproxybase.h"
-#include "../Common/basicmetadatamodel.h"
-#include "../SpellCheck/spellcheckiteminfo.h"
-#include "../Suggestion/suggestionartwork.h"
-#include "../Common/hold.h"
-#include "../Common/delayedactionentity.h"
+#include <Models/Editing/artworkproxybase.h>
+#include <Artworks/basicmetadatamodel.h>
+#include <SpellCheck/spellcheckiteminfo.h>
+#include <Suggestion/suggestionartwork.h>
+#include <Common/hold.h>
+#include <Common/delayedactionentity.h>
 
-namespace QuickBuffer {
+namespace Commands {
+    class AppMessages;
+    class ICommandManager;
+}
+
+namespace Models {
+    class CurrentEditableModel;
+
     class QuickBuffer:
             public QObject,
             public Models::ArtworkProxyBase,
@@ -36,7 +43,10 @@ namespace QuickBuffer {
         Q_PROPERTY(bool hasKeywordsSpellErrors READ getHasKeywordsSpellError NOTIFY keywordsSpellingChanged)
 
     public:
-        explicit QuickBuffer(QObject *parent = 0);
+        explicit QuickBuffer(Commands::AppMessages &messages,
+                             CurrentEditableModel &currentEditableModel,
+                             Commands::ICommandManager &commandManager,
+                             QObject *parent = 0);
         virtual ~QuickBuffer();
 
     signals:
@@ -65,8 +75,6 @@ namespace QuickBuffer {
         Q_INVOKABLE void pasteKeywords(const QStringList &keywords);
         Q_INVOKABLE void clearKeywords();
         Q_INVOKABLE QString getKeywordsString();
-        Q_INVOKABLE void initDescriptionHighlighting(QQuickTextDocument *document);
-        Q_INVOKABLE void initTitleHighlighting(QQuickTextDocument *document);
         Q_INVOKABLE bool hasTitleWordSpellError(const QString &word);
         Q_INVOKABLE bool hasDescriptionWordSpellError(const QString &word);
         Q_INVOKABLE void resetModel();
@@ -107,6 +115,9 @@ namespace QuickBuffer {
         Common::Hold m_HoldPlaceholder;
         Artworks::BasicMetadataModel m_BasicModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
+        CurrentEditableModel &m_CurrentEditableModel;
+        Commands::AppMessages &m_Messages;
+        Commands::ICommandManager &m_CommandManager;
     };
 }
 

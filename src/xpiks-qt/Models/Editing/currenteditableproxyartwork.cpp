@@ -83,4 +83,26 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::update() {
         return std::shared_ptr<Commands::ICommand>(new Commands::EmptyCommand());
     }
+
+    std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::applyEdits(const QString &title,
+                                                                                const QString &description,
+                                                                                const QStringList &keywords) {
+
+        return std::shared_ptr<Commands::ICommand>(
+                    new Commands::SimpleCommand([this, title, description, keywords](){
+            if (!title.isEmpty()) {
+                this->m_ArtworkProxy.setTitle(title);
+            }
+
+            if (!description.isEmpty()) {
+                this->m_ArtworkProxy.setDescription(description);
+            }
+
+            if (!keywords.isEmpty()) {
+                this->m_ArtworkProxy.setKeywords(keywords);
+            }
+
+            // TODO: spellcheck me
+        }));
+    }
 }

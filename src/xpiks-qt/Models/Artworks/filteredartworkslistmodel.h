@@ -15,8 +15,8 @@
 #include <QString>
 #include <QList>
 #include <functional>
-#include "../Common/flags.h"
-#include "../Artworks/iartworkssource.h"
+#include <Common/flags.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace Commands {
     class ICommandManager;
@@ -30,6 +30,10 @@ namespace AutoComplete {
     class ICompletionSource;
 }
 
+namespace Commands {
+    class AppMessages;
+}
+
 namespace Models {
     class ArtworkMetadata;
     class ArtworkElement;
@@ -38,8 +42,7 @@ namespace Models {
     class SettingsModel;
 
     class FilteredArtworksListModel:
-            public QSortFilterProxyModel,
-            public Artworks::IArtworksSource
+            public QSortFilterProxyModel
     {
         Q_OBJECT
         Q_PROPERTY(QString searchTerm READ getSearchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
@@ -48,6 +51,7 @@ namespace Models {
 
     public:
         FilteredArtworksListModel(ArtworksListModel &artworksListModel,
+                                  Commands::AppMessages &messages,
                                   Commands::ICommandManager &commandManager,
                                   KeywordsPresets::IPresetsManager &presetsManager,
                                   AutoComplete::ICompletionSource &completionSource,
@@ -65,10 +69,6 @@ namespace Models {
 #ifdef CORE_TESTS
         int retrieveNumberOfSelectedItems();
 #endif
-
-        // IArtworksSource interface
-    public:
-        virtual Artworks::WeakArtworksSnapshot getArtworks() override { return getSelectedOriginalItems(); }
 
     public:
         // indexing
@@ -126,6 +126,10 @@ namespace Models {
         Q_INVOKABLE bool hasDescriptionWordSpellError(int proxyIndex, const QString &word);
 
     public:
+        // other
+        Q_INVOKABLE void registerCurrentItem(int proxyIndex) const;
+
+    public:
         //void removeSelectedArtworks();
         Q_INVOKABLE void saveSelectedArtworks(bool overwriteAll, bool useBackups);
         //Q_INVOKABLE void wipeMetadataFromSelectedArtworks(bool useBackups);
@@ -137,7 +141,6 @@ namespace Models {
 
 
 
-        Q_INVOKABLE void registerCurrentItem(int index) const;
         Q_INVOKABLE void copyToQuickBuffer(int index) const;
         Q_INVOKABLE void fillFromQuickBuffer(int index) const;
         //Q_INVOKABLE void suggestCorrectionsForSelected() const;
@@ -178,6 +181,7 @@ namespace Models {
 
     private:
         ArtworksListModel &m_ArtworksListModel;
+        Commands::AppMessages &m_Messages;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         AutoComplete::ICompletionSource &m_CompletionSource;

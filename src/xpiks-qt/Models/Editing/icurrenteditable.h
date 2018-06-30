@@ -48,6 +48,10 @@ namespace Models {
 
         virtual std::shared_ptr<Commands::ICommand> inspect() = 0;
         virtual std::shared_ptr<Commands::ICommand> update() = 0;
+
+        virtual std::shared_ptr<Commands::ICommand> applyEdits(const QString &title,
+                                                               const QString &description,
+                                                               const QStringList &keywords) = 0;
     };
 }
 

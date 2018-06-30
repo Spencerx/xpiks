@@ -88,7 +88,6 @@ SOURCES += main.cpp \
     Translation/translationworker.cpp \
     Translation/translationquery.cpp \
     Plugins/sandboxeddependencies.cpp \
-    QuickBuffer/quickbuffer.cpp \
     SpellCheck/userdicteditmodel.cpp \
     Helpers/asynccoordinator.cpp \
     QMLExtensions/tabsmodel.cpp \
@@ -216,7 +215,8 @@ SOURCES += main.cpp \
     Commands/Editing/deletekeywordstemplate.cpp \
     Models/Editing/currenteditablemodel.cpp \
     Commands/Services/inspectbasicmodeltemplate.cpp \
-    Commands/Services/updatevideothumbnailtemplate.cpp
+    Commands/Services/updatevideothumbnailtemplate.cpp \
+    Models/Editing/quickbuffer.cpp
 
 RESOURCES += qml.qrc
 
@@ -326,7 +326,6 @@ HEADERS += \
     Translation/translationworker.h \
     Translation/translationquery.h \
     Plugins/sandboxeddependencies.h \
-    QuickBuffer/quickbuffer.h \
     KeywordsPresets/ipresetsmanager.h \
     SpellCheck/userdicteditmodel.h \
     Helpers/asynccoordinator.h \
@@ -342,7 +341,6 @@ HEADERS += \
     QMLExtensions/videocachingservice.h \
     QMLExtensions/videocachingworker.h \
     QMLExtensions/videocacherequest.h \
-    QMLExtensions/artworkupdaterequest.h \
     Helpers/filehelpers.h \
     Helpers/artworkshelpers.h \
     Maintenance/savesessionjobitem.h \
@@ -433,7 +431,6 @@ HEADERS += \
     Artworks/artworkmetadata.h \
     Artworks/imageartwork.h \
     Artworks/videoartwork.h \
-    Artworks/iartworkssource.h \
     Artworks/artworkelement.h \
     Artworks/basickeywordsmodel.h \
     Artworks/basickeywordsmodelimpl.h \
@@ -479,7 +476,6 @@ HEADERS += \
     Models/Artworks/artworksrepository.h \
     Models/Artworks/artworksviewmodel.h \
     Models/Artworks/filteredartworkslistmodel.h \
-    Models/Artworks/selectedartworksconsumer.h \
     Models/Connectivity/abstractconfigupdatermodel.h \
     Models/Connectivity/artworkuploader.h \
     Models/Connectivity/proxysettings.h \
@@ -531,7 +527,9 @@ HEADERS += \
     Commands/Services/inspectbasicmodeltemplate.h \
     Commands/Services/updatevideothumbnailtemplate.h \
     QMLExtensions/iuicommanddispatcher.h \
-    Commands/messages.h
+    Commands/messages.h \
+    Commands/appmessages.h \
+    Models/Editing/quickbuffer.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

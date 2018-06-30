@@ -46,7 +46,11 @@ namespace Models {
                                                                  KeywordsPresets::IPresetsManager &presetsManager) override;
 
         virtual std::shared_ptr<Commands::ICommand> inspect() override;
-        virtual std::shared_ptr<Commands::ICommand> update() override;
+        virtual std::shared_ptr<Commands::ICommand> update() override;        
+
+        virtual std::shared_ptr<Commands::ICommand> applyEdits(const QString &title,
+                                                               const QString &description,
+                                                               const QStringList &keywords) override;
 
     private:
         Models::ArtworkProxyBase &m_ArtworkProxy;

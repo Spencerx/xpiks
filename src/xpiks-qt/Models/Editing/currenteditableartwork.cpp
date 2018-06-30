@@ -28,10 +28,8 @@ namespace Models {
     using ArtworksCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
 
     CurrentEditableArtwork::CurrentEditableArtwork(Artworks::ArtworkMetadata *artworkMetadata,
-                                                   const std::shared_ptr<IArtworksCommandTemplate> &inspectTemplate,
                                                    const std::shared_ptr<IArtworksCommandTemplate> &updateTemplate):
         m_ArtworkMetadata(artworkMetadata),
-        m_InspectTemplate(inspectTemplate),
         m_UpdateTemplate(updateTemplate)
     {
         Q_ASSERT(artworkMetadata != nullptr);
@@ -148,5 +146,24 @@ namespace Models {
                     new ArtworksCommand(
                         Artworks::ArtworksSnapshot({m_ArtworkMetadata}),
                         m_UpdateTemplate));
+    }
+
+    void CurrentEditableArtwork::applyEdits(const QString &title,
+                                            const QString &description,
+                                            const QStringList &keywords) {
+        Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::None;
+        if (!title.isEmpty()) { Common::SetFlag(flags, Common::ArtworkEditFlags::EditTitle); }
+        if (!description.isEmpty()) { Common::SetFlag(flags, Common::ArtworkEditFlags::EditDescription); }
+        if (!keywords.empty()) { Common::SetFlag(flags, Common::ArtworkEditFlags::EditKeywords); }
+
+        using namespace Commands;
+        auto command = std::make_shared<ModifyArtworksCommand>(
+                           Artworks::ArtworksSnapshot({m_ArtworkMetadata}),
+                           std::make_shared<CompositeCommandTemplate>({
+                                                                          std::make_shared<EditArtworksTemplate>(
+                                                                          title, description, keywords, flags),
+                                                                          m_UpdateTemplate
+                                                                      }));
+        return command;
     }
 }

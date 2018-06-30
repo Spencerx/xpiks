@@ -13,25 +13,17 @@
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
+#include <Commands/appmessages.h>
 
 namespace Models {
-    CurrentEditableModel::CurrentEditableModel(ArtworksListModel &artworksList,
-                                               CombinedArtworksModel &combinedArtworksModel,
-                                               ArtworkProxyModel &artworkProxyModel,
+    CurrentEditableModel::CurrentEditableModel(Commands::AppMessages &messages,
                                                QObject *parent) :
-        QObject(parent),
-        m_ArtworksListModel(artworksList),
-        m_CombinedArtworksModel(combinedArtworksModel),
-        m_ArtworkProxyModel(artworkProxyModel)
+        QObject(parent)
     {
-        QObject::connect(&m_ArtworksListModel, &ArtworksListModel::currentArtworkChanged,
-                         this, &CurrentEditableModel::onCurrentArtworkChanged);
-
-        QObject::connect(&m_CombinedArtworksModel, &CombinedArtworksModel::currentEditableChanged,
-                         this, &CurrentEditableModel::onCombinedEditableChanged);
-
-        QObject::connect(&m_ArtworkProxyModel, &ArtworkProxyModel::currentEditableChanged,
-                         this, &CurrentEditableModel::onProxyEditableChanged)
+        messages
+                .ofType<std::shared_ptr<ICurrentEditable>>()
+                .withID(Commands::AppMessages::RegisterCurrentEditable)
+                .addListener(std::bind(&CurrentEditableModel::setCurrentEditable, this));
     }
 
     void CurrentEditableModel::clearCurrentItem() {
@@ -40,16 +32,8 @@ namespace Models {
         emit currentEditableChanged();
     }
 
-    void CurrentEditableModel::onCurrentArtworkChanged() {
-        LOG_DEBUG << "#";
-        m_CurrentEditable = std::move(m_ArtworksListModel.getCurrentEditable());
-    }
-
-    void CurrentEditableModel::onCombinedEditableChanged() {
-        m_CurrentEditable = std::move(m_CombinedArtworksModel.getCurrentEditable());
-    }
-
-    void CurrentEditableModel::onProxyEditableChanged() {
-        m_CurrentEditable = std::move(m_ArtworkProxyModel.getCurrentEditable());
+    void CurrentEditableModel::setCurrentEditable(std::shared_ptr<ICurrentEditable> currentEditable) {
+        m_CurrentEditable = std::move(currentEditable);
+        emit currentEditableChanged();
     }
 }

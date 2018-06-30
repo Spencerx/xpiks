@@ -15,20 +15,18 @@
 #include <memory>
 #include "icurrenteditable.h"
 
-namespace Models {
-    class ArtworksListModel;
-    class CombinedArtworksModel;
-    class ArtworkProxyModel;
+namespace Commands {
+    class AppMessages;
+}
 
+namespace Models {
     class CurrentEditableModel : public QObject
     {
         Q_OBJECT
         Q_PROPERTY(bool isAvailable READ getIsAvailable NOTIFY currentEditableChanged)
 
     public:
-        explicit CurrentEditableModel(ArtworksListModel &artworksList,
-                                      CombinedArtworksModel &combinedArtworksModel,
-                                      ArtworkProxyModel &artworkProxyModel,
+        explicit CurrentEditableModel(Commands::AppMessages &messages,
                                       QObject *parent = 0);
 
     public:
@@ -38,19 +36,14 @@ namespace Models {
     public:
         void clearCurrentItem();
 
+    private:
+        void setCurrentEditable(std::shared_ptr<Models::ICurrentEditable> currentEditable);
+
     signals:
         void currentEditableChanged();
 
-    public slots:
-        void onCurrentArtworkChanged();
-        void onCombinedEditableChanged();
-        void onProxyEditableChanged();
-
     private:
         std::shared_ptr<Models::ICurrentEditable> m_CurrentEditable;
-        ArtworksListModel &m_ArtworksListModel;
-        CombinedArtworksModel &m_CombinedArtworksModel;
-        ArtworkProxyModel &m_ArtworkProxyModel;
     };
 }
 

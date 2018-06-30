@@ -26,9 +26,6 @@ namespace Commands {
         }
 
     public:
-        int getID() const { return m_ID; }
-
-    public:
         void broadcast(Args&&... args) {
             for (auto &listener: m_Listeners) {
                 listener(std::forward<Args>(args)...);

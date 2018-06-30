@@ -11,74 +11,80 @@
 #ifndef XPIKSAPP_H
 #define XPIKSAPP_H
 
-#include "QMLExtensions/artworksupdatehub.h"
-#include "QMLExtensions/colorsmodel.h"
-#include "QMLExtensions/imagecachingservice.h"
-#include "QMLExtensions/videocachingservice.h"
+#include <Commands/commandmanager.h>
+#include <Commands/appmessages.h>
 
-#include "Models/artworkslistmodel.h"
-#include "Models/artworkproxymodel.h"
-#include "Models/artworksrepository.h"
-#include "Models/artworkuploader.h"
-#include "Models/combinedartworksmodel.h"
-#include "Models/deletekeywordsviewmodel.h"
-#include "Models/filteredartworkslistmodel.h"
-#include "Models/findandreplacemodel.h"
-#include "Models/languagesmodel.h"
-#include "Models/logsmodel.h"
-#include "Models/recentdirectoriesmodel.h"
-#include "Models/recentfilesmodel.h"
-#include "Models/sessionmanager.h"
-#include "Models/settingsmodel.h"
-#include "Models/switchermodel.h"
-#include "Models/uimanager.h"
-#include "Models/ziparchiver.h"
+#include <Services/artworksupdatehub.h>
 
-#include "Connectivity/requestsservice.h"
-#include "Connectivity/telemetryservice.h"
-#include "Connectivity/updateservice.h"
+#include <QMLExtensions/colorsmodel.h>
+#include <QMLExtensions/imagecachingservice.h>
+#include <QMLExtensions/videocachingservice.h>
 
-#include "Warnings/warningsmodel.h"
-#include "Warnings/warningsservice.h"
+#include <Models/Artworks/artworkslistmodel.h>
+#include <Models/Editing/artworkproxymodel.h>
+#include <Models/Artworks/artworksrepository.h>
+#include <Models/Connectivity/artworkuploader.h>
+#include <Models/Editing/combinedartworksmodel.h>
+#include <Models/Editing/deletekeywordsviewmodel.h>
+#include <Models/Artworks/filteredartworkslistmodel.h>
+#include <Models/Editing/findandreplacemodel.h>
+#include <Models/languagesmodel.h>
+#include <Models/logsmodel.h>
+#include <Models/Session/recentdirectoriesmodel.h>
+#include <Models/Session/recentfilesmodel.h>
+#include <Models/Session/sessionmanager.h>
+#include <Models/settingsmodel.h>
+#include <Models/switchermodel.h>
+#include <Models/uimanager.h>
+#include <Models/Connectivity/ziparchiver.h>
 
-#include "UndoRedo/undoredomanager.h"
+#include <Connectivity/requestsservice.h>
+#include <Connectivity/telemetryservice.h>
+#include <Connectivity/updateservice.h>
 
-#include "Storage/databasemanager.h"
+#include <Warnings/warningsmodel.h>
+#include <Warnings/warningsservice.h>
 
-#include "Encryption/isecretsstorage.h"
+#include <UndoRedo/undoredomanager.h>
 
-#include "Microstocks/microstockapiclients.h"
+#include <Storage/databasemanager.h>
 
-#include "Suggestion/keywordssuggestor.h"
+#include <Encryption/isecretsstorage.h>
 
-#include "ftpcoordinator.h"
+#include <Microstocks/microstockapiclients.h>
 
-#include "SpellCheck/duplicatesreviewmodel.h"
-#include "SpellCheck/spellcheckerservice.h"
-#include "SpellCheck/spellchecksuggestionmodel.h"
-#include "SpellCheck/userdicteditmodel.h"
+#include <Suggestion/keywordssuggestor.h>
 
-#include "MetadataIO/csvexportmodel.h"
-#include "MetadataIO/metadataiocoordinator.h"
-#include "MetadataIO/metadataioservice.h"
+#include <KeywordsPresets/presetkeywordsmodel.h>
 
-#include "AutoComplete/autocompleteservice.h"
-#include "AutoComplete/keywordsautocompletemodel.h"
+#include <ftpcoordinator.h>
 
-#include "Translation/translationmanager.h"
-#include "Translation/translationservice.h"
+#include <SpellCheck/duplicatesreviewmodel.h>
+#include <SpellCheck/spellcheckerservice.h>
+#include <SpellCheck/spellchecksuggestionmodel.h>
+#include <SpellCheck/userdicteditmodel.h>
 
-#include "QuickBuffer/quickbuffer.h"
+#include <MetadataIO/csvexportmodel.h>
+#include <MetadataIO/metadataiocoordinator.h>
+#include <MetadataIO/metadataioservice.h>
 
-#include "Maintenance/maintenanceservice.h"
+#include <AutoComplete/autocompleteservice.h>
+#include <AutoComplete/keywordsautocompletemodel.h>
 
-#include "Plugins/pluginmanager.h"
-#include "Plugins/uiprovider.h"
+#include <Translation/translationmanager.h>
+#include <Translation/translationservice.h>
 
-#include "Helpers/helpersqmlwrapper.h"
-#include "Helpers/ifilenotavailablemodel.h"
+#include <QuickBuffer/quickbuffer.h>
 
-#include "Common/isystemenvironment.h"
+#include <Maintenance/maintenanceservice.h>
+
+#include <Plugins/pluginmanager.h>
+#include <Plugins/uiprovider.h>
+
+#include <Helpers/helpersqmlwrapper.h>
+#include <Helpers/ifilenotavailablemodel.h>
+
+#include <Common/isystemenvironment.h>
 
 class QQmlContext;
 class QQuickWindow;
@@ -141,6 +147,7 @@ private slots:
     void servicesInitialized(int status);
 
 protected:
+    Commands::AppMessages m_Messages;
     QMLExtensions::ColorsModel m_ColorsModel;
     Models::LogsModel m_LogsModel;
     Models::SettingsModel m_SettingsModel;
@@ -196,7 +203,6 @@ protected:
     Helpers::HelpersQmlWrapper m_HelpersQmlWrapper;
     Commands::CommandManager m_CommandManager;
 
-    Commands::MainDelegator m_MainDelegator;
     Helpers::AsyncCoordinator m_InitCoordinator;
     QVector<Helpers::IFileNotAvailableModel*> m_AvailabilityListeners;
     volatile bool m_ServicesInitialized = false;

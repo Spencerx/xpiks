@@ -11,6 +11,7 @@
 #include "artworkslistmodel.h"
 #include <QDir>
 #include <QtQml>
+#include <functional>
 #include <Artworks/basickeywordsmodel.h>
 #include <Artworks/imageartwork.h>
 #include <Artworks/videoartwork.h>
@@ -37,8 +38,10 @@ namespace Models {
     using ArtworksCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
 
     ArtworksListModel::ArtworksListModel(ArtworksRepository &repository,
+                                         Commands::AppMessages &messages,
                                          QObject *parent):
         QAbstractListModel(parent),
+        m_Messages(messages),
         // all items before 1024 are reserved for internal models
         m_LastID(1024),
         m_CurrentItemIndex(0),
@@ -46,6 +49,8 @@ namespace Models {
     {
         QObject::connect(&m_ArtworksRepository, &ArtworksRepository::filesUnavailable,
                          this, &ArtworksListModel::onFilesUnavailableHandler);
+
+        registerListeners();
     }
 
     ArtworksListModel::~ArtworksListModel() {
@@ -163,14 +168,6 @@ namespace Models {
             result = m_ArtworksRepository.isDirectorySelected(dirID);
         }
         return result;
-    }
-
-    void ArtworksListModel::setBackupTemplate(const std::shared_ptr<IArtworksCommandTemplate> &actionTemplate) {
-        m_BackupTemplate = actionTemplate;
-    }
-
-    void ArtworksListModel::setInspectionTemplate(const std::shared_ptr<IArtworksCommandTemplate> &actionTemplate) {
-        m_InspectionTemplate = actionTemplate;
     }
 
     void ArtworksListModel::processUpdateRequests(const std::vector<std::shared_ptr<Services::ArtworkUpdateRequest> > &updateRequests) {
@@ -485,8 +482,29 @@ namespace Models {
     void ArtworksListModel::setCurrentIndex(size_t index) {
          if (m_CurrentItemIndex != index) {
              m_CurrentItemIndex = index;
-             emit currentArtworkChanged();
+
+             Artworks::ArtworkMetadata *artwork = getArtwork(index);
+             if (artwork != nullptr) {
+                 using namespace Commands;
+                 auto editable = std::make_shared<CurrentEditableArtwork>(
+                                     artwork,
+                                     std::make_shared<ArtworksUpdateTemplate>(*this, getStandardUpdateRoles()));
+
+                 m_Messages
+                         .ofType<std::shared_ptr<ICurrentEditable>>()
+                         .withID(AppMessages::RegisterCurrentEditable)
+                         .broadcast(editable);
+             }
          }
+    }
+
+    void ArtworksListModel::registerListeners() {
+        LOG_DEBUG << "#";
+        using namespace Commands;
+        m_Messages
+                .ofType<Helpers::IndicesRanges>()
+                .withID(AppMessages::UpdateArtworks)
+                .addListener(std::bind(&ArtworksListModel::updateItems, this));
     }
 
     QVariant ArtworksListModel::data(const QModelIndex &index, int role) const {
@@ -613,17 +631,6 @@ namespace Models {
         }
 
         return nullptr;
-    }
-
-    std::shared_ptr<ICurrentEditable> ArtworksListModel::getCurrentEditable() const {
-        Artworks::ArtworkMetadata *artwork = getArtwork(m_CurrentItemIndex);
-        if (artwork != nullptr) {
-            return std::make_shared<CurrentEditableArtwork>(
-                        artwork,
-                        m_InspectionTemplate,
-                        std::make_shared<ArtworksUpdateTemplate>(*this, getStandardUpdateRoles()));
-        }
-        return std::shared_ptr<ICurrentEditable>();
     }
 
     std::shared_ptr<Commands::ICommand> ArtworksListModel::removeKeywordAt(int artworkIndex, int keywordIndex) {
@@ -954,9 +961,15 @@ namespace Models {
         Artworks::ArtworkMetadata *artwork = qobject_cast<Artworks::ArtworkMetadata *>(sender());
         Q_ASSERT(artwork != nullptr);
         if (artwork != nullptr && m_EditTemplate != nullptr) {
-            Artworks::ArtworksSnapshot snapshot({artwork});
-            m_InspectionTemplate->execute(snapshot);
-            m_BackupTemplate->execute(snapshot);
+            m_Messages
+                    .ofType<Artworks::ArtworksSnapshot>()
+                    .withID(Commands::AppMessages::InspectArtworks)
+                    .broadcast(Artworks::ArtworksSnapshot({artwork}));
+
+            m_Messages
+                    .ofType<Artworks::ArtworksSnapshot>()
+                    .withID(Commands::AppMessages::BackupArtworks)
+                    .broadcast(Artworks::ArtworksSnapshot({artwork}));
         }
     }
 
@@ -980,7 +993,10 @@ namespace Models {
     void ArtworksListModel::onSpellCheckerAvailable(bool afterRestart) {
         LOG_DEBUG << afterRestart;
         if (afterRestart) {
-            m_InspectionTemplate->execute(Artworks::ArtworksSnapshot(m_ArtworkList));
+            m_Messages
+                    .ofType<Artworks::ArtworksSnapshot>()
+                    .withID(Commands::AppMessages::InspectArtworks)
+                    .broadcast(Artworks::ArtworksSnapshot(m_ArtworkList));
         }
     }
 

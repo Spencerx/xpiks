@@ -26,7 +26,6 @@ namespace Models {
 
     public:
         CurrentEditableArtwork(Artworks::ArtworkMetadata *artworkMetadata,
-                               const std::shared_ptr<IArtworksCommandTemplate> &inspectTemplate,
                                const std::shared_ptr<IArtworksCommandTemplate> &updateTemplate);
         virtual ~CurrentEditableArtwork();
 
@@ -58,9 +57,13 @@ namespace Models {
         virtual std::shared_ptr<Commands::ICommand> inspect() override;
         virtual std::shared_ptr<Commands::ICommand> update() override;
 
+    public:
+        std::shared_ptr<Commands::ICommand> applyEdits(const QString &title,
+                                                       const QString &description,
+                                                       const QStringList &keywords);
+
     private:
         Artworks::ArtworkMetadata *m_ArtworkMetadata;
-        std::shared_ptr<IArtworksCommandTemplate> m_InspectTemplate;
         std::shared_ptr<IArtworksCommandTemplate> m_UpdateTemplate;
     };
 }
