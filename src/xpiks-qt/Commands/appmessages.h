@@ -13,24 +13,29 @@
 
 #include <QString>
 #include <QStringList>
+#include <QVector>
 #include "messages.h"
 #include <Helpers/indiceshelper.h>
 #include <Artworks/artworkssnapshot.h>
 #include <Models/Editing/icurrenteditable.h>
+#include <Common/types.h>
 
 namespace Artworks {
     class BasicKeywordsModel;
+    class VideoArtwork;
 }
 
 namespace Commands {
-    class AppMessages:
-            RegisteredMessages<
+    class AppMessages: RegisteredMessages<
             MessageMap<>,
+            MessageMap<size_t>,
             MessageMap<Helpers::IndicesRanges>,
             MessageMap<Artworks::ArtworksSnapshot>,
             MessageMap<std::shared_ptr<Models::ICurrentEditable>>,
             MessageMap<Artworks::BasicKeywordsModel*>,
-            MessageMap<QString, QString, QStringList, bool>
+            MessageMap<QString, QString, QStringList, bool>,
+            MessageMap<Common::ID_t, size_t, QVector<int>>,
+            MessageMap<Artworks::VideoArtwork*>
             >
     {
     public:
@@ -39,7 +44,11 @@ namespace Commands {
             UpdateArtworks,
             BackupArtworks,
             SpellCheck,
-            CopyToQuickBuffer
+            CopyToQuickBuffer,
+            ZipArtworks,
+            UploadArtworks,
+            CreateThumbnail,
+            ExportToCSV
         };
     };
 }

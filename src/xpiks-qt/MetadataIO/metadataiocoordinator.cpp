@@ -57,11 +57,6 @@ namespace MetadataIO {
                          this, &MetadataIOCoordinator::onReadingFinished);
     }
 
-    void MetadataIOCoordinator::setCommandManager(Commands::CommandManager *commandManager) {
-        Common::BaseEntity::setCommandManager(commandManager);
-        m_ReadingHub.setCommandManager(commandManager);
-    }
-
     void MetadataIOCoordinator::setRecommendedExiftoolPath(const QString &recommendedExiftool) {
         LOG_DEBUG << recommendedExiftool;
         setExiftoolNotFound(recommendedExiftool.isEmpty());

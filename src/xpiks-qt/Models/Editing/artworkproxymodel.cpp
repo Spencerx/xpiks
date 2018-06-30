@@ -25,13 +25,15 @@
 #include <Commands/Base/compositecommandtemplate.h>
 
 namespace Models {
-    ArtworkProxyModel::ArtworkProxyModel(Commands::ICommandManager &commandManager,
+    ArtworkProxyModel::ArtworkProxyModel(Commands::AppMessages &messages,
+                                         Commands::ICommandManager &commandManager,
                                          KeywordsPresets::IPresetsManager &presetsManager,
                                          AutoComplete::ICompletionSource &completionSource,
                                          QObject *parent) :
         QObject(parent),
         ArtworkProxyBase(),
         m_ArtworkMetadata(nullptr),
+        m_Messages(messages),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_CompletionSource(completionSource)
@@ -47,22 +49,6 @@ namespace Models {
         Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
         bool isVideo = videoArtwork != nullptr;
         return isVideo;
-    }
-
-    std::shared_ptr<ICurrentEditable> ArtworkProxyModel::getCurrentEditable() {
-        return std::make_shared<CurrentEditableProxyArtwork>(*this);
-    }
-
-    void ArtworkProxyModel::setUpdateArtworksTemplate(const std::shared_ptr<ArtworkProxyModel::IArtworksCommandTemplate> &actionTemplate) {
-        m_UpdateArtworksTemplate = actionTemplate;
-    }
-
-    void ArtworkProxyModel::setThumbnailUpdateTemplate(const std::shared_ptr<ArtworkProxyModel::IArtworksCommandTemplate> &actionTemplate) {
-        m_ThumbnailUpdateTemplate = actionTemplate;
-    }
-
-    void ArtworkProxyModel::setInspectionTemplate(const std::shared_ptr<ArtworkProxyModel::IArtworksCommandTemplate> &actionTemplate) {
-        m_InspectionTemplate = actionTemplate;
     }
 
     void ArtworkProxyModel::setDescription(const QString &description)  {
@@ -206,14 +192,9 @@ namespace Models {
     }
 
     void ArtworkProxyModel::setSourceArtwork(QObject *artworkMetadata) {
-        ArtworkMetadata *artwork = qobject_cast<ArtworkMetadata*>(artworkMetadata);
+        Artworks::ArtworkMetadata *artwork = qobject_cast<Artworks::ArtworkMetadata*>(artworkMetadata);
         Q_ASSERT(artwork != nullptr);
         LOG_INFO << artwork->getLastKnownIndex();
-
-#ifdef QT_DEBUG
-        auto *itemsModel = m_CommandManager->getArtItemsModel();
-        Q_ASSERT(itemsModel->getArtwork(artwork->getLastKnownIndex()) == artwork);
-#endif
 
         disconnectCurrentArtwork();
         updateCurrentArtwork();
@@ -301,16 +282,6 @@ namespace Models {
         doAppendPreset((KeywordsPresets::ID_t)presetID, m_PresetsManager);
     }
 
-    void ArtworkProxyModel::copyToQuickBuffer() {
-        LOG_DEBUG << "#";
-        doCopyToQuickBuffer();
-    }
-
-    void ArtworkProxyModel::generateCompletions(const QString &prefix) {
-        LOG_DEBUG << prefix;
-        doGenerateCompletions(prefix);
-    }
-
     bool ArtworkProxyModel::acceptCompletionAsPreset(int completionID) {
         LOG_DEBUG << completionID;
         return doAcceptCompletionAsPreset(completionID, m_CompletionSource, m_PresetsManager);
@@ -331,10 +302,10 @@ namespace Models {
     void ArtworkProxyModel::submitForInspection() {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         if (m_ArtworkMetadata == nullptr) { return; }
-        m_CommandManager.processCommand(
-                    std::make_shared<Commands::TemplatedCommand<Artworks::ArtworksSnapshot>>(
-                        Artworks::ArtworksSnapshot(m_ArtworkMetadata),
-                        m_InspectionTemplate));
+        m_Messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::SpellCheck)
+                .broadcast(Artworks::ArtworksSnapshot({m_ArtworkMetadata}));
     }
 
     void ArtworkProxyModel::connectArtworkSignals(ArtworkMetadata *artwork) {
@@ -371,10 +342,14 @@ namespace Models {
         emit titleSpellingChanged();
         emit descriptionSpellingChanged();
         emit keywordsSpellingChanged();
-        emit currentEditableChanged();
 
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         m_PropertiesMap.updateProperties(m_ArtworkMetadata);
+
+        m_Messages
+                .ofType<std::shared_ptr<ICurrentEditable>>()
+                .withID(Commands::AppMessages::RegisterCurrentEditable)
+                .broadcast(std::make_shared<CurrentEditableProxyArtwork>(*this));
 
         emit isValidChanged();
     }
@@ -383,18 +358,35 @@ namespace Models {
         LOG_DEBUG << "#";
         if (m_ArtworkMetadata == nullptr) { return; }
 
-        using namespace Commands;
-        m_CommandManager.processCommand(
-                    std::make_shared<TemplatedCommand<Artworks::ArtworksSnapshot>>(
-                        Artworks::ArtworksSnapshot(m_ArtworkMetadata),
-                        std::make_shared<CompositeCommandTemplate>({
-                                                                       m_ThumbnailUpdateTemplate,
-                                                                       m_UpdateArtworksTemplate,
-                                                                       m_InspectionTemplate
-                                                                   })));
+        m_Messages
+                .ofType<Helpers::IndicesRanges>()
+                .withID(Commands::AppMessages::UpdateArtworks)
+                .broadcast(Helpers::IndicesRanges(m_ArtworkMetadata->getLastKnownIndex(), 1));
 
-        emit warningsCouldHaveChanged(lastKnownIndex);
-        emit duplicatesCouldHaveChanged(lastKnownIndex);
+        m_Messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::SpellCheck)
+                .broadcast(Artworks::ArtworksSnapshot({m_ArtworkMetadata}));
+
+        Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(artwork);
+        if (videoArtwork != nullptr) {
+            if (!videoArtwork->isThumbnailGenerated()) {
+                m_Messages
+                        .ofType<Artworks::VideoArtwork*>()
+                        .withID(Commands::AppMessages::CreateThumbnail)
+                        .broadcast(videoArtwork);
+            } else {
+                m_Messages
+                        .ofType<Common::ID_t, size_t, QVector<int>>()
+                        .withID(Commands::AppMessages::UpdateArtworks)
+                        .broadcast(videoArtwork->getItemID(),
+                                   videoArtwork->getLastKnownIndex(),
+                                   QVector<int>() << Models::ArtworksListModel::ArtworkThumbnailRole);
+            }
+        }
+
+        emit warningsCouldHaveChanged(m_ArtworkMetadata->getLastKnownIndex());
+        emit duplicatesCouldHaveChanged(m_ArtworkMetadata->getLastKnownIndex());
     }
 
     void ArtworkProxyModel::disconnectCurrentArtwork() {

@@ -14,30 +14,38 @@
 #include <QQmlEngine>
 #include "uploadinforepository.h"
 #include "uploadinfo.h"
-#include "../Common/defines.h"
-#include "../Helpers/ziphelper.h"
-#include "../Models/artworkmetadata.h"
-#include "../Commands/commandmanager.h"
-#include "../Models/settingsmodel.h"
-#include "../Helpers/filehelpers.h"
-#include "../Connectivity/iftpcoordinator.h"
-#include "../Connectivity/testconnection.h"
+#include <Common/defines.h>
+#include <Helpers/ziphelper.h>
+#include <Artworks/artworkmetadata.h>
+#include <Models/settingsmodel.h>
+#include <Helpers/filehelpers.h>
+#include <Connectivity/iftpcoordinator.h>
+#include <Connectivity/testconnection.h>
 #include <uploadcontext.h>
-#include "../Models/imageartwork.h"
-#include "../Connectivity/ftphelpers.h"
+#include <Artworks/imageartwork.h>
+#include <Connectivity/ftphelpers.h>
+#include <Commands/appmessages.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace Models {
     ArtworkUploader::ArtworkUploader(Common::ISystemEnvironment &environment,
-                                     UploadInfoRepository &uploadInfoRepository, Artworks::IArtworksSource &selectedArtworksSource,
+                                     UploadInfoRepository &uploadInfoRepository,
+                                     Commands::AppMessages &messages,
+                                     SettingsModel &settingsModel,
                                      QObject *parent):
         QObject(parent),
         m_Environment(environment),
         m_TestingCredentialWatcher(nullptr),
         m_UploadInfos(uploadInfoRepository),
+        m_SettingsModel(settingsModel),
         m_Percent(0),
         m_IsInProgress(false),
         m_HasErrors(false)
     {
+        messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::UploadArtworks)
+                .addListener(std::bind(&ArtworkUploader::setArtworks, this));
     }
 
     ArtworkUploader::~ArtworkUploader() {
@@ -129,10 +137,9 @@ namespace Models {
         context->m_UsePassiveMode = !disablePassiveMode;
         context->m_UseEPSV = !disableEPSV;
 
-        Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-        context->m_UseProxy = settingsModel->getUseProxy();
-        context->m_ProxySettings = settingsModel->getProxySettings();
-        context->m_VerboseLogging = settingsModel->getVerboseUpload();
+        context->m_UseProxy = m_SettingsModel.getUseProxy();
+        context->m_ProxySettings = m_SettingsModel.getProxySettings();
+        context->m_VerboseLogging = m_SettingsModel.getVerboseUpload();
 
         m_TestingCredentialWatcher->setFuture(QtConcurrent::run(Connectivity::isContextValid, context));
     }
@@ -144,7 +151,7 @@ namespace Models {
             auto &snapshot = this->getArtworksSnapshot();
             auto &artworkList = snapshot.getWeakSnapshot();
             for (auto *artwork: artworkList) {
-                ImageArtwork *image = dynamic_cast<ImageArtwork *>(artwork);
+                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
 
                 if (image == NULL || !image->hasVectorAttached()) {
                     continue;
@@ -189,9 +196,9 @@ namespace Models {
         m_FtpCoordinator->cancelUpload();
     }
 
-    void ArtworkUploader::setArtworks(Artworks::WeakArtworksSnapshot &snapshot) {
+    void ArtworkUploader::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
         LOG_DEBUG << "#";
-        m_ArtworksSnapshot.set(snapshot);
+        m_ArtworksSnapshot = std::move(snapshot);
         emit itemsCountChanged();
     }
 

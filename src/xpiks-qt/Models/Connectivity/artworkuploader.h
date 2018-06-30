@@ -14,12 +14,10 @@
 #include <QAbstractListModel>
 #include <QStringList>
 #include <QFutureWatcher>
-#include "../Connectivity/testconnection.h"
-#include "../Connectivity/uploadwatcher.h"
-#include "../Helpers/ifilenotavailablemodel.h"
-#include "../Artworks/artworkssnapshot.h"
-#include "../Common/isystemenvironment.h"
-#include "selectedartworksconsumer.h"
+#include <Connectivity/testconnection.h>
+#include <Connectivity/uploadwatcher.h>
+#include <Helpers/ifilenotavailablemodel.h>
+#include <Common/isystemenvironment.h>
 #include "uploadinforepository.h"
 #include <ftpcoordinator.h>
 
@@ -32,19 +30,24 @@ namespace Connectivity {
 }
 
 namespace Commands {
-    class CommandManager;
+    class AppMessages;
 }
 
 namespace Helpers {
     class AsyncCoordinator;
 }
 
-namespace Models {
-#define PERCENT_EPSILON 0.0001
+namespace Artworks {
     class ArtworkMetadata;
+    class ArtworksSnapshot;
+}
+
+namespace Models {
+    class SettingsModel;
+#define PERCENT_EPSILON 0.0001
 
     class ArtworkUploader:
-            public SelectedArtworksConsumer,
+            public QObject,
             public Helpers::IFileNotAvailableModel
     {
         Q_PROPERTY(int percent READ getUIPercent NOTIFY percentChanged)
@@ -55,7 +58,8 @@ namespace Models {
     public:
         ArtworkUploader(Common::ISystemEnvironment &environment,
                         Models::UploadInfoRepository &uploadInfoRepository,
-                        Artworks::IArtworksSource &selectedArtworksSource,
+                        Commands::AppMessages &messages,
+                        SettingsModel &settingsModel,
                         QObject *parent=0);
         virtual ~ArtworkUploader();
 
@@ -108,7 +112,7 @@ namespace Models {
         Q_INVOKABLE void cancelOperation();
 
     protected:
-        virtual void setArtworks(Artworks::WeakArtworksSnapshot &snapshot) override;
+        void setArtworks(Artworks::ArtworksSnapshot &&snapshot);
         void resetArtworks();
 
 #ifdef CORE_TESTS
@@ -135,7 +139,8 @@ namespace Models {
         Connectivity::UploadWatcher m_UploadWatcher;
         std::shared_ptr<Connectivity::IFtpCoordinator> m_FtpCoordinator;
         QFutureWatcher<Connectivity::ContextValidationResult> *m_TestingCredentialWatcher;
-        Models::UploadInfoRepository &m_UploadInfos;
+        UploadInfoRepository &m_UploadInfos;
+        SettingsModel &m_SettingsModel;
         double m_Percent;
         volatile bool m_IsInProgress;
         volatile bool m_HasErrors;

@@ -215,7 +215,6 @@ SOURCES += main.cpp \
     Commands/Editing/deletekeywordstemplate.cpp \
     Models/Editing/currenteditablemodel.cpp \
     Commands/Services/inspectbasicmodeltemplate.cpp \
-    Commands/Services/updatevideothumbnailtemplate.cpp \
     Models/Editing/quickbuffer.cpp
 
 RESOURCES += qml.qrc
@@ -525,7 +524,6 @@ HEADERS += \
     Commands/Base/simplecommand.h \
     Models/Editing/currenteditablemodel.h \
     Commands/Services/inspectbasicmodeltemplate.h \
-    Commands/Services/updatevideothumbnailtemplate.h \
     QMLExtensions/iuicommanddispatcher.h \
     Commands/messages.h \
     Commands/appmessages.h \

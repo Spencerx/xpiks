@@ -15,9 +15,8 @@
 #include <vector>
 #include <memory>
 #include "csvexportproperties.h"
-#include "../Models/abstractconfigupdatermodel.h"
-#include "../Helpers/localconfig.h"
-#include "../Common/baseentity.h"
+#include <Models/Connectivity/abstractconfigupdatermodel.h>
+#include <Helpers/localconfig.h>
 #include "../Common/isystemenvironment.h"
 
 namespace Helpers {

@@ -15,7 +15,6 @@
 #include <QVector>
 #include <QAtomicInt>
 #include <set>
-#include "../Common/baseentity.h"
 #include "../Common/defines.h"
 #include "../Common/readerwriterqueue.h"
 #include "originalmetadata.h"
@@ -38,9 +37,6 @@ namespace MetadataIO {
         Q_PROPERTY(bool isInProgress READ getIsInProgress WRITE setIsInProgress NOTIFY isInProgressChanged)
     public:
         MetadataIOCoordinator();
-
-    public:
-        virtual void setCommandManager(Commands::CommandManager *commandManager) override;
 
     signals:
         void metadataReadingFinished();

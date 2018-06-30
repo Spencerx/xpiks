@@ -19,23 +19,19 @@
 #include <QList>
 #include <QSet>
 #include <QSize>
-#include <QQuickTextDocument>
 #include <memory>
 #include <vector>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Common/flags.h>
-#include <SpellCheck/spellcheckiteminfo.h>
 #include <Common/hold.h>
-#include <Artworks/artworkelement.h>
 #include "artworkproxybase.h"
-#include <Models/keyvaluelist.h>
 #include <Models/Editing/icurrenteditable.h>
-#include <Commands/Base/icommandtemplate.h>
-#include <Artworks/artworkssnapshot.h>
+#include <Models/keyvaluelist.h>
 
 namespace Commands {
     class ICommandManager;
+    class AppMessages;
 }
 
 namespace KeywordsPresets {
@@ -66,10 +62,9 @@ namespace Models {
         Q_PROPERTY(bool isVideo READ getIsVideo NOTIFY imagePathChanged)
         Q_PROPERTY(bool isValid READ getIsValid NOTIFY isValidChanged)
 
-        using IArtworksCommandTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
-
     public:
-        explicit ArtworkProxyModel(Commands::ICommandManager &commandManager,
+        explicit ArtworkProxyModel(Commands::AppMessages &messages,
+                                   Commands::ICommandManager &commandManager,
                                    KeywordsPresets::IPresetsManager &presetsManager,
                                    AutoComplete::ICompletionSource &completionSource,
                                    QObject *parent = 0);
@@ -81,12 +76,6 @@ namespace Models {
         QString getThumbPath() const { return m_ArtworkMetadata->getThumbnailPath(); }
         const QString &getFilePath() const { return m_ArtworkMetadata->getFilepath(); }
         QString getBasename() const { return m_ArtworkMetadata->getBaseFilename(); }
-        std::shared_ptr<ICurrentEditable> getCurrentEditable();
-
-    public:
-        void setUpdateArtworksTemplate(const std::shared_ptr<IArtworksCommandTemplate> &actionTemplate);
-        void setThumbnailUpdateTemplate(const std::shared_ptr<IArtworksCommandTemplate> &actionTemplate);
-        void setInspectionTemplate(const std::shared_ptr<IArtworksCommandTemplate> &actionTemplate);
 
     public:
         virtual void setDescription(const QString &description) override;
@@ -158,8 +147,6 @@ namespace Models {
         Q_INVOKABLE void expandLastKeywordAsPreset();
         Q_INVOKABLE void addPreset(unsigned int presetID);
         Q_INVOKABLE void initSuggestion();
-        Q_INVOKABLE void copyToQuickBuffer();
-        Q_INVOKABLE void generateCompletions(const QString &prefix);
         Q_INVOKABLE bool acceptCompletionAsPreset(int completionID);
 
     protected:
@@ -186,9 +173,7 @@ namespace Models {
     private:
         ArtworkPropertiesMap m_PropertiesMap;
         Artworks::ArtworkMetadata *m_ArtworkMetadata;
-        std::shared_ptr<IArtworksCommandTemplate> m_InspectionTemplate;
-        std::shared_ptr<IArtworksCommandTemplate> m_ThumbnailUpdateTemplate;
-        std::shared_ptr<IArtworksCommandTemplate> m_UpdateArtworksTemplate;
+        Commands::AppMessages &m_Messages;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         AutoComplete::ICompletionSource &m_CompletionSource;

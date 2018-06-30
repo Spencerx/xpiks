@@ -10,17 +10,18 @@
 
 #include "artworksupdatehub.h"
 #include "artworkupdaterequest.h"
-#include "../Commands/commandmanager.h"
-#include "../Models/artworkslistmodel.h"
-#include "../Models/artworkproxymodel.h"
+#include <Models/Artworks/artworkslistmodel.h>
 #include "../Common/defines.h"
+#include <Commands/appmessages.h>
 
 #define MAX_NOT_UPDATED_ARTWORKS_TO_HOLD 50
 #define MAX_UPDATE_TIMER_DELAYS 2
 #define UPDATE_TIMER_DELAY 400
 
 namespace Services {
-    ArtworksUpdateHub::ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel, QObject *parent) :
+    ArtworksUpdateHub::ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel,
+                                         Commands::AppMessages &messages,
+                                         QObject *parent) :
         QObject(parent),
         m_ArtworksListModel(artworksListModel),
         m_TimerRestartedCount(0)
@@ -31,15 +32,22 @@ namespace Services {
         QObject::connect(this, SIGNAL(updateRequested()), this, SLOT(onUpdateRequested()));
 
         m_UpdateRequests.reserve(100);
+
+        messages
+                .ofType<Common::ID_t, size_t, QVector<int>>()
+                .withID(Commands::AppMessages::UpdateArtworks)
+                .addListener(std::bind(&ArtworksUpdateHub::updateArtwork, this));
     }
 
     void ArtworksUpdateHub::setStandardRoles(const QVector<int> &roles) {
         m_StandardRoles = roles.toList().toSet();
     }
 
-    void ArtworksUpdateHub::updateArtwork(qint64 artworkID, size_t lastKnownIndex, const QSet<int> &rolesToUpdate) {
+    void ArtworksUpdateHub::updateArtwork(Common::ID_t artworkID,
+                                          size_t lastKnownIndex,
+                                          const QVector<int> &rolesToUpdate) {
         std::shared_ptr<ArtworkUpdateRequest> updateRequest(
-                    new ArtworkUpdateRequest(artworkID, lastKnownIndex, rolesToUpdate));
+                    new ArtworkUpdateRequest(artworkID, lastKnownIndex, rolesToUpdate.toList().toSet()));
         {
             QMutexLocker locker(&m_Lock);
             m_UpdateRequests.emplace_back(updateRequest);

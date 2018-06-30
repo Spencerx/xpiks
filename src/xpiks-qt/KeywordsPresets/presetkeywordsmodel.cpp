@@ -9,7 +9,7 @@
  */
 
 #include "presetkeywordsmodel.h"
-#include "../Commands/commandmanager.h"
+#include <QQmlEngine>
 #include "../Helpers/stringhelper.h"
 #include "presetmodel.h"
 
@@ -19,7 +19,6 @@
 namespace KeywordsPresets {
     PresetKeywordsModel::PresetKeywordsModel(Common::ISystemEnvironment &environment, QObject *parent):
         QAbstractListModel(parent),
-        Common::BaseEntity(),
         Common::DelayedActionEntity(PRESET_SAVE_TIMEOUT, MAX_SAVE_PAUSE_RESTARTS),
         m_Environment(environment),
         m_PresetsConfig(environment),

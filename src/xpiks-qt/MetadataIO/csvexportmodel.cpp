@@ -14,6 +14,7 @@
 #include <QDir>
 #include <QTimerEvent>
 #include <QThread>
+#include <Commands/appmessages.h>
 #include "csvexportworker.h"
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
@@ -227,11 +228,10 @@ namespace MetadataIO {
     /*------------------------------------------------------*/
 
     CsvExportModel::CsvExportModel(Common::ISystemEnvironment &environment,
-                                   Artworks::IArtworksSource &selectedArtworksSource):
-        Common::BaseEntity(),
+                                   Commands::AppMessages &messages):
         Common::DelayedActionEntity(3000, MAX_SAVE_PAUSE_RESTARTS),
         m_ExportPlansModel(environment),
-        m_SelectedArtworksSource(selectedArtworksSource),
+        m_SelectedArtworksSource(messages),
         m_SaveTimerId(-1),
         m_SaveRestartsCount(0),
         m_IsExporting(false)
@@ -242,6 +242,11 @@ namespace MetadataIO {
         QObject::connect(this, &CsvExportModel::backupRequired, this, &CsvExportModel::onBackupRequired);
 
         m_ExportDirectory = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+
+        messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::ExportToCSV)
+                .addListener(std::bind(&CsvExportModel::setArtworks, this));
     }
 
     void CsvExportModel::setIsExporting(bool value) {
@@ -249,12 +254,6 @@ namespace MetadataIO {
             m_IsExporting = value;
             emit isExportingChanged();
         }
-    }
-
-    void CsvExportModel::setCommandManager(Commands::CommandManager *commandManager) {
-        Common::BaseEntity::setCommandManager(commandManager);
-
-        m_ExportPlansModel.setCommandManager(commandManager);
     }
 
     void CsvExportModel::initializeExportPlans(Helpers::AsyncCoordinator *initCoordinator) {
@@ -343,11 +342,6 @@ namespace MetadataIO {
         }
 
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
-    }
-
-    void CsvExportModel::pullArtworks() {
-        LOG_DEBUG << "#";
-        this->setArtworks(m_SelectedArtworksSource.getArtworks());
     }
 
     void CsvExportModel::startExport() {
@@ -451,8 +445,8 @@ namespace MetadataIO {
         }
     }
 
-    void CsvExportModel::setArtworks(Artworks::WeakArtworksSnapshot &snapshot) {
-         m_ArtworksToExport.set(snapshot);
+    void CsvExportModel::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
+         m_ArtworksToExport = std::move(snapshot);
          emit artworksCountChanged();
     }
 

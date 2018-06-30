@@ -13,19 +13,19 @@
 #include <QFileInfo>
 #include <QRegExp>
 #include <QDir>
-#include "../Artworks/artworkmetadata.h"
-#include "../Artworks/imageartwork.h"
-#include "../Helpers/filehelpers.h"
-#include "../Common/defines.h"
-#include "../Helpers/cpphelpers.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Helpers/filehelpers.h>
+#include <Common/defines.h>
+#include <Helpers/cpphelpers.h>
+#include <Commands/appmessages.h>
 
 #ifndef CORE_TESTS
-#include "../Helpers/ziphelper.h"
+#include <Helpers/ziphelper.h>
 #endif
 
 namespace Models {
-    ZipArchiver::ZipArchiver(Artworks::IArtworksSource &selectedArtworksSource):
-        SelectedArtworksConsumer(selectedArtworksSource),
+    ZipArchiver::ZipArchiver(Commands::AppMessages &messages):
         m_IsInProgress(false),
         m_HasErrors(false)
     {
@@ -34,6 +34,11 @@ namespace Models {
                          this, &ZipArchiver::archiveCreated);
         QObject::connect(m_ArchiveCreator, &QFutureWatcher<QStringList>::finished,
                          this, &ZipArchiver::allFinished);
+
+        messages.
+                ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::ZipArtworks)
+                .addListener(std::bind(&ZipArchiver::setArtworks, this));
     }
 
     int ZipArchiver::getPercent() const {
@@ -102,10 +107,10 @@ namespace Models {
         emit percentChanged();
     }
 
-    void ZipArchiver::setArtworks(Artworks::WeakArtworksSnapshot &snapshot) {
+    void ZipArchiver::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
         LOG_DEBUG << "#";
         m_ArtworksSnapshot.set(
-                    Helpers::filter(snapshot, [](Artworks::ArtworkMetadata *artwork) {
+                    Helpers::filter(snapshot.getWeakSnapshot(), [](Artworks::ArtworkMetadata *artwork) {
                         Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
                         return (image != NULL) && image->hasVectorAttached();
                     }));

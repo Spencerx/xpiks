@@ -90,7 +90,6 @@ namespace Models {
     protected:
         void doHandleUserDictChanged(const QStringList &keywords, bool overwritten);
         void doHandleUserDictCleared();
-        void doCopyToQuickBuffer();
         bool hasKeywords(const QStringList &keywordsList);
         bool doAcceptCompletionAsPreset(int completionID,
                                         AutoComplete::ICompletionSource &completionSource,

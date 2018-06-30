@@ -338,13 +338,6 @@ namespace Models {
         submitForInspection();
     }
 
-    void ArtworkProxyBase::doCopyToQuickBuffer() {
-        LOG_DEBUG << "#";
-        auto *metadataModel = getBasicMetadataModel();
-        auto *quickBuffer = m_CommandManager->getQuickBuffer();
-        quickBuffer->setFromBasicModel(metadataModel);
-    }
-
     bool ArtworkProxyBase::hasKeywords(const QStringList &keywordsList) {
         auto *metadataOperator = getMetadataOperator();
         bool result = metadataOperator->hasKeywords(keywordsList);

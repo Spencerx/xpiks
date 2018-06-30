@@ -28,6 +28,10 @@ namespace Models {
     class ArtworksListModel;
 }
 
+namespace Commands {
+    class AppMessages;
+}
+
 namespace Services {
     class ArtworkUpdateRequest;
 
@@ -41,13 +45,15 @@ namespace Services {
         };
 
     public:
-        explicit ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel, QObject *parent = 0);
+        explicit ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel,
+                                   Commands::AppMessages &messages,
+                                   QObject *parent = 0);
 
     public:
         void setStandardRoles(const QVector<int> &roles);
 
     public:
-        void updateArtwork(qint64 artworkID, size_t lastKnownIndex, const QSet<int> &rolesToUpdate = QSet<int>());
+        void updateArtwork(Common::ID_t artworkID, size_t lastKnownIndex, const QVector<int> &rolesToUpdate = QVector<int>());
         void updateArtwork(Artworks::ArtworkMetadata *artwork);
         void updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, UpdateMode updateMode=FastUpdate) const;
         void updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks, UpdateMode updateMode=FastUpdate) const;

@@ -11,10 +11,9 @@
 #include "metadatareadinghub.h"
 #include "metadataioservice.h"
 #include "../Artworks/artworkmetadata.h"
-#include "../Commands/commandmanager.h"
 #include "../Common/defines.h"
 #include "../MetadataIO/metadataioservice.h"
-#include "../QMLExtensions/artworksupdatehub.h"
+#include <Services/artworksupdatehub.h>
 
 namespace MetadataIO {
     MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService, QMLExtensions::ArtworksUpdateHub &updateHub):
