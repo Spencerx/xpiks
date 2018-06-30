@@ -170,6 +170,19 @@ namespace Models {
         return result;
     }
 
+    void ArtworksListModel::sendToQuickBuffer(int artworkIndex) {
+        LOG_DEBUG << "#";
+        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        if (artwork != nullptr) {
+            m_Messages
+                    .ofType<QString, QString, QStringList>()
+                    .withID(Commands::AppMessages::CopyToQuickBuffer)
+                    .broadcast(artwork->getTitle(),
+                               artwork->getDescription(),
+                               artwork->getKeywords());
+        }
+    }
+
     void ArtworksListModel::processUpdateRequests(const std::vector<std::shared_ptr<Services::ArtworkUpdateRequest> > &updateRequests) {
         LOG_INFO << updateRequests.size() << "requests to process";
 

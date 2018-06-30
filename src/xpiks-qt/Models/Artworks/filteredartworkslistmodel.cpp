@@ -21,7 +21,6 @@
 #include <Common/defines.h>
 #include <Helpers/filterhelpers.h>
 #include <Models/Editing/previewartworkelement.h>
-#include <QuickBuffer/quickbuffer.h>
 #include <Artworks/videoartwork.h>
 
 namespace Models {

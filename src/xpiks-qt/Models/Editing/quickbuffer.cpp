@@ -9,13 +9,13 @@
  */
 
 #include "quickbuffer.h"
-#include <QSyntaxHighlighter>
 #include <Commands/Base/icommandmanager.h>
 #include <Models/Editing/icurrenteditable.h>
 #include <Models/Editing/currenteditablemodel.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Base/compositecommandtemplate.h>
 #include <Commands/Editing/editartworkstemplate.h>
+#include <Commands/appmessages.h>
 
 #define MAX_EDITING_PAUSE_RESTARTS 10
 #define QUICKBUFFER_EDITING_PAUSE 1000
@@ -47,6 +47,11 @@ namespace Models {
 
         QObject::connect(&m_BasicModel, &Artworks::BasicMetadataModel::afterSpellingErrorsFixed,
                          this, &QuickBuffer::afterSpellingErrorsFixedHandler);
+
+        m_Messages
+                .ofType<QString, QString, QStringList>()
+                .withID(Commands::AppMessages::CopyToQuickBuffer)
+                .addListener(std::bind(&QuickBuffer::setQuickBuffer, this));
     }
 
     QuickBuffer::~QuickBuffer() {
@@ -138,31 +143,12 @@ namespace Models {
         return result;
     }
 
-    void QuickBuffer::setFromBasicModel(Artworks::BasicMetadataModel *model) {
+    void QuickBuffer::setQuickBuffer(const QString &title,
+                                     const QString &description,
+                                     const QStringList &keywords) {
         LOG_DEBUG << "#";
-        Q_ASSERT(model != nullptr);
-
-        auto title = model->getTitle();
-        auto description = model->getDescription();
-        auto keywords = model->getKeywords();
-
         if (!title.isEmpty()) { this->setTitle(title); }
         if (!description.isEmpty()) { this->setDescription(description); }
-        if (!keywords.empty()) { this->setKeywords(keywords); }
-
-        emit isEmptyChanged();
-    }
-
-    void QuickBuffer::setFromSuggestionArtwork(const std::shared_ptr<Suggestion::SuggestionArtwork> &from) {
-        LOG_DEBUG << "#";
-        Q_ASSERT(from != nullptr);
-
-        auto &title = from->getTitle();
-        auto &description = from->getDescription();
-        auto keywords = from->getKeywordsSet().toList();
-
-        this->setTitle(title);
-        this->setDescription(description);
         if (!keywords.empty()) { this->setKeywords(keywords); }
 
         emit isEmptyChanged();

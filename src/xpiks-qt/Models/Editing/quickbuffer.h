@@ -93,8 +93,9 @@ namespace Models {
 
     public:
         bool getIsEmpty();
-        void setFromBasicModel(Artworks::BasicMetadataModel *model);
-        void setFromSuggestionArtwork(const std::shared_ptr<Suggestion::SuggestionArtwork> &from);
+
+    private:
+        void setQuickBuffer(const QString &title, const QString &description, const QStringList &keywords);
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }

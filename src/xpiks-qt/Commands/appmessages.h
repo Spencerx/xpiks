@@ -11,6 +11,8 @@
 #ifndef APPMESSAGES_H
 #define APPMESSAGES_H
 
+#include <QString>
+#include <QStringList>
 #include "messages.h"
 #include <Helpers/indiceshelper.h>
 #include <Artworks/artworkssnapshot.h>
@@ -27,7 +29,8 @@ namespace Commands {
             MessageMap<Helpers::IndicesRanges>,
             MessageMap<Artworks::ArtworksSnapshot>,
             MessageMap<std::shared_ptr<Models::ICurrentEditable>>,
-            MessageMap<Artworks::BasicKeywordsModel*>
+            MessageMap<Artworks::BasicKeywordsModel*>,
+            MessageMap<QString, QString, QStringList>
             >
     {
     public:
@@ -36,7 +39,8 @@ namespace Commands {
             UpdateArtworks,
             InspectArtworks,
             BackupArtworks,
-            SpellCheck
+            SpellCheck,
+            CopyToQuickBuffer
         };
     };
 }

@@ -123,6 +123,7 @@ namespace Models {
         void generateAboutToBeRemoved();
         void unlockAllForIO();
         bool isInSelectedDirectory(int artworkIndex);
+        void sendToQuickBuffer(int artworkIndex);
 
     public:
         // update hub related
@@ -167,7 +168,6 @@ namespace Models {
         Artworks::ArtworkMetadata *getArtworkObject(int index) const;
         Artworks::BasicMetadataModel *getBasicModelObject(int index) const;
         Artworks::ArtworkMetadata *getArtwork(size_t index) const;
-        std::shared_ptr<ICurrentEditable> getCurrentEditable() const;
 
     public:
         std::shared_ptr<Commands::ICommand> removeKeywordAt(int artworkIndex, int keywordIndex);
