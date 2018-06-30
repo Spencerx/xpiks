@@ -131,7 +131,7 @@ namespace Models {
         void updateArtworksByIDs(const QSet<qint64> &artworkIDs, const QVector<int> &rolesToUpdate);
 
     public:
-        // add-remove items methods
+        // add-remove ixtems methods
         ArtworksAddResult addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                    Common::AddFilesFlags flags);
         ArtworksRemoveResult removeFiles(const Helpers::IndicesRanges &ranges);

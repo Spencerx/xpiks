@@ -17,21 +17,25 @@
 #include "../Artworks/basickeywordsmodel.h"
 #include "../Common/iservicebase.h"
 #include "../Common/flags.h"
-#include "../Models/settingsmodel.h"
 #include "../Common/isystemenvironment.h"
 #include "spellcheckworker.h"
 #include "userdictionary.h"
 
 namespace Artworks {
     class ArtworkMetadata;
-}
-
-namespace Helpers {
-    class AsyncCoordinatorStartParams;
+    class ArtworksSnapshot;
 }
 
 namespace Warnings {
     class WarningsService;
+}
+
+namespace Commands {
+    class AppMessages;
+}
+
+namespace Models {
+    class SettingsModel;
 }
 
 namespace SpellCheck {
@@ -41,12 +45,14 @@ namespace SpellCheck {
         Q_PROPERTY(int userDictWordsNumber READ getUserDictWordsNumber NOTIFY userDictWordsNumberChanged)
 
     public:
-        SpellCheckerService(Common::ISystemEnvironment &environment, Models::SettingsModel *settingsModel = 0);
+        SpellCheckerService(Common::ISystemEnvironment &environment,
+                            Models::SettingsModel &settingsModel,
+                            Commands::AppMessages &messages);
 
         virtual ~SpellCheckerService();
 
     public:
-        void startService(const std::shared_ptr<Helpers::AsyncCoordinatorStartParams> &params,
+        void startService(const std::shared_ptr<Common::ServiceStartParams> &params,
                           Warnings::WarningsService &warningsService);
         void stopService();
 
@@ -55,6 +61,7 @@ namespace SpellCheck {
 
         void submitItem(Artworks::BasicKeywordsModel *itemToCheck);
         void submitItem(Artworks::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags);
+        void submitItems(Artworks::ArtworksSnapshot &&snapshot);
         SpellCheckWorker::batch_id_t submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck);
         void submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck, const QStringList &wordsToCheck);
         virtual QStringList suggestCorrections(const QString &word) const;
@@ -97,7 +104,7 @@ namespace SpellCheck {
         Common::ISystemEnvironment &m_Environment;
         SpellCheckWorker *m_SpellCheckWorker;
         UserDictionary m_UserDictionary;
-        Models::SettingsModel *m_SettingsModel;
+        Models::SettingsModel &m_SettingsModel;
         QString m_DictionariesPath;
         volatile bool m_RestartRequired;
         volatile bool m_IsStopped;

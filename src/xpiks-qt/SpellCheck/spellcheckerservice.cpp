@@ -10,13 +10,18 @@
 
 #include "spellcheckerservice.h"
 #include <QThread>
-#include "../Artworks/artworkmetadata.h"
 #include "spellcheckitem.h"
-#include "../Common/logging.h"
-#include "../Common/flags.h"
+#include <Artworks/artworkmetadata.h>
+#include <Common/logging.h>
+#include <Common/flags.h>
+#include <Models/settingsmodel.h>
+#include <Commands/appmessages.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace SpellCheck {
-    SpellCheckerService::SpellCheckerService(Common::ISystemEnvironment &environment, Models::SettingsModel *settingsModel):
+    SpellCheckerService::SpellCheckerService(Common::ISystemEnvironment &environment,
+                                             Models::SettingsModel &settingsModel,
+                                             Commands::AppMessages &messages):
         m_Environment(environment),
         m_UserDictionary(environment),
         m_SettingsModel(settingsModel),
@@ -25,20 +30,31 @@ namespace SpellCheck {
     {
         QObject::connect(&m_UserDictionary, &UserDictionary::sizeChanged,
                          this, &SpellCheckerService::userDictWordsNumberChanged);
+
+        messages
+                .ofType<Artworks::BasicKeywordsModel*>()
+                .withID(Commands::AppMessages::SpellCheck)
+                .addListener(std::bind(&SpellCheckerService::submitItem, this));
+
+        messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::SpellCheck)
+                .addListener(std::bind(&SpellCheckerService::submitItems, this));
     }
 
     SpellCheckerService::~SpellCheckerService() {
         if (m_SpellCheckWorker != nullptr) {}
     }
 
-    void SpellCheckerService::startService(const std::shared_ptr<Helpers::AsyncCoordinatorStartParams> &params, Warnings::WarningsService &warningsService) {
+    void SpellCheckerService::startService(const std::shared_ptr<Common::ServiceStartParams> &params, Warnings::WarningsService &warningsService) {
         if (m_SpellCheckWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
         }
 
+        auto coordinatorParams = std::dynamic_pointer_cast<Helpers::AsyncCoordinatorStartParams>(params);
         Helpers::AsyncCoordinator *coordinator = nullptr;
-        if (params) { coordinator = params->m_Coordinator; }
+        if (coordinatorParams) { coordinator = coordinatorParams->m_Coordinator; }
 
         m_SpellCheckWorker = new SpellCheckWorker(getDictsRoot(),
                                                   m_Environment,
@@ -110,6 +126,10 @@ namespace SpellCheck {
             spi->deleteLater();
         });
         m_SpellCheckWorker->submitItem(item);
+    }
+
+    void SpellCheckerService::submitItems(Artworks::ArtworksSnapshot &&snapshot) {
+        this->submitItems(snapshot.getWeakSnapshot());
     }
 
     Common::ItemProcessingWorker::batch_id_t SpellCheckerService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck) {
@@ -256,14 +276,12 @@ namespace SpellCheck {
 
     Common::WordAnalysisFlags SpellCheckerService::getWordAnalysisFlags() const {
         Common::WordAnalysisFlags result = Common::WordAnalysisFlags::None;
-        if (m_SettingsModel != NULL) {
-            if (m_SettingsModel->getUseSpellCheck()) {
-                Common::SetFlag(result, Common::WordAnalysisFlags::Spelling);
-            }
+        if (m_SettingsModel.getUseSpellCheck()) {
+            Common::SetFlag(result, Common::WordAnalysisFlags::Spelling);
+        }
 
-            if (m_SettingsModel->getDetectDuplicates()) {
-                Common::SetFlag(result, Common::WordAnalysisFlags::Stemming);
-            }
+        if (m_SettingsModel.getDetectDuplicates()) {
+            Common::SetFlag(result, Common::WordAnalysisFlags::Stemming);
         }
         return result;
     }

@@ -145,11 +145,12 @@ namespace Models {
 
     void QuickBuffer::setQuickBuffer(const QString &title,
                                      const QString &description,
-                                     const QStringList &keywords) {
+                                     const QStringList &keywords,
+                                     bool overwrite) {
         LOG_DEBUG << "#";
-        if (!title.isEmpty()) { this->setTitle(title); }
-        if (!description.isEmpty()) { this->setDescription(description); }
-        if (!keywords.empty()) { this->setKeywords(keywords); }
+        if (!title.isEmpty() || overwrite) { this->setTitle(title); }
+        if (!description.isEmpty() || overwrite) { this->setDescription(description); }
+        if (!keywords.empty() || overwrite) { this->setKeywords(keywords); }
 
         emit isEmptyChanged();
     }

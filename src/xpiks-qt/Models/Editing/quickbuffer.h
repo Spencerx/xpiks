@@ -95,7 +95,10 @@ namespace Models {
         bool getIsEmpty();
 
     private:
-        void setQuickBuffer(const QString &title, const QString &description, const QStringList &keywords);
+        void setQuickBuffer(const QString &title,
+                            const QString &description,
+                            const QStringList &keywords,
+                            bool overwrite);
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }

@@ -179,7 +179,8 @@ namespace Models {
                     .withID(Commands::AppMessages::CopyToQuickBuffer)
                     .broadcast(artwork->getTitle(),
                                artwork->getDescription(),
-                               artwork->getKeywords());
+                               artwork->getKeywords(),
+                               false);
         }
     }
 
@@ -976,7 +977,7 @@ namespace Models {
         if (artwork != nullptr && m_EditTemplate != nullptr) {
             m_Messages
                     .ofType<Artworks::ArtworksSnapshot>()
-                    .withID(Commands::AppMessages::InspectArtworks)
+                    .withID(Commands::AppMessages::SpellCheck)
                     .broadcast(Artworks::ArtworksSnapshot({artwork}));
 
             m_Messages

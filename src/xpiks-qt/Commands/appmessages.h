@@ -30,14 +30,13 @@ namespace Commands {
             MessageMap<Artworks::ArtworksSnapshot>,
             MessageMap<std::shared_ptr<Models::ICurrentEditable>>,
             MessageMap<Artworks::BasicKeywordsModel*>,
-            MessageMap<QString, QString, QStringList>
+            MessageMap<QString, QString, QStringList, bool>
             >
     {
     public:
         enum MessageID {
             RegisterCurrentEditable,
             UpdateArtworks,
-            InspectArtworks,
             BackupArtworks,
             SpellCheck,
             CopyToQuickBuffer
