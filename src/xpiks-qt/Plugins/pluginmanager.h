@@ -17,7 +17,6 @@
 #include <QDir>
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>
-#include "../Common/baseentity.h"
 #include "uiprovider.h"
 #include "../Common/isystemenvironment.h"
 #include "pluginenvironment.h"
@@ -27,15 +26,25 @@
 #include "../Connectivity/requestsservice.h"
 #include "../Microstocks/microstockapiclients.h"
 
+namespace Commands {
+    class ICommandManager;
+}
+
+namespace KeywordsPresets {
+    class IPresetsManager;
+}
+
 namespace Plugins {
     class XpiksPluginInterface;
     class PluginWrapper;
 
-    class PluginManager : public QAbstractListModel, public Common::BaseEntity
+    class PluginManager : public QAbstractListModel
     {
         Q_OBJECT
     public:
         PluginManager(Common::ISystemEnvironment &environment,
+                      Commands::ICommandManager &commandManager,
+                      KeywordsPresets::IPresetsManager &presetsManager,
                       Storage::DatabaseManager *dbManager,
                       Connectivity::RequestsService &requestsService,
                       Microstocks::MicrostockAPIClients &apiClients);
@@ -95,6 +104,8 @@ namespace Plugins {
 
     private:
         Common::ISystemEnvironment &m_Environment;
+        Commands::ICommandManager &m_CommandManager;
+        KeywordsPresets::IPresetsManager &m_PresetsManager;
         Storage::DatabaseManager *m_DatabaseManager;
         MicrostockServicesSafe m_MicrostockServices;
         QString m_PluginsDirectoryPath;
@@ -110,7 +121,7 @@ namespace Plugins {
     public:
         PluginsWithActionsModel(QObject *parent = 0):
             QSortFilterProxyModel(parent)
-        {}
+        { }
 
     public:
         Q_INVOKABLE int getOriginalIndex(int index);

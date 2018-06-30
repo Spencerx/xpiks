@@ -12,14 +12,14 @@
 #include <QThread>
 #include "autocompleteworker.h"
 #include "completionquery.h"
-#include "../Common/flags.h"
-#include "../Common/basickeywordsmodel.h"
-#include "../Helpers/asynccoordinator.h"
-#include "../Models/settingsmodel.h"
+#include <Common/flags.h>
+#include <Artworks/basickeywordsmodel.h>
+#include <Helpers/asynccoordinator.h>
+#include <Models/settingsmodel.h>
 
 namespace AutoComplete {
     AutoCompleteService::AutoCompleteService(KeywordsAutoCompleteModel *autoCompleteModel,
-                                             KeywordsPresets::PresetKeywordsModel *presetsManager,
+                                             KeywordsPresets::PresetKeywordsModel &presetsManager,
                                              Models::SettingsModel *settingsModel,
                                              QObject *parent):
         QObject(parent),
@@ -29,9 +29,6 @@ namespace AutoComplete {
         m_SettingsModel(settingsModel),
         m_RestartRequired(false)
     {
-        Q_ASSERT(autoCompleteModel != nullptr);
-        Q_ASSERT(presetsManager != nullptr);
-        Q_ASSERT(settingsModel != nullptr);
     }
 
     AutoCompleteService::~AutoCompleteService() {
@@ -90,24 +87,6 @@ namespace AutoComplete {
         return isBusy;
     }
 
-    void AutoCompleteService::submitItem(QString *item) {
-        Q_UNUSED(item);
-    }
-
-    void AutoCompleteService::submitItem(QString *item, Common::flag_t flags) {
-        Q_UNUSED(flags);
-        this->submitItem(item);
-    }
-
-    void AutoCompleteService::submitItems(const std::vector<QString *> &items) {
-        Q_UNUSED(items);
-#if QT_NO_DEBUG
-        LOG_WARNING << "Cannot use this API for autocomplete";
-#else
-        Q_ASSERT(false);
-#endif
-    }
-
     void AutoCompleteService::restartWorker() {
         m_RestartRequired = true;
         stopService();
@@ -119,8 +98,8 @@ namespace AutoComplete {
             return;
         }
 
-        const bool completeKeywords = m_SettingsModel->getUseKeywordsAutoComplete();
-        const bool completePresets = m_SettingsModel->getUsePresetsAutoComplete();
+        const bool completeKeywords = m_SettingsModel.getUseKeywordsAutoComplete();
+        const bool completePresets = m_SettingsModel.getUsePresetsAutoComplete();
 
         LOG_INTEGR_TESTS_OR_DEBUG << "Complete keywords:" << completeKeywords << "presets:" << completePresets;
 

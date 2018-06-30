@@ -14,14 +14,12 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDirIterator>
-#include "../Common/defines.h"
+#include <Common/defines.h>
 #include "translationquery.h"
 #include "translationservice.h"
-#include "../Commands/commandmanager.h"
-#include "../Models/settingsmodel.h"
-#include "../Helpers/constants.h"
-#include "../Maintenance/maintenanceservice.h"
-#include "../Helpers/asynccoordinator.h"
+#include <Models/settingsmodel.h>
+#include <Helpers/constants.h>
+#include <Helpers/asynccoordinator.h>
 
 #define DEFAULT_SELECTED_DICT_INDEX -1
 
@@ -64,10 +62,12 @@ namespace Translation {
         return success;
     }
 
-    TranslationManager::TranslationManager(Common::ISystemEnvironment &environment, QObject *parent) :
+    TranslationManager::TranslationManager(Common::ISystemEnvironment &environment,
+                                           TranslationService &translationService,
+                                           QObject *parent) :
         QObject(parent),
-        Common::BaseEntity(),
         m_Environment(environment),
+        m_TranslationService(translationService),
         m_State("translator", environment),
         m_AllowedSuffixes({"idx", "idx.dz", "idx.oft", "dict.dz", "dict", "ifo"}),
         m_SelectedDictionaryIndex(-1),
@@ -76,16 +76,9 @@ namespace Translation {
     {
         m_TranslateTimer.setSingleShot(true);
         QObject::connect(&m_TranslateTimer, &QTimer::timeout, this, &TranslationManager::updateTranslationTimer);
-    }
 
-    void TranslationManager::initializeDictionaries(Helpers::AsyncCoordinator *initCoordinator) {
-        LOG_DEBUG << "#";
-
-        Helpers::AsyncCoordinatorLocker locker(initCoordinator);
-        Q_UNUSED(locker);
-
-        Maintenance::MaintenanceService *maintenanceService = m_CommandManager->getMaintenanceService();
-        maintenanceService->initializeDictionaries(this, initCoordinator);
+        QObject::connect(&m_TranslationService, &TranslationService::translationAvailable,
+                         this, &TranslationManager::translationArrived);
     }
 
     void TranslationManager::setQuery(const QString &value) {
@@ -112,10 +105,9 @@ namespace Translation {
             emit selectedDictionaryIndexChanged();
 
             if ((0 <= value) && (value < m_DictionariesList.length())) {
-                auto *translationService = m_CommandManager->getTranslationService();
                 auto &dictInfo = m_DictionariesList[value];
                 LOG_INFO << "Selecting" << dictInfo.m_Description;
-                translationService->selectDictionary(dictInfo.m_FullIfoPath);
+                m_TranslationService.selectDictionary(dictInfo.m_FullIfoPath);
             } else {
                 LOG_WARNING << "Cannot select dictionary path: indices to not match";
             }
@@ -317,8 +309,7 @@ namespace Translation {
     }
 
     void TranslationManager::updateTranslationTimer() {
-        TranslationService *translationService = m_CommandManager->getTranslationService();
-        translationService->translate(m_Query);
+        m_TranslationService.translate(m_Query);
         setIsBusy(true);
     }
 

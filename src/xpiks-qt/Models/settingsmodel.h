@@ -19,23 +19,21 @@
 #include <QJsonObject>
 #include <QSettings>
 #include <QMutex>
-#include "../Common/baseentity.h"
-#include "../Common/version.h"
-#include "../Models/proxysettings.h"
+#include <Models/Connectivity/proxysettings.h>
 #include "../Helpers/localconfig.h"
 #include "../Helpers/constants.h"
-#include "../Commands/commandmanager.h"
-#include "../Encryption/secretsmanager.h"
-#include "../Models/uploadinforepository.h"
 #include "../Common/delayedactionentity.h"
 #include "../Common/statefulentity.h"
 #include "../Common/isystemenvironment.h"
 #include "../Helpers/jsonobjectmap.h"
 
+namespace Encryption {
+    class SecretsManager;
+}
+
 namespace Models {
     class SettingsModel:
             public QObject,
-            public Common::BaseEntity,
             public Common::DelayedActionEntity
     {
         Q_OBJECT
@@ -79,7 +77,8 @@ namespace Models {
         Q_PROPERTY(QString whatsNewText READ getWhatsNewText CONSTANT)
 
     public:
-        explicit SettingsModel(Common::ISystemEnvironment &environment, QObject *parent = 0);
+        explicit SettingsModel(Common::ISystemEnvironment &environment,
+                               QObject *parent = 0);
         virtual ~SettingsModel() { }
 
     public:
@@ -92,8 +91,6 @@ namespace Models {
     private:
         void moveSetting(QSettings &settingsQSettings, const QString &oldKey, const char* newKey, int type);
         void moveProxyHostSetting(QSettings &settingsQSettings);
-        void wipeOldSettings(QSettings &settingsQSettings);
-        void moveSettingsFromQSettingsToJson();
 
     public:
         ProxySettings *retrieveProxySettings();
@@ -219,6 +216,12 @@ namespace Models {
         void progressiveSuggestionIncrementChanged(int progressiveSuggestionIncrement);
         void useAutoImportChanged(bool value);
 
+    signals:
+        void spellCheckDisabled();
+        void duplicatesCheckDisabled();
+        void spellCheckRestarted();
+        void exiftoolSettingChanged();
+
     public:
         void setExifToolPath(QString value);
         void setUploadTimeout(int uploadTimeout);
@@ -282,6 +285,8 @@ namespace Models {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
+        Encryption::SecretsManager &m_SecretsManager;
+        Commands::AppMessages &m_Messages;
         Common::StatefulEntity m_State;
         QMutex m_SettingsMutex;
         Helpers::LocalConfig m_Config;

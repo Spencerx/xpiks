@@ -13,11 +13,10 @@
 
 #include <QObject>
 #include <QAbstractListModel>
-#include "../Common/baseentity.h"
 #include "completionitem.h"
 
 namespace AutoComplete {
-    class AutoCompleteModel : public QObject, public Common::BaseEntity
+    class AutoCompleteModel : public QObject
     {
         Q_OBJECT
         Q_PROPERTY(int selectedIndex READ getSelectedIndex WRITE setSelectedIndex NOTIFY selectedIndexChanged)

@@ -15,23 +15,22 @@
 #include <QString>
 #include <QTimer>
 #include <QVector>
-#include "../Common/baseentity.h"
-#include "../Common/statefulentity.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/statefulentity.h>
+#include <Common/isystemenvironment.h>
 
 namespace Helpers {
     class AsyncCoordinator;
 }
 
 namespace Translation {
+    class TranslationService;
+
     struct DictionaryInfo {
         QString m_FullIfoPath;
         QString m_Description;
     };
 
-    class TranslationManager :
-            public QObject,
-            public Common::BaseEntity
+    class TranslationManager: public QObject
     {
         Q_OBJECT
         Q_PROPERTY(bool isBusy READ getIsBusy WRITE setIsBusy NOTIFY isBusyChanged)
@@ -43,7 +42,9 @@ namespace Translation {
         Q_PROPERTY(QStringList dictionaries READ getDictionariesDescriptions NOTIFY dictionariesChanged)
 
     public:
-        explicit TranslationManager(Common::ISystemEnvironment &environment, QObject *parent = 0);
+        explicit TranslationManager(Common::ISystemEnvironment &environment,
+                                    TranslationService &translationService,
+                                    QObject *parent = 0);
 
     public:
         bool getHasMore() const { return m_HasMore; }
@@ -61,7 +62,6 @@ namespace Translation {
         int getSelectedDictionaryIndex() const { return m_SelectedDictionaryIndex; }
 
     public:
-        void initializeDictionaries(Helpers::AsyncCoordinator *initCoordinator=nullptr);
         void setQuery(const QString &value);
         void setSelectedDictionaryIndex(int value);
         QStringList getDictionariesDescriptions() const;
@@ -93,6 +93,7 @@ namespace Translation {
 
     private:
         Common::ISystemEnvironment &m_Environment;
+        TranslationService &m_TranslationService;
         Common::StatefulEntity m_State;
         QStringList m_AllowedSuffixes;
         QVector<DictionaryInfo> m_DictionariesList;

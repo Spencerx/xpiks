@@ -14,7 +14,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include "../Models/abstractconfigupdatermodel.h"
 #include "../Common/logging.h"
 #include "../Helpers/localconfig.h"
 #include "../Connectivity/apimanager.h"
@@ -32,10 +31,12 @@
 #define FTP_ZIP_VECTORS_KEY QLatin1String("zip_vector")
 
 namespace Microstocks {
-    StocksFtpListModel::StocksFtpListModel(Common::ISystemEnvironment &environment):
+    StocksFtpListModel::StocksFtpListModel(Common::ISystemEnvironment &environment,
+                                           Connectivity::RequestsService &requestsService):
         Models::AbstractConfigUpdaterModel(
             environment.path({LOCAL_STOCKS_LIST_FILE}),
             Connectivity::ApiManager::getInstance().getStocksACSourceAddr(),
+            requestsService,
             OVERWRITE_STOCKS_CONFIG,
             environment.getIsInMemoryOnly())
     { }

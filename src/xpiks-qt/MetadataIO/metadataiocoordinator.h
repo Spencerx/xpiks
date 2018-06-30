@@ -106,6 +106,9 @@ namespace MetadataIO {
         void writingWorkersFinished(int status);
         void onReadingFinished(int importID);
 
+    public slots:
+        void onExiftoolDiscoveryRequested();
+
     private:
         int getNextImportID();
         void initializeImport(const ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);

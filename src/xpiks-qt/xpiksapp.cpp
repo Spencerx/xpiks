@@ -239,7 +239,7 @@ void XpiksApp::start() {
     m_TelemetryService.startReporting();
     m_UploadInfoRepository.initializeStocksList(&m_InitCoordinator);
     m_WarningsService.initWarningsSettings();
-    m_TranslationManager.initializeDictionaries();
+    m_MaintenanceService.initializeDictionaries(&m_TranslationManager, &m_InitCoordinator);
     m_UploadInfoRepository.initializeConfig();
     m_PresetsModel.initializePresets();
     m_CsvExportModel.initializeExportPlans(&m_InitCoordinator);
@@ -477,6 +477,14 @@ void XpiksApp::connectEntitiesSignalsSlots() {
 
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::settingsUpdated,
                      &m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::onSettingsUpdated);
+    QObject::connect(&m_SettingsModel, &Models::SettingsModel::spellCheckDisabled,
+                     &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckDisabled);
+    QObject::connect(&m_SettingsModel, &Models::SettingsModel::duplicatesCheckDisabled,
+                     m_ArtworksListModel, &Models::ArtworksListModel::onDuplicatesDisabled);
+    QObject::connect(&m_SettingsModel, &Models::SettingsModel::spellCheckRestarted,
+                     m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckRestarted);
+    QObject::connect(&m_SettingsModel, &Models::SettingsModel::exiftoolSettingChanged,
+                     &m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::onExiftoolDiscoveryRequested);
 
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::serviceAvailable,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckerAvailable);

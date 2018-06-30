@@ -194,6 +194,10 @@ namespace MetadataIO {
         setIsInProgress(false);
     }
 
+    void MetadataIOCoordinator::onExiftoolDiscoveryRequested() {
+        autoDiscoverExiftool();
+    }
+
     int MetadataIOCoordinator::getNextImportID() {
         int id = m_LastImportID++;
         return id;

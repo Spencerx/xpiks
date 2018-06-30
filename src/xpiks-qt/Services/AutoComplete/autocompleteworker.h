@@ -12,7 +12,7 @@
 #define AUTOCOMPLETEWORKER_H
 
 #include <QObject>
-#include "../Common/itemprocessingworker.h"
+#include <Common/itemprocessingworker.h>
 #include "completionquery.h"
 #include "libfacecompletionengine.h"
 #include "presetscompletionengine.h"
@@ -23,6 +23,7 @@ namespace Helpers {
 
 namespace KeywordsPresets {
     class PresetKeywordsModel;
+    class IPresetsManager;
 }
 
 namespace AutoComplete {
@@ -35,8 +36,8 @@ namespace AutoComplete {
         Q_OBJECT
     public:
         explicit AutoCompleteWorker(Helpers::AsyncCoordinator *initCoordinator,
-                                    KeywordsAutoCompleteModel *autoCompleteModel,
-                                    KeywordsPresets::PresetKeywordsModel *presetsManager,
+                                    KeywordsAutoCompleteModel &autoCompleteModel,
+                                    KeywordsPresets::PresetKeywordsModel &presetsManager,
                                     QObject *parent = 0);
         virtual ~AutoCompleteWorker();
 
@@ -64,8 +65,8 @@ namespace AutoComplete {
         LibFaceCompletionEngine m_FaceCompletionEngine;
         PresetsCompletionEngine m_PresetsCompletionEngine;
         Helpers::AsyncCoordinator *m_InitCoordinator;
-        KeywordsAutoCompleteModel *m_AutoCompleteModel;
-        KeywordsPresets::PresetKeywordsModel *m_PresetsManager;
+        KeywordsAutoCompleteModel &m_AutoCompleteModel;
+        KeywordsPresets::IPresetsManager &m_PresetsManager;
     };
 }
 

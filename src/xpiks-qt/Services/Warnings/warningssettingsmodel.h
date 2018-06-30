@@ -14,8 +14,8 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include "iwarningssettings.h"
-#include "../Models/abstractconfigupdatermodel.h"
-#include "../Common/isystemenvironment.h"
+#include <Models/Connectivity/abstractconfigupdatermodel.h>
+#include <Common/isystemenvironment.h>
 
 namespace Warnings {
     class WarningsSettingsModel:
@@ -25,7 +25,8 @@ namespace Warnings {
         Q_OBJECT
 
     public:
-        WarningsSettingsModel(Common::ISystemEnvironment &environment);
+        WarningsSettingsModel(Common::ISystemEnvironment &environment,
+                              Connectivity::RequestsService &requestsService);
 
     public:
         virtual const QString &getAllowedFilenameCharacters() const override { return m_AllowedFilenameCharacters; }

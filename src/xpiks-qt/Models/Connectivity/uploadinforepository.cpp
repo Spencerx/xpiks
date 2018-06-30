@@ -12,12 +12,10 @@
 #include "uploadinfo.h"
 #include <QJsonObject>
 #include <QJsonArray>
-#include "../Commands/commandmanager.h"
-#include "../Encryption/secretsmanager.h"
-#include "../Common/defines.h"
-#include "../Models/settingsmodel.h"
-#include "../Helpers/asynccoordinator.h"
-#include "../Connectivity/ftphelpers.h"
+#include <Encryption/secretsmanager.h>
+#include <Common/logging.h>
+#include <Helpers/asynccoordinator.h>
+#include <Connectivity/ftphelpers.h>
 
 #define UPLOAD_INFO_SAVE_TIMEOUT 3000
 #define UPLOAD_INFO_DELAYS_COUNT 10
@@ -163,18 +161,21 @@ namespace Models {
         }
     }
 
-    UploadInfoRepository::UploadInfoRepository(Common::ISystemEnvironment &environment, QObject *parent):
+    UploadInfoRepository::UploadInfoRepository(Common::ISystemEnvironment &environment,
+                                               Encryption::SecretsManager &secretsManager,
+                                               QObject *parent):
         QAbstractListModel(parent),
-        Common::BaseEntity(),
         Common::DelayedActionEntity(UPLOAD_INFO_SAVE_TIMEOUT, UPLOAD_INFO_DELAYS_COUNT),
         m_Environment(environment),
         m_LocalConfig(environment.path({UPLOAD_INFOS_FILE}),
                       environment.getIsInMemoryOnly()),
         m_StocksFtpList(environment),
+        m_SecretsManager(secretsManager),
         m_CurrentIndex(0),
         m_EmptyPasswordsMode(false)
     {
-        QObject::connect(this, &UploadInfoRepository::backupRequired, this, &UploadInfoRepository::onBackupRequired);
+        QObject::connect(this, &UploadInfoRepository::backupRequired,
+                         this, &UploadInfoRepository::onBackupRequired);
 
         QObject::connect(&m_StocksFtpList, &Microstocks::StocksFtpListModel::stocksListUpdated,
                          this, &UploadInfoRepository::stocksListUpdated);
@@ -236,12 +237,6 @@ namespace Models {
         Q_UNUSED(unlocker);
 
         m_StocksFtpList.initializeConfigs();
-    }
-
-    void UploadInfoRepository::setCommandManager(Commands::CommandManager *commandManager) {
-        Common::BaseEntity::setCommandManager(commandManager);
-
-        m_StocksFtpList.setCommandManager(commandManager);
     }
 
     void UploadInfoRepository::removeItem(int row) {
@@ -407,7 +402,7 @@ namespace Models {
                 return uploadInfo->getUsername();
             case PasswordRole: {
                 const QString &encodedPassword = uploadInfo->getPassword();
-                QString password = m_CommandManager->getSecretsManager()->decodePassword(encodedPassword);
+                QString password = m_SecretsManager.decodePassword(encodedPassword);
                 return password;
             }
             case IsSelectedRole:
@@ -476,7 +471,7 @@ namespace Models {
             case EditPasswordRole: {
                 roleToUpdate = PasswordRole;
                 QString rawPassword = value.toString();
-                QString encodedPassword = m_CommandManager->getSecretsManager()->encodePassword(rawPassword);
+                QString encodedPassword = m_SecretsManager.encodePassword(rawPassword);
                 // skip needUpdate
                 uploadInfo->setPassword(encodedPassword);
                 break;
@@ -549,11 +544,7 @@ namespace Models {
 
     void UploadInfoRepository::onBackupRequired() {
         LOG_DEBUG << "#";
-
-        if (saveUploadInfos()) {
-            auto *settingsModel = m_CommandManager->getSettingsModel();
-            settingsModel->clearLegacyUploadInfos();
-        }
+        saveUploadInfos();
     }
 
     void UploadInfoRepository::stocksListUpdated() {

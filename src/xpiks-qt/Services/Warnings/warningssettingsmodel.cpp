@@ -8,10 +8,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 #include "warningssettingsmodel.h"
-#include "../Connectivity/apimanager.h"
+#include <Connectivity/apimanager.h>
 #include <QStandardPaths>
 #include <QDir>
-#include "../Common/logging.h"
+#include <Common/logging.h>
 
 #define OVERWRITE_WARNINGS_CONFIG false
 #define LOCAL_WARNINGS_SETTINGS_FILE QLatin1String("warnings_settings.json")
@@ -40,10 +40,12 @@
 #define DEFAULT_MAX_VIDEO_DURATION_SECONDS 60
 
 namespace Warnings {
-    WarningsSettingsModel::WarningsSettingsModel(Common::ISystemEnvironment &environment):
+    WarningsSettingsModel::WarningsSettingsModel(Common::ISystemEnvironment &environment,
+                                                 Connectivity::RequestsService &requestsService):
         Models::AbstractConfigUpdaterModel(
             environment.path({LOCAL_WARNINGS_SETTINGS_FILE}),
             Connectivity::ApiManager::getInstance().getWarningSettingsAddr(),
+            requestsService,
             OVERWRITE_WARNINGS_CONFIG,
             environment.getIsInMemoryOnly()),
         m_AllowedFilenameCharacters("._-@#"),

@@ -9,13 +9,13 @@
  */
 
 #include "abstractconfigupdatermodel.h"
-#include "../Models/settingsmodel.h"
-#include "../Commands/commandmanager.h"
-#include "../Connectivity/requestsservice.h"
+#include <Models/settingsmodel.h>
+#include <Connectivity/requestsservice.h>
 
 namespace Models {
     AbstractConfigUpdaterModel::AbstractConfigUpdaterModel(const QString &localPath,
                                                            const QString &remoteResource,
+                                                           Connectivity::RequestsService &requestsService,
                                                            bool forceOverwrite,
                                                            bool memoryOnly,
                                                            QObject *parent):
@@ -62,11 +62,7 @@ namespace Models {
         } else
 #endif
         {
-#ifndef CORE_TESTS
-            Q_ASSERT(m_CommandManager != NULL);
-            Connectivity::RequestsService *requestsService = m_CommandManager->getRequestsService();
-            requestsService->receiveConfig(&m_RemoteConfig);
-#endif
+            m_RequestsService.receiveConfig(&m_RemoteConfig);
         }
     }
 

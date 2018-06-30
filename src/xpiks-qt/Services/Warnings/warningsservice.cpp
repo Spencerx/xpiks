@@ -11,11 +11,10 @@
 #include "warningsservice.h"
 #include <QVector>
 #include <QThread>
-#include "../Common/defines.h"
+#include <Common/logging.h>
 #include "warningscheckingworker.h"
-#include "../Commands/commandmanager.h"
 #include "warningsitem.h"
-#include "../Common/flags.h"
+#include <Common/flags.h>
 
 namespace Warnings {    
     QString warningsFlagToString(Common::WarningsCheckFlags flags) {
@@ -157,12 +156,6 @@ namespace Warnings {
         LOG_INFO << "Submitting" << size << "item(s)";
         m_WarningsWorker->submitItems(itemsToSubmit);
         m_WarningsWorker->submitSeparator();
-    }
-
-    void WarningsService::setCommandManager(Commands::CommandManager *commandManager) {
-        Common::BaseEntity::setCommandManager(commandManager);
-
-        m_WarningsSettingsModel.setCommandManager(commandManager);
     }
 
     void WarningsService::workerDestoyed(QObject *object) {

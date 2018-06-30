@@ -17,7 +17,7 @@
 #include <QJsonArray>
 #include <vector>
 #include <memory>
-#include "../Models/abstractconfigupdatermodel.h"
+#include <Models/Connectivity/abstractconfigupdatermodel.h>
 #include "../Common/isystemenvironment.h"
 #include "stockftpoptions.h"
 
@@ -26,7 +26,7 @@ namespace Microstocks {
     {
         Q_OBJECT
     public:
-        StocksFtpListModel(Common::ISystemEnvironment &environment);
+        StocksFtpListModel(Common::ISystemEnvironment &environment, Connectivity::RequestsService &requestsService);
 
     public:
         std::shared_ptr<StockFtpOptions> findFtpOptions(const QString &title) const;

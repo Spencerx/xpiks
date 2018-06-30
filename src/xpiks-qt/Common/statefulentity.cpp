@@ -25,6 +25,10 @@ namespace Common {
         Q_ASSERT(!stateName.endsWith(".json", Qt::CaseInsensitive));
     }
 
+    StatefulEntity::~StatefulEntity() {
+        Q_ASSERT(m_InitCounter.load() > 0);
+    }
+
     void StatefulEntity::init() {
         LOG_DEBUG << m_StateName;
 

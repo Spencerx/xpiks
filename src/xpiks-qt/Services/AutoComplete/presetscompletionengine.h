@@ -23,7 +23,7 @@ namespace AutoComplete {
     class PresetsCompletionEngine: public CompletionEngineBase
     {
     public:
-        PresetsCompletionEngine(KeywordsPresets::PresetKeywordsModel *presetsModel);
+        PresetsCompletionEngine(KeywordsPresets::PresetKeywordsModel &presetsModel);
 
         // CompletionEngineBase interface
     public:
@@ -32,7 +32,7 @@ namespace AutoComplete {
         virtual bool generateCompletions(const CompletionQuery &query, std::vector<CompletionResult> &completions) override;
 
     private:
-        KeywordsPresets::PresetKeywordsModel *m_PresetsModel;
+        KeywordsPresets::PresetKeywordsModel &m_PresetsManager;
     };
 }
 

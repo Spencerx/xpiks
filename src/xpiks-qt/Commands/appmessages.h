@@ -48,7 +48,7 @@ namespace Commands {
             ZipArtworks,
             UploadArtworks,
             CreateThumbnail,
-            ExportToCSV
+            ExportToCSV,
         };
     };
 }

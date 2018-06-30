@@ -13,8 +13,10 @@
 #include <QApplication>
 #include <QDir>
 #include <QQmlEngine>
+#include <Common/defines.h>
+#include <Common/logging.h>
 #include "xpiksplugininterface.h"
-#include "../Commands/commandmanager.h"
+#include "../Commands/Base/icommandmanager.h"
 #include "../UndoRedo/undoredomanager.h"
 #include "pluginwrapper.h"
 #include "../Models/artitemsmodel.h"
@@ -24,11 +26,15 @@
 
 namespace Plugins {
     PluginManager::PluginManager(Common::ISystemEnvironment &environment,
+                                 Commands::ICommandManager &commandManager,
+                                 KeywordsPresets::IPresetsManager &presetsManager,
                                  Storage::DatabaseManager *dbManager,
                                  Connectivity::RequestsService &requestsService,
                                  Microstocks::MicrostockAPIClients &apiClients):
         QAbstractListModel(),
         m_Environment(environment),
+        m_CommandManager(commandManager),
+        m_PresetsManager(presetsManager),
         m_DatabaseManager(dbManager),
         m_MicrostockServices(requestsService, apiClients),
         m_LastPluginID(0)
@@ -407,10 +413,8 @@ namespace Plugins {
         do {
             try {
                 plugin->injectCommandManager(m_CommandManager);
-                plugin->injectUndoRedoManager(m_CommandManager->getUndoRedoManager());
                 plugin->injectUIProvider(pluginWrapper->getUIProvider());
-                plugin->injectArtworksSource(m_CommandManager->getArtItemsModel());
-                plugin->injectPresetsManager(m_CommandManager->getPresetsModel());
+                plugin->injectPresetsManager(m_PresetsManager);
                 plugin->injectDatabaseManager(pluginWrapper->getDatabaseManager());
                 plugin->injectMicrostockServices(&m_MicrostockServices);
             }

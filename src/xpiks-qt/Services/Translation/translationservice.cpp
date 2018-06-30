@@ -12,12 +12,12 @@
 #include <QThread>
 #include "translationworker.h"
 #include "translationquery.h"
-#include "../Helpers/asynccoordinator.h"
+#include <Helpers/asynccoordinator.h>
+#include <Common/logging.h>
 
 namespace Translation {
-    TranslationService::TranslationService(TranslationManager &manager, QObject *parent) :
+    TranslationService::TranslationService(QObject *parent) :
         QObject(parent),
-        m_TranslationManager(manager),
         m_TranslationWorker(nullptr),
         m_RestartRequired(false)
     {
@@ -44,7 +44,8 @@ namespace Translation {
         QObject::connect(thread, &QThread::started, m_TranslationWorker, &TranslationWorker::process);
         QObject::connect(m_TranslationWorker, &TranslationWorker::stopped, thread, &QThread::quit);
 
-        QObject::connect(m_TranslationWorker, &TranslationWorker::stopped, m_TranslationWorker, &TranslationWorker::deleteLater);
+        QObject::connect(m_TranslationWorker, &TranslationWorker::stopped,
+                         m_TranslationWorker, &TranslationWorker::deleteLater);
         QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 
         QObject::connect(m_TranslationWorker, &TranslationWorker::stopped,
@@ -102,7 +103,8 @@ namespace Translation {
 
         std::shared_ptr<TranslationQuery> query(new TranslationQuery(wordToTranslate),
                                                 [](TranslationQuery *tq) { tq->deleteLater(); });
-        QObject::connect(query.get(), &TranslationQuery::translationAvailable, &m_TranslationManager, &TranslationManager::translationArrived);
+        QObject::connect(query.get(), &TranslationQuery::translationAvailable,
+                         this, &TranslationService::translationAvailable);
 
         m_TranslationWorker->submitItem(query);
     }

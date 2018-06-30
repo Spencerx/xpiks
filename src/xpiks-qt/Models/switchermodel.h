@@ -15,12 +15,11 @@
 #include <QTimer>
 #include "../Connectivity/switcherconfig.h"
 #include "../Helpers/localconfig.h"
-#include "../Common/baseentity.h"
 #include "../Common/statefulentity.h"
 #include "../Common/isystemenvironment.h"
 
 namespace Models {
-    class SwitcherModel: public QObject, public Common::BaseEntity
+    class SwitcherModel: public QObject
     {
         Q_OBJECT
         Q_PROPERTY(bool isDonationCampaign1Active READ getIsDonationCampaign1On NOTIFY switchesUpdated)
@@ -31,9 +30,6 @@ namespace Models {
         Q_PROPERTY(bool keywordsDragDropEnabled READ getKeywordsDragDropEnabled NOTIFY switchesUpdated)
     public:
         SwitcherModel(Common::ISystemEnvironment &environment, QObject *parent=nullptr);
-
-    public:
-        virtual void setCommandManager(Commands::CommandManager *commandManager) override;
 
     public:
         void initialize();

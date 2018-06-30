@@ -9,24 +9,24 @@
  */
 
 #include "presetscompletionengine.h"
-#include "../KeywordsPresets/presetkeywordsmodel.h"
-#include "../Helpers/stringhelper.h"
+#include <KeywordsPresets/presetkeywordsmodel.h>
+#include <Helpers/stringhelper.h>
 
 #define MAX_PRESETS_IN_AC_COUNT 10
 #define PRESET_SIMILARITY_THRESHOLD 80
 
 namespace AutoComplete {
-    PresetsCompletionEngine::PresetsCompletionEngine(KeywordsPresets::PresetKeywordsModel *presetsModel):
-        m_PresetsModel(presetsModel)
+    PresetsCompletionEngine::PresetsCompletionEngine(KeywordsPresets::PresetKeywordsModel &presetsModel):
+        m_PresetsManager(presetsModel)
     {
-        Q_ASSERT(presetsModel != nullptr);
     }
 
     bool PresetsCompletionEngine::initialize() {
         return true;
     }
 
-    bool PresetsCompletionEngine::generateCompletions(const CompletionQuery &query, std::vector<CompletionResult> &completions) {
+    bool PresetsCompletionEngine::generateCompletions(const CompletionQuery &query,
+                                                      std::vector<CompletionResult> &completions) {
         QString searchTerm = query.getPrefix();
 
         if (searchTerm.startsWith(PRESETS_COMPLETE_PREFIX)) {
@@ -37,7 +37,7 @@ namespace AutoComplete {
 
         const size_t initialSize = completions.size();
 
-        m_PresetsModel->foreachPreset([&completions, &searchTerm](size_t, KeywordsPresets::PresetModel *preset) {
+        m_PresetsManager.foreachPreset([&completions, &searchTerm](size_t, KeywordsPresets::PresetModel *preset) {
             const QString &presetName = preset->m_PresetName;
 
             bool canAdd = false;

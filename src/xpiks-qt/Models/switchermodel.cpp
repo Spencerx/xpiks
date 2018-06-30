@@ -23,7 +23,6 @@ namespace Models {
 
     SwitcherModel::SwitcherModel(Common::ISystemEnvironment &environment, QObject *parent):
         QObject(parent),
-        Common::BaseEntity(),
         m_State("switcher", environment),
         m_Config(environment),
         // effectively meaning all features are OFF
@@ -34,11 +33,6 @@ namespace Models {
 
         m_DelayTimer.setSingleShot(true);
         QObject::connect(&m_DelayTimer, &QTimer::timeout, this, &SwitcherModel::onDelayTimer);
-    }
-
-    void SwitcherModel::setCommandManager(Commands::CommandManager *commandManager) {
-        Common::BaseEntity::setCommandManager(commandManager);
-        m_Config.setCommandManager(commandManager);
     }
 
     void SwitcherModel::initialize() {

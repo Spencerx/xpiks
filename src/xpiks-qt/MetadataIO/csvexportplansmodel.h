@@ -29,7 +29,9 @@ namespace MetadataIO {
     {
         Q_OBJECT
     public:
-        CsvExportPlansModel(Common::ISystemEnvironment &environment, QObject *parent = nullptr);
+        CsvExportPlansModel(Common::ISystemEnvironment &environment,
+                            Connectivity::RequestsService &requestsService,
+                            QObject *parent = nullptr);
 
     public:
         std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() { return m_ExportPlans; }

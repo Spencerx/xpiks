@@ -10,17 +10,17 @@
 
 #include "autocompleteworker.h"
 #include <QDir>
-#include "../Common/defines.h"
+#include <Common/defines.h>
 #include <QStringList>
-#include "../Helpers/asynccoordinator.h"
-#include "../KeywordsPresets/presetkeywordsmodel.h"
+#include <Helpers/asynccoordinator.h>
+#include <KeywordsPresets/ipresetsmanager.h>
 #include "keywordsautocompletemodel.h"
-#include "../Common/basickeywordsmodel.h"
+#include <Artworks/basickeywordsmodel.h>
 
 namespace AutoComplete {
     AutoCompleteWorker::AutoCompleteWorker(Helpers::AsyncCoordinator *initCoordinator,
-                                           KeywordsAutoCompleteModel *autoCompleteModel,
-                                           KeywordsPresets::PresetKeywordsModel *presetsManager,
+                                           KeywordsAutoCompleteModel &autoCompleteModel,
+                                           KeywordsPresets::PresetKeywordsModel &presetsManager,
                                            QObject *parent) :
         QObject(parent),
         m_PresetsCompletionEngine(presetsManager),
@@ -28,8 +28,6 @@ namespace AutoComplete {
         m_AutoCompleteModel(autoCompleteModel),
         m_PresetsManager(presetsManager)
     {
-        Q_ASSERT(presetsManager != nullptr);
-        Q_ASSERT(autoCompleteModel != nullptr);
     }
 
     AutoCompleteWorker::~AutoCompleteWorker() {
@@ -121,7 +119,6 @@ namespace AutoComplete {
 
     void AutoCompleteWorker::updateCompletions(std::shared_ptr<CompletionQuery> &item) {
         LOG_INTEGR_TESTS_OR_DEBUG << item->getPrefix();
-        Q_ASSERT(m_PresetsManager != nullptr);
 
         bool anyChanges = false;
         auto &completionsList = item->getCompletions();
@@ -130,7 +127,7 @@ namespace AutoComplete {
 
         for (auto &result: completionsList) {
             KeywordsPresets::ID_t presetID;
-            if (m_PresetsManager->tryFindSinglePresetByName(result.m_Completion, false, presetID)) {
+            if (m_PresetsManager.tryFindSinglePresetByName(result.m_Completion, false, presetID)) {
                 result.m_PresetID = presetID;
                 anyChanges = true;
             }

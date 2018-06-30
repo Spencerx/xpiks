@@ -14,19 +14,23 @@
 #include <QSet>
 #include <QJsonDocument>
 #include <QFileInfo>
-#include "../Helpers/comparevaluesjson.h"
-#include "../Helpers/remoteconfig.h"
-#include "../Helpers/localconfig.h"
-#include "../Helpers/jsonhelper.h"
-#include "../Common/baseentity.h"
+#include <Helpers/comparevaluesjson.h>
+#include <Helpers/remoteconfig.h>
+#include <Helpers/localconfig.h>
+#include <Helpers/jsonhelper.h>
+
+namespace Connectivity {
+    class RequestsService;
+}
 
 namespace Models {
-    class AbstractConfigUpdaterModel: public QObject, public Helpers::CompareValuesJson, public Common::BaseEntity
+    class AbstractConfigUpdaterModel: public QObject, public Helpers::CompareValuesJson
     {
         Q_OBJECT
     public:
         AbstractConfigUpdaterModel(const QString &localPath,
                                    const QString &remoteResource,
+                                   Connectivity::RequestsService &requestsService,
                                    bool forceOverwrite,
                                    bool memoryOnly, QObject *parent=nullptr);
         virtual ~AbstractConfigUpdaterModel() {}
@@ -58,6 +62,7 @@ namespace Models {
     private:
         Helpers::RemoteConfig m_RemoteConfig;
         Helpers::LocalConfig m_LocalConfig;
+        Connectivity::RequestsService &m_RequestsService;
         bool m_ForceOverwrite;
 
 #ifdef INTEGRATION_TESTS

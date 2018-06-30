@@ -13,19 +13,17 @@
 
 #include <QObject>
 #include "translationmanager.h"
-#include "../Common/iservicebase.h"
 
 namespace Translation {
     class TranslationWorker;
 
     class TranslationService :
-            public QObject,
-            public Common::IServiceBase<QString>
+            public QObject
     {
         Q_OBJECT
     public:
-        explicit TranslationService(TranslationManager &manager, QObject *parent = 0);
-        virtual ~TranslationService() {}
+        explicit TranslationService(QObject *parent = 0);
+        virtual ~TranslationService() { }
 
         virtual void startService(const std::shared_ptr<Common::ServiceStartParams> &params) override;
         virtual void stopService() override;
@@ -42,12 +40,14 @@ namespace Translation {
         void selectDictionary(const QString &dictionaryPath);
         void translate(const QString &what);
 
+    signals:
+        void translationAvailable();
+
     private slots:
         void workerFinished();
         void workerDestroyed(QObject* object);
 
     private:
-        TranslationManager &m_TranslationManager;
         TranslationWorker *m_TranslationWorker;
         volatile bool m_RestartRequired;
     };

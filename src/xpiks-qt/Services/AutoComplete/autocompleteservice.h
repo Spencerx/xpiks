@@ -13,9 +13,8 @@
 
 #include <QObject>
 #include <QString>
-#include "../Common/iservicebase.h"
 
-namespace Common {
+namespace Artworks {
     class BasicKeywordsModel;
 }
 
@@ -32,14 +31,13 @@ namespace AutoComplete {
     class KeywordsAutoCompleteModel;
 
     class AutoCompleteService:
-            public QObject,
-            public Common::IServiceBase<QString>
+            public QObject
     {
         Q_OBJECT
     public:
-        AutoCompleteService(KeywordsAutoCompleteModel *autoCompleteModel,
-                            KeywordsPresets::PresetKeywordsModel *presetsManager,
-                            Models::SettingsModel *settingsModel,
+        AutoCompleteService(KeywordsAutoCompleteModel &autoCompleteModel,
+                            KeywordsPresets::PresetKeywordsModel &presetsManager,
+                            Models::SettingsModel &settingsModel,
                             QObject *parent = 0);
         virtual ~AutoCompleteService();
 
@@ -48,11 +46,6 @@ namespace AutoComplete {
 
         virtual bool isAvailable() const override { return true; }
         virtual bool isBusy() const override;
-
-    protected:
-        virtual void submitItem(QString *item) override;
-        virtual void submitItem(QString *item, Common::flag_t flags) override;
-        virtual void submitItems(const std::vector<QString*> &items) override;
 
     public:
         void restartWorker();
@@ -73,9 +66,9 @@ namespace AutoComplete {
 
     private:
         AutoCompleteWorker *m_AutoCompleteWorker;
-        KeywordsAutoCompleteModel *m_AutoCompleteModel;
-        KeywordsPresets::PresetKeywordsModel *m_PresetsManager;
-        Models::SettingsModel *m_SettingsModel;
+        KeywordsAutoCompleteModel &m_AutoCompleteModel;
+        KeywordsPresets::PresetKeywordsModel &m_PresetsManager;
+        Models::SettingsModel &m_SettingsModel;
         volatile bool m_RestartRequired;
     };
 }

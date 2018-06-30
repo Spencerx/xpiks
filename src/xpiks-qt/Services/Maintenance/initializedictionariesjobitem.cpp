@@ -8,11 +8,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "../Common/defines.h"
-#include "../Translation/translationmanager.h"
+#include <Common/logging.h>
+#include <Services/Translation/translationmanager.h>
 #include "initializedictionariesjobitem.h"
-#include "../Helpers/asynccoordinator.h"
-#include "../Common/logging.h"
+#include <Helpers/asynccoordinator.h>
 
 namespace Maintenance {
     InitializeDictionariesJobItem::InitializeDictionariesJobItem(Translation::TranslationManager *translationManager, Helpers::AsyncCoordinator *initCoordinator):

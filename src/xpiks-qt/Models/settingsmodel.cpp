@@ -12,10 +12,9 @@
 #include <QQmlEngine>
 #include "../Common/defines.h"
 #include "../Models/artitemsmodel.h"
-#include "../Maintenance/maintenanceservice.h"
+#include <Encryption/secretsmanager.h>
 #include "../MetadataIO/metadataiocoordinator.h"
-#include "../Commands/commandmanager.h"
-#include "filteredartworkslistmodel.h"
+#include <Common/version.h>
 
 #ifdef Q_OS_MAC
 #  define DEFAULT_EXIFTOOL "/usr/bin/exiftool"
@@ -127,9 +126,9 @@ namespace Models {
         oldSettings.remove(QLatin1String(settingName));
     }
 
-    SettingsModel::SettingsModel(Common::ISystemEnvironment &environment, QObject *parent) :
+    SettingsModel::SettingsModel(Common::ISystemEnvironment &environment,
+                                 QObject *parent) :
         QObject(parent),
-        Common::BaseEntity(),
         Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
         m_State("settings", environment),
         m_Config(environment.path({SETTINGS_FILE}),
@@ -246,69 +245,6 @@ namespace Models {
         QVariant qvalue = oldSettings.value(oldKey);
         ProxySettings proxySettings = qvalue.value<ProxySettings>();
         m_SettingsMap->setValue(Constants::proxyHost, serializeProxyForSettings(proxySettings));
-    }
-
-    void SettingsModel::wipeOldSettings(QSettings &oldSettings) {
-        using namespace Constants;
-
-        clearSetting(oldSettings, PATH_TO_EXIFTOOL);
-        clearSetting(oldSettings, SAVE_BACKUPS);
-        clearSetting(oldSettings, KEYWORD_SIZE_SCALE);
-        clearSetting(oldSettings, DISMISS_DURATION);
-        clearSetting(oldSettings, FIT_SMALL_PREVIEW);
-        clearSetting(oldSettings, SEARCH_USING_AND);
-        clearSetting(oldSettings, SEARCH_BY_FILEPATH);
-        clearSetting(oldSettings, DICT_PATH);
-        clearSetting(oldSettings, USER_STATISTICS);
-        clearSetting(oldSettings, CHECK_FOR_UPDATES);
-        clearSetting(oldSettings, NUMBER_OF_LAUNCHES);
-        clearSetting(oldSettings, APP_WINDOW_WIDTH);
-        clearSetting(oldSettings, APP_WINDOW_HEIGHT);
-        clearSetting(oldSettings, APP_WINDOW_X);
-        clearSetting(oldSettings, APP_WINDOW_Y);
-        clearSetting(oldSettings, AUTO_FIND_VECTORS);
-        clearSetting(oldSettings, USE_PROXY);
-        clearSetting(oldSettings, PROXY_HOST);
-        clearSetting(oldSettings, UPLOAD_HOSTS);
-        clearSetting(oldSettings, USE_MASTER_PASSWORD);
-        clearSetting(oldSettings, MASTER_PASSWORD_HASH);
-        clearSetting(oldSettings, ONE_UPLOAD_SECONDS_TIMEMOUT);
-        clearSetting(oldSettings, USE_CONFIRMATION_DIALOGS);
-        clearSetting(oldSettings, RECENT_DIRECTORIES);
-        clearSetting(oldSettings, RECENT_FILES);
-        clearSetting(oldSettings, MAX_PARALLEL_UPLOADS);
-        clearSetting(oldSettings, USE_SPELL_CHECK);
-        clearSetting(oldSettings, USER_AGENT_ID);
-        clearSetting(oldSettings, INSTALLED_VERSION);
-        clearSetting(oldSettings, USER_CONSENT);
-        clearSetting(oldSettings, SELECTED_LOCALE);
-        clearSetting(oldSettings, SELECTED_THEME_INDEX);
-        clearSetting(oldSettings, USE_AUTO_COMPLETE);
-        clearSetting(oldSettings, USE_EXIFTOOL);
-        clearSetting(oldSettings, CACHE_IMAGES_AUTOMATICALLY);
-        clearSetting(oldSettings, SCROLL_SPEED_SENSIVITY);
-        clearSetting(oldSettings, AUTO_DOWNLOAD_UPDATES);
-        clearSetting(oldSettings, AVAILABLE_UPDATE_VERSION);
-        clearSetting(oldSettings, ARTWORK_EDIT_RIGHT_PANE_WIDTH);
-        clearSetting(oldSettings, TRANSLATOR_SELECTED_DICT_INDEX);
-    }
-
-    void SettingsModel::moveSettingsFromQSettingsToJson() {
-        LOG_DEBUG << "#";
-
-        {
-            QMutexLocker locker(&m_SettingsMutex);
-            Q_UNUSED(locker);
-
-            doMoveSettingsFromQSettingsToJson();
-        }
-
-        Encryption::SecretsManager *secretsManager = m_CommandManager->getSecretsManager();
-        secretsManager->setMasterPasswordHash(getMasterPasswordHash());
-#ifndef CORE_TESTS
-        Models::UploadInfoRepository *uploadInfoRepository = m_CommandManager->getUploadInfoRepository();
-        uploadInfoRepository->initFromString(getLegacyUploadHosts());
-#endif
     }
 
     ProxySettings *SettingsModel::retrieveProxySettings() {
@@ -651,7 +587,7 @@ namespace Models {
 #if defined(Q_OS_LINUX)
         if (m_DictsPathChanged) {
             // TODO: check if need to restart depending on path
-            xpiks()->restartSpellChecking();
+            emit spellCheckRestarted();
             m_DictsPathChanged = false;
         }
 #endif
@@ -660,7 +596,7 @@ namespace Models {
 
         if (m_UseSpellCheckChanged) {
             if (!getUseSpellCheck()) {
-                xpiks()->disableSpellChecking();
+                emit spellCheckDisabled();
             } else {
                 requiresSpellCheck = true;
             }
@@ -668,19 +604,18 @@ namespace Models {
 
         if (m_DetectDuplicatesChanged) {
             if (!getDetectDuplicates()) {
-                xpiks()->disableDuplicatesCheck();
+                emit duplicatesCheckDisabled();
             } else {
                 requiresSpellCheck = true;
             }
         }
 
         if (requiresSpellCheck) {
-            auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-            filteredModel->spellCheckAllItems();
+            emit spellCheckRestarted();
         }
 
         if (m_ExiftoolPathChanged) {
-            xpiks()->autoDiscoverExiftool();
+            emit exiftoolSettingChanged();
         }
 
         resetChangeStates();
@@ -772,8 +707,7 @@ namespace Models {
 
     void SettingsModel::setMasterPasswordHash() {
         LOG_DEBUG << "#";
-        Encryption::SecretsManager *secretsManager = m_CommandManager->getSecretsManager();
-        m_SettingsMap->setValue(Constants::masterPasswordHash, secretsManager->getMasterPasswordHash());
+        m_SettingsMap->setValue(Constants::masterPasswordHash, m_SecretsManager.getMasterPasswordHash());
     }
 
     void SettingsModel::setUserAgentId(const QString &id) {

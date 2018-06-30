@@ -9,7 +9,8 @@
  */
 
 #include <QThread>
-#include "../Common/defines.h"
+#include <Common/defines.h>
+#include <Common/logging.h>
 #include "maintenanceservice.h"
 #include "maintenanceworker.h"
 #include "logscleanupjobitem.h"
@@ -21,6 +22,7 @@
 #include "moveimagecachejobitem.h"
 #include "xpkscleanupjob.h"
 #include "updatebundlecleanupjobitem.h"
+#include <Helpers/asynccoordinator.h>
 
 namespace Maintenance {
     MaintenanceService::MaintenanceService(Common::ISystemEnvironment &environment):
@@ -103,6 +105,8 @@ namespace Maintenance {
 
     void MaintenanceService::initializeDictionaries(Translation::TranslationManager *translationManager, Helpers::AsyncCoordinator *initCoordinator) {
         LOG_DEBUG << "#";
+        Helpers::AsyncCoordinatorLocker locker(initCoordinator);
+        Q_UNUSED(locker);
         std::shared_ptr<IMaintenanceItem> jobItem(new InitializeDictionariesJobItem(translationManager, initCoordinator));
         m_MaintenanceWorker->submitFirst(jobItem);
     }

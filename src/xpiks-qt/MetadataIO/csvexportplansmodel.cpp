@@ -165,10 +165,13 @@ namespace MetadataIO {
         return result;
     }
 
-    CsvExportPlansModel::CsvExportPlansModel(Common::ISystemEnvironment &environment, QObject *parent):
+    CsvExportPlansModel::CsvExportPlansModel(Common::ISystemEnvironment &environment,
+                                             Connectivity::RequestsService &requestsService,
+                                             QObject *parent):
         Models::AbstractConfigUpdaterModel(
             environment.path({EXPORT_PLANS_FILE}),
             Connectivity::ApiManager::getInstance().getCsvExportPlansAddr(),
+            requestsService,
             OVERWRITE_CSV_PLANS,
             environment.getIsInMemoryOnly(),
             parent),

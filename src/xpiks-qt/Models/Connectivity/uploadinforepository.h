@@ -18,15 +18,18 @@
 #include <QList>
 #include <vector>
 #include <memory>
-#include "../Common/baseentity.h"
-#include "../Common/delayedactionentity.h"
-#include "../Helpers/localconfig.h"
-#include "../Common/isystemenvironment.h"
-#include "../AutoComplete/stringsautocompletemodel.h"
-#include "../Microstocks/stocksftplistmodel.h"
+#include <Common/delayedactionentity.h>
+#include <Helpers/localconfig.h>
+#include <Common/isystemenvironment.h>
+#include <Services/AutoComplete/stringsautocompletemodel.h>
+#include <Microstocks/stocksftplistmodel.h>
 
 namespace Helpers {
     class AsyncCoordinator;
+}
+
+namespace Encryption {
+    class SecretsManager;
 }
 
 namespace Models {
@@ -34,14 +37,15 @@ namespace Models {
 
     class UploadInfoRepository:
             public QAbstractListModel,
-            public Common::BaseEntity,
             public Common::DelayedActionEntity
     {
         Q_OBJECT
         Q_PROPERTY(int infosCount READ getInfosCount NOTIFY infosCountChanged)
 
     public:
-        UploadInfoRepository(Common::ISystemEnvironment &environment, QObject *parent = 0);
+        UploadInfoRepository(Common::ISystemEnvironment &environment,
+                             Encryption::SecretsManager &secretsManager,
+                             QObject *parent = 0);
         virtual ~UploadInfoRepository();
 
     public:
@@ -78,7 +82,6 @@ namespace Models {
         void initFromString(const QString &savedString);
         void initializeConfig();        
         void initializeStocksList(Helpers::AsyncCoordinator *initCoordinator);
-        virtual void setCommandManager(Commands::CommandManager *commandManager) override;
 
     public:
         Q_INVOKABLE void removeItem(int row);
@@ -154,6 +157,7 @@ namespace Models {
         Helpers::LocalConfig m_LocalConfig;
         AutoComplete::StringsAutoCompleteModel m_StocksCompletionSource;
         Microstocks::StocksFtpListModel m_StocksFtpList;
+        Encryption::SecretsManager m_SecretsManager;
         int m_CurrentIndex;
         // when MP is cancelled before Upload dialog
         // all passwords should be empty

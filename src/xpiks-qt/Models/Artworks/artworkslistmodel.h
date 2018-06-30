@@ -157,6 +157,12 @@ namespace Models {
         void setCurrentIndex(size_t index);
         void registerListeners();
 
+    private:
+        // message handlers
+        void resetSpellCheckResults();
+        void resetDuplicatesResults();
+        void spellCheckAllItems();
+
     public:
         // qabstractlistmodel methods
         virtual int rowCount(const QModelIndex &) const { return (int)getArtworksCount(); }
@@ -203,6 +209,9 @@ namespace Models {
         void onArtworkEditingPaused();
         void onUndoStackEmpty();
         void onSpellCheckerAvailable(bool afterRestart);
+        void onSpellCheckRestarted();
+        void onSpellCheckDisabled();
+        void onDuplicatesDisabled();
         void userDictUpdateHandler(const QStringList &keywords, bool overwritten);
         void userDictClearedHandler();
 

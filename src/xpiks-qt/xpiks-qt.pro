@@ -38,16 +38,16 @@ SOURCES += main.cpp \
     Helpers/logger.cpp \
     Helpers/helpersqmlwrapper.cpp \
     Connectivity/updateservice.cpp \
-    SpellCheck/spellcheckerservice.cpp \
-    SpellCheck/spellcheckitem.cpp \
-    SpellCheck/spellcheckworker.cpp \
-    SpellCheck/spellchecksuggestionmodel.cpp \
-    SpellCheck/spellcheckerrorshighlighter.cpp \
-    SpellCheck/spellcheckiteminfo.cpp \
-    SpellCheck/spellsuggestionsitem.cpp \
+    Services/SpellCheck/spellcheckerservice.cpp \
+    Services/SpellCheck/spellcheckitem.cpp \
+    Services/SpellCheck/spellcheckworker.cpp \
+    Services/SpellCheck/spellchecksuggestionmodel.cpp \
+    Services/SpellCheck/spellcheckerrorshighlighter.cpp \
+    Services/SpellCheck/spellcheckiteminfo.cpp \
+    Services/SpellCheck/spellsuggestionsitem.cpp \
     Connectivity/telemetryservice.cpp \
     Connectivity/updatescheckerworker.cpp \
-    Warnings/warningscheckingworker.cpp \
+    Services/Warnings/warningscheckingworker.cpp \
     MetadataIO/metadataiocoordinator.cpp \
     Connectivity/testconnection.cpp \
     Connectivity/ftphelpers.cpp \
@@ -55,9 +55,9 @@ SOURCES += main.cpp \
     Plugins/pluginwrapper.cpp \
     Plugins/pluginactionsmodel.cpp \
     Plugins/uiprovider.cpp \
-    Warnings/warningsservice.cpp \
+    Services/Warnings/warningsservice.cpp \
     Helpers/loghighlighter.cpp \
-    Warnings/warningsmodel.cpp \
+    Services/Warnings/warningsmodel.cpp \
     Helpers/filterhelpers.cpp \
     QMLExtensions/triangleelement.cpp \
     Suggestion/locallibraryqueryengine.cpp \
@@ -65,8 +65,8 @@ SOURCES += main.cpp \
     Helpers/remoteconfig.cpp \
     Helpers/localconfig.cpp \
     Helpers/jsonhelper.cpp \
-    AutoComplete/autocompleteworker.cpp \
-    AutoComplete/autocompleteservice.cpp \
+    Services/AutoComplete/autocompleteworker.cpp \
+    Services/AutoComplete/autocompleteservice.cpp \
     Microstocks/stocksftplistmodel.cpp \
     QMLExtensions/imagecachingworker.cpp \
     QMLExtensions/imagecachingservice.cpp \
@@ -75,7 +75,7 @@ SOURCES += main.cpp \
     Helpers/keywordshelpers.cpp \
     Connectivity/uploadwatcher.cpp \
     Connectivity/telemetryworker.cpp \
-    Warnings/warningssettingsmodel.cpp \
+    Services/Warnings/warningssettingsmodel.cpp \
     Connectivity/simplecurlrequest.cpp \
     Connectivity/curlinithelper.cpp \
     Connectivity/simplecurldownloader.cpp \
@@ -83,33 +83,33 @@ SOURCES += main.cpp \
     KeywordsPresets/presetkeywordsmodel.cpp \
     KeywordsPresets/presetkeywordsmodelconfig.cpp \
     QMLExtensions/folderelement.cpp \
-    Translation/translationservice.cpp \
-    Translation/translationmanager.cpp \
-    Translation/translationworker.cpp \
-    Translation/translationquery.cpp \
+    Services/Translation/translationservice.cpp \
+    Services/Translation/translationmanager.cpp \
+    Services/Translation/translationworker.cpp \
+    Services/Translation/translationquery.cpp \
     Plugins/sandboxeddependencies.cpp \
-    SpellCheck/userdicteditmodel.cpp \
+    Services/SpellCheck/userdicteditmodel.cpp \
     Helpers/asynccoordinator.cpp \
     QMLExtensions/tabsmodel.cpp \
-    Maintenance/maintenanceworker.cpp \
-    Maintenance/maintenanceservice.cpp \
-    Maintenance/logscleanupjobitem.cpp \
-    Maintenance/updatescleanupjobitem.cpp \
-    Maintenance/launchexiftooljobitem.cpp \
-    Maintenance/initializedictionariesjobitem.cpp \
-    Maintenance/movesettingsjobitem.cpp \
+    Services/Maintenance/maintenanceworker.cpp \
+    Services/Maintenance/maintenanceservice.cpp \
+    Services/Maintenance/logscleanupjobitem.cpp \
+    Services/Maintenance/updatescleanupjobitem.cpp \
+    Services/Maintenance/launchexiftooljobitem.cpp \
+    Services/Maintenance/initializedictionariesjobitem.cpp \
+    Services/Maintenance/movesettingsjobitem.cpp \
     QMLExtensions/videocachingservice.cpp \
     QMLExtensions/videocachingworker.cpp \
     Helpers/filehelpers.cpp \
     Helpers/artworkshelpers.cpp \
-    Maintenance/savesessionjobitem.cpp \
+    Services/Maintenance/savesessionjobitem.cpp \
     Connectivity/switcherconfig.cpp \
     Connectivity/requestsworker.cpp \
     Connectivity/requestsservice.cpp \
     Storage/database.cpp \
     QMLExtensions/cachedimage.cpp \
     QMLExtensions/dbimagecacheindex.cpp \
-    Maintenance/moveimagecachejobitem.cpp \
+    Services/Maintenance/moveimagecachejobitem.cpp \
     QMLExtensions/cachedvideo.cpp \
     QMLExtensions/dbvideocacheindex.cpp \
     MetadataIO/cachedartwork.cpp \
@@ -117,13 +117,13 @@ SOURCES += main.cpp \
     MetadataIO/metadataioworker.cpp \
     MetadataIO/metadataioservice.cpp \
     MetadataIO/metadatareadinghub.cpp \
-    AutoComplete/libfacecompletionengine.cpp \
-    AutoComplete/autocompletemodel.cpp \
-    AutoComplete/keywordsautocompletemodel.cpp \
-    AutoComplete/stringsautocompletemodel.cpp \
-    AutoComplete/presetscompletionengine.cpp \
-    SpellCheck/duplicatesreviewmodel.cpp \
-    SpellCheck/duplicateshighlighter.cpp \
+    Services/AutoComplete/libfacecompletionengine.cpp \
+    Services/AutoComplete/autocompletemodel.cpp \
+    Services/AutoComplete/keywordsautocompletemodel.cpp \
+    Services/AutoComplete/stringsautocompletemodel.cpp \
+    Services/AutoComplete/presetscompletionengine.cpp \
+    Services/SpellCheck/duplicatesreviewmodel.cpp \
+    Services/SpellCheck/duplicateshighlighter.cpp \
     MetadataIO/csvexportworker.cpp \
     MetadataIO/csvexportplansmodel.cpp \
     MetadataIO/csvexportproperties.cpp \
@@ -131,10 +131,10 @@ SOURCES += main.cpp \
     Helpers/threadhelpers.cpp \
     KeywordsPresets/presetgroupsmodel.cpp \
     UndoRedo/removedirectoryitem.cpp \
-    Maintenance/xpkscleanupjob.cpp \
+    Services/Maintenance/xpkscleanupjob.cpp \
     Commands/maindelegator.cpp \
-    Warnings/warningsitem.cpp \
-    Maintenance/updatebundlecleanupjobitem.cpp \
+    Services/Warnings/warningsitem.cpp \
+    Services/Maintenance/updatebundlecleanupjobitem.cpp \
     Plugins/pluginenvironment.cpp \
     Plugins/plugindatabasemanager.cpp \
     Storage/databasemanager.cpp \
@@ -163,7 +163,7 @@ SOURCES += main.cpp \
     Artworks/basickeywordsmodelimpl.cpp \
     Artworks/basicmetadatamodel.cpp \
     Services/artworksupdatehub.cpp \
-    SpellCheck/userdictionary.cpp \
+    Services/SpellCheck/userdictionary.cpp \
     QMLExtensions/appdispatcher.cpp \
     Commands/Services/autoimportmetadatacommand.cpp \
     Commands/Services/backupartworkstemplate.cpp \
@@ -263,18 +263,18 @@ HEADERS += \
     Helpers/loggingworker.h \
     Helpers/helpersqmlwrapper.h \
     Connectivity/updateservice.h \
-    SpellCheck/spellcheckerservice.h \
-    SpellCheck/spellcheckitem.h \
-    SpellCheck/spellcheckworker.h \
-    SpellCheck/spellchecksuggestionmodel.h \
-    SpellCheck/spellcheckerrorshighlighter.h \
-    SpellCheck/spellcheckiteminfo.h \
-    SpellCheck/spellsuggestionsitem.h \
+    Services/SpellCheck/spellcheckerservice.h \
+    Services/SpellCheck/spellcheckitem.h \
+    Services/SpellCheck/spellcheckworker.h \
+    Services/SpellCheck/spellchecksuggestionmodel.h \
+    Services/SpellCheck/spellcheckerrorshighlighter.h \
+    Services/SpellCheck/spellcheckiteminfo.h \
+    Services/SpellCheck/spellsuggestionsitem.h \
     Connectivity/analyticsuserevent.h \
     Connectivity/telemetryservice.h \
     Connectivity/updatescheckerworker.h \
-    Warnings/warningscheckingworker.h \
-    Warnings/warningsitem.h \
+    Services/Warnings/warningscheckingworker.h \
+    Services/Warnings/warningsitem.h \
     MetadataIO/metadataiocoordinator.h \
     Connectivity/testconnection.h \
     Connectivity/ftphelpers.h \
@@ -286,9 +286,9 @@ HEADERS += \
     Plugins/pluginactionsmodel.h \
     Plugins/uiprovider.h \
     Plugins/iuiprovider.h \
-    Warnings/warningsservice.h \
+    Services/Warnings/warningsservice.h \
     Helpers/loghighlighter.h \
-    Warnings/warningsmodel.h \
+    Services/Warnings/warningsmodel.h \
     Helpers/filterhelpers.h \
     Connectivity/iftpcoordinator.h \
     QMLExtensions/triangleelement.h \
@@ -299,9 +299,9 @@ HEADERS += \
     Helpers/localconfig.h \
     Helpers/jsonhelper.h \
     Helpers/comparevaluesjson.h \
-    AutoComplete/autocompleteworker.h \
-    AutoComplete/completionquery.h \
-    AutoComplete/autocompleteservice.h \
+    Services/AutoComplete/autocompleteworker.h \
+    Services/AutoComplete/completionquery.h \
+    Services/AutoComplete/autocompleteservice.h \
     Microstocks/stocksftplistmodel.h \
     QMLExtensions/imagecachingworker.h \
     QMLExtensions/imagecacherequest.h \
@@ -311,7 +311,7 @@ HEADERS += \
     Helpers/keywordshelpers.h \
     Connectivity/uploadwatcher.h \
     Connectivity/telemetryworker.h \
-    Warnings/warningssettingsmodel.h \
+    Services/Warnings/warningssettingsmodel.h \
     Connectivity/simplecurlrequest.h \
     Connectivity/curlinithelper.h \
     Connectivity/simplecurldownloader.h \
@@ -320,40 +320,40 @@ HEADERS += \
     KeywordsPresets/presetkeywordsmodel.h \
     KeywordsPresets/presetkeywordsmodelconfig.h \
     QMLExtensions/folderelement.h \
-    Translation/translationservice.h \
-    Translation/translationmanager.h \
-    Translation/translationworker.h \
-    Translation/translationquery.h \
+    Services/Translation/translationservice.h \
+    Services/Translation/translationmanager.h \
+    Services/Translation/translationworker.h \
+    Services/Translation/translationquery.h \
     Plugins/sandboxeddependencies.h \
     KeywordsPresets/ipresetsmanager.h \
-    SpellCheck/userdicteditmodel.h \
+    Services/SpellCheck/userdicteditmodel.h \
     Helpers/asynccoordinator.h \
     QMLExtensions/tabsmodel.h \
-    Maintenance/maintenanceworker.h \
-    Maintenance/maintenanceservice.h \
-    Maintenance/imaintenanceitem.h \
-    Maintenance/logscleanupjobitem.h \
-    Maintenance/updatescleanupjobitem.h \
-    Maintenance/launchexiftooljobitem.h \
-    Maintenance/initializedictionariesjobitem.h \
-    Maintenance/movesettingsjobitem.h \
+    Services/Maintenance/maintenanceworker.h \
+    Services/Maintenance/maintenanceservice.h \
+    Services/Maintenance/imaintenanceitem.h \
+    Services/Maintenance/logscleanupjobitem.h \
+    Services/Maintenance/updatescleanupjobitem.h \
+    Services/Maintenance/launchexiftooljobitem.h \
+    Services/Maintenance/initializedictionariesjobitem.h \
+    Services/Maintenance/movesettingsjobitem.h \
     QMLExtensions/videocachingservice.h \
     QMLExtensions/videocachingworker.h \
     QMLExtensions/videocacherequest.h \
     Helpers/filehelpers.h \
     Helpers/artworkshelpers.h \
-    Maintenance/savesessionjobitem.h \
+    Services/Maintenance/savesessionjobitem.h \
     Connectivity/switcherconfig.h \
     Connectivity/requestsworker.h \
     Connectivity/requestsservice.h \
-    Warnings/iwarningsitem.h \
-    AutoComplete/completionitem.h \
+    Services/Warnings/iwarningsitem.h \
+    Services/AutoComplete/completionitem.h \
     Storage/database.h \
-    AutoComplete/completionitem.h \
+    Services/AutoComplete/completionitem.h \
     QMLExtensions/previewstorage.h \
     QMLExtensions/cachedimage.h \
     QMLExtensions/dbimagecacheindex.h \
-    Maintenance/moveimagecachejobitem.h \
+    Services/Maintenance/moveimagecachejobitem.h \
     QMLExtensions/dbcacheindex.h \
     QMLExtensions/cachedvideo.h \
     QMLExtensions/dbvideocacheindex.h \
@@ -366,14 +366,14 @@ HEADERS += \
     Microstocks/searchquery.h \
     Suggestion/locallibraryquery.h \
     MetadataIO/metadatareadinghub.h \
-    AutoComplete/completionenginebase.h \
-    AutoComplete/libfacecompletionengine.h \
-    AutoComplete/autocompletemodel.h \
-    AutoComplete/keywordsautocompletemodel.h \
-    AutoComplete/stringsautocompletemodel.h \
-    AutoComplete/presetscompletionengine.h \
-    SpellCheck/duplicatesreviewmodel.h \
-    SpellCheck/duplicateshighlighter.h \
+    Services/AutoComplete/completionenginebase.h \
+    Services/AutoComplete/libfacecompletionengine.h \
+    Services/AutoComplete/autocompletemodel.h \
+    Services/AutoComplete/keywordsautocompletemodel.h \
+    Services/AutoComplete/stringsautocompletemodel.h \
+    Services/AutoComplete/presetscompletionengine.h \
+    Services/SpellCheck/duplicatesreviewmodel.h \
+    Services/SpellCheck/duplicateshighlighter.h \
     MetadataIO/csvexportworker.h \
     MetadataIO/csvexportproperties.h \
     MetadataIO/csvexportplansmodel.h \
@@ -381,12 +381,12 @@ HEADERS += \
     Helpers/threadhelpers.h \
     KeywordsPresets/presetgroupsmodel.h \
     UndoRedo/removedirectoryitem.h \
-    Maintenance/xpkscleanupjob.h \
+    Services/Maintenance/xpkscleanupjob.h \
     Commands/maindelegator.h \
     KeywordsPresets/presetmodel.h \
     KeywordsPresets/groupmodel.h \
-    Warnings/iwarningssettings.h \
-    Maintenance/updatebundlecleanupjobitem.h \
+    Services/Warnings/iwarningssettings.h \
+    Services/Maintenance/updatebundlecleanupjobitem.h \
     Storage/idatabasemanager.h \
     Plugins/pluginenvironment.h \
     Plugins/plugindatabasemanager.h \
@@ -440,9 +440,9 @@ HEADERS += \
     Services/artworkupdaterequest.h \
     Helpers/cpphelpers.h \
     Artworks/artworksprocessingworker.h \
-    SpellCheck/userdictionary.h \
+    Services/SpellCheck/userdictionary.h \
     Artworks/iartworksservice.h \
-    AutoComplete/icompletionsource.h \
+    Services/AutoComplete/icompletionsource.h \
     QMLExtensions/appdispatcher.h \
     QMLExtensions/uicommandid.h \
     Commands/Services/autoimportmetadatacommand.h \
@@ -506,7 +506,6 @@ HEADERS += \
     Common/flags.h \
     Common/hold.h \
     Common/iflagsprovider.h \
-    Common/iservicebase.h \
     Common/isystemenvironment.h \
     Common/itemprocessingworker.h \
     Common/logging.h \

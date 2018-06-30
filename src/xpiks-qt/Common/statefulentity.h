@@ -24,6 +24,7 @@ namespace Common {
     {
     public:
         StatefulEntity(const QString &stateName, ISystemEnvironment &environment);
+        virtual ~StatefulEntity();
 
     public:
         void init();

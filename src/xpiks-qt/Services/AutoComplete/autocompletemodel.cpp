@@ -10,7 +10,7 @@
 
 #include "autocompletemodel.h"
 #include <QQmlEngine>
-#include "../Common/logging.h"
+#include <Common/logging.h>
 
 namespace AutoComplete {
     AutoCompleteModel::AutoCompleteModel(QObject *parent) :

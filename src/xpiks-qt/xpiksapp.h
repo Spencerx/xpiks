@@ -42,8 +42,8 @@
 #include <Connectivity/telemetryservice.h>
 #include <Connectivity/updateservice.h>
 
-#include <Warnings/warningsmodel.h>
-#include <Warnings/warningsservice.h>
+#include <Services/Warnings/warningsmodel.h>
+#include <Services/Warnings/warningsservice.h>
 
 #include <UndoRedo/undoredomanager.h>
 
@@ -59,24 +59,24 @@
 
 #include <ftpcoordinator.h>
 
-#include <SpellCheck/duplicatesreviewmodel.h>
-#include <SpellCheck/spellcheckerservice.h>
-#include <SpellCheck/spellchecksuggestionmodel.h>
-#include <SpellCheck/userdicteditmodel.h>
+#include <Services/SpellCheck/duplicatesreviewmodel.h>
+#include <Services/SpellCheck/spellcheckerservice.h>
+#include <Services/SpellCheck/spellchecksuggestionmodel.h>
+#include <Services/SpellCheck/userdicteditmodel.h>
 
 #include <MetadataIO/csvexportmodel.h>
 #include <MetadataIO/metadataiocoordinator.h>
 #include <MetadataIO/metadataioservice.h>
 
-#include <AutoComplete/autocompleteservice.h>
-#include <AutoComplete/keywordsautocompletemodel.h>
+#include <Services/AutoComplete/autocompleteservice.h>
+#include <Services/AutoComplete/keywordsautocompletemodel.h>
 
-#include <Translation/translationmanager.h>
-#include <Translation/translationservice.h>
+#include <Services/Translation/translationmanager.h>
+#include <Services/Translation/translationservice.h>
 
-#include <QuickBuffer/quickbuffer.h>
+#include <Models/Editing/quickbuffer.h>
 
-#include <Maintenance/maintenanceservice.h>
+#include <Services/Maintenance/maintenanceservice.h>
 
 #include <Plugins/pluginmanager.h>
 #include <Plugins/uiprovider.h>

@@ -12,19 +12,16 @@
 #define WARNINGSSERVICE_H
 
 #include <QObject>
-#include "../Common/iservicebase.h"
-#include "../Artworks/artworkmetadata.h"
-#include "../Common/flags.h"
+#include <Artworks/artworkmetadata.h>
+#include <Common/flags.h>
 #include "warningssettingsmodel.h"
-#include "../Artworks/artworkssnapshot.h"
-#include "../Common/isystemenvironment.h"
+#include <Artworks/artworkssnapshot.h>
+#include <Common/isystemenvironment.h>
 
 namespace Warnings {
     class WarningsCheckingWorker;
 
-    class WarningsService:
-        public QObject,
-        public Common::IServiceBase<Artworks::ArtworkMetadata, Common::WarningsCheckFlags>
+    class WarningsService: public QObject
     {
         Q_OBJECT
 
@@ -47,7 +44,6 @@ namespace Warnings {
         virtual void submitItem(Artworks::ArtworkMetadata *item) override;
         virtual void submitItem(Artworks::ArtworkMetadata *item, Common::WarningsCheckFlags flags) override;
         virtual void submitItems(const Artworks::WeakArtworksSnapshot &items) override;
-        virtual void setCommandManager(Commands::CommandManager *commandManager) override;
 
     private slots:
         void workerDestoyed(QObject *object);

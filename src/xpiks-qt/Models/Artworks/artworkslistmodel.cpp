@@ -23,7 +23,7 @@
 #include <Artworks/iartworksservice.h>
 #include <Commands/Editing/expandpresettemplate.h>
 #include <Commands/Editing/editartworkstemplate.h>
-#include <AutoComplete/icompletionsource.h>
+#include <Services/AutoComplete/icompletionsource.h>
 #include <Commands/Base/templatedcommand.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Base/compositecommandtemplate.h>
@@ -521,6 +521,28 @@ namespace Models {
                 .addListener(std::bind(&ArtworksListModel::updateItems, this));
     }
 
+    void ArtworksListModel::resetSpellCheckResults() {
+        foreachArtwork(Helpers::IndicesRanges(getArtworksCount()),
+                       [](Artworks::ArtworkMetadata *artwork, size_t) {
+            artwork->resetSpellingInfo();
+        });
+    }
+
+    void ArtworksListModel::resetDuplicatesResults() {
+        foreachArtwork(Helpers::IndicesRanges(getArtworksCount()),
+                       [](Artworks::ArtworkMetadata *artwork, size_t) {
+            artwork->resetDuplicatesInfo();
+        });
+    }
+
+    void ArtworksListModel::spellCheckAllItems() {
+        LOG_DEBUG << "#";
+        m_Messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::InspectArtworks)
+                .broadcast(Artworks::ArtworksSnapshot(m_ArtworkList));
+    }
+
     QVariant ArtworksListModel::data(const QModelIndex &index, int role) const {
         int row = index.row();
 
@@ -1007,11 +1029,20 @@ namespace Models {
     void ArtworksListModel::onSpellCheckerAvailable(bool afterRestart) {
         LOG_DEBUG << afterRestart;
         if (afterRestart) {
-            m_Messages
-                    .ofType<Artworks::ArtworksSnapshot>()
-                    .withID(Commands::AppMessages::InspectArtworks)
-                    .broadcast(Artworks::ArtworksSnapshot(m_ArtworkList));
+            spellCheckAllItems();
         }
+    }
+
+    void ArtworksListModel::onSpellCheckRestarted() {
+        spellCheckAllItems();
+    }
+
+    void ArtworksListModel::onSpellCheckDisabled() {
+        resetSpellCheckResults();
+    }
+
+    void ArtworksListModel::onDuplicatesDisabled() {
+        resetDuplicatesResults();
     }
 
     QHash<int, QByteArray> ArtworksListModel::roleNames() const {
