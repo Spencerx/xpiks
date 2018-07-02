@@ -43,7 +43,7 @@ namespace Artworks {
     class ArtworkMetadata:
             public QObject,
             public Common::DelayedActionEntity,
-            public Common::IMetadataOperator
+            public Artworks::IMetadataOperator
     {
         Q_OBJECT
 

@@ -250,7 +250,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::setupSpellCheckSuggestions(Common::IMetadataOperator *item, int index, Common::SuggestionFlags flags) const {
+    void MainDelegator::setupSpellCheckSuggestions(Artworks::IMetadataOperator *item, int index, Common::SuggestionFlags flags) const {
         Q_ASSERT(item != NULL);
         auto *spellCheckSuggestionModel = m_CommandManager->getSpellSuggestionsModel();
         if (spellCheckSuggestionModel) {
@@ -259,7 +259,7 @@ namespace Commands {
         }
     }
 
-    void MainDelegator::setupSpellCheckSuggestions(std::vector<std::pair<Common::IMetadataOperator *, int> > &itemPairs, Common::SuggestionFlags flags) const {
+    void MainDelegator::setupSpellCheckSuggestions(std::vector<std::pair<Artworks::IMetadataOperator *, int> > &itemPairs, Common::SuggestionFlags flags) const {
         auto *spellCheckSuggestionModel = m_CommandManager->getSpellSuggestionsModel();
         if (spellCheckSuggestionModel) {
             spellCheckSuggestionModel->setupModel(itemPairs, flags);

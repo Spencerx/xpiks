@@ -182,6 +182,26 @@ namespace Models {
                                artwork->getKeywords(),
                                false);
         }
+    }    
+
+    void ArtworksListModel::setCurrentIndex(size_t index) {
+        LOG_DEBUG << index;
+        if (m_CurrentItemIndex != index) {
+            m_CurrentItemIndex = index;
+
+            Artworks::ArtworkMetadata *artwork = getArtwork(index);
+            if (artwork != nullptr) {
+                using namespace Commands;
+                auto editable = std::make_shared<CurrentEditableArtwork>(
+                                    artwork,
+                                    std::make_shared<ArtworksUpdateTemplate>(*this, getStandardUpdateRoles()));
+
+                m_Messages
+                        .ofType<std::shared_ptr<ICurrentEditable>>()
+                        .withID(AppMessages::RegisterCurrentEditable)
+                        .broadcast(editable);
+            }
+        }
     }
 
     void ArtworksListModel::processUpdateRequests(const std::vector<std::shared_ptr<Services::ArtworkUpdateRequest> > &updateRequests) {
@@ -491,25 +511,6 @@ namespace Models {
         });
 
         updateItems(ranges, QVector<int>() << HasVectorAttachedRole);
-    }
-
-    void ArtworksListModel::setCurrentIndex(size_t index) {
-         if (m_CurrentItemIndex != index) {
-             m_CurrentItemIndex = index;
-
-             Artworks::ArtworkMetadata *artwork = getArtwork(index);
-             if (artwork != nullptr) {
-                 using namespace Commands;
-                 auto editable = std::make_shared<CurrentEditableArtwork>(
-                                     artwork,
-                                     std::make_shared<ArtworksUpdateTemplate>(*this, getStandardUpdateRoles()));
-
-                 m_Messages
-                         .ofType<std::shared_ptr<ICurrentEditable>>()
-                         .withID(AppMessages::RegisterCurrentEditable)
-                         .broadcast(editable);
-             }
-         }
     }
 
     void ArtworksListModel::registerListeners() {

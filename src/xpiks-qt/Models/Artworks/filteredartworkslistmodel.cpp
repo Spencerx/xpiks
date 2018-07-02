@@ -408,16 +408,27 @@ namespace Models {
 
     void FilteredArtworksListModel::registerCurrentItem(int proxyIndex) const {
         LOG_INFO << proxyIndex;
+        m_ArtworksListModel.setCurrentIndex(getOriginalIndex(proxyIndex));
+    }
 
-        if (0 <= proxyIndex && proxyIndex < rowCount()) {
-            int originalIndex = getOriginalIndex(proxyIndex);
-            m_ArtworksListModel.setCurrentIndex(proxyIndex);
-            ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
-
-            if (artwork != NULL) {
-                xpiks()->registerCurrentItem(artwork);
-            }
+    void FilteredArtworksListModel::suggestCorrections(int proxyIndex) const {
+        LOG_DEBUG << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
+        if (artwork != NULL) {
+            m_Messages
+                    .ofType<Artworks::IMetadataOperator*>()
+                    .withID(Commands::AppMessages::SpellSuggestions)
+                    .broadcast(dynamic_cast<Artworks::IMetadataOperator*>(artwork));
         }
+    }
+
+    void FilteredArtworksListModel::suggestCorrectionsForSelected() const {
+        LOG_DEBUG << "#";
+        m_Messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::SpellSuggestions)
+                .broadcast(Artworks::ArtworksSnapshot(getSelectedOriginalItems()));
     }
 
     void FilteredArtworksListModel::removeSelectedArtworks() {
@@ -503,19 +514,6 @@ namespace Models {
             ArtItemsModel *artItemsModel = getArtItemsModel();
             artItemsModel->fillFromQuickBuffer(originalIndex);
         }
-    }
-
-    void FilteredArtworksListModel::suggestCorrectionsForSelected() const {
-        using namespace Common;
-        SuggestionFlags flags = SuggestionFlags::None;
-        Common::SetFlag(flags, SuggestionFlags::Description);
-        Common::SetFlag(flags, SuggestionFlags::Title);
-        Common::SetFlag(flags, SuggestionFlags::Keywords);
-
-        auto itemsForSuggestions = filterItems<std::pair<Common::IMetadataOperator *, int> >(
-                    [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
-                    [] (Artworks::ArtworkMetadata *metadata, int index, int) { return std::pair<Common::IMetadataOperator *, int>(metadata, index); });
-        xpiks()->setupSpellCheckSuggestions(itemsForSuggestions, flags);
     }
 
     void FilteredArtworksListModel::generateCompletions(const QString &prefix, int index) {

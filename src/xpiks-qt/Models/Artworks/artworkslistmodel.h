@@ -124,6 +124,7 @@ namespace Models {
         void unlockAllForIO();
         bool isInSelectedDirectory(int artworkIndex);
         void sendToQuickBuffer(int artworkIndex);
+        void setCurrentIndex(size_t index);
 
     public:
         // update hub related
@@ -154,7 +155,6 @@ namespace Models {
         void syncArtworksIndices(int startIndex=0, int count=-1);
         void setItemsSaved(const Helpers::IndicesRanges &ranges);
         void detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges);
-        void setCurrentIndex(size_t index);
         void registerListeners();
 
     private:

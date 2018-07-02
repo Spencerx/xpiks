@@ -128,6 +128,8 @@ namespace Models {
     public:
         // other
         Q_INVOKABLE void registerCurrentItem(int proxyIndex) const;
+        Q_INVOKABLE void suggestCorrections(int proxyIndex) const;
+        Q_INVOKABLE void suggestCorrectionsForSelected() const;
 
     public:
         //void removeSelectedArtworks();

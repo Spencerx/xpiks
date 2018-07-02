@@ -132,7 +132,7 @@ namespace SpellCheck {
         this->submitItems(snapshot.getWeakSnapshot());
     }
 
-    Common::ItemProcessingWorker::batch_id_t SpellCheckerService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck) {
+    SpellCheckWorker::batch_id_t SpellCheckerService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck) {
         if (m_SpellCheckWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 

@@ -161,8 +161,8 @@ namespace Commands {
         void submitForSpellCheck(const std::vector<Artworks::BasicKeywordsModel *> &items) const;
         void submitItemForSpellCheck(Artworks::BasicKeywordsModel *item, Common::SpellCheckFlags flags = Common::SpellCheckFlags::All) const;
         void checkSemanticDuplicates(Artworks::BasicKeywordsModel *item) const;
-        void setupSpellCheckSuggestions(Common::IMetadataOperator *item, int index, Common::SuggestionFlags flags) const;
-        void setupSpellCheckSuggestions(std::vector<std::pair<Common::IMetadataOperator *, int> > &itemPairs, Common::SuggestionFlags flags) const;
+        void setupSpellCheckSuggestions(Artworks::IMetadataOperator *item, int index, Common::SuggestionFlags flags) const;
+        void setupSpellCheckSuggestions(std::vector<std::pair<Artworks::IMetadataOperator *, int> > &itemPairs, Common::SuggestionFlags flags) const;
         void submitForSpellCheck(const std::vector<Artworks::BasicKeywordsModel *> &items, const QStringList &wordsToCheck) const;
         void setupDuplicatesModel(Artworks::BasicMetadataModel *item);
         void setupDuplicatesModel(const std::vector<Artworks::ArtworkMetadata *> &items) const;

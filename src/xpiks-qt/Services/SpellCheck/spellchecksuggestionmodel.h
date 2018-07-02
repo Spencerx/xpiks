@@ -16,9 +16,8 @@
 #include <vector>
 #include <memory>
 #include <utility>
-#include "../Common/baseentity.h"
-#include "../Common/flags.h"
-#include "../Common/imetadataoperator.h"
+#include <Common/flags.h>
+#include <Artworks/imetadataoperator.h>
 
 namespace Models {
     class ArtworkMetadata;
@@ -28,19 +27,30 @@ namespace Common {
     class IMetadataOperator;
 }
 
+namespace Commands {
+    class AppMessages;
+}
+
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
 namespace SpellCheck {
     class SpellSuggestionsItem;
     class SpellCheckerService;
+    class KeywordSpellSuggestions;
 
     typedef std::vector<std::shared_ptr<SpellSuggestionsItem> > SuggestionsVector;
     typedef std::vector<std::shared_ptr<KeywordSpellSuggestions> > KeywordsSuggestionsVector;
 
-    class SpellCheckSuggestionModel : public QAbstractListModel, public Common::BaseEntity {
+    class SpellCheckSuggestionModel : public QAbstractListModel
+    {
         Q_OBJECT
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
         Q_PROPERTY(bool anythingSelected READ getAnythingSelected NOTIFY anythingSelectedChanged)
+
     public:
-        SpellCheckSuggestionModel();
+        SpellCheckSuggestionModel(SpellCheckerService &spellCheckerService, Commands::AppMessages &messages);
         virtual ~SpellCheckSuggestionModel();
 
     public:
@@ -51,7 +61,7 @@ namespace SpellCheck {
         };
 
     public:
-        int getArtworksCount() const { return (int)m_ItemsPairs.size(); }
+        int getArtworksCount() const { return (int)m_CheckedItems.size(); }
         bool getAnythingSelected() const;
 
     public:
@@ -67,14 +77,16 @@ namespace SpellCheck {
         void anythingSelectedChanged();
 
     public:
-        void setupModel(Common::IMetadataOperator *item, int index, Common::SuggestionFlags flags);
-        void setupModel(std::vector<std::pair<Common::IMetadataOperator *, int> > &items, Common::SuggestionFlags flags);
+        void setupItem(Artworks::IMetadataOperator *item, Common::SuggestionFlags flags);
+        void setupItems(std::vector<Artworks::IMetadataOperator *> &items, Common::SuggestionFlags flags);
 #if defined(INTEGRATION_TESTS) || defined(CORE_TESTS)
         SpellSuggestionsItem *getItem(int i) const { return m_SuggestionsList.at(i).get(); }
 #endif
 
     private:
-        SuggestionsVector createSuggestionsRequests(Common::SuggestionFlags flags);
+        void setArtworks(Artworks::ArtworksSnapshot &&snapshot);
+        SuggestionsVector createSuggestionsRequests(Common::SuggestionFlags flags,
+                                                    std::vector<Artworks::IMetadataOperator *> &items);
         bool processFailedReplacements(const SuggestionsVector &failedReplacements) const;
         SuggestionsVector setupSuggestions(const SuggestionsVector &items);
 
@@ -90,7 +102,9 @@ namespace SpellCheck {
 
     private:
         std::vector<std::shared_ptr<SpellSuggestionsItem> > m_SuggestionsList;
-        std::vector<std::pair<Common::IMetadataOperator *, int> > m_ItemsPairs;
+        std::vector<Artworks::IMetadataOperator *> m_CheckedItems;
+        SpellCheckerService &m_SpellCheckerService;
+        Commands::AppMessages &m_Messages;
     };
 }
 

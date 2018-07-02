@@ -27,15 +27,16 @@ namespace Artworks {
 
 namespace Commands {
     class AppMessages: RegisteredMessages<
-            MessageMap<>,
-            MessageMap<size_t>,
+            //MessageMap<>, - use Qt signals instead of this one
+            //MessageMap<int>, - use Qt signals instead of this one
             MessageMap<Helpers::IndicesRanges>,
             MessageMap<Artworks::ArtworksSnapshot>,
             MessageMap<std::shared_ptr<Models::ICurrentEditable>>,
             MessageMap<Artworks::BasicKeywordsModel*>,
+            MessageMap<Artworks::IMetadataOperator*>,
+            MessageMap<Artworks::VideoArtwork*>,
             MessageMap<QString, QString, QStringList, bool>,
             MessageMap<Common::ID_t, size_t, QVector<int>>,
-            MessageMap<Artworks::VideoArtwork*>
             >
     {
     public:
@@ -44,6 +45,7 @@ namespace Commands {
             UpdateArtworks,
             BackupArtworks,
             SpellCheck,
+            SpellSuggestions,
             CopyToQuickBuffer,
             ZipArtworks,
             UploadArtworks,

@@ -155,7 +155,7 @@ namespace Models {
             return m_ArtworkMetadata->getBasicModel();
         }
 
-        virtual Common::IMetadataOperator *getMetadataOperator() override {
+        virtual Artworks::IMetadataOperator *getMetadataOperator() override {
             Q_ASSERT(m_ArtworkMetadata != nullptr);
             return m_ArtworkMetadata;
         }

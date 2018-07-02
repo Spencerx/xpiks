@@ -17,20 +17,22 @@
 #include <QVector>
 #include <vector>
 #include <memory>
-#include "../Common/flags.h"
+#include <Common/flags.h>
 
-namespace Common {
+namespace Artworks {
     class IMetadataOperator;
     class BasicKeywordsModel;
 }
 
 namespace SpellCheck {
-
     class SpellSuggestionsItem: public QAbstractListModel {
         Q_OBJECT
     public:
-        SpellSuggestionsItem(const QString &word, const QString &origin);
-        SpellSuggestionsItem(const QString &word);
+        SpellSuggestionsItem(const QString &word,
+                             const QString &origin,
+                             Artworks::IMetadataOperator *metadataOperator);
+        SpellSuggestionsItem(const QString &word,
+                             Artworks::IMetadataOperator *metadataOperator);
         virtual ~SpellSuggestionsItem();
 
     public:
@@ -59,8 +61,7 @@ namespace SpellCheck {
 
         bool getReplacementSucceeded() const { return m_ReplacementSucceeded; }
 
-        Common::IMetadataOperator *getMetadataOperator() const { Q_ASSERT(m_MetadataOperator != nullptr); return m_MetadataOperator; }
-        void setMetadataOperator(Common::IMetadataOperator *value) { Q_ASSERT(value != nullptr); m_MetadataOperator = value; }
+        Artworks::IMetadataOperator *getMetadataOperator() const { return m_MetadataOperator; }
 
     public:
         virtual void replaceToSuggested() = 0;
@@ -86,7 +87,7 @@ namespace SpellCheck {
         const QStringList &getSuggestions() const { return m_Suggestions; }
 
     private:
-        Common::IMetadataOperator *m_MetadataOperator;
+        Artworks::IMetadataOperator *m_MetadataOperator;
         QStringList m_Suggestions;
         QString m_Word;
         QString m_ReplacementOrigin;
@@ -98,9 +99,13 @@ namespace SpellCheck {
     {
         Q_OBJECT
     public:
-        KeywordSpellSuggestions(const QString &keyword, size_t originalIndex, const QString &origin);
-        KeywordSpellSuggestions(const QString &keyword, size_t originalIndex);
-        virtual ~KeywordSpellSuggestions();
+        KeywordSpellSuggestions(const QString &keyword,
+                                size_t originalIndex,
+                                const QString &origin,
+                                Artworks::IMetadataOperator *metadataOperator);
+        KeywordSpellSuggestions(const QString &keyword,
+                                size_t originalIndex,
+                                Artworks::IMetadataOperator *metadataOperator);
 
     public:
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
@@ -123,8 +128,8 @@ namespace SpellCheck {
     {
         Q_OBJECT
     public:
-        DescriptionSpellSuggestions(const QString &word);
-        virtual ~DescriptionSpellSuggestions();
+        DescriptionSpellSuggestions(const QString &word,
+                                    Artworks::IMetadataOperator *metadataOperator);
 
     public:
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
@@ -140,8 +145,8 @@ namespace SpellCheck {
     {
         Q_OBJECT
     public:
-        TitleSpellSuggestions(const QString &word);
-        virtual ~TitleSpellSuggestions();
+        TitleSpellSuggestions(const QString &word,
+                              Artworks::IMetadataOperator *metadataOperator);
 
     public:
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
@@ -157,7 +162,6 @@ namespace SpellCheck {
         Q_OBJECT
     public:
         CombinedSpellSuggestions(const QString &word, std::vector<std::shared_ptr<SpellSuggestionsItem> > &suggestions);
-        virtual ~CombinedSpellSuggestions();
 
     public:
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)

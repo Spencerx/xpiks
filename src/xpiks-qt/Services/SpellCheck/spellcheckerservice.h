@@ -14,10 +14,9 @@
 #include <QObject>
 #include <QString>
 #include <QVector>
-#include "../Artworks/basickeywordsmodel.h"
-#include "../Common/iservicebase.h"
-#include "../Common/flags.h"
-#include "../Common/isystemenvironment.h"
+#include <Artworks/basickeywordsmodel.h>
+#include <Common/flags.h>
+#include <Common/isystemenvironment.h>
 #include "spellcheckworker.h"
 #include "userdictionary.h"
 

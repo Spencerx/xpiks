@@ -213,7 +213,7 @@ namespace Models {
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_CommonKeywordsModel; }
-        virtual Common::IMetadataOperator *getMetadataOperator() override { return &m_CommonKeywordsModel; }
+        virtual Artworks::IMetadataOperator *getMetadataOperator() override { return &m_CommonKeywordsModel; }
 
     protected:
         virtual void doJustEdited() override;

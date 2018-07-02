@@ -55,7 +55,7 @@ namespace SpellCheck {
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }
-        virtual Common::IMetadataOperator *getMetadataOperator() override { return &m_BasicModel; }
+        virtual Artworks::IMetadataOperator *getMetadataOperator() override { return &m_BasicModel; }
 
     private:
         Common::Hold m_HoldPlaceholder;

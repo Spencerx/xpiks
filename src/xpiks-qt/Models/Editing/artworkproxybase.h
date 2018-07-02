@@ -50,7 +50,7 @@ namespace Models {
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() = 0;
-        virtual Common::IMetadataOperator *getMetadataOperator() = 0;
+        virtual Artworks::IMetadataOperator *getMetadataOperator() = 0;
 
     protected:
         virtual void submitForInspection() = 0;
