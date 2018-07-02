@@ -36,4 +36,8 @@ namespace Models {
         m_CurrentEditable = std::move(currentEditable);
         emit currentEditableChanged();
     }
+
+    void CurrentEditableModel::onClearCurrentEditable() {
+        clearCurrentItem();
+    }
 }

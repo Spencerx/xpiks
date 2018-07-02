@@ -10,18 +10,19 @@
 
 #include "findandreplacemodel.h"
 #include <QAbstractListModel>
-#include <Artworks/artworkmetadata.h>
-#include <Models/settingsmodel.h>
-#include <Helpers/filterhelpers.h>
-#include <Models/Editing/previewartworkelement.h>
-#include <Helpers/metadatahighlighter.h>
-#include <Commands/Editing/findandreplacetemplate.h>
 #include <Common/logging.h>
 #include <Common/defines.h>
-#include <Helpers/stringhelper.h>
+#include <Artworks/artworkmetadata.h>
 #include <Artworks/videoartwork.h>
-#include <Commands/appmessages.h>
+#include <Models/settingsmodel.h>
+#include <Models/Editing/previewartworkelement.h>
+#include <Helpers/filterhelpers.h>
+#include <Helpers/metadatahighlighter.h>
 #include <Helpers/cpphelpers.h>
+#include <Helpers/stringhelper.h>
+#include <Commands/appmessages.h>
+#include <Commands/Editing/findandreplacetemplate.h>
+#include <Commands/Editing/modifyartworkscommand.h>
 
 QString searchFlagsToString(Common::SearchFlags flags) {
     QStringList items;
@@ -70,21 +71,6 @@ namespace Models {
                 .ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::FindArtworks)
                 .addListener(std::bind(&FindAndReplaceModel::findReplaceCandidates, this));
-    }
-
-    void FindAndReplaceModel::initArtworksList() {
-        LOG_INFO << "Flags:" << searchFlagsToString(m_Flags);
-        LOG_INFO << "ReplaceFrom: [" << m_ReplaceFrom << "]";
-
-        Q_ASSERT(!m_ReplaceFrom.isEmpty());
-        if (m_ReplaceFrom.isEmpty()) {
-            LOG_WARNING << "Replace from is empty";
-            return;
-        }
-
-        normalizeSearchCriteria();
-
-        // TODO: fire to filtered model
     }
 
     int FindAndReplaceModel::rowCount(const QModelIndex &parent) const {
@@ -164,7 +150,18 @@ namespace Models {
 
     void FindAndReplaceModel::findReplaceCandidates(Artworks::ArtworksSnapshot &&snapshot) {
         LOG_DEBUG << "size:" << snapshot.size();
-        m_ArtworksSnapshot = Helpers::filterMap<Artworks::ArtworkMetadataLocker>(
+        LOG_INFO << "flags:" << searchFlagsToString(m_Flags);
+        LOG_INFO << "replace from: [" << m_ReplaceFrom << "]";
+
+        Q_ASSERT(!m_ReplaceFrom.isEmpty());
+        if (m_ReplaceFrom.isEmpty()) {
+            LOG_WARNING << "Replace from is empty";
+            return;
+        }
+
+        normalizeSearchCriteria();
+
+        auto previewElements = Helpers::filterMap<Artworks::ArtworkMetadataLocker>(
                     snapshot.getRawData(),
                     [this](const Artworks::ArtworkMetadataLocker &locker) {
             return Helpers::hasSearchMatch(this->m_ReplaceFrom, locker.getArtworkMetadata(), this->m_Flags);
@@ -173,6 +170,7 @@ namespace Models {
             return std::make_shared<PreviewArtworkElement>(locker.getArtworkMetadata());
         });
 
+        m_ArtworksSnapshot.set(previewElements);
         LOG_INFO << "Found" << m_ArtworksSnapshot.size() << "item(s)";
     }
 
@@ -315,13 +313,17 @@ namespace Models {
     void FindAndReplaceModel::replace() {
         LOG_INFO << "Flags:" << searchFlagsToString(m_Flags);
         using namespace Commands;
+        // this will clear m_ArtworksSnapshot since it will be
+        // moved inside command but this behavior is desirable
+        // in this place since it's the end of replacement flow
         m_CommandManager.processCommand(
                     std::make_shared<ModifyArtworksCommand>(
-                        getSnapshot(),
+                        m_ArtworksSnapshot,
                         std::make_shared<FindAndReplaceTemplate>(m_ReplaceFrom,
                                                                  m_ReplaceTo,
                                                                  m_Flags)));
 
+        LOG_DEBUG << "Own snapshot is empty now";
         emit replaceSucceeded();
     }
 

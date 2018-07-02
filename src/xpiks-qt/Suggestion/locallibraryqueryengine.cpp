@@ -20,7 +20,7 @@
 
 namespace Suggestion {
     LocalLibraryQueryEngine::LocalLibraryQueryEngine(int engineID,
-                                                     MetadataIO::MetadataIOService *metadataIOService):
+                                                     MetadataIO::MetadataIOService &metadataIOService):
         m_EngineID(engineID),
         m_MetadataIOService(metadataIOService),
         m_IsEnabled(true)
@@ -40,7 +40,7 @@ namespace Suggestion {
         LOG_DEBUG << query.getSearchQuery();
         m_Query.setSearchQuery(query);
 
-        m_MetadataIOService->searchArtworks(&m_Query);
+        m_MetadataIOService.searchArtworks(&m_Query);
     }
 
     void LocalLibraryQueryEngine::resultsFoundHandler() {

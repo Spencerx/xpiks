@@ -118,11 +118,13 @@ namespace Artworks {
         clear();
         LOG_DEBUG << "Copying snapshot of" << other.m_ArtworksSnapshot.size() << "item(s)";
 
-        m_ArtworksSnapshot = other.m_ArtworksSnapshot;
+        m_ArtworksSnapshot.reserve(other.m_ArtworksSnapshot.size());
+        for (auto &locker: other.m_ArtworksSnapshot) {
+            m_ArtworksSnapshot.emplace_back(locker->getArtworkMetadata());
+        }
     }
 
     void ArtworksSnapshot::remove(size_t index) {
-        Q_ASSERT(m_ArtworksSnapshot.size() == m_RawArtworks.size());
         if (index >= m_ArtworksSnapshot.size()) { return; }
 
         m_ArtworksSnapshot.erase(m_ArtworksSnapshot.begin() + index);

@@ -28,7 +28,7 @@ namespace Artworks {
 namespace Commands {
     class AppMessages: RegisteredMessages<
             //MessageMap<>, - use Qt signals instead of this one
-            //MessageMap<int>, - use Qt signals instead of this one
+            MessageMap<int>,
             MessageMap<Helpers::IndicesRanges>,
             MessageMap<Artworks::ArtworksSnapshot>,
             MessageMap<std::shared_ptr<Models::ICurrentEditable>>,

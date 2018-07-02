@@ -13,16 +13,16 @@
 #include <QScreen>
 #include "imagecachingworker.h"
 #include "imagecacherequest.h"
-#include "../Models/artworkmetadata.h"
-#include "../Models/imageartwork.h"
-#include "../Helpers/asynccoordinator.h"
-#include "../Commands/commandmanager.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Helpers/asynccoordinator.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace QMLExtensions {
-    ImageCachingService::ImageCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent) :
+    ImageCachingService::ImageCachingService(Common::ISystemEnvironment &environment,
+                                             Storage::IDatabaseManager *dbManager,
+                                             QObject *parent) :
         QObject(parent),
-        Common::BaseEntity(),
         m_Environment(environment),
         m_DatabaseManager(dbManager),
         m_CachingWorker(NULL),

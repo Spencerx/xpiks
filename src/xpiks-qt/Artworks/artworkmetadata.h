@@ -297,7 +297,9 @@ namespace Artworks {
         ArtworkMetadata *getArtworkMetadata() const { return m_ArtworkMetadata; }
 
     private:
+        ArtworkMetadataLocker();
         ArtworkMetadataLocker(const ArtworkMetadataLocker&);
+        ArtworkMetadataLocker &operator=(const ArtworkMetadataLocker&);
 
     private:
         ArtworkMetadata *m_ArtworkMetadata;

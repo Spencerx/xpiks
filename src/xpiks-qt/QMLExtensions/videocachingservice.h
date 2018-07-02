@@ -34,11 +34,13 @@ namespace Storage {
 namespace QMLExtensions {
     class VideoCachingWorker;
 
-    class VideoCachingService : public QObject, public Common::BaseEntity
+    class VideoCachingService : public QObject
     {
         Q_OBJECT
     public:
-        explicit VideoCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent = 0);
+        explicit VideoCachingService(Common::ISystemEnvironment &environment,
+                                     Storage::IDatabaseManager *dbManager,
+                                     QObject *parent = 0);
 
     public:
         void startService();

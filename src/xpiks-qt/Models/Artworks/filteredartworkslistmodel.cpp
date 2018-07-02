@@ -586,7 +586,7 @@ namespace Models {
                                         QVector<int>() << ArtworksListModel::IsSelectedRole);
         emit allItemsSelectedChanged();
 
-        xpiks()->clearCurrentItem();
+        emit clearCurrentEditable();
     }
 
     Artworks::WeakArtworksSnapshot FilteredArtworksListModel::getSelectedOriginalItems() const {
@@ -634,7 +634,7 @@ namespace Models {
         m_SelectedArtworksCount = 0;
         emit selectedArtworksCountChanged();
         emit allItemsSelectedChanged();
-        xpiks()->clearCurrentItem();
+        emit clearCurrentEditable();
     }
 
     void FilteredArtworksListModel::updateSearchFlags() {

@@ -37,6 +37,7 @@
 #include <Models/switchermodel.h>
 #include <Models/uimanager.h>
 #include <Models/Connectivity/ziparchiver.h>
+#include <Models/Editing/currenteditablemodel.h>
 
 #include <Connectivity/requestsservice.h>
 #include <Connectivity/telemetryservice.h>
@@ -167,7 +168,7 @@ protected:
     Storage::DatabaseManager m_DatabaseManager;
     std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
     Microstocks::MicrostockAPIClients m_ApiClients;
-    Models::FilteredArtworksListModel m_FilteredArtItemsModel;
+    Models::FilteredArtworksListModel m_FilteredArtworksListModel;
     Models::RecentFilesModel m_RecentFileModel;
     std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
     Models::ArtworkUploader m_ArtworkUploader;
@@ -187,7 +188,7 @@ protected:
     Translation::TranslationService m_TranslationService;
     Models::UIManager m_UIManager;
     Models::SessionManager m_SessionManager;
-    QuickBuffer::QuickBuffer m_QuickBuffer;
+    Models::QuickBuffer m_QuickBuffer;
     Maintenance::MaintenanceService m_MaintenanceService;
     QMLExtensions::VideoCachingService m_VideoCachingService;
     QMLExtensions::ArtworksUpdateHub m_ArtworksUpdateHub;
@@ -202,6 +203,7 @@ protected:
     Plugins::PluginsWithActionsModel m_PluginsWithActions;
     Helpers::HelpersQmlWrapper m_HelpersQmlWrapper;
     Commands::CommandManager m_CommandManager;
+    Models::CurrentEditableModel m_CurrentEditable;
 
     Helpers::AsyncCoordinator m_InitCoordinator;
     QVector<Helpers::IFileNotAvailableModel*> m_AvailabilityListeners;

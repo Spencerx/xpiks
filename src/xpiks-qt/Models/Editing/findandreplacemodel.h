@@ -132,8 +132,6 @@ namespace Models {
         };
 
     public:
-        Q_INVOKABLE void initArtworksList();
-
 #if !defined(CORE_TESTS) && !defined(INTEGRATION_TESTS)
         Q_INVOKABLE void initHighlighting(QQuickTextDocument *document);
 #endif

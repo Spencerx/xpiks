@@ -11,14 +11,15 @@
 #include "duplicatesreviewmodel.h"
 #include <QQuickTextDocument>
 #include <QFileInfo>
-#include "../SpellCheck/duplicateshighlighter.h"
-#include "../Common/basicmetadatamodel.h"
-#include "../SpellCheck/spellcheckiteminfo.h"
-#include "../Helpers/stringhelper.h"
-#include "../Common/keyword.h"
-#include "../Models/videoartwork.h"
-#include "../Models/imageartwork.h"
-#include "../Common/defines.h"
+#include <Services/SpellCheck/duplicateshighlighter.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Artworks/basicmetadatamodel.h>
+#include <Helpers/stringhelper.h>
+#include <Artworks/keyword.h>
+#include <Artworks/videoartwork.h>
+#include <Artworks/imageartwork.h>
+#include <Common/defines.h>
+#include <Common/logging.h>
 
 namespace SpellCheck {
     DuplicatesReviewModel::DuplicatesReviewModel(QMLExtensions::ColorsModel *colorsModel):

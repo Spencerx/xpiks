@@ -160,6 +160,7 @@ namespace Models {
         void selectedArtworksCountChanged();
         void afterInvalidateFilter();
         void allItemsSelectedChanged();
+        void clearCurrentEditable();
 
     private:
         void setFilteredItemsSelected(bool selected);

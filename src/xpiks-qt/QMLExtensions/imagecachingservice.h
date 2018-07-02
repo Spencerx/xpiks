@@ -17,8 +17,6 @@
 #include <QSize>
 #include <vector>
 #include <memory>
-#include "../Common/baseentity.h"
-#include "../Common/iservicebase.h"
 #include "../Common/isystemenvironment.h"
 
 namespace Models {
@@ -39,7 +37,7 @@ class QScreen;
 namespace QMLExtensions {
     class ImageCachingWorker;
 
-    class ImageCachingService : public QObject, public Common::BaseEntity
+    class ImageCachingService : public QObject
     {
         Q_OBJECT
     public:

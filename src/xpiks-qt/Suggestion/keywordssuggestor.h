@@ -26,12 +26,19 @@
 #include "isuggestionengine.h"
 #include "../Microstocks/microstockapiclients.h"
 #include "../Connectivity/requestsservice.h"
-#include "../Models/switchermodel.h"
+
+namespace Models {
+    class SwitcherModel;
+    class SettingsModel;
+}
+
+namespace MetadataIO {
+    class MetadataIOService;
+}
 
 namespace Suggestion {
     class KeywordsSuggestor:
-            public QAbstractListModel,
-            public Common::BaseEntity
+            public QAbstractListModel
     {
         Q_OBJECT
         Q_PROPERTY(int suggestedKeywordsCount READ getSuggestedKeywordsCount NOTIFY suggestedKeywordsCountChanged)
@@ -48,12 +55,13 @@ namespace Suggestion {
         KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
                           Connectivity::RequestsService &requestsService,
                           Models::SwitcherModel &switcherModel,
+                          Models::SettingsModel &settingsModel,
                           Common::ISystemEnvironment &environment,
                           QObject *parent=NULL);
 
     public:
         void setExistingKeywords(const QSet<QString> &keywords);
-        void initSuggestionEngines();
+        void initSuggestionEngines(MetadataIO::MetadataIOService &metadataIOService);
         void setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks);
         void clear();
 

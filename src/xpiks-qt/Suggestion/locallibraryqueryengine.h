@@ -29,7 +29,7 @@ namespace Suggestion {
         Q_OBJECT
     public:
         LocalLibraryQueryEngine(int engineID,
-                                MetadataIO::MetadataIOService *metadataIOService);
+                                MetadataIO::MetadataIOService &metadataIOService);
 
     public:
         virtual void setSuggestions(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestions) override;
@@ -56,7 +56,7 @@ namespace Suggestion {
     private:
         int m_EngineID;
         LocalLibraryQuery m_Query;
-        MetadataIO::MetadataIOService *m_MetadataIOService;
+        MetadataIO::MetadataIOService &m_MetadataIOService;
         std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
         bool m_IsEnabled;
     };

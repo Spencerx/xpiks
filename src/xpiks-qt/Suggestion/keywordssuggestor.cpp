@@ -15,7 +15,6 @@
 #include "suggestionartwork.h"
 #include "../Commands/commandmanager.h"
 #include "../Common/defines.h"
-#include "../QuickBuffer/quickbuffer.h"
 #include "locallibraryqueryengine.h"
 #include "../Models/switchermodel.h"
 #include "../Models/settingsmodel.h"
@@ -24,6 +23,7 @@
 #include "shutterstocksuggestionengine.h"
 #include "fotoliasuggestionengine.h"
 #include "gettysuggestionengine.h"
+#include <Commands/appmessages.h>
 
 #define LINEAR_TIMER_INTERVAL 1000
 #define DEFAULT_SEARCH_TYPE_INDEX 0
@@ -32,14 +32,17 @@ namespace Suggestion {
     KeywordsSuggestor::KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
                                          Connectivity::RequestsService &requestsService,
                                          Models::SwitcherModel &switcherModel,
+                                         Models::SettingsModel &settingsModel,
+                                         Commands::AppMessages &messages,
                                          Common::ISystemEnvironment &environment,
                                          QObject *parent):
         QAbstractListModel(parent),
-        Common::BaseEntity(),
         m_State("ksuggest", environment),
         m_ApiClients(apiClients),
         m_RequestsService(requestsService),
         m_SwitcherModel(switcherModel),
+        m_SettingsModel(settingsModel),
+        m_Messages(messages),
         m_SuggestedKeywords(m_HoldPlaceholder, this),
         m_AllOtherKeywords(m_HoldPlaceholder, this),
         m_SelectedArtworksCount(0),
@@ -62,10 +65,8 @@ namespace Suggestion {
         m_ExistingKeywords.clear(); m_ExistingKeywords.unite(keywords);
     }
 
-    void KeywordsSuggestor::initSuggestionEngines() {
+    void KeywordsSuggestor::initSuggestionEngines(MetadataIO::MetadataIOService &metadataIOService) {
         LOG_DEBUG << "#";
-        Q_ASSERT(m_CommandManager != NULL);
-        auto *metadataIOService = m_CommandManager->getMetadataIOService();
 
         int id = 0;
         std::shared_ptr<ShutterstockSuggestionEngine> shutterstockEngine(new ShutterstockSuggestionEngine(
@@ -114,11 +115,10 @@ namespace Suggestion {
         m_SuggestedKeywords.clearKeywords();
         m_AllOtherKeywords.clearKeywords();
 
-        Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
 #if !defined(INTEGRATION_TESTS) && !defined(CORE_TESTS)
         const bool sequentialLoading =
                 (m_SwitcherModel.getProgressiveSuggestionPreviewsOn() ||
-                 settingsModel->getUseProgressiveSuggestionPreviews()) &&
+                 m_SettingsModel.getUseProgressiveSuggestionPreviews()) &&
                 (!getIsLocalSearch());
 #else
         const bool sequentialLoading = false;
@@ -126,7 +126,7 @@ namespace Suggestion {
         LOG_INFO << "With sequential loading:" << sequentialLoading;
 
         if (sequentialLoading) {
-            const int increment = settingsModel->getProgressiveSuggestionIncrement();
+            const int increment = m_SettingsModel.getProgressiveSuggestionIncrement();
             m_LoadedPreviewsNumber = increment;
             LOG_DEBUG << "Progressive increment is" << increment;
         } else {
@@ -221,8 +221,7 @@ namespace Suggestion {
         const int size = rowCount();
         if (m_LoadedPreviewsNumber >= size) { return; }
 
-        Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-        const int increment = settingsModel->getProgressiveSuggestionIncrement();
+        const int increment = m_SettingsModel.getProgressiveSuggestionIncrement();
 
         QModelIndex firstIndex = this->index(m_LoadedPreviewsNumber);
         int nextIndex = m_LoadedPreviewsNumber + increment;
@@ -320,8 +319,14 @@ namespace Suggestion {
         }
 
         auto &suggestionArtwork = m_Suggestions.at(index);
-        auto *quickBuffer = m_CommandManager->getQuickBuffer();
-        quickBuffer->setFromSuggestionArtwork(suggestionArtwork);
+
+        m_Messages
+                .ofType<QString, QString, QStringList, bool>()
+                .withID(Commands::AppMessages::CopyToQuickBuffer)
+                .broadcast(suggestionArtwork->getTitle(),
+                           suggestionArtwork->getDescription(),
+                           suggestionArtwork->getKeywordsSet().toList(),
+                           true);
     }
 
     void KeywordsSuggestor::searchArtworks(const QString &searchTerm, int resultsType) {

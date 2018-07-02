@@ -13,10 +13,9 @@
 
 #include <QAbstractListModel>
 #include <vector>
-#include "../MetadataIO/artworkssnapshot.h"
-#include "../Common/baseentity.h"
+#include <Artworks/artworkssnapshot.h>
 
-namespace Common {
+namespace Artworks {
     class BasicMetadataModel;
 }
 

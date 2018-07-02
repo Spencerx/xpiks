@@ -13,9 +13,8 @@
 #include <vector>
 #include <memory>
 #include "videocachingworker.h"
-#include "../Models/videoartwork.h"
+#include <Artworks/videoartwork.h>
 #include "../QMLExtensions/videocacherequest.h"
-#include "../Commands/commandmanager.h"
 #include "../Models/switchermodel.h"
 #include "../Common/logging.h"
 
