@@ -38,11 +38,10 @@ namespace QMLExtensions {
     class DbCacheIndex: public PreviewStorage<QString, TValue>
     {
     public:
-        DbCacheIndex(Storage::IDatabaseManager *dbManager):
+        DbCacheIndex(Storage::IDatabaseManager &dbManager):
             m_DatabaseManager(dbManager),
             m_MaxCacheTag(0)
         {
-            Q_ASSERT(dbManager != nullptr);
         }
 
     public:
@@ -239,7 +238,7 @@ namespace QMLExtensions {
         // guard for get statement accessed from UI thread
         // and from ImageCachingWorker thread
         QMutex m_ReadMutex;
-        Storage::IDatabaseManager *m_DatabaseManager;
+        Storage::IDatabaseManager &m_DatabaseManager;
         std::shared_ptr<Storage::IDbTable> m_DbCacheIndex;
         std::shared_ptr<Storage::IDatabase> m_Database;
         IndexWriteAheadLog<TValue> m_WAL;

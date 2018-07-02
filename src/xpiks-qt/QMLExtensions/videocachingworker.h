@@ -17,20 +17,32 @@
 #include <QSet>
 #include <vector>
 #include "../Common/itemprocessingworker.h"
-#include "../Common/baseentity.h"
 #include "videocacherequest.h"
 #include "cachedvideo.h"
 #include "dbvideocacheindex.h"
 #include "../Common/isystemenvironment.h"
 #include "../Storage/idatabasemanager.h"
 
+namespace Services {
+    class ArtworksUpdateHub;
+}
+
+namespace MetadataIO {
+    class MetadataIOService;
+}
+
 namespace QMLExtensions {
-    class VideoCachingWorker : public QObject, public Common::BaseEntity, public Common::ItemProcessingWorker<VideoCacheRequest>
+    class ImageCachingService;
+
+    class VideoCachingWorker : public QObject, public Common::ItemProcessingWorker<VideoCacheRequest>
     {
         Q_OBJECT
     public:
         explicit VideoCachingWorker(Common::ISystemEnvironment &environment,
-                                    Storage::IDatabaseManager *dbManager,
+                                    Storage::IDatabaseManager &dbManager,
+                                    ImageCachingService &imageCachingService,
+                                    Services::ArtworksUpdateHub &updateHub,
+                                    MetadataIO::MetadataIOService &metadataIOService,
                                     QObject *parent = 0);
 
     protected:
@@ -66,6 +78,9 @@ namespace QMLExtensions {
 
     private:
         Common::ISystemEnvironment &m_Environment;
+        ImageCachingService &m_ImageCachingService;
+        Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
+        MetadataIO::MetadataIOService &m_MetadataIOService;
         volatile int m_ProcessedItemsCount;
         qreal m_Scale;
         QString m_VideosCacheDir;

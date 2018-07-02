@@ -14,7 +14,7 @@
 #include "../Storage/memorytable.h"
 
 namespace QMLExtensions {
-    DbVideoCacheIndex::DbVideoCacheIndex(Storage::IDatabaseManager *dbManager):
+    DbVideoCacheIndex::DbVideoCacheIndex(Storage::IDatabaseManager &dbManager):
         DbCacheIndex(dbManager)
     {
     }
@@ -25,7 +25,7 @@ namespace QMLExtensions {
 
         bool success = false;
         do {
-            m_Database = m_DatabaseManager->openDatabase(Constants::VIDEOCACHE_DB_NAME);
+            m_Database = m_DatabaseManager.openDatabase(Constants::VIDEOCACHE_DB_NAME);
             if (!m_Database) {
                 LOG_WARNING << "Failed to open database";
             } else {

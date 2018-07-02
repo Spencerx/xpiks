@@ -17,13 +17,10 @@
 #include <vector>
 #include "../Common/isystemenvironment.h"
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
     class ArtworkMetadataLocker;
     class VideoArtwork;
-}
-
-namespace MetadataIO {
     class ArtworksSnapshot;
 }
 
@@ -31,19 +28,35 @@ namespace Storage {
     class IDatabaseManager;
 }
 
+namespace Models {
+    class SwitcherModel;
+}
+
+namespace Services {
+    class ArtworksUpdateHub;
+}
+
+namespace MetadataIO {
+    class MetadataIOService;
+}
+
 namespace QMLExtensions {
     class VideoCachingWorker;
+    class ImageCachingService;
 
     class VideoCachingService : public QObject
     {
         Q_OBJECT
     public:
         explicit VideoCachingService(Common::ISystemEnvironment &environment,
-                                     Storage::IDatabaseManager *dbManager,
+                                     Storage::IDatabaseManager &dbManager,
+                                     Models::SwitcherModel &switcherModel,
                                      QObject *parent = 0);
 
     public:
-        void startService();
+        void startService(ImageCachingService &imageCachingService,
+                          Services::ArtworksUpdateHub &updateHub,
+                          MetadataIO::MetadataIOService &metadataIOService);
         void stopService();
 
     public:
@@ -53,7 +66,8 @@ namespace QMLExtensions {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Storage::IDatabaseManager *m_DatabaseManager;
+        Storage::IDatabaseManager &m_DatabaseManager;
+        Models::SwitcherModel &m_SwitcherModel;
         VideoCachingWorker *m_CachingWorker;
         volatile bool m_IsCancelled;
     };

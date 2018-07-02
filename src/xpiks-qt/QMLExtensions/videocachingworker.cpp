@@ -19,8 +19,7 @@
 #include "imagecachingservice.h"
 #include "../Services/artworksupdatehub.h"
 #include "../MetadataIO/metadataioservice.h"
-#include "../Models/artitemsmodel.h"
-#include "../Commands/commandmanager.h"
+#include <Models/Artworks/artworkslistmodel.h>
 #include <thumbnailcreator.h>
 
 #define VIDEO_WORKER_SLEEP_DELAY 500
@@ -36,16 +35,22 @@ namespace QMLExtensions {
     }
 
     VideoCachingWorker::VideoCachingWorker(Common::ISystemEnvironment &environment,
-                                           Storage::IDatabaseManager *dbManager,
+                                           Storage::IDatabaseManager &dbManager,
+                                           ImageCachingService &imageCachingService,
+                                           Services::ArtworksUpdateHub &updateHub,
+                                           MetadataIO::MetadataIOService &metadataIOService,
                                            QObject *parent) :
         QObject(parent),
         ItemProcessingWorker(2),
         m_Environment(environment),
+        m_ImageCachingService(imageCachingService),
+        m_ArtworksUpdateHub(updateHub),
+        m_MetadataIOService(metadataIOService),
         m_ProcessedItemsCount(0),
         m_Scale(1.0),
         m_Cache(dbManager)
     {
-        m_RolesToUpdate << Models::ArtItemsModel::ArtworkThumbnailRole;
+        m_RolesToUpdate << Models::ArtworksListModel::ArtworkThumbnailRole;
     }
 
     bool VideoCachingWorker::initWorker() {
@@ -202,21 +207,18 @@ namespace QMLExtensions {
     }
 
     void VideoCachingWorker::cacheImage(const QString &thumbnailPath) {
-        auto *imageCachingService = m_CommandManager->getImageCachingService();
-        imageCachingService->cacheImage(thumbnailPath);
+        m_ImageCachingService.cacheImage(thumbnailPath);
     }
 
     void VideoCachingWorker::applyThumbnail(std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath, bool recacheArtwork) {
         LOG_INFO << "#" << item->getArtworkID() << thumbnailPath;
         item->setThumbnailPath(thumbnailPath);
 
-        auto *updateHub = m_CommandManager->getArtworksUpdateHub();
-        updateHub->updateArtwork(item->getArtworkID(), item->getLastKnownIndex(), m_RolesToUpdate);
+        m_ArtworksUpdateHub.updateArtwork(item->getArtworkID(), item->getLastKnownIndex(), m_RolesToUpdate);
 
         if (recacheArtwork) {
             // write video metadata set to the artwork
-            auto *metadataIOService = m_CommandManager->getMetadataIOService();
-            metadataIOService->writeArtwork(item->getArtwork());
+            m_MetadataIOService.writeArtwork(item->getArtwork());
         }
     }
 

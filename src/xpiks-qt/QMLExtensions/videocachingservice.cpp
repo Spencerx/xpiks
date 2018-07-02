@@ -19,20 +19,27 @@
 #include "../Common/logging.h"
 
 namespace QMLExtensions {
-    VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent) :
+    VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment,
+                                             Storage::IDatabaseManager &dbManager,
+                                             Models::SwitcherModel &switcherModel,
+                                             QObject *parent) :
         QObject(parent),
-        Common::BaseEntity(),
         m_Environment(environment),
         m_DatabaseManager(dbManager),
+        m_SwitcherModel(switcherModel),
         m_CachingWorker(nullptr),
         m_IsCancelled(false)
     {
-        Q_ASSERT(dbManager != nullptr);
     }
 
-    void VideoCachingService::startService() {
-        m_CachingWorker = new VideoCachingWorker(m_Environment, m_DatabaseManager);
-        m_CachingWorker->setCommandManager(m_CommandManager);
+    void VideoCachingService::startService(ImageCachingService &imageCachingService,
+                                           Services::ArtworksUpdateHub &updateHub,
+                                           MetadataIO::MetadataIOService &metadataIOService) {
+        m_CachingWorker = new VideoCachingWorker(m_Environment,
+                                                 m_DatabaseManager,
+                                                 imageCachingService,
+                                                 updateHub,
+                                                 metadataIOService);
 
         QThread *thread = new QThread();
         m_CachingWorker->moveToThread(thread);
@@ -63,8 +70,7 @@ namespace QMLExtensions {
         LOG_INFO << snapshot.size() << "artworks";
 
 #ifndef INTEGRATION_TESTS
-        Models::SwitcherModel *switcher = m_CommandManager->getSwitcherModel();
-        const bool goodQualityAllowed = switcher->getGoodQualityVideoPreviews();
+        const bool goodQualityAllowed = m_SwitcherModel.getGoodQualityVideoPreviews();
 #else
         const bool goodQualityAllowed = false;
 #endif
@@ -96,8 +102,7 @@ namespace QMLExtensions {
         LOG_DEBUG << "#" << videoArtwork->getItemID();
 
 #ifndef INTEGRATION_TESTS
-        Models::SwitcherModel *switcher = m_CommandManager->getSwitcherModel();
-        const bool goodQualityAllowed = switcher->getGoodQualityVideoPreviews();
+        const bool goodQualityAllowed = m_SwitcherModel.getGoodQualityVideoPreviews();
 #else
         const bool goodQualityAllowed = false;
 #endif
