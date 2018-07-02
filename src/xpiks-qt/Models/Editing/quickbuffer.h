@@ -15,7 +15,7 @@
 #include <QQmlEngine>
 #include <Models/Editing/artworkproxybase.h>
 #include <Artworks/basicmetadatamodel.h>
-#include <SpellCheck/spellcheckiteminfo.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
 #include <Suggestion/suggestionartwork.h>
 #include <Common/hold.h>
 #include <Common/delayedactionentity.h>

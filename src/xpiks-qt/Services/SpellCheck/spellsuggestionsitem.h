@@ -20,12 +20,13 @@
 #include <Common/flags.h>
 
 namespace Artworks {
-    class IMetadataOperator;
     class BasicKeywordsModel;
+    class IMetadataOperator;
 }
 
 namespace SpellCheck {
-    class SpellSuggestionsItem: public QAbstractListModel {
+    class SpellSuggestionsItem: public QAbstractListModel
+    {
         Q_OBJECT
     public:
         SpellSuggestionsItem(const QString &word,
@@ -33,7 +34,6 @@ namespace SpellCheck {
                              Artworks::IMetadataOperator *metadataOperator);
         SpellSuggestionsItem(const QString &word,
                              Artworks::IMetadataOperator *metadataOperator);
-        virtual ~SpellSuggestionsItem();
 
     public:
         enum KeywordSpellSuggestions_Roles {
@@ -61,8 +61,6 @@ namespace SpellCheck {
 
         bool getReplacementSucceeded() const { return m_ReplacementSucceeded; }
 
-        Artworks::IMetadataOperator *getMetadataOperator() const { return m_MetadataOperator; }
-
     public:
         virtual void replaceToSuggested() = 0;
 
@@ -85,6 +83,7 @@ namespace SpellCheck {
         virtual QHash<int, QByteArray> roleNames() const override;
         void setReplacementSucceeded(bool succeeded) { m_ReplacementSucceeded = succeeded; }
         const QStringList &getSuggestions() const { return m_Suggestions; }
+        Artworks::IMetadataOperator *getMetadataOperator() const { return m_MetadataOperator; }
 
     private:
         Artworks::IMetadataOperator *m_MetadataOperator;

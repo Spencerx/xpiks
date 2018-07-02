@@ -82,14 +82,12 @@ namespace Artworks {
 
     public:
         const Container &getRawData() const { return m_ArtworksSnapshot; }
-        const WeakArtworksSnapshot &getWeakSnapshot() const { return m_RawArtworks; }
         size_t size() const { return m_ArtworksSnapshot.size(); }
 
     public:
-        void reserve(size_t size) { m_ArtworksSnapshot.reserve(size); m_RawArtworks.reserve((int)size); }
+        void reserve(size_t size) { m_ArtworksSnapshot.reserve(size); }
         void append(ArtworkMetadata *artwork) {
             m_ArtworksSnapshot.emplace_back(new ArtworkMetadataLocker(artwork));
-            m_RawArtworks.push_back(artwork);
         }
         void append(const WeakArtworksSnapshot &artworks);
         void append(const std::deque<ArtworkMetadata *> &artworks);
@@ -101,12 +99,10 @@ namespace Artworks {
         ArtworkMetadata *get(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i)->getArtworkMetadata(); }
         const std::shared_ptr<ArtworkMetadataLocker> &at(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i); }
         void clear();
-        bool empty() const { Q_ASSERT(m_ArtworksSnapshot.size() == m_RawArtworks.size()); return m_ArtworksSnapshot.empty(); }
+        bool empty() const { return m_ArtworksSnapshot.empty(); }
 
     private:
         Container m_ArtworksSnapshot;
-        // TODO: deprecate and remove raw items
-        WeakArtworksSnapshot m_RawArtworks;
     };
 }
 

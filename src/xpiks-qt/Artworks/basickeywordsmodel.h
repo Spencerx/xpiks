@@ -36,7 +36,7 @@ namespace Artworks {
     class BasicKeywordsModelImpl;
 
     class BasicKeywordsModel:
-            public AbstractListModel
+            public Common::AbstractListModel
     {
         Q_OBJECT
         Q_PROPERTY(bool hasKeywordsSpellErrors READ hasKeywordsSpellError NOTIFY keywordsSpellingChanged)

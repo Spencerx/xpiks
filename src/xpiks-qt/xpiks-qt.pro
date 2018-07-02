@@ -179,7 +179,6 @@ SOURCES += main.cpp \
     Commands/Files/removefilescommandbase.cpp \
     Commands/Editing/editartworkstemplate.cpp \
     Commands/Editing/expandpresettemplate.cpp \
-    Commands/Editing/findandreplacecommand.cpp \
     Commands/Editing/keywordedittemplate.cpp \
     Commands/Editing/readmetadatatemplate.cpp \
     Models/Artworks/artworkslistmodel.cpp \
@@ -215,7 +214,8 @@ SOURCES += main.cpp \
     Commands/Editing/deletekeywordstemplate.cpp \
     Models/Editing/currenteditablemodel.cpp \
     Commands/Services/inspectbasicmodeltemplate.cpp \
-    Models/Editing/quickbuffer.cpp
+    Models/Editing/quickbuffer.cpp \
+    Commands/Editing/findandreplacetemplate.cpp
 
 RESOURCES += qml.qrc
 
@@ -467,7 +467,6 @@ HEADERS += \
     Commands/Base/templateduicommand.h \
     Commands/Editing/editartworkstemplate.h \
     Commands/Editing/expandpresettemplate.h \
-    Commands/Editing/findandreplacecommand.h \
     Commands/Editing/keywordedittemplate.h \
     Commands/Editing/modifyartworkscommand.h \
     Commands/Editing/readmetadatatemplate.h \
@@ -526,7 +525,8 @@ HEADERS += \
     QMLExtensions/iuicommanddispatcher.h \
     Commands/messages.h \
     Commands/appmessages.h \
-    Models/Editing/quickbuffer.h
+    Models/Editing/quickbuffer.h \
+    Commands/Editing/findandreplacetemplate.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

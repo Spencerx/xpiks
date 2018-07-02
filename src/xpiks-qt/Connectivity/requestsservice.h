@@ -13,7 +13,6 @@
 
 #include <QObject>
 #include <memory>
-#include "../Common/baseentity.h"
 #include "iconnectivityrequest.h"
 
 namespace Helpers {

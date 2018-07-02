@@ -85,8 +85,6 @@ namespace SpellCheck {
 
     private:
         void setArtworks(Artworks::ArtworksSnapshot &&snapshot);
-        SuggestionsVector createSuggestionsRequests(Common::SuggestionFlags flags,
-                                                    std::vector<Artworks::IMetadataOperator *> &items);
         bool processFailedReplacements(const SuggestionsVector &failedReplacements) const;
         SuggestionsVector setupSuggestions(const SuggestionsVector &items);
 
@@ -102,7 +100,7 @@ namespace SpellCheck {
 
     private:
         std::vector<std::shared_ptr<SpellSuggestionsItem> > m_SuggestionsList;
-        std::vector<Artworks::IMetadataOperator *> m_CheckedItems;
+        std::vector<Artworks::MetadataOperatorLocker> m_CheckedItems;
         SpellCheckerService &m_SpellCheckerService;
         Commands::AppMessages &m_Messages;
     };

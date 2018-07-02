@@ -98,6 +98,10 @@ namespace Artworks {
         virtual bool moveKeyword(size_t from, size_t to) override { return BasicKeywordsModel::moveKeyword(from, to); }
 
     public:
+        virtual void acquire() override { BasicKeywordsModel::acquire(); }
+        virtual bool release() override { return BasicKeywordsModel::release(); }
+
+    public:
         virtual bool setDescription(const QString &value) override;
         virtual bool setTitle(const QString &value) override;
         virtual bool isEmpty() override;

@@ -13,8 +13,8 @@
 
 #include <QString>
 #include <QSet>
-#include "../SpellCheck/spellsuggestionsitem.h"
-#include "../Common/flags.h"
+#include <Services/SpellCheck/spellsuggestionsitem.h>
+#include <Common/flags.h>
 #include "keyword.h"
 
 namespace Artworks {
@@ -22,7 +22,10 @@ namespace Artworks {
 
     class IMetadataOperator {
     public:
-        virtual ~IMetadataOperator() {}
+        virtual ~IMetadataOperator() { }
+
+        virtual void acquire() = 0;
+        virtual bool release() = 0;
 
         virtual bool editKeyword(size_t index, const QString &replacement) = 0;
         virtual bool removeKeywordAt(size_t index, QString &removedKeyword) = 0;
@@ -52,6 +55,32 @@ namespace Artworks {
         virtual QStringList retrieveMisspelledDescriptionWords() = 0;
         virtual bool processFailedKeywordReplacements(const std::vector<std::shared_ptr<SpellCheck::KeywordSpellSuggestions> > &candidatesForRemoval) = 0;
         virtual void afterReplaceCallback() = 0;
+    };
+
+    class MetadataOperatorLocker {
+    public:
+        MetadataOperatorLocker(IMetadataOperator *metadataOperator):
+            m_MetadataOperator(metadataOperator)
+        {
+            if (m_MetadataOperator != nullptr) {
+                m_MetadataOperator->acquire();
+            }
+        }
+
+        virtual ~MetadataOperatorLocker() {
+            if (m_MetadataOperator != nullptr) {
+                m_MetadataOperator->release();
+            }
+        }
+
+    public:
+        IMetadataOperator *getMetadataOperator() const { return m_MetadataOperator; }
+
+    private:
+        MetadataOperatorLocker(const MetadataOperatorLocker&);
+
+    private:
+        IMetadataOperator *m_MetadataOperator;
     };
 }
 

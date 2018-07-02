@@ -11,18 +11,18 @@
 #ifndef KEYWORDEDITTEMPLATE_H
 #define KEYWORDEDITTEMPLATE_H
 
-#include "icommandtemplate.h"
+#include <Commands/Base/icommandtemplate.h>
 #include <QString>
 #include <vector>
-#include "../UndoRedo/artworkmetadatabackup.h"
-#include "../Common/flags.h"
+#include <UndoRedo/artworkmetadatabackup.h>
+#include <Common/flags.h>
 
 namespace Artworks {
     class ArtworksSnapshot;
 }
 
 namespace Commands {
-    class KeywordEditTemplate: public Artworks::ArtworksSnapshot
+    class KeywordEditTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         KeywordEditTemplate(Common::KeywordEditFlags editFlags,

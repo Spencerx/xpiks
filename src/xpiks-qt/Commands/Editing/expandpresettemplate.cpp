@@ -9,8 +9,8 @@
  */
 
 #include "expandpresettemplate.h"
-#include "../KeywordsPresets/ipresetsmanager.h"
-#include "../Artworks/artworkssnapshot.h"
+#include <KeywordsPresets/ipresetsmanager.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace Commands {
     ExpandPresetTemplate::ExpandPresetTemplate(KeywordsPresets::IPresetsManager &presetsManager,

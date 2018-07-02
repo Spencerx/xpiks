@@ -66,8 +66,7 @@ namespace Models {
         Q_PROPERTY(bool appendKeywords READ getAppendKeywords WRITE setAppendKeywords NOTIFY appendKeywordsChanged)
 
     public:
-        CombinedArtworksModel(Artworks::IArtworksSource &selectedArtworksSource,
-                              Commands::ICommandManager &commandManager,
+        CombinedArtworksModel(Commands::ICommandManager &commandManager,
                               KeywordsPresets::IPresetsManager &presetsManager,
                               AutoComplete::ICompletionSource &completionSource,
                               QObject *parent=0);

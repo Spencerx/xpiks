@@ -11,7 +11,7 @@
 #include "artworksupdatetemplate.h"
 #include "../Helpers/cpphelpers.h"
 #include "../Artworks/artworkssnapshot.h"
-#include "../Models/artworkslistmodel.h"
+#include <Models/Artworks/artworkslistmodel.h>
 
 namespace Commands {
     ArtworksUpdateTemplate::ArtworksUpdateTemplate(Models::ArtworksListModel &artworksListModel,

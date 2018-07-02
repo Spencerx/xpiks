@@ -40,10 +40,6 @@ namespace SpellCheck {
         Q_ASSERT(metadataOperator != nullptr);
     }
 
-    SpellSuggestionsItem::~SpellSuggestionsItem() {
-
-    }
-
     bool SpellSuggestionsItem::setReplacementIndex(int value) {
         bool result = (value != m_ReplacementIndex) && (value != -1);
 

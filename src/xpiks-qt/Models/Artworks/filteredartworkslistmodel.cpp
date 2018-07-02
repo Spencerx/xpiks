@@ -708,10 +708,6 @@ namespace Models {
     Artworks::ArtworksSnapshot::Container FilteredArtworksListModel::getSearchablePreviewOriginalItems(const QString &searchTerm,
                                                                                                           Common::SearchFlags flags) const {
         return filterItems<std::shared_ptr<ArtworkMetadataLocker> >(
-            [&searchTerm, flags](ArtworkMetadata *artwork) {
-            return Helpers::hasSearchMatch(searchTerm, artwork, flags);
-        },
-            [] (Artworks::ArtworkMetadata *artwork, int, int) {
-            return std::shared_ptr<ArtworkMetadataLocker>(new PreviewArtworkElement(artwork)); });
+
     }
 }

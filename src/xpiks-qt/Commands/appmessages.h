@@ -51,6 +51,7 @@ namespace Commands {
             UploadArtworks,
             CreateThumbnail,
             ExportToCSV,
+            FindArtworks
         };
     };
 }

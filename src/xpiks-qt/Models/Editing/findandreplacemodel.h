@@ -11,18 +11,21 @@
 #ifndef FINDANDREPLACEMODEL_H
 #define FINDANDREPLACEMODEL_H
 
-#include "../Common/baseentity.h"
 #include <QObject>
 #include <QQuickTextDocument>
-#include "../Models/previewartworkelement.h"
-#include "../Common/flags.h"
-#include "../Common/iflagsprovider.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include <Models/Editing/previewartworkelement.h>
+#include <Common/flags.h>
+#include <Common/iflagsprovider.h>
+#include <Artworks/artworkssnapshot.h>
+
+namespace Commands {
+    class ICommandManager;
+    class AppMessages;
+}
 
 namespace Models {
     class FindAndReplaceModel:
         public QAbstractListModel,
-        public Common::BaseEntity,
         public Common::IFlagsProvider<Common::SearchFlags>
     {
         Q_OBJECT
@@ -36,9 +39,10 @@ namespace Models {
         Q_PROPERTY(int count READ getArtworksCount NOTIFY countChanged)
 
     public:
-        FindAndReplaceModel(QMLExtensions::ColorsModel *colorsModel, QObject *parent=0);
-
-        virtual ~FindAndReplaceModel() {}
+        FindAndReplaceModel(QMLExtensions::ColorsModel &colorsModel,
+                            Commands::ICommandManager &commandManager,
+                            Commands::AppMessages &messages,
+                            QObject *parent=0);
 
     public:
         virtual Common::SearchFlags getFlags() const override { return m_Flags; }
@@ -171,6 +175,8 @@ namespace Models {
         void replaceSucceeded();
 
     private:
+        void findReplaceCandidates(Artworks::ArtworksSnapshot &&snapshot);
+        void updatePreviewFlags();
         QString filterText(const QString &text);
         void setAllSelected(bool isSelected);
         void initDefaultFlags();
@@ -181,7 +187,8 @@ namespace Models {
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
         QString m_ReplaceFrom;
         QString m_ReplaceTo;
-        QMLExtensions::ColorsModel *m_ColorsModel;
+        QMLExtensions::ColorsModel &m_ColorsModel;
+        Commands::ICommandManager &m_CommandManager;
         Common::SearchFlags m_Flags;
     };
 }

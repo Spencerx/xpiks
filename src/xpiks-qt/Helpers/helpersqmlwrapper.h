@@ -13,8 +13,7 @@
 
 #include <QObject>
 #include <QString>
-#include "../Common/baseentity.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/isystemenvironment.h>
 
 namespace Commands {
     class CommandManager;
@@ -30,7 +29,7 @@ namespace QMLExtensions {
 }
 
 namespace Helpers {
-    class HelpersQmlWrapper : public QObject, public Common::BaseEntity
+    class HelpersQmlWrapper : public QObject
     {
         Q_OBJECT
     public:

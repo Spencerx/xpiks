@@ -50,8 +50,7 @@ namespace Artworks {
     }
 
     ArtworksSnapshot::ArtworksSnapshot(ArtworksSnapshot &&other):
-        m_ArtworksSnapshot(std::move(other.m_ArtworksSnapshot)),
-        m_RawArtworks(std::move(other.m_RawArtworks))
+        m_ArtworksSnapshot(std::move(other.m_ArtworksSnapshot))
     {
     }
 
@@ -59,7 +58,6 @@ namespace Artworks {
         if (this != &other) {
             LOG_DEBUG << "Moving snapshot of" << other.m_ArtworksSnapshot.size() << "item(s)";
             m_ArtworksSnapshot = std::move(other.m_ArtworksSnapshot);
-            m_RawArtworks = std::move(other.m_RawArtworks);
         }
 
         return *this;
@@ -82,8 +80,6 @@ namespace Artworks {
     }
 
     void ArtworksSnapshot::append(const WeakArtworksSnapshot &artworks) {
-        m_RawArtworks.insert(m_RawArtworks.end(), artworks.begin(), artworks.end());
-
         LOG_DEBUG << "Appending snapshot of" << artworks.size() << "artwork(s)";
         m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + artworks.size());
         for (auto &item: artworks) {
@@ -94,20 +90,16 @@ namespace Artworks {
     void ArtworksSnapshot::append(const std::deque<ArtworkMetadata *> &artworks) {
         LOG_DEBUG << "Appending snapshot of" << artworks.size() << "artwork(s)";
         m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + artworks.size());
-        m_RawArtworks.reserve(m_RawArtworks.size() + (int)artworks.size());
         for (auto &item: artworks) {
             m_ArtworksSnapshot.emplace_back(new ArtworkMetadataLocker(item));
-            m_RawArtworks.push_back(item);
         }
     }
 
     void ArtworksSnapshot::append(ArtworksSnapshot::Container &rawSnapshot) {
         LOG_DEBUG << "Appending snapshot of" << rawSnapshot.size() << "artwork(s)";
 
-        m_RawArtworks.reserve(m_RawArtworks.size() + rawSnapshot.size());
         m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + rawSnapshot.size());
         for (auto &item: rawSnapshot) {
-            m_RawArtworks.push_back(item->getArtworkMetadata());
             m_ArtworksSnapshot.push_back(item);
         }
     }
@@ -126,7 +118,6 @@ namespace Artworks {
         clear();
         LOG_DEBUG << "Copying snapshot of" << other.m_ArtworksSnapshot.size() << "item(s)";
 
-        m_RawArtworks.insert(m_RawArtworks.end(), other.m_RawArtworks.begin(), other.m_RawArtworks.end());
         m_ArtworksSnapshot = other.m_ArtworksSnapshot;
     }
 
@@ -134,13 +125,11 @@ namespace Artworks {
         Q_ASSERT(m_ArtworksSnapshot.size() == m_RawArtworks.size());
         if (index >= m_ArtworksSnapshot.size()) { return; }
 
-        m_RawArtworks.erase(m_RawArtworks.begin() + index);
         m_ArtworksSnapshot.erase(m_ArtworksSnapshot.begin() + index);
     }
 
     void ArtworksSnapshot::clear() {
         LOG_DEBUG << "Removing" << size() << "item(s)";
-        m_RawArtworks.clear();
         m_ArtworksSnapshot.clear();
     }
 }

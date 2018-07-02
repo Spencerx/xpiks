@@ -199,8 +199,10 @@ namespace SpellCheck {
 
     void SpellCheckSuggestionModel::clearModel() {
         beginResetModel();
-        m_SuggestionsList.clear();
-        m_CheckedItems.clear();
+        {
+            m_SuggestionsList.clear();
+            m_CheckedItems.clear();
+        }
         endResetModel();
         emit artworksCountChanged();
     }
@@ -228,16 +230,16 @@ namespace SpellCheck {
         }
 
         if (anyChanged) {
-             std::vector<Artworks::BasicKeywordsModel *> itemsToSubmit;
-             itemsToSubmit.reserve(m_CheckedItems.size());
+            std::vector<Artworks::BasicKeywordsModel *> itemsToSubmit;
+            itemsToSubmit.reserve(m_CheckedItems.size());
 
-             for (auto &pair: m_CheckedItems) {
-                 auto *item = pair.first;
-                 item->afterReplaceCallback();
-                 itemsToSubmit.push_back(item->getBasicKeywordsModel());
-             }
+            for (auto *item: m_CheckedItems) {
+                auto *metadataOperator = item.getMetadataOperator();
+                metadataOperator->afterReplaceCallback();
+                itemsToSubmit.push_back(metadataOperator->getBasicKeywordsModel());
+            }
 
-             m_SpellCheckerService.submitItems(itemsToSubmit);
+            m_SpellCheckerService.submitItems(itemsToSubmit);
         }
 
         updateItems();
@@ -266,6 +268,11 @@ namespace SpellCheck {
         auto executedRequests = setupSuggestions(combinedRequests);
         LOG_INFO << executedRequests.size() << "executed request(s)";
 
+        decltype(m_CheckedItems) lockers(items.size());
+        for (auto *item: items) {
+            lockers.emplace_back(item);
+        }
+
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
         for (auto &executedItem: executedRequests) {
             LOG_INFO << executedItem->toDebugString();
@@ -273,9 +280,11 @@ namespace SpellCheck {
 #endif
 
         beginResetModel();
-        m_CheckedItems = std::move(items);
-        m_SuggestionsList.clear();
-        m_SuggestionsList = executedRequests;
+        {
+            m_CheckedItems = std::move(lockers);
+            m_SuggestionsList.clear();
+            m_SuggestionsList = executedRequests;
+        }
         endResetModel();
 
         emit artworksCountChanged();
@@ -364,10 +373,11 @@ namespace SpellCheck {
         std::vector<int> indices;
         indices.reserve(m_CheckedItems.size());
 
-        for (auto &pair: m_CheckedItems) {
-            int index = pair.second;
-            if (index != -1) {
-                indices.push_back(index);
+        for (auto &locker: m_CheckedItems) {
+            auto *metadataOperator = locker->getMetadataOperator();
+            Artworks::ArtworkMetadata *artwork = dynamic_cast<Artworks::ArtworkMetadata*>(metadataOperator);
+            if (artwork != nullptr) {
+                indices.push_back(artwork->getLastKnownIndex());
             }
         }
 

@@ -10,18 +10,18 @@
 
 #include "findandreplacemodel.h"
 #include <QAbstractListModel>
-#include "../Models/artworkmetadata.h"
-#include "../Models/artitemsmodel.h"
-#include "../Models/settingsmodel.h"
-#include "../Commands/commandmanager.h"
-#include "../Helpers/filterhelpers.h"
-#include "../Models/filteredartworkslistmodel.h"
-#include "../Models/previewartworkelement.h"
-#include "../Helpers/metadatahighlighter.h"
-#include "../Commands/findandreplacecommand.h"
-#include "../Common/defines.h"
-#include "../Helpers/stringhelper.h"
-#include "../Models/videoartwork.h"
+#include <Artworks/artworkmetadata.h>
+#include <Models/settingsmodel.h>
+#include <Helpers/filterhelpers.h>
+#include <Models/Editing/previewartworkelement.h>
+#include <Helpers/metadatahighlighter.h>
+#include <Commands/Editing/findandreplacetemplate.h>
+#include <Common/logging.h>
+#include <Common/defines.h>
+#include <Helpers/stringhelper.h>
+#include <Artworks/videoartwork.h>
+#include <Commands/appmessages.h>
+#include <Helpers/cpphelpers.h>
 
 QString searchFlagsToString(Common::SearchFlags flags) {
     QStringList items;
@@ -55,14 +55,21 @@ QString searchFlagsToString(Common::SearchFlags flags) {
 }
 
 namespace Models {
-    FindAndReplaceModel::FindAndReplaceModel(QMLExtensions::ColorsModel *colorsModel, QObject *parent):
+    FindAndReplaceModel::FindAndReplaceModel(QMLExtensions::ColorsModel &colorsModel,
+                                             Commands::ICommandManager &commandManager,
+                                             Commands::AppMessages &messages,
+                                             QObject *parent):
         QAbstractListModel(parent),
-        Common::BaseEntity(),
         m_ColorsModel(colorsModel),
+        m_CommandManager(commandManager),
         m_Flags(Common::SearchFlags::None)
     {
-        Q_ASSERT(colorsModel != nullptr);
         initDefaultFlags();
+
+        messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::FindArtworks)
+                .addListener(std::bind(&FindAndReplaceModel::findReplaceCandidates, this));
     }
 
     void FindAndReplaceModel::initArtworksList() {
@@ -77,46 +84,7 @@ namespace Models {
 
         normalizeSearchCriteria();
 
-        Models::FilteredArtworksListModel *filteredItemsModel = m_CommandManager->getFilteredArtItemsModel();
-        auto rawSnapshot = filteredItemsModel->getSearchablePreviewOriginalItems(m_ReplaceFrom, m_Flags);
-        m_ArtworksSnapshot.set(rawSnapshot);
-
-        LOG_INFO << "Found" << m_ArtworksSnapshot.size() << "item(s)";
-
-        for (auto &locker: m_ArtworksSnapshot.getRawData()) {
-            std::shared_ptr<PreviewArtworkElement> preview = std::dynamic_pointer_cast<PreviewArtworkElement>(locker);
-            Q_ASSERT(preview);
-            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
-            bool hasMatch = false;
-            Common::SearchFlags flags = Common::SearchFlags::None;
-
-            if (getSearchInTitle()) {
-                flags = m_Flags;
-                Common::UnsetFlag(flags, Common::SearchFlags::Description);
-                Common::UnsetFlag(flags, Common::SearchFlags::Keywords);
-
-                hasMatch = Helpers::hasSearchMatch(m_ReplaceFrom, artwork, flags);
-                preview->setHasTitleMatch(hasMatch);
-            }
-
-            if (getSearchInDescription()) {
-                flags = m_Flags;
-                Common::UnsetFlag(flags, Common::SearchFlags::Title);
-                Common::UnsetFlag(flags, Common::SearchFlags::Keywords);
-
-                hasMatch = Helpers::hasSearchMatch(m_ReplaceFrom, artwork, flags);
-                preview->setHasDescriptionMatch(hasMatch);
-            }
-
-            if (getSearchInKeywords()) {
-                flags = m_Flags;
-                Common::UnsetFlag(flags, Common::SearchFlags::Description);
-                Common::UnsetFlag(flags, Common::SearchFlags::Title);
-
-                hasMatch = Helpers::hasSearchMatch(m_ReplaceFrom, artwork, flags);
-                preview->setHasKeywordsMatch(hasMatch);
-            }
-        }
+        // TODO: fire to filtered model
     }
 
     int FindAndReplaceModel::rowCount(const QModelIndex &parent) const {
@@ -194,11 +162,63 @@ namespace Models {
         return roles;
     }
 
+    void FindAndReplaceModel::findReplaceCandidates(Artworks::ArtworksSnapshot &&snapshot) {
+        LOG_DEBUG << "size:" << snapshot.size();
+        m_ArtworksSnapshot = Helpers::filterMap<Artworks::ArtworkMetadataLocker>(
+                    snapshot.getRawData(),
+                    [this](const Artworks::ArtworkMetadataLocker &locker) {
+            return Helpers::hasSearchMatch(this->m_ReplaceFrom, locker.getArtworkMetadata(), this->m_Flags);
+        },
+        [](const Artworks::ArtworkMetadataLocker &locker) {
+            return std::make_shared<PreviewArtworkElement>(locker.getArtworkMetadata());
+        });
+
+        LOG_INFO << "Found" << m_ArtworksSnapshot.size() << "item(s)";
+    }
+
+    void FindAndReplaceModel::updatePreviewFlags() {
+        LOG_DEBUG << "#";
+        for (auto &locker: m_ArtworksSnapshot.getRawData()) {
+            std::shared_ptr<PreviewArtworkElement> preview = std::dynamic_pointer_cast<PreviewArtworkElement>(locker);
+            Q_ASSERT(preview);
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+            bool hasMatch = false;
+            Common::SearchFlags flags = Common::SearchFlags::None;
+
+            if (getSearchInTitle()) {
+                flags = m_Flags;
+                Common::UnsetFlag(flags, Common::SearchFlags::Description);
+                Common::UnsetFlag(flags, Common::SearchFlags::Keywords);
+
+                hasMatch = Helpers::hasSearchMatch(m_ReplaceFrom, artwork, flags);
+                preview->setHasTitleMatch(hasMatch);
+            }
+
+            if (getSearchInDescription()) {
+                flags = m_Flags;
+                Common::UnsetFlag(flags, Common::SearchFlags::Title);
+                Common::UnsetFlag(flags, Common::SearchFlags::Keywords);
+
+                hasMatch = Helpers::hasSearchMatch(m_ReplaceFrom, artwork, flags);
+                preview->setHasDescriptionMatch(hasMatch);
+            }
+
+            if (getSearchInKeywords()) {
+                flags = m_Flags;
+                Common::UnsetFlag(flags, Common::SearchFlags::Description);
+                Common::UnsetFlag(flags, Common::SearchFlags::Title);
+
+                hasMatch = Helpers::hasSearchMatch(m_ReplaceFrom, artwork, flags);
+                preview->setHasKeywordsMatch(hasMatch);
+            }
+        }
+    }
+
 #if !defined(CORE_TESTS) && !defined(INTEGRATION_TESTS)
     void FindAndReplaceModel::initHighlighting(QQuickTextDocument *document) {
         Helpers::MetadataHighlighter *highlighter = new Helpers::MetadataHighlighter(m_ReplaceFrom,
                                                                                      this,
-                                                                                     m_ColorsModel,
+                                                                                     &m_ColorsModel,
                                                                                      document->textDocument());
 
         Q_UNUSED(highlighter);
@@ -294,13 +314,13 @@ namespace Models {
 
     void FindAndReplaceModel::replace() {
         LOG_INFO << "Flags:" << searchFlagsToString(m_Flags);
-
-        std::shared_ptr<Commands::FindAndReplaceCommand> replaceCommand(new Commands::FindAndReplaceCommand(m_ArtworksSnapshot.getRawData(),
-                                                                                                            m_ReplaceFrom,
-                                                                                                            m_ReplaceTo,
-                                                                                                            m_Flags));
-
-        m_CommandManager->processCommand(replaceCommand);
+        using namespace Commands;
+        m_CommandManager.processCommand(
+                    std::make_shared<ModifyArtworksCommand>(
+                        getSnapshot(),
+                        std::make_shared<FindAndReplaceTemplate>(m_ReplaceFrom,
+                                                                 m_ReplaceTo,
+                                                                 m_Flags)));
 
         emit replaceSucceeded();
     }

@@ -22,13 +22,13 @@
 #include <QMutex>
 #include <QQmlEngine>
 #include "basicmetadatamodel.h"
-#include "../Common/flags.h"
+#include <Common/flags.h>
 #include "imetadataoperator.h"
-#include "../Common/hold.h"
-#include "../SpellCheck/spellcheckiteminfo.h"
-#include "../UndoRedo/artworkmetadatabackup.h"
-#include "../Common/delayedactionentity.h"
-#include "../Common/types.h"
+#include <Common/hold.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <UndoRedo/artworkmetadatabackup.h>
+#include <Common/delayedactionentity.h>
+#include <Common/types.h>
 
 namespace MetadataIO {
     struct CachedArtwork;
@@ -195,8 +195,8 @@ namespace Artworks {
         virtual BasicKeywordsModel *getBasicKeywordsModel() override;
 
     public:
-        void acquire() { m_Hold.acquire(); }
-        bool release() { return m_Hold.release(); }
+        virtual void acquire() override { m_Hold.acquire(); }
+        virtual bool release() override { return m_Hold.release(); }
 
     public:
         // IBasicArtwork interface
@@ -279,7 +279,7 @@ namespace Artworks {
     class ArtworkMetadataLocker
     {
     public:
-        ArtworkMetadataLocker(Artworks::ArtworkMetadata *metadata):
+        ArtworkMetadataLocker(ArtworkMetadata *metadata):
             m_ArtworkMetadata(metadata)
         {
             if (m_ArtworkMetadata != nullptr) {

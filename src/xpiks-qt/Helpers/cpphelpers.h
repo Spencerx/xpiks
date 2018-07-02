@@ -17,30 +17,29 @@
 
 namespace Helpers {
     template<typename InType, typename OutType>
-    std::vector<OutType> map(const std::vector<InType> &v, const std::function<OutType (const InType&)> &mapper) {
+    std::vector<OutType> filterMap(const std::vector<InType> &v,
+                                   const std::function<bool (const InType&)> &pred,
+                                   const std::function<OutType (const InType&)> &mapper) {
         std::vector<OutType> result;
         result.reserve(v.size());
         auto itEnd = v.end();
         auto it = v.begin();
         while (it != itEnd) {
-            result.emplace_back(mapper(*it++));
+            if (pred(*it)) {
+                result.emplace_back(mapper(*it++));
+            }
         }
         return result;
     }
 
+    template<typename InType, typename OutType>
+    std::vector<OutType> map(const std::vector<InType> &v, const std::function<OutType (const InType&)> &mapper) {
+        return filterMap(v, [](const InType&) {return true;}, mapper);
+    }
+
     template<typename T>
     std::vector<T> filter(const std::vector<T> &v, const std::function<bool (const T&)> &pred) {
-        std::vector<T> result;
-        result.reserve(v.size());
-        auto itEnd = v.end();
-        auto it = v.begin();
-        while (it != itEnd) {
-            if (pred(*it)) {
-                result.push_back(*it);
-            }
-            it++;
-        }
-        return result;
+        return filterMap(v, pred, [](const T &t) { return t; });
     }
 }
 

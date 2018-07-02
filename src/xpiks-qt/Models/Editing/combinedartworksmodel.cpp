@@ -16,7 +16,6 @@
 #include <Suggestion/keywordssuggestor.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkelement.h>
-#include <SpellCheck/spellcheckiteminfo.h>
 #include <Common/defines.h>
 #include <QMLExtensions/appdispatcher.h>
 #include <QMLExtensions/uicommandid.h>
@@ -27,8 +26,7 @@
 #define MAX_EDITING_PAUSE_RESTARTS 12
 
 namespace Models {
-    CombinedArtworksModel::CombinedArtworksModel(Artworks::IArtworksSource &selectedArtworksSource,
-                                                 Commands::ICommandManager &commandManager,
+    CombinedArtworksModel::CombinedArtworksModel(Commands::ICommandManager &commandManager,
                                                  KeywordsPresets::IPresetsManager &presetsManager,
                                                  AutoComplete::ICompletionSource &completionSource,
                                                  QObject *parent):

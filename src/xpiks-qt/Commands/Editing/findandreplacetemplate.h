@@ -8,36 +8,43 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef EXPANDPRESETTEMPLATE_H
-#define EXPANDPRESETTEMPLATE_H
+#ifndef FINDANDREPLACECOMMAND_H
+#define FINDANDREPLACECOMMAND_H
 
+#include <QString>
+#include <QVector>
+#include <Common/flags.h>
 #include <Commands/Base/icommandtemplate.h>
-#include <KeywordsPresets/ipresetsmanager.h>
 #include <UndoRedo/artworkmetadatabackup.h>
+
+namespace Models {
+    class PreviewArtworkElement;
+}
 
 namespace Artworks {
     class ArtworksSnapshot;
 }
 
 namespace Commands {
-    class ExpandPresetTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
+    class FindAndReplaceTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
-        ExpandPresetTemplate(KeywordsPresets::IPresetsManager &presetsManager,
-                             KeywordsPresets::ID_t presetID,
-                             int keywordIndex = -1);
+        FindAndReplaceCommand(const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags):
+            m_ReplaceWhat(replaceWhat),
+            m_ReplaceTo(replaceTo),
+            m_Flags(flags)
+        {}
 
-        // IArtworksCommandTemplate interface
     public:
         virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
         virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
         std::vector<UndoRedo::ArtworkMetadataBackup> m_ArtworksBackups;
-        KeywordsPresets::IPresetsManager &m_PresetsManager;
-        KeywordsPresets::ID_t m_PresetID;
-        int m_KeywordIndex;
+        QString m_ReplaceWhat;
+        QString m_ReplaceTo;
+        Common::SearchFlags m_Flags;
     };
 }
 
-#endif // EXPANDPRESETTEMPLATE_H
+#endif // FINDANDREPLACE_H
