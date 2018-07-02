@@ -42,6 +42,9 @@ namespace Models {
     signals:
         void currentEditableChanged();
 
+    public slots:
+        void onClearCurrentEditable();
+
     private:
         std::shared_ptr<Models::ICurrentEditable> m_CurrentEditable;
     };

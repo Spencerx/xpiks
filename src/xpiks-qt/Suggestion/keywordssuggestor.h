@@ -36,6 +36,10 @@ namespace MetadataIO {
     class MetadataIOService;
 }
 
+namespace Commands {
+    class AppMessages;
+}
+
 namespace Suggestion {
     class KeywordsSuggestor:
             public QAbstractListModel
@@ -56,6 +60,7 @@ namespace Suggestion {
                           Connectivity::RequestsService &requestsService,
                           Models::SwitcherModel &switcherModel,
                           Models::SettingsModel &settingsModel,
+                          Commands::AppMessages &messages,
                           Common::ISystemEnvironment &environment,
                           QObject *parent=NULL);
 
@@ -168,6 +173,8 @@ namespace Suggestion {
         Microstocks::MicrostockAPIClients &m_ApiClients;
         Connectivity::RequestsService &m_RequestsService;
         Models::SwitcherModel &m_SwitcherModel;
+        Models::SettingsModel &m_SettingsModel;
+        Commands::AppMessages &m_Messages;
         std::vector<std::shared_ptr<ISuggestionEngine> > m_QueryEngines;
         std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
         QString m_LastErrorString;
