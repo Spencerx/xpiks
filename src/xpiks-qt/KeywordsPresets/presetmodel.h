@@ -12,9 +12,9 @@
 #define PRESETMODEL_H
 
 #include <QString>
-#include "../Common/basickeywordsmodel.h"
-#include "../Common/hold.h"
-#include "../Common/flags.h"
+#include <Artworks/basickeywordsmodel.h>
+#include <Common/hold.h>
+#include <Common/flags.h>
 #include "groupmodel.h"
 
 namespace KeywordsPresets {

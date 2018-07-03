@@ -35,15 +35,15 @@ namespace Warnings {
         void cancelCurrentBatch();
 
     public:
-        virtual void startService(const std::shared_ptr<Common::ServiceStartParams> &params) override;
-        virtual void stopService() override;
+        virtual void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
+        virtual void stopService();
 
-        virtual bool isAvailable() const override { return true; }
-        virtual bool isBusy() const override;
+        virtual bool isAvailable() const { return true; }
+        virtual bool isBusy() const;
 
-        virtual void submitItem(Artworks::ArtworkMetadata *item) override;
-        virtual void submitItem(Artworks::ArtworkMetadata *item, Common::WarningsCheckFlags flags) override;
-        virtual void submitItems(const Artworks::WeakArtworksSnapshot &items) override;
+        virtual void submitItem(Artworks::ArtworkMetadata *item);
+        virtual void submitItem(Artworks::ArtworkMetadata *item, Common::WarningsCheckFlags flags);
+        virtual void submitItems(const Artworks::WeakArtworksSnapshot &items);
 
     private slots:
         void workerDestoyed(QObject *object);

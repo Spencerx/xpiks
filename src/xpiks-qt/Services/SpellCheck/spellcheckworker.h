@@ -16,11 +16,11 @@
 #include <QReadWriteLock>
 #include <QHash>
 #include <QSet>
-#include "../Common/itemprocessingworker.h"
-#include "../Models/settingsmodel.h"
+#include <Common/itemprocessingworker.h>
+#include <Models/settingsmodel.h>
 #include "spellcheckitem.h"
-#include "../Helpers/asynccoordinator.h"
-#include "../Common/isystemenvironment.h"
+#include <Helpers/asynccoordinator.h>
+#include <Common/isystemenvironment.h>
 
 class Hunspell;
 class QTextCodec;
@@ -52,9 +52,9 @@ namespace SpellCheck {
         virtual ~SpellCheckWorker();
 
     public:
-        const QStringList &getUserDictionary() const { return m_UserDictionary.getWords(); }
+        const QStringList &getUserDictionary() const;
         QStringList retrieveCorrections(const QString &word);
-        int getUserDictionarySize() const { return m_UserDictionary.size(); }
+        int getUserDictionarySize() const;
 
     protected:
         virtual bool initWorker() override;        
@@ -66,8 +66,8 @@ namespace SpellCheck {
             /* Notify on emptiness only for batches with separator */
             /* emit queueIsEmpty(); */
         }
-        virtual void onResultsAvailable(std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker>> &results);
-        virtual void workerStopped() override { emit stopped(); }
+        virtual void onResultsAvailable(std::vector<WorkResult> &results) override;
+        virtual void onWorkerStopped() override { emit stopped(); }
 
     public slots:
         void process() { doWork(); }

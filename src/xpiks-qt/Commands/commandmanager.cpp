@@ -9,13 +9,12 @@
  */
 
 #include "commandmanager.h"
-#include "icommand.h"
+#include <Commands/Base/icommand.h>
 #include "../UndoRedo/undoredomanager.h"
 
 namespace Commands {
     CommandManager::CommandManager(UndoRedo::UndoRedoManager &undoRedoManager):
-        m_UndoRedoManager(undoRedoManager),
-        m_LastCommandID(0)
+        m_UndoRedoManager(undoRedoManager)
     {
     }
 
@@ -25,6 +24,5 @@ namespace Commands {
         if (command->canUndo()) {
             m_UndoRedoManager.recordHistoryItem(command);
         }
-        return result;
     }
 }

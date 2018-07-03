@@ -209,7 +209,7 @@ void XpiksApp::start() {
     Q_UNUSED(deferredStarter);
 
     m_AfterInitCalled = true;
-    std::shared_ptr<Common::ServiceStartParams> emptyParams;
+    std::shared_ptr<Services::ServiceStartParams> emptyParams;
     auto coordinatorParams = std::make_shared(new Helpers::AsyncCoordinatorStartParams(&m_InitCoordinator));
 
     bool dbInitialized = m_DatabaseManager.initialize();

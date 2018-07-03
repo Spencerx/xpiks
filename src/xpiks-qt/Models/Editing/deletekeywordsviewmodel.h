@@ -13,10 +13,14 @@
 
 #include <QQmlEngine>
 #include <QHash>
-#include "../Common/hold.h"
-#include "../Artworks/basickeywordsmodel.h"
-#include "../Models/artworksviewmodel.h"
-#include "../KeywordsPresets/ipresetsmanager.h"
+#include <Common/hold.h>
+#include <Artworks/basickeywordsmodel.h>
+#include <Models/Artworks/artworksviewmodel.h>
+#include <KeywordsPresets/ipresetsmanager.h>
+
+namespace Commands {
+    class ICommandManager;
+}
 
 namespace Models {
     class DeleteKeywordsViewModel: public Models::ArtworksViewModel
@@ -27,8 +31,7 @@ namespace Models {
         Q_PROPERTY(bool caseSensitive READ getCaseSensitive WRITE setCaseSensitive NOTIFY caseSensitiveChanged)
 
     public:
-        DeleteKeywordsViewModel(Artworks::IArtworksSource &selectedArtworksSource, QObject *parent=nullptr);
-        virtual ~DeleteKeywordsViewModel() {}
+        DeleteKeywordsViewModel(Commands::ICommandManager &commandManager, QObject *parent=nullptr);
 
     public:
         int getCommonKeywordsCount() { return m_CommonKeywordsModel.getKeywordsCount(); }
@@ -90,6 +93,7 @@ namespace Models {
         Common::Hold m_HoldForCommon;
         Artworks::BasicKeywordsModel m_KeywordsToDeleteModel;
         Artworks::BasicKeywordsModel m_CommonKeywordsModel;
+        Commands::ICommandManager &m_CommandManager;
         bool m_CaseSensitive;
     };
 }

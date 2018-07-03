@@ -18,7 +18,7 @@
 #include <QTextDocument>
 #include <QReadWriteLock>
 
-namespace Common {
+namespace Artworks {
     class BasicMetadataModel;
 }
 

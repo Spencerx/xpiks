@@ -10,18 +10,19 @@
 
 #include "deletekeywordsviewmodel.h"
 #include <QTime>
-#include "../Helpers/indiceshelper.h"
-#include "../Artworks/artworkelement.h"
-#include "../Commands/commandmanager.h"
-#include "../Commands/deletekeywordscommand.h"
-#include "../Common/defines.h"
+#include <Helpers/indiceshelper.h>
+#include <Artworks/artworkelement.h>
+#include <Commands/Editing/deletekeywordstemplate.h>
+#include <Common/defines.h>
+#include <Commands/Base/icommandmanager.h>
+#include <Commands/Editing/modifyartworkscommand.h>
 
 namespace Models {
-    DeleteKeywordsViewModel::DeleteKeywordsViewModel(Artworks::IArtworksSource &selectedArtworksSource, QObject *parent):
-        Models::ArtworksViewModel(selectedArtworksSource,
-                                  parent),
+    DeleteKeywordsViewModel::DeleteKeywordsViewModel(Commands::ICommandManager &commandManager, QObject *parent):
+        Models::ArtworksViewModel(parent),
         m_KeywordsToDeleteModel(m_HoldForDeleters),
         m_CommonKeywordsModel(m_HoldForCommon),
+        m_CommandManager(commandManager),
         m_CaseSensitive(false)
     {
     }
@@ -132,9 +133,12 @@ namespace Models {
 
         auto keywordsSet = keywordsList.toSet();
 
-        std::shared_ptr<Commands::DeleteKeywordsCommand> deleteKeywordsCommand(
-                    new Commands::DeleteKeywordsCommand(rawSnapshot, keywordsSet, m_CaseSensitive));
-        m_CommandManager->processCommand(deleteKeywordsCommand);
+        using namespace Commands;
+        m_CommandManager.processCommand(
+                    std::make_shared<ModifyArtworksCommand>(
+                        Artworks::ArtworksSnapshot(getSnapshot()),
+                        std::make_shared<DeleteKeywordsTemplate>(
+                            keywordsSet, m_CaseSensitive)));
     }
 
     bool DeleteKeywordsViewModel::addPreset(KeywordsPresets::ID_t presetID) {

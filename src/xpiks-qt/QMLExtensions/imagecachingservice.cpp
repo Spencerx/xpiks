@@ -33,7 +33,7 @@ namespace QMLExtensions {
         Q_ASSERT(dbManager != nullptr);
     }
 
-    void ImageCachingService::startService(const std::shared_ptr<Common::ServiceStartParams> &params) {
+    void ImageCachingService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
         auto coordinatorParams = std::dynamic_pointer_cast<Helpers::AsyncCoordinatorStartParams>(params);
 
         Helpers::AsyncCoordinator *coordinator = nullptr;

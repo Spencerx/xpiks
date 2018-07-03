@@ -22,12 +22,15 @@
 #include <vector>
 #include <tuple>
 
-#include "recentdirectoriesmodel.h"
-#include "../Common/abstractlistmodel.h"
-#include "../Common/flags.h"
-#include "../Filesystem/ifilescollection.h"
-#include "../Artworks/artworkssnapshot.h"
-#include "../Maintenance/maintenanceservice.h"
+#include <Models/Session/recentdirectoriesmodel.h>
+#include <Common/abstractlistmodel.h>
+#include <Common/flags.h>
+#include <Filesystem/ifilescollection.h>
+#include <Artworks/artworkssnapshot.h>
+
+namespace Maintenance {
+    class MaintenanceService;
+}
 
 namespace Models {
     class ArtworksRepository : public Common::AbstractListModel {

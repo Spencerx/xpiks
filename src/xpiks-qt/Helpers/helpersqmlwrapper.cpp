@@ -17,21 +17,20 @@
 #include <QCoreApplication>
 #include <QQmlEngine>
 #include "keywordshelpers.h"
-#include "../Commands/commandmanager.h"
-#include "../Models/logsmodel.h"
-#include "../Models/artworkuploader.h"
-#include "../AutoComplete/stringsautocompletemodel.h"
-#include "../Models/ziparchiver.h"
-#include "../SpellCheck/spellcheckerservice.h"
-#include "../Models/deletekeywordsviewmodel.h"
-#include "../Models/uploadinforepository.h"
-#include "../SpellCheck/spellchecksuggestionmodel.h"
+#include <Models/logsmodel.h>
+#include <Models/Connectivity/artworkuploader.h>
+#include <Services/AutoComplete/stringsautocompletemodel.h>
+#include <Models/Connectivity/ziparchiver.h>
+#include <Services/SpellCheck/spellcheckerservice.h>
+#include <Models/Editing/deletekeywordsviewmodel.h>
+#include <Models/Connectivity/uploadinforepository.h>
+#include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include "logger.h"
-#include "../Common/defines.h"
-#include "../Helpers/filehelpers.h"
-#include "../Helpers/updatehelpers.h"
-#include "../QMLExtensions/colorsmodel.h"
-#include "../Helpers/filehelpers.h"
+#include <Common/defines.h>
+#include <Helpers/filehelpers.h>
+#include <Helpers/updatehelpers.h>
+#include <QMLExtensions/colorsmodel.h>
+#include <Helpers/filehelpers.h>
 
 #ifdef Q_OS_WIN
 #include <QWinTaskbarButton>
@@ -74,7 +73,7 @@ namespace Helpers {
     }
 
     void Helpers::HelpersQmlWrapper::reportOpen() {
-        xpiks()->reportUserAction(Connectivity::UserAction::Open);
+        //xpiks()->reportUserAction(Connectivity::UserAction::Open);
     }
 
     void HelpersQmlWrapper::setProgressIndicator(QQuickWindow *window) {
@@ -117,9 +116,10 @@ namespace Helpers {
 #endif
     }
 
-    void HelpersQmlWrapper::removeUnavailableFiles() {
+
+    /*void HelpersQmlWrapper::removeUnavailableFiles() {
         xpiks()->removeUnavailableFiles();
-    }
+    }*/
 
     bool HelpersQmlWrapper::isVector(const QString &path) const {
         return path.endsWith("eps", Qt::CaseInsensitive) ||
@@ -141,7 +141,7 @@ namespace Helpers {
         return result;
     }
 
-    QObject *HelpersQmlWrapper::getLogsModel() {
+    /*QObject *HelpersQmlWrapper::getLogsModel() {
         Models::LogsModel *model = m_CommandManager->getLogsModel();
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
         return model;
@@ -188,7 +188,8 @@ namespace Helpers {
         auto *model = m_CommandManager->getSpellSuggestionsModel();
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
         return model;
-    }
+    }*/
+
     void HelpersQmlWrapper::revealFile(const QString &path) {
 #ifdef Q_OS_MAC
         QStringList args;

@@ -11,7 +11,7 @@
 #ifndef COMMANDMANAGER_H
 #define COMMANDMANAGER_H
 
-#include "icommandmanager.h"
+#include <Commands/Base/icommandmanager.h>
 
 namespace UndoRedo {
     class UndoRedoManager;

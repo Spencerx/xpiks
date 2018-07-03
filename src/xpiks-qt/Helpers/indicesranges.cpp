@@ -82,7 +82,7 @@ namespace Helpers {
         return sum;
     }
 
-    std::vector<int> IndicesRanges::getIndices() const {
+    std::vector<int> IndicesRanges::retrieveIndices() const {
         std::vector<int> indices;
         indices.reserve(m_Ranges.size()*3);
         for (auto &pair: m_Ranges) {

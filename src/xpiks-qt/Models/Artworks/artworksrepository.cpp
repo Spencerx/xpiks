@@ -13,10 +13,7 @@
 #include <QSet>
 #include <QFileInfo>
 #include <QRegExp>
-#include "../Common/defines.h"
-#include "../Helpers/indiceshelper.h"
-#include "../Commands/commandmanager.h"
-#include "../Models/filteredartworkslistmodel.h"
+#include <Common/defines.h>
 
 namespace Models {
     ArtworksRepository::ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent) :

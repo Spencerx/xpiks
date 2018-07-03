@@ -515,7 +515,8 @@ HEADERS += \
     Commands/messages.h \
     Commands/appmessages.h \
     Models/Editing/quickbuffer.h \
-    Commands/Editing/findandreplacetemplate.h
+    Commands/Editing/findandreplacetemplate.h \
+    Services/iservicebase.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

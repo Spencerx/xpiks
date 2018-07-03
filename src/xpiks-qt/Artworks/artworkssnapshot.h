@@ -71,7 +71,7 @@ namespace Artworks {
     public:
         ArtworksSnapshot() { }
         ArtworksSnapshot(const WeakArtworksSnapshot &artworks);
-        ArtworksSnapshot(std::initialize_list<ArtworkMetadata *> artworks);
+        ArtworksSnapshot(std::initializer_list<ArtworkMetadata *> artworks);
         ArtworksSnapshot(const std::deque<ArtworkMetadata *> &artworks);
         ArtworksSnapshot(Container &rawSnapshot);
         ArtworksSnapshot(ArtworksSnapshot &&other);

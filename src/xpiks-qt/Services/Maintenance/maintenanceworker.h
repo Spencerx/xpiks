@@ -11,7 +11,7 @@
 #ifndef MAINTENANCEWORKER_H
 #define MAINTENANCEWORKER_H
 
-#include "../Common/itemprocessingworker.h"
+#include <Common/itemprocessingworker.h>
 #include "imaintenanceitem.h"
 
 namespace Maintenance {

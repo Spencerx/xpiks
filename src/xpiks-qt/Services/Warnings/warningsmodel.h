@@ -14,10 +14,7 @@
 #include <QSortFilterProxyModel>
 #include <QStringList>
 #include <QVector>
-
-namespace Models {
-    class ArtworksListModel;
-}
+#include <Models/Artworks/artworkslistmodel.h>
 
 namespace Warnings {
     class WarningsSettingsModel;
@@ -59,7 +56,7 @@ namespace Warnings {
 
     private:
         enum WarningsModel_Roles {
-            WarningsRole = Models::ArtItemsModel::RolesNumber + 1
+            WarningsRole = Models::ArtworksListModel::RolesNumber + 1
         };
 
         // QSortFilterProxyModel interface

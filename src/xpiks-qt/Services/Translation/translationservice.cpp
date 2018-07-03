@@ -23,7 +23,7 @@ namespace Translation {
     {
     }
 
-    void TranslationService::startService(const std::shared_ptr<Common::ServiceStartParams> &params) {
+    void TranslationService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
         if (m_TranslationWorker != nullptr) {
             LOG_WARNING << "Attempt to start running worker";
             return;
@@ -72,24 +72,6 @@ namespace Translation {
         return isBusy;
     }
 
-    void TranslationService::submitItem(QString *item) {
-        Q_UNUSED(item);
-    }
-
-    void TranslationService::submitItem(QString *item, Common::flag_t flags) {
-        Q_UNUSED(flags);
-        this->submitItem(item);
-    }
-
-    void TranslationService::submitItems(const std::vector<QString *> &items) {
-        Q_UNUSED(items);
-#if QT_NO_DEBUG
-        LOG_WARNING << "Cannot use this API for translation";
-#else
-        Q_ASSERT(false);
-#endif
-    }
-
     void TranslationService::selectDictionary(const QString &dictionaryPath) {
         Q_ASSERT(m_TranslationWorker != nullptr);
         m_TranslationWorker->selectDictionary(dictionaryPath);
@@ -120,7 +102,7 @@ namespace Translation {
 
         if (m_RestartRequired) {
             LOG_INFO << "Restarting worker...";
-            startService(std::shared_ptr<Common::ServiceStartParams>());
+            startService(std::shared_ptr<Services::ServiceStartParams>());
             m_RestartRequired = false;
         }
     }

@@ -32,8 +32,8 @@ namespace Helpers {
     public:
         const std::vector<std::pair<int, int> > &getRanges() const { return m_Ranges; }
         int length() const;
-        size_t size() const { return m_Ranges; }
-        std::vector<int> getIndices() const;
+        size_t size() const { return m_Ranges.size(); }
+        std::vector<int> retrieveIndices() const;
 
     private:
         std::vector<std::pair<int, int> > m_Ranges;

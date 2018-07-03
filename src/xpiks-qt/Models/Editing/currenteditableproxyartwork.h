@@ -25,7 +25,7 @@ namespace Models {
 
         // ICurrentEditable interface
     public:
-        virtual qint64 getItemID() override;
+        virtual Common::ID_t getItemID() override;
 
         virtual QString getTitle() override;
         virtual QString getDescription() override;

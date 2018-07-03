@@ -16,7 +16,7 @@
 #include <QString>
 #include <QSet>
 #include <QStringList>
-#include "../Common/isystemenvironment.h"
+#include <Common/isystemenvironment.h>
 
 namespace SpellCheck {
     class UserDictionary: public QObject {

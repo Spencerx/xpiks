@@ -14,17 +14,17 @@
 #include <QJsonObject>
 #include <QMutex>
 #include <memory>
-#include "../Helpers/localconfig.h"
-#include "../Common/isystemenvironment.h"
-#include "../Helpers/jsonobjectmap.h"
+#include <Helpers/localconfig.h>
+#include <Common/isystemenvironment.h>
+#include <Helpers/jsonobjectmap.h>
 
-namespace MetadataIO {
+namespace Artworks {
     class ArtworkSessionSnapshot;
     class SessionSnapshot;
+    class ArtworkMetadata;
 }
 
 namespace Models {
-    class ArtworkMetadata;
     class ArtworksRepository;
 }
 

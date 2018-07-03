@@ -23,7 +23,7 @@
 #include <Models/Artworks/artworksviewmodel.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Common/flags.h>
-#include <SpellCheck/spellcheckiteminfo.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
 #include <Common/hold.h>
 #include <Artworks/artworkelement.h>
 #include "artworkproxybase.h"

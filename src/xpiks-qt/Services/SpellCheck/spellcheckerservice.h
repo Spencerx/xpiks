@@ -51,16 +51,15 @@ namespace SpellCheck {
         virtual ~SpellCheckerService();
 
     public:
-        void startService(const std::shared_ptr<Common::ServiceStartParams> &params,
+        void startService(const std::shared_ptr<Services::ServiceStartParams> &params,
                           Warnings::WarningsService &warningsService);
         void stopService();
 
         bool isAvailable() const { return true; }
         bool isBusy() const;
 
-        void submitItem(Artworks::BasicKeywordsModel *itemToCheck);
         void submitItem(Artworks::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags);
-        void submitItems(Artworks::ArtworksSnapshot &&snapshot);
+        void submitArtworks(Artworks::ArtworksSnapshot &&snapshot);
         SpellCheckWorker::batch_id_t submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck);
         void submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck, const QStringList &wordsToCheck);
         virtual QStringList suggestCorrections(const QString &word) const;

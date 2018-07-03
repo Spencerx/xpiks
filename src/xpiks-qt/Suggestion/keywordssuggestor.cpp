@@ -13,17 +13,16 @@
 #include <QMultiMap>
 #include "keywordssuggestor.h"
 #include "suggestionartwork.h"
-#include "../Commands/commandmanager.h"
-#include "../Common/defines.h"
-#include "locallibraryqueryengine.h"
-#include "../Models/switchermodel.h"
-#include "../Models/settingsmodel.h"
-#include "../Helpers/constants.h"
-#include "../Models/switchermodel.h"
+#include <Common/defines.h>
+#include <Models/switchermodel.h>
+#include <Models/settingsmodel.h>
+#include <Helpers/constants.h>
 #include "shutterstocksuggestionengine.h"
 #include "fotoliasuggestionengine.h"
 #include "gettysuggestionengine.h"
+#include "locallibraryqueryengine.h"
 #include <Commands/appmessages.h>
+#include <Connectivity/analyticsuserevent.h>
 
 #define LINEAR_TIMER_INTERVAL 1000
 #define DEFAULT_SEARCH_TYPE_INDEX 0
@@ -323,8 +322,8 @@ namespace Suggestion {
         m_Messages
                 .ofType<QString, QString, QStringList, bool>()
                 .withID(Commands::AppMessages::CopyToQuickBuffer)
-                .broadcast(suggestionArtwork->getTitle(),
-                           suggestionArtwork->getDescription(),
+                .broadcast(QString(suggestionArtwork->getTitle()),
+                           QString(suggestionArtwork->getDescription()),
                            suggestionArtwork->getKeywordsSet().toList(),
                            true);
     }
@@ -341,9 +340,15 @@ namespace Suggestion {
                 engine->submitQuery(query);
 
                 if (std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine) == nullptr) {
-                    xpiks()->reportUserAction(Connectivity::UserAction::SuggestionRemote);
+                    m_Messages
+                            .ofType<int>()
+                            .withID(Commands::AppMessages::Telemetry)
+                            .broadcast((int)Connectivity::UserAction::SuggestionRemote);
                 } else {
-                    xpiks()->reportUserAction(Connectivity::UserAction::SuggestionLocal);
+                    m_Messages
+                            .ofType<int>()
+                            .withID(Commands::AppMessages::Telemetry)
+                            .broadcast((int)Connectivity::UserAction::SuggestionLocal);
                 }
             }
         }

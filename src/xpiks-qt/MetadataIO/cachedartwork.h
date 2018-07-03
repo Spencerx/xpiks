@@ -18,7 +18,7 @@
 #include <QVector>
 #include "../Common/flags.h"
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
 }
 

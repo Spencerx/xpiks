@@ -12,7 +12,7 @@
 #include "../Common/defines.h"
 #include "../Common/logging.h"
 
-void UndoRedo::UndoRedoManager::recordHistoryItem(std::shared_ptr<Commands::ICommand> &historyItem) {
+void UndoRedo::UndoRedoManager::recordHistoryItem(const std::shared_ptr<Commands::ICommand> &historyItem) {
     LOG_INFO << "History item about to be recorded";
 
     QMutexLocker locker(&m_Mutex);
@@ -22,7 +22,7 @@ void UndoRedo::UndoRedoManager::recordHistoryItem(std::shared_ptr<Commands::ICom
         Q_ASSERT(m_HistoryStack.empty());
     }
 
-    m_HistoryStack.push(std::move(historyItem));
+    m_HistoryStack.push(historyItem);
     emit canUndoChanged();
     emit itemRecorded();
     emit undoDescriptionChanged();

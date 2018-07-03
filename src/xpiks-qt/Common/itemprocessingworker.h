@@ -264,7 +264,7 @@ namespace Common {
         virtual void processOneItem(std::shared_ptr<ItemType> &item) { Q_UNUSED(item); }
         virtual void onQueueIsEmpty() { /* DO NOTHING */ }
         virtual void onWorkerStopped() { /* DO NOTHING */ }
-        virtual void onResultsAvailable(std::vector<ResultType> &results) { Q_UNUSED(results); }
+        virtual void onResultsAvailable(std::vector<WorkResult> &results) { Q_UNUSED(results); }
 
         void runWorkerLoop() {
             m_IdleEvent.set();

@@ -37,13 +37,13 @@ namespace Artworks {
         bool BasicKeywordsModel::hasDuplicateAt(size_t i) const { return m_Impl->accessKeyword(i).m_HasDuplicates; }
 #endif
 
-    void BasicKeywordsModel::removeItemsFromRanges(const QVector<QPair<int, int> > &ranges) {
+    void BasicKeywordsModel::removeItems(const Helpers::IndicesRanges &indicesRanges) {
         LOG_INFO << "#";
 
         QWriteLocker writeLocker(&m_KeywordsLock);
         Q_UNUSED(writeLocker);
 
-        AbstractListModel::removeItemsFromRanges(ranges);
+        AbstractListModel::removeItems(indicesRanges);
     }
 
     void BasicKeywordsModel::removeInnerItem(int row) {

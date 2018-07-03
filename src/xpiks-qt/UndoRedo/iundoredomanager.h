@@ -18,7 +18,7 @@ namespace UndoRedo {
     class IUndoRedoManager {
     public:
         virtual ~IUndoRedoManager() {}
-        virtual void recordHistoryItem(std::shared_ptr<Commands::ICommand> &historyItem) = 0;
+        virtual void recordHistoryItem(const std::shared_ptr<Commands::ICommand> &historyItem) = 0;
     };
 }
 

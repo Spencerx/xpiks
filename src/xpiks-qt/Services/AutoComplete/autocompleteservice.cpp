@@ -34,7 +34,7 @@ namespace AutoComplete {
     AutoCompleteService::~AutoCompleteService() {
     }
 
-    void AutoCompleteService::startService(const std::shared_ptr<Common::ServiceStartParams> &params) {
+    void AutoCompleteService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
         if (m_AutoCompleteWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
@@ -129,7 +129,7 @@ namespace AutoComplete {
 
         if (m_RestartRequired) {
             LOG_INFO << "Restarting worker...";
-            startService(std::shared_ptr<Common::ServiceStartParams>());
+            startService(std::shared_ptr<Services::ServiceStartParams>());
             m_RestartRequired = false;
         }
     }

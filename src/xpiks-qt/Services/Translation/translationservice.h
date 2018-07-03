@@ -23,18 +23,12 @@ namespace Translation {
         Q_OBJECT
     public:
         explicit TranslationService(QObject *parent = 0);
-        virtual ~TranslationService() { }
 
-        virtual void startService(const std::shared_ptr<Common::ServiceStartParams> &params) override;
-        virtual void stopService() override;
+        void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
+        void stopService();
 
-        virtual bool isAvailable() const override { return true; }
-        virtual bool isBusy() const override;
-
-    protected:
-        virtual void submitItem(QString *item) override;
-        virtual void submitItem(QString *item, Common::flag_t flags) override;
-        virtual void submitItems(const std::vector<QString*> &items) override;
+        bool isAvailable() const { return true; }
+        bool isBusy() const;
 
     public:
         void selectDictionary(const QString &dictionaryPath);

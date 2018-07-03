@@ -12,9 +12,15 @@
 #define RECENTFILESMODEL_H
 
 #include "recentitemsmodel.h"
-#include "../Common/statefulentity.h"
-#include "../Common/isystemenvironment.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include <Common/statefulentity.h>
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Artworks {
+    class ArtworksSnapshot;
+}
 
 namespace Models {
     class RecentFilesModel : public RecentItemsModel

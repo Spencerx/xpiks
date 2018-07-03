@@ -12,7 +12,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
 }
 

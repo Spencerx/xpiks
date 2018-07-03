@@ -13,23 +13,22 @@
 
 #include <QObject>
 #include <QString>
-#include <QVector>
 #include <QSize>
-#include <vector>
 #include <memory>
-#include "../Common/isystemenvironment.h"
+#include <Common/isystemenvironment.h>
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
     class ArtworkMetadataLocker;
-}
-
-namespace MetadataIO {
     class ArtworksSnapshot;
 }
 
 namespace Storage {
     class IDatabaseManager;
+}
+
+namespace Services {
+    class ServiceStartParams;
 }
 
 class QScreen;
@@ -44,7 +43,7 @@ namespace QMLExtensions {
         explicit ImageCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent = 0);
 
     public:
-        void startService(const std::shared_ptr<Common::ServiceStartParams> &params);
+        void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
         void stopService();
         void upgradeCacheStorage();
 

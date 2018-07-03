@@ -13,6 +13,8 @@
 
 #include <QObject>
 #include <QString>
+#include <memory>
+#include <Services/iservicebase.h>
 
 namespace Artworks {
     class BasicKeywordsModel;
@@ -39,13 +41,13 @@ namespace AutoComplete {
                             KeywordsPresets::PresetKeywordsModel &presetsManager,
                             Models::SettingsModel &settingsModel,
                             QObject *parent = 0);
-        virtual ~AutoCompleteService();
 
-        virtual void startService(const std::shared_ptr<Common::ServiceStartParams> &params) override;
-        virtual void stopService() override;
+    public:
+        void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
+        void stopService();
 
-        virtual bool isAvailable() const override { return true; }
-        virtual bool isBusy() const override;
+        bool isAvailable() const { return true; }
+        bool isBusy() const;
 
     public:
         void restartWorker();

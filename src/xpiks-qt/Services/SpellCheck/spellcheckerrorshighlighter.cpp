@@ -13,9 +13,9 @@
 #include <QSet>
 #include <QString>
 #include "spellcheckiteminfo.h"
-#include "../QMLExtensions/colorsmodel.h"
-#include "../Helpers/stringhelper.h"
-#include "../Common/defines.h"
+#include <QMLExtensions/colorsmodel.h>
+#include <Helpers/stringhelper.h>
+#include <Common/defines.h>
 
 namespace SpellCheck {
     SpellCheckErrorsHighlighter::SpellCheckErrorsHighlighter(QTextDocument *document,

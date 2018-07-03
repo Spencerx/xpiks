@@ -18,7 +18,6 @@
 #include <Artworks/artworkmetadata.h>
 #include <Helpers/ifilenotavailablemodel.h>
 #include <Artworks/artworkssnapshot.h>
-#include <Artworks/iartworkssource.h>
 
 namespace Models {
     class ArtworksViewModel:
@@ -38,18 +37,15 @@ namespace Models {
         };
 
     public:
-        ArtworksViewModel(Artworks::IArtworksSource &artworksSource, QObject *parent=NULL);
+        ArtworksViewModel(QObject *parent=NULL);
         virtual ~ArtworksViewModel() { }
 
     protected:
-        virtual void setArtworks(Artworks::WeakArtworksSnapshot &weakSnapshot) override;
+        virtual void setArtworks(Artworks::WeakArtworksSnapshot &weakSnapshot);
 
     public:
         int getArtworksCount() const { return (int)m_ArtworksSnapshot.size(); }
         int getSelectedArtworksCount() const;
-
-    public:
-        void pullArtworks();
 
     public:
         Q_INVOKABLE void setArtworkSelected(int index, bool value);
@@ -99,7 +95,6 @@ namespace Models {
         virtual void removeInnerItem(int row) override;
 
     private:
-        Artworks::IArtworksSource &m_ArtworksSource;
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
     };
 }

@@ -20,12 +20,12 @@
 #include <QThread>
 #include <hunspell/hunspell.hxx>
 #include "spellcheckitem.h"
-#include "../Common/defines.h"
-#include "../Common/flags.h"
-#include "../Helpers/stringhelper.h"
-#include "../Artworks/artworkmetadata.h"
-#include "../Warnings/warningsservice.h"
-#include "../Helpers/cpphelpers.h"
+#include <Common/defines.h>
+#include <Common/flags.h>
+#include <Helpers/stringhelper.h>
+#include <Artworks/artworkmetadata.h>
+#include <Services/Warnings/warningsservice.h>
+#include <Helpers/cpphelpers.h>
 
 #define EN_HUNSPELL_DIC "en_US.dic"
 #define EN_HUNSPELL_AFF "en_US.aff"
@@ -61,6 +61,8 @@ namespace SpellCheck {
 
         LOG_INFO << "destroyed";
     }
+
+    const QStringList &SpellCheckWorker::getUserDictionary() const { return m_UserDictionary.getWords(); }
 
     bool SpellCheckWorker::initWorker() {
         LOG_INFO << "Dicts root:" << m_DictsRoot;
@@ -163,12 +165,12 @@ namespace SpellCheck {
         }
     }
 
-    void SpellCheckWorker::onResultsAvailable(std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &results) {
+    void SpellCheckWorker::onResultsAvailable(std::vector<WorkResult> &results) {
         m_WarningsService.submitItems(
                     Helpers::map(
                         results,
-                        [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
-            return locker->getArtworkMetadata();
+                        [](const WorkResult &result) {
+            return result.m_Result->getArtworkMetadata();
         }));
     }
 
@@ -183,6 +185,8 @@ namespace SpellCheck {
 
         return result;
     }
+
+    int SpellCheckWorker::getUserDictionarySize() const { return m_UserDictionary.size(); }
 
     QStringList SpellCheckWorker::suggestCorrections(const QString &word) {
         QStringList suggestions;

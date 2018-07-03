@@ -16,11 +16,11 @@
 #include <QVector>
 
 namespace Models {
-    class ArtworkMetadata;
     class UploadInfo;
 }
 
-namespace MetadataIO {
+namespace Artworks {
+    class ArtworkMetadata;
     class ArtworksSnapshot;
 }
 

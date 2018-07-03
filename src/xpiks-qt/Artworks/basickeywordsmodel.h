@@ -35,8 +35,7 @@ namespace SpellCheck {
 namespace Artworks {
     class BasicKeywordsModelImpl;
 
-    class BasicKeywordsModel:
-            public Common::AbstractListModel
+    class BasicKeywordsModel: public Common::AbstractListModel
     {
         Q_OBJECT
         Q_PROPERTY(bool hasKeywordsSpellErrors READ hasKeywordsSpellError NOTIFY keywordsSpellingChanged)
@@ -45,8 +44,6 @@ namespace Artworks {
 
     public:
         BasicKeywordsModel(Common::Hold &hold, QObject *parent=0);
-
-        virtual ~BasicKeywordsModel() {}
 
     public:
         enum BasicKeywordsModel_Roles {
@@ -66,7 +63,7 @@ namespace Artworks {
 #endif
 
     public:
-        virtual void removeItemsFromRanges(const QVector<QPair<int, int> > &ranges) override;
+        virtual void removeItems(const Helpers::IndicesRanges &indicesRanges) override;
         virtual int getRangesLengthForReset() const override { return 10; }
 
     protected:
@@ -127,7 +124,7 @@ namespace Artworks {
         virtual bool hasDuplicates();
 
     public:
-        virtual void notifySpellCheckResults(SpellCheckFlags flags);
+        virtual void notifySpellCheckResults(Common::SpellCheckFlags flags);
         void notifyAboutToBeRemoved() { emit aboutToBeRemoved(); }
         void notifyCompletionsAvailable() { emit completionsAvailable(); }
 

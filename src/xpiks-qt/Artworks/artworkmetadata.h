@@ -118,8 +118,8 @@ namespace Artworks {
         virtual bool initFromStorageUnsafe(const MetadataIO::CachedArtwork &cachedArtwork) { Q_UNUSED(cachedArtwork); return false; }
 
     public:
-        virtual const QString &getFilepath() const override { return m_ArtworkFilepath; }
-        virtual const QString &getThumbnailPath() const override { return m_ArtworkFilepath; }
+        const QString &getFilepath() const { return m_ArtworkFilepath; }
+        const QString &getThumbnailPath() const { return m_ArtworkFilepath; }
         virtual QString getDirectory() const { QFileInfo fi(m_ArtworkFilepath); return fi.absolutePath(); }
         QString getBaseFilename() const;
         bool isInDirectory(const QString &directoryAbsolutePath) const;
@@ -133,7 +133,7 @@ namespace Artworks {
         bool isRemoved() { return getIsRemovedFlag(); }
         size_t getLastKnownIndex() const { return m_LastKnownIndex; }
         virtual qint64 getFileSize() const { return m_FileSize; }
-        virtual Common::ID_t getItemID() const override { return m_ID; }
+        Common::ID_t getItemID() const { return m_ID; }
         bool hasDuplicates();
 
     public:
@@ -187,7 +187,7 @@ namespace Artworks {
         virtual Common::KeywordReplaceResult fixKeywordSpelling(size_t index, const QString &existing, const QString &replacement) override;
         virtual bool fixDescriptionSpelling(const QString &word, const QString &replacement) override;
         virtual bool fixTitleSpelling(const QString &word, const QString &replacement) override;
-        virtual std::vector<Common::KeywordItem> retrieveMisspelledKeywords() override;
+        virtual std::vector<KeywordItem> retrieveMisspelledKeywords() override;
         virtual QStringList retrieveMisspelledTitleWords() override;
         virtual QStringList retrieveMisspelledDescriptionWords() override;
         virtual bool processFailedKeywordReplacements(const std::vector<std::shared_ptr<SpellCheck::KeywordSpellSuggestions> > &candidatesForRemoval) override;
@@ -199,12 +199,10 @@ namespace Artworks {
         virtual bool release() override { return m_Hold.release(); }
 
     public:
-        // IBasicArtwork interface
-        virtual QSet<QString> getKeywordsSet() override { return m_MetadataModel.getKeywordsSet(); }
-        virtual QStringList getKeywords() override { return m_MetadataModel.getKeywords(); }
-        virtual bool isEmpty() override { return m_MetadataModel.isEmpty(); }
-        virtual QString getDescription() override { return m_MetadataModel.getDescription(); }
-        virtual QString getTitle() override { return m_MetadataModel.getTitle(); }
+        QStringList getKeywords() { return m_MetadataModel.getKeywords(); }
+        bool isEmpty() { return m_MetadataModel.isEmpty(); }
+        QString getDescription() { return m_MetadataModel.getDescription(); }
+        QString getTitle() { return m_MetadataModel.getTitle(); }
 
    public:
         virtual qint64 getDirectoryID() const { return m_DirectoryID; }

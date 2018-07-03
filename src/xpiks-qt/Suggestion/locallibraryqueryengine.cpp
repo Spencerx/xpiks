@@ -25,8 +25,6 @@ namespace Suggestion {
         m_MetadataIOService(metadataIOService),
         m_IsEnabled(true)
     {
-        Q_ASSERT(metadataIOService != nullptr);
-
         QObject::connect(&m_Query, &LocalLibraryQuery::resultsReady,
                          this, &LocalLibraryQueryEngine::resultsFoundHandler);
     }

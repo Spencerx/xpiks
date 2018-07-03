@@ -19,7 +19,7 @@ namespace Models {
     {
     }
 
-    qint64 CurrentEditableProxyArtwork::getItemID() {
+    Common::ID_t CurrentEditableProxyArtwork::getItemID() {
         return m_ArtworkProxy.getSpecialItemID();
     }
 

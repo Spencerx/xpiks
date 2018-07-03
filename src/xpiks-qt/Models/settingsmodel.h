@@ -89,7 +89,6 @@ namespace Models {
         void saveLocale();
         void initializeConfigs();
         void syncronizeSettings() { sync(); }
-        void migrateSettings();
         void clearLegacyUploadInfos();
 
     private:
@@ -258,9 +257,6 @@ namespace Models {
         void setProgressiveSuggestionIncrement(int progressiveSuggestionIncrement);
         void setUseDirectExiftoolExport(bool value);
         void setUseAutoImport(bool value);
-
-    private slots:
-        void onSettingsMigrationRequest() { moveSettingsFromQSettingsToJson(); }
 
     public slots:
         void onRecommendedExiftoolFound(const QString &path);

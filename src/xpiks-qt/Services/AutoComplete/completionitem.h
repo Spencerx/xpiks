@@ -12,7 +12,7 @@
 #define COMPLETIONITEM_H
 
 #include <QString>
-#include "../Common/flags.h"
+#include <Common/flags.h>
 
 namespace AutoComplete {
     class CompletionItem {

@@ -17,8 +17,8 @@
 #include <QObject>
 #include <QHash>
 #include <functional>
-#include "../Common/flags.h"
-#include "../Common/wordanalysisresult.h"
+#include <Common/flags.h>
+#include <Common/wordanalysisresult.h>
 
 namespace Artworks {
     class ArtworkMetadata;

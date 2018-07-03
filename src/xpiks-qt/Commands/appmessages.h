@@ -26,7 +26,7 @@ namespace Artworks {
 }
 
 namespace Commands {
-    class AppMessages: RegisteredMessages<
+    class AppMessages: public RegisteredMessages<
             //MessageMap<>, - use Qt signals instead of this one
             MessageMap<int>,
             MessageMap<Helpers::IndicesRanges>,
@@ -36,7 +36,7 @@ namespace Commands {
             MessageMap<Artworks::IMetadataOperator*>,
             MessageMap<Artworks::VideoArtwork*>,
             MessageMap<QString, QString, QStringList, bool>,
-            MessageMap<Common::ID_t, size_t, QVector<int>>,
+            MessageMap<Common::ID_t, size_t, QVector<int>>
             >
     {
     public:
@@ -51,7 +51,8 @@ namespace Commands {
             UploadArtworks,
             CreateThumbnail,
             ExportToCSV,
-            FindArtworks
+            FindArtworks,
+            Telemetry
         };
     };
 }

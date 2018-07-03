@@ -9,8 +9,8 @@
  */
 
 #include "recentfilesmodel.h"
-#include "../Helpers/constants.h"
-#include "../Artworks/artworkssnapshot.h"
+#include <Helpers/constants.h>
+#include <Artworks/artworkssnapshot.h>
 
 #define MAX_RECENT_FILES 10
 

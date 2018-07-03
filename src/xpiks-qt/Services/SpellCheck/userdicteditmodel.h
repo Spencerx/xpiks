@@ -8,15 +8,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <QObject>
-#include <QQmlEngine>
-#include "../Models/artworkproxybase.h"
-#include "../Common/basicmetadatamodel.h"
-#include "../SpellCheck/spellcheckiteminfo.h"
-#include "../Common/hold.h"
-
 #ifndef SPELLCHECKUSERDICT_H
 #define SPELLCHECKUSERDICT_H
+
+#include <QObject>
+#include <QQmlEngine>
+#include <Models/Editing/artworkproxybase.h>
+#include <Artworks/basicmetadatamodel.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Common/hold.h>
 
 namespace SpellCheck {
     class UserDictEditModel: public QObject, public Models::ArtworkProxyBase

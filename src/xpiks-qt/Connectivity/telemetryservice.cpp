@@ -12,12 +12,14 @@
 #include <QThread>
 #include <QUuid>
 #include "telemetryworker.h"
-#include "../Common/defines.h"
-#include "../Common/version.h"
+#include <Common/defines.h>
+#include <Common/version.h>
+#include <Commands/appmessages.h>
 
 namespace Connectivity {
     TelemetryService::TelemetryService(Models::SwitcherModel &switcher,
                                        Models::SettingsModel &settingsModel,
+                                       Commands::AppMessages &messages,
                                        QObject *parent) :
         QObject(parent),
         m_TelemetryWorker(nullptr),
@@ -25,6 +27,10 @@ namespace Connectivity {
         m_SettingsModel(settingsModel),
         m_InterfaceLanguage("en_US")
     {
+        messages
+                .ofType<int>()
+                .withID(Commands::AppMessages::Telemetry)
+                .addListener(std::bind(&TelemetryService::reportAction, this));
     }
 
     void TelemetryService::initialize() {
@@ -107,9 +113,9 @@ namespace Connectivity {
         }
     }
 
-    void TelemetryService::reportAction(UserAction action) {
+    void TelemetryService::reportAction(int action) {
         if (getIsTelemetryEnabled()) {
-            doReportAction(action);
+            doReportAction((UserAction)action);
         } else {
             LOG_DEBUG << "Telemetry disabled";
         }

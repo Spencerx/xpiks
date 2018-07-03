@@ -15,7 +15,7 @@
 #include <QStringList>
 #include <QHash>
 #include <QReadWriteLock>
-#include "../Common/flags.h"
+#include <Common/flags.h>
 #include "imetadataoperator.h"
 
 namespace SpellCheck {
@@ -51,7 +51,7 @@ namespace Artworks {
 #endif
 
     public:
-        virtual void setSpellCheckResults(const QHash<QString, Common::WordAnalysisResult> &results, SpellCheckFlags flags);
+        virtual void setSpellCheckResults(const QHash<QString, Common::WordAnalysisResult> &results, Common::SpellCheckFlags flags);
         virtual QStringList retrieveMisspelledDescriptionWords() override;
         virtual QStringList retrieveMisspelledTitleWords() override;
         virtual bool fixDescriptionSpelling(const QString &word, const QString &replacement) override;
@@ -71,7 +71,7 @@ namespace Artworks {
         bool replaceInDescription(const QString &replaceWhat, const QString &replaceTo,
                                   Common::SearchFlags flags);
         bool replaceInTitle(const QString &replaceWhat, const QString &replaceTo,
-                            SearchFlags flags);
+                            Common::SearchFlags flags);
 
     public:
         virtual bool replace(const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags) override;
@@ -110,7 +110,7 @@ namespace Artworks {
         void clearModel();
 
     public:
-        virtual void notifySpellCheckResults(SpellCheckFlags flags) override;
+        virtual void notifySpellCheckResults(Common::SpellCheckFlags flags) override;
         void notifyDescriptionSpellingChanged();
         void notifyTitleSpellingChanged();
 

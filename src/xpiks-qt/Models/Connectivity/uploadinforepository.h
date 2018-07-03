@@ -157,7 +157,7 @@ namespace Models {
         Helpers::LocalConfig m_LocalConfig;
         AutoComplete::StringsAutoCompleteModel m_StocksCompletionSource;
         Microstocks::StocksFtpListModel m_StocksFtpList;
-        Encryption::SecretsManager m_SecretsManager;
+        Encryption::SecretsManager &m_SecretsManager;
         int m_CurrentIndex;
         // when MP is cancelled before Upload dialog
         // all passwords should be empty

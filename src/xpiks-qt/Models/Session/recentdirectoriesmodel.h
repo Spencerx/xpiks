@@ -12,8 +12,8 @@
 #define RECENTDIRECTORIESMODEL_H
 
 #include "recentitemsmodel.h"
-#include "../Common/statefulentity.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/statefulentity.h>
+#include <Common/isystemenvironment.h>
 
 namespace Models {
     class RecentDirectoriesModel : public RecentItemsModel

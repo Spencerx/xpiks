@@ -14,7 +14,7 @@
 #include <QObject>
 #include <QAtomicInt>
 #include <QTimer>
-#include "../Common/iservicebase.h"
+#include <Services/iservicebase.h>
 
 namespace Helpers {
     class AsyncCoordinator: public QObject
@@ -52,7 +52,7 @@ namespace Helpers {
         QAtomicInt m_StatusReported;
     };
 
-    class AsyncCoordinatorStartParams: public Common::ServiceStartParams {
+    class AsyncCoordinatorStartParams: public Services::ServiceStartParams {
     public:
         AsyncCoordinatorStartParams(AsyncCoordinator *coordinator):
             m_Coordinator(coordinator)

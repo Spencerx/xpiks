@@ -28,17 +28,18 @@ namespace Common {
         virtual ~AbstractListModel() {}
 
     protected:
-        virtual void removeItems(const Helpers::IndicesRanges &ranges) {
-            const int rangesCount = ranges.count();
+        virtual void removeItems(const Helpers::IndicesRanges &indicesRanges) {
+            const int rangesCount = (int)indicesRanges.size();
             const int rangesLengthForReset = getRangesLengthForReset();
 
-            const bool willResetModel = ranges.length() >= rangesLengthForReset;
+            const bool willResetModel = indicesRanges.length() >= rangesLengthForReset;
 
             if (willResetModel) {
                 beginResetModel();
             }
 
             QModelIndex dummy;
+            auto &ranges = indicesRanges.getRanges();
 
             for (int i = rangesCount - 1; i >= 0; --i) {
                 const int startRow = ranges[i].first;
@@ -62,7 +63,7 @@ namespace Common {
 
     protected:
         void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles) {
-            for (auto &r: ranges) {
+            for (auto &r: ranges.getRanges()) {
                 QModelIndex topLeft = index(r.first);
                 QModelIndex bottomRight = index(r.second);
                 emit dataChanged(topLeft, bottomRight, roles);

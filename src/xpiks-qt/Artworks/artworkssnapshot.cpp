@@ -36,7 +36,7 @@ namespace Artworks {
         append(artworks);
     }
 
-    ArtworksSnapshot::ArtworksSnapshot(std::initialize_list<ArtworkMetadata *> artworks) {
+    ArtworksSnapshot::ArtworksSnapshot(std::initializer_list<ArtworkMetadata *> artworks) {
         std::vector<ArtworkMetadata*> v(artworks.begin(), artworks.end());
         append(v);
     }

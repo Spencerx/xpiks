@@ -14,8 +14,12 @@
 #include <QObject>
 #include <QString>
 #include "analyticsuserevent.h"
-#include "../Models/switchermodel.h"
-#include "../Models/settingsmodel.h"
+#include <Models/switchermodel.h>
+#include <Models/settingsmodel.h>
+
+namespace Commands {
+    class AppMessages;
+}
 
 namespace Connectivity {
     class TelemetryWorker;
@@ -25,6 +29,7 @@ namespace Connectivity {
     public:
         TelemetryService(Models::SwitcherModel &switcher,
                          Models::SettingsModel &settingsModel,
+                         Commands::AppMessages &messages,
                          QObject *parent=NULL);
 
     public:
@@ -39,7 +44,7 @@ namespace Connectivity {
         void doReportAction(UserAction action);
 
     public:
-        void reportAction(UserAction action);
+        void reportAction(int action);
         void setEndpoint(const QString &endpoint);
         void setInterfaceLanguage(const QString &language) { m_InterfaceLanguage = language; }
 

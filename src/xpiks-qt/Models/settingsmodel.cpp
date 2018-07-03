@@ -197,16 +197,6 @@ namespace Models {
         }
     }
 
-    void SettingsModel::migrateSettings() {
-        const int settingsVersion = getSettingsVersion();
-        LOG_INFO << "Current settings version:" << settingsVersion;
-
-        if (settingsVersion < CURRENT_SETTINGS_VERSION) {
-            // execute this on the main thread
-            QTimer::singleShot(0, this, &SettingsModel::onSettingsMigrationRequest);
-        }
-    }
-
     void SettingsModel::clearLegacyUploadInfos() {
         LOG_DEBUG << "#";
 

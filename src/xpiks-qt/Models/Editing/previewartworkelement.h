@@ -11,14 +11,14 @@
 #ifndef PREVIEWMETADATAELEMENT_H
 #define PREVIEWMETADATAELEMENT_H
 
-#include "artworkelement.h"
+#include <Artworks/artworkelement.h>
 
 namespace Models {
-    class PreviewArtworkElement: public ArtworkElement
+    class PreviewArtworkElement: public Artworks::ArtworkElement
     {
     public:
-        PreviewArtworkElement(ArtworkMetadata *metadata):
-            ArtworkElement(metadata)
+        PreviewArtworkElement(Artworks::ArtworkMetadata *artwork):
+            ArtworkElement(artwork)
         {
             setIsSelected(true);
         }

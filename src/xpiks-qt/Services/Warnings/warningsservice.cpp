@@ -73,7 +73,7 @@ namespace Warnings {
         }
     }
 
-    void WarningsService::startService(const std::shared_ptr<Common::ServiceStartParams> &params) {
+    void WarningsService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
         Q_UNUSED(params);
         m_WarningsWorker = new WarningsCheckingWorker(&m_WarningsSettingsModel);
 

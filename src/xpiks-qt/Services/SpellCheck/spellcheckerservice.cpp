@@ -17,6 +17,7 @@
 #include <Models/settingsmodel.h>
 #include <Commands/appmessages.h>
 #include <Artworks/artworkssnapshot.h>
+#include <Helpers/cpphelpers.h>
 
 namespace SpellCheck {
     SpellCheckerService::SpellCheckerService(Common::ISystemEnvironment &environment,
@@ -34,19 +35,19 @@ namespace SpellCheck {
         messages
                 .ofType<Artworks::BasicKeywordsModel*>()
                 .withID(Commands::AppMessages::SpellCheck)
-                .addListener(std::bind(&SpellCheckerService::submitItem, this));
+                .addListener(std::bind(&SpellCheckerService::submitItem, this, Common::SpellCheckFlags::All));
 
         messages
                 .ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::SpellCheck)
-                .addListener(std::bind(&SpellCheckerService::submitItems, this));
+                .addListener(std::bind(&SpellCheckerService::submitArtworks, this));
     }
 
     SpellCheckerService::~SpellCheckerService() {
         if (m_SpellCheckWorker != nullptr) {}
     }
 
-    void SpellCheckerService::startService(const std::shared_ptr<Common::ServiceStartParams> &params, Warnings::WarningsService &warningsService) {
+    void SpellCheckerService::startService(const std::shared_ptr<Services::ServiceStartParams> &params, Warnings::WarningsService &warningsService) {
         if (m_SpellCheckWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
@@ -108,10 +109,6 @@ namespace SpellCheck {
         return isBusy;
     }
 
-    void SpellCheckerService::submitItem(Artworks::BasicKeywordsModel *itemToCheck) {
-        this->submitItem(itemToCheck, Common::SpellCheckFlags::All);
-    }
-
     void SpellCheckerService::submitItem(Artworks::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags) {
         if (m_SpellCheckWorker == NULL) { return; }
         if (m_IsStopped) { return; }
@@ -129,7 +126,12 @@ namespace SpellCheck {
     }
 
     void SpellCheckerService::submitItems(Artworks::ArtworksSnapshot &&snapshot) {
-        this->submitItems(snapshot.getWeakSnapshot());
+        this->submitItems(
+                    Helpers::map(
+                        snapshot.getRawData(),
+                        [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+            return locker->getArtworkMetadata();
+        }));
     }
 
     SpellCheckWorker::batch_id_t SpellCheckerService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck) {
@@ -269,7 +271,7 @@ namespace SpellCheck {
 
         if (m_RestartRequired) {
             LOG_INFO << "Restarting worker...";
-            startService(std::shared_ptr<Common::ServiceStartParams>());
+            startService(std::shared_ptr<Services::ServiceStartParams>());
             m_RestartRequired = false;
         }
     }
