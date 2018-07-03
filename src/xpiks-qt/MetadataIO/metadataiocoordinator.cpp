@@ -35,9 +35,12 @@ namespace MetadataIO {
         }
     }
 
-    MetadataIOCoordinator::MetadataIOCoordinator(Models::SettingsModel &settingsModel, Models::SwitcherModel &switcherModel):
+    MetadataIOCoordinator::MetadataIOCoordinator(Models::SettingsModel &settingsModel,
+                                                 Models::SwitcherModel &switcherModel,
+                                                 QMLExtensions::VideoCachingService &videoCachingService):
         m_SettingsModel(settingsModel),
         m_SwitcherModel(switcherModel),
+        m_VideoCachingService(videoCachingService),
         m_LastImportID(1),
         m_ProcessingItemsCount(0),
         m_IsInProgress(false),
@@ -68,7 +71,7 @@ namespace MetadataIO {
         initializeImport(artworksToRead, importID, storageReadBatchID);
 
         libxpks::io::ReadingOrchestrator readingOrchestrator(&m_ReadingHub,
-                                                             &);
+                                                             &m_SettingsModel);
         readingOrchestrator.startReading();
 
         return importID;
@@ -83,8 +86,7 @@ namespace MetadataIO {
         // this should prevent a race between video thumbnails and exiftool
         // https://github.com/ribtoks/xpiks/issues/477
         // ---
-        QMLExtensions::VideoCachingService *videoCachingService = m_CommandManager->getVideoCachingService();
-        videoCachingService->waitWorkerIdle();
+        m_VideoCachingService.waitWorkerIdle();
         // ---
 
         libxpks::io::WritingOrchestrator writingOrchestrator(artworksToWrite,
@@ -111,8 +113,7 @@ namespace MetadataIO {
         // this should prevent a race between video thumbnails and exiftool
         // https://github.com/ribtoks/xpiks/issues/477
         // ---
-        QMLExtensions::VideoCachingService *videoCachingService = m_CommandManager->getVideoCachingService();
-        videoCachingService->waitWorkerIdle();
+        m_VideoCachingService.waitWorkerIdle();
         // ---
 
         libxpks::io::WritingOrchestrator writingOrchestrator(artworksToWipe,
