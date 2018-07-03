@@ -27,9 +27,7 @@ SOURCES += main.cpp \
     Helpers/stringhelper.cpp \
     Commands/commandmanager.cpp \
     UndoRedo/undoredomanager.cpp \
-    UndoRedo/removeartworksitem.cpp \
     UndoRedo/artworkmetadatabackup.cpp \
-    UndoRedo/modifyartworkshistoryitem.cpp \
     Helpers/runguard.cpp \
     Encryption/aes-qt.cpp \
     Helpers/ziphelper.cpp \
@@ -130,9 +128,7 @@ SOURCES += main.cpp \
     MetadataIO/csvexportmodel.cpp \
     Helpers/threadhelpers.cpp \
     KeywordsPresets/presetgroupsmodel.cpp \
-    UndoRedo/removedirectoryitem.cpp \
     Services/Maintenance/xpkscleanupjob.cpp \
-    Commands/maindelegator.cpp \
     Services/Warnings/warningsitem.cpp \
     Services/Maintenance/updatebundlecleanupjobitem.cpp \
     Plugins/pluginenvironment.cpp \
@@ -200,7 +196,6 @@ SOURCES += main.cpp \
     Models/Session/recentitemsmodel.cpp \
     Models/Session/sessionmanager.cpp \
     Commands/artworksupdatetemplate.cpp \
-    Models/artitemsmodel.cpp \
     Models/keyvaluelist.cpp \
     Models/languagesmodel.cpp \
     Models/logsmodel.cpp \
@@ -251,11 +246,8 @@ HEADERS += \
     Helpers/stringhelper.h \
     Helpers/logger.h \
     Commands/commandmanager.h \
-    UndoRedo/historyitem.h \
     UndoRedo/undoredomanager.h \
-    UndoRedo/removeartworksitem.h \
     UndoRedo/artworkmetadatabackup.h \
-    UndoRedo/modifyartworkshistoryitem.h \
     Helpers/runguard.h \
     Helpers/ziphelper.h \
     Suggestion/keywordssuggestor.h \
@@ -380,9 +372,7 @@ HEADERS += \
     MetadataIO/csvexportmodel.h \
     Helpers/threadhelpers.h \
     KeywordsPresets/presetgroupsmodel.h \
-    UndoRedo/removedirectoryitem.h \
     Services/Maintenance/xpkscleanupjob.h \
-    Commands/maindelegator.h \
     KeywordsPresets/presetmodel.h \
     KeywordsPresets/groupmodel.h \
     Services/Warnings/iwarningssettings.h \
@@ -491,7 +481,6 @@ HEADERS += \
     Models/Session/recentitemsmodel.h \
     Models/Session/sessionmanager.h \
     Commands/artworksupdatetemplate.h \
-    Models/artitemsmodel.h \
     Models/exportinfo.h \
     Models/keyvaluelist.h \
     Models/languagesmodel.h \
