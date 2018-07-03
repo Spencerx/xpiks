@@ -8,13 +8,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "../Common/defines.h"
+#include <Common/logging.h>
 #include <QDir>
 #include <QCoreApplication>
 #include <QProcess>
 #include <QFileInfo>
 #include <QStandardPaths>
-#include "../MetadataIO/metadataiocoordinator.h"
 #include "launchexiftooljobitem.h"
 
 #define EXIFTOOL_VERSION_TIMEOUT 3000
@@ -94,17 +93,14 @@ namespace Maintenance {
         return exiftoolPath;
     }
 
-    LaunchExiftoolJobItem::LaunchExiftoolJobItem(const QString &settingsExiftoolPath,
-                                                 MetadataIO::MetadataIOCoordinator *coordinator):
-        m_SettingsExiftoolPath(settingsExiftoolPath),
-        m_MetadataIOCoordinator(coordinator)
+    LaunchExiftoolJobItem::LaunchExiftoolJobItem(const QString &settingsExiftoolPath):
+        m_SettingsExiftoolPath(settingsExiftoolPath)
     {
-        Q_ASSERT(coordinator != nullptr);
     }
 
     void LaunchExiftoolJobItem::processJob() {
         LOG_DEBUG << "#";
         QString recommendedPath = discoverExiftool(m_SettingsExiftoolPath);
-        m_MetadataIOCoordinator->setRecommendedExiftoolPath(recommendedPath);
+        emit exiftoolDetected(recommendedPath);
     }
 }

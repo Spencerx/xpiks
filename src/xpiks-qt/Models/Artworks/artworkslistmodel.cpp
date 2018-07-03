@@ -1046,6 +1046,12 @@ namespace Models {
         resetDuplicatesResults();
     }
 
+    void ArtworksListModel::onMetadataWritingFinished() {
+        LOG_DEBUG << "#";
+        unlockAllForIO();
+        updateItems(ArtworksListModel::SelectionType::Selected, QVector<int>() << IsModifiedRole);
+    }
+
     QHash<int, QByteArray> ArtworksListModel::roleNames() const {
         QHash<int, QByteArray> roles;
         roles[ArtworkDescriptionRole] = "description";

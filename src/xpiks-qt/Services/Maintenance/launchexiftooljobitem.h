@@ -12,6 +12,7 @@
 #ifndef LAUNCHEXIFTOOLJOBITEM_H
 #define LAUNCHEXIFTOOLJOBITEM_H
 
+#include <QObject>
 #include <QString>
 #include "imaintenanceitem.h"
 
@@ -20,13 +21,17 @@ namespace MetadataIO {
 }
 
 namespace Maintenance {
-    class LaunchExiftoolJobItem : public IMaintenanceItem
+    class LaunchExiftoolJobItem : public QObject, public IMaintenanceItem
     {
+        Q_OBJECT
     public:
-        LaunchExiftoolJobItem(const QString &settingsExiftoolPath, MetadataIO::MetadataIOCoordinator *coordinator);
+        LaunchExiftoolJobItem(const QString &settingsExiftoolPath);
 
     public:
         virtual void processJob() override;
+
+    signals:
+        void exiftoolDetected(const QString &path);
 
     private:
         const QString m_SettingsExiftoolPath;

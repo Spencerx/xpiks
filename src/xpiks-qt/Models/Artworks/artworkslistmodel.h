@@ -214,6 +214,7 @@ namespace Models {
         void onDuplicatesDisabled();
         void userDictUpdateHandler(const QStringList &keywords, bool overwritten);
         void userDictClearedHandler();
+        void onMetadataWritingFinished();
 
     protected:
         virtual QHash<int, QByteArray> roleNames() const override;

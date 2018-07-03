@@ -484,7 +484,15 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::spellCheckRestarted,
                      m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckRestarted);
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::exiftoolSettingChanged,
-                     &m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::onExiftoolDiscoveryRequested);
+                     &m_MaintenanceService, &Maintenance::MaintenanceService::onExiftoolPathChanged);
+
+    QObject::connect(&m_MaintenanceService, &Maintenance::MaintenanceService::exiftoolDetected,
+                     &m_SettingsModel, &Models::SettingsModel::onRecommendedExiftoolFound);
+    QObject::connect(&m_MaintenanceService, &Maintenance::MaintenanceService::exiftoolDetected,
+                     &m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::onRecommendedExiftoolFound);
+
+    QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::writingWorkersFinished,
+                     &m_ArtworksListModel, &Models::ArtworksListModel::onMetadataWritingFinished);
 
     QObject::connect(&m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::clearCurrentEditable,
                      &m_CurrentEditable, &Models::CurrentEditableModel::onClearCurrentEditable);

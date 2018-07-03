@@ -31,6 +31,10 @@ namespace Encryption {
     class SecretsManager;
 }
 
+namespace Commands {
+    class AppMessages;
+}
+
 namespace Models {
     class SettingsModel:
             public QObject,
@@ -220,7 +224,7 @@ namespace Models {
         void spellCheckDisabled();
         void duplicatesCheckDisabled();
         void spellCheckRestarted();
-        void exiftoolSettingChanged();
+        void exiftoolSettingChanged(const QString &path);
 
     public:
         void setExifToolPath(QString value);

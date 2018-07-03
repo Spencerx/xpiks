@@ -27,7 +27,8 @@
 namespace Maintenance {
     MaintenanceService::MaintenanceService(Common::ISystemEnvironment &environment):
         m_Environment(environment),
-        m_MaintenanceWorker(NULL),
+        m_MaintenanceThread(nullptr),
+        m_MaintenanceWorker(nullptr),
         m_LastSessionBatchId(INVALID_BATCH_ID)
     {
     }
@@ -58,6 +59,8 @@ namespace Maintenance {
 
         LOG_DEBUG << "starting low priority thread...";
         thread->start(QThread::LowPriority);
+
+        m_MaintenanceThread = thread;
     }
 
     void MaintenanceService::stopService() {
@@ -97,9 +100,13 @@ namespace Maintenance {
         m_MaintenanceWorker->submitItem(jobItem);
     }
 
-    void MaintenanceService::launchExiftool(const QString &settingsExiftoolPath, MetadataIO::MetadataIOCoordinator *coordinator) {
+    void MaintenanceService::launchExiftool(const QString &settingsExiftoolPath) {
         LOG_DEBUG << "#";
-        std::shared_ptr<IMaintenanceItem> jobItem(new LaunchExiftoolJobItem(settingsExiftoolPath, coordinator));
+        Q_ASSERT(m_MaintenanceThread != nullptr);
+        auto jobItem = std::make_shared<LaunchExiftoolJobItem>(settingsExiftoolPath);
+        QObject::connect(jobItem.get(), &LaunchExiftoolJobItem::exiftoolDetected,
+                         this, &MaintenanceService::exiftoolDetected);
+        jobItem->moveToThread(m_MaintenanceThread);
         m_MaintenanceWorker->submitItem(jobItem);
     }
 
@@ -141,6 +148,11 @@ namespace Maintenance {
 
         std::shared_ptr<IMaintenanceItem> jobItem(new XpksCleanupJob(directory));
         m_MaintenanceWorker->submitItem(jobItem);
+    }
+
+    void MaintenanceService::onExiftoolPathChanged(const QString &path) {
+        LOG_DEBUG << "#";
+        launchExiftool(path);
     }
 
     void MaintenanceService::workerFinished() {

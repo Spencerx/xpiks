@@ -615,7 +615,7 @@ namespace Models {
         }
 
         if (m_ExiftoolPathChanged) {
-            emit exiftoolSettingChanged();
+            emit exiftoolSettingChanged(m_ExifToolPath);
         }
 
         resetChangeStates();
@@ -1006,10 +1006,12 @@ namespace Models {
 
     void SettingsModel::onRecommendedExiftoolFound(const QString &path) {
         LOG_INFO << path;
+        if (path.isEmpty()) { return; }
+
         QString existingExiftoolPath = getExifToolPath();
 
         if (existingExiftoolPath != path) {
-            LOG_INFO << "Setting exiftool path to recommended";
+            LOG_DEBUG << "Setting exiftool path to recommended";
             setExifToolPath(path);
         }
     }

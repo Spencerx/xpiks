@@ -12,16 +12,12 @@
 #define MAINTENANCESERVICE_H
 
 #include <QObject>
-#include "../MetadataIO/artworkssnapshot.h"
-#include "../Common/isystemenvironment.h"
+#include <Artworks/artworkssnapshot.h>
+#include <Common/isystemenvironment.h>
 #include "maintenanceworker.h"
 
 namespace Models {
     class ArtworkMetadata;
-}
-
-namespace MetadataIO {
-    class MetadataIOCoordinator;
 }
 
 namespace Translation {
@@ -40,6 +36,8 @@ namespace Helpers {
 namespace QMLExtensions {
     class ImageCachingService;
 }
+
+class QThread;
 
 namespace Maintenance {
     class MaintenanceService: public QObject
@@ -61,7 +59,7 @@ namespace Maintenance {
     public:
         void cleanupUpdatesArtifacts();
         void cleanupDownloadedUpdates(const QString &downloadsPath);
-        void launchExiftool(const QString &settingsExiftoolPath, MetadataIO::MetadataIOCoordinator *coordinator);
+        void launchExiftool(const QString &settingsExiftoolPath);
         void initializeDictionaries(Translation::TranslationManager *translationManager, Helpers::AsyncCoordinator *initCoordinator);
         void cleanupLogs();
         void moveSettings(Models::SettingsModel *settingsModel);
@@ -69,11 +67,18 @@ namespace Maintenance {
         void saveSession(std::unique_ptr<MetadataIO::SessionSnapshot> &sessionSnapshot, Models::SessionManager *sessionManager);
         void cleanupOldXpksBackups(const QString &directory);
 
+    signals:
+        void exiftoolDetected(const QString &path);
+
+    public slots:
+        void onExiftoolPathChanged(const QString &path);
+
     private slots:
         void workerFinished();
         void workerDestroyed(QObject *object);
 
     private:
+        QThread *m_MaintenanceThread;
         Common::ISystemEnvironment &m_Environment;
         MaintenanceWorker *m_MaintenanceWorker;
         MaintenanceWorker::batch_id_t m_LastSessionBatchId;

@@ -87,8 +87,6 @@ namespace MetadataIO {
         int readMetadataExifTool(const ArtworksSnapshot &artworksToRead, quint32 storageReadBatchID);
         void writeMetadataExifTool(const ArtworksSnapshot &artworksToWrite, bool useBackups);
         void wipeAllMetadataExifTool(const ArtworksSnapshot &artworksToWipe, bool useBackups);
-        void autoDiscoverExiftool();
-        void setRecommendedExiftoolPath(const QString &recommendedExiftool);
 
 #ifdef INTEGRATION_TESTS
     public:
@@ -107,7 +105,7 @@ namespace MetadataIO {
         void onReadingFinished(int importID);
 
     public slots:
-        void onExiftoolDiscoveryRequested();
+        void onRecommendedExiftoolFound(const QString &path);
 
     private:
         int getNextImportID();
@@ -118,7 +116,6 @@ namespace MetadataIO {
     private:
         MetadataReadingHub m_ReadingHub;
         Helpers::AsyncCoordinator m_WritingAsyncCoordinator;
-        QString m_RecommendedExiftoolPath;
         int m_LastImportID;
         std::set<int> m_PreviousImportIDs;
         volatile int m_ProcessingItemsCount;
