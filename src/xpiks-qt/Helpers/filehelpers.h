@@ -26,10 +26,6 @@
     #define VECTOR_PATH DIRECTORY_PATH "_%1/artwork%2.eps"
 #endif
 
-namespace Models {
-    class ArtworkMetadata;
-}
-
 namespace Helpers {
     QStringList convertToVectorFilenames(const QStringList &items);
     QStringList convertToVectorFilenames(const QString &path);

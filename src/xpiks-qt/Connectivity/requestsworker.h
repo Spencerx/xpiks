@@ -13,7 +13,7 @@
 
 #include <QObject>
 #include "iconnectivityrequest.h"
-#include "../Common/itemprocessingworker.h"
+#include <Common/itemprocessingworker.h>
 
 namespace Models {
     class ProxySettings;
@@ -38,7 +38,7 @@ namespace Connectivity {
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
-        virtual void workerStopped() override { emit stopped(); }
+        virtual void onWorkerStopped() override { emit stopped(); }
 
     public slots:
         void process() { doWork(); }

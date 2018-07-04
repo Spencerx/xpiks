@@ -10,11 +10,11 @@
 
 #include "filterhelpers.h"
 #include <QString>
-#include "../Models/artworkmetadata.h"
-#include "../Models/imageartwork.h"
-#include "../Common/basickeywordsmodel.h"
-#include "../Common/flags.h"
-#include "../Common/defines.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Artworks/basickeywordsmodel.h>
+#include <Common/flags.h>
+#include <Common/defines.h>
 
 namespace Helpers {
     bool fitsSpecialKeywords(const QString &searchTerm, Artworks::ArtworkMetadata *metadata) {

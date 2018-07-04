@@ -21,9 +21,11 @@
 
 namespace SpellCheck {
     SpellCheckerService::SpellCheckerService(Common::ISystemEnvironment &environment,
+                                             Warnings::WarningsService &warningsService,
                                              Models::SettingsModel &settingsModel,
                                              Commands::AppMessages &messages):
         m_Environment(environment),
+        m_WarningsService(warningsService),
         m_UserDictionary(environment),
         m_SettingsModel(settingsModel),
         m_RestartRequired(false),
@@ -47,7 +49,7 @@ namespace SpellCheck {
         if (m_SpellCheckWorker != nullptr) {}
     }
 
-    void SpellCheckerService::startService(const std::shared_ptr<Services::ServiceStartParams> &params, Warnings::WarningsService &warningsService) {
+    void SpellCheckerService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
         if (m_SpellCheckWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
@@ -60,7 +62,7 @@ namespace SpellCheck {
         m_SpellCheckWorker = new SpellCheckWorker(getDictsRoot(),
                                                   m_Environment,
                                                   m_UserDictionary,
-                                                  warningsService,
+                                                  m_WarningsService,
                                                   coordinator);
         Helpers::AsyncCoordinatorLocker locker(coordinator);
         Q_UNUSED(locker);
@@ -125,9 +127,9 @@ namespace SpellCheck {
         m_SpellCheckWorker->submitItem(item);
     }
 
-    void SpellCheckerService::submitItems(Artworks::ArtworksSnapshot &&snapshot) {
+    void SpellCheckerService::submitArtworks(Artworks::ArtworksSnapshot &&snapshot) {
         this->submitItems(
-                    Helpers::map(
+                    Helpers::map<std::shared_ptr<Artworks::ArtworkMetadataLocker>, Artworks::ArtworkMetadata*>(
                         snapshot.getRawData(),
                         [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
             return locker->getArtworkMetadata();
@@ -135,8 +137,8 @@ namespace SpellCheck {
     }
 
     SpellCheckWorker::batch_id_t SpellCheckerService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck) {
-        if (m_SpellCheckWorker == NULL) { return; }
-        if (m_IsStopped) { return; }
+        if (m_SpellCheckWorker == NULL) { return INVALID_BATCH_ID; }
+        if (m_IsStopped) { return INVALID_BATCH_ID; }
 
         std::vector<std::shared_ptr<SpellCheckItem> > items;
         const size_t size = itemsToCheck.size();
@@ -160,8 +162,9 @@ namespace SpellCheck {
 
         LOG_INFO << size << "item(s)";
 
-        m_SpellCheckWorker->submitItems(items);
+        auto batchID = m_SpellCheckWorker->submitItems(items);
         m_SpellCheckWorker->submitSeparator();
+        return batchID;
     }
 
     // used for spellchecking after adding a word to user dictionary
@@ -214,7 +217,7 @@ namespace SpellCheck {
         return m_UserDictionary.size();
     }
 
-    QStringList SpellCheckerService::getUserDictionary() const {
+    QStringList SpellCheckerService::getUserDictionary() {
         return m_UserDictionary.getWords();
     }
 

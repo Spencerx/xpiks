@@ -48,18 +48,19 @@ namespace SpellCheck {
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
         virtual QString toDebugString() const { return QString("%1 -> (%2)").arg(m_Word).arg(m_Suggestions.join(", ")); }
 #endif
+
+    public:
         const QString &getWord() const { return m_Word; }
-        int getReplacementIndex() const { return m_ReplacementIndex; }
-
-        bool setReplacementIndex(int value);
-
         const QString &getReplacement() const { return m_Suggestions.at(m_ReplacementIndex); }
-        void setSuggestions(const QStringList &suggestions);
-
+        int getReplacementIndex() const { return m_ReplacementIndex; }
         const QString &getReplacementOrigin() const { return m_ReplacementOrigin; }
-        bool anyReplacementSelected() const { return m_ReplacementIndex != -1; }
-
         bool getReplacementSucceeded() const { return m_ReplacementSucceeded; }
+        bool anyReplacementSelected() const { return m_ReplacementIndex != -1; }
+        Artworks::IMetadataOperator *getMetadataOperator() const { return m_MetadataOperator; }
+
+    public:
+        bool setReplacementIndex(int value);
+        void setSuggestions(const QStringList &suggestions);
 
     public:
         virtual void replaceToSuggested() = 0;
@@ -83,7 +84,6 @@ namespace SpellCheck {
         virtual QHash<int, QByteArray> roleNames() const override;
         void setReplacementSucceeded(bool succeeded) { m_ReplacementSucceeded = succeeded; }
         const QStringList &getSuggestions() const { return m_Suggestions; }
-        Artworks::IMetadataOperator *getMetadataOperator() const { return m_MetadataOperator; }
 
     private:
         Artworks::IMetadataOperator *m_MetadataOperator;

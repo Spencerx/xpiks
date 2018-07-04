@@ -10,9 +10,9 @@
 
 #include "remoteconfig.h"
 #include <QThread>
-#include "../Common/logging.h"
-#include "../Connectivity/simplecurlrequest.h"
-#include "../Models/proxysettings.h"
+#include <Common/logging.h>
+#include <Connectivity/simplecurlrequest.h>
+#include <Models/Connectivity/proxysettings.h>
 
 namespace Helpers {
     RemoteConfig::RemoteConfig(const QString &configUrl, QObject *parent):

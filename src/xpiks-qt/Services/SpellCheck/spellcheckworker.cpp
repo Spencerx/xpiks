@@ -26,6 +26,7 @@
 #include <Artworks/artworkmetadata.h>
 #include <Services/Warnings/warningsservice.h>
 #include <Helpers/cpphelpers.h>
+#include "userdictionary.h"
 
 #define EN_HUNSPELL_DIC "en_US.dic"
 #define EN_HUNSPELL_AFF "en_US.aff"
@@ -167,7 +168,7 @@ namespace SpellCheck {
 
     void SpellCheckWorker::onResultsAvailable(std::vector<WorkResult> &results) {
         m_WarningsService.submitItems(
-                    Helpers::map(
+                    Helpers::map<WorkResult, Artworks::ArtworkMetadata*>(
                         results,
                         [](const WorkResult &result) {
             return result.m_Result->getArtworkMetadata();

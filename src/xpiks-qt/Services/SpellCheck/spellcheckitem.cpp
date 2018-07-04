@@ -9,13 +9,13 @@
  */
 
 #include "spellcheckitem.h"
-#include "../Artworks/artworkmetadata.h"
 #include <QStringList>
-#include "../Helpers/indiceshelper.h"
-#include "../Common/flags.h"
-#include "../Common/defines.h"
-#include "../Artworks/basicmetadatamodel.h"
-#include "../Helpers/stringhelper.h"
+#include <Common/flags.h>
+#include <Common/defines.h>
+#include <Helpers/indiceshelper.h>
+#include <Helpers/stringhelper.h>
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/basicmetadatamodel.h>
 
 /*
  * When spellcheck results are propagated back, they are updated in artwork

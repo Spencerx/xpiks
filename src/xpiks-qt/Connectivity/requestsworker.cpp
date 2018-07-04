@@ -10,7 +10,7 @@
 
 #include "requestsworker.h"
 #include "simplecurlrequest.h"
-#include "../Models/proxysettings.h"
+#include <Models/Connectivity/proxysettings.h>
 
 namespace Connectivity {
     RequestsWorker::RequestsWorker(Models::ProxySettings *proxySettings, QObject *parent) :

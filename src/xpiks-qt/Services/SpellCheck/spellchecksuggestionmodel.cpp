@@ -109,12 +109,14 @@ namespace SpellCheck {
                 requests.reserve(requests.size() + misspelledKeywords.size());
                 for (auto &keywordItem: misspelledKeywords) {
                     if (!keywordItem.isPartOfAKeyword()) {
-                        requests.emplace_back(new SpellCheck::KeywordSpellSuggestions(keywordItem.m_Word, keywordItem.m_Index));
+                        requests.emplace_back(
+                                    std::make_shared<KeywordSpellSuggestions>(
+                                        keywordItem.m_Word, keywordItem.m_Index, item));
                     } else {
-                        requests.emplace_back(new SpellCheck::KeywordSpellSuggestions(keywordItem.m_Word, keywordItem.m_Index, keywordItem.m_OriginKeyword));
+                        requests.emplace_back(
+                                    std::make_shared<KeywordSpellSuggestions>(
+                                        keywordItem.m_Word, keywordItem.m_Index, keywordItem.m_OriginKeyword, item));
                     }
-
-                    requests.back()->setMetadataOperator(item);
                 }
                 LOG_DEBUG << misspelledKeywords.size() << "keywords requests";
             }
@@ -126,8 +128,7 @@ namespace SpellCheck {
                 requests.reserve(requests.size() + misspelledWords.size());
 
                 for (auto &word: misspelledWords) {
-                    requests.emplace_back(new SpellCheck::TitleSpellSuggestions(word));
-                    requests.back()->setMetadataOperator(item);
+                    requests.emplace_back(std::make_shared<TitleSpellSuggestions>(word, item));
                 }
 
                 LOG_DEBUG << misspelledWords.size() << "title requests";
@@ -140,8 +141,7 @@ namespace SpellCheck {
                 requests.reserve(requests.size() + misspelledWords.size());
 
                 for (auto &word: misspelledWords) {
-                    requests.emplace_back(new SpellCheck::DescriptionSpellSuggestions(word));
-                    requests.back()->setMetadataOperator(item);
+                    requests.emplace_back(std::make_shared<DescriptionSpellSuggestions>(word, item));
                 }
                 LOG_DEBUG << misspelledWords.size() << "description requests";
             }
@@ -233,7 +233,7 @@ namespace SpellCheck {
             std::vector<Artworks::BasicKeywordsModel *> itemsToSubmit;
             itemsToSubmit.reserve(m_CheckedItems.size());
 
-            for (auto *item: m_CheckedItems) {
+            for (auto &item: m_CheckedItems) {
                 auto *metadataOperator = item.getMetadataOperator();
                 metadataOperator->afterReplaceCallback();
                 itemsToSubmit.push_back(metadataOperator->getBasicKeywordsModel());

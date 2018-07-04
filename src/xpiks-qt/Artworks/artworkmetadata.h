@@ -119,7 +119,7 @@ namespace Artworks {
 
     public:
         const QString &getFilepath() const { return m_ArtworkFilepath; }
-        const QString &getThumbnailPath() const { return m_ArtworkFilepath; }
+        virtual const QString &getThumbnailPath() const { return m_ArtworkFilepath; }
         virtual QString getDirectory() const { QFileInfo fi(m_ArtworkFilepath); return fi.absolutePath(); }
         QString getBaseFilename() const;
         bool isInDirectory(const QString &directoryAbsolutePath) const;

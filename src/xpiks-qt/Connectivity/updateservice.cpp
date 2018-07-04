@@ -20,9 +20,9 @@
 
 namespace Connectivity {
     UpdateService::UpdateService(Common::ISystemEnvironment &environment,
-                                 Models::SettingsModel *settingsModel,
-                                 Models::SwitcherModel *switcherModel,
-                                 Maintenance::MaintenanceService *maintenanceService):
+                                 Models::SettingsModel &settingsModel,
+                                 Models::SwitcherModel &switcherModel,
+                                 Maintenance::MaintenanceService &maintenanceService):
         m_Environment(environment),
         m_UpdatesCheckerWorker(nullptr),
         m_SettingsModel(settingsModel),
@@ -30,9 +30,6 @@ namespace Connectivity {
         m_MaintenanceService(maintenanceService),
         m_State("updater", environment)
     {
-        Q_ASSERT(settingsModel != nullptr);
-        Q_ASSERT(switcherModel != nullptr);
-        Q_ASSERT(maintenanceService != nullptr);
     }
 
     void UpdateService::initialize() {
@@ -42,8 +39,8 @@ namespace Connectivity {
 
     void UpdateService::startChecking() {
 #ifdef WITH_UPDATES
-        const bool startWorker = m_SettingsModel->getCheckForUpdates() &&
-                m_SwitcherModel->getUpdateEnabled();
+        const bool startWorker = m_SettingsModel.getCheckForUpdates() &&
+                m_SwitcherModel.getUpdateEnabled();
 #else
         const bool startWorker = false;
 #endif

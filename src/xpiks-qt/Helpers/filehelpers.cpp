@@ -13,10 +13,8 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QVector>
-#include "../Common/defines.h"
-#include "../Helpers/constants.h"
-#include "../Models/artworkmetadata.h"
-#include "../Models/imageartwork.h"
+#include <Common/logging.h>
+#include <Helpers/constants.h>
 
 namespace Helpers {
     QStringList convertToVectorFilenames(const QStringList &item) {

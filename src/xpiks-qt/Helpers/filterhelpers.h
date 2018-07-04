@@ -12,9 +12,9 @@
 #define FILTERHELPERS_H
 
 #include <QString>
-#include "../Common/flags.h"
+#include <Common/flags.h>
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
 }
 

@@ -34,9 +34,9 @@ namespace Connectivity {
         Q_OBJECT
     public:
         UpdateService(Common::ISystemEnvironment &environment,
-                      Models::SettingsModel *settingsModel,
-                      Models::SwitcherModel *switcherModel,
-                      Maintenance::MaintenanceService *maintenanceService);
+                      Models::SettingsModel &settingsModel,
+                      Models::SwitcherModel &switcherModel,
+                      Maintenance::MaintenanceService &maintenanceService);
 
     public:
         void initialize();
@@ -82,9 +82,9 @@ namespace Connectivity {
     private:
         Common::ISystemEnvironment &m_Environment;
         Connectivity::UpdatesCheckerWorker *m_UpdatesCheckerWorker;
-        Models::SettingsModel *m_SettingsModel;
-        Models::SwitcherModel *m_SwitcherModel;
-        Maintenance::MaintenanceService *m_MaintenanceService;
+        Models::SettingsModel &m_SettingsModel;
+        Models::SwitcherModel &m_SwitcherModel;
+        Maintenance::MaintenanceService &m_MaintenanceService;
         Common::StatefulEntity m_State;
         bool m_HaveUpgradeConsent = false;
     };

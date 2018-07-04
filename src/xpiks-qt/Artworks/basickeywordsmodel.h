@@ -147,7 +147,7 @@ namespace Artworks {
         void aboutToBeRemoved();
         void afterSpellingErrorsFixed();
 
-    protected slots:
+    public slots:
         void onSpellCheckRequestReady(Common::SpellCheckFlags flags, int index);
 
     private:

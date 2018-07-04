@@ -15,8 +15,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QJsonDocument>
-#include "../Connectivity/configrequest.h"
-#include "../Common/defines.h"
+#include <Connectivity/configrequest.h>
 
 namespace Models {
     class ProxySettings;

@@ -29,7 +29,7 @@ namespace Helpers {
                           std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &videoRawSnapshot);
     int retrieveImagesCount(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot);
     int retrieveVideosCount(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot);
-    int findAndAttachVectors(const std::vector<Artworks::ArtworkMetadata> &artworksList, QVector<int> &modifiedIndices);
+    int findAndAttachVectors(const std::vector<Artworks::ArtworkMetadata *> &artworksList, QVector<int> &modifiedIndices);
 }
 
 #endif // ARTWORKSHELPERS_H

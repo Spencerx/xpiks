@@ -45,14 +45,14 @@ namespace SpellCheck {
 
     public:
         SpellCheckerService(Common::ISystemEnvironment &environment,
+                            Warnings::WarningsService &warningsService,
                             Models::SettingsModel &settingsModel,
                             Commands::AppMessages &messages);
 
         virtual ~SpellCheckerService();
 
     public:
-        void startService(const std::shared_ptr<Services::ServiceStartParams> &params,
-                          Warnings::WarningsService &warningsService);
+        void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
         void stopService();
 
         bool isAvailable() const { return true; }
@@ -72,7 +72,7 @@ namespace SpellCheck {
 #endif
 
     public:
-        QStringList getUserDictionary() const;
+        QStringList getUserDictionary();
         void updateUserDictionary(const QStringList &words);
 
     public:
@@ -100,6 +100,7 @@ namespace SpellCheck {
 
     private:
         Common::ISystemEnvironment &m_Environment;
+        Warnings::WarningsService &m_WarningsService;
         SpellCheckWorker *m_SpellCheckWorker;
         UserDictionary m_UserDictionary;
         Models::SettingsModel &m_SettingsModel;

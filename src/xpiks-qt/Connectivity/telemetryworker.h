@@ -33,7 +33,7 @@ namespace Connectivity {
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
-        virtual void workerStopped() override { emit stopped(); }
+        virtual void onWorkerStopped() override { emit stopped(); }
 
     public slots:
         void process() { doWork(); }

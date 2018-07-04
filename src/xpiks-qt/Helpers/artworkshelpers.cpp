@@ -103,7 +103,7 @@ namespace Helpers {
         return count;
     }
 
-    int findAndAttachVectors(const std::vector<Artworks::ArtworkMetadata> &artworksList, QVector<int> &modifiedIndices) {
+    int findAndAttachVectors(const std::vector<Artworks::ArtworkMetadata*> &artworksList, QVector<int> &modifiedIndices) {
         LOG_DEBUG << "#";
         int attachedCount = 0;
         const size_t size = artworksList.size();
