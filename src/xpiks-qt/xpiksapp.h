@@ -45,6 +45,16 @@
 
 #include <Services/Warnings/warningsmodel.h>
 #include <Services/Warnings/warningsservice.h>
+#include <Services/artworksupdatehub.h>
+#include <Services/AutoComplete/autocompleteservice.h>
+#include <Services/AutoComplete/keywordsautocompletemodel.h>
+#include <Services/Translation/translationmanager.h>
+#include <Services/Translation/translationservice.h>
+#include <Services/SpellCheck/duplicatesreviewmodel.h>
+#include <Services/SpellCheck/spellcheckerservice.h>
+#include <Services/SpellCheck/spellchecksuggestionmodel.h>
+#include <Services/SpellCheck/userdicteditmodel.h>
+#include <Services/Maintenance/maintenanceservice.h>
 
 #include <UndoRedo/undoredomanager.h>
 
@@ -60,24 +70,11 @@
 
 #include <ftpcoordinator.h>
 
-#include <Services/SpellCheck/duplicatesreviewmodel.h>
-#include <Services/SpellCheck/spellcheckerservice.h>
-#include <Services/SpellCheck/spellchecksuggestionmodel.h>
-#include <Services/SpellCheck/userdicteditmodel.h>
-
 #include <MetadataIO/csvexportmodel.h>
 #include <MetadataIO/metadataiocoordinator.h>
 #include <MetadataIO/metadataioservice.h>
 
-#include <Services/AutoComplete/autocompleteservice.h>
-#include <Services/AutoComplete/keywordsautocompletemodel.h>
-
-#include <Services/Translation/translationmanager.h>
-#include <Services/Translation/translationservice.h>
-
 #include <Models/Editing/quickbuffer.h>
-
-#include <Services/Maintenance/maintenanceservice.h>
 
 #include <Plugins/pluginmanager.h>
 #include <Plugins/uiprovider.h>
@@ -191,7 +188,7 @@ protected:
     Models::QuickBuffer m_QuickBuffer;
     Maintenance::MaintenanceService m_MaintenanceService;
     QMLExtensions::VideoCachingService m_VideoCachingService;
-    QMLExtensions::ArtworksUpdateHub m_ArtworksUpdateHub;
+    Services::ArtworksUpdateHub m_ArtworksUpdateHub;
     Models::SwitcherModel m_SwitcherModel;
     SpellCheck::DuplicatesReviewModel m_DuplicatesModel;
     MetadataIO::CsvExportModel m_CsvExportModel;

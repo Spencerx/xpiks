@@ -18,13 +18,12 @@
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>
 #include "uiprovider.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/isystemenvironment.h>
 #include "pluginenvironment.h"
 #include "plugindatabasemanager.h"
-#include "../Storage/idatabasemanager.h"
+#include <Storage/idatabasemanager.h>
 #include "sandboxeddependencies.h"
-#include "../Connectivity/requestsservice.h"
-#include "../Microstocks/microstockapiclients.h"
+#include <Connectivity/requestsservice.h>
 
 namespace Commands {
     class ICommandManager;
@@ -32,6 +31,14 @@ namespace Commands {
 
 namespace KeywordsPresets {
     class IPresetsManager;
+}
+
+namespace Microstocks {
+    class MicrostockAPIClients;
+}
+
+namespace Models {
+    class ICurrentEditableSource;
 }
 
 namespace Plugins {
@@ -47,7 +54,9 @@ namespace Plugins {
                       KeywordsPresets::IPresetsManager &presetsManager,
                       Storage::DatabaseManager *dbManager,
                       Connectivity::RequestsService &requestsService,
-                      Microstocks::MicrostockAPIClients &apiClients);
+                      Microstocks::MicrostockAPIClients &apiClients,
+                      Models::ICurrentEditableSource &currentEditableSource,
+                      Models::UIManager &uiManager);
         virtual ~PluginManager();
 
     public:
@@ -70,11 +79,10 @@ namespace Plugins {
         void unloadPlugins();
         bool hasExportedActions(int row) const;
         bool isUsable(int row) const;
-        UIProvider *getUIProvider() { return &m_UIProvider; }
+        UIProvider &getUIProvider() { return m_UIProvider; }
 
     public slots:
         void onCurrentEditableChanged();
-        void onLastActionUndone(int commandID);
         void onPresetsUpdated();
 
     public:
@@ -108,6 +116,7 @@ namespace Plugins {
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         Storage::DatabaseManager *m_DatabaseManager;
         MicrostockServicesSafe m_MicrostockServices;
+        Models::ICurrentEditableSource &m_CurrentEditableSource;
         QString m_PluginsDirectoryPath;
         QString m_FailedPluginsDirectory;
         std::vector<std::shared_ptr<PluginWrapper> > m_PluginsList;

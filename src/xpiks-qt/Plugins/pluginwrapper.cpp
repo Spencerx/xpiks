@@ -22,7 +22,7 @@ namespace Plugins {
                                  XpiksPluginInterface *pluginInterface,
                                  int pluginID,
                                  Common::ISystemEnvironment &environment,
-                                 UIProvider *realUIProvider,
+                                 UIProvider &realUIProvider,
                                  Storage::DatabaseManager *databaseManager):
         m_PluginInterface(pluginInterface),
         m_PluginEnvironment(environment, Constants::PLUGINS_DIR, filepath),

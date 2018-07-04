@@ -68,9 +68,6 @@ namespace Warnings {
         virtual QHash<int, QByteArray> roleNames() const override;
 
     private:
-        void setSourceModel(Models::ArtworksListModel &artworksListModel);
-
-    private:
         WarningsSettingsModel &m_WarningsSettingsModel;
         Models::ArtworksListModel &m_ArtworksListModel;
         QVector<int> m_PendingUpdates;

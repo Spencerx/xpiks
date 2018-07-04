@@ -27,7 +27,7 @@ namespace Models {
     {
     }
 
-    void DeleteKeywordsViewModel::setArtworks(Artworks::WeakArtworksSnapshot &artworks) {
+    void DeleteKeywordsViewModel::setArtworks(Artworks::ArtworksSnapshot &&artworks) {
         LOG_DEBUG << "#";
         ArtworksViewModel::setArtworks(artworks);
         recombineKeywords();

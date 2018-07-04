@@ -976,9 +976,9 @@ namespace Models {
         bool anyArtworkUnavailable = false;
         bool anyVectorUnavailable = false;
 
-        foreachArtwork([this](ArtworkMetadata *artwork) {
+        foreachArtwork([this](Artworks::ArtworkMetadata *artwork) {
             return this->m_ArtworksRepository.isFileUnavailable(artwork->getFilepath()); },
-        [&anyArtworkUnavailable](ArtworkMetadata *artwork, size_t) {
+        [&anyArtworkUnavailable](Artworks::ArtworkMetadata *artwork, size_t) {
             artwork->setUnavailable(); anyArtworkUnavailable = true; });
 
         foreachArtworkAs<Artworks::ImageArtwork>(Helpers::IndicesRanges(getArtworksCount()),

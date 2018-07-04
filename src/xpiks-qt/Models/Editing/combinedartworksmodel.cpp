@@ -22,6 +22,7 @@
 #include <Commands/Base/simpleuicommandtemplate.h>
 #include <KeywordsPresets/ipresetsmanager.h>
 #include <Models/Editing/currenteditableproxyartwork.h>
+#include <Commands/appmessages.h>
 
 #define MAX_EDITING_PAUSE_RESTARTS 12
 
@@ -29,6 +30,7 @@ namespace Models {
     CombinedArtworksModel::CombinedArtworksModel(Commands::ICommandManager &commandManager,
                                                  KeywordsPresets::IPresetsManager &presetsManager,
                                                  AutoComplete::ICompletionSource &completionSource,
+                                                 Commands::AppMessages &messages,
                                                  QObject *parent):
         ArtworksViewModel(selectedArtworksSource, parent),
         ArtworkProxyBase(),
@@ -36,6 +38,7 @@ namespace Models {
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_CompletionSource(completionSource),
+        m_Messages(messages),
         m_CommonKeywordsModel(m_HoldPlaceholder, this),
         m_EditFlags(Common::ArtworkEditFlags::None),
         m_ModifiedFlags(0)
@@ -62,27 +65,14 @@ namespace Models {
                          this, &CombinedArtworksModel::titleSpellingChanged);
         QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
                          this, &CombinedArtworksModel::keywordsSpellingChanged);
+
+        m_Messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::EditArtworks)
+                .addListener(std::bind(&CombinedArtworksModel::setArtworks, this));
     }
 
-    void CombinedArtworksModel::registerUICommands(QMLExtensions::IUICommandDispatcher &dispatcher) {
-        dispatcher.registerCommand(
-                    QMLExtensions::UICommandID::EditSelectedArtworks,
-                    std::shared_ptr<Commands::IUICommandTemplate>(
-                        new Commands::SimpleUICommandTemplate([this](const QJSValue&){
-            this->pullArtworks();
-            // TODO: register as current
-        })));
-    }
-
-    void CombinedArtworksModel::setInspectionTemplate(const std::shared_ptr<Commands::InspectBasicModelTemplate> &actionTemplate) {
-        m_InspectionTemplate = actionTemplate;
-    }
-
-    std::shared_ptr<ICurrentEditable> CombinedArtworksModel::getCurrentEditable() const {
-        return std::make_shared<CurrentEditableProxyArtwork>(*this);
-    }
-
-    void CombinedArtworksModel::setArtworks(Artworks::WeakArtworksSnapshot &artworks) {
+    void CombinedArtworksModel::setArtworks(Artworks::ArtworksSnapshot &&artworks) {
         ArtworksViewModel::setArtworks(artworks);
 
         recombineArtworks();
@@ -481,10 +471,10 @@ namespace Models {
     }
 
     void CombinedArtworksModel::submitForInspection() {
-        m_CommandManager.processCommand(
-                    std::make_shared<Commands::TemplatedCommand<Artworks::BasicKeywordsModel*>(
-                        &m_CommonKeywordsModel,
-                        m_InspectionTemplate));
+        m_Messages
+                .ofType<Artworks::BasicKeywordsModel*>()
+                .withID(Commands::AppMessages::SpellCheck)
+                .broadcast(&m_CommonKeywordsModel);
     }
 
     Common::ID_t CombinedArtworksModel::getSpecialItemID() {

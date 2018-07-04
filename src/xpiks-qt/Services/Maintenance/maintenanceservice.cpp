@@ -23,6 +23,7 @@
 #include "xpkscleanupjob.h"
 #include "updatebundlecleanupjobitem.h"
 #include <Helpers/asynccoordinator.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace Maintenance {
     MaintenanceService::MaintenanceService(Common::ISystemEnvironment &environment):

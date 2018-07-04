@@ -13,7 +13,6 @@
 #include <QObject>
 #include <QString>
 #include <QDataStream>
-#include "../Common/defines.h"
 
 namespace Models {
     class ProxySettings {

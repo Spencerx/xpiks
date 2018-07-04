@@ -16,7 +16,6 @@
 #include <deque>
 #include <vector>
 #include <Artworks/artworkmetadata.h>
-#include <Helpers/ifilenotavailablemodel.h>
 #include <Artworks/artworkssnapshot.h>
 #include <Filesystem/ifilescollection.h>
 #include <Helpers/indicesranges.h>
@@ -52,8 +51,7 @@ namespace Models {
     using IArtworksCommandTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
 
     class ArtworksListModel:
-            public QAbstractListModel,
-            public Helpers::IFileNotAvailableModel
+            public QAbstractListModel
     {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
@@ -165,7 +163,7 @@ namespace Models {
 
     public:
         // qabstractlistmodel methods
-        virtual int rowCount(const QModelIndex &) const { return (int)getArtworksCount(); }
+        virtual int rowCount(const QModelIndex &) const override { return (int)getArtworksCount(); }
         virtual QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
         virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
         virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
@@ -233,7 +231,7 @@ namespace Models {
             std::vector<T> result;
             result.reserve(ranges.size());
             for (auto &r: ranges.getRanges()) {
-                for (int i = r.first; i <= r.second; r++) {
+                for (int i = r.first; i <= r.second; i++) {
                     auto *artwork = accessArtwork(i);
                     if (pred(artwork)) {
                         result.emplace_back(
@@ -274,7 +272,7 @@ namespace Models {
                               std::function<bool (T *)> pred,
                               std::function<void (T *, size_t)> action) const {
             for (auto &r: ranges.getRanges()) {
-                for (int i = r.first; i <= r.second; r++) {
+                for (int i = r.first; i <= r.second; i++) {
                     auto *artwork = accessArtwork(i);
                     T *t = dynamic_cast<T*>(artwork);
                     if ((t != nullptr) && pred(t)) {

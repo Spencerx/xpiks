@@ -132,8 +132,6 @@ void XpiksApp::initialize() {
     m_TelemetryService.setInterfaceLanguage(m_LanguagesModel.getCurrentLanguage());
     m_ColorsModel.applyTheme(m_SettingsModel.getSelectedThemeIndex());
 
-    m_PluginManager.getUIProvider()->setUIManager(&m_UIManager);
-
     m_AvailabilityListeners.append(&m_CombinedArtworksModel);
     m_AvailabilityListeners.append(&m_ArtworkUploader);
     m_AvailabilityListeners.append(&m_ZipArchiver);
@@ -564,7 +562,7 @@ void XpiksApp::connectEntitiesSignalsSlots() {
                      &m_QuickBuffer, &QuickBuffer::QuickBuffer::userDictClearedHandler);
 
 #ifdef WITH_PLUGINS
-    QObject::connect(&m_UIManager, &Models::UIManager::currentEditableChanged,
+    QObject::connect(&m_CurrentEditable, &Models::CurrentEditableModel::currentEditableChanged,
                      &m_PluginManager, &Plugins::PluginManager::onCurrentEditableChanged);
 
     QObject::connect(&m_UndoRedoManager, &UndoRedo::UndoRedoManager::actionUndone,

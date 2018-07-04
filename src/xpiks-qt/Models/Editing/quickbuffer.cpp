@@ -54,10 +54,6 @@ namespace Models {
                 .addListener(std::bind(&QuickBuffer::setQuickBuffer, this));
     }
 
-    QuickBuffer::~QuickBuffer() {
-        // BUMP
-    }
-
     void QuickBuffer::afterSpellingErrorsFixedHandler() {
         // if squeezing took place after replace
         signalKeywordsCountChanged();
@@ -155,6 +151,13 @@ namespace Models {
         emit isEmptyChanged();
     }
 
+    void QuickBuffer::submitForInspection() {
+        m_Messages
+                .ofType<Artworks::BasicKeywordsModel*>()
+                .withID(Commands::AppMessages::SpellCheck)
+                .broadcast(&m_BasicModel);
+    }
+
     void QuickBuffer::doJustEdited() {
         ArtworkProxyBase::doJustEdited();
         justChanged();
@@ -162,6 +165,6 @@ namespace Models {
 
     void QuickBuffer::doOnTimer() {
         LOG_DEBUG << "#";
-        xpiks()->submitItemForSpellCheck(&m_BasicModel);
+        submitForInspection();
     }
 }

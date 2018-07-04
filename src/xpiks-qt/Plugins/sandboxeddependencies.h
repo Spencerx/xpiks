@@ -26,17 +26,16 @@ namespace Plugins {
 
     class UIProviderSafe : public IUIProvider {
     public:
-        UIProviderSafe(int pluginID, UIProvider *realUIProvider);
+        UIProviderSafe(int pluginID, UIProvider &realUIProvider);
 
     public:
         virtual void openDialog(const QUrl &rcPath, const QHash<QString, QObject*> &contextModels = QHash<QString, QObject*>()) const override;
         virtual int addTab(const QString &tabIconUrl, const QString &tabComponentUrl, QObject *tabModel) const override;
         virtual bool removeTab(int tabID) const override;
-        virtual std::shared_ptr<QuickBuffer::ICurrentEditable> getCurrentEditable() const override;
 
     private:
         int m_PluginID;
-        UIProvider *m_RealUIProvider;
+        UIProvider &m_RealUIProvider;
     };
 
     class MicrostockServicesSafe: public Microstocks::IMicrostockServices {

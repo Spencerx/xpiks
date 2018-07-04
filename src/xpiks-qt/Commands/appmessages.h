@@ -52,7 +52,8 @@ namespace Commands {
             CreateThumbnail,
             ExportToCSV,
             FindArtworks,
-            Telemetry
+            Telemetry,
+            EditArtworks,
         };
     };
 }

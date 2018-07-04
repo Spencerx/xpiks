@@ -13,33 +13,32 @@
 #include "uiprovider.h"
 
 namespace Plugins {
-    UIProviderSafe::UIProviderSafe(int pluginID, UIProvider *realUIProvider):
+    UIProviderSafe::UIProviderSafe(int pluginID, UIProvider &realUIProvider):
         m_PluginID(pluginID),
         m_RealUIProvider(realUIProvider)
     {
-        Q_ASSERT(realUIProvider != nullptr);
     }
 
     void UIProviderSafe::openDialog(const QUrl &rcPath, const QHash<QString, QObject *> &contextModels) const {
-        m_RealUIProvider->openDialog(rcPath, contextModels);
+        m_RealUIProvider.openDialog(rcPath, contextModels);
     }
 
     int UIProviderSafe::addTab(const QString &tabIconUrl, const QString &tabComponentUrl, QObject *tabModel) const {
-        auto *uiManager = m_RealUIProvider->getUIManager();
+        auto *uiManager = m_RealUIProvider.getUIManager();
         Q_ASSERT(uiManager != nullptr);
         int result = uiManager->addPluginTab(m_PluginID, tabIconUrl, tabComponentUrl, tabModel);
         return result;
     }
 
     bool UIProviderSafe::removeTab(int tabID) const {
-        auto *uiManager = m_RealUIProvider->getUIManager();
+        auto *uiManager = m_RealUIProvider.getUIManager();
         Q_ASSERT(uiManager != nullptr);
         bool result = uiManager->removePluginTab(m_PluginID, tabID);
         return result;
     }
 
-    std::shared_ptr<QuickBuffer::ICurrentEditable> UIProviderSafe::getCurrentEditable() const {
-        auto *uiManager = m_RealUIProvider->getUIManager();
+    std::shared_ptr<Models::ICurrentEditable> UIProviderSafe::getCurrentEditable() const {
+        auto *uiManager = m_RealUIProvider.getUIManager();
         Q_ASSERT(uiManager != nullptr);
 
         return uiManager->getCurrentEditable();

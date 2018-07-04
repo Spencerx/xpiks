@@ -47,7 +47,6 @@ namespace Models {
                              CurrentEditableModel &currentEditableModel,
                              Commands::ICommandManager &commandManager,
                              QObject *parent = 0);
-        virtual ~QuickBuffer();
 
     signals:
         void descriptionChanged();
@@ -105,6 +104,7 @@ namespace Models {
         virtual Artworks::IMetadataOperator *getMetadataOperator() override { return &m_BasicModel; }
 
     protected:
+        virtual void submitForInspection() override;
         virtual void doJustEdited() override;
 
         // DelayedActionEntity implementation

@@ -20,7 +20,7 @@ namespace Commands {
 }
 
 namespace Models {
-    class CurrentEditableModel : public QObject
+    class CurrentEditableModel : public QObject, public ICurrentEditableSource
     {
         Q_OBJECT
         Q_PROPERTY(bool isAvailable READ getIsAvailable NOTIFY currentEditableChanged)
@@ -31,7 +31,7 @@ namespace Models {
 
     public:
         bool getIsAvailable() const { return m_CurrentEditable.operator bool(); }
-        std::shared_ptr<Models::ICurrentEditable> getCurrentEditable() const { return m_CurrentEditable; }
+        virtual std::shared_ptr<Models::ICurrentEditable> getCurrentEditable() const override { return m_CurrentEditable; }
 
     public:
         void clearCurrentItem();

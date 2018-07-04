@@ -35,7 +35,7 @@ namespace Plugins {
                       XpiksPluginInterface *pluginInterface,
                       int pluginID,
                       Common::ISystemEnvironment &environment,
-                      UIProvider *realUIProvider,
+                      UIProvider &realUIProvider,
                       Storage::DatabaseManager *databaseManager);
         virtual ~PluginWrapper();
 
@@ -65,7 +65,7 @@ namespace Plugins {
 
         bool anyActionsProvided() const { return m_ActionsModel.size() > 0; }
         PluginActionsModel *getActionsModel() { return &m_ActionsModel; }
-        IUIProvider *getUIProvider() { return &m_UIProviderSafe; }
+        IUIProvider &getUIProvider() { return &m_UIProviderSafe; }
         Storage::IDatabaseManager *getDatabaseManager() { return &m_PluginDatabaseManager; }
 
     public:

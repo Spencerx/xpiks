@@ -12,12 +12,12 @@
 #define MAINTENANCESERVICE_H
 
 #include <QObject>
-#include <Artworks/artworkssnapshot.h>
 #include <Common/isystemenvironment.h>
 #include "maintenanceworker.h"
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
+    class SessionSnapshot;
 }
 
 namespace Translation {
@@ -60,11 +60,13 @@ namespace Maintenance {
         void cleanupUpdatesArtifacts();
         void cleanupDownloadedUpdates(const QString &downloadsPath);
         void launchExiftool(const QString &settingsExiftoolPath);
-        void initializeDictionaries(Translation::TranslationManager *translationManager, Helpers::AsyncCoordinator *initCoordinator);
+        void initializeDictionaries(Translation::TranslationManager *translationManager,
+                                    Helpers::AsyncCoordinator *initCoordinator);
         void cleanupLogs();
         void moveSettings(Models::SettingsModel *settingsModel);
         void upgradeImagesCache(QMLExtensions::ImageCachingService *imageCachingService);
-        void saveSession(std::unique_ptr<MetadataIO::SessionSnapshot> &sessionSnapshot, Models::SessionManager *sessionManager);
+        void saveSession(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,
+                         Models::SessionManager *sessionManager);
         void cleanupOldXpksBackups(const QString &directory);
 
     signals:

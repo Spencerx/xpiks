@@ -177,8 +177,7 @@ namespace Common {
     enum struct PluginNotificationFlags: Common::flag_t {
         None = 0,
         CurrentEditableChanged = 1 << 0,
-        ActionUndone = 1 << 1,
-        PresetsUpdated = 1 << 2
+        PresetsUpdated = 1 << 1
     };
 
     enum struct AddFilesFlags: Common::flag_t {

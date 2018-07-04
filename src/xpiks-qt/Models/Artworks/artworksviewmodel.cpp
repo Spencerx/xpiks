@@ -14,6 +14,7 @@
 #include <Common/defines.h>
 #include <Artworks/imageartwork.h>
 #include <Artworks/videoartwork.h>
+#include <Helpers/cpphelpers.h>
 
 namespace Models {
     ArtworksViewModel::ArtworksViewModel(QObject *parent):
@@ -21,20 +22,19 @@ namespace Models {
     {
     }
 
-    void ArtworksViewModel::setArtworks(Artworks::WeakArtworksSnapshot &weakSnapshot) {
-        LOG_INFO << weakSnapshot.size() << "artworks";
-        if (weakSnapshot.empty()) { return; }
+    void ArtworksViewModel::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
+        LOG_INFO << snapshot.size() << "artworks";
+        if (snapshot.empty()) { return; }
 
-        Artworks::ArtworksSnapshot::Container rawSnapshot;
-        rawSnapshot.reserve(weakSnapshot.size());
-
-        for (auto *artwork: weakSnapshot) {
-            rawSnapshot.emplace_back(new Artworks::ArtworkElement(artwork));
-        }
+        auto elements = Helpers::map(
+                            snapshot.getRawData(),
+                            [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+            return std::make_shared<Artworks::ArtworkElement>(locker->getArtworkMetadata());
+        });
 
         beginResetModel();
         {
-            m_ArtworksSnapshot.set(rawSnapshot);
+            m_ArtworksSnapshot.set(elements);
         }
         endResetModel();
 

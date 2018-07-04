@@ -139,7 +139,7 @@ namespace Warnings {
         m_ArtworksListModel(artworksListModel),
         m_ShowOnlySelected(false)
     {
-        setSourceModel(m_ArtworksListModel);
+        setSourceModel(&m_ArtworksListModel);
         QObject::connect(warningsSettingsModel, &WarningsSettingsModel::settingsUpdated,
                          this, &WarningsModel::warningsSettingsUpdated);
     }

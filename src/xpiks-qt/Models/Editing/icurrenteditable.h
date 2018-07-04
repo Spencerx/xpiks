@@ -53,6 +53,12 @@ namespace Models {
                                                                const QString &description,
                                                                const QStringList &keywords) = 0;
     };
+
+    class ICurrentEditableSource {
+    public:
+        virtual ~ICurrentEditableSource() {}
+        virtual std::shared_ptr<ICurrentEditable> getCurrentEditable() const = 0;
+    };
 }
 
 #endif // ICURRENTEDITABLE_H

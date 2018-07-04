@@ -27,8 +27,6 @@ namespace SpellCheck {
     public:
         UserDictEditModel(QObject *parent=0);
 
-        virtual ~UserDictEditModel() {}
-
     signals:
         void keywordsCountChanged();
 
@@ -56,6 +54,9 @@ namespace SpellCheck {
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }
         virtual Artworks::IMetadataOperator *getMetadataOperator() override { return &m_BasicModel; }
+
+    protected:
+        virtual void submitForInspection() override { /*BUMP*/ }
 
     private:
         Common::Hold m_HoldPlaceholder;

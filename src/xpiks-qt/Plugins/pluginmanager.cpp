@@ -19,10 +19,11 @@
 #include "../Commands/Base/icommandmanager.h"
 #include "../UndoRedo/undoredomanager.h"
 #include "pluginwrapper.h"
-#include "../Models/artitemsmodel.h"
 #include "../Common/defines.h"
 #include "../Helpers/constants.h"
 #include "../Helpers/filehelpers.h"
+#include <Microstocks/microstockapiclients.h>
+#include <Models/Editing/icurrenteditable.h>
 
 namespace Plugins {
     PluginManager::PluginManager(Common::ISystemEnvironment &environment,
@@ -30,13 +31,17 @@ namespace Plugins {
                                  KeywordsPresets::IPresetsManager &presetsManager,
                                  Storage::DatabaseManager *dbManager,
                                  Connectivity::RequestsService &requestsService,
-                                 Microstocks::MicrostockAPIClients &apiClients):
+                                 Microstocks::MicrostockAPIClients &apiClients,
+                                 Models::ICurrentEditableSource &currentEditableSource,
+                                 Models::UIManager &uiManager):
         QAbstractListModel(),
         m_Environment(environment),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_DatabaseManager(dbManager),
         m_MicrostockServices(requestsService, apiClients),
+        m_CurrentEditableSource(currentEditableSource),
+        m_UIProvider(uiManager),
         m_LastPluginID(0)
     {
         Q_ASSERT(dbManager != nullptr);
@@ -174,17 +179,6 @@ namespace Plugins {
         for (size_t i = 0; i < size; ++i) {
             std::shared_ptr<PluginWrapper> &wrapper = m_PluginsList.at(i);
             wrapper->notifyPlugin(Common::PluginNotificationFlags::CurrentEditableChanged, empty, nullptr);
-        }
-    }
-
-    void PluginManager::onLastActionUndone(int commandID) {
-        LOG_DEBUG << "#";
-        size_t size = m_PluginsList.size();
-        QVariant commandVariant = QVariant::fromValue(commandID);
-
-        for (size_t i = 0; i < size; ++i) {
-            std::shared_ptr<PluginWrapper> &wrapper = m_PluginsList.at(i);
-            wrapper->notifyPlugin(Common::PluginNotificationFlags::ActionUndone, commandVariant, nullptr);
         }
     }
 
@@ -402,12 +396,12 @@ namespace Plugins {
         const int pluginID = getNextPluginID();
         LOG_INFO << "ID:" << pluginID << "name:" << plugin->getPrettyName() << "version:" << plugin->getVersionString() << "filepath:" << filepath;
 
-        std::shared_ptr<PluginWrapper> pluginWrapper(new PluginWrapper(filepath,
-                                                                       plugin,
-                                                                       pluginID,
-                                                                       m_Environment,
-                                                                       &m_UIProvider,
-                                                                       m_DatabaseManager));
+        auto pluginWrapper = std::make_shared<PluginWrapper>(filepath,
+                                                             plugin,
+                                                             pluginID,
+                                                             m_Environment,
+                                                             m_UIProvider,
+                                                             m_DatabaseManager);
         bool initialized = false;
 
         do {
@@ -417,6 +411,7 @@ namespace Plugins {
                 plugin->injectPresetsManager(m_PresetsManager);
                 plugin->injectDatabaseManager(pluginWrapper->getDatabaseManager());
                 plugin->injectMicrostockServices(&m_MicrostockServices);
+                plugin->injectCurrentEditable(&m_CurrentEditableSource);
             }
             catch(...) {
                 LOG_WARNING << "Failed to inject dependencies to plugin with ID:" << pluginID;
