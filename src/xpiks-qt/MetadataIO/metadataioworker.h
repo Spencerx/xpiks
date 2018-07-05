@@ -51,7 +51,7 @@ namespace MetadataIO {
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItemEx(std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID, Common::flag_t flags) override;
+        virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
         virtual void processOneItem(std::shared_ptr<MetadataIOTaskBase> &item) override;
 
     private:
@@ -63,7 +63,7 @@ namespace MetadataIO {
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
-        virtual void workerStopped() override;
+        virtual void onWorkerStopped() override;
 
     public slots:
         void process() { doWork(); }

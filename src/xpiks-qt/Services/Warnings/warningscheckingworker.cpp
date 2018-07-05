@@ -42,5 +42,7 @@ namespace Warnings {
                 QThread::msleep(WARNINGS_WORKER_SLEEP_INTERVAL);
             }
         }
+
+        return std::shared_ptr<void>();
     }
 }

@@ -406,8 +406,8 @@ namespace Plugins {
 
         do {
             try {
-                plugin->injectCommandManager(m_CommandManager);
-                plugin->injectUIProvider(pluginWrapper->getUIProvider());
+                plugin->injectCommandManager(&m_CommandManager);
+                plugin->injectUIProvider(&pluginWrapper->getUIProvider());
                 plugin->injectPresetsManager(m_PresetsManager);
                 plugin->injectDatabaseManager(pluginWrapper->getDatabaseManager());
                 plugin->injectMicrostockServices(&m_MicrostockServices);

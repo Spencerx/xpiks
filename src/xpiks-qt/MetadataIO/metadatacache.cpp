@@ -11,11 +11,12 @@
 #include "metadatacache.h"
 #include <QFileInfo>
 #include <functional>
-#include "../Models/artworkmetadata.h"
-#include "../Helpers/constants.h"
-#include "../Common/defines.h"
-#include "../Storage/idatabasemanager.h"
-#include "../Storage/memorytable.h"
+#include <Artworks/artworkmetadata.h>
+#include <Helpers/constants.h>
+#include <Common/logging.h>
+#include <Common/defines.h>
+#include <Storage/idatabasemanager.h>
+#include <Storage/memorytable.h>
 
 namespace MetadataIO {
     CachedArtwork::CachedArtworkType queryFlagToCachedType(const Microstocks::SearchQuery &query) {

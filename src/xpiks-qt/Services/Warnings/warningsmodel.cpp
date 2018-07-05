@@ -22,7 +22,7 @@
 namespace Warnings {
     void describeWarningFlags(Common::WarningFlags warningsFlags,
                               Artworks::ArtworkMetadata *metadata,
-                              const WarningsSettingsModel *settingsModel,
+                              const WarningsSettingsModel &settingsModel,
                               QStringList &descriptions) {
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::SizeLessThanMinimum)) {
@@ -45,7 +45,7 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::TooFewKeywords)) {
-            const int minKeywordsCount = settingsModel->getMinKeywordsCount();
+            const int minKeywordsCount = settingsModel.getMinKeywordsCount();
             descriptions.append(QObject::tr("There's less than %1 keywords").arg(minKeywordsCount));
         }
 
@@ -59,7 +59,7 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::DescriptionNotEnoughWords)) {
-            const int minWordsCount = settingsModel->getMinWordsCount();
+            const int minWordsCount = settingsModel.getMinWordsCount();
             descriptions.append(QObject::tr("Description should not have less than %1 words").arg(minWordsCount));
         }
 
@@ -72,7 +72,7 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::TitleNotEnoughWords)) {
-            const int minWordsCount = settingsModel->getMinWordsCount();
+            const int minWordsCount = settingsModel.getMinWordsCount();
             descriptions.append(QObject::tr("Title should not have less than %1 words").arg(minWordsCount));
         }
 
@@ -101,9 +101,9 @@ namespace Warnings {
             double filesizeMB = 0.0;
 
             if (Common::HasFlag(warningsFlags, Common::WarningFlags::ImageFileIsTooBig)) {
-                filesizeMB = settingsModel->getMaxImageFilesizeMB();
+                filesizeMB = settingsModel.getMaxImageFilesizeMB();
             } else if (Common::HasFlag(warningsFlags, Common::WarningFlags::VideoFileIsTooBig)) {
-                filesizeMB = settingsModel->getMaxVideoFilesizeMB();
+                filesizeMB = settingsModel.getMaxVideoFilesizeMB();
             }
 
             QString formattedSize = QString::number(filesizeMB, 'f', 1);
@@ -123,12 +123,12 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::VideoIsTooLong)) {
-            QString formattedSeconds = QString::number(settingsModel->getMaxVideoDurationSeconds(), 'f', 1);
+            QString formattedSeconds = QString::number(settingsModel.getMaxVideoDurationSeconds(), 'f', 1);
             descriptions.append(QObject::tr("Video is longer than %1 seconds").arg(formattedSeconds));
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::VideoIsTooShort)) {
-            QString formattedSeconds = QString::number(settingsModel->getMinVideoDurationSeconds(), 'f', 1);
+            QString formattedSeconds = QString::number(settingsModel.getMinVideoDurationSeconds(), 'f', 1);
             descriptions.append(QObject::tr("Video is shorter than %1 seconds").arg(formattedSeconds));
         }
     }
@@ -142,6 +142,13 @@ namespace Warnings {
         setSourceModel(&m_ArtworksListModel);
         QObject::connect(&m_WarningsSettingsModel, &WarningsSettingsModel::settingsUpdated,
                          this, &WarningsModel::warningsSettingsUpdated);
+
+        QObject::connect(&artworksListModel, &QAbstractItemModel::rowsRemoved,
+                         this, &WarningsModel::sourceRowsRemoved);
+        QObject::connect(&artworksListModel, &QAbstractItemModel::rowsInserted,
+                         this, &WarningsModel::sourceRowsInserted);
+        QObject::connect(&artworksListModel, &QAbstractItemModel::modelReset,
+                         this, &WarningsModel::sourceModelReset);
     }
 
     int WarningsModel::getMinKeywordsCount() const { return m_WarningsSettingsModel.getMinKeywordsCount(); }
@@ -225,17 +232,6 @@ namespace Warnings {
         }
 
         return rowIsOk;
-    }
-
-    void WarningsModel::setSourceModel(Models::ArtworksListModel &artworksListModel) {
-        QSortFilterProxyModel::setSourceModel(&artworksListModel);
-
-        QObject::connect(&artworksListModel, &QAbstractItemModel::rowsRemoved,
-                         this, &WarningsModel::sourceRowsRemoved);
-        QObject::connect(&artworksListModel, &QAbstractItemModel::rowsInserted,
-                         this, &WarningsModel::sourceRowsInserted);
-        QObject::connect(&artworksListModel, &QAbstractItemModel::modelReset,
-                         this, &WarningsModel::sourceModelReset);
     }
 
     QVariant WarningsModel::data(const QModelIndex &index, int role) const {

@@ -16,7 +16,7 @@
 #include <QString>
 #include <QDateTime>
 #include <QVector>
-#include "../Common/flags.h"
+#include <Common/flags.h>
 
 namespace Artworks {
     class ArtworkMetadata;

@@ -9,10 +9,10 @@
  */
 
 #include "cachedartwork.h"
-#include "../Models/artworkmetadata.h"
-#include "../Models/imageartwork.h"
-#include "../Models/videoartwork.h"
-#include "../Common/version.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Artworks/videoartwork.h>
+#include <Common/version.h>
 
 namespace MetadataIO {
 

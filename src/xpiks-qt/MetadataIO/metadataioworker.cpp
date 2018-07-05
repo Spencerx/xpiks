@@ -37,15 +37,14 @@ namespace MetadataIO {
         return true;
     }
 
-    void MetadataIOWorker::processOneItemEx(std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID, Common::flag_t flags) {
-        Q_UNUSED(batchID);
-
-        if (getIsSeparatorFlag(flags)) {
+    std::shared_ptr<void> MetadataIOWorker::processWorkItem(Common::ItemProcessingWorker::WorkItem &workItem) {
+        if (workItem.isSeparator()) {
             LOG_DEBUG << "Processing separator";
             m_MetadataCache.sync();
             emit readyToImportFromStorage();
+            return std::shared_ptr<void>();
         } else {
-            ItemProcessingWorker::processOneItemEx(item, batchID, flags);
+            return ItemProcessingWorker::processWorkItem(workItem);
         }
     }
 
