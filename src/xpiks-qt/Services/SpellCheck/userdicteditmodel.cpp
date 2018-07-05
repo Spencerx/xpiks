@@ -9,8 +9,7 @@
  */
 
 #include "userdicteditmodel.h"
-#include "../Helpers/keywordshelpers.h"
-#include "../Commands/commandmanager.h"
+#include <Helpers/keywordshelpers.h>
 #include "spellcheckerservice.h"
 
 namespace SpellCheck {
@@ -22,10 +21,9 @@ namespace SpellCheck {
         m_BasicModel.setSpellCheckInfo(&m_SpellCheckInfo);
     }
 
-    void UserDictEditModel::initializeModel() {
+    void UserDictEditModel::initializeModel(SpellCheckerService &spellCheckerService) {
         LOG_DEBUG << "#";
-        auto *spellCheckService = m_CommandManager->getSpellCheckerService();
-        auto keywordsList = spellCheckService->getUserDictionary();
+        auto keywordsList = spellCheckerService.getUserDictionary();
         m_BasicModel.setKeywords(keywordsList);
     }
 

@@ -19,6 +19,8 @@
 #include <Common/hold.h>
 
 namespace SpellCheck {
+    class SpellCheckerService;
+
     class UserDictEditModel: public QObject, public Models::ArtworkProxyBase
     {
         Q_OBJECT
@@ -36,7 +38,7 @@ namespace SpellCheck {
         virtual void signalKeywordsCountChanged() override { emit keywordsCountChanged(); }
 
     public:
-        Q_INVOKABLE void initializeModel();
+        Q_INVOKABLE void initializeModel(SpellCheckerService &spellCheckerService);
         Q_INVOKABLE void removeKeywordAt(int keywordIndex);
         Q_INVOKABLE void removeLastKeyword();
         Q_INVOKABLE void appendKeyword(const QString &keyword);

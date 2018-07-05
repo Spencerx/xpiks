@@ -22,7 +22,7 @@ namespace Models {
     {
     }
 
-    void ArtworksViewModel::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
+    void ArtworksViewModel::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_INFO << snapshot.size() << "artworks";
         if (snapshot.empty()) { return; }
 

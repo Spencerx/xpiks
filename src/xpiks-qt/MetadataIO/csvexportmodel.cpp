@@ -445,8 +445,8 @@ namespace MetadataIO {
         }
     }
 
-    void CsvExportModel::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
-         m_ArtworksToExport = std::move(snapshot);
+    void CsvExportModel::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
+         m_ArtworksToExport = snapshot;
          emit artworksCountChanged();
     }
 

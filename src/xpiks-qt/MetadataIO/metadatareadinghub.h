@@ -30,7 +30,7 @@ namespace MetadataIO {
         Q_OBJECT
     public:
         MetadataReadingHub(MetadataIOService &metadataIOService,
-                           Comands::AppMessages &messages);
+                           Commands::AppMessages &messages);
 
     public:
         void initializeImport(const Artworks::ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);

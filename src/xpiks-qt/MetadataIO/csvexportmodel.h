@@ -126,7 +126,7 @@ namespace MetadataIO {
         Q_INVOKABLE void setOutputDirectory(const QUrl &url);
 
     private:
-        void setArtworks(Artworks::ArtworksSnapshot &&snapshot);
+        void setArtworks(const Artworks::ArtworksSnapshot &snapshot);
         void saveExportPlans();
         int retrieveSelectedPlansCount();
 
