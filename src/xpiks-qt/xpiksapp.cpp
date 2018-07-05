@@ -412,7 +412,6 @@ void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &f
                     new AutoImportMetadataCommand(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel),
                     new AddToRecentTemplate(m_RecentFileModel),
                     new SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager),
-                    new InspectArtworksTemplate(m_SpellCheckerService, m_WarningsService, m_SettingsModel),
                     new CleanupLegacyBackupsCommand(files, m_MaintenanceService)
                 });
 

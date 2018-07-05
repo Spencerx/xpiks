@@ -12,9 +12,9 @@
 #define WARNINGSCHECKINGWORKER_H
 
 #include <QObject>
-#include "../Common/itemprocessingworker.h"
+#include <Common/itemprocessingworker.h>
 #include "iwarningsitem.h"
-#include "../Common/flags.h"
+#include <Common/flags.h>
 
 namespace Warnings {
     class WarningsSettingsModel;
@@ -26,16 +26,15 @@ namespace Warnings {
     Q_OBJECT
 
     public:
-        WarningsCheckingWorker(WarningsSettingsModel *warningsSettingsModel, QObject *parent=0);
+        WarningsCheckingWorker(WarningsSettingsModel &warningsSettingsModel, QObject *parent=0);
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItemEx(std::shared_ptr<IWarningsItem> &item, batch_id_t batchID, Common::flag_t flags) override;
-        virtual void processOneItem(std::shared_ptr<IWarningsItem> &item) override;
+        virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
 
     protected:
         virtual void onQueueIsEmpty() override { /* Notify only on batches */ /* emit queueIsEmpty(); */ }
-        virtual void workerStopped() override { emit stopped(); }
+        virtual void onWorkerStopped() override { emit stopped(); }
 
     public slots:
         void process() { doWork(); }
@@ -46,7 +45,7 @@ namespace Warnings {
         void queueIsEmpty();
 
     private:
-        WarningsSettingsModel *m_WarningsSettingsModel;
+        WarningsSettingsModel &m_WarningsSettingsModel;
     };
 }
 

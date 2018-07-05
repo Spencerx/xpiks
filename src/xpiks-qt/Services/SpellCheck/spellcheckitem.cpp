@@ -31,8 +31,8 @@ namespace SpellCheck {
                                    Common::WordAnalysisFlags wordAnalysisFlags):
         QObject(),
         m_BasicModel(spellCheckable),
-        m_SpellCheckFlags(spellCheckFlags),
         m_WordAnalysisFlags(wordAnalysisFlags),
+        m_SpellCheckFlags(spellCheckFlags),
         m_NeedsSuggestions(false),
         m_OnlyOneKeyword(false)
     {
@@ -71,8 +71,8 @@ namespace SpellCheck {
                                    Common::WordAnalysisFlags wordAnalysisFlags):
         QObject(),
         m_BasicModel(spellCheckable),
-        m_SpellCheckFlags(Common::SpellCheckFlags::All),
         m_WordAnalysisFlags(wordAnalysisFlags),
+        m_SpellCheckFlags(Common::SpellCheckFlags::All),
         m_NeedsSuggestions(false),
         m_OnlyOneKeyword(false)
     {

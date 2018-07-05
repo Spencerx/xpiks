@@ -46,7 +46,7 @@ namespace SpellCheck {
             SuggestionsVector &vector = i.value();
 
             if (vector.size() > 1) {
-                result.emplace_back(new CombinedSpellSuggestions(i.key(), vector));
+                result.emplace_back(std::make_shared<CombinedSpellSuggestions>(i.key(), vector));
             } else {
                 result.emplace_back(vector.front());
             }
@@ -55,7 +55,7 @@ namespace SpellCheck {
         return result;
     }
 
-    QHash<Artworks::IMetadataOperator *, KeywordsSuggestionsVector> combinedFailedReplacements(const SuggestionsVector &failedReplacements) {
+    QHash<Artworks::IMetadataOperator *, KeywordsSuggestionsVector> combineFailedReplacements(const SuggestionsVector &failedReplacements) {
         QHash<Artworks::IMetadataOperator *, KeywordsSuggestionsVector > candidatesToRemove;
         size_t size = failedReplacements.size();
         candidatesToRemove.reserve((int)size);
@@ -98,7 +98,7 @@ namespace SpellCheck {
     }
 
     SuggestionsVector createSuggestionsRequests(Common::SuggestionFlags flags,
-                                                std::vector<Artworks::IMetadataOperator *> &items) {
+                                                const std::vector<Artworks::IMetadataOperator *> &items) {
         SuggestionsVector requests;
 
         using namespace Common;
@@ -159,7 +159,8 @@ namespace SpellCheck {
         m_Messages
                 .ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::SpellSuggestions)
-                .addListener(std::bind(&SpellCheckSuggestionModel::setArtworks, this));
+                .addListener(std::bind(&SpellCheckSuggestionModel::setArtworks, this,
+                                       std::placeholders::_1));
 
         m_Messages
                 .ofType<Artworks::IMetadataOperator*>()
@@ -230,11 +231,10 @@ namespace SpellCheck {
         }
 
         if (anyChanged) {
-            std::vector<Artworks::BasicKeywordsModel *> itemsToSubmit;
-            itemsToSubmit.reserve(m_CheckedItems.size());
+            std::vector<Artworks::BasicKeywordsModel *> itemsToSubmit(m_CheckedItems.size());
 
             for (auto &item: m_CheckedItems) {
-                auto *metadataOperator = item.getMetadataOperator();
+                auto *metadataOperator = item->getMetadataOperator();
                 metadataOperator->afterReplaceCallback();
                 itemsToSubmit.push_back(metadataOperator->getBasicKeywordsModel());
             }
@@ -258,7 +258,7 @@ namespace SpellCheck {
         this->setupItems({item}, flags);
     }
 
-    void SpellCheckSuggestionModel::setupItems(std::vector<Artworks::IMetadataOperator *> &items, Common::SuggestionFlags flags) {
+    void SpellCheckSuggestionModel::setupItems(const std::vector<Artworks::IMetadataOperator *> &items, Common::SuggestionFlags flags) {
         LOG_INFO << "flags =" << (int)flags;
 
         auto requests = createSuggestionsRequests(flags, items);
@@ -270,7 +270,7 @@ namespace SpellCheck {
 
         decltype(m_CheckedItems) lockers(items.size());
         for (auto *item: items) {
-            lockers.emplace_back(item);
+            lockers.emplace_back(std::make_shared<Artworks::MetadataOperatorLocker>(item));
         }
 
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
@@ -291,11 +291,11 @@ namespace SpellCheck {
     }
 
     void SpellCheckSuggestionModel::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
-        setupModel(
-                    Helpers::map(
-                        snapshot.getWeakSnapshot(),
-                        [](Artworks::ArtworkMetadata *artwork) {
-                        return dynamic_cast<Artworks::IMetadataOperator *>(artwork);
+        this->setupItems(
+                    Helpers::map<std::shared_ptr<Artworks::ArtworkMetadataLocker>, Artworks::IMetadataOperator*>(
+                        snapshot.getRawData(),
+                        [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+                        return dynamic_cast<Artworks::IMetadataOperator *>(locker->getArtworkMetadata());
                     }),
                 Common::SuggestionFlags::All);
     }
@@ -303,7 +303,7 @@ namespace SpellCheck {
     bool SpellCheckSuggestionModel::processFailedReplacements(const SuggestionsVector &failedReplacements) const {
         LOG_INFO << failedReplacements.size() << "failed items";
 
-        auto candidatesToRemove = combinedFailedReplacements(failedReplacements);
+        auto candidatesToRemove = combineFailedReplacements(failedReplacements);
 
         auto it = candidatesToRemove.begin();
         auto itEnd = candidatesToRemove.end();

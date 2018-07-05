@@ -11,7 +11,7 @@
 #ifndef IWARNINGSITEM_H
 #define IWARNINGSITEM_H
 
-#include "../Common/flags.h"
+#include <Common/flags.h>
 
 namespace Warnings {
     class IWarningsSettings;
@@ -20,7 +20,7 @@ namespace Warnings {
     public:
         virtual ~IWarningsItem() {}
 
-        virtual void checkWarnings(IWarningsSettings *warningsSettings) = 0;
+        virtual void checkWarnings(IWarningsSettings &warningsSettings) = 0;
     };
 }
 

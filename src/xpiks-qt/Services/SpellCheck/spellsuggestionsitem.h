@@ -30,10 +30,8 @@ namespace SpellCheck {
         Q_OBJECT
     public:
         SpellSuggestionsItem(const QString &word,
-                             const QString &origin,
-                             Artworks::IMetadataOperator *metadataOperator);
-        SpellSuggestionsItem(const QString &word,
-                             Artworks::IMetadataOperator *metadataOperator);
+                             const QString &origin);
+        SpellSuggestionsItem(const QString &word);
 
     public:
         enum KeywordSpellSuggestions_Roles {
@@ -56,7 +54,6 @@ namespace SpellCheck {
         const QString &getReplacementOrigin() const { return m_ReplacementOrigin; }
         bool getReplacementSucceeded() const { return m_ReplacementSucceeded; }
         bool anyReplacementSelected() const { return m_ReplacementIndex != -1; }
-        Artworks::IMetadataOperator *getMetadataOperator() const { return m_MetadataOperator; }
 
     public:
         bool setReplacementIndex(int value);
@@ -86,7 +83,6 @@ namespace SpellCheck {
         const QStringList &getSuggestions() const { return m_Suggestions; }
 
     private:
-        Artworks::IMetadataOperator *m_MetadataOperator;
         QStringList m_Suggestions;
         QString m_Word;
         QString m_ReplacementOrigin;
@@ -94,7 +90,22 @@ namespace SpellCheck {
         bool m_ReplacementSucceeded;
     };
 
-    class KeywordSpellSuggestions: public SpellSuggestionsItem
+    class MetadataSpellSuggestionsItem: public SpellSuggestionsItem {
+        Q_OBJECT
+    public:
+        MetadataSpellSuggestionsItem(const QString &word,
+                                     const QString &origin,
+                                     Artworks::IMetadataOperator *metadataOperator);
+        MetadataSpellSuggestionsItem(const QString &word,
+                                     Artworks::IMetadataOperator *metadataOperator);
+    public:
+        Artworks::IMetadataOperator *getMetadataOperator() const { return m_MetadataOperator; }
+
+    private:
+        Artworks::IMetadataOperator *m_MetadataOperator;
+    };
+
+    class KeywordSpellSuggestions: public MetadataSpellSuggestionsItem
     {
         Q_OBJECT
     public:
@@ -123,7 +134,7 @@ namespace SpellCheck {
         Common::KeywordReplaceResult m_ReplaceResult;
     };
 
-    class DescriptionSpellSuggestions: public SpellSuggestionsItem
+    class DescriptionSpellSuggestions: public MetadataSpellSuggestionsItem
     {
         Q_OBJECT
     public:
@@ -140,7 +151,7 @@ namespace SpellCheck {
         virtual void replaceToSuggested(const QString &word, const QString &replacement) override;
     };
 
-    class TitleSpellSuggestions: public SpellSuggestionsItem
+    class TitleSpellSuggestions: public MetadataSpellSuggestionsItem
     {
         Q_OBJECT
     public:
@@ -160,7 +171,8 @@ namespace SpellCheck {
     class CombinedSpellSuggestions: public SpellSuggestionsItem {
         Q_OBJECT
     public:
-        CombinedSpellSuggestions(const QString &word, std::vector<std::shared_ptr<SpellSuggestionsItem> > &suggestions);
+        CombinedSpellSuggestions(const QString &word,
+                                 std::vector<std::shared_ptr<SpellSuggestionsItem> > &suggestions);
 
     public:
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)

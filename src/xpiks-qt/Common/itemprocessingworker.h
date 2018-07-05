@@ -42,8 +42,8 @@ namespace Common {
 
         class WorkItem {
         public:
-            WorkItem(std::shared_ptr<ItemType> &item, Common::flag_t flags, batch_id_t id):
-                m_Item(std::move(item)),
+            WorkItem(const std::shared_ptr<ItemType> &item, Common::flag_t flags, batch_id_t id):
+                m_Item(item),
                 m_Flags(flags),
                 m_ID(id)
             {}

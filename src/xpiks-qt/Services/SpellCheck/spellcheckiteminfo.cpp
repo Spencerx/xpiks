@@ -13,9 +13,9 @@
 #include <QWriteLocker>
 #include <QReadWriteLock>
 #include "spellcheckerrorshighlighter.h"
-#include "../Common/basicmetadatamodel.h"
-#include "../Common/basickeywordsmodel.h"
-#include "../QMLExtensions/colorsmodel.h"
+#include <Artworks/basicmetadatamodel.h>
+#include <Artworks/basickeywordsmodel.h>
+#include <QMLExtensions/colorsmodel.h>
 
 namespace SpellCheck {
     bool SpellCheckErrorsInfo::hasWrongSpelling(const QString &word) {

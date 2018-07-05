@@ -10,8 +10,8 @@
 
 #include "warningscheckingworker.h"
 #include <QThread>
-#include "../Common/logging.h"
-#include "../Common/flags.h"
+#include <Common/logging.h>
+#include <Common/flags.h>
 #include "warningssettingsmodel.h"
 #include "warningsitem.h"
 
@@ -19,13 +19,12 @@
 #define WARNINGS_DELAY_PERIOD 50
 
 namespace Warnings {
-    WarningsCheckingWorker::WarningsCheckingWorker(WarningsSettingsModel *warningsSettingsModel,
+    WarningsCheckingWorker::WarningsCheckingWorker(WarningsSettingsModel &warningsSettingsModel,
                                                    QObject *parent):
         QObject(parent),
         ItemProcessingWorker(WARNINGS_DELAY_PERIOD),
         m_WarningsSettingsModel(warningsSettingsModel)
     {
-        Q_ASSERT(warningsSettingsModel != nullptr);
     }
 
     bool WarningsCheckingWorker::initWorker() {
@@ -33,19 +32,15 @@ namespace Warnings {
         return true;
     }
 
-    void WarningsCheckingWorker::processOneItemEx(std::shared_ptr<IWarningsItem> &item, batch_id_t batchID, Common::flag_t flags) {
-        if (getIsSeparatorFlag(flags)) {
+    std::shared_ptr<void> WarningsCheckingWorker::processWorkItem(WorkItem &workItem) {
+        if (workItem.isSeparator()) {
             emit queueIsEmpty();
         } else {
-            ItemProcessingWorker::processOneItemEx(item, batchID, flags);
+            workItem.m_Item->checkWarnings(m_WarningsSettingsModel);
 
-            if (getIsMilestone(flags)) {
+            if (workItem.isMilestone()) {
                 QThread::msleep(WARNINGS_WORKER_SLEEP_INTERVAL);
             }
         }
-    }
-
-    void WarningsCheckingWorker::processOneItem(std::shared_ptr<IWarningsItem> &item) {
-        item->checkWarnings(m_WarningsSettingsModel);
     }
 }

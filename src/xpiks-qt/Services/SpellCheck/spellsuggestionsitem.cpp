@@ -16,28 +16,22 @@
 
 namespace SpellCheck {
     SpellSuggestionsItem::SpellSuggestionsItem(const QString &word,
-                                               const QString &origin,
-                                               Artworks::IMetadataOperator *metadataOperator) :
+                                               const QString &origin) :
         QAbstractListModel(),
-        m_MetadataOperator(metadataOperator),
         m_Word(word),
         m_ReplacementOrigin(origin),
         m_ReplacementIndex(-1),
         m_ReplacementSucceeded(false)
     {
-        Q_ASSERT(metadataOperator != nullptr);
     }
 
-    SpellSuggestionsItem::SpellSuggestionsItem(const QString &word,
-                                               Artworks::IMetadataOperator *metadataOperator):
+    SpellSuggestionsItem::SpellSuggestionsItem(const QString &word):
         QAbstractListModel(),
-        m_MetadataOperator(metadataOperator),
         m_Word(word),
         m_ReplacementOrigin(word),
         m_ReplacementIndex(-1),
         m_ReplacementSucceeded(false)
     {
-        Q_ASSERT(metadataOperator != nullptr);
     }
 
     bool SpellSuggestionsItem::setReplacementIndex(int value) {
@@ -133,11 +127,28 @@ namespace SpellCheck {
         return roles;
     }
 
+    MetadataSpellSuggestionsItem::MetadataSpellSuggestionsItem(const QString &word,
+                                                               const QString &origin,
+                                                               Artworks::IMetadataOperator *metadataOperator):
+        SpellSuggestionsItem(word, origin),
+        m_MetadataOperator(metadataOperator)
+    {
+        Q_ASSERT(metadataOperator != nullptr);
+    }
+
+    MetadataSpellSuggestionsItem::MetadataSpellSuggestionsItem(const QString &word,
+                                                               Artworks::IMetadataOperator *metadataOperator):
+        SpellSuggestionsItem(word),
+        m_MetadataOperator(metadataOperator)
+    {
+        Q_ASSERT(metadataOperator != nullptr);
+    }
+
     KeywordSpellSuggestions::KeywordSpellSuggestions(const QString &keyword,
                                                      size_t originalIndex,
                                                      const QString &origin,
                                                      Artworks::IMetadataOperator *metadataOperator) :
-        SpellSuggestionsItem(keyword, origin, metadataOperator),
+        MetadataSpellSuggestionsItem(keyword, origin, metadataOperator),
         m_OriginalIndex(originalIndex),
         m_ReplaceResult(Common::KeywordReplaceResult::Unknown)
     {
@@ -146,7 +157,7 @@ namespace SpellCheck {
     KeywordSpellSuggestions::KeywordSpellSuggestions(const QString &keyword,
                                                      size_t originalIndex,
                                                      Artworks::IMetadataOperator *metadataOperator):
-        SpellSuggestionsItem(keyword, metadataOperator),
+        MetadataSpellSuggestionsItem(keyword, metadataOperator),
         m_OriginalIndex(originalIndex),
         m_ReplaceResult(Common::KeywordReplaceResult::Unknown)
     {
@@ -170,7 +181,7 @@ namespace SpellCheck {
 
     DescriptionSpellSuggestions::DescriptionSpellSuggestions(const QString &word,
                                                              Artworks::IMetadataOperator *metadataOperator):
-        SpellSuggestionsItem(word, metadataOperator)
+        MetadataSpellSuggestionsItem(word, metadataOperator)
     {
     }
 
@@ -195,7 +206,7 @@ namespace SpellCheck {
 
     TitleSpellSuggestions::TitleSpellSuggestions(const QString &word,
                                                  Artworks::IMetadataOperator *metadataOperator):
-        SpellSuggestionsItem(word, metadataOperator)
+        MetadataSpellSuggestionsItem(word, metadataOperator)
     {
     }
 
@@ -218,7 +229,8 @@ namespace SpellCheck {
         }
     }
 
-    CombinedSpellSuggestions::CombinedSpellSuggestions(const QString &word, std::vector<std::shared_ptr<SpellSuggestionsItem> > &suggestions, Artworks::IMetadataOperator *metadataOperator):
+    CombinedSpellSuggestions::CombinedSpellSuggestions(const QString &word,
+                                                       std::vector<std::shared_ptr<SpellSuggestionsItem> > &suggestions):
         SpellSuggestionsItem(word, tr("multireplace")),
         m_SpellSuggestions(std::move(suggestions))
     {

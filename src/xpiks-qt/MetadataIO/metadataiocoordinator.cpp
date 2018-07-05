@@ -38,6 +38,7 @@ namespace MetadataIO {
     MetadataIOCoordinator::MetadataIOCoordinator(Models::SettingsModel &settingsModel,
                                                  Models::SwitcherModel &switcherModel,
                                                  QMLExtensions::VideoCachingService &videoCachingService):
+        m_ReadingHub(),
         m_SettingsModel(settingsModel),
         m_SwitcherModel(switcherModel),
         m_VideoCachingService(videoCachingService),
@@ -66,7 +67,7 @@ namespace MetadataIO {
         return autoImport;
     }
 
-    int MetadataIOCoordinator::readMetadataExifTool(const ArtworksSnapshot &artworksToRead, quint32 storageReadBatchID) {
+    int MetadataIOCoordinator::readMetadataExifTool(const Artworks::ArtworksSnapshot &artworksToRead, quint32 storageReadBatchID) {
         int importID = getNextImportID();
         initializeImport(artworksToRead, importID, storageReadBatchID);
 
@@ -77,7 +78,7 @@ namespace MetadataIO {
         return importID;
     }
 
-    void MetadataIOCoordinator::writeMetadataExifTool(const ArtworksSnapshot &artworksToWrite, bool useBackups) {
+    void MetadataIOCoordinator::writeMetadataExifTool(const Artworks::ArtworksSnapshot &artworksToWrite, bool useBackups) {
         LOG_DEBUG << "use backups:" << useBackups;
         m_WritingAsyncCoordinator.reset();
 
@@ -104,7 +105,7 @@ namespace MetadataIO {
         writingOrchestrator.startWriting(useBackups, useDirectExport || directExportOn);
     }
 
-    void MetadataIOCoordinator::wipeAllMetadataExifTool(const ArtworksSnapshot &artworksToWipe, bool useBackups) {
+    void MetadataIOCoordinator::wipeAllMetadataExifTool(const Artworks::ArtworksSnapshot &artworksToWipe, bool useBackups) {
         LOG_DEBUG << "use backups:" << useBackups;
         m_WritingAsyncCoordinator.reset();
 
@@ -170,7 +171,7 @@ namespace MetadataIO {
         return id;
     }
 
-    void MetadataIOCoordinator::initializeImport(const ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID) {
+    void MetadataIOCoordinator::initializeImport(const Artworks::ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID) {
         m_ReadingHub.initializeImport(artworksToRead, importID, storageReadBatchID);
 
         setHasErrors(false);

@@ -34,7 +34,8 @@ namespace Helpers {
 
     template<typename InType, typename OutType>
     std::vector<OutType> map(const std::vector<InType> &v, const std::function<OutType (const InType&)> &mapper) {
-        return filterMap(v, [](const InType&) {return true;}, mapper);
+        std::function<bool(const InType&)> everything = [](const InType&) {return true;};
+        return filterMap(v, everything, mapper);
     }
 
     template<typename T>

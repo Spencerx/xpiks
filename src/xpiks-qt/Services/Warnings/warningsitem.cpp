@@ -14,13 +14,13 @@
 #include <QSet>
 #include <QFileInfo>
 #include <QSize>
-#include "../Helpers/stringhelper.h"
-#include "../Common/flags.h"
-#include "../Models/artworkmetadata.h"
-#include "../Common/defines.h"
-#include "../Models/imageartwork.h"
-#include "../Models/videoartwork.h"
 #include "iwarningssettings.h"
+#include <Helpers/stringhelper.h>
+#include <Common/flags.h>
+#include <Common/defines.h>
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Artworks/videoartwork.h>
 
 namespace Warnings {
     QSet<QString> toLowerSet(const QStringList &from) {
@@ -47,9 +47,7 @@ namespace Warnings {
         }
     }
 
-    void WarningsItem::checkWarnings(IWarningsSettings *warningsSettings) {
-        Q_ASSERT(warningsSettings != nullptr);
-
+    void WarningsItem::checkWarnings(IWarningsSettings &warningsSettings) {
         if (needCheckAll()) {
             checkImageProperties(warningsSettings);
             checkVideoProperties(warningsSettings);
@@ -76,7 +74,7 @@ namespace Warnings {
         }
     }
 
-    void WarningsItem::checkImageProperties(IWarningsSettings *warningsSettings) {
+    void WarningsItem::checkImageProperties(IWarningsSettings &warningsSettings) {
         Artworks::ArtworkMetadata *item = m_CheckableItem;
         Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(item);
         if (image == nullptr) {
@@ -85,7 +83,7 @@ namespace Warnings {
             return;
         }
 
-        const double minimumMegapixels = warningsSettings->getMinMegapixels();
+        const double minimumMegapixels = warningsSettings.getMinMegapixels();
 
         QSize size = image->getImageSize();
         const double currentProd = size.width() * size.height() / 1000000.0;
@@ -96,12 +94,12 @@ namespace Warnings {
         double filesizeMB = (double)filesize;
         filesizeMB /= (1024.0*1024.0);
 
-        const double maxImageFileSizeMB = warningsSettings->getMaxImageFilesizeMB();
+        const double maxImageFileSizeMB = warningsSettings.getMaxImageFilesizeMB();
         const bool imageTooBigValue = (filesizeMB >= maxImageFileSizeMB);
         accountFlag(Common::WarningFlags::ImageFileIsTooBig, imageTooBigValue);
     }
 
-    void WarningsItem::checkVideoProperties(IWarningsSettings *warningsSettings) {
+    void WarningsItem::checkVideoProperties(IWarningsSettings &warningsSettings) {
         Artworks::ArtworkMetadata *item = m_CheckableItem;
         Artworks::VideoArtwork *video = dynamic_cast<Artworks::VideoArtwork *>(item);
 
@@ -116,13 +114,13 @@ namespace Warnings {
         double filesizeMB = (double)filesize;
         filesizeMB /= (1024.0*1024.0);
 
-        double maxVideoFileSizeMB = warningsSettings->getMaxVideoFilesizeMB();
+        double maxVideoFileSizeMB = warningsSettings.getMaxVideoFilesizeMB();
         const bool videoTooBigValue = (filesizeMB >= maxVideoFileSizeMB);
         accountFlag(Common::WarningFlags::VideoFileIsTooBig, videoTooBigValue);
 
         const double duration = video->getDuration();
-        const double maxDuration = warningsSettings->getMaxVideoDurationSeconds();
-        const double minDuration = warningsSettings->getMinVideoDurationSeconds();
+        const double maxDuration = warningsSettings.getMaxVideoDurationSeconds();
+        const double minDuration = warningsSettings.getMinVideoDurationSeconds();
 
         const bool durationTooLongValue = (duration > maxDuration);
         accountFlag(Common::WarningFlags::VideoIsTooLong, durationTooLongValue);
@@ -131,8 +129,8 @@ namespace Warnings {
         accountFlag(Common::WarningFlags::VideoIsTooShort, durationTooShortValue);
     }
 
-    void WarningsItem::checkFilename(IWarningsSettings *warningsSettings) {
-        const QString &allowedFilenameCharacters = warningsSettings->getAllowedFilenameCharacters();
+    void WarningsItem::checkFilename(IWarningsSettings &warningsSettings) {
+        const QString &allowedFilenameCharacters = warningsSettings.getAllowedFilenameCharacters();
 
         QFileInfo fi(m_CheckableItem->getFilepath());
         QString filename = fi.fileName();
@@ -153,7 +151,7 @@ namespace Warnings {
         accountFlag(Common::WarningFlags::FilenameSymbols, anyBadSymbol);
     }
 
-    void WarningsItem::checkKeywords(IWarningsSettings *warningsSettings) {
+    void WarningsItem::checkKeywords(IWarningsSettings &warningsSettings) {
         LOG_INTEGRATION_TESTS << "#";
         Q_UNUSED(warningsSettings);
         Artworks::BasicKeywordsModel *keywordsModel = m_CheckableItem->getBasicModel();
@@ -166,19 +164,19 @@ namespace Warnings {
         }
 
         {
-            const int minimumKeywordsCount = warningsSettings->getMinKeywordsCount();
+            const int minimumKeywordsCount = warningsSettings.getMinKeywordsCount();
             const bool tooFewKeywordsValue = (0 < keywordsCount) && (keywordsCount < minimumKeywordsCount);
             accountFlag(Common::WarningFlags::TooFewKeywords, tooFewKeywordsValue);
         }
 
         {
-            const int maximumKeywordsCount = warningsSettings->getMaxKeywordsCount();
+            const int maximumKeywordsCount = warningsSettings.getMaxKeywordsCount();
             const bool tooManyKeywordsValue = (keywordsCount > maximumKeywordsCount);
             accountFlag(Common::WarningFlags::TooManyKeywords, tooManyKeywordsValue);
         }
     }
 
-    void WarningsItem::checkDescription(IWarningsSettings *warningsSettings) {
+    void WarningsItem::checkDescription(IWarningsSettings &warningsSettings) {
         LOG_INTEGRATION_TESTS << "#";
 
         const int descriptionLength = getDescription().length();
@@ -189,7 +187,7 @@ namespace Warnings {
         }
 
         {
-            const int maximumDescriptionLength = warningsSettings->getMaxDescriptionLength();
+            const int maximumDescriptionLength = warningsSettings.getMaxDescriptionLength();
             const bool descriptionTooBigValue = (descriptionLength > maximumDescriptionLength);
             accountFlag(Common::WarningFlags::DescriptionTooBig, descriptionTooBigValue);
         }
@@ -198,13 +196,13 @@ namespace Warnings {
         const int wordsLength = descriptionWords.length();
 
         {
-            const int minWordsCount = warningsSettings->getMinWordsCount();
+            const int minWordsCount = warningsSettings.getMinWordsCount();
             const bool notEnoughKeywordsValue = (0 < wordsLength) && (wordsLength < minWordsCount);
             accountFlag(Common::WarningFlags::DescriptionNotEnoughWords, notEnoughKeywordsValue);
         }
     }
 
-    void WarningsItem::checkTitle(IWarningsSettings *warningsSettings) {
+    void WarningsItem::checkTitle(IWarningsSettings &warningsSettings) {
         LOG_INTEGRATION_TESTS << "#";
 
         const int titleLength = getTitle().length();
@@ -218,19 +216,19 @@ namespace Warnings {
         const int partsLength = titleWords.length();
 
         {
-            const int minWordsCount = warningsSettings->getMinWordsCount();
+            const int minWordsCount = warningsSettings.getMinWordsCount();
             const bool titleNotEnoughWords = (0 < partsLength) && (partsLength < minWordsCount);
             accountFlag(Common::WarningFlags::TitleNotEnoughWords, titleNotEnoughWords);
         }
 
         {
-            const int maxWordsCount = warningsSettings->getMaxTitleWords();
+            const int maxWordsCount = warningsSettings.getMaxTitleWords();
             const bool titleTooManyWords = (partsLength > maxWordsCount);
             accountFlag(Common::WarningFlags::TitleTooManyWords, titleTooManyWords);
         }
     }
 
-    void WarningsItem::checkSpelling(IWarningsSettings *warningsSettings) {
+    void WarningsItem::checkSpelling(IWarningsSettings &warningsSettings) {
         LOG_INTEGRATION_TESTS << "#";
         Q_UNUSED(warningsSettings);
 
@@ -255,7 +253,7 @@ namespace Warnings {
         }
     }
 
-    void WarningsItem::checkDuplicates(IWarningsSettings *warningsSettings) {
+    void WarningsItem::checkDuplicates(IWarningsSettings &warningsSettings) {
         Q_UNUSED(warningsSettings);
         const QSet<QString> &keywordsSet = getKeywordsSet();
 

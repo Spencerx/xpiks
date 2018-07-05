@@ -30,7 +30,8 @@ namespace Connectivity {
         messages
                 .ofType<int>()
                 .withID(Commands::AppMessages::Telemetry)
-                .addListener(std::bind(&TelemetryService::reportAction, this));
+                .addListener(std::bind(&TelemetryService::reportAction, this,
+                                       std::placeholders::_1));
     }
 
     void TelemetryService::initialize() {

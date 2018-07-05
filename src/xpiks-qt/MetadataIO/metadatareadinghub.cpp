@@ -13,12 +13,12 @@
 #include "../Artworks/artworkmetadata.h"
 #include "../Common/defines.h"
 #include "../MetadataIO/metadataioservice.h"
-#include <Services/artworksupdatehub.h>
+#include <Commands/appmessages.h>
 
 namespace MetadataIO {
-    MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService, QMLExtensions::ArtworksUpdateHub &updateHub):
+    MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService, Comands::AppMessages &messages):
         m_MetadataIOService(metadataIOService),
-        m_ArtworksUpdateHub(updateHub),
+        m_Messages(messages),
         m_ImportID(0),
         m_StorageReadBatchID(0),
         m_IgnoreBackupsAtImport(false),
@@ -78,20 +78,21 @@ namespace MetadataIO {
         const bool isCancelled = m_IsCancelled;
 
         if (ignoreBackups) {
-            MetadataIOService *metadataIOService = m_CommandManager->getMetadataIOService();
-            metadataIOService->cancelBatch(m_StorageReadBatchID);
+            m_MetadataIOService.cancelBatch(m_StorageReadBatchID);
         }
 
         initializeArtworks(ignoreBackups, isCancelled);
 
         emit readingFinished(m_ImportID);
 
-        const auto &itemsToRead = m_ArtworksToRead.getWeakSnapshot();
-
         if (!isCancelled) {
-            m_MetadataIOService.addArtworks(itemsToRead);
+            m_MetadataIOService.addArtworks(m_ArtworksToRead);
         }
 
+        m_Messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::UpdateArtworks)
+                .broadcast(m_ArtworksToRead);
         m_ArtworksUpdateHub.updateArtworks(itemsToRead, QMLExtensions::ArtworksUpdateHub::FastUpdate);
         xpiks()->submitForSpellCheck(itemsToRead);
         xpiks()->submitForWarningsCheck(itemsToRead);

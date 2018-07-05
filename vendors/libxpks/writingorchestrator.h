@@ -3,7 +3,7 @@
 
 #include <QVector>
 #include <QMutex>
-#include <MetadataIO/artworkssnapshot.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace Models {
     class ArtworkMetadata;
@@ -18,7 +18,7 @@ namespace libxpks {
         class WritingOrchestrator
         {
         public:
-            explicit WritingOrchestrator(const MetadataIO::ArtworksSnapshot &artworksToWrite,
+            explicit WritingOrchestrator(const Artworks::ArtworksSnapshot &artworksToWrite,
                                          Helpers::AsyncCoordinator *asyncCoordinator,
                                          Models::SettingsModel *settingsModel);
             virtual ~WritingOrchestrator();
@@ -28,12 +28,12 @@ namespace libxpks {
             void startMetadataWiping(bool useBackups);
 
         private:
-            void startWritingImages(MetadataIO::ArtworksSnapshot::Container &rawSnapshot, bool useBackups, bool useDirectExport);
-            void startWritingVideos(MetadataIO::ArtworksSnapshot::Container &rawSnapshot, bool useBackups, bool useDirectExport);
-            void startWipingImages(MetadataIO::ArtworksSnapshot::Container &rawSnapshot, bool useBackups);
+            void startWritingImages(Artworks::ArtworksSnapshot::Container &rawSnapshot, bool useBackups, bool useDirectExport);
+            void startWritingVideos(Artworks::ArtworksSnapshot::Container &rawSnapshot, bool useBackups, bool useDirectExport);
+            void startWipingImages(Artworks::ArtworksSnapshot::Container &rawSnapshot, bool useBackups);
 
         private:
-            const MetadataIO::ArtworksSnapshot &m_ItemsToWriteSnapshot;
+            const Artworks::ArtworksSnapshot &m_ItemsToWriteSnapshot;
             Models::SettingsModel *m_SettingsModel;
             Helpers::AsyncCoordinator *m_AsyncCoordinator;
         };

@@ -11,11 +11,11 @@
 #ifndef WARNINGSQUERYITEM
 #define WARNINGSQUERYITEM
 
-#include "../Common/flags.h"
+#include <Common/flags.h>
 #include <QSet>
 #include "iwarningsitem.h"
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
 }
 
@@ -24,24 +24,25 @@ namespace Warnings {
 
     class WarningsItem: public IWarningsItem {
     public:
-        WarningsItem(Artworks::ArtworkMetadata *checkableItem, Common::WarningsCheckFlags checkingFlags = Common::WarningsCheckFlags::All);
+        WarningsItem(Artworks::ArtworkMetadata *checkableItem,
+                     Common::WarningsCheckFlags checkingFlags = Common::WarningsCheckFlags::All);
         virtual ~WarningsItem();
 
     public:
-        virtual void checkWarnings(IWarningsSettings *warningsSettings) override;
+        virtual void checkWarnings(IWarningsSettings &warningsSettings) override;
 
     private:
         void submitWarnings();
 
     private:
-        void checkImageProperties(IWarningsSettings *warningsSettings);
-        void checkVideoProperties(IWarningsSettings *warningsSettings);
-        void checkFilename(IWarningsSettings *warningsSettings);
-        void checkKeywords(IWarningsSettings *warningsSettings);
-        void checkDescription(IWarningsSettings *warningsSettings);
-        void checkTitle(IWarningsSettings *warningsSettings);
-        void checkSpelling(IWarningsSettings *warningsSettings);
-        void checkDuplicates(IWarningsSettings *warningsSettings);
+        void checkImageProperties(IWarningsSettings &warningsSettings);
+        void checkVideoProperties(IWarningsSettings &warningsSettings);
+        void checkFilename(IWarningsSettings &warningsSettings);
+        void checkKeywords(IWarningsSettings &warningsSettings);
+        void checkDescription(IWarningsSettings &warningsSettings);
+        void checkTitle(IWarningsSettings &warningsSettings);
+        void checkSpelling(IWarningsSettings &warningsSettings);
+        void checkDuplicates(IWarningsSettings &warningsSettings);
 
     private:
         bool needCheckAll() const { return m_CheckingFlags == Common::WarningsCheckFlags::All; }
