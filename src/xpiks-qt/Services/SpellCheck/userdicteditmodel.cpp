@@ -10,20 +10,21 @@
 
 #include "userdicteditmodel.h"
 #include <Helpers/keywordshelpers.h>
-#include "spellcheckerservice.h"
+#include "userdictionary.h"
 
 namespace SpellCheck {
-    UserDictEditModel::UserDictEditModel(QObject *parent):
+    UserDictEditModel::UserDictEditModel(UserDictionary &userDictionary, QObject *parent):
         QObject(parent),
         ArtworkProxyBase(),
-        m_BasicModel(m_HoldPlaceholder, this)
+        m_BasicModel(m_HoldPlaceholder, this),
+        m_UserDictionary(userDictionary)
     {
         m_BasicModel.setSpellCheckInfo(&m_SpellCheckInfo);
     }
 
-    void UserDictEditModel::initializeModel(SpellCheckerService &spellCheckerService) {
+    void UserDictEditModel::initializeModel() {
         LOG_DEBUG << "#";
-        auto keywordsList = spellCheckerService.getUserDictionary();
+        auto keywordsList = m_UserDictionary.getWords();
         m_BasicModel.setKeywords(keywordsList);
     }
 
@@ -52,15 +53,13 @@ namespace SpellCheck {
     void UserDictEditModel::resetModel() {
         LOG_DEBUG << "#";
         m_BasicModel.clearModel();
-        auto *service = m_CommandManager->getSpellCheckerService();
-        service->clearUserDictionary();
+        m_UserDictionary.clear();
     }
 
     void UserDictEditModel::saveUserDict() {
         LOG_DEBUG << "#";
 
         auto keywords = m_BasicModel.getKeywords();
-        auto *spellCheckService = m_CommandManager->getSpellCheckerService();
-        spellCheckService->updateUserDictionary(keywords);
+        m_UserDictionary.reset(keywords);
     }
 }

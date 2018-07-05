@@ -76,8 +76,8 @@ namespace Artworks {
         ArtworksSnapshot(Container &rawSnapshot);
         ArtworksSnapshot(ArtworksSnapshot &&other);
         ArtworksSnapshot &operator=(ArtworksSnapshot &&other);
-        ArtworksSnapshot &operator=(const ArtworksSnapshot &other);
-        ArtworksSnapshot(const ArtworksSnapshot &other);
+        ArtworksSnapshot(const ArtworksSnapshot &) = delete;
+        ArtworksSnapshot &operator=(ArtworksSnapshot &) = delete;
         virtual ~ArtworksSnapshot();
 
     public:
@@ -94,7 +94,7 @@ namespace Artworks {
         void append(Container &rawSnapshot);
         void set(Container &rawSnapshot);
         void set(WeakArtworksSnapshot &rawSnapshot);
-        void copy(const ArtworksSnapshot &other);
+        void copyFrom(const ArtworksSnapshot &other);
         void remove(size_t index);
         ArtworkMetadata *get(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i)->getArtworkMetadata(); }
         const std::shared_ptr<ArtworkMetadataLocker> &at(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i); }

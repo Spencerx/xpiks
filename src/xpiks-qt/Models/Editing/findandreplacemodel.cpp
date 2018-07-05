@@ -148,7 +148,7 @@ namespace Models {
         return roles;
     }
 
-    void FindAndReplaceModel::findReplaceCandidates(Artworks::ArtworksSnapshot &&snapshot) {
+    void FindAndReplaceModel::findReplaceCandidates(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "size:" << snapshot.size();
         LOG_INFO << "flags:" << searchFlagsToString(m_Flags);
         LOG_INFO << "replace from: [" << m_ReplaceFrom << "]";

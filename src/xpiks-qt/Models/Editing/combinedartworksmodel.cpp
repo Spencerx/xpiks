@@ -72,7 +72,7 @@ namespace Models {
                 .addListener(std::bind(&CombinedArtworksModel::setArtworks, this));
     }
 
-    void CombinedArtworksModel::setArtworks(Artworks::ArtworksSnapshot &&artworks) {
+    void CombinedArtworksModel::setArtworks(const Artworks::ArtworksSnapshot &artworks) {
         ArtworksViewModel::setArtworks(artworks);
 
         recombineArtworks();

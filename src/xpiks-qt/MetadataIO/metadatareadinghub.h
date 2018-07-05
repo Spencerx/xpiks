@@ -37,10 +37,6 @@ namespace MetadataIO {
         void finalizeImport();
 
     public:
-        Helpers::AsyncCoordinator *getCoordinator() { return &m_AsyncCoordinator; }
-        const Artworks::ArtworksSnapshot &getSnapshot() const { return m_ArtworksToRead; }
-
-    public:
         void proceedImport(bool ignoreBackups);
         void cancelImport(bool ignoreBackups);
         void skipImport();

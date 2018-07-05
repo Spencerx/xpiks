@@ -93,9 +93,11 @@ namespace MetadataIO {
                 .ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::UpdateArtworks)
                 .broadcast(m_ArtworksToRead);
-        m_ArtworksUpdateHub.updateArtworks(itemsToRead, QMLExtensions::ArtworksUpdateHub::FastUpdate);
-        xpiks()->submitForSpellCheck(itemsToRead);
-        xpiks()->submitForWarningsCheck(itemsToRead);
+
+        m_Messages
+                .ofType<Artworks::ArtworksSnapshot>()
+                .withID(Commands::AppMessages::SpellCheck)
+                .broadcast(m_ArtworksToRead);
 
         finalizeImport();
     }

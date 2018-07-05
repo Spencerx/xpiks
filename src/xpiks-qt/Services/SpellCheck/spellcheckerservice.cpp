@@ -130,7 +130,7 @@ namespace SpellCheck {
         m_SpellCheckWorker->submitItem(item);
     }
 
-    void SpellCheckerService::submitArtworks(Artworks::ArtworksSnapshot &&snapshot) {
+    void SpellCheckerService::submitArtworks(const Artworks::ArtworksSnapshot &snapshot) {
         this->submitItems(
                     Helpers::map<std::shared_ptr<Artworks::ArtworkMetadataLocker>, Artworks::ArtworkMetadata*>(
                         snapshot.getRawData(),

@@ -66,7 +66,7 @@ namespace Models {
         Q_INVOKABLE void resetModel();
 
     public:
-        void setArtworks(Artworks::ArtworksSnapshot &&snapshot);
+        void setArtworks(const Artworks::ArtworksSnapshot &snapshot);
         void resetArtworks();
 
     protected:

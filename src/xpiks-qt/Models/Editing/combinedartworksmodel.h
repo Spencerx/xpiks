@@ -69,7 +69,7 @@ namespace Models {
                               QObject *parent=0);
 
     protected:
-        virtual void setArtworks(Artworks::ArtworksSnapshot &&artworks) override;
+        virtual void setArtworks(const Artworks::ArtworksSnapshot &artworks) override;
 
     private:
         enum CombinedEditModifiedFlags {

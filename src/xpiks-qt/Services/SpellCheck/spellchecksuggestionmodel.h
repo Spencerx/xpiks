@@ -84,7 +84,7 @@ namespace SpellCheck {
 #endif
 
     private:
-        void setArtworks(Artworks::ArtworksSnapshot &&snapshot);
+        void setArtworks(const Artworks::ArtworksSnapshot &snapshot);
         bool processFailedReplacements(const SuggestionsVector &failedReplacements) const;
         SuggestionsVector setupSuggestions(const SuggestionsVector &items);
 

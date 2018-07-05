@@ -213,7 +213,7 @@ namespace SpellCheck {
 
         auto &item = m_DuplicatesList.at(index);
         Artworks::BasicMetadataModel *basicModel = item.m_BasicModel;
-        std::vector<Common::KeywordItem> duplicatedKeywords = basicModel->retrieveDuplicatedKeywords();
+        std::vector<Artworks::KeywordItem> duplicatedKeywords = basicModel->retrieveDuplicatedKeywords();
 
         QString text;
 

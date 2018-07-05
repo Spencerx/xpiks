@@ -107,13 +107,14 @@ namespace Models {
         emit percentChanged();
     }
 
-    void ZipArchiver::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
+    void ZipArchiver::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
         m_ArtworksSnapshot.set(
-                    Helpers::filter(snapshot.getWeakSnapshot(), [](Artworks::ArtworkMetadata *artwork) {
-                        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
-                        return (image != NULL) && image->hasVectorAttached();
-                    }));
+                    Helpers::filter(snapshot.getRawData(), [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+            return (image != NULL) && image->hasVectorAttached();
+        }));
         emit itemsCountChanged();
     }
 

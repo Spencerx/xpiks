@@ -11,12 +11,12 @@
 #include "warningsmodel.h"
 #include <QObject>
 #include <QStringList>
-#include "../Models/artworkslistmodel.h"
-#include "../Artworks/artworkmetadata.h"
-#include "../Common/flags.h"
-#include "../Artworks/imageartwork.h"
-#include "../Artworks/basickeywordsmodel.h"
-#include "../Helpers/indiceshelper.h"
+#include <Artworks/artworkmetadata.h>
+#include <Common/flags.h>
+#include <Artworks/imageartwork.h>
+#include <Artworks/basickeywordsmodel.h>
+#include <Helpers/indicesranges.h>
+#include <Models/Artworks/artworkslistmodel.h>
 #include "warningssettingsmodel.h"
 
 namespace Warnings {
@@ -140,19 +140,11 @@ namespace Warnings {
         m_ShowOnlySelected(false)
     {
         setSourceModel(&m_ArtworksListModel);
-        QObject::connect(warningsSettingsModel, &WarningsSettingsModel::settingsUpdated,
+        QObject::connect(&m_WarningsSettingsModel, &WarningsSettingsModel::settingsUpdated,
                          this, &WarningsModel::warningsSettingsUpdated);
     }
 
-    int WarningsModel::getMinKeywordsCount() const {
-        int count = 0;
-
-        if (m_WarningsSettingsModel != nullptr) {
-            count = m_WarningsSettingsModel.getMinKeywordsCount();
-        }
-
-        return count;
-    }
+    int WarningsModel::getMinKeywordsCount() const { return m_WarningsSettingsModel.getMinKeywordsCount(); }
 
     QStringList WarningsModel::describeWarnings(int index) const {
         QStringList descriptions;
@@ -185,11 +177,9 @@ namespace Warnings {
         QVector<int> roles;
         roles << WarningsRole;
 
-        QVector<QPair<int, int> > ranges;
-        qSort(m_PendingUpdates);
-        Helpers::indicesToRanges(m_PendingUpdates, ranges);
+        Helpers::IndicesRanges ranges(m_PendingUpdates);
 
-        for (auto &r: ranges) {
+        for (auto &r: ranges.getRanges()) {
             QModelIndex indexFrom = mapFromSource(sourceItemModel->index(r.first, 0));
             QModelIndex indexTo = mapFromSource(sourceItemModel->index(r.second, 0));
             emit dataChanged(indexFrom, indexTo, roles);

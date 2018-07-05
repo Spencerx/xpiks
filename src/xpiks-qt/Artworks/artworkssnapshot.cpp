@@ -63,18 +63,6 @@ namespace Artworks {
         return *this;
     }
 
-    ArtworksSnapshot &ArtworksSnapshot::operator=(const ArtworksSnapshot &other) {
-        if (this != &other) {
-            copy(other);
-        }
-
-        return *this;
-    }
-
-    ArtworksSnapshot::ArtworksSnapshot(const ArtworksSnapshot &other) {
-        copy(other);
-    }
-
     ArtworksSnapshot::~ArtworksSnapshot() {
         LOG_DEBUG << "Destroying snapshot of" << m_ArtworksSnapshot.size() << "artwork(s)";
     }
@@ -114,7 +102,7 @@ namespace Artworks {
         append(rawSnapshot);
     }
 
-    void ArtworksSnapshot::copy(const ArtworksSnapshot &other) {
+    void ArtworksSnapshot::copyFrom(const ArtworksSnapshot &other) {
         clear();
         LOG_DEBUG << "Copying snapshot of" << other.m_ArtworksSnapshot.size() << "item(s)";
 

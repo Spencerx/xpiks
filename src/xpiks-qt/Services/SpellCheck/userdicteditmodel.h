@@ -19,7 +19,7 @@
 #include <Common/hold.h>
 
 namespace SpellCheck {
-    class SpellCheckerService;
+    class UserDictionary;
 
     class UserDictEditModel: public QObject, public Models::ArtworkProxyBase
     {
@@ -27,7 +27,7 @@ namespace SpellCheck {
         Q_PROPERTY(int keywordsCount READ getKeywordsCount NOTIFY keywordsCountChanged)
 
     public:
-        UserDictEditModel(QObject *parent=0);
+        UserDictEditModel(UserDictionary &userDictionary, QObject *parent=0);
 
     signals:
         void keywordsCountChanged();
@@ -38,7 +38,7 @@ namespace SpellCheck {
         virtual void signalKeywordsCountChanged() override { emit keywordsCountChanged(); }
 
     public:
-        Q_INVOKABLE void initializeModel(SpellCheckerService &spellCheckerService);
+        Q_INVOKABLE void initializeModel();
         Q_INVOKABLE void removeKeywordAt(int keywordIndex);
         Q_INVOKABLE void removeLastKeyword();
         Q_INVOKABLE void appendKeyword(const QString &keyword);
@@ -64,6 +64,7 @@ namespace SpellCheck {
         Common::Hold m_HoldPlaceholder;
         Artworks::BasicMetadataModel m_BasicModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
+        UserDictionary &m_UserDictionary;
     };
 }
 #endif // SPELLCHECKUSERDICT_H

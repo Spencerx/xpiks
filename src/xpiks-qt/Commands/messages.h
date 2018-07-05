@@ -15,8 +15,7 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
-#include <atomic>
-#include <cassert>
+#include <mutex>
 
 namespace Commands {
     template<class... Args>
@@ -28,33 +27,21 @@ namespace Commands {
         }
 
     public:
-        void send(Args&&... args) {
-            assert(m_Target.load() != 0);
-            m_Target(std::forward<Args>(args)...);
-        }
-
-        void setTarget(std::function<void(Args&&...)> target) {
-            if (m_TargetSet.fetch_add(1) == 0) {
-                m_Target = std::move(target);
-            } else {
-                assert(false);
-            }
-        }
-
         void broadcast(const Args&... args) {
+            std::lock_guard<std::mutex> guard(m_ListenersMutex);
             for (auto &listener: m_Listeners) {
                 listener(args...);
             }
         }
 
         void addListener(std::function<void(const Args&...)> listener) {
+            std::lock_guard<std::mutex> guard(m_ListenersMutex);
             m_Listeners.emplace_back(listener);
         }
 
     private:
+        std::mutex m_ListenersMutex;
         std::vector<std::function<void(const Args&...)>> m_Listeners;
-        std::function<void(Args&&...)> m_Target;
-        std::atomic<int> m_TargetSet;
         int m_ID;
     };
 
@@ -62,6 +49,7 @@ namespace Commands {
     class MessageMap {
     public:
         Message<Args...> &withID(int id) {
+            std::lock_guard<std::mutex> guard(m_MessagesMutex);
             auto it = m_Messages.find(id);
             if (it == m_Messages.end()) {
                 it = m_Messages.emplace(id, id).first;
@@ -70,6 +58,7 @@ namespace Commands {
         }
 
     private:
+        std::mutex m_MessagesMutex;
         std::unordered_map<int, Message<Args...>> m_Messages;
     };
 

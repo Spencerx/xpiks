@@ -173,7 +173,7 @@ namespace Models {
         void replaceSucceeded();
 
     private:
-        void findReplaceCandidates(Artworks::ArtworksSnapshot &&snapshot);
+        void findReplaceCandidates(const Artworks::ArtworksSnapshot &snapshot);
         void updatePreviewFlags();
         QString filterText(const QString &text);
         void setAllSelected(bool isSelected);

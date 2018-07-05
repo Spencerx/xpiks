@@ -17,6 +17,7 @@
 #include "warningssettingsmodel.h"
 #include <Artworks/artworkssnapshot.h>
 #include <Common/isystemenvironment.h>
+#include <Services/iservicebase.h>
 
 namespace Warnings {
     class WarningsCheckingWorker;
@@ -26,12 +27,10 @@ namespace Warnings {
         Q_OBJECT
 
     public:
-        explicit WarningsService(Common::ISystemEnvironment &environment, QObject *parent=0);
-        virtual ~WarningsService() {}
+        explicit WarningsService(WarningsSettingsModel &warningsSettingsModel, QObject *parent=0);
 
     public:
         void initWarningsSettings();
-        const WarningsSettingsModel *getWarningsSettingsModel() const { return &m_WarningsSettingsModel; }
         void cancelCurrentBatch();
 
     public:
@@ -55,7 +54,7 @@ namespace Warnings {
 
     private:
         WarningsCheckingWorker *m_WarningsWorker;
-        WarningsSettingsModel m_WarningsSettingsModel;
+        WarningsSettingsModel &m_WarningsSettingsModel;
         bool m_IsStopped;
     };
 }

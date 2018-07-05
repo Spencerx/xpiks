@@ -290,7 +290,7 @@ namespace SpellCheck {
         emit artworksCountChanged();
     }
 
-    void SpellCheckSuggestionModel::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
+    void SpellCheckSuggestionModel::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
         this->setupItems(
                     Helpers::map<std::shared_ptr<Artworks::ArtworkMetadataLocker>, Artworks::IMetadataOperator*>(
                         snapshot.getRawData(),

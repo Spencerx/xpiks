@@ -54,10 +54,10 @@ namespace Warnings {
 #endif
     }
 
-    WarningsService::WarningsService(Common::ISystemEnvironment &environment, QObject *parent):
+    WarningsService::WarningsService(WarningsSettingsModel &warningsSettingsModel, QObject *parent):
         QObject(parent),
         m_WarningsWorker(NULL),
-        m_WarningsSettingsModel(environment),
+        m_WarningsSettingsModel(warningsSettingsModel),
         m_IsStopped(false)
     {}
 
@@ -75,7 +75,7 @@ namespace Warnings {
 
     void WarningsService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
         Q_UNUSED(params);
-        m_WarningsWorker = new WarningsCheckingWorker(&m_WarningsSettingsModel);
+        m_WarningsWorker = new WarningsCheckingWorker(m_WarningsSettingsModel);
 
         QThread *thread = new QThread();
         m_WarningsWorker->moveToThread(thread);
