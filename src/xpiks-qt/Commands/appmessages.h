@@ -54,6 +54,7 @@ namespace Commands {
             FindArtworks,
             Telemetry,
             EditArtworks,
+            AutoComplete
         };
     };
 }

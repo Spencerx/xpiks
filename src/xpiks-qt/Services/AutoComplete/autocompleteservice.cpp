@@ -18,9 +18,9 @@
 #include <Models/settingsmodel.h>
 
 namespace AutoComplete {
-    AutoCompleteService::AutoCompleteService(KeywordsAutoCompleteModel *autoCompleteModel,
+    AutoCompleteService::AutoCompleteService(KeywordsAutoCompleteModel &autoCompleteModel,
                                              KeywordsPresets::PresetKeywordsModel &presetsManager,
-                                             Models::SettingsModel *settingsModel,
+                                             Models::SettingsModel &settingsModel,
                                              QObject *parent):
         QObject(parent),
         m_AutoCompleteWorker(NULL),
@@ -29,9 +29,6 @@ namespace AutoComplete {
         m_SettingsModel(settingsModel),
         m_RestartRequired(false)
     {
-    }
-
-    AutoCompleteService::~AutoCompleteService() {
     }
 
     void AutoCompleteService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {

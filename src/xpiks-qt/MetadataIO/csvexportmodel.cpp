@@ -15,7 +15,9 @@
 #include <QTimerEvent>
 #include <QThread>
 #include <Commands/appmessages.h>
+#include <Helpers/asynccoordinator.h>
 #include "csvexportworker.h"
+#include "csvexportplansmodel.h"
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 
@@ -227,11 +229,10 @@ namespace MetadataIO {
 
     /*------------------------------------------------------*/
 
-    CsvExportModel::CsvExportModel(Common::ISystemEnvironment &environment,
+    CsvExportModel::CsvExportModel(CsvExportPlansModel &exportPlansModel,
                                    Commands::AppMessages &messages):
         Common::DelayedActionEntity(3000, MAX_SAVE_PAUSE_RESTARTS),
-        m_ExportPlansModel(environment),
-        m_SelectedArtworksSource(messages),
+        m_ExportPlansModel(exportPlansModel),
         m_SaveTimerId(-1),
         m_SaveRestartsCount(0),
         m_IsExporting(false)
@@ -246,7 +247,8 @@ namespace MetadataIO {
         messages
                 .ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::ExportToCSV)
-                .addListener(std::bind(&CsvExportModel::setArtworks, this));
+                .addListener(std::bind(&CsvExportModel::setArtworks, this,
+                                       std::placeholders::_1));
     }
 
     void CsvExportModel::setIsExporting(bool value) {
@@ -446,7 +448,7 @@ namespace MetadataIO {
     }
 
     void CsvExportModel::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
-         m_ArtworksToExport = snapshot;
+         m_ArtworksToExport.copyFrom(snapshot);
          emit artworksCountChanged();
     }
 

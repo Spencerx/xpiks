@@ -8,16 +8,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "../Models/sessionmanager.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include <Models/Session/sessionmanager.h>
+#include <Artworks/artworkssnapshot.h>
 #include "savesessionjobitem.h"
 
 namespace Maintenance {
-    SaveSessionJobItem::SaveSessionJobItem(std::unique_ptr<MetadataIO::SessionSnapshot> &sessionSnapshot, Models::SessionManager *sessionManager):
+    SaveSessionJobItem::SaveSessionJobItem(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,
+                                           Models::SessionManager &sessionManager):
         m_SessionSnapshot(std::move(sessionSnapshot)),
         m_SessionManager(sessionManager)
     {
-        Q_ASSERT(m_SessionManager != NULL);
     }
 
     void SaveSessionJobItem::processJob() {
@@ -28,6 +28,6 @@ namespace Maintenance {
     void SaveSessionJobItem::doSaveSession() {
         auto &snapshot = m_SessionSnapshot->getSnapshot();
         auto &directories = m_SessionSnapshot->getDirectoriesSnapshot();
-        m_SessionManager->save(snapshot, directories);
+        m_SessionManager.save(snapshot, directories);
     }
 }

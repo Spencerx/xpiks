@@ -9,8 +9,8 @@
  */
 
 #include "stringsautocompletemodel.h"
-#include "../Helpers/stringhelper.h"
-#include "../Common/logging.h"
+#include <Helpers/stringhelper.h>
+#include <Common/logging.h>
 
 namespace AutoComplete {
     StringFilterProxyModel::StringFilterProxyModel():

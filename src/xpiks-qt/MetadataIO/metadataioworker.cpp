@@ -9,22 +9,21 @@
  */
 
 #include "metadataioworker.h"
-#include "../QMLExtensions/artworksupdatehub.h"
-#include "../Suggestion/locallibraryquery.h"
+#include <Services/artworksupdatehub.h>
+#include <Suggestion/locallibraryquery.h>
 
 #define METADATA_CACHE_SYNC_INTERVAL 29
 #define STORAGE_IMPORT_INTERVAL 29
 
 namespace MetadataIO {
-    MetadataIOWorker::MetadataIOWorker(Storage::IDatabaseManager *dbManager,
-                                       QMLExtensions::ArtworksUpdateHub *artworksUpdateHub,
+    MetadataIOWorker::MetadataIOWorker(Storage::IDatabaseManager &dbManager,
+                                       Services::ArtworksUpdateHub &artworksUpdateHub,
                                        QObject *parent):
         QObject(parent),
         m_ArtworksUpdateHub(artworksUpdateHub),
         m_MetadataCache(dbManager),
         m_ProcessedItemsCount(0)
     {
-        Q_ASSERT(artworksUpdateHub != nullptr);
     }
 
     bool MetadataIOWorker::initWorker() {
@@ -37,15 +36,16 @@ namespace MetadataIO {
         return true;
     }
 
-    std::shared_ptr<void> MetadataIOWorker::processWorkItem(Common::ItemProcessingWorker::WorkItem &workItem) {
+    std::shared_ptr<void> MetadataIOWorker::processWorkItem(WorkItem &workItem) {
         if (workItem.isSeparator()) {
             LOG_DEBUG << "Processing separator";
             m_MetadataCache.sync();
             emit readyToImportFromStorage();
-            return std::shared_ptr<void>();
         } else {
-            return ItemProcessingWorker::processWorkItem(workItem);
+            processOneItem(workItem.m_Item);
         }
+
+        return std::shared_ptr<void>();
     }
 
     void MetadataIOWorker::processOneItem(std::shared_ptr<MetadataIOTaskBase> &item) {
@@ -113,11 +113,11 @@ namespace MetadataIO {
             bool modified = request->m_Artwork->initFromStorage(request->m_CachedArtwork);
             Q_UNUSED(modified);
 
-            m_ArtworksUpdateHub->updateArtwork(request->m_Artwork);
+            m_ArtworksUpdateHub.updateArtwork(request->m_Artwork);
         }
     }
 
-    void MetadataIOWorker::workerStopped() {
+    void MetadataIOWorker::onWorkerStopped() {
         m_MetadataCache.finalize();
         emit stopped();
     }

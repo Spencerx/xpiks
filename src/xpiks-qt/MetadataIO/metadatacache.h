@@ -50,7 +50,7 @@ namespace MetadataIO {
     class MetadataCache
     {
     public:
-        MetadataCache(Storage::IDatabaseManager *dbManager);
+        MetadataCache(Storage::IDatabaseManager &dbManager);
 
     public:
         bool initialize();
@@ -76,7 +76,7 @@ namespace MetadataIO {
 
     private:
         QMutex m_ReadMutex;
-        Storage::IDatabaseManager *m_DatabaseManager;
+        Storage::IDatabaseManager &m_DatabaseManager;
         std::shared_ptr<Storage::IDbTable> m_DbCacheIndex;
         std::shared_ptr<Storage::IDatabase> m_Database;
         ArtworkSetWAL m_SetWAL;

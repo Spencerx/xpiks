@@ -11,17 +11,14 @@
 #include "translationworker.h"
 #include <lookupdictionary.h>
 #include <string>
-#include "../Common/defines.h"
-#include "../Helpers/asynccoordinator.h"
+#include <Common/defines.h>
+#include <Helpers/asynccoordinator.h>
 
 namespace Translation {
     TranslationWorker::TranslationWorker(Helpers::AsyncCoordinator *initCoordinator, QObject *parent) :
         QObject(parent),
         m_InitCoordinator(initCoordinator)
     {
-    }
-
-    TranslationWorker::~TranslationWorker() {
     }
 
     void TranslationWorker::selectDictionary(const QString &dictionaryPath) {

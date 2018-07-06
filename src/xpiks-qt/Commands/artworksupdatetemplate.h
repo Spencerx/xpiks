@@ -11,7 +11,7 @@
 #ifndef ARTWORKSUPDATETEMPLATE_H
 #define ARTWORKSUPDATETEMPLATE_H
 
-#include "icommandtemplate.h"
+#include <Commands/Base/icommandtemplate.h>
 #include <QVector>
 
 namespace Models {

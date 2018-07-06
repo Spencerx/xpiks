@@ -33,17 +33,17 @@ namespace QMLExtensions {
     public:
         ImageCachingWorker(Common::ISystemEnvironment &environment,
                            Helpers::AsyncCoordinator *initCoordinator,
-                           Storage::IDatabaseManager *dbManager,
+                           Storage::IDatabaseManager &dbManager,
                            QObject *parent=0);
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItemEx(std::shared_ptr<ImageCacheRequest> &item, batch_id_t batchID, Common::flag_t flags) override;
+        virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
         virtual void processOneItem(std::shared_ptr<ImageCacheRequest> &item) override;
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
-        virtual void workerStopped() override;
+        virtual void onWorkerStopped() override;
 
     public slots:
         void process() { doWork(); }

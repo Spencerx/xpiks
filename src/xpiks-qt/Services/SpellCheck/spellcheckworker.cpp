@@ -63,7 +63,7 @@ namespace SpellCheck {
         LOG_INFO << "destroyed";
     }
 
-    const QStringList &SpellCheckWorker::getUserDictionary() const { return m_UserDictionary.getWords(); }
+    QStringList SpellCheckWorker::getUserDictionary() const { return m_UserDictionary.getWords(); }
 
     bool SpellCheckWorker::initWorker() {
         LOG_INFO << "Dicts root:" << m_DictsRoot;

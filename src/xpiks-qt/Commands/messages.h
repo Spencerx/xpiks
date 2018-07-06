@@ -52,7 +52,9 @@ namespace Commands {
             std::lock_guard<std::mutex> guard(m_MessagesMutex);
             auto it = m_Messages.find(id);
             if (it == m_Messages.end()) {
-                it = m_Messages.emplace(id, id).first;
+                it = m_Messages.emplace(std::piecewise_construct,
+                                        std::forward_as_tuple(id),
+                                        std::forward_as_tuple(id)).first;
             }
             return it->second;
         }

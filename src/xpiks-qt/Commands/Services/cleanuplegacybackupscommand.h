@@ -13,9 +13,9 @@
 
 #include <memory>
 #include <QStringList>
-#include "icommand.h"
-#include "../Filesystem/ifilescollection.h"
-#include "icommandtemplate.h"
+#include <Commands/Base/icommand.h>
+#include <Commands/Base/icommandtemplate.h>
+#include <Filesystem/ifilescollection.h>
 
 namespace Maintenance {
     class MaintenanceService;

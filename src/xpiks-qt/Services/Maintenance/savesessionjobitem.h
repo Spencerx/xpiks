@@ -12,17 +12,21 @@
 #define SAVESESSIONJOBITEM_H
 
 #include "imaintenanceitem.h"
-#include "../MetadataIO/artworkssnapshot.h"
 
 namespace Models {
     class SessionManager;
+}
+
+namespace Artworks {
+    class SessionSnapshot;
 }
 
 namespace Maintenance {
     class SaveSessionJobItem : public IMaintenanceItem
     {
     public:
-        SaveSessionJobItem(std::unique_ptr<MetadataIO::SessionSnapshot> &sessionSnapshot, class Models::SessionManager *sessionManager);
+        SaveSessionJobItem(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,
+                           Models::SessionManager &sessionManager);
 
     public:
         virtual void processJob() override;
@@ -31,8 +35,8 @@ namespace Maintenance {
         void doSaveSession();
 
     private:
-        std::unique_ptr<MetadataIO::SessionSnapshot> m_SessionSnapshot;
-        class Models::SessionManager *m_SessionManager;
+        std::unique_ptr<Artworks::SessionSnapshot> m_SessionSnapshot;
+        Models::SessionManager &m_SessionManager;
     };
 }
 

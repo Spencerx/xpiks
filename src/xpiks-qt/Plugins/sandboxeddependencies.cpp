@@ -24,24 +24,15 @@ namespace Plugins {
     }
 
     int UIProviderSafe::addTab(const QString &tabIconUrl, const QString &tabComponentUrl, QObject *tabModel) const {
-        auto *uiManager = m_RealUIProvider.getUIManager();
-        Q_ASSERT(uiManager != nullptr);
-        int result = uiManager->addPluginTab(m_PluginID, tabIconUrl, tabComponentUrl, tabModel);
+        auto &uiManager = m_RealUIProvider.getUIManager();
+        int result = uiManager.addPluginTab(m_PluginID, tabIconUrl, tabComponentUrl, tabModel);
         return result;
     }
 
     bool UIProviderSafe::removeTab(int tabID) const {
-        auto *uiManager = m_RealUIProvider.getUIManager();
-        Q_ASSERT(uiManager != nullptr);
-        bool result = uiManager->removePluginTab(m_PluginID, tabID);
+        auto &uiManager = m_RealUIProvider.getUIManager();
+        bool result = uiManager.removePluginTab(m_PluginID, tabID);
         return result;
-    }
-
-    std::shared_ptr<Models::ICurrentEditable> UIProviderSafe::getCurrentEditable() const {
-        auto *uiManager = m_RealUIProvider.getUIManager();
-        Q_ASSERT(uiManager != nullptr);
-
-        return uiManager->getCurrentEditable();
     }
 
     MicrostockServicesSafe::MicrostockServicesSafe(Connectivity::RequestsService &requestsService,

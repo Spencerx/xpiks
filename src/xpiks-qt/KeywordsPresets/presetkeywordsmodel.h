@@ -17,12 +17,15 @@
 #include <QReadWriteLock>
 #include <QAtomicInt>
 #include <functional>
-#include "../Common/abstractlistmodel.h"
-#include "../Common/delayedactionentity.h"
+#include <Common/delayedactionentity.h>
+#include <Common/isystemenvironment.h>
 #include "ipresetsmanager.h"
 #include "presetkeywordsmodelconfig.h"
 #include "presetgroupsmodel.h"
-#include "../Common/isystemenvironment.h"
+
+namespace Commands {
+    class AppMessages;
+}
 
 namespace KeywordsPresets {
     struct PresetModel;
@@ -36,7 +39,9 @@ namespace KeywordsPresets {
         Q_OBJECT
 
     public:
-        PresetKeywordsModel(Common::ISystemEnvironment &environment, QObject *parent=0);
+        PresetKeywordsModel(Common::ISystemEnvironment &environment,
+                            Commands::AppMessages &messages,
+                            QObject *parent=0);
         virtual ~PresetKeywordsModel();
 
 #ifdef INTEGRATION_TESTS
@@ -164,6 +169,7 @@ namespace KeywordsPresets {
 
     private:
         Common::ISystemEnvironment &m_Environment;
+        Commands::AppMessages &m_Messages;
         PresetKeywordsModelConfig m_PresetsConfig;
         PresetGroupsModel m_GroupsModel;
         QReadWriteLock m_PresetsLock;
@@ -179,6 +185,9 @@ namespace KeywordsPresets {
     {
         Q_OBJECT
     public:
+        FilteredPresetsModelBase(PresetKeywordsModel &presetsModel);
+
+    public:
         Q_INVOKABLE int getOriginalIndex(int index);
         Q_INVOKABLE unsigned int getOriginalID(int index);
         Q_INVOKABLE int getItemsCount() const { return rowCount(); }
@@ -193,6 +202,8 @@ namespace KeywordsPresets {
         Q_OBJECT
         Q_PROPERTY(QString searchTerm READ getSearchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
 
+    public:
+        FilteredPresetKeywordsModel(PresetKeywordsModel &presetsModel);
     public:
         const QString &getSearchTerm() const { return m_SearchTerm; }
         void setSearchTerm(const QString &value);
@@ -210,7 +221,7 @@ namespace KeywordsPresets {
     {
         Q_OBJECT
     public:
-        PresetKeywordsGroupModel(int groupID);
+        PresetKeywordsGroupModel(int groupID, PresetKeywordsModel &presetsModel);
 
     public:
         int getGroupID() const { return m_GroupID; }

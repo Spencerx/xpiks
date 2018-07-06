@@ -137,7 +137,8 @@ namespace Maintenance {
         m_MaintenanceWorker->submitItem(jobItem);
     }
 
-    void MaintenanceService::saveSession(std::unique_ptr<MetadataIO::SessionSnapshot> &sessionSnapshot, Models::SessionManager *sessionManager) {
+    void MaintenanceService::saveSession(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,
+                                         Models::SessionManager &sessionManager) {
         LOG_DEBUG << "#";
 
         std::shared_ptr<IMaintenanceItem> jobItem(new SaveSessionJobItem(sessionSnapshot, sessionManager));

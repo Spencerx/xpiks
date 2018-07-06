@@ -11,7 +11,7 @@
 #ifndef BACKUPARTWORKSTEMPLATE_H
 #define BACKUPARTWORKSTEMPLATE_H
 
-#include "icommandtemplate.h"
+#include <Commands/Base/icommandtemplate.h>
 
 namespace MetadataIO {
     class MetadataIOService;

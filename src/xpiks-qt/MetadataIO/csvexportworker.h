@@ -14,21 +14,21 @@
 #include <QObject>
 #include <vector>
 #include <memory>
-#include "artworkssnapshot.h"
 #include "csvexportproperties.h"
 
-namespace MetadataIO {
+namespace Artworks {
+    class ArtworksSnapshot;
+}
 
+namespace MetadataIO {
     class CsvExportWorker: public QObject
     {
         Q_OBJECT
     public:
         CsvExportWorker(const std::vector<std::shared_ptr<CsvExportPlan> > &exportPlans,
-                        ArtworksSnapshot &selectedArtworks,
-                        QString exportDirectoryPath,
+                        Artworks::ArtworksSnapshot &selectedArtworks,
+                        const QString &exportDirectoryPath,
                         QObject *parent = 0);
-
-        virtual ~CsvExportWorker();
 
     public:
         void dismiss() { emit stopped(); }
@@ -44,7 +44,7 @@ namespace MetadataIO {
 
     private:
         const std::vector<std::shared_ptr<CsvExportPlan> > &m_ExportPlans;
-        ArtworksSnapshot &m_ArtworksToExport;
+        Artworks::ArtworksSnapshot &m_ArtworksToExport;
         QString m_ExportDirectoryPath;
     };
 }

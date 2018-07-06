@@ -62,7 +62,7 @@ namespace Plugins {
         virtual void injectPresetsManager(KeywordsPresets::IPresetsManager *presetsManager) { Q_UNUSED(presetsManager); }
         virtual void injectDatabaseManager(Storage::IDatabaseManager *databaseManager) { Q_UNUSED(databaseManager); }
         virtual void injectMicrostockServices(Microstocks::IMicrostockServices *microstockServices) { Q_UNUSED(microstockServices); }
-        virtual void injectCurrentEditable(Models::ICurrentEditable *currentEditable) { Q_UNUSED(currentEditable); }
+        virtual void injectCurrentEditable(Models::ICurrentEditableSource *currentEditableSource) { Q_UNUSED(currentEditableSource); }
     };
 }
 

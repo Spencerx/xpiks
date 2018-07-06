@@ -185,13 +185,13 @@ namespace Models {
         Q_PROPERTY(int artworksSourcesCount READ getArtworksSourcesCount NOTIFY artworksSourcesCountChanged)
 
     public:
-        FilteredArtworksRepository(ArtworksRepository *artworksRepository);
+        FilteredArtworksRepository(ArtworksRepository &artworksRepository);
 
     public:
         int getArtworksSourcesCount() { return rowCount(); }
 
     public:
-        void setArtworksRepository(ArtworksRepository *artworksRepository);
+        void setArtworksRepository(ArtworksRepository &artworksRepository);
 
     public:
         Q_INVOKABLE int getOriginalIndex(int index);

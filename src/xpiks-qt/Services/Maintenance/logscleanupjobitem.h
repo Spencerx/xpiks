@@ -13,9 +13,10 @@
 
 #include <QString>
 #include <QVector>
-#include "../Common/defines.h"
+#include <QDateTime>
 #include "imaintenanceitem.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/defines.h>
+#include <Common/isystemenvironment.h>
 
 #define MAX_LOGS_SIZE_MB 10
 #define MAX_LOGS_SIZE_BYTES (MAX_LOGS_SIZE_MB * 1024 * 1024)

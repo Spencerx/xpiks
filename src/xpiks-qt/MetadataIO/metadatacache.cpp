@@ -33,19 +33,17 @@ namespace MetadataIO {
         return searchType;
     }
 
-    MetadataCache::MetadataCache(Storage::IDatabaseManager *dbManager):
+    MetadataCache::MetadataCache(Storage::IDatabaseManager &dbManager):
         m_DatabaseManager(dbManager)
     {
-        Q_ASSERT(dbManager != nullptr);
     }
 
     bool MetadataCache::initialize() {
         LOG_DEBUG << "#";
-        Q_ASSERT(m_DatabaseManager != nullptr);
 
         bool success = false;
         do {
-            m_Database = m_DatabaseManager->openDatabase(Constants::METADATA_CACHE_DB_NAME);
+            m_Database = m_DatabaseManager.openDatabase(Constants::METADATA_CACHE_DB_NAME);
             if (!m_Database) {
                 LOG_WARNING << "Failed to open database";
             } else {

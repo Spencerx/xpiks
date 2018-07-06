@@ -675,17 +675,16 @@ namespace Models {
         }
     }
 
-    FilteredArtworksRepository::FilteredArtworksRepository(ArtworksRepository *artworksRepository) {
+    FilteredArtworksRepository::FilteredArtworksRepository(ArtworksRepository &artworksRepository) {
         setArtworksRepository(artworksRepository);
     }
 
-    void FilteredArtworksRepository::setArtworksRepository(ArtworksRepository *artworksRepository) {
-        Q_ASSERT(artworksRepository != nullptr);
-        setSourceModel(artworksRepository);
+    void FilteredArtworksRepository::setArtworksRepository(ArtworksRepository &artworksRepository) {
+        setSourceModel(&artworksRepository);
 
-        QObject::connect(artworksRepository, &ArtworksRepository::artworksSourcesCountChanged,
+        QObject::connect(&artworksRepository, &ArtworksRepository::artworksSourcesCountChanged,
                          this, &FilteredArtworksRepository::artworksSourcesCountChanged);
-        QObject::connect(artworksRepository, &ArtworksRepository::refreshRequired,
+        QObject::connect(&artworksRepository, &ArtworksRepository::refreshRequired,
                          this, &FilteredArtworksRepository::onRefreshRequired);
     }
 

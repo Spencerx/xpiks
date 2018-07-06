@@ -11,7 +11,7 @@
 #ifndef GENERATETHUMBNAILSCOMMAND_H
 #define GENERATETHUMBNAILSCOMMAND_H
 
-#include "icommandtemplate.h"
+#include <Commands/Base/icommandtemplate.h>
 #include <memory>
 
 namespace QMLExtensions {

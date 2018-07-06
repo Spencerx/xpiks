@@ -67,17 +67,19 @@ namespace QMLExtensions {
         return true;
     }
 
-    void VideoCachingWorker::processOneItemEx(std::shared_ptr<VideoCacheRequest> &item, batch_id_t batchID, Common::flag_t flags) {
-        if (getIsSeparatorFlag(flags)) {
+    std::shared_ptr<void> VideoCachingWorker::processWorkItem(WorkItem &workItem) {
+        if (workItem.isSeparator()) {
             saveIndex();
         } else {
-            ItemProcessingWorker::processOneItemEx(item, batchID, flags);
+            processOneItem(workItem.m_Item);
 
-            if (getIsMilestone(flags)) {
+            if (workItem.isMilestone()) {
                 // force context switch for more imporant tasks
                 QThread::msleep(VIDEO_WORKER_SLEEP_DELAY);
             }
         }
+
+        return std::shared_ptr<void>();
     }
 
     void VideoCachingWorker::processOneItem(std::shared_ptr<VideoCacheRequest> &item) {
@@ -154,7 +156,7 @@ namespace QMLExtensions {
         return thumbnailCreated;
     }
 
-    void VideoCachingWorker::workerStopped() {
+    void VideoCachingWorker::onWorkerStopped() {
         LOG_DEBUG << "#";
         m_Cache.finalize();
         emit stopped();

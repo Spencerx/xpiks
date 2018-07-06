@@ -255,7 +255,7 @@ namespace Warnings {
 
     void WarningsItem::checkDuplicates(IWarningsSettings &warningsSettings) {
         Q_UNUSED(warningsSettings);
-        const QSet<QString> &keywordsSet = getKeywordsSet();
+        QSet<QString> keywordsSet = getKeywords().toSet();
 
         bool keywordsInTitleValue = false;
         QStringList titleWords = getTitleWords();
@@ -288,8 +288,8 @@ namespace Warnings {
         return m_CheckableItem->getTitle();
     }
 
-    QSet<QString> WarningsItem::getKeywordsSet() const {
-        return m_CheckableItem->getKeywordsSet();
+    QStringList WarningsItem::getKeywords() const {
+        return m_CheckableItem->getKeywords();
     }
 
     void WarningsItem::accountFlag(Common::WarningFlags flag, bool value) {

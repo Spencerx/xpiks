@@ -15,8 +15,8 @@
 #include <string>
 #include <src/libfaceapi.hpp>
 #include <include/types.hpp>
-#include "../Common/logging.h"
-#include "../Common/defines.h"
+#include <Common/logging.h>
+#include <Common/defines.h>
 
 #define FREQUENCY_TABLE_FILENAME "en_wordlist.tsv"
 #define GENERATE_COMPLETIONS_COUNT 8

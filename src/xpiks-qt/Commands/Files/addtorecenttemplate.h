@@ -11,7 +11,7 @@
 #ifndef ADDTORECENTTEMPLATE_H
 #define ADDTORECENTTEMPLATE_H
 
-#include "icommandtemplate.h"
+#include <Commands/Base/icommandtemplate.h>
 
 namespace Artworks {
     class ArtworksSnapshot;

@@ -19,7 +19,7 @@ namespace Plugins {
     class PluginDatabaseManager: public Storage::IDatabaseManager
     {
     public:
-        PluginDatabaseManager(Common::ISystemEnvironment &environment, Storage::DatabaseManager *dbManager);
+        PluginDatabaseManager(Common::ISystemEnvironment &environment, Storage::DatabaseManager &dbManager);
 
         // IDatabaseManager interface
     public:
@@ -27,7 +27,7 @@ namespace Plugins {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Storage::DatabaseManager *m_DatabaseManager;
+        Storage::DatabaseManager &m_DatabaseManager;
     };
 }
 

@@ -20,7 +20,7 @@
 
 namespace QMLExtensions {
     ImageCachingService::ImageCachingService(Common::ISystemEnvironment &environment,
-                                             Storage::IDatabaseManager *dbManager,
+                                             Storage::IDatabaseManager &dbManager,
                                              QObject *parent) :
         QObject(parent),
         m_Environment(environment),
@@ -30,7 +30,6 @@ namespace QMLExtensions {
         m_Scale(1.0)
     {
         updateDefaultSize();
-        Q_ASSERT(dbManager != nullptr);
     }
 
     void ImageCachingService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {

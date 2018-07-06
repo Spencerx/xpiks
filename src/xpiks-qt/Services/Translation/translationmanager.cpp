@@ -11,6 +11,7 @@
 #include "translationmanager.h"
 #include <QDir>
 #include <QSet>
+#include <QUrl>
 #include <QFile>
 #include <QTextStream>
 #include <QDirIterator>

@@ -37,7 +37,7 @@ namespace QMLExtensions {
 
     ImageCachingWorker::ImageCachingWorker(Common::ISystemEnvironment &environment,
                                            Helpers::AsyncCoordinator *initCoordinator,
-                                           Storage::IDatabaseManager *dbManager,
+                                           Storage::IDatabaseManager &dbManager,
                                            QObject *parent):
         QObject(parent),
         ItemProcessingWorker(2),
@@ -66,19 +66,19 @@ namespace QMLExtensions {
         return true;
     }
 
-    void ImageCachingWorker::processOneItemEx(std::shared_ptr<ImageCacheRequest> &item, batch_id_t batchID, Common::flag_t flags) {
-        Q_UNUSED(batchID);
-
-        if (getIsSeparatorFlag(flags)) {
+    std::shared_ptr<void> ImageCachingWorker::processWorkItem(WorkItem &workItem) {
+        if (workItem.isSeparator()) {
             saveIndex();
         } else {
-            ItemProcessingWorker::processOneItemEx(item, batchID, flags);
+            processOneItem(workItem.m_Item);
 
-            if (getIsMilestone(flags)) {
+            if (workItem.isMilestone()) {
                 // force context switch for more imporant tasks
                 QThread::msleep(IMAGE_CACHING_WORKER_SLEEP_DELAY);
             }
         }
+
+        return std::shared_ptr<void>();
     }
 
     void ImageCachingWorker::processOneItem(std::shared_ptr<ImageCacheRequest> &item) {
@@ -132,7 +132,7 @@ namespace QMLExtensions {
         }
     }
 
-    void ImageCachingWorker::workerStopped() {
+    void ImageCachingWorker::onWorkerStopped() {
         LOG_DEBUG << "#";
         m_Cache.finalize();
         emit stopped();

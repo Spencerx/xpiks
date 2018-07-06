@@ -16,7 +16,7 @@
 #include <Commands/appmessages.h>
 
 namespace MetadataIO {
-    MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService, Comands::AppMessages &messages):
+    MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService, Commands::AppMessages &messages):
         m_MetadataIOService(metadataIOService),
         m_Messages(messages),
         m_ImportID(0),
@@ -29,7 +29,7 @@ namespace MetadataIO {
     }
 
     void MetadataReadingHub::initializeImport(const Artworks::ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID) {
-        m_ArtworksToRead = artworksToRead;
+        m_ArtworksToRead.copyFrom(artworksToRead);
         m_ImportQueue.reservePush(artworksToRead.size());
         m_ImportID = importID;
         m_StorageReadBatchID = storageReadBatchID;

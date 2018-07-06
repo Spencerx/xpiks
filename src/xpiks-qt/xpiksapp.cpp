@@ -19,8 +19,6 @@
 #include <Filesystem/directoriescollection.h>
 #include <Filesystem/filesdirectoriescollection.h>
 #include <Commands/Services/savesessioncommand.h>
-#include <UndoRedo/removeartworksitem.h>
-#include <UndoRedo/removedirectoryitem.h>
 #include <Commands/Files/addfilescommand.h>
 #include <Commands/Services/cleanuplegacybackupscommand.h>
 #include <Commands/Editing/readmetadatatemplate.h>
@@ -34,42 +32,8 @@
 #include <Commands/Services/backupartworkstemplate.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
-    m_LogsModel(&m_ColorsModel),
-    m_SettingsModel(environment),
-    m_RecentDirectorieModel(environment),
-    m_ArtworksRepository(m_RecentDirectorieModel),
-    m_FilteredArtworksRepository(m_ArtworksListModel),
-    m_UploadInfoRepository(environment),
-    m_RequestsService(m_SettingsModel.getProxySettings()),
-    m_PresetsModel(environment),
-    m_WarningsService(environment),
-    m_DatabaseManager(environment),
-    m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
-    m_ApiClients(m_SecretsStorage.get()),
-    m_RecentFileModel(environment),
-    m_ArtworkUploader(environment, m_UploadInfoRepository),
-    m_SpellCheckerService(environment, &m_SettingsModel),
-    m_MetadataIOService(&m_DatabaseManager),
-    m_AutoCompleteService(&m_AutoCompleteModel, &m_PresetsModel, &m_SettingsModel),
-    m_ImageCachingService(environment, &m_DatabaseManager),
-    m_ReplaceModel(&m_ColorsModel),
-    m_TranslationManager(environment),
-    m_TranslationService(m_TranslationManager),
-    m_UIManager(environment, &m_SettingsModel),
-    m_SessionManager(environment),
-    m_MaintenanceService(environment),
-    m_VideoCachingService(environment, &m_DatabaseManager),
-    m_SwitcherModel(environment),
-    m_DuplicatesModel(&m_ColorsModel),
-    m_CsvExportModel(environment),
-    m_UpdateService(environment, &m_SettingsModel, &m_SwitcherModel, &m_MaintenanceService),
-    m_KeywordsSuggestor(m_ApiClients, m_RequestsService, m_SwitcherModel, environment),
-    m_TelemetryService(m_SwitcherModel, m_SettingsModel),
-    m_PluginManager(environment, &m_DatabaseManager, m_RequestsService, m_ApiClients),
-    m_HelpersQmlWrapper(environment, &m_ColorsModel),
-    m_CommandManager(m_UndoRedoManager)
+
 {
-    m_FilteredPresetsModel.setSourceModel(&m_PresetsModel);
 
     m_WarningsModel.setSourceModel(&m_ArtworksListModel);
     m_WarningsModel.setWarningsSettingsModel(m_WarningsService.getWarningsSettingsModel());

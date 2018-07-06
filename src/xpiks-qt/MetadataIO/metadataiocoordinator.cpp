@@ -35,10 +35,10 @@ namespace MetadataIO {
         }
     }
 
-    MetadataIOCoordinator::MetadataIOCoordinator(Models::SettingsModel &settingsModel,
+    MetadataIOCoordinator::MetadataIOCoordinator(MetadataReadingHub readingHub, Models::SettingsModel &settingsModel,
                                                  Models::SwitcherModel &switcherModel,
                                                  QMLExtensions::VideoCachingService &videoCachingService):
-        m_ReadingHub(),
+        m_ReadingHub(readingHub),
         m_SettingsModel(settingsModel),
         m_SwitcherModel(switcherModel),
         m_VideoCachingService(videoCachingService),

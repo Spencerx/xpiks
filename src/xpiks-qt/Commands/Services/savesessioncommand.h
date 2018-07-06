@@ -11,8 +11,8 @@
 #ifndef SAVESESSIONCOMMAND_H
 #define SAVESESSIONCOMMAND_H
 
-#include "icommand.h"
-#include "icommandtemplate.h"
+#include <Commands/Base/icommand.h>
+#include <Commands/Base/icommandtemplate.h>
 
 namespace Models {
     class ArtworksListModel;
@@ -42,7 +42,7 @@ namespace Commands {
 
         // IArtworksCommandTemplate interface
     public:
-        virtual void execute(Artworks::ArtworksSnapshot &) override { execute(); }
+        virtual void execute(const Artworks::ArtworksSnapshot &) override { execute(); }
 
     private:
         Maintenance::MaintenanceService &m_MaintenanceService;

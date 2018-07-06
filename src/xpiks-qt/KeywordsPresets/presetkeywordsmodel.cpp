@@ -10,19 +10,23 @@
 
 #include "presetkeywordsmodel.h"
 #include <QQmlEngine>
-#include "../Helpers/stringhelper.h"
+#include <Helpers/stringhelper.h>
 #include "presetmodel.h"
+#include <Commands/appmessages.h>
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 #define PRESET_SAVE_TIMEOUT 3000
 
 namespace KeywordsPresets {
-    PresetKeywordsModel::PresetKeywordsModel(Common::ISystemEnvironment &environment, QObject *parent):
+    PresetKeywordsModel::PresetKeywordsModel(Common::ISystemEnvironment &environment,
+                                             Commands::AppMessages &messages,
+                                             QObject *parent):
         QAbstractListModel(parent),
         Common::DelayedActionEntity(PRESET_SAVE_TIMEOUT, MAX_SAVE_PAUSE_RESTARTS),
         m_Environment(environment),
+        m_Messages(messages),
         m_PresetsConfig(environment),
-        m_GroupsModel(this),
+        m_GroupsModel(*this),
         m_LastUsedID(0)
     {
         m_SavingTimer.setSingleShot(true);
@@ -479,8 +483,12 @@ namespace KeywordsPresets {
         if (0 <= index && index < getPresetsCount()) {
             auto &keywordsModel = m_PresetsList.at(index)->m_KeywordsModel;
             if (keywordsModel.editKeyword(keywordIndex, replacement)) {
-                xpiks()->submitKeywordForSpellCheck(&keywordsModel, keywordIndex);
                 justChanged();
+
+                m_Messages
+                        .ofType<Artworks::BasicKeywordsModel*>()
+                        .withID(Commands::AppMessages::SpellCheck)
+                        .broadcast(&keywordsModel);
             }
         }
     }
@@ -497,6 +505,11 @@ namespace KeywordsPresets {
 
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
+
+                m_Messages
+                        .ofType<Artworks::BasicKeywordsModel*>()
+                        .withID(Commands::AppMessages::SpellCheck)
+                        .broadcast(&keywordsModel);
             }
         }
     }
@@ -513,6 +526,11 @@ namespace KeywordsPresets {
 
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
+
+                m_Messages
+                        .ofType<Artworks::BasicKeywordsModel*>()
+                        .withID(Commands::AppMessages::SpellCheck)
+                        .broadcast(&keywordsModel);
             }
         }
     }
@@ -528,10 +546,14 @@ namespace KeywordsPresets {
                 added = true;
 
                 justChanged();
-                xpiks()->submitKeywordForSpellCheck(&keywordsModel, keywordsModel.getKeywordsCount() - 1);
 
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
+
+                m_Messages
+                        .ofType<Artworks::BasicKeywordsModel*>()
+                        .withID(Commands::AppMessages::SpellCheck)
+                        .broadcast(&keywordsModel);
             }
         }
 
@@ -546,10 +568,14 @@ namespace KeywordsPresets {
             auto &keywordsModel = preset->m_KeywordsModel;
             keywordsModel.appendKeywords(keywords);
             justChanged();
-            xpiks()->submitItemForSpellCheck(&keywordsModel);
 
             QModelIndex indexToUpdate = this->index(index);
             emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
+
+            m_Messages
+                    .ofType<Artworks::BasicKeywordsModel*>()
+                    .withID(Commands::AppMessages::SpellCheck)
+                    .broadcast(&keywordsModel);
         }
     }
 
@@ -568,10 +594,14 @@ namespace KeywordsPresets {
 
             keywordsModel.setKeywords(keywords);
             justChanged();
-            xpiks()->submitItemForSpellCheck(&keywordsModel);
 
             QModelIndex indexToUpdate = this->index(index);
             emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
+
+            m_Messages
+                    .ofType<Artworks::BasicKeywordsModel*>()
+                    .withID(Commands::AppMessages::SpellCheck)
+                    .broadcast(&keywordsModel);
         }
     }
 
@@ -626,7 +656,8 @@ namespace KeywordsPresets {
 
         if (0 <= index && index < getPresetsCount()) {
             auto *basicArwork = &m_PresetsList[index]->m_KeywordsModel;
-            xpiks()->generateCompletions(prefix, basicArwork);
+            // TODO: request completions
+            //xpiks()->generateCompletions(prefix, basicArwork);
         }
     }
 
@@ -670,7 +701,11 @@ namespace KeywordsPresets {
                 int nextID = generateNextID();
                 PresetModel *model = new PresetModel(nextID, name, keywords, item.m_GroupID);
                 m_PresetsList.push_back(model);
-                xpiks()->submitItemForSpellCheck(&model->m_KeywordsModel, Common::SpellCheckFlags::Keywords);
+
+                m_Messages
+                        .ofType<Artworks::BasicKeywordsModel*>()
+                        .withID(Commands::AppMessages::SpellCheck)
+                        .broadcast(&model->m_KeywordsModel);
             } else {
                 LOG_WARNING << "Preset" << name << "already exists. Skipping...";
             }
@@ -823,6 +858,11 @@ namespace KeywordsPresets {
         }
     }
 
+    FilteredPresetsModelBase::FilteredPresetsModelBase(PresetKeywordsModel &presetsModel)
+    {
+        setSourceModel(&presetsModel);
+    }
+
     int FilteredPresetsModelBase::getOriginalIndex(int index) {
         LOG_INFO << index;
         QModelIndex originalIndex = mapToSource(this->index(index, 0));
@@ -858,6 +898,11 @@ namespace KeywordsPresets {
         return presetsModel;
     }
 
+    FilteredPresetKeywordsModel::FilteredPresetKeywordsModel(PresetKeywordsModel &presetsModel):
+        FilteredPresetsModelBase(presetsModel)
+    {
+    }
+
     void FilteredPresetKeywordsModel::setSearchTerm(const QString &value) {
         LOG_INFO << value;
 
@@ -887,7 +932,8 @@ namespace KeywordsPresets {
         return result;
     }
 
-    PresetKeywordsGroupModel::PresetKeywordsGroupModel(int groupID):
+    PresetKeywordsGroupModel::PresetKeywordsGroupModel(int groupID, PresetKeywordsModel &presetsModel):
+        FilteredPresetsModelBase(presetsModel),
         m_GroupID(groupID)
     {
         LOG_DEBUG << "Instantiated for group" << groupID;

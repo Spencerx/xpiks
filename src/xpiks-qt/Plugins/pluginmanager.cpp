@@ -29,7 +29,7 @@ namespace Plugins {
     PluginManager::PluginManager(Common::ISystemEnvironment &environment,
                                  Commands::ICommandManager &commandManager,
                                  KeywordsPresets::IPresetsManager &presetsManager,
-                                 Storage::DatabaseManager *dbManager,
+                                 Storage::DatabaseManager &dbManager,
                                  Connectivity::RequestsService &requestsService,
                                  Microstocks::MicrostockAPIClients &apiClients,
                                  Models::ICurrentEditableSource &currentEditableSource,
@@ -43,9 +43,7 @@ namespace Plugins {
         m_CurrentEditableSource(currentEditableSource),
         m_UIProvider(uiManager),
         m_LastPluginID(0)
-    {
-        Q_ASSERT(dbManager != nullptr);
-    }
+    { }
 
     PluginManager::~PluginManager() {
         LOG_DEBUG << "#";
@@ -408,7 +406,7 @@ namespace Plugins {
             try {
                 plugin->injectCommandManager(&m_CommandManager);
                 plugin->injectUIProvider(&pluginWrapper->getUIProvider());
-                plugin->injectPresetsManager(m_PresetsManager);
+                plugin->injectPresetsManager(&m_PresetsManager);
                 plugin->injectDatabaseManager(pluginWrapper->getDatabaseManager());
                 plugin->injectMicrostockServices(&m_MicrostockServices);
                 plugin->injectCurrentEditable(&m_CurrentEditableSource);

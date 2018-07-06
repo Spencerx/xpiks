@@ -36,7 +36,7 @@ namespace Plugins {
                       int pluginID,
                       Common::ISystemEnvironment &environment,
                       UIProvider &realUIProvider,
-                      Storage::DatabaseManager *databaseManager);
+                      Storage::DatabaseManager &databaseManager);
         virtual ~PluginWrapper();
 
     private:

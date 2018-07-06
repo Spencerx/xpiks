@@ -15,6 +15,8 @@
 #include <Services/SpellCheck/spellcheckiteminfo.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Helpers/stringhelper.h>
+#include <Helpers/indicesranges.h>
+#include <Helpers/cpphelpers.h>
 #include <Artworks/keyword.h>
 #include <Artworks/videoartwork.h>
 #include <Artworks/imageartwork.h>
@@ -252,30 +254,19 @@ namespace SpellCheck {
 
         QSet<size_t> indicesSet = m_PendingUpdates.toList().toSet();
 
-        QVector<int> indicesToUpdate;
-        const size_t size = m_DuplicatesList.size();
-        indicesToUpdate.reserve((int)size);
+        auto indicesToUpdate = Helpers::filterMap<MetadataDuplicatesItem, int>(
+                                   m_DuplicatesList,
+                                   [&indicesSet](const MetadataDuplicatesItem& item) {
+            return item.m_ArtworkMetadata != nullptr &&
+                                             indicesSet.contains(item.m_ArtworkMetadata->getLastKnownIndex());
+        },
+        [](const MetadataDuplicatesItem& item) { return item.m_ArtworkMetadata->getLastKnownIndex(); });
 
-        for (size_t i = 0; i < size; i++) {
-            auto &item = m_DuplicatesList[i];
-            if (item.m_ArtworkMetadata == nullptr) { continue; }
+        LOG_INTEGR_TESTS_OR_DEBUG << QVector<int>::fromStdVector(indicesToUpdate);
+        Helpers::IndicesRanges ranges(indicesToUpdate);
+        auto roles = QVector<int>() << TriggerRole;
 
-            const size_t index = item.m_ArtworkMetadata->getLastKnownIndex();
-            if (indicesSet.contains(index)) {
-                indicesToUpdate.append((int)i);
-            }
-        }
-
-        LOG_INTEGR_TESTS_OR_DEBUG << indicesToUpdate;
-
-        QVector<QPair<int, int> > ranges;
-        qSort(indicesToUpdate);
-        Helpers::indicesToRanges(indicesToUpdate, ranges);
-
-        QVector<int> roles;
-        roles << TriggerRole;
-
-        for (auto &r: ranges) {
+        for (auto &r: ranges.getRanges()) {
             QModelIndex indexFrom = this->index(r.first, 0);
             QModelIndex indexTo = this->index(r.second, 0);
             emit dataChanged(indexFrom, indexTo, roles);

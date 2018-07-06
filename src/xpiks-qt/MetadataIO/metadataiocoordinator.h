@@ -46,7 +46,8 @@ namespace MetadataIO {
         Q_PROPERTY(bool isInProgress READ getIsInProgress WRITE setIsInProgress NOTIFY isInProgressChanged)
 
     public:
-        MetadataIOCoordinator(Models::SettingsModel &settingsModel,
+        MetadataIOCoordinator(MetadataReadingHub readingHub,
+                              Models::SettingsModel &settingsModel,
                               Models::SwitcherModel &switcherModel,
                               QMLExtensions::VideoCachingService &videoCachingService);
 
@@ -126,8 +127,8 @@ namespace MetadataIO {
         void afterImportHandler(const QVector<Artworks::ArtworkMetadata*> &itemsToRead, bool ignoreBackups);
 
     private:
-        MetadataReadingHub m_ReadingHub;
         Helpers::AsyncCoordinator m_WritingAsyncCoordinator;
+        MetadataReadingHub &m_ReadingHub;
         Models::SettingsModel &m_SettingsModel;
         Models::SwitcherModel &m_SwitcherModel;
         QMLExtensions::VideoCachingService &m_VideoCachingService;

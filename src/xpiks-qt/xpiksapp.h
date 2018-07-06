@@ -145,62 +145,83 @@ private slots:
     void servicesInitialized(int status);
 
 protected:
+    // general
     Commands::AppMessages m_Messages;
     QMLExtensions::ColorsModel m_ColorsModel;
     Models::LogsModel m_LogsModel;
     Models::SettingsModel m_SettingsModel;
+    Storage::DatabaseManager m_DatabaseManager;
+    Models::SessionManager m_SessionManager;
+    UndoRedo::UndoRedoManager m_UndoRedoManager;
+    Commands::CommandManager m_CommandManager;
+
+    // models
+    KeywordsPresets::PresetKeywordsModel m_PresetsModel;
+    KeywordsPresets::FilteredPresetKeywordsModel m_FilteredPresetsModel;
+    AutoComplete::KeywordsAutoCompleteModel m_AutoCompleteModel;
+
+    // artworks
     Models::RecentDirectoriesModel m_RecentDirectorieModel;
+    Models::RecentFilesModel m_RecentFileModel;
     Models::ArtworksRepository m_ArtworksRepository;
     Models::FilteredArtworksRepository m_FilteredArtworksRepository;
     Models::ArtworksListModel m_ArtworksListModel;
+
+    // editing
     Models::CombinedArtworksModel m_CombinedArtworksModel;
-    Models::UploadInfoRepository m_UploadInfoRepository;
-    Connectivity::RequestsService m_RequestsService;
-    KeywordsPresets::PresetKeywordsModel m_PresetsModel;
-    KeywordsPresets::FilteredPresetKeywordsModel m_FilteredPresetsModel;
-    Warnings::WarningsService m_WarningsService;
-    Encryption::SecretsManager m_SecretsManager;
-    UndoRedo::UndoRedoManager m_UndoRedoManager;
-    Models::ZipArchiver m_ZipArchiver;
-    Storage::DatabaseManager m_DatabaseManager;
-    std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
-    Microstocks::MicrostockAPIClients m_ApiClients;
-    Models::FilteredArtworksListModel m_FilteredArtworksListModel;
-    Models::RecentFilesModel m_RecentFileModel;
-    std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
-    Models::ArtworkUploader m_ArtworkUploader;
-    SpellCheck::SpellCheckerService m_SpellCheckerService;
-    SpellCheck::SpellCheckSuggestionModel m_SpellCheckSuggestionModel;
-    SpellCheck::UserDictEditModel m_UserDictEditModel;
-    MetadataIO::MetadataIOService m_MetadataIOService;
-    Warnings::WarningsModel m_WarningsModel;
-    Models::LanguagesModel m_LanguagesModel;
-    AutoComplete::KeywordsAutoCompleteModel m_AutoCompleteModel;
-    AutoComplete::AutoCompleteService m_AutoCompleteService;
-    QMLExtensions::ImageCachingService m_ImageCachingService;
+    Models::QuickBuffer m_QuickBuffer;
     Models::FindAndReplaceModel m_ReplaceModel;
     Models::DeleteKeywordsViewModel m_DeleteKeywordsModel;
     Models::ArtworkProxyModel m_ArtworkProxyModel;
-    Translation::TranslationManager m_TranslationManager;
-    Translation::TranslationService m_TranslationService;
-    Models::UIManager m_UIManager;
-    Models::SessionManager m_SessionManager;
-    Models::QuickBuffer m_QuickBuffer;
-    Maintenance::MaintenanceService m_MaintenanceService;
-    QMLExtensions::VideoCachingService m_VideoCachingService;
-    Services::ArtworksUpdateHub m_ArtworksUpdateHub;
-    Models::SwitcherModel m_SwitcherModel;
     SpellCheck::DuplicatesReviewModel m_DuplicatesModel;
+
+    // connectivity
+    Models::UploadInfoRepository m_UploadInfoRepository;
+    Models::ZipArchiver m_ZipArchiver;
+    Encryption::SecretsManager m_SecretsManager;
+    std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
+    Microstocks::MicrostockAPIClients m_ApiClients;
+    std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
+    Models::ArtworkUploader m_ArtworkUploader;
+
+    // other
+    Models::LanguagesModel m_LanguagesModel;
+    Models::UIManager m_UIManager;
+    SpellCheck::UserDictionary m_UserDictionary;
+    SpellCheck::UserDictEditModel m_UserDictEditModel;
+    Models::CurrentEditableModel m_CurrentEditable;
+    Warnings::WarningsSettingsModel m_WarningsSettingsModel;
+    Warnings::WarningsModel m_WarningsModel;
+    Translation::TranslationManager m_TranslationManager;
+    Services::ArtworksUpdateHub m_ArtworksUpdateHub;
     MetadataIO::CsvExportModel m_CsvExportModel;
-    Connectivity::UpdateService m_UpdateService;
-    Suggestion::KeywordsSuggestor m_KeywordsSuggestor;
+    Models::SwitcherModel m_SwitcherModel;
     MetadataIO::MetadataIOCoordinator m_MetadataIOCoordinator;
+
+    // services
+    Maintenance::MaintenanceService m_MaintenanceService;
+    AutoComplete::AutoCompleteService m_AutoCompleteService;
+    Connectivity::RequestsService m_RequestsService;
+    Warnings::WarningsService m_WarningsService;
+    SpellCheck::SpellCheckerService m_SpellCheckerService;
+    MetadataIO::MetadataIOService m_MetadataIOService;
+    QMLExtensions::ImageCachingService m_ImageCachingService;
+    Translation::TranslationService m_TranslationService;
+    QMLExtensions::VideoCachingService m_VideoCachingService;
+    Connectivity::UpdateService m_UpdateService;
     Connectivity::TelemetryService m_TelemetryService;
+
+    // dependent
+    Models::FilteredArtworksListModel m_FilteredArtworksListModel;
+    SpellCheck::SpellCheckSuggestionModel m_SpellCheckSuggestionModel;
+    Suggestion::KeywordsSuggestor m_KeywordsSuggestor;
+
+    // plugins
     Plugins::PluginManager m_PluginManager;
     Plugins::PluginsWithActionsModel m_PluginsWithActions;
+
+    // ui
     Helpers::HelpersQmlWrapper m_HelpersQmlWrapper;
-    Commands::CommandManager m_CommandManager;
-    Models::CurrentEditableModel m_CurrentEditable;
 
     Helpers::AsyncCoordinator m_InitCoordinator;
     QVector<Helpers::IFileNotAvailableModel*> m_AvailabilityListeners;

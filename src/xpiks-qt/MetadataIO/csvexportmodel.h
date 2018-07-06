@@ -16,7 +16,6 @@
 #include <memory>
 #include "csvexportproperties.h"
 #include "../Artworks/artworkssnapshot.h"
-#include "csvexportplansmodel.h"
 #include "../Common/delayedactionentity.h"
 #include "../Common/isystemenvironment.h"
 
@@ -26,7 +25,13 @@ namespace Commands {
     class AppMessages;
 }
 
+namespace Helpers {
+    class AsyncCoordinator;
+}
+
 namespace MetadataIO {
+    class CsvExportPlansModel;
+
     class CsvExportColumnsModel: public QAbstractListModel
     {
         Q_OBJECT
@@ -80,7 +85,7 @@ namespace MetadataIO {
         Q_PROPERTY(bool isExporting READ getIsExporting WRITE setIsExporting NOTIFY isExportingChanged)
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
     public:
-        CsvExportModel(Common::ISystemEnvironment &environment,
+        CsvExportModel(CsvExportPlansModel &exportPlansModel,
                        Commands::AppMessages &messages);
 
     public:
@@ -164,7 +169,7 @@ namespace MetadataIO {
 
     private:
         CsvExportColumnsModel m_CurrentColumnsModel;
-        CsvExportPlansModel m_ExportPlansModel;
+        CsvExportPlansModel &m_ExportPlansModel;
         std::vector<std::shared_ptr<CsvExportPlan> > m_ExportPlans;
         Artworks::ArtworksSnapshot m_ArtworksToExport;
         QString m_ExportDirectory;

@@ -66,7 +66,7 @@ namespace Maintenance {
         void moveSettings(Models::SettingsModel *settingsModel);
         void upgradeImagesCache(QMLExtensions::ImageCachingService *imageCachingService);
         void saveSession(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,
-                         Models::SessionManager *sessionManager);
+                         Models::SessionManager &sessionManager);
         void cleanupOldXpksBackups(const QString &directory);
 
     signals:

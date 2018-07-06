@@ -49,7 +49,7 @@ namespace Warnings {
         Common::WarningsCheckFlags getCheckingFlags() const { return m_CheckingFlags; }
         QString getDescription() const;
         QString getTitle() const;
-        QSet<QString> getKeywordsSet() const;
+        QStringList getKeywords() const;
 
     private:
         void accountFlag(Common::WarningFlags flag, bool value);

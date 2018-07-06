@@ -13,10 +13,10 @@
 #include <QSet>
 #include <QString>
 #include "spellcheckiteminfo.h"
-#include "../QMLExtensions/colorsmodel.h"
-#include "../Helpers/stringhelper.h"
-#include "../Common/defines.h"
-#include "../Common/basickeywordsmodel.h"
+#include <QMLExtensions/colorsmodel.h>
+#include <Helpers/stringhelper.h>
+#include <Common/defines.h>
+#include <Artworks/basickeywordsmodel.h>
 
 namespace SpellCheck {
     DuplicatesHighlighter::DuplicatesHighlighter(QTextDocument *document,

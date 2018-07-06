@@ -15,7 +15,8 @@
 #include <QThread>
 #include <QRegularExpression>
 #include "csvexportplansmodel.h"
-#include "../Models/artworkmetadata.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/artworkssnapshot.h>
 
 #define DOUBLE_QUOTE "\""
 
@@ -56,7 +57,8 @@ namespace MetadataIO {
         }
     }
 
-    void writeRows(QFile &csvFile, const std::shared_ptr<CsvExportPlan> &plan, const ArtworksSnapshot::Container &artworks) {
+    void writeRows(QFile &csvFile, const std::shared_ptr<CsvExportPlan> &plan,
+                   const Artworks::ArtworksSnapshot::Container &artworks) {
         auto &properties = plan->m_PropertiesToExport;
         const size_t propertiesSize = properties.size();
         Q_ASSERT(propertiesSize != 0);
@@ -82,7 +84,8 @@ namespace MetadataIO {
         }
     }
 
-    void runExportPlan(const std::shared_ptr<CsvExportPlan> &plan, const QString &filepath, const ArtworksSnapshot::Container &artworks) {
+    void runExportPlan(const std::shared_ptr<CsvExportPlan> &plan, const QString &filepath,
+                       const Artworks::ArtworksSnapshot::Container &artworks) {
         LOG_DEBUG << "Plan" << plan->m_Name << ": exporting" << artworks.size() << "artwork(s) to" << filepath;
         Q_ASSERT(plan->m_IsSelected);
 
@@ -118,18 +121,14 @@ namespace MetadataIO {
     }
 
     CsvExportWorker::CsvExportWorker(const std::vector<std::shared_ptr<CsvExportPlan> > &exportPlans,
-                                     ArtworksSnapshot &selectedArtworks,
-                                     QString exportDirectoryPath,
+                                     Artworks::ArtworksSnapshot &selectedArtworks,
+                                     const QString &exportDirectoryPath,
                                      QObject *parent):
         QObject(parent),
         m_ExportPlans(exportPlans),
         m_ArtworksToExport(selectedArtworks),
         m_ExportDirectoryPath(exportDirectoryPath)
     {
-    }
-
-    CsvExportWorker::~CsvExportWorker() {
-        LOG_DEBUG << "#";
     }
 
     void CsvExportWorker::doWork() {

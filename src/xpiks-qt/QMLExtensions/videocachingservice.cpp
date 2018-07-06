@@ -14,9 +14,10 @@
 #include <memory>
 #include "videocachingworker.h"
 #include <Artworks/videoartwork.h>
-#include "../QMLExtensions/videocacherequest.h"
-#include "../Models/switchermodel.h"
-#include "../Common/logging.h"
+#include <Artworks/artworkssnapshot.h>
+#include <QMLExtensions/videocacherequest.h>
+#include <Models/switchermodel.h>
+#include <Common/logging.h>
 
 namespace QMLExtensions {
     VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment,

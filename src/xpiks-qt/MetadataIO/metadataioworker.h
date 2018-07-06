@@ -13,16 +13,16 @@
 
 #include <QObject>
 #include <QSet>
-#include "../Common/itemprocessingworker.h"
+#include <Common/itemprocessingworker.h>
+#include <Common/readerwriterqueue.h>
 #include "metadataiotask.h"
 #include "metadatacache.h"
-#include "../Common/readerwriterqueue.h"
 
 namespace Helpers {
     class DatabaseManager;
 }
 
-namespace QMLExtensions {
+namespace Services {
     class ArtworksUpdateHub;
 }
 
@@ -40,8 +40,8 @@ namespace MetadataIO {
     {
         Q_OBJECT
     public:
-        explicit MetadataIOWorker(Storage::IDatabaseManager *dbManager,
-                                  QMLExtensions::ArtworksUpdateHub *artworksUpdateHub,
+        explicit MetadataIOWorker(Storage::IDatabaseManager &dbManager,
+                                  Services::ArtworksUpdateHub &artworksUpdateHub,
                                   QObject *parent = 0);
 
 #ifdef INTEGRATION_TESTS
@@ -76,7 +76,7 @@ namespace MetadataIO {
 
     private:
         Common::ReaderWriterQueue<StorageReadRequest> m_StorageReadQueue;
-        QMLExtensions::ArtworksUpdateHub *m_ArtworksUpdateHub;
+        Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
         MetadataCache m_MetadataCache;
         volatile int m_ProcessedItemsCount;
     };

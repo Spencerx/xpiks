@@ -12,8 +12,8 @@
 #define READMETADATACOMMAND_H
 
 #include <memory>
-#include "icommandtemplate.h"
-#include "../Artworks/artworkssnapshot.h"
+#include <Commands/Base/icommandtemplate.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace MetadataIO {
     class MetadataIOService;

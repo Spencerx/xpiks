@@ -25,6 +25,10 @@ namespace Storage {
     class IDatabaseManager;
 }
 
+namespace Services {
+    class ArtworksUpdateHub;
+}
+
 namespace MetadataIO {
     class MetadataIOWorker;
 
@@ -34,10 +38,11 @@ namespace MetadataIO {
     {
         Q_OBJECT
     public:
-        MetadataIOService(Storage::IDatabaseManager *dbManager, QObject *parent = nullptr);
+        MetadataIOService(QObject *parent = nullptr);
 
     public:
-        void startService();
+        void startService(Storage::IDatabaseManager &databaseManager,
+                          Services::ArtworksUpdateHub &artworksUpdateHub);
         void stopService();
 
     public:
@@ -77,7 +82,6 @@ namespace MetadataIO {
 
     private:
         MetadataIOWorker *m_MetadataIOWorker;
-        Storage::IDatabaseManager *m_DatabaseManager;
         bool m_IsStopped;
     };
 }

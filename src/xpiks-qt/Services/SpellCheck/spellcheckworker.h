@@ -52,7 +52,7 @@ namespace SpellCheck {
         virtual ~SpellCheckWorker();
 
     public:
-        const QStringList &getUserDictionary() const;
+        QStringList getUserDictionary() const;
         QStringList retrieveCorrections(const QString &word);
         int getUserDictionarySize() const;
 

@@ -52,7 +52,7 @@ namespace Plugins {
         PluginManager(Common::ISystemEnvironment &environment,
                       Commands::ICommandManager &commandManager,
                       KeywordsPresets::IPresetsManager &presetsManager,
-                      Storage::DatabaseManager *dbManager,
+                      Storage::DatabaseManager &dbManager,
                       Connectivity::RequestsService &requestsService,
                       Microstocks::MicrostockAPIClients &apiClients,
                       Models::ICurrentEditableSource &currentEditableSource,
@@ -114,7 +114,7 @@ namespace Plugins {
         Common::ISystemEnvironment &m_Environment;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
-        Storage::DatabaseManager *m_DatabaseManager;
+        Storage::DatabaseManager &m_DatabaseManager;
         MicrostockServicesSafe m_MicrostockServices;
         Models::ICurrentEditableSource &m_CurrentEditableSource;
         QString m_PluginsDirectoryPath;

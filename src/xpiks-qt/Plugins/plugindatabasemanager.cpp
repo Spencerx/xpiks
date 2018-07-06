@@ -12,14 +12,12 @@
 
 namespace Plugins {
     PluginDatabaseManager::PluginDatabaseManager(Common::ISystemEnvironment &environment,
-                                                 Storage::DatabaseManager *dbManager):
+                                                 Storage::DatabaseManager &dbManager):
         m_Environment(environment),
         m_DatabaseManager(dbManager)
-    {
-        Q_ASSERT(dbManager != nullptr);
-    }
+    { }
 
     std::shared_ptr<Storage::IDatabase> PluginDatabaseManager::openDatabase(const QString &dbName) {
-        return m_DatabaseManager->openDatabase(m_Environment, dbName);
+        return m_DatabaseManager.openDatabase(m_Environment, dbName);
     }
 }

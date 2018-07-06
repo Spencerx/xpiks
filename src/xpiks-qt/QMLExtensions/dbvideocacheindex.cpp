@@ -21,7 +21,6 @@ namespace QMLExtensions {
 
     bool DbVideoCacheIndex::initialize() {
         LOG_DEBUG << "#";
-        Q_ASSERT(m_DatabaseManager != nullptr);
 
         bool success = false;
         do {

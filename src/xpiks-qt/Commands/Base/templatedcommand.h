@@ -35,7 +35,7 @@ namespace Commands {
 
         // ICommand interface
     public:
-        virtual void execute() override { m_CommandTemplate->execute(m_Argument; }
+        virtual void execute() override { m_CommandTemplate->execute(m_Argument); }
         virtual void undo() override { m_CommandTemplate->undo(m_Argument); }
 
     private:

@@ -15,10 +15,9 @@
 #include "presetkeywordsmodel.h"
 
 namespace KeywordsPresets {
-    PresetGroupsModel::PresetGroupsModel(PresetKeywordsModel *presetsModel):
+    PresetGroupsModel::PresetGroupsModel(PresetKeywordsModel &presetsModel):
         m_PresetsModel(presetsModel)
     {
-        Q_ASSERT(presetsModel != nullptr);
     }
 
     bool PresetGroupsModel::tryGetGroupIndexById(int groupID, size_t &index) {
@@ -149,11 +148,9 @@ namespace KeywordsPresets {
         }
 
         Q_ASSERT(m_GroupsList.size() == m_FilteredGroups.size());
-        Q_ASSERT(m_PresetsModel != nullptr);
 
         if (!m_FilteredGroups[index]) {
-            m_FilteredGroups[index].reset(new PresetKeywordsGroupModel(m_GroupsList[index].m_GroupID));
-            m_FilteredGroups[index]->setSourceModel(m_PresetsModel);
+            m_FilteredGroups[index].reset(new PresetKeywordsGroupModel(m_GroupsList[index].m_GroupID, m_PresetsModel));
         }
 
         QObject *result = m_FilteredGroups[index].get();
@@ -163,11 +160,9 @@ namespace KeywordsPresets {
 
     QObject *PresetGroupsModel::getDefaultGroupModel() {
         LOG_DEBUG << "#";
-        Q_ASSERT(m_PresetsModel != nullptr);
 
         if (!m_DefaultGroup) {
-            m_DefaultGroup.reset(new PresetKeywordsGroupModel(DEFAULT_GROUP_ID));
-            m_DefaultGroup->setSourceModel(m_PresetsModel);
+            m_DefaultGroup.reset(new PresetKeywordsGroupModel(DEFAULT_GROUP_ID, m_PresetsModel));
         }
 
         QObject *result = m_DefaultGroup.get();

@@ -10,11 +10,12 @@
 
 #include "autocompleteworker.h"
 #include <QDir>
-#include <Common/defines.h>
 #include <QStringList>
+#include <Common/defines.h>
+#include "keywordsautocompletemodel.h"
 #include <Helpers/asynccoordinator.h>
 #include <KeywordsPresets/ipresetsmanager.h>
-#include "keywordsautocompletemodel.h"
+#include <KeywordsPresets/presetkeywordsmodel.h>
 #include <Artworks/basickeywordsmodel.h>
 
 namespace AutoComplete {
@@ -90,13 +91,13 @@ namespace AutoComplete {
         if (onlyFindPresets) {
             if (m_PresetsCompletionEngine.generateCompletions(*item.get(), completionsList)) {
                 generatedCount = completionsList.size();
-                auto &completionsModel = m_AutoCompleteModel->getInnerModel();
+                auto &completionsModel = m_AutoCompleteModel.getInnerModel();
                 completionsModel.setPresetCompletions(completionsList);
             }
         } else {
             if (m_FaceCompletionEngine.generateCompletions(*item.get(), completionsList)) {
                 generatedCount = completionsList.size();
-                auto &completionsModel = m_AutoCompleteModel->getInnerModel();
+                auto &completionsModel = m_AutoCompleteModel.getInnerModel();
                 completionsModel.setKeywordCompletions(completionsList);
 
                 item->setCompletions(completionsList);
@@ -135,7 +136,7 @@ namespace AutoComplete {
 
         if (anyChanges) {
             LOG_INTEGR_TESTS_OR_DEBUG << "Propagating update to the model";
-            auto &completionsModel = m_AutoCompleteModel->getInnerModel();
+            auto &completionsModel = m_AutoCompleteModel.getInnerModel();
             completionsModel.setPresetsMembership(completionsList);
         }
     }

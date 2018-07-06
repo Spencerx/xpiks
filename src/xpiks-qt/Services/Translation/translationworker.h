@@ -13,7 +13,7 @@
 
 #include <QObject>
 #include <memory>
-#include "../Common/itemprocessingworker.h"
+#include <Common/itemprocessingworker.h>
 #include "translationquery.h"
 
 class LookupDictionary;
@@ -30,7 +30,6 @@ namespace Translation {
         Q_OBJECT
     public:
         explicit TranslationWorker(Helpers::AsyncCoordinator *initCoordinator, QObject *parent = 0);
-        virtual ~TranslationWorker();
 
     public:
         void selectDictionary(const QString &dictionaryPath);
@@ -41,7 +40,7 @@ namespace Translation {
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
-        virtual void workerStopped() override { emit stopped(); }
+        virtual void onWorkerStopped() override { emit stopped(); }
 
     public slots:
         void process() { doWork(); }

@@ -10,8 +10,8 @@
 
 #include <QDirIterator>
 #include <QDateTime>
-#include "../Helpers/logger.h"
-#include "../Common/logging.h"
+#include <Helpers/logger.h>
+#include <Common/logging.h>
 #include "logscleanupjobitem.h"
 
 namespace Maintenance {

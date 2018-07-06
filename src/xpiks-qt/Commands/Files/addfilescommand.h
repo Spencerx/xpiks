@@ -13,11 +13,11 @@
 
 #include <memory>
 #include <QObject>
-#include "icommand.h"
-#include "icommandtemplate.h"
-#include "../Common/flags.h"
-#include "../Filesystem/ifilescollection.h"
-#include "../Artworks/artworkssnapshot.h"
+#include <Commands/Base/icommand.h>
+#include <Commands/Base/icommandtemplate.h>
+#include <Common/flags.h>
+#include <Filesystem/ifilescollection.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace Models {
     class ArtworksListModel;
@@ -41,7 +41,7 @@ namespace Commands {
 
         // IHistoryItem interface
     public:
-        virtual void canUndo() override { return true; }
+        virtual bool canUndo() override { return true; }
         virtual void undo() override;
         virtual QString getDescription() const override {
             return m_AddedCount != 1 ? QObject::tr("%1 items added").arg(m_AddedCount) :
