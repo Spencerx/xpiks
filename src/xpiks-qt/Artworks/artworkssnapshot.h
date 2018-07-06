@@ -35,7 +35,7 @@ namespace Artworks {
 
     class SessionSnapshot {
     public:
-        SessionSnapshot(const std::deque<ArtworkMetadata *> &artworksList, const QStringList &fullDirectories);
+        SessionSnapshot(const std::vector<ArtworkMetadata *> &artworksList, const QStringList &fullDirectories);
 
         SessionSnapshot(SessionSnapshot &&other) {
             m_ArtworksSnapshot.swap(other.m_ArtworksSnapshot);

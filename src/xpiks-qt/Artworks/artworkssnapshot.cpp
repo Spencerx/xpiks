@@ -21,7 +21,7 @@ namespace Artworks {
         }
     }
 
-    SessionSnapshot::SessionSnapshot(const std::deque<ArtworkMetadata *> &artworksList, const QStringList &fullDirectories):
+    SessionSnapshot::SessionSnapshot(const std::vector<ArtworkMetadata *> &artworksList, const QStringList &fullDirectories):
         m_DirectoriesSnapshot(fullDirectories)
     {
         LOG_DEBUG << "Creating snapshot of" << artworksList.size() << "artwork(s) and" << m_DirectoriesSnapshot.size() << "full directory(ies)";

@@ -406,23 +406,22 @@ void XpiksApp::removeUnavailableFiles() {
     }
 }
 
-void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
+void XpiksApp::doAddFiles(std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
     using namespace Commands;
-    using CompositeTemplate = CompositeCommandTemplate<Artworks::ArtworkSessionSnapshot>;
+    using CompositeTemplate = CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksTemplate = std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>>;
 
-    auto afterAddActions = std::make_shared<CompositeTemplate>(std::initializer_list<ArtworksTemplate>{
-                    new ReadMetadataTemplate(m_MetadataIOService, m_MetadataIOCoordinator),
-                    new GenerateThumbnailsTemplate(m_ImageCachingService, m_VideoCachingService),
-                    new AutoImportMetadataCommand(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel),
-                    new AddToRecentTemplate(m_RecentFileModel),
-                    new SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager),
-                    new CleanupLegacyBackupsCommand(files, m_MaintenanceService)
-                });
+    std::vector<ArtworksTemplate> templates;
+    templates.emplace_back(std::make_shared<ReadMetadataTemplate>(m_MetadataIOService, m_MetadataIOCoordinator));
+    templates.emplace_back(std::make_shared<GenerateThumbnailsTemplate>(m_ImageCachingService, m_VideoCachingService));
+    templates.emplace_back(std::make_shared<AutoImportMetadataCommand>(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel));
+    templates.emplace_back(std::make_shared<AddToRecentTemplate>(m_RecentFileModel));
+    templates.emplace_back(std::make_shared<SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager));
+    templates.emplace_back(std::make_shared<CleanupLegacyBackupsCommand>(files, m_MaintenanceService));
 
     auto addFilesCommand = std::make_shared<AddFilesCommand>(
                 files, flags, m_ArtworksListModel,
-                afterAddActions);
+                std::make_shared<CompositeTemplate>(templates));
 
     m_CommandManager.processCommand(addFilesCommand);
 }

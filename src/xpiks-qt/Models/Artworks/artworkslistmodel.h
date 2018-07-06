@@ -122,7 +122,7 @@ namespace Models {
         void unlockAllForIO();
         bool isInSelectedDirectory(int artworkIndex);
         void sendToQuickBuffer(int artworkIndex);
-        void setCurrentIndex(int index);
+        void setCurrentIndex(size_t index);
 
     public:
         // update hub related

@@ -90,7 +90,7 @@ namespace Models {
         LOG_FOR_TESTS << "Select directory:" << directory;
 
         const QString directoryAbsolutePath = QDir(directory).absolutePath();
-        std::vector<int> indices = this->filterArtworks(
+        auto indices = this->filterArtworks<int>(
                     [&directoryAbsolutePath](Artworks::ArtworkMetadata *artwork) {
                 return artwork->isInDirectory(directoryAbsolutePath); },
                 [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
@@ -133,14 +133,14 @@ namespace Models {
             return;
         }
 
-        auto indices = filterArtworks(pred, [](Artworks::ArtworkMetadata*, size_t i) { return (int)i; });
+        auto indices = filterArtworks<int>(pred, [](Artworks::ArtworkMetadata*, size_t i) { return (int)i; });
         this->updateItems(Helpers::IndicesRanges(indices), roles);
     }
 
     std::unique_ptr<Artworks::SessionSnapshot> ArtworksListModel::snapshotAll() {
         std::unique_ptr<Artworks::SessionSnapshot> sessionSnapshot(
                     new Artworks::SessionSnapshot(
-                        filterAvailableArtworks([](Artworks::ArtworkMetadata *artwork, size_t) {return artwork;}),
+                        filterAvailableArtworks<Artworks::ArtworkMetadata>([](Artworks::ArtworkMetadata *artwork, size_t) {return artwork;}),
                         m_ArtworksRepository.retrieveFullDirectories()));
         return sessionSnapshot;
     }
@@ -175,7 +175,7 @@ namespace Models {
         Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             m_Messages
-                    .ofType<QString, QString, QStringList>()
+                    .ofType<QString, QString, QStringList, bool>()
                     .withID(Commands::AppMessages::CopyToQuickBuffer)
                     .broadcast(artwork->getTitle(),
                                artwork->getDescription(),
