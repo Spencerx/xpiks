@@ -46,7 +46,7 @@ namespace MetadataIO {
         Q_PROPERTY(bool isInProgress READ getIsInProgress WRITE setIsInProgress NOTIFY isInProgressChanged)
 
     public:
-        MetadataIOCoordinator(MetadataReadingHub readingHub,
+        MetadataIOCoordinator(MetadataReadingHub &readingHub,
                               Models::SettingsModel &settingsModel,
                               Models::SwitcherModel &switcherModel,
                               QMLExtensions::VideoCachingService &videoCachingService);

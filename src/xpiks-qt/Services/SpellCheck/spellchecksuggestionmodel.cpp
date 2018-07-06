@@ -13,7 +13,7 @@
 #include <QHash>
 #include <QString>
 #include "spellsuggestionsitem.h"
-#include "spellcheckerservice.h"
+#include "spellcheckservice.h"
 #include <Common/flags.h>
 #include <Common/logging.h>
 #include <Artworks/artworkmetadata.h>
@@ -150,7 +150,7 @@ namespace SpellCheck {
         return requests;
     }
 
-    SpellCheckSuggestionModel::SpellCheckSuggestionModel(SpellCheckerService &spellCheckerService,
+    SpellCheckSuggestionModel::SpellCheckSuggestionModel(SpellCheckService &spellCheckerService,
                                                          Commands::AppMessages &messages):
         QAbstractListModel(),
         m_SpellCheckerService(spellCheckerService),

@@ -42,6 +42,8 @@ namespace SpellCheck {
 
     signals:
         void sizeChanged();
+        void userDictCleared();
+        void userDictUpdate(const QStringList &words, bool override);
 
     private:
         void addWordsUnsafe(const QStringList &words);

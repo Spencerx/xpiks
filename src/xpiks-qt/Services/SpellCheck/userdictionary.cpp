@@ -85,6 +85,7 @@ namespace SpellCheck {
             addWordsUnsafe(words);
         }
         emit sizeChanged();
+        emit userDictUpdate(words, true);
     }
 
     void UserDictionary::addWord(const QString &word) {
@@ -101,6 +102,7 @@ namespace SpellCheck {
             }
         }
         emit sizeChanged();
+        emit userDictUpdate(QStringList() << word, false);
     }
 
     void UserDictionary::clear() {
@@ -110,6 +112,7 @@ namespace SpellCheck {
             clearUnsafe();
         }
         emit sizeChanged();
+        emit userDictCleared();
     }
 
     bool UserDictionary::empty() {

@@ -187,31 +187,32 @@ namespace AutoComplete {
     }
 #endif
 
-    KeywordsAutoCompleteModel::KeywordsAutoCompleteModel()
+    KeywordsAutoCompleteModel::KeywordsAutoCompleteModel(KeywordsCompletionsModel &keywordsCompletions):
+        m_KeywordsCompletion(keywordsCompletions)
     {
     }
 
     int KeywordsAutoCompleteModel::getCompletionsCount() {
-        return m_CompletionsModel.rowCount();
+        return m_KeywordsCompletion.rowCount();
     }
 
     QString KeywordsAutoCompleteModel::doGetCompletion(int completionID) {
-        return m_CompletionsModel.getCompletion(completionID);
+        return m_KeywordsCompletion.getCompletion(completionID);
     }
 
     QAbstractItemModel *KeywordsAutoCompleteModel::doGetCompletionsModel() {
-        return &m_CompletionsModel;
+        return &m_KeywordsCompletion;
     }
 
     void KeywordsAutoCompleteModel::doInitializeCompletions() {
-        m_CompletionsModel.sync();
+        m_KeywordsCompletion.sync();
     }
 
     void KeywordsAutoCompleteModel::clearCompletions() {
-        m_CompletionsModel.clear();
+        m_KeywordsCompletion.clear();
     }
 
     int KeywordsAutoCompleteModel::doAcceptCompletion(int index, bool withMetaAction) {
-        return m_CompletionsModel.acceptCompletion(index, withMetaAction);
+        return m_KeywordsCompletion.acceptCompletion(index, withMetaAction);
     }
 }

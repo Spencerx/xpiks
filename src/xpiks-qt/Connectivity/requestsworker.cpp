@@ -13,11 +13,10 @@
 #include <Models/Connectivity/proxysettings.h>
 
 namespace Connectivity {
-    RequestsWorker::RequestsWorker(Models::ProxySettings *proxySettings, QObject *parent) :
+    RequestsWorker::RequestsWorker(const Models::ProxySettings &proxySettings, QObject *parent) :
         QObject(parent),
         m_ProxySettings(proxySettings)
     {
-        Q_ASSERT(proxySettings != nullptr);
     }
 
     void RequestsWorker::sendRequestSync(std::shared_ptr<IConnectivityRequest> &item) {
@@ -35,7 +34,7 @@ namespace Connectivity {
         LOG_INFO << "Request:" << url;
 
         SimpleCurlRequest request(url);
-        request.setProxySettings(m_ProxySettings);
+        request.setProxySettings(&m_ProxySettings);
         request.addRawHeaders(item->getRawHeaders());
 
         Common::flag_t flags = item->getFlags();

@@ -21,7 +21,7 @@
 #include <Models/Connectivity/artworkuploader.h>
 #include <Services/AutoComplete/stringsautocompletemodel.h>
 #include <Models/Connectivity/ziparchiver.h>
-#include <Services/SpellCheck/spellcheckerservice.h>
+#include <Services/SpellCheck/spellcheckservice.h>
 #include <Models/Editing/deletekeywordsviewmodel.h>
 #include <Models/Connectivity/uploadinforepository.h>
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
@@ -38,12 +38,10 @@
 #endif
 
 namespace Helpers {
-    HelpersQmlWrapper::HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel *colorsModel):
+    HelpersQmlWrapper::HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel &colorsModel):
         m_Environment(environment),
         m_ColorsModel(colorsModel)
     {
-        Q_ASSERT(colorsModel != nullptr);
-
 #if defined(Q_OS_WIN) && !defined(INTEGRATION_TESTS)
         m_WinTaskbarButtonApplicable = QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS7;
         if (m_WinTaskbarButtonApplicable) {
@@ -135,7 +133,7 @@ namespace Helpers {
     }
 
     QString HelpersQmlWrapper::getAssetForTheme(const QString &assetName, int themeIndex) const {
-        QString themeName = m_ColorsModel->getThemeName(themeIndex);
+        QString themeName = m_ColorsModel.getThemeName(themeIndex);
         themeName.remove(QChar::Space);
         QString result = QString("qrc:/Graphics/%1/%2").arg(themeName.toLower()).arg(assetName);
         return result;

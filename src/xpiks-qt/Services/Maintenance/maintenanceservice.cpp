@@ -17,9 +17,7 @@
 #include "updatescleanupjobitem.h"
 #include "launchexiftooljobitem.h"
 #include "initializedictionariesjobitem.h"
-#include "movesettingsjobitem.h"
 #include "savesessionjobitem.h"
-#include "moveimagecachejobitem.h"
 #include "xpkscleanupjob.h"
 #include "updatebundlecleanupjobitem.h"
 #include <Helpers/asynccoordinator.h>
@@ -125,16 +123,6 @@ namespace Maintenance {
         std::shared_ptr<IMaintenanceItem> jobItem(new LogsCleanupJobItem(m_Environment));
         m_MaintenanceWorker->submitItem(jobItem);
 #endif
-    }
-
-    void MaintenanceService::moveSettings(Models::SettingsModel *settingsModel) {
-        std::shared_ptr<IMaintenanceItem> jobItem(new MoveSettingsJobItem(settingsModel));
-        m_MaintenanceWorker->submitFirst(jobItem);
-    }
-
-    void MaintenanceService::upgradeImagesCache(QMLExtensions::ImageCachingService *imageCachingService) {
-        std::shared_ptr<IMaintenanceItem> jobItem(new MoveImageCacheJobItem(imageCachingService));
-        m_MaintenanceWorker->submitItem(jobItem);
     }
 
     void MaintenanceService::saveSession(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,

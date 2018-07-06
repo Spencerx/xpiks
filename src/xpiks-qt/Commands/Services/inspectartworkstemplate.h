@@ -14,7 +14,7 @@
 #include <Commands/Base/icommandtemplate.h>
 
 namespace SpellCheck {
-    class SpellCheckerService;
+    class SpellCheckService;
 }
 
 namespace Warnings {
@@ -33,7 +33,7 @@ namespace Commands {
     class InspectArtworksTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
-        InspectArtworksTemplate(SpellCheck::SpellCheckerService &spellCheckService,
+        InspectArtworksTemplate(SpellCheck::SpellCheckService &spellCheckService,
                                 Warnings::WarningsService &warningsService,
                                 Models::SettingsModel &settingsModel);
 
@@ -43,7 +43,7 @@ namespace Commands {
         virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override { execute(snapshot); }
 
     private:
-        SpellCheck::SpellCheckerService &m_SpellCheckService;
+        SpellCheck::SpellCheckService &m_SpellCheckService;
         Warnings::WarningsService &m_WarningsService;
         Models::SettingsModel &m_SettingsModel;
     };

@@ -28,8 +28,7 @@ void shuffleString(QString &str) {
 }
 
 namespace Encryption {
-    SecretsManager::SecretsManager():
-        m_CommandManager(NULL)
+    SecretsManager::SecretsManager()
     {
         QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
         shuffleString(possibleCharacters);

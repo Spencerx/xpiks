@@ -50,7 +50,7 @@ namespace SpellCheck {
     {
         Q_OBJECT
     public:
-        DuplicatesReviewModel(QMLExtensions::ColorsModel *colorsModel);
+        DuplicatesReviewModel(QMLExtensions::ColorsModel &colorsModel);
 
     public:
         enum DuplicatesReviewModel_Roles {
@@ -93,7 +93,7 @@ namespace SpellCheck {
     private:
         std::vector<MetadataDuplicatesItem> m_DuplicatesList;
         QVector<size_t> m_PendingUpdates;
-        QMLExtensions::ColorsModel *m_ColorsModel;
+        QMLExtensions::ColorsModel &m_ColorsModel;
     };
 }
 

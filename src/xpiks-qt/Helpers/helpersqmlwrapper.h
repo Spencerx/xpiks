@@ -33,7 +33,7 @@ namespace Helpers {
     {
         Q_OBJECT
     public:
-        HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel *colorsModel);
+        HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel &colorsModel);
 
     public:
         Q_INVOKABLE bool isKeywordValid(const QString &keyword) const;
@@ -76,7 +76,7 @@ namespace Helpers {
         bool m_WinTaskbarButtonApplicable;
 #endif
         Common::ISystemEnvironment &m_Environment;
-        QMLExtensions::ColorsModel *m_ColorsModel;
+        QMLExtensions::ColorsModel &m_ColorsModel;
     };
 }
 

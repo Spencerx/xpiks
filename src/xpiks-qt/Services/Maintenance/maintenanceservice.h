@@ -25,16 +25,11 @@ namespace Translation {
 }
 
 namespace Models {
-    class SettingsModel;
     class SessionManager;
 }
 
 namespace Helpers {
     class AsyncCoordinator;
-}
-
-namespace QMLExtensions {
-    class ImageCachingService;
 }
 
 class QThread;
@@ -63,8 +58,6 @@ namespace Maintenance {
         void initializeDictionaries(Translation::TranslationManager *translationManager,
                                     Helpers::AsyncCoordinator *initCoordinator);
         void cleanupLogs();
-        void moveSettings(Models::SettingsModel *settingsModel);
-        void upgradeImagesCache(QMLExtensions::ImageCachingService *imageCachingService);
         void saveSession(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,
                          Models::SessionManager &sessionManager);
         void cleanupOldXpksBackups(const QString &directory);

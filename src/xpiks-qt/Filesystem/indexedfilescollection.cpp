@@ -9,8 +9,8 @@
  */
 
 #include "indexedfilescollection.h"
-#include "../MetadataIO/artworkssnapshot.h"
-#include "../Models/imageartwork.h"
+#include <Artworks/artworkssnapshot.h>
+#include <Artworks/imageartwork.h>
 
 namespace Filesystem {
     IndexedFilesCollection::IndexedFilesCollection(const Artworks::ArtworksSnapshot &snapshot,

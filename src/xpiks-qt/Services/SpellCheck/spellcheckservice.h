@@ -38,18 +38,18 @@ namespace Models {
 }
 
 namespace SpellCheck {
-    class SpellCheckerService: public QObject
+    class SpellCheckService: public QObject
     {
         Q_OBJECT
         Q_PROPERTY(int userDictWordsNumber READ getUserDictWordsNumber NOTIFY userDictWordsNumberChanged)
 
     public:
-        SpellCheckerService(Common::ISystemEnvironment &environment,
+        SpellCheckService(Common::ISystemEnvironment &environment,
                             Warnings::WarningsService &warningsService,
                             Models::SettingsModel &settingsModel,
                             Commands::AppMessages &messages);
 
-        virtual ~SpellCheckerService();
+        virtual ~SpellCheckService();
 
     public:
         void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
@@ -87,9 +87,6 @@ namespace SpellCheck {
         void spellCheckQueueIsEmpty();
         void serviceAvailable(bool afterRestart);
         void serviceDisabled();
-        void userDictWordsNumberChanged();
-        void userDictUpdate(const QStringList &keywords, bool overwritten);
-        void userDictCleared();
 
     private slots:
         void workerFinished();

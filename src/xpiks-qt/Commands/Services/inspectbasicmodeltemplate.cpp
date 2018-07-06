@@ -13,7 +13,7 @@
 #include <SpellCheck/spellcheckerservice.h>
 
 namespace Commands {
-    InspectBasicModelTemplate::InspectBasicModelTemplate(SpellCheck::SpellCheckerService &spellCheckService,
+    InspectBasicModelTemplate::InspectBasicModelTemplate(SpellCheck::SpellCheckService &spellCheckService,
                                                          Models::SettingsModel &settingsModel):
         m_SpellCheckService(spellCheckService),
         m_SettingsModel(settingsModel)

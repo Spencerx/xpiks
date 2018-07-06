@@ -474,6 +474,12 @@ namespace Plugins {
         return roles;
     }
 
+    PluginsWithActionsModel::PluginsWithActionsModel(PluginManager &pluginManager, QObject *parent):
+        QSortFilterProxyModel(parent)
+    {
+        setSourceModel(&pluginManager);
+    }
+
     int PluginsWithActionsModel::getOriginalIndex(int index) {
         QModelIndex originalIndex = mapToSource(this->index(index, 0));
         int row = originalIndex.row();

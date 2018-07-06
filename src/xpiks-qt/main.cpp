@@ -255,8 +255,8 @@ int main(int argc, char *argv[]) {
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     LOG_DEBUG << "Main view loaded";
 
-    auto *uiProvider = xpiks.getUIProvider();
-    uiProvider->setQmlEngine(&engine);
+    auto &uiProvider = xpiks.getUIProvider();
+    uiProvider.setQmlEngine(&engine);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(engine.rootObjects().at(0));
     imageCachingService.setScale(window->effectiveDevicePixelRatio());
     LOG_INFO << "Effective pixel ratio:" << window->effectiveDevicePixelRatio();

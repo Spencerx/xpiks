@@ -36,7 +36,6 @@ SOURCES += main.cpp \
     Helpers/logger.cpp \
     Helpers/helpersqmlwrapper.cpp \
     Connectivity/updateservice.cpp \
-    Services/SpellCheck/spellcheckerservice.cpp \
     Services/SpellCheck/spellcheckitem.cpp \
     Services/SpellCheck/spellcheckworker.cpp \
     Services/SpellCheck/spellchecksuggestionmodel.cpp \
@@ -95,7 +94,6 @@ SOURCES += main.cpp \
     Services/Maintenance/updatescleanupjobitem.cpp \
     Services/Maintenance/launchexiftooljobitem.cpp \
     Services/Maintenance/initializedictionariesjobitem.cpp \
-    Services/Maintenance/movesettingsjobitem.cpp \
     QMLExtensions/videocachingservice.cpp \
     QMLExtensions/videocachingworker.cpp \
     Helpers/filehelpers.cpp \
@@ -107,7 +105,6 @@ SOURCES += main.cpp \
     Storage/database.cpp \
     QMLExtensions/cachedimage.cpp \
     QMLExtensions/dbimagecacheindex.cpp \
-    Services/Maintenance/moveimagecachejobitem.cpp \
     QMLExtensions/cachedvideo.cpp \
     QMLExtensions/dbvideocacheindex.cpp \
     MetadataIO/cachedartwork.cpp \
@@ -210,7 +207,8 @@ SOURCES += main.cpp \
     Models/Editing/currenteditablemodel.cpp \
     Commands/Services/inspectbasicmodeltemplate.cpp \
     Models/Editing/quickbuffer.cpp \
-    Commands/Editing/findandreplacetemplate.cpp
+    Commands/Editing/findandreplacetemplate.cpp \
+    Services/SpellCheck/spellcheckservice.cpp
 
 RESOURCES += qml.qrc
 
@@ -255,7 +253,6 @@ HEADERS += \
     Helpers/loggingworker.h \
     Helpers/helpersqmlwrapper.h \
     Connectivity/updateservice.h \
-    Services/SpellCheck/spellcheckerservice.h \
     Services/SpellCheck/spellcheckitem.h \
     Services/SpellCheck/spellcheckworker.h \
     Services/SpellCheck/spellchecksuggestionmodel.h \
@@ -328,7 +325,6 @@ HEADERS += \
     Services/Maintenance/updatescleanupjobitem.h \
     Services/Maintenance/launchexiftooljobitem.h \
     Services/Maintenance/initializedictionariesjobitem.h \
-    Services/Maintenance/movesettingsjobitem.h \
     QMLExtensions/videocachingservice.h \
     QMLExtensions/videocachingworker.h \
     QMLExtensions/videocacherequest.h \
@@ -345,7 +341,6 @@ HEADERS += \
     QMLExtensions/previewstorage.h \
     QMLExtensions/cachedimage.h \
     QMLExtensions/dbimagecacheindex.h \
-    Services/Maintenance/moveimagecachejobitem.h \
     QMLExtensions/dbcacheindex.h \
     QMLExtensions/cachedvideo.h \
     QMLExtensions/dbvideocacheindex.h \
@@ -516,7 +511,8 @@ HEADERS += \
     Commands/appmessages.h \
     Models/Editing/quickbuffer.h \
     Commands/Editing/findandreplacetemplate.h \
-    Services/iservicebase.h
+    Services/iservicebase.h \
+    Services/SpellCheck/spellcheckservice.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

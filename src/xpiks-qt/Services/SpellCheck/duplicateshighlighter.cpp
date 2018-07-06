@@ -20,7 +20,7 @@
 
 namespace SpellCheck {
     DuplicatesHighlighter::DuplicatesHighlighter(QTextDocument *document,
-                                                 QMLExtensions::ColorsModel *colorsModel,
+                                                 QMLExtensions::ColorsModel &colorsModel,
                                                  SpellCheckErrorsInfo *errorsInfo,
                                                  bool highlightAll) :
         QSyntaxHighlighter(document),
@@ -28,7 +28,6 @@ namespace SpellCheck {
         m_ColorsModel(colorsModel),
         m_HighlighAll(highlightAll)
     {
-        Q_ASSERT(colorsModel != nullptr);
     }
 
     DuplicatesHighlighter::~DuplicatesHighlighter() {
@@ -38,8 +37,8 @@ namespace SpellCheck {
     void DuplicatesHighlighter::highlightBlock(const QString &text) {
         if ((m_SpellCheckErrors != nullptr) && !m_SpellCheckErrors->anyDuplicate()) { return; }
 
-        QColor modifiedColor = m_ColorsModel->artworkModifiedColor();
-        QColor darkColor = m_ColorsModel->defaultDarkColor();
+        QColor modifiedColor = m_ColorsModel.artworkModifiedColor();
+        QColor darkColor = m_ColorsModel.defaultDarkColor();
         QTextCharFormat duplicatesFormat;
         duplicatesFormat.setBackground(QBrush(modifiedColor));
         duplicatesFormat.setForeground(QBrush(darkColor));

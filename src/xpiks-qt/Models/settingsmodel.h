@@ -173,7 +173,7 @@ namespace Models {
         QString getProxyUser() const { return m_ProxySettings.m_User; }
         QString getProxyPassword() const { return m_ProxySettings.m_Password; }
         QString getProxyPort() const { return m_ProxySettings.m_Port; }
-        ProxySettings *getProxySettings() { return &m_ProxySettings; }
+        const ProxySettings &getProxySettings() { return m_ProxySettings; }
         bool getAutoCacheImages() const { return m_AutoCacheImages; }
         bool getVerboseUpload() const { return m_VerboseUpload; }
         bool getUseProgressiveSuggestionPreviews() const { return m_UseProgressiveSuggestionPreviews; }

@@ -77,11 +77,11 @@ namespace AutoComplete {
     {
         Q_OBJECT
     public:
-        KeywordsAutoCompleteModel();
+        KeywordsAutoCompleteModel(KeywordsCompletionsModel &keywordsCompletions);
 
     public:
-        std::shared_ptr<CompletionItem> getAcceptedCompletion(int completionID) { return m_CompletionsModel.getAcceptedCompletion(completionID); }
-        KeywordsCompletionsModel &getInnerModel() { return m_CompletionsModel; }
+        std::shared_ptr<CompletionItem> getAcceptedCompletion(int completionID) { return m_KeywordsCompletion.getAcceptedCompletion(completionID); }
+        KeywordsCompletionsModel &getInnerModel() { return m_KeywordsCompletion; }
 
         // AutoCompleteModel interface
     protected:
@@ -93,7 +93,7 @@ namespace AutoComplete {
         virtual int doAcceptCompletion(int index, bool withMetaAction) override;
 
     private:
-        KeywordsCompletionsModel m_CompletionsModel;
+        KeywordsCompletionsModel &m_KeywordsCompletion;
     };
 }
 

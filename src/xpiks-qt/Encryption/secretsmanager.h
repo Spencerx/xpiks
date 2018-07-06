@@ -16,19 +16,12 @@
 #include <QString>
 #include <QMutex>
 
-namespace Commands { class CommandManager; }
-
 namespace Encryption {
     class SecretsManager : public QObject {
         Q_OBJECT
 
     public:
         SecretsManager();
-
-        void setCommandManager(Commands::CommandManager *commandManager) {
-            Q_ASSERT(commandManager != NULL);
-            m_CommandManager = commandManager;
-        }
 
     public:
         void setMasterPasswordHash(const QString &hash);
@@ -71,7 +64,6 @@ namespace Encryption {
         QString m_DefaultMasterPassword;
         // used for checks in Upload dialog and changing MP
         QByteArray m_MasterPasswordHash;
-        Commands::CommandManager *m_CommandManager;
         QMutex m_EncodingMutex;
     };
 }

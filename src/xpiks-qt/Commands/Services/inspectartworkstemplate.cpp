@@ -16,7 +16,7 @@
 #include <Warnings/warningsservice.h>
 
 namespace Commands {
-    InspectArtworksTemplate::InspectArtworksTemplate(SpellCheck::SpellCheckerService &spellCheckService,
+    InspectArtworksTemplate::InspectArtworksTemplate(SpellCheck::SpellCheckService &spellCheckService,
                                                      Warnings::WarningsService &warningsService,
                                                      Models::SettingsModel &settingsModel):
         m_SpellCheckService(spellCheckService),

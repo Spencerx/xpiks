@@ -27,7 +27,7 @@ namespace SpellCheck {
         Q_OBJECT
     public:
         DuplicatesHighlighter(QTextDocument *document,
-                              QMLExtensions::ColorsModel *colorsModel,
+                              QMLExtensions::ColorsModel &colorsModel,
                               SpellCheckErrorsInfo *errorsInfo,
                               bool highlightAll = true);
         virtual ~DuplicatesHighlighter();
@@ -40,7 +40,7 @@ namespace SpellCheck {
 
     private:
         SpellCheckErrorsInfo *m_SpellCheckErrors;
-        QMLExtensions::ColorsModel *m_ColorsModel;
+        QMLExtensions::ColorsModel &m_ColorsModel;
         bool m_HighlighAll;
     };
 }

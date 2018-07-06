@@ -16,10 +16,10 @@ namespace Helpers {
         if (indices.empty()) { return; }
 
         int currentStart = indices[0];
-        const int indicesCount = indices.count();
+        const size_t indicesCount = indices.size();
         ranges.reserve(indicesCount/3);
 
-        for (int i = 1; i < indicesCount; ++i) {
+        for (size_t i = 1; i < indicesCount; ++i) {
             if (indices[i] - indices[i - 1] > 1) {
                 ranges.emplace_back(std::make_pair(currentStart, indices[i - 1]));
                 currentStart = indices[i];

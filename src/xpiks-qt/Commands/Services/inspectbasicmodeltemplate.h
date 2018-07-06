@@ -14,7 +14,7 @@
 #include <Commands/Base/icommandtemplate.h>
 
 namespace SpellCheck {
-    class SpellCheckerService;
+    class SpellCheckService;
 }
 
 namespace Warnings {
@@ -33,7 +33,7 @@ namespace Commands {
     class InspectBasicModelTemplate: public ICommandTemplate<Artworks::BasicKeywordsModel*>
     {
     public:
-        InspectBasicModelTemplate(SpellCheck::SpellCheckerService &spellCheckService,
+        InspectBasicModelTemplate(SpellCheck::SpellCheckService &spellCheckService,
                                   Models::SettingsModel &settingsModel);
 
     public:
@@ -41,7 +41,7 @@ namespace Commands {
         virtual void undo(const Artworks::BasicKeywordsModel *&basicModel) override { execute(basicModel); }
 
     private:
-        SpellCheck::SpellCheckerService &m_SpellCheckService;
+        SpellCheck::SpellCheckService &m_SpellCheckService;
         Models::SettingsModel &m_SettingsModel;
     };
 }

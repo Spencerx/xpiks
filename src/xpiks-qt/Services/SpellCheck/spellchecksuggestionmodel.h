@@ -37,7 +37,7 @@ namespace Artworks {
 
 namespace SpellCheck {
     class SpellSuggestionsItem;
-    class SpellCheckerService;
+    class SpellCheckService;
     class KeywordSpellSuggestions;
 
     typedef std::vector<std::shared_ptr<SpellSuggestionsItem> > SuggestionsVector;
@@ -50,7 +50,7 @@ namespace SpellCheck {
         Q_PROPERTY(bool anythingSelected READ getAnythingSelected NOTIFY anythingSelectedChanged)
 
     public:
-        SpellCheckSuggestionModel(SpellCheckerService &spellCheckerService, Commands::AppMessages &messages);
+        SpellCheckSuggestionModel(SpellCheckService &spellCheckerService, Commands::AppMessages &messages);
         virtual ~SpellCheckSuggestionModel();
 
     public:
@@ -101,7 +101,7 @@ namespace SpellCheck {
     private:
         std::vector<std::shared_ptr<SpellSuggestionsItem> > m_SuggestionsList;
         std::vector<std::shared_ptr<Artworks::MetadataOperatorLocker>> m_CheckedItems;
-        SpellCheckerService &m_SpellCheckerService;
+        SpellCheckService &m_SpellCheckerService;
         Commands::AppMessages &m_Messages;
     };
 }

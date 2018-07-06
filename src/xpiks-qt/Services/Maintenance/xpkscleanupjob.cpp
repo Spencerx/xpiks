@@ -11,8 +11,8 @@
 #include "xpkscleanupjob.h"
 #include <QFile>
 #include <QDirIterator>
-#include "../Common/logging.h"
-#include "../Helpers/constants.h"
+#include <Common/logging.h>
+#include <Helpers/constants.h>
 
 namespace Maintenance {
     XpksCleanupJob::XpksCleanupJob(const QString directoryPath):

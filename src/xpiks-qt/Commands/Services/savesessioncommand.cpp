@@ -9,9 +9,9 @@
  */
 
 #include "savesessioncommand.h"
-#include "../Models/artworkslistmodel.h"
-#include "../Maintenance/maintenanceservice.h"
-#include "../Models/sessionmanager.h"
+#include <Models/Artworks/artworkslistmodel.h>
+#include <Services/Maintenance/maintenanceservice.h>
+#include <Models/Session/sessionmanager.h>
 
 namespace Commands {
     SaveSessionCommand::SaveSessionCommand(Maintenance::MaintenanceService &maintenanceService,
@@ -25,6 +25,6 @@ namespace Commands {
 
     void SaveSessionCommand::execute() {
         LOG_DEBUG << "#";
-        m_MaintenanceService.saveSession(ArtworksListModel.snapshotAll(), &m_SessionManager);
+        m_MaintenanceService.saveSession(m_ArtworksListModel.snapshotAll(), &m_SessionManager);
     }
 }

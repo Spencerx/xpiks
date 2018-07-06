@@ -8,7 +8,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "spellcheckerservice.h"
+#include "spellcheckservice.h"
 #include <QThread>
 #include "spellcheckitem.h"
 #include <Artworks/artworkmetadata.h>
@@ -20,7 +20,7 @@
 #include <Helpers/cpphelpers.h>
 
 namespace SpellCheck {
-    SpellCheckerService::SpellCheckerService(Common::ISystemEnvironment &environment,
+    SpellCheckService::SpellCheckService(Common::ISystemEnvironment &environment,
                                              Warnings::WarningsService &warningsService,
                                              Models::SettingsModel &settingsModel,
                                              Commands::AppMessages &messages):
@@ -32,27 +32,27 @@ namespace SpellCheck {
         m_IsStopped(false)
     {
         QObject::connect(&m_UserDictionary, &UserDictionary::sizeChanged,
-                         this, &SpellCheckerService::userDictWordsNumberChanged);
+                         this, &SpellCheckService::userDictWordsNumberChanged);
 
         messages
                 .ofType<Artworks::BasicKeywordsModel*>()
                 .withID(Commands::AppMessages::SpellCheck)
-                .addListener(std::bind(&SpellCheckerService::submitItem, this,
+                .addListener(std::bind(&SpellCheckService::submitItem, this,
                                        std::placeholders::_1,
                                        Common::SpellCheckFlags::All));
 
         messages
                 .ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::SpellCheck)
-                .addListener(std::bind(&SpellCheckerService::submitArtworks, this,
+                .addListener(std::bind(&SpellCheckService::submitArtworks, this,
                                        std::placeholders::_1));
     }
 
-    SpellCheckerService::~SpellCheckerService() {
+    SpellCheckService::~SpellCheckService() {
         if (m_SpellCheckWorker != nullptr) {}
     }
 
-    void SpellCheckerService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
+    void SpellCheckService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
         if (m_SpellCheckWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
@@ -79,16 +79,16 @@ namespace SpellCheck {
         QObject::connect(m_SpellCheckWorker, &SpellCheckWorker::stopped, m_SpellCheckWorker, &SpellCheckWorker::deleteLater);
         QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 
-        QObject::connect(this, &SpellCheckerService::cancelSpellChecking,
+        QObject::connect(this, &SpellCheckService::cancelSpellChecking,
                          m_SpellCheckWorker, &SpellCheckWorker::cancel);
 
         QObject::connect(m_SpellCheckWorker, &SpellCheckWorker::queueIsEmpty,
-                         this, &SpellCheckerService::spellCheckQueueIsEmpty);
+                         this, &SpellCheckService::spellCheckQueueIsEmpty);
 
         QObject::connect(m_SpellCheckWorker, &SpellCheckWorker::stopped,
-                         this, &SpellCheckerService::workerFinished);
+                         this, &SpellCheckService::workerFinished);
         QObject::connect(m_SpellCheckWorker, &SpellCheckWorker::destroyed,
-                         this, &SpellCheckerService::workerDestroyed);
+                         this, &SpellCheckService::workerDestroyed);
 
         LOG_DEBUG << "starting thread...";
         thread->start();
@@ -98,7 +98,7 @@ namespace SpellCheck {
         emit serviceAvailable(m_RestartRequired);
     }
 
-    void SpellCheckerService::stopService() {
+    void SpellCheckService::stopService() {
         LOG_DEBUG << "#";
         if (m_SpellCheckWorker != NULL) {
             m_SpellCheckWorker->stopWorking();
@@ -109,12 +109,12 @@ namespace SpellCheck {
         m_IsStopped = true;
     }
 
-    bool SpellCheckerService::isBusy() const {
+    bool SpellCheckService::isBusy() const {
         bool isBusy = (m_SpellCheckWorker != NULL) && (m_SpellCheckWorker->hasPendingJobs());
         return isBusy;
     }
 
-    void SpellCheckerService::submitItem(Artworks::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags) {
+    void SpellCheckService::submitItem(Artworks::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags) {
         if (m_SpellCheckWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
@@ -130,7 +130,7 @@ namespace SpellCheck {
         m_SpellCheckWorker->submitItem(item);
     }
 
-    void SpellCheckerService::submitArtworks(const Artworks::ArtworksSnapshot &snapshot) {
+    void SpellCheckService::submitArtworks(const Artworks::ArtworksSnapshot &snapshot) {
         this->submitItems(
                     Helpers::map<std::shared_ptr<Artworks::ArtworkMetadataLocker>, Artworks::ArtworkMetadata*>(
                         snapshot.getRawData(),
@@ -139,7 +139,7 @@ namespace SpellCheck {
         }));
     }
 
-    SpellCheckWorker::batch_id_t SpellCheckerService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck) {
+    SpellCheckWorker::batch_id_t SpellCheckService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck) {
         if (m_SpellCheckWorker == NULL) { return INVALID_BATCH_ID; }
         if (m_IsStopped) { return INVALID_BATCH_ID; }
 
@@ -170,7 +170,7 @@ namespace SpellCheck {
         return batchID;
     }
 
-    SpellCheckWorker::batch_id_t SpellCheckerService::submitItems(const std::vector<Artworks::BasicKeywordsModel *> &itemsToCheck) {
+    SpellCheckWorker::batch_id_t SpellCheckService::submitItems(const std::vector<Artworks::BasicKeywordsModel *> &itemsToCheck) {
         if (m_SpellCheckWorker == NULL) { return INVALID_BATCH_ID; }
         if (m_IsStopped) { return INVALID_BATCH_ID; }
 
@@ -202,7 +202,7 @@ namespace SpellCheck {
     }
 
     // used for spellchecking after adding a word to user dictionary
-    void SpellCheckerService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck,
+    void SpellCheckService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck,
                                           const QStringList &wordsToCheck) {
         if (m_SpellCheckWorker == NULL) { return; }
         if (m_IsStopped) { return; }
@@ -232,7 +232,7 @@ namespace SpellCheck {
         m_SpellCheckWorker->submitSeparator();
     }
 
-    QStringList SpellCheckerService::suggestCorrections(const QString &word) const {
+    QStringList SpellCheckService::suggestCorrections(const QString &word) const {
         if (m_SpellCheckWorker == NULL) {
             LOG_DEBUG << "Worker is null";
             return QStringList();
@@ -242,16 +242,16 @@ namespace SpellCheck {
         return corrections;
     }
 
-    void SpellCheckerService::restartWorker() {
+    void SpellCheckService::restartWorker() {
         m_RestartRequired = true;
         stopService();
     }
 
-    int SpellCheckerService::getUserDictWordsNumber() {
+    int SpellCheckService::getUserDictWordsNumber() {
         return m_UserDictionary.size();
     }
 
-    QStringList SpellCheckerService::getUserDictionary() {
+    QStringList SpellCheckService::getUserDictionary() {
         return m_UserDictionary.getWords();
     }
 
@@ -261,21 +261,20 @@ namespace SpellCheck {
     }
 #endif
 
-    void SpellCheckerService::updateUserDictionary(const QStringList &words) {
+    void SpellCheckService::updateUserDictionary(const QStringList &words) {
         LOG_INFO << words;
         m_UserDictionary.reset(words);
         m_UserDictionary.save();
-        emit userDictUpdate(words, true);
     }
 
-    void SpellCheckerService::cancelCurrentBatch() {
+    void SpellCheckService::cancelCurrentBatch() {
         LOG_DEBUG << "#";
         if (m_SpellCheckWorker == NULL) { return; }
 
         m_SpellCheckWorker->cancelPendingJobs();
     }
 
-    bool SpellCheckerService::hasAnyPending() {
+    bool SpellCheckService::hasAnyPending() {
         bool hasPending = false;
 
         if (m_SpellCheckWorker != NULL) {
@@ -285,23 +284,21 @@ namespace SpellCheck {
         return hasPending;
     }
 
-    void SpellCheckerService::addWordToUserDictionary(const QString &word) {
+    void SpellCheckService::addWordToUserDictionary(const QString &word) {
         m_UserDictionary.addWord(word);
         m_UserDictionary.save();
-        emit userDictUpdate(QStringList() << word, false);
     }
 
-    void SpellCheckerService::clearUserDictionary() {
+    void SpellCheckService::clearUserDictionary() {
         m_UserDictionary.clear();
         m_UserDictionary.save();
-        emit userDictCleared();
     }
 
-    void SpellCheckerService::workerFinished() {
+    void SpellCheckService::workerFinished() {
         LOG_DEBUG << "#";
     }
 
-    void SpellCheckerService::workerDestroyed(QObject *object) {
+    void SpellCheckService::workerDestroyed(QObject *object) {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
         m_SpellCheckWorker = NULL;
@@ -313,7 +310,7 @@ namespace SpellCheck {
         }
     }
 
-    Common::WordAnalysisFlags SpellCheckerService::getWordAnalysisFlags() const {
+    Common::WordAnalysisFlags SpellCheckService::getWordAnalysisFlags() const {
         Common::WordAnalysisFlags result = Common::WordAnalysisFlags::None;
         if (m_SettingsModel.getUseSpellCheck()) {
             Common::SetFlag(result, Common::WordAnalysisFlags::Spelling);
@@ -325,7 +322,7 @@ namespace SpellCheck {
         return result;
     }
 
-    QString SpellCheckerService::getDictsRoot() const {
+    QString SpellCheckService::getDictsRoot() const {
         QString resourcesPath;
 #ifdef INTEGRATION_TESTS
         resourcesPath = STRINGIZE(DEPS_DIR);

@@ -24,10 +24,9 @@
 #include <Common/logging.h>
 
 namespace SpellCheck {
-    DuplicatesReviewModel::DuplicatesReviewModel(QMLExtensions::ColorsModel *colorsModel):
+    DuplicatesReviewModel::DuplicatesReviewModel(QMLExtensions::ColorsModel &colorsModel):
         m_ColorsModel(colorsModel)
     {
-        Q_ASSERT(colorsModel != nullptr);
     }
 
     void DuplicatesReviewModel::setupModel(Artworks::BasicMetadataModel *basicModel) {

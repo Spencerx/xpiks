@@ -13,8 +13,8 @@
 #include <string>
 #include <cstring>
 #include <cstdlib>
-#include "../Models/proxysettings.h"
-#include "../Common/logging.h"
+#include <Models/Connectivity/proxysettings.h>
+#include <Common/logging.h>
 #include "ftphelpers.h"
 
 struct MemoryStruct {
@@ -56,7 +56,7 @@ namespace Connectivity {
         m_RawHeaders.append(headers);
     }
 
-    void SimpleCurlRequest::setProxySettings(Models::ProxySettings *proxySettings) {
+    void SimpleCurlRequest::setProxySettings(const Models::ProxySettings *proxySettings) {
         m_ProxySettings = proxySettings;
     }
 

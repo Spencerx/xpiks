@@ -32,16 +32,65 @@
 #include <Commands/Services/backupartworkstemplate.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
-
+    m_SettingsModel(environment),
+    m_DatabaseManager(environment),
+    m_SessionManager(environment),
+    m_CommandManager(m_UndoRedoManager),
+    m_SwitcherModel(environment),
+    m_PresetsModel(environment, m_Messages),
+    m_FilteredPresetsModel(m_PresetsModel),
+    m_KeywordsCompletions(),
+    m_KeywordsAutoCompleteModel(m_KeywordsCompletions),
+    m_CurrentEditableModel(m_Messages),
+    m_RecentDirectorieModel(environment),
+    m_RecentFileModel(environment),
+    m_ArtworksRepository(m_RecentDirectorieModel),
+    m_FilteredArtworksRepository(m_ArtworksRepository),
+    m_ArtworksListModel(m_ArtworksRepository, m_Messages),
+    m_ArtworksUpdateHub(m_ArtworksListModel, m_Messages),
+    m_CombinedArtworksModel(m_CommandManager, m_PresetsModel, m_KeywordsCompletions, m_Messages),
+    m_QuickBuffer(m_Messages, m_CurrentEditableModel, m_CommandManager),
+    m_ReplaceModel(m_ColorsModel, m_CommandManager, m_Messages),
+    m_DeleteKeywordsModel(m_CommandManager),
+    m_ArtworkProxyModel(m_Messages, m_CommandManager, m_PresetsModel, m_KeywordsCompletions),
+    m_DuplicatesModel(m_ColorsModel),
+    m_SecretsManager(),
+    m_UploadInfoRepository(environment, m_SecretsManager),
+    m_ZipArchiver(m_Messages),
+    m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
+    m_ApiClients(m_SecretsStorage.get()),
+    m_FtpCoordinator(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel)),
+    m_ArtworkUploader(environment, m_UploadInfoRepository, m_Messages, m_SettingsModel),
+    m_MaintenanceService(environment),
+    m_AutoCompleteService(m_KeywordsAutoCompleteModel, m_PresetsModel, m_SettingsModel),
+    m_RequestsService(m_SettingsModel.getProxySettings()),
+    m_WarningsSettingsModel(environment, m_RequestsService),
+    m_WarningsService(m_WarningsSettingsModel),
+    m_SpellCheckerService(environment, m_WarningsService, m_SettingsModel, m_Messages),
+    m_MetadataIOService(),
+    m_ImageCachingService(environment, m_DatabaseManager),
+    m_TranslationService(),
+    m_VideoCachingService(environment, m_DatabaseManager, m_SwitcherModel),
+    m_UpdateService(environment, m_SettingsModel, m_SwitcherModel, m_MaintenanceService),
+    m_TelemetryService(m_SwitcherModel, m_SettingsModel, m_Messages),
+    m_LanguagesModel(m_SettingsModel),
+    m_UIManager(environment, m_SettingsModel),
+    m_UserDictionary(environment),
+    m_UserDictEditModel(m_UserDictionary),
+    m_WarningsModel(m_ArtworksListModel, m_WarningsSettingsModel),
+    m_TranslationManager(environment, m_TranslationService),
+    m_CsvExportPlans(environment, m_RequestsService),
+    m_CsvExportModel(m_CsvExportPlans, m_Messages),
+    m_MetadataReadingHub(m_MetadataIOService, m_Messages),
+    m_MetadataIOCoordinator(m_MetadataReadingHub, m_SettingsModel, m_SwitcherModel, m_VideoCachingService),
+    m_FilteredArtworksListModel(m_ArtworksListModel, m_Messages, m_CommandManager, m_PresetsModel, m_KeywordsCompletions),
+    m_SpellCheckSuggestionModel(m_SpellCheckerService, m_Messages),
+    m_KeywordsSuggestor(m_ApiClients, m_RequestsService, m_SwitcherModel, m_SettingsModel, m_Messages, environment),
+    m_PluginManager(environment, m_CommandManager, m_PresetsModel, m_DatabaseManager,
+                    m_RequestsService, m_ApiClients, m_CurrentEditableModel, m_UIManager),
+    m_PluginsWithActions(m_PluginManager),
+    m_HelpersQmlWrapper(environment, m_ColorsModel)
 {
-
-    m_WarningsModel.setSourceModel(&m_ArtworksListModel);
-    m_WarningsModel.setWarningsSettingsModel(m_WarningsService.getWarningsSettingsModel());
-
-    m_ArtworksUpdateHub.setStandardRoles(m_ArtworksListModel.getStandardUpdateRoles());
-
-    m_PluginsWithActions.setSourceModel(&m_PluginManager);
-
     QObject::connect(&m_InitCoordinator, &Helpers::AsyncCoordinator::statusReported,
                      this, &XpiksApp::servicesInitialized);
 }
@@ -62,7 +111,7 @@ bool XpiksApp::getPluginsAvailable() const {
     return result;
 }
 
-Plugins::UIProvider *XpiksApp::getUIProvider() {
+Plugins::UIProvider &XpiksApp::getUIProvider() {
     return m_PluginManager.getUIProvider();
 }
 
@@ -85,7 +134,6 @@ void XpiksApp::initialize() {
     m_RecentFileModel.initialize();
 
     connectEntitiesSignalsSlots();
-    injectActionsTemplates();
 
     m_LanguagesModel.initFirstLanguage();
     m_LanguagesModel.loadLanguages();
@@ -120,7 +168,7 @@ void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("languagesModel", &m_LanguagesModel);
     context->setContextProperty("i18", &m_LanguagesModel);
     context->setContextProperty("uiColors", &m_ColorsModel);
-    context->setContextProperty("acSource", &m_AutoCompleteModel);
+    context->setContextProperty("acSource", &m_KeywordsAutoCompleteModel);
     context->setContextProperty("replaceModel", &m_ReplaceModel);
     context->setContextProperty("presetsModel", &m_PresetsModel);
     context->setContextProperty("filteredPresetsModel", &m_FilteredPresetsModel);
@@ -172,7 +220,7 @@ void XpiksApp::start() {
 
     m_AfterInitCalled = true;
     std::shared_ptr<Services::ServiceStartParams> emptyParams;
-    auto coordinatorParams = std::make_shared(new Helpers::AsyncCoordinatorStartParams(&m_InitCoordinator));
+    auto coordinatorParams = std::make_shared<Helpers::AsyncCoordinatorStartParams>(&m_InitCoordinator);
 
     bool dbInitialized = m_DatabaseManager.initialize();
     Q_ASSERT(dbInitialized);
@@ -182,10 +230,10 @@ void XpiksApp::start() {
 
     m_MaintenanceService.startService();
     m_ImageCachingService.startService(coordinatorParams);
-    m_VideoCachingService.startService();
-    m_MetadataIOService.startService();
+    m_MetadataIOService.startService(m_DatabaseManager, m_ArtworksUpdateHub);
+    m_VideoCachingService.startService(m_ImageCachingService, m_ArtworksUpdateHub, m_MetadataIOService);
 
-    m_SpellCheckerService.startService(coordinatorParams, m_WarningsService);
+    m_SpellCheckerService.startService(coordinatorParams);
     m_WarningsService.startService(emptyParams);
     m_AutoCompleteService.startService(coordinatorParams);
     m_TranslationService.startService(coordinatorParams);
@@ -205,7 +253,7 @@ void XpiksApp::start() {
     m_UploadInfoRepository.initializeConfig();
     m_PresetsModel.initializePresets();
     m_CsvExportModel.initializeExportPlans(&m_InitCoordinator);
-    m_KeywordsSuggestor.initSuggestionEngines();
+    m_KeywordsSuggestor.initSuggestionEngines(m_MetadataIOService);
     m_UpdateService.initialize();
 }
 
@@ -218,8 +266,6 @@ void XpiksApp::stop() {
 #ifdef WITH_PLUGINS
     m_PluginManager.unloadPlugins();
 #endif
-
-    m_MainDelegator.clearCurrentItem();
 
     m_ArtworksRepository.stopListeningToUnavailableFiles();
 
@@ -243,7 +289,7 @@ void XpiksApp::stop() {
     m_DatabaseManager.prepareToFinalize();
 
     // we have a second for important? stuff
-    m_TelemetryService.reportAction(Connectivity::UserAction::Close);
+    m_TelemetryService.reportAction((int)Connectivity::UserAction::Close);
     m_TelemetryService.stopReporting();
     m_RequestsService.stopService();
 }
@@ -267,8 +313,8 @@ void XpiksApp::setupWindow(QQuickWindow *window) {
     QObject::connect(screen, &QScreen::physicalDotsPerInchChanged,
                      &m_UIManager, &Models::UIManager::onScreenDpiChanged);
 
-    auto *uiProvider = m_PluginManager.getUIProvider();
-    uiProvider->setRoot(window->contentItem());
+    auto &uiProvider = m_PluginManager.getUIProvider();
+    uiProvider.setRoot(window->contentItem());
 }
 
 void XpiksApp::shutdown() {
@@ -295,7 +341,7 @@ void XpiksApp::debugCrash() {
 
 void XpiksApp::addFiles(const QList<QUrl> &urls) {
     LOG_DEBUG << urls.size() << "urls";
-    Common::AddFilesFlags flags = 0;
+    Common::AddFilesFlags flags = Common::AddFilesFlags::None;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
 
     std::shared_ptr<Filesystem::IFilesCollection> files(
@@ -306,7 +352,7 @@ void XpiksApp::addFiles(const QList<QUrl> &urls) {
 
 void XpiksApp::addDirectories(const QList<QUrl> &urls) {
     LOG_DEBUG << urls.size() << "urls";
-    Common::AddFilesFlags flags = 0;
+    Common::AddFilesFlags flags = Common::AddFilesFlags::None;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
     Common::SetFlag(flags, Common::AddFilesFlags::FlagIsFullDirectory);
 
@@ -318,7 +364,7 @@ void XpiksApp::addDirectories(const QList<QUrl> &urls) {
 
 void XpiksApp::dropItems(const QList<QUrl> &urls) {
     LOG_DEBUG << urls.size() << "urls";
-    Common::AddFilesFlags flags = 0;
+    Common::AddFilesFlags flags = Common::AddFilesFlags::None;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
 
     std::shared_ptr<Filesystem::IFilesCollection> files(
@@ -329,20 +375,15 @@ void XpiksApp::dropItems(const QList<QUrl> &urls) {
 
 void XpiksApp::removeSelectedArtworks() {
     LOG_DEBUG << "#";
-    auto removeResult = m_FilteredArtworksListModel.removeSelectedArtworks();
+    //auto removeResult = m_FilteredArtworksListModel.removeSelectedArtworks();
     Commands::SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager).execute();
-    m_UndoRedoManager.recordHistoryItem(
-                std::make_unique<UndoRedo::IHistoryItem>(
-                    new UndoRedo::RemoveArtworksHistoryItem()));
 }
 
 void XpiksApp::removeDirectory(int index) {
     int originalIndex = m_FilteredArtworksRepository.getOriginalIndex(index);
-    auto removeResult = m_ArtworksListModel.removeArtworksDirectory(originalIndex);
+    auto removeResult = m_ArtworksListModel.removeFilesFromDirectory(originalIndex);
     Commands::SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager).execute();
-    m_UndoRedoManager.recordHistoryItem(
-                std::make_unique<UndoRedo::IHistoryItem>(
-                    new UndoRedo::RemoveDirectoryHistoryItem()));
+
 }
 
 void XpiksApp::removeUnavailableFiles() {
@@ -368,9 +409,10 @@ void XpiksApp::removeUnavailableFiles() {
 
 void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
     using namespace Commands;
+    using CompositeTemplate = CompositeCommandTemplate<Artworks::ArtworkSessionSnapshot>;
+    using ArtworksTemplate = std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>>;
 
-    auto afterAddActions = std::make_shared<CompositeCommandTemplate>(
-    {
+    auto afterAddActions = std::make_shared<CompositeTemplate>(std::initializer_list<ArtworksTemplate>{
                     new ReadMetadataTemplate(m_MetadataIOService, m_MetadataIOCoordinator),
                     new GenerateThumbnailsTemplate(m_ImageCachingService, m_VideoCachingService),
                     new AutoImportMetadataCommand(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel),
@@ -381,10 +423,9 @@ void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &f
 
     auto addFilesCommand = std::make_shared<AddFilesCommand>(
                 files, flags, m_ArtworksListModel,
-                std::dynamic_pointer_cast<IArtworksCommandTemplate>(afterAddActions));
+                afterAddActions);
 
-    m_CommandManager.processCommand(
-                std::dynamic_pointer_cast<ICommand>(addFilesCommand));
+    m_CommandManager.processCommand(addFilesCommand);
 }
 
 void XpiksApp::afterServicesStarted() {
@@ -398,8 +439,8 @@ void XpiksApp::afterServicesStarted() {
         int newFilesAdded = m_SessionManager.restoreSession(m_ArtworksRepository);
         if (newFilesAdded > 0) {
             // immediately save restored session - to beat race between
-            // saving session from Add Command and restoring FULL_DIR flag
-            m_MainDelegator.saveSessionInBackground();
+            // saving session from Add Command and restoring FULL_DIR flag            
+            m_MaintenanceService.saveSession(m_ArtworksListModel.snapshotAll(), m_SessionManager);
         }
     }
 
@@ -414,13 +455,7 @@ void XpiksApp::afterServicesStarted() {
 
 void XpiksApp::executeMaintenanceJobs() {
     // integration test just don't have old ones
-    m_MetadataIOCoordinator.autoDiscoverExiftool();
-
-    m_MaintenanceService.moveSettings(&m_SettingsModel);
-#ifdef QT_DEBUG
-    m_MaintenanceService.upgradeImagesCache(&m_ImageCachingService);
-#endif
-
+    m_MaintenanceService.launchExiftool(m_SettingsModel.getExifToolPath());
     m_MaintenanceService.cleanupLogs();
     m_MaintenanceService.cleanupUpdatesArtifacts();
 }
@@ -441,9 +476,9 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::spellCheckDisabled,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckDisabled);
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::duplicatesCheckDisabled,
-                     m_ArtworksListModel, &Models::ArtworksListModel::onDuplicatesDisabled);
+                     &m_ArtworksListModel, &Models::ArtworksListModel::onDuplicatesDisabled);
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::spellCheckRestarted,
-                     m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckRestarted);
+                     &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckRestarted);
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::exiftoolSettingChanged,
                      &m_MaintenanceService, &Maintenance::MaintenanceService::onExiftoolPathChanged);
 
@@ -452,13 +487,13 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_MaintenanceService, &Maintenance::MaintenanceService::exiftoolDetected,
                      &m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::onRecommendedExiftoolFound);
 
-    QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::writingWorkersFinished,
+    QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onMetadataWritingFinished);
 
     QObject::connect(&m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::clearCurrentEditable,
-                     &m_CurrentEditable, &Models::CurrentEditableModel::onClearCurrentEditable);
+                     &m_CurrentEditableModel, &Models::CurrentEditableModel::onClearCurrentEditable);
 
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::serviceAvailable,
+    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckService::serviceAvailable,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckerAvailable);
 
     QObject::connect(&m_ArtworksRepository, &Models::ArtworksRepository::selectionChanged,
@@ -495,23 +530,8 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
                      &m_ArtworksListModel, &Models::ArtworksListModel::modifiedArtworksCountChanged);
 
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,
-                     &m_ArtworksListModel, &Models::ArtworksListModel::userDictUpdateHandler);
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictCleared,
-                     &m_ArtworksListModel, &Models::ArtworksListModel::userDictClearedHandler);
-
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,
-                     &m_CombinedArtworksModel, &Models::CombinedArtworksModel::userDictUpdateHandler);
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictCleared,
-                     &m_CombinedArtworksModel, &Models::CombinedArtworksModel::userDictClearedHandler);
-
     QObject::connect(&m_ArtworksListModel, &Models::ArtworksListModel::fileWithIndexUnavailable,
                      &m_ArtworkProxyModel, &Models::ArtworkProxyModel::itemUnavailableHandler);
-
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,
-                     &m_ArtworkProxyModel, &Models::ArtworkProxyModel::userDictUpdateHandler);
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictCleared,
-                     &m_ArtworkProxyModel, &Models::ArtworkProxyModel::userDictClearedHandler);
 
     QObject::connect(&m_ArtworkProxyModel, &Models::ArtworkProxyModel::warningsCouldHaveChanged,
                      &m_WarningsModel, &Warnings::WarningsModel::onWarningsCouldHaveChanged);
@@ -519,34 +539,30 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_ArtworkProxyModel, &Models::ArtworkProxyModel::duplicatesCouldHaveChanged,
                      &m_DuplicatesModel, &SpellCheck::DuplicatesReviewModel::onDuplicatesCouldHaveChanged);
 
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictUpdate,
-                     &m_QuickBuffer, &QuickBuffer::QuickBuffer::userDictUpdateHandler);
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckerService::userDictCleared,
-                     &m_QuickBuffer, &QuickBuffer::QuickBuffer::userDictClearedHandler);
+    QObject::connect(&m_UserDictionary, &SpellCheck::UserDictionary::userDictUpdate,
+                     &m_QuickBuffer, &Models::QuickBuffer::userDictUpdateHandler);
+    QObject::connect(&m_UserDictionary, &SpellCheck::UserDictionary::userDictCleared,
+                     &m_QuickBuffer, &Models::QuickBuffer::userDictClearedHandler);
+    QObject::connect(&m_UserDictionary, &SpellCheck::UserDictionary::userDictUpdate,
+                     &m_ArtworksListModel, &Models::ArtworksListModel::userDictUpdateHandler);
+    QObject::connect(&m_UserDictionary, &SpellCheck::UserDictionary::userDictCleared,
+                     &m_ArtworksListModel, &Models::ArtworksListModel::userDictClearedHandler);
+    QObject::connect(&m_UserDictionary, &SpellCheck::UserDictionary::userDictUpdate,
+                     &m_CombinedArtworksModel, &Models::CombinedArtworksModel::userDictUpdateHandler);
+    QObject::connect(&m_UserDictionary, &SpellCheck::UserDictionary::userDictCleared,
+                     &m_CombinedArtworksModel, &Models::CombinedArtworksModel::userDictClearedHandler);
+    QObject::connect(&m_UserDictionary, &SpellCheck::UserDictionary::userDictUpdate,
+                     &m_ArtworkProxyModel, &Models::ArtworkProxyModel::userDictUpdateHandler);
+    QObject::connect(&m_UserDictionary, &SpellCheck::UserDictionary::userDictCleared,
+                     &m_ArtworkProxyModel, &Models::ArtworkProxyModel::userDictClearedHandler);
 
 #ifdef WITH_PLUGINS
-    QObject::connect(&m_CurrentEditable, &Models::CurrentEditableModel::currentEditableChanged,
+    QObject::connect(&m_CurrentEditableModel, &Models::CurrentEditableModel::currentEditableChanged,
                      &m_PluginManager, &Plugins::PluginManager::onCurrentEditableChanged);
-
-    QObject::connect(&m_UndoRedoManager, &UndoRedo::UndoRedoManager::actionUndone,
-                     &m_PluginManager, &Plugins::PluginManager::onLastActionUndone);
 
     QObject::connect(&m_PresetsModel, &KeywordsPresets::PresetKeywordsModel::presetsUpdated,
                      &m_PluginManager, &Plugins::PluginManager::onPresetsUpdated);
 #endif
-}
-
-void XpiksApp::injectActionsTemplates() {
-    LOG_DEBUG << "#";
-    using ArtworkTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
-    auto inspectionTemplate = std::make_shared<ArtworkTemplate>(
-                new InspectArtworksTemplate(m_SpellCheckerService, m_WarningsService, m_SettingsModel));
-    auto backupTemplate = std::make_shared<ArtworkTemplate>(
-                new BackupArtworksTemplate(m_MetadataIOService));
-
-    m_ArtworksListModel.setEditCommandTemplate(
-                std::shared_ptr<ArtworkTemplate>(
-                    new Commands::CompositeCommandTemplate({inspectionTemplate, backupTemplate})));
 }
 
 void XpiksApp::servicesInitialized(int status) {

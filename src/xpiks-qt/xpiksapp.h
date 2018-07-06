@@ -45,13 +45,14 @@
 
 #include <Services/Warnings/warningsmodel.h>
 #include <Services/Warnings/warningsservice.h>
+#include <Services/Warnings/warningssettingsmodel.h>
 #include <Services/artworksupdatehub.h>
 #include <Services/AutoComplete/autocompleteservice.h>
 #include <Services/AutoComplete/keywordsautocompletemodel.h>
 #include <Services/Translation/translationmanager.h>
 #include <Services/Translation/translationservice.h>
 #include <Services/SpellCheck/duplicatesreviewmodel.h>
-#include <Services/SpellCheck/spellcheckerservice.h>
+#include <Services/SpellCheck/spellcheckservice.h>
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include <Services/SpellCheck/userdicteditmodel.h>
 #include <Services/Maintenance/maintenanceservice.h>
@@ -73,6 +74,8 @@
 #include <MetadataIO/csvexportmodel.h>
 #include <MetadataIO/metadataiocoordinator.h>
 #include <MetadataIO/metadataioservice.h>
+#include <MetadataIO/csvexportplansmodel.h>
+#include <MetadataIO/metadatareadinghub.h>
 
 #include <Models/Editing/quickbuffer.h>
 
@@ -101,7 +104,7 @@ public:
     bool getPluginsAvailable() const;
 
 public:
-    Plugins::UIProvider *getUIProvider();
+    Plugins::UIProvider &getUIProvider();
     QMLExtensions::ImageCachingService &getImageCachingService() { return m_ImageCachingService; }
 
 public:
@@ -132,7 +135,6 @@ private:
     void afterServicesStarted();
     void executeMaintenanceJobs();
     void connectEntitiesSignalsSlots();
-    void injectActionsTemplates();
 
 signals:
     void globalCloseRequested();
@@ -154,11 +156,14 @@ protected:
     Models::SessionManager m_SessionManager;
     UndoRedo::UndoRedoManager m_UndoRedoManager;
     Commands::CommandManager m_CommandManager;
+    Models::SwitcherModel m_SwitcherModel;
 
     // models
     KeywordsPresets::PresetKeywordsModel m_PresetsModel;
     KeywordsPresets::FilteredPresetKeywordsModel m_FilteredPresetsModel;
-    AutoComplete::KeywordsAutoCompleteModel m_AutoCompleteModel;
+    AutoComplete::KeywordsCompletionsModel m_KeywordsCompletions;
+    AutoComplete::KeywordsAutoCompleteModel m_KeywordsAutoCompleteModel;
+    Models::CurrentEditableModel m_CurrentEditableModel;
 
     // artworks
     Models::RecentDirectoriesModel m_RecentDirectorieModel;
@@ -166,6 +171,7 @@ protected:
     Models::ArtworksRepository m_ArtworksRepository;
     Models::FilteredArtworksRepository m_FilteredArtworksRepository;
     Models::ArtworksListModel m_ArtworksListModel;
+    Services::ArtworksUpdateHub m_ArtworksUpdateHub;
 
     // editing
     Models::CombinedArtworksModel m_CombinedArtworksModel;
@@ -176,40 +182,39 @@ protected:
     SpellCheck::DuplicatesReviewModel m_DuplicatesModel;
 
     // connectivity
+    Encryption::SecretsManager m_SecretsManager;
     Models::UploadInfoRepository m_UploadInfoRepository;
     Models::ZipArchiver m_ZipArchiver;
-    Encryption::SecretsManager m_SecretsManager;
     std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
     Microstocks::MicrostockAPIClients m_ApiClients;
     std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
     Models::ArtworkUploader m_ArtworkUploader;
 
-    // other
-    Models::LanguagesModel m_LanguagesModel;
-    Models::UIManager m_UIManager;
-    SpellCheck::UserDictionary m_UserDictionary;
-    SpellCheck::UserDictEditModel m_UserDictEditModel;
-    Models::CurrentEditableModel m_CurrentEditable;
-    Warnings::WarningsSettingsModel m_WarningsSettingsModel;
-    Warnings::WarningsModel m_WarningsModel;
-    Translation::TranslationManager m_TranslationManager;
-    Services::ArtworksUpdateHub m_ArtworksUpdateHub;
-    MetadataIO::CsvExportModel m_CsvExportModel;
-    Models::SwitcherModel m_SwitcherModel;
-    MetadataIO::MetadataIOCoordinator m_MetadataIOCoordinator;
-
     // services
     Maintenance::MaintenanceService m_MaintenanceService;
     AutoComplete::AutoCompleteService m_AutoCompleteService;
     Connectivity::RequestsService m_RequestsService;
+    Warnings::WarningsSettingsModel m_WarningsSettingsModel;
     Warnings::WarningsService m_WarningsService;
-    SpellCheck::SpellCheckerService m_SpellCheckerService;
+    SpellCheck::SpellCheckService m_SpellCheckerService;
     MetadataIO::MetadataIOService m_MetadataIOService;
     QMLExtensions::ImageCachingService m_ImageCachingService;
     Translation::TranslationService m_TranslationService;
     QMLExtensions::VideoCachingService m_VideoCachingService;
     Connectivity::UpdateService m_UpdateService;
     Connectivity::TelemetryService m_TelemetryService;
+
+    // other
+    Models::LanguagesModel m_LanguagesModel;
+    Models::UIManager m_UIManager;
+    SpellCheck::UserDictionary m_UserDictionary;
+    SpellCheck::UserDictEditModel m_UserDictEditModel;
+    Warnings::WarningsModel m_WarningsModel;
+    Translation::TranslationManager m_TranslationManager;
+    MetadataIO::CsvExportPlansModel m_CsvExportPlans;
+    MetadataIO::CsvExportModel m_CsvExportModel;
+    MetadataIO::MetadataReadingHub m_MetadataReadingHub;
+    MetadataIO::MetadataIOCoordinator m_MetadataIOCoordinator;
 
     // dependent
     Models::FilteredArtworksListModel m_FilteredArtworksListModel;

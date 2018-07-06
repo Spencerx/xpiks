@@ -30,7 +30,7 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        explicit RequestsService(Models::ProxySettings *proxySettings, QObject *parent = 0);
+        explicit RequestsService(const Models::ProxySettings &proxySettings, QObject *parent = 0);
 
     public:
         void startService();
@@ -50,7 +50,7 @@ namespace Connectivity {
 
     private:
         RequestsWorker *m_RequestsWorker;
-        Models::ProxySettings *m_ProxySettings;
+        const Models::ProxySettings &m_ProxySettings;
     };
 }
 

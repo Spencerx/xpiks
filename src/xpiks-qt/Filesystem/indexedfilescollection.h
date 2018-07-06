@@ -13,7 +13,7 @@
 
 #include "ifilescollection.h"
 
-namespace MetadataIO {
+namespace Artworks {
     class ArtworksSnapshot;
 }
 

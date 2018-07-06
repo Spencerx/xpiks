@@ -19,12 +19,11 @@
 #define NO_CACHE_ATTRIBUTE true
 
 namespace Connectivity {
-    RequestsService::RequestsService(Models::ProxySettings *proxySettings, QObject *parent):
+    RequestsService::RequestsService(const Models::ProxySettings &proxySettings, QObject *parent):
         QObject(parent),
         m_RequestsWorker(nullptr),
         m_ProxySettings(proxySettings)
     {
-        Q_ASSERT(proxySettings != nullptr);
     }
 
     void RequestsService::startService() {
