@@ -42,8 +42,8 @@ namespace Commands {
         void editTitle(Artworks::ArtworkMetadata *artwork) const;
 
     private:
-        QString m_Description;
         QString m_Title;
+        QString m_Description;
         QStringList m_Keywords;
         Common::ArtworkEditFlags m_EditFlags;
         std::vector<UndoRedo::ArtworkMetadataBackup> m_ArtworksBackups;

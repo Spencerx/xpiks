@@ -43,6 +43,7 @@ namespace Commands {
         // IArtworksCommandTemplate interface
     public:
         virtual void execute(const Artworks::ArtworksSnapshot &) override { execute(); }
+        virtual void undo(const Artworks::ArtworksSnapshot &) override {}
 
     private:
         Maintenance::MaintenanceService &m_MaintenanceService;

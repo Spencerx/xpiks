@@ -23,7 +23,7 @@ namespace Artworks {
 
 namespace Commands {
     template<typename T>
-    class TemplatedCommand: ICommand {
+    class TemplatedCommand: public ICommand {
         static_assert(std::is_move_constructible<T>::value, "T should have move constructor");
     public:
         TemplatedCommand(T &&argument, std::shared_ptr<ICommandTemplate<T>> &commandTemplate):

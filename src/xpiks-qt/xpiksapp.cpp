@@ -354,10 +354,7 @@ void XpiksApp::addDirectories(const QList<QUrl> &urls) {
     Common::AddFilesFlags flags = Common::AddFilesFlags::None;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
     Common::SetFlag(flags, Common::AddFilesFlags::FlagIsFullDirectory);
-
-    std::shared_ptr<Filesystem::IFilesCollection> directories(
-                new Filesystem::DirectoriesCollection(urls));
-
+    auto directories = std::make_shared<Filesystem::DirectoriesCollection>(urls);
     doAddFiles(directories, flags);
 }
 
@@ -406,22 +403,25 @@ void XpiksApp::removeUnavailableFiles() {
     }
 }
 
-void XpiksApp::doAddFiles(std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
+void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
     using namespace Commands;
     using CompositeTemplate = CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksTemplate = std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>>;
 
-    std::vector<ArtworksTemplate> templates;
-    templates.emplace_back(std::make_shared<ReadMetadataTemplate>(m_MetadataIOService, m_MetadataIOCoordinator));
-    templates.emplace_back(std::make_shared<GenerateThumbnailsTemplate>(m_ImageCachingService, m_VideoCachingService));
-    templates.emplace_back(std::make_shared<AutoImportMetadataCommand>(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel));
-    templates.emplace_back(std::make_shared<AddToRecentTemplate>(m_RecentFileModel));
-    templates.emplace_back(std::make_shared<SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager));
-    templates.emplace_back(std::make_shared<CleanupLegacyBackupsCommand>(files, m_MaintenanceService));
+    auto postAddActions = std::make_shared<CompositeTemplate, std::initializer_list<ArtworksTemplate>>(
+    {
+                                  std::make_shared<ReadMetadataTemplate>(m_MetadataIOService, m_MetadataIOCoordinator),
+                                  std::make_shared<GenerateThumbnailsTemplate>(m_ImageCachingService, m_VideoCachingService),
+                                  std::make_shared<AutoImportMetadataCommand>(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel),
+                                  std::make_shared<AddToRecentTemplate>(m_RecentFileModel),
+                                  std::make_shared<SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager),
+                                  std::make_shared<CleanupLegacyBackupsCommand>(files, m_MaintenanceService),
+                              });
+
+    ArtworksTemplate actions = postAddActions;
 
     auto addFilesCommand = std::make_shared<AddFilesCommand>(
-                files, flags, m_ArtworksListModel,
-                std::make_shared<CompositeTemplate>(templates));
+                               files, flags, m_ArtworksListModel, actions);
 
     m_CommandManager.processCommand(addFilesCommand);
 }
@@ -437,8 +437,9 @@ void XpiksApp::afterServicesStarted() {
         int newFilesAdded = m_SessionManager.restoreSession(m_ArtworksRepository);
         if (newFilesAdded > 0) {
             // immediately save restored session - to beat race between
-            // saving session from Add Command and restoring FULL_DIR flag            
-            m_MaintenanceService.saveSession(m_ArtworksListModel.snapshotAll(), m_SessionManager);
+            // saving session from Add Command and restoring FULL_DIR flag
+            auto snapshot = m_ArtworksListModel.snapshotAll();
+            m_MaintenanceService.saveSession(snapshot, m_SessionManager);
         }
     }
 

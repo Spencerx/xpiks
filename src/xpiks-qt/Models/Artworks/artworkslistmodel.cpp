@@ -140,7 +140,7 @@ namespace Models {
     std::unique_ptr<Artworks::SessionSnapshot> ArtworksListModel::snapshotAll() {
         std::unique_ptr<Artworks::SessionSnapshot> sessionSnapshot(
                     new Artworks::SessionSnapshot(
-                        filterAvailableArtworks<Artworks::ArtworkMetadata>([](Artworks::ArtworkMetadata *artwork, size_t) {return artwork;}),
+                        filterAvailableArtworks<Artworks::ArtworkMetadata*>([](Artworks::ArtworkMetadata *artwork, size_t) {return artwork;}),
                         m_ArtworksRepository.retrieveFullDirectories()));
         return sessionSnapshot;
     }
@@ -235,11 +235,11 @@ namespace Models {
         LOG_INFO << artworkIDs.size() << "artworks to find by IDs";
         if (artworkIDs.isEmpty()) { return; }
 
-        std::vector<int> indices = filterArtworks(
+        std::vector<int> indices = filterArtworks<int>(
                     [&artworkIDs](Artworks::ArtworkMetadata *artwork) { return artworkIDs.contains(artwork->getItemID()); },
                 [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
 
-        this->updateItems(Helpers::IndicesRanges(indices, rolesToUpdate));
+        this->updateItems(Helpers::IndicesRanges(indices), rolesToUpdate);
     }
 
     ArtworksListModel::ArtworksAddResult ArtworksListModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
@@ -256,7 +256,7 @@ namespace Models {
                 if (file.m_Type == Filesystem::ArtworkFileType::Vector) { continue; }
 
                 if (m_ArtworksRepository.accountFile(file.m_Path, directoryID, directoryFlags)) {
-                    ArtworkMetadata *artwork = createArtwork(file, directoryID);
+                    Artworks::ArtworkMetadata *artwork = createArtwork(file, directoryID);
                     m_ArtworkList.push_back(artwork);
                     snapshot.append(artwork);
                     connectArtworkSignals(artwork);

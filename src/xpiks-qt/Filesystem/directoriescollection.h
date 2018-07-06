@@ -18,7 +18,7 @@
 #include "filescollection.h"
 
 namespace Filesystem {
-    class DirectoriesCollection: IFilesCollection
+    class DirectoriesCollection: public IFilesCollection
     {
     public:
         DirectoriesCollection(const QStringList &directories);

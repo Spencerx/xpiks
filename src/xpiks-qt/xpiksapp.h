@@ -131,7 +131,7 @@ public:
     Q_INVOKABLE void removeUnavailableFiles();
 
 private:
-    void doAddFiles(std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);
+    void doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);
     void afterServicesStarted();
     void executeMaintenanceJobs();
     void connectEntitiesSignalsSlots();

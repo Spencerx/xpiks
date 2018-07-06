@@ -12,6 +12,7 @@
 #define AUTOIMPORTMETADATACOMMAND_H
 
 #include <Commands/Base/icommand.h>
+#include <Commands/Base/icommandtemplate.h>
 
 namespace MetadataIO {
     class MetadataIOCoordinator;
@@ -22,8 +23,12 @@ namespace Models {
     class SwitcherModel;
 }
 
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
 namespace Commands {
-    class AutoImportMetadataCommand: public ICommand
+    class AutoImportMetadataCommand: public ICommand, public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
         AutoImportMetadataCommand(MetadataIO::MetadataIOCoordinator &metadataIOCoordinator,
@@ -33,6 +38,10 @@ namespace Commands {
         // ICommand interface
     public:
         virtual void execute() override;
+
+        // IArtworksCommandTemplate interface
+    public:
+        virtual void execute(const Artworks::ArtworksSnapshot &) override { execute(); }
 
     private:
         MetadataIO::MetadataIOCoordinator &m_MetadataIOCoordinator;
