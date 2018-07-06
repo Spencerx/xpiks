@@ -64,7 +64,7 @@ namespace Artworks {
         bool containsKeyword(const QString &searchTerm, Common::SearchFlags searchFlags=Common::SearchFlags::Keywords);
         bool hasKeywordsSpellError() const;
         bool hasKeywordsDuplicates() const;
-        bool findKeywordsIndices(const QSet<QString> &keywordsToFind, bool caseSensitive, QVector<int> &foundIndices);
+        bool findKeywordsIndices(const QSet<QString> &keywordsToFind, bool caseSensitive, std::vector<int> &foundIndices);
         bool hasKeywords(const QStringList &keywordsList) const;
         QStringList generateStringList();
 
@@ -73,7 +73,7 @@ namespace Artworks {
         std::vector<KeywordItem> retrieveDuplicatedKeywords();
         Common::KeywordReplaceResult fixKeywordSpelling(size_t index, const QString &existing, const QString &replacement);
         bool processFailedKeywordReplacements(const std::vector<std::shared_ptr<SpellCheck::KeywordSpellSuggestions> > &candidatesForRemoval,
-                                              QVector<int> &indicesToRemove);
+                                              std::vector<int> &indicesToRemove);
 
     public:
         bool replaceInKeywords(const QString &replaceWhat, const QString &replaceTo,

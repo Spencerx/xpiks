@@ -11,7 +11,7 @@
 #include "cleanuplegacybackupscommand.h"
 #include <QFileInfo>
 #include <QSet>
-#include "../Maintenance/maintenanceservice.h"
+#include <Services/Maintenance/maintenanceservice.h>
 
 namespace Commands {
     CleanupLegacyBackupsCommand::CleanupLegacyBackupsCommand(const std::shared_ptr<Filesystem::IFilesCollection> &files,
@@ -19,8 +19,8 @@ namespace Commands {
         m_MaintenanceService(maintenanceService)
     {
         QSet<QString> dirs;
-        for (auto &f: files->getImages()) {
-            dirs.insert(QFileInfo(f).absolutePath());
+        for (auto &f: files->getFiles()) {
+            dirs.insert(QFileInfo(f.m_Path).absolutePath());
         }
 
         m_Directories = dirs.toList();

@@ -9,8 +9,8 @@
  */
 
 #include "removefilescommandbase.h"
-#include "../Models/artworkslistmodel.h"
-#include "../Models/artworksrepository.h"
+#include <Models/Artworks/artworkslistmodel.h>
+#include <Models/Artworks/artworksrepository.h>
 
 namespace Commands {
     RemoveFilesCommandBase::RemoveFilesCommandBase(Models::ArtworksListModel &artworksList,

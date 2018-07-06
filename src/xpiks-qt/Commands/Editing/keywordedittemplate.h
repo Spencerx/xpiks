@@ -35,6 +35,7 @@ namespace Commands {
         virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
+        std::vector<UndoRedo::ArtworkMetadataBackup> m_ArtworksBackups;
         int m_KeywordIndex;
         Common::KeywordEditFlags m_EditFlags;
         QString m_NextValue;

@@ -11,9 +11,9 @@
 #ifndef REMOVEFILESCOMMAND_H
 #define REMOVEFILESCOMMAND_H
 
-#include "icommand.h"
-#include "../Filesystem/ifilescollection.h"
-#include "../Models/artworkslistmodel.h"
+#include <Commands/Base/icommand.h>
+#include <Filesystem/ifilescollection.h>
+#include <Models/Artworks/artworkslistmodel.h>
 
 namespace Models {
     class ArtworksRepository;

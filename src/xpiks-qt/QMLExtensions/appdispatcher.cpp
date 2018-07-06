@@ -9,19 +9,21 @@
  */
 
 #include "appdispatcher.h"
-#include "../Commands/icommandmanager.h"
-#include "../Commands/iuicommandtemplate.h"
-#include "../Commands/templateduicommand.h"
+#include <Commands/Base/icommandmanager.h>
+#include <Commands/Base/iuicommandtemplate.h>
+#include <Commands/Base/templateduicommand.h>
 
 namespace QMLExtensions {
-    AppDispatcher::AppDispatcher(QObject *parent) : QObject(parent)
+    AppDispatcher::AppDispatcher(Commands::ICommandManager &commandManager, QObject *parent) :
+        QObject(parent),
+        m_CommandManager(commandManager)
     {
     }
 
     void AppDispatcher::dispatch(int commandID, QJSValue value) {
         using namespace Commands;
         auto range = m_ComandsMap.equal_range(commandID);
-        for (auto it = range.first; it <= range.second; it++) {
+        for (auto it = range.first; it != range.second; it++) {
             m_CommandManager.processCommand(
                         std::shared_ptr<ICommand>(
                             new TemplatedUICommand(value, it->second)));
@@ -29,6 +31,6 @@ namespace QMLExtensions {
     }
 
     void AppDispatcher::registerCommand(int commandID, const std::shared_ptr<Commands::IUICommandTemplate> &command) {
-        m_ComandsMap.insert(commandID, command);
+        m_ComandsMap.insert({commandID, command});
     }
 }

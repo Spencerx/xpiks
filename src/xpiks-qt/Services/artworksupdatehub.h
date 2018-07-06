@@ -53,10 +53,10 @@ namespace Services {
         void setStandardRoles(const QVector<int> &roles);
 
     public:
-        void updateArtwork(Common::ID_t artworkID, size_t lastKnownIndex, const QVector<int> &rolesToUpdate = QVector<int>());
+        void updateArtworkByID(Common::ID_t artworkID, size_t lastKnownIndex, const QVector<int> &rolesToUpdate = QVector<int>());
         void updateArtwork(Artworks::ArtworkMetadata *artwork);
-        void updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, UpdateMode updateMode=FastUpdate) const;
-        void updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks, UpdateMode updateMode=FastUpdate) const;
+        void updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, UpdateMode updateMode=FastUpdate);
+        void updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks, UpdateMode updateMode=FastUpdate);
 
 #ifdef INTEGRATION_TESTS
     public:
@@ -72,7 +72,7 @@ namespace Services {
 
     private:
         QMutex m_Lock;
-        QSet<int> m_StandardRoles;
+        QVector<int> m_StandardRoles;
         Models::ArtworksListModel &m_ArtworksListModel;
         std::vector<std::shared_ptr<ArtworkUpdateRequest> > m_UpdateRequests;
         QTimer m_UpdateTimer;

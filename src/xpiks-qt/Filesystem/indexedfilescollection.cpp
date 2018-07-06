@@ -24,8 +24,7 @@ namespace Filesystem {
             Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             const bool isImage = image != nullptr;
             m_Files.emplace_back(artwork->getFilepath(),
-                                 isImage ? ArtworkFileType::Image : ArtworkFileType::Video,
-                                 indices[i]);
+                                 isImage ? ArtworkFileType::Image : ArtworkFileType::Video);
             if (isImage && image->hasVectorAttached()) {
                 m_Files.emplace_back(image->getAttachedVectorPath(),
                                      ArtworkFileType::Vector);

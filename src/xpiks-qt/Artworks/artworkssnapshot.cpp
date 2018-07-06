@@ -108,7 +108,8 @@ namespace Artworks {
 
         m_ArtworksSnapshot.reserve(other.m_ArtworksSnapshot.size());
         for (auto &locker: other.m_ArtworksSnapshot) {
-            m_ArtworksSnapshot.emplace_back(locker->getArtworkMetadata());
+            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+            m_ArtworksSnapshot.emplace_back(std::make_shared<Artworks::ArtworkMetadataLocker>(artwork));
         }
     }
 

@@ -12,7 +12,7 @@
 #define REMOVESELECTEDFILESCOMMAND_H
 
 #include "removefilescommandbase.h"
-#include "../Helpers/indiceshelper.h"
+#include <Helpers/indiceshelper.h>
 
 namespace Commands {
     class RemoveFilesCommand: public RemoveFilesCommandBase

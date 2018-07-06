@@ -28,7 +28,6 @@
 #include <Commands/Base/compositecommandtemplate.h>
 #include <Commands/Services/generatethumbnailstemplate.h>
 #include <Commands/artworksupdatetemplate.h>
-#include <Commands/Services/inspectartworkstemplate.h>
 #include <Commands/Services/backupartworkstemplate.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):

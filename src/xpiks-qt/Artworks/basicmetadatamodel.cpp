@@ -12,17 +12,16 @@
 #include <QReadWriteLock>
 #include <QReadLocker>
 #include <QWriteLocker>
-#include "../SpellCheck/spellcheckitem.h"
-#include "../SpellCheck/spellsuggestionsitem.h"
-#include "../SpellCheck/spellcheckiteminfo.h"
-#include "../Helpers/keywordshelpers.h"
-#include "../Helpers/stringhelper.h"
-#include "../Common/defines.h"
-#include "../Helpers/indiceshelper.h"
-#include "../Common/flags.h"
+#include <Services/SpellCheck/spellcheckitem.h>
+#include <Services/SpellCheck/spellsuggestionsitem.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Helpers/keywordshelpers.h>
+#include <Helpers/stringhelper.h>
+#include <Common/defines.h>
+#include <Common/flags.h>
 
 namespace Artworks {
-    BasicMetadataModel::BasicMetadataModel(Hold &hold, QObject *parent):
+    BasicMetadataModel::BasicMetadataModel(Common::Hold &hold, QObject *parent):
         BasicKeywordsModel(hold, parent),
         m_SpellCheckInfo(NULL)
     { }
@@ -133,7 +132,7 @@ namespace Artworks {
         return BasicKeywordsModel::retrieveMisspelledKeywords();
     }
 
-    KeywordReplaceResult BasicMetadataModel::fixKeywordSpelling(size_t index, const QString &existing, const QString &replacement) {
+    Common::KeywordReplaceResult BasicMetadataModel::fixKeywordSpelling(size_t index, const QString &existing, const QString &replacement) {
         return BasicKeywordsModel::fixKeywordSpelling(index, existing, replacement);
     }
 
@@ -209,7 +208,7 @@ namespace Artworks {
         return result;
     }
 
-    bool BasicMetadataModel::replace(const QString &replaceWhat, const QString &replaceTo, SearchFlags flags) {
+    bool BasicMetadataModel::replace(const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags) {
         LOG_INFO << "[" << replaceWhat << "] -> [" << replaceTo << "] with flags:" << (int)flags;
         Q_ASSERT(!replaceWhat.isEmpty());
         Q_ASSERT(((int)flags & (int)Common::SearchFlags::Metadata) != 0);
@@ -345,7 +344,7 @@ namespace Artworks {
         clearKeywords();
     }
 
-    void BasicMetadataModel::notifySpellCheckResults(SpellCheckFlags flags) {
+    void BasicMetadataModel::notifySpellCheckResults(Common::SpellCheckFlags flags) {
         LOG_INTEGR_TESTS_OR_DEBUG << (int)flags;
 
         if (Common::HasFlag(flags, Common::SpellCheckFlags::Description)) {

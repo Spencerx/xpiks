@@ -13,14 +13,14 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 #include <algorithm>
-#include "../SpellCheck/spellcheckitem.h"
-#include "../SpellCheck/spellsuggestionsitem.h"
-#include "../SpellCheck/spellcheckiteminfo.h"
-#include "../Helpers/keywordshelpers.h"
-#include "../Helpers/stringhelper.h"
-#include "../Common/logging.h"
-#include "../Helpers/indiceshelper.h"
-#include "../Common/flags.h"
+#include <Services/SpellCheck/spellcheckitem.h>
+#include <Services/SpellCheck/spellsuggestionsitem.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Helpers/keywordshelpers.h>
+#include <Helpers/stringhelper.h>
+#include <Helpers/indiceshelper.h>
+#include <Common/logging.h>
+#include <Common/flags.h>
 
 namespace Artworks {
     BasicKeywordsModelImpl::BasicKeywordsModelImpl()
@@ -262,10 +262,10 @@ namespace Artworks {
         return hasDuplicate;
     }
 
-    bool BasicKeywordsModelImpl::findKeywordsIndices(const QSet<QString> &keywordsToFind, bool caseSensitive, QVector<int> &foundIndices) {
-        size_t size = m_KeywordsList.size();
+    bool BasicKeywordsModelImpl::findKeywordsIndices(const QSet<QString> &keywordsToFind, bool caseSensitive, std::vector<int> &foundIndices) {
+        const size_t size = m_KeywordsList.size();
 
-        foundIndices.reserve((int)size/2);
+        foundIndices.reserve(size/2);
 
         for (size_t i = 0; i < size; ++i) {
             QString keyword = m_KeywordsList.at(i).m_Value;
@@ -275,7 +275,7 @@ namespace Artworks {
             }
 
             if (keywordsToFind.contains(keyword)) {
-                foundIndices.append((int)i);
+                foundIndices.push_back((int)i);
             }
         }
 
@@ -369,7 +369,7 @@ namespace Artworks {
     }
 
     bool BasicKeywordsModelImpl::processFailedKeywordReplacements(const std::vector<std::shared_ptr<SpellCheck::KeywordSpellSuggestions> > &candidatesForRemoval,
-                                                                  QVector<int> &indicesToRemove) {
+                                                                  std::vector<int> &indicesToRemove) {
         LOG_INFO << candidatesForRemoval.size() << "candidates to remove";
         bool anyReplaced = false;
 
@@ -377,8 +377,8 @@ namespace Artworks {
             return anyReplaced;
         }
 
-        size_t size = candidatesForRemoval.size();
-        indicesToRemove.reserve((int)size);
+        const size_t size = candidatesForRemoval.size();
+        indicesToRemove.reserve(size);
 
         for (size_t i = 0; i < size; ++i) {
             auto &item = candidatesForRemoval.at(i);
@@ -393,13 +393,13 @@ namespace Artworks {
             QString sanitized = Helpers::doSanitizeKeyword(item->getReplacement());
 
             if (isReplacedADuplicate(index, existingPrev, sanitized)) {
-                indicesToRemove.append((int)index);
+                indicesToRemove.push_back((int)index);
             }
         }
 
         LOG_INFO << "confirmed" << indicesToRemove.size() << "duplicates to remove";
 
-        if (!indicesToRemove.isEmpty()) {
+        if (!indicesToRemove.empty()) {
             anyReplaced = true;
         }
 

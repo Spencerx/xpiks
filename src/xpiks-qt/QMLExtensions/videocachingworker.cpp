@@ -216,7 +216,7 @@ namespace QMLExtensions {
         LOG_INFO << "#" << item->getArtworkID() << thumbnailPath;
         item->setThumbnailPath(thumbnailPath);
 
-        m_ArtworksUpdateHub.updateArtwork(item->getArtworkID(), item->getLastKnownIndex(), m_RolesToUpdate);
+        m_ArtworksUpdateHub.updateArtworkByID(item->getArtworkID(), item->getLastKnownIndex(), m_RolesToUpdate);
 
         if (recacheArtwork) {
             // write video metadata set to the artwork

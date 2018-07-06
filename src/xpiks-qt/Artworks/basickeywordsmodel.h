@@ -11,7 +11,7 @@
 #ifndef BASICKEYWORDSMODEL_H
 #define BASICKEYWORDSMODEL_H
 
-#include "../Common/abstractlistmodel.h"
+#include <Common/abstractlistmodel.h>
 #include <QStringList>
 #include <QVariant>
 #include <QByteArray>
@@ -20,10 +20,10 @@
 #include <QHash>
 #include <QReadWriteLock>
 #include <memory>
-#include "../Common/flags.h"
-#include "../Common/wordanalysisresult.h"
+#include <Common/flags.h>
+#include <Common/wordanalysisresult.h>
 #include "keyword.h"
-#include "../Common/hold.h"
+#include <Common/hold.h>
 
 namespace SpellCheck {
     class SpellCheckQueryItem;

@@ -162,7 +162,6 @@ SOURCES += main.cpp \
     Commands/Services/backupartworkstemplate.cpp \
     Commands/Services/cleanuplegacybackupscommand.cpp \
     Commands/Services/generatethumbnailstemplate.cpp \
-    Commands/Services/inspectartworkstemplate.cpp \
     Commands/Services/savebackupstemplate.cpp \
     Commands/Services/savesessioncommand.cpp \
     Commands/Files/addfilescommand.cpp \
@@ -205,7 +204,6 @@ SOURCES += main.cpp \
     Models/Editing/currenteditableproxyartwork.cpp \
     Commands/Editing/deletekeywordstemplate.cpp \
     Models/Editing/currenteditablemodel.cpp \
-    Commands/Services/inspectbasicmodeltemplate.cpp \
     Models/Editing/quickbuffer.cpp \
     Commands/Editing/findandreplacetemplate.cpp \
     Services/SpellCheck/spellcheckservice.cpp
@@ -434,7 +432,6 @@ HEADERS += \
     Commands/Services/backupartworkstemplate.h \
     Commands/Services/cleanuplegacybackupscommand.h \
     Commands/Services/generatethumbnailstemplate.h \
-    Commands/Services/inspectartworkstemplate.h \
     Commands/Services/savebackupstemplate.h \
     Commands/Services/savesessioncommand.h \
     Commands/Files/addfilescommand.h \
@@ -505,7 +502,6 @@ HEADERS += \
     Commands/Editing/deletekeywordstemplate.h \
     Commands/Base/simplecommand.h \
     Models/Editing/currenteditablemodel.h \
-    Commands/Services/inspectbasicmodeltemplate.h \
     QMLExtensions/iuicommanddispatcher.h \
     Commands/messages.h \
     Commands/appmessages.h \

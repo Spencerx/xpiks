@@ -87,6 +87,7 @@ namespace SpellCheck {
         void spellCheckQueueIsEmpty();
         void serviceAvailable(bool afterRestart);
         void serviceDisabled();
+        void userDictWordsNumberChanged();
 
     private slots:
         void workerFinished();

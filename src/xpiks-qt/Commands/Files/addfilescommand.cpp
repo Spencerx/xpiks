@@ -9,9 +9,9 @@
  */
 
 #include "addfilescommand.h"
-#include "../Models/artworkslistmodel.h"
-#include "../Common/logging.h"
-#include "../Helpers/indicesranges.h"
+#include <Models/Artworks/artworkslistmodel.h>
+#include <Common/logging.h>
+#include <Helpers/indicesranges.h>
 
 namespace Commands {
     AddFilesCommand::AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> &files,
@@ -30,7 +30,7 @@ namespace Commands {
         m_OriginalCount = m_ArtworksListModel.getArtworksCount();
 
         auto addResult = m_ArtworksListModel.addFiles(m_Files, m_Flags);
-        m_AddedCount = addResult.m_Snapshot->size();
+        m_AddedCount = addResult.m_Snapshot.size();
 
         if (m_AddedArtworksTemplate) {
             m_AddedArtworksTemplate->execute(addResult.m_Snapshot);
@@ -40,10 +40,6 @@ namespace Commands {
 
         // clean resources if this will be stored in undo manager
         m_Files.reset();
-    }
-
-    int AddFilesCommand::addFiles() {
-        return addResult.m_Snapshot.size();
     }
 
     void AddFilesCommand::undo() {

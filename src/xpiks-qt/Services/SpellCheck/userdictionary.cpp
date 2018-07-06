@@ -10,9 +10,9 @@
 
 #include "userdictionary.h"
 #include <QFile>
-#include "../Common/logging.h"
-#include "../Helpers/constants.h"
-#include "../Helpers/stringhelper.h"
+#include <Common/logging.h>
+#include <Helpers/constants.h>
+#include <Helpers/stringhelper.h>
 
 namespace SpellCheck {
     UserDictionary::UserDictionary(Common::ISystemEnvironment &environment):
@@ -30,7 +30,7 @@ namespace SpellCheck {
                 addWord(word);
             }
         } else {
-            LOG_WARNING << "Cannot open" << filepath;
+            LOG_WARNING << "Cannot open" << m_Filepath;
         }
 
         LOG_INFO << "User Dictionary contains:" << this->size() << "item(s)";

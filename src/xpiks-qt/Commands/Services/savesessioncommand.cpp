@@ -25,6 +25,6 @@ namespace Commands {
 
     void SaveSessionCommand::execute() {
         LOG_DEBUG << "#";
-        m_MaintenanceService.saveSession(m_ArtworksListModel.snapshotAll(), &m_SessionManager);
+        m_MaintenanceService.saveSession(m_ArtworksListModel.snapshotAll(), m_SessionManager);
     }
 }

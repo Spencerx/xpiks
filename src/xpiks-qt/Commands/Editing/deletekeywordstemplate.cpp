@@ -9,7 +9,6 @@
  */
 
 #include "deletekeywordstemplate.h"
-#include <UndoRedo/modifyartworkshistoryitem.h>
 #include <Common/defines.h>
 #include <Common/logging.h>
 #include <Artworks/artworkmetadata.h>

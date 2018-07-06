@@ -19,6 +19,6 @@ namespace Commands {
 
     void SaveBackupsTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
-        m_MetadataIOService.writeArtworks(snapshot->getWeakSnapshot());
+        m_MetadataIOService.writeArtworks(snapshot);
     }
 }

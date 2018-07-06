@@ -9,8 +9,8 @@
  */
 
 #include "removefilescommand.h"
-#include "../Models/artworkslistmodel.h"
-#include "../Models/artworksrepository.h"
+#include <Models/Artworks/artworkslistmodel.h>
+#include <Models/Artworks/artworksrepository.h>
 
 namespace Commands {
     RemoveFilesCommand::RemoveFilesCommand(Helpers::IndicesRanges &ranges,

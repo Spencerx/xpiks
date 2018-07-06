@@ -9,9 +9,9 @@
  */
 
 #include "generatethumbnailstemplate.h"
-#include "../Artworks/artworkssnapshot.h"
-#include "../QMLExtensions/imagecachingservice.h"
-#include "../QMLExtensions/videocachingservice.h"
+#include <Artworks/artworkssnapshot.h>
+#include <QMLExtensions/imagecachingservice.h>
+#include <QMLExtensions/videocachingservice.h>
 
 namespace Commands {
     GenerateThumbnailsTemplate::GenerateThumbnailsTemplate(QMLExtensions::ImageCachingService &imageCachingService,

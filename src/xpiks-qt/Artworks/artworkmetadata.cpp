@@ -14,13 +14,13 @@
 #include <QStringBuilder>
 #include <QDir>
 #include <QFileInfo>
-#include "../Helpers/keywordshelpers.h"
-#include "../SpellCheck/spellsuggestionsitem.h"
-#include "../SpellCheck/spellcheckitem.h"
-#include "../SpellCheck/spellcheckiteminfo.h"
-#include "../Common/defines.h"
-#include "../MetadataIO/cachedartwork.h"
-#include "../MetadataIO/originalmetadata.h"
+#include <Helpers/keywordshelpers.h>
+#include <Services/SpellCheck/spellsuggestionsitem.h>
+#include <Services/SpellCheck/spellcheckitem.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Common/defines.h>
+#include <MetadataIO/cachedartwork.h>
+#include <MetadataIO/originalmetadata.h>
 
 // twice average English word length
 #define MAX_EDITING_PAUSE_RESTARTS 12
@@ -33,7 +33,7 @@
 #endif
 
 namespace Artworks {
-    ArtworkMetadata::ArtworkMetadata(const QString &filepath, qint64 ID, qint64 directoryID):
+    ArtworkMetadata::ArtworkMetadata(const QString &filepath, Common::ID_t ID, qint64 directoryID):
         Common::DelayedActionEntity(ARTWORK_EDITING_PAUSE, MAX_EDITING_PAUSE_RESTARTS),
         m_MetadataModel(m_Hold),
         m_FileSize(0),
@@ -467,7 +467,7 @@ namespace Artworks {
         return result;
     }
 
-    std::vector<Common::KeywordItem> ArtworkMetadata::retrieveMisspelledKeywords() {
+    std::vector<KeywordItem> ArtworkMetadata::retrieveMisspelledKeywords() {
         return m_MetadataModel.retrieveMisspelledKeywords();
     }
 

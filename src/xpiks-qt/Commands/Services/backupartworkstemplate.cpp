@@ -9,7 +9,7 @@
  */
 
 #include "backupartworkstemplate.h"
-#include "../MetadataIO/metadataioservice.h"
+#include <MetadataIO/metadataioservice.h>
 
 namespace Commands {
     BackupArtworksTemplate::BackupArtworksTemplate(MetadataIO::MetadataIOService &metadataIOService):
@@ -19,6 +19,6 @@ namespace Commands {
 
     void BackupArtworksTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
-        m_MetadataIOService.writeArtworks(snapshot.getWeakSnapshot());
+        m_MetadataIOService.writeArtworks(snapshot);
     }
 }

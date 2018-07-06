@@ -12,17 +12,17 @@
 #include <QReadWriteLock>
 #include <QReadLocker>
 #include <QWriteLocker>
-#include "../SpellCheck/spellcheckitem.h"
-#include "../SpellCheck/spellsuggestionsitem.h"
-#include "../SpellCheck/spellcheckiteminfo.h"
-#include "../Helpers/keywordshelpers.h"
-#include "../Helpers/stringhelper.h"
+#include <Services/SpellCheck/spellcheckitem.h>
+#include <Services/SpellCheck/spellsuggestionsitem.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Helpers/keywordshelpers.h>
+#include <Helpers/stringhelper.h>
 #include "defines.h"
-#include "../Helpers/indiceshelper.h"
+#include <Helpers/indiceshelper.h>
 #include "basickeywordsmodelimpl.h"
 
 namespace Artworks {
-    BasicKeywordsModel::BasicKeywordsModel(Hold &hold, QObject *parent):
+    BasicKeywordsModel::BasicKeywordsModel(Common::Hold &hold, QObject *parent):
         AbstractListModel(parent),
         m_Hold(hold),
         m_Impl(new BasicKeywordsModelImpl())
@@ -298,7 +298,6 @@ namespace Artworks {
 
         bool anyChanged = false;
         QVector<int> indicesToUpdate, indicesToRemove;
-        QVector<QPair<int, int> > rangesToRemove;
 
         const bool needToCheckKeywords = Common::HasFlag(flags, Common::SearchFlags::Keywords);
         if (needToCheckKeywords) {
@@ -306,8 +305,7 @@ namespace Artworks {
             Q_UNUSED(locker);
 
             if (m_Impl->replaceInKeywords(replaceWhat, replaceTo, flags, indicesToRemove, indicesToUpdate)) {
-                Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
-                AbstractListModel::removeItemsFromRanges(rangesToRemove);
+                AbstractListModel::removeItems(Helpers::IndicesRanges(indicesToRemove));
                 anyChanged = true;
             }
         }
@@ -315,7 +313,7 @@ namespace Artworks {
         if (anyChanged) {
             const int size = (int)m_Impl->getKeywordsSize();
             // update all because of easiness instead of calculating correct shifts after removal
-            this->updateItemsInRanges({{0, size - 1}}, QVector<int>() << KeywordRole);
+            this->updateItems(Helpers::IndicesRanges(size), QVector<int>() << KeywordRole);
         }
 
         return anyChanged;
@@ -323,21 +321,16 @@ namespace Artworks {
 
     bool BasicKeywordsModel::removeKeywords(const QSet<QString> &keywords, bool caseSensitive) {
         bool anyRemoved = false;
-
-        QVector<QPair<int, int> > rangesToRemove;
-
         {
             QWriteLocker locker(&m_KeywordsLock);
             Q_UNUSED(locker);
 
-            QVector<int> indicesToRemove;
+            std::vector<int> indicesToRemove;
             if (m_Impl->findKeywordsIndices(keywords, caseSensitive, indicesToRemove)) {
-                Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
-                AbstractListModel::removeItemsFromRanges(rangesToRemove);
+                AbstractListModel::removeItems(Helpers::IndicesRanges(indicesToRemove));
                 anyRemoved = true;
             }
         }
-
         return anyRemoved;
     }
 
@@ -417,21 +410,17 @@ namespace Artworks {
                                                               std::vector<std::shared_ptr<SpellCheck::KeywordSpellSuggestions> > &candidatesForRemoval)
     {
         bool anyReplaced = false;
-        QVector<QPair<int, int> > rangesToRemove;
-
         {
             QWriteLocker locker(&m_KeywordsLock);
             Q_UNUSED(locker);
 
-            QVector<int> indicesToRemove;
+            std::vector<int> indicesToRemove;
             if (m_Impl->processFailedKeywordReplacements(candidatesForRemoval, indicesToRemove)) {
-                Q_ASSERT(!indicesToRemove.isEmpty());
-                Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
-                AbstractListModel::removeItemsFromRanges(rangesToRemove);
+                Q_ASSERT(!indicesToRemove.empty());
+                AbstractListModel::removeItems(Helpers::IndicesRanges(indicesToRemove));
                 anyReplaced = true;
             }
         }
-
         return anyReplaced;
     }
 

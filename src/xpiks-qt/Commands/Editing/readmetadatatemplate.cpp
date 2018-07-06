@@ -9,8 +9,8 @@
  */
 
 #include "readmetadatatemplate.h"
-#include "../MetadataIO/metadataioservice.h"
-#include "../MetadataIO/metadataiocoordinator.h"
+#include <MetadataIO/metadataioservice.h>
+#include <MetadataIO/metadataiocoordinator.h>
 
 namespace Commands {
     ReadMetadataTemplate::ReadMetadataTemplate(MetadataIO::MetadataIOService &metadataIOService,

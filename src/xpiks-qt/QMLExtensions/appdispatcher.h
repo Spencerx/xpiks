@@ -21,11 +21,11 @@ namespace Commands {
 }
 
 namespace QMLExtensions {
-    class AppDispatcher : public QObject
+    class AppDispatcher : public QObject, public IUICommandDispatcher
     {
         Q_OBJECT
     public:
-        explicit AppDispatcher(QObject *parent = 0);
+        explicit AppDispatcher(Commands::ICommandManager &commandManager, QObject *parent = 0);
 
     public:
         Q_INVOKABLE void dispatch(int commandID, QJSValue value = QJSValue());

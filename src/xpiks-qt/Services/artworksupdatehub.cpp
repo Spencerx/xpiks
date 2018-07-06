@@ -36,14 +36,17 @@ namespace Services {
         messages
                 .ofType<Common::ID_t, size_t, QVector<int>>()
                 .withID(Commands::AppMessages::UpdateArtworks)
-                .addListener(std::bind(&ArtworksUpdateHub::updateArtwork, this));
+                .addListener(std::bind(&ArtworksUpdateHub::updateArtworkByID, this,
+                                       std::placeholders::_1,
+                                       std::placeholders::_2,
+                                       std::placeholders::_3));
     }
 
     void ArtworksUpdateHub::setStandardRoles(const QVector<int> &roles) {
-        m_StandardRoles = roles.toList().toSet();
+        m_StandardRoles = roles;
     }
 
-    void ArtworksUpdateHub::updateArtwork(Common::ID_t artworkID,
+    void ArtworksUpdateHub::updateArtworkByID(Common::ID_t artworkID,
                                           size_t lastKnownIndex,
                                           const QVector<int> &rolesToUpdate) {
         std::shared_ptr<ArtworkUpdateRequest> updateRequest(
@@ -58,18 +61,19 @@ namespace Services {
 
     void ArtworksUpdateHub::updateArtwork(Artworks::ArtworkMetadata *artwork) {
         Q_ASSERT(artwork != nullptr);
-        this->updateArtwork(artwork->getItemID(), artwork->getLastKnownIndex(), m_StandardRoles);
+        this->updateArtworkByID(artwork->getItemID(), artwork->getLastKnownIndex(), m_StandardRoles);
     }
 
-    void ArtworksUpdateHub::updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, UpdateMode updateMode) const {
+    void ArtworksUpdateHub::updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, UpdateMode updateMode) {
         decltype(m_UpdateRequests) requests;
         requests.reserve(artworks.size());
+        QSet<int> rolesToUpdate = m_StandardRoles.toList().toSet();
         for (auto &artwork: artworks) {
             std::shared_ptr<ArtworkUpdateRequest> updateRequest(
                         new ArtworkUpdateRequest(
                             artwork->getItemID(),
                             artwork->getLastKnownIndex(),
-                            m_StandardRoles,
+                            rolesToUpdate,
                             updateMode == FastUpdate));
             requests.emplace_back(updateRequest);
         }
@@ -82,16 +86,17 @@ namespace Services {
         emit updateRequested();
     }
 
-    void ArtworksUpdateHub::updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks, UpdateMode updateMode) const {
+    void ArtworksUpdateHub::updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks, UpdateMode updateMode) {
         decltype(m_UpdateRequests) requests;
         requests.reserve(artworks.size());
+        QSet<int> rolesToUpdate = m_StandardRoles.toList().toSet();
         for (auto &locker: artworks) {
             auto *artwork = locker->getArtworkMetadata();
             std::shared_ptr<ArtworkUpdateRequest> updateRequest(
                         new ArtworkUpdateRequest(
                             artwork->getItemID(),
                             artwork->getLastKnownIndex(),
-                            m_StandardRoles,
+                            rolesToUpdate,
                             updateMode == FastUpdate));
             requests.emplace_back(updateRequest);
         }
