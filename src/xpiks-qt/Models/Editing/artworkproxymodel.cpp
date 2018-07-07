@@ -13,7 +13,7 @@
 #include <QSyntaxHighlighter>
 #include <Commands/Base/icommandmanager.h>
 #include <Common/defines.h>
-#include <Warnings/warningsservice.h>
+#include <Services/Warnings/warningsservice.h>
 #include <Artworks/imageartwork.h>
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Artworks/videoartwork.h>
@@ -50,6 +50,10 @@ namespace Models {
         bool isVideo = videoArtwork != nullptr;
         return isVideo;
     }
+
+    QString ArtworkProxyModel::getThumbPath() const { return m_ArtworkMetadata->getThumbnailPath(); }
+    const QString &ArtworkProxyModel::getFilePath() const { return m_ArtworkMetadata->getFilepath(); }
+    QString ArtworkProxyModel::getBasename() const { return m_ArtworkMetadata->getBaseFilename(); }
 
     void ArtworkProxyModel::setDescription(const QString &description)  {
         Q_ASSERT(getIsValid());
@@ -287,6 +291,16 @@ namespace Models {
         return doAcceptCompletionAsPreset(completionID, m_CompletionSource, m_PresetsManager);
     }
 
+    Artworks::BasicMetadataModel *ArtworkProxyModel::getBasicMetadataModel() {
+        Q_ASSERT(m_ArtworkMetadata != nullptr);
+        return m_ArtworkMetadata->getBasicModel();
+    }
+
+    Artworks::IMetadataOperator *ArtworkProxyModel::getMetadataOperator() {
+        Q_ASSERT(m_ArtworkMetadata != nullptr);
+        return m_ArtworkMetadata;
+    }
+
     Common::ID_t ArtworkProxyModel::getSpecialItemID() {
         Common::ID_t result = 0;
 
@@ -308,7 +322,7 @@ namespace Models {
                 .broadcast(Artworks::ArtworksSnapshot({m_ArtworkMetadata}));
     }
 
-    void ArtworkProxyModel::connectArtworkSignals(ArtworkMetadata *artwork) {
+    void ArtworkProxyModel::connectArtworkSignals(Artworks::ArtworkMetadata *artwork) {
         auto *basicModel = artwork->getBasicModel();
 
         QObject::connect(basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
@@ -368,7 +382,7 @@ namespace Models {
                 .withID(Commands::AppMessages::SpellCheck)
                 .broadcast(Artworks::ArtworksSnapshot({m_ArtworkMetadata}));
 
-        Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(artwork);
+        Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
         if (videoArtwork != nullptr) {
             if (!videoArtwork->isThumbnailGenerated()) {
                 m_Messages

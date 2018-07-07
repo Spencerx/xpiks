@@ -40,7 +40,8 @@ namespace Helpers {
 
     template<typename T>
     std::vector<T> filter(const std::vector<T> &v, const std::function<bool (const T&)> &pred) {
-        return filterMap(v, pred, [](const T &t) { return t; });
+        std::function<T(const T&)> eye = [](const T &t) { return t; };
+        return filterMap(v, pred, eye);
     }
 }
 

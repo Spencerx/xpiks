@@ -116,12 +116,13 @@ namespace Models {
         void onAvailabilityTimer();
 
     public:
-        bool accountFile(const Filesystem::ArtworkFile &file, qint64 &directoryID);
+        bool accountFile(const QString &filepath, qint64 &directoryID);
         bool removeFile(const QString &filepath, qint64 directoryID);
         void removeVector(const QString &vectorPath);
         void cleanupEmptyDirectories();
         void purgeUnavailableFiles();
-        void addFiles(const Artworks::ArtworksSnapshot &snapshot);
+        void watchFiles(const Artworks::ArtworksSnapshot &snapshot);
+        void setFullDirectories(const QSet<qint64> &directoryIDs);
         std::tuple<QSet<qint64>, bool> removeFiles(const Artworks::WeakArtworksSnapshot &snapshot);
         void cleanupOldBackups(const Artworks::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService);
         void unwatchFilePaths(const QStringList &filePaths);
@@ -205,7 +206,7 @@ namespace Models {
         virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
     signals:
-        void artworksSourcesCountChanged();
+        //void artworksSourcesCountChanged();
         void directoriesFiltered();
 
     private slots:

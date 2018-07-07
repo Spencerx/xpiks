@@ -20,11 +20,12 @@ namespace Models {
                                                            bool memoryOnly,
                                                            QObject *parent):
         QObject(parent)
-        ,m_RemoteConfig(remoteResource, this)
-        ,m_LocalConfig(localPath, memoryOnly)
-        ,m_ForceOverwrite(forceOverwrite)
+      ,m_RemoteConfig(remoteResource, this)
+      ,m_LocalConfig(localPath, memoryOnly)
+      ,m_RequestsService(requestsService)
+      ,m_ForceOverwrite(forceOverwrite)
   #ifdef INTEGRATION_TESTS
-        ,m_MemoryOnly(memoryOnly)
+      ,m_MemoryOnly(memoryOnly)
   #endif
     {
         QObject::connect(&m_RemoteConfig, &Helpers::RemoteConfig::configArrived,

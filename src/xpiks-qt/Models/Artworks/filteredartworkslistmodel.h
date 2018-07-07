@@ -55,6 +55,7 @@ namespace Models {
                                   Commands::ICommandManager &commandManager,
                                   KeywordsPresets::IPresetsManager &presetsManager,
                                   AutoComplete::ICompletionSource &completionSource,
+                                  Models::SettingsModel &settingsModel,
                                   QObject *parent=0);
 
     public:
@@ -144,7 +145,7 @@ namespace Models {
 
 
         Q_INVOKABLE void copyToQuickBuffer(int index) const;
-        Q_INVOKABLE void fillFromQuickBuffer(int index) const;
+        //Q_INVOKABLE void fillFromQuickBuffer(int index) const;
         //Q_INVOKABLE void suggestCorrectionsForSelected() const;
         //Q_INVOKABLE void generateCompletions(const QString &prefix, int index);
         //Q_INVOKABLE void reviewDuplicatesInSelected() const;
@@ -164,7 +165,7 @@ namespace Models {
 
     private:
         void setFilteredItemsSelected(bool selected);
-        void setFilteredItemsSelectedEx(const std::function<bool (ArtworkMetadata *)> pred,
+        void setFilteredItemsSelectedEx(const std::function<bool (Artworks::ArtworkMetadata *)> pred,
                                         bool selected,
                                         bool unselectAllFirst);
 

@@ -15,6 +15,7 @@
 #include <QRegExp>
 #include <Common/defines.h>
 #include <Filesystem/ifilescollection.h>
+#include <Services/Maintenance/maintenanceservice.h>
 
 namespace Models {
     ArtworksRepository::ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent) :
@@ -53,24 +54,6 @@ namespace Models {
         if (!directories.isEmpty()) {
             m_FilesWatcher.removePaths(directories);
         }
-    }
-
-    bool ArtworksRepository::beginAccountingFiles(const QStringList &items) {
-        int count = getNewDirectoriesCount(items);
-        bool shouldAccountFiles = count > 0;
-        if (shouldAccountFiles) {
-            beginInsertRows(QModelIndex(), rowCount(), rowCount() + count - 1);
-        }
-
-        return shouldAccountFiles;
-    }
-
-    void ArtworksRepository::endAccountingFiles(bool filesWereAccounted) {
-        if (filesWereAccounted) {
-            endInsertRows();
-        }
-
-        emit artworksSourcesCountChanged();
     }
 
     /*virtual */
@@ -134,17 +117,17 @@ namespace Models {
         emit artworksSourcesCountChanged();
     }
 
-    bool ArtworksRepository::accountFile(const Filesystem::ArtworkFile &file, qint64 &directoryID) {
+    bool ArtworksRepository::accountFile(const QString &filepath, qint64 &directoryID) {
         bool wasModified = false, wasAdded = false;
         QString directoryPath;
 
-        if (this->checkFileExists(file.m_Path, directoryPath) &&
-                !m_FilesSet.contains(file.m_Path)) {
+        if (this->checkFileExists(filepath, directoryPath) &&
+                !m_FilesSet.contains(filepath)) {
             int occurances = 0;
             size_t index = 0;
             bool alreadyExists = tryFindDirectory(directoryPath, index);
             if (!alreadyExists) {
-                qint64 id = generateNextID();
+                const qint64 id = generateNextID();
                 LOG_INFO << "Adding new directory" << directoryPath << "with index" << m_DirectoriesList.size() << "and id" << id;
                 m_DirectoriesList.emplace_back(directoryPath, id, 0);
                 auto &item = m_DirectoriesList.back();
@@ -159,12 +142,10 @@ namespace Models {
             }
 
             // watchFilePath(filepath);
-            m_FilesSet.insert(file.m_Path);
+            m_FilesSet.insert(filepath);
             auto &item = m_DirectoriesList[index];
             item.setIsRemovedFlag(false);
             item.m_FilesCount = occurances + 1;
-            if (Common::HasFlag(directoryFlags, Common::DirectoryFlags::IsAddedAsDirectory)) { item.setAddedAsDirectoryFlag(true); }
-            if (Common::HasFlag(directoryFlags, Common::DirectoryFlags::IsSelected)) { item.setIsSelectedFlag(true); }
             wasModified = true;
         }
 
@@ -207,24 +188,20 @@ namespace Models {
 
     void ArtworksRepository::cleanupEmptyDirectories() {
         LOG_DEBUG << "#";
-        size_t count = m_DirectoriesList.size();
-        QVector<int> indicesToRemove;
-        indicesToRemove.reserve((int)count);
+        const size_t size = m_DirectoriesList.size();
+        std::vector<int> indicesToRemove;
+        indicesToRemove.reserve(size);
 
-        for (size_t i = 0; i < count; ++i) {
+        for (size_t i = 0; i < size; ++i) {
             auto &directory = m_DirectoriesList[i];
             if (directory.m_FilesCount == 0) {
-                indicesToRemove.append((int)i);
+                indicesToRemove.push_back((int)i);
             }
         }
 
-        if (!indicesToRemove.isEmpty()) {
-            LOG_INFO << indicesToRemove.length() << "empty directory(ies)...";
-
-            QVector<QPair<int, int> > rangesToRemove;
-            Helpers::indicesToRanges(indicesToRemove, rangesToRemove);
-            removeItemsFromRanges(rangesToRemove);
-
+        if (!indicesToRemove.empty()) {
+            LOG_INFO << indicesToRemove.size() << "empty directory(ies)...";
+            removeItems(Helpers::IndicesRanges(indicesToRemove));
             updateSelectedState();
         }
     }
@@ -235,14 +212,15 @@ namespace Models {
         m_LastUnavailableFilesCount = 0;
     }
 
-    void ArtworksRepository::addFiles(const Artworks::ArtworksSnapshot &snapshot) {
+    void ArtworksRepository::watchFiles(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << snapshot.size() << "item(s)";
         if (snapshot.empty()) { return; }
 
         QStringList filepaths;
         filepaths.reserve(snapshot.size());
-        for (auto *artwork: snapshot.getWeakSnapshot()) {
-            filepaths.append(artwork->getFilePath());
+        for (auto &locker: snapshot.getRawData()) {
+            auto *artwork = locker->getArtworkMetadata();
+            filepaths.append(artwork->getFilepath());
 
             Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork *>(artwork);
             if ((imageArtwork != nullptr) && imageArtwork->hasVectorAttached()) {
@@ -256,6 +234,16 @@ namespace Models {
         emit refreshRequired();
     }
 
+    void ArtworksRepository::setFullDirectories(const QSet<qint64> &directoryIDs) {
+        LOG_DEBUG << directoryIDs.size() << "item(s)";
+        for (auto id: directoryIDs) {
+            size_t index = 0;
+            if (tryFindDirectoryByID(id, index)) {
+                m_DirectoriesList[index].setAddedAsDirectoryFlag(true);
+            }
+        }
+    }
+
     std::tuple<QSet<qint64>, bool> ArtworksRepository::removeFiles(const Artworks::WeakArtworksSnapshot &snapshot) {
         QStringList filepaths;
         QStringList removedAttachedVectors;
@@ -263,7 +251,7 @@ namespace Models {
         removedAttachedVectors.reserve(snapshot.size()/2);
 
         for (auto *artwork: snapshot) {
-            filepaths.append(artwork->getFilePath());
+            filepaths.append(artwork->getFilepath());
 
             Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
 
@@ -290,7 +278,8 @@ namespace Models {
 
     void ArtworksRepository::cleanupOldBackups(const Artworks::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService) {
         QString directoryPath;
-        for (auto *artwork: snapshot.getWeakSnapshot()) {
+        for (auto &locker: snapshot.getRawData()) {
+            auto *artwork = locker->getArtworkMetadata();
             if (tryGetDirectoryPath(artwork->getDirectoryID(), directoryPath)) {
                 maintenanceService.cleanupOldXpksBackups(directoryPath);
             }
@@ -683,8 +672,8 @@ namespace Models {
     void FilteredArtworksRepository::setArtworksRepository(ArtworksRepository &artworksRepository) {
         setSourceModel(&artworksRepository);
 
-        QObject::connect(&artworksRepository, &ArtworksRepository::artworksSourcesCountChanged,
-                         this, &FilteredArtworksRepository::artworksSourcesCountChanged);
+        /*QObject::connect(&artworksRepository, &ArtworksRepository::artworksSourcesCountChanged,
+                         this, &FilteredArtworksRepository::artworksSourcesCountChanged);*/
         QObject::connect(&artworksRepository, &ArtworksRepository::refreshRequired,
                          this, &FilteredArtworksRepository::onRefreshRequired);
     }

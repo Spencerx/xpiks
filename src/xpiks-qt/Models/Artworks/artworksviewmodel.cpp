@@ -8,7 +8,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "artworksviewmodel.h>
+#include "artworksviewmodel.h"
 #include <QVector>
 #include <Helpers/indiceshelper.h>
 #include <Common/defines.h>
@@ -26,10 +26,11 @@ namespace Models {
         LOG_INFO << snapshot.size() << "artworks";
         if (snapshot.empty()) { return; }
 
-        auto elements = Helpers::map(
+        using namespace Artworks;
+        auto elements = Helpers::map<std::shared_ptr<ArtworkMetadataLocker>, std::shared_ptr<ArtworkMetadataLocker>>(
                             snapshot.getRawData(),
-                            [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
-            return std::make_shared<Artworks::ArtworkElement>(locker->getArtworkMetadata());
+                            [](const std::shared_ptr<ArtworkMetadataLocker> &locker) {
+            return std::make_shared<ArtworkElement>(locker->getArtworkMetadata());
         });
 
         beginResetModel();
@@ -84,7 +85,7 @@ namespace Models {
 
     bool ArtworksViewModel::getIsSelected(size_t i) const {
         auto &locker = m_ArtworksSnapshot.at(i);
-        std::shared_ptr<ArtworkElement> element = std::dynamic_pointer_cast<ArtworkElement>(locker);
+        auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
         Q_ASSERT(element);
         bool result = element->getIsSelected();
         return result;
@@ -92,7 +93,7 @@ namespace Models {
 
     void ArtworksViewModel::setIsSelected(size_t i, bool value) {
         auto &locker = m_ArtworksSnapshot.at(i);
-        std::shared_ptr<ArtworkElement> element = std::dynamic_pointer_cast<ArtworkElement>(locker);
+        auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
         Q_ASSERT(element);
         element->setIsSelected(value);
     }
@@ -112,7 +113,7 @@ namespace Models {
 
         for (size_t i = 0; i < size; ++i) {
             if (getIsSelected(i)) {
-                indicesToRemove.append((int)i);
+                indicesToRemove.push_back((int)i);
             }
         }
 
@@ -141,8 +142,8 @@ namespace Models {
         endResetModel();
     }
 
-    void ArtworksViewModel::processArtworks(std::function<bool (const ArtworkElement *element)> pred,
-                                            std::function<void (size_t, ArtworkMetadata *)> action) const {
+    void ArtworksViewModel::processArtworks(std::function<bool (const Artworks::ArtworkElement *element)> pred,
+                                            std::function<void (size_t, Artworks::ArtworkMetadata *)> action) const {
         LOG_DEBUG << "#";
 
         auto &rawSnapshot = m_ArtworksSnapshot.getRawData();
@@ -227,13 +228,13 @@ namespace Models {
             auto *artwork = m_ArtworksSnapshot.get(i);
 
             if (artwork->isUnavailable()) {
-                indicesToRemove.append((int)i);
+                indicesToRemove.push_back((int)i);
                 anyUnavailable = true;
             }
         }
 
         if (anyUnavailable) {
-            LOG_INFO << "Found" << indicesToRemove.length() << "unavailable item(s)";
+            LOG_INFO << "Found" << indicesToRemove.size() << "unavailable item(s)";
             removeItems(Helpers::IndicesRanges(indicesToRemove));
 
             if (m_ArtworksSnapshot.empty()) {

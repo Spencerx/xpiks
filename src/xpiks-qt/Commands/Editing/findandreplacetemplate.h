@@ -29,11 +29,11 @@ namespace Commands {
     class FindAndReplaceTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
     public:
-        FindAndReplaceCommand(const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags):
+        FindAndReplaceTemplate(const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags):
             m_ReplaceWhat(replaceWhat),
             m_ReplaceTo(replaceTo),
             m_Flags(flags)
-        {}
+        { }
 
     public:
         virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;

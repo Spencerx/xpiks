@@ -137,6 +137,7 @@ namespace Models {
         void titleSpellingChanged();
         void descriptionSpellingChanged();
         void keywordsSpellingChanged();
+        void clearCurrentEditable();
 
     protected:
         virtual void signalDescriptionChanged() override { emit descriptionChanged(); }
@@ -178,6 +179,7 @@ namespace Models {
         Q_INVOKABLE void expandPreset(int keywordIndex, unsigned int presetID);
         Q_INVOKABLE void expandLastKeywordAsPreset();
         Q_INVOKABLE void addPreset(unsigned int presetID);
+        Q_INVOKABLE void copyToQuickBuffer();
         Q_INVOKABLE bool acceptCompletionAsPreset(int completionID);
 
     private:

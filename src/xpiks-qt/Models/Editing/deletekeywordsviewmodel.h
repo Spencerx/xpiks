@@ -20,6 +20,11 @@
 
 namespace Commands {
     class ICommandManager;
+    class AppMessages;
+}
+
+namespace KeywordsPresets {
+    class IPresetsManager;
 }
 
 namespace Models {
@@ -31,7 +36,10 @@ namespace Models {
         Q_PROPERTY(bool caseSensitive READ getCaseSensitive WRITE setCaseSensitive NOTIFY caseSensitiveChanged)
 
     public:
-        DeleteKeywordsViewModel(Commands::ICommandManager &commandManager, QObject *parent=nullptr);
+        DeleteKeywordsViewModel(Commands::ICommandManager &commandManager,
+                                Commands::AppMessages &messages,
+                                KeywordsPresets::IPresetsManager &presetsManager,
+                                QObject *parent=nullptr);
 
     public:
         int getCommonKeywordsCount() { return m_CommonKeywordsModel.getKeywordsCount(); }
@@ -87,6 +95,7 @@ namespace Models {
     private:
         void recombineKeywords();
         void fillKeywordsHash(QHash<QString, int> &keywordsHash);
+        void submitForSpellCheck();
 
     private:
         Common::Hold m_HoldForDeleters;
@@ -94,6 +103,8 @@ namespace Models {
         Artworks::BasicKeywordsModel m_KeywordsToDeleteModel;
         Artworks::BasicKeywordsModel m_CommonKeywordsModel;
         Commands::ICommandManager &m_CommandManager;
+        Commands::AppMessages &m_Messages;
+        KeywordsPresets::IPresetsManager &m_PresetsManager;
         bool m_CaseSensitive;
     };
 }

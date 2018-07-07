@@ -38,7 +38,8 @@ namespace Models {
         messages.
                 ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::ZipArtworks)
-                .addListener(std::bind(&ZipArchiver::setArtworks, this));
+                .addListener(std::bind(&ZipArchiver::setArtworks, this,
+                                       std::placeholders::_1));
     }
 
     int ZipArchiver::getPercent() const {
@@ -109,12 +110,13 @@ namespace Models {
 
     void ZipArchiver::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
-        m_ArtworksSnapshot.set(
-                    Helpers::filter(snapshot.getRawData(), [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+        auto imagesWithVectors = Helpers::filter<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(snapshot.getRawData(),
+                                                                                                   [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
             Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
             Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             return (image != NULL) && image->hasVectorAttached();
-        }));
+        });
+        m_ArtworksSnapshot.set(imagesWithVectors);
         emit itemsCountChanged();
     }
 
@@ -155,10 +157,10 @@ namespace Models {
 
     void ZipArchiver::fillFilenamesHash(QHash<QString, QStringList> &hash) {
         auto &snapshot = getArtworksSnapshot();
-        auto &artworksList = snapshot.getWeakSnapshot();
-        LOG_DEBUG << "Processing" << artworksList.size() << "item(s)";
+        LOG_DEBUG << "Processing" << snapshot.size() << "item(s)";
 
-        for (auto &artwork: artworksList) {
+        for (auto &locker: snapshot.getRawData()) {
+            auto *artwork = locker->getArtworkMetadata();
             const QString &filepath = artwork->getFilepath();
 
             QFileInfo fi(filepath);

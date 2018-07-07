@@ -16,7 +16,7 @@
 #include <Common/flags.h>
 
 namespace Filesystem {
-    enum struct ArtworkFileType {
+    enum struct ArtworkFileType: uint8_t {
         Image,
         Video,
         Vector
@@ -26,14 +26,14 @@ namespace Filesystem {
         ArtworkFile(const QString &path, ArtworkFileType type, bool isPartOfFullDirectory=false):
             m_Path(path),
             m_Type(type),
-            m_DirectoryFlags(isPartOfFullDirectory ?
-                                 Common::DirectoryFlags::IsAddedAsDirectory :
-                                 Common::DirectoryFlags::None)
+            m_IsPartOfFullDirectory(isPartOfFullDirectory)
         { }
+
+        bool isPartOfFullDirectory() const { return m_IsPartOfFullDirectory; }
 
         QString m_Path;
         ArtworkFileType m_Type;
-        Common::DirectoryFlags m_DirectoryFlags;
+        bool m_IsPartOfFullDirectory;
     };
 
     class IFilesCollection {

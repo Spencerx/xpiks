@@ -27,7 +27,7 @@ namespace Commands {
 
     void AddFilesCommand::execute() {
         LOG_DEBUG << "#";
-        m_OriginalCount = m_ArtworksListModel.getArtworksCount();
+        m_OriginalCount = m_ArtworksListModel.getArtworksSize();
 
         auto addResult = m_ArtworksListModel.addFiles(m_Files, m_Flags);
         m_AddedCount = addResult.m_Snapshot.size();

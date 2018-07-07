@@ -15,17 +15,18 @@
 #include "uploadinforepository.h"
 #include "uploadinfo.h"
 #include <Common/defines.h>
-#include <Helpers/ziphelper.h>
+#include <Commands/appmessages.h>
 #include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Artworks/artworkssnapshot.h>
 #include <Models/settingsmodel.h>
+#include <Helpers/ziphelper.h>
 #include <Helpers/filehelpers.h>
 #include <Connectivity/iftpcoordinator.h>
 #include <Connectivity/testconnection.h>
-#include <uploadcontext.h>
-#include <Artworks/imageartwork.h>
 #include <Connectivity/ftphelpers.h>
-#include <Commands/appmessages.h>
-#include <Artworks/artworkssnapshot.h>
+#include <Connectivity/analyticsuserevent.h>
+#include <uploadcontext.h>
 
 namespace Models {
     ArtworkUploader::ArtworkUploader(Common::ISystemEnvironment &environment,
@@ -35,6 +36,7 @@ namespace Models {
                                      QObject *parent):
         QObject(parent),
         m_Environment(environment),
+        m_Messages(messages),
         m_TestingCredentialWatcher(nullptr),
         m_UploadInfos(uploadInfoRepository),
         m_SettingsModel(settingsModel),
@@ -45,7 +47,8 @@ namespace Models {
         messages
                 .ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::UploadArtworks)
-                .addListener(std::bind(&ArtworkUploader::setArtworks, this));
+                .addListener(std::bind(&ArtworkUploader::setArtworks, this,
+                                       std::placeholders::_1));
     }
 
     ArtworkUploader::~ArtworkUploader() {
@@ -138,7 +141,7 @@ namespace Models {
         context->m_UseEPSV = !disableEPSV;
 
         context->m_UseProxy = m_SettingsModel.getUseProxy();
-        context->m_ProxySettings = m_SettingsModel.getProxySettings();
+        context->m_ProxySettings = &m_SettingsModel.getProxySettings();
         context->m_VerboseLogging = m_SettingsModel.getVerboseUpload();
 
         m_TestingCredentialWatcher->setFuture(QtConcurrent::run(Connectivity::isContextValid, context));
@@ -149,13 +152,10 @@ namespace Models {
 
         if (m_UploadInfos.isZippingRequired()) {
             auto &snapshot = this->getArtworksSnapshot();
-            auto &artworkList = snapshot.getWeakSnapshot();
-            for (auto *artwork: artworkList) {
+            for (auto &locker: snapshot.getRawData()) {
+                auto *artwork = locker->getArtworkMetadata();
                 Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
-
-                if (image == NULL || !image->hasVectorAttached()) {
-                    continue;
-                }
+                if (image == NULL || !image->hasVectorAttached()) { continue; }
 
                 const QString &filepath = artwork->getFilepath();
                 QString archivePath = Helpers::getArchivePath(filepath);
@@ -196,9 +196,9 @@ namespace Models {
         m_FtpCoordinator->cancelUpload();
     }
 
-    void ArtworkUploader::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
+    void ArtworkUploader::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
-        m_ArtworksSnapshot = std::move(snapshot);
+        m_ArtworksSnapshot.copyFrom(snapshot);
         emit itemsCountChanged();
     }
 
@@ -224,7 +224,10 @@ namespace Models {
         m_UploadInfos.updatePercentages();
 
         m_FtpCoordinator->uploadArtworks(snapshot, selectedInfos);
-        xpiks()->reportUserAction(Connectivity::UserAction::Upload);
+        m_Messages
+                .ofType<int>()
+                .withID(Commands::AppMessages::Telemetry)
+                .broadcast((int)Connectivity::UserAction::Upload);
     }
 
     bool ArtworkUploader::removeUnavailableItems() {

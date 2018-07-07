@@ -21,8 +21,6 @@
 #include <QSize>
 #include <memory>
 #include <vector>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/basicmetadatamodel.h>
 #include <Common/flags.h>
 #include <Common/hold.h>
 #include "artworkproxybase.h"
@@ -40,6 +38,11 @@ namespace KeywordsPresets {
 
 namespace AutoComplete {
     class ICompletionSource;
+}
+
+namespace Artworks {
+    class ArtworkMetadata;
+    class BasicMetadataModel;
 }
 
 namespace Models {
@@ -73,9 +76,9 @@ namespace Models {
     public:
         bool getIsValid() const { return m_ArtworkMetadata != nullptr; }
         bool getIsVideo() const;
-        QString getThumbPath() const { return m_ArtworkMetadata->getThumbnailPath(); }
-        const QString &getFilePath() const { return m_ArtworkMetadata->getFilepath(); }
-        QString getBasename() const { return m_ArtworkMetadata->getBaseFilename(); }
+        QString getThumbPath() const;
+        const QString &getFilePath() const;
+        QString getBasename() const;
 
     public:
         virtual void setDescription(const QString &description) override;
@@ -150,21 +153,13 @@ namespace Models {
         Q_INVOKABLE bool acceptCompletionAsPreset(int completionID);
 
     protected:
-        virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override {
-            Q_ASSERT(m_ArtworkMetadata != nullptr);
-            return m_ArtworkMetadata->getBasicModel();
-        }
-
-        virtual Artworks::IMetadataOperator *getMetadataOperator() override {
-            Q_ASSERT(m_ArtworkMetadata != nullptr);
-            return m_ArtworkMetadata;
-        }
-
+        virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override;
+        virtual Artworks::IMetadataOperator *getMetadataOperator() override;
         virtual Common::ID_t getSpecialItemID() override;
         virtual void submitForInspection() override;
 
     private:
-        void connectArtworkSignals(ArtworkMetadata *artwork);
+        void connectArtworkSignals(Artworks::ArtworkMetadata *artwork);
         void updateModelProperties();
         void updateCurrentArtwork();
         void disconnectCurrentArtwork();

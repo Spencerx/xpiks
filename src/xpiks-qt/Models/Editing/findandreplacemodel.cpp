@@ -23,6 +23,7 @@
 #include <Commands/appmessages.h>
 #include <Commands/Editing/findandreplacetemplate.h>
 #include <Commands/Editing/modifyartworkscommand.h>
+#include <Commands/Base/icommandmanager.h>
 
 QString searchFlagsToString(Common::SearchFlags flags) {
     QStringList items;
@@ -70,7 +71,8 @@ namespace Models {
         messages
                 .ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::FindArtworks)
-                .addListener(std::bind(&FindAndReplaceModel::findReplaceCandidates, this));
+                .addListener(std::bind(&FindAndReplaceModel::findReplaceCandidates, this,
+                                       std::placeholders::_1));
     }
 
     int FindAndReplaceModel::rowCount(const QModelIndex &parent) const {
@@ -161,13 +163,14 @@ namespace Models {
 
         normalizeSearchCriteria();
 
-        auto previewElements = Helpers::filterMap<Artworks::ArtworkMetadataLocker>(
+        auto previewElements = Helpers::filterMap<std::shared_ptr<Artworks::ArtworkMetadataLocker>,
+                std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
                     snapshot.getRawData(),
-                    [this](const Artworks::ArtworkMetadataLocker &locker) {
-            return Helpers::hasSearchMatch(this->m_ReplaceFrom, locker.getArtworkMetadata(), this->m_Flags);
+                    [this](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+            return Helpers::hasSearchMatch(this->m_ReplaceFrom, locker->getArtworkMetadata(), this->m_Flags);
         },
-        [](const Artworks::ArtworkMetadataLocker &locker) {
-            return std::make_shared<PreviewArtworkElement>(locker.getArtworkMetadata());
+        [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+            return std::make_shared<PreviewArtworkElement>(locker->getArtworkMetadata());
         });
 
         m_ArtworksSnapshot.set(previewElements);

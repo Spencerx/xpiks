@@ -112,7 +112,7 @@ namespace Models {
         Q_INVOKABLE void cancelOperation();
 
     protected:
-        void setArtworks(Artworks::ArtworksSnapshot &&snapshot);
+        void setArtworks(const Artworks::ArtworksSnapshot &snapshot);
         void resetArtworks();
 
 #ifdef CORE_TESTS
@@ -135,6 +135,7 @@ namespace Models {
 
     private:
         Common::ISystemEnvironment &m_Environment;
+        Commands::AppMessages &m_Messages;
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
         Connectivity::UploadWatcher m_UploadWatcher;
         std::shared_ptr<Connectivity::IFtpCoordinator> m_FtpCoordinator;

@@ -68,7 +68,7 @@ namespace Models {
         virtual bool doRemoveSelectedArtworks();
         virtual void doResetModel();
         void processArtworks(std::function<bool (const Artworks::ArtworkElement *element)> pred,
-                             std::function<void (size_t, ArtworkMetadata *)> action) const;
+                             std::function<void (size_t, Artworks::ArtworkMetadata *)> action) const;
         void processArtworksEx(std::function<bool (const Artworks::ArtworkElement *element)> pred,
                                std::function<bool (size_t, Artworks::ArtworkMetadata *)> action) const;
 

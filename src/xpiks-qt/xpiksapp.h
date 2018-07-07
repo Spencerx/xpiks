@@ -14,11 +14,7 @@
 #include <Commands/commandmanager.h>
 #include <Commands/appmessages.h>
 
-#include <Services/artworksupdatehub.h>
-
-#include <QMLExtensions/colorsmodel.h>
-#include <QMLExtensions/imagecachingservice.h>
-#include <QMLExtensions/videocachingservice.h>
+#include <Common/isystemenvironment.h>
 
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
@@ -38,6 +34,7 @@
 #include <Models/uimanager.h>
 #include <Models/Connectivity/ziparchiver.h>
 #include <Models/Editing/currenteditablemodel.h>
+#include <Models/Editing/quickbuffer.h>
 
 #include <Connectivity/requestsservice.h>
 #include <Connectivity/telemetryservice.h>
@@ -57,6 +54,12 @@
 #include <Services/SpellCheck/userdicteditmodel.h>
 #include <Services/Maintenance/maintenanceservice.h>
 
+#include <Services/artworksupdatehub.h>
+
+#include <QMLExtensions/colorsmodel.h>
+#include <QMLExtensions/imagecachingservice.h>
+#include <QMLExtensions/videocachingservice.h>
+
 #include <UndoRedo/undoredomanager.h>
 
 #include <Storage/databasemanager.h>
@@ -64,6 +67,7 @@
 #include <Encryption/isecretsstorage.h>
 
 #include <Microstocks/microstockapiclients.h>
+#include <Microstocks/stocksftplistmodel.h>
 
 #include <Suggestion/keywordssuggestor.h>
 
@@ -77,15 +81,11 @@
 #include <MetadataIO/csvexportplansmodel.h>
 #include <MetadataIO/metadatareadinghub.h>
 
-#include <Models/Editing/quickbuffer.h>
-
 #include <Plugins/pluginmanager.h>
 #include <Plugins/uiprovider.h>
 
 #include <Helpers/helpersqmlwrapper.h>
 #include <Helpers/ifilenotavailablemodel.h>
-
-#include <Common/isystemenvironment.h>
 
 class QQmlContext;
 class QQuickWindow;
@@ -183,6 +183,7 @@ protected:
 
     // connectivity
     Encryption::SecretsManager m_SecretsManager;
+    Microstocks::StocksFtpListModel m_StocksFtpList;
     Models::UploadInfoRepository m_UploadInfoRepository;
     Models::ZipArchiver m_ZipArchiver;
     std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;

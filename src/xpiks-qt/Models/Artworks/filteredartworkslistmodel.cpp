@@ -10,7 +10,7 @@
 
 #include "filteredartworkslistmodel.h"
 #include <QDir>
-#include "artworkslistmodel.h>
+#include "artworkslistmodel.h"
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkelement.h>
 #include <Models/settingsmodel.h>
@@ -29,6 +29,7 @@ namespace Models {
                                                          Commands::ICommandManager &commandManager,
                                                          KeywordsPresets::IPresetsManager &presetsManager,
                                                          AutoComplete::ICompletionSource &completionSource,
+                                                         SettingsModel &settingsModel,
                                                          QObject *parent):
         QSortFilterProxyModel(parent),
         m_ArtworksListModel(artworksListModel),
@@ -36,6 +37,7 @@ namespace Models {
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_CompletionSource(completionSource),
+        m_SettingsModel(settingsModel),
         m_SelectedArtworksCount(0),
         m_SortingEnabled(false) {
         // m_SortingEnabled = true;
@@ -65,8 +67,7 @@ namespace Models {
     }
 
     int FilteredArtworksListModel::getDerivedIndex(int originalIndex) const {
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        QModelIndex index = mapFromSource(artItemsModel->index(originalIndex, 0));
+        QModelIndex index = mapFromSource(m_ArtworksListModel.index(originalIndex, 0));
         int row = index.row();
 
         return row;
@@ -96,7 +97,7 @@ namespace Models {
             Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(index);
             if (artwork != NULL) {
                 artwork->invertSelection();
-                indices << index;
+                indices.push_back(index);
             }
         }
 
@@ -122,7 +123,7 @@ namespace Models {
         auto selectedArtworks = getSelectedOriginalItems();
         bool anyModified = false;
 
-        for (ArtworkMetadata *artwork: selectedArtworks) {
+        for (auto *artwork: selectedArtworks) {
             if (artwork->isModified()) {
                 anyModified = true;
                 break;
@@ -202,7 +203,7 @@ namespace Models {
         case 5: {
             // select Videos
             this->setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata *artwork) {
-                return dynamic_cast<VideoArtwork*>(artwork) != nullptr;
+                return dynamic_cast<Artworks::VideoArtwork*>(artwork) != nullptr;
             }, isSelected, unselectFirst);
             break;
         }
@@ -250,7 +251,7 @@ namespace Models {
             invalidate();
         }
 
-        m_ArtworksListModel.updateItems(ArtworksListModel::SelectionType::All);
+        m_ArtworksListModel.updateSelection(ArtworksListModel::SelectionType::All);
     }
 
     void FilteredArtworksListModel::removeKeywordAt(int proxyIndex, int keywordIndex) {
@@ -360,7 +361,7 @@ namespace Models {
 
     void FilteredArtworksListModel::detachVectorFromSelected() {
         LOG_DEBUG << "#";
-        QVector<int> indices = getSelectedOriginalIndices();
+        auto indices = getSelectedOriginalIndices();
         m_ArtworksListModel.detachVectorsFromArtworks(Helpers::IndicesRanges(indices));
     }
 
@@ -431,63 +432,16 @@ namespace Models {
                 .broadcast(Artworks::ArtworksSnapshot(getSelectedOriginalItems()));
     }
 
-    void FilteredArtworksListModel::removeSelectedArtworks() {
-        LOG_DEBUG << "#";
-        //m_ArtworksListModel.removeFiles()
-    }
-
     void FilteredArtworksListModel::saveSelectedArtworks(bool overwriteAll, bool useBackups) {
         LOG_INFO << "ovewriteAll:" << overwriteAll << "useBackups:" << useBackups;
         // former patchSelectedArtworks
-        auto itemsToSave = filterItems<ArtworkMetadata*>(
-                    [&overwriteAll](ArtworkMetadata *artwork) {
+        auto itemsToSave = filterItems<Artworks::ArtworkMetadata*>(
+                    [&overwriteAll](Artworks::ArtworkMetadata *artwork) {
                 return artwork->isSelected() && !artwork->isReadOnly() && (artwork->isModified() || overwriteAll);
     },
                 [] (Artworks::ArtworkMetadata *artwork, int, int) { return artwork; });
 
-        xpiks()->writeMetadata(itemsToSave, useBackups);
-    }
-
-    void FilteredArtworksListModel::wipeMetadataFromSelectedArtworks(bool useBackups) {
-        LOG_INFO << "useBackups:" << useBackups;
-
-        auto selectedArtworks = getSelectedArtworksSnapshot();
-        Artworks::ArtworksSnapshot snapshot(selectedArtworks);
-        xpiks()->wipeAllMetadata(snapshot, useBackups);
-    }
-
-
-
-    void FilteredArtworksListModel::removeArtworksDirectory(int index) {
-        LOG_DEBUG << "#";
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-
-        artItemsModel->removeArtworksDirectory(index);
-        emit selectedArtworksCountChanged();
-    }
-
-    void FilteredArtworksListModel::deleteKeywordsFromSelected() {
-        auto selectedItems = getSelectedOriginalItems();
-        xpiks()->deleteKeywordsFromArtworks(selectedItems);
-    }
-
-    void FilteredArtworksListModel::setSelectedForCsvExport() {
-        LOG_DEBUG << "#";
-        auto selectedArtworks = getSelectedArtworksSnapshot();
-        xpiks()->setArtworksForCsvExport(selectedArtworks);
-    }
-
-    void FilteredArtworksListModel::reimportMetadataForSelected() {
-        LOG_DEBUG << "#";
-        auto selectedArtworks = getSelectedOriginalItems();
-
-        for (auto *artwork: selectedArtworks) {
-            artwork->prepareForReimport();
-        }
-
-        int importID = xpiks()->reimportMetadata(selectedArtworks);
-        ArtItemsModel *artItemsModel = getArtItemsModel();
-        artItemsModel->raiseArtworksReimported(importID, (int)selectedArtworks.size());
+        //xpiks()->writeMetadata(itemsToSave, useBackups);
     }
 
     void FilteredArtworksListModel::copyToQuickBuffer(int index) const {
@@ -495,43 +449,17 @@ namespace Models {
 
         if (0 <= index && index < rowCount()) {
             int originalIndex = getOriginalIndex(index);
-            ArtItemsModel *artItemsModel = getArtItemsModel();
-            ArtworkMetadata *metadata = artItemsModel->getArtwork(originalIndex);
-
-            if (metadata != NULL) {
-                auto *basicModel = metadata->getBasicModel();
-                auto *quickBuffer = m_CommandManager->getQuickBuffer();
-                quickBuffer->setFromBasicModel(basicModel);
+            Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
+            if (artwork != NULL) {
+                m_Messages
+                        .ofType<QString, QString, QStringList, bool>()
+                        .withID(Commands::AppMessages::CopyToQuickBuffer)
+                        .broadcast(artwork->getTitle(),
+                                   artwork->getDescription(),
+                                   artwork->getKeywords(),
+                                   false);
             }
         }
-    }
-
-    void FilteredArtworksListModel::fillFromQuickBuffer(int index) const {
-        LOG_INFO << index;
-
-        if (0 <= index && index < rowCount()) {
-            int originalIndex = getOriginalIndex(index);
-            ArtItemsModel *artItemsModel = getArtItemsModel();
-            artItemsModel->fillFromQuickBuffer(originalIndex);
-        }
-    }
-
-    void FilteredArtworksListModel::generateCompletions(const QString &prefix, int index) {
-        if (0 <= index && index < rowCount()) {
-            int originalIndex = getOriginalIndex(index);
-
-            ArtItemsModel *artItemsModel = getArtItemsModel();
-            auto *basicModel = artItemsModel->getBasicModel(originalIndex);
-
-            xpiks()->generateCompletions(prefix, basicModel);
-        }
-    }
-
-    void FilteredArtworksListModel::reviewDuplicatesInSelected() const {
-        auto itemsForSuggestions = filterItems<ArtworkMetadata *>(
-                    [](Artworks::ArtworkMetadata *artwork) { return artwork->hasDuplicates(); },
-                    [] (Artworks::ArtworkMetadata *artwork, int, int) { return artwork; });
-        xpiks()->setupDuplicatesModel(itemsForSuggestions);
     }
 
     void FilteredArtworksListModel::itemSelectedChanged(bool value) {
@@ -553,10 +481,12 @@ namespace Models {
     }
 
     void FilteredArtworksListModel::setFilteredItemsSelected(bool selected) {
-        setFilteredItemsSelectedEx([](ArtworkMetadata*) { return true; }, selected, false);
+        setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata*) { return true; }, selected, false);
     }
 
-    void FilteredArtworksListModel::setFilteredItemsSelectedEx(const std::function<bool (ArtworkMetadata *)> pred, bool selected, bool unselectAllFirst) {
+    void FilteredArtworksListModel::setFilteredItemsSelectedEx(const std::function<bool (Artworks::ArtworkMetadata *)> pred,
+                                                               bool selected,
+                                                               bool unselectAllFirst) {
         LOG_INFO << selected;
 
         std::vector<int> indices;
@@ -590,7 +520,7 @@ namespace Models {
     }
 
     Artworks::WeakArtworksSnapshot FilteredArtworksListModel::getSelectedOriginalItems() const {
-        Artworks::WeakArtworksSnapshot items = filterItems<ArtworkMetadata *>(
+        Artworks::WeakArtworksSnapshot items = filterItems<Artworks::ArtworkMetadata *>(
             [](Artworks::ArtworkMetadata *metadata) { return metadata->isSelected(); },
             [] (Artworks::ArtworkMetadata *metadata, int, int) { return metadata; });
 
@@ -649,7 +579,7 @@ namespace Models {
     bool FilteredArtworksListModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
         Q_UNUSED(sourceParent);
 
-        ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(sourceRow);
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(sourceRow);
 
         if (artwork == nullptr) { return false; }
         if (artwork->isRemoved()) { return false; }
@@ -672,8 +602,8 @@ namespace Models {
             return QSortFilterProxyModel::lessThan(sourceLeft, sourceRight);
         }
 
-        ArtworkMetadata *leftMetadata = m_ArtworksListModel.getArtwork(sourceLeft.row());
-        ArtworkMetadata *rightMetadata = m_ArtworksListModel.getArtwork(sourceRight.row());
+        Artworks::ArtworkMetadata *leftMetadata = m_ArtworksListModel.getArtwork(sourceLeft.row());
+        Artworks::ArtworkMetadata *rightMetadata = m_ArtworksListModel.getArtwork(sourceRight.row());
 
         bool result = false;
 
@@ -697,17 +627,5 @@ namespace Models {
         }
 
         return result;
-    }
-
-#ifdef CORE_TESTS
-    int FilteredArtItemsProxyModel::retrieveNumberOfSelectedItems() {
-        return getSelectedOriginalIndices().size();
-    }
-#endif
-
-    Artworks::ArtworksSnapshot::Container FilteredArtworksListModel::getSearchablePreviewOriginalItems(const QString &searchTerm,
-                                                                                                          Common::SearchFlags flags) const {
-        return filterItems<std::shared_ptr<ArtworkMetadataLocker> >(
-
     }
 }

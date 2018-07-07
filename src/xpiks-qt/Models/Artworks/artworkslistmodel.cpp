@@ -42,16 +42,21 @@ namespace Models {
                                          Commands::AppMessages &messages,
                                          QObject *parent):
         QAbstractListModel(parent),
-        m_Messages(messages),
         // all items before 1024 are reserved for internal models
         m_LastID(1024),
         m_CurrentItemIndex(0),
-        m_ArtworksRepository(repository)
+        m_ArtworksRepository(repository),
+        m_Messages(messages)
     {
         QObject::connect(&m_ArtworksRepository, &ArtworksRepository::filesUnavailable,
                          this, &ArtworksListModel::onFilesUnavailableHandler);
 
-        registerListeners();
+        m_Messages
+                .ofType<Helpers::IndicesRanges>()
+                .withID(Commands::AppMessages::UpdateArtworks)
+                .addListener(std::bind(&ArtworksListModel::updateItems, this,
+                                       std::placeholders::_1,
+                                       getStandardUpdateRoles()));
     }
 
     ArtworksListModel::~ArtworksListModel() {
@@ -105,7 +110,7 @@ namespace Models {
 
     void ArtworksListModel::unselectAllItems() {
         LOG_DEBUG << "#";
-        foreachArtwork(Helpers::IndicesRanges(getArtworksCount()), [](Artworks::ArtworkMetadata *artwork, size_t){
+        foreachArtwork(Helpers::IndicesRanges(getArtworksSize()), [](Artworks::ArtworkMetadata *artwork, size_t){
             artwork->resetSelected();
         });
     }
@@ -118,11 +123,11 @@ namespace Models {
         }
     }
 
-    void ArtworksListModel::updateItems(ArtworksListModel::SelectionType selectionType, const QVector<int> &roles) {
+    void ArtworksListModel::updateSelection(ArtworksListModel::SelectionType selectionType, const QVector<int> &roles) {
         std::function<bool (Artworks::ArtworkMetadata *)> pred;
         switch (selectionType) {
         case SelectionType::All:
-            this->updateItems(Helpers::IndicesRanges(getArtworksCount()), roles);
+            this->updateItems(Helpers::IndicesRanges(getArtworksSize()), roles);
             return;
         case SelectionType::Modified:
             pred = [](Artworks::ArtworkMetadata *artwork) { return artwork->isModified(); };
@@ -204,6 +209,30 @@ namespace Models {
         }
     }
 
+    void ArtworksListModel::setItemsSaved(const Helpers::IndicesRanges &ranges) {
+        LOG_DEBUG << "#";
+        foreachArtwork(ranges, [](Artworks::ArtworkMetadata *artwork, size_t) {
+            artwork->resetModified();
+        });
+
+        this->updateItems(ranges, QVector<int>() << IsModifiedRole);
+
+        emit modifiedArtworksCountChanged();
+        emit artworksChanged(false);
+    }
+
+    void ArtworksListModel::detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges) {
+        foreachArtworkAs<Artworks::ImageArtwork>(ranges,
+                                       [](Artworks::ImageArtwork *image) { return image->hasVectorAttached(); },
+        [this](Artworks::ImageArtwork *image, size_t) {
+            this->m_ArtworksRepository.removeVector(
+                        image->getAttachedVectorPath());
+            image->detachVector();
+        });
+
+        updateItems(ranges, QVector<int>() << HasVectorAttachedRole);
+    }
+
     void ArtworksListModel::processUpdateRequests(const std::vector<std::shared_ptr<Services::ArtworkUpdateRequest> > &updateRequests) {
         LOG_INFO << updateRequests.size() << "requests to process";
 
@@ -247,18 +276,20 @@ namespace Models {
         const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
         Artworks::ArtworksSnapshot snapshot;
         snapshot.reserve(newFilesCount);
-        const int count = getArtworksCount();
+        const int count = (int)getArtworksSize();
+        QSet<qint64> fullDirectories;
 
         emit beginInsertRows(QModelIndex(), count, count + newFilesCount - 1);
         {
             for (auto &file: filesCollection->getFiles()) {
                 if (file.m_Type == Filesystem::ArtworkFileType::Vector) { continue; }
                 qint64 directoryID = 0;
-                if (m_ArtworksRepository.accountFile(file, directoryID)) {
+                if (m_ArtworksRepository.accountFile(file.m_Path, directoryID)) {
                     Artworks::ArtworkMetadata *artwork = createArtwork(file, directoryID);
                     m_ArtworkList.push_back(artwork);
                     snapshot.append(artwork);
                     connectArtworkSignals(artwork);
+                    if (file.isPartOfFullDirectory()) { fullDirectories.insert(directoryID); }
                 }
             }
         }
@@ -266,8 +297,8 @@ namespace Models {
 
         const bool autoAttach = Common::HasFlag(flags, Common::AddFilesFlags::FlagAutoFindVectors);
         const int attachedCount = attachVectors(filesCollection, snapshot, count, autoAttach);
-        m_ArtworksRepository.addFiles(snapshot);
-
+        m_ArtworksRepository.watchFiles(snapshot);
+        m_ArtworksRepository.setFullDirectories(fullDirectories);
         syncArtworksIndices(count, -1);
 
         return ArtworksListModel::ArtworksAddResult(snapshot, attachedCount);
@@ -320,8 +351,9 @@ namespace Models {
         LOG_DEBUG << "#";
         foreachArtwork([](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
         [this](Artworks::ArtworkMetadata *artwork, size_t) {
-            this->m_ArtworksRepository.accountFile(
-                        artwork->getFilepath(), artwork->getDirectoryID(), directoryFlags);
+            qint64 directoryID;
+            this->m_ArtworksRepository.accountFile(artwork->getFilepath(), directoryID);
+            Q_ASSERT(directoryID == artwork->getDirectoryID());
         });
         // TODO: finish this
     }
@@ -360,7 +392,7 @@ namespace Models {
         }
     }
 
-    Artworks::ArtworksSnapshot ArtworksListModel::deleteItems(const Helpers::IndicesRanges &ranges) {
+    void ArtworksListModel::deleteItems(const Helpers::IndicesRanges &ranges) {
         LOG_DEBUG << ranges.size() << "range(s)";
         QModelIndex dummy;
         const bool willReset = ranges.length() > 20;
@@ -370,8 +402,8 @@ namespace Models {
 
         for (int i = size - 1; i >= 0; i--) {
             auto &r = rangesArray.at(i);
-            Q_ASSERT(r.first >= 0 && r.first < (int)getArtworksCount());
-            Q_ASSERT(r.second >= 0 && r.second < (int)getArtworksCount());
+            Q_ASSERT(r.first >= 0 && (size_t)r.first < getArtworksSize());
+            Q_ASSERT(r.second >= 0 && (size_t)r.second < getArtworksSize());
 
             auto itBegin = m_ArtworkList.begin() + r.first;
             auto itEnd = m_ArtworkList.begin() + (r.second + 1);
@@ -441,7 +473,7 @@ namespace Models {
         int attachedVectors = 0;
         QString defaultPath;
 
-        const size_t size = getArtworksCount();
+        const size_t size = getArtworksSize();
         indicesToUpdate.reserve((int)size);
 
         for (size_t i = 0; i < size; ++i) {
@@ -484,54 +516,20 @@ namespace Models {
     }
 
     void ArtworksListModel::syncArtworksIndices(int startIndex, int count) {
-        if (count == -1) { count = getArtworksCount(); }
+        if (count == -1) { count = getArtworksSize(); }
         foreachArtwork(Helpers::IndicesRanges(startIndex, count),
         [this](Artworks::ArtworkMetadata *, size_t i) { this->accessArtwork(i); });
     }
 
-    void ArtworksListModel::setItemsSaved(const Helpers::IndicesRanges &ranges) {
-        LOG_DEBUG << "#";
-        foreachArtwork(ranges, [](Artworks::ArtworkMetadata *artwork, size_t) {
-            artwork->resetModified();
-        });
-
-        this->updateItems(ranges, QVector<int>() << IsModifiedRole);
-
-        emit modifiedArtworksCountChanged();
-        emit artworksChanged(false);
-    }
-
-    void ArtworksListModel::detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges) {
-        foreachArtworkAs<Artworks::ImageArtwork>(ranges,
-                                       [](Artworks::ImageArtwork *image) { return image->hasVectorAttached(); },
-        [this](Artworks::ImageArtwork *image, size_t) {
-            this->m_ArtworksRepository.removeVector(
-                        image->getAttachedVectorPath());
-            image->detachVector();
-        });
-
-        updateItems(ranges, QVector<int>() << HasVectorAttachedRole);
-    }
-
-    void ArtworksListModel::registerListeners() {
-        LOG_DEBUG << "#";
-        using namespace Commands;
-        m_Messages
-                .ofType<Helpers::IndicesRanges>()
-                .withID(AppMessages::UpdateArtworks)
-                .addListener(std::bind(&ArtworksListModel::updateItems, this,
-                                       std::placeholders::_1));
-    }
-
     void ArtworksListModel::resetSpellCheckResults() {
-        foreachArtwork(Helpers::IndicesRanges(getArtworksCount()),
+        foreachArtwork(Helpers::IndicesRanges(getArtworksSize()),
                        [](Artworks::ArtworkMetadata *artwork, size_t) {
             artwork->resetSpellingInfo();
         });
     }
 
     void ArtworksListModel::resetDuplicatesResults() {
-        foreachArtwork(Helpers::IndicesRanges(getArtworksCount()),
+        foreachArtwork(Helpers::IndicesRanges(getArtworksSize()),
                        [](Artworks::ArtworkMetadata *artwork, size_t) {
             artwork->resetDuplicatesInfo();
         });
@@ -548,7 +546,7 @@ namespace Models {
     QVariant ArtworksListModel::data(const QModelIndex &index, int role) const {
         int row = index.row();
 
-        if (row < 0 || row >= (int)getArtworksCount()) {
+        if (row < 0 || (size_t)row >= getArtworksSize()) {
             return QVariant();
         }
 
@@ -594,7 +592,7 @@ namespace Models {
     Qt::ItemFlags ArtworksListModel::flags(const QModelIndex &index) const {
         int row = index.row();
 
-        if (row < 0 || row >= getArtworksCount()) {
+        if (row < 0 || (size_t)row >= getArtworksSize()) {
             return Qt::ItemIsEnabled;
         }
 
@@ -604,7 +602,7 @@ namespace Models {
     bool ArtworksListModel::setData(const QModelIndex &index, const QVariant &value, int role) {
         int row = index.row();
 
-        if (row < 0 || row >= getArtworksCount()) {
+        if (row < 0 || (size_t)row >= getArtworksSize()) {
             return false;
         }
 
@@ -643,7 +641,7 @@ namespace Models {
     Artworks::ArtworkMetadata *ArtworksListModel::getArtworkObject(int index) const {
         Artworks::ArtworkMetadata *item = NULL;
 
-        if (0 <= index && index < getArtworksCount()) {
+        if (0 <= index && (size_t)index < getArtworksSize()) {
             item = accessArtwork(index);
             QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
         }
@@ -654,7 +652,7 @@ namespace Models {
     Artworks::BasicMetadataModel *ArtworksListModel::getBasicModelObject(int index) const {
         Artworks::BasicMetadataModel *keywordsModel = NULL;
 
-        if (0 <= index && index < getArtworksCount()) {
+        if (0 <= index && (size_t)index < getArtworksSize()) {
             keywordsModel = accessArtwork(index)->getBasicModel();
             QQmlEngine::setObjectOwnership(keywordsModel, QQmlEngine::CppOwnership);
         }
@@ -981,7 +979,7 @@ namespace Models {
         [&anyArtworkUnavailable](Artworks::ArtworkMetadata *artwork, size_t) {
             artwork->setUnavailable(); anyArtworkUnavailable = true; });
 
-        foreachArtworkAs<Artworks::ImageArtwork>(Helpers::IndicesRanges(getArtworksCount()),
+        foreachArtworkAs<Artworks::ImageArtwork>(Helpers::IndicesRanges(getArtworksSize()),
                     [this](Artworks::ImageArtwork *image) { return image->hasVectorAttached() &&
                     this->m_ArtworksRepository.isFileUnavailable(image->getAttachedVectorPath()); },
         [&anyVectorUnavailable](Artworks::ImageArtwork *image, size_t) {
@@ -1049,7 +1047,7 @@ namespace Models {
     void ArtworksListModel::onMetadataWritingFinished() {
         LOG_DEBUG << "#";
         unlockAllForIO();
-        updateItems(ArtworksListModel::SelectionType::Selected, QVector<int>() << IsModifiedRole);
+        updateSelection(ArtworksListModel::SelectionType::Selected, QVector<int>() << IsModifiedRole);
     }
 
     QHash<int, QByteArray> ArtworksListModel::roleNames() const {
@@ -1137,7 +1135,7 @@ namespace Models {
 
     void ArtworksListModel::foreachArtwork(std::function<bool (Artworks::ArtworkMetadata *)> pred,
                                            std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
-        foreachArtwork(Helpers::IndicesRanges(0, getArtworksCount()),
+        foreachArtwork(Helpers::IndicesRanges(0, getArtworksSize()),
                        pred,
                        action);
     }

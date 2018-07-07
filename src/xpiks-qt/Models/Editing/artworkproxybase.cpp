@@ -11,17 +11,14 @@
 #include "artworkproxybase.h"
 #include <Artworks/imetadataoperator.h>
 #include <Suggestion/keywordssuggestor.h>
-#include <QuickBuffer/quickbuffer.h>
+#include <Models/Editing/quickbuffer.h>
 #include <Helpers/stringhelper.h>
-#include <AutoComplete/completionitem.h>
-#include <AutoComplete/keywordsautocompletemodel.h>
+#include <Services/AutoComplete/completionitem.h>
+#include <Services/AutoComplete/keywordsautocompletemodel.h>
 
 namespace Models {
-    ArtworkProxyBase::ArtworkProxyBase():
-        m_CompletionSource(completionSource),
-        m_PresetsManager(presetsManager)
-    {
-    }
+    ArtworkProxyBase::ArtworkProxyBase()
+    { }
 
     QString ArtworkProxyBase::getDescription() {
         auto *basicModel = getBasicMetadataModel();
@@ -250,7 +247,6 @@ namespace Models {
             auto *metadataOperator = getMetadataOperator();
             if (metadataOperator->expandPreset(keywordIndex, keywords)) {
                 signalKeywordsCountChanged();
-                spellCheckKeywords();
                 doJustEdited();
                 success = true;
             }
@@ -269,7 +265,6 @@ namespace Models {
             auto *metadataOperator = getMetadataOperator();
             if (metadataOperator->appendPreset(keywords)) {
                 signalKeywordsCountChanged();
-                spellCheckKeywords();
                 doJustEdited();
                 success = true;
             }

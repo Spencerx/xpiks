@@ -10,19 +10,25 @@
 
 #include "deletekeywordsviewmodel.h"
 #include <QTime>
+#include <Common/defines.h>
 #include <Helpers/indiceshelper.h>
 #include <Artworks/artworkelement.h>
 #include <Commands/Editing/deletekeywordstemplate.h>
-#include <Common/defines.h>
 #include <Commands/Base/icommandmanager.h>
 #include <Commands/Editing/modifyartworkscommand.h>
+#include <Commands/appmessages.h>
 
 namespace Models {
-    DeleteKeywordsViewModel::DeleteKeywordsViewModel(Commands::ICommandManager &commandManager, QObject *parent):
+    DeleteKeywordsViewModel::DeleteKeywordsViewModel(Commands::ICommandManager &commandManager,
+                                                     Commands::AppMessages &messages,
+                                                     KeywordsPresets::IPresetsManager &presetsManager,
+                                                     QObject *parent):
         Models::ArtworksViewModel(parent),
         m_KeywordsToDeleteModel(m_HoldForDeleters),
         m_CommonKeywordsModel(m_HoldForCommon),
         m_CommandManager(commandManager),
+        m_Messages(messages),
+        m_PresetsManager(presetsManager),
         m_CaseSensitive(false)
     {
     }
@@ -86,6 +92,7 @@ namespace Models {
         LOG_DEBUG << "#";
         if (m_KeywordsToDeleteModel.clearKeywords()) {
             emit keywordsToDeleteCountChanged();
+            submitForSpellCheck();
         }
     }
 
@@ -94,6 +101,7 @@ namespace Models {
         QString keyword;
         if (m_CommonKeywordsModel.removeKeywordAt(keywordIndex, keyword)) {
             emit commonKeywordsCountChanged();
+            submitForSpellCheck();
         }
 
         return keyword;
@@ -103,8 +111,7 @@ namespace Models {
         LOG_INFO << keyword;
         if (m_KeywordsToDeleteModel.appendKeyword(keyword)) {
             emit keywordsToDeleteCountChanged();
-
-            xpiks()->submitKeywordForSpellCheck(&m_KeywordsToDeleteModel, m_KeywordsToDeleteModel.rowCount() - 1);
+            submitForSpellCheck();
         }
     }
 
@@ -112,8 +119,7 @@ namespace Models {
         LOG_INFO << keywords.length() << "keyword(s)" << "|" << keywords;
         if (m_KeywordsToDeleteModel.appendKeywords(keywords) > 0) {
             emit keywordsToDeleteCountChanged();
-
-            xpiks()->submitItemForSpellCheck(&m_KeywordsToDeleteModel, Common::SpellCheckFlags::Keywords);
+            submitForSpellCheck();
         }
     }
 
@@ -122,21 +128,20 @@ namespace Models {
 
         if (m_KeywordsToDeleteModel.getKeywordsCount() == 0) { return; }
 
-        Artworks::ArtworksSnapshot::Container rawSnapshot(getRawSnapshot());
         auto keywordsList = m_KeywordsToDeleteModel.getKeywords();
-
         if (!m_CaseSensitive) {
             for (auto &keyword: keywordsList) {
                 keyword = keyword.toLower();
             }
         }
-
         auto keywordsSet = keywordsList.toSet();
+        Artworks::ArtworksSnapshot snapshot;
+        snapshot.copyFrom(getSnapshot());
 
         using namespace Commands;
         m_CommandManager.processCommand(
                     std::make_shared<ModifyArtworksCommand>(
-                        Artworks::ArtworksSnapshot(getSnapshot()),
+                        std::move(snapshot),
                         std::make_shared<DeleteKeywordsTemplate>(
                             keywordsSet, m_CaseSensitive)));
     }
@@ -144,14 +149,12 @@ namespace Models {
     bool DeleteKeywordsViewModel::addPreset(KeywordsPresets::ID_t presetID) {
         bool success = false;
         LOG_INFO << "preset" << presetID;
-        auto *presetsModel = m_CommandManager->getPresetsModel();
         QStringList keywords;
 
-        if (presetsModel->tryGetPreset(presetID, keywords)) {
+        if (m_PresetsManager.tryGetPreset(presetID, keywords)) {
             if (m_KeywordsToDeleteModel.appendKeywords(keywords) > 0) {
                 emit keywordsToDeleteCountChanged();
-
-                xpiks()->submitItemForSpellCheck(&m_KeywordsToDeleteModel, Common::SpellCheckFlags::Keywords);
+                submitForSpellCheck();
             }
         }
 
@@ -201,9 +204,9 @@ namespace Models {
 
     void DeleteKeywordsViewModel::fillKeywordsHash(QHash<QString, int> &keywordsHash) {
         LOG_DEBUG << "#";
-        processArtworks([](const ArtworkElement*) { return true; },
-        [&keywordsHash](size_t, ArtworkMetadata *metadata) {
-            const auto &keywords = metadata->getKeywords();
+        processArtworks([](const Artworks::ArtworkElement*) { return true; },
+        [&keywordsHash](size_t, Artworks::ArtworkMetadata *artwork) {
+            const auto &keywords = artwork->getKeywords();
 
             for (auto &keyword: keywords) {
                 if (keywordsHash.contains(keyword)) {
@@ -213,5 +216,12 @@ namespace Models {
                 }
             }
         });
+    }
+
+    void DeleteKeywordsViewModel::submitForSpellCheck() {
+        m_Messages
+                .ofType<Artworks::BasicKeywordsModel*>()
+                .withID(Commands::AppMessages::SpellCheck)
+                .broadcast(&m_KeywordsToDeleteModel);
     }
 }

@@ -32,7 +32,7 @@ namespace Models {
                                                  AutoComplete::ICompletionSource &completionSource,
                                                  Commands::AppMessages &messages,
                                                  QObject *parent):
-        ArtworksViewModel(selectedArtworksSource, parent),
+        ArtworksViewModel(parent),
         ArtworkProxyBase(),
         Common::DelayedActionEntity(1000, MAX_EDITING_PAUSE_RESTARTS),
         m_CommandManager(commandManager),
@@ -69,7 +69,8 @@ namespace Models {
         m_Messages
                 .ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::EditArtworks)
-                .addListener(std::bind(&CombinedArtworksModel::setArtworks, this));
+                .addListener(std::bind(&CombinedArtworksModel::setArtworks, this,
+                                       std::placeholders::_1));
     }
 
     void CombinedArtworksModel::setArtworks(const Artworks::ArtworksSnapshot &artworks) {
@@ -101,7 +102,10 @@ namespace Models {
         LOG_DEBUG << "After recombine title:" << getTitle();
         LOG_DEBUG << "After recombine keywords:" << getKeywordsString();
 
-        xpiks()->submitItemForSpellCheck(&m_CommonKeywordsModel);
+        m_Messages
+                .ofType<Artworks::BasicKeywordsModel*>()
+                .withID(Commands::AppMessages::SpellCheck)
+                .broadcast(&m_CommonKeywordsModel);
     }
 
     void CombinedArtworksModel::setDescription(const QString &value) {
@@ -221,9 +225,11 @@ namespace Models {
 
         if (needToSave) {
             using namespace Commands;
+            Artworks::ArtworksSnapshot snapshot;
+            snapshot.copyFrom(getSnapshot());
             m_CommandManager.processCommand(
                         std::make_shared<ModifyArtworksCommand>(
-                            getSnapshot(),
+                            std::move(snapshot),
                             std::make_shared<EditArtworksTemplate>(
                                 m_CommonKeywordsModel.getTitle(),
                                 m_CommonKeywordsModel.getDescription(),
@@ -248,7 +254,10 @@ namespace Models {
         LOG_DEBUG << "After recombine title:" << getTitle();
         LOG_DEBUG << "After recombine keywords:" << getKeywordsString();
 
-        xpiks()->submitItemForSpellCheck(&m_CommonKeywordsModel);
+        m_Messages
+                .ofType<Artworks::BasicKeywordsModel*>()
+                .withID(Commands::AppMessages::SpellCheck)
+                .broadcast(&m_CommonKeywordsModel);
     }
 
     void CombinedArtworksModel::plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {
@@ -282,7 +291,13 @@ namespace Models {
 
     void CombinedArtworksModel::copyToQuickBuffer() {
         LOG_DEBUG << "#";
-        doCopyToQuickBuffer();
+        m_Messages
+                .ofType<QString, QString, QStringList, bool>()
+                .withID(Commands::AppMessages::CopyToQuickBuffer)
+                .broadcast(m_CommonKeywordsModel.getTitle(),
+                           m_CommonKeywordsModel.getDescription(),
+                           m_CommonKeywordsModel.getKeywords(),
+                           false);
     }
 
     bool CombinedArtworksModel::acceptCompletionAsPreset(int completionID) {
@@ -319,7 +334,7 @@ namespace Models {
         recombineArtworks([](const Artworks::ArtworkElement *) { return true; });
     }
 
-    void CombinedArtworksModel::recombineArtworks(std::function<bool (const ArtworkElement *)> pred) {
+    void CombinedArtworksModel::recombineArtworks(std::function<bool (const Artworks::ArtworkElement *)> pred) {
         LOG_DEBUG << "#";
 
         bool descriptionsDiffer = false;
@@ -390,7 +405,9 @@ namespace Models {
         }
     }
 
-    bool CombinedArtworksModel::findNonEmptyData(std::function<bool (const ArtworkElement *)> pred, int &index,  ArtworkMetadata *&artworkMetadata) {
+    bool CombinedArtworksModel::findNonEmptyData(std::function<bool (const Artworks::ArtworkElement *)> pred,
+                                                 int &index,
+                                                 Artworks::ArtworkMetadata *&artworkMetadata) {
         bool found = false, foundOther = false;
         int nonEmptyKeywordsIndex = -1, nonEmptyOtherIndex = -1;
         Artworks::ArtworkMetadata *nonEmptyKeywordsArtwork = nullptr;
@@ -509,7 +526,7 @@ namespace Models {
         initTitle("");
         initKeywords(QStringList());
 
-        xpiks()->clearCurrentItem();
+        emit clearCurrentEditable();
     }
 
     void CombinedArtworksModel::doOnTimer() {

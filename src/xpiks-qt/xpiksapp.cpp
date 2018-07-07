@@ -50,11 +50,12 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_CombinedArtworksModel(m_CommandManager, m_PresetsModel, m_KeywordsCompletions, m_Messages),
     m_QuickBuffer(m_Messages, m_CurrentEditableModel, m_CommandManager),
     m_ReplaceModel(m_ColorsModel, m_CommandManager, m_Messages),
-    m_DeleteKeywordsModel(m_CommandManager),
+    m_DeleteKeywordsModel(m_CommandManager, m_Messages, m_PresetsModel),
     m_ArtworkProxyModel(m_Messages, m_CommandManager, m_PresetsModel, m_KeywordsCompletions),
     m_DuplicatesModel(m_ColorsModel),
     m_SecretsManager(),
-    m_UploadInfoRepository(environment, m_SecretsManager),
+    m_StocksFtpList(environment, m_RequestsService),
+    m_UploadInfoRepository(environment, m_StocksFtpList, m_SecretsManager),
     m_ZipArchiver(m_Messages),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
     m_ApiClients(m_SecretsStorage.get()),
@@ -82,7 +83,8 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_CsvExportModel(m_CsvExportPlans, m_Messages),
     m_MetadataReadingHub(m_MetadataIOService, m_Messages),
     m_MetadataIOCoordinator(m_MetadataReadingHub, m_SettingsModel, m_SwitcherModel, m_VideoCachingService),
-    m_FilteredArtworksListModel(m_ArtworksListModel, m_Messages, m_CommandManager, m_PresetsModel, m_KeywordsCompletions),
+    m_FilteredArtworksListModel(m_ArtworksListModel, m_Messages, m_CommandManager,
+                                m_PresetsModel, m_KeywordsCompletions, m_SettingsModel),
     m_SpellCheckSuggestionModel(m_SpellCheckerService, m_Messages),
     m_KeywordsSuggestor(m_ApiClients, m_RequestsService, m_SwitcherModel, m_SettingsModel, m_Messages, environment),
     m_PluginManager(environment, m_CommandManager, m_PresetsModel, m_DatabaseManager,
@@ -483,7 +485,10 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onMetadataWritingFinished);
 
+    // current editable
     QObject::connect(&m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::clearCurrentEditable,
+                     &m_CurrentEditableModel, &Models::CurrentEditableModel::onClearCurrentEditable);
+    QObject::connect(&m_CombinedArtworksModel, &Models::CombinedArtworksModel::clearCurrentEditable,
                      &m_CurrentEditableModel, &Models::CurrentEditableModel::onClearCurrentEditable);
 
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckService::serviceAvailable,
@@ -532,6 +537,7 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_ArtworkProxyModel, &Models::ArtworkProxyModel::duplicatesCouldHaveChanged,
                      &m_DuplicatesModel, &SpellCheck::DuplicatesReviewModel::onDuplicatesCouldHaveChanged);
 
+    // user dictionary update
     QObject::connect(&m_UserDictionary, &SpellCheck::UserDictionary::userDictUpdate,
                      &m_QuickBuffer, &Models::QuickBuffer::userDictUpdateHandler);
     QObject::connect(&m_UserDictionary, &SpellCheck::UserDictionary::userDictCleared,

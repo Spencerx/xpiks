@@ -162,6 +162,7 @@ namespace Models {
     }
 
     UploadInfoRepository::UploadInfoRepository(Common::ISystemEnvironment &environment,
+                                               Microstocks::StocksFtpListModel &stocksFtpList,
                                                Encryption::SecretsManager &secretsManager,
                                                QObject *parent):
         QAbstractListModel(parent),
@@ -169,7 +170,7 @@ namespace Models {
         m_Environment(environment),
         m_LocalConfig(environment.path({UPLOAD_INFOS_FILE}),
                       environment.getIsInMemoryOnly()),
-        m_StocksFtpList(environment),
+        m_StocksFtpList(stocksFtpList),
         m_SecretsManager(secretsManager),
         m_CurrentIndex(0),
         m_EmptyPasswordsMode(false)
@@ -513,8 +514,16 @@ namespace Models {
 
     void UploadInfoRepository::onBeforeMasterPasswordChanged(const QString &oldMasterPassword,
                                                              const QString &newMasterPassword) {
-        LOG_INFO << "#";
-        xpiks()->recodePasswords(oldMasterPassword, newMasterPassword, m_UploadInfos);
+        LOG_INFO << m_UploadInfos.size() << "item(s)";
+
+        for (auto &info: m_UploadInfos) {
+            if (info->hasPassword()) {
+                QString newPassword = m_SecretsManager.recodePassword(
+                                          info->getPassword(), oldMasterPassword, newMasterPassword);
+                info->setPassword(newPassword);
+            }
+        }
+
         justChanged();
     }
 

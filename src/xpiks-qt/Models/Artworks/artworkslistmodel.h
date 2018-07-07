@@ -107,7 +107,7 @@ namespace Models {
         };
 
     public:
-        size_t getArtworksCount() const { return m_ArtworkList.size(); }
+        size_t getArtworksSize() const { return m_ArtworkList.size(); }
         int getModifiedArtworksCount();
         QVector<int> getStandardUpdateRoles() const;
 
@@ -116,13 +116,15 @@ namespace Models {
         void selectArtworksFromDirectory(int directoryIndex);
         void unselectAllItems();
         void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles = QVector<int>());
-        void updateItems(SelectionType selectionType, const QVector<int> &roles = QVector<int>());
+        void updateSelection(SelectionType selectionType, const QVector<int> &roles = QVector<int>());
         std::unique_ptr<Artworks::SessionSnapshot> snapshotAll();
         void generateAboutToBeRemoved();
         void unlockAllForIO();
         bool isInSelectedDirectory(int artworkIndex);
         void sendToQuickBuffer(int artworkIndex);
         void setCurrentIndex(size_t index);
+        void setItemsSaved(const Helpers::IndicesRanges &ranges);
+        void detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges);
 
     public:
         // update hub related
@@ -142,7 +144,7 @@ namespace Models {
 
     private:
         // general purpose internal methods
-        Artworks::ArtworksSnapshot deleteItems(const Helpers::IndicesRanges &ranges);
+        void deleteItems(const Helpers::IndicesRanges &ranges);
         int attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                            const Artworks::ArtworksSnapshot &snapshot,
                            int initialCount,
@@ -151,9 +153,6 @@ namespace Models {
                                QVector<int> &indicesToUpdate) const;
         void connectArtworkSignals(Artworks::ArtworkMetadata *artwork);
         void syncArtworksIndices(int startIndex=0, int count=-1);
-        void setItemsSaved(const Helpers::IndicesRanges &ranges);
-        void detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges);
-        void registerListeners();
 
     private:
         // message handlers
@@ -163,7 +162,7 @@ namespace Models {
 
     public:
         // qabstractlistmodel methods
-        virtual int rowCount(const QModelIndex &) const override { return (int)getArtworksCount(); }
+        virtual int rowCount(const QModelIndex &) const override { return (int)getArtworksSize(); }
         virtual QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
         virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
         virtual bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
@@ -247,7 +246,7 @@ namespace Models {
         template<typename T>
         std::vector<T> filterArtworks(std::function<bool (Artworks::ArtworkMetadata *)> pred,
                                       std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
-            return filterArtworks(Helpers::IndicesRanges(getArtworksCount()),
+            return filterArtworks(Helpers::IndicesRanges(getArtworksSize()),
                                   pred,
                                   mapper);
         }
