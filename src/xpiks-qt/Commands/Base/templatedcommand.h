@@ -26,9 +26,9 @@ namespace Commands {
     class TemplatedCommand: public ICommand {
         static_assert(std::is_move_constructible<T>::value, "T should have move constructor");
     public:
-        TemplatedCommand(T &&argument, std::shared_ptr<ICommandTemplate<T>> &commandTemplate):
+        TemplatedCommand(T &&argument, const std::shared_ptr<ICommandTemplate<T>> &commandTemplate):
             m_Argument(std::move(argument)),
-            m_CommandTemplate(std::move(commandTemplate))
+            m_CommandTemplate(commandTemplate)
         {
             Q_ASSERT(m_CommandTemplate);
         }

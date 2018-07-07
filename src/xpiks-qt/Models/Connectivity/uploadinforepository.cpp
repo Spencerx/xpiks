@@ -70,7 +70,7 @@ namespace Models {
     bool tryParseHost(const QJsonObject &element, std::shared_ptr<UploadInfo> &uploadInfo) {
         bool parsed = false;
 
-        std::shared_ptr<UploadInfo> destination(new UploadInfo());
+        auto destination = std::make_shared<UploadInfo>();
 
         do {
             QJsonValue titleValue = element.value(FTP_TITLE_KEY);
@@ -205,7 +205,7 @@ namespace Models {
 
         for (int i = 0; i < length; ++i) {
             auto &hash = items.at(i);
-            m_UploadInfos.emplace_back(new UploadInfo(hash));
+            m_UploadInfos.emplace_back(std::make_shared<UploadInfo>(hash));
         }
 
         LOG_INFO << length << "item(s) found";
@@ -256,7 +256,7 @@ namespace Models {
         LOG_INFO << lastIndex;
         beginInsertRows(QModelIndex(), lastIndex, lastIndex);
         {
-            m_UploadInfos.emplace_back(new UploadInfo());
+            m_UploadInfos.emplace_back(std::make_shared<UploadInfo>());
         }
         endInsertRows();
 

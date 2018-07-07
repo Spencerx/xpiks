@@ -68,39 +68,39 @@ namespace Suggestion {
         LOG_DEBUG << "#";
 
         int id = 0;
-        std::shared_ptr<ShutterstockSuggestionEngine> shutterstockEngine(new ShutterstockSuggestionEngine(
-                                                                             id++,
-                                                                             &m_ApiClients.getShutterstockClient(),
-                                                                             &m_RequestsService));
+        auto shutterstockEngine = std::make_shared<ShutterstockSuggestionEngine>(
+                                      id++,
+                                      &m_ApiClients.getShutterstockClient(),
+                                      &m_RequestsService);
         QObject::connect(shutterstockEngine.get(), &ShutterstockSuggestionEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
-        m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(shutterstockEngine));
+        m_QueryEngines.emplace_back(shutterstockEngine);
 
-        std::shared_ptr<GettySuggestionEngine> gettyEngine(new GettySuggestionEngine(
-                                                               id++,
-                                                               &m_ApiClients.getGettyClient(),
-                                                               &m_RequestsService));
+        auto gettyEngine = std::make_shared<GettySuggestionEngine>(
+                               id++,
+                               &m_ApiClients.getGettyClient(),
+                               &m_RequestsService);
         QObject::connect(gettyEngine.get(), &GettySuggestionEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
-        m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(gettyEngine));
+        m_QueryEngines.emplace_back(gettyEngine);
 
         // https://github.com/ribtoks/xpiks/issues/463
         gettyEngine->setIsEnabled(m_SwitcherModel.getGettySuggestionEnabled());
 
-        std::shared_ptr<FotoliaSuggestionEngine> fotoliaEngine(new FotoliaSuggestionEngine(
-                                                                   id++,
-                                                                   &m_ApiClients.getFotoliaClient(),
-                                                                   &m_RequestsService));
+        auto fotoliaEngine = std::make_shared<FotoliaSuggestionEngine>(
+                                 id++,
+                                 &m_ApiClients.getFotoliaClient(),
+                                 &m_RequestsService);
         QObject::connect(fotoliaEngine.get(), &FotoliaSuggestionEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
-        m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(fotoliaEngine));
+        m_QueryEngines.emplace_back(fotoliaEngine);
 
-        std::shared_ptr<LocalLibraryQueryEngine> localEngine(new LocalLibraryQueryEngine(
-                                                                 id++,
-                                                                 metadataIOService));
+        auto localEngine = std::make_shared<LocalLibraryQueryEngine>(
+                               id++,
+                               metadataIOService);
         QObject::connect(localEngine.get(), &LocalLibraryQueryEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
-        m_QueryEngines.push_back(std::dynamic_pointer_cast<ISuggestionEngine>(localEngine));
+        m_QueryEngines.emplace_back(localEngine);
         m_LocalSearchIndex = (int)m_QueryEngines.size() - 1;
 
         m_State.init();

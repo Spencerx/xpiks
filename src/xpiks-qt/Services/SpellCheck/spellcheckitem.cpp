@@ -137,7 +137,7 @@ namespace SpellCheck {
         foreach(const QString &word, words) {
             if (!word.contains(QChar::Space)) {
                 if (pred(word)) {
-                    std::shared_ptr<SpellCheckQueryItem> queryItem(new SpellCheckQueryItem(index, word));
+                    auto queryItem = std::make_shared<SpellCheckQueryItem>(index, word);
                     m_QueryItems.emplace_back(queryItem);
                 }
             } else {
@@ -147,7 +147,7 @@ namespace SpellCheck {
 
                     if (item.length() >= 2) {
                         if (pred(item)) {
-                            std::shared_ptr<SpellCheckQueryItem> queryItem(new SpellCheckQueryItem(index, item));
+                            auto queryItem = std::make_shared<SpellCheckQueryItem>(index, item);
                             m_QueryItems.emplace_back(queryItem);
                         }
                     }

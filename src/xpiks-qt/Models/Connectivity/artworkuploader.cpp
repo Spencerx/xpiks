@@ -128,7 +128,7 @@ namespace Models {
             return;
         }
 
-        std::shared_ptr<libxpks::net::UploadContext> context(new libxpks::net::UploadContext());
+        auto context = std::make_shared<libxpks::net::UploadContext>();
 
         context->m_Host = host;
         context->m_Username = username;

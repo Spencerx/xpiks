@@ -4,7 +4,7 @@ QMAKE_MAC_SDK = macosx10.11
 
 QT += qml quick widgets concurrent svg
 CONFIG += qtquickcompiler
-CONFIG += c++11
+CONFIG += c++14
 TARGET = Xpiks
 
 #CONFIG += force_debug_info

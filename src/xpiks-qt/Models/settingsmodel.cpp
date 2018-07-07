@@ -133,8 +133,8 @@ namespace Models {
         m_State("settings", environment),
         m_Config(environment.path({SETTINGS_FILE}),
                  environment.getIsInMemoryOnly()),
-        m_SettingsMap(new Helpers::JsonObjectMap()),
-        m_ExperimentalMap(new Helpers::JsonObjectMap()),
+        m_SettingsMap(std::make_shared<Helpers::JsonObjectMap>()),
+        m_ExperimentalMap(std::make_shared<Helpers::JsonObjectMap>()),
         m_ExifToolPath(DEFAULT_EXIFTOOL),
         m_SelectedLocale(DEFAULT_LOCALE),
         m_KeywordSizeScale(DEFAULT_KEYWORD_SIZE_SCALE),
@@ -192,7 +192,7 @@ namespace Models {
             QJsonValue experimental = m_SettingsMap->value(EXPERIMENTAL_KEY);
             if (experimental.isObject()) {
                 QJsonObject experimentalJson = experimental.toObject();
-                m_ExperimentalMap.reset(new Helpers::JsonObjectMap(experimentalJson));
+                m_ExperimentalMap = std::make_shared<Helpers::JsonObjectMap>(experimentalJson);
             }
         }
     }

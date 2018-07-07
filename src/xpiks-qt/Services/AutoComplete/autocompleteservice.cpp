@@ -109,7 +109,7 @@ namespace AutoComplete {
         QString requestPrefix = prefix.toLower();
         LOG_INFO << "Requesting for" << requestPrefix;
 
-        std::shared_ptr<CompletionQuery> query(new CompletionQuery(requestPrefix, basicModel));
+        auto query = std::make_shared<CompletionQuery>(requestPrefix, basicModel);
         query->setCompleteKeywords(completeKeywords);
         query->setCompletePresets(completePresets);
         m_AutoCompleteWorker->submitItem(query);

@@ -58,9 +58,9 @@ namespace Models {
         virtual std::shared_ptr<Commands::ICommand> update() override;
 
     public:
-        std::shared_ptr<Commands::ICommand> applyEdits(const QString &title,
-                                                       const QString &description,
-                                                       const QStringList &keywords);
+        virtual std::shared_ptr<Commands::ICommand> applyEdits(const QString &title,
+                                                               const QString &description,
+                                                               const QStringList &keywords) override;
 
     private:
         Artworks::ArtworkMetadata *m_ArtworkMetadata;

@@ -410,7 +410,7 @@ namespace MetadataIO {
         beginInsertRows(QModelIndex(), size, size);
         {
             QString name = QObject::tr("Untitled");
-            m_ExportPlans.emplace_back(new CsvExportPlan(name));
+            m_ExportPlans.emplace_back(std::make_shared<CsvExportPlan>(name));
         }
         endInsertRows();
 

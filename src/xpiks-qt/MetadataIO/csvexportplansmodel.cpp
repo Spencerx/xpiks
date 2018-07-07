@@ -120,7 +120,7 @@ namespace MetadataIO {
                 continue;
             }
 
-            exportPlan.reset(new CsvExportPlan());
+            exportPlan = std::make_shared<CsvExportPlan>();
 
             exportPlan->m_Name = nameValue.toString();
 

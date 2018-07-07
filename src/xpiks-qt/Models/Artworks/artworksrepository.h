@@ -25,11 +25,15 @@
 #include <Models/Session/recentdirectoriesmodel.h>
 #include <Common/abstractlistmodel.h>
 #include <Common/flags.h>
-#include <Filesystem/ifilescollection.h>
 #include <Artworks/artworkssnapshot.h>
 
 namespace Maintenance {
     class MaintenanceService;
+}
+
+namespace Filesystem {
+    struct ArtworkFile;
+    class IFilesCollection;
 }
 
 namespace Models {
@@ -112,7 +116,7 @@ namespace Models {
         void onAvailabilityTimer();
 
     public:
-        bool accountFile(const QString &filepath, qint64 &directoryID, Common::DirectoryFlags directoryFlags = Common::DirectoryFlags::None);
+        bool accountFile(const Filesystem::ArtworkFile &file, qint64 &directoryID);
         bool removeFile(const QString &filepath, qint64 directoryID);
         void removeVector(const QString &vectorPath);
         void cleanupEmptyDirectories();

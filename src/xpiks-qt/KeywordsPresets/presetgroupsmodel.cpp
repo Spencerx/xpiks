@@ -150,7 +150,8 @@ namespace KeywordsPresets {
         Q_ASSERT(m_GroupsList.size() == m_FilteredGroups.size());
 
         if (!m_FilteredGroups[index]) {
-            m_FilteredGroups[index].reset(new PresetKeywordsGroupModel(m_GroupsList[index].m_GroupID, m_PresetsModel));
+            m_FilteredGroups[index] = std::make_shared<PresetKeywordsGroupModel>(
+                                          m_GroupsList[index].m_GroupID, m_PresetsModel);
         }
 
         QObject *result = m_FilteredGroups[index].get();
@@ -162,7 +163,7 @@ namespace KeywordsPresets {
         LOG_DEBUG << "#";
 
         if (!m_DefaultGroup) {
-            m_DefaultGroup.reset(new PresetKeywordsGroupModel(DEFAULT_GROUP_ID, m_PresetsModel));
+            m_DefaultGroup = std::make_shared<PresetKeywordsGroupModel>(DEFAULT_GROUP_ID, m_PresetsModel);
         }
 
         QObject *result = m_DefaultGroup.get();

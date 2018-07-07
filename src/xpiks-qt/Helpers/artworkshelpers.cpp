@@ -9,9 +9,10 @@
  */
 
 #include "artworkshelpers.h"
-#include "../Artworks/artworkmetadata.h"
-#include "../Artworks/imageartwork.h"
-#include "../Artworks/videoartwork.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Artworks/videoartwork.h>
+#include <Artworks/artworkssnapshot.h>
 #include "filehelpers.h"
 
 namespace Helpers {
@@ -103,14 +104,14 @@ namespace Helpers {
         return count;
     }
 
-    int findAndAttachVectors(const std::vector<Artworks::ArtworkMetadata*> &artworksList, QVector<int> &modifiedIndices) {
+    int findAndAttachVectors(const Artworks::ArtworksSnapshot &snapshot, QVector<int> &modifiedIndices) {
         LOG_DEBUG << "#";
         int attachedCount = 0;
-        const size_t size = artworksList.size();
+        const size_t size = snapshot.size();
         modifiedIndices.reserve((int)size);
 
         for (size_t i = 0; i < size; ++i) {
-            Artworks::ArtworkMetadata *artwork = artworksList.at(i);
+            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
             Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
 
             if (image == NULL) { continue; }

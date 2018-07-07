@@ -81,14 +81,12 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::appendPreset(KeywordsPresets::ID_t presetID,
                                                                              KeywordsPresets::IPresetsManager &presetsManager) {
         using namespace Commands;
-        std::shared_ptr<ICommand> command(
-                    new ModifyArtworksCommand(
+        auto command = std::make_shared<ModifyArtworksCommand>(
                         m_ArtworkMetadata,
-                        std::shared_ptr<IArtworksCommandTemplate>(
-                            new ArtworksTemplateComposite({
-                                                              new ExpandPresetTemplate(presetsManager,
+                        std::make_shared<ArtworksTemplateComposite>({
+                                                              std::make_shared<ExpandPresetTemplate>(presetsManager,
                                                               (KeywordsPresets::ID_t)presetID),
-                                                              m_UpdateTemplate}))));
+                                                              m_UpdateTemplate}));
         return command;
     }
 
@@ -96,15 +94,13 @@ namespace Models {
                                                                              KeywordsPresets::ID_t presetID,
                                                                              KeywordsPresets::IPresetsManager &presetsManager) {
         using namespace Commands;
-        std::shared_ptr<ICommand> command(
-                    new ModifyArtworksCommand(
+        auto command = std::make_shared<ModifyArtworksCommand>(
                         m_ArtworkMetadata,
-                        std::shared_ptr<IArtworksCommandTemplate>(
-                            new ArtworksTemplateComposite({
-                                                             new ExpandPresetTemplate(presetsManager,
+                        std::make_shared<ArtworksTemplateComposite>({
+                                                             std::make_shared<ExpandPresetTemplate>(presetsManager,
                                                              (KeywordsPresets::ID_t)presetID,
                                                              keywordIndex),
-                                                             m_UpdateTemplate}))));
+                                                             m_UpdateTemplate}));
         return command;
 
     }
@@ -119,36 +115,32 @@ namespace Models {
                 keyword = keyword.toLower();
             }
 
-            command.reset(
-                        new ModifyArtworksCommand(
-                            m_ArtworkMetadata,
-                            std::shared_ptr<IArtworksCommandTemplate>(
-                                new ArtworksTemplateComposite({
-                                                                  new DeleteKeywordsTemplate(
-                                                                  keywords.toSet(), false),
-                                                                  m_UpdateTemplate}))));
+            command = std::make_shared<ModifyArtworksCommand>(
+                          m_ArtworkMetadata,
+                          std::make_shared<ArtworksTemplateComposite>({
+                                                                std::make_shared<DeleteKeywordsTemplate>(
+                                                                          keywords.toSet(), false),
+                                                                          m_UpdateTemplate}));
         } else {
-            command.reset(new EmptyCommand());
+            command = std::make_shared<EmptyCommand>();
         }
 
         return command;
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::inspect() {
-        return std::shared_ptr<Commands::ICommand>(
-                    new ArtworksCommand(
+        return std::make_shared<ArtworksCommand>(
                         Artworks::ArtworksSnapshot({m_ArtworkMetadata}),
-                        m_InspectTemplate));
+                        m_InspectTemplate);
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::update() {
-        return std::shared_ptr<Commands::ICommand>(
-                    new ArtworksCommand(
+        return std::make_shared<ArtworksCommand>(
                         Artworks::ArtworksSnapshot({m_ArtworkMetadata}),
-                        m_UpdateTemplate));
+                        m_UpdateTemplate);
     }
 
-    void CurrentEditableArtwork::applyEdits(const QString &title,
+    std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::applyEdits(const QString &title,
                                             const QString &description,
                                             const QStringList &keywords) {
         Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::None;

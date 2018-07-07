@@ -217,7 +217,7 @@ namespace Storage {
 
         int rc = sqlite3_exec(m_Database, createStr.c_str(), nullptr, nullptr, nullptr);
         if (rc == SQLITE_OK) {
-            table.reset(new Database::Table(m_Database, name));
+            table = std::make_shared<Database::Table>(m_Database, name);
 
             if (table->initialize()) {
                 m_Tables.push_back(table);

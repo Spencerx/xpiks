@@ -85,7 +85,7 @@ namespace MetadataIO {
         if (m_IsStopped) { return; }
         LOG_DEBUG << "Saving" << metadata->getItemID();
 
-        std::shared_ptr<MetadataIOTaskBase> jobItem(new MetadataReadWriteTask(metadata, MetadataReadWriteTask::Write));
+        auto jobItem = std::make_shared<MetadataReadWriteTask>(metadata, MetadataReadWriteTask::Write);
         m_MetadataIOWorker->submitItem(jobItem);
 
         emit cacheSyncRequest();
@@ -101,7 +101,7 @@ namespace MetadataIO {
 
         for (auto &item: items) {
             Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
-            jobs.emplace_back(new MetadataReadWriteTask(artwork, MetadataReadWriteTask::Read));
+            jobs.emplace_back(std::make_shared<MetadataReadWriteTask>(artwork, MetadataReadWriteTask::Read));
         }
 
         MetadataIOWorker::batch_id_t batchID = m_MetadataIOWorker->submitItems(jobs);
@@ -120,7 +120,7 @@ namespace MetadataIO {
         const size_t size = artworks.size();
         for (size_t i = 0; i < size; ++i) {
             Artworks::ArtworkMetadata *artwork = artworks.get(i);
-            jobs.emplace_back(new MetadataReadWriteTask(artwork, MetadataReadWriteTask::Write));
+            jobs.emplace_back(std::make_shared<MetadataReadWriteTask>(artwork, MetadataReadWriteTask::Write));
         }
 
         m_MetadataIOWorker->submitItems(jobs);
@@ -136,7 +136,7 @@ namespace MetadataIO {
         const size_t size = artworks.size();
         for (size_t i = 0; i < size; ++i) {
             Artworks::ArtworkMetadata *artwork = artworks.get(i);
-            jobs.emplace_back(new MetadataReadWriteTask(artwork, MetadataReadWriteTask::Add));
+            jobs.emplace_back(std::make_shared<MetadataReadWriteTask>(artwork, MetadataReadWriteTask::Add));
         }
 
         m_MetadataIOWorker->submitItems(jobs);
@@ -147,7 +147,7 @@ namespace MetadataIO {
         LOG_DEBUG << "#";
         Q_ASSERT(query != nullptr);
         if (m_IsStopped) { return; }
-        std::shared_ptr<MetadataSearchTask> jobItem(new MetadataSearchTask(query));
+        auto jobItem = std::make_shared<MetadataSearchTask>(query);
         m_MetadataIOWorker->submitFirst(jobItem);
     }
 

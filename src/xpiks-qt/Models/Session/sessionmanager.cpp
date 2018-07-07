@@ -30,7 +30,7 @@ namespace Models {
                            const QStringList &directoriesSnapshot) {
         LOG_INFO << filesSnapshot.size() << "artwork(s)" << directoriesSnapshot.size() << "directory(ies)";
 
-        std::shared_ptr<Helpers::JsonObjectMap> sessionMap(new Helpers::JsonObjectMap());
+        auto sessionMap = std::make_shared<Helpers::JsonObjectMap>();
         QJsonArray filesList;
 
         for (auto &item: filesSnapshot) {

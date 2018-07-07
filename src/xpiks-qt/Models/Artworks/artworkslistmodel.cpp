@@ -34,6 +34,7 @@
 #include <Models/Editing/currenteditableartwork.h>
 
 namespace Models {
+    using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
 
@@ -138,10 +139,9 @@ namespace Models {
     }
 
     std::unique_ptr<Artworks::SessionSnapshot> ArtworksListModel::snapshotAll() {
-        std::unique_ptr<Artworks::SessionSnapshot> sessionSnapshot(
-                    new Artworks::SessionSnapshot(
-                        filterAvailableArtworks<Artworks::ArtworkMetadata*>([](Artworks::ArtworkMetadata *artwork, size_t) {return artwork;}),
-                        m_ArtworksRepository.retrieveFullDirectories()));
+        auto sessionSnapshot = std::make_unique<Artworks::SessionSnapshot>(
+                                   filterAvailableArtworks<Artworks::ArtworkMetadata*>([](Artworks::ArtworkMetadata *artwork, size_t) {return artwork;}),
+                m_ArtworksRepository.retrieveFullDirectories());
         return sessionSnapshot;
     }
 
@@ -247,15 +247,14 @@ namespace Models {
         const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
         Artworks::ArtworksSnapshot snapshot;
         snapshot.reserve(newFilesCount);
-        qint64 directoryID = 0;
         const int count = getArtworksCount();
 
         emit beginInsertRows(QModelIndex(), count, count + newFilesCount - 1);
         {
             for (auto &file: filesCollection->getFiles()) {
                 if (file.m_Type == Filesystem::ArtworkFileType::Vector) { continue; }
-
-                if (m_ArtworksRepository.accountFile(file.m_Path, directoryID, directoryFlags)) {
+                qint64 directoryID = 0;
+                if (m_ArtworksRepository.accountFile(file, directoryID)) {
                     Artworks::ArtworkMetadata *artwork = createArtwork(file, directoryID);
                     m_ArtworkList.push_back(artwork);
                     snapshot.append(artwork);
@@ -291,7 +290,7 @@ namespace Models {
         emit modifiedArtworksCountChanged();
         emit artworksChanged(true);
 
-        Artworks::WeakArtworksSnapshot snapshot = filterArtworks(
+        Artworks::WeakArtworksSnapshot snapshot = filterArtworks<Artworks::ArtworkMetadata*>(
                     [](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
                 [](Artworks::ArtworkMetadata *artwork, size_t) { return artwork; });
 
@@ -309,7 +308,7 @@ namespace Models {
         LOG_FOR_TESTS << "Removing directory:" << directory;
 
         const QString directoryAbsolutePath = QDir(directory).absolutePath();
-        std::vector<int> indices = this->filterArtworks(
+        std::vector<int> indices = filterArtworks<int>(
                     [&directoryAbsolutePath](Artworks::ArtworkMetadata *artwork) {
                 return artwork->isInDirectory(directoryAbsolutePath); },
                 [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
@@ -320,15 +319,16 @@ namespace Models {
     void ArtworksListModel::restoreRemoved() {
         LOG_DEBUG << "#";
         foreachArtwork([](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
-        [](Artworks::ArtworkMetadata *artwork, size_t) {
-            m_ArtworksRepository.accountFile(artwork->getFilepath(), artwork->getDirectoryID(), directoryFlags);
+        [this](Artworks::ArtworkMetadata *artwork, size_t) {
+            this->m_ArtworksRepository.accountFile(
+                        artwork->getFilepath(), artwork->getDirectoryID(), directoryFlags);
         });
         // TODO: finish this
     }
 
     void ArtworksListModel::deleteRemovedItems() {
         LOG_DEBUG << "#";
-        std::vector<int> indices = this->filterArtworks(
+        auto indices = filterArtworks<int>(
                     [](Artworks::ArtworkMetadata *artwork){ return artwork->isRemoved(); },
                 [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
         deleteItems(Helpers::IndicesRanges(indices));
@@ -336,7 +336,7 @@ namespace Models {
 
     void ArtworksListModel::deleteUnavailableItems() {
         LOG_DEBUG << "#";
-        std::vector<int> indices = this->filterArtworks(
+        auto indices = filterArtworks<int>(
                     [](Artworks::ArtworkMetadata *artwork){ return artwork->isUnavailable(); },
                 [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
         deleteItems(Helpers::IndicesRanges(indices));
@@ -370,21 +370,21 @@ namespace Models {
 
         for (int i = size - 1; i >= 0; i--) {
             auto &r = rangesArray.at(i);
-            Q_ASSERT(r.first >= 0 && r.first < getArtworksCount());
-            Q_ASSERT(r.second >= 0 && r.second < getArtworksCount());
+            Q_ASSERT(r.first >= 0 && r.first < (int)getArtworksCount());
+            Q_ASSERT(r.second >= 0 && r.second < (int)getArtworksCount());
 
             auto itBegin = m_ArtworkList.begin() + r.first;
             auto itEnd = m_ArtworkList.begin() + (r.second + 1);
 
-            std::vector<ArtworkMetadata *> itemsToDelete(itBegin, itEnd);
-            if (!willReset) { emit beginRemoveRows(dummy, r.first, r.last); }
+            std::vector<Artworks::ArtworkMetadata *> itemsToDelete(itBegin, itEnd);
+            if (!willReset) { emit beginRemoveRows(dummy, r.first, r.second); }
             {
                 m_ArtworkList.erase(itBegin, itEnd);
             }
             if (!willReset) { emit endRemoveRows(); }
 
-            std::vector<ArtworkMetadata *>::iterator it = itemsToDelete.begin();
-            std::vector<ArtworkMetadata *>::iterator itemsEnd = itemsToDelete.end();
+            std::vector<Artworks::ArtworkMetadata *>::iterator it = itemsToDelete.begin();
+            std::vector<Artworks::ArtworkMetadata *>::iterator itemsEnd = itemsToDelete.end();
             for (; it < itemsEnd; it++) {
                 Artworks::ArtworkMetadata *artwork = *it;
                 Q_ASSERT(artwork->isRemoved());
@@ -413,7 +413,7 @@ namespace Models {
                 vectors.insert(absolutePath, QHash<QString, QString>());
             }
 
-            vectors[absolutePath].insert(fi.baseName().toLower(), path);
+            vectors[absolutePath].insert(fi.baseName().toLower(), file.m_Path);
         }
 
         QVector<int> indicesToUpdate;
@@ -421,7 +421,7 @@ namespace Models {
 
         if (autoAttach) {
             QVector<int> autoAttachedIndices;
-            attachedCount += Helpers::findAndAttachVectors(snapshot.getWeakSnapshot(), autoAttachedIndices);
+            attachedCount += Helpers::findAndAttachVectors(snapshot, autoAttachedIndices);
 
             foreach (int index, autoAttachedIndices) {
                 indicesToUpdate.append(initialCount + index);
@@ -445,7 +445,7 @@ namespace Models {
         indicesToUpdate.reserve((int)size);
 
         for (size_t i = 0; i < size; ++i) {
-            ArtworkMetadata *metadata = accessArtwork(i);
+            Artworks::ArtworkMetadata *metadata = accessArtwork(i);
             Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(metadata);
             if (image == NULL) { continue; }
 
@@ -486,7 +486,7 @@ namespace Models {
     void ArtworksListModel::syncArtworksIndices(int startIndex, int count) {
         if (count == -1) { count = getArtworksCount(); }
         foreachArtwork(Helpers::IndicesRanges(startIndex, count),
-        [](Artworks::ArtworkMetadata *, size_t i) { accessArtwork(i); });
+        [this](Artworks::ArtworkMetadata *, size_t i) { this->accessArtwork(i); });
     }
 
     void ArtworksListModel::setItemsSaved(const Helpers::IndicesRanges &ranges) {
@@ -519,7 +519,8 @@ namespace Models {
         m_Messages
                 .ofType<Helpers::IndicesRanges>()
                 .withID(AppMessages::UpdateArtworks)
-                .addListener(std::bind(&ArtworksListModel::updateItems, this));
+                .addListener(std::bind(&ArtworksListModel::updateItems, this,
+                                       std::placeholders::_1));
     }
 
     void ArtworksListModel::resetSpellCheckResults() {
@@ -540,18 +541,18 @@ namespace Models {
         LOG_DEBUG << "#";
         m_Messages
                 .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::InspectArtworks)
+                .withID(Commands::AppMessages::SpellCheck)
                 .broadcast(Artworks::ArtworksSnapshot(m_ArtworkList));
     }
 
     QVariant ArtworksListModel::data(const QModelIndex &index, int role) const {
         int row = index.row();
 
-        if (row < 0 || row >= getArtworksCount()) {
+        if (row < 0 || row >= (int)getArtworksCount()) {
             return QVariant();
         }
 
-        ArtworkMetadata *artwork = accessArtwork(row);
+        Artworks::ArtworkMetadata *artwork = accessArtwork(row);
         switch (role) {
             case ArtworkDescriptionRole:
                 return artwork->getDescription();
@@ -578,7 +579,7 @@ namespace Models {
             case BaseFilenameRole:
                 return artwork->getBaseFilename();
             case IsVideoRole: {
-                bool isVideo = dynamic_cast<VideoArtwork*>(artwork) != nullptr;
+                bool isVideo = dynamic_cast<Artworks::VideoArtwork*>(artwork) != nullptr;
                 return isVideo;
             }
             case ArtworkThumbnailRole:
@@ -607,7 +608,7 @@ namespace Models {
             return false;
         }
 
-        ArtworkMetadata *metadata = accessArtwork(row);
+        Artworks::ArtworkMetadata *metadata = accessArtwork(row);
         if (metadata->isLockedForEditing()) { return false; }
 
         int roleToUpdate = 0;
@@ -639,7 +640,7 @@ namespace Models {
         return true;
     }
 
-    Artworks::ArtworkMetadata *ArtworksListModel::getBasicModelObject(int index) const {
+    Artworks::ArtworkMetadata *ArtworksListModel::getArtworkObject(int index) const {
         Artworks::ArtworkMetadata *item = NULL;
 
         if (0 <= index && index < getArtworksCount()) {
@@ -677,17 +678,16 @@ namespace Models {
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
-            command.reset(
-                        new ArtworksCommand(
-                            artwork,
-                            std::shared_ptr<IArtworksCommandTemplate>(
-                                new ArtworksTemplateComposite({
-                                                                 new KeywordEditTemplate(
-                                                                 Common::KeywordEditFlags::Remove,
-                                                                 keywordIndex),
-                                                                 new ArtworksUpdateTemplate(*this,
-                                                                 QVector<int>() << IsModifiedRole << KeywordsCountRole)
-                                                             }))));
+            command = std::make_shared<ArtworksCommand>(
+                          Artworks::ArtworksSnapshot({artwork}),
+                          std::make_shared<ArtworksTemplateComposite>(
+                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                  std::make_shared<KeywordEditTemplate>(
+                                  Common::KeywordEditFlags::Remove,
+                                  keywordIndex),
+                                  std::make_shared<ArtworksUpdateTemplate>(*this,
+                                  QVector<int>() << IsModifiedRole << KeywordsCountRole)
+                              }));
         }
 
         return command;
@@ -700,18 +700,17 @@ namespace Models {
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
-            command.reset(
-                        new ArtworksCommand(
-                            artwork,
-                            std::shared_ptr<IArtworksCommandTemplate>(
-                                new ArtworksTemplateComposite({
-                                                                 new KeywordEditTemplate(
-                                                                 Common::KeywordEditFlags::RemoveLast),
-                                                                 new ArtworksUpdateTemplate(*this,
-                                                                 QVector<int>() << IsModifiedRole << KeywordsCountRole)
-                                                             }))));
+            command = std::make_shared<ArtworksCommand>(
+                          Artworks::ArtworksSnapshot({artwork}),
+                          std::make_shared<ArtworksTemplateComposite>(
+                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                  std::make_shared<KeywordEditTemplate>(
+                                  Common::KeywordEditFlags::RemoveLast),
+                                  std::make_shared<ArtworksUpdateTemplate>(*this,
+                                  QVector<int>() << IsModifiedRole << KeywordsCountRole)
+                              }));
         } else {
-            command.reset(new Commands::EmptyCommand());
+            command = std::make_shared<Commands::EmptyCommand>();
         }
         return command;
     }
@@ -723,18 +722,18 @@ namespace Models {
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
-            command.reset(
-                        new ArtworksCommand(
-                            artwork,
-                            std::shared_ptr<IArtworksCommandTemplate>(
-                                new ArtworksTemplateComposite({
-                                                                 new EditArtworksTemplate("", "",
-                                                                 QStringList() << keyword),
-                                                                 new ArtworksUpdateTemplate(*this,
-                                                                 QVector<int>() << IsModifiedRole << KeywordsCountRole)
-                                                             }))));
+            command = std::make_shared<ArtworksCommand>(
+                          Artworks::ArtworksSnapshot({artwork}),
+                          std::make_shared<ArtworksTemplateComposite>(
+                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                  std::make_shared<EditArtworksTemplate>("", "",
+                                  QStringList() << keyword,
+                                  Common::ArtworkEditFlags::AppendKeywords),
+                                  std::make_shared<ArtworksUpdateTemplate>(*this,
+                                  QVector<int>() << IsModifiedRole << KeywordsCountRole)
+                              }));
         } else {
-            command.reset(new Commands::EmptyCommand());
+            command = std::make_shared<Commands::EmptyCommand>();
         }
         return command;
     }
@@ -752,17 +751,17 @@ namespace Models {
             }
 
             using namespace Commands;
-            command.reset(
-                        new ModifyArtworksCommand(
-                            artwork,
-                            std::shared_ptr<IArtworksCommandTemplate>(
-                                new ArtworksTemplateComposite({
-                                                                 new EditArtworksTemplate("", "",
-                                                                 keywords,
-                                                                 Common::ArtworkEditFlags::AppendKeywords),
-                                                                 new ArtworksUpdateTemplate(*this, getStandardUpdateRoles())}))));
+            command = std::make_shared<ModifyArtworksCommand>(
+                          artwork,
+                          std::make_shared<ArtworksTemplateComposite>(
+                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                  std::make_shared<EditArtworksTemplate>("", "",
+                                  keywords,
+                                  Common::ArtworkEditFlags::AppendKeywords),
+                                  std::make_shared<ArtworksUpdateTemplate>(
+                                  *this, getStandardUpdateRoles())}));
         } else {
-            command.reset(new Commands::EmptyCommand());
+            command = std::make_shared<Commands::EmptyCommand>();
         }
         return command;
     }
@@ -774,16 +773,17 @@ namespace Models {
         if (artwork != nullptr && !keywords.empty()) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
-            command.reset(
-                        new ModifyArtworksCommand(
-                            artwork,
-                            std::shared_ptr<IArtworksCommandTemplate>(
-                                new ArtworksTemplateComposite({new EditArtworksTemplate("", "",
-                                                              keywords,
-                                                              Common::ArtworkEditFlags::AppendKeywords),
-                                                              new ArtworksUpdateTemplate(*this, getStandardUpdateRoles())}))));
+            command = std::make_shared<ModifyArtworksCommand>(
+                          artwork,
+                          std::make_shared<ArtworksTemplateComposite>(
+                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                  std::make_shared<EditArtworksTemplate>("", "",
+                                  keywords,
+                                  Common::ArtworkEditFlags::AppendKeywords),
+                                  std::make_shared<ArtworksUpdateTemplate>(
+                                  *this, getStandardUpdateRoles())}));
         } else {
-            command.reset(new Commands::EmptyCommand());
+            command = std::make_shared<Commands::EmptyCommand>();
         }
         return command;
     }
@@ -795,20 +795,19 @@ namespace Models {
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
-            command.reset(
-                        new ArtworksCommand(
-                            artwork,
-                            std::shared_ptr<IArtworksCommandTemplate>(
-                                new ArtworksTemplateComposite({
-                                                                 new KeywordEditTemplate(
-                                                                 Common::KeywordEditFlags::Replace,
-                                                                 keywordIndex,
-                                                                 replacement),
-                                                                 new ArtworksUpdateTemplate(*this,
-                                                                 QVector<int>() << IsModifiedRole << KeywordsCountRole)
-                                                             }))));
+            command = std::make_shared<ArtworksCommand>(
+                          Artworks::ArtworksSnapshot({artwork}),
+                          std::make_shared<ArtworksTemplateComposite>(
+                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                  std::make_shared<KeywordEditTemplate>(
+                                  Common::KeywordEditFlags::Replace,
+                                  keywordIndex,
+                                  replacement),
+                                  std::make_shared<ArtworksUpdateTemplate>(*this,
+                                  QVector<int>() << IsModifiedRole << KeywordsCountRole)
+                              }));
         } else {
-            command.reset(new Commands::EmptyCommand());
+            command = std::make_shared<Commands::EmptyCommand>();
         }
         return command;
     }
@@ -816,7 +815,7 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::plainTextEdit(int artworkIndex, const QString &rawKeywords, bool spaceIsSeparator) {
         LOG_DEBUG << "Plain text edit for item" << artworkIndex;
         std::shared_ptr<Commands::ICommand> command;
-        ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             QVector<QChar> separators;
@@ -826,16 +825,17 @@ namespace Models {
             Helpers::splitKeywords(rawKeywords.trimmed(), separators, keywords);
 
             using namespace Commands;
-            command.reset(
-                        new ModifyArtworksCommand(
-                            artwork,
-                            std::shared_ptr<IArtworksCommandTemplate>(
-                                new ArtworksTemplateComposite({new EditArtworksTemplate("", "",
-                                                              keywords,
-                                                              Common::ArtworkEditFlags::EditKeywords),
-                                                              new ArtworksUpdateTemplate(*this, getStandardUpdateRoles())}))));
+            command = std::make_shared<ModifyArtworksCommand>(
+                          artwork,
+                          std::make_shared<ArtworksTemplateComposite>(
+                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                  std::make_shared<EditArtworksTemplate>("", "",
+                                  keywords,
+                                  Common::ArtworkEditFlags::EditKeywords),
+                                  std::make_shared<ArtworksUpdateTemplate>(
+                                  *this, getStandardUpdateRoles())}));
         } else {
-            command.reset(new Commands::EmptyCommand());
+            command = std::make_shared<Commands::EmptyCommand>();
         }
         return command;
     }
@@ -850,17 +850,17 @@ namespace Models {
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
-            command.reset(
-                        new ModifyArtworksCommand(
-                            artwork,
-                            std::shared_ptr<IArtworksCommandTemplate>(
-                                new ArtworksTemplateComposite({
-                                                                 new ExpandPresetTemplate(presetsManager,
-                                                                 (KeywordsPresets::ID_t)presetID,
-                                                                 keywordIndex),
-                                                                 new ArtworksUpdateTemplate(*this, getStandardUpdateRoles())}))));
+            command = std::make_shared<ModifyArtworksCommand>(
+                          artwork,
+                          std::make_shared<ArtworksTemplateComposite>(
+                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                  std::make_shared<ExpandPresetTemplate>(presetsManager,
+                                  (KeywordsPresets::ID_t)presetID,
+                                  keywordIndex),
+                                  std::make_shared<ArtworksUpdateTemplate>(
+                                  *this, getStandardUpdateRoles())}));
         } else {
-            command.reset(new Commands::EmptyCommand());
+            command = std::make_shared<Commands::EmptyCommand>();
         }
         return command;
     }
@@ -868,7 +868,7 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::expandLastAsPreset(int artworkIndex,
                                                                               KeywordsPresets::IPresetsManager &presetsManager) {
         LOG_INFO << "item" << artworkIndex;
-        std::shared_ptr<Commands::ICommand> command(new Commands::EmptyCommand());
+        std::shared_ptr<Commands::ICommand> command = std::make_shared<Commands::EmptyCommand>();
         Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
@@ -880,15 +880,15 @@ namespace Models {
             KeywordsPresets::ID_t presetID;
             if (presetsManager.tryFindSinglePresetByName(lastKeyword, false, presetID)) {
                 using namespace Commands;
-                command.reset(
-                            new ModifyArtworksCommand(
-                                artwork,
-                                std::shared_ptr<IArtworksCommandTemplate>(
-                                    new ArtworksTemplateComposite({
-                                                                     new ExpandPresetTemplate(presetsManager,
-                                                                     presetID,
-                                                                     keywordIndex),
-                                                                     new ArtworksUpdateTemplate(*this, getStandardUpdateRoles())}))));
+                command = std::make_shared<ModifyArtworksCommand>(
+                              artwork,
+                              std::make_shared<ArtworksTemplateComposite>(
+                                  std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                      std::make_shared<ExpandPresetTemplate>(presetsManager,
+                                      presetID,
+                                      keywordIndex),
+                                      std::make_shared<ArtworksUpdateTemplate>(
+                                      *this, getStandardUpdateRoles())}));
             }
         }
         return command;
@@ -901,16 +901,16 @@ namespace Models {
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
-            command.reset(
-                        new ModifyArtworksCommand(
-                            artwork,
-                            std::shared_ptr<IArtworksCommandTemplate>(
-                                new ArtworksTemplateComposite({
-                                                                 new ExpandPresetTemplate(presetsManager,
-                                                                 (KeywordsPresets::ID_t)presetID),
-                                                                 new ArtworksUpdateTemplate(*this, getStandardUpdateRoles())}))));
+            command = std::make_shared<ModifyArtworksCommand>(
+                          artwork,
+                          std::make_shared<ArtworksTemplateComposite>(
+                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                  std::make_shared<ExpandPresetTemplate>(presetsManager,
+                                  (KeywordsPresets::ID_t)presetID),
+                                  std::make_shared<ArtworksUpdateTemplate>(
+                                  *this, getStandardUpdateRoles())}));
         } else {
-            command.reset(new Commands::EmptyCommand());
+            command = std::make_shared<Commands::EmptyCommand>();
         }
         return command;
     }
@@ -920,7 +920,7 @@ namespace Models {
                                                                                     KeywordsPresets::IPresetsManager &presetsManager,
                                                                                     AutoComplete::ICompletionSource &completionsSource) {
         LOG_INFO << "item" << artworkIndex << "completionID" << completionID;
-        std::shared_ptr<Commands::ICommand> command(new Commands::EmptyCommand());
+        std::shared_ptr<Commands::ICommand> command = std::make_shared<Commands::EmptyCommand>();
         Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
@@ -928,7 +928,7 @@ namespace Models {
             auto completionItem = completionsSource.getAcceptedCompletion(completionID);
             if (!completionItem) {
                 LOG_WARNING << "Completion is not available anymore";
-                return false;
+                return command;
             }
 
             const int presetID = completionItem->getPresetID();
@@ -936,14 +936,14 @@ namespace Models {
             if (completionItem->isPreset() ||
                     (completionItem->canBePreset() && completionItem->shouldExpandPreset())) {
                 using namespace Commands;
-                command.reset(
-                            new ModifyArtworksCommand(
-                                artwork,
-                                std::shared_ptr<IArtworksCommandTemplate>(
-                                    new ArtworksTemplateComposite({
-                                                                     new ExpandPresetTemplate(presetsManager,
-                                                                     (KeywordsPresets::ID_t)presetID),
-                                                                     new ArtworksUpdateTemplate(*this, getStandardUpdateRoles())}))));
+                command = std::make_shared<ModifyArtworksCommand>(
+                              artwork,
+                              std::make_shared<ArtworksTemplateComposite>(
+                                  std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                      std::make_shared<ExpandPresetTemplate>(presetsManager,
+                                      (KeywordsPresets::ID_t)presetID),
+                                      std::make_shared<ArtworksUpdateTemplate>(
+                                      *this, getStandardUpdateRoles())}));
             }
             /* --------- this is handled in the edit field -----------
                 else if (completionItem->isKeyword()) {
@@ -957,18 +957,18 @@ namespace Models {
 
     std::shared_ptr<Commands::ICommand> ArtworksListModel::removeMetadata(const Helpers::IndicesRanges &ranges,
                                                                           Common::ArtworkEditFlags flags) {
-        Artworks::WeakArtworksSnapshot weakSnapshot = filterArtworks(
-                                                      ranges,
-                                                      [](Artworks::ArtworkMetadata *) { return true; },
+        auto weakSnapshot = filterArtworks<Artworks::ArtworkMetadata*>(
+                                ranges,
+                                [](Artworks::ArtworkMetadata *) { return true; },
                 [](Artworks::ArtworkMetadata *artwork, size_t) { return artwork; });
         using namespace Commands;
-        return std::shared_ptr<ICommand>(
-                    new ModifyArtworksCommand(
-                        Artworks::ArtworksSnapshot(weakSnapshot),
-                        std::shared_ptr<IArtworksCommandTemplate>(
-                            new ArtworksTemplateComposite({
-                                                             new EditArtworksTemplate(flags),
-                                                             new ArtworksUpdateTemplate(*this, getStandardUpdateRoles())}))));
+        return std::make_shared<ModifyArtworksCommand>(
+                    Artworks::ArtworksSnapshot(weakSnapshot),
+                    std::make_shared<ArtworksTemplateComposite>(
+                        std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                            std::make_shared<EditArtworksTemplate>(flags),
+                            std::make_shared<ArtworksUpdateTemplate>(
+                            *this, getStandardUpdateRoles())}));
     }
 
     void ArtworksListModel::onFilesUnavailableHandler() {
@@ -997,7 +997,7 @@ namespace Models {
     void ArtworksListModel::onArtworkEditingPaused() {
         Artworks::ArtworkMetadata *artwork = qobject_cast<Artworks::ArtworkMetadata *>(sender());
         Q_ASSERT(artwork != nullptr);
-        if (artwork != nullptr && m_EditTemplate != nullptr) {
+        if (artwork != nullptr) {
             m_Messages
                     .ofType<Artworks::ArtworksSnapshot>()
                     .withID(Commands::AppMessages::SpellCheck)
@@ -1077,15 +1077,15 @@ namespace Models {
         if (file.m_Type == Filesystem::ArtworkFileType::Image) {
             artwork = new Artworks::ImageArtwork(file.m_Path, getNextID(), directoryID);
         } else if (file.m_Type == Filesystem::ArtworkFileType::Video) {
-            artwork = new Artworks::VideoArtwork(file, getNextID(), directoryID);
+            artwork = new Artworks::VideoArtwork(file.m_Path, getNextID(), directoryID);
         }
         Q_ASSERT(artwork != nullptr);
         return artwork;
     }
 
-    ArtworkMetadata *ArtworksListModel::accessArtwork(size_t index) const {
+    Artworks::ArtworkMetadata *ArtworksListModel::accessArtwork(size_t index) const {
         Q_ASSERT(index < m_ArtworkList.size());
-        ArtworkMetadata *artwork = m_ArtworkList.at(index);
+        Artworks::ArtworkMetadata *artwork = m_ArtworkList.at(index);
         artwork->setCurrentIndex(index);
         return artwork;
     }
@@ -1123,10 +1123,10 @@ namespace Models {
     }
 
     void ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
-                                           std::function<bool (ArtworkMetadata *)> pred,
-                                           std::function<void (ArtworkMetadata *, size_t)> action) const {
+                                           std::function<bool (Artworks::ArtworkMetadata *)> pred,
+                                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
         for (auto &r: ranges.getRanges()) {
-            for (int i = r.first; i <= r.second; r++) {
+            for (int i = r.first; i <= r.second; i++) {
                 auto *artwork = accessArtwork(i);
                 if (pred(artwork)) {
                     action(artwork, i);
@@ -1135,15 +1135,15 @@ namespace Models {
         }
     }
 
-    void ArtworksListModel::foreachArtwork(std::function<bool (ArtworkMetadata *)> pred,
-                                           std::function<void (ArtworkMetadata *, size_t)> action) const {
+    void ArtworksListModel::foreachArtwork(std::function<bool (Artworks::ArtworkMetadata *)> pred,
+                                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
         foreachArtwork(Helpers::IndicesRanges(0, getArtworksCount()),
                        pred,
                        action);
     }
 
     void ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
-                                           std::function<void (ArtworkMetadata *, size_t)> action) const {
+                                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
         foreachArtwork(ranges,
                        [](Artworks::ArtworkMetadata *){ return true; },
                        action);

@@ -29,7 +29,7 @@ namespace AutoComplete {
 
         for (auto &result: completions) {
             const int id = m_LastCompletionID.fetchAndAddOrdered(1);
-            m_LastGeneratedCompletions.emplace_back(new CompletionItem(result.m_Completion, id));
+            m_LastGeneratedCompletions.emplace_back(std::make_shared<CompletionItem>(result.m_Completion, id));
             m_LastGeneratedCompletions.back()->setIsKeyword();
         }
     }

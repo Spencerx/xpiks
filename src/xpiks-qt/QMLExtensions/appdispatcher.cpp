@@ -25,8 +25,7 @@ namespace QMLExtensions {
         auto range = m_ComandsMap.equal_range(commandID);
         for (auto it = range.first; it != range.second; it++) {
             m_CommandManager.processCommand(
-                        std::shared_ptr<ICommand>(
-                            new TemplatedUICommand(value, it->second)));
+                        std::make_shared<TemplatedUICommand>(value, it->second));
         }
     }
 

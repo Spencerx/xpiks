@@ -38,8 +38,8 @@ namespace Microstocks {
 
         QString resourceUrl = QString::fromLocal8Bit(url.toEncoded());
 
-        std::shared_ptr<Connectivity::IConnectivityRequest> request(
-                    new Connectivity::SimpleAPIRequest(resourceUrl, QStringList() << headerData, response));
+        auto request = std::make_shared<Connectivity::SimpleAPIRequest>(
+                           resourceUrl, QStringList() << headerData, response);
         return request;
     }
 

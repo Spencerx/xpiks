@@ -342,10 +342,7 @@ void XpiksApp::addFiles(const QList<QUrl> &urls) {
     LOG_DEBUG << urls.size() << "urls";
     Common::AddFilesFlags flags = Common::AddFilesFlags::None;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
-
-    std::shared_ptr<Filesystem::IFilesCollection> files(
-                new Filesystem::FilesCollection(urls));
-
+    auto files = std::make_shared<Filesystem::FilesCollection>(urls);
     doAddFiles(files, flags);
 }
 
@@ -362,10 +359,7 @@ void XpiksApp::dropItems(const QList<QUrl> &urls) {
     LOG_DEBUG << urls.size() << "urls";
     Common::AddFilesFlags flags = Common::AddFilesFlags::None;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
-
-    std::shared_ptr<Filesystem::IFilesCollection> files(
-                new Filesystem::FilesDirectoriesCollection(urls));
-
+    auto files = std::make_shared<Filesystem::FilesDirectoriesCollection>(urls);
     doAddFiles(files, flags);
 }
 

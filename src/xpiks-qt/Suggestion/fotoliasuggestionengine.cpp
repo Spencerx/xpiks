@@ -39,7 +39,9 @@ namespace Suggestion {
 
             QStringList keywordsList = keywords.toString().split(',');
 
-            suggestionArtworks.emplace_back(new SuggestionArtwork(url.toString(), externalUrl, title.toString(), QString(""), keywordsList));
+            suggestionArtworks.emplace_back(
+                        std::make_shared<SuggestionArtwork>(
+                            url.toString(), externalUrl, title.toString(), QString(""), keywordsList));
         }
     }
 

@@ -19,11 +19,11 @@ namespace Filesystem {
     class FilesCollection: public IFilesCollection
     {
     public:
-        FilesCollection(const QList<QUrl> &urls);
-        FilesCollection(const QStringList &files);
+        FilesCollection(const QList<QUrl> &urls, bool fullDirectory=false);
+        FilesCollection(const QStringList &files, bool fullDirectory=false);
 
     private:
-        void sortRawFiles(const QStringList &files);
+        void sortRawFiles(const QStringList &files, bool fullDirectory);
 
         // IFilesCollection interface
     public:

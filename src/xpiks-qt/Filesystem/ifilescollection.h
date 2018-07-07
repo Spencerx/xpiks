@@ -13,6 +13,7 @@
 
 #include <QString>
 #include <vector>
+#include <Common/flags.h>
 
 namespace Filesystem {
     enum struct ArtworkFileType {
@@ -22,13 +23,17 @@ namespace Filesystem {
     };
 
     struct ArtworkFile {
-        ArtworkFile(const QString &path, ArtworkFileType type):
+        ArtworkFile(const QString &path, ArtworkFileType type, bool isPartOfFullDirectory=false):
             m_Path(path),
-            m_Type(type)
+            m_Type(type),
+            m_DirectoryFlags(isPartOfFullDirectory ?
+                                 Common::DirectoryFlags::IsAddedAsDirectory :
+                                 Common::DirectoryFlags::None)
         { }
 
         QString m_Path;
         ArtworkFileType m_Type;
+        Common::DirectoryFlags m_DirectoryFlags;
     };
 
     class IFilesCollection {

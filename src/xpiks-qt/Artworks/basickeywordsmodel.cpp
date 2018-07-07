@@ -25,7 +25,7 @@ namespace Artworks {
     BasicKeywordsModel::BasicKeywordsModel(Common::Hold &hold, QObject *parent):
         AbstractListModel(parent),
         m_Hold(hold),
-        m_Impl(new BasicKeywordsModelImpl())
+        m_Impl(std::make_shared<BasicKeywordsModelImpl>())
     {}
 
 #ifdef CORE_TESTS

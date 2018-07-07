@@ -33,7 +33,7 @@ namespace QMLExtensions {
 
             if (!m_DbCacheIndex) {
                 LOG_WARNING << "Failed to get table" << Constants::IMAGE_CACHE_TABLE;
-                m_DbCacheIndex.reset(new Storage::MemoryTable(Constants::IMAGE_CACHE_TABLE));
+                m_DbCacheIndex = std::make_shared<Storage::MemoryTable>(Constants::IMAGE_CACHE_TABLE);
             }
 
             success = true;

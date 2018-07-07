@@ -137,7 +137,7 @@ namespace Microstocks {
             QJsonValue item = array.at(i);
             if (!item.isObject()) { continue; }
 
-            std::shared_ptr<StockFtpOptions> ftpOptions(new StockFtpOptions());
+            auto ftpOptions = std::make_shared<StockFtpOptions>();
             QJsonObject ftpItem = item.toObject();
 
             QJsonValue addressValue = ftpItem[FTP_ADDRESS_KEY];

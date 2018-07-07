@@ -87,7 +87,7 @@ namespace Artworks {
     public:
         void reserve(size_t size) { m_ArtworksSnapshot.reserve(size); }
         void append(ArtworkMetadata *artwork) {
-            m_ArtworksSnapshot.emplace_back(new ArtworkMetadataLocker(artwork));
+            m_ArtworksSnapshot.emplace_back(std::make_shared<ArtworkMetadataLocker>(artwork));
         }
         void append(const WeakArtworksSnapshot &artworks);
         void append(const std::deque<ArtworkMetadata *> &artworks);

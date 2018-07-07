@@ -116,7 +116,7 @@ namespace SpellCheck {
         std::shared_ptr<Artworks::ArtworkMetadataLocker> result;
         auto artworkItem = std::dynamic_pointer_cast<ArtworkSpellCheckItem>(workItem.m_Item);
         if (artworkItem) {
-            result.reset(new Artworks::ArtworkMetadataLocker(artworkItem->getArtwork()));
+            result = std::make_shared<Artworks::ArtworkMetadataLocker>(artworkItem->getArtwork());
         }
         return result;
     }

@@ -31,7 +31,8 @@ namespace Microstocks {
         QString decodedAPIKey = Encryption::decodeText(apiSecret.m_Value, apiSecret.m_Key);
         QString headerData = "Api-Key: " + decodedAPIKey;
 
-        std::shared_ptr<Connectivity::IConnectivityRequest> request(new Connectivity::SimpleAPIRequest(resourceUrl, QStringList() << headerData, response));
+        auto request = std::make_shared<Connectivity::SimpleAPIRequest>(
+                           resourceUrl, QStringList() << headerData, response);
         return request;
     }
 

@@ -31,8 +31,8 @@ std::shared_ptr<Connectivity::IConnectivityRequest> Microstocks::FotoliaAPIClien
     QString authStr = QString("%1:").arg(decodedAPIKey);
     QString headerData = "Authorization: Basic " + QString::fromLatin1(authStr.toLocal8Bit().toBase64());
 
-    std::shared_ptr<Connectivity::IConnectivityRequest> request(
-                new Connectivity::SimpleAPIRequest(resourceUrl, QStringList() << headerData, response));
+    auto request = std::make_shared<Connectivity::SimpleAPIRequest>(
+                       resourceUrl, QStringList() << headerData, response);
     return request;
 }
 

@@ -49,8 +49,8 @@ namespace Services {
     void ArtworksUpdateHub::updateArtworkByID(Common::ID_t artworkID,
                                           size_t lastKnownIndex,
                                           const QVector<int> &rolesToUpdate) {
-        std::shared_ptr<ArtworkUpdateRequest> updateRequest(
-                    new ArtworkUpdateRequest(artworkID, lastKnownIndex, rolesToUpdate.toList().toSet()));
+        auto updateRequest = std::make_shared<ArtworkUpdateRequest>(
+                                 artworkID, lastKnownIndex, rolesToUpdate.toList().toSet());
         {
             QMutexLocker locker(&m_Lock);
             m_UpdateRequests.emplace_back(updateRequest);
@@ -69,12 +69,11 @@ namespace Services {
         requests.reserve(artworks.size());
         QSet<int> rolesToUpdate = m_StandardRoles.toList().toSet();
         for (auto &artwork: artworks) {
-            std::shared_ptr<ArtworkUpdateRequest> updateRequest(
-                        new ArtworkUpdateRequest(
+            auto updateRequest = std::make_shared<ArtworkUpdateRequest>(
                             artwork->getItemID(),
                             artwork->getLastKnownIndex(),
                             rolesToUpdate,
-                            updateMode == FastUpdate));
+                            updateMode == FastUpdate);
             requests.emplace_back(updateRequest);
         }
 
@@ -92,12 +91,11 @@ namespace Services {
         QSet<int> rolesToUpdate = m_StandardRoles.toList().toSet();
         for (auto &locker: artworks) {
             auto *artwork = locker->getArtworkMetadata();
-            std::shared_ptr<ArtworkUpdateRequest> updateRequest(
-                        new ArtworkUpdateRequest(
+            auto updateRequest = std::make_shared<ArtworkUpdateRequest>(
                             artwork->getItemID(),
                             artwork->getLastKnownIndex(),
                             rolesToUpdate,
-                            updateMode == FastUpdate));
+                            updateMode == FastUpdate);
             requests.emplace_back(updateRequest);
         }
 

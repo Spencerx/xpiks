@@ -74,7 +74,7 @@ namespace MetadataIO {
 
         const MetadataReadWriteTask::ReadWriteAction action = item->getReadWriteAction();
         if (action == MetadataReadWriteTask::Read) {
-            std::shared_ptr<StorageReadRequest> readRequest(new StorageReadRequest());
+            auto readRequest = std::make_shared<StorageReadRequest>();
             if (m_MetadataCache.read(artworkMetadata, readRequest->m_CachedArtwork)) {
                 readRequest->m_Artwork = artworkMetadata;
                 m_StorageReadQueue.push(readRequest);

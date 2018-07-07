@@ -125,7 +125,7 @@ namespace Warnings {
 
         LOG_INFO << "Submitting one item";
 
-        std::shared_ptr<IWarningsItem> wItem(new WarningsItem(item));
+        auto wItem = std::make_shared<WarningsItem>(item);
         m_WarningsWorker->submitItem(wItem);
     }
 
@@ -135,7 +135,7 @@ namespace Warnings {
 
         LOG_INFO << "flags:" << (int)flags << warningsFlagToString(flags);
 
-        std::shared_ptr<IWarningsItem> wItem(new WarningsItem(item, flags));
+        auto wItem = std::make_shared<WarningsItem>(item, flags);
         m_WarningsWorker->submitItem(wItem);
     }
 
@@ -150,7 +150,7 @@ namespace Warnings {
 
         for (size_t i = 0; i < size; ++i) {
             Artworks::ArtworkMetadata *item = items.at(i);
-            itemsToSubmit.emplace_back(new WarningsItem(item));
+            itemsToSubmit.emplace_back(std::make_shared<WarningsItem>(item));
         }
 
         LOG_INFO << "Submitting" << size << "item(s)";

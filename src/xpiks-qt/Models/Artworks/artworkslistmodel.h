@@ -102,7 +102,7 @@ namespace Models {
 
         struct ArtworksRemoveResult {
             QSet<qint64> m_SelectedDirectoryIds;
-            int m_RemovedCount;
+            size_t m_RemovedCount;
             bool m_UnselectAll;
         };
 

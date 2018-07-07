@@ -14,6 +14,7 @@
 #include <QFileInfo>
 #include <QRegExp>
 #include <Common/defines.h>
+#include <Filesystem/ifilescollection.h>
 
 namespace Models {
     ArtworksRepository::ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent) :
@@ -133,12 +134,12 @@ namespace Models {
         emit artworksSourcesCountChanged();
     }
 
-    bool ArtworksRepository::accountFile(const QString &filepath, qint64 &directoryID, Common::DirectoryFlags directoryFlags) {
+    bool ArtworksRepository::accountFile(const Filesystem::ArtworkFile &file, qint64 &directoryID) {
         bool wasModified = false, wasAdded = false;
         QString directoryPath;
 
-        if (this->checkFileExists(filepath, directoryPath) &&
-                !m_FilesSet.contains(filepath)) {
+        if (this->checkFileExists(file.m_Path, directoryPath) &&
+                !m_FilesSet.contains(file.m_Path)) {
             int occurances = 0;
             size_t index = 0;
             bool alreadyExists = tryFindDirectory(directoryPath, index);
@@ -158,7 +159,7 @@ namespace Models {
             }
 
             // watchFilePath(filepath);
-            m_FilesSet.insert(filepath);
+            m_FilesSet.insert(file.m_Path);
             auto &item = m_DirectoriesList[index];
             item.setIsRemovedFlag(false);
             item.m_FilesCount = occurances + 1;

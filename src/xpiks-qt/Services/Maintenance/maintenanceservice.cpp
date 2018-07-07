@@ -88,14 +88,14 @@ namespace Maintenance {
     void MaintenanceService::cleanupUpdatesArtifacts() {
 #ifdef Q_OS_WIN
         LOG_DEBUG << "#";
-        std::shared_ptr<IMaintenanceItem> jobItem(new UpdatesCleanupJobItem());
+        auto jobItem = std::make_shared<UpdatesCleanupJobItem>();
         m_MaintenanceWorker->submitItem(jobItem);
 #endif
     }
 
     void MaintenanceService::cleanupDownloadedUpdates(const QString &downloadsPath) {
         LOG_DEBUG << "#";
-        std::shared_ptr<IMaintenanceItem> jobItem(new UpdateBundleCleanupJobItem(downloadsPath));
+        auto jobItem = std::make_shared<UpdateBundleCleanupJobItem>(downloadsPath);
         m_MaintenanceWorker->submitItem(jobItem);
     }
 
@@ -113,14 +113,14 @@ namespace Maintenance {
         LOG_DEBUG << "#";
         Helpers::AsyncCoordinatorLocker locker(initCoordinator);
         Q_UNUSED(locker);
-        std::shared_ptr<IMaintenanceItem> jobItem(new InitializeDictionariesJobItem(translationManager, initCoordinator));
+        auto jobItem = std::make_shared<InitializeDictionariesJobItem>(translationManager, initCoordinator);
         m_MaintenanceWorker->submitFirst(jobItem);
     }
 
     void MaintenanceService::cleanupLogs() {
 #ifdef WITH_LOGS
         LOG_DEBUG << "#";
-        std::shared_ptr<IMaintenanceItem> jobItem(new LogsCleanupJobItem(m_Environment));
+        auto jobItem = std::make_shared<LogsCleanupJobItem>(m_Environment);
         m_MaintenanceWorker->submitItem(jobItem);
 #endif
     }
@@ -129,14 +129,14 @@ namespace Maintenance {
                                          Models::SessionManager &sessionManager) {
         LOG_DEBUG << "#";
 
-        std::shared_ptr<IMaintenanceItem> jobItem(new SaveSessionJobItem(sessionSnapshot, sessionManager));
+        auto jobItem = std::make_shared<SaveSessionJobItem>(sessionSnapshot, sessionManager);
         m_LastSessionBatchId = m_MaintenanceWorker->submitItem(jobItem);
     }
 
     void MaintenanceService::cleanupOldXpksBackups(const QString &directory) {
         LOG_DEBUG << directory;
 
-        std::shared_ptr<IMaintenanceItem> jobItem(new XpksCleanupJob(directory));
+        auto jobItem = std::make_shared<XpksCleanupJob>(directory);
         m_MaintenanceWorker->submitItem(jobItem);
     }
 

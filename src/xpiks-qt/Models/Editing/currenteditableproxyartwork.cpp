@@ -53,27 +53,24 @@ namespace Models {
 
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::appendPreset(KeywordsPresets::ID_t presetID,
                                                                                   KeywordsPresets::IPresetsManager &presetsManager) {
-        return std::shared_ptr<Commands::ICommand>(
-                    new Commands::SimpleCommand([this, presetID, &presetsManager]() {
+        return std::make_shared<Commands::SimpleCommand>([this, presetID, &presetsManager]() {
             this->m_ArtworkProxy.doAppendPreset(presetID, presetsManager);
-        }));
+        });
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::expandPreset(int keywordIndex,
                                                                                   KeywordsPresets::ID_t presetID,
                                                                                   KeywordsPresets::IPresetsManager &presetsManager) {
-        return std::shared_ptr<Commands::ICommand>(
-                    new Commands::SimpleCommand([this, keywordIndex, presetID, &presetsManager]() {
+        return std::make_shared<Commands::SimpleCommand>([this, keywordIndex, presetID, &presetsManager]() {
             this->m_ArtworkProxy.doExpandPreset(keywordIndex, presetID, presetsManager);
-        }));
+        });
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::removePreset(KeywordsPresets::ID_t presetID,
                                                                                   KeywordsPresets::IPresetsManager &presetsManager) {
-        return std::shared_ptr<Commands::ICommand>(
-                    new Commands::SimpleCommand([this, presetID, &presetsManager]() {
+        return std::make_shared<Commands::SimpleCommand>([this, presetID, &presetsManager]() {
             this->m_ArtworkProxy.doRemovePreset(presetID, presetsManager);
-        }));
+        });
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::inspect() {
@@ -81,15 +78,14 @@ namespace Models {
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::update() {
-        return std::shared_ptr<Commands::ICommand>(new Commands::EmptyCommand());
+        return std::make_shared<Commands::EmptyCommand>();
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::applyEdits(const QString &title,
                                                                                 const QString &description,
                                                                                 const QStringList &keywords) {
 
-        return std::shared_ptr<Commands::ICommand>(
-                    new Commands::SimpleCommand([this, title, description, keywords](){
+        return std::make_shared<Commands::SimpleCommand>([this, title, description, keywords](){
             if (!title.isEmpty()) {
                 this->m_ArtworkProxy.setTitle(title);
             }
@@ -103,6 +99,6 @@ namespace Models {
             }
 
             // TODO: spellcheck me
-        }));
+        });
     }
 }

@@ -46,7 +46,9 @@ namespace Suggestion {
                             description = imageResult["description"].toString();
                         }
 
-                        suggestionArtworks.emplace_back(new SuggestionArtwork(url, externalUrl, QString(""), description, keywordsList));
+                        suggestionArtworks.emplace_back(
+                                    std::make_shared<SuggestionArtwork>(
+                                        url, externalUrl, QString(""), description, keywordsList));
                     }
                 }
             }

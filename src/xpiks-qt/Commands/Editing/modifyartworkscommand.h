@@ -20,13 +20,13 @@ namespace Commands {
     {
     public:
         ModifyArtworksCommand(Artworks::ArtworksSnapshot &&snapshot,
-                              std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
+                              const std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
             TemplatedCommand(std::forward<Artworks::ArtworksSnapshot>(snapshot), editTemplate),
             m_Count(snapshot.size())
         { }
 
         ModifyArtworksCommand(Artworks::ArtworkMetadata *artwork,
-                              std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
+                              const std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
             TemplatedCommand(Artworks::ArtworksSnapshot({artwork}), editTemplate),
             m_Count(1)
         { }

@@ -26,7 +26,7 @@ namespace Translation {
 
         if (m_LookupDictionary->isLoaded()) {
             LOG_INFO << "Unloading old dictionary";
-            m_LookupDictionary.reset(new LookupDictionary());
+            m_LookupDictionary = std::make_unique<LookupDictionary>();
         }
 
 #ifdef Q_OS_WIN
@@ -42,7 +42,7 @@ namespace Translation {
         Helpers::AsyncCoordinatorUnlocker unlocker(m_InitCoordinator);
         Q_UNUSED(unlocker);
 
-        m_LookupDictionary.reset(new LookupDictionary());
+        m_LookupDictionary = std::make_unique<LookupDictionary>();
 
         return true;
     }

@@ -119,9 +119,9 @@ namespace QMLExtensions {
             auto *artwork = snapshot.get(i);
             Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             if (imageArtwork != nullptr) {
-                requests.emplace_back(new ImageCacheRequest(artwork->getThumbnailPath(),
-                                                            m_DefaultSize,
-                                                            recache));
+                requests.emplace_back(std::make_shared<ImageCacheRequest>(artwork->getThumbnailPath(),
+                                                                          m_DefaultSize,
+                                                                          recache));
             }
         }
 

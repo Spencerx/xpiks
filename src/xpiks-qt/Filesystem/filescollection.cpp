@@ -15,7 +15,7 @@
 #include "../Helpers/constants.h"
 
 namespace Filesystem {
-    FilesCollection::FilesCollection(const QList<QUrl> &urls) {
+    FilesCollection::FilesCollection(const QList<QUrl> &urls, bool fullDirectory) {
         m_Files.reserve(urls.length());
 
         QStringList files;
@@ -25,15 +25,15 @@ namespace Filesystem {
             files.append(url.toLocalFile());
         }
 
-        sortRawFiles(files);
+        sortRawFiles(files, fullDirectory);
     }
 
-    FilesCollection::FilesCollection(const QStringList &files) {
+    FilesCollection::FilesCollection(const QStringList &files, bool fullDirectory) {
         m_Files.reserve(files.length());
-        sortRawFiles(files);
+        sortRawFiles(files, fullDirectory);
     }
 
-    void FilesCollection::sortRawFiles(const QStringList &files) {
+    void FilesCollection::sortRawFiles(const QStringList &files, bool fullDirectory) {
         LOG_INFO << files.length() << "file(s)";
 
         foreach(const QString &filepath, files) {
@@ -41,11 +41,11 @@ namespace Filesystem {
             const QString suffix = fi.suffix().toLower();
 
             if (Helpers::isImageExtension(suffix)) {
-                m_Files.emplace_back(filepath, Filesystem::ArtworkFileType::Image);
+                m_Files.emplace_back(filepath, Filesystem::ArtworkFileType::Image, fullDirectory);
             } else if (Helpers::isVectorExtension(suffix)) {
-                m_Files.emplace_back(filepath, Filesystem::ArtworkFileType::Vector);
+                m_Files.emplace_back(filepath, Filesystem::ArtworkFileType::Vector, fullDirectory);
             } else if (Helpers::isVideoExtension(suffix)) {
-                m_Files.emplace_back(filepath, Filesystem::ArtworkFileType::Video);
+                m_Files.emplace_back(filepath, Filesystem::ArtworkFileType::Video, fullDirectory);
             } else if (suffix == QLatin1String("png")) {
                 LOG_WARNING << "PNG is unsupported file format";
             } else if (suffix != QLatin1String(Constants::METADATA_BACKUP_SUFFIX)) {

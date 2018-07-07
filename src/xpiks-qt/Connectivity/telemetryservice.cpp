@@ -107,7 +107,7 @@ namespace Connectivity {
 
     void TelemetryService::doReportAction(UserAction action) {
         if (m_TelemetryWorker != nullptr) {
-            std::shared_ptr<AnalyticsUserEvent> item(new AnalyticsUserEvent(action));
+            auto item = std::make_shared<AnalyticsUserEvent>(action);
             m_TelemetryWorker->submitItem(item);
         } else {
             LOG_WARNING << "Worker is null";

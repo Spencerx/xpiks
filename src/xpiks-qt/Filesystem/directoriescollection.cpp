@@ -52,6 +52,7 @@ namespace Filesystem {
             }
         }
 
-        m_Files.reset(new FilesCollection(files));
+        const bool fullDirectory = true;
+        m_Files = std::make_shared<FilesCollection>(files, fullDirectory);
     }
 }

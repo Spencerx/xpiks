@@ -86,10 +86,10 @@ namespace QMLExtensions {
             Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork *>(artwork);
             if (videoArtwork != nullptr) {
                 const bool quickThumbnail = true, dontRecache = false;
-                requests.emplace_back(new VideoCacheRequest(videoArtwork,
-                                                            dontRecache,
-                                                            quickThumbnail,
-                                                            goodQualityAllowed));
+                requests.emplace_back(std::make_shared<VideoCacheRequest>(videoArtwork,
+                                                                          dontRecache,
+                                                                          quickThumbnail,
+                                                                          goodQualityAllowed));
             }
         }
 

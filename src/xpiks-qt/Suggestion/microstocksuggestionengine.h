@@ -50,7 +50,7 @@ namespace Suggestion {
             Q_ASSERT(m_IsEnabled);
             if (!m_IsEnabled) { return; }
             m_IsCancelled = false;
-            std::shared_ptr<ResponseType> response(new ResponseType(this));
+            auto response = std::make_shared<ResponseType>(this);
             std::shared_ptr<Connectivity::IConnectivityRequest> request = m_Client->search(query, response);
             m_RequestsService->sendRequest(request);
         }
