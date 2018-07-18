@@ -12,7 +12,6 @@
 #define XPIKSAPP_H
 
 #include <Commands/commandmanager.h>
-#include <Commands/appmessages.h>
 
 #include <Common/isystemenvironment.h>
 
@@ -53,7 +52,7 @@
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include <Services/SpellCheck/userdicteditmodel.h>
 #include <Services/Maintenance/maintenanceservice.h>
-
+#include <Services/artworksinspectionhub.h>
 #include <Services/artworksupdatehub.h>
 
 #include <QMLExtensions/colorsmodel.h>
@@ -181,16 +180,6 @@ protected:
     Models::ArtworkProxyModel m_ArtworkProxyModel;
     SpellCheck::DuplicatesReviewModel m_DuplicatesModel;
 
-    // connectivity
-    Encryption::SecretsManager m_SecretsManager;
-    Microstocks::StocksFtpListModel m_StocksFtpList;
-    Models::UploadInfoRepository m_UploadInfoRepository;
-    Models::ZipArchiver m_ZipArchiver;
-    std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
-    Microstocks::MicrostockAPIClients m_ApiClients;
-    std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
-    Models::ArtworkUploader m_ArtworkUploader;
-
     // services
     Maintenance::MaintenanceService m_MaintenanceService;
     AutoComplete::AutoCompleteService m_AutoCompleteService;
@@ -204,6 +193,17 @@ protected:
     QMLExtensions::VideoCachingService m_VideoCachingService;
     Connectivity::UpdateService m_UpdateService;
     Connectivity::TelemetryService m_TelemetryService;
+    Services::ArtworksInspectionHub m_InspectionHub;
+
+    // connectivity
+    Encryption::SecretsManager m_SecretsManager;
+    Microstocks::StocksFtpListModel m_StocksFtpList;
+    Models::UploadInfoRepository m_UploadInfoRepository;
+    Models::ZipArchiver m_ZipArchiver;
+    std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
+    Microstocks::MicrostockAPIClients m_ApiClients;
+    std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
+    Models::ArtworkUploader m_ArtworkUploader;
 
     // other
     Models::LanguagesModel m_LanguagesModel;

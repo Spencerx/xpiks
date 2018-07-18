@@ -12,9 +12,11 @@
 #include <QVector>
 #include <QThread>
 #include <Common/logging.h>
+#include <Common/flags.h>
 #include "warningscheckingworker.h"
 #include "warningsitem.h"
-#include <Common/flags.h>
+#include <Artworks/artworkssnapshot.h>
+#include <Artworks/artworkmetadata.h>
 
 namespace Warnings {    
     QString warningsFlagToString(Common::WarningsCheckFlags flags) {
@@ -139,7 +141,7 @@ namespace Warnings {
         m_WarningsWorker->submitItem(wItem);
     }
 
-    void WarningsService::submitItems(const Artworks::WeakArtworksSnapshot &items) {
+    void WarningsService::submitItems(const Artworks::ArtworksSnapshot &items) {
         if (m_WarningsWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
@@ -149,7 +151,7 @@ namespace Warnings {
         itemsToSubmit.reserve(size);
 
         for (size_t i = 0; i < size; ++i) {
-            Artworks::ArtworkMetadata *item = items.at(i);
+            Artworks::ArtworkMetadata *item = items.get(i);
             itemsToSubmit.emplace_back(std::make_shared<WarningsItem>(item));
         }
 

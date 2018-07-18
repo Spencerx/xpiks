@@ -19,7 +19,7 @@ namespace Commands {
     class ModifyArtworksCommand: public TemplatedCommand<Artworks::ArtworksSnapshot>
     {
     public:
-        ModifyArtworksCommand(const Artworks::ArtworksSnapshot &snapshot,
+        ModifyArtworksCommand(Artworks::ArtworksSnapshot &&snapshot,
                               const std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
             TemplatedCommand(snapshot, editTemplate),
             m_Count(snapshot.size()),

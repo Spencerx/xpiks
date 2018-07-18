@@ -21,7 +21,6 @@
 #include "fotoliasuggestionengine.h"
 #include "gettysuggestionengine.h"
 #include "locallibraryqueryengine.h"
-#include <Commands/appmessages.h>
 #include <Connectivity/analyticsuserevent.h>
 
 #define LINEAR_TIMER_INTERVAL 1000

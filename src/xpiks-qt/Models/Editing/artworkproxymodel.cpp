@@ -21,7 +21,6 @@
 #include <QMLExtensions/videocachingservice.h>
 #include <Services/artworksupdatehub.h>
 #include <Models/Editing/currenteditableproxyartwork.h>
-#include <Commands/Base/templatedcommand.h>
 #include <Commands/Base/compositecommandtemplate.h>
 
 namespace Models {

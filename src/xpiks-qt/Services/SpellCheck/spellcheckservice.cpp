@@ -139,6 +139,24 @@ namespace SpellCheck {
         }));
     }
 
+    void SpellCheckService::submitArtwork(const Artworks::ArtworkMetadata *artwork) {
+        if (m_SpellCheckWorker == NULL) { return; }
+        if (m_IsStopped) { return; }
+        Q_ASSERT(artwork != nullptr);
+        if (artwork == nullptr) { return; }
+
+        auto deleter = [](SpellCheckItem *spi) {
+            LOG_INTEGRATION_TESTS << "Delete later for multiple spellcheck item";
+            spi->disconnect();
+            spi->deleteLater();
+        };
+
+        std::shared_ptr<SpellCheckItem> item(
+                    new ArtworkSpellCheckItem(artwork, Common::SpellCheckFlags::All, getWordAnalysisFlags()),
+                    deleter);
+        m_SpellCheckWorker->submitItem(item);
+    }
+
     SpellCheckWorker::batch_id_t SpellCheckService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck) {
         if (m_SpellCheckWorker == NULL) { return INVALID_BATCH_ID; }
         if (m_IsStopped) { return INVALID_BATCH_ID; }

@@ -18,8 +18,9 @@
 #include "originalmetadata.h"
 #include "../Helpers/asynccoordinator.h"
 
-namespace Commands {
-    class AppMessages;
+namespace Services {
+    class ArtworksUpdateHub;
+    class ArtworksInspectionHub;
 }
 
 namespace MetadataIO {
@@ -30,7 +31,8 @@ namespace MetadataIO {
         Q_OBJECT
     public:
         MetadataReadingHub(MetadataIOService &metadataIOService,
-                           Commands::AppMessages &messages);
+                           Services::ArtworksUpdateHub &updateHub,
+                           Services::ArtworksInspectionHub &inspectionHub);
 
     public:
         void initializeImport(const Artworks::ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);
@@ -57,7 +59,6 @@ namespace MetadataIO {
         Artworks::ArtworksSnapshot m_ArtworksToRead;
         Helpers::AsyncCoordinator m_AsyncCoordinator;
         MetadataIOService &m_MetadataIOService;
-        Commands::AppMessages &m_Messages;
         Common::ReaderWriterQueue<OriginalMetadata> m_ImportQueue;
         int m_ImportID;
         quint32 m_StorageReadBatchID;

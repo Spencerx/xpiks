@@ -14,7 +14,6 @@
 #include <QDir>
 #include <QTimerEvent>
 #include <QThread>
-#include <Commands/appmessages.h>
 #include <Helpers/asynccoordinator.h>
 #include "csvexportworker.h"
 #include "csvexportplansmodel.h"
@@ -229,8 +228,7 @@ namespace MetadataIO {
 
     /*------------------------------------------------------*/
 
-    CsvExportModel::CsvExportModel(CsvExportPlansModel &exportPlansModel,
-                                   Commands::AppMessages &messages):
+    CsvExportModel::CsvExportModel(CsvExportPlansModel &exportPlansModel):
         Common::DelayedActionEntity(3000, MAX_SAVE_PAUSE_RESTARTS),
         m_ExportPlansModel(exportPlansModel),
         m_SaveTimerId(-1),

@@ -159,7 +159,6 @@ SOURCES += main.cpp \
     Services/SpellCheck/userdictionary.cpp \
     QMLExtensions/appdispatcher.cpp \
     Commands/Services/autoimportmetadatacommand.cpp \
-    Commands/Services/backupartworkstemplate.cpp \
     Commands/Services/cleanuplegacybackupscommand.cpp \
     Commands/Services/generatethumbnailstemplate.cpp \
     Commands/Services/savebackupstemplate.cpp \
@@ -206,7 +205,8 @@ SOURCES += main.cpp \
     Models/Editing/currenteditablemodel.cpp \
     Models/Editing/quickbuffer.cpp \
     Commands/Editing/findandreplacetemplate.cpp \
-    Services/SpellCheck/spellcheckservice.cpp
+    Services/SpellCheck/spellcheckservice.cpp \
+    Services/artworksinspectionhub.cpp
 
 RESOURCES += qml.qrc
 
@@ -429,7 +429,6 @@ HEADERS += \
     QMLExtensions/appdispatcher.h \
     QMLExtensions/uicommandid.h \
     Commands/Services/autoimportmetadatacommand.h \
-    Commands/Services/backupartworkstemplate.h \
     Commands/Services/cleanuplegacybackupscommand.h \
     Commands/Services/generatethumbnailstemplate.h \
     Commands/Services/savebackupstemplate.h \
@@ -503,12 +502,12 @@ HEADERS += \
     Commands/Base/simplecommand.h \
     Models/Editing/currenteditablemodel.h \
     QMLExtensions/iuicommanddispatcher.h \
-    Commands/messages.h \
-    Commands/appmessages.h \
     Models/Editing/quickbuffer.h \
     Commands/Editing/findandreplacetemplate.h \
     Services/iservicebase.h \
-    Services/SpellCheck/spellcheckservice.h
+    Services/SpellCheck/spellcheckservice.h \
+    Services/artworksinspectionhub.h \
+    Common/changesevents.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

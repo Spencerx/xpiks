@@ -28,7 +28,6 @@
 #include <Commands/Base/compositecommandtemplate.h>
 #include <Commands/Services/generatethumbnailstemplate.h>
 #include <Commands/artworksupdatetemplate.h>
-#include <Commands/Services/backupartworkstemplate.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_SettingsModel(environment),
@@ -53,6 +52,20 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_DeleteKeywordsModel(m_CommandManager, m_Messages, m_PresetsModel),
     m_ArtworkProxyModel(m_Messages, m_CommandManager, m_PresetsModel, m_KeywordsCompletions),
     m_DuplicatesModel(m_ColorsModel),
+    m_MaintenanceService(environment),
+    m_AutoCompleteService(m_KeywordsAutoCompleteModel, m_PresetsModel, m_SettingsModel),
+    m_RequestsService(),
+    m_RequestsService(m_SettingsModel.getProxySettings()),
+    m_WarningsSettingsModel(environment, m_RequestsService),
+    m_WarningsService(m_WarningsSettingsModel),
+    m_SpellCheckerService(environment, m_WarningsService, m_SettingsModel),
+    m_MetadataIOService(),
+    m_ImageCachingService(environment, m_DatabaseManager),
+    m_TranslationService(),
+    m_VideoCachingService(environment, m_DatabaseManager, m_SwitcherModel),
+    m_UpdateService(environment, m_SettingsModel, m_SwitcherModel, m_MaintenanceService),
+    m_TelemetryService(m_SwitcherModel, m_SettingsModel, m_Messages),
+    m_InspectionHub(m_SpellCheckerService, m_WarningsService, m_SettingsModel),
     m_SecretsManager(),
     m_StocksFtpList(environment, m_RequestsService),
     m_UploadInfoRepository(environment, m_StocksFtpList, m_SecretsManager),
@@ -61,18 +74,6 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_ApiClients(m_SecretsStorage.get()),
     m_FtpCoordinator(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel)),
     m_ArtworkUploader(environment, m_UploadInfoRepository, m_Messages, m_SettingsModel),
-    m_MaintenanceService(environment),
-    m_AutoCompleteService(m_KeywordsAutoCompleteModel, m_PresetsModel, m_SettingsModel),
-    m_RequestsService(m_SettingsModel.getProxySettings()),
-    m_WarningsSettingsModel(environment, m_RequestsService),
-    m_WarningsService(m_WarningsSettingsModel),
-    m_SpellCheckerService(environment, m_WarningsService, m_SettingsModel, m_Messages),
-    m_MetadataIOService(),
-    m_ImageCachingService(environment, m_DatabaseManager),
-    m_TranslationService(),
-    m_VideoCachingService(environment, m_DatabaseManager, m_SwitcherModel),
-    m_UpdateService(environment, m_SettingsModel, m_SwitcherModel, m_MaintenanceService),
-    m_TelemetryService(m_SwitcherModel, m_SettingsModel, m_Messages),
     m_LanguagesModel(m_SettingsModel),
     m_UIManager(environment, m_SettingsModel),
     m_UserDictionary(environment),

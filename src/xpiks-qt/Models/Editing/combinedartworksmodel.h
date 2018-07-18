@@ -20,14 +20,15 @@
 #include <QQuickTextDocument>
 #include <memory>
 #include <vector>
-#include <Models/Artworks/artworksviewmodel.h>
-#include <Artworks/basicmetadatamodel.h>
-#include <Common/flags.h>
-#include <Services/SpellCheck/spellcheckiteminfo.h>
-#include <Common/hold.h>
-#include <Artworks/artworkelement.h>
 #include "artworkproxybase.h"
+#include <Common/flags.h>
+#include <Common/hold.h>
 #include <Common/delayedactionentity.h>
+#include <Common/changesevents.h>
+#include <Artworks/artworkelement.h>
+#include <Artworks/basicmetadatamodel.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Models/Artworks/artworksviewmodel.h>
 #include <Models/Editing/icurrenteditable.h>
 
 namespace Commands {
@@ -47,7 +48,8 @@ namespace Models {
     class CombinedArtworksModel:
             public ArtworksViewModel,
             public ArtworkProxyBase,
-            public Common::DelayedActionEntity
+            public Common::DelayedActionEntity,
+            public Common::EventsSource<Artworks::BasicKeywordsModel*>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)

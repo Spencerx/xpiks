@@ -150,7 +150,7 @@ namespace Models {
 
         using namespace Commands;
         auto command = std::make_shared<ModifyArtworksCommand>(
-                           Artworks::ArtworksSnapshot({m_ArtworkMetadata}),
+                           m_ArtworkMetadata,
                            std::make_shared<CompositeCommandTemplate>({
                                                                           std::make_shared<EditArtworksTemplate>(
                                                                           title, description, keywords, flags),

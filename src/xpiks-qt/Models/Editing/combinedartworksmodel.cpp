@@ -488,10 +488,7 @@ namespace Models {
     }
 
     void CombinedArtworksModel::submitForInspection() {
-        m_Messages
-                .ofType<Artworks::BasicKeywordsModel*>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .broadcast(&m_CommonKeywordsModel);
+        notifyChange(&m_CommonKeywordsModel);
     }
 
     Common::ID_t CombinedArtworksModel::getSpecialItemID() {

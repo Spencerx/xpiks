@@ -12,12 +12,15 @@
 #define WARNINGSSERVICE_H
 
 #include <QObject>
-#include <Artworks/artworkmetadata.h>
 #include <Common/flags.h>
 #include "warningssettingsmodel.h"
-#include <Artworks/artworkssnapshot.h>
 #include <Common/isystemenvironment.h>
 #include <Services/iservicebase.h>
+
+namespace Artworks {
+    class ArtworkMetadata;
+    class ArtworksSnapshot;
+}
 
 namespace Warnings {
     class WarningsCheckingWorker;
@@ -42,7 +45,7 @@ namespace Warnings {
 
         virtual void submitItem(Artworks::ArtworkMetadata *item);
         virtual void submitItem(Artworks::ArtworkMetadata *item, Common::WarningsCheckFlags flags);
-        virtual void submitItems(const Artworks::WeakArtworksSnapshot &items);
+        virtual void submitItems(const Artworks::ArtworksSnapshot &items);
 
     private slots:
         void workerDestoyed(QObject *object);

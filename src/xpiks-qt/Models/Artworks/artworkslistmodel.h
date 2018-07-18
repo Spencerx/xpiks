@@ -20,7 +20,7 @@
 #include <Filesystem/ifilescollection.h>
 #include <Helpers/indicesranges.h>
 #include <Commands/Base/icommandtemplate.h>
-#include <Commands/appmessages.h>
+#include <Common/changesevents.h>
 
 class QQuickTextDocument;
 
@@ -51,7 +51,8 @@ namespace Models {
     using IArtworksCommandTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
 
     class ArtworksListModel:
-            public QAbstractListModel
+            public QAbstractListModel,
+            public Common::EventsSource<Artworks::ArtworkMetadata*>
     {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
@@ -60,7 +61,6 @@ namespace Models {
 
     public:
         ArtworksListModel(ArtworksRepository &repository,
-                          Commands::AppMessages &messages,
                           QObject *parent=0);
         virtual ~ArtworksListModel();
 
@@ -291,7 +291,6 @@ namespace Models {
         qint64 m_LastID;
         size_t m_CurrentItemIndex;
         ArtworksRepository &m_ArtworksRepository;
-        Commands::AppMessages &m_Messages;
         ArtworksContainer m_FinalizationList;
 #ifdef QT_DEBUG
         ArtworksContainer m_DestroyedList;

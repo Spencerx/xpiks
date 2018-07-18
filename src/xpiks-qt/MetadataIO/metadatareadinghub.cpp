@@ -10,15 +10,19 @@
 
 #include "metadatareadinghub.h"
 #include "metadataioservice.h"
-#include "../Artworks/artworkmetadata.h"
-#include "../Common/defines.h"
-#include "../MetadataIO/metadataioservice.h"
-#include <Commands/appmessages.h>
+#include <Artworks/artworkmetadata.h>
+#include <Common/defines.h>
+#include <MetadataIO/metadataioservice.h>
+#include <Services/artworksupdatehub.h>
+#include <Services/artworksinspectionhub.h>
 
 namespace MetadataIO {
-    MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService, Commands::AppMessages &messages):
+    MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService,
+                                           Services::ArtworksUpdateHub &updateHub,
+                                           Services::ArtworksInspectionHub &inspectionHub):
         m_MetadataIOService(metadataIOService),
-        m_Messages(messages),
+        m_UpdateHub(updateHub),
+        m_InspectionHub(inspectionHub),
         m_ImportID(0),
         m_StorageReadBatchID(0),
         m_IgnoreBackupsAtImport(false),
@@ -89,15 +93,8 @@ namespace MetadataIO {
             m_MetadataIOService.addArtworks(m_ArtworksToRead);
         }
 
-        m_Messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::UpdateArtworks)
-                .broadcast(m_ArtworksToRead);
-
-        m_Messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .broadcast(m_ArtworksToRead);
+        m_UpdateHub.updateArtworks(m_ArtworksToRead);
+        m_InspectionHub.inspectArtworks(m_ArtworksToRead);
 
         finalizeImport();
     }

@@ -12,19 +12,16 @@
 #include <QQmlEngine>
 #include <Helpers/stringhelper.h>
 #include "presetmodel.h"
-#include <Commands/appmessages.h>
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 #define PRESET_SAVE_TIMEOUT 3000
 
 namespace KeywordsPresets {
     PresetKeywordsModel::PresetKeywordsModel(Common::ISystemEnvironment &environment,
-                                             Commands::AppMessages &messages,
                                              QObject *parent):
         QAbstractListModel(parent),
         Common::DelayedActionEntity(PRESET_SAVE_TIMEOUT, MAX_SAVE_PAUSE_RESTARTS),
         m_Environment(environment),
-        m_Messages(messages),
         m_PresetsConfig(environment),
         m_GroupsModel(*this),
         m_LastUsedID(0)
@@ -485,10 +482,7 @@ namespace KeywordsPresets {
             if (keywordsModel.editKeyword(keywordIndex, replacement)) {
                 justChanged();
 
-                m_Messages
-                        .ofType<Artworks::BasicKeywordsModel*>()
-                        .withID(Commands::AppMessages::SpellCheck)
-                        .broadcast(&keywordsModel);
+                notifyChange(&keywordsModel);
             }
         }
     }
@@ -506,10 +500,7 @@ namespace KeywordsPresets {
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-                m_Messages
-                        .ofType<Artworks::BasicKeywordsModel*>()
-                        .withID(Commands::AppMessages::SpellCheck)
-                        .broadcast(&keywordsModel);
+                notifyChange(&keywordsModel);
             }
         }
     }
@@ -527,10 +518,7 @@ namespace KeywordsPresets {
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-                m_Messages
-                        .ofType<Artworks::BasicKeywordsModel*>()
-                        .withID(Commands::AppMessages::SpellCheck)
-                        .broadcast(&keywordsModel);
+                notifyChange(&keywordsModel);
             }
         }
     }
@@ -550,10 +538,7 @@ namespace KeywordsPresets {
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-                m_Messages
-                        .ofType<Artworks::BasicKeywordsModel*>()
-                        .withID(Commands::AppMessages::SpellCheck)
-                        .broadcast(&keywordsModel);
+                notifyChange(&keywordsModel);
             }
         }
 
@@ -572,10 +557,7 @@ namespace KeywordsPresets {
             QModelIndex indexToUpdate = this->index(index);
             emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-            m_Messages
-                    .ofType<Artworks::BasicKeywordsModel*>()
-                    .withID(Commands::AppMessages::SpellCheck)
-                    .broadcast(&keywordsModel);
+            notifyChange(&keywordsModel);
         }
     }
 
@@ -598,10 +580,7 @@ namespace KeywordsPresets {
             QModelIndex indexToUpdate = this->index(index);
             emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-            m_Messages
-                    .ofType<Artworks::BasicKeywordsModel*>()
-                    .withID(Commands::AppMessages::SpellCheck)
-                    .broadcast(&keywordsModel);
+            notifyChange(&keywordsModel);
         }
     }
 
@@ -702,10 +681,7 @@ namespace KeywordsPresets {
                 PresetModel *model = new PresetModel(nextID, name, keywords, item.m_GroupID);
                 m_PresetsList.push_back(model);
 
-                m_Messages
-                        .ofType<Artworks::BasicKeywordsModel*>()
-                        .withID(Commands::AppMessages::SpellCheck)
-                        .broadcast(&model->m_KeywordsModel);
+                notifyChange(&keywordsModel);
             } else {
                 LOG_WARNING << "Preset" << name << "already exists. Skipping...";
             }

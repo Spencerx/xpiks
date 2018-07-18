@@ -23,10 +23,6 @@
 #include "presetkeywordsmodelconfig.h"
 #include "presetgroupsmodel.h"
 
-namespace Commands {
-    class AppMessages;
-}
-
 namespace KeywordsPresets {
     struct PresetModel;
     class FilteredPresetKeywordsModel;
@@ -40,7 +36,6 @@ namespace KeywordsPresets {
 
     public:
         PresetKeywordsModel(Common::ISystemEnvironment &environment,
-                            Commands::AppMessages &messages,
                             QObject *parent=0);
         virtual ~PresetKeywordsModel();
 
@@ -169,7 +164,6 @@ namespace KeywordsPresets {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Commands::AppMessages &m_Messages;
         PresetKeywordsModelConfig m_PresetsConfig;
         PresetGroupsModel m_GroupsModel;
         QReadWriteLock m_PresetsLock;

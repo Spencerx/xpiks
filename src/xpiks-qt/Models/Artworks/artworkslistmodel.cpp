@@ -29,6 +29,7 @@
 #include <Commands/Base/compositecommandtemplate.h>
 #include <Commands/artworksupdatetemplate.h>
 #include <Services/artworkupdaterequest.h>
+#include <Services/iartworksinspector.h>
 #include <Commands/Editing/keywordedittemplate.h>
 #include <Commands/Base/emptycommand.h>
 #include <Models/Editing/currenteditableartwork.h>
@@ -39,24 +40,15 @@ namespace Models {
     using ArtworksCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
 
     ArtworksListModel::ArtworksListModel(ArtworksRepository &repository,
-                                         Commands::AppMessages &messages,
                                          QObject *parent):
         QAbstractListModel(parent),
         // all items before 1024 are reserved for internal models
         m_LastID(1024),
         m_CurrentItemIndex(0),
-        m_ArtworksRepository(repository),
-        m_Messages(messages)
+        m_ArtworksRepository(repository)
     {
         QObject::connect(&m_ArtworksRepository, &ArtworksRepository::filesUnavailable,
                          this, &ArtworksListModel::onFilesUnavailableHandler);
-
-        m_Messages
-                .ofType<Helpers::IndicesRanges>()
-                .withID(Commands::AppMessages::UpdateArtworks)
-                .addListener(std::bind(&ArtworksListModel::updateItems, this,
-                                       std::placeholders::_1,
-                                       getStandardUpdateRoles()));
     }
 
     ArtworksListModel::~ArtworksListModel() {
@@ -996,15 +988,7 @@ namespace Models {
         Artworks::ArtworkMetadata *artwork = qobject_cast<Artworks::ArtworkMetadata *>(sender());
         Q_ASSERT(artwork != nullptr);
         if (artwork != nullptr) {
-            m_Messages
-                    .ofType<Artworks::ArtworksSnapshot>()
-                    .withID(Commands::AppMessages::SpellCheck)
-                    .broadcast(Artworks::ArtworksSnapshot({artwork}));
-
-            m_Messages
-                    .ofType<Artworks::ArtworksSnapshot>()
-                    .withID(Commands::AppMessages::BackupArtworks)
-                    .broadcast(Artworks::ArtworksSnapshot({artwork}));
+            notifyChange(artwork);
         }
     }
 
