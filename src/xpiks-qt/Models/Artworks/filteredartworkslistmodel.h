@@ -17,6 +17,7 @@
 #include <functional>
 #include <Common/flags.h>
 #include <Artworks/artworkssnapshot.h>
+#include <Artworks/iartworkssource.h>
 
 namespace Commands {
     class ICommandManager;
@@ -30,10 +31,6 @@ namespace AutoComplete {
     class ICompletionSource;
 }
 
-namespace Commands {
-    class AppMessages;
-}
-
 namespace Models {
     class ArtworkMetadata;
     class ArtworkElement;
@@ -42,7 +39,8 @@ namespace Models {
     class SettingsModel;
 
     class FilteredArtworksListModel:
-            public QSortFilterProxyModel
+            public QSortFilterProxyModel,
+            public Artworks::IArtworksSource
     {
         Q_OBJECT
         Q_PROPERTY(QString searchTerm READ getSearchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
@@ -51,7 +49,6 @@ namespace Models {
 
     public:
         FilteredArtworksListModel(ArtworksListModel &artworksListModel,
-                                  Commands::AppMessages &messages,
                                   Commands::ICommandManager &commandManager,
                                   KeywordsPresets::IPresetsManager &presetsManager,
                                   AutoComplete::ICompletionSource &completionSource,
@@ -66,6 +63,10 @@ namespace Models {
         bool getGlobalSelectionChanged() const { return false; }
 
         Artworks::ArtworksSnapshot::Container getSearchablePreviewOriginalItems(const QString &searchTerm, Common::SearchFlags flags) const;
+
+    public:
+        // returns currently selected artworks as a snapshot
+        virtual Artworks::ArtworksSnapshot getArtworks() override;
 
 #ifdef CORE_TESTS
         int retrieveNumberOfSelectedItems();
@@ -185,7 +186,6 @@ namespace Models {
 
     private:
         ArtworksListModel &m_ArtworksListModel;
-        Commands::AppMessages &m_Messages;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         AutoComplete::ICompletionSource &m_CompletionSource;

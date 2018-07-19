@@ -15,7 +15,6 @@
 #include "uploadinforepository.h"
 #include "uploadinfo.h"
 #include <Common/defines.h>
-#include <Commands/appmessages.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/imageartwork.h>
 #include <Artworks/artworkssnapshot.h>
@@ -31,12 +30,12 @@
 namespace Models {
     ArtworkUploader::ArtworkUploader(Common::ISystemEnvironment &environment,
                                      UploadInfoRepository &uploadInfoRepository,
-                                     Commands::AppMessages &messages,
+                                     Artworks::IArtworksSource &artworksSource,
                                      SettingsModel &settingsModel,
                                      QObject *parent):
         QObject(parent),
         m_Environment(environment),
-        m_Messages(messages),
+        m_ArtworksSource(artworksSource),
         m_TestingCredentialWatcher(nullptr),
         m_UploadInfos(uploadInfoRepository),
         m_SettingsModel(settingsModel),
@@ -44,11 +43,6 @@ namespace Models {
         m_IsInProgress(false),
         m_HasErrors(false)
     {
-        messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::UploadArtworks)
-                .addListener(std::bind(&ArtworkUploader::setArtworks, this,
-                                       std::placeholders::_1));
     }
 
     ArtworkUploader::~ArtworkUploader() {
@@ -118,6 +112,12 @@ namespace Models {
         LOG_DEBUG << "Overall progress =" << percent;
 
         m_UploadInfos.updatePercentages();
+    }
+
+    void ArtworkUploader::pullArtworks() {
+        LOG_DEBUG << "#";
+        m_ArtworksSnapshot = std::move(m_ArtworksSource.getArtworks());
+        emit itemsCountChanged();
     }
 
     void ArtworkUploader::uploadArtworks() {
@@ -194,12 +194,6 @@ namespace Models {
     void ArtworkUploader::cancelOperation() {
         LOG_DEBUG << "#";
         m_FtpCoordinator->cancelUpload();
-    }
-
-    void ArtworkUploader::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
-        LOG_DEBUG << "#";
-        m_ArtworksSnapshot.copyFrom(snapshot);
-        emit itemsCountChanged();
     }
 
     void ArtworkUploader::resetArtworks() {

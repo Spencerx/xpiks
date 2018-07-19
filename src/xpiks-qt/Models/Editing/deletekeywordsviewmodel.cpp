@@ -16,18 +16,16 @@
 #include <Commands/Editing/deletekeywordstemplate.h>
 #include <Commands/Base/icommandmanager.h>
 #include <Commands/Editing/modifyartworkscommand.h>
-#include <Commands/appmessages.h>
 
 namespace Models {
     DeleteKeywordsViewModel::DeleteKeywordsViewModel(Commands::ICommandManager &commandManager,
-                                                     Commands::AppMessages &messages,
                                                      KeywordsPresets::IPresetsManager &presetsManager,
+                                                     Artworks::IArtworksSource &artworksSource,
                                                      QObject *parent):
-        Models::ArtworksViewModel(parent),
+        Models::ArtworksViewModel(artworksSource, parent),
         m_KeywordsToDeleteModel(m_HoldForDeleters),
         m_CommonKeywordsModel(m_HoldForCommon),
         m_CommandManager(commandManager),
-        m_Messages(messages),
         m_PresetsManager(presetsManager),
         m_CaseSensitive(false)
     {
@@ -219,9 +217,6 @@ namespace Models {
     }
 
     void DeleteKeywordsViewModel::submitForSpellCheck() {
-        m_Messages
-                .ofType<Artworks::BasicKeywordsModel*>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .broadcast(&m_KeywordsToDeleteModel);
+        notifyChange(&m_KeywordsToDeleteModel);
     }
 }

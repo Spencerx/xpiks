@@ -25,7 +25,6 @@
 
 namespace Models {
     FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel,
-                                                         Commands::AppMessages &messages,
                                                          Commands::ICommandManager &commandManager,
                                                          KeywordsPresets::IPresetsManager &presetsManager,
                                                          AutoComplete::ICompletionSource &completionSource,
@@ -33,7 +32,6 @@ namespace Models {
                                                          QObject *parent):
         QSortFilterProxyModel(parent),
         m_ArtworksListModel(artworksListModel),
-        m_Messages(messages),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_CompletionSource(completionSource),
@@ -58,6 +56,14 @@ namespace Models {
 
         updateFilter();
         forceUnselectAllItems();
+    }
+
+    Artworks::ArtworksSnapshot FilteredArtworksListModel::getArtworks() {
+        var rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
+                    [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
+                [] (Artworks::ArtworkMetadata *artwork, int, int) { return std::make_shared<ArtworkMetadataLocker>(artwork); });
+
+        return Artworks::ArtworksSnapshot(rawSnapshot);
     }
 
     int FilteredArtworksListModel::getOriginalIndex(int proxyIndex) const {
@@ -521,8 +527,8 @@ namespace Models {
 
     Artworks::WeakArtworksSnapshot FilteredArtworksListModel::getSelectedOriginalItems() const {
         Artworks::WeakArtworksSnapshot items = filterItems<Artworks::ArtworkMetadata *>(
-            [](Artworks::ArtworkMetadata *metadata) { return metadata->isSelected(); },
-            [] (Artworks::ArtworkMetadata *metadata, int, int) { return metadata; });
+            [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
+            [] (Artworks::ArtworkMetadata *artwork, int, int) { return artwork; });
 
         return items;
     }

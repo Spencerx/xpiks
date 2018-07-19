@@ -15,18 +15,18 @@
 #include <vector>
 #include <memory>
 #include "csvexportproperties.h"
-#include "../Artworks/artworkssnapshot.h"
-#include "../Common/delayedactionentity.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/delayedactionentity.h>
+#include <Common/isystemenvironment.h>
+#include <Artworks/artworkssnapshot.h>
 
 class QTimerEvent;
 
-namespace Commands {
-    class AppMessages;
-}
-
 namespace Helpers {
     class AsyncCoordinator;
+}
+
+namespace Artworks {
+    class IArtworksSource;
 }
 
 namespace MetadataIO {
@@ -85,8 +85,7 @@ namespace MetadataIO {
         Q_PROPERTY(bool isExporting READ getIsExporting WRITE setIsExporting NOTIFY isExportingChanged)
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
     public:
-        CsvExportModel(CsvExportPlansModel &exportPlansModel,
-                       Commands::AppMessages &messages);
+        CsvExportModel(CsvExportPlansModel &exportPlansModel, Artworks::IArtworksSource &artworksSource);
 
     public:
         const std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() const { return m_ExportPlans; }
@@ -120,6 +119,7 @@ namespace MetadataIO {
         virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     public:
+        Q_INVOKABLE void pullArtworks();
         Q_INVOKABLE void startExport();
         Q_INVOKABLE void clearModel();
         Q_INVOKABLE void removePlanAt(int row);
@@ -131,7 +131,6 @@ namespace MetadataIO {
         Q_INVOKABLE void setOutputDirectory(const QUrl &url);
 
     private:
-        void setArtworks(const Artworks::ArtworksSnapshot &snapshot);
         void saveExportPlans();
         int retrieveSelectedPlansCount();
 
@@ -170,6 +169,7 @@ namespace MetadataIO {
     private:
         CsvExportColumnsModel m_CurrentColumnsModel;
         CsvExportPlansModel &m_ExportPlansModel;
+        Artworks::IArtworksSource &m_ArtworksSource;
         std::vector<std::shared_ptr<CsvExportPlan> > m_ExportPlans;
         Artworks::ArtworksSnapshot m_ArtworksToExport;
         QString m_ExportDirectory;

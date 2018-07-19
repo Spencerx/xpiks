@@ -15,6 +15,7 @@
 #include <QTimerEvent>
 #include <QThread>
 #include <Helpers/asynccoordinator.h>
+#include <Artworks/iartworkssource.h>
 #include "csvexportworker.h"
 #include "csvexportplansmodel.h"
 
@@ -228,9 +229,11 @@ namespace MetadataIO {
 
     /*------------------------------------------------------*/
 
-    CsvExportModel::CsvExportModel(CsvExportPlansModel &exportPlansModel):
+    CsvExportModel::CsvExportModel(CsvExportPlansModel &exportPlansModel,
+                                   Artworks::IArtworksSource &artworksSource):
         Common::DelayedActionEntity(3000, MAX_SAVE_PAUSE_RESTARTS),
         m_ExportPlansModel(exportPlansModel),
+        m_ArtworksSource(artworksSource),
         m_SaveTimerId(-1),
         m_SaveRestartsCount(0),
         m_IsExporting(false)
@@ -241,12 +244,6 @@ namespace MetadataIO {
         QObject::connect(this, &CsvExportModel::backupRequired, this, &CsvExportModel::onBackupRequired);
 
         m_ExportDirectory = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-
-        messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::ExportToCSV)
-                .addListener(std::bind(&CsvExportModel::setArtworks, this,
-                                       std::placeholders::_1));
     }
 
     void CsvExportModel::setIsExporting(bool value) {
@@ -342,6 +339,11 @@ namespace MetadataIO {
         }
 
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+    }
+
+    void CsvExportModel::pullArtworks() {
+        m_ArtworksToExport = std::move(m_ArtworksSource.getArtworks());
+        emit artworksCountChanged();
     }
 
     void CsvExportModel::startExport() {
@@ -443,11 +445,6 @@ namespace MetadataIO {
         if (localFile != m_ExportDirectory) {
             m_ExportDirectory = localFile;
         }
-    }
-
-    void CsvExportModel::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
-         m_ArtworksToExport.copyFrom(snapshot);
-         emit artworksCountChanged();
     }
 
     void CsvExportModel::saveExportPlans() {

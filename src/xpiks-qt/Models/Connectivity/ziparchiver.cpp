@@ -18,14 +18,14 @@
 #include <Helpers/filehelpers.h>
 #include <Common/defines.h>
 #include <Helpers/cpphelpers.h>
-#include <Commands/appmessages.h>
 
 #ifndef CORE_TESTS
 #include <Helpers/ziphelper.h>
 #endif
 
 namespace Models {
-    ZipArchiver::ZipArchiver(Commands::AppMessages &messages):
+    ZipArchiver::ZipArchiver(Artworks::IArtworksSource &artworksSource):
+        m_ArtworksSource(artworksSource),
         m_IsInProgress(false),
         m_HasErrors(false)
     {
@@ -34,12 +34,6 @@ namespace Models {
                          this, &ZipArchiver::archiveCreated);
         QObject::connect(m_ArchiveCreator, &QFutureWatcher<QStringList>::finished,
                          this, &ZipArchiver::allFinished);
-
-        messages.
-                ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::ZipArtworks)
-                .addListener(std::bind(&ZipArchiver::setArtworks, this,
-                                       std::placeholders::_1));
     }
 
     int ZipArchiver::getPercent() const {
@@ -69,6 +63,11 @@ namespace Models {
     void ZipArchiver::allFinished() {
         emit finishedProcessing();
         setInProgress(false);
+    }
+
+    void ZipArchiver::pullArtworks() {
+        LOG_DEBUG << "#";
+        setArtworks(m_ArtworksSource.getArtworks());
     }
 
     void ZipArchiver::archiveArtworks() {

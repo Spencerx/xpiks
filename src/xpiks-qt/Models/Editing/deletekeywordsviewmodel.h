@@ -17,10 +17,10 @@
 #include <Artworks/basickeywordsmodel.h>
 #include <Models/Artworks/artworksviewmodel.h>
 #include <KeywordsPresets/ipresetsmanager.h>
+#include <Common/changesevents.h>
 
 namespace Commands {
     class ICommandManager;
-    class AppMessages;
 }
 
 namespace KeywordsPresets {
@@ -28,7 +28,9 @@ namespace KeywordsPresets {
 }
 
 namespace Models {
-    class DeleteKeywordsViewModel: public Models::ArtworksViewModel
+    class DeleteKeywordsViewModel:
+            public Models::ArtworksViewModel,
+            public Common::EventsSource<Artworks::BasicKeywordsModel*>
     {
         Q_OBJECT
         Q_PROPERTY(int commonKeywordsCount READ getCommonKeywordsCount NOTIFY commonKeywordsCountChanged)
@@ -37,8 +39,8 @@ namespace Models {
 
     public:
         DeleteKeywordsViewModel(Commands::ICommandManager &commandManager,
-                                Commands::AppMessages &messages,
                                 KeywordsPresets::IPresetsManager &presetsManager,
+                                Artworks::IArtworksSource &artworksSource,
                                 QObject *parent=nullptr);
 
     public:

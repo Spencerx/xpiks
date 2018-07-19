@@ -19,9 +19,9 @@
 #include <Suggestion/suggestionartwork.h>
 #include <Common/hold.h>
 #include <Common/delayedactionentity.h>
+#include <Common/changesevents.h>
 
 namespace Commands {
-    class AppMessages;
     class ICommandManager;
 }
 
@@ -31,7 +31,8 @@ namespace Models {
     class QuickBuffer:
             public QObject,
             public Models::ArtworkProxyBase,
-            public Common::DelayedActionEntity
+            public Common::DelayedActionEntity,
+            public Common::EventsSource<Artworks::BasicKeywordsModel*>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
@@ -43,8 +44,7 @@ namespace Models {
         Q_PROPERTY(bool hasKeywordsSpellErrors READ getHasKeywordsSpellError NOTIFY keywordsSpellingChanged)
 
     public:
-        explicit QuickBuffer(Commands::AppMessages &messages,
-                             CurrentEditableModel &currentEditableModel,
+        explicit QuickBuffer(CurrentEditableModel &currentEditableModel,
                              Commands::ICommandManager &commandManager,
                              QObject *parent = 0);
 
@@ -120,7 +120,6 @@ namespace Models {
         Artworks::BasicMetadataModel m_BasicModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
         CurrentEditableModel &m_CurrentEditableModel;
-        Commands::AppMessages &m_Messages;
         Commands::ICommandManager &m_CommandManager;
     };
 }

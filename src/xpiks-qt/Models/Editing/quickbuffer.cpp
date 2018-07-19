@@ -15,14 +15,12 @@
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Base/compositecommandtemplate.h>
 #include <Commands/Editing/editartworkstemplate.h>
-#include <Commands/appmessages.h>
 
 #define MAX_EDITING_PAUSE_RESTARTS 10
 #define QUICKBUFFER_EDITING_PAUSE 1000
 
 namespace Models {
-    QuickBuffer::QuickBuffer(Commands::AppMessages &messages,
-                             CurrentEditableModel &currentEditableModel,
+    QuickBuffer::QuickBuffer(CurrentEditableModel &currentEditableModel,
                              Commands::ICommandManager &commandManager,
                              QObject *parent) :
         QObject(parent),
@@ -152,10 +150,7 @@ namespace Models {
     }
 
     void QuickBuffer::submitForInspection() {
-        m_Messages
-                .ofType<Artworks::BasicKeywordsModel*>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .broadcast(&m_BasicModel);
+        notifyChange(&m_BasicModel);
     }
 
     void QuickBuffer::doJustEdited() {

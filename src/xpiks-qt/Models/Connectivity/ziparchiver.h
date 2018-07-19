@@ -16,13 +16,10 @@
 #include <QVector>
 #include <Helpers/ifilenotavailablemodel.h>
 #include <Artworks/artworkssnapshot.h>
+#include <Artworks/iartworkssource.h>
 
 class QStringList;
 class QString;
-
-namespace Commands {
-    class AppMessages;
-}
 
 namespace Models {
     class ZipArchiver:
@@ -35,7 +32,7 @@ namespace Models {
         Q_PROPERTY(int itemsCount READ getItemsCount NOTIFY itemsCountChanged)
         Q_OBJECT
     public:
-        ZipArchiver(Commands::AppMessages &messages);
+        ZipArchiver(Artworks::IArtworksSource &artworksSource);
         virtual ~ZipArchiver() { delete m_ArchiveCreator; }
 
     public:
@@ -62,6 +59,7 @@ namespace Models {
         void allFinished();
 
     public:
+        Q_INVOKABLE void pullArtworks();
         Q_INVOKABLE void archiveArtworks();
         Q_INVOKABLE void resetModel();
 
@@ -84,6 +82,7 @@ namespace Models {
 
     private:
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
+        Artworks::IArtworksSource &m_ArtworksSource;
         QFutureWatcher<QStringList> *m_ArchiveCreator;
         QAtomicInt m_ProcessedArtworksCount;
         volatile bool m_IsInProgress;

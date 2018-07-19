@@ -59,6 +59,8 @@ namespace MetadataIO {
         Artworks::ArtworksSnapshot m_ArtworksToRead;
         Helpers::AsyncCoordinator m_AsyncCoordinator;
         MetadataIOService &m_MetadataIOService;
+        Services::ArtworksUpdateHub &m_UpdateHub;
+        Services::ArtworksInspectionHub &m_InspectionHub;
         Common::ReaderWriterQueue<OriginalMetadata> m_ImportQueue;
         int m_ImportID;
         quint32 m_StorageReadBatchID;

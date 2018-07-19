@@ -20,6 +20,7 @@
 #include <Common/isystemenvironment.h>
 #include "uploadinforepository.h"
 #include <ftpcoordinator.h>
+#include <Artworks/iartworkssource.h>
 
 namespace Helpers {
     class TestConnectionResult;
@@ -27,10 +28,6 @@ namespace Helpers {
 
 namespace Connectivity {
     class IFtpCoordinator;
-}
-
-namespace Commands {
-    class AppMessages;
 }
 
 namespace Helpers {
@@ -58,7 +55,7 @@ namespace Models {
     public:
         ArtworkUploader(Common::ISystemEnvironment &environment,
                         Models::UploadInfoRepository &uploadInfoRepository,
-                        Commands::AppMessages &messages,
+                        Artworks::IArtworksSource &artworksSource,
                         SettingsModel &settingsModel,
                         QObject *parent=0);
         virtual ~ArtworkUploader();
@@ -98,6 +95,7 @@ namespace Models {
         void uploaderPercentChanged(double percent);
 
     public:
+        Q_INVOKABLE void pullArtworks();
         Q_INVOKABLE void uploadArtworks();
         Q_INVOKABLE void checkCredentials(const QString &host, const QString &username,
                                           const QString &password, bool disablePassiveMode, bool disableEPSV);
@@ -112,7 +110,6 @@ namespace Models {
         Q_INVOKABLE void cancelOperation();
 
     protected:
-        void setArtworks(const Artworks::ArtworksSnapshot &snapshot);
         void resetArtworks();
 
 #ifdef CORE_TESTS
@@ -135,7 +132,7 @@ namespace Models {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Commands::AppMessages &m_Messages;
+        Artworks::IArtworksSource &m_ArtworksSource;
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
         Connectivity::UploadWatcher m_UploadWatcher;
         std::shared_ptr<Connectivity::IFtpCoordinator> m_FtpCoordinator;
