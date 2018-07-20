@@ -11,7 +11,7 @@
 #ifndef ARTWORKSINSPECTIONHUB_H
 #define ARTWORKSINSPECTIONHUB_H
 
-#include <Common/changesevents.h>
+#include <Common/events.h>
 
 namespace SpellCheck {
     class SpellCheckService;
@@ -42,8 +42,8 @@ namespace Services {
                               Models::SettingsModel &settingsModel);
 
     public:
-        virtual void handleChange(const Artworks::ArtworkMetadata * &change) override;
-        virtual void handleChange(const Artworks::BasicKeywordsModel * &change) override;
+        virtual void handleEvent(const Artworks::ArtworkMetadata * &change) override;
+        virtual void handleEvent(const Artworks::BasicKeywordsModel * &change) override;
 
     public:
         void inspectArtwork(const Artworks::ArtworkMetadata *artwork);

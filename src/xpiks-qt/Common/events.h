@@ -12,13 +12,18 @@
 #define CHANGESLISTENER_H
 
 #include <vector>
+#include <functional>
 
 namespace Common {
+    enum struct EventType {
+        SpellCheck
+    };
+
     template<typename T>
     class EventsTarget {
     public:
         virtual ~EventsTarget() {}
-        virtual void handleChange(const T &change) = 0;
+        virtual void handleEvent(const T &event) = 0;
     };
 
     template<typename T>
@@ -27,18 +32,22 @@ namespace Common {
         virtual ~EventsSource() {}
 
     public:
-        void addTarget(EventsTarget<T> &&target) {
-            m_Targets.emplace_back(target);
+        void addTarget(EventsTarget<T> &target) {
+            m_Targets.push_back(target);
         }
 
-        void notifyChange(const T &change) {
+        void addTargets(std::initializer_list<std::reference_wrapper<EventsTarget<T>>> targets) {
+            m_Targets.insert(m_Targets.end(), targets.begin(), targets.end());
+        }
+
+        void notifyEvent(const T &event) {
             for (auto &target: m_Targets) {
-                target.handleChange(change);
+                target.handleEvent(event);
             }
         }
 
     private:
-        std::vector<EventsTarget<T>> m_Targets;
+        std::vector<std::reference_wrapper<EventsTarget<T>>> m_Targets;
     };
 }
 

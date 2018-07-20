@@ -28,7 +28,6 @@ namespace Models {
         Common::DelayedActionEntity(QUICKBUFFER_EDITING_PAUSE, MAX_EDITING_PAUSE_RESTARTS),
         m_BasicModel(m_HoldPlaceholder, this),
         m_CurrentEditableModel(currentEditableModel),
-        m_Messages(messages),
         m_CommandManager(commandManager)
     {
         m_BasicModel.setSpellCheckInfo(&m_SpellCheckInfo);
@@ -150,7 +149,7 @@ namespace Models {
     }
 
     void QuickBuffer::submitForInspection() {
-        notifyChange(&m_BasicModel);
+        notifyEvent(&m_BasicModel);
     }
 
     void QuickBuffer::doJustEdited() {

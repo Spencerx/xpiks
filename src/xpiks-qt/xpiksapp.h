@@ -147,7 +147,6 @@ private slots:
 
 protected:
     // general
-    Commands::AppMessages m_Messages;
     QMLExtensions::ColorsModel m_ColorsModel;
     Models::LogsModel m_LogsModel;
     Models::SettingsModel m_SettingsModel;

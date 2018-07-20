@@ -31,10 +31,6 @@ namespace Encryption {
     class SecretsManager;
 }
 
-namespace Commands {
-    class AppMessages;
-}
-
 namespace Models {
     class SettingsModel:
             public QObject,
@@ -286,7 +282,6 @@ namespace Models {
 
     private:
         Encryption::SecretsManager &m_SecretsManager;
-        Commands::AppMessages &m_Messages;
         Common::StatefulEntity m_State;
         QMutex m_SettingsMutex;
         Helpers::LocalConfig m_Config;

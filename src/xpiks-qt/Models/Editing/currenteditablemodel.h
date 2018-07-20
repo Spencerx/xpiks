@@ -14,24 +14,27 @@
 #include <QObject>
 #include <memory>
 #include "icurrenteditable.h"
-
-namespace Commands {
-    class AppMessages;
-}
+#include <Common/types.h>
+#include <Common/events.h>
 
 namespace Models {
-    class CurrentEditableModel : public QObject, public ICurrentEditableSource
+    class CurrentEditableModel:
+            public QObject,
+            public ICurrentEditableSource,
+            public Common::EventsTarget<std::shared_ptr<Models::ICurrentEditable>>
     {
         Q_OBJECT
         Q_PROPERTY(bool isAvailable READ getIsAvailable NOTIFY currentEditableChanged)
 
     public:
-        explicit CurrentEditableModel(Commands::AppMessages &messages,
-                                      QObject *parent = 0);
+        explicit CurrentEditableModel(QObject *parent = 0);
 
     public:
         bool getIsAvailable() const { return m_CurrentEditable.operator bool(); }
         virtual std::shared_ptr<Models::ICurrentEditable> getCurrentEditable() const override { return m_CurrentEditable; }
+
+    public:
+        virtual void handleEvent(const std::shared_ptr<Models::ICurrentEditable> &event) override;
 
     public:
         void clearCurrentItem();

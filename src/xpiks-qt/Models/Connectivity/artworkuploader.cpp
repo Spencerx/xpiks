@@ -218,10 +218,7 @@ namespace Models {
         m_UploadInfos.updatePercentages();
 
         m_FtpCoordinator->uploadArtworks(snapshot, selectedInfos);
-        m_Messages
-                .ofType<int>()
-                .withID(Commands::AppMessages::Telemetry)
-                .broadcast((int)Connectivity::UserAction::Upload);
+        notifyEvent(Connectivity::UserAction::Upload);
     }
 
     bool ArtworkUploader::removeUnavailableItems() {

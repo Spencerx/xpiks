@@ -482,7 +482,7 @@ namespace KeywordsPresets {
             if (keywordsModel.editKeyword(keywordIndex, replacement)) {
                 justChanged();
 
-                notifyChange(&keywordsModel);
+                notifyEvent(&keywordsModel);
             }
         }
     }
@@ -500,7 +500,7 @@ namespace KeywordsPresets {
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-                notifyChange(&keywordsModel);
+                notifyEvent(&keywordsModel);
             }
         }
     }
@@ -518,7 +518,7 @@ namespace KeywordsPresets {
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-                notifyChange(&keywordsModel);
+                notifyEvent(&keywordsModel);
             }
         }
     }
@@ -538,7 +538,7 @@ namespace KeywordsPresets {
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-                notifyChange(&keywordsModel);
+                notifyEvent(&keywordsModel);
             }
         }
 
@@ -557,7 +557,7 @@ namespace KeywordsPresets {
             QModelIndex indexToUpdate = this->index(index);
             emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-            notifyChange(&keywordsModel);
+            notifyEvent(&keywordsModel);
         }
     }
 
@@ -580,7 +580,7 @@ namespace KeywordsPresets {
             QModelIndex indexToUpdate = this->index(index);
             emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-            notifyChange(&keywordsModel);
+            notifyEvent(&keywordsModel);
         }
     }
 
@@ -681,7 +681,7 @@ namespace KeywordsPresets {
                 PresetModel *model = new PresetModel(nextID, name, keywords, item.m_GroupID);
                 m_PresetsList.push_back(model);
 
-                notifyChange(&keywordsModel);
+                notifyEvent(&keywordsModel);
             } else {
                 LOG_WARNING << "Preset" << name << "already exists. Skipping...";
             }

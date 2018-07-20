@@ -24,18 +24,18 @@
 #include <Commands/Base/compositecommandtemplate.h>
 
 namespace Models {
-    ArtworkProxyModel::ArtworkProxyModel(Commands::AppMessages &messages,
-                                         Commands::ICommandManager &commandManager,
+    ArtworkProxyModel::ArtworkProxyModel(Commands::ICommandManager &commandManager,
                                          KeywordsPresets::IPresetsManager &presetsManager,
                                          AutoComplete::ICompletionSource &completionSource,
+                                         Services::ArtworksUpdateHub &updateHub,
                                          QObject *parent) :
         QObject(parent),
         ArtworkProxyBase(),
         m_ArtworkMetadata(nullptr),
-        m_Messages(messages),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
-        m_CompletionSource(completionSource)
+        m_CompletionSource(completionSource),
+        m_ArtworksUpdateHub(updateHub)
     {
     }
 
@@ -315,10 +315,7 @@ namespace Models {
     void ArtworkProxyModel::submitForInspection() {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         if (m_ArtworkMetadata == nullptr) { return; }
-        m_Messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .broadcast(Artworks::ArtworksSnapshot({m_ArtworkMetadata}));
+        notifyEvent(m_ArtworkMetadata);
     }
 
     void ArtworkProxyModel::connectArtworkSignals(Artworks::ArtworkMetadata *artwork) {
@@ -359,11 +356,7 @@ namespace Models {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         m_PropertiesMap.updateProperties(m_ArtworkMetadata);
 
-        m_Messages
-                .ofType<std::shared_ptr<ICurrentEditable>>()
-                .withID(Commands::AppMessages::RegisterCurrentEditable)
-                .broadcast(std::make_shared<CurrentEditableProxyArtwork>(*this));
-
+        notifyEvent(std::make_shared<CurrentEditableProxyArtwork>(*this));
         emit isValidChanged();
     }
 
@@ -371,15 +364,8 @@ namespace Models {
         LOG_DEBUG << "#";
         if (m_ArtworkMetadata == nullptr) { return; }
 
-        m_Messages
-                .ofType<Helpers::IndicesRanges>()
-                .withID(Commands::AppMessages::UpdateArtworks)
-                .broadcast(Helpers::IndicesRanges(m_ArtworkMetadata->getLastKnownIndex(), 1));
-
-        m_Messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .broadcast(Artworks::ArtworksSnapshot({m_ArtworkMetadata}));
+        m_ArtworksUpdateHub.updateArtwork(m_ArtworkMetadata);
+        notifyEvent(m_ArtworkMetadata);
 
         Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
         if (videoArtwork != nullptr) {
@@ -389,12 +375,9 @@ namespace Models {
                         .withID(Commands::AppMessages::CreateThumbnail)
                         .broadcast(videoArtwork);
             } else {
-                m_Messages
-                        .ofType<Common::ID_t, size_t, QVector<int>>()
-                        .withID(Commands::AppMessages::UpdateArtworks)
-                        .broadcast(videoArtwork->getItemID(),
-                                   videoArtwork->getLastKnownIndex(),
-                                   QVector<int>() << Models::ArtworksListModel::ArtworkThumbnailRole);
+                m_ArtworksUpdateHub.updateArtworkByID(videoArtwork->getItemID(),
+                                                      videoArtwork->getLastKnownIndex(),
+                                                      QVector<int>() << Models::ArtworksListModel::ArtworkThumbnailRole);
             }
         }
 

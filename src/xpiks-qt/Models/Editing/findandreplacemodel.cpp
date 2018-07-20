@@ -20,7 +20,6 @@
 #include <Helpers/metadatahighlighter.h>
 #include <Helpers/cpphelpers.h>
 #include <Helpers/stringhelper.h>
-#include <Commands/appmessages.h>
 #include <Commands/Editing/findandreplacetemplate.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Base/icommandmanager.h>
@@ -59,7 +58,6 @@ QString searchFlagsToString(Common::SearchFlags flags) {
 namespace Models {
     FindAndReplaceModel::FindAndReplaceModel(QMLExtensions::ColorsModel &colorsModel,
                                              Commands::ICommandManager &commandManager,
-                                             Commands::AppMessages &messages,
                                              QObject *parent):
         QAbstractListModel(parent),
         m_ColorsModel(colorsModel),

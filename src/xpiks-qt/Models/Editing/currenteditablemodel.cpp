@@ -13,17 +13,15 @@
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
-#include <Commands/appmessages.h>
 
 namespace Models {
-    CurrentEditableModel::CurrentEditableModel(Commands::AppMessages &messages,
-                                               QObject *parent) :
+    CurrentEditableModel::CurrentEditableModel(QObject *parent) :
         QObject(parent)
     {
-        messages
-                .ofType<std::shared_ptr<ICurrentEditable>>()
-                .withID(Commands::AppMessages::RegisterCurrentEditable)
-                .addListener(std::bind(&CurrentEditableModel::setCurrentEditable, this));
+    }
+
+    void CurrentEditableModel::handleEvent(const std::shared_ptr<ICurrentEditable> &event) {
+        setCurrentEditable(event);
     }
 
     void CurrentEditableModel::clearCurrentItem() {

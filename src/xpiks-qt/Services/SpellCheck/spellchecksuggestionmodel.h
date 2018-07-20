@@ -21,14 +21,11 @@
 
 namespace Models {
     class ArtworkMetadata;
+    class IArtworksSource;
 }
 
 namespace Common {
     class IMetadataOperator;
-}
-
-namespace Commands {
-    class AppMessages;
 }
 
 namespace Artworks {
@@ -43,14 +40,14 @@ namespace SpellCheck {
     typedef std::vector<std::shared_ptr<SpellSuggestionsItem> > SuggestionsVector;
     typedef std::vector<std::shared_ptr<KeywordSpellSuggestions> > KeywordsSuggestionsVector;
 
-    class SpellCheckSuggestionModel : public QAbstractListModel
+    class SpellCheckSuggestionModel: public QAbstractListModel
     {
         Q_OBJECT
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
         Q_PROPERTY(bool anythingSelected READ getAnythingSelected NOTIFY anythingSelectedChanged)
 
     public:
-        SpellCheckSuggestionModel(SpellCheckService &spellCheckerService, Commands::AppMessages &messages);
+        SpellCheckSuggestionModel(SpellCheckService &spellCheckerService);
         virtual ~SpellCheckSuggestionModel();
 
     public:
@@ -102,7 +99,6 @@ namespace SpellCheck {
         std::vector<std::shared_ptr<SpellSuggestionsItem> > m_SuggestionsList;
         std::vector<std::shared_ptr<Artworks::MetadataOperatorLocker>> m_CheckedItems;
         SpellCheckService &m_SpellCheckerService;
-        Commands::AppMessages &m_Messages;
     };
 }
 

@@ -12,7 +12,6 @@
 #include "artworkupdaterequest.h"
 #include <Models/Artworks/artworkslistmodel.h>
 #include "../Common/defines.h"
-#include <Commands/appmessages.h>
 
 #define MAX_NOT_UPDATED_ARTWORKS_TO_HOLD 50
 #define MAX_UPDATE_TIMER_DELAYS 2
@@ -20,7 +19,6 @@
 
 namespace Services {
     ArtworksUpdateHub::ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel,
-                                         Commands::AppMessages &messages,
                                          QObject *parent) :
         QObject(parent),
         m_ArtworksListModel(artworksListModel),
@@ -32,14 +30,6 @@ namespace Services {
         QObject::connect(this, SIGNAL(updateRequested()), this, SLOT(onUpdateRequested()));
 
         m_UpdateRequests.reserve(100);
-
-        messages
-                .ofType<Common::ID_t, size_t, QVector<int>>()
-                .withID(Commands::AppMessages::UpdateArtworks)
-                .addListener(std::bind(&ArtworksUpdateHub::updateArtworkByID, this,
-                                       std::placeholders::_1,
-                                       std::placeholders::_2,
-                                       std::placeholders::_3));
     }
 
     void ArtworksUpdateHub::setStandardRoles(const QVector<int> &roles) {

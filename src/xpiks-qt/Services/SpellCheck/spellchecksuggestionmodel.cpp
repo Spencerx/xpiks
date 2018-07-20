@@ -18,7 +18,6 @@
 #include <Common/logging.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/basickeywordsmodel.h>
-#include <Commands/appmessages.h>
 #include <Helpers/indicesranges.h>
 #include <Helpers/cpphelpers.h>
 
@@ -150,11 +149,9 @@ namespace SpellCheck {
         return requests;
     }
 
-    SpellCheckSuggestionModel::SpellCheckSuggestionModel(SpellCheckService &spellCheckerService,
-                                                         Commands::AppMessages &messages):
+    SpellCheckSuggestionModel::SpellCheckSuggestionModel(SpellCheckService &spellCheckerService):
         QAbstractListModel(),
-        m_SpellCheckerService(spellCheckerService),
-        m_Messages(messages)
+        m_SpellCheckerService(spellCheckerService)
     {
         m_Messages
                 .ofType<Artworks::ArtworksSnapshot>()

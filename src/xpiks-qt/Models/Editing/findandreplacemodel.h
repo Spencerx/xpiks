@@ -20,7 +20,6 @@
 
 namespace Commands {
     class ICommandManager;
-    class AppMessages;
 }
 
 namespace Models {
@@ -41,7 +40,6 @@ namespace Models {
     public:
         FindAndReplaceModel(QMLExtensions::ColorsModel &colorsModel,
                             Commands::ICommandManager &commandManager,
-                            Commands::AppMessages &messages,
                             QObject *parent=0);
 
     public:

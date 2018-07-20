@@ -17,6 +17,8 @@
 #include <Artworks/basickeywordsmodel.h>
 #include <Common/flags.h>
 #include <Common/isystemenvironment.h>
+#include <Common/types.h>
+#include <Common/events.h>
 #include "spellcheckworker.h"
 #include "userdictionary.h"
 
@@ -29,16 +31,15 @@ namespace Warnings {
     class WarningsService;
 }
 
-namespace Commands {
-    class AppMessages;
-}
-
 namespace Models {
     class SettingsModel;
 }
 
 namespace SpellCheck {
-    class SpellCheckService: public QObject
+    class SpellCheckService:
+            public QObject,
+            public Common::EventsTarget<Common::NamedType<Artworks::ArtworkMetadata*, Common::EventType::SpellCheck>>,
+            public Common::EventsTarget<Common::NamedType<Artworks::BasicKeywordsModel*, Common::EventType::SpellCheck>>,
     {
         Q_OBJECT
         Q_PROPERTY(int userDictWordsNumber READ getUserDictWordsNumber NOTIFY userDictWordsNumberChanged)
@@ -46,10 +47,13 @@ namespace SpellCheck {
     public:
         SpellCheckService(Common::ISystemEnvironment &environment,
                             Warnings::WarningsService &warningsService,
-                            Models::SettingsModel &settingsModel,
-                            Commands::AppMessages &messages);
+                            Models::SettingsModel &settingsModel);
 
         virtual ~SpellCheckService();
+
+    public:
+        virtual void handleEvent(const Common::NamedType<Artworks::ArtworkMetadata*, Common::EventType::SpellCheck> &event) override;
+        virtual void handleEvent(const Common::NamedType<Artworks::BasicKeywordsModel*, Common::EventType::SpellCheck> &event) override;
 
     public:
         void startService(const std::shared_ptr<Services::ServiceStartParams> &params);

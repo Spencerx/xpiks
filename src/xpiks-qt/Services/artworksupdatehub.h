@@ -28,10 +28,6 @@ namespace Models {
     class ArtworksListModel;
 }
 
-namespace Commands {
-    class AppMessages;
-}
-
 namespace Services {
     class ArtworkUpdateRequest;
 
@@ -46,7 +42,6 @@ namespace Services {
 
     public:
         explicit ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel,
-                                   Commands::AppMessages &messages,
                                    QObject *parent = 0);
 
     public:

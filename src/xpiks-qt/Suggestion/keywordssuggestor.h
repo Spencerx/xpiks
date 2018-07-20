@@ -18,14 +18,17 @@
 #include <QHash>
 #include <QSet>
 #include <QTimer>
-#include "../Artworks/basickeywordsmodel.h"
 #include "suggestionartwork.h"
-#include "../Common/hold.h"
-#include "../Common/statefulentity.h"
-#include "../Common/isystemenvironment.h"
 #include "isuggestionengine.h"
-#include "../Microstocks/microstockapiclients.h"
-#include "../Connectivity/requestsservice.h"
+#include <Common/hold.h>
+#include <Common/types.h>
+#include <Common/events.h>
+#include <Common/statefulentity.h>
+#include <Common/isystemenvironment.h>
+#include <Artworks/basickeywordsmodel.h>
+#include <Microstocks/microstockapiclients.h>
+#include <Connectivity/requestsservice.h>
+#include <Connectivity/analyticsuserevent.h>
 
 namespace Models {
     class SwitcherModel;
@@ -36,13 +39,10 @@ namespace MetadataIO {
     class MetadataIOService;
 }
 
-namespace Commands {
-    class AppMessages;
-}
-
 namespace Suggestion {
     class KeywordsSuggestor:
-            public QAbstractListModel
+            public QAbstractListModel,
+            public Common::EventsSource<Common::NamedType<Connectivity::UserAction>>
     {
         Q_OBJECT
         Q_PROPERTY(int suggestedKeywordsCount READ getSuggestedKeywordsCount NOTIFY suggestedKeywordsCountChanged)
@@ -60,7 +60,6 @@ namespace Suggestion {
                           Connectivity::RequestsService &requestsService,
                           Models::SwitcherModel &switcherModel,
                           Models::SettingsModel &settingsModel,
-                          Commands::AppMessages &messages,
                           Common::ISystemEnvironment &environment,
                           QObject *parent=NULL);
 
@@ -174,7 +173,7 @@ namespace Suggestion {
         Connectivity::RequestsService &m_RequestsService;
         Models::SwitcherModel &m_SwitcherModel;
         Models::SettingsModel &m_SettingsModel;
-        Commands::AppMessages &m_Messages;
+        Models::ICurrentEditableSource &m_CurrentEditableSource;
         std::vector<std::shared_ptr<ISuggestionEngine> > m_QueryEngines;
         std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
         QString m_LastErrorString;

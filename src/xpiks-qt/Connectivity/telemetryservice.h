@@ -16,26 +16,29 @@
 #include "analyticsuserevent.h"
 #include <Models/switchermodel.h>
 #include <Models/settingsmodel.h>
-
-namespace Commands {
-    class AppMessages;
-}
+#include <Common/types.h>
+#include <Common/events.h>
 
 namespace Connectivity {
     class TelemetryWorker;
 
-    class TelemetryService : public QObject {
+    class TelemetryService:
+            public QObject,
+            public Common::EventsTarget<Common::NamedType<UserAction>>
+    {
         Q_OBJECT
     public:
         TelemetryService(Models::SwitcherModel &switcher,
                          Models::SettingsModel &settingsModel,
-                         Commands::AppMessages &messages,
                          QObject *parent=NULL);
 
     public:
         void initialize();
         void startReporting();
         void stopReporting(bool immediately=true);
+
+    public:
+        virtual void handleEvent(const Common::NamedType<UserAction> &event) override;
 
     private:
         void ensureUserIdExists();
@@ -44,7 +47,7 @@ namespace Connectivity {
         void doReportAction(UserAction action);
 
     public:
-        void reportAction(int action);
+        void reportAction(UserAction action);
         void setEndpoint(const QString &endpoint);
         void setInterfaceLanguage(const QString &language) { m_InterfaceLanguage = language; }
 

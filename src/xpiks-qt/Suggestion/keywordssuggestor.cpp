@@ -31,7 +31,6 @@ namespace Suggestion {
                                          Connectivity::RequestsService &requestsService,
                                          Models::SwitcherModel &switcherModel,
                                          Models::SettingsModel &settingsModel,
-                                         Commands::AppMessages &messages,
                                          Common::ISystemEnvironment &environment,
                                          QObject *parent):
         QAbstractListModel(parent),
@@ -40,7 +39,6 @@ namespace Suggestion {
         m_RequestsService(requestsService),
         m_SwitcherModel(switcherModel),
         m_SettingsModel(settingsModel),
-        m_Messages(messages),
         m_SuggestedKeywords(m_HoldPlaceholder, this),
         m_AllOtherKeywords(m_HoldPlaceholder, this),
         m_SelectedArtworksCount(0),
@@ -339,15 +337,9 @@ namespace Suggestion {
                 engine->submitQuery(query);
 
                 if (std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine) == nullptr) {
-                    m_Messages
-                            .ofType<int>()
-                            .withID(Commands::AppMessages::Telemetry)
-                            .broadcast((int)Connectivity::UserAction::SuggestionRemote);
+                    notifyEvent(Connectivity::UserAction::SuggestionRemote);
                 } else {
-                    m_Messages
-                            .ofType<int>()
-                            .withID(Commands::AppMessages::Telemetry)
-                            .broadcast((int)Connectivity::UserAction::SuggestionLocal);
+                    notifyEvent(Connectivity::UserAction::SuggestionLocal);
                 }
             }
         }

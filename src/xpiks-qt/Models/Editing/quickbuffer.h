@@ -19,7 +19,7 @@
 #include <Suggestion/suggestionartwork.h>
 #include <Common/hold.h>
 #include <Common/delayedactionentity.h>
-#include <Common/changesevents.h>
+#include <Common/events.h>
 
 namespace Commands {
     class ICommandManager;

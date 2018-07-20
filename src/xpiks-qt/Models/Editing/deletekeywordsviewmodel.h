@@ -17,7 +17,7 @@
 #include <Artworks/basickeywordsmodel.h>
 #include <Models/Artworks/artworksviewmodel.h>
 #include <KeywordsPresets/ipresetsmanager.h>
-#include <Common/changesevents.h>
+#include <Common/events.h>
 
 namespace Commands {
     class ICommandManager;
@@ -105,7 +105,6 @@ namespace Models {
         Artworks::BasicKeywordsModel m_KeywordsToDeleteModel;
         Artworks::BasicKeywordsModel m_CommonKeywordsModel;
         Commands::ICommandManager &m_CommandManager;
-        Commands::AppMessages &m_Messages;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         bool m_CaseSensitive;
     };

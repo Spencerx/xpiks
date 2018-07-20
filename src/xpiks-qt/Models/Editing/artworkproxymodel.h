@@ -23,13 +23,13 @@
 #include <vector>
 #include <Common/flags.h>
 #include <Common/hold.h>
+#include <Common/events.h>
 #include "artworkproxybase.h"
 #include <Models/Editing/icurrenteditable.h>
 #include <Models/keyvaluelist.h>
 
 namespace Commands {
     class ICommandManager;
-    class AppMessages;
 }
 
 namespace KeywordsPresets {
@@ -45,8 +45,16 @@ namespace Artworks {
     class BasicMetadataModel;
 }
 
+namespace Services {
+    class ArtworksUpdateHub;
+}
+
 namespace Models {
-    class ArtworkProxyModel: public QObject, public ArtworkProxyBase
+    class ArtworkProxyModel:
+            public QObject,
+            public ArtworkProxyBase,
+            public Common::EventsSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::EventType::SpellCheck>>,
+            public Common::EventsSource<std::shared_ptr<ICurrentEditable>>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
@@ -66,10 +74,10 @@ namespace Models {
         Q_PROPERTY(bool isValid READ getIsValid NOTIFY isValidChanged)
 
     public:
-        explicit ArtworkProxyModel(Commands::AppMessages &messages,
-                                   Commands::ICommandManager &commandManager,
+        explicit ArtworkProxyModel(Commands::ICommandManager &commandManager,
                                    KeywordsPresets::IPresetsManager &presetsManager,
                                    AutoComplete::ICompletionSource &completionSource,
+                                   Services::ArtworksUpdateHub &updateHub,
                                    QObject *parent = 0);
         virtual ~ArtworkProxyModel();
 
@@ -168,10 +176,10 @@ namespace Models {
     private:
         ArtworkPropertiesMap m_PropertiesMap;
         Artworks::ArtworkMetadata *m_ArtworkMetadata;
-        Commands::AppMessages &m_Messages;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         AutoComplete::ICompletionSource &m_CompletionSource;
+        Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
     };
 }
 

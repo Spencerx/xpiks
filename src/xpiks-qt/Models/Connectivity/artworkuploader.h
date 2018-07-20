@@ -16,8 +16,10 @@
 #include <QFutureWatcher>
 #include <Connectivity/testconnection.h>
 #include <Connectivity/uploadwatcher.h>
+#include <Connectivity/analyticsuserevent.h>
 #include <Helpers/ifilenotavailablemodel.h>
 #include <Common/isystemenvironment.h>
+#include <Common/events.h>
 #include "uploadinforepository.h"
 #include <ftpcoordinator.h>
 #include <Artworks/iartworkssource.h>
@@ -45,7 +47,8 @@ namespace Models {
 
     class ArtworkUploader:
             public QObject,
-            public Helpers::IFileNotAvailableModel
+            public Helpers::IFileNotAvailableModel,
+            public Common::EventsSource<Connectivity::UserAction>
     {
         Q_PROPERTY(int percent READ getUIPercent NOTIFY percentChanged)
         Q_PROPERTY(bool inProgress READ getInProgress WRITE setInProgress NOTIFY inProgressChanged)

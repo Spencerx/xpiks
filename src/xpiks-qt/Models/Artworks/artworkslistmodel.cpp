@@ -193,10 +193,7 @@ namespace Models {
                                     artwork,
                                     std::make_shared<ArtworksUpdateTemplate>(*this, getStandardUpdateRoles()));
 
-                m_Messages
-                        .ofType<std::shared_ptr<ICurrentEditable>>()
-                        .withID(AppMessages::RegisterCurrentEditable)
-                        .broadcast(editable);
+                notifyEvent(editable);
             }
         }
     }
@@ -529,6 +526,7 @@ namespace Models {
 
     void ArtworksListModel::spellCheckAllItems() {
         LOG_DEBUG << "#";
+
         m_Messages
                 .ofType<Artworks::ArtworksSnapshot>()
                 .withID(Commands::AppMessages::SpellCheck)
@@ -988,7 +986,7 @@ namespace Models {
         Artworks::ArtworkMetadata *artwork = qobject_cast<Artworks::ArtworkMetadata *>(sender());
         Q_ASSERT(artwork != nullptr);
         if (artwork != nullptr) {
-            notifyChange(artwork);
+            notifyEvent(artwork);
         }
     }
 

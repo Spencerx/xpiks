@@ -217,6 +217,6 @@ namespace Models {
     }
 
     void DeleteKeywordsViewModel::submitForSpellCheck() {
-        notifyChange(&m_KeywordsToDeleteModel);
+        notifyEvent(&m_KeywordsToDeleteModel);
     }
 }

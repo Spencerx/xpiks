@@ -507,8 +507,8 @@ HEADERS += \
     Services/iservicebase.h \
     Services/SpellCheck/spellcheckservice.h \
     Services/artworksinspectionhub.h \
-    Common/changesevents.h \
-    Artworks/iartworkssource.h
+    Artworks/iartworkssource.h \
+    Common/events.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

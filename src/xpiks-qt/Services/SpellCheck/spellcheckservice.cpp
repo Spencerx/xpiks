@@ -15,15 +15,13 @@
 #include <Common/logging.h>
 #include <Common/flags.h>
 #include <Models/settingsmodel.h>
-#include <Commands/appmessages.h>
 #include <Artworks/artworkssnapshot.h>
 #include <Helpers/cpphelpers.h>
 
 namespace SpellCheck {
     SpellCheckService::SpellCheckService(Common::ISystemEnvironment &environment,
                                              Warnings::WarningsService &warningsService,
-                                             Models::SettingsModel &settingsModel,
-                                             Commands::AppMessages &messages):
+                                             Models::SettingsModel &settingsModel):
         m_Environment(environment),
         m_WarningsService(warningsService),
         m_UserDictionary(environment),
@@ -33,23 +31,18 @@ namespace SpellCheck {
     {
         QObject::connect(&m_UserDictionary, &UserDictionary::sizeChanged,
                          this, &SpellCheckService::userDictWordsNumberChanged);
-
-        messages
-                .ofType<Artworks::BasicKeywordsModel*>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .addListener(std::bind(&SpellCheckService::submitItem, this,
-                                       std::placeholders::_1,
-                                       Common::SpellCheckFlags::All));
-
-        messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .addListener(std::bind(&SpellCheckService::submitArtworks, this,
-                                       std::placeholders::_1));
     }
 
     SpellCheckService::~SpellCheckService() {
         if (m_SpellCheckWorker != nullptr) {}
+    }
+
+    void SpellCheckService::handleEvent(const Common::NamedType<Artworks::ArtworkMetadata *, Common::EventType::SpellCheck> &event) {
+        this->submitArtwork(event.get());
+    }
+
+    void SpellCheckService::handleEvent(const Common::NamedType<Artworks::BasicKeywordsModel *, Common::EventType::SpellCheck> &event) {
+        this->submitItem(event.get(), Common::SpellCheckFlags::All);
     }
 
     void SpellCheckService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {

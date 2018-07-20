@@ -22,7 +22,6 @@
 #include <Commands/Base/simpleuicommandtemplate.h>
 #include <KeywordsPresets/ipresetsmanager.h>
 #include <Models/Editing/currenteditableproxyartwork.h>
-#include <Commands/appmessages.h>
 
 #define MAX_EDITING_PAUSE_RESTARTS 12
 
@@ -30,7 +29,6 @@ namespace Models {
     CombinedArtworksModel::CombinedArtworksModel(Commands::ICommandManager &commandManager,
                                                  KeywordsPresets::IPresetsManager &presetsManager,
                                                  AutoComplete::ICompletionSource &completionSource,
-                                                 Commands::AppMessages &messages,
                                                  QObject *parent):
         ArtworksViewModel(parent),
         ArtworkProxyBase(),
@@ -38,7 +36,6 @@ namespace Models {
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_CompletionSource(completionSource),
-        m_Messages(messages),
         m_CommonKeywordsModel(m_HoldPlaceholder, this),
         m_EditFlags(Common::ArtworkEditFlags::None),
         m_ModifiedFlags(0)
@@ -65,12 +62,6 @@ namespace Models {
                          this, &CombinedArtworksModel::titleSpellingChanged);
         QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
                          this, &CombinedArtworksModel::keywordsSpellingChanged);
-
-        m_Messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::EditArtworks)
-                .addListener(std::bind(&CombinedArtworksModel::setArtworks, this,
-                                       std::placeholders::_1));
     }
 
     void CombinedArtworksModel::setArtworks(const Artworks::ArtworksSnapshot &artworks) {
@@ -102,10 +93,7 @@ namespace Models {
         LOG_DEBUG << "After recombine title:" << getTitle();
         LOG_DEBUG << "After recombine keywords:" << getKeywordsString();
 
-        m_Messages
-                .ofType<Artworks::BasicKeywordsModel*>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .broadcast(&m_CommonKeywordsModel);
+        notifyEvent(&m_CommonKeywordsModel);
     }
 
     void CombinedArtworksModel::setDescription(const QString &value) {
@@ -254,10 +242,7 @@ namespace Models {
         LOG_DEBUG << "After recombine title:" << getTitle();
         LOG_DEBUG << "After recombine keywords:" << getKeywordsString();
 
-        m_Messages
-                .ofType<Artworks::BasicKeywordsModel*>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .broadcast(&m_CommonKeywordsModel);
+        notifyEvent(&m_CommonKeywordsModel);
     }
 
     void CombinedArtworksModel::plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {
@@ -488,7 +473,7 @@ namespace Models {
     }
 
     void CombinedArtworksModel::submitForInspection() {
-        notifyChange(&m_CommonKeywordsModel);
+        notifyEvent(&m_CommonKeywordsModel);
     }
 
     Common::ID_t CombinedArtworksModel::getSpecialItemID() {

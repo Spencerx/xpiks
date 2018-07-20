@@ -24,7 +24,7 @@
 #include <Common/flags.h>
 #include <Common/hold.h>
 #include <Common/delayedactionentity.h>
-#include <Common/changesevents.h>
+#include <Common/events.h>
 #include <Artworks/artworkelement.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Services/SpellCheck/spellcheckiteminfo.h>
@@ -33,7 +33,6 @@
 
 namespace Commands {
     class ICommandManager;
-    class AppMessages;
 }
 
 namespace KeywordsPresets {
@@ -49,7 +48,7 @@ namespace Models {
             public ArtworksViewModel,
             public ArtworkProxyBase,
             public Common::DelayedActionEntity,
-            public Common::EventsSource<Artworks::BasicKeywordsModel*>
+            public Common::EventsSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::EventType::SpellCheck>>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
@@ -67,7 +66,6 @@ namespace Models {
         CombinedArtworksModel(Commands::ICommandManager &commandManager,
                               KeywordsPresets::IPresetsManager &presetsManager,
                               AutoComplete::ICompletionSource &completionSource,
-                              Commands::AppMessages &messages,
                               QObject *parent=0);
 
     protected:
@@ -234,7 +232,6 @@ namespace Models {
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         AutoComplete::ICompletionSource &m_CompletionSource;
-        Commands::AppMessages &m_Messages;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
         Common::ArtworkEditFlags m_EditFlags;

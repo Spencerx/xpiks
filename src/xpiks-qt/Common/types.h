@@ -15,7 +15,20 @@
 
 namespace Common {
     typedef uint32_t flag_t;
-    typedef uint32_t ID_t;
+
+    template <typename T, typename Parameter=int>
+    class NamedType
+    {
+    public:
+        explicit NamedType(T const &value) : m_Value(value) {}
+        explicit NamedType(T &&value) : m_Value(std::move(value)) {}
+        T& get() { return m_Value; }
+        T const& get() const { return m_Value; }
+    private:
+        T m_Value;
+    };
+
+    using ID_t = NamedType<uint32_t>;
 }
 
 #endif // TYPES_H

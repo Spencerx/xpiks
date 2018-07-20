@@ -20,7 +20,7 @@
 #include <Filesystem/ifilescollection.h>
 #include <Helpers/indicesranges.h>
 #include <Commands/Base/icommandtemplate.h>
-#include <Common/changesevents.h>
+#include <Common/events.h>
 
 class QQuickTextDocument;
 
@@ -47,12 +47,12 @@ namespace Services {
 
 namespace Models {
     class ArtworksRepository;
-
-    using IArtworksCommandTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
+    class ICurrentEidtable;
 
     class ArtworksListModel:
             public QAbstractListModel,
-            public Common::EventsSource<Artworks::ArtworkMetadata*>
+            public Common::EventsSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::EventType::SpellCheck>>,
+            public Common::EventsSource<std::shared_ptr<ICurrentEidtable>>
     {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
