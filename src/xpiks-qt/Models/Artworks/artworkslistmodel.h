@@ -20,7 +20,7 @@
 #include <Filesystem/ifilescollection.h>
 #include <Helpers/indicesranges.h>
 #include <Commands/Base/icommandtemplate.h>
-#include <Common/events.h>
+#include <Common/messages.h>
 
 class QQuickTextDocument;
 
@@ -51,8 +51,8 @@ namespace Models {
 
     class ArtworksListModel:
             public QAbstractListModel,
-            public Common::EventsSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::EventType::SpellCheck>>,
-            public Common::EventsSource<std::shared_ptr<ICurrentEidtable>>
+            public Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>,
+            public Common::MessagesSource<std::shared_ptr<ICurrentEidtable>>
     {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)

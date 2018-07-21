@@ -58,7 +58,7 @@ namespace Models {
         forceUnselectAllItems();
     }
 
-    Artworks::ArtworksSnapshot FilteredArtworksListModel::getArtworks() {
+    Artworks::ArtworksSnapshot FilteredArtworksListModel::getSelectedArtworks() {
         var rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
                     [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
                 [] (Artworks::ArtworkMetadata *artwork, int, int) { return std::make_shared<ArtworkMetadataLocker>(artwork); });
@@ -430,14 +430,6 @@ namespace Models {
         }
     }
 
-    void FilteredArtworksListModel::suggestCorrectionsForSelected() const {
-        LOG_DEBUG << "#";
-        m_Messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::SpellSuggestions)
-                .broadcast(Artworks::ArtworksSnapshot(getSelectedOriginalItems()));
-    }
-
     void FilteredArtworksListModel::saveSelectedArtworks(bool overwriteAll, bool useBackups) {
         LOG_INFO << "ovewriteAll:" << overwriteAll << "useBackups:" << useBackups;
         // former patchSelectedArtworks
@@ -450,21 +442,16 @@ namespace Models {
         //xpiks()->writeMetadata(itemsToSave, useBackups);
     }
 
-    void FilteredArtworksListModel::copyToQuickBuffer(int index) const {
+    void FilteredArtworksListModel::copyToQuickBuffer(int proxyIndex) const {
         LOG_INFO << index;
-
-        if (0 <= index && index < rowCount()) {
-            int originalIndex = getOriginalIndex(index);
-            Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
-            if (artwork != NULL) {
-                m_Messages
-                        .ofType<QString, QString, QStringList, bool>()
-                        .withID(Commands::AppMessages::CopyToQuickBuffer)
-                        .broadcast(artwork->getTitle(),
-                                   artwork->getDescription(),
-                                   artwork->getKeywords(),
-                                   false);
-            }
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(getOriginalIndex(proxyIndex));
+        if (artwork != nullptr) {
+            sendMessage(
+                        QuickBufferMessage(
+                            artwork->getTitle(),
+                            artwork->getDescription(),
+                            artwork->getKeywords(),
+                            false));
         }
     }
 

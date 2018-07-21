@@ -16,7 +16,7 @@
 namespace Common {
     typedef uint32_t flag_t;
 
-    template <typename T, typename Parameter=int>
+    template <typename T, int Tag=0>
     class NamedType
     {
     public:

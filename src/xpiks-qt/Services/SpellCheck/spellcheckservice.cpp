@@ -37,11 +37,11 @@ namespace SpellCheck {
         if (m_SpellCheckWorker != nullptr) {}
     }
 
-    void SpellCheckService::handleEvent(const Common::NamedType<Artworks::ArtworkMetadata *, Common::EventType::SpellCheck> &event) {
+    void SpellCheckService::handleMessage(const Common::NamedType<Artworks::ArtworkMetadata *, Common::MessageType::SpellCheck> &event) {
         this->submitArtwork(event.get());
     }
 
-    void SpellCheckService::handleEvent(const Common::NamedType<Artworks::BasicKeywordsModel *, Common::EventType::SpellCheck> &event) {
+    void SpellCheckService::handleMessage(const Common::NamedType<Artworks::BasicKeywordsModel *, Common::MessageType::SpellCheck> &event) {
         this->submitItem(event.get(), Common::SpellCheckFlags::All);
     }
 

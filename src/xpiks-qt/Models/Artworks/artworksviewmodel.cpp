@@ -15,10 +15,10 @@
 #include <Artworks/imageartwork.h>
 #include <Artworks/videoartwork.h>
 #include <Helpers/cpphelpers.h>
-#include <Artworks/iartworkssource.h>
+#include <Artworks/iselectedartworkssource.h>
 
 namespace Models {
-    ArtworksViewModel::ArtworksViewModel(Artworks::IArtworksSource &artworksSource, QObject *parent):
+    ArtworksViewModel::ArtworksViewModel(Artworks::ISelectedArtworksSource &artworksSource, QObject *parent):
         AbstractListModel(parent),
         m_ArtworksSource(artworksSource)
     {
@@ -58,7 +58,7 @@ namespace Models {
 
     void ArtworksViewModel::pullArtworks() {
         LOG_DEBUG << "#";
-        setArtworks(m_ArtworksSource.getArtworks());
+        setArtworks(m_ArtworksSource.getSelectedArtworks());
     }
 
     void ArtworksViewModel::setArtworkSelected(int index, bool value) {

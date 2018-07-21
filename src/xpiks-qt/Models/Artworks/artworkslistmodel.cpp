@@ -167,20 +167,6 @@ namespace Models {
         return result;
     }
 
-    void ArtworksListModel::sendToQuickBuffer(int artworkIndex) {
-        LOG_DEBUG << "#";
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
-        if (artwork != nullptr) {
-            m_Messages
-                    .ofType<QString, QString, QStringList, bool>()
-                    .withID(Commands::AppMessages::CopyToQuickBuffer)
-                    .broadcast(artwork->getTitle(),
-                               artwork->getDescription(),
-                               artwork->getKeywords(),
-                               false);
-        }
-    }    
-
     void ArtworksListModel::setCurrentIndex(size_t index) {
         LOG_DEBUG << index;
         if (m_CurrentItemIndex != index) {
@@ -193,7 +179,7 @@ namespace Models {
                                     artwork,
                                     std::make_shared<ArtworksUpdateTemplate>(*this, getStandardUpdateRoles()));
 
-                notifyEvent(editable);
+                sendMessage(editable);
             }
         }
     }
@@ -986,7 +972,7 @@ namespace Models {
         Artworks::ArtworkMetadata *artwork = qobject_cast<Artworks::ArtworkMetadata *>(sender());
         Q_ASSERT(artwork != nullptr);
         if (artwork != nullptr) {
-            notifyEvent(artwork);
+            sendMessage(artwork);
         }
     }
 

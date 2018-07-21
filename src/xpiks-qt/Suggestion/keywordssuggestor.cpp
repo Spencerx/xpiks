@@ -316,13 +316,12 @@ namespace Suggestion {
 
         auto &suggestionArtwork = m_Suggestions.at(index);
 
-        m_Messages
-                .ofType<QString, QString, QStringList, bool>()
-                .withID(Commands::AppMessages::CopyToQuickBuffer)
-                .broadcast(QString(suggestionArtwork->getTitle()),
-                           QString(suggestionArtwork->getDescription()),
-                           suggestionArtwork->getKeywordsSet().toList(),
-                           true);
+        sendMessage(
+                    Models::QuickBufferMessage(
+                        QString(suggestionArtwork->getTitle()),
+                        QString(suggestionArtwork->getDescription()),
+                        suggestionArtwork->getKeywordsSet().toList(),
+                        true));
     }
 
     void KeywordsSuggestor::searchArtworks(const QString &searchTerm, int resultsType) {
@@ -337,9 +336,9 @@ namespace Suggestion {
                 engine->submitQuery(query);
 
                 if (std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine) == nullptr) {
-                    notifyEvent(Connectivity::UserAction::SuggestionRemote);
+                    sendMessage(Connectivity::UserAction::SuggestionRemote);
                 } else {
-                    notifyEvent(Connectivity::UserAction::SuggestionLocal);
+                    sendMessage(Connectivity::UserAction::SuggestionLocal);
                 }
             }
         }

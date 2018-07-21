@@ -315,7 +315,7 @@ namespace Models {
     void ArtworkProxyModel::submitForInspection() {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         if (m_ArtworkMetadata == nullptr) { return; }
-        notifyEvent(m_ArtworkMetadata);
+        sendMessage(m_ArtworkMetadata);
     }
 
     void ArtworkProxyModel::connectArtworkSignals(Artworks::ArtworkMetadata *artwork) {
@@ -356,7 +356,7 @@ namespace Models {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         m_PropertiesMap.updateProperties(m_ArtworkMetadata);
 
-        notifyEvent(std::make_shared<CurrentEditableProxyArtwork>(*this));
+        sendMessage(std::make_shared<CurrentEditableProxyArtwork>(*this));
         emit isValidChanged();
     }
 
@@ -365,15 +365,12 @@ namespace Models {
         if (m_ArtworkMetadata == nullptr) { return; }
 
         m_ArtworksUpdateHub.updateArtwork(m_ArtworkMetadata);
-        notifyEvent(m_ArtworkMetadata);
+        sendMessage(m_ArtworkMetadata);
 
         Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
         if (videoArtwork != nullptr) {
             if (!videoArtwork->isThumbnailGenerated()) {
-                m_Messages
-                        .ofType<Artworks::VideoArtwork*>()
-                        .withID(Commands::AppMessages::CreateThumbnail)
-                        .broadcast(videoArtwork);
+                sendMessage(videoArtwork);
             } else {
                 m_ArtworksUpdateHub.updateArtworkByID(videoArtwork->getItemID(),
                                                       videoArtwork->getLastKnownIndex(),

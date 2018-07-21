@@ -19,7 +19,7 @@
 #include <functional>
 #include <Common/delayedactionentity.h>
 #include <Common/isystemenvironment.h>
-#include <Common/events.h>
+#include <Common/messages.h>
 #include "ipresetsmanager.h"
 #include "presetkeywordsmodelconfig.h"
 #include "presetgroupsmodel.h"
@@ -32,7 +32,7 @@ namespace KeywordsPresets {
             public QAbstractListModel,
             public Common::DelayedActionEntity,
             public IPresetsManager,
-            public Common::EventsSource<Artworks::BasicKeywordsModel*>
+            public Common::MessagesSource<Artworks::BasicKeywordsModel*>
     {
         Q_OBJECT
 

@@ -44,11 +44,6 @@ namespace Models {
 
         QObject::connect(&m_BasicModel, &Artworks::BasicMetadataModel::afterSpellingErrorsFixed,
                          this, &QuickBuffer::afterSpellingErrorsFixedHandler);
-
-        m_Messages
-                .ofType<QString, QString, QStringList>()
-                .withID(Commands::AppMessages::CopyToQuickBuffer)
-                .addListener(std::bind(&QuickBuffer::setQuickBuffer, this));
     }
 
     void QuickBuffer::afterSpellingErrorsFixedHandler() {
@@ -136,20 +131,18 @@ namespace Models {
         return result;
     }
 
-    void QuickBuffer::setQuickBuffer(const QString &title,
-                                     const QString &description,
-                                     const QStringList &keywords,
-                                     bool overwrite) {
+    void QuickBuffer::handleMessage(const QuickBufferMessage &message) {
         LOG_DEBUG << "#";
-        if (!title.isEmpty() || overwrite) { this->setTitle(title); }
-        if (!description.isEmpty() || overwrite) { this->setDescription(description); }
-        if (!keywords.empty() || overwrite) { this->setKeywords(keywords); }
+
+        if (!message.m_Title.isEmpty() || overwrite) { this->setTitle(message.m_Title); }
+        if (!message.m_Description.isEmpty() || overwrite) { this->setDescription(message.m_Description); }
+        if (!message.m_Keywords.empty() || overwrite) { this->setKeywords(message.m_Keywords); }
 
         emit isEmptyChanged();
     }
 
     void QuickBuffer::submitForInspection() {
-        notifyEvent(&m_BasicModel);
+        sendMessage(&m_BasicModel);
     }
 
     void QuickBuffer::doJustEdited() {

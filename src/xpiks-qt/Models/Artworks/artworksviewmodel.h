@@ -20,13 +20,13 @@
 #include <Artworks/artworkssnapshot.h>
 
 namespace Artworks {
-    class IArtworksSource;
+    class ISelectedArtworksSource;
 }
 
 namespace Models {
     class ArtworksViewModel:
             public Common::AbstractListModel,
-            public Artworks::IArtworksSource,
+            public Artworks::ISelectedArtworksSource,
             public Helpers::IFileNotAvailableModel
     {
         Q_OBJECT
@@ -42,7 +42,7 @@ namespace Models {
         };
 
     public:
-        ArtworksViewModel(Artworks::IArtworksSource &artworksSource, QObject *parent=NULL);
+        ArtworksViewModel(Artworks::ISelectedArtworksSource &artworksSource, QObject *parent=NULL);
         virtual ~ArtworksViewModel() { }
 
     protected:
@@ -102,7 +102,7 @@ namespace Models {
 
     private:
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
-        Artworks::IArtworksSource &m_ArtworksSource;
+        Artworks::ISelectedArtworksSource &m_ArtworksSource;
     };
 }
 

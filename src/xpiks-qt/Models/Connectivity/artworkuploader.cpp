@@ -30,7 +30,7 @@
 namespace Models {
     ArtworkUploader::ArtworkUploader(Common::ISystemEnvironment &environment,
                                      UploadInfoRepository &uploadInfoRepository,
-                                     Artworks::IArtworksSource &artworksSource,
+                                     Artworks::ISelectedArtworksSource &artworksSource,
                                      SettingsModel &settingsModel,
                                      QObject *parent):
         QObject(parent),
@@ -116,7 +116,7 @@ namespace Models {
 
     void ArtworkUploader::pullArtworks() {
         LOG_DEBUG << "#";
-        m_ArtworksSnapshot = std::move(m_ArtworksSource.getArtworks());
+        m_ArtworksSnapshot = std::move(m_ArtworksSource.getSelectedArtworks());
         emit itemsCountChanged();
     }
 
@@ -218,7 +218,7 @@ namespace Models {
         m_UploadInfos.updatePercentages();
 
         m_FtpCoordinator->uploadArtworks(snapshot, selectedInfos);
-        notifyEvent(Connectivity::UserAction::Upload);
+        sendMessage(Connectivity::UserAction::Upload);
     }
 
     bool ArtworkUploader::removeUnavailableItems() {

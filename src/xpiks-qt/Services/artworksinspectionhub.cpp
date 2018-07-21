@@ -23,11 +23,11 @@ namespace Services {
     {
     }
 
-    void ArtworksInspectionHub::handleEvent(const Artworks::ArtworkMetadata *&change) {
+    void ArtworksInspectionHub::handleMessage(const Artworks::ArtworkMetadata *&change) {
         inspectArtwork(change);
     }
 
-    void ArtworksInspectionHub::handleEvent(const Artworks::BasicKeywordsModel *&change) {
+    void ArtworksInspectionHub::handleMessage(const Artworks::BasicKeywordsModel *&change) {
         inspectBasicModel(change);
     }
 

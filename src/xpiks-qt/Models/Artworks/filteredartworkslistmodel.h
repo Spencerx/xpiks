@@ -17,7 +17,9 @@
 #include <functional>
 #include <Common/flags.h>
 #include <Artworks/artworkssnapshot.h>
-#include <Artworks/iartworkssource.h>
+#include <Artworks/iselectedartworkssource.h>
+#include <Models/Editing/quickbuffermessage.h>
+#include <Common/messages.h>
 
 namespace Commands {
     class ICommandManager;
@@ -40,7 +42,8 @@ namespace Models {
 
     class FilteredArtworksListModel:
             public QSortFilterProxyModel,
-            public Artworks::IArtworksSource
+            public Artworks::ISelectedArtworksSource,
+            public Common::MessagesSource<QuickBufferMessage>
     {
         Q_OBJECT
         Q_PROPERTY(QString searchTerm READ getSearchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
@@ -66,7 +69,7 @@ namespace Models {
 
     public:
         // returns currently selected artworks as a snapshot
-        virtual Artworks::ArtworksSnapshot getArtworks() override;
+        virtual Artworks::ArtworksSnapshot getSelectedArtworks() override;
 
 #ifdef CORE_TESTS
         int retrieveNumberOfSelectedItems();
@@ -131,7 +134,6 @@ namespace Models {
         // other
         Q_INVOKABLE void registerCurrentItem(int proxyIndex) const;
         Q_INVOKABLE void suggestCorrections(int proxyIndex) const;
-        Q_INVOKABLE void suggestCorrectionsForSelected() const;
 
     public:
         //void removeSelectedArtworks();
@@ -145,7 +147,7 @@ namespace Models {
 
 
 
-        Q_INVOKABLE void copyToQuickBuffer(int index) const;
+        Q_INVOKABLE void copyToQuickBuffer(int proxyIndex) const;
         //Q_INVOKABLE void fillFromQuickBuffer(int index) const;
         //Q_INVOKABLE void suggestCorrectionsForSelected() const;
         //Q_INVOKABLE void generateCompletions(const QString &prefix, int index);

@@ -19,10 +19,10 @@
 #include <Connectivity/analyticsuserevent.h>
 #include <Helpers/ifilenotavailablemodel.h>
 #include <Common/isystemenvironment.h>
-#include <Common/events.h>
+#include <Common/messages.h>
 #include "uploadinforepository.h"
 #include <ftpcoordinator.h>
-#include <Artworks/iartworkssource.h>
+#include <Artworks/iselectedartworkssource.h>
 
 namespace Helpers {
     class TestConnectionResult;
@@ -48,7 +48,7 @@ namespace Models {
     class ArtworkUploader:
             public QObject,
             public Helpers::IFileNotAvailableModel,
-            public Common::EventsSource<Connectivity::UserAction>
+            public Common::MessagesSource<Connectivity::UserAction>
     {
         Q_PROPERTY(int percent READ getUIPercent NOTIFY percentChanged)
         Q_PROPERTY(bool inProgress READ getInProgress WRITE setInProgress NOTIFY inProgressChanged)
@@ -58,7 +58,7 @@ namespace Models {
     public:
         ArtworkUploader(Common::ISystemEnvironment &environment,
                         Models::UploadInfoRepository &uploadInfoRepository,
-                        Artworks::IArtworksSource &artworksSource,
+                        Artworks::ISelectedArtworksSource &artworksSource,
                         SettingsModel &settingsModel,
                         QObject *parent=0);
         virtual ~ArtworkUploader();
@@ -135,7 +135,7 @@ namespace Models {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Artworks::IArtworksSource &m_ArtworksSource;
+        Artworks::ISelectedArtworksSource &m_ArtworksSource;
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
         Connectivity::UploadWatcher m_UploadWatcher;
         std::shared_ptr<Connectivity::IFtpCoordinator> m_FtpCoordinator;

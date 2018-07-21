@@ -26,7 +26,7 @@ namespace Helpers {
 }
 
 namespace Artworks {
-    class IArtworksSource;
+    class ISelectedArtworksSource;
 }
 
 namespace MetadataIO {
@@ -85,7 +85,7 @@ namespace MetadataIO {
         Q_PROPERTY(bool isExporting READ getIsExporting WRITE setIsExporting NOTIFY isExportingChanged)
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
     public:
-        CsvExportModel(CsvExportPlansModel &exportPlansModel, Artworks::IArtworksSource &artworksSource);
+        CsvExportModel(CsvExportPlansModel &exportPlansModel, Artworks::ISelectedArtworksSource &artworksSource);
 
     public:
         const std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() const { return m_ExportPlans; }
@@ -169,7 +169,7 @@ namespace MetadataIO {
     private:
         CsvExportColumnsModel m_CurrentColumnsModel;
         CsvExportPlansModel &m_ExportPlansModel;
-        Artworks::IArtworksSource &m_ArtworksSource;
+        Artworks::ISelectedArtworksSource &m_ArtworksSource;
         std::vector<std::shared_ptr<CsvExportPlan> > m_ExportPlans;
         Artworks::ArtworksSnapshot m_ArtworksToExport;
         QString m_ExportDirectory;

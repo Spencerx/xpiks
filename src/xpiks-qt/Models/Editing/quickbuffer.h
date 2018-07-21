@@ -19,7 +19,8 @@
 #include <Suggestion/suggestionartwork.h>
 #include <Common/hold.h>
 #include <Common/delayedactionentity.h>
-#include <Common/events.h>
+#include <Common/messages.h>
+#include "quickbuffermessage.h"
 
 namespace Commands {
     class ICommandManager;
@@ -32,7 +33,8 @@ namespace Models {
             public QObject,
             public Models::ArtworkProxyBase,
             public Common::DelayedActionEntity,
-            public Common::EventsSource<Artworks::BasicKeywordsModel*>
+            public Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>,
+            public Common::MessagesTarget<QuickBufferMessage>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
@@ -93,11 +95,8 @@ namespace Models {
     public:
         bool getIsEmpty();
 
-    private:
-        void setQuickBuffer(const QString &title,
-                            const QString &description,
-                            const QStringList &keywords,
-                            bool overwrite);
+    public:
+        virtual void handleMessage(const QuickBufferMessage &message) override;
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }

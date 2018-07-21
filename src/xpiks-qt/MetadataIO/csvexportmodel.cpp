@@ -15,7 +15,7 @@
 #include <QTimerEvent>
 #include <QThread>
 #include <Helpers/asynccoordinator.h>
-#include <Artworks/iartworkssource.h>
+#include <Artworks/iselectedartworkssource.h>
 #include "csvexportworker.h"
 #include "csvexportplansmodel.h"
 
@@ -230,7 +230,7 @@ namespace MetadataIO {
     /*------------------------------------------------------*/
 
     CsvExportModel::CsvExportModel(CsvExportPlansModel &exportPlansModel,
-                                   Artworks::IArtworksSource &artworksSource):
+                                   Artworks::ISelectedArtworksSource &artworksSource):
         Common::DelayedActionEntity(3000, MAX_SAVE_PAUSE_RESTARTS),
         m_ExportPlansModel(exportPlansModel),
         m_ArtworksSource(artworksSource),
@@ -342,7 +342,7 @@ namespace MetadataIO {
     }
 
     void CsvExportModel::pullArtworks() {
-        m_ArtworksToExport = std::move(m_ArtworksSource.getArtworks());
+        m_ArtworksToExport = std::move(m_ArtworksSource.getSelectedArtworks());
         emit artworksCountChanged();
     }
 

@@ -16,7 +16,7 @@
 #include <QVector>
 #include <Helpers/ifilenotavailablemodel.h>
 #include <Artworks/artworkssnapshot.h>
-#include <Artworks/iartworkssource.h>
+#include <Artworks/iselectedartworkssource.h>
 
 class QStringList;
 class QString;
@@ -32,7 +32,7 @@ namespace Models {
         Q_PROPERTY(int itemsCount READ getItemsCount NOTIFY itemsCountChanged)
         Q_OBJECT
     public:
-        ZipArchiver(Artworks::IArtworksSource &artworksSource);
+        ZipArchiver(Artworks::ISelectedArtworksSource &artworksSource);
         virtual ~ZipArchiver() { delete m_ArchiveCreator; }
 
     public:
@@ -82,7 +82,7 @@ namespace Models {
 
     private:
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
-        Artworks::IArtworksSource &m_ArtworksSource;
+        Artworks::ISelectedArtworksSource &m_ArtworksSource;
         QFutureWatcher<QStringList> *m_ArchiveCreator;
         QAtomicInt m_ProcessedArtworksCount;
         volatile bool m_IsInProgress;

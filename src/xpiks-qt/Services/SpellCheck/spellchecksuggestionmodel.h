@@ -22,6 +22,7 @@
 namespace Models {
     class ArtworkMetadata;
     class IArtworksSource;
+    class ArtworksListModel;
 }
 
 namespace Common {
@@ -30,6 +31,7 @@ namespace Common {
 
 namespace Artworks {
     class ArtworksSnapshot;
+    class ISelectedArtworksSource;
 }
 
 namespace SpellCheck {
@@ -47,8 +49,9 @@ namespace SpellCheck {
         Q_PROPERTY(bool anythingSelected READ getAnythingSelected NOTIFY anythingSelectedChanged)
 
     public:
-        SpellCheckSuggestionModel(SpellCheckService &spellCheckerService);
-        virtual ~SpellCheckSuggestionModel();
+        SpellCheckSuggestionModel(SpellCheckService &spellCheckerService,
+                                  Artworks::ISelectedArtworksSource &artworksSource,
+                                  Models::ArtworksListModel &artworksListModel);
 
     public:
         enum KeywordSpellSuggestions_Roles {
@@ -67,6 +70,8 @@ namespace SpellCheck {
         Q_INVOKABLE void submitCorrections() const;
         Q_INVOKABLE void resetAllSuggestions();
         Q_INVOKABLE void updateSelection() { emit anythingSelectedChanged(); }
+        Q_INVOKABLE void pullArtworks();
+        Q_INVOKABLE void pullOneItem();
 
     signals:
         void selectAllChanged();
@@ -99,6 +104,8 @@ namespace SpellCheck {
         std::vector<std::shared_ptr<SpellSuggestionsItem> > m_SuggestionsList;
         std::vector<std::shared_ptr<Artworks::MetadataOperatorLocker>> m_CheckedItems;
         SpellCheckService &m_SpellCheckerService;
+        Artworks::ISelectedArtworksSource &m_ArtworksSource;
+        Models::ArtworksListModel &m_ArtworksListModel;
     };
 }
 

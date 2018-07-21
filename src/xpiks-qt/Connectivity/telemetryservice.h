@@ -17,14 +17,14 @@
 #include <Models/switchermodel.h>
 #include <Models/settingsmodel.h>
 #include <Common/types.h>
-#include <Common/events.h>
+#include <Common/messages.h>
 
 namespace Connectivity {
     class TelemetryWorker;
 
     class TelemetryService:
             public QObject,
-            public Common::EventsTarget<Common::NamedType<UserAction>>
+            public Common::MessagesTarget<Common::NamedType<UserAction>>
     {
         Q_OBJECT
     public:
@@ -38,7 +38,7 @@ namespace Connectivity {
         void stopReporting(bool immediately=true);
 
     public:
-        virtual void handleEvent(const Common::NamedType<UserAction> &event) override;
+        virtual void handleMessage(const Common::NamedType<UserAction> &event) override;
 
     private:
         void ensureUserIdExists();

@@ -17,7 +17,9 @@
 #include <Common/flags.h>
 #include <Common/logging.h>
 #include <Artworks/artworkmetadata.h>
+#include <Artworks/iselectedartworkssource.h>
 #include <Artworks/basickeywordsmodel.h>
+#include <Models/Artworks/artworkslistmodel.h>
 #include <Helpers/indicesranges.h>
 #include <Helpers/cpphelpers.h>
 
@@ -149,26 +151,14 @@ namespace SpellCheck {
         return requests;
     }
 
-    SpellCheckSuggestionModel::SpellCheckSuggestionModel(SpellCheckService &spellCheckerService):
+    SpellCheckSuggestionModel::SpellCheckSuggestionModel(SpellCheckService &spellCheckerService,
+                                                         Artworks::ISelectedArtworksSource &artworksSource,
+                                                         Models::ArtworksListModel &artworksListModel):
         QAbstractListModel(),
-        m_SpellCheckerService(spellCheckerService)
+        m_SpellCheckerService(spellCheckerService),
+        m_ArtworksSource(artworksSource),
+        m_ArtworksListModel(artworksListModel)
     {
-        m_Messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::SpellSuggestions)
-                .addListener(std::bind(&SpellCheckSuggestionModel::setArtworks, this,
-                                       std::placeholders::_1));
-
-        m_Messages
-                .ofType<Artworks::IMetadataOperator*>()
-                .withID(Commands::AppMessages::SpellSuggestions)
-                .addListener(std::bind(&SpellCheckSuggestionModel::setupItem,
-                                       this,
-                                       std::placeholders::_1,
-                                       Common::SuggestionFlags::All));
-    }
-
-    SpellCheckSuggestionModel::~SpellCheckSuggestionModel() {
     }
 
     bool SpellCheckSuggestionModel::getAnythingSelected() const {
@@ -247,6 +237,15 @@ namespace SpellCheck {
         for (auto &item: m_SuggestionsList) {
             item->setReplacementIndex(-1);
         }
+    }
+
+    void SpellCheckSuggestionModel::pullArtworks() {
+        LOG_DEBUG << "#";
+        setArtworks(m_ArtworksSource.getSelectedArtworks());
+    }
+
+    void SpellCheckSuggestionModel::pullOneItem() {
+        LOG_DEBUG << "#";
     }
 
     void SpellCheckSuggestionModel::setupItem(Artworks::IMetadataOperator *item, Common::SuggestionFlags flags) {
@@ -379,10 +378,7 @@ namespace SpellCheck {
         }
 
         if (!indices.empty()) {
-            m_Messages
-                    .ofType<Helpers::IndicesRanges>()
-                    .withID(Commands::AppMessages::UpdateArtworks)
-                    .broadcast(Helpers::IndicesRanges(indices));
+            m_ArtworksListModel.updateItems(Helpers::IndicesRanges(indices));
         }
     }
 }

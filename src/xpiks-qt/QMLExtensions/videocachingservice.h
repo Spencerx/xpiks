@@ -15,7 +15,8 @@
 #include <QVector>
 #include <memory>
 #include <vector>
-#include "../Common/isystemenvironment.h"
+#include <Common/isystemenvironment.h>
+#include <Common/messages.h>
 
 namespace Artworks {
     class ArtworkMetadata;
@@ -44,7 +45,9 @@ namespace QMLExtensions {
     class VideoCachingWorker;
     class ImageCachingService;
 
-    class VideoCachingService : public QObject
+    class VideoCachingService :
+            public QObject,
+            public Common::MessagesTarget<Artworks::VideoArtwork*>
     {
         Q_OBJECT
     public:
@@ -58,6 +61,9 @@ namespace QMLExtensions {
                           Services::ArtworksUpdateHub &updateHub,
                           MetadataIO::MetadataIOService &metadataIOService);
         void stopService();
+
+    public:
+        virtual void handleMessage(const Artworks::VideoArtwork * &message) override { generateThumbnail(message); }
 
     public:
         void generateThumbnails(const Artworks::ArtworksSnapshot &snapshot);

@@ -24,12 +24,13 @@
 #include <Common/flags.h>
 #include <Common/hold.h>
 #include <Common/delayedactionentity.h>
-#include <Common/events.h>
+#include <Common/messages.h>
 #include <Artworks/artworkelement.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Services/SpellCheck/spellcheckiteminfo.h>
 #include <Models/Artworks/artworksviewmodel.h>
 #include <Models/Editing/icurrenteditable.h>
+#include <Models/Editing/quickbuffermessage.h>
 
 namespace Commands {
     class ICommandManager;
@@ -48,7 +49,8 @@ namespace Models {
             public ArtworksViewModel,
             public ArtworkProxyBase,
             public Common::DelayedActionEntity,
-            public Common::EventsSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::EventType::SpellCheck>>
+            public Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>,
+            public Common::MessagesSource<QuickBufferMessage>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)

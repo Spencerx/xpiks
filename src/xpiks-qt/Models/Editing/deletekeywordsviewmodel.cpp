@@ -20,7 +20,7 @@
 namespace Models {
     DeleteKeywordsViewModel::DeleteKeywordsViewModel(Commands::ICommandManager &commandManager,
                                                      KeywordsPresets::IPresetsManager &presetsManager,
-                                                     Artworks::IArtworksSource &artworksSource,
+                                                     Artworks::ISelectedArtworksSource &artworksSource,
                                                      QObject *parent):
         Models::ArtworksViewModel(artworksSource, parent),
         m_KeywordsToDeleteModel(m_HoldForDeleters),
@@ -217,6 +217,6 @@ namespace Models {
     }
 
     void DeleteKeywordsViewModel::submitForSpellCheck() {
-        notifyEvent(&m_KeywordsToDeleteModel);
+        sendMessage(&m_KeywordsToDeleteModel);
     }
 }

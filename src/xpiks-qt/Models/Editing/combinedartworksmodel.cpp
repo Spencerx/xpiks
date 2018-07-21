@@ -93,7 +93,7 @@ namespace Models {
         LOG_DEBUG << "After recombine title:" << getTitle();
         LOG_DEBUG << "After recombine keywords:" << getKeywordsString();
 
-        notifyEvent(&m_CommonKeywordsModel);
+        sendMessage(&m_CommonKeywordsModel);
     }
 
     void CombinedArtworksModel::setDescription(const QString &value) {
@@ -242,7 +242,7 @@ namespace Models {
         LOG_DEBUG << "After recombine title:" << getTitle();
         LOG_DEBUG << "After recombine keywords:" << getKeywordsString();
 
-        notifyEvent(&m_CommonKeywordsModel);
+        sendMessage(&m_CommonKeywordsModel);
     }
 
     void CombinedArtworksModel::plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {
@@ -276,13 +276,12 @@ namespace Models {
 
     void CombinedArtworksModel::copyToQuickBuffer() {
         LOG_DEBUG << "#";
-        m_Messages
-                .ofType<QString, QString, QStringList, bool>()
-                .withID(Commands::AppMessages::CopyToQuickBuffer)
-                .broadcast(m_CommonKeywordsModel.getTitle(),
-                           m_CommonKeywordsModel.getDescription(),
-                           m_CommonKeywordsModel.getKeywords(),
-                           false);
+        sendMessage(
+                    QuickBufferMessage(
+                        m_CommonKeywordsModel.getTitle(),
+                        m_CommonKeywordsModel.getDescription(),
+                        m_CommonKeywordsModel.getKeywords(),
+                        false));
     }
 
     bool CombinedArtworksModel::acceptCompletionAsPreset(int completionID) {
@@ -473,7 +472,7 @@ namespace Models {
     }
 
     void CombinedArtworksModel::submitForInspection() {
-        notifyEvent(&m_CommonKeywordsModel);
+        sendMessage(&m_CommonKeywordsModel);
     }
 
     Common::ID_t CombinedArtworksModel::getSpecialItemID() {

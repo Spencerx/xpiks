@@ -20,7 +20,7 @@ namespace Models {
     {
     }
 
-    void CurrentEditableModel::handleEvent(const std::shared_ptr<ICurrentEditable> &event) {
+    void CurrentEditableModel::handleMessage(const std::shared_ptr<ICurrentEditable> &event) {
         setCurrentEditable(event);
     }
 

@@ -22,13 +22,14 @@
 #include "isuggestionengine.h"
 #include <Common/hold.h>
 #include <Common/types.h>
-#include <Common/events.h>
+#include <Common/messages.h>
 #include <Common/statefulentity.h>
 #include <Common/isystemenvironment.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Microstocks/microstockapiclients.h>
 #include <Connectivity/requestsservice.h>
 #include <Connectivity/analyticsuserevent.h>
+#include <Models/Editing/quickbuffermessage.h>
 
 namespace Models {
     class SwitcherModel;
@@ -42,7 +43,8 @@ namespace MetadataIO {
 namespace Suggestion {
     class KeywordsSuggestor:
             public QAbstractListModel,
-            public Common::EventsSource<Common::NamedType<Connectivity::UserAction>>
+            public Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>,
+            public Common::MessagesSource<Models::QuickBufferMessage>
     {
         Q_OBJECT
         Q_PROPERTY(int suggestedKeywordsCount READ getSuggestedKeywordsCount NOTIFY suggestedKeywordsCountChanged)

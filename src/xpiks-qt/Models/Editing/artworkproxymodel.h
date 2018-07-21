@@ -23,7 +23,7 @@
 #include <vector>
 #include <Common/flags.h>
 #include <Common/hold.h>
-#include <Common/events.h>
+#include <Common/messages.h>
 #include "artworkproxybase.h"
 #include <Models/Editing/icurrenteditable.h>
 #include <Models/keyvaluelist.h>
@@ -43,6 +43,7 @@ namespace AutoComplete {
 namespace Artworks {
     class ArtworkMetadata;
     class BasicMetadataModel;
+    class VideoArtwork;
 }
 
 namespace Services {
@@ -53,8 +54,9 @@ namespace Models {
     class ArtworkProxyModel:
             public QObject,
             public ArtworkProxyBase,
-            public Common::EventsSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::EventType::SpellCheck>>,
-            public Common::EventsSource<std::shared_ptr<ICurrentEditable>>
+            public Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>,
+            public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>,
+            public Common::MessagesSource<Artworks::VideoArtwork*>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)

@@ -15,40 +15,47 @@
 #include <functional>
 
 namespace Common {
-    enum struct EventType {
-        SpellCheck
+    // tag for events with same underlying type
+    struct MessageType {
+        enum Type {
+            SpellCheck
+        };
     };
 
     template<typename T>
-    class EventsTarget {
+    class MessagesTarget {
     public:
-        virtual ~EventsTarget() {}
-        virtual void handleEvent(const T &event) = 0;
+        virtual ~MessagesTarget() {}
+        virtual void handleMessage(const T &message) = 0;
     };
 
     template<typename T>
-    class EventsSource {
+    class MessagesSource {
     public:
-        virtual ~EventsSource() {}
+        virtual ~MessagesSource() {}
 
     public:
-        void addTarget(EventsTarget<T> &target) {
+        void addTarget(MessagesTarget<T> &target) {
             m_Targets.push_back(target);
         }
 
-        void addTargets(std::initializer_list<std::reference_wrapper<EventsTarget<T>>> targets) {
-            m_Targets.insert(m_Targets.end(), targets.begin(), targets.end());
-        }
-
-        void notifyEvent(const T &event) {
+        void sendMessage(const T &message) {
             for (auto &target: m_Targets) {
-                target.handleEvent(event);
+                target.handleMessage(message);
             }
         }
 
     private:
-        std::vector<std::reference_wrapper<EventsTarget<T>>> m_Targets;
+        std::vector<std::reference_wrapper<MessagesTarget<T>>> m_Targets;
     };
+
+    template<typename T>
+    void connectTarget(MessagesTarget<T> &t,
+                       std::initializer_list<std::reference_wrapper<MessagesSource<T>>> sources) {
+        for (auto s: sources) {
+            s.addTarget(t);
+        }
+    }
 }
 
 #endif // CHANGESLISTENER_H
