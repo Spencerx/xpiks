@@ -12,6 +12,7 @@
 #define IAPPDISPATCHER_H
 
 #include <memory>
+#include <QJSValue>
 
 namespace Commands {
     class IUICommandTemplate;
@@ -22,6 +23,7 @@ namespace QMLExtensions {
     public:
         virtual ~IUICommandDispatcher() {}
         virtual void registerCommand(int commandID, const std::shared_ptr<Commands::IUICommandTemplate> &command) = 0;
+        virtual void dispatchCommand(int commandID, const QJSValue &value) = 0;
     };
 }
 
