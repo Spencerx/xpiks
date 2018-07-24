@@ -215,10 +215,10 @@ protected:
     MetadataIO::CsvExportModel m_CsvExportModel;
     MetadataIO::MetadataReadingHub m_MetadataReadingHub;
     MetadataIO::MetadataIOCoordinator m_MetadataIOCoordinator;
+    SpellCheck::SpellCheckSuggestionModel m_SpellSuggestionModel;
 
     // dependent
     Models::FilteredArtworksListModel m_FilteredArtworksListModel;
-    SpellCheck::SpellCheckSuggestionModel m_SpellCheckSuggestionModel;
     Suggestion::KeywordsSuggestor m_KeywordsSuggestor;
 
     // plugins

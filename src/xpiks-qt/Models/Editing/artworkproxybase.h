@@ -12,7 +12,7 @@
 #define ARTWORKPROXYBASE_H
 
 #include <Artworks/basicmetadatamodel.h>
-#include <Artworks/imetadataoperator.h>
+#include <Artworks/iartworkmetadata.h>
 #include "currenteditableproxyartwork.h"
 #include <KeywordsPresets/ipresetsmanager.h>
 #include <Common/types.h>
@@ -50,7 +50,7 @@ namespace Models {
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() = 0;
-        virtual Artworks::IMetadataOperator *getMetadataOperator() = 0;
+        virtual Artworks::IArtworkMetadata *getArtworkMetadata() = 0;
 
     protected:
         virtual void submitForInspection() = 0;

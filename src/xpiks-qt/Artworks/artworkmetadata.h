@@ -22,13 +22,15 @@
 #include <QMutex>
 #include <QQmlEngine>
 #include "basicmetadatamodel.h"
+#include "iartworkmetadata.h"
 #include <Common/flags.h>
-#include "imetadataoperator.h"
 #include <Common/hold.h>
-#include <Services/SpellCheck/spellcheckiteminfo.h>
-#include <UndoRedo/artworkmetadatabackup.h>
-#include <Common/delayedactionentity.h>
 #include <Common/types.h>
+#include <Common/delayedactionentity.h>
+#include <Common/irefcountedobject.h>
+#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Services/SpellCheck/ispellcheckable.h>
+#include <UndoRedo/artworkmetadatabackup.h>
 
 namespace MetadataIO {
     struct CachedArtwork;
@@ -43,7 +45,9 @@ namespace Artworks {
     class ArtworkMetadata:
             public QObject,
             public Common::DelayedActionEntity,
-            public Artworks::IMetadataOperator
+            public Artworks::IArtworkMetadata,
+            public SpellCheck::ISpellCheckable,
+            public Common::IRefCountedObject
     {
         Q_OBJECT
 

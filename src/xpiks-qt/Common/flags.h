@@ -81,14 +81,6 @@ namespace Common {
         Replace = 1 << 2
     };
 
-    enum struct SuggestionFlags: flag_t {
-        None = 0,
-        Title = 1 << 0,
-        Description = 1 << 1,
-        Keywords = 1 << 2,
-        All = Title | Description | Keywords
-    };
-
     enum struct SpellCheckFlags: flag_t {
         Title = 1 << 0,
         Description = 1 << 1,
@@ -203,11 +195,6 @@ namespace Common {
     };
 
     template<>
-    struct enable_bitmask_operators<SuggestionFlags> {
-        static constexpr bool enable = true;
-    };
-
-    template<>
     struct enable_bitmask_operators<SpellCheckFlags> {
         static constexpr bool enable = true;
     };
@@ -271,7 +258,6 @@ namespace Common {
     return ~(static_cast<T>(a)); \
 }
 
-    ENUM_OR(SuggestionFlags)
     ENUM_OR(CombinedEditFlags)
     ENUM_OR(SearchFlags)
     ENUM_OR(DirectoryFlags)
@@ -283,7 +269,6 @@ namespace Common {
     ENUM_AND(DirectoryFlags)
     ENUM_AND(WordAnalysisFlags)
     ENUM_AND(SpellCheckFlags)
-    ENUM_AND(SuggestionFlags)
     ENUM_AND(WarningFlags)
     ENUM_AND(WarningsCheckFlags)
     ENUM_AND(PluginNotificationFlags)

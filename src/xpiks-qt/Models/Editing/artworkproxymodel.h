@@ -164,7 +164,7 @@ namespace Models {
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override;
-        virtual Artworks::IMetadataOperator *getMetadataOperator() override;
+        virtual Artworks::IArtworkMetadata *getArtworkMetadata() override;
         virtual Common::ID_t getSpecialItemID() override;
         virtual void submitForInspection() override;
 

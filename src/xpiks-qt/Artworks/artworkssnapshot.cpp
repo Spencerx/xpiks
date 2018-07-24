@@ -71,7 +71,7 @@ namespace Artworks {
         LOG_DEBUG << "Appending snapshot of" << artworks.size() << "artwork(s)";
         m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + artworks.size());
         for (auto &item: artworks) {
-            m_ArtworksSnapshot.emplace_back(std::make_shared<ArtworkMetadataLocker>(item));
+            m_ArtworksSnapshot.emplace_back(std::make_shared<ItemType>(item));
         }
     }
 
@@ -79,7 +79,7 @@ namespace Artworks {
         LOG_DEBUG << "Appending snapshot of" << artworks.size() << "artwork(s)";
         m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + artworks.size());
         for (auto &item: artworks) {
-            m_ArtworksSnapshot.emplace_back(std::make_shared<ArtworkMetadataLocker>(item));
+            m_ArtworksSnapshot.emplace_back(std::make_shared<ItemType>(item));
         }
     }
 
@@ -109,7 +109,7 @@ namespace Artworks {
         m_ArtworksSnapshot.reserve(other.m_ArtworksSnapshot.size());
         for (auto &locker: other.m_ArtworksSnapshot) {
             Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
-            m_ArtworksSnapshot.emplace_back(std::make_shared<Artworks::ArtworkMetadataLocker>(artwork));
+            m_ArtworksSnapshot.emplace_back(std::make_shared<ItemType>(artwork));
         }
     }
 

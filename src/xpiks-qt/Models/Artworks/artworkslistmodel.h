@@ -45,6 +45,10 @@ namespace Services {
     class ArtworkUpdateRequest;
 }
 
+namespace SpellCheck {
+    class SpellCheckerService;
+}
+
 namespace Models {
     class ArtworksRepository;
     class ICurrentEidtable;
@@ -158,7 +162,7 @@ namespace Models {
         // message handlers
         void resetSpellCheckResults();
         void resetDuplicatesResults();
-        void spellCheckAllItems();
+        void spellCheckAllItems(SpellCheck::SpellCheckService &spellCheckService) const;
 
     public:
         // qabstractlistmodel methods

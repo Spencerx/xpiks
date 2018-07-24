@@ -12,27 +12,27 @@
 #include <QDir>
 #include <QtQml>
 #include <functional>
+#include "artworksrepository.h"
 #include <Artworks/basickeywordsmodel.h>
 #include <Artworks/imageartwork.h>
 #include <Artworks/videoartwork.h>
-#include "artworksrepository.h"
+#include <Artworks/iartworksservice.h>
 #include <Helpers/artworkshelpers.h>
 #include <Helpers/stringhelper.h>
-#include <Commands/Base/icommandmanager.h>
 #include <KeywordsPresets/ipresetsmanager.h>
-#include <Artworks/iartworksservice.h>
+#include <Commands/Base/icommandmanager.h>
 #include <Commands/Editing/expandpresettemplate.h>
 #include <Commands/Editing/editartworkstemplate.h>
-#include <Services/AutoComplete/icompletionsource.h>
 #include <Commands/Base/templatedcommand.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Base/compositecommandtemplate.h>
 #include <Commands/artworksupdatetemplate.h>
-#include <Services/artworkupdaterequest.h>
-#include <Services/iartworksinspector.h>
 #include <Commands/Editing/keywordedittemplate.h>
 #include <Commands/Base/emptycommand.h>
 #include <Models/Editing/currenteditableartwork.h>
+#include <Services/AutoComplete/icompletionsource.h>
+#include <Services/artworkupdaterequest.h>
+#include <Services/SpellCheck/spellcheckservice.h>
 
 namespace Models {
     using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
@@ -510,13 +510,10 @@ namespace Models {
         });
     }
 
-    void ArtworksListModel::spellCheckAllItems() {
+    void ArtworksListModel::spellCheckAllItems( SpellCheck::SpellCheckService &spellCheckService) const {
         LOG_DEBUG << "#";
 
-        m_Messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::SpellCheck)
-                .broadcast(Artworks::ArtworksSnapshot(m_ArtworkList));
+        spellCheckService.submitItems(m_ArtworkList);
     }
 
     QVariant ArtworksListModel::data(const QModelIndex &index, int role) const {
@@ -996,7 +993,11 @@ namespace Models {
     void ArtworksListModel::onSpellCheckerAvailable(bool afterRestart) {
         LOG_DEBUG << afterRestart;
         if (afterRestart) {
-            spellCheckAllItems();
+            SpellCheck::SpellCheckService *service = qobject_cast<SpellCheck::SpellCheckService*>(sender());
+            Q_ASSERT(service != nullptr);
+            if (service != nullptr) {
+                spellCheckAllItems(*service);
+            }
         }
     }
 

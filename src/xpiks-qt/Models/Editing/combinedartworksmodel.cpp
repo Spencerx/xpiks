@@ -29,6 +29,7 @@ namespace Models {
     CombinedArtworksModel::CombinedArtworksModel(Commands::ICommandManager &commandManager,
                                                  KeywordsPresets::IPresetsManager &presetsManager,
                                                  AutoComplete::ICompletionSource &completionSource,
+                                                 SpellCheck::SpellCheckSuggestionModel &spellSuggestionsModel,
                                                  QObject *parent):
         ArtworksViewModel(parent),
         ArtworkProxyBase(),
@@ -36,6 +37,7 @@ namespace Models {
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_CompletionSource(completionSource),
+        m_SpellSuggestionsModel(spellSuggestionsModel),
         m_CommonKeywordsModel(m_HoldPlaceholder, this),
         m_EditFlags(Common::ArtworkEditFlags::None),
         m_ModifiedFlags(0)

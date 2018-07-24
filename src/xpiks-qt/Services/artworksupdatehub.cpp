@@ -75,11 +75,12 @@ namespace Services {
         emit updateRequested();
     }
 
-    void ArtworksUpdateHub::updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks, UpdateMode updateMode) {
+    void ArtworksUpdateHub::updateArtworks(const Artworks::ArtworksSnapshot &artworks, UpdateMode updateMode) {
+        if (artworks.empty()) { return; }
         decltype(m_UpdateRequests) requests;
         requests.reserve(artworks.size());
         QSet<int> rolesToUpdate = m_StandardRoles.toList().toSet();
-        for (auto &locker: artworks) {
+        for (auto &locker: artworks.getRawData()) {
             auto *artwork = locker->getArtworkMetadata();
             auto updateRequest = std::make_shared<ArtworkUpdateRequest>(
                             artwork->getItemID(),

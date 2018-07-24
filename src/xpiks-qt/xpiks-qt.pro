@@ -417,7 +417,6 @@ HEADERS += \
     Artworks/basickeywordsmodel.h \
     Artworks/basickeywordsmodelimpl.h \
     Artworks/basicmetadatamodel.h \
-    Artworks/imetadataoperator.h \
     Artworks/keyword.h \
     Services/artworksupdatehub.h \
     Services/artworkupdaterequest.h \
@@ -509,7 +508,10 @@ HEADERS += \
     Services/artworksinspectionhub.h \
     Common/messages.h \
     Models/Editing/quickbuffermessage.h \
-    Artworks/iselectedartworkssource.h
+    Artworks/iselectedartworkssource.h \
+    Common/irefcountedobject.h \
+    Services/SpellCheck/ispellcheckable.h \
+    Artworks/iartworkmetadata.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

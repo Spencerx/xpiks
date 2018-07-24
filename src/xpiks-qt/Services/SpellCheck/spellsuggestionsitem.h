@@ -19,12 +19,9 @@
 #include <memory>
 #include <Common/flags.h>
 
-namespace Artworks {
-    class BasicKeywordsModel;
-    class IMetadataOperator;
-}
-
 namespace SpellCheck {
+    class ISpellCheckable;
+
     class SpellSuggestionsItem: public QAbstractListModel
     {
         Q_OBJECT
@@ -60,6 +57,7 @@ namespace SpellCheck {
         void setSuggestions(const QStringList &suggestions);
 
     public:
+        virtual void finalizeReplacement() = 0;
         virtual void replaceToSuggested() = 0;
 
         // doesn't work like that because of f&cking c++ standard
@@ -67,6 +65,7 @@ namespace SpellCheck {
         // (you cannot access protected members of freestanding objects of base type)
         //protected:
         virtual void replaceToSuggested(const QString &word, const QString &replacement) = 0;
+
 
     signals:
         void replacementIndexChanged();
@@ -95,14 +94,17 @@ namespace SpellCheck {
     public:
         MetadataSpellSuggestionsItem(const QString &word,
                                      const QString &origin,
-                                     Artworks::IMetadataOperator *metadataOperator);
+                                     ISpellCheckable &spellCheckable);
         MetadataSpellSuggestionsItem(const QString &word,
-                                     Artworks::IMetadataOperator *metadataOperator);
+                                     ISpellCheckable &spellCheckable);
     public:
-        Artworks::IMetadataOperator *getMetadataOperator() const { return m_MetadataOperator; }
+        ISpellCheckable &getSpellCheckable() const { return m_SpellCheckable; }
+
+    public:
+        virtual void finalizeReplacement() override;
 
     private:
-        Artworks::IMetadataOperator *m_MetadataOperator;
+        ISpellCheckable &m_SpellCheckable;
     };
 
     class KeywordSpellSuggestions: public MetadataSpellSuggestionsItem
@@ -112,10 +114,10 @@ namespace SpellCheck {
         KeywordSpellSuggestions(const QString &keyword,
                                 size_t originalIndex,
                                 const QString &origin,
-                                Artworks::IMetadataOperator *metadataOperator);
+                                ISpellCheckable *spellCheckable);
         KeywordSpellSuggestions(const QString &keyword,
                                 size_t originalIndex,
-                                Artworks::IMetadataOperator *metadataOperator);
+                                ISpellCheckable *spellCheckable);
 
     public:
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
@@ -123,6 +125,7 @@ namespace SpellCheck {
 #endif
         size_t getOriginalIndex() const { return m_OriginalIndex; }
         bool isPotentialDuplicate() const { return m_ReplaceResult == Common::KeywordReplaceResult::FailedDuplicate; }
+        virtual void finalizeReplacement() override;
         virtual void replaceToSuggested() override;
 
         // TODO: fix this back in future when c++ will be normal language (see comments in base class)
@@ -139,7 +142,7 @@ namespace SpellCheck {
         Q_OBJECT
     public:
         DescriptionSpellSuggestions(const QString &word,
-                                    Artworks::IMetadataOperator *metadataOperator);
+                                    ISpellCheckable *spellCheckable);
 
     public:
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
@@ -156,7 +159,7 @@ namespace SpellCheck {
         Q_OBJECT
     public:
         TitleSpellSuggestions(const QString &word,
-                              Artworks::IMetadataOperator *metadataOperator);
+                              ISpellCheckable *spellCheckable);
 
     public:
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
@@ -179,6 +182,7 @@ namespace SpellCheck {
         virtual QString toDebugString() const override { return "Multireplace: " + SpellSuggestionsItem::toDebugString(); }
 #endif
         std::vector<std::shared_ptr<KeywordSpellSuggestions> > getKeywordsDuplicateSuggestions() const;
+        virtual void finalizeReplacement() override;
         virtual void replaceToSuggested() override;
 
     //protected:

@@ -21,7 +21,7 @@
 #include <vector>
 #include "keyword.h"
 #include "../Common/flags.h"
-#include "imetadataoperator.h"
+#include "iartworkmetadata.h"
 #include "../Common/wordanalysisresult.h"
 
 namespace SpellCheck {

@@ -16,7 +16,9 @@
 #include <QHash>
 #include <QReadWriteLock>
 #include <Common/flags.h>
-#include "imetadataoperator.h"
+#include "iartworkmetadata.h"
+#include <Services/SpellCheck/ispellcheckable.h>
+#include <Common/irefcountedobject.h>
 
 namespace SpellCheck {
     class SpellCheckQueryItem;
@@ -28,7 +30,9 @@ namespace SpellCheck {
 namespace Artworks {
     class BasicMetadataModel :
             public BasicKeywordsModel,
-            public IMetadataOperator
+            public IArtworkMetadata,
+            public SpellCheck::ISpellCheckable,
+            public Common::IRefCountedObject
     {
         Q_OBJECT
         Q_PROPERTY(bool hasTitleSpellErrors READ hasTitleSpellError NOTIFY titleSpellingChanged)
@@ -83,7 +87,7 @@ namespace Artworks {
         virtual bool hasDuplicates() override;
 
     public:
-        // IMetadataOperator
+        // IArtworkMetadata
         // c++ is still not capable of picking abstract implementations from Base class
         virtual bool editKeyword(size_t index, const QString &replacement) override { return BasicKeywordsModel::editKeyword(index, replacement); }
         virtual bool removeKeywordAt(size_t index, QString &removedKeyword) override { return BasicKeywordsModel::removeKeywordAt(index, removedKeyword); }

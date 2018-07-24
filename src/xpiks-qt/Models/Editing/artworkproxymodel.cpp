@@ -295,7 +295,7 @@ namespace Models {
         return m_ArtworkMetadata->getBasicModel();
     }
 
-    Artworks::IMetadataOperator *ArtworkProxyModel::getMetadataOperator() {
+    Artworks::IArtworkMetadata *ArtworkProxyModel::getArtworkMetadata() {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         return m_ArtworkMetadata;
     }

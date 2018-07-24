@@ -10,9 +10,8 @@
 
 #include "spellsuggestionsitem.h"
 #include <Common/defines.h>
-#include <Artworks/imetadataoperator.h>
-#include <Artworks/basickeywordsmodel.h>
-#include <Artworks/basicmetadatamodel.h>
+#include <Common/logging.h>
+#include "ispellcheckable.h"
 
 namespace SpellCheck {
     SpellSuggestionsItem::SpellSuggestionsItem(const QString &word,
@@ -129,26 +128,28 @@ namespace SpellCheck {
 
     MetadataSpellSuggestionsItem::MetadataSpellSuggestionsItem(const QString &word,
                                                                const QString &origin,
-                                                               Artworks::IMetadataOperator *metadataOperator):
+                                                               ISpellCheckable &spellCheckable):
         SpellSuggestionsItem(word, origin),
-        m_MetadataOperator(metadataOperator)
+        m_SpellCheckable(metadataOperator)
     {
-        Q_ASSERT(metadataOperator != nullptr);
     }
 
     MetadataSpellSuggestionsItem::MetadataSpellSuggestionsItem(const QString &word,
-                                                               Artworks::IMetadataOperator *metadataOperator):
+                                                               ISpellCheckable &spellCheckable):
         SpellSuggestionsItem(word),
-        m_MetadataOperator(metadataOperator)
+        m_SpellCheckable(spellCheckable)
     {
-        Q_ASSERT(metadataOperator != nullptr);
+    }
+
+    void MetadataSpellSuggestionsItem::finalizeReplacement() {
+        m_SpellCheckable.afterReplaceCallback();
     }
 
     KeywordSpellSuggestions::KeywordSpellSuggestions(const QString &keyword,
                                                      size_t originalIndex,
                                                      const QString &origin,
-                                                     Artworks::IMetadataOperator *metadataOperator) :
-        MetadataSpellSuggestionsItem(keyword, origin, metadataOperator),
+                                                     ISpellCheckable *spellCheckable) :
+        MetadataSpellSuggestionsItem(keyword, origin, spellCheckable),
         m_OriginalIndex(originalIndex),
         m_ReplaceResult(Common::KeywordReplaceResult::Unknown)
     {
@@ -156,8 +157,8 @@ namespace SpellCheck {
 
     KeywordSpellSuggestions::KeywordSpellSuggestions(const QString &keyword,
                                                      size_t originalIndex,
-                                                     Artworks::IMetadataOperator *metadataOperator):
-        MetadataSpellSuggestionsItem(keyword, metadataOperator),
+                                                     ISpellCheckable *spellCheckable):
+        MetadataSpellSuggestionsItem(keyword, spellCheckable),
         m_OriginalIndex(originalIndex),
         m_ReplaceResult(Common::KeywordReplaceResult::Unknown)
     {
@@ -173,15 +174,15 @@ namespace SpellCheck {
 
     void KeywordSpellSuggestions::replaceToSuggested(const QString &word, const QString &replacement) {
         LOG_INFO << word << "-->" << replacement;
-        auto *item = getMetadataOperator();
-        Common::KeywordReplaceResult result = item->fixKeywordSpelling(m_OriginalIndex, word, replacement);
+        auto &item = getSpellCheckable();
+        Common::KeywordReplaceResult result = item.fixKeywordSpelling(m_OriginalIndex, word, replacement);
         setReplacementSucceeded(result == Common::KeywordReplaceResult::Succeeded);
         m_ReplaceResult = result;
     }
 
     DescriptionSpellSuggestions::DescriptionSpellSuggestions(const QString &word,
-                                                             Artworks::IMetadataOperator *metadataOperator):
-        MetadataSpellSuggestionsItem(word, metadataOperator)
+                                                             ISpellCheckable *spellCheckable):
+        MetadataSpellSuggestionsItem(word, spellCheckable)
     {
     }
 
@@ -195,8 +196,8 @@ namespace SpellCheck {
 
     void DescriptionSpellSuggestions::replaceToSuggested(const QString &word, const QString &replacement) {
         LOG_INFO << word << "-->" << replacement;
-        auto *item = getMetadataOperator();
-        bool success = item->fixDescriptionSpelling(word, replacement);
+        auto &item = getSpellCheckable();
+        bool success = item.fixDescriptionSpelling(word, replacement);
         setReplacementSucceeded(success);
 
         if (!success) {
@@ -205,8 +206,8 @@ namespace SpellCheck {
     }
 
     TitleSpellSuggestions::TitleSpellSuggestions(const QString &word,
-                                                 Artworks::IMetadataOperator *metadataOperator):
-        MetadataSpellSuggestionsItem(word, metadataOperator)
+                                                 ISpellCheckable *spellCheckable):
+        MetadataSpellSuggestionsItem(word, spellCheckable)
     {
     }
 
@@ -220,8 +221,8 @@ namespace SpellCheck {
 
     void TitleSpellSuggestions::replaceToSuggested(const QString &word, const QString &replacement) {
         LOG_INFO << word << "-->" << replacement;
-        auto *item = getMetadataOperator();
-        bool success = item->fixTitleSpelling(word, replacement);
+        auto &item = getSpellCheckable();
+        bool success = item.fixTitleSpelling(word, replacement);
         setReplacementSucceeded(success);
 
         if (!success) {
@@ -248,6 +249,12 @@ namespace SpellCheck {
         }
 
         return keywordsSuggestions;
+    }
+
+    void CombinedSpellSuggestions::finalizeReplacement() {
+        for (auto &item: m_SpellSuggestions) {
+            item->finalizeReplacement();
+        }
     }
 
     void CombinedSpellSuggestions::replaceToSuggested() {

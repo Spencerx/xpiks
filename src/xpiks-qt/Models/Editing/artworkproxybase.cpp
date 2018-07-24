@@ -9,7 +9,7 @@
  */
 
 #include "artworkproxybase.h"
-#include <Artworks/imetadataoperator.h>
+#include <Artworks/iartworkmetadata.h>
 #include <Suggestion/keywordssuggestor.h>
 #include <Models/Editing/quickbuffer.h>
 #include <Helpers/stringhelper.h>
@@ -61,7 +61,7 @@ namespace Models {
     }
 
     bool ArtworkProxyBase::doSetDescription(const QString &description) {
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         bool result = metadataOperator->setDescription(description);
         if (result) {
             doJustEdited();
@@ -71,7 +71,7 @@ namespace Models {
     }
 
     bool ArtworkProxyBase::doSetTitle(const QString &title) {
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         bool result = metadataOperator->setTitle(title);
         if (result) {
             doJustEdited();
@@ -81,7 +81,7 @@ namespace Models {
     }
 
     void ArtworkProxyBase::doSetKeywords(const QStringList &keywords) {
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         metadataOperator->setKeywords(keywords);
         doJustEdited();
     }
@@ -92,7 +92,7 @@ namespace Models {
 
     bool ArtworkProxyBase::doEditKeyword(int index, const QString &replacement) {
         LOG_INFO << "index:" << index << "replacement:" << replacement;
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         bool result = metadataOperator->editKeyword(index, replacement);
         if (result) {
             doJustEdited();
@@ -105,7 +105,7 @@ namespace Models {
 
     bool ArtworkProxyBase::doRemoveKeywordAt(int index, QString &keyword) {
         LOG_INFO << "keyword index:" << index;
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         bool result = metadataOperator->removeKeywordAt(index, keyword);
         if (result) {
             LOG_INFO << "Removed keyword:" << keyword << "keywords count:" << getKeywordsCount();
@@ -118,7 +118,7 @@ namespace Models {
 
     bool ArtworkProxyBase::doRemoveLastKeyword(QString &keyword) {
         LOG_DEBUG << "#";
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         bool result = metadataOperator->removeLastKeyword(keyword);
         if (result) {
             LOG_INFO << "Removed keyword:" << keyword << "keywords count:" << getKeywordsCount();
@@ -131,7 +131,7 @@ namespace Models {
 
     bool ArtworkProxyBase::doAppendKeyword(const QString &keyword) {
         LOG_INFO << keyword;
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         bool result = metadataOperator->appendKeyword(keyword);
         if (result) {
             signalKeywordsCountChanged();
@@ -145,7 +145,7 @@ namespace Models {
 
     size_t ArtworkProxyBase::doAppendKeywords(const QStringList &keywords) {
         LOG_INFO << keywords.length() << "keyword(s)" << "|" << keywords;
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         const size_t appendedCount = metadataOperator->appendKeywords(keywords);
         LOG_INFO << "Appended" << appendedCount << "keywords";
 
@@ -159,7 +159,7 @@ namespace Models {
 
     bool ArtworkProxyBase::doRemoveKeywords(const QSet<QString> &keywords, bool caseSensitive) {
         LOG_INFO << "case sensitive:" << caseSensitive;
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         const bool result = metadataOperator->removeKeywords(keywords, caseSensitive);
         if (result) {
             signalKeywordsCountChanged();
@@ -171,7 +171,7 @@ namespace Models {
 
     bool ArtworkProxyBase::doMoveKeyword(int from, int to) {
         LOG_INFO << from << "-->" << to;
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         const bool result = metadataOperator->moveKeyword(from, to);
         if (result) {
             doJustEdited();
@@ -182,7 +182,7 @@ namespace Models {
 
     bool ArtworkProxyBase::doClearKeywords() {
         LOG_DEBUG << "#";
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         const bool result = metadataOperator->clearKeywords();
         if (result) {
             signalKeywordsCountChanged();
@@ -195,7 +195,7 @@ namespace Models {
     }
 
     QString ArtworkProxyBase::doGetKeywordsString() {
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         return metadataOperator->getKeywordsString();
     }
 
@@ -244,7 +244,7 @@ namespace Models {
         QStringList keywords;
 
         if (presetsManager.tryGetPreset(presetID, keywords)) {
-            auto *metadataOperator = getMetadataOperator();
+            auto *metadataOperator = getArtworkMetadata();
             if (metadataOperator->expandPreset(keywordIndex, keywords)) {
                 signalKeywordsCountChanged();
                 doJustEdited();
@@ -262,7 +262,7 @@ namespace Models {
         QStringList keywords;
 
         if (presetsManager.tryGetPreset(presetID, keywords)) {
-            auto *metadataOperator = getMetadataOperator();
+            auto *metadataOperator = getArtworkMetadata();
             if (metadataOperator->appendPreset(keywords)) {
                 signalKeywordsCountChanged();
                 doJustEdited();
@@ -334,7 +334,7 @@ namespace Models {
     }
 
     bool ArtworkProxyBase::hasKeywords(const QStringList &keywordsList) {
-        auto *metadataOperator = getMetadataOperator();
+        auto *metadataOperator = getArtworkMetadata();
         bool result = metadataOperator->hasKeywords(keywordsList);
         return result;
     }

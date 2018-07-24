@@ -11,17 +11,18 @@
 #include "filteredartworkslistmodel.h"
 #include <QDir>
 #include "artworkslistmodel.h"
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkelement.h>
-#include <Models/settingsmodel.h>
 #include <Commands/commandmanager.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Common/flags.h>
-#include <Helpers/indiceshelper.h>
 #include <Common/defines.h>
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/artworkelement.h>
+#include <Artworks/videoartwork.h>
+#include <Helpers/indiceshelper.h>
 #include <Helpers/filterhelpers.h>
 #include <Models/Editing/previewartworkelement.h>
-#include <Artworks/videoartwork.h>
+#include <Models/settingsmodel.h>
+#include <Services/SpellCheck/spellchecksuggestionmodel.h>
 
 namespace Models {
     FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel,
@@ -423,10 +424,8 @@ namespace Models {
         int originalIndex = getOriginalIndex(proxyIndex);
         Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
         if (artwork != NULL) {
-            m_Messages
-                    .ofType<Artworks::IMetadataOperator*>()
-                    .withID(Commands::AppMessages::SpellSuggestions)
-                    .broadcast(dynamic_cast<Artworks::IMetadataOperator*>(artwork));
+            Artworks::ArtworksSnapshot snapshot({artwork});
+            m_SpellSuggestionsModel.setupArtworks(snapshot);
         }
     }
 

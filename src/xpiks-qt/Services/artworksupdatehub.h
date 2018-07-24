@@ -51,7 +51,7 @@ namespace Services {
         void updateArtworkByID(Common::ID_t artworkID, size_t lastKnownIndex, const QVector<int> &rolesToUpdate = QVector<int>());
         void updateArtwork(Artworks::ArtworkMetadata *artwork);
         void updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, UpdateMode updateMode=FastUpdate);
-        void updateArtworks(const Artworks::ArtworksSnapshot::Container &artworks, UpdateMode updateMode=FastUpdate);
+        void updateArtworks(const Artworks::ArtworksSnapshot &artworks, UpdateMode updateMode=FastUpdate);
 
 #ifdef INTEGRATION_TESTS
     public:

@@ -44,6 +44,10 @@ namespace AutoComplete {
     class ICompletionSource;
 }
 
+namespace SpellCheck {
+    class SpellCheckSuggestionModel;
+}
+
 namespace Models {
     class CombinedArtworksModel:
             public ArtworksViewModel,
@@ -68,6 +72,7 @@ namespace Models {
         CombinedArtworksModel(Commands::ICommandManager &commandManager,
                               KeywordsPresets::IPresetsManager &presetsManager,
                               AutoComplete::ICompletionSource &completionSource,
+                              SpellCheck::SpellCheckSuggestionModel &spellSuggestionsModel,
                               QObject *parent=0);
 
     protected:
@@ -207,7 +212,7 @@ namespace Models {
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_CommonKeywordsModel; }
-        virtual Artworks::IMetadataOperator *getMetadataOperator() override { return &m_CommonKeywordsModel; }
+        virtual Artworks::IArtworkMetadata *getArtworkMetadata() override { return &m_CommonKeywordsModel; }
 
     protected:
         virtual void doJustEdited() override;
@@ -234,6 +239,7 @@ namespace Models {
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         AutoComplete::ICompletionSource &m_CompletionSource;
+        SpellCheck::SpellCheckSuggestionModel &m_SpellSuggestionsModel;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
         Common::ArtworkEditFlags m_EditFlags;

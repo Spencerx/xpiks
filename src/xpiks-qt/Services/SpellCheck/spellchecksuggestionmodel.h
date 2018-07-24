@@ -16,22 +16,21 @@
 #include <vector>
 #include <memory>
 #include <utility>
+#include <functional>
 #include <Common/flags.h>
-#include <Artworks/imetadataoperator.h>
 
 namespace Models {
-    class ArtworkMetadata;
-    class IArtworksSource;
     class ArtworksListModel;
 }
 
-namespace Common {
-    class IMetadataOperator;
-}
-
 namespace Artworks {
+    class BasicMetadataModel;
     class ArtworksSnapshot;
     class ISelectedArtworksSource;
+}
+
+namespace Services {
+    class ArtworksUpdateHub;
 }
 
 namespace SpellCheck {
@@ -51,7 +50,7 @@ namespace SpellCheck {
     public:
         SpellCheckSuggestionModel(SpellCheckService &spellCheckerService,
                                   Artworks::ISelectedArtworksSource &artworksSource,
-                                  Models::ArtworksListModel &artworksListModel);
+                                  Services::ArtworksUpdateHub &artworksUpdateHub);
 
     public:
         enum KeywordSpellSuggestions_Roles {
@@ -61,7 +60,7 @@ namespace SpellCheck {
         };
 
     public:
-        int getArtworksCount() const { return (int)m_CheckedItems.size(); }
+        int getArtworksCount() const;
         bool getAnythingSelected() const;
 
     public:
@@ -79,8 +78,8 @@ namespace SpellCheck {
         void anythingSelectedChanged();
 
     public:
-        void setupItem(Artworks::IMetadataOperator *item, Common::SuggestionFlags flags);
-        void setupItems(const std::vector<Artworks::IMetadataOperator *> &items, Common::SuggestionFlags flags);
+        void setupItem(Artworks::BasicMetadataModel *item);
+        void setupArtworks(Artworks::ArtworksSnapshot &snapshot);
 #if defined(INTEGRATION_TESTS) || defined(CORE_TESTS)
         SpellSuggestionsItem *getItem(int i) const { return m_SuggestionsList.at(i).get(); }
 #endif
@@ -89,6 +88,7 @@ namespace SpellCheck {
         void setArtworks(const Artworks::ArtworksSnapshot &snapshot);
         bool processFailedReplacements(const SuggestionsVector &failedReplacements) const;
         SuggestionsVector setupSuggestions(const SuggestionsVector &items);
+        void setupRequests(const SuggestionsVector &requests);
 
     public:
         virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -98,14 +98,12 @@ namespace SpellCheck {
         virtual QHash<int, QByteArray> roleNames() const override;
 
     private:
-        void updateItems() const;
-
-    private:
         std::vector<std::shared_ptr<SpellSuggestionsItem> > m_SuggestionsList;
-        std::vector<std::shared_ptr<Artworks::MetadataOperatorLocker>> m_CheckedItems;
+        // if we're checking basic model this list will be empty
+        Artworks::ArtworksSnapshot m_CheckedItems;
         SpellCheckService &m_SpellCheckerService;
         Artworks::ISelectedArtworksSource &m_ArtworksSource;
-        Models::ArtworksListModel &m_ArtworksListModel;
+        Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
     };
 }
 

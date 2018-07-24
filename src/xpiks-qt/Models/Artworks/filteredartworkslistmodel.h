@@ -33,6 +33,10 @@ namespace AutoComplete {
     class ICompletionSource;
 }
 
+namespace SpellCheck {
+    class SpellCheckSuggestionModel;
+}
+
 namespace Models {
     class ArtworkMetadata;
     class ArtworkElement;
@@ -192,6 +196,7 @@ namespace Models {
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         AutoComplete::ICompletionSource &m_CompletionSource;
         Models::SettingsModel &m_SettingsModel;
+        SpellCheck::SpellCheckSuggestionModel &m_SpellSuggestionsModel;
         // ignore default regexp from proxymodel
         QString m_SearchTerm;
         Common::SearchFlags m_SearchFlags;

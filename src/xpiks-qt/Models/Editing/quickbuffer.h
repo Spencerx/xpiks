@@ -100,7 +100,7 @@ namespace Models {
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }
-        virtual Artworks::IMetadataOperator *getMetadataOperator() override { return &m_BasicModel; }
+        virtual Artworks::IArtworkMetadata *getArtworkMetadata() override { return &m_BasicModel; }
 
     protected:
         virtual void submitForInspection() override;

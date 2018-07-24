@@ -17,6 +17,7 @@
 #include <initializer_list>
 #include "artworkmetadata.h"
 #include "imageartwork.h"
+#include <Common/irefcountedobject.h>
 
 namespace Artworks {
     class ArtworkSessionSnapshot
@@ -66,7 +67,8 @@ namespace Artworks {
 
     class ArtworksSnapshot {
     public:
-        typedef std::vector<std::shared_ptr<ArtworkMetadataLocker> > Container;
+        using ItemType = Common::HoldLocker<Artworks::ArtworkMetadata>;
+        using Container = std::vector<std::shared_ptr<ItemType>>;
 
     public:
         ArtworksSnapshot() { }
@@ -87,7 +89,7 @@ namespace Artworks {
     public:
         void reserve(size_t size) { m_ArtworksSnapshot.reserve(size); }
         void append(ArtworkMetadata *artwork) {
-            m_ArtworksSnapshot.emplace_back(std::make_shared<ArtworkMetadataLocker>(artwork));
+            m_ArtworksSnapshot.emplace_back(std::make_shared<ItemType>(artwork));
         }
         void append(const WeakArtworksSnapshot &artworks);
         void append(const std::deque<ArtworkMetadata *> &artworks);
@@ -97,7 +99,7 @@ namespace Artworks {
         void copyFrom(const ArtworksSnapshot &other);
         void remove(size_t index);
         ArtworkMetadata *get(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i)->getArtworkMetadata(); }
-        const std::shared_ptr<ArtworkMetadataLocker> &at(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i); }
+        const std::shared_ptr<ItemType> &at(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i); }
         void clear();
         bool empty() const { return m_ArtworksSnapshot.empty(); }
 
