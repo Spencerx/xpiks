@@ -8,17 +8,5 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef ISELECTEDARTWORKSSOURCE_H
-#define ISELECTEDARTWORKSSOURCE_H
+#include "generalcommands.h"
 
-#include "artworkssnapshot.h"
-
-namespace Artworks {
-    class ISelectedArtworksSource {
-    public:
-        virtual ~ISelectedArtworksSource() {}
-        virtual ArtworksSnapshot getSelectedArtworks() = 0;
-    };
-}
-
-#endif // ISELECTEDARTWORKSSOURCE_H

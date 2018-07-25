@@ -17,7 +17,7 @@
 #include <Common/flags.h>
 #include <Common/logging.h>
 #include <Artworks/artworkmetadata.h>
-#include <Artworks/iselectedartworkssource.h>
+#include <Artworks/iartworkssource.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Services/artworksupdatehub.h>
 #include <Models/Artworks/artworkslistmodel.h>
@@ -256,16 +256,6 @@ namespace SpellCheck {
         for (auto &item: m_SuggestionsList) {
             item->setReplacementIndex(-1);
         }
-    }
-
-    void SpellCheckSuggestionModel::pullArtworks() {
-        LOG_DEBUG << "#";
-        auto snapshot = std::move(m_ArtworksSource.getSelectedArtworks());
-        setupArtworks(snapshot);
-    }
-
-    void SpellCheckSuggestionModel::pullOneItem() {
-        LOG_DEBUG << "#";
     }
 
     void SpellCheckSuggestionModel::setupItem(Artworks::BasicMetadataModel *item) {

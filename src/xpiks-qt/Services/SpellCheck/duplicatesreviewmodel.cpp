@@ -38,13 +38,14 @@ namespace SpellCheck {
         endResetModel();
     }
 
-    void DuplicatesReviewModel::setupModel(const std::vector<Artworks::ArtworkMetadata *> &items) {
+    void DuplicatesReviewModel::setupModel(const Artworks::ArtworksSnapshot &snapshot) {
         Q_ASSERT(m_DuplicatesList.empty());
         beginResetModel();
         {
-            m_DuplicatesList.reserve(items.size());
-            for (auto &item: items) {
-                m_DuplicatesList.emplace_back(item);
+            const size_t size = snapshot.size();
+            m_DuplicatesList.reserve(size);
+            for (auto &locker: snapshot.getRawData()) {
+                m_DuplicatesList.emplace_back(locker->getArtworkMetadata());
             }
         }
         endResetModel();

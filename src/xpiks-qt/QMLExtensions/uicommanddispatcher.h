@@ -15,6 +15,10 @@
 #include <QObject>
 #include "iuicommanddispatcher.h"
 
+namespace Commands {
+    class ICommandManager;
+}
+
 namespace QMLExtensions {
     class UICommandDispatcher:
             public QObject,
@@ -22,7 +26,7 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        UICommandDispatcher(QObject *parent=0);
+        UICommandDispatcher(Commands::ICommandManager &commandManager, QObject *parent=0);
 
     public:
         Q_INVOKABLE void dispatch(int commandID, const QJSValue &value) { dispatchCommand(commandID, value); }
@@ -34,6 +38,7 @@ namespace QMLExtensions {
 
     private:
         std::unordered_map<int, std::shared_ptr<Commands::IUICommandTemplate>> m_CommandsMap;
+        Commands::ICommandManager &m_CommandManager;
     };
 }
 

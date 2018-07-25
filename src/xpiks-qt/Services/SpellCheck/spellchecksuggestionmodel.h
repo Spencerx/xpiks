@@ -69,8 +69,6 @@ namespace SpellCheck {
         Q_INVOKABLE void submitCorrections() const;
         Q_INVOKABLE void resetAllSuggestions();
         Q_INVOKABLE void updateSelection() { emit anythingSelectedChanged(); }
-        Q_INVOKABLE void pullArtworks();
-        Q_INVOKABLE void pullOneItem();
 
     signals:
         void selectAllChanged();

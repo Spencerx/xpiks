@@ -28,6 +28,7 @@
 #include <Commands/Base/compositecommandtemplate.h>
 #include <Commands/Services/generatethumbnailstemplate.h>
 #include <Commands/artworksupdatetemplate.h>
+#include <Commands/UI/selectedartworkscommands.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_SettingsModel(environment),
@@ -136,6 +137,7 @@ void XpiksApp::initialize() {
     m_RecentFileModel.initialize();
 
     connectEntitiesSignalsSlots();
+    registerUICommands();
 
     m_LanguagesModel.initFirstLanguage();
     m_LanguagesModel.loadLanguages();
@@ -376,7 +378,6 @@ void XpiksApp::removeDirectory(int index) {
     int originalIndex = m_FilteredArtworksRepository.getOriginalIndex(index);
     auto removeResult = m_ArtworksListModel.removeFilesFromDirectory(originalIndex);
     Commands::SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager).execute();
-
 }
 
 void XpiksApp::removeUnavailableFiles() {
@@ -563,6 +564,24 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_PresetsModel, &KeywordsPresets::PresetKeywordsModel::presetsUpdated,
                      &m_PluginManager, &Plugins::PluginManager::onPresetsUpdated);
 #endif
+}
+
+void XpiksApp::registerUICommands() {
+    m_UICommandDispatcher.registerCommand(
+                std::make_shared<Commands::FixSpellingInSelectedCommand>(
+                    m_FilteredArtworksListModel, m_SpellSuggestionModel));
+
+    m_UICommandDispatcher.registerCommand(
+                std::make_shared<Commands::ShowDuplicatesInSelectedCommand>(
+                    m_FilteredArtworksListModel, m_DuplicatesModel));
+
+    m_UICommandDispatcher.registerCommand(
+                std::make_shared<Commands::SaveSelectedCommand>(
+                    m_FilteredArtworksListModel, m_MetadataIOCoordinator, m_MetadataIOService));
+
+    m_UICommandDispatcher.registerCommand(
+                std::make_shared<Commands::WipeMetadataInselectedCommand>(
+                    m_FilteredArtworksListModel, m_MetadataIOCoordinator));
 }
 
 void XpiksApp::servicesInitialized(int status) {

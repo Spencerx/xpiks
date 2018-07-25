@@ -42,7 +42,7 @@ namespace Models {
         };
 
     public:
-        ArtworksViewModel(Artworks::ISelectedArtworksSource &artworksSource, QObject *parent=NULL);
+        ArtworksViewModel(QObject *parent=NULL);
         virtual ~ArtworksViewModel() { }
 
     protected:
@@ -53,7 +53,6 @@ namespace Models {
         int getSelectedArtworksCount() const;
 
     public:
-        Q_INVOKABLE void pullArtworks();
         Q_INVOKABLE void setArtworkSelected(int index, bool value);
         Q_INVOKABLE void removeSelectedArtworks() { doRemoveSelectedArtworks(); }
         Q_INVOKABLE void resetModel() { doResetModel(); }
@@ -102,7 +101,6 @@ namespace Models {
 
     private:
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
-        Artworks::ISelectedArtworksSource &m_ArtworksSource;
     };
 }
 

@@ -278,34 +278,7 @@ namespace Artworks {
         volatile Common::WarningFlags m_WarningsFlags;
     };
 
-    class ArtworkMetadataLocker
-    {
-    public:
-        ArtworkMetadataLocker(ArtworkMetadata *metadata):
-            m_ArtworkMetadata(metadata)
-        {
-            if (m_ArtworkMetadata != nullptr) {
-                m_ArtworkMetadata->acquire();
-            }
-        }
-
-        virtual ~ArtworkMetadataLocker() {
-            if (m_ArtworkMetadata != nullptr) {
-                m_ArtworkMetadata->release();
-            }
-        }
-
-    public:
-        ArtworkMetadata *getArtworkMetadata() const { return m_ArtworkMetadata; }
-
-    private:
-        ArtworkMetadataLocker();
-        ArtworkMetadataLocker(const ArtworkMetadataLocker&);
-        ArtworkMetadataLocker &operator=(const ArtworkMetadataLocker&);
-
-    private:
-        ArtworkMetadata *m_ArtworkMetadata;
-    };
+    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
 }
 
 Q_DECLARE_METATYPE(Artworks::ArtworkMetadata *)

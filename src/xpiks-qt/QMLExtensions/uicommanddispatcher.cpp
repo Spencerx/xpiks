@@ -10,10 +10,13 @@
 
 #include "uicommanddispatcher.h"
 #include <Common/logging.h>
+#include <Commands/commandmanager.h>
+#include <Commands/Base/templateduicommand.h>
 
 namespace QMLExtensions {
-    UICommandDispatcher::UICommandDispatcher(QObject *parent):
-        QObject(parent)
+    UICommandDispatcher::UICommandDispatcher(Commands::ICommandManager &commandManager, QObject *parent):
+        QObject(parent),
+        m_CommandManager(commandManager)
     {
     }
 
@@ -29,7 +32,8 @@ namespace QMLExtensions {
         LOG_INFO << commandID << value;
         auto it = m_CommandsMap.find(commandID);
         if (it != m_CommandsMap.end()) {
-            (*it)->execute(value);
+            m_CommandManager.processCommand(
+                        std::make_shared<Commands::TemplatedUICommand>(value, *it));
         }
     }
 }

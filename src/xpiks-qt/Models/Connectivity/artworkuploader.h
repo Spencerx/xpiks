@@ -22,7 +22,7 @@
 #include <Common/messages.h>
 #include "uploadinforepository.h"
 #include <ftpcoordinator.h>
-#include <Artworks/iselectedartworkssource.h>
+#include <Artworks/iartworkssource.h>
 
 namespace Helpers {
     class TestConnectionResult;

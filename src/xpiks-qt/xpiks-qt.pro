@@ -207,7 +207,9 @@ SOURCES += main.cpp \
     Commands/Editing/findandreplacetemplate.cpp \
     Services/SpellCheck/spellcheckservice.cpp \
     Services/artworksinspectionhub.cpp \
-    QMLExtensions/uicommanddispatcher.cpp
+    QMLExtensions/uicommanddispatcher.cpp \
+    Commands/UI/selectedartworkscommands.cpp \
+    Commands/UI/generalcommands.cpp
 
 RESOURCES += qml.qrc
 
@@ -509,11 +511,13 @@ HEADERS += \
     Services/artworksinspectionhub.h \
     Common/messages.h \
     Models/Editing/quickbuffermessage.h \
-    Artworks/iselectedartworkssource.h \
     Common/irefcountedobject.h \
     Services/SpellCheck/ispellcheckable.h \
     Artworks/iartworkmetadata.h \
-    QMLExtensions/uicommanddispatcher.h
+    QMLExtensions/uicommanddispatcher.h \
+    Commands/UI/selectedartworkscommands.h \
+    Artworks/iartworkssource.h \
+    Commands/UI/generalcommands.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

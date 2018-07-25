@@ -23,7 +23,11 @@ namespace QMLExtensions {
 
         // enum values must start with capital letter
         enum CommandID {
-            EditSelectedArtworks
+            EditSelectedArtworks,
+            FixSpellingInSelected,
+            ReviewDuplicatesInSelected,
+            SaveSelected,
+            WipeMetadataInSelected
         };
         Q_ENUMS(CommandID)
     };

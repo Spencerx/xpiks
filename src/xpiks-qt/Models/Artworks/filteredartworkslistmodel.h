@@ -17,7 +17,7 @@
 #include <functional>
 #include <Common/flags.h>
 #include <Artworks/artworkssnapshot.h>
-#include <Artworks/iselectedartworkssource.h>
+#include <Artworks/iartworkssource.h>
 #include <Models/Editing/quickbuffermessage.h>
 #include <Common/messages.h>
 
@@ -70,10 +70,11 @@ namespace Models {
         bool getGlobalSelectionChanged() const { return false; }
 
         Artworks::ArtworksSnapshot::Container getSearchablePreviewOriginalItems(const QString &searchTerm, Common::SearchFlags flags) const;
+        Artworks::ArtworksSnapshot getArtworksToSave(bool overwriteAll=false) const;
 
     public:
         // returns currently selected artworks as a snapshot
-        virtual Artworks::ArtworksSnapshot getSelectedArtworks() override;
+        virtual Artworks::ArtworksSnapshot getArtworks() override;
 
 #ifdef CORE_TESTS
         int retrieveNumberOfSelectedItems();
@@ -141,7 +142,6 @@ namespace Models {
 
     public:
         //void removeSelectedArtworks();
-        Q_INVOKABLE void saveSelectedArtworks(bool overwriteAll, bool useBackups);
         //Q_INVOKABLE void wipeMetadataFromSelectedArtworks(bool useBackups);
         //Q_INVOKABLE void removeArtworksDirectory(int index);
 
@@ -153,9 +153,7 @@ namespace Models {
 
         Q_INVOKABLE void copyToQuickBuffer(int proxyIndex) const;
         //Q_INVOKABLE void fillFromQuickBuffer(int index) const;
-        //Q_INVOKABLE void suggestCorrectionsForSelected() const;
         //Q_INVOKABLE void generateCompletions(const QString &prefix, int index);
-        //Q_INVOKABLE void reviewDuplicatesInSelected() const;
 
     public slots:
         void itemSelectedChanged(bool value);

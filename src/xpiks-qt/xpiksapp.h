@@ -58,6 +58,7 @@
 #include <QMLExtensions/colorsmodel.h>
 #include <QMLExtensions/imagecachingservice.h>
 #include <QMLExtensions/videocachingservice.h>
+#include <QMLExtensions/uicommanddispatcher.h>
 
 #include <UndoRedo/undoredomanager.h>
 
@@ -134,6 +135,7 @@ private:
     void afterServicesStarted();
     void executeMaintenanceJobs();
     void connectEntitiesSignalsSlots();
+    void registerUICommands();
 
 signals:
     void globalCloseRequested();
@@ -155,6 +157,7 @@ protected:
     UndoRedo::UndoRedoManager m_UndoRedoManager;
     Commands::CommandManager m_CommandManager;
     Models::SwitcherModel m_SwitcherModel;
+    QMLExtensions::UICommandDispatcher m_UICommandDispatcher;
 
     // models
     KeywordsPresets::PresetKeywordsModel m_PresetsModel;

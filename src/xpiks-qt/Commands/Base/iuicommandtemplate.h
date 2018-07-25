@@ -17,8 +17,8 @@ namespace Commands {
     class IUICommandTemplate {
     public:
         virtual ~IUICommandTemplate() {}
-        virtual void execute(const QJSValue &value) = 0;
         virtual int getCommandID() = 0;
+        virtual void execute(const QJSValue &value) = 0;
     };
 }
 

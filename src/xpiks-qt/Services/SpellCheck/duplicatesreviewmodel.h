@@ -17,6 +17,7 @@
 
 namespace Artworks {
     class BasicMetadataModel;
+    class ArtworksSnapshot;
 }
 
 namespace QMLExtensions {
@@ -65,7 +66,7 @@ namespace SpellCheck {
 
     public:
         void setupModel(Artworks::BasicMetadataModel *basicModel);
-        void setupModel(const std::vector<Artworks::ArtworkMetadata *> &items);
+        void setupModel(const Artworks::ArtworksSnapshot &snapshot);
         void clearDuplicates();
 
     public:

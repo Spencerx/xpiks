@@ -59,10 +59,19 @@ namespace Models {
         forceUnselectAllItems();
     }
 
-    Artworks::ArtworksSnapshot FilteredArtworksListModel::getSelectedArtworks() {
-        var rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
+    Artworks::ArtworksSnapshot FilteredArtworksListModel::getArtworksToSave(bool overwriteAll) const {
+        auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
+                    [](Artworks::ArtworkMetadata *artwork) {
+                       return artwork->isSelected() && !artwork->isReadOnly() && (artwork->isModified() || overwriteAll); },
+                [] (Artworks::ArtworkMetadata *artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
+
+        return Artworks::ArtworksSnapshot(rawSnapshot);
+    }
+
+    Artworks::ArtworksSnapshot FilteredArtworksListModel::getArtworks() {
+        auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
                     [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
-                [] (Artworks::ArtworkMetadata *artwork, int, int) { return std::make_shared<ArtworkMetadataLocker>(artwork); });
+                [] (Artworks::ArtworkMetadata *artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
 
         return Artworks::ArtworksSnapshot(rawSnapshot);
     }
@@ -427,18 +436,6 @@ namespace Models {
             Artworks::ArtworksSnapshot snapshot({artwork});
             m_SpellSuggestionsModel.setupArtworks(snapshot);
         }
-    }
-
-    void FilteredArtworksListModel::saveSelectedArtworks(bool overwriteAll, bool useBackups) {
-        LOG_INFO << "ovewriteAll:" << overwriteAll << "useBackups:" << useBackups;
-        // former patchSelectedArtworks
-        auto itemsToSave = filterItems<Artworks::ArtworkMetadata*>(
-                    [&overwriteAll](Artworks::ArtworkMetadata *artwork) {
-                return artwork->isSelected() && !artwork->isReadOnly() && (artwork->isModified() || overwriteAll);
-    },
-                [] (Artworks::ArtworkMetadata *artwork, int, int) { return artwork; });
-
-        //xpiks()->writeMetadata(itemsToSave, useBackups);
     }
 
     void FilteredArtworksListModel::copyToQuickBuffer(int proxyIndex) const {
