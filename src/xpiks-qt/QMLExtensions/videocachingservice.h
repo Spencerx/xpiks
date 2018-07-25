@@ -64,7 +64,7 @@ namespace QMLExtensions {
         void stopService();
 
     public:
-        virtual void handleMessage(const Artworks::VideoArtwork * &message) override { generateThumbnail(message); }
+        virtual void handleMessage(Artworks::VideoArtwork * const &message) override { generateThumbnail(message); }
 
     public:
         void generateThumbnails(const Artworks::ArtworksSnapshot &snapshot);

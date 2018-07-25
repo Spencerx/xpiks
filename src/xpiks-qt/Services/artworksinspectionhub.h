@@ -45,8 +45,8 @@ namespace Services {
                               Models::SettingsModel &settingsModel);
 
     public:
-        virtual void handleMessage(const Artworks::ArtworkMetadata * &change) override;
-        virtual void handleMessage(const Artworks::BasicKeywordsModel * &change) override;
+        virtual void handleMessage(Artworks::ArtworkMetadata* const &change) override;
+        virtual void handleMessage(Artworks::BasicKeywordsModel* const &change) override;
 
     public:
         void inspectArtwork(const Artworks::ArtworkMetadata *artwork);
