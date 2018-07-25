@@ -46,7 +46,7 @@ namespace Services {
 }
 
 namespace SpellCheck {
-    class SpellCheckerService;
+    class SpellCheckService;
 }
 
 namespace Models {

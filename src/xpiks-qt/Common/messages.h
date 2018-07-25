@@ -39,9 +39,9 @@ namespace Common {
             m_Targets.push_back(target);
         }
 
-        void sendMessage(const T &message) {
+        void sendMessage(const T &message) const {
             for (auto &target: m_Targets) {
-                target.handleMessage(message);
+                target.get().handleMessage(message);
             }
         }
 

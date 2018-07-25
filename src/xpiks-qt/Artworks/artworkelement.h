@@ -14,14 +14,15 @@
 #include <QString>
 #include <QSet>
 #include "artworkmetadata.h"
-#include "../Common/flags.h"
+#include <Common/irefcountedobject.h>
+#include <Common/flags.h>
 
 namespace Artworks {
-    class ArtworkElement: public ArtworkMetadataLocker
+    class ArtworkElement: public Common::HoldLocker<ArtworkMetadata>
     {
     public:
         ArtworkElement(ArtworkMetadata *artwork):
-            ArtworkMetadataLocker(artwork),
+            Common::HoldLocker<ArtworkMetadata>(artwork),
             m_Flags(0)
         {
             Q_ASSERT(artwork != nullptr);

@@ -14,9 +14,9 @@
 #include <vector>
 
 namespace Artworks {
-    class IArtworksIndicesSource {
+    class ISelectedIndicesSource {
     public:
-        virtual ~IArtworksIndicesSource() {}
+        virtual ~ISelectedIndicesSource() {}
         virtual std::vector<int> getSelectedIndices() = 0;
     };
 }

@@ -19,14 +19,9 @@
 #include <Helpers/ifilenotavailablemodel.h>
 #include <Artworks/artworkssnapshot.h>
 
-namespace Artworks {
-    class ISelectedArtworksSource;
-}
-
 namespace Models {
     class ArtworksViewModel:
             public Common::AbstractListModel,
-            public Artworks::ISelectedArtworksSource,
             public Helpers::IFileNotAvailableModel
     {
         Q_OBJECT

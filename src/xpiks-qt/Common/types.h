@@ -20,8 +20,9 @@ namespace Common {
     class NamedType
     {
     public:
-        explicit NamedType(T const &value) : m_Value(value) {}
-        explicit NamedType(T &&value) : m_Value(std::move(value)) {}
+        NamedType(T const &value) : m_Value(value) {}
+        NamedType(T &&value) : m_Value(std::move(value)) {}
+        NamedType(const NamedType &other): m_Value(other.m_Value) {}
         T& get() { return m_Value; }
         T const& get() const { return m_Value; }
     private:

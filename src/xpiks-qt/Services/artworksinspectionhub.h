@@ -36,6 +36,9 @@ namespace Services {
             public Common::MessagesTarget<Artworks::ArtworkMetadata*>,
             public Common::MessagesTarget<Artworks::BasicKeywordsModel*>
     {
+        using Common::MessagesTarget<Artworks::ArtworkMetadata*>::handleMessage;
+        using Common::MessagesTarget<Artworks::BasicKeywordsModel*>::handleMessage;
+
     public:
         ArtworksInspectionHub(SpellCheck::SpellCheckService &spellCheckService,
                               Warnings::WarningsService &warningsService,

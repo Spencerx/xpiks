@@ -16,10 +16,11 @@
 #include <QSize>
 #include <memory>
 #include <Common/isystemenvironment.h>
+#include <Common/irefcountedobject.h>
 
 namespace Artworks {
     class ArtworkMetadata;
-    class ArtworkMetadataLocker;
+    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
     class ArtworksSnapshot;
 }
 

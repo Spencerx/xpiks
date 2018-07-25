@@ -277,8 +277,6 @@ namespace Artworks {
         volatile size_t m_LastKnownIndex; // optimistic guess on current index of this item in artitemsmodel
         volatile Common::WarningFlags m_WarningsFlags;
     };
-
-    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
 }
 
 Q_DECLARE_METATYPE(Artworks::ArtworkMetadata *)

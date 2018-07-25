@@ -30,12 +30,10 @@
 namespace Models {
     ArtworkUploader::ArtworkUploader(Common::ISystemEnvironment &environment,
                                      UploadInfoRepository &uploadInfoRepository,
-                                     Artworks::ISelectedArtworksSource &artworksSource,
                                      SettingsModel &settingsModel,
                                      QObject *parent):
         QObject(parent),
         m_Environment(environment),
-        m_ArtworksSource(artworksSource),
         m_TestingCredentialWatcher(nullptr),
         m_UploadInfos(uploadInfoRepository),
         m_SettingsModel(settingsModel),
@@ -114,9 +112,9 @@ namespace Models {
         m_UploadInfos.updatePercentages();
     }
 
-    void ArtworkUploader::pullArtworks() {
+    void ArtworkUploader::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
         LOG_DEBUG << "#";
-        m_ArtworksSnapshot = std::move(m_ArtworksSource.getSelectedArtworks());
+        m_ArtworksSnapshot = std::move(snapshot);
         emit itemsCountChanged();
     }
 

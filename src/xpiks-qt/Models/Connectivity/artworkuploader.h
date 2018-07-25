@@ -58,7 +58,6 @@ namespace Models {
     public:
         ArtworkUploader(Common::ISystemEnvironment &environment,
                         Models::UploadInfoRepository &uploadInfoRepository,
-                        Artworks::ISelectedArtworksSource &artworksSource,
                         SettingsModel &settingsModel,
                         QObject *parent=0);
         virtual ~ArtworkUploader();
@@ -98,6 +97,9 @@ namespace Models {
         void uploaderPercentChanged(double percent);
 
     public:
+        void setArtworks(Artworks::ArtworksSnapshot &&snapshot);
+
+    public:
         Q_INVOKABLE void pullArtworks();
         Q_INVOKABLE void uploadArtworks();
         Q_INVOKABLE void checkCredentials(const QString &host, const QString &username,
@@ -135,7 +137,6 @@ namespace Models {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Artworks::ISelectedArtworksSource &m_ArtworksSource;
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
         Connectivity::UploadWatcher m_UploadWatcher;
         std::shared_ptr<Connectivity::IFtpCoordinator> m_FtpCoordinator;

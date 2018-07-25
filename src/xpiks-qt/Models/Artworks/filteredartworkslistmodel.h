@@ -48,6 +48,7 @@ namespace Models {
     class FilteredArtworksListModel:
             public QSortFilterProxyModel,
             public Artworks::ISelectedArtworksSource,
+            public Artworks::ISelectedIndicesSource,
             public Common::MessagesSource<QuickBufferMessage>
     {
         Q_OBJECT

@@ -57,6 +57,10 @@ namespace Suggestion {
         Q_PROPERTY(int searchTypeIndex READ getSearchTypeIndex WRITE setSearchTypeIndex NOTIFY searchTypeIndexChanged)
         Q_PROPERTY(QStringList engineNames READ getEngineNames NOTIFY engineNamesChanged)
 
+    private:
+        using Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>::sendMessage;
+        using Common::MessagesSource<Models::QuickBufferMessage>::sendMessage;
+
     public:
         KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
                           Connectivity::RequestsService &requestsService,
@@ -175,7 +179,6 @@ namespace Suggestion {
         Connectivity::RequestsService &m_RequestsService;
         Models::SwitcherModel &m_SwitcherModel;
         Models::SettingsModel &m_SettingsModel;
-        Models::ICurrentEditableSource &m_CurrentEditableSource;
         std::vector<std::shared_ptr<ISuggestionEngine> > m_QueryEngines;
         std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
         QString m_LastErrorString;

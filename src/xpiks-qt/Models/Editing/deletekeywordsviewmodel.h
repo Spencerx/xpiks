@@ -40,7 +40,6 @@ namespace Models {
     public:
         DeleteKeywordsViewModel(Commands::ICommandManager &commandManager,
                                 KeywordsPresets::IPresetsManager &presetsManager,
-                                Artworks::ISelectedArtworksSource &artworksSource,
                                 QObject *parent=nullptr);
 
     public:

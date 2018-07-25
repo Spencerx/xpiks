@@ -16,21 +16,23 @@
 #include <QReadWriteLock>
 #include <QHash>
 #include <QSet>
-#include <Common/itemprocessingworker.h>
-#include <Models/settingsmodel.h>
 #include "spellcheckitem.h"
-#include <Helpers/asynccoordinator.h>
+#include <Common/itemprocessingworker.h>
 #include <Common/isystemenvironment.h>
+#include <Common/irefcountedobject.h>
+#include <Models/settingsmodel.h>
+#include <Helpers/asynccoordinator.h>
 
 class Hunspell;
 class QTextCodec;
 
-namespace Artworks {
-    class ArtworkMetadataLocker;
-}
-
 namespace Warnings {
     class WarningsService;
+}
+
+namespace Artworks {
+    class ArtworkMetadata;
+    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata*>;
 }
 
 namespace SpellCheck {

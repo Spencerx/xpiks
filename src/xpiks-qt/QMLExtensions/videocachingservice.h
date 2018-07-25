@@ -17,10 +17,11 @@
 #include <vector>
 #include <Common/isystemenvironment.h>
 #include <Common/messages.h>
+#include <Common/irefcountedobject.h>
 
 namespace Artworks {
     class ArtworkMetadata;
-    class ArtworkMetadataLocker;
+    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
     class VideoArtwork;
     class ArtworksSnapshot;
 }

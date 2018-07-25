@@ -9,17 +9,17 @@
  */
 
 #include "artworkmetadatabackup.h"
-#include "../Artworks/artworkmetadata.h"
-#include "../Artworks/imageartwork.h"
-#include "../Common/defines.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Common/defines.h>
 
-UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(Artworks::ArtworkMetadata *artwork) {
-    m_ArtworkID = artwork->getItemID();
-    m_Description = artwork->getDescription();
-    m_Title = artwork->getTitle();
-    m_KeywordsList = artwork->getKeywords();
-    m_IsModified = artwork->isModified();
-
+UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(Artworks::ArtworkMetadata *artwork):
+    m_ArtworkID(artwork->getItemID()),
+    m_Description(artwork->getDescription()),
+    m_Title(artwork->getTitle()),
+    m_KeywordsList(artwork->getKeywords()),
+    m_IsModified(artwork->isModified())
+{
     Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
     if (image != NULL && image->hasVectorAttached()) {
         m_AttachedVector = image->getAttachedVectorPath();
@@ -37,8 +37,8 @@ UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(const UndoRedo::ArtworkMe
 }
 
 void UndoRedo::ArtworkMetadataBackup::restore(Artworks::ArtworkMetadata *artwork) const {
-    Q_ASSERT(m_ArtworkID == artwork->getItemID());
-    if (m_ArtworkID != artwork->getItemID()) {
+    Q_ASSERT(m_ArtworkID.get() == artwork->getItemID().get());
+    if (m_ArtworkID.get() != artwork->getItemID().get()) {
         LOG_WARNING << "Cannot restore to different artwork";
         return;
     }

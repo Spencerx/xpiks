@@ -26,6 +26,7 @@ namespace Common {
         HoldLocker(T *obj):
             m_RefCountedObject(obj)
         {
+            Q_ASSERT(obj != nullptr);
             Q_ASSERT(dynamic_cast<IRefCountedObject*>(obj) != nullptr);
 
             if (m_RefCountedObject != nullptr) {

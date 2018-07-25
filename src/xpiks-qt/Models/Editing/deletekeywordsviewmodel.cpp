@@ -20,9 +20,8 @@
 namespace Models {
     DeleteKeywordsViewModel::DeleteKeywordsViewModel(Commands::ICommandManager &commandManager,
                                                      KeywordsPresets::IPresetsManager &presetsManager,
-                                                     Artworks::ISelectedArtworksSource &artworksSource,
                                                      QObject *parent):
-        Models::ArtworksViewModel(artworksSource, parent),
+        Models::ArtworksViewModel(parent),
         m_KeywordsToDeleteModel(m_HoldForDeleters),
         m_CommonKeywordsModel(m_HoldForCommon),
         m_CommandManager(commandManager),
