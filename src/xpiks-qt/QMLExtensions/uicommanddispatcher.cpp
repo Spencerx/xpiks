@@ -20,6 +20,12 @@ namespace QMLExtensions {
     {
     }
 
+    void UICommandDispatcher::registerCommands(std::initializer_list<std::shared_ptr<Commands::IUICommandTemplate> > commands) {
+        for (auto &command: commands) {
+            registerCommand(command);
+        }
+    }
+
     void UICommandDispatcher::registerCommand(const std::shared_ptr<Commands::IUICommandTemplate> &command) {
         Q_ASSERT(command != nullptr);
         if (!command) { return; }

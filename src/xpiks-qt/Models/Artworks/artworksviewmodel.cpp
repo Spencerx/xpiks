@@ -15,7 +15,7 @@
 #include <Artworks/imageartwork.h>
 #include <Artworks/videoartwork.h>
 #include <Helpers/cpphelpers.h>
-#include <Artworks/iartworkssource.h>
+#include <Artworks/iselectedartworkssource.h>
 
 namespace Models {
     ArtworksViewModel::ArtworksViewModel(QObject *parent):

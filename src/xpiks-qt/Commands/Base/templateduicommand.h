@@ -29,6 +29,9 @@ namespace Commands {
         // ICommand interface
     public:
         virtual void execute() override { m_CommandTemplate->execute(m_Value); }
+        virtual void undo() override { m_CommandTemplate->undo(); }
+        virtual bool canUndo() override { return m_CommandTemplate->canUndo(); }
+        virtual QString getDescription() const { return m_CommandTemplate->getDescription(); }
 
     private:
         QJSValue m_Value;

@@ -516,8 +516,9 @@ HEADERS += \
     Artworks/iartworkmetadata.h \
     QMLExtensions/uicommanddispatcher.h \
     Commands/UI/selectedartworkscommands.h \
-    Artworks/iartworkssource.h \
-    Commands/UI/generalcommands.h
+    Commands/UI/generalcommands.h \
+    Artworks/iselectedartworkssource.h \
+    Artworks/iselectedindicessource.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

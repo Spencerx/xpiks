@@ -17,7 +17,7 @@
 #include <Common/flags.h>
 #include <Common/logging.h>
 #include <Artworks/artworkmetadata.h>
-#include <Artworks/iartworkssource.h>
+#include <Artworks/iselectedartworkssource.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Services/artworksupdatehub.h>
 #include <Models/Artworks/artworkslistmodel.h>

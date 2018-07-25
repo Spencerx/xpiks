@@ -126,7 +126,6 @@ public:
     Q_INVOKABLE void dropItems(const QList<QUrl> &urls);
 
 public:
-    Q_INVOKABLE void removeSelectedArtworks();
     Q_INVOKABLE void removeDirectory(int index);
     Q_INVOKABLE void removeUnavailableFiles();
 

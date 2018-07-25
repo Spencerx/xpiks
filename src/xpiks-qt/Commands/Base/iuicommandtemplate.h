@@ -19,6 +19,9 @@ namespace Commands {
         virtual ~IUICommandTemplate() {}
         virtual int getCommandID() = 0;
         virtual void execute(const QJSValue &value) = 0;
+        virtual void undo() { /*BUMP*/ }
+        virtual bool canUndo() { return false; }
+        virtual QString getDescription() const { return QString(); }
     };
 }
 

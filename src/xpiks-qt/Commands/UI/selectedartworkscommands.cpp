@@ -10,24 +10,27 @@
 
 #include "selectedartworkscommands.h"
 #include <Common/logging.h>
-#include <Artworks/iartworkssource.h>
+#include <Commands/Base/icommand.h>
+#include <Artworks/iselectedartworkssource.h>
+#include <Artworks/iselectedindicessource.h>
 #include <Artworks/artworkssnapshot.h>
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include <Services/SpellCheck/duplicatesreviewmodel.h>
 #include <MetadataIO/metadataiocoordinator.h>
 #include <MetadataIO/metadataioservice.h>
+#include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 
 namespace Commands {
     void FixSpellingInSelectedCommand::execute(const QJSValue &) {
         LOG_DEBUG << "#";
-        Artworks::ArtworksSnapshot snapshot = std::move(m_SelectedArtworksSource.getArtworks());
+        Artworks::ArtworksSnapshot snapshot = std::move(m_SelectedArtworksSource.getSelectedArtworks());
         m_SpellCheckSuggestionModel.setupArtworks(snapshot);
     }
 
     void ShowDuplicatesInSelectedCommand::execute(const QJSValue &) {
         LOG_DEBUG << "#";
-        m_DuplicatesReviewModel.setupModel(m_SelectedArtworksSource.getArtworks());
+        m_DuplicatesReviewModel.setupModel(m_SelectedArtworksSource.getSelectedArtworks());
     }
 
     void SaveSelectedCommand::execute(const QJSValue &value) {
@@ -42,13 +45,27 @@ namespace Commands {
         m_MetadataIOCoordinator.writeMetadataExifTool(snapshot, useBackups);
     }
 
-    void WipeMetadataInselectedCommand::execute(const QJSValue &value) {
+    void WipeMetadataInSelectedCommand::execute(const QJSValue &value) {
         LOG_DEBUG << value;
         bool useBackups = false;
         if (value.isBool()) {
             useBackups = value.toBool();
         }
 
-        m_MetadataIOCoordinator.wipeAllMetadataExifTool(m_SelectedArtworksSource.getArtworks(), useBackups);
+        m_MetadataIOCoordinator.wipeAllMetadataExifTool(m_SelectedArtworksSource.getSelectedArtworks(), useBackups);
+    }
+
+    void RemoveSelectedCommand::execute(const QJSValue &) {
+        LOG_DEBUG << "#";
+        auto indices = m_SelectedIndicesSource.getSelectedIndices();
+        auto removeResult = m_ArtworksListModel.removeFiles(Helpers::IndicesRanges(indices));
+        if (removeResult.m_RemovedCount > 0) {
+            m_SaveSessionCommand->execute();
+        }
+    }
+
+    void ReimportMetadataForSelected::execute(const QJSValue &) {
+        LOG_DEBUG << "#";
+        m_MetadataIOCoordinator.readMetadataExifTool(m_SelectedArtworksSource.getSelectedArtworks(), INVALID_BATCH_ID);
     }
 }

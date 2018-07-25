@@ -15,7 +15,7 @@
 #include <QTimerEvent>
 #include <QThread>
 #include <Helpers/asynccoordinator.h>
-#include <Artworks/iartworkssource.h>
+#include <Artworks/iselectedartworkssource.h>
 #include "csvexportworker.h"
 #include "csvexportplansmodel.h"
 

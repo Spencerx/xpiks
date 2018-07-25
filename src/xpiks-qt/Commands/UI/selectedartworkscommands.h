@@ -11,12 +11,13 @@
 #ifndef SELECTEDARTWORKSCOMMANDS_H
 #define SELECTEDARTWORKSCOMMANDS_H
 
+#include <memory>
 #include <Commands/Base/iuicommandtemplate.h>
-
 #include <QMLExtensions/uicommandid.h>
 
 namespace Artworks {
-    class IArtworksSource;
+    class ISelectedArtworksSource;
+    class ISelectedIndicesSource;
 }
 
 namespace SpellCheck {
@@ -30,13 +31,16 @@ namespace MetadataIO {
 }
 
 namespace Models {
+    class ArtworksListModel;
     class FilteredArtworksListModel;
 }
 
 namespace Commands {
+    class ICommand;
+
     class FixSpellingInSelectedCommand: public IUICommandTemplate {
     public:
-        FixSpellingInSelectedCommand(Artworks::IArtworksSource &selectedArtworksSource,
+        FixSpellingInSelectedCommand(Artworks::ISelectedArtworksSource &selectedArtworksSource,
                                      SpellCheck::SpellCheckSuggestionModel spellSuggestionModel):
             m_SelectedArtworksSource(selectedArtworksSource),
             m_SpellCheckSuggestionModel(spellSuggestionModel)
@@ -48,13 +52,13 @@ namespace Commands {
         virtual void execute(const QJSValue &) override;
 
     private:
-        Artworks::IArtworksSource &m_SelectedArtworksSource;
+        Artworks::ISelectedArtworksSource &m_SelectedArtworksSource;
         SpellCheck::SpellCheckSuggestionModel &m_SpellCheckSuggestionModel;
     };
 
     class ShowDuplicatesInSelectedCommand: public IUICommandTemplate {
     public:
-        ShowDuplicatesInSelectedCommand(Artworks::IArtworksSource &selectedArtworksSource,
+        ShowDuplicatesInSelectedCommand(Artworks::ISelectedArtworksSource &selectedArtworksSource,
                                         SpellCheck::DuplicatesReviewModel duplicatesReviewModel):
             m_SelectedArtworksSource(selectedArtworksSource),
             m_DuplicatesReviewModel(duplicatesReviewModel)
@@ -66,7 +70,7 @@ namespace Commands {
         virtual void execute(const QJSValue &) override;
 
     private:
-        Artworks::IArtworksSource &m_SelectedArtworksSource;
+        Artworks::ISelectedArtworksSource &m_SelectedArtworksSource;
         SpellCheck::DuplicatesReviewModel &m_DuplicatesReviewModel;
     };
 
@@ -91,9 +95,9 @@ namespace Commands {
         MetadataIO::MetadataIOService &m_MetadataIOService;
     };
 
-    class WipeMetadataInselectedCommand: public IUICommandTemplate {
+    class WipeMetadataInSelectedCommand: public IUICommandTemplate {
     public:
-        WipeMetadataInselectedCommand(Artworks::IArtworksSource &selectedArtworksSource,
+        WipeMetadataInSelectedCommand(Artworks::ISelectedArtworksSource &selectedArtworksSource,
                                       MetadataIO::MetadataIOCoordinator &metadataIOCoordinator):
             m_SelectedArtworksSource(selectedArtworksSource),
             m_MetadataIOCoordinator(metadataIOCoordinator)
@@ -105,7 +109,49 @@ namespace Commands {
         virtual void execute(const QJSValue &value) override;
 
     private:
-        Artworks::IArtworksSource &m_SelectedArtworksSource;
+        Artworks::ISelectedArtworksSource &m_SelectedArtworksSource;
+        MetadataIO::MetadataIOCoordinator &m_MetadataIOCoordinator;
+    };
+
+    class RemoveSelectedCommand: public IUICommandTemplate {
+    public:
+        RemoveSelectedCommand(Artworks::ISelectedIndicesSource &selectedIndicesSource,
+                              Models::ArtworksListModel &artworksListModel,
+                              const std::shared_ptr<ICommand> &saveSessionCommand):
+            m_SelectedIndicesSource(selectedIndicesSource),
+            m_ArtworksListModel(artworksListModel),
+            m_SaveSessionCommand(saveSessionCommand)
+        {}
+
+        // IUICommandTemplate interface
+    public:
+        virtual int getCommandID() override { return QMLExtensions::UICommandID::RemoveSelected; }
+        virtual void execute(const QJSValue &) override;
+        virtual void undo() override;
+        virtual bool canUndo() override { return true; }
+        virtual QString getDescription() const override;
+
+    private:
+        Artworks::ISelectedIndicesSource &m_SelectedIndicesSource;
+        Models::ArtworksListModel &m_ArtworksListModel;
+        std::shared_ptr<ICommand> m_SaveSessionCommand;
+    };
+
+    class ReimportMetadataForSelected: public IUICommandTemplate {
+    public:
+        ReimportMetadataForSelected(Artworks::ISelectedArtworksSource &selectedArtworksSource,
+                                    MetadataIO::MetadataIOCoordinator &metadataIOCoordinator):
+            m_SelectedArtworksSource(selectedArtworksSource),
+            m_MetadataIOCoordinator(metadataIOCoordinator)
+        {}
+
+        // IUICommandTemplate interface
+    public:
+        virtual int getCommandID() override { return QMLExtensions::UICommandID::ReimportFromSelected; }
+        virtual void execute(const QJSValue &) override;
+
+    private:
+        Artworks::ISelectedArtworksSource &m_SelectedArtworksSource;
         MetadataIO::MetadataIOCoordinator &m_MetadataIOCoordinator;
     };
 }

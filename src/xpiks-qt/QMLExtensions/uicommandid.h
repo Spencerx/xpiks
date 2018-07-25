@@ -27,7 +27,9 @@ namespace QMLExtensions {
             FixSpellingInSelected,
             ReviewDuplicatesInSelected,
             SaveSelected,
-            WipeMetadataInSelected
+            WipeMetadataInSelected,
+            RemoveSelected,
+            ReimportFromSelected
         };
         Q_ENUMS(CommandID)
     };

@@ -17,7 +17,8 @@
 #include <functional>
 #include <Common/flags.h>
 #include <Artworks/artworkssnapshot.h>
-#include <Artworks/iartworkssource.h>
+#include <Artworks/iselectedartworkssource.h>
+#include <Artworks/iselectedindicessource.h>
 #include <Models/Editing/quickbuffermessage.h>
 #include <Common/messages.h>
 
@@ -74,7 +75,8 @@ namespace Models {
 
     public:
         // returns currently selected artworks as a snapshot
-        virtual Artworks::ArtworksSnapshot getArtworks() override;
+        virtual Artworks::ArtworksSnapshot getSelectedArtworks() override;
+        virtual std::vector<int> getSelectedIndices() override { return getSelectedOriginalIndices(); }
 
 #ifdef CORE_TESTS
         int retrieveNumberOfSelectedItems();
@@ -141,15 +143,7 @@ namespace Models {
         Q_INVOKABLE void suggestCorrections(int proxyIndex) const;
 
     public:
-        //void removeSelectedArtworks();
-        //Q_INVOKABLE void wipeMetadataFromSelectedArtworks(bool useBackups);
         //Q_INVOKABLE void removeArtworksDirectory(int index);
-
-        //Q_INVOKABLE void reimportMetadataForSelected();
-
-
-
-
 
         Q_INVOKABLE void copyToQuickBuffer(int proxyIndex) const;
         //Q_INVOKABLE void fillFromQuickBuffer(int index) const;

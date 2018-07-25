@@ -17,7 +17,7 @@ namespace Artworks {
     class IArtworksSource {
     public:
         virtual ~IArtworksSource() {}
-        virtual ArtworksSnapshot getArtworks() = 0;
+        virtual ArtworksSnapshot getSelectedArtworks() = 0;
     };
 }
 
