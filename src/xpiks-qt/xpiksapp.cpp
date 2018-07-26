@@ -29,6 +29,7 @@
 #include <Commands/Services/generatethumbnailstemplate.h>
 #include <Commands/artworksupdatetemplate.h>
 #include <Commands/UI/selectedartworkscommands.h>
+#include <Commands/UI/singleeditablecommands.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_SettingsModel(environment),
@@ -52,11 +53,10 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_QuickBuffer(m_CurrentEditableModel, m_CommandManager),
     m_ReplaceModel(m_ColorsModel, m_CommandManager),
     m_DeleteKeywordsModel(m_CommandManager, m_PresetsModel),
-    m_ArtworkProxyModel(m_CommandManager, m_PresetsModel, m_KeywordsCompletions),
+    m_ArtworkProxyModel(m_CommandManager, m_PresetsModel, m_KeywordsCompletions, m_ArtworksUpdateHub),
     m_DuplicatesModel(m_ColorsModel),
     m_MaintenanceService(environment),
     m_AutoCompleteService(m_KeywordsAutoCompleteModel, m_PresetsModel, m_SettingsModel),
-    m_RequestsService(),
     m_RequestsService(m_SettingsModel.getProxySettings()),
     m_WarningsSettingsModel(environment, m_RequestsService),
     m_WarningsService(m_WarningsSettingsModel),
@@ -582,6 +582,12 @@ void XpiksApp::registerUICommands() {
 
                     std::make_shared<Commands::ReimportMetadataForSelected>(
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator)
+
+                    std::make_shared<Commands::FixSpellingInCombinedEditCommand>(
+                    m_CombinedArtworksModel, m_SpellSuggestionModel),
+
+                    std::make_shared<Commands::FixSpellingInArtworkProxyCommand>(
+                    m_ArtworkProxyModel, m_SpellSuggestionModel)
                 });
 }
 

@@ -512,8 +512,8 @@ namespace Models {
 
     void ArtworksListModel::spellCheckAllItems( SpellCheck::SpellCheckService &spellCheckService) const {
         LOG_DEBUG << "#";
-
-        spellCheckService.submitItems(m_ArtworkList);
+        std::vector<Artworks::ArtworkMetadata*> artworks(m_ArtworkList.begin(), m_ArtworkList.end());
+        spellCheckService.submitItems(artworks);
     }
 
     QVariant ArtworksListModel::data(const QModelIndex &index, int role) const {

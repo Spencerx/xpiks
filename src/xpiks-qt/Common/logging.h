@@ -12,6 +12,7 @@
 #define LOGGING_H
 
 #include <QDebug>
+#include "types.h"
 
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 4, 2))
 #define qInfo qDebug
@@ -55,5 +56,10 @@
 #else
 #define LOG_FOR_TESTS if (1) {} else qDebug()
 #endif
+
+QDebug& operator<< (QDebug &debug, const Common::ID_t &t) {
+    debug << t.get();
+    return debug;
+}
 
 #endif // LOGGING_H

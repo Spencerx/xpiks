@@ -72,7 +72,6 @@ namespace Models {
         CombinedArtworksModel(Commands::ICommandManager &commandManager,
                               KeywordsPresets::IPresetsManager &presetsManager,
                               AutoComplete::ICompletionSource &completionSource,
-                              SpellCheck::SpellCheckSuggestionModel &spellSuggestionsModel,
                               QObject *parent=0);
 
     protected:
@@ -112,6 +111,9 @@ namespace Models {
         void initDescription(const QString &description) { setDescription(description); setDescriptionModified(false); }
         void initTitle(const QString &title) { setTitle(title); setTitleModified(false); }
         void recombineArtworks();
+
+    public:
+        Artworks::BasicMetadataModel &getBasicModel() { return m_CommonKeywordsModel; }
 
     public:
         virtual void setDescription(const QString &value) override;
@@ -169,7 +171,7 @@ namespace Models {
         Q_INVOKABLE void clearKeywords();
 
         Q_INVOKABLE QString getKeywordsString() { return m_CommonKeywordsModel.getKeywordsString(); }
-        Q_INVOKABLE QObject *getBasicModel() {
+        Q_INVOKABLE QObject *getBasicModelObject () {
             QObject *item = &m_CommonKeywordsModel;
             QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
 
@@ -239,7 +241,6 @@ namespace Models {
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         AutoComplete::ICompletionSource &m_CompletionSource;
-        SpellCheck::SpellCheckSuggestionModel &m_SpellSuggestionsModel;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
         Common::ArtworkEditFlags m_EditFlags;

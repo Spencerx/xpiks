@@ -100,7 +100,7 @@ namespace QMLExtensions {
     void VideoCachingService::generateThumbnail(Artworks::VideoArtwork *videoArtwork) {
         Q_ASSERT(videoArtwork != nullptr);
         if (videoArtwork == nullptr) { return; }
-        LOG_DEBUG << "#" << videoArtwork->getItemID().get();
+        LOG_DEBUG << "#" << videoArtwork->getItemID();
 
 #ifndef INTEGRATION_TESTS
         const bool goodQualityAllowed = m_SwitcherModel.getGoodQualityVideoPreviews();

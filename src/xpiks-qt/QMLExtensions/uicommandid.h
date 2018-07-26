@@ -29,7 +29,10 @@ namespace QMLExtensions {
             SaveSelected,
             WipeMetadataInSelected,
             RemoveSelected,
-            ReimportFromSelected
+            ReimportFromSelected,
+            // ------------------
+            FixSpellingCombined,
+            FixSpellingSingle
         };
         Q_ENUMS(CommandID)
     };

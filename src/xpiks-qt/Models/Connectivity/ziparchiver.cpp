@@ -24,8 +24,7 @@
 #endif
 
 namespace Models {
-    ZipArchiver::ZipArchiver(Artworks::ISelectedArtworksSource &artworksSource):
-        m_ArtworksSource(artworksSource),
+    ZipArchiver::ZipArchiver():
         m_IsInProgress(false),
         m_HasErrors(false)
     {
@@ -63,11 +62,6 @@ namespace Models {
     void ZipArchiver::allFinished() {
         emit finishedProcessing();
         setInProgress(false);
-    }
-
-    void ZipArchiver::pullArtworks() {
-        LOG_DEBUG << "#";
-        setArtworks(m_ArtworksSource.getSelectedArtworks());
     }
 
     void ZipArchiver::archiveArtworks() {

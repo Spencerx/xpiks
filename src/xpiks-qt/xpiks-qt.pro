@@ -209,7 +209,8 @@ SOURCES += main.cpp \
     Services/artworksinspectionhub.cpp \
     QMLExtensions/uicommanddispatcher.cpp \
     Commands/UI/selectedartworkscommands.cpp \
-    Commands/UI/generalcommands.cpp
+    Commands/UI/generalcommands.cpp \
+    Commands/UI/singleeditablecommands.cpp
 
 RESOURCES += qml.qrc
 
@@ -518,7 +519,8 @@ HEADERS += \
     Commands/UI/selectedartworkscommands.h \
     Commands/UI/generalcommands.h \
     Artworks/iselectedartworkssource.h \
-    Artworks/iselectedindicessource.h
+    Artworks/iselectedindicessource.h \
+    Commands/UI/singleeditablecommands.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

@@ -67,7 +67,7 @@ namespace SpellCheck {
         void submitItem(Artworks::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags);
         void submitArtworks(const Artworks::ArtworksSnapshot &snapshot);
         void submitArtwork(const Artworks::ArtworkMetadata *artwork);
-        SpellCheckWorker::batch_id_t submitItems(const std::deque<Artworks::ArtworkMetadata *> &itemsToCheck);
+        SpellCheckWorker::batch_id_t submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck);
         SpellCheckWorker::batch_id_t submitItems(const std::vector<Artworks::BasicKeywordsModel *> &itemsToCheck);
         void submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck, const QStringList &wordsToCheck);
         virtual QStringList suggestCorrections(const QString &word) const;

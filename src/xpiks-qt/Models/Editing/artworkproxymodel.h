@@ -95,6 +95,9 @@ namespace Models {
         virtual void setTitle(const QString &title) override;
         virtual void setKeywords(const QStringList &keywords) override;
 
+    public:
+        Artworks::ArtworkMetadata *getArtwork() { return m_ArtworkMetadata; }
+
     signals:
         void imagePathChanged();
         void thumbnailChanged();
@@ -140,7 +143,7 @@ namespace Models {
         Q_INVOKABLE void setSourceArtwork(QObject *artworkMetadata);
         // --
         Q_INVOKABLE void resetModel();
-        Q_INVOKABLE QObject *getBasicModel() {
+        Q_INVOKABLE QObject *getBasicModelObject() {
             QObject *item = getBasicMetadataModel();
             QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
 

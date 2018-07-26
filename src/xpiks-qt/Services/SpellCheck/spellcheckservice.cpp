@@ -150,7 +150,7 @@ namespace SpellCheck {
         m_SpellCheckWorker->submitItem(item);
     }
 
-    SpellCheckWorker::batch_id_t SpellCheckService::submitItems(const std::deque<Artworks::ArtworkMetadata *> &itemsToCheck) {
+    SpellCheckWorker::batch_id_t SpellCheckService::submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck) {
         if (m_SpellCheckWorker == NULL) { return INVALID_BATCH_ID; }
         if (m_IsStopped) { return INVALID_BATCH_ID; }
 
