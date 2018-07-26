@@ -40,9 +40,9 @@ namespace Helpers {
         }
     }
 
-    void splitImagesVideo(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot,
-                          std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &imagesRawSnapshot,
-                          std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &videoRawSnapshot) {
+    void splitImagesVideo(const Artworks::ArtworksSnapshot::Container &rawSnapshot,
+                          Artworks::ArtworksSnapshot::Container &imagesRawSnapshot,
+                          Artworks::ArtworksSnapshot::Container &videoRawSnapshot) {
         const size_t size = rawSnapshot.size();
         imagesRawSnapshot.reserve(size / 2);
         videoRawSnapshot.reserve(size / 2);
@@ -68,7 +68,7 @@ namespace Helpers {
         }
     }
 
-    int retrieveImagesCount(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot) {
+    int retrieveImagesCount(const Artworks::ArtworksSnapshot::Container &rawSnapshot) {
         int count = 0;
 
         for (auto &locker: rawSnapshot) {
@@ -86,7 +86,7 @@ namespace Helpers {
         return count;
     }
 
-    int retrieveVideosCount(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot) {
+    int retrieveVideosCount(const Artworks::ArtworksSnapshot::Container &rawSnapshot) {
         int count = 0;
 
         for (auto &locker: rawSnapshot) {

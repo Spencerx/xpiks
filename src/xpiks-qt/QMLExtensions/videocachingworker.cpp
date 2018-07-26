@@ -83,7 +83,7 @@ namespace QMLExtensions {
     }
 
     void VideoCachingWorker::processOneItem(std::shared_ptr<VideoCacheRequest> &item) {
-        LOG_DEBUG << "Processing #" << item->getArtworkID();
+        LOG_DEBUG << "Processing #" << item->getArtworkID().get();
         if (checkLockedIO(item)) { return; }
         if (checkProcessed(item)) { return; }
 
@@ -213,7 +213,7 @@ namespace QMLExtensions {
     }
 
     void VideoCachingWorker::applyThumbnail(std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath, bool recacheArtwork) {
-        LOG_INFO << "#" << item->getArtworkID() << thumbnailPath;
+        LOG_INFO << "#" << item->getArtworkID().get() << thumbnailPath;
         item->setThumbnailPath(thumbnailPath);
 
         m_ArtworksUpdateHub.updateArtworkByID(item->getArtworkID(), item->getLastKnownIndex(), m_RolesToUpdate);
@@ -256,7 +256,7 @@ namespace QMLExtensions {
             isAlreadyProcessed = !needsUpdate;
 
             if (item->getThumbnailPath() != cachedPath) {
-                LOG_DEBUG << "Updating outdated thumbnail of artwork #" << item->getArtworkID();
+                LOG_DEBUG << "Updating outdated thumbnail of artwork #" << item->getArtworkID().get();
                 applyThumbnail(item, cachedPath, false);
             }
         }

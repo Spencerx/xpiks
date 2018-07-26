@@ -32,7 +32,7 @@ namespace Warnings {
 
 namespace Artworks {
     class ArtworkMetadata;
-    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata*>;
+    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
 }
 
 namespace SpellCheck {

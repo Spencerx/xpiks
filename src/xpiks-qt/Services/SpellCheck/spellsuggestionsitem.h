@@ -94,17 +94,17 @@ namespace SpellCheck {
     public:
         MetadataSpellSuggestionsItem(const QString &word,
                                      const QString &origin,
-                                     ISpellCheckable &spellCheckable);
+                                     ISpellCheckable *spellCheckable);
         MetadataSpellSuggestionsItem(const QString &word,
-                                     ISpellCheckable &spellCheckable);
+                                     ISpellCheckable *spellCheckable);
     public:
-        ISpellCheckable &getSpellCheckable() const { return m_SpellCheckable; }
+        ISpellCheckable *getSpellCheckable() const { return m_SpellCheckable; }
 
     public:
         virtual void finalizeReplacement() override;
 
     private:
-        ISpellCheckable &m_SpellCheckable;
+        ISpellCheckable *m_SpellCheckable;
     };
 
     class KeywordSpellSuggestions: public MetadataSpellSuggestionsItem

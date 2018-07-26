@@ -128,21 +128,23 @@ namespace SpellCheck {
 
     MetadataSpellSuggestionsItem::MetadataSpellSuggestionsItem(const QString &word,
                                                                const QString &origin,
-                                                               ISpellCheckable &spellCheckable):
+                                                               ISpellCheckable *spellCheckable):
         SpellSuggestionsItem(word, origin),
-        m_SpellCheckable(metadataOperator)
+        m_SpellCheckable(spellCheckable)
     {
+        Q_ASSERT(spellCheckable != nullptr);
     }
 
     MetadataSpellSuggestionsItem::MetadataSpellSuggestionsItem(const QString &word,
-                                                               ISpellCheckable &spellCheckable):
+                                                               ISpellCheckable *spellCheckable):
         SpellSuggestionsItem(word),
         m_SpellCheckable(spellCheckable)
     {
+        Q_ASSERT(spellCheckable != nullptr);
     }
 
     void MetadataSpellSuggestionsItem::finalizeReplacement() {
-        m_SpellCheckable.afterReplaceCallback();
+        m_SpellCheckable->afterReplaceCallback();
     }
 
     KeywordSpellSuggestions::KeywordSpellSuggestions(const QString &keyword,
@@ -174,8 +176,8 @@ namespace SpellCheck {
 
     void KeywordSpellSuggestions::replaceToSuggested(const QString &word, const QString &replacement) {
         LOG_INFO << word << "-->" << replacement;
-        auto &item = getSpellCheckable();
-        Common::KeywordReplaceResult result = item.fixKeywordSpelling(m_OriginalIndex, word, replacement);
+        auto *item = getSpellCheckable();
+        Common::KeywordReplaceResult result = item->fixKeywordSpelling(m_OriginalIndex, word, replacement);
         setReplacementSucceeded(result == Common::KeywordReplaceResult::Succeeded);
         m_ReplaceResult = result;
     }
@@ -196,8 +198,8 @@ namespace SpellCheck {
 
     void DescriptionSpellSuggestions::replaceToSuggested(const QString &word, const QString &replacement) {
         LOG_INFO << word << "-->" << replacement;
-        auto &item = getSpellCheckable();
-        bool success = item.fixDescriptionSpelling(word, replacement);
+        auto *item = getSpellCheckable();
+        bool success = item->fixDescriptionSpelling(word, replacement);
         setReplacementSucceeded(success);
 
         if (!success) {
@@ -221,8 +223,8 @@ namespace SpellCheck {
 
     void TitleSpellSuggestions::replaceToSuggested(const QString &word, const QString &replacement) {
         LOG_INFO << word << "-->" << replacement;
-        auto &item = getSpellCheckable();
-        bool success = item.fixTitleSpelling(word, replacement);
+        auto *item = getSpellCheckable();
+        bool success = item->fixTitleSpelling(word, replacement);
         setReplacementSucceeded(success);
 
         if (!success) {

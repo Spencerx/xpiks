@@ -681,7 +681,7 @@ namespace KeywordsPresets {
                 PresetModel *model = new PresetModel(nextID, name, keywords, item.m_GroupID);
                 m_PresetsList.push_back(model);
 
-                sendMessage(&keywordsModel);
+                sendMessage(&model->m_KeywordsModel);
             } else {
                 LOG_WARNING << "Preset" << name << "already exists. Skipping...";
             }

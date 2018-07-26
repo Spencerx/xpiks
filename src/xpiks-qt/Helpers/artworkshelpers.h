@@ -14,22 +14,24 @@
 #include <QVector>
 #include <vector>
 #include <memory>
+#include <Artworks/artworkssnapshot.h>
 
 namespace Artworks {
     class ArtworkMetadata;
     class ArtworkMetadataLocker;
     class ImageArtwork;
     class VideoArtwork;
-    class ArtworksSnapshot;
 }
 
 namespace Helpers {
-    void splitImagesVideo(const QVector<Artworks::ArtworkMetadata *> &artworks, QVector<Artworks::ArtworkMetadata *> &imageArtworks, QVector<Artworks::ArtworkMetadata *> &videoArtworks);
-    void splitImagesVideo(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot,
-                          std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &imagesRawSnapshot,
-                          std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &videoRawSnapshot);
-    int retrieveImagesCount(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot);
-    int retrieveVideosCount(const std::vector<std::shared_ptr<Artworks::ArtworkMetadataLocker> > &rawSnapshot);
+    void splitImagesVideo(const QVector<Artworks::ArtworkMetadata *> &artworks,
+                          QVector<Artworks::ArtworkMetadata *> &imageArtworks,
+                          QVector<Artworks::ArtworkMetadata *> &videoArtworks);
+    void splitImagesVideo(const Artworks::ArtworksSnapshot::Container &rawSnapshot,
+                          Artworks::ArtworksSnapshot::Container &imagesRawSnapshot,
+                          Artworks::ArtworksSnapshot::Container &videoRawSnapshot);
+    int retrieveImagesCount(const Artworks::ArtworksSnapshot::Container &rawSnapshot);
+    int retrieveVideosCount(const Artworks::ArtworksSnapshot::Container &rawSnapshot);
     int findAndAttachVectors(const Artworks::ArtworksSnapshot &snapshot, QVector<int> &modifiedIndices);
 }
 

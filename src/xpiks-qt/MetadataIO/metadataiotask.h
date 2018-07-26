@@ -13,13 +13,14 @@
 
 #include <Artworks/artworkmetadata.h>
 #include <Suggestion/locallibraryquery.h>
+#include <Common/irefcountedobject.h>
 
 namespace MetadataIO {
-    class MetadataIOTaskBase: public Artworks::ArtworkMetadataLocker
+    class MetadataIOTaskBase: public Common::HoldLocker<Artworks::ArtworkMetadata>
     {
     public:
-        MetadataIOTaskBase(Artworks::ArtworkMetadata *metadata):
-            Artworks::ArtworkMetadataLocker(metadata)
+        MetadataIOTaskBase(Artworks::ArtworkMetadata *artwork):
+            Common::HoldLocker<Artworks::ArtworkMetadata>(artwork)
         {
         }
     };

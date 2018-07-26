@@ -57,8 +57,8 @@ namespace SpellCheck {
         return result;
     }
 
-    QHash<Artworks::IMetadataOperator *, KeywordsSuggestionsVector> combineFailedReplacements(const SuggestionsVector &failedReplacements) {
-        QHash<Artworks::IMetadataOperator *, KeywordsSuggestionsVector > candidatesToRemove;
+    QHash<ISpellCheckable *, KeywordsSuggestionsVector> combineFailedReplacements(SuggestionsVector const &failedReplacements) {
+        QHash<ISpellCheckable *, KeywordsSuggestionsVector > candidatesToRemove;
         size_t size = failedReplacements.size();
         candidatesToRemove.reserve((int)size);
 
@@ -67,7 +67,7 @@ namespace SpellCheck {
             std::shared_ptr<KeywordSpellSuggestions> keywordsItem = std::dynamic_pointer_cast<KeywordSpellSuggestions>(item);
 
             if (keywordsItem) {
-                auto *item = keywordsItem->getMetadataOperator();
+                auto *item = keywordsItem->getSpellCheckable();
 
                 if (keywordsItem->isPotentialDuplicate()) {
                     if (!candidatesToRemove.contains(item)) {
@@ -82,7 +82,7 @@ namespace SpellCheck {
                     auto keywordsItems = combinedItem->getKeywordsDuplicateSuggestions();
 
                     for (auto &keywordsCombinedItem: keywordsItems) {
-                        auto *item = keywordsCombinedItem->getMetadataOperator();
+                        auto *item = keywordsCombinedItem->getSpellCheckable();
 
                         if (!candidatesToRemove.contains(item)) {
                             candidatesToRemove.insert(item, KeywordsSuggestionsVector());
@@ -99,38 +99,40 @@ namespace SpellCheck {
         return candidatesToRemove;
     }
 
-    void addMisspelledKeywords(const QStringList &keywords, SuggestionsVector &requests) {
-        requests.reserve(requests.size() + keywords.size(););
+    void addMisspelledKeywords(ISpellCheckable *item,
+                               std::vector<Artworks::KeywordItem> const &keywords,
+                               SuggestionsVector &requests) {
+        requests.reserve(requests.size() + keywords.size());
         for (auto &keywordItem: keywords) {
             if (!keywordItem.isPartOfAKeyword()) {
                 requests.emplace_back(
                             std::make_shared<KeywordSpellSuggestions>(
-                                keywordItem.m_Word, keywordItem.m_Index, *item));
+                                keywordItem.m_Word, keywordItem.m_Index, item));
             } else {
                 requests.emplace_back(
                             std::make_shared<KeywordSpellSuggestions>(
-                                keywordItem.m_Word, keywordItem.m_Index, keywordItem.m_OriginKeyword, *item));
+                                keywordItem.m_Word, keywordItem.m_Index, keywordItem.m_OriginKeyword, item));
             }
         }
 
         LOG_DEBUG << keywords.size() << "keywords requests";
     }
 
-    void addMisspelledTitle(const QStringList &words, SuggestionsVector &requests) {
+    void addMisspelledTitle(ISpellCheckable *item, const QStringList &words, SuggestionsVector &requests) {
         requests.reserve(requests.size() + words.size());
 
         for (auto &word: words) {
-            requests.emplace_back(std::make_shared<TitleSpellSuggestions>(word, *item));
+            requests.emplace_back(std::make_shared<TitleSpellSuggestions>(word, item));
         }
 
         LOG_DEBUG << words.size() << "title requests";
     }
 
-    void addMisspelledDescription(const QStringList &words, SuggestionsVector &request) {
+    void addMisspelledDescription(ISpellCheckable *item, const QStringList &words, SuggestionsVector &requests) {
         requests.reserve(requests.size() + words.size());
 
         for (auto &word: words) {
-            requests.emplace_back(std::make_shared<DescriptionSpellSuggestions>(word, *item));
+            requests.emplace_back(std::make_shared<DescriptionSpellSuggestions>(word, item));
         }
 
         LOG_DEBUG << words.size() << "description requests";
@@ -142,30 +144,30 @@ namespace SpellCheck {
         for (auto &locker: snapshot.getRawData()) {
             auto *item = locker->getArtworkMetadata();
 
-            auto words = item->retrieveMisspelledKeywords();
-            addMisspelledKeywords(words, requests);
+            auto keywords = item->retrieveMisspelledKeywords();
+            addMisspelledKeywords(item, keywords, requests);
 
-            words = item->retrieveMisspelledTitleWords();
-            addMisspelledTitle(words, requests);
+            auto words = item->retrieveMisspelledTitleWords();
+            addMisspelledTitle(item, words, requests);
 
             words = item->retrieveMisspelledDescriptionWords();
-            addMisspelledDescription(words, requests);
+            addMisspelledDescription(item, words, requests);
         }
 
         return requests;
     }
 
-    SuggestionsVector createSuggestionsRequests(const Artworks::BasicMetadataModel *basicModel) {
+    SuggestionsVector createSuggestionsRequests(Artworks::BasicMetadataModel *basicModel) {
         SuggestionsVector requests;
 
-        auto words = basicModel->retrieveMisspelledKeywords();
-        addMisspelledKeywords(words, requests);
+        auto keywords = basicModel->retrieveMisspelledKeywords();
+        addMisspelledKeywords(basicModel, keywords, requests);
 
-        words = basicModel->retrieveMisspelledTitleWords();
-        addMisspelledTitle(words, requests);
+        auto words = basicModel->retrieveMisspelledTitleWords();
+        addMisspelledTitle(basicModel, words, requests);
 
         words = basicModel->retrieveMisspelledDescriptionWords();
-        addMisspelledDescription(words, requests);
+        addMisspelledDescription(basicModel, words, requests);
 
         return requests;
     }
@@ -176,7 +178,7 @@ namespace SpellCheck {
         QAbstractListModel(),
         m_SpellCheckerService(spellCheckerService),
         m_ArtworksSource(artworksSource),
-        m_ArtworksListModel(artworksUpdateHub)
+        m_ArtworksUpdateHub(artworksUpdateHub)
     {
     }
 
@@ -270,16 +272,6 @@ namespace SpellCheck {
         auto requests = createSuggestionsRequests(snapshot);
         setupRequests(requests);
         m_CheckedItems = std::move(snapshot);
-    }
-
-    void SpellCheckSuggestionModel::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
-        this->setupItems(
-                    Helpers::map<Artworks::ArtworksSnapshot::ItemType, Artworks::BasicMetadataModel*>(
-                        snapshot.getRawData(),
-                        [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
-                        return locker->getArtworkMetadata()->getBasicModel();
-                    }),
-                Common::SuggestionFlags::All);
     }
 
     bool SpellCheckSuggestionModel::processFailedReplacements(const SuggestionsVector &failedReplacements) const {

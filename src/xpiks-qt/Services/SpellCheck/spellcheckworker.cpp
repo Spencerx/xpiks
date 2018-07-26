@@ -24,6 +24,7 @@
 #include <Common/flags.h>
 #include <Helpers/stringhelper.h>
 #include <Artworks/artworkmetadata.h>
+#include <Artworks/artworkssnapshot.h>
 #include <Services/Warnings/warningsservice.h>
 #include <Helpers/cpphelpers.h>
 #include "userdictionary.h"
@@ -168,11 +169,12 @@ namespace SpellCheck {
 
     void SpellCheckWorker::onResultsAvailable(std::vector<WorkResult> &results) {
         m_WarningsService.submitItems(
-                    Helpers::map<WorkResult, Artworks::ArtworkMetadata*>(
-                        results,
-                        [](const WorkResult &result) {
-            return result.m_Result->getArtworkMetadata();
-        }));
+                    Artworks::ArtworksSnapshot(
+                        Helpers::map<WorkResult, std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
+                            results,
+                            [](const WorkResult &result) {
+            return std::make_shared<Artworks::ArtworkMetadataLocker>(result.m_Result->getArtworkMetadata());
+        })));
     }
 
     QStringList SpellCheckWorker::retrieveCorrections(const QString &word) {

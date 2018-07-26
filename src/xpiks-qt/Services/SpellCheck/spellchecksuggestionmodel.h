@@ -18,6 +18,7 @@
 #include <utility>
 #include <functional>
 #include <Common/flags.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace Models {
     class ArtworksListModel;
@@ -25,7 +26,6 @@ namespace Models {
 
 namespace Artworks {
     class BasicMetadataModel;
-    class ArtworksSnapshot;
     class ISelectedArtworksSource;
 }
 
@@ -83,7 +83,6 @@ namespace SpellCheck {
 #endif
 
     private:
-        void setArtworks(const Artworks::ArtworksSnapshot &snapshot);
         bool processFailedReplacements(const SuggestionsVector &failedReplacements) const;
         SuggestionsVector setupSuggestions(const SuggestionsVector &items);
         void setupRequests(const SuggestionsVector &requests);

@@ -76,9 +76,9 @@ namespace Commands {
 
     class SaveSelectedCommand: public IUICommandTemplate {
     public:
-        ShowDuplicatesInSelectedCommand(Models::FilteredArtworksListModel &filteredArtworksList,
-                                        MetadataIO::MetadataIOCoordinator &metadataIOCoordinator,
-                                        MetadataIO::MetadataIOService &metadataIOService):
+        SaveSelectedCommand(Models::FilteredArtworksListModel &filteredArtworksList,
+                            MetadataIO::MetadataIOCoordinator &metadataIOCoordinator,
+                            MetadataIO::MetadataIOService &metadataIOService):
             m_FilteredArtworksList(filteredArtworksList),
             m_MetadataIOCoordinator(metadataIOCoordinator),
             m_MetadataIOService(metadataIOService)

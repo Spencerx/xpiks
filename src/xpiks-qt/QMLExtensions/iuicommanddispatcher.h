@@ -22,7 +22,7 @@ namespace QMLExtensions {
     class IUICommandDispatcher {
     public:
         virtual ~IUICommandDispatcher() {}
-        virtual void registerCommand(int commandID, const std::shared_ptr<Commands::IUICommandTemplate> &command) = 0;
+        virtual void registerCommand(const std::shared_ptr<Commands::IUICommandTemplate> &command) = 0;
         virtual void dispatchCommand(int commandID, const QJSValue &value) = 0;
     };
 }
