@@ -51,8 +51,6 @@ namespace SpellCheck {
                             Warnings::WarningsService &warningsService,
                             Models::SettingsModel &settingsModel);
 
-        virtual ~SpellCheckService();
-
     public:
         virtual void handleMessage(const Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck> &event) override;
         virtual void handleMessage(const Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck> &event) override;

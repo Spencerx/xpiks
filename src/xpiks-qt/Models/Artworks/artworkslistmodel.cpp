@@ -32,7 +32,6 @@
 #include <Models/Editing/currenteditableartwork.h>
 #include <Services/AutoComplete/icompletionsource.h>
 #include <Services/artworkupdaterequest.h>
-#include <Services/SpellCheck/spellcheckservice.h>
 
 namespace Models {
     using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
@@ -245,7 +244,7 @@ namespace Models {
         this->updateItems(Helpers::IndicesRanges(indices), rolesToUpdate);
     }
 
-    ArtworksListModel::ArtworksAddResult ArtworksListModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
+    ArtworksAddResult ArtworksListModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                                                      Common::AddFilesFlags flags) {
         const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
         Artworks::ArtworksSnapshot snapshot;
@@ -275,10 +274,10 @@ namespace Models {
         m_ArtworksRepository.setFullDirectories(fullDirectories);
         syncArtworksIndices(count, -1);
 
-        return ArtworksListModel::ArtworksAddResult(snapshot, attachedCount);
+        return ArtworksAddResult(snapshot, attachedCount);
     }
 
-    ArtworksListModel::ArtworksRemoveResult ArtworksListModel::removeFiles(const Helpers::IndicesRanges &ranges) {
+    ArtworksRemoveResult ArtworksListModel::removeFiles(const Helpers::IndicesRanges &ranges) {
         int selectedCount = 0;
         foreachArtwork(ranges, [this, &selectedCount](Artworks::ArtworkMetadata *artwork, size_t) {
             artwork->setRemoved();
@@ -307,7 +306,7 @@ namespace Models {
         };
     }
 
-    ArtworksListModel::ArtworksRemoveResult ArtworksListModel::removeFilesFromDirectory(int directoryIndex) {
+    ArtworksRemoveResult ArtworksListModel::removeFilesFromDirectory(int directoryIndex) {
         LOG_INFO << "Remove artworks directory at" << directoryIndex;
         const QString &directory = m_ArtworksRepository.getDirectoryPath(directoryIndex);
         LOG_FOR_TESTS << "Removing directory:" << directory;
@@ -329,6 +328,8 @@ namespace Models {
             this->m_ArtworksRepository.accountFile(artwork->getFilepath(), directoryID);
             Q_ASSERT(directoryID == artwork->getDirectoryID());
         });
+
+        updateSelection(SelectionType::All, QVector<int>() << IsSelectedRole);
         // TODO: finish this
     }
 
@@ -509,10 +510,10 @@ namespace Models {
         });
     }
 
-    void ArtworksListModel::spellCheckAllItems( SpellCheck::SpellCheckService &spellCheckService) const {
+    void ArtworksListModel::spellCheckAll() {
         LOG_DEBUG << "#";
         std::vector<Artworks::ArtworkMetadata*> artworks(m_ArtworkList.begin(), m_ArtworkList.end());
-        spellCheckService.submitItems(artworks);
+        sendMessage(artworks);
     }
 
     QVariant ArtworksListModel::data(const QModelIndex &index, int role) const {
@@ -990,13 +991,8 @@ namespace Models {
     }
 
     void ArtworksListModel::onSpellCheckerAvailable(bool afterRestart) {
-        LOG_DEBUG << afterRestart;
         if (afterRestart) {
-            SpellCheck::SpellCheckService *service = qobject_cast<SpellCheck::SpellCheckService*>(sender());
-            Q_ASSERT(service != nullptr);
-            if (service != nullptr) {
-                spellCheckAllItems(*service);
-            }
+            spellCheckAll();
         }
     }
 
@@ -1006,6 +1002,26 @@ namespace Models {
 
     void ArtworksListModel::onDuplicatesDisabled() {
         resetDuplicatesResults();
+    }
+
+    void ArtworksListModel::userDictUpdateHandler(const QStringList &keywords, bool overwritten) {
+        LOG_DEBUG << "#";
+        for (auto *artwork: m_ArtworkList) {
+            auto *basicModel = artwork->getBasicModel();
+            SpellCheck::SpellCheckItemInfo *info = basicModel->getSpellCheckInfo();
+            if (!overwritten) {
+                info->removeWordsFromErrors(keywords);
+            } else {
+                info->clear();
+            }
+        }
+
+        spellCheckAll();
+    }
+
+    void ArtworksListModel::userDictClearedHandler() {
+        LOG_DEBUG << "#";
+        spellCheckAll();
     }
 
     void ArtworksListModel::onMetadataWritingFinished() {

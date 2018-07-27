@@ -8,7 +8,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "artworkuploader.h"
+#include "artworksuploader.h"
 #include <QtConcurrent>
 #include <QFileInfo>
 #include <QQmlEngine>
@@ -28,7 +28,7 @@
 #include <uploadcontext.h>
 
 namespace Models {
-    ArtworkUploader::ArtworkUploader(Common::ISystemEnvironment &environment,
+    ArtworksUploader::ArtworksUploader(Common::ISystemEnvironment &environment,
                                      UploadInfoRepository &uploadInfoRepository,
                                      SettingsModel &settingsModel,
                                      QObject *parent):
@@ -43,17 +43,17 @@ namespace Models {
     {
     }
 
-    ArtworkUploader::~ArtworkUploader() {
+    ArtworksUploader::~ArtworksUploader() {
         if (m_TestingCredentialWatcher != nullptr) {
             delete m_TestingCredentialWatcher;
         }
     }
 
-    void ArtworkUploader::setFtpCoordinator(const std::shared_ptr<libxpks::net::FtpCoordinator> &ftpCoordinator) {
+    void ArtworksUploader::setFtpCoordinator(const std::shared_ptr<libxpks::net::FtpCoordinator> &ftpCoordinator) {
         auto *coordinator = ftpCoordinator.get();
-        QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadStarted, this, &ArtworkUploader::onUploadStarted);
-        QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadFinished, this, &ArtworkUploader::allFinished);
-        QObject::connect(coordinator, &libxpks::net::FtpCoordinator::overallProgressChanged, this, &ArtworkUploader::uploaderPercentChanged);
+        QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadStarted, this, &ArtworksUploader::onUploadStarted);
+        QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadFinished, this, &ArtworksUploader::allFinished);
+        QObject::connect(coordinator, &libxpks::net::FtpCoordinator::overallProgressChanged, this, &ArtworksUploader::uploaderPercentChanged);
 
         m_TestingCredentialWatcher = new QFutureWatcher<Connectivity::ContextValidationResult>(this);
         QObject::connect(m_TestingCredentialWatcher, SIGNAL(finished()), SLOT(credentialsTestingFinished()));
@@ -63,28 +63,28 @@ namespace Models {
         m_FtpCoordinator = std::dynamic_pointer_cast<Connectivity::IFtpCoordinator>(ftpCoordinator);
     }
 
-    void ArtworkUploader::setPercent(double value) {
+    void ArtworksUploader::setPercent(double value) {
         if (fabs(m_Percent - value) > PERCENT_EPSILON) {
             m_Percent = value;
             emit percentChanged();
         }
     }
 
-    void ArtworkUploader::setInProgress(bool value) {
+    void ArtworksUploader::setInProgress(bool value) {
         if (m_IsInProgress != value) {
             m_IsInProgress = value;
             emit inProgressChanged();
         }
     }
 
-    void ArtworkUploader::setHasErrors(bool value) {
+    void ArtworksUploader::setHasErrors(bool value) {
         if (m_HasErrors != value) {
             m_HasErrors = value;
             emit hasErrorsChanged();
         }
     }
 
-    void ArtworkUploader::onUploadStarted() {
+    void ArtworksUploader::onUploadStarted() {
         LOG_DEBUG << "#";
         setHasErrors(false);
         setInProgress(true);
@@ -92,7 +92,7 @@ namespace Models {
         emit startedProcessing();
     }
 
-    void ArtworkUploader::allFinished(bool anyError) {
+    void ArtworksUploader::allFinished(bool anyError) {
         LOG_INFO << "anyError =" << anyError;
         setHasErrors(anyError);
         setPercent(100);
@@ -100,29 +100,29 @@ namespace Models {
         emit finishedProcessing();
     }
 
-    void ArtworkUploader::credentialsTestingFinished() {
+    void ArtworksUploader::credentialsTestingFinished() {
         Connectivity::ContextValidationResult result = m_TestingCredentialWatcher->result();
         emit credentialsChecked(result.m_Result, result.m_Host);
     }
 
-    void ArtworkUploader::uploaderPercentChanged(double percent) {
+    void ArtworksUploader::uploaderPercentChanged(double percent) {
         setPercent(percent);
         LOG_DEBUG << "Overall progress =" << percent;
 
         m_UploadInfos.updatePercentages();
     }
 
-    void ArtworkUploader::setArtworks(Artworks::ArtworksSnapshot &&snapshot) {
+    void ArtworksUploader::setArtworks(Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
         m_ArtworksSnapshot = std::move(snapshot);
         emit itemsCountChanged();
     }
 
-    void ArtworkUploader::uploadArtworks() {
+    void ArtworksUploader::uploadArtworks() {
         doUploadArtworks(m_ArtworksSnapshot);
     }
 
-    void ArtworkUploader::checkCredentials(const QString &host, const QString &username,
+    void ArtworksUploader::checkCredentials(const QString &host, const QString &username,
                                            const QString &password, bool disablePassiveMode, bool disableEPSV) {
         if (host.isEmpty() || username.isEmpty()) {
             emit credentialsChecked(false, host);
@@ -145,7 +145,7 @@ namespace Models {
         m_TestingCredentialWatcher->setFuture(QtConcurrent::run(Connectivity::isContextValid, context));
     }
 
-    bool ArtworkUploader::needCreateArchives() const {
+    bool ArtworksUploader::needCreateArchives() const {
         bool needCreate = false;
 
         if (m_UploadInfos.isZippingRequired()) {
@@ -170,37 +170,37 @@ namespace Models {
         return needCreate;
     }
 
-    void ArtworkUploader::resetModel() {
+    void ArtworksUploader::resetModel() {
         LOG_DEBUG << "#";
         clearModel();
         resetArtworks();
     }
 
-    void ArtworkUploader::clearModel() {
+    void ArtworksUploader::clearModel() {
         LOG_DEBUG << "#";
         resetProgress();
         setHasErrors(false);
         m_UploadWatcher.resetModel();
     }
 
-    void ArtworkUploader::resetProgress() {
+    void ArtworksUploader::resetProgress() {
         LOG_DEBUG << "#";
         setPercent(0);
         setInProgress(false);
     }
 
-    void ArtworkUploader::cancelOperation() {
+    void ArtworksUploader::cancelOperation() {
         LOG_DEBUG << "#";
         m_FtpCoordinator->cancelUpload();
     }
 
-    void ArtworkUploader::resetArtworks() {
+    void ArtworksUploader::resetArtworks() {
         LOG_DEBUG << "#";
         m_ArtworksSnapshot.clear();
         emit itemsCountChanged();
     }
 
-    void ArtworkUploader::doUploadArtworks(const Artworks::ArtworksSnapshot &snapshot) {
+    void ArtworksUploader::doUploadArtworks(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_INFO << snapshot.size() << "artwork(s)";
         Q_ASSERT(m_FtpCoordinator != nullptr);
 
@@ -219,7 +219,7 @@ namespace Models {
         sendMessage(Connectivity::UserAction::Upload);
     }
 
-    bool ArtworkUploader::removeUnavailableItems() {
+    bool ArtworksUploader::removeUnavailableItems() {
         LOG_DEBUG << "#";
 
         auto &artworksListOld = getArtworksSnapshot();
@@ -248,7 +248,7 @@ namespace Models {
         return anyUnavailable;
     }
 
-    QString ArtworkUploader::getFtpName(const QString &stockAddress) const {
+    QString ArtworksUploader::getFtpName(const QString &stockAddress) const {
         QString result;
         auto info = m_UploadInfos.tryFindItemByHost(stockAddress);
         if (info) {
@@ -258,7 +258,7 @@ namespace Models {
         return result;
     }
 
-    QObject *ArtworkUploader::getUploadWatcher() {
+    QObject *ArtworksUploader::getUploadWatcher() {
         auto *model = &m_UploadWatcher;
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
 

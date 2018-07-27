@@ -44,10 +44,6 @@ namespace AutoComplete {
     class ICompletionSource;
 }
 
-namespace SpellCheck {
-    class SpellCheckSuggestionModel;
-}
-
 namespace Models {
     class CombinedArtworksModel:
             public ArtworksViewModel,
@@ -181,8 +177,6 @@ namespace Models {
             return item;
         }
 
-        Q_INVOKABLE void suggestCorrections();
-        Q_INVOKABLE void setupDuplicatesModel();
         Q_INVOKABLE void assignFromSelected();
         Q_INVOKABLE void plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator=false);
 

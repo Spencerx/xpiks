@@ -165,7 +165,6 @@ SOURCES += main.cpp \
     Commands/Files/addfilescommand.cpp \
     Commands/Files/addtorecenttemplate.cpp \
     Commands/Files/removedirectorycommand.cpp \
-    Commands/Files/removefilescommand.cpp \
     Commands/Files/removefilescommandbase.cpp \
     Commands/Editing/editartworkstemplate.cpp \
     Commands/Editing/expandpresettemplate.cpp \
@@ -176,7 +175,6 @@ SOURCES += main.cpp \
     Models/Artworks/artworksviewmodel.cpp \
     Models/Artworks/filteredartworkslistmodel.cpp \
     Models/Connectivity/abstractconfigupdatermodel.cpp \
-    Models/Connectivity/artworkuploader.cpp \
     Models/Connectivity/proxysettings.cpp \
     Models/Connectivity/uploadinforepository.cpp \
     Models/Connectivity/ziparchiver.cpp \
@@ -210,7 +208,9 @@ SOURCES += main.cpp \
     Commands/UI/selectedartworkscommands.cpp \
     Commands/UI/generalcommands.cpp \
     Commands/UI/singleeditablecommands.cpp \
-    Common/logging.cpp
+    Common/logging.cpp \
+    Models/Connectivity/artworksuploader.cpp \
+    Commands/Files/removeselectedfilescommand.cpp
 
 RESOURCES += qml.qrc
 
@@ -438,7 +438,6 @@ HEADERS += \
     Commands/Files/addfilescommand.h \
     Commands/Files/addtorecenttemplate.h \
     Commands/Files/removedirectorycommand.h \
-    Commands/Files/removefilescommand.h \
     Commands/Files/removefilescommandbase.h \
     Commands/Base/compositecommandtemplate.h \
     Commands/Base/emptycommand.h \
@@ -458,7 +457,6 @@ HEADERS += \
     Models/Artworks/artworksviewmodel.h \
     Models/Artworks/filteredartworkslistmodel.h \
     Models/Connectivity/abstractconfigupdatermodel.h \
-    Models/Connectivity/artworkuploader.h \
     Models/Connectivity/proxysettings.h \
     Models/Connectivity/uploadinfo.h \
     Models/Connectivity/uploadinforepository.h \
@@ -519,7 +517,11 @@ HEADERS += \
     Artworks/iselectedartworkssource.h \
     Artworks/iselectedindicessource.h \
     Commands/UI/singleeditablecommands.h \
-    Commands/Base/commanduiwrapper.h
+    Commands/Base/commanduiwrapper.h \
+    Models/Artworks/artworklistoperations.h \
+    Models/Connectivity/artworksuploader.h \
+    Commands/UI/sourcetargetcommand.h \
+    Commands/Files/removeselectedfilescommand.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

@@ -34,10 +34,12 @@ namespace Artworks {
 namespace Services {
     class ArtworksInspectionHub:
             public Common::MessagesTarget<Artworks::ArtworkMetadata*>,
-            public Common::MessagesTarget<Artworks::BasicKeywordsModel*>
+            public Common::MessagesTarget<Artworks::BasicKeywordsModel*>,
+            public Common::MessagesTarget<std::vector<Artworks::ArtworkMetadata*>>
     {
         using Common::MessagesTarget<Artworks::ArtworkMetadata*>::handleMessage;
         using Common::MessagesTarget<Artworks::BasicKeywordsModel*>::handleMessage;
+        using Common::MessagesTarget<std::vector<Artworks::ArtworkMetadata*>>::handleMessage;
 
     public:
         ArtworksInspectionHub(SpellCheck::SpellCheckService &spellCheckService,
@@ -47,10 +49,11 @@ namespace Services {
     public:
         virtual void handleMessage(Artworks::ArtworkMetadata* const &change) override;
         virtual void handleMessage(Artworks::BasicKeywordsModel* const &change) override;
+        virtual void handleMessage(std::vector<Artworks::ArtworkMetadata*> const &change) override;
 
     public:
         void inspectArtwork(Artworks::ArtworkMetadata *artwork);
-        void inspectArtworks(const Artworks::ArtworksSnapshot &snapshot);
+        void inspectArtworks(Artworks::ArtworksSnapshot const &snapshot);
         void inspectBasicModel(Artworks::BasicKeywordsModel *basicModel);
 
     private:

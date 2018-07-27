@@ -22,62 +22,62 @@
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Models/Editing/findandreplacemodel.h>
+#include <Models/Connectivity/artworksuploader.h>
 
 namespace Commands {
-    void FixSpellingInSelectedCommand::execute(const QJSValue &) {
-        LOG_DEBUG << "#";
-        Artworks::ArtworksSnapshot snapshot = std::move(m_Source.getSelectedArtworks());
-        m_Target.setupArtworks(snapshot);
-    }
-
-    void ShowDuplicatesInSelectedCommand::execute(const QJSValue &) {
-        LOG_DEBUG << "#";
-        m_Target.setupModel(m_Source.getSelectedArtworks());
-    }
-
-    void SaveSelectedCommand::execute(const QJSValue &value) {
-        LOG_DEBUG << value.toString();
-        bool useBackups = false;
-        if (value.isBool()) {
-            useBackups = value.toBool();
+    namespace UI {
+        void FixSpellingInSelectedCommand::execute(const QJSValue &) {
+            LOG_DEBUG << "#";
+            Artworks::ArtworksSnapshot snapshot = std::move(m_Source.getSelectedArtworks());
+            m_Target.setupArtworks(snapshot);
         }
 
-        Artworks::ArtworksSnapshot snapshot = std::move(m_FilteredArtworksList.getArtworksToSave(false));
-        m_MetadataIOService.writeArtworks(snapshot);
-        m_MetadataIOCoordinator.writeMetadataExifTool(snapshot, useBackups);
-    }
-
-    void WipeMetadataInSelectedCommand::execute(const QJSValue &value) {
-        LOG_DEBUG << value.toString();
-        bool useBackups = false;
-        if (value.isBool()) {
-            useBackups = value.toBool();
+        void ShowDuplicatesInSelectedCommand::execute(const QJSValue &) {
+            LOG_DEBUG << "#";
+            m_Target.setupModel(m_Source.getSelectedArtworks());
         }
 
-        m_Target.wipeAllMetadataExifTool(m_Source.getSelectedArtworks(), useBackups);
-    }
+        void SaveSelectedCommand::execute(const QJSValue &value) {
+            LOG_DEBUG << value.toString();
+            bool useBackups = false;
+            if (value.isBool()) {
+                useBackups = value.toBool();
+            }
 
-    void RemoveSelectedCommand::execute(const QJSValue &) {
-        LOG_DEBUG << "#";
-        auto indices = m_SelectedIndicesSource.getSelectedIndices();
-        auto removeResult = m_ArtworksListModel.removeFiles(Helpers::IndicesRanges(indices));
-        if (removeResult.m_RemovedCount > 0) {
-            m_SaveSessionCommand->execute();
+            Artworks::ArtworksSnapshot snapshot = std::move(m_FilteredArtworksList.getArtworksToSave(false));
+            m_MetadataIOService.writeArtworks(snapshot);
+            m_MetadataIOCoordinator.writeMetadataExifTool(snapshot, useBackups);
         }
-    }
 
-    void ReimportMetadataForSelected::execute(const QJSValue &) {
-        LOG_DEBUG << "#";
-        m_Target.readMetadataExifTool(m_Source.getSelectedArtworks(), INVALID_BATCH_ID);
-    }
+        void WipeMetadataInSelectedCommand::execute(const QJSValue &value) {
+            LOG_DEBUG << value.toString();
+            bool useBackups = false;
+            if (value.isBool()) {
+                useBackups = value.toBool();
+            }
 
-    void ExportSelectedToCSV::execute(const QJSValue &) {
-        LOG_DEBUG << "#";
-        m_Target.setArtworksToExport(m_Source.getSelectedArtworks());
-    }
+            m_Target.wipeAllMetadataExifTool(m_Source.getSelectedArtworks(), useBackups);
+        }
 
-    void FindAndReplaceInSelected::execute(const QJSValue &) {
-        LOG_DEBUG << "#";
-        m_Target.findReplaceCandidates(m_Source.getSelectedArtworks());
+        void ReimportMetadataForSelected::execute(const QJSValue &) {
+            LOG_DEBUG << "#";
+            m_Target.readMetadataExifTool(m_Source.getSelectedArtworks(), INVALID_BATCH_ID);
+        }
+
+        void ExportSelectedToCSV::execute(const QJSValue &) {
+            LOG_DEBUG << "#";
+            m_Target.setArtworksToExport(m_Source.getSelectedArtworks());
+        }
+
+        void FindAndReplaceInSelected::execute(const QJSValue &) {
+            LOG_DEBUG << "#";
+            m_Target.findReplaceCandidates(m_Source.getSelectedArtworks());
+        }
+
+        void UploadSelected::execute(const QJSValue &) {
+            LOG_DEBUG << "#";
+            auto selectedArtworks = m_Source.getSelectedArtworks();
+            m_Target.setArtworks(selectedArtworks);
+        }
     }
 }

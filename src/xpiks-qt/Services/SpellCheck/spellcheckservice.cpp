@@ -33,10 +33,6 @@ namespace SpellCheck {
                          this, &SpellCheckService::userDictWordsNumberChanged);
     }
 
-    SpellCheckService::~SpellCheckService() {
-        if (m_SpellCheckWorker != nullptr) {}
-    }
-
     void SpellCheckService::handleMessage(const Common::NamedType<Artworks::ArtworkMetadata *, Common::MessageType::SpellCheck> &event) {
         this->submitArtwork(event.get());
     }

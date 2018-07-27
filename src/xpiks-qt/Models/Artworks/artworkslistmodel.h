@@ -15,6 +15,7 @@
 #include <functional>
 #include <deque>
 #include <vector>
+#include "artworklistoperations.h"
 #include <Common/messages.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkssnapshot.h>
@@ -46,10 +47,6 @@ namespace Services {
     class ArtworkUpdateRequest;
 }
 
-namespace SpellCheck {
-    class SpellCheckService;
-}
-
 namespace Models {
     class ArtworksRepository;
     class ICurrentEidtable;
@@ -57,7 +54,8 @@ namespace Models {
     class ArtworksListModel:
             public QAbstractListModel,
             public Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>,
-            public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>
+            public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>,
+            public Common::MessagesSource<std::vector<Artworks::ArtworkMetadata*>>
     {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
@@ -65,6 +63,7 @@ namespace Models {
         using ArtworksContainer = std::deque<Artworks::ArtworkMetadata *>;
         using Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
+        using Common::MessagesSource<std::vector<Artworks::ArtworkMetadata*>>::sendMessage;
 
     public:
         ArtworksListModel(ArtworksRepository &repository,
@@ -96,21 +95,6 @@ namespace Models {
             ArtworkThumbnailRole,
             IsReadOnlyRole,
             RolesNumber
-        };
-
-        struct ArtworksAddResult {
-            ArtworksAddResult(Artworks::ArtworksSnapshot &snapshot, int attachedVectorsCount):
-                m_Snapshot(std::move(snapshot)),
-                m_AttachedVectorsCount(attachedVectorsCount)
-            { }
-            Artworks::ArtworksSnapshot m_Snapshot;
-            int m_AttachedVectorsCount;
-        };
-
-        struct ArtworksRemoveResult {
-            QSet<qint64> m_SelectedDirectoryIds;
-            size_t m_RemovedCount;
-            bool m_UnselectAll;
         };
 
     public:
@@ -165,7 +149,7 @@ namespace Models {
         // message handlers
         void resetSpellCheckResults();
         void resetDuplicatesResults();
-        void spellCheckAllItems(SpellCheck::SpellCheckService &spellCheckService) const;
+        void spellCheckAll();
 
     public:
         // qabstractlistmodel methods

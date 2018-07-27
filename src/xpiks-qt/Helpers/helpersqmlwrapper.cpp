@@ -18,7 +18,7 @@
 #include <QQmlEngine>
 #include "keywordshelpers.h"
 #include <Models/logsmodel.h>
-#include <Models/Connectivity/artworkuploader.h>
+#include <Models/Connectivity/artworksuploader.h>
 #include <Services/AutoComplete/stringsautocompletemodel.h>
 #include <Models/Connectivity/ziparchiver.h>
 #include <Services/SpellCheck/spellcheckservice.h>

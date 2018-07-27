@@ -34,10 +34,13 @@ namespace QMLExtensions {
             ReimportFromSelected,
             ExportSelectedToCSV,
             FindAndReplaceInSelected,
+            UploadSelected,
             // ------------------
             FixSpellingCombined,
             FixSpellingSingle,
-            FixSpellingArtwork
+            FixSpellingArtwork,
+            ShowDuplicatesSingle,
+            ShowDuplicatesCombined
         };
         Q_ENUMS(CommandID)
     };

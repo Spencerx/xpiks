@@ -34,10 +34,6 @@ namespace AutoComplete {
     class ICompletionSource;
 }
 
-namespace SpellCheck {
-    class SpellCheckSuggestionModel;
-}
-
 namespace Models {
     class ArtworkMetadata;
     class ArtworkElement;

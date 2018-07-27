@@ -18,7 +18,7 @@
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
 #include <Models/Artworks/artworksrepository.h>
-#include <Models/Connectivity/artworkuploader.h>
+#include <Models/Connectivity/artworksuploader.h>
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/deletekeywordsviewmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
@@ -201,7 +201,7 @@ protected:
     std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
     Microstocks::MicrostockAPIClients m_ApiClients;
     std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
-    Models::ArtworkUploader m_ArtworkUploader;
+    Models::ArtworksUploader m_ArtworksUploader;
 
     // other
     Models::LanguagesModel m_LanguagesModel;

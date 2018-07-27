@@ -13,6 +13,7 @@
 
 #include <Commands/Base/iuicommandtemplate.h>
 #include <QMLExtensions/uicommandid.h>
+#include "sourcetargetcommand.h"
 
 namespace Models {
     class CombinedArtworksModel;
@@ -23,66 +24,52 @@ namespace Models {
 
 namespace SpellCheck {
     class SpellCheckSuggestionModel;
-    class FilteredArtworksListModel;
+    class DuplicatesReviewModel;
 }
 
 namespace Commands {
-    class FixSpellingInCombinedEditCommand: public IUICommandTemplate {
-    public:
-        FixSpellingInCombinedEditCommand(Models::CombinedArtworksModel &combinedArtworksModel,
-                                         SpellCheck::SpellCheckSuggestionModel &suggestionsModel):
-            m_CombinedArtworksModel(combinedArtworksModel),
-            m_SuggestionsModel(suggestionsModel)
-        {}
+    namespace UI {
+        SOURCE_TARGET_COMMAND(FixSpellingInCombinedEditCommand,
+                              QMLExtensions::UICommandID::FixSpellingCombined,
+                              Models::CombinedArtworksModel,
+                              SpellCheck::SpellCheckSuggestionModel);
 
-        // IUICommandTemplate interface
-    public:
-        virtual int getCommandID() override { return QMLExtensions::UICommandID::FixSpellingCombined; }
-        virtual void execute(const QJSValue &) override;
+        SOURCE_TARGET_COMMAND(FixSpellingInArtworkProxyCommand,
+                              QMLExtensions::UICommandID::FixSpellingSingle,
+                              Models::ArtworkProxyModel,
+                              SpellCheck::SpellCheckSuggestionModel);
 
-    private:
-        Models::CombinedArtworksModel &m_CombinedArtworksModel;
-        SpellCheck::SpellCheckSuggestionModel &m_SuggestionsModel;
-    };
+        class FixSpellingInArtworkCommand: public IUICommandTemplate {
+        public:
+            FixSpellingInArtworkCommand(Models::FilteredArtworksListModel &filteredArtworksModel,
+                                        Models::ArtworksListModel &artworksListModel,
+                                        SpellCheck::SpellCheckSuggestionModel &suggestionsModel):
+                m_FilteredArtworksModel(filteredArtworksModel),
+                m_ArtworksListModel(artworksListModel),
+                m_SuggestionsModel(suggestionsModel)
+            {}
 
-    class FixSpellingInArtworkProxyCommand: public IUICommandTemplate {
-    public:
-        FixSpellingInArtworkProxyCommand(Models::ArtworkProxyModel &artworkProxyModel,
-                                         SpellCheck::SpellCheckSuggestionModel &suggestionsModel):
-            m_ArtworkProxyModel(artworkProxyModel),
-            m_SuggestionsModel(suggestionsModel)
-        {}
+            // IUICommandTemplate interface
+        public:
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::FixSpellingArtwork; }
+            virtual void execute(const QJSValue &value) override;
 
-        // IUICommandTemplate interface
-    public:
-        virtual int getCommandID() override { return QMLExtensions::UICommandID::FixSpellingSingle; }
-        virtual void execute(const QJSValue &) override;
+        private:
+            Models::FilteredArtworksListModel &m_FilteredArtworksModel;
+            Models::ArtworksListModel &m_ArtworksListModel;
+            SpellCheck::SpellCheckSuggestionModel &m_SuggestionsModel;
+        };
 
-    private:
-        Models::ArtworkProxyModel &m_ArtworkProxyModel;
-        SpellCheck::SpellCheckSuggestionModel &m_SuggestionsModel;
-    };
+        SOURCE_TARGET_COMMAND(ShowDuplicatesForSingle,
+                              QMLExtensions::UICommandID::ShowDuplicatesSingle,
+                              Models::ArtworkProxyModel,
+                              SpellCheck::DuplicatesReviewModel);
 
-    class FixSpellingInArtworkCommand: public IUICommandTemplate {
-    public:
-        FixSpellingInArtworkCommand(Models::FilteredArtworksListModel &filteredArtworksModel,
-                                    Models::ArtworksListModel &artworksListModel,
-                                    SpellCheck::SpellCheckSuggestionModel &suggestionsModel):
-            m_FilteredArtworksModel(filteredArtworksModel),
-            m_ArtworksListModel(artworksListModel),
-            m_SuggestionsModel(suggestionsModel)
-        {}
-
-        // IUICommandTemplate interface
-    public:
-        virtual int getCommandID() override { return QMLExtensions::UICommandID::FixSpellingArtwork; }
-        virtual void execute(const QJSValue &value) override;
-
-    private:
-        Models::FilteredArtworksListModel &m_FilteredArtworksModel;
-        Models::ArtworksListModel &m_ArtworksListModel;
-        SpellCheck::SpellCheckSuggestionModel &m_SuggestionsModel;
-    };
+        SOURCE_TARGET_COMMAND(ShowDuplicatesForCombined,
+                              QMLExtensions::UICommandID::ShowDuplicatesCombined,
+                              Models::CombinedArtworksModel,
+                              SpellCheck::DuplicatesReviewModel);
+    }
 }
 
 #endif // SINGLEEDITABLECOMMANDS_H

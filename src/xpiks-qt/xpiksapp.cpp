@@ -31,6 +31,7 @@
 #include <Commands/UI/selectedartworkscommands.h>
 #include <Commands/UI/singleeditablecommands.h>
 #include <Commands/Base/commanduiwrapper.h>
+#include <Commands/Files/removeselectedfilescommand.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_SettingsModel(environment, m_SecretsManager),
@@ -75,7 +76,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
     m_ApiClients(m_SecretsStorage.get()),
     m_FtpCoordinator(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel)),
-    m_ArtworkUploader(environment, m_UploadInfoRepository, m_SettingsModel),
+    m_ArtworksUploader(environment, m_UploadInfoRepository, m_SettingsModel),
     m_LanguagesModel(m_SettingsModel),
     m_UIManager(environment, m_ColorsModel, m_SettingsModel),
     m_UserDictionary(environment),
@@ -129,7 +130,7 @@ void XpiksApp::initialize() {
     m_TelemetryService.initialize();
 
     m_FtpCoordinator.reset(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel));
-    m_ArtworkUploader.setFtpCoordinator(m_FtpCoordinator);
+    m_ArtworksUploader.setFtpCoordinator(m_FtpCoordinator);
 
     // other initializations
     m_SecretsManager.setMasterPasswordHash(m_SettingsModel.getMasterPasswordHash());
@@ -149,7 +150,7 @@ void XpiksApp::initialize() {
     m_ColorsModel.applyTheme(m_SettingsModel.getSelectedThemeIndex());
 
     m_AvailabilityListeners.append(&m_CombinedArtworksModel);
-    m_AvailabilityListeners.append(&m_ArtworkUploader);
+    m_AvailabilityListeners.append(&m_ArtworksUploader);
     m_AvailabilityListeners.append(&m_ZipArchiver);
 }
 
@@ -569,35 +570,46 @@ void XpiksApp::registerUICommands() {
 
     m_UICommandDispatcher.registerCommands(
     {
-                    std::make_shared<Commands::FixSpellingInSelectedCommand>(
+                    std::make_shared<Commands::UI::FixSpellingInSelectedCommand>(
                     m_FilteredArtworksListModel, m_SpellSuggestionModel),
 
-                    std::make_shared<Commands::ShowDuplicatesInSelectedCommand>(
+                    std::make_shared<Commands::UI::ShowDuplicatesInSelectedCommand>(
                     m_FilteredArtworksListModel, m_DuplicatesModel),
 
-                    std::make_shared<Commands::SaveSelectedCommand>(
+                    std::make_shared<Commands::UI::SaveSelectedCommand>(
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator, m_MetadataIOService),
 
-                    std::make_shared<Commands::WipeMetadataInSelectedCommand>(
+                    std::make_shared<Commands::UI::WipeMetadataInSelectedCommand>(
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator),
 
-                    std::make_shared<Commands::RemoveSelectedCommand>(
-                    m_FilteredArtworksListModel, m_ArtworksListModel, saveSessionCommand),
+                    std::make_shared<Commands::CommandUIWrapper>(
+                    QMLExtensions::UICommandID::RemoveSelected,
+                    std::make_shared<Commands::RemoveSelectedFilesCommand>(
+                    m_FilteredArtworksListModel, m_ArtworksListModel, m_ArtworksRepository, saveSessionCommand)),
 
-                    std::make_shared<Commands::ReimportMetadataForSelected>(
+                    std::make_shared<Commands::UI::ReimportMetadataForSelected>(
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator),
 
-                    std::make_shared<Commands::FixSpellingInCombinedEditCommand>(
+                    std::make_shared<Commands::UI::FixSpellingInCombinedEditCommand>(
                     m_CombinedArtworksModel, m_SpellSuggestionModel),
 
-                    std::make_shared<Commands::FixSpellingInArtworkProxyCommand>(
+                    std::make_shared<Commands::UI::FixSpellingInArtworkProxyCommand>(
                     m_ArtworkProxyModel, m_SpellSuggestionModel),
 
-                    std::make_shared<Commands::FixSpellingInArtworkCommand>(
+                    std::make_shared<Commands::UI::FixSpellingInArtworkCommand>(
                     m_FilteredArtworksListModel, m_ArtworksListModel, m_SpellSuggestionModel),
 
                     std::make_shared<Commands::CommandUIWrapper>(
-                    QMLExtensions::UICommandID::SaveSession, saveSessionCommand)
+                    QMLExtensions::UICommandID::SaveSession, saveSessionCommand),
+
+                    std::make_shared<Commands::UI::UploadSelected>(
+                    m_FilteredArtworksListModel, m_ArtworksUploader),
+
+                    std::make_shared<Commands::UI::ShowDuplicatesForSingle>(
+                    m_ArtworkProxyModel, m_DuplicatesModel),
+
+                    std::make_shared<Commands::UI::ShowDuplicatesForCombined>(
+                    m_CombinedArtworksModel, m_DuplicatesModel)
                 });
 }
 

@@ -9,6 +9,7 @@
  */
 
 #include "removedirectorycommand.h"
+#include <Models/Artworks/artworkslistmodel.h>
 
 namespace Commands {
     RemoveDirectoryCommand::RemoveDirectoryCommand(int directoryID,

@@ -50,7 +50,6 @@ namespace Warnings {
     private slots:
         void workerDestoyed(QObject *object);
         void workerStopped();
-        void updateWarningsSettings();
 
     signals:
         void queueIsEmpty();

@@ -166,7 +166,6 @@ namespace Models {
         Q_INVOKABLE void expandPreset(int keywordIndex, unsigned int presetID);
         Q_INVOKABLE void expandLastKeywordAsPreset();
         Q_INVOKABLE void addPreset(unsigned int presetID);
-        Q_INVOKABLE void initSuggestion();
         Q_INVOKABLE bool acceptCompletionAsPreset(int completionID);
 
     protected:

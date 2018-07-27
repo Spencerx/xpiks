@@ -31,6 +31,12 @@ namespace Services {
         inspectBasicModel(change);
     }
 
+    void ArtworksInspectionHub::handleMessage(const std::vector<Artworks::ArtworkMetadata *> &change) {
+        if (isSpellCheckAvailable()) {
+            m_SpellCheckService.submitItems(change);
+        }
+    }
+
     void ArtworksInspectionHub::inspectArtwork(Artworks::ArtworkMetadata *artwork) {
         if (isSpellCheckAvailable()) {
             m_SpellCheckService.submitArtwork(artwork);
@@ -39,7 +45,7 @@ namespace Services {
         }
     }
 
-    void ArtworksInspectionHub::inspectArtworks(const Artworks::ArtworksSnapshot &snapshot) {
+    void ArtworksInspectionHub::inspectArtworks(Artworks::ArtworksSnapshot const &snapshot) {
         if (isSpellCheckAvailable()) {
             m_SpellCheckService.submitArtworks(snapshot);
         } else {

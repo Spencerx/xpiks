@@ -45,7 +45,7 @@ namespace Models {
     class SettingsModel;
 #define PERCENT_EPSILON 0.0001
 
-    class ArtworkUploader:
+    class ArtworksUploader:
             public QObject,
             public Helpers::IFileNotAvailableModel,
             public Common::MessagesSource<Connectivity::UserAction>
@@ -56,11 +56,11 @@ namespace Models {
         Q_PROPERTY(int itemsCount READ getItemsCount NOTIFY itemsCountChanged)
         Q_OBJECT
     public:
-        ArtworkUploader(Common::ISystemEnvironment &environment,
-                        Models::UploadInfoRepository &uploadInfoRepository,
-                        SettingsModel &settingsModel,
-                        QObject *parent=0);
-        virtual ~ArtworkUploader();
+        ArtworksUploader(Common::ISystemEnvironment &environment,
+                         Models::UploadInfoRepository &uploadInfoRepository,
+                         SettingsModel &settingsModel,
+                         QObject *parent=0);
+        virtual ~ArtworksUploader();
 
     public:
         // used to test UI of artwork upload
@@ -97,10 +97,9 @@ namespace Models {
         void uploaderPercentChanged(double percent);
 
     public:
-        void setArtworks(Artworks::ArtworksSnapshot &&snapshot);
+        void setArtworks(Artworks::ArtworksSnapshot &snapshot);
 
     public:
-        Q_INVOKABLE void pullArtworks();
         Q_INVOKABLE void uploadArtworks();
         Q_INVOKABLE void checkCredentials(const QString &host, const QString &username,
                                           const QString &password, bool disablePassiveMode, bool disableEPSV);

@@ -312,14 +312,10 @@ namespace Models {
         Q_ASSERT(!keywords.isEmpty());
 
         auto *metadataModel = getBasicMetadataModel();
-
         SpellCheck::SpellCheckItemInfo *info = metadataModel->getSpellCheckInfo();
 
         if (!overwritten) {
             info->removeWordsFromErrors(keywords);
-            // special case after words added to dict
-            std::vector<Artworks::BasicKeywordsModel *> items;
-            items.push_back(metadataModel);
         }
         else {
             info->clear();

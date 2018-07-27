@@ -61,11 +61,7 @@ namespace Warnings {
         m_WarningsWorker(NULL),
         m_WarningsSettingsModel(warningsSettingsModel),
         m_IsStopped(false)
-    {}
-
-    void WarningsService::initWarningsSettings() {
-        QTimer::singleShot(1000, this, SLOT(updateWarningsSettings()));
-    }
+    { }
 
     void WarningsService::cancelCurrentBatch() {
         LOG_DEBUG << "#";

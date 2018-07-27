@@ -12,18 +12,19 @@
 #define REMOVEFILESCOMMAND_H
 
 #include <Commands/Base/icommand.h>
-#include <Filesystem/ifilescollection.h>
-#include <Models/Artworks/artworkslistmodel.h>
+#include <Models/Artworks/artworklistoperations.h>
 
 namespace Models {
     class ArtworksRepository;
+    class ArtworksListModel;
 }
 
 namespace Commands {
     class RemoveFilesCommandBase: public ICommand
     {
     public:
-        RemoveFilesCommandBase(Models::ArtworksListModel &artworksList, Models::ArtworksRepository &artworksRepository);
+        RemoveFilesCommandBase(Models::ArtworksListModel &artworksList,
+                               Models::ArtworksRepository &artworksRepository);
 
         // IUndoCommand interface
     public:
@@ -38,7 +39,7 @@ namespace Commands {
     protected:
         Models::ArtworksListModel &m_ArtworksList;
         Models::ArtworksRepository &m_ArtworksRepository;
-        Models::ArtworksListModel::ArtworksRemoveResult m_RemoveResult;
+        Models::ArtworksRemoveResult m_RemoveResult;
     };
 }
 
