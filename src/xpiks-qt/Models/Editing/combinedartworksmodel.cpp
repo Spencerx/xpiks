@@ -17,7 +17,6 @@
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkelement.h>
 #include <Common/defines.h>
-#include <QMLExtensions/appdispatcher.h>
 #include <QMLExtensions/uicommandid.h>
 #include <Commands/Base/simpleuicommandtemplate.h>
 #include <KeywordsPresets/ipresetsmanager.h>
@@ -299,7 +298,7 @@ namespace Models {
     void CombinedArtworksModel::assignFromOneArtwork() {
         LOG_DEBUG << "#";
         Q_ASSERT(getArtworksCount() == 1);
-        Artworks::ArtworkMetadata *artwork = getArtworkMetadata(0);
+        Artworks::ArtworkMetadata *artwork = accessItem(0)->getArtworkMetadata();
 
         if (!isDescriptionModified()) {
             initDescription(artwork->getDescription());

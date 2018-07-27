@@ -178,7 +178,6 @@ namespace Models {
                 auto editable = std::make_shared<CurrentEditableArtwork>(
                                     artwork,
                                     std::make_shared<ArtworksUpdateTemplate>(*this, getStandardUpdateRoles()));
-
                 sendMessage(editable);
             }
         }
@@ -219,7 +218,7 @@ namespace Models {
         for (auto &request: updateRequests) {
             size_t index = request->getLastKnownIndex();
             auto *artwork = getArtwork(index);
-            if (artwork->getItemID() == request->getArtworkID()) {
+            if (artwork->getItemID().get() == request->getArtworkID().get()) {
                 indicesToUpdate.push_back((int)index);
                 rolesToUpdateSet.unite(request->getRolesToUpdate());
             } else {
@@ -240,7 +239,7 @@ namespace Models {
         if (artworkIDs.isEmpty()) { return; }
 
         std::vector<int> indices = filterArtworks<int>(
-                    [&artworkIDs](Artworks::ArtworkMetadata *artwork) { return artworkIDs.contains(artwork->getItemID()); },
+                    [&artworkIDs](Artworks::ArtworkMetadata *artwork) { return artworkIDs.contains(artwork->getItemID().get()); },
                 [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
 
         this->updateItems(Helpers::IndicesRanges(indices), rolesToUpdate);
@@ -999,10 +998,6 @@ namespace Models {
                 spellCheckAllItems(*service);
             }
         }
-    }
-
-    void ArtworksListModel::onSpellCheckRestarted() {
-        spellCheckAllItems();
     }
 
     void ArtworksListModel::onSpellCheckDisabled() {

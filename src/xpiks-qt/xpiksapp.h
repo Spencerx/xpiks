@@ -67,7 +67,6 @@
 #include <Encryption/isecretsstorage.h>
 
 #include <Microstocks/microstockapiclients.h>
-#include <Microstocks/stocksftplistmodel.h>
 
 #include <Suggestion/keywordssuggestor.h>
 
@@ -78,7 +77,6 @@
 #include <MetadataIO/csvexportmodel.h>
 #include <MetadataIO/metadataiocoordinator.h>
 #include <MetadataIO/metadataioservice.h>
-#include <MetadataIO/csvexportplansmodel.h>
 #include <MetadataIO/metadatareadinghub.h>
 
 #include <Plugins/pluginmanager.h>
@@ -130,7 +128,7 @@ public:
     Q_INVOKABLE void removeUnavailableFiles();
 
 private:
-    void doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);
+    int doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);
     void afterServicesStarted();
     void executeMaintenanceJobs();
     void connectEntitiesSignalsSlots();
@@ -148,6 +146,7 @@ private slots:
 
 protected:
     // general
+    Encryption::SecretsManager m_SecretsManager;
     QMLExtensions::ColorsModel m_ColorsModel;
     Models::LogsModel m_LogsModel;
     Models::SettingsModel m_SettingsModel;
@@ -197,8 +196,6 @@ protected:
     Services::ArtworksInspectionHub m_InspectionHub;
 
     // connectivity
-    Encryption::SecretsManager m_SecretsManager;
-    Microstocks::StocksFtpListModel m_StocksFtpList;
     Models::UploadInfoRepository m_UploadInfoRepository;
     Models::ZipArchiver m_ZipArchiver;
     std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
@@ -213,7 +210,6 @@ protected:
     SpellCheck::UserDictEditModel m_UserDictEditModel;
     Warnings::WarningsModel m_WarningsModel;
     Translation::TranslationManager m_TranslationManager;
-    MetadataIO::CsvExportPlansModel m_CsvExportPlans;
     MetadataIO::CsvExportModel m_CsvExportModel;
     MetadataIO::MetadataReadingHub m_MetadataReadingHub;
     MetadataIO::MetadataIOCoordinator m_MetadataIOCoordinator;

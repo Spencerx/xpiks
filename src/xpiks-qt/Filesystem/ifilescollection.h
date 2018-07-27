@@ -39,9 +39,7 @@ namespace Filesystem {
     class IFilesCollection {
     public:
         virtual ~IFilesCollection() {}
-
-    public:
-        virtual const std::vector<ArtworkFile> &getFiles() = 0;
+        virtual std::vector<ArtworkFile> const &getFiles() = 0;
     };
 }
 

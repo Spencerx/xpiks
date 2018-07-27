@@ -10,10 +10,8 @@
 
 #include "settingsmodel.h"
 #include <QQmlEngine>
-#include "../Common/defines.h"
-#include "../Models/artitemsmodel.h"
+#include <Common/defines.h>
 #include <Encryption/secretsmanager.h>
-#include "../MetadataIO/metadataiocoordinator.h"
 #include <Common/version.h>
 
 #ifdef Q_OS_MAC
@@ -127,8 +125,10 @@ namespace Models {
     }
 
     SettingsModel::SettingsModel(Common::ISystemEnvironment &environment,
+                                 Encryption::SecretsManager &secretsManager,
                                  QObject *parent) :
         QObject(parent),
+        m_SecretsManager(secretsManager),
         Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
         m_State("settings", environment),
         m_Config(environment.path({SETTINGS_FILE}),
@@ -155,7 +155,6 @@ namespace Models {
         m_UserStatistics(DEFAULT_COLLECT_USER_STATISTICS),
         m_CheckForUpdates(DEFAULT_CHECK_FOR_UPDATES),
         m_AutoDownloadUpdates(DEFAULT_AUTO_DOWNLOAD_UPDATES),
-        m_DictsPathChanged(false),
         m_UseSpellCheckChanged(false),
         m_DetectDuplicatesChanged(false),
         m_AutoFindVectors(DEFAULT_AUTO_FIND_VECTORS),
@@ -574,14 +573,6 @@ namespace Models {
     void SettingsModel::afterSaveHandler() {
         LOG_DEBUG << "#";
 
-#if defined(Q_OS_LINUX)
-        if (m_DictsPathChanged) {
-            // TODO: check if need to restart depending on path
-            emit spellCheckRestarted();
-            m_DictsPathChanged = false;
-        }
-#endif
-
         bool requiresSpellCheck = false;
 
         if (m_UseSpellCheckChanged) {
@@ -601,7 +592,6 @@ namespace Models {
         }
 
         if (requiresSpellCheck) {
-            emit spellCheckRestarted();
         }
 
         if (m_ExiftoolPathChanged) {
@@ -615,7 +605,6 @@ namespace Models {
     }
 
     void SettingsModel::resetChangeStates() {
-        m_DictsPathChanged = false;
         m_UseSpellCheckChanged = false;
         m_ExiftoolPathChanged = false;
         m_DetectDuplicatesChanged = false;

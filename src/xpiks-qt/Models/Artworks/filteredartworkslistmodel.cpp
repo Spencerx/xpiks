@@ -11,10 +11,11 @@
 #include "filteredartworkslistmodel.h"
 #include <QDir>
 #include "artworkslistmodel.h"
-#include <Commands/commandmanager.h>
-#include <Commands/Editing/modifyartworkscommand.h>
 #include <Common/flags.h>
 #include <Common/defines.h>
+#include <Common/irefcountedobject.h>
+#include <Commands/commandmanager.h>
+#include <Commands/Editing/modifyartworkscommand.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkelement.h>
 #include <Artworks/videoartwork.h>
@@ -22,9 +23,12 @@
 #include <Helpers/filterhelpers.h>
 #include <Models/Editing/previewartworkelement.h>
 #include <Models/settingsmodel.h>
-#include <Services/SpellCheck/spellchecksuggestionmodel.h>
 
-namespace Models {
+namespace Artworks {
+    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
+}
+
+namespace Models {    
     FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel,
                                                          Commands::ICommandManager &commandManager,
                                                          KeywordsPresets::IPresetsManager &presetsManager,
@@ -38,7 +42,8 @@ namespace Models {
         m_CompletionSource(completionSource),
         m_SettingsModel(settingsModel),
         m_SelectedArtworksCount(0),
-        m_SortingEnabled(false) {
+        m_SortingEnabled(false)
+    {
         // m_SortingEnabled = true;
         // this->sort(0);
         m_SearchFlags = Common::SearchFlags::AnyTermsEverything;
@@ -61,14 +66,14 @@ namespace Models {
 
     Artworks::ArtworksSnapshot FilteredArtworksListModel::getArtworksToSave(bool overwriteAll) const {
         auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
-                    [](Artworks::ArtworkMetadata *artwork) {
+                    [overwriteAll](Artworks::ArtworkMetadata *artwork) {
                        return artwork->isSelected() && !artwork->isReadOnly() && (artwork->isModified() || overwriteAll); },
                 [] (Artworks::ArtworkMetadata *artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
 
         return Artworks::ArtworksSnapshot(rawSnapshot);
     }
 
-    Artworks::ArtworksSnapshot FilteredArtworksListModel::getArtworks() {
+    Artworks::ArtworksSnapshot FilteredArtworksListModel::getSelectedArtworks() {
         auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
                     [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
                 [] (Artworks::ArtworkMetadata *artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
@@ -428,18 +433,8 @@ namespace Models {
         m_ArtworksListModel.setCurrentIndex(getOriginalIndex(proxyIndex));
     }
 
-    void FilteredArtworksListModel::suggestCorrections(int proxyIndex) const {
-        LOG_DEBUG << proxyIndex;
-        int originalIndex = getOriginalIndex(proxyIndex);
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
-        if (artwork != NULL) {
-            Artworks::ArtworksSnapshot snapshot({artwork});
-            m_SpellSuggestionsModel.setupArtworks(snapshot);
-        }
-    }
-
     void FilteredArtworksListModel::copyToQuickBuffer(int proxyIndex) const {
-        LOG_INFO << index;
+        LOG_INFO << proxyIndex;
         Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(getOriginalIndex(proxyIndex));
         if (artwork != nullptr) {
             sendMessage(

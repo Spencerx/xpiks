@@ -13,15 +13,20 @@
 #include <QFileInfo>
 #include <QRegExp>
 #include <QDir>
+#include <Common/defines.h>
+#include <Common/irefcountedobject.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/imageartwork.h>
 #include <Helpers/filehelpers.h>
-#include <Common/defines.h>
 #include <Helpers/cpphelpers.h>
 
 #ifndef CORE_TESTS
 #include <Helpers/ziphelper.h>
 #endif
+
+namespace Artworks {
+    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
+}
 
 namespace Models {
     ZipArchiver::ZipArchiver():

@@ -41,7 +41,7 @@ namespace libxpks {
             bool m_UseProxy;
             bool m_VerboseLogging;
             bool m_VectorsFirst;
-            Models::ProxySettings *m_ProxySettings;
+            Models::ProxySettings const *m_ProxySettings;
         };
     }
 }

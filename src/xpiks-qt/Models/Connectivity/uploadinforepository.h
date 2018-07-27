@@ -44,7 +44,6 @@ namespace Models {
 
     public:
         UploadInfoRepository(Common::ISystemEnvironment &environment,
-                             Microstocks::StocksFtpListModel &stocksFtpList,
                              Encryption::SecretsManager &secretsManager,
                              QObject *parent = 0);
         virtual ~UploadInfoRepository();
@@ -82,7 +81,8 @@ namespace Models {
     public:
         void initFromString(const QString &savedString);
         void initializeConfig();        
-        void initializeStocksList(Helpers::AsyncCoordinator *initCoordinator);
+        void initializeStocksList(Helpers::AsyncCoordinator *initCoordinator,
+                                  Connectivity::RequestsService &requestsService);
 
     public:
         Q_INVOKABLE void removeItem(int row);
@@ -157,7 +157,7 @@ namespace Models {
         std::vector<std::shared_ptr<UploadInfo> > m_UploadInfos;
         Helpers::LocalConfig m_LocalConfig;
         AutoComplete::StringsAutoCompleteModel m_StocksCompletionSource;
-        Microstocks::StocksFtpListModel &m_StocksFtpList;
+        Microstocks::StocksFtpListModel m_StocksFtpList;
         Encryption::SecretsManager &m_SecretsManager;
         int m_CurrentIndex;
         // when MP is cancelled before Upload dialog

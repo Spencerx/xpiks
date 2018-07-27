@@ -315,7 +315,7 @@ namespace Models {
     void ArtworkProxyModel::submitForInspection() {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         if (m_ArtworkMetadata == nullptr) { return; }
-        sendMessage(m_ArtworkMetadata);
+        sendMessage(Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>(m_ArtworkMetadata));
     }
 
     void ArtworkProxyModel::connectArtworkSignals(Artworks::ArtworkMetadata *artwork) {

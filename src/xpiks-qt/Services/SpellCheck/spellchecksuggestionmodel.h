@@ -26,7 +26,6 @@ namespace Models {
 
 namespace Artworks {
     class BasicMetadataModel;
-    class ISelectedArtworksSource;
 }
 
 namespace Services {
@@ -49,7 +48,6 @@ namespace SpellCheck {
 
     public:
         SpellCheckSuggestionModel(SpellCheckService &spellCheckerService,
-                                  Artworks::ISelectedArtworksSource &artworksSource,
                                   Services::ArtworksUpdateHub &artworksUpdateHub);
 
     public:
@@ -99,7 +97,6 @@ namespace SpellCheck {
         // if we're checking basic model this list will be empty
         Artworks::ArtworksSnapshot m_CheckedItems;
         SpellCheckService &m_SpellCheckerService;
-        Artworks::ISelectedArtworksSource &m_ArtworksSource;
         Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
     };
 }

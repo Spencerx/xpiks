@@ -25,9 +25,10 @@ namespace Commands {
     }
 
     void ArtworksUpdateTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
-        auto indices = Helpers::map(snapshot.getWeakSnapshot(),
-                                    [](const Artworks::ArtworkMetadata *artwork) {
-            return artwork->getLastKnownIndex();
+        auto indices = Helpers::map<std::shared_ptr<Artworks::ArtworksSnapshot::ItemType>, int>(
+                    snapshot.getRawData(),
+                    [](const std::shared_ptr<Artworks::ArtworksSnapshot::ItemType> &locker) {
+            return locker->getArtworkMetadata()->getLastKnownIndex();
         });
 
         m_ArtworksListModel.updateItems(Helpers::IndicesRanges(indices), m_Roles);

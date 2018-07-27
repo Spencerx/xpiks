@@ -132,7 +132,7 @@ namespace SpellCheck {
         }));
     }
 
-    void SpellCheckService::submitArtwork(const Artworks::ArtworkMetadata *artwork) {
+    void SpellCheckService::submitArtwork(Artworks::ArtworkMetadata *artwork) {
         if (m_SpellCheckWorker == NULL) { return; }
         if (m_IsStopped) { return; }
         Q_ASSERT(artwork != nullptr);
@@ -251,11 +251,6 @@ namespace SpellCheck {
 
         QStringList corrections = m_SpellCheckWorker->retrieveCorrections(word);
         return corrections;
-    }
-
-    void SpellCheckService::restartWorker() {
-        m_RestartRequired = true;
-        stopService();
     }
 
     int SpellCheckService::getUserDictWordsNumber() {

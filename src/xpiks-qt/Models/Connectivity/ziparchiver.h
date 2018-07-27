@@ -16,7 +16,6 @@
 #include <QVector>
 #include <Helpers/ifilenotavailablemodel.h>
 #include <Artworks/artworkssnapshot.h>
-#include <Artworks/iselectedartworkssource.h>
 
 class QStringList;
 class QString;

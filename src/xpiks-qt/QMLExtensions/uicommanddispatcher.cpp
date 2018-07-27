@@ -35,7 +35,7 @@ namespace QMLExtensions {
     }
 
     void UICommandDispatcher::dispatchCommand(int commandID, const QJSValue &value) {
-        LOG_INFO << commandID << value;
+        LOG_INFO << commandID << value.toString();
         auto it = m_CommandsMap.find(commandID);
         if (it != m_CommandsMap.end()) {
             m_CommandManager.processCommand(

@@ -130,6 +130,9 @@ namespace Models {
         };
 
     public:
+        void findReplaceCandidates(const Artworks::ArtworksSnapshot &snapshot);
+
+    public:
 #if !defined(CORE_TESTS) && !defined(INTEGRATION_TESTS)
         Q_INVOKABLE void initHighlighting(QQuickTextDocument *document);
 #endif
@@ -171,7 +174,6 @@ namespace Models {
         void replaceSucceeded();
 
     private:
-        void findReplaceCandidates(const Artworks::ArtworksSnapshot &snapshot);
         void updatePreviewFlags();
         QString filterText(const QString &text);
         void setAllSelected(bool isSelected);

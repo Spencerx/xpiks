@@ -18,7 +18,6 @@
 
 namespace Artworks {
     class ArtworkMetadata;
-    class ArtworkMetadataLocker;
     class ImageArtwork;
     class VideoArtwork;
 }

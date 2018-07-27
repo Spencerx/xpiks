@@ -10,9 +10,10 @@
 
 #include "findandreplacetemplate.h"
 #include <QObject>
-#include <Artworks/artworkmetadata.h>
 #include <Common/logging.h>
 #include <Common/defines.h>
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/artworkssnapshot.h>
 #include <Helpers/filterhelpers.h>
 
 namespace Commands {

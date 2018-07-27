@@ -141,7 +141,6 @@ namespace Models {
     public:
         // other
         Q_INVOKABLE void registerCurrentItem(int proxyIndex) const;
-        Q_INVOKABLE void suggestCorrections(int proxyIndex) const;
 
     public:
         //Q_INVOKABLE void removeArtworksDirectory(int index);
@@ -189,7 +188,6 @@ namespace Models {
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         AutoComplete::ICompletionSource &m_CompletionSource;
         Models::SettingsModel &m_SettingsModel;
-        SpellCheck::SpellCheckSuggestionModel &m_SpellSuggestionsModel;
         // ignore default regexp from proxymodel
         QString m_SearchTerm;
         Common::SearchFlags m_SearchFlags;

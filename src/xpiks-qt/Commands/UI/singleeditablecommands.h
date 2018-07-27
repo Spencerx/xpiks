@@ -17,6 +17,8 @@
 namespace Models {
     class CombinedArtworksModel;
     class ArtworkProxyModel;
+    class FilteredArtworksListModel;
+    class ArtworksListModel;
 }
 
 namespace SpellCheck {
@@ -58,6 +60,27 @@ namespace Commands {
 
     private:
         Models::ArtworkProxyModel &m_ArtworkProxyModel;
+        SpellCheck::SpellCheckSuggestionModel &m_SuggestionsModel;
+    };
+
+    class FixSpellingInArtworkCommand: public IUICommandTemplate {
+    public:
+        FixSpellingInArtworkCommand(Models::FilteredArtworksListModel &filteredArtworksModel,
+                                    Models::ArtworksListModel &artworksListModel,
+                                    SpellCheck::SpellCheckSuggestionModel &suggestionsModel):
+            m_FilteredArtworksModel(filteredArtworksModel),
+            m_ArtworksListModel(artworksListModel),
+            m_SuggestionsModel(suggestionsModel)
+        {}
+
+        // IUICommandTemplate interface
+    public:
+        virtual int getCommandID() override { return QMLExtensions::UICommandID::FixSpellingArtwork; }
+        virtual void execute(const QJSValue &value) override;
+
+    private:
+        Models::FilteredArtworksListModel &m_FilteredArtworksModel;
+        Models::ArtworksListModel &m_ArtworksListModel;
         SpellCheck::SpellCheckSuggestionModel &m_SuggestionsModel;
     };
 }

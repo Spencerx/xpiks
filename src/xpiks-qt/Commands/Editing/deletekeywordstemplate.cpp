@@ -12,6 +12,7 @@
 #include <Common/defines.h>
 #include <Common/logging.h>
 #include <Artworks/artworkmetadata.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace Commands {
     DeleteKeywordsTemplate::DeleteKeywordsTemplate(const QSet<QString> &keywordsSet, bool caseSensitive):

@@ -30,7 +30,6 @@ namespace Connectivity {
 
     public:
         SwitcherConfig(Common::ISystemEnvironment &environment,
-                       RequestsService &requestsService,
                        QObject *parent=nullptr);
 
     public:

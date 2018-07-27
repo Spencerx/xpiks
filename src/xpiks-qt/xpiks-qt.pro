@@ -157,7 +157,6 @@ SOURCES += main.cpp \
     Artworks/basicmetadatamodel.cpp \
     Services/artworksupdatehub.cpp \
     Services/SpellCheck/userdictionary.cpp \
-    QMLExtensions/appdispatcher.cpp \
     Commands/Services/autoimportmetadatacommand.cpp \
     Commands/Services/cleanuplegacybackupscommand.cpp \
     Commands/Services/generatethumbnailstemplate.cpp \
@@ -429,7 +428,6 @@ HEADERS += \
     Services/SpellCheck/userdictionary.h \
     Artworks/iartworksservice.h \
     Services/AutoComplete/icompletionsource.h \
-    QMLExtensions/appdispatcher.h \
     QMLExtensions/uicommandid.h \
     Commands/Services/autoimportmetadatacommand.h \
     Commands/Services/cleanuplegacybackupscommand.h \

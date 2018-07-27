@@ -18,6 +18,10 @@
 #include "../Common/statefulentity.h"
 #include "../Common/isystemenvironment.h"
 
+namespace Connectivity {
+    class RequestsService;
+}
+
 namespace Models {
     class SwitcherModel: public QObject
     {
@@ -29,11 +33,12 @@ namespace Models {
         Q_PROPERTY(bool useAutoImport READ getUseAutoImport NOTIFY switchesUpdated)
         Q_PROPERTY(bool keywordsDragDropEnabled READ getKeywordsDragDropEnabled NOTIFY switchesUpdated)
     public:
-        SwitcherModel(Common::ISystemEnvironment &environment, QObject *parent=nullptr);
+        SwitcherModel(Common::ISystemEnvironment &environment,
+                      QObject *parent=nullptr);
 
     public:
         void initialize();
-        void updateConfigs();
+        void updateConfigs(Connectivity::RequestsService &requestsService);
         void afterInitializedCallback();
 
     private:

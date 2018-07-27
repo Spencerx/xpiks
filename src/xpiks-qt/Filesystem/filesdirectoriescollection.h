@@ -16,6 +16,9 @@
 #include <QUrl>
 
 namespace Filesystem {
+    class FilesCollection;
+    class DirectoriesCollection;
+
     class FilesDirectoriesCollection: public IFilesCollection
     {
     public:

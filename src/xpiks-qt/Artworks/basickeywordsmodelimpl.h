@@ -19,6 +19,7 @@
 #include <QVector>
 #include <QHash>
 #include <vector>
+#include <memory>
 #include "keyword.h"
 #include "../Common/flags.h"
 #include "iartworkmetadata.h"

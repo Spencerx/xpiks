@@ -25,8 +25,7 @@ namespace Warnings {
         Q_OBJECT
 
     public:
-        WarningsSettingsModel(Common::ISystemEnvironment &environment,
-                              Connectivity::RequestsService &requestsService);
+        WarningsSettingsModel(Common::ISystemEnvironment &environment);
 
     public:
         virtual const QString &getAllowedFilenameCharacters() const override { return m_AllowedFilenameCharacters; }

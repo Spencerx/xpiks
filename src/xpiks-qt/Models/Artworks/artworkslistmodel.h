@@ -15,12 +15,13 @@
 #include <functional>
 #include <deque>
 #include <vector>
+#include <Common/messages.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkssnapshot.h>
+#include <Models/Editing/icurrenteditable.h>
 #include <Filesystem/ifilescollection.h>
 #include <Helpers/indicesranges.h>
 #include <Commands/Base/icommandtemplate.h>
-#include <Common/messages.h>
 
 class QQuickTextDocument;
 
@@ -56,12 +57,14 @@ namespace Models {
     class ArtworksListModel:
             public QAbstractListModel,
             public Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>,
-            public Common::MessagesSource<std::shared_ptr<ICurrentEidtable>>
+            public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>
     {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
 
         using ArtworksContainer = std::deque<Artworks::ArtworkMetadata *>;
+        using Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>::sendMessage;
+        using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
 
     public:
         ArtworksListModel(ArtworksRepository &repository,
@@ -210,7 +213,6 @@ namespace Models {
         void onArtworkEditingPaused();
         void onUndoStackEmpty();
         void onSpellCheckerAvailable(bool afterRestart);
-        void onSpellCheckRestarted();
         void onSpellCheckDisabled();
         void onDuplicatesDisabled();
         void userDictUpdateHandler(const QStringList &keywords, bool overwritten);

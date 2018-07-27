@@ -137,7 +137,7 @@ namespace Artworks {
         bool isRemoved() { return getIsRemovedFlag(); }
         size_t getLastKnownIndex() const { return m_LastKnownIndex; }
         virtual qint64 getFileSize() const { return m_FileSize; }
-        Common::ID_t getItemID() const { return m_ID; }
+        Common::ID_t const &getItemID() const { return m_ID; }
         bool hasDuplicates();
 
     public:

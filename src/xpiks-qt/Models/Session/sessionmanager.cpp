@@ -10,11 +10,8 @@
 
 #include <QDir>
 #include <QJsonArray>
-#include "../Models/artitemsmodel.h"
-#include "../Models/imageartwork.h"
-#include "../Models/artworksrepository.h"
-#include "../Commands/commandmanager.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include <Artworks/artworkssnapshot.h>
+#include <Filesystem/filescollection.h>
 #include "sessionmanager.h"
 
 #define SESSION_FILE "session.json"
@@ -27,7 +24,7 @@
 
 namespace Models {    
     std::shared_ptr<Helpers::JsonObjectMap> serializeSnapshot(std::vector<std::shared_ptr<Artworks::ArtworkSessionSnapshot> > &filesSnapshot,
-                           const QStringList &directoriesSnapshot) {
+                                                              const QStringList &directoriesSnapshot) {
         LOG_INFO << filesSnapshot.size() << "artwork(s)" << directoriesSnapshot.size() << "directory(ies)";
 
         auto sessionMap = std::make_shared<Helpers::JsonObjectMap>();
@@ -125,9 +122,8 @@ namespace Models {
         }
     }
 
-    bool SessionManager::save(std::vector<std::shared_ptr<Artworks::ArtworkSessionSnapshot> > &filesSnapshot,
-                                    const QStringList &directoriesSnapshot) {
-        auto sessionMap = serializeSnapshot(filesSnapshot, directoriesSnapshot);
+    bool SessionManager::save(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot) {
+        auto sessionMap = serializeSnapshot(sessionSnapshot->getSnapshot(), sessionSnapshot->getDirectoriesSnapshot());
         bool success = false;
 
         {
@@ -145,7 +141,7 @@ namespace Models {
         return success;
     }
 
-    int SessionManager::restoreSession(Models::ArtworksRepository &artworksRepository) {
+    SessionManager::SessionTuple SessionManager::restoreSession() {
         LOG_DEBUG << "#";
 
         QMutexLocker locker(&m_Mutex);
@@ -159,15 +155,15 @@ namespace Models {
 
         if (filenames.empty()) {
             LOG_INFO << "Session was empty";
-            return 0;
+            return SessionTuple(
+                        std::make_shared<Filesystem::FilesCollection>(QStringList()),
+                        QStringList());
         }
 
-        int newFilesCount = xpiks()->restoreFiles(filenames, vectors);
-        if (newFilesCount > 0) {
-            artworksRepository.restoreFullDirectories(fullDirectories);
-        }
-
-        return newFilesCount;
+        return SessionTuple(
+                    std::make_shared<Filesystem::FilesCollection>(
+                        std::initializer_list<QStringList>({filenames, vectors})),
+                    fullDirectories);
     }
 
 #ifdef INTEGRATION_TESTS

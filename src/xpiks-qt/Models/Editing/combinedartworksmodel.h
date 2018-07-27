@@ -68,6 +68,9 @@ namespace Models {
         Q_PROPERTY(bool changeKeywords READ getChangeKeywords WRITE setChangeKeywords NOTIFY changeKeywordsChanged)
         Q_PROPERTY(bool appendKeywords READ getAppendKeywords WRITE setAppendKeywords NOTIFY appendKeywordsChanged)
 
+        using Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>::sendMessage;
+        using Common::MessagesSource<QuickBufferMessage>::sendMessage;
+
     public:
         CombinedArtworksModel(Commands::ICommandManager &commandManager,
                               KeywordsPresets::IPresetsManager &presetsManager,

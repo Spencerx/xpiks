@@ -169,9 +169,4 @@ namespace Warnings {
     void WarningsService::workerStopped() {
         LOG_DEBUG << "#";
     }
-
-    void WarningsService::updateWarningsSettings() {
-        LOG_DEBUG << "#";
-        m_WarningsSettingsModel.initializeConfigs();
-    }
 }

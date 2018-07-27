@@ -11,6 +11,8 @@
 #include "singleeditablecommands.h"
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
+#include <Models/Artworks/artworkslistmodel.h>
+#include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 
 namespace Commands {
@@ -23,5 +25,22 @@ namespace Commands {
         LOG_DEBUG << "#";
         m_SuggestionsModel.setupArtworks(
                     Artworks::ArtworksSnapshot({m_ArtworkProxyModel.getArtwork()}));
+    }
+
+    void FixSpellingInArtworkCommand::execute(const QJSValue &value) {
+        LOG_DEBUG << value;
+        int index = -1;
+        if (value.isNumber()) {
+            index = value.toInt();
+        }
+
+        int originalIndex = m_FilteredArtworksModel.getOriginalIndex(index);
+        auto *artwork = m_ArtworksListModel.getArtwork(originalIndex);
+        if (artwork != nullptr) {
+            m_SuggestionsModel.setupArtworks(
+                        Artworks::ArtworksSnapshot({artwork}));
+        } else {
+            LOG_WARNING << "Cannot find artwork at" << index;
+        }
     }
 }

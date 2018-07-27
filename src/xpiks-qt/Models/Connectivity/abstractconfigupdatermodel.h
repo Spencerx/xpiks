@@ -30,13 +30,12 @@ namespace Models {
     public:
         AbstractConfigUpdaterModel(const QString &localPath,
                                    const QString &remoteResource,
-                                   Connectivity::RequestsService &requestsService,
                                    bool forceOverwrite,
                                    bool memoryOnly, QObject *parent=nullptr);
         virtual ~AbstractConfigUpdaterModel() {}
 
     public:
-        void initializeConfigs();
+        void initializeConfigs(Connectivity::RequestsService &requestsService);
         const Helpers::LocalConfig &getLocalConfig() const { return m_LocalConfig; }
         Helpers::LocalConfig &getLocalConfig() { return m_LocalConfig; }
 
@@ -56,13 +55,12 @@ namespace Models {
         virtual void processMergedConfig(const QJsonDocument &document) { Q_UNUSED(document); }
 
     private:
-        virtual void initRemoteConfig();
+        virtual void initRemoteConfig(Connectivity::RequestsService &requestsService);
         virtual void initLocalConfig();
 
     private:
         Helpers::RemoteConfig m_RemoteConfig;
         Helpers::LocalConfig m_LocalConfig;
-        Connectivity::RequestsService &m_RequestsService;
         bool m_ForceOverwrite;
 
 #ifdef INTEGRATION_TESTS

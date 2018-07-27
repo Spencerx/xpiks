@@ -156,7 +156,7 @@ namespace Services {
                 request->incrementGeneration();
                 requestsToResubmit.emplace_back(request);
             } else {
-                artworkIDsToUpdate.insert(request->getArtworkID());
+                artworkIDsToUpdate.insert(request->getArtworkID().get());
                 commonRoles.unite(request->getRolesToUpdate());
             }
         }

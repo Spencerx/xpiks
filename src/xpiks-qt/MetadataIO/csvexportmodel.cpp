@@ -229,11 +229,9 @@ namespace MetadataIO {
 
     /*------------------------------------------------------*/
 
-    CsvExportModel::CsvExportModel(CsvExportPlansModel &exportPlansModel,
-                                   Artworks::ISelectedArtworksSource &artworksSource):
+    CsvExportModel::CsvExportModel(Common::ISystemEnvironment &environment):
         Common::DelayedActionEntity(3000, MAX_SAVE_PAUSE_RESTARTS),
-        m_ExportPlansModel(exportPlansModel),
-        m_ArtworksSource(artworksSource),
+        m_ExportPlansModel(environment),
         m_SaveTimerId(-1),
         m_SaveRestartsCount(0),
         m_IsExporting(false)
@@ -253,9 +251,14 @@ namespace MetadataIO {
         }
     }
 
-    void CsvExportModel::initializeExportPlans(Helpers::AsyncCoordinator *initCoordinator) {
+    void CsvExportModel::initializeExportPlans(Helpers::AsyncCoordinator *initCoordinator, Connectivity::RequestsService &requestsService) {
         LOG_DEBUG << "#";
-        m_ExportPlansModel.initializeConfigs(initCoordinator);
+        m_ExportPlansModel.initializeConfigs(initCoordinator, requestsService);
+    }
+
+    void CsvExportModel::setArtworksToExport(Artworks::ArtworksSnapshot &&snapshot) {
+        m_ArtworksToExport = std::move(snapshot);
+        emit artworksCountChanged();
     }
 
     int CsvExportModel::rowCount(const QModelIndex &parent) const {
@@ -339,11 +342,6 @@ namespace MetadataIO {
         }
 
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
-    }
-
-    void CsvExportModel::pullArtworks() {
-        m_ArtworksToExport = std::move(m_ArtworksSource.getSelectedArtworks());
-        emit artworksCountChanged();
     }
 
     void CsvExportModel::startExport() {

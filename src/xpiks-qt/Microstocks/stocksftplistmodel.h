@@ -26,7 +26,7 @@ namespace Microstocks {
     {
         Q_OBJECT
     public:
-        StocksFtpListModel(Common::ISystemEnvironment &environment, Connectivity::RequestsService &requestsService);
+        StocksFtpListModel(Common::ISystemEnvironment &environment);
 
     public:
         std::shared_ptr<StockFtpOptions> findFtpOptions(const QString &title) const;

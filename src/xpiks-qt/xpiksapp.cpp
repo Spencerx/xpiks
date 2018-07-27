@@ -32,7 +32,7 @@
 #include <Commands/UI/singleeditablecommands.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
-    m_SettingsModel(environment),
+    m_SettingsModel(environment, m_SecretsManager),
     m_DatabaseManager(environment),
     m_SessionManager(environment),
     m_CommandManager(m_UndoRedoManager),
@@ -58,7 +58,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_MaintenanceService(environment),
     m_AutoCompleteService(m_KeywordsAutoCompleteModel, m_PresetsModel, m_SettingsModel),
     m_RequestsService(m_SettingsModel.getProxySettings()),
-    m_WarningsSettingsModel(environment, m_RequestsService),
+    m_WarningsSettingsModel(environment),
     m_WarningsService(m_WarningsSettingsModel),
     m_SpellCheckerService(environment, m_WarningsService, m_SettingsModel),
     m_MetadataIOService(),
@@ -69,8 +69,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_TelemetryService(m_SwitcherModel, m_SettingsModel),
     m_InspectionHub(m_SpellCheckerService, m_WarningsService, m_SettingsModel),
     m_SecretsManager(),
-    m_StocksFtpList(environment, m_RequestsService),
-    m_UploadInfoRepository(environment, m_StocksFtpList, m_SecretsManager),
+    m_UploadInfoRepository(environment, m_SecretsManager),
     m_ZipArchiver(),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
     m_ApiClients(m_SecretsStorage.get()),
@@ -82,13 +81,12 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_UserDictEditModel(m_UserDictionary),
     m_WarningsModel(m_ArtworksListModel, m_WarningsSettingsModel),
     m_TranslationManager(environment, m_TranslationService),
-    m_CsvExportPlans(environment, m_RequestsService),
-    m_CsvExportModel(m_CsvExportPlans),
-    m_MetadataReadingHub(m_MetadataIOService),
+    m_CsvExportModel(environment),
+    m_MetadataReadingHub(m_MetadataIOService, m_ArtworksUpdateHub, m_InspectionHub),
     m_MetadataIOCoordinator(m_MetadataReadingHub, m_SettingsModel, m_SwitcherModel, m_VideoCachingService),
     m_SpellSuggestionModel(m_SpellCheckerService, m_ArtworksUpdateHub),
     m_FilteredArtworksListModel(m_ArtworksListModel, m_CommandManager, m_PresetsModel,
-                                m_KeywordsCompletions, m_SettingsModel, m_SpellSuggestionModel),
+                                m_KeywordsCompletions, m_SettingsModel),
     m_KeywordsSuggestor(m_ApiClients, m_RequestsService, m_SwitcherModel, m_SettingsModel, environment),
     m_PluginManager(environment, m_CommandManager, m_PresetsModel, m_DatabaseManager,
                     m_RequestsService, m_ApiClients, m_CurrentEditableModel, m_UIManager),
@@ -217,7 +215,7 @@ void XpiksApp::start() {
     m_RequestsService.startService();
 
     m_SwitcherModel.initialize();
-    m_SwitcherModel.updateConfigs();
+    m_SwitcherModel.updateConfigs(m_RequestsService);
 
     const int waitSeconds = 5;
     Helpers::AsyncCoordinatorStarter deferredStarter(&m_InitCoordinator, waitSeconds);
@@ -252,12 +250,12 @@ void XpiksApp::start() {
     m_TelemetryService.setEndpoint(endpoint);
 
     m_TelemetryService.startReporting();
-    m_UploadInfoRepository.initializeStocksList(&m_InitCoordinator);
-    m_WarningsService.initWarningsSettings();
+    m_UploadInfoRepository.initializeStocksList(&m_InitCoordinator, m_RequestsService);
+    m_WarningsSettingsModel.initializeConfigs(m_RequestsService);
     m_MaintenanceService.initializeDictionaries(&m_TranslationManager, &m_InitCoordinator);
     m_UploadInfoRepository.initializeConfig();
     m_PresetsModel.initializePresets();
-    m_CsvExportModel.initializeExportPlans(&m_InitCoordinator);
+    m_CsvExportModel.initializeExportPlans(&m_InitCoordinator, m_RequestsService);
     m_KeywordsSuggestor.initSuggestionEngines(m_MetadataIOService);
     m_UpdateService.initialize();
 }
@@ -294,7 +292,7 @@ void XpiksApp::stop() {
     m_DatabaseManager.prepareToFinalize();
 
     // we have a second for important? stuff
-    m_TelemetryService.reportAction((int)Connectivity::UserAction::Close);
+    m_TelemetryService.reportAction(Connectivity::UserAction::Close);
     m_TelemetryService.stopReporting();
     m_RequestsService.stopService();
 }
@@ -396,27 +394,32 @@ void XpiksApp::removeUnavailableFiles() {
     }
 }
 
-void XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
+int XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
     using namespace Commands;
     using CompositeTemplate = CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksTemplate = std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>>;
 
-    auto postAddActions = std::make_shared<CompositeTemplate, std::initializer_list<ArtworksTemplate>>(
-    {
-                                  std::make_shared<ReadMetadataTemplate>(m_MetadataIOService, m_MetadataIOCoordinator),
-                                  std::make_shared<GenerateThumbnailsTemplate>(m_ImageCachingService, m_VideoCachingService),
-                                  std::make_shared<AutoImportMetadataCommand>(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel),
-                                  std::make_shared<AddToRecentTemplate>(m_RecentFileModel),
-                                  std::make_shared<SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager),
-                                  std::make_shared<CleanupLegacyBackupsCommand>(files, m_MaintenanceService),
-                              });
+    std::vector<ArtworksTemplate> postAddActions = {
+        std::make_shared<ReadMetadataTemplate>(m_MetadataIOService, m_MetadataIOCoordinator),
+        std::make_shared<GenerateThumbnailsTemplate>(m_ImageCachingService, m_VideoCachingService),
+        std::make_shared<AutoImportMetadataCommand>(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel),
+        std::make_shared<AddToRecentTemplate>(m_RecentFileModel),
+    };
 
-    ArtworksTemplate actions = postAddActions;
+    if (!Common::HasFlag(flags, Common::AddFilesFlags::FlagIsSessionRestore)) {
+        postAddActions.emplace_back(
+                    std::make_shared<SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager));
+        postAddActions.emplace_back(
+                    std::make_shared<CleanupLegacyBackupsCommand>(files, m_MaintenanceService));
+    }
+
+    ArtworksTemplate actions = std::make_shared<CompositeTemplate>(postAddActions);
 
     auto addFilesCommand = std::make_shared<AddFilesCommand>(
                                files, flags, m_ArtworksListModel, actions);
 
     m_CommandManager.processCommand(addFilesCommand);
+    return addFilesCommand->getAddedCount();
 }
 
 void XpiksApp::afterServicesStarted() {
@@ -427,10 +430,10 @@ void XpiksApp::afterServicesStarted() {
 #endif
 
     if (m_SettingsModel.getSaveSession() || m_SessionManager.getIsEmergencyRestore()) {
-        int newFilesAdded = m_SessionManager.restoreSession(m_ArtworksRepository);
-        if (newFilesAdded > 0) {
-            // immediately save restored session - to beat race between
-            // saving session from Add Command and restoring FULL_DIR flag
+        auto session = m_SessionManager.restoreSession();
+        int addedCount = doAddFiles(std::get<0>(session), Common::AddFilesFlags::FlagIsSessionRestore);
+        if (addedCount > 0) {
+            m_ArtworksRepository.restoreFullDirectories(std::get<1>(session));
             auto snapshot = m_ArtworksListModel.snapshotAll();
             m_MaintenanceService.saveSession(snapshot, m_SessionManager);
         }
@@ -469,8 +472,6 @@ void XpiksApp::connectEntitiesSignalsSlots() {
                      &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckDisabled);
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::duplicatesCheckDisabled,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onDuplicatesDisabled);
-    QObject::connect(&m_SettingsModel, &Models::SettingsModel::spellCheckRestarted,
-                     &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckRestarted);
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::exiftoolSettingChanged,
                      &m_MaintenanceService, &Maintenance::MaintenanceService::onExiftoolPathChanged);
 
@@ -577,17 +578,20 @@ void XpiksApp::registerUICommands() {
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator),
 
                     std::make_shared<Commands::RemoveSelectedCommand>(
-                    m_FilteredArtworksListModel,
+                    m_FilteredArtworksListModel, m_ArtworksListModel,
                     std::make_shared<Commands::SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager)),
 
                     std::make_shared<Commands::ReimportMetadataForSelected>(
-                    m_FilteredArtworksListModel, m_MetadataIOCoordinator)
+                    m_FilteredArtworksListModel, m_MetadataIOCoordinator),
 
                     std::make_shared<Commands::FixSpellingInCombinedEditCommand>(
                     m_CombinedArtworksModel, m_SpellSuggestionModel),
 
                     std::make_shared<Commands::FixSpellingInArtworkProxyCommand>(
-                    m_ArtworkProxyModel, m_SpellSuggestionModel)
+                    m_ArtworkProxyModel, m_SpellSuggestionModel),
+
+                    std::make_shared<Commands::FixSpellingInArtworkCommand>(
+                    m_FilteredArtworksListModel, m_ArtworksListModel, m_SpellSuggestionModel)
                 });
 }
 

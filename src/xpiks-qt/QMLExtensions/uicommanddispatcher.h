@@ -36,8 +36,8 @@ namespace QMLExtensions {
 
         // IUICommandDispatcher interface
     public:
-        virtual void registerCommand(const std::shared_ptr<Commands::IUICommandTemplate> &command) override;
-        virtual void dispatchCommand(int commandID, const QJSValue &value) override;
+        virtual void registerCommand(std::shared_ptr<Commands::IUICommandTemplate> const &command) override;
+        virtual void dispatchCommand(int commandID, QJSValue const &value) override;
 
     private:
         std::unordered_map<int, std::shared_ptr<Commands::IUICommandTemplate>> m_CommandsMap;

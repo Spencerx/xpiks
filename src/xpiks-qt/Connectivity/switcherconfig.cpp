@@ -43,12 +43,10 @@ namespace Connectivity {
     }
 
     SwitcherConfig::SwitcherConfig(Common::ISystemEnvironment &environment,
-                                   RequestsService &requestsService,
                                    QObject *parent):
         Models::AbstractConfigUpdaterModel(
             environment.path({LOCAL_SWITCHER_CONFIG}),
             Connectivity::ApiManager::getInstance().getSwitcherAddr(),
-            requestsService,
             OVERWRITE_SWITCHER_CONFIG,
             environment.getIsInMemoryOnly(), parent)
     {

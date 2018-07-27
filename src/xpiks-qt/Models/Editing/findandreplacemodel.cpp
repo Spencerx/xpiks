@@ -12,6 +12,7 @@
 #include <QAbstractListModel>
 #include <Common/logging.h>
 #include <Common/defines.h>
+#include <Common/irefcountedobject.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/videoartwork.h>
 #include <Models/settingsmodel.h>
@@ -55,6 +56,10 @@ QString searchFlagsToString(Common::SearchFlags flags) {
     return items.join(" | ");
 }
 
+namespace Artworks {
+    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
+}
+
 namespace Models {
     FindAndReplaceModel::FindAndReplaceModel(QMLExtensions::ColorsModel &colorsModel,
                                              Commands::ICommandManager &commandManager,
@@ -65,12 +70,6 @@ namespace Models {
         m_Flags(Common::SearchFlags::None)
     {
         initDefaultFlags();
-
-        messages
-                .ofType<Artworks::ArtworksSnapshot>()
-                .withID(Commands::AppMessages::FindArtworks)
-                .addListener(std::bind(&FindAndReplaceModel::findReplaceCandidates, this,
-                                       std::placeholders::_1));
     }
 
     int FindAndReplaceModel::rowCount(const QModelIndex &parent) const {
@@ -148,33 +147,6 @@ namespace Models {
         return roles;
     }
 
-    void FindAndReplaceModel::findReplaceCandidates(const Artworks::ArtworksSnapshot &snapshot) {
-        LOG_DEBUG << "size:" << snapshot.size();
-        LOG_INFO << "flags:" << searchFlagsToString(m_Flags);
-        LOG_INFO << "replace from: [" << m_ReplaceFrom << "]";
-
-        Q_ASSERT(!m_ReplaceFrom.isEmpty());
-        if (m_ReplaceFrom.isEmpty()) {
-            LOG_WARNING << "Replace from is empty";
-            return;
-        }
-
-        normalizeSearchCriteria();
-
-        auto previewElements = Helpers::filterMap<std::shared_ptr<Artworks::ArtworkMetadataLocker>,
-                std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
-                    snapshot.getRawData(),
-                    [this](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
-            return Helpers::hasSearchMatch(this->m_ReplaceFrom, locker->getArtworkMetadata(), this->m_Flags);
-        },
-        [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
-            return std::make_shared<PreviewArtworkElement>(locker->getArtworkMetadata());
-        });
-
-        m_ArtworksSnapshot.set(previewElements);
-        LOG_INFO << "Found" << m_ArtworksSnapshot.size() << "item(s)";
-    }
-
     void FindAndReplaceModel::updatePreviewFlags() {
         LOG_DEBUG << "#";
         for (auto &locker: m_ArtworksSnapshot.getRawData()) {
@@ -211,6 +183,33 @@ namespace Models {
                 preview->setHasKeywordsMatch(hasMatch);
             }
         }
+    }
+
+    void FindAndReplaceModel::findReplaceCandidates(const Artworks::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "size:" << snapshot.size();
+        LOG_INFO << "flags:" << searchFlagsToString(m_Flags);
+        LOG_INFO << "replace from: [" << m_ReplaceFrom << "]";
+
+        Q_ASSERT(!m_ReplaceFrom.isEmpty());
+        if (m_ReplaceFrom.isEmpty()) {
+            LOG_WARNING << "Replace from is empty";
+            return;
+        }
+
+        normalizeSearchCriteria();
+
+        auto previewElements = Helpers::filterMap<std::shared_ptr<Artworks::ArtworkMetadataLocker>,
+                std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
+                    snapshot.getRawData(),
+                    [this](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+            return Helpers::hasSearchMatch(this->m_ReplaceFrom, locker->getArtworkMetadata(), this->m_Flags);
+        },
+        [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
+            return std::make_shared<PreviewArtworkElement>(locker->getArtworkMetadata());
+        });
+
+        m_ArtworksSnapshot.set(previewElements);
+        LOG_INFO << "Found" << m_ArtworksSnapshot.size() << "item(s)";
     }
 
 #if !defined(CORE_TESTS) && !defined(INTEGRATION_TESTS)
@@ -319,7 +318,7 @@ namespace Models {
         // in this place since it's the end of replacement flow
         m_CommandManager.processCommand(
                     std::make_shared<ModifyArtworksCommand>(
-                        m_ArtworksSnapshot,
+                        std::move(m_ArtworksSnapshot),
                         std::make_shared<FindAndReplaceTemplate>(m_ReplaceFrom,
                                                                  m_ReplaceTo,
                                                                  m_Flags)));

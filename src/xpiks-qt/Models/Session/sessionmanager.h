@@ -14,6 +14,7 @@
 #include <QJsonObject>
 #include <QMutex>
 #include <memory>
+#include <tuple>
 #include <Helpers/localconfig.h>
 #include <Common/isystemenvironment.h>
 #include <Helpers/jsonobjectmap.h>
@@ -28,6 +29,10 @@ namespace Models {
     class ArtworksRepository;
 }
 
+namespace Filesystem {
+    class IFilesCollection;
+}
+
 namespace Models {
     class SessionManager: public QObject
     {
@@ -37,9 +42,11 @@ namespace Models {
         virtual ~SessionManager() {}
 
     public:
-        bool save(std::vector<std::shared_ptr<Artworks::ArtworkSessionSnapshot> > &filesSnapshot,
-                        const QStringList &directoriesSnapshot);
-        int restoreSession(Models::ArtworksRepository &artworksRepository);
+        using SessionTuple = std::tuple<std::shared_ptr<Filesystem::IFilesCollection>, QStringList>;
+
+    public:
+        bool save(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot);
+        SessionTuple restoreSession();
 
     public:
         bool getIsEmergencyRestore() const { return m_EmergencyRestore; }

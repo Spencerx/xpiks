@@ -26,6 +26,11 @@ namespace Commands {
         {
         }
 
+        CompositeCommandTemplate(std::vector<std::shared_ptr<ICommandTemplate<T>> > &templates):
+            m_Templates(std::move(templates))
+        {
+        }
+
         // IArtworksCommandTemplate interface
     public:
         virtual void execute(const T &argument) override {

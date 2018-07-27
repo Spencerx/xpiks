@@ -15,7 +15,7 @@
 #include "../Helpers/constants.h"
 
 namespace Filesystem {
-    FilesCollection::FilesCollection(const QList<QUrl> &urls, bool fullDirectory) {
+    FilesCollection::FilesCollection(QList<QUrl> const &urls, bool fullDirectory) {
         m_Files.reserve(urls.length());
 
         QStringList files;
@@ -28,12 +28,18 @@ namespace Filesystem {
         sortRawFiles(files, fullDirectory);
     }
 
-    FilesCollection::FilesCollection(const QStringList &files, bool fullDirectory) {
+    FilesCollection::FilesCollection(QStringList const &files, bool fullDirectory) {
         m_Files.reserve(files.length());
         sortRawFiles(files, fullDirectory);
     }
 
-    void FilesCollection::sortRawFiles(const QStringList &files, bool fullDirectory) {
+    FilesCollection::FilesCollection(std::initializer_list<QStringList> filesList) {
+        for (auto &files: filesList) {
+            sortRawFiles(files, false);
+        }
+    }
+
+    void FilesCollection::sortRawFiles(QStringList const &files, bool fullDirectory) {
         LOG_INFO << files.length() << "file(s)";
 
         foreach(const QString &filepath, files) {

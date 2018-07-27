@@ -48,6 +48,9 @@ namespace Commands {
                                        QObject::tr("1 item added");
         }
 
+    public:
+        int getAddedCount() const { return m_AddedCount; }
+
     signals:
         void artworksAdded(int imagesCount, int vectorsCount);
 

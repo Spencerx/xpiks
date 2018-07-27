@@ -78,6 +78,7 @@ namespace Models {
 
     public:
         explicit SettingsModel(Common::ISystemEnvironment &environment,
+                               Encryption::SecretsManager &secretsManager,
                                QObject *parent = 0);
         virtual ~SettingsModel() { }
 
@@ -169,7 +170,7 @@ namespace Models {
         QString getProxyUser() const { return m_ProxySettings.m_User; }
         QString getProxyPassword() const { return m_ProxySettings.m_Password; }
         QString getProxyPort() const { return m_ProxySettings.m_Port; }
-        const ProxySettings &getProxySettings() { return m_ProxySettings; }
+        ProxySettings const &getProxySettings() { return m_ProxySettings; }
         bool getAutoCacheImages() const { return m_AutoCacheImages; }
         bool getVerboseUpload() const { return m_VerboseUpload; }
         bool getUseProgressiveSuggestionPreviews() const { return m_UseProgressiveSuggestionPreviews; }
@@ -218,7 +219,6 @@ namespace Models {
     signals:
         void spellCheckDisabled();
         void duplicatesCheckDisabled();
-        void spellCheckRestarted();
         void exiftoolSettingChanged(const QString &path);
 
     public:
@@ -307,7 +307,6 @@ namespace Models {
         bool m_UserStatistics;
         bool m_CheckForUpdates;
         bool m_AutoDownloadUpdates;
-        bool m_DictsPathChanged;
         bool m_UseSpellCheckChanged;
         bool m_DetectDuplicatesChanged;
         bool m_AutoFindVectors;

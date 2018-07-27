@@ -15,6 +15,7 @@
 #include <vector>
 #include <memory>
 #include "csvexportproperties.h"
+#include "csvexportplansmodel.h"
 #include <Common/delayedactionentity.h>
 #include <Common/isystemenvironment.h>
 #include <Artworks/artworkssnapshot.h>
@@ -26,12 +27,14 @@ namespace Helpers {
 }
 
 namespace Artworks {
-    class ISelectedArtworksSource;
+    class ArtworksSnapshot;
+}
+
+namespace Connectivity {
+    class RequestsService;
 }
 
 namespace MetadataIO {
-    class CsvExportPlansModel;
-
     class CsvExportColumnsModel: public QAbstractListModel
     {
         Q_OBJECT
@@ -85,7 +88,7 @@ namespace MetadataIO {
         Q_PROPERTY(bool isExporting READ getIsExporting WRITE setIsExporting NOTIFY isExportingChanged)
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
     public:
-        CsvExportModel(CsvExportPlansModel &exportPlansModel, Artworks::ISelectedArtworksSource &artworksSource);
+        CsvExportModel(Common::ISystemEnvironment &environment);
 
     public:
         const std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() const { return m_ExportPlans; }
@@ -94,7 +97,9 @@ namespace MetadataIO {
         void setIsExporting(bool value);
 
     public:
-        void initializeExportPlans(Helpers::AsyncCoordinator *initCoordinator);
+        void initializeExportPlans(Helpers::AsyncCoordinator *initCoordinator,
+                                   Connectivity::RequestsService &requestsService);
+        void setArtworksToExport(Artworks::ArtworksSnapshot &&snapshot);
 
 #ifdef INTEGRATION_TESTS
     public:
@@ -119,7 +124,6 @@ namespace MetadataIO {
         virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     public:
-        Q_INVOKABLE void pullArtworks();
         Q_INVOKABLE void startExport();
         Q_INVOKABLE void clearModel();
         Q_INVOKABLE void removePlanAt(int row);
@@ -168,8 +172,7 @@ namespace MetadataIO {
 
     private:
         CsvExportColumnsModel m_CurrentColumnsModel;
-        CsvExportPlansModel &m_ExportPlansModel;
-        Artworks::ISelectedArtworksSource &m_ArtworksSource;
+        CsvExportPlansModel m_ExportPlansModel;
         std::vector<std::shared_ptr<CsvExportPlan> > m_ExportPlans;
         Artworks::ArtworksSnapshot m_ArtworksToExport;
         QString m_ExportDirectory;

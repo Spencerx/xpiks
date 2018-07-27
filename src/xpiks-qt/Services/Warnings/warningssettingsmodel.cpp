@@ -40,12 +40,10 @@
 #define DEFAULT_MAX_VIDEO_DURATION_SECONDS 60
 
 namespace Warnings {
-    WarningsSettingsModel::WarningsSettingsModel(Common::ISystemEnvironment &environment,
-                                                 Connectivity::RequestsService &requestsService):
+    WarningsSettingsModel::WarningsSettingsModel(Common::ISystemEnvironment &environment):
         Models::AbstractConfigUpdaterModel(
             environment.path({LOCAL_WARNINGS_SETTINGS_FILE}),
             Connectivity::ApiManager::getInstance().getWarningSettingsAddr(),
-            requestsService,
             OVERWRITE_WARNINGS_CONFIG,
             environment.getIsInMemoryOnly()),
         m_AllowedFilenameCharacters("._-@#"),

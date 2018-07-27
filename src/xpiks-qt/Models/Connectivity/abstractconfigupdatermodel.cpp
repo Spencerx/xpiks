@@ -15,14 +15,12 @@
 namespace Models {
     AbstractConfigUpdaterModel::AbstractConfigUpdaterModel(const QString &localPath,
                                                            const QString &remoteResource,
-                                                           Connectivity::RequestsService &requestsService,
                                                            bool forceOverwrite,
                                                            bool memoryOnly,
                                                            QObject *parent):
         QObject(parent)
       ,m_RemoteConfig(remoteResource, this)
       ,m_LocalConfig(localPath, memoryOnly)
-      ,m_RequestsService(requestsService)
       ,m_ForceOverwrite(forceOverwrite)
   #ifdef INTEGRATION_TESTS
       ,m_MemoryOnly(memoryOnly)
@@ -32,11 +30,11 @@ namespace Models {
                          this, &AbstractConfigUpdaterModel::remoteConfigArrived);
     }
 
-    void AbstractConfigUpdaterModel::initializeConfigs() {
+    void AbstractConfigUpdaterModel::initializeConfigs(Connectivity::RequestsService &requestsService) {
         LOG_DEBUG << "#";
 
         initLocalConfig();
-        initRemoteConfig();
+        initRemoteConfig(requestsService);
     }
 
     void AbstractConfigUpdaterModel::remoteConfigArrived() {
@@ -54,7 +52,7 @@ namespace Models {
         processMergedConfig(document);
     }
 
-    void AbstractConfigUpdaterModel::initRemoteConfig() {
+    void AbstractConfigUpdaterModel::initRemoteConfig(Connectivity::RequestsService &requestsService) {
 #ifdef INTEGRATION_TESTS
         if (!m_RemoteOverrideLocalPath.isEmpty()) {
             LOG_DEBUG << "Using remote override" << m_RemoteOverrideLocalPath;
@@ -63,7 +61,7 @@ namespace Models {
         } else
 #endif
         {
-            m_RequestsService.receiveConfig(&m_RemoteConfig);
+            requestsService.receiveConfig(&m_RemoteConfig);
         }
     }
 

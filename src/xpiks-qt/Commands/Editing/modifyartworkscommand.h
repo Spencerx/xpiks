@@ -21,10 +21,10 @@ namespace Commands {
     public:
         ModifyArtworksCommand(Artworks::ArtworksSnapshot &&snapshot,
                               const std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
-            TemplatedCommand(snapshot, editTemplate),
-            m_Count(snapshot.size()),
-            m_IsOwned(false)
-        { }
+            TemplatedCommand(std::move(snapshot), editTemplate)
+        {
+            m_Count = m_Argument.size();
+        }
 
         ModifyArtworksCommand(Artworks::ArtworkMetadata *artwork,
                               const std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
@@ -40,7 +40,7 @@ namespace Commands {
         }
 
     private:
-        int m_Count;
+        size_t m_Count;
     };
 }
 

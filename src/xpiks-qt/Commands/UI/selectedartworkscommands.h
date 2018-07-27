@@ -28,51 +28,42 @@ namespace SpellCheck {
 namespace MetadataIO {
     class MetadataIOCoordinator;
     class MetadataIOService;
+    class CsvExportModel;
 }
 
 namespace Models {
     class ArtworksListModel;
     class FilteredArtworksListModel;
+    class FindAndReplaceModel;
 }
 
 namespace Commands {
     class ICommand;
 
-    class FixSpellingInSelectedCommand: public IUICommandTemplate {
-    public:
-        FixSpellingInSelectedCommand(Artworks::ISelectedArtworksSource &selectedArtworksSource,
-                                     SpellCheck::SpellCheckSuggestionModel spellSuggestionModel):
-            m_SelectedArtworksSource(selectedArtworksSource),
-            m_SpellCheckSuggestionModel(spellSuggestionModel)
-        {}
-
-        // IUICommandTemplate interface
-    public:
-        virtual int getCommandID() override { return QMLExtensions::UICommandID::FixSpellingInSelected; }
-        virtual void execute(const QJSValue &) override;
-
-    private:
-        Artworks::ISelectedArtworksSource &m_SelectedArtworksSource;
-        SpellCheck::SpellCheckSuggestionModel &m_SpellCheckSuggestionModel;
+#define SOURCE_TARGET_COMMAND(ClassName, CommandID, Source, Target) \
+    class ClassName: public IUICommandTemplate {\
+    public:\
+        ClassName(Source &source, Target &target):\
+            m_Source(source),\
+            m_Target(target)\
+        {}\
+    public:\
+        virtual int getCommandID() override { return CommandID; }\
+        virtual void execute(const QJSValue &) override;\
+    private:\
+        Source &m_Source;\
+        Target &m_Target;\
     };
 
-    class ShowDuplicatesInSelectedCommand: public IUICommandTemplate {
-    public:
-        ShowDuplicatesInSelectedCommand(Artworks::ISelectedArtworksSource &selectedArtworksSource,
-                                        SpellCheck::DuplicatesReviewModel duplicatesReviewModel):
-            m_SelectedArtworksSource(selectedArtworksSource),
-            m_DuplicatesReviewModel(duplicatesReviewModel)
-        {}
+    SOURCE_TARGET_COMMAND(FixSpellingInSelectedCommand,
+                          QMLExtensions::UICommandID::FixSpellingInSelected,
+                          Artworks::ISelectedArtworksSource,
+                          SpellCheck::SpellCheckSuggestionModel)
 
-        // IUICommandTemplate interface
-    public:
-        virtual int getCommandID() override { return QMLExtensions::UICommandID::ReviewDuplicatesInSelected; }
-        virtual void execute(const QJSValue &) override;
-
-    private:
-        Artworks::ISelectedArtworksSource &m_SelectedArtworksSource;
-        SpellCheck::DuplicatesReviewModel &m_DuplicatesReviewModel;
-    };
+    SOURCE_TARGET_COMMAND(ShowDuplicatesInSelectedCommand,
+                          QMLExtensions::UICommandID::ReviewDuplicatesInSelected,
+                          Artworks::ISelectedArtworksSource,
+                          SpellCheck::DuplicatesReviewModel)
 
     class SaveSelectedCommand: public IUICommandTemplate {
     public:
@@ -95,23 +86,10 @@ namespace Commands {
         MetadataIO::MetadataIOService &m_MetadataIOService;
     };
 
-    class WipeMetadataInSelectedCommand: public IUICommandTemplate {
-    public:
-        WipeMetadataInSelectedCommand(Artworks::ISelectedArtworksSource &selectedArtworksSource,
-                                      MetadataIO::MetadataIOCoordinator &metadataIOCoordinator):
-            m_SelectedArtworksSource(selectedArtworksSource),
-            m_MetadataIOCoordinator(metadataIOCoordinator)
-        {}
-
-        // IUICommandTemplate interface
-    public:
-        virtual int getCommandID() override { return QMLExtensions::UICommandID::WipeMetadataInSelected; }
-        virtual void execute(const QJSValue &value) override;
-
-    private:
-        Artworks::ISelectedArtworksSource &m_SelectedArtworksSource;
-        MetadataIO::MetadataIOCoordinator &m_MetadataIOCoordinator;
-    };
+    SOURCE_TARGET_COMMAND(WipeMetadataInSelectedCommand,
+                          QMLExtensions::UICommandID::WipeMetadataInSelected,
+                          Artworks::ISelectedArtworksSource,
+                          MetadataIO::MetadataIOCoordinator)
 
     class RemoveSelectedCommand: public IUICommandTemplate {
     public:
@@ -137,23 +115,22 @@ namespace Commands {
         std::shared_ptr<ICommand> m_SaveSessionCommand;
     };
 
-    class ReimportMetadataForSelected: public IUICommandTemplate {
-    public:
-        ReimportMetadataForSelected(Artworks::ISelectedArtworksSource &selectedArtworksSource,
-                                    MetadataIO::MetadataIOCoordinator &metadataIOCoordinator):
-            m_SelectedArtworksSource(selectedArtworksSource),
-            m_MetadataIOCoordinator(metadataIOCoordinator)
-        {}
+    SOURCE_TARGET_COMMAND(ReimportMetadataForSelected,
+                          QMLExtensions::UICommandID::ReimportFromSelected,
+                          Artworks::ISelectedArtworksSource,
+                          MetadataIO::MetadataIOCoordinator)
 
-        // IUICommandTemplate interface
-    public:
-        virtual int getCommandID() override { return QMLExtensions::UICommandID::ReimportFromSelected; }
-        virtual void execute(const QJSValue &) override;
+    SOURCE_TARGET_COMMAND(ExportSelectedToCSV,
+                          QMLExtensions::UICommandID::ExportSelectedToCSV,
+                          Artworks::ISelectedArtworksSource,
+                          MetadataIO::CsvExportModel)
 
-    private:
-        Artworks::ISelectedArtworksSource &m_SelectedArtworksSource;
-        MetadataIO::MetadataIOCoordinator &m_MetadataIOCoordinator;
-    };
+    SOURCE_TARGET_COMMAND(FindAndReplaceInSelected,
+                          QMLExtensions::UICommandID::FindAndReplaceInSelected,
+                          Artworks::ISelectedArtworksSource,
+                          Models::FindAndReplaceModel)
+
+#undef SOURCE_TARGET_COMMAND
 }
 
 #endif // SELECTEDARTWORKSCOMMANDS_H

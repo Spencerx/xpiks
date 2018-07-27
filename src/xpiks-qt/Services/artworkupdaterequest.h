@@ -12,11 +12,12 @@
 #define ARTWORKUPDATEREQUEST_H
 
 #include <QSet>
+#include <Common/types.h>
 
 namespace Services {
     class ArtworkUpdateRequest {
     public:
-        ArtworkUpdateRequest(qint64 artworkID, size_t lastKnownIndex, const QSet<int> &rolesToUpdate, bool fastUpdate=false):
+        ArtworkUpdateRequest(Common::ID_t artworkID, size_t lastKnownIndex, const QSet<int> &rolesToUpdate, bool fastUpdate=false):
             m_RolesToUpdate(rolesToUpdate),
             m_ArtworkID(artworkID),
             m_LastKnownIndex(lastKnownIndex),
@@ -27,7 +28,7 @@ namespace Services {
 
     public:
         const QSet<int> &getRolesToUpdate() const { return m_RolesToUpdate; }
-        qint64 getArtworkID() const { return m_ArtworkID; }
+        Common::ID_t const &getArtworkID() const { return m_ArtworkID; }
         size_t getLastKnownIndex() const { return m_LastKnownIndex; }
         int isFirstGeneration() const { return m_GenerationIndex == 0; }
         bool isCacheMiss() const { return m_IsCacheMiss; }
@@ -39,7 +40,7 @@ namespace Services {
 
     private:
         QSet<int> m_RolesToUpdate;
-        qint64 m_ArtworkID;
+        Common::ID_t m_ArtworkID;
         size_t m_LastKnownIndex;
         int m_GenerationIndex;
         bool m_IsCacheMiss;

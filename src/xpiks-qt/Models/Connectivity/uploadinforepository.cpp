@@ -162,7 +162,6 @@ namespace Models {
     }
 
     UploadInfoRepository::UploadInfoRepository(Common::ISystemEnvironment &environment,
-                                               Microstocks::StocksFtpListModel &stocksFtpList,
                                                Encryption::SecretsManager &secretsManager,
                                                QObject *parent):
         QAbstractListModel(parent),
@@ -170,7 +169,7 @@ namespace Models {
         m_Environment(environment),
         m_LocalConfig(environment.path({UPLOAD_INFOS_FILE}),
                       environment.getIsInMemoryOnly()),
-        m_StocksFtpList(stocksFtpList),
+        m_StocksFtpList(environment),
         m_SecretsManager(secretsManager),
         m_CurrentIndex(0),
         m_EmptyPasswordsMode(false)
@@ -229,7 +228,8 @@ namespace Models {
         }
     }
 
-    void UploadInfoRepository::initializeStocksList(Helpers::AsyncCoordinator *initCoordinator) {
+    void UploadInfoRepository::initializeStocksList(Helpers::AsyncCoordinator *initCoordinator,
+                                                    Connectivity::RequestsService &requestsService) {
         LOG_DEBUG << "#";
 
         Helpers::AsyncCoordinatorLocker locker(initCoordinator);
@@ -237,7 +237,7 @@ namespace Models {
         Helpers::AsyncCoordinatorUnlocker unlocker(initCoordinator);
         Q_UNUSED(unlocker);
 
-        m_StocksFtpList.initializeConfigs();
+        m_StocksFtpList.initializeConfigs(requestsService);
     }
 
     void UploadInfoRepository::removeItem(int row) {

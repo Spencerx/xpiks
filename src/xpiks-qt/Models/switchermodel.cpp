@@ -21,7 +21,8 @@ namespace Models {
 #define SWITCHER_SESSION_START "sessionStart"
 #define SWITCHER_TIMER_DELAY 2000
 
-    SwitcherModel::SwitcherModel(Common::ISystemEnvironment &environment, QObject *parent):
+    SwitcherModel::SwitcherModel(Common::ISystemEnvironment &environment,
+                                 QObject *parent):
         QObject(parent),
         m_State("switcher", environment),
         m_Config(environment),
@@ -52,9 +53,9 @@ namespace Models {
         LOG_INFO << "Current threshold is" << m_Threshold;
     }
 
-    void SwitcherModel::updateConfigs() {
+    void SwitcherModel::updateConfigs(Connectivity::RequestsService &requestsService) {
         LOG_DEBUG << "#";
-        m_Config.initializeConfigs();
+        m_Config.initializeConfigs(requestsService);
     }
 
     void SwitcherModel::afterInitializedCallback() {

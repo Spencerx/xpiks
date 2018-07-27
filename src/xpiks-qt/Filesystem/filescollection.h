@@ -12,6 +12,7 @@
 #define FILESCOLLECTION_H
 
 #include "ifilescollection.h"
+#include <initializer_list>
 #include <QList>
 #include <QUrl>
 
@@ -19,11 +20,12 @@ namespace Filesystem {
     class FilesCollection: public IFilesCollection
     {
     public:
-        FilesCollection(const QList<QUrl> &urls, bool fullDirectory=false);
-        FilesCollection(const QStringList &files, bool fullDirectory=false);
+        FilesCollection(QList<QUrl> const &urls, bool fullDirectory=false);
+        FilesCollection(QStringList const &files, bool fullDirectory=false);
+        FilesCollection(std::initializer_list<QStringList> filesList);
 
     private:
-        void sortRawFiles(const QStringList &files, bool fullDirectory);
+        void sortRawFiles(QStringList const &files, bool fullDirectory);
 
         // IFilesCollection interface
     public:

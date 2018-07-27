@@ -75,6 +75,10 @@ namespace Models {
         Q_PROPERTY(bool isVideo READ getIsVideo NOTIFY imagePathChanged)
         Q_PROPERTY(bool isValid READ getIsValid NOTIFY isValidChanged)
 
+        using Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>::sendMessage;
+        using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
+        using Common::MessagesSource<Artworks::VideoArtwork*>::sendMessage;
+
     public:
         explicit ArtworkProxyModel(Commands::ICommandManager &commandManager,
                                    KeywordsPresets::IPresetsManager &presetsManager,
