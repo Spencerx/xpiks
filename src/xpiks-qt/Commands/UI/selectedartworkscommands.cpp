@@ -36,7 +36,7 @@ namespace Commands {
     }
 
     void SaveSelectedCommand::execute(const QJSValue &value) {
-        LOG_DEBUG << value;
+        LOG_DEBUG << value.toString();
         bool useBackups = false;
         if (value.isBool()) {
             useBackups = value.toBool();
@@ -48,7 +48,7 @@ namespace Commands {
     }
 
     void WipeMetadataInSelectedCommand::execute(const QJSValue &value) {
-        LOG_DEBUG << value;
+        LOG_DEBUG << value.toString();
         bool useBackups = false;
         if (value.isBool()) {
             useBackups = value.toBool();

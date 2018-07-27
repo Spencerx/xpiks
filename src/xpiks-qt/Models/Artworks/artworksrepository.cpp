@@ -114,7 +114,7 @@ namespace Models {
     void ArtworksRepository::onUndoStackEmpty() {
         LOG_DEBUG << "#";
         cleanupEmptyDirectories();
-        emit artworksSourcesCountChanged();
+        emit artworksSourcesChanged();
     }
 
     bool ArtworksRepository::accountFile(const QString &filepath, qint64 &directoryID) {
@@ -452,7 +452,7 @@ namespace Models {
             emit selectionChanged();
         }
 
-        emit artworksSourcesCountChanged();
+        emit artworksSourcesChanged();
         return result;
     }
 
@@ -665,15 +665,17 @@ namespace Models {
         }
     }
 
-    FilteredArtworksRepository::FilteredArtworksRepository(ArtworksRepository &artworksRepository) {
-        setArtworksRepository(artworksRepository);
+    FilteredArtworksRepository::FilteredArtworksRepository(ArtworksRepository &artworksRepository):
+        m_ArtworksRepository(artworksRepository)
+    {
+        setArtworksRepository(m_ArtworksRepository);
     }
 
     void FilteredArtworksRepository::setArtworksRepository(ArtworksRepository &artworksRepository) {
         setSourceModel(&artworksRepository);
 
-        /*QObject::connect(&artworksRepository, &ArtworksRepository::artworksSourcesCountChanged,
-                         this, &FilteredArtworksRepository::artworksSourcesCountChanged);*/
+        QObject::connect(&artworksRepository, &ArtworksRepository::artworksSourcesChanged,
+                         this, &FilteredArtworksRepository::artworksSourcesCountChanged);
         QObject::connect(&artworksRepository, &ArtworksRepository::refreshRequired,
                          this, &FilteredArtworksRepository::onRefreshRequired);
     }
@@ -688,8 +690,7 @@ namespace Models {
     void FilteredArtworksRepository::selectDirectory(int row) {
         LOG_INFO << row;
         int originalRow = getOriginalIndex(row);
-        ArtworksRepository *artworksRepository = getArtworksRepository();
-        artworksRepository->toggleDirectorySelected(originalRow);
+        m_ArtworksRepository.toggleDirectorySelected(originalRow);
         emit directoriesFiltered();
     }
 
@@ -710,14 +711,4 @@ namespace Models {
         LOG_DEBUG << "#";
         this->invalidate();
     }
-
-    ArtworksRepository *FilteredArtworksRepository::getArtworksRepository() const {
-        QAbstractItemModel *sourceItemModel = sourceModel();
-        ArtworksRepository *artworksRepository = dynamic_cast<ArtworksRepository *>(sourceItemModel);
-        Q_ASSERT(artworksRepository != nullptr);
-        return artworksRepository;
-    }
-
 }
-
-

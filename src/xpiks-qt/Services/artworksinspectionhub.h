@@ -49,9 +49,9 @@ namespace Services {
         virtual void handleMessage(Artworks::BasicKeywordsModel* const &change) override;
 
     public:
-        void inspectArtwork(const Artworks::ArtworkMetadata *artwork);
+        void inspectArtwork(Artworks::ArtworkMetadata *artwork);
         void inspectArtworks(const Artworks::ArtworksSnapshot &snapshot);
-        void inspectBasicModel(const Artworks::BasicKeywordsModel *basicModel);
+        void inspectBasicModel(Artworks::BasicKeywordsModel *basicModel);
 
     private:
         bool isSpellCheckAvailable() const;

@@ -31,7 +31,7 @@ namespace Services {
         inspectBasicModel(change);
     }
 
-    void ArtworksInspectionHub::inspectArtwork(const Artworks::ArtworkMetadata *artwork) {
+    void ArtworksInspectionHub::inspectArtwork(Artworks::ArtworkMetadata *artwork) {
         if (isSpellCheckAvailable()) {
             m_SpellCheckService.submitArtwork(artwork);
         } else {
@@ -47,7 +47,7 @@ namespace Services {
         }
     }
 
-    void ArtworksInspectionHub::inspectBasicModel(const Artworks::BasicKeywordsModel *basicModel) {
+    void ArtworksInspectionHub::inspectBasicModel(Artworks::BasicKeywordsModel *basicModel) {
         if (isSpellCheckAvailable()) {
             m_SpellCheckService.submitItem(basicModel, Common::SpellCheckFlags::All);
         }

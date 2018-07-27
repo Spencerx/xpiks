@@ -57,9 +57,6 @@
 #define LOG_FOR_TESTS if (1) {} else qDebug()
 #endif
 
-QDebug& operator<< (QDebug &debug, const Common::ID_t &t) {
-    debug << t.get();
-    return debug;
-}
+QDebug& operator<< (QDebug &debug, const Common::ID_t &t);
 
 #endif // LOGGING_H

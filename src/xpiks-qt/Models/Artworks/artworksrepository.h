@@ -89,7 +89,7 @@ namespace Models {
     signals:
         void refreshRequired();
         void filteringChanged();
-        void artworksSourcesCountChanged();
+        void artworksSourcesChanged();
         void fileChanged(const QString &path);
         void filesUnavailable();
         void selectionChanged();
@@ -206,14 +206,14 @@ namespace Models {
         virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
     signals:
-        //void artworksSourcesCountChanged();
+        void artworksSourcesCountChanged();
         void directoriesFiltered();
 
     private slots:
         void onRefreshRequired();
 
     private:
-        ArtworksRepository *getArtworksRepository() const;
+        ArtworksRepository &m_ArtworksRepository;
     };
 }
 

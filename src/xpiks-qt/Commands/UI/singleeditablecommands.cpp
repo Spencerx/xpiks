@@ -28,7 +28,7 @@ namespace Commands {
     }
 
     void FixSpellingInArtworkCommand::execute(const QJSValue &value) {
-        LOG_DEBUG << value;
+        LOG_DEBUG << value.toString();
         int index = -1;
         if (value.isNumber()) {
             index = value.toInt();

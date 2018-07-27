@@ -39,7 +39,7 @@ namespace QMLExtensions {
         auto it = m_CommandsMap.find(commandID);
         if (it != m_CommandsMap.end()) {
             m_CommandManager.processCommand(
-                        std::make_shared<Commands::TemplatedUICommand>(value, *it));
+                        std::make_shared<Commands::TemplatedUICommand>(value, it->second));
         }
     }
 }

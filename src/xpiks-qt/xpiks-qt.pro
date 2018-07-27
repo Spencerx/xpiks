@@ -209,7 +209,8 @@ SOURCES += main.cpp \
     QMLExtensions/uicommanddispatcher.cpp \
     Commands/UI/selectedartworkscommands.cpp \
     Commands/UI/generalcommands.cpp \
-    Commands/UI/singleeditablecommands.cpp
+    Commands/UI/singleeditablecommands.cpp \
+    Common/logging.cpp
 
 RESOURCES += qml.qrc
 
