@@ -30,6 +30,7 @@
 #include <Commands/artworksupdatetemplate.h>
 #include <Commands/UI/selectedartworkscommands.h>
 #include <Commands/UI/singleeditablecommands.h>
+#include <Commands/Base/commanduiwrapper.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_SettingsModel(environment, m_SecretsManager),
@@ -76,7 +77,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_FtpCoordinator(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel)),
     m_ArtworkUploader(environment, m_UploadInfoRepository, m_SettingsModel),
     m_LanguagesModel(m_SettingsModel),
-    m_UIManager(environment, m_SettingsModel),
+    m_UIManager(environment, m_ColorsModel, m_SettingsModel),
     m_UserDictionary(environment),
     m_UserDictEditModel(m_UserDictionary),
     m_WarningsModel(m_ArtworksListModel, m_WarningsSettingsModel),
@@ -407,10 +408,10 @@ int XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &fi
     };
 
     if (!Common::HasFlag(flags, Common::AddFilesFlags::FlagIsSessionRestore)) {
-        postAddActions.emplace_back(
-                    std::make_shared<SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager));
-        postAddActions.emplace_back(
-                    std::make_shared<CleanupLegacyBackupsCommand>(files, m_MaintenanceService));
+        postAddActions.insert(postAddActions.end(), {
+                                  std::make_shared<SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager),
+                                  std::make_shared<CleanupLegacyBackupsCommand>(files, m_MaintenanceService)
+                              });
     }
 
     ArtworksTemplate actions = std::make_shared<CompositeTemplate>(postAddActions);
@@ -563,6 +564,9 @@ void XpiksApp::connectEntitiesSignalsSlots() {
 }
 
 void XpiksApp::registerUICommands() {
+    auto saveSessionCommand = std::make_shared<Commands::SaveSessionCommand>(
+                m_MaintenanceService, m_ArtworksListModel, m_SessionManager);
+
     m_UICommandDispatcher.registerCommands(
     {
                     std::make_shared<Commands::FixSpellingInSelectedCommand>(
@@ -578,8 +582,7 @@ void XpiksApp::registerUICommands() {
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator),
 
                     std::make_shared<Commands::RemoveSelectedCommand>(
-                    m_FilteredArtworksListModel, m_ArtworksListModel,
-                    std::make_shared<Commands::SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager)),
+                    m_FilteredArtworksListModel, m_ArtworksListModel, saveSessionCommand),
 
                     std::make_shared<Commands::ReimportMetadataForSelected>(
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator),
@@ -591,7 +594,10 @@ void XpiksApp::registerUICommands() {
                     m_ArtworkProxyModel, m_SpellSuggestionModel),
 
                     std::make_shared<Commands::FixSpellingInArtworkCommand>(
-                    m_FilteredArtworksListModel, m_ArtworksListModel, m_SpellSuggestionModel)
+                    m_FilteredArtworksListModel, m_ArtworksListModel, m_SpellSuggestionModel),
+
+                    std::make_shared<Commands::CommandUIWrapper>(
+                    QMLExtensions::UICommandID::SaveSession, saveSessionCommand)
                 });
 }
 

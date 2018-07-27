@@ -73,10 +73,6 @@ namespace Models {
         });
     }
 
-    std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::inspect() {
-        // TODO:
-    }
-
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::update() {
         return std::make_shared<Commands::EmptyCommand>();
     }

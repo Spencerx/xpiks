@@ -106,12 +106,10 @@ namespace Models {
         Q_INVOKABLE void retrieveAllValues();
         Q_INVOKABLE void raiseMasterPasswordSignal() { emit mustUseMasterPasswordChanged(m_MustUseMasterPassword); }
         Q_INVOKABLE void saveProxySetting(const QString &address, const QString &user, const QString &password, const QString &port);
-        Q_INVOKABLE void updateSaveSession(bool value);
 
     private:
         void doReadAllValues();
         void consolidateSettings();
-        void doMoveSettingsFromQSettingsToJson();
         void doResetToDefault();
         void doSaveAllValues();
         void afterSaveHandler();

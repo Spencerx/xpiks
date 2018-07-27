@@ -47,6 +47,7 @@ namespace Models {
 
     public:
         explicit UIManager(Common::ISystemEnvironment &environment,
+                           QMLExtensions::ColorsModel &colorsModel,
                            SettingsModel &settingsModel,
                            QObject *parent = 0);
 

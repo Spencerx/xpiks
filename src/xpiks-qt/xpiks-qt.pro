@@ -495,7 +495,6 @@ HEADERS += \
     Common/types.h \
     Common/version.h \
     Common/wordanalysisresult.h \
-    Commands/Base/simpleuicommandtemplate.h \
     Models/Editing/currenteditableartwork.h \
     Models/Editing/currenteditableproxyartwork.h \
     Models/Editing/icurrenteditable.h \
@@ -518,7 +517,8 @@ HEADERS += \
     Commands/UI/generalcommands.h \
     Artworks/iselectedartworkssource.h \
     Artworks/iselectedindicessource.h \
-    Commands/UI/singleeditablecommands.h
+    Commands/UI/singleeditablecommands.h \
+    Commands/Base/commanduiwrapper.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

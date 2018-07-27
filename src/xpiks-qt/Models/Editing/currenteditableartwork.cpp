@@ -17,6 +17,7 @@
 #include <Artworks/artworkelement.h>
 #include <Commands/Editing/deletekeywordstemplate.h>
 #include <Commands/Base/icommand.h>
+#include <Commands/Editing/editartworkstemplate.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Base/compositecommandtemplate.h>
 #include <Commands/Base/templatedcommand.h>
@@ -24,6 +25,7 @@
 #include <Commands/Base/emptycommand.h>
 
 namespace Models {
+    using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
 
@@ -82,11 +84,12 @@ namespace Models {
                                                                              KeywordsPresets::IPresetsManager &presetsManager) {
         using namespace Commands;
         auto command = std::make_shared<ModifyArtworksCommand>(
-                        m_ArtworkMetadata,
-                        std::make_shared<ArtworksTemplateComposite>({
-                                                              std::make_shared<ExpandPresetTemplate>(presetsManager,
-                                                              (KeywordsPresets::ID_t)presetID),
-                                                              m_UpdateTemplate}));
+                    m_ArtworkMetadata,
+                    std::make_shared<ArtworksTemplateComposite>(
+                        std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                            std::make_shared<ExpandPresetTemplate>(presetsManager,
+                            (KeywordsPresets::ID_t)presetID),
+                            m_UpdateTemplate}));
         return command;
     }
 
@@ -95,12 +98,13 @@ namespace Models {
                                                                              KeywordsPresets::IPresetsManager &presetsManager) {
         using namespace Commands;
         auto command = std::make_shared<ModifyArtworksCommand>(
-                        m_ArtworkMetadata,
-                        std::make_shared<ArtworksTemplateComposite>({
-                                                             std::make_shared<ExpandPresetTemplate>(presetsManager,
-                                                             (KeywordsPresets::ID_t)presetID,
-                                                             keywordIndex),
-                                                             m_UpdateTemplate}));
+                    m_ArtworkMetadata,
+                    std::make_shared<ArtworksTemplateComposite>(
+                        std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                            std::make_shared<ExpandPresetTemplate>(presetsManager,
+                            (KeywordsPresets::ID_t)presetID,
+                            keywordIndex),
+                            m_UpdateTemplate}));
         return command;
 
     }
@@ -116,22 +120,17 @@ namespace Models {
             }
 
             command = std::make_shared<ModifyArtworksCommand>(
-                          m_ArtworkMetadata,
-                          std::make_shared<ArtworksTemplateComposite>({
-                                                                std::make_shared<DeleteKeywordsTemplate>(
-                                                                          keywords.toSet(), false),
-                                                                          m_UpdateTemplate}));
+                        m_ArtworkMetadata,
+                        std::make_shared<ArtworksTemplateComposite>(
+                            std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                std::make_shared<DeleteKeywordsTemplate>(
+                                keywords.toSet(), false),
+                                m_UpdateTemplate}));
         } else {
             command = std::make_shared<EmptyCommand>();
         }
 
         return command;
-    }
-
-    std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::inspect() {
-        return std::make_shared<ArtworksCommand>(
-                        Artworks::ArtworksSnapshot({m_ArtworkMetadata}),
-                        m_InspectTemplate);
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::update() {
@@ -151,7 +150,7 @@ namespace Models {
         using namespace Commands;
         auto command = std::make_shared<ModifyArtworksCommand>(
                     m_ArtworkMetadata,
-                    std::make_shared<CompositeCommandTemplate>(
+                    std::make_shared<ArtworksTemplateComposite>(
                         std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
                             std::make_shared<EditArtworksTemplate>(
                             title, description, keywords, flags),

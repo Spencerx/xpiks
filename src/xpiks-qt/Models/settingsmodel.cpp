@@ -10,6 +10,7 @@
 
 #include "settingsmodel.h"
 #include <QQmlEngine>
+#include <QDateTime>
 #include <Common/defines.h>
 #include <Encryption/secretsmanager.h>
 #include <Common/version.h>
@@ -327,24 +328,6 @@ namespace Models {
         }
     }
 
-    void SettingsModel::updateSaveSession(bool value) {
-        LOG_DEBUG << value;
-
-        if (m_SaveSession == value) {
-            return;
-        }
-
-        m_SaveSession = value;
-        emit saveSessionChanged(value);
-
-        m_SettingsMap->setValue(Constants::saveSession, value);
-        sync();
-
-        if (value) {
-            xpiks()->saveSessionInBackground();
-        }
-    }
-
     void SettingsModel::doReadAllValues() {
         using namespace Constants;
 
@@ -408,66 +391,6 @@ namespace Models {
                 }
             }
         } while (false);
-    }
-
-    void SettingsModel::doMoveSettingsFromQSettingsToJson() {
-        LOG_DEBUG << "#";
-
-        using namespace Constants;
-
-        QSettings oldSettings(QSettings::UserScope,
-                              QCoreApplication::instance()->organizationName(),
-                              QCoreApplication::instance()->applicationName());
-
-        moveSetting(oldSettings, PATH_TO_EXIFTOOL, pathToExifTool, QMetaType::QString);
-        moveSetting(oldSettings, SAVE_BACKUPS, saveBackups, QMetaType::Bool);
-        moveSetting(oldSettings, KEYWORD_SIZE_SCALE, keywordSizeScale, QMetaType::Double);
-        moveSetting(oldSettings, DISMISS_DURATION, dismissDuration, QMetaType::Int);
-        moveSetting(oldSettings, FIT_SMALL_PREVIEW, fitSmallPreview, QMetaType::Bool);
-        moveSetting(oldSettings, SEARCH_USING_AND, searchUsingAnd, QMetaType::Bool);
-        moveSetting(oldSettings, SEARCH_BY_FILEPATH, searchByFilepath, QMetaType::Bool);
-        //moveSetting(oldSettings, DICT_PATH, dictPath, QMetaType::QString);
-        moveSetting(oldSettings, USER_STATISTICS, userStatistics, QMetaType::Bool);
-        moveSetting(oldSettings, CHECK_FOR_UPDATES, checkForUpdates, QMetaType::Bool);
-        //moveSetting(oldSettings, NUMBER_OF_LAUNCHES, numberOfLaunches, QMetaType::Int);
-        //moveSetting(oldSettings, APP_WINDOW_WIDTH, appWindowWidth, QMetaType::Int);
-        //moveSetting(oldSettings, APP_WINDOW_HEIGHT, appWindowHeight, QMetaType::Int);
-        //moveSetting(oldSettings, APP_WINDOW_X, appWindowX, QMetaType::Int);
-        //moveSetting(oldSettings, APP_WINDOW_Y, appWindowY, QMetaType::Int);
-        moveSetting(oldSettings, AUTO_FIND_VECTORS, autoFindVectors, QMetaType::Bool);
-        moveSetting(oldSettings, USE_PROXY, useProxy, QMetaType::Bool);
-        moveProxyHostSetting(oldSettings);
-        moveSetting(oldSettings, UPLOAD_HOSTS, legacyUploadHosts, QMetaType::QString);
-        moveSetting(oldSettings, USE_MASTER_PASSWORD, useMasterPassword, QMetaType::Bool);
-        moveSetting(oldSettings, MASTER_PASSWORD_HASH, masterPasswordHash, QMetaType::QString);
-        moveSetting(oldSettings, ONE_UPLOAD_SECONDS_TIMEMOUT, oneUploadSecondsTimeout, QMetaType::Int);
-        moveSetting(oldSettings, USE_CONFIRMATION_DIALOGS, useConfirmationDialogs, QMetaType::Bool);
-        //moveSetting(oldSettings, RECENT_DIRECTORIES, recentDirectories, QMetaType::QString);
-        //moveSetting(oldSettings, RECENT_FILES, recentFiles, QMetaType::QString);
-        moveSetting(oldSettings, MAX_PARALLEL_UPLOADS, maxParallelUploads, QMetaType::Int);
-        moveSetting(oldSettings, USE_SPELL_CHECK, useSpellCheck, QMetaType::Bool);
-        //moveSetting(oldSettings, USER_AGENT_ID, userAgentId, QMetaType::QString);
-        //moveSetting(oldSettings, INSTALLED_VERSION, installedVersion, QMetaType::Int);
-        //moveSetting(oldSettings, USER_CONSENT, userConsent, QMetaType::Bool);
-        moveSetting(oldSettings, SELECTED_LOCALE, selectedLocale, QMetaType::QString);
-        moveSetting(oldSettings, SELECTED_THEME_INDEX, selectedThemeIndex, QMetaType::Int);
-        moveSetting(oldSettings, USE_AUTO_COMPLETE, useKeywordsAutoComplete, QMetaType::Bool);
-        moveSetting(oldSettings, USE_EXIFTOOL, useExifTool, QMetaType::Bool);
-        moveSetting(oldSettings, CACHE_IMAGES_AUTOMATICALLY, cacheImagesAutomatically, QMetaType::Bool);
-        moveSetting(oldSettings, SCROLL_SPEED_SENSIVITY, scrollSpeedSensivity, QMetaType::Double);
-        moveSetting(oldSettings, AUTO_DOWNLOAD_UPDATES, autoDownloadUpdates, QMetaType::Bool);
-        moveSetting(oldSettings, PATH_TO_UPDATE, pathToUpdate, QMetaType::QString);
-        moveSetting(oldSettings, AVAILABLE_UPDATE_VERSION, availableUpdateVersion, QMetaType::Int);
-        moveSetting(oldSettings, ARTWORK_EDIT_RIGHT_PANE_WIDTH, artworkEditRightPaneWidth, QMetaType::Int);
-        //moveSetting(oldSettings, TRANSLATOR_SELECTED_DICT_INDEX, translatorSelectedDictIndex, QMetaType::Int);
-
-        // apply imported settings
-        doReadAllValues();
-
-        m_SettingsMap->setValue(settingsVersion, CURRENT_SETTINGS_VERSION);
-        sync();
-
-        wipeOldSettings(oldSettings);
     }
 
     void SettingsModel::doResetToDefault() {
@@ -555,7 +478,7 @@ namespace Models {
 
         if (m_VerboseUpload) {
             if (!m_State.contains(VERBOSE_UPLOAD_STARTDATE)) {
-                const QDateTime dtNow = QDateTime::currentDateTime();
+                const QDateTime dtNow = QDateTime::currentDateTimeUtc();
                 QString dateTimeString = dtNow.toString(Qt::ISODate);
                 m_State.setValue(VERBOSE_UPLOAD_STARTDATE, dateTimeString);
                 m_State.sync();

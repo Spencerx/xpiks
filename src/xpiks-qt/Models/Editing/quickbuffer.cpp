@@ -133,6 +133,7 @@ namespace Models {
 
     void QuickBuffer::handleMessage(const QuickBufferMessage &message) {
         LOG_DEBUG << "#";
+        const bool overwrite = message.m_Override;
 
         if (!message.m_Title.isEmpty() || overwrite) { this->setTitle(message.m_Title); }
         if (!message.m_Description.isEmpty() || overwrite) { this->setDescription(message.m_Description); }

@@ -18,7 +18,6 @@
 #include <Artworks/artworkelement.h>
 #include <Common/defines.h>
 #include <QMLExtensions/uicommandid.h>
-#include <Commands/Base/simpleuicommandtemplate.h>
 #include <KeywordsPresets/ipresetsmanager.h>
 #include <Models/Editing/currenteditableproxyartwork.h>
 

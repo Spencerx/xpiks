@@ -14,9 +14,7 @@
 #include <Commands/Base/iuicommandtemplate.h>
 
 namespace Commands {
-    class AddFilesCommand: public Commands::IUICommandTemplate {
 
-    };
 }
 
 #endif // GENERALCOMMANDS_H

@@ -564,7 +564,8 @@ ApplicationWindow {
                     checkable: true
 
                     onCheckedChanged: {
-                        settingsModel.updateSaveSession(checked);
+                        settingsModel.saveSession = checked
+                        // TODO: save session command if checked
                     }
 
                     Component.onCompleted: {

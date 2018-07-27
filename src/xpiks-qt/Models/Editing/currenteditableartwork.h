@@ -54,7 +54,6 @@ namespace Models {
         virtual std::shared_ptr<Commands::ICommand> removePreset(KeywordsPresets::ID_t presetID,
                                                                  KeywordsPresets::IPresetsManager &presetsManager) override;
 
-        virtual std::shared_ptr<Commands::ICommand> inspect() override;
         virtual std::shared_ptr<Commands::ICommand> update() override;
 
     public:

@@ -9,12 +9,13 @@
  */
 
 #include "uimanager.h"
-#include "../Common/defines.h"
-#include "../Artworks/basicmetadatamodel.h"
-#include "../Models/settingsmodel.h"
+#include <QQuickTextDocument>
+#include <QScreen>
+#include <Common/defines.h>
+#include <Artworks/basicmetadatamodel.h>
+#include <Models/settingsmodel.h>
 #include <Models/Artworks/artworkslistmodel.h>
 
-#include <QScreen>
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 
@@ -26,11 +27,13 @@
 
 namespace Models {
     UIManager::UIManager(Common::ISystemEnvironment &environment,
+                         QMLExtensions::ColorsModel &colorsModel,
                          SettingsModel &settingsModel,
                          QObject *parent) :
         QObject(parent),
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
         m_State("uimanager", environment),
+        m_ColorsModel(colorsModel),
         m_SettingsModel(settingsModel),
         m_TabID(42),
         m_ScreenDPI(96.0)
@@ -59,7 +62,7 @@ namespace Models {
     }
 
     double UIManager::getKeywordHeight() const {
-        double keywordScale = m_SettingsModel->getKeywordSizeScale();
+        double keywordScale = m_SettingsModel.getKeywordSizeScale();
         double height = 20.0 * keywordScale + (keywordScale - 1.0) * 10.0;
         return height;
     }

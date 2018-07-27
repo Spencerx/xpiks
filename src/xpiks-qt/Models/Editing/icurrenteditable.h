@@ -46,7 +46,6 @@ namespace Models {
         virtual std::shared_ptr<Commands::ICommand> removePreset(KeywordsPresets::ID_t presetID,
                                                                  KeywordsPresets::IPresetsManager &presetsManager) = 0;
 
-        virtual std::shared_ptr<Commands::ICommand> inspect() = 0;
         virtual std::shared_ptr<Commands::ICommand> update() = 0;
 
         virtual std::shared_ptr<Commands::ICommand> applyEdits(const QString &title,
