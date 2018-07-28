@@ -196,7 +196,7 @@ namespace Models {
         void onFilesUnavailableHandler();
         void onArtworkEditingPaused();
         void onUndoStackEmpty();
-        void onSpellCheckerAvailable(bool afterRestart);
+        void onSpellCheckerAvailable();
         void onSpellCheckDisabled();
         void onDuplicatesDisabled();
         void userDictUpdateHandler(const QStringList &keywords, bool overwritten);

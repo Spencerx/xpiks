@@ -15,7 +15,7 @@
 #include <Helpers/asynccoordinator.h>
 
 namespace Translation {
-    TranslationWorker::TranslationWorker(Helpers::AsyncCoordinator *initCoordinator, QObject *parent) :
+    TranslationWorker::TranslationWorker(Helpers::AsyncCoordinator &initCoordinator, QObject *parent) :
         QObject(parent),
         m_InitCoordinator(initCoordinator)
     {

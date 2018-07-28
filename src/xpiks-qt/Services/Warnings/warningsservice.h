@@ -37,7 +37,7 @@ namespace Warnings {
         void cancelCurrentBatch();
 
     public:
-        virtual void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
+        virtual void startService();
         virtual void stopService();
 
         virtual bool isAvailable() const { return true; }

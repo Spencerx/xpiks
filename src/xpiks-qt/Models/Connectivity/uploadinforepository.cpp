@@ -228,7 +228,7 @@ namespace Models {
         }
     }
 
-    void UploadInfoRepository::initializeStocksList(Helpers::AsyncCoordinator *initCoordinator,
+    void UploadInfoRepository::initializeStocksList(Helpers::AsyncCoordinator &initCoordinator,
                                                     Connectivity::RequestsService &requestsService) {
         LOG_DEBUG << "#";
 

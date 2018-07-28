@@ -55,8 +55,8 @@ namespace Maintenance {
         void cleanupUpdatesArtifacts();
         void cleanupDownloadedUpdates(const QString &downloadsPath);
         void launchExiftool(const QString &settingsExiftoolPath);
-        void initializeDictionaries(Translation::TranslationManager *translationManager,
-                                    Helpers::AsyncCoordinator *initCoordinator);
+        void initializeDictionaries(Translation::TranslationManager &translationManager,
+                                    Helpers::AsyncCoordinator &initCoordinator);
         void cleanupLogs();
         void saveSession(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,
                          Models::SessionManager &sessionManager);

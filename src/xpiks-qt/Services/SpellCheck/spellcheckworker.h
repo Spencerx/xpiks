@@ -49,7 +49,7 @@ namespace SpellCheck {
                          Common::ISystemEnvironment &environment,
                          UserDictionary &userDictionary,
                          Warnings::WarningsService &warningsService,
-                         Helpers::AsyncCoordinator *initCoordinator,
+                         Helpers::AsyncCoordinator &initCoordinator,
                          QObject *parent=0);
         virtual ~SpellCheckWorker();
 
@@ -97,7 +97,7 @@ namespace SpellCheck {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Helpers::AsyncCoordinator *m_InitCoordinator;
+        Helpers::AsyncCoordinator &m_InitCoordinator;
         UserDictionary &m_UserDictionary;
         Warnings::WarningsService &m_WarningsService;
         QHash<QString, QStringList> m_Suggestions;

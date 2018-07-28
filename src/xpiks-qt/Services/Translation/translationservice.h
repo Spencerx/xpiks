@@ -25,7 +25,7 @@ namespace Translation {
     public:
         explicit TranslationService(QObject *parent = 0);
 
-        void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
+        void startService(Helpers::AsyncCoordinator &coordinator);
         void stopService();
 
         bool isAvailable() const { return true; }
@@ -44,7 +44,6 @@ namespace Translation {
 
     private:
         TranslationWorker *m_TranslationWorker;
-        volatile bool m_RestartRequired;
     };
 }
 

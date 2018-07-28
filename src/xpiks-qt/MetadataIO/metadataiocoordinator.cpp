@@ -68,18 +68,18 @@ namespace MetadataIO {
         return autoImport;
     }
 
-    int MetadataIOCoordinator::readMetadataExifTool(const Artworks::ArtworksSnapshot &artworksToRead, quint32 storageReadBatchID) {
+    int MetadataIOCoordinator::readMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToRead, quint32 storageReadBatchID) {
         int importID = getNextImportID();
         initializeImport(artworksToRead, importID, storageReadBatchID);
 
-        libxpks::io::ReadingOrchestrator readingOrchestrator(&m_ReadingHub,
-                                                             &m_SettingsModel);
+        libxpks::io::ReadingOrchestrator readingOrchestrator(m_ReadingHub,
+                                                             m_SettingsModel);
         readingOrchestrator.startReading();
 
         return importID;
     }
 
-    void MetadataIOCoordinator::writeMetadataExifTool(const Artworks::ArtworksSnapshot &artworksToWrite, bool useBackups) {
+    void MetadataIOCoordinator::writeMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWrite, bool useBackups) {
         LOG_DEBUG << "use backups:" << useBackups;
         m_WritingAsyncCoordinator.reset();
 
@@ -92,8 +92,8 @@ namespace MetadataIO {
         // ---
 
         libxpks::io::WritingOrchestrator writingOrchestrator(artworksToWrite,
-                                                             &m_WritingAsyncCoordinator,
-                                                             &m_SettingsModel);
+                                                             m_WritingAsyncCoordinator,
+                                                             m_SettingsModel);
 
 #ifndef INTEGRATION_TESTS
         const bool directExportOn = m_SwitcherModel.getUseDirectMetadataExport();
@@ -106,7 +106,7 @@ namespace MetadataIO {
         writingOrchestrator.startWriting(useBackups, useDirectExport || directExportOn);
     }
 
-    void MetadataIOCoordinator::wipeAllMetadataExifTool(const Artworks::ArtworksSnapshot &artworksToWipe, bool useBackups) {
+    void MetadataIOCoordinator::wipeAllMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWipe, bool useBackups) {
         LOG_DEBUG << "use backups:" << useBackups;
         m_WritingAsyncCoordinator.reset();
 
@@ -119,8 +119,8 @@ namespace MetadataIO {
         // ---
 
         libxpks::io::WritingOrchestrator writingOrchestrator(artworksToWipe,
-                                                             &m_WritingAsyncCoordinator,
-                                                             &m_SettingsModel);
+                                                             m_WritingAsyncCoordinator,
+                                                             m_SettingsModel);
 
         writingOrchestrator.startMetadataWiping(useBackups);
     }

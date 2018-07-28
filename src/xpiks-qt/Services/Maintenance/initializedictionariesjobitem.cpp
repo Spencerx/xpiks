@@ -14,11 +14,11 @@
 #include <Helpers/asynccoordinator.h>
 
 namespace Maintenance {
-    InitializeDictionariesJobItem::InitializeDictionariesJobItem(Translation::TranslationManager *translationManager, Helpers::AsyncCoordinator *initCoordinator):
+    InitializeDictionariesJobItem::InitializeDictionariesJobItem(Translation::TranslationManager &translationManager,
+                                                                 Helpers::AsyncCoordinator &initCoordinator):
         m_TranslationManager(translationManager),
         m_InitCoordinator(initCoordinator)
     {
-        Q_ASSERT(translationManager != NULL);
     }
 
     void InitializeDictionariesJobItem::processJob() {
@@ -31,7 +31,7 @@ namespace Maintenance {
     }
 
     void InitializeDictionariesJobItem::doInitializeDictionaries() {
-        m_TranslationManager->doInitializeDictionaries();
-        m_TranslationManager->initializationFinished();
+        m_TranslationManager.doInitializeDictionaries();
+        m_TranslationManager.initializationFinished();
     }
 }

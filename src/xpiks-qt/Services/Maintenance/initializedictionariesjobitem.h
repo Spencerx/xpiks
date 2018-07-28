@@ -25,7 +25,8 @@ namespace Maintenance {
     class InitializeDictionariesJobItem : public IMaintenanceItem
     {
     public:
-        InitializeDictionariesJobItem(Translation::TranslationManager *translationManager, Helpers::AsyncCoordinator *initCoordinator);
+        InitializeDictionariesJobItem(Translation::TranslationManager &translationManager,
+                                      Helpers::AsyncCoordinator &initCoordinator);
 
     public:
         virtual void processJob() override;
@@ -34,8 +35,8 @@ namespace Maintenance {
         void doInitializeDictionaries();
 
     private:
-        Translation::TranslationManager *m_TranslationManager;
-        Helpers::AsyncCoordinator *m_InitCoordinator;
+        Translation::TranslationManager &m_TranslationManager;
+        Helpers::AsyncCoordinator &m_InitCoordinator;
     };
 }
 

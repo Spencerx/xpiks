@@ -36,7 +36,7 @@ namespace QMLExtensions {
     }
 
     ImageCachingWorker::ImageCachingWorker(Common::ISystemEnvironment &environment,
-                                           Helpers::AsyncCoordinator *initCoordinator,
+                                           Helpers::AsyncCoordinator &initCoordinator,
                                            Storage::IDatabaseManager &dbManager,
                                            QObject *parent):
         QObject(parent),

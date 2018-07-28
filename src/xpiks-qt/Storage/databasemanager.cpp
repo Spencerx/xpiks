@@ -96,7 +96,7 @@ namespace Storage {
         bool success = false, triedHard = false;
 
         do {
-            db = std::make_shared<Database>(id, &m_FinalizeCoordinator);
+            db = std::make_shared<Database>(id, m_FinalizeCoordinator);
             if (db->open(dbPath)) {
                 success = db->initialize();
             }
@@ -128,7 +128,7 @@ namespace Storage {
         const int id = getNextID();
         LOG_INFO << "Using #" << id << "for temp DB";
 
-        auto db = std::make_shared<Database>(id, &m_FinalizeCoordinator);
+        auto db = std::make_shared<Database>(id, m_FinalizeCoordinator);
         bool success = false;
 
         // empty string means temp db
@@ -138,7 +138,7 @@ namespace Storage {
 
         if (!success) {
             db->close();
-            db = std::make_shared<Database>(id, &m_FinalizeCoordinator);
+            db = std::make_shared<Database>(id, m_FinalizeCoordinator);
 
             // in-memory db
             if (db->open(":memory:")) {

@@ -32,15 +32,7 @@ namespace QMLExtensions {
         updateDefaultSize();
     }
 
-    void ImageCachingService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
-        auto coordinatorParams = std::dynamic_pointer_cast<Helpers::AsyncCoordinatorStartParams>(params);
-
-        Helpers::AsyncCoordinator *coordinator = nullptr;
-        if (coordinatorParams) { coordinator = coordinatorParams->m_Coordinator; }
-
-        Helpers::AsyncCoordinatorLocker locker(coordinator);
-        Q_UNUSED(locker);
-
+    void ImageCachingService::startService(Helpers::AsyncCoordinator &coordinator) {
         m_CachingWorker = new ImageCachingWorker(m_Environment, coordinator, m_DatabaseManager);
 
         QThread *thread = new QThread();

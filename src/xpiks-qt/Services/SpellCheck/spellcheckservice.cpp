@@ -26,7 +26,6 @@ namespace SpellCheck {
         m_WarningsService(warningsService),
         m_UserDictionary(environment),
         m_SettingsModel(settingsModel),
-        m_RestartRequired(false),
         m_IsStopped(false)
     {
         QObject::connect(&m_UserDictionary, &UserDictionary::sizeChanged,
@@ -41,23 +40,20 @@ namespace SpellCheck {
         this->submitItem(event.get(), Common::SpellCheckFlags::All);
     }
 
-    void SpellCheckService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
+    void SpellCheckService::startService(Helpers::AsyncCoordinator &initCoordinator) {
         if (m_SpellCheckWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
         }
 
-        auto coordinatorParams = std::dynamic_pointer_cast<Helpers::AsyncCoordinatorStartParams>(params);
-        Helpers::AsyncCoordinator *coordinator = nullptr;
-        if (coordinatorParams) { coordinator = coordinatorParams->m_Coordinator; }
+        Helpers::AsyncCoordinatorLocker locker(initCoordinator);
+        Q_UNUSED(locker);
 
         m_SpellCheckWorker = new SpellCheckWorker(getDictsRoot(),
                                                   m_Environment,
                                                   m_UserDictionary,
                                                   m_WarningsService,
-                                                  coordinator);
-        Helpers::AsyncCoordinatorLocker locker(coordinator);
-        Q_UNUSED(locker);
+                                                  initCoordinator);
 
         QThread *thread = new QThread();
         m_SpellCheckWorker->moveToThread(thread);
@@ -84,7 +80,7 @@ namespace SpellCheck {
 
         m_IsStopped = false;
 
-        emit serviceAvailable(m_RestartRequired);
+        emit serviceAvailable();
     }
 
     void SpellCheckService::stopService() {
@@ -304,12 +300,6 @@ namespace SpellCheck {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
         m_SpellCheckWorker = NULL;
-
-        if (m_RestartRequired) {
-            LOG_INFO << "Restarting worker...";
-            startService(std::shared_ptr<Services::ServiceStartParams>());
-            m_RestartRequired = false;
-        }
     }
 
     Common::WordAnalysisFlags SpellCheckService::getWordAnalysisFlags() const {

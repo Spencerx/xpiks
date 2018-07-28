@@ -32,6 +32,10 @@ namespace Services {
     class ServiceStartParams;
 }
 
+namespace Helpers {
+    class AsyncCoordinator;
+}
+
 class QScreen;
 
 namespace QMLExtensions {
@@ -46,7 +50,7 @@ namespace QMLExtensions {
                                      QObject *parent = 0);
 
     public:
-        void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
+        void startService(Helpers::AsyncCoordinator &coordinator);
         void stopService();
         void upgradeCacheStorage();
 

@@ -41,7 +41,7 @@ namespace SpellCheck {
                                        Common::ISystemEnvironment &environment,
                                        UserDictionary &userDictionary,
                                        Warnings::WarningsService &warningsService,
-                                       Helpers::AsyncCoordinator *initCoordinator,
+                                       Helpers::AsyncCoordinator &initCoordinator,
                                        QObject *parent):
         QObject(parent),
         ItemProcessingWorker(SPELLCHECK_DELAY_PERIOD),

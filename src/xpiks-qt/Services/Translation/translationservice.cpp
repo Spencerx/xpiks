@@ -18,20 +18,15 @@
 namespace Translation {
     TranslationService::TranslationService(QObject *parent) :
         QObject(parent),
-        m_TranslationWorker(nullptr),
-        m_RestartRequired(false)
+        m_TranslationWorker(nullptr)
     {
     }
 
-    void TranslationService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
+    void TranslationService::startService(Helpers::AsyncCoordinator &coordinator) {
         if (m_TranslationWorker != nullptr) {
             LOG_WARNING << "Attempt to start running worker";
             return;
         }
-
-        auto coordinatorParams = std::dynamic_pointer_cast<Helpers::AsyncCoordinatorStartParams>(params);
-        Helpers::AsyncCoordinator *coordinator = nullptr;
-        if (coordinatorParams) { coordinator = coordinatorParams->m_Coordinator; }
 
         Helpers::AsyncCoordinatorLocker locker(coordinator);
         Q_UNUSED(locker);
@@ -99,11 +94,5 @@ namespace Translation {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
         m_TranslationWorker = nullptr;
-
-        if (m_RestartRequired) {
-            LOG_INFO << "Restarting worker...";
-            startService(std::shared_ptr<Services::ServiceStartParams>());
-            m_RestartRequired = false;
-        }
     }
 }

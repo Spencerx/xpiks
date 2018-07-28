@@ -177,7 +177,7 @@ namespace MetadataIO {
     {
     }
 
-    void CsvExportPlansModel::initializeConfigs(Helpers::AsyncCoordinator *initCoordinator,
+    void CsvExportPlansModel::initializeConfigs(Helpers::AsyncCoordinator &initCoordinator,
                                                 Connectivity::RequestsService &requestsService) {
         LOG_DEBUG << "#";
 

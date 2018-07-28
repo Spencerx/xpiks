@@ -36,7 +36,7 @@ namespace MetadataIO {
         std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() { return m_ExportPlans; }
 
     public:
-        void initializeConfigs(Helpers::AsyncCoordinator *initCoordinator,
+        void initializeConfigs(Helpers::AsyncCoordinator &initCoordinator,
                                Connectivity::RequestsService &requestsService);
         void sync(const std::vector<std::shared_ptr<CsvExportPlan> > &exportPlans);
 

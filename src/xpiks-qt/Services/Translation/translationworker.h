@@ -29,7 +29,7 @@ namespace Translation {
     {
         Q_OBJECT
     public:
-        explicit TranslationWorker(Helpers::AsyncCoordinator *initCoordinator, QObject *parent = 0);
+        explicit TranslationWorker(Helpers::AsyncCoordinator &initCoordinator, QObject *parent = 0);
 
     public:
         void selectDictionary(const QString &dictionaryPath);
@@ -55,7 +55,7 @@ namespace Translation {
 
     private:
         std::unique_ptr<LookupDictionary> m_LookupDictionary;
-        Helpers::AsyncCoordinator *m_InitCoordinator;
+        Helpers::AsyncCoordinator &m_InitCoordinator;
     };
 }
 

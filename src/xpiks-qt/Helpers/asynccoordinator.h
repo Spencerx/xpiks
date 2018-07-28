@@ -14,6 +14,7 @@
 #include <QObject>
 #include <QAtomicInt>
 #include <QTimer>
+#include <memory>
 #include <Services/iservicebase.h>
 
 namespace Helpers {
@@ -52,25 +53,12 @@ namespace Helpers {
         QAtomicInt m_StatusReported;
     };
 
-    class AsyncCoordinatorStartParams: public Services::ServiceStartParams {
-    public:
-        AsyncCoordinatorStartParams(AsyncCoordinator *coordinator):
-            m_Coordinator(coordinator)
-        {
-        }
-
-    public:
-        AsyncCoordinator *m_Coordinator;
-    };
-
     class AsyncCoordinatorLocker {
     public:
-        AsyncCoordinatorLocker(AsyncCoordinator *coordinator):
+        AsyncCoordinatorLocker(AsyncCoordinator &coordinator):
             m_Coordinator(coordinator)
         {
-            if (m_Coordinator != nullptr) {
-                m_Coordinator->aboutToBegin();
-            }
+            m_Coordinator.aboutToBegin();
         }
 
         virtual ~AsyncCoordinatorLocker() {
@@ -80,12 +68,12 @@ namespace Helpers {
         }
 
     private:
-        AsyncCoordinator *m_Coordinator;
+        AsyncCoordinator &m_Coordinator;
     };
 
     class AsyncCoordinatorUnlocker {
     public:
-        AsyncCoordinatorUnlocker(AsyncCoordinator *coordinator):
+        AsyncCoordinatorUnlocker(AsyncCoordinator &coordinator):
             m_Coordinator(coordinator)
         {
             // if (m_Coordinator != nullptr) {
@@ -94,31 +82,27 @@ namespace Helpers {
         }
 
         virtual ~AsyncCoordinatorUnlocker() {
-            if (m_Coordinator != nullptr) {
-                m_Coordinator->justEnded();
-            }
+            m_Coordinator.justEnded();
         }
 
     private:
-        AsyncCoordinator *m_Coordinator;
+        AsyncCoordinator &m_Coordinator;
     };
 
     class AsyncCoordinatorStarter {
     public:
-        AsyncCoordinatorStarter(AsyncCoordinator *coordinator, int timeout):
+        AsyncCoordinatorStarter(AsyncCoordinator &coordinator, int timeout):
             m_Coordinator(coordinator),
             m_Timeout(timeout)
         {
         }
 
         virtual ~AsyncCoordinatorStarter() {
-            if (m_Coordinator != nullptr) {
-                m_Coordinator->allBegun(m_Timeout);
-            }
+            m_Coordinator.allBegun(m_Timeout);
         }
 
     private:
-        AsyncCoordinator *m_Coordinator;
+        AsyncCoordinator &m_Coordinator;
         int m_Timeout;
     };
 }

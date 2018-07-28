@@ -28,6 +28,10 @@ namespace Models {
     class SettingsModel;
 }
 
+namespace Helpers {
+    class AsyncCoordinator;
+}
+
 namespace AutoComplete {
     class AutoCompleteWorker;
     class KeywordsAutoCompleteModel;
@@ -43,14 +47,13 @@ namespace AutoComplete {
                             QObject *parent = 0);
 
     public:
-        void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
+        void startService(Helpers::AsyncCoordinator &coordinator);
         void stopService();
 
         bool isAvailable() const { return true; }
         bool isBusy() const;
 
     public:
-        void restartWorker();
         void generateCompletions(const QString &prefix, Artworks::BasicKeywordsModel *basicModel);
 
     private slots:
@@ -59,7 +62,7 @@ namespace AutoComplete {
 
     signals:
         void cancelAutoCompletion();
-        void serviceAvailable(bool afterRestart);
+        void serviceAvailable();
 
 #ifdef INTEGRATION_TESTS
     public:
@@ -71,7 +74,6 @@ namespace AutoComplete {
         KeywordsAutoCompleteModel &m_AutoCompleteModel;
         KeywordsPresets::PresetKeywordsModel &m_PresetsManager;
         Models::SettingsModel &m_SettingsModel;
-        volatile bool m_RestartRequired;
     };
 }
 

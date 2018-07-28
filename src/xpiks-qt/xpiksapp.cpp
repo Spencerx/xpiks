@@ -220,12 +220,10 @@ void XpiksApp::start() {
     m_SwitcherModel.updateConfigs(m_RequestsService);
 
     const int waitSeconds = 5;
-    Helpers::AsyncCoordinatorStarter deferredStarter(&m_InitCoordinator, waitSeconds);
+    Helpers::AsyncCoordinatorStarter deferredStarter(m_InitCoordinator, waitSeconds);
     Q_UNUSED(deferredStarter);
 
     m_AfterInitCalled = true;
-    std::shared_ptr<Services::ServiceStartParams> emptyParams;
-    auto coordinatorParams = std::make_shared<Helpers::AsyncCoordinatorStartParams>(&m_InitCoordinator);
 
     bool dbInitialized = m_DatabaseManager.initialize();
     Q_ASSERT(dbInitialized);
@@ -234,14 +232,14 @@ void XpiksApp::start() {
     }
 
     m_MaintenanceService.startService();
-    m_ImageCachingService.startService(coordinatorParams);
+    m_ImageCachingService.startService(m_InitCoordinator);
     m_MetadataIOService.startService(m_DatabaseManager, m_ArtworksUpdateHub);
     m_VideoCachingService.startService(m_ImageCachingService, m_ArtworksUpdateHub, m_MetadataIOService);
 
-    m_SpellCheckerService.startService(coordinatorParams);
-    m_WarningsService.startService(emptyParams);
-    m_AutoCompleteService.startService(coordinatorParams);
-    m_TranslationService.startService(coordinatorParams);
+    m_SpellCheckerService.startService(m_InitCoordinator);
+    m_WarningsService.startService();
+    m_AutoCompleteService.startService(m_InitCoordinator);
+    m_TranslationService.startService(m_InitCoordinator);
 
     QCoreApplication::processEvents();
 
@@ -252,12 +250,12 @@ void XpiksApp::start() {
     m_TelemetryService.setEndpoint(endpoint);
 
     m_TelemetryService.startReporting();
-    m_UploadInfoRepository.initializeStocksList(&m_InitCoordinator, m_RequestsService);
+    m_UploadInfoRepository.initializeStocksList(m_InitCoordinator, m_RequestsService);
     m_WarningsSettingsModel.initializeConfigs(m_RequestsService);
-    m_MaintenanceService.initializeDictionaries(&m_TranslationManager, &m_InitCoordinator);
+    m_MaintenanceService.initializeDictionaries(m_TranslationManager, m_InitCoordinator);
     m_UploadInfoRepository.initializeConfig();
     m_PresetsModel.initializePresets();
-    m_CsvExportModel.initializeExportPlans(&m_InitCoordinator, m_RequestsService);
+    m_CsvExportModel.initializeExportPlans(m_InitCoordinator, m_RequestsService);
     m_KeywordsSuggestor.initSuggestionEngines(m_MetadataIOService);
     m_UpdateService.initialize();
 }

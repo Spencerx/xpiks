@@ -26,23 +26,15 @@ namespace AutoComplete {
         m_AutoCompleteWorker(NULL),
         m_AutoCompleteModel(autoCompleteModel),
         m_PresetsManager(presetsManager),
-        m_SettingsModel(settingsModel),
-        m_RestartRequired(false)
+        m_SettingsModel(settingsModel)
     {
     }
 
-    void AutoCompleteService::startService(const std::shared_ptr<Services::ServiceStartParams> &params) {
+    void AutoCompleteService::startService(Helpers::AsyncCoordinator &coordinator) {
         if (m_AutoCompleteWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
         }
-
-        auto coordinatorParams = std::dynamic_pointer_cast<Helpers::AsyncCoordinatorStartParams>(params);
-        Helpers::AsyncCoordinator *coordinator = nullptr;
-        if (coordinatorParams) { coordinator = coordinatorParams->m_Coordinator; }
-
-        Helpers::AsyncCoordinatorLocker locker(coordinator);
-        Q_UNUSED(locker);
 
         m_AutoCompleteWorker = new AutoCompleteWorker(coordinator, m_AutoCompleteModel, m_PresetsManager);
 
@@ -67,7 +59,7 @@ namespace AutoComplete {
         LOG_DEBUG << "starting thread...";
         thread->start();
 
-        emit serviceAvailable(m_RestartRequired);
+        emit serviceAvailable();
     }
 
     void AutoCompleteService::stopService() {
@@ -82,11 +74,6 @@ namespace AutoComplete {
     bool AutoCompleteService::isBusy() const {
         bool isBusy = (m_AutoCompleteWorker != NULL) && m_AutoCompleteWorker->hasPendingJobs();
         return isBusy;
-    }
-
-    void AutoCompleteService::restartWorker() {
-        m_RestartRequired = true;
-        stopService();
     }
 
     void AutoCompleteService::generateCompletions(const QString &prefix, Artworks::BasicKeywordsModel *basicModel) {
@@ -123,11 +110,5 @@ namespace AutoComplete {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
         m_AutoCompleteWorker = NULL;
-
-        if (m_RestartRequired) {
-            LOG_INFO << "Restarting worker...";
-            startService(std::shared_ptr<Services::ServiceStartParams>());
-            m_RestartRequired = false;
-        }
     }
 }

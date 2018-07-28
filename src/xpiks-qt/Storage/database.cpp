@@ -127,7 +127,7 @@ namespace Storage {
         }
     }
 
-    Database::Database(int id, Helpers::AsyncCoordinator *finalizeCoordinator):
+    Database::Database(int id, Helpers::AsyncCoordinator &finalizeCoordinator):
         m_ID(id),
         m_FinalizeCoordinator(finalizeCoordinator),
         m_Database(nullptr),

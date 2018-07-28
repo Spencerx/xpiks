@@ -19,7 +19,7 @@
 #include <Artworks/basickeywordsmodel.h>
 
 namespace AutoComplete {
-    AutoCompleteWorker::AutoCompleteWorker(Helpers::AsyncCoordinator *initCoordinator,
+    AutoCompleteWorker::AutoCompleteWorker(Helpers::AsyncCoordinator &initCoordinator,
                                            KeywordsAutoCompleteModel &autoCompleteModel,
                                            KeywordsPresets::PresetKeywordsModel &presetsManager,
                                            QObject *parent) :

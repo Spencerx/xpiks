@@ -109,7 +109,8 @@ namespace Maintenance {
         m_MaintenanceWorker->submitItem(jobItem);
     }
 
-    void MaintenanceService::initializeDictionaries(Translation::TranslationManager *translationManager, Helpers::AsyncCoordinator *initCoordinator) {
+    void MaintenanceService::initializeDictionaries(Translation::TranslationManager &translationManager,
+                                                    Helpers::AsyncCoordinator &initCoordinator) {
         LOG_DEBUG << "#";
         Helpers::AsyncCoordinatorLocker locker(initCoordinator);
         Q_UNUSED(locker);

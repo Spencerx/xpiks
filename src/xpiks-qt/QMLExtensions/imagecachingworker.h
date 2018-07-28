@@ -32,7 +32,7 @@ namespace QMLExtensions {
         Q_OBJECT
     public:
         ImageCachingWorker(Common::ISystemEnvironment &environment,
-                           Helpers::AsyncCoordinator *initCoordinator,
+                           Helpers::AsyncCoordinator &initCoordinator,
                            Storage::IDatabaseManager &dbManager,
                            QObject *parent=0);
 
@@ -65,7 +65,7 @@ namespace QMLExtensions {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Helpers::AsyncCoordinator *m_InitCoordinator;
+        Helpers::AsyncCoordinator &m_InitCoordinator;
         volatile int m_ProcessedItemsCount;
         DbImageCacheIndex m_Cache;
         qreal m_Scale;

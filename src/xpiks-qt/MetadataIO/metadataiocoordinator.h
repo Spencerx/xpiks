@@ -97,9 +97,9 @@ namespace MetadataIO {
         }
 
     public:
-        int readMetadataExifTool(const Artworks::ArtworksSnapshot &artworksToRead, quint32 storageReadBatchID);
-        void writeMetadataExifTool(const Artworks::ArtworksSnapshot &artworksToWrite, bool useBackups);
-        void wipeAllMetadataExifTool(const Artworks::ArtworksSnapshot &artworksToWipe, bool useBackups);
+        int readMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToRead, quint32 storageReadBatchID);
+        void writeMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWrite, bool useBackups);
+        void wipeAllMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWipe, bool useBackups);
 
 #ifdef INTEGRATION_TESTS
     public:

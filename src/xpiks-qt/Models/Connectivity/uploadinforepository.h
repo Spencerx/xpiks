@@ -81,7 +81,7 @@ namespace Models {
     public:
         void initFromString(const QString &savedString);
         void initializeConfig();        
-        void initializeStocksList(Helpers::AsyncCoordinator *initCoordinator,
+        void initializeStocksList(Helpers::AsyncCoordinator &initCoordinator,
                                   Connectivity::RequestsService &requestsService);
 
     public:

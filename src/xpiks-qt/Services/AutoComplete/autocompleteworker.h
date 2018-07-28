@@ -35,7 +35,7 @@ namespace AutoComplete {
     {
         Q_OBJECT
     public:
-        explicit AutoCompleteWorker(Helpers::AsyncCoordinator *initCoordinator,
+        explicit AutoCompleteWorker(Helpers::AsyncCoordinator &initCoordinator,
                                     KeywordsAutoCompleteModel &autoCompleteModel,
                                     KeywordsPresets::PresetKeywordsModel &presetsManager,
                                     QObject *parent = 0);
@@ -64,7 +64,7 @@ namespace AutoComplete {
     private:
         LibFaceCompletionEngine m_FaceCompletionEngine;
         PresetsCompletionEngine m_PresetsCompletionEngine;
-        Helpers::AsyncCoordinator *m_InitCoordinator;
+        Helpers::AsyncCoordinator &m_InitCoordinator;
         KeywordsAutoCompleteModel &m_AutoCompleteModel;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
     };

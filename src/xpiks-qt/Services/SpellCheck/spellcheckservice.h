@@ -56,7 +56,7 @@ namespace SpellCheck {
         virtual void handleMessage(const Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck> &event) override;
 
     public:
-        void startService(const std::shared_ptr<Services::ServiceStartParams> &params);
+        void startService(Helpers::AsyncCoordinator &initCoordinator);
         void stopService();
 
         bool isAvailable() const { return true; }
@@ -89,7 +89,7 @@ namespace SpellCheck {
     signals:
         void cancelSpellChecking();
         void spellCheckQueueIsEmpty();
-        void serviceAvailable(bool afterRestart);
+        void serviceAvailable();
         void userDictWordsNumberChanged();
 
     private slots:
@@ -107,7 +107,6 @@ namespace SpellCheck {
         UserDictionary m_UserDictionary;
         Models::SettingsModel &m_SettingsModel;
         QString m_DictionariesPath;
-        volatile bool m_RestartRequired;
         volatile bool m_IsStopped;
     };
 }

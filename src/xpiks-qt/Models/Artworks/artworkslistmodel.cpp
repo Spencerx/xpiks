@@ -990,10 +990,8 @@ namespace Models {
         }
     }
 
-    void ArtworksListModel::onSpellCheckerAvailable(bool afterRestart) {
-        if (afterRestart) {
-            spellCheckAll();
-        }
+    void ArtworksListModel::onSpellCheckerAvailable() {
+        spellCheckAll();
     }
 
     void ArtworksListModel::onSpellCheckDisabled() {

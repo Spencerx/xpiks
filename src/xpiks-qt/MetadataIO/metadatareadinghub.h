@@ -13,10 +13,10 @@
 
 #include <QObject>
 #include <QAtomicInt>
-#include "../Common/readerwriterqueue.h"
-#include "../Artworks/artworkssnapshot.h"
+#include <Common/readerwriterqueue.h>
+#include <Artworks/artworkssnapshot.h>
 #include "originalmetadata.h"
-#include "../Helpers/asynccoordinator.h"
+#include <Helpers/asynccoordinator.h>
 
 namespace Services {
     class ArtworksUpdateHub;
