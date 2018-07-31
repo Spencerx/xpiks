@@ -91,6 +91,9 @@ namespace Artworks {
         void append(ArtworkMetadata *artwork) {
             m_ArtworksSnapshot.emplace_back(std::make_shared<ItemType>(artwork));
         }
+        void append(const std::shared_ptr<ItemType> &item) {
+            m_ArtworksSnapshot.push_back(item);
+        }
         void append(const WeakArtworksSnapshot &artworks);
         void append(const std::deque<ArtworkMetadata *> &artworks);
         void append(Container &rawSnapshot);

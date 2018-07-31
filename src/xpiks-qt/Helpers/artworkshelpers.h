@@ -14,23 +14,21 @@
 #include <QVector>
 #include <vector>
 #include <memory>
-#include <Artworks/artworkssnapshot.h>
 
 namespace Artworks {
     class ArtworkMetadata;
-    class ImageArtwork;
-    class VideoArtwork;
+    class ArtworksSnapshot;
 }
 
 namespace Helpers {
     void splitImagesVideo(const QVector<Artworks::ArtworkMetadata *> &artworks,
                           QVector<Artworks::ArtworkMetadata *> &imageArtworks,
                           QVector<Artworks::ArtworkMetadata *> &videoArtworks);
-    void splitImagesVideo(const Artworks::ArtworksSnapshot::Container &rawSnapshot,
-                          Artworks::ArtworksSnapshot::Container &imagesRawSnapshot,
-                          Artworks::ArtworksSnapshot::Container &videoRawSnapshot);
-    int retrieveImagesCount(const Artworks::ArtworksSnapshot::Container &rawSnapshot);
-    int retrieveVideosCount(const Artworks::ArtworksSnapshot::Container &rawSnapshot);
+    void splitImagesVideo(const Artworks::ArtworksSnapshot &rawSnapshot,
+                          Artworks::ArtworksSnapshot &imagesRawSnapshot,
+                          Artworks::ArtworksSnapshot &videoRawSnapshot);
+    int retrieveImagesCount(const Artworks::ArtworksSnapshot &rawSnapshot);
+    int retrieveVideosCount(const Artworks::ArtworksSnapshot &rawSnapshot);
     int findAndAttachVectors(const Artworks::ArtworksSnapshot &snapshot, QVector<int> &modifiedIndices);
 }
 

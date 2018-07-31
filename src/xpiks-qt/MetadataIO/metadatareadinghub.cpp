@@ -32,7 +32,7 @@ namespace MetadataIO {
                          this, &MetadataReadingHub::onCanInitialize);
     }
 
-    void MetadataReadingHub::initializeImport(const Artworks::ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID) {
+    void MetadataReadingHub::initializeImport(Artworks::ArtworksSnapshot const &artworksToRead, int importID, quint32 storageReadBatchID) {
         m_ArtworksToRead.copyFrom(artworksToRead);
         m_ImportQueue.reservePush(artworksToRead.size());
         m_ImportID = importID;
@@ -48,6 +48,14 @@ namespace MetadataIO {
     void MetadataReadingHub::finalizeImport() {
         m_ArtworksToRead.clear();
         m_ImportQueue.clear();
+    }
+
+    void MetadataReadingHub::accountReadIO() {
+        m_AsyncCoordinator.aboutToBegin();
+    }
+
+    void MetadataReadingHub::startAcceptingIOResults() {
+        m_AsyncCoordinator.allBegun();
     }
 
     void MetadataReadingHub::proceedImport(bool ignoreBackups) {

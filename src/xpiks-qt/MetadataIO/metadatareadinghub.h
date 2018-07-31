@@ -35,8 +35,15 @@ namespace MetadataIO {
                            Services::ArtworksInspectionHub &inspectionHub);
 
     public:
-        void initializeImport(const Artworks::ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);
+        Artworks::ArtworksSnapshot const &getSnapshot() const { return m_ArtworksToRead; }
+
+    public:
+        void initializeImport(Artworks::ArtworksSnapshot const &artworksToRead, int importID, quint32 storageReadBatchID);
         void finalizeImport();
+
+    public:
+        void accountReadIO();
+        void startAcceptingIOResults();
 
     public:
         void proceedImport(bool ignoreBackups);

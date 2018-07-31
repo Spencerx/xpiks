@@ -40,14 +40,14 @@ namespace Helpers {
         }
     }
 
-    void splitImagesVideo(const Artworks::ArtworksSnapshot::Container &rawSnapshot,
-                          Artworks::ArtworksSnapshot::Container &imagesRawSnapshot,
-                          Artworks::ArtworksSnapshot::Container &videoRawSnapshot) {
+    void splitImagesVideo(const Artworks::ArtworksSnapshot &rawSnapshot,
+                          Artworks::ArtworksSnapshot &imagesRawSnapshot,
+                          Artworks::ArtworksSnapshot &videoRawSnapshot) {
         const size_t size = rawSnapshot.size();
         imagesRawSnapshot.reserve(size / 2);
         videoRawSnapshot.reserve(size / 2);
 
-        for (auto &locker: rawSnapshot) {
+        for (auto &locker: rawSnapshot.getRawData()) {
             Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
 
             Q_ASSERT(artwork != nullptr);
@@ -55,11 +55,11 @@ namespace Helpers {
 
             Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
             if (imageArtwork != nullptr) {
-                imagesRawSnapshot.push_back(locker);
+                imagesRawSnapshot.append(locker);
             } else {
                 Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(artwork);
                 if (videoArtwork != nullptr) {
-                    videoRawSnapshot.push_back(locker);
+                    videoRawSnapshot.append(locker);
                 } else {
                     Q_ASSERT(false);
                     LOG_WARNING << "Unknown type";
@@ -68,10 +68,10 @@ namespace Helpers {
         }
     }
 
-    int retrieveImagesCount(const Artworks::ArtworksSnapshot::Container &rawSnapshot) {
+    int retrieveImagesCount(const Artworks::ArtworksSnapshot &rawSnapshot) {
         int count = 0;
 
-        for (auto &locker: rawSnapshot) {
+        for (auto &locker: rawSnapshot.getRawData()) {
             Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
 
             Q_ASSERT(artwork != nullptr);
@@ -86,10 +86,10 @@ namespace Helpers {
         return count;
     }
 
-    int retrieveVideosCount(const Artworks::ArtworksSnapshot::Container &rawSnapshot) {
+    int retrieveVideosCount(const Artworks::ArtworksSnapshot &rawSnapshot) {
         int count = 0;
 
-        for (auto &locker: rawSnapshot) {
+        for (auto &locker: rawSnapshot.getRawData()) {
             Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
 
             Q_ASSERT(artwork != nullptr);
