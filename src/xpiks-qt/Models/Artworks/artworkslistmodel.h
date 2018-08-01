@@ -133,9 +133,11 @@ namespace Models {
         void deleteUnavailableItems();
         void deleteAllItems();
 
+    protected:
+        void deleteItems(const Helpers::IndicesRanges &ranges);
+
     private:
         // general purpose internal methods
-        void deleteItems(const Helpers::IndicesRanges &ranges);
         int attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                            const Artworks::ArtworksSnapshot &snapshot,
                            int initialCount,

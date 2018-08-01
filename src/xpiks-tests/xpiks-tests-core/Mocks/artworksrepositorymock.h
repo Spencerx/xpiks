@@ -3,17 +3,14 @@
 
 #include <QVector>
 #include <QPair>
-#include "../../xpiks-qt/Models/artworksrepository.h"
-#include "../../xpiks-qt/Models/recentdirectoriesmodel.h"
+#include <Models/Artworks/artworksrepository.h>
 
 namespace Mocks {
     class ArtworksRepositoryMock : public Models::ArtworksRepository {
     public:
-        ArtworksRepositoryMock(Common::ISystemEnvironment &environment):
-            Models::ArtworksRepository(m_RecentDirectories),
-            m_RecentDirectories(environment)
+        ArtworksRepositoryMock(Models::RecentDirectoriesModel &recentDirectories):
+            Models::ArtworksRepository(recentDirectories)
         {
-            m_RecentDirectories.initialize();
         }
 
         void removeFileAndEmitSignal() {
@@ -30,9 +27,6 @@ namespace Mocks {
 
         void setWasAddedAsFullDirectory(int index) { setFullDirectory(index); }
         void unsetWasAddedAsFullDirectory(int index) { unsetFullDirectory(index); }
-
-    private:
-        Models::RecentDirectoriesModel m_RecentDirectories;
     };
 }
 

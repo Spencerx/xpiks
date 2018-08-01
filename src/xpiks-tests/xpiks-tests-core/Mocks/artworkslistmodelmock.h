@@ -1,5 +1,5 @@
-#ifndef ARTITEMSMODELMOCK_H
-#define ARTITEMSMODELMOCK_H
+#ifndef ArtworksListModelMock_H
+#define ArtworksListModelMock_H
 
 #include <QVector>
 #include <QPair>
@@ -13,20 +13,22 @@ namespace Mocks {
     class ArtworksListModelMock : public Models::ArtworksListModel
     {
     public:
-        ArtworksListModelMock(): m_BlockUpdates(true) {}
+        ArtworksListModelMock(Models::ArtworksRepository &repository):
+            Models::ArtworksListModel(repository),
+            m_BlockUpdates(true)
+        { }
 
     public:
-        virtual Artworks::ArtworkMetadata *createArtwork(const QString &filepath, qint64 directoryID) override {
-            ArtworkMetadataMock *artwork = new ArtworkMetadataMock(filepath, directoryID);
+        virtual Artworks::ArtworkMetadata *createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID) override {
+            ArtworkMetadataMock *artwork = new ArtworkMetadataMock(file.m_Path, directoryID);
             artwork->initialize("Test title", "Test description", QStringList() << "keyword1" << "keyword2" << "keyword3");
-            this->connectArtworkSignals(artwork);
             return artwork;
         }
         void setUpdatesBlocked(bool value) { m_BlockUpdates = value; }
 
         ArtworkMetadataMock *getMockArtwork(int index) const { return dynamic_cast<ArtworkMetadataMock*>(getArtwork(index)); }
 
-        void removeAll() { deleteItems(Helpers::IndicesRanges(rowCount())); }
+        void removeAll() { deleteItems(Helpers::IndicesRanges(getArtworksSize())); }
 
         void mockDeletion(int count) {
             for (int i = 0; i < count; ++i) {
@@ -41,7 +43,7 @@ namespace Mocks {
         }
 
         void foreachArtwork(std::function<void (int index, ArtworkMetadataMock *metadata)> action) {
-            int size = getArtworksCount();
+            int size = getArtworksSize();
             for (int i = 0; i < size; ++i) {
                 auto *item = dynamic_cast<ArtworkMetadataMock*>(getArtwork(i));
                 action(i, item);
@@ -64,4 +66,4 @@ namespace Mocks {
     };
 }
 
-#endif // ARTITEMSMODELMOCK_H
+#endif // ArtworksListModelMock_H

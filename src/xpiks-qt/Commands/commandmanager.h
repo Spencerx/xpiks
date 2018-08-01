@@ -14,20 +14,20 @@
 #include <Commands/Base/icommandmanager.h>
 
 namespace UndoRedo {
-    class UndoRedoManager;
+    class IUndoRedoManager;
 }
 
 namespace Commands {
     class CommandManager : public ICommandManager
     {
     public:
-        CommandManager(UndoRedo::UndoRedoManager &undoRedoManager);
+        CommandManager(UndoRedo::IUndoRedoManager &undoRedoManager);
 
     public:
         virtual void processCommand(const std::shared_ptr<ICommand> &command) override;
 
     private:
-        UndoRedo::UndoRedoManager &m_UndoRedoManager;
+        UndoRedo::IUndoRedoManager &m_UndoRedoManager;
     };
 }
 

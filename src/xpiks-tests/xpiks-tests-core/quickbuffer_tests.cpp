@@ -15,17 +15,17 @@
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock;\
-    Mocks::ArtItemsModelMock artItemsModelMock;\
+    Mocks::ArtworksListModelMock ArtworksListModelMock;\
     Mocks::ArtworksRepositoryMock artworksRepository(environment);\
     QuickBuffer::QuickBuffer quickBuffer;\
     Models::SettingsModel settingsModel(environment);\
     Models::UIManager uiManager(environment, &settingsModel);\
     Models::FilteredArtItemsProxyModel filteredItemsModel;\
     commandManagerMock.InjectDependency(&artworksRepository);\
-    commandManagerMock.InjectDependency(&artItemsModelMock);\
+    commandManagerMock.InjectDependency(&ArtworksListModelMock);\
     commandManagerMock.InjectDependency(&quickBuffer);\
     commandManagerMock.InjectDependency(&uiManager);\
-    filteredItemsModel.setSourceModel(&artItemsModelMock);\
+    filteredItemsModel.setSourceModel(&ArtworksListModelMock);\
     commandManagerMock.InjectDependency(&filteredItemsModel);\
     commandManagerMock.generateAndAddArtworks(count);
 
@@ -38,7 +38,7 @@ void QuickBufferTests::copyArtworkToQuickBufferTest() {
     QStringList keywordsForQB;
     keywordsForQB << "brand" << "new" << "keywords";
 
-    auto *artwork = artItemsModelMock.getMockArtwork(0);
+    auto *artwork = ArtworksListModelMock.getMockArtwork(0);
     artwork->set(titleForQB, descriptionForQB, keywordsForQB);
     filteredItemsModel.copyToQuickBuffer(0);
 
@@ -104,7 +104,7 @@ void QuickBufferTests::copyHalfEmptyArtworkToQuickBufferTest() {
     QStringList keywordsForQB;
     keywordsForQB << "brand" << "new" << "keywords";
 
-    auto *artwork = artItemsModelMock.getMockArtwork(0);
+    auto *artwork = ArtworksListModelMock.getMockArtwork(0);
     artwork->set(titleForQB, descriptionForQB, keywordsForQB);
     filteredItemsModel.copyToQuickBuffer(0);
 
@@ -186,7 +186,7 @@ void QuickBufferTests::applyQuickBufferToArtworkTest() {
     bool success = quickBuffer.copyToCurrentEditable();
     QVERIFY(success);
 
-    auto *artwork = artItemsModelMock.getMockArtwork(1);
+    auto *artwork = ArtworksListModelMock.getMockArtwork(1);
     QCOMPARE(artwork->getTitle(), titleForQB);
     QCOMPARE(artwork->getDescription(), descriptionForQB);
     QCOMPARE(artwork->getKeywords(), keywordsForQB);
@@ -216,7 +216,7 @@ void QuickBufferTests::applyQuickBufferToProxyModelTest() {
     QCOMPARE(proxyModel.getDescription(), descriptionForQB);
     QCOMPARE(proxyModel.getKeywords(), keywordsForQB);
 
-    auto *artwork = artItemsModelMock.getMockArtwork(1);
+    auto *artwork = ArtworksListModelMock.getMockArtwork(1);
     QCOMPARE(artwork->getTitle(), titleForQB);
     QCOMPARE(artwork->getDescription(), descriptionForQB);
     QCOMPARE(artwork->getKeywords(), keywordsForQB);
@@ -257,7 +257,7 @@ void QuickBufferTests::applyHalfEmptyQuickBufferToArtworkTest() {
     QStringList keywordsForArtwork;
     keywordsForArtwork << "brand" << "new" << "keywords";
 
-    auto *artwork = artItemsModelMock.getMockArtwork(1);
+    auto *artwork = ArtworksListModelMock.getMockArtwork(1);
     const QString prevDescription = "some description";
     artwork->setDescription(prevDescription);
     artwork->setKeywords(keywordsForArtwork);
@@ -300,7 +300,7 @@ void QuickBufferTests::applyHalfEmptyQuickBufferToProxyModelTest() {
     QCOMPARE(proxyModel.getDescription(), descriptionForQB);
     QCOMPARE(proxyModel.getKeywords(), keywordsForQB);
 
-    auto *artwork = artItemsModelMock.getMockArtwork(1);
+    auto *artwork = ArtworksListModelMock.getMockArtwork(1);
     QCOMPARE(artwork->getTitle(), titleForModel);
     QCOMPARE(artwork->getDescription(), descriptionForQB);
     QCOMPARE(artwork->getKeywords(), keywordsForQB);
@@ -343,7 +343,7 @@ void QuickBufferTests::cannotApplyWhenNoCurrentItemTest() {
     QStringList keywordsForQB;
     keywordsForQB << "brand" << "new" << "keywords";
 
-    auto *artwork = artItemsModelMock.getMockArtwork(1);
+    auto *artwork = ArtworksListModelMock.getMockArtwork(1);
     const QString title = artwork->getTitle();
     const QString description = artwork->getDescription();
     QStringList keywords = artwork->getKeywords();

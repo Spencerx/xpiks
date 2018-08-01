@@ -14,15 +14,15 @@
 #include <Helpers/indicesranges.h>
 
 namespace Commands {
-    AddFilesCommand::AddFilesCommand(const std::shared_ptr<Filesystem::IFilesCollection> &files,
+    AddFilesCommand::AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> const &files,
                                      Common::AddFilesFlags flags,
                                      Models::ArtworksListModel &artworksListModel,
-                                     std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot> > &addedArtworksTemplate):
+                                     std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot> > const &addedArtworksTemplate):
         QObject(),
         m_Files(files),
         m_Flags(flags),
         m_ArtworksListModel(artworksListModel),
-        m_AddedArtworksTemplate(std::move(addedArtworksTemplate))
+        m_AddedArtworksTemplate(addedArtworksTemplate)
     { }
 
     void AddFilesCommand::execute() {

@@ -13,17 +13,17 @@
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \
     Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock;\
-    Mocks::ArtItemsModelMock artItemsModelMock;\
+    Mocks::ArtworksListModelMock ArtworksListModelMock;\
     Mocks::ArtworksRepositoryMock artworksRepository(environment);\
     Models::FilteredArtItemsProxyModel filteredItemsModel;\
     commandManagerMock.InjectDependency(&artworksRepository);\
-    commandManagerMock.InjectDependency(&artItemsModelMock);\
-    filteredItemsModel.setSourceModel(&artItemsModelMock);\
+    commandManagerMock.InjectDependency(&ArtworksListModelMock);\
+    filteredItemsModel.setSourceModel(&ArtworksListModelMock);\
     commandManagerMock.InjectDependency(&filteredItemsModel);\
     commandManagerMock.generateAndAddArtworks(count, withVector);
 
 #define MODIFIED_TEST_START\
-    QSignalSpy artItemsModifiedSpy(&artItemsModelMock, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)));
+    QSignalSpy artItemsModifiedSpy(&ArtworksListModelMock, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)));
 
 #define MODIFIED_TEST_END\
     QVERIFY(artItemsModifiedSpy.count() > 0);\
@@ -35,14 +35,14 @@ void ArtItemsModelTests::removeUnavailableTest() {
 
     for (int i = 0; i < count; ++i) {
         if (i%3 == 0) {
-            artItemsModelMock.getArtwork(i)->setUnavailable();
+            ArtworksListModelMock.getArtwork(i)->setUnavailable();
         }
     }
 
-    artItemsModelMock.removeUnavailableItems();
+    ArtworksListModelMock.removeUnavailableItems();
 
-    for (int i = 0; i < artItemsModelMock.getArtworksCount(); ++i) {
-        QVERIFY(!artItemsModelMock.getArtwork(i)->isUnavailable());
+    for (int i = 0; i < ArtworksListModelMock.getArtworksCount(); ++i) {
+        QVERIFY(!ArtworksListModelMock.getArtwork(i)->isUnavailable());
     }
 }
 
@@ -52,14 +52,14 @@ void ArtItemsModelTests::unselectAllTest() {
 
     for (int i = 0; i < count; ++i) {
         if (i%3 == 0) {
-            artItemsModelMock.getArtwork(i)->setIsSelected(true);
+            ArtworksListModelMock.getArtwork(i)->setIsSelected(true);
         }
     }
 
-    artItemsModelMock.forceUnselectAllItems();
+    ArtworksListModelMock.forceUnselectAllItems();
 
     for (int i = 0; i < count; ++i) {
-        QVERIFY(!artItemsModelMock.getArtwork(i)->isSelected());
+        QVERIFY(!ArtworksListModelMock.getArtwork(i)->isSelected());
     }
 }
 
@@ -69,11 +69,11 @@ void ArtItemsModelTests::modificationChangesModifiedCountTest() {
 
     const int index = 3;
 
-    QCOMPARE(artItemsModelMock.getModifiedArtworksCount(), 0);
-    artItemsModelMock.getArtwork(index)->setModified();
-    QCOMPARE(artItemsModelMock.getModifiedArtworksCount(), 1);
-    artItemsModelMock.getArtwork(index)->resetModified();
-    QCOMPARE(artItemsModelMock.getModifiedArtworksCount(), 0);
+    QCOMPARE(ArtworksListModelMock.getModifiedArtworksCount(), 0);
+    ArtworksListModelMock.getArtwork(index)->setModified();
+    QCOMPARE(ArtworksListModelMock.getModifiedArtworksCount(), 1);
+    ArtworksListModelMock.getArtwork(index)->resetModified();
+    QCOMPARE(ArtworksListModelMock.getModifiedArtworksCount(), 0);
 }
 
 void ArtItemsModelTests::removeArtworkDirectorySimpleTest() {
@@ -84,9 +84,9 @@ void ArtItemsModelTests::removeArtworkDirectorySimpleTest() {
 
     int firstDirCount = artworksRepository.getFilesCountForDirectory(indexToRemove);
 
-    QCOMPARE(artItemsModelMock.getArtworksCount(), count);
-    artItemsModelMock.removeArtworksDirectory(indexToRemove);
-    QCOMPARE(artItemsModelMock.getArtworksCount(), count - firstDirCount);
+    QCOMPARE(ArtworksListModelMock.getArtworksCount(), count);
+    ArtworksListModelMock.removeArtworksDirectory(indexToRemove);
+    QCOMPARE(ArtworksListModelMock.getArtworksCount(), count - firstDirCount);
 }
 
 void ArtItemsModelTests::addRemoveOneByOneFewDirsTest() {
@@ -96,17 +96,17 @@ void ArtItemsModelTests::addRemoveOneByOneFewDirsTest() {
 
     QCOMPARE(artworksRepository.getFilesCountForDirectory(0), 1);
     QCOMPARE(artworksRepository.getFilesCountForDirectory(1), 1);
-    QCOMPARE(artItemsModelMock.getArtworksCount(), count);
+    QCOMPARE(ArtworksListModelMock.getArtworksCount(), count);
 
-    artItemsModelMock.removeArtworksDirectory(0);
+    ArtworksListModelMock.removeArtworksDirectory(0);
     artworksRepository.cleanupEmptyDirectories();
     QCOMPARE(artworksRepository.rowCount(), 1);
 
-    artItemsModelMock.removeArtworksDirectory(0);
+    ArtworksListModelMock.removeArtworksDirectory(0);
     artworksRepository.cleanupEmptyDirectories();
     QCOMPARE(artworksRepository.rowCount(), 0);
 
-    QCOMPARE(artItemsModelMock.getArtworksCount(), 0);
+    QCOMPARE(ArtworksListModelMock.getArtworksCount(), 0);
 }
 
 void ArtItemsModelTests::addRemoveOneByOneOneDirTest() {
@@ -115,12 +115,12 @@ void ArtItemsModelTests::addRemoveOneByOneOneDirTest() {
     DECLARE_MODELS_AND_GENERATE(count, false);
 
     QCOMPARE(artworksRepository.getFilesCountForDirectory(0), 1);
-    QCOMPARE(artItemsModelMock.getArtworksCount(), count);
+    QCOMPARE(ArtworksListModelMock.getArtworksCount(), count);
 
-    artItemsModelMock.removeArtworksDirectory(0);
+    ArtworksListModelMock.removeArtworksDirectory(0);
     artworksRepository.cleanupEmptyDirectories();
     QCOMPARE(artworksRepository.rowCount(), 0);
-    QCOMPARE(artItemsModelMock.getArtworksCount(), 0);
+    QCOMPARE(ArtworksListModelMock.getArtworksCount(), 0);
 }
 
 void ArtItemsModelTests::setAllSavedResetsModifiedCountTest() {
@@ -130,15 +130,15 @@ void ArtItemsModelTests::setAllSavedResetsModifiedCountTest() {
 
     for (int i = 0; i < count; ++i) {
         if (i%3 == 0) {
-            artItemsModelMock.getArtwork(i)->setModified();
+            ArtworksListModelMock.getArtwork(i)->setModified();
             selectedItems.append(i);
         }
     }
 
-    QCOMPARE(artItemsModelMock.getModifiedArtworksCount(), selectedItems.count());
+    QCOMPARE(ArtworksListModelMock.getModifiedArtworksCount(), selectedItems.count());
 
-    artItemsModelMock.setSelectedItemsSaved(selectedItems);
-    QCOMPARE(artItemsModelMock.getModifiedArtworksCount(), 0);
+    ArtworksListModelMock.setSelectedItemsSaved(selectedItems);
+    QCOMPARE(ArtworksListModelMock.getModifiedArtworksCount(), 0);
 }
 
 void ArtItemsModelTests::removingLockedArtworksTest() {
@@ -146,69 +146,69 @@ void ArtItemsModelTests::removingLockedArtworksTest() {
     DECLARE_MODELS_AND_GENERATE(count, false);
 
     for (int i = 0; i < (int)count; ++i) {
-        artItemsModelMock.getArtwork(i)->acquire();
+        ArtworksListModelMock.getArtwork(i)->acquire();
     }
 
-    QCOMPARE(artItemsModelMock.getFinalizationList().size(), (size_t)0);
-    artItemsModelMock.deleteAllItems();
-    QCOMPARE(artItemsModelMock.getFinalizationList().size(), count);
+    QCOMPARE(ArtworksListModelMock.getFinalizationList().size(), (size_t)0);
+    ArtworksListModelMock.deleteAllItems();
+    QCOMPARE(ArtworksListModelMock.getFinalizationList().size(), count);
 }
 
 void ArtItemsModelTests::plainTextEditToEmptyKeywordsTest() {
     const int count = 1;
     DECLARE_MODELS_AND_GENERATE(count, false);
-    artItemsModelMock.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
+    ArtworksListModelMock.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
 
-    artItemsModelMock.plainTextEdit(0, "");
-    QCOMPARE(artItemsModelMock.getMockArtwork(0)->getKeywords().length(), 0);
+    ArtworksListModelMock.plainTextEdit(0, "");
+    QCOMPARE(ArtworksListModelMock.getMockArtwork(0)->getKeywords().length(), 0);
 }
 
 void ArtItemsModelTests::plainTextEditToOneKeywordTest() {
     const int count = 1;
     DECLARE_MODELS_AND_GENERATE(count, false);
-    artItemsModelMock.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
+    ArtworksListModelMock.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
 
     QString keywords = "new keyword";
     QStringList result = QStringList() << keywords;
 
-    artItemsModelMock.plainTextEdit(0, keywords);
-    QCOMPARE(artItemsModelMock.getMockArtwork(0)->getKeywords(), result);
+    ArtworksListModelMock.plainTextEdit(0, keywords);
+    QCOMPARE(ArtworksListModelMock.getMockArtwork(0)->getKeywords(), result);
 }
 
 void ArtItemsModelTests::plainTextEditToSeveralKeywordsTest() {
     const int count = 1;
     DECLARE_MODELS_AND_GENERATE(count, false);
-    artItemsModelMock.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
+    ArtworksListModelMock.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
 
     QString keywords = "new keyword, another one, new";
     QStringList result = QStringList() << "new keyword" << "another one" << "new";
 
-    artItemsModelMock.plainTextEdit(0, keywords);
-    QCOMPARE(artItemsModelMock.getMockArtwork(0)->getKeywords(), result);
+    ArtworksListModelMock.plainTextEdit(0, keywords);
+    QCOMPARE(ArtworksListModelMock.getMockArtwork(0)->getKeywords(), result);
 }
 
 void ArtItemsModelTests::plainTextEditToAlmostEmptyTest() {
     const int count = 1;
     DECLARE_MODELS_AND_GENERATE(count, false);
-    artItemsModelMock.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
+    ArtworksListModelMock.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
 
     QString keywords = ",,, , , , , ,,,,   ";
     QStringList result = QStringList();
 
-    artItemsModelMock.plainTextEdit(0, keywords);
-    QCOMPARE(artItemsModelMock.getMockArtwork(0)->getKeywords(), result);
+    ArtworksListModelMock.plainTextEdit(0, keywords);
+    QCOMPARE(ArtworksListModelMock.getMockArtwork(0)->getKeywords(), result);
 }
 
 void ArtItemsModelTests::plainTextEditToMixedTest() {
     const int count = 1;
     DECLARE_MODELS_AND_GENERATE(count, false);
-    artItemsModelMock.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
+    ArtworksListModelMock.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
 
     QString keywords = ",,, , ,word here , , ,,,,   ";
     QStringList result = QStringList() << "word here";
 
-    artItemsModelMock.plainTextEdit(0, keywords);
-    QCOMPARE(artItemsModelMock.getMockArtwork(0)->getKeywords(), result);
+    ArtworksListModelMock.plainTextEdit(0, keywords);
+    QCOMPARE(ArtworksListModelMock.getMockArtwork(0)->getKeywords(), result);
 }
 
 void ArtItemsModelTests::appendKeywordEmitsModifiedTest() {
@@ -216,7 +216,7 @@ void ArtItemsModelTests::appendKeywordEmitsModifiedTest() {
 
     MODIFIED_TEST_START;
 
-    artItemsModelMock.appendKeyword(0, "brand new keyword");
+    ArtworksListModelMock.appendKeyword(0, "brand new keyword");
 
     MODIFIED_TEST_END;
 }
@@ -224,12 +224,12 @@ void ArtItemsModelTests::appendKeywordEmitsModifiedTest() {
 void ArtItemsModelTests::removeKeywordEmitsModifiedTest() {
     DECLARE_MODELS_AND_GENERATE(1, false);
 
-    artItemsModelMock.appendKeyword(0, "brand new keyword");
-    artItemsModelMock.getMockArtwork(0)->resetModified();
+    ArtworksListModelMock.appendKeyword(0, "brand new keyword");
+    ArtworksListModelMock.getMockArtwork(0)->resetModified();
 
     MODIFIED_TEST_START;
 
-    artItemsModelMock.removeKeywordAt(0, 0);
+    ArtworksListModelMock.removeKeywordAt(0, 0);
 
     MODIFIED_TEST_END;
 }
@@ -237,12 +237,12 @@ void ArtItemsModelTests::removeKeywordEmitsModifiedTest() {
 void ArtItemsModelTests::removeLastKeywordEmitsModifiedTest() {
     DECLARE_MODELS_AND_GENERATE(1, false);
 
-    artItemsModelMock.appendKeyword(0, "brand new keyword");
-    artItemsModelMock.getMockArtwork(0)->resetModified();
+    ArtworksListModelMock.appendKeyword(0, "brand new keyword");
+    ArtworksListModelMock.getMockArtwork(0)->resetModified();
 
     MODIFIED_TEST_START;
 
-    artItemsModelMock.removeLastKeyword(0);
+    ArtworksListModelMock.removeLastKeyword(0);
 
     MODIFIED_TEST_END;
 }
@@ -252,7 +252,7 @@ void ArtItemsModelTests::plainTextEditEmitsModifiedTest() {
 
     MODIFIED_TEST_START;
 
-    artItemsModelMock.plainTextEdit(0, "brand,new,keyword");
+    ArtworksListModelMock.plainTextEdit(0, "brand,new,keyword");
 
     MODIFIED_TEST_END;
 }
@@ -260,12 +260,12 @@ void ArtItemsModelTests::plainTextEditEmitsModifiedTest() {
 void ArtItemsModelTests::keywordEditEmitsModifiedTest() {
     DECLARE_MODELS_AND_GENERATE(1, false);
 
-    artItemsModelMock.appendKeyword(0, "keyword");
-    artItemsModelMock.getMockArtwork(0)->resetModified();
+    ArtworksListModelMock.appendKeyword(0, "keyword");
+    ArtworksListModelMock.getMockArtwork(0)->resetModified();
 
     MODIFIED_TEST_START;
 
-    artItemsModelMock.editKeyword(0, 0, "other");
+    ArtworksListModelMock.editKeyword(0, 0, "other");
 
     MODIFIED_TEST_END;
 }
@@ -275,7 +275,7 @@ void ArtItemsModelTests::pasteKeywordsEmitsModifiedTest() {
 
     MODIFIED_TEST_START;
 
-    artItemsModelMock.pasteKeywords(0, QString("other,keywords,here").split(','));
+    ArtworksListModelMock.pasteKeywords(0, QString("other,keywords,here").split(','));
 
     MODIFIED_TEST_END;
 }
@@ -285,7 +285,7 @@ void ArtItemsModelTests::addSuggestedEmitsModifiedTest() {
 
     MODIFIED_TEST_START;
 
-    artItemsModelMock.addSuggestedKeywords(0, QString("suggested,keywords,here").split(','));
+    ArtworksListModelMock.addSuggestedKeywords(0, QString("suggested,keywords,here").split(','));
 
     MODIFIED_TEST_END;
 }
@@ -300,7 +300,7 @@ void ArtItemsModelTests::fillFromQuickBufferEmitsModifiedTest() {
 
     MODIFIED_TEST_START;
 
-    artItemsModelMock.fillFromQuickBuffer(0);
+    ArtworksListModelMock.fillFromQuickBuffer(0);
 
     MODIFIED_TEST_END;
 }
@@ -314,7 +314,7 @@ void ArtItemsModelTests::addPresetEmitsModifiedTest() {
 
     MODIFIED_TEST_START;
 
-    artItemsModelMock.addPreset(0, 0);
+    ArtworksListModelMock.addPreset(0, 0);
 
     MODIFIED_TEST_END;
 }
@@ -324,10 +324,10 @@ void ArtItemsModelTests::proxyModelExitEmitsModifiedTest() {
 
     Models::ArtworkProxyModel proxyModel;
     commandManagerMock.InjectDependency(&proxyModel);
-    proxyModel.setSourceArtwork((QObject*)artItemsModelMock.getMockArtwork(0));
+    proxyModel.setSourceArtwork((QObject*)ArtworksListModelMock.getMockArtwork(0));
     proxyModel.setDescription("other description");
 
-    artItemsModelMock.setUpdatesBlocked(false);
+    ArtworksListModelMock.setUpdatesBlocked(false);
 
     MODIFIED_TEST_START;
 

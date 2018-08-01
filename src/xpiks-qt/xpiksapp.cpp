@@ -34,6 +34,7 @@
 #include <Commands/Files/removeselectedfilescommand.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
+    m_SecretsManager(),
     m_SettingsModel(environment, m_SecretsManager),
     m_DatabaseManager(environment),
     m_SessionManager(environment),
@@ -70,7 +71,6 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_UpdateService(environment, m_SettingsModel, m_SwitcherModel, m_MaintenanceService),
     m_TelemetryService(m_SwitcherModel, m_SettingsModel),
     m_InspectionHub(m_SpellCheckerService, m_WarningsService, m_SettingsModel),
-    m_SecretsManager(),
     m_UploadInfoRepository(environment, m_SecretsManager),
     m_ZipArchiver(),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),

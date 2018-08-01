@@ -30,10 +30,12 @@ namespace Commands {
     {
         Q_OBJECT
     public:
-        AddFilesCommand(const std::shared_ptr<Filesystem::IFilesCollection> &files,
+        using ArtworksCommandTemplate = std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>>;
+
+        AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> const &files,
                         Common::AddFilesFlags flags,
                         Models::ArtworksListModel &artworksListModel,
-                        std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &addedArtworksTemplate);
+                        ArtworksCommandTemplate const &addedArtworksTemplate = ArtworksCommandTemplate());
 
         // ICommand interface
     public:

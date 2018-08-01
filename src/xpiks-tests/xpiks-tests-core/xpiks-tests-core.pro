@@ -158,7 +158,10 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/Editing/currenteditableproxyartwork.cpp \
     ../../xpiks-qt/Models/Editing/quickbuffer.cpp \
     ../../xpiks-qt/Commands/Files/addfilescommand.cpp \
-    Mocks/filescollectionmock.cpp
+    Mocks/filescollectionmock.cpp \
+    ../../xpiks-qt/UndoRedo/undoredomanager.cpp \
+    ../../xpiks-qt/Models/Session/recentdirectoriesmodel.cpp \
+    ../../xpiks-qt/Models/Session/recentitemsmodel.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -264,5 +267,10 @@ HEADERS += \
     ../../xpiks-qt/Commands/Base/icommandtemplate.h \
     ../../xpiks-qt/Commands/Base/templatedcommand.h \
     ../../xpiks-qt/Commands/Files/addfilescommand.h \
-    Mocks/filescollectionmock.h
+    Mocks/filescollectionmock.h \
+    ../../xpiks-qt/UndoRedo/iundoredomanager.h \
+    ../../xpiks-qt/UndoRedo/undoredomanager.h \
+    ../../xpiks-qt/Models/Session/recentdirectoriesmodel.h \
+    ../../xpiks-qt/Models/Session/recentitemsmodel.h \
+    Mocks/selectedindicessourcemock.h
 

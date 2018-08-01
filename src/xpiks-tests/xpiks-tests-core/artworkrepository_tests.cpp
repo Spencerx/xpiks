@@ -15,19 +15,19 @@
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \
     Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock;\
-    Mocks::ArtItemsModelMock artItemsModelMock;\
+    Mocks::ArtworksListModelMock ArtworksListModelMock;\
     Mocks::ArtworksRepositoryMock artworksRepository(environment);\
     Models::FilteredArtItemsProxyModel filteredItemsModel;\
     commandManagerMock.InjectDependency(&artworksRepository);\
-    commandManagerMock.InjectDependency(&artItemsModelMock);\
-    filteredItemsModel.setSourceModel(&artItemsModelMock);\
+    commandManagerMock.InjectDependency(&ArtworksListModelMock);\
+    filteredItemsModel.setSourceModel(&ArtworksListModelMock);\
     commandManagerMock.InjectDependency(&filteredItemsModel);\
     commandManagerMock.generateAndAddArtworks(count, withVector);
 
 #define SETUP_SELECTION_TEST(count, dirsCount) \
     Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock; \
-    Mocks::ArtItemsModelMock artItemsMock; \
+    Mocks::ArtworksListModelMock artItemsMock; \
     Mocks::ArtworksRepositoryMock artworksRepository(environment); \
     commandManagerMock.InjectDependency(&artworksRepository); \
     Models::ArtItemsModel *artItemsModel = &artItemsMock; \
@@ -395,9 +395,9 @@ void ArtworkRepositoryTests::oneEmptyDirectoryStaysTest() {
     DECLARE_MODELS_AND_GENERATE(count, false);
 
     QCOMPARE(artworksRepository.getFilesCountForDirectory(0), 1);
-    QCOMPARE(artItemsModelMock.getArtworksCount(), count);
+    QCOMPARE(ArtworksListModelMock.getArtworksCount(), count);
 
-    artItemsModelMock.removeArtworksDirectory(0);
+    ArtworksListModelMock.removeArtworksDirectory(0);
     QCOMPARE(artworksRepository.rowCount(), 1);
 
     artworksRepository.cleanupEmptyDirectories();
@@ -410,10 +410,10 @@ void ArtworkRepositoryTests::fewEmptyDirectoriesStayTest() {
 
     QCOMPARE(artworksRepository.getFilesCountForDirectory(0), 1);
     QCOMPARE(artworksRepository.getFilesCountForDirectory(1), 1);
-    QCOMPARE(artItemsModelMock.getArtworksCount(), count);
+    QCOMPARE(ArtworksListModelMock.getArtworksCount(), count);
 
-    artItemsModelMock.removeArtworksDirectory(0);
-    artItemsModelMock.removeArtworksDirectory(1);
+    ArtworksListModelMock.removeArtworksDirectory(0);
+    ArtworksListModelMock.removeArtworksDirectory(1);
     QCOMPARE(artworksRepository.rowCount(), 2);
 
     artworksRepository.cleanupEmptyDirectories();

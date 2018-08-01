@@ -20,7 +20,7 @@
 #define SETUP_TEST \
     Mocks::CoreTestsEnvironment environment; \
     Mocks::CommandManagerMock commandManagerMock; \
-    Mocks::ArtItemsModelMock artItemsMock; \
+    Mocks::ArtworksListModelMock artItemsMock; \
     Mocks::ArtworksRepositoryMock artworksRepository(environment); \
     commandManagerMock.InjectDependency(&artworksRepository); \
     Models::ArtItemsModel *artItemsModel = &artItemsMock; \

@@ -6,17 +6,14 @@
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/coretestsenvironment.h"
-#include "../../xpiks-qt/Commands/removeartworkscommand.h"
-#include "../../xpiks-qt/Models/artworksrepository.h"
+#include <Commands/Files/removeselectedfilescommand.h>
+#include <Models/Artworks/artworksrepository.h>
 
 #define DECLARE_MODELS \
-    Mocks::CommandManagerMock commandManagerMock;\
-    Mocks::ArtItemsModelMock artItemsMock;\
     Mocks::CoreTestsEnvironment environment;\
-    Mocks::ArtworksRepositoryMock artworksRepository(environment);\
-    commandManagerMock.InjectDependency(&artworksRepository);\
-    Models::ArtItemsModel *artItemsModel = &artItemsMock;\
-    commandManagerMock.InjectDependency(artItemsModel);
+    Models::RecentDirectoriesModel recentDirectories(environment);\
+    Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);\
+    Mocks::ArtworksListModelMock artworksListModel(artworksRepository);
 
 void RemoveCommandTests::removeArtworksFromEmptyRepository() {
     DECLARE_MODELS;

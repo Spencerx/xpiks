@@ -28,12 +28,16 @@ namespace Commands {
         auto indices = m_IndicesSource.getSelectedIndices();
         m_RemoveResult = m_ArtworksList.removeFiles(Helpers::IndicesRanges(indices));
         if (m_RemoveResult.m_RemovedCount > 0) {
-            m_SaveSessionCommand->execute();
+            if (m_SaveSessionCommand) {
+                m_SaveSessionCommand->execute();
+            }
         }
     }
 
     void RemoveSelectedFilesCommand::undo() {
         LOG_DEBUG << "#";
-        m_SaveSessionCommand->execute();
+        if (m_SaveSessionCommand) {
+            m_SaveSessionCommand->execute();
+        }
     }
 }

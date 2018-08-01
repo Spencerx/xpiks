@@ -24,7 +24,8 @@ namespace Commands {
         RemoveSelectedFilesCommand(Artworks::ISelectedIndicesSource &indicesSource,
                                    Models::ArtworksListModel &artworksList,
                                    Models::ArtworksRepository &artworksRepository,
-                                   std::shared_ptr<ICommand> const &saveSessionCommand);
+                                   std::shared_ptr<ICommand> const &saveSessionCommand =
+                std::shared_ptr<ICommand>());
 
         // ICommand interface
     public:

@@ -129,8 +129,8 @@ namespace Models {
                                  Encryption::SecretsManager &secretsManager,
                                  QObject *parent) :
         QObject(parent),
-        m_SecretsManager(secretsManager),
         Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
+        m_SecretsManager(secretsManager),
         m_State("settings", environment),
         m_Config(environment.path({SETTINGS_FILE}),
                  environment.getIsInMemoryOnly()),

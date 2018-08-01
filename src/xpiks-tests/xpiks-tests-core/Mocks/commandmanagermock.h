@@ -7,12 +7,11 @@ namespace Mocks {
     class CommandManagerMock : public Commands::CommandManager
     {
     public:
-        CommandManagerMock():
+        CommandManagerMock(UndoRedo::IUndoRedoManager &undoRedoManager):
+            Commands::CommandManager(undoRedoManager),
             m_AnyCommandProcessed(false),
             m_CanExecuteCommands(true)
         {
-            m_TestsDelegator.setCommandManager(this);
-            this->InjectDependency(&m_TestsDelegator);
         }
 
     public:
@@ -22,7 +21,7 @@ namespace Mocks {
         void enableCommands() { m_CanExecuteCommands = true; }
 
     public:
-        virtual void processCommand(const std::shared_ptr<ICommand> &command) override {
+        virtual void processCommand(const std::shared_ptr<Commands::ICommand> &command) override {
             m_AnyCommandProcessed = true;
             if (m_CanExecuteCommands) {
                 Commands::CommandManager::processCommand(command);

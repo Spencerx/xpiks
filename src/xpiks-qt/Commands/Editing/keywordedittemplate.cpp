@@ -35,15 +35,18 @@ namespace Commands {
             m_ArtworksBackups.emplace_back(UndoRedo::ArtworkMetadataBackup(artwork));
 
             switch (m_EditFlags) {
-            case Common::KeywordEditFlags::Remove:
-                artwork->removeKeywordAt(m_KeywordIndex, removed);
-                break;
-            case Common::KeywordEditFlags::RemoveLast:
-                artwork->removeLastKeyword(removed);
-                break;
-            case Common::KeywordEditFlags::Replace:
-                artwork->editKeyword(m_KeywordIndex, m_NextValue);
-                break;
+                case Common::KeywordEditFlags::Remove:
+                    artwork->removeKeywordAt(m_KeywordIndex, removed);
+                    break;
+                case Common::KeywordEditFlags::RemoveLast:
+                    artwork->removeLastKeyword(removed);
+                    break;
+                case Common::KeywordEditFlags::Replace:
+                    artwork->editKeyword(m_KeywordIndex, m_NextValue);
+                    break;
+                case Common::KeywordEditFlags::None:
+                    Q_ASSERT(false);
+                    break;
             }
         }
     }

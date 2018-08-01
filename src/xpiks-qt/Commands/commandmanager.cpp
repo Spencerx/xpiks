@@ -10,10 +10,10 @@
 
 #include "commandmanager.h"
 #include <Commands/Base/icommand.h>
-#include "../UndoRedo/undoredomanager.h"
+#include <UndoRedo/iundoredomanager.h>
 
 namespace Commands {
-    CommandManager::CommandManager(UndoRedo::UndoRedoManager &undoRedoManager):
+    CommandManager::CommandManager(UndoRedo::IUndoRedoManager &undoRedoManager):
         m_UndoRedoManager(undoRedoManager)
     {
     }
