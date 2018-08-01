@@ -20,30 +20,18 @@ namespace Mocks {
         void resetAnyCommandProcessed() { m_AnyCommandProcessed = false; }
         void disableCommands() { m_CanExecuteCommands = false; }
         void enableCommands() { m_CanExecuteCommands = true; }
-        void mockAcceptDeletion() { getDelegator()->removeUnavailableFiles();}
 
     public:
-
-
-        virtual std::shared_ptr<Commands::ICommandResult> processCommand(const std::shared_ptr<Commands::ICommandBase> &command) {
+        virtual void processCommand(const std::shared_ptr<ICommand> &command) override {
             m_AnyCommandProcessed = true;
             if (m_CanExecuteCommands) {
-                return Commands::CommandManager::processCommand(command);
-            } else {
-                return std::shared_ptr<Commands::ICommandResult>();
-            }
-        }
-
-        void mockDeletion(int count) {
-            for (int i = 0; i < count; ++i) {
-                CommandManager::getArtItemsModel()->getArtwork(i)->setUnavailable();
+                Commands::CommandManager::processCommand(command);
             }
         }
 
     private:
-        Commands::MainDelegator m_TestsDelegator;
         bool m_AnyCommandProcessed;
-        volatile bool m_CanExecuteCommands;
+        bool m_CanExecuteCommands;
     };
 }
 

@@ -5,6 +5,7 @@
 #include <QPair>
 #include <functional>
 #include <Models/Artworks/artworkslistmodel.h>
+#include <Artworks/artworkmetadata.h>
 #include "artworkmetadatamock.h"
 #include "filescollectionmock.h"
 
@@ -26,6 +27,12 @@ namespace Mocks {
         ArtworkMetadataMock *getMockArtwork(int index) const { return dynamic_cast<ArtworkMetadataMock*>(getArtwork(index)); }
 
         void removeAll() { deleteItems(Helpers::IndicesRanges(rowCount())); }
+
+        void mockDeletion(int count) {
+            for (int i = 0; i < count; ++i) {
+                getArtwork(i)->setUnavailable();
+            }
+        }
 
         virtual void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles = QVector<int>()) override {
             if (!m_BlockUpdates) {
