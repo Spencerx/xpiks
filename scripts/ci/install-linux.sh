@@ -24,3 +24,4 @@ sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y gdb
 sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y libexiv2-dev expat
 sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -qq cppcheck
 sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-5 90
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90
