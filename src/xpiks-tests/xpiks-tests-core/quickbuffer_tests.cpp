@@ -1,7 +1,7 @@
 #include "quickbuffer_tests.h"
 #include <QSignalSpy>
 #include "Mocks/commandmanagermock.h"
-#include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworkmetadatamock.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
 #include "../../xpiks-qt/QuickBuffer/quickbuffer.h"

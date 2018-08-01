@@ -1,6 +1,6 @@
 #include "deletekeywords_tests.h"
 #include "Mocks/commandmanagermock.h"
-#include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworkmetadatamock.h"
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/artworksrepositorymock.h"

@@ -3,7 +3,7 @@
 #include <QSignalSpy>
 #include "removecommand_tests.h"
 #include "Mocks/commandmanagermock.h"
-#include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/coretestsenvironment.h"
 #include "../../xpiks-qt/Commands/removeartworkscommand.h"

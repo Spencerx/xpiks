@@ -245,7 +245,7 @@ namespace Models {
     }
 
     ArtworksAddResult ArtworksListModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
-                                                                     Common::AddFilesFlags flags) {
+                                                  Common::AddFilesFlags flags) {
         const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
         Artworks::ArtworksSnapshot snapshot;
         snapshot.reserve(newFilesCount);

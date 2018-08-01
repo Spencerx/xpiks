@@ -4,13 +4,13 @@
 #include <vector>
 #include <QSignalSpy>
 #include "../../xpiks-qt/Models/combinedartworksmodel.h"
-#include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/commandmanagermock.h"
 #include "../../xpiks-qt/Models/artworkelement.h"
 #include "../../xpiks-qt/Common/basickeywordsmodel.h"
 #include "../../xpiks-qt/Models/settingsmodel.h"
 
-Models::ArtworkMetadata *createArtworkMetadata(const QString &desc, const QString &title, const QStringList &keywords, int index=0) {
+Artworks::ArtworkMetadata *createArtworkMetadata(const QString &desc, const QString &title, const QStringList &keywords, int index=0) {
     Mocks::ArtworkMetadataMock *artwork = new Mocks::ArtworkMetadataMock("/random/file/path.jpg");
     artwork->initAsEmpty();
     artwork->appendKeywords(keywords);
@@ -373,7 +373,7 @@ void CombinedModelTests::editSeveralWithSameKeywordsTest() {
     const QString commonTitle = "a common Title";
     const QStringList commonKeywords = QStringList() << "fox" << "dog" << "pastel" << "art";
 
-    std::vector<Models::ArtworkMetadata*> artworks;
+    std::vector<Artworks::ArtworkMetadata*> artworks;
 
     MetadataIO::WeakArtworksSnapshot items;
     items.push_back(createArtworkMetadata(commonDescription, commonTitle, commonKeywords, 0));
@@ -441,7 +441,7 @@ void CombinedModelTests::recombineAfterRemoveAllButOneTest() {
     combinedModel.setIsSelected(1, true);
     combinedModel.setIsSelected(2, true);
     combinedModel.removeSelectedArtworks();
-    Models::ArtworkMetadata *first = combinedModel.accessItem(0)->getArtworkMetadata();
+    Artworks::ArtworkMetadata *first = combinedModel.accessItem(0)->getArtworkMetadata();
 
     QCOMPARE(combinedModel.getArtworksCount(), 1);
     QCOMPARE(combinedModel.getTitle(), first->getTitle());
@@ -471,7 +471,7 @@ void CombinedModelTests::recombineAfterChangesTest() {
     combinedModel.setIsSelected(1, true);
     combinedModel.setIsSelected(2, true);
     combinedModel.removeSelectedArtworks();
-    Models::ArtworkMetadata *first = combinedModel.accessItem(0)->getArtworkMetadata();
+    Artworks::ArtworkMetadata *first = combinedModel.accessItem(0)->getArtworkMetadata();
 
     QCOMPARE(combinedModel.getArtworksCount(), 1);
     QVERIFY(combinedModel.getTitle() != first->getTitle());

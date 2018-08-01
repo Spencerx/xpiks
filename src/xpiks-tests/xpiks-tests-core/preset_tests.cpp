@@ -1,7 +1,7 @@
 #include "preset_tests.h"
 #include <thread>
 #include "../../xpiks-qt/KeywordsPresets/presetkeywordsmodel.h"
-#include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/commandmanagermock.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
 #include "../../xpiks-qt/Models/artworksrepository.h"
@@ -44,7 +44,7 @@ void PresetTests::expandFromPresetTrivial()
     }
 
     artItemsModelMock.expandPreset(0, 0, 0);
-    Models::ArtworkMetadata *metadata = artItemsModelMock.getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = artItemsModelMock.getArtwork(0);
     QStringList finalString;
     finalString << "keyword_1" << "keyword_2" << "keyword_3" << "keyword_4" << "keyword_5";
     QCOMPARE(metadata->getKeywords(), finalString);
@@ -69,7 +69,7 @@ void PresetTests::expandFromPresetWithDuplicates()
     }
 
     artItemsModelMock.expandPreset(0, 0, 0);
-    Models::ArtworkMetadata *metadata = artItemsModelMock.getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = artItemsModelMock.getArtwork(0);
     QStringList finalString;
     finalString << "keyword_1" << "keyword_2" << "keyword_3" << "keyword_4" << "keyword_5";
     QCOMPARE(metadata->getKeywords(), finalString);
@@ -93,7 +93,7 @@ void PresetTests::appendFromPresetTrivial() {
     }
 
     artItemsModelMock.addPreset(0, 0);
-    Models::ArtworkMetadata *metadata = artItemsModelMock.getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = artItemsModelMock.getArtwork(0);
     QStringList finalString;
     finalString << "keyword_0" << "keyword_1" << "keyword_2" << "keyword_3" << "keyword_4" << "keyword_5";
     QCOMPARE(metadata->getKeywords(), finalString);
@@ -117,7 +117,7 @@ void PresetTests::appendFromPresetWithDuplicates() {
     }
 
     artItemsModelMock.addPreset(0, 0);
-    Models::ArtworkMetadata *metadata = artItemsModelMock.getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = artItemsModelMock.getArtwork(0);
     QStringList finalString;
     finalString << "keyword_0" << "keyword_1" << "keyword_2" << "keyword_3" << "keyword_4" << "keyword_5";
     QCOMPARE(metadata->getKeywords(), finalString);

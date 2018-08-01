@@ -2,19 +2,19 @@
 #define ARTWORKMETADATAMOCK
 
 #include <QString>
-#include "../../xpiks-qt/Models/imageartwork.h"
-#include "../../xpiks-qt/MetadataIO/originalmetadata.h"
+#include <Artworks/imageartwork.h>
+#include <MetadataIO/originalmetadata.h>
 
 namespace Mocks {
-    class ArtworkMetadataMock : public Models::ImageArtwork {
+    class ArtworkMetadataMock : public Artworks::ImageArtwork {
     public:
         ArtworkMetadataMock():
-            Models::ImageArtwork("random.jpg", 0, 0)
+            Artworks::ImageArtwork("random.jpg", 0, 0)
         {
         }
 
         ArtworkMetadataMock(const QString &filepath, qint64 directoryID = 0):
-            Models::ImageArtwork(filepath, 0, directoryID)
+            Artworks::ImageArtwork(filepath, 0, directoryID)
         {
         }
 

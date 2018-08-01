@@ -4,7 +4,7 @@
 #include <QSignalSpy>
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artworksrepositorymock.h"
-#include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/coretestsenvironment.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
 #include "../../xpiks-qt/Models/artworksrepository.h"
@@ -32,7 +32,7 @@
 
 void RemoveFilesFsTests::removeArtworksSignals() {
     Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
+    Mocks::ArtworksListModelMock artItemsMock;
     Mocks::CoreTestsEnvironment environment;
     Mocks::ArtworksRepositoryMock artworksRepositoryMock(environment);
 
@@ -122,7 +122,7 @@ void RemoveFilesFsTests::removeArtworksAllItems() {
 
 void RemoveFilesFsTests::removeVectorSmokeTest() {
     Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtItemsModelMock artItemsMock;
+    Mocks::ArtworksListModelMock artItemsMock;
     Mocks::CoreTestsEnvironment environment;
     Mocks::ArtworksRepositoryMock artworksRepositoryMock(environment);
 

@@ -1,6 +1,6 @@
 #include "artitemsmodel_tests.h"
 #include <QSignalSpy>
-#include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"

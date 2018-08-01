@@ -1,5 +1,5 @@
 #include "filteredmodel_tests.h"
-#include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
@@ -450,7 +450,7 @@ void FilteredModelTests::filterTitleAndKeywordsTest() {
 
 void FilteredModelTests::clearEmptyKeywordsTest() {
     DECLARE_MODELS_AND_GENERATE(1);
-    Models::ArtworkMetadata *artwork = artItemsModelMock.getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = artItemsModelMock.getArtwork(0);
     artwork->clearKeywords();
 
     commandManagerMock.resetAnyCommandProcessed();

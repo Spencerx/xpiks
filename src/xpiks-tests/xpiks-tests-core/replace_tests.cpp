@@ -1,7 +1,7 @@
 #include "replace_tests.h"
 #include <QString>
 #include <QtAlgorithms>
-#include "Mocks/artitemsmodelmock.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/artworksrepositorymock.h"

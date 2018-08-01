@@ -106,7 +106,7 @@ namespace Models {
         // general purpose collective methods
         void selectArtworksFromDirectory(int directoryIndex);
         void unselectAllItems();
-        void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles = QVector<int>());
+        virtual void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles = QVector<int>());
         void updateSelection(SelectionType selectionType, const QVector<int> &roles = QVector<int>());
         std::unique_ptr<Artworks::SessionSnapshot> snapshotAll();
         void generateAboutToBeRemoved();

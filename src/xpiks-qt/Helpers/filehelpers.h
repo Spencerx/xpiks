@@ -13,19 +13,6 @@
 
 #include <QStringList>
 
-#ifdef CORE_TESTS
-    #ifdef Q_OS_WIN
-        #define DIRECTORY_PATH "C:/path/to/some/directory"
-    #else
-        #define DIRECTORY_PATH "/path/to/some/directory"
-    #endif
-
-    #define ARTWORK_JPG_PATTERN "artwork%2.jpg"
-
-    #define ARTWORK_PATH DIRECTORY_PATH "_%1/" ARTWORK_JPG_PATTERN
-    #define VECTOR_PATH DIRECTORY_PATH "_%1/artwork%2.eps"
-#endif
-
 namespace Helpers {
     QStringList convertToVectorFilenames(const QStringList &items);
     QStringList convertToVectorFilenames(const QString &path);
