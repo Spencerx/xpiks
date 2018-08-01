@@ -36,6 +36,9 @@ namespace Commands {
                         QObject::tr("1 item removed");
         }
 
+    public:
+        int getRemovedCount() const { return m_RemoveResult.m_RemovedCount; }
+
     protected:
         Models::ArtworksListModel &m_ArtworksList;
         Models::ArtworksRepository &m_ArtworksRepository;

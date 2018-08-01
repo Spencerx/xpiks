@@ -272,5 +272,6 @@ HEADERS += \
     ../../xpiks-qt/UndoRedo/undoredomanager.h \
     ../../xpiks-qt/Models/Session/recentdirectoriesmodel.h \
     ../../xpiks-qt/Models/Session/recentitemsmodel.h \
-    Mocks/selectedindicessourcemock.h
+    Mocks/selectedindicessourcemock.h \
+    ../../xpiks-qt/Artworks/artworkelement.h
 
