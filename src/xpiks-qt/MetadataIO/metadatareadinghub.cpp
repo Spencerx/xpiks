@@ -58,6 +58,10 @@ namespace MetadataIO {
         m_AsyncCoordinator.allBegun();
     }
 
+    std::shared_ptr<Helpers::AsyncCoordinatorUnlocker> MetadataReadingHub::getIOFinalizer() {
+        return std::make_shared<Helpers::AsyncCoordinatorUnlocker>(m_AsyncCoordinator);
+    }
+
     void MetadataReadingHub::proceedImport(bool ignoreBackups) {
         LOG_DEBUG << "ignore backups =" << ignoreBackups;
         m_IgnoreBackupsAtImport = ignoreBackups;

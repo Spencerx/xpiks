@@ -3,10 +3,14 @@
 
 #include <QVector>
 #include <QMutex>
-#include <Artworks/artworkssnapshot.h>
 
 namespace Models {
+    class SettingsModel;
+}
+
+namespace Artworks {
     class ArtworkMetadata;
+    class ArtworksSnapshot;
 }
 
 namespace Helpers {
@@ -18,9 +22,9 @@ namespace libxpks {
         class WritingOrchestrator
         {
         public:
-            explicit WritingOrchestrator(const Artworks::ArtworksSnapshot &artworksToWrite,
-                                         Helpers::AsyncCoordinator *asyncCoordinator,
-                                         Models::SettingsModel *settingsModel);
+            explicit WritingOrchestrator(Artworks::ArtworksSnapshot const &artworksToWrite,
+                                         Helpers::AsyncCoordinator &asyncCoordinator,
+                                         Models::SettingsModel &settingsModel);
             virtual ~WritingOrchestrator();
 
         public:
@@ -28,14 +32,14 @@ namespace libxpks {
             void startMetadataWiping(bool useBackups);
 
         private:
-            void startWritingImages(Artworks::ArtworksSnapshot::Container &rawSnapshot, bool useBackups, bool useDirectExport);
-            void startWritingVideos(Artworks::ArtworksSnapshot::Container &rawSnapshot, bool useBackups, bool useDirectExport);
-            void startWipingImages(Artworks::ArtworksSnapshot::Container &rawSnapshot, bool useBackups);
+            void startWritingImages(Artworks::ArtworksSnapshot &snapshot, bool useBackups, bool useDirectExport);
+            void startWritingVideos(Artworks::ArtworksSnapshot &snapshot, bool useBackups, bool useDirectExport);
+            void startWipingImages(Artworks::ArtworksSnapshot &snapshot, bool useBackups);
 
         private:
             const Artworks::ArtworksSnapshot &m_ItemsToWriteSnapshot;
-            Models::SettingsModel *m_SettingsModel;
-            Helpers::AsyncCoordinator *m_AsyncCoordinator;
+            Models::SettingsModel &m_SettingsModel;
+            Helpers::AsyncCoordinator &m_AsyncCoordinator;
         };
     }
 }

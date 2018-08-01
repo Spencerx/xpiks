@@ -168,13 +168,13 @@ namespace SpellCheck {
     }
 
     void SpellCheckWorker::onResultsAvailable(std::vector<WorkResult> &results) {
-        m_WarningsService.submitItems(
-                    Artworks::ArtworksSnapshot(
-                        Helpers::map<WorkResult, std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
-                            results,
-                            [](const WorkResult &result) {
+        auto rawSnapshot = Helpers::map<WorkResult, std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
+                    results,
+                    [](const WorkResult &result) {
             return std::make_shared<Artworks::ArtworkMetadataLocker>(result.m_Result->getArtworkMetadata());
-        })));
+        });
+        m_WarningsService.submitItems(
+                    Artworks::ArtworksSnapshot(rawSnapshot));
     }
 
     QStringList SpellCheckWorker::retrieveCorrections(const QString &word) {

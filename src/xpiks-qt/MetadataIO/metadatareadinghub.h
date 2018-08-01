@@ -23,6 +23,10 @@ namespace Services {
     class ArtworksInspectionHub;
 }
 
+namespace Helpers {
+    class AsyncCoordinatorUnlocker;
+}
+
 namespace MetadataIO {
     class MetadataIOService;
 
@@ -44,6 +48,7 @@ namespace MetadataIO {
     public:
         void accountReadIO();
         void startAcceptingIOResults();
+        std::shared_ptr<Helpers::AsyncCoordinatorUnlocker> getIOFinalizer();
 
     public:
         void proceedImport(bool ignoreBackups);

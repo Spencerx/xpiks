@@ -12,7 +12,7 @@
 #include <QThread>
 #include <QVector>
 #include <QMutexLocker>
-#include <Models/artworkmetadata.h>
+#include <Artworks/artworkmetadata.h>
 #include <Common/defines.h>
 #include <MetadataIO/metadatareadinghub.h>
 #include "metadatareadingworker.h"

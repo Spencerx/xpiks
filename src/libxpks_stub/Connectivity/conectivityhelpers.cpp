@@ -11,7 +11,7 @@
 #include "conectivityhelpers.h"
 #include <memory>
 #include <QVector>
-#include <Models/artworkmetadata.h>
+#include <Artworks/artworkmetadata.h>
 #include <Models/uploadinfo.h>
 #include <Encryption/secretsmanager.h>
 #include "uploadbatch.h"
@@ -20,13 +20,13 @@
 #include <Commands/commandmanager.h>
 #include <Models/settingsmodel.h>
 #include <Models/proxysettings.h>
-#include <MetadataIO/artworkssnapshot.h>
+#include <Artworks/artworkssnapshot.h>
 
 #define RETRIES_COUNT 3
 
 namespace libxpks {
     namespace net {
-        void extractFilePathes(const MetadataIO::ArtworksSnapshot &artworksSnapshot,
+        void extractFilePathes(const Artworks::ArtworksSnapshot &artworksSnapshot,
                                QStringList &filePathes,
                                QStringList &zipsPathes) {
 
@@ -36,7 +36,7 @@ namespace libxpks {
             LOG_DEBUG << "Generating filepathes for" << size << "item(s)";
 
             for (size_t i = 0; i < size; ++i) {
-                Models::ArtworkMetadata *metadata = artworksSnapshot.get(i);
+                Artworks::ArtworkMetadata *metadata = artworksSnapshot.get(i);
                 QString filepath = metadata->getFilepath();
                 filePathes.append(filepath);
 
@@ -92,7 +92,7 @@ namespace libxpks {
             }
         }
 
-        std::vector<std::shared_ptr<UploadBatch> > generateUploadBatches(const MetadataIO::ArtworksSnapshot &artworksToUpload,
+        std::vector<std::shared_ptr<UploadBatch> > generateUploadBatches(const Artworks::ArtworksSnapshot &artworksToUpload,
                                                                          const std::vector<std::shared_ptr<Models::UploadInfo> > &uploadInfos,
                                                                          Encryption::SecretsManager *secretsManager,
                                                                          Models::SettingsModel *settingsModel) {
