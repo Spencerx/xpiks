@@ -7,6 +7,8 @@ CONFIG += qtquickcompiler
 CONFIG += c++14
 TARGET = Xpiks
 
+QMAKE_CXXFLAGS += -std=c++14
+
 #CONFIG += force_debug_info
 
 CONFIG(release, debug|release)  {
