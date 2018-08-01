@@ -25,8 +25,8 @@ namespace Commands {
 
         void FixSpellingInArtworkProxyCommand::execute(const QJSValue &) {
             LOG_DEBUG << "#";
-            m_Target.setupArtworks(
-                        Artworks::ArtworksSnapshot({m_Source.getArtwork()}));
+            Artworks::ArtworksSnapshot snapshot({m_Source.getArtwork()});
+            m_Target.setupArtworks(snapshot);
         }
 
         void FixSpellingInArtworkCommand::execute(const QJSValue &value) {
@@ -39,8 +39,8 @@ namespace Commands {
             int originalIndex = m_FilteredArtworksModel.getOriginalIndex(index);
             auto *artwork = m_ArtworksListModel.getArtwork(originalIndex);
             if (artwork != nullptr) {
-                m_SuggestionsModel.setupArtworks(
-                            Artworks::ArtworksSnapshot({artwork}));
+                Artworks::ArtworksSnapshot snapshot({artwork});
+                m_SuggestionsModel.setupArtworks(snapshot);
             } else {
                 LOG_WARNING << "Cannot find artwork at" << index;
             }
