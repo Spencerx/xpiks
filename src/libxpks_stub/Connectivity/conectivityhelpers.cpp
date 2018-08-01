@@ -12,14 +12,14 @@
 #include <memory>
 #include <QVector>
 #include <Artworks/artworkmetadata.h>
-#include <Models/uploadinfo.h>
+#include <Models/Connectivity/uploadinfo.h>
 #include <Encryption/secretsmanager.h>
 #include "uploadbatch.h"
 #include <Helpers/filehelpers.h>
-#include <Models/imageartwork.h>
+#include <Artworks/imageartwork.h>
 #include <Commands/commandmanager.h>
 #include <Models/settingsmodel.h>
-#include <Models/proxysettings.h>
+#include <Models/Connectivity/proxysettings.h>
 #include <Artworks/artworkssnapshot.h>
 
 #define RETRIES_COUNT 3
@@ -40,7 +40,7 @@ namespace libxpks {
                 QString filepath = metadata->getFilepath();
                 filePathes.append(filepath);
 
-                Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(metadata);
+                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(metadata);
 
                 if (image != NULL && image->hasVectorAttached()) {
                     filePathes.append(image->getAttachedVectorPath());
@@ -55,14 +55,14 @@ namespace libxpks {
 
         void generateUploadContexts(const std::vector<std::shared_ptr<Models::UploadInfo> > &uploadInfos,
                                     std::vector<std::shared_ptr<UploadContext> > &contexts,
-                                    Encryption::SecretsManager *secretsManager,
-                                    Models::SettingsModel *settingsModel) {
+                                    Encryption::SecretsManager &secretsManager,
+                                    Models::SettingsModel &settingsModel) {
             size_t size = uploadInfos.size();
             contexts.reserve(size);
 
-            Models::ProxySettings *proxySettings = settingsModel->getProxySettings();
-            int timeoutSeconds = settingsModel->getUploadTimeout();
-            bool useProxy = settingsModel->getUseProxy();
+            Models::ProxySettings const &proxySettings = settingsModel.getProxySettings();
+            int timeoutSeconds = settingsModel.getUploadTimeout();
+            bool useProxy = settingsModel.getUseProxy();
 
             for (size_t i = 0; i < size; ++i) {
                 std::shared_ptr<UploadContext> context(new UploadContext());
@@ -70,11 +70,11 @@ namespace libxpks {
 
                 context->m_Host = info->getHost();
                 context->m_Username = info->getUsername();
-                context->m_Password = secretsManager->decodePassword(info->getPassword());
+                context->m_Password = secretsManager.decodePassword(info->getPassword());
                 context->m_UsePassiveMode = !info->getDisableFtpPassiveMode();
                 context->m_UseEPSV = !info->getDisableEPSV();
                 context->m_UseProxy = useProxy;
-                context->m_ProxySettings = proxySettings;
+                context->m_ProxySettings = &proxySettings;
                 context->m_TimeoutSeconds = timeoutSeconds;
                 // TODO: move to configs/options
                 context->m_RetriesCount = RETRIES_COUNT;
@@ -94,8 +94,8 @@ namespace libxpks {
 
         std::vector<std::shared_ptr<UploadBatch> > generateUploadBatches(const Artworks::ArtworksSnapshot &artworksToUpload,
                                                                          const std::vector<std::shared_ptr<Models::UploadInfo> > &uploadInfos,
-                                                                         Encryption::SecretsManager *secretsManager,
-                                                                         Models::SettingsModel *settingsModel) {
+                                                                         Encryption::SecretsManager &secretsManager,
+                                                                         Models::SettingsModel &settingsModel) {
             LOG_DEBUG << artworksToUpload.size() << "file(s)";
             std::vector<std::shared_ptr<UploadBatch> > batches;
 

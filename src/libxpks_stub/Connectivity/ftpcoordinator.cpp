@@ -13,7 +13,7 @@
 #include <QSharedData>
 #include <QThread>
 #include <Artworks/artworkmetadata.h>
-#include <Models/uploadinfo.h>
+#include <Models/Connectivity/uploadinfo.h>
 #include <Helpers/filehelpers.h>
 #include <Encryption/secretsmanager.h>
 #include <Commands/commandmanager.h>
@@ -54,8 +54,8 @@ namespace libxpks {
 
             std::vector<std::shared_ptr<UploadBatch> > batches = std::move(generateUploadBatches(artworksToUpload,
                                                                                                  uploadInfos,
-                                                                                                 &m_SecretsManager,
-                                                                                                 &m_Settings));
+                                                                                                 m_SecretsManager,
+                                                                                                 m_Settings));
 
             Q_ASSERT(batches.size() == uploadInfos.size());
 

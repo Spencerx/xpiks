@@ -28,7 +28,7 @@ namespace Encryption {
     class SecretsManager;
 }
 
-namespace MetadataIO {
+namespace Artworks {
     class ArtworksSnapshot;
 }
 
@@ -42,13 +42,13 @@ namespace libxpks {
 
         void generateUploadContexts(const std::vector<std::shared_ptr<Models::UploadInfo> > &uploadInfos,
                                     std::vector<std::shared_ptr<UploadContext> > &contexts,
-                                    Encryption::SecretsManager *secretsManager,
-                                    Models::SettingsModel *settingsModel);
+                                    Encryption::SecretsManager &secretsManager,
+                                    Models::SettingsModel &settingsModel);
 
         std::vector<std::shared_ptr<UploadBatch> > generateUploadBatches(const Artworks::ArtworksSnapshot &artworksToUpload,
                                                                          const std::vector<std::shared_ptr<Models::UploadInfo> > &uploadInfos,
-                                                                         Encryption::SecretsManager *secretsManager,
-                                                                         Models::SettingsModel *settingsModel);
+                                                                         Encryption::SecretsManager &secretsManager,
+                                                                         Models::SettingsModel &settingsModel);
     }
 }
 

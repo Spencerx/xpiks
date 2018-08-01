@@ -20,14 +20,12 @@
 namespace libxpks {
     namespace io {
         WritingOrchestrator::WritingOrchestrator(const Artworks::ArtworksSnapshot &artworksToWrite,
-                                                 Helpers::AsyncCoordinator *asyncCoordinator,
-                                                 Models::SettingsModel *settingsModel):
+                                                 Helpers::AsyncCoordinator &asyncCoordinator,
+                                                 Models::SettingsModel &settingsModel):
             m_ItemsToWriteSnapshot(artworksToWrite),
             m_SettingsModel(settingsModel),
             m_AsyncCoordinator(asyncCoordinator)
         {
-            Q_ASSERT(settingsModel != nullptr);
-            Q_ASSERT(asyncCoordinator != nullptr);
         }
 
         WritingOrchestrator::~WritingOrchestrator() {
