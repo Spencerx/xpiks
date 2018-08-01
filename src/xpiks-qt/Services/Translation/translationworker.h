@@ -30,6 +30,7 @@ namespace Translation {
         Q_OBJECT
     public:
         explicit TranslationWorker(Helpers::AsyncCoordinator &initCoordinator, QObject *parent = 0);
+        virtual ~TranslationWorker();
 
     public:
         void selectDictionary(const QString &dictionaryPath);

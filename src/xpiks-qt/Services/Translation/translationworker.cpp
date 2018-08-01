@@ -21,6 +21,10 @@ namespace Translation {
     {
     }
 
+    TranslationWorker::~TranslationWorker() {
+        // this destructor is required for unique_ptr with incomplete type
+    }
+
     void TranslationWorker::selectDictionary(const QString &dictionaryPath) {
         LOG_INFO << dictionaryPath;
 
