@@ -9,8 +9,6 @@ class UndoRedoTests : public QObject
     Q_OBJECT
 private slots:
     void undoAddCommandTest();
-    void undoUndoAddCommandTest();
-    void undoUndoAddWithVectorsTest();
     void undoRemoveItemsTest();
     void undoRemoveAddFullDirectoryTest();
     void undoRemoveNotFullDirectoryTest();

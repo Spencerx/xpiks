@@ -50,15 +50,27 @@ namespace Mocks {
             }
         }
 
-        void generateAndAddArtworks(size_t count, bool withVector=true) {
-            generateAndAddArtworksEx(count, 2, withVector);
+        int generateAndAddArtworks(int count, bool withVector=true) {
+            return generateAndAddArtworksEx(count, 2, withVector);
         }
 
-        void generateAndAddArtworksEx(size_t count, int dirsCount, bool withVector) {
+        int generateAndAddArtworksEx(int count,
+                                      int dirsCount,
+                                      bool withVector,
+                                      Common::AddFilesFlags flags = Common::AddFilesFlags::None) {
             Q_ASSERT(count >= 0);
             Q_ASSERT(dirsCount > 0);
-            addFiles(std::make_shared<Mocks::FilesCollectionMock>(count, withVector ? count : 0, dirsCount),
-                     Common::AddFilesFlags::None);
+            auto result = addFiles(std::make_shared<Mocks::FilesCollectionMock>(count, withVector ? count : 0, dirsCount), flags);
+            return (int)result.m_Snapshot.size();
+        }
+
+        int generateAndAddDirectories(int dirsCount, int fileInDir = 5, bool withVector=true) {
+            auto files = std::make_shared<Mocks::FilesCollectionMock>(fileInDir*dirsCount,
+                                                                      withVector ? count : 0,
+                                                                      dirsCount);
+            files->setFromFullDirectory();
+            auto result = addFiles(files, Common::AddFilesFlags::FlagIsFullDirectory);
+            return (int)result.m_Snapshot.size();
         }
 
     private:

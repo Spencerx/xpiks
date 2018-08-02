@@ -1,218 +1,145 @@
 #include "undoredo_tests.h"
 #include <QStringList>
 #include <QSignalSpy>
+#include "Mocks/coretestsenvironment.h"
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
-#include "../../xpiks-qt/Commands/addartworkscommand.h"
-#include "../../xpiks-qt/Commands/removeartworkscommand.h"
-#include "../../xpiks-qt/Commands/combinededitcommand.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/UndoRedo/undoredomanager.h"
-#include "../../xpiks-qt/Common/flags.h"
-#include "../../xpiks-qt/Models/artworkelement.h"
-#include "../../xpiks-qt/Models/previewartworkelement.h"
-#include "../../xpiks-qt/Commands/pastekeywordscommand.h"
-#include "../../xpiks-qt/Commands/findandreplacecommand.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "Mocks/coretestsenvironment.h"
+#include "Mocks/selectedindicessourcemock.h"
+#include <Commands/Files/addfilescommand.h>
+#include <Commands/Files/removeselectedfilescommand.h>
+#include <Commands/Editing/modifyartworkscommand.h>
+#include <Commands/Editing/findandreplacetemplate.h>
+#include <Models/settingsmodel.h>
+#include <UndoRedo/undoredomanager.h>
+#include <Common/flags.h>
+#include <Artworks/artworkelement.h>
+#include <Models/Editing/previewartworkelement.h>
+#include <Models/Artworks/filteredartworkslistmodel.h>
+#include <Models/Session/recentdirectoriesmodel.h>
+#include <KeywordsPresets/presetkeywordsmodel.h>
 
 #define SETUP_TEST \
     Mocks::CoreTestsEnvironment environment; \
-    Mocks::CommandManagerMock commandManagerMock; \
-    Mocks::ArtworksListModelMock artItemsMock; \
-    Mocks::ArtworksRepositoryMock artworksRepository(environment); \
-    commandManagerMock.InjectDependency(&artworksRepository); \
-    Models::ArtItemsModel *artItemsModel = &artItemsMock; \
-    commandManagerMock.InjectDependency(artItemsModel); \
     UndoRedo::UndoRedoManager undoRedoManager; \
-    commandManagerMock.InjectDependency(&undoRedoManager);
+    Mocks::CommandManagerMock commandManager(undoRedoManager); \
+    Models::RecentDirectoriesModel recentDirectories(environment);\
+    Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);\
+    Mocks::ArtworksListModelMock artworksListModel(artworksRepository);\
+    KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
+    Models::SettingsModel settingsModel;\
+    Models::FilteredArtworksListModel filteredArtworksModel(\
+    artworksListModel, commandManager, keywordsPresets, settingsModel);
 
 void UndoRedoTests::undoAddCommandTest() {
     SETUP_TEST;
 
     QStringList filenames;
     filenames << "/path/to/test/image1.jpg";
+    auto filesCollection = std::make_shared<Mocks::FilesCollectionMock>(filenames);
+    auto addFilesCommand = std::make_shared<Commands::AddFilesCommand>(filesCollection,
+                                                                       Common::AddFilesFlags::None,
+                                                                       artworksListModel);
+    commandManager.processCommand(addFilesCommand);
 
-    std::shared_ptr<Commands::AddArtworksCommand> addArtworksCommand(new Commands::AddArtworksCommand(filenames, QStringList(), 0));
-    auto result = commandManagerMock.processCommand(addArtworksCommand);
-    auto addArtworksResult = std::dynamic_pointer_cast<Commands::AddArtworksCommandResult>(result);
-    int newFilesCount = addArtworksResult->m_NewFilesAdded;
-
-    QCOMPARE(newFilesCount, filenames.length());
-    QCOMPARE(artItemsMock.getArtworksCount(), filenames.length());
-
-    bool undoSucceeded = undoRedoManager.undoLastAction();
-    QVERIFY(undoSucceeded);
-
-    QCOMPARE(artItemsMock.getArtworksCount(), 0);
-}
-
-void UndoRedoTests::undoUndoAddCommandTest() {
-    SETUP_TEST;
-
-    QStringList filenames;
-    filenames << "/path/to/test/image1.jpg";
-
-    std::shared_ptr<Commands::AddArtworksCommand> addArtworksCommand(new Commands::AddArtworksCommand(filenames, QStringList(), 0));
-    auto result = commandManagerMock.processCommand(addArtworksCommand);
-    auto addArtworksResult = std::dynamic_pointer_cast<Commands::AddArtworksCommandResult>(result);
-    int newFilesCount = addArtworksResult->m_NewFilesAdded;
-
-    QCOMPARE(newFilesCount, filenames.length());
-    QCOMPARE(artItemsMock.getArtworksCount(), filenames.length());
+    QCOMPARE(addFilesCommand->getAddedCount(), filenames.length());
+    QCOMPARE(filteredArtworksModel.getItemsCount(), filenames.length());
 
     bool undoSucceeded = undoRedoManager.undoLastAction();
     QVERIFY(undoSucceeded);
 
-    undoSucceeded = undoRedoManager.undoLastAction();
-    QVERIFY(undoSucceeded);
-
-    QCOMPARE(artItemsMock.getArtworksCount(), filenames.length());
-    for (int i = 0; i < filenames.length(); ++i) {
-        QCOMPARE(artItemsMock.getArtworkFilepath(i), filenames[i]);
-    }
-}
-
-void UndoRedoTests::undoUndoAddWithVectorsTest() {
-    SETUP_TEST;
-
-    QStringList filenames, vectors;
-    filenames << "/path/to/test/image1.jpg" << "/path/to/test/image2.jpg" << "/path/to/test/image3.jpg";
-    vectors << "/path/to/test/image3.jpg" << "/path/to/test/image1.eps";
-
-    std::shared_ptr<Commands::AddArtworksCommand> addArtworksCommand(new Commands::AddArtworksCommand(filenames, vectors, 0));
-    auto result = commandManagerMock.processCommand(addArtworksCommand);
-    auto addArtworksResult = std::dynamic_pointer_cast<Commands::AddArtworksCommandResult>(result);
-    int newFilesCount = addArtworksResult->m_NewFilesAdded;
-
-    QCOMPARE(newFilesCount, filenames.length());
-    QCOMPARE(artItemsMock.getArtworksCount(), filenames.length());
-
-    bool undoSucceeded = undoRedoManager.undoLastAction();
-    QVERIFY(undoSucceeded);
-
-    undoSucceeded = undoRedoManager.undoLastAction();
-    QVERIFY(undoSucceeded);
-
-    QCOMPARE(newFilesCount, filenames.length());
-    QCOMPARE(artItemsMock.getArtworksCount(), filenames.length());
-
-    Artworks::ImageArtwork *image1 = artItemsMock.getMockArtwork(0);
-    QVERIFY(image1->hasVectorAttached());
-    QCOMPARE(image1->getAttachedVectorPath(), vectors[1]);
-
-    Artworks::ImageArtwork *image2 = artItemsMock.getMockArtwork(1);
-    QVERIFY(!image2->hasVectorAttached());
-
-    Artworks::ImageArtwork *image3 = artItemsMock.getMockArtwork(2);
-    QVERIFY(image3->hasVectorAttached());
-    QCOMPARE(image3->getAttachedVectorPath(), vectors[0]);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), 0);
 }
 
 void UndoRedoTests::undoRemoveItemsTest() {
     SETUP_TEST;
     int itemsToAdd = 5;
-    commandManagerMock.generateAndAddArtworks(itemsToAdd);
+    artworksListModel.generateAndAddArtworks(itemsToAdd);
 
-    QVector<QPair<int, int> > indicesToRemove;
-    indicesToRemove.append(qMakePair(1, 3));
-    std::shared_ptr<Commands::RemoveArtworksCommand> removeArtworkCommand(new Commands::RemoveArtworksCommand(indicesToRemove, false));
-    auto result = commandManagerMock.processCommand(removeArtworkCommand);
-    auto removeArtworksResult = std::dynamic_pointer_cast<Commands::RemoveArtworksCommandResult>(result);
-    int artworksRemovedCount = removeArtworksResult->m_RemovedArtworksCount;
+    Mocks::SelectedIndicesSourceMock selectedIndices({1, 2, 3});
+    auto removeCommand = std::make_shared<Commands::RemoveSelectedFilesCommand>(
+                             selectedIndices, artworksListModel, artworksRepository);
+    commandManager.processCommand(removeCommand);
 
-    QCOMPARE(artworksRemovedCount, 3);
+    QCOMPARE(removeCommand->getRemovedCount(), 3);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd - 3);
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
-    QCOMPARE(artItemsMock.getArtworksCount(), itemsToAdd);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd);
 }
 
 void UndoRedoTests::undoRemoveAddFullDirectoryTest() {
     SETUP_TEST;
-    Models::SettingsModel settingsModel(environment);
-    commandManagerMock.InjectDependency(&settingsModel);
     settingsModel.setAutoFindVectors(false);
 
-    QList<QUrl> dirs;
-    dirs << QUrl::fromLocalFile(DIRECTORY_PATH);
-    int addedCount = artItemsModel->addLocalDirectories(dirs);
+    int addedCount = artworksListModel.generateAndAddDirectories(1);
 
-    artItemsMock.removeItemsFromRanges({{1, 3}});
-    QCOMPARE(artItemsMock.getArtworksCount(), addedCount - 3);
+    artworksListModel.removeFiles(Helpers::IndicesRanges({{1, 3}}));
+    QCOMPARE(filteredArtworksModel.getItemsCount(), addedCount - 3);
 
-    artItemsMock.removeArtworksDirectory(0);
+    artworksListModel.removeFilesFromDirectory(0);
 
-    QCOMPARE(artItemsMock.getArtworksCount(), 0);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), 0);
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
-    QVERIFY(artItemsMock.getArtworksCount() == addedCount);
+    QVERIFY(filteredArtworksModel.getItemsCount() == addedCount);
 }
 
 void UndoRedoTests::undoRemoveNotFullDirectoryTest() {
     SETUP_TEST;
-    Models::SettingsModel settingsModel(environment);
-    commandManagerMock.InjectDependency(&settingsModel);
     settingsModel.setAutoFindVectors(false);
 
-    QList<QUrl> dirs;
-    dirs << QUrl::fromLocalFile(DIRECTORY_PATH);
-    int addedCount = artItemsModel->addLocalDirectories(dirs);
-
+    int addedCount = artworksListModel.generateAndAddDirectories(1);
     artworksRepository.unsetWasAddedAsFullDirectory(0);
 
-    artItemsMock.removeItemsFromRanges({{1, 3}});
-    QCOMPARE(artItemsMock.getArtworksCount(), addedCount - 3);
+    artworksListModel.removeFiles(Helpers::IndicesRanges({{1, 3}});
+    QCOMPARE(filteredArtworksModel.getItemsCount(), addedCount - 3);
 
-    artItemsMock.removeArtworksDirectory(0);
+    artworksListModel.removeFilesFromDirectory(0);
 
-    QCOMPARE(artItemsMock.getArtworksCount(), 0);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), 0);
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
-    QVERIFY(artItemsMock.getArtworksCount() == addedCount - 3);
+    QVERIFY(filteredArtworksModel.getItemsCount() == addedCount - 3);
 }
 
 void UndoRedoTests::undoRemoveLaterFullDirectoryTest() {
     SETUP_TEST;
-    int itemsToAdd = 5;
-    commandManagerMock.generateAndAddArtworks(itemsToAdd, false);
-    const int addedFromSecondDir = artworksRepository.getFilesCountForDirectory(1);
-
-    Models::SettingsModel settingsModel(environment);
-    commandManagerMock.InjectDependency(&settingsModel);
     settingsModel.setAutoFindVectors(false);
 
-    QList<QUrl> dirs;
-    dirs << QUrl::fromLocalFile(DIRECTORY_PATH "_0");
-    artItemsModel->addLocalDirectories(dirs);
+    int itemsToAdd = 5;
+    artworksListModel.generateAndAddArtworks(itemsToAdd, false);
+    const int addedFromSecondDir = artworksRepository.getFilesCountForDirectory(1);
 
-    const int maxCount = artItemsModel->getArtworksCount();
+    artworksListModel.generateAndAddDirectories(1, itemsToAdd, false);
+
+    const int maxCount = filteredArtworksModel.getItemsCount();
     qDebug() << "max count is" << maxCount;
 
     // removing selected files from 1st directory
-    artItemsMock.removeItemsFromRanges({{0, 0}, {2, 2}, {4, 4}});
-    QCOMPARE(artItemsMock.getArtworksCount(), maxCount - 3);
+    artworksListModel.removeFiles(Helpers::IndicesRanges({{0, 0}, {2, 2}, {4, 4}});
+    QCOMPARE(filteredArtworksModel.getItemsCount(), maxCount - 3);
 
-    artItemsMock.removeArtworksDirectory(0);
+    artworksListModel.removeFilesFromDirectory(0);
 
-    QCOMPARE(artItemsMock.getArtworksCount(), addedFromSecondDir);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), addedFromSecondDir);
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
-    QVERIFY(artItemsMock.getArtworksCount() == maxCount);
+    QVERIFY(filteredArtworksModel.getItemsCount() == maxCount);
 }
 
 void UndoRedoTests::undoUndoRemoveItemsTest() {
     SETUP_TEST;
     int itemsToAdd = 5;
-    commandManagerMock.generateAndAddArtworks(itemsToAdd);
+    artworksListModel.generateAndAddArtworks(itemsToAdd);
 
     QVector<QPair<int, int> > indicesToRemove;
     indicesToRemove.append(qMakePair(1, 3));
@@ -229,13 +156,13 @@ void UndoRedoTests::undoUndoRemoveItemsTest() {
     undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
-    QCOMPARE(artItemsMock.getArtworksCount(), 2);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), 2);
 }
 
 void UndoRedoTests::undoModifyCommandTest() {
     SETUP_TEST;
     int itemsToAdd = 5;
-    commandManagerMock.generateAndAddArtworks(itemsToAdd);
+    artworksListModel.generateAndAddArtworks(itemsToAdd);
 
     QString originalTitle = "title";
     QString originalDescription = "some description here";
@@ -243,11 +170,11 @@ void UndoRedoTests::undoModifyCommandTest() {
     MetadataIO::ArtworksSnapshot::Container infos;
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        artItemsMock.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
-        infos.emplace_back(new Artworks::ArtworkMetadataLocker(artItemsMock.getArtwork(i)));
+        artworksListModel.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
+        infos.emplace_back(new Artworks::ArtworkMetadataLocker(artworksListModel.getArtwork(i)));
     }
 
-    artItemsMock.getArtwork(0)->setModified();
+    artworksListModel.getArtwork(0)->setModified();
 
     auto flags = Common::CombinedEditFlags::EditEverything;
     QString otherDescription = "brand new description";
@@ -265,22 +192,22 @@ void UndoRedoTests::undoModifyCommandTest() {
     QVERIFY(undoStatus);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        Artworks::ArtworkMetadata *metadata = artItemsMock.getArtwork(i);
+        Artworks::ArtworkMetadata *metadata = artworksListModel.getArtwork(i);
         QCOMPARE(metadata->getDescription(), originalDescription);
         QCOMPARE(metadata->getTitle(), originalTitle);
         QCOMPARE(metadata->getKeywords(), originalKeywords);
         if (i > 0) {
-            QVERIFY(!artItemsMock.getArtwork(i)->isModified());
+            QVERIFY(!artworksListModel.getArtwork(i)->isModified());
         }
     }
 
-    QVERIFY(artItemsMock.getArtwork(0)->isModified());
+    QVERIFY(artworksListModel.getArtwork(0)->isModified());
 }
 
 void UndoRedoTests::undoUndoModifyCommandTest() {
     SETUP_TEST;
     int itemsToAdd = 5;
-    commandManagerMock.generateAndAddArtworks(itemsToAdd);
+    artworksListModel.generateAndAddArtworks(itemsToAdd);
 
     QString originalTitle = "title";
     QString originalDescription = "some description here";
@@ -288,11 +215,11 @@ void UndoRedoTests::undoUndoModifyCommandTest() {
     MetadataIO::ArtworksSnapshot::Container infos;
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        artItemsMock.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
-        infos.emplace_back(new Artworks::ArtworkMetadataLocker(artItemsMock.getArtwork(i)));
+        artworksListModel.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
+        infos.emplace_back(new Artworks::ArtworkMetadataLocker(artworksListModel.getArtwork(i)));
     }
 
-    artItemsMock.getArtwork(0)->setModified();
+    artworksListModel.getArtwork(0)->setModified();
 
     auto flags = Common::CombinedEditFlags::EditEverything;
     QString otherDescription = "brand new description";
@@ -316,7 +243,7 @@ void UndoRedoTests::undoUndoModifyCommandTest() {
 void UndoRedoTests::undoPasteCommandTest() {
     SETUP_TEST;
     int itemsToAdd = 5;
-    commandManagerMock.generateAndAddArtworks(itemsToAdd);
+    artworksListModel.generateAndAddArtworks(itemsToAdd);
 
     QString originalTitle = "title";
     QString originalDescription = "some description here";
@@ -324,8 +251,8 @@ void UndoRedoTests::undoPasteCommandTest() {
     MetadataIO::ArtworksSnapshot::Container infos;
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        artItemsMock.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
-        infos.emplace_back(new Artworks::ArtworkMetadataLocker(artItemsMock.getArtwork(i)));
+        artworksListModel.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
+        infos.emplace_back(new Artworks::ArtworkMetadataLocker(artworksListModel.getArtwork(i)));
     }
 
     QStringList keywordsToPaste = QStringList() << "keyword1" << "keyword2" << "keyword3";
@@ -341,27 +268,27 @@ void UndoRedoTests::undoPasteCommandTest() {
     merged += keywordsToPaste;
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        QCOMPARE(artItemsMock.getArtwork(i)->getDescription(), originalDescription);
-        QCOMPARE(artItemsMock.getArtwork(i)->getTitle(), originalTitle);
-        QCOMPARE(artItemsMock.getArtwork(i)->getKeywords(), merged);
-        QVERIFY(artItemsMock.getArtwork(i)->isModified());
+        QCOMPARE(artworksListModel.getArtwork(i)->getDescription(), originalDescription);
+        QCOMPARE(artworksListModel.getArtwork(i)->getTitle(), originalTitle);
+        QCOMPARE(artworksListModel.getArtwork(i)->getKeywords(), merged);
+        QVERIFY(artworksListModel.getArtwork(i)->isModified());
     }
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        QCOMPARE(artItemsMock.getArtwork(i)->getDescription(), originalDescription);
-        QCOMPARE(artItemsMock.getArtwork(i)->getTitle(), originalTitle);
-        QCOMPARE(artItemsMock.getArtwork(i)->getKeywords(), originalKeywords);
-        QVERIFY(!artItemsMock.getArtwork(i)->isModified());
+        QCOMPARE(artworksListModel.getArtwork(i)->getDescription(), originalDescription);
+        QCOMPARE(artworksListModel.getArtwork(i)->getTitle(), originalTitle);
+        QCOMPARE(artworksListModel.getArtwork(i)->getKeywords(), originalKeywords);
+        QVERIFY(!artworksListModel.getArtwork(i)->isModified());
     }
 }
 
 void UndoRedoTests::undoClearAllTest() {
     SETUP_TEST;
     int itemsToAdd = 5;
-    commandManagerMock.generateAndAddArtworks(itemsToAdd);
+    artworksListModel.generateAndAddArtworks(itemsToAdd);
 
     QString originalTitle = "title";
     QString originalDescription = "some description here";
@@ -369,8 +296,8 @@ void UndoRedoTests::undoClearAllTest() {
     MetadataIO::ArtworksSnapshot::Container infos;
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        artItemsMock.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
-        infos.emplace_back(new Artworks::ArtworkMetadataLocker(artItemsMock.getArtwork(i)));
+        artworksListModel.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
+        infos.emplace_back(new Artworks::ArtworkMetadataLocker(artworksListModel.getArtwork(i)));
     }
 
     auto flags = Common::CombinedEditFlags::Clear | Common::CombinedEditFlags::EditEverything;
@@ -383,28 +310,28 @@ void UndoRedoTests::undoClearAllTest() {
     QCOMPARE(indices.length(), itemsToAdd);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        auto *keywordsModel = artItemsMock.getArtwork(i)->getBasicModel();
+        auto *keywordsModel = artworksListModel.getArtwork(i)->getBasicModel();
         QVERIFY(keywordsModel->isDescriptionEmpty());
         QVERIFY(keywordsModel->isTitleEmpty());
         QVERIFY(keywordsModel->areKeywordsEmpty());
-        QVERIFY(artItemsMock.getArtwork(i)->isModified());
+        QVERIFY(artworksListModel.getArtwork(i)->isModified());
     }
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        QCOMPARE(artItemsMock.getArtwork(i)->getDescription(), originalDescription);
-        QCOMPARE(artItemsMock.getArtwork(i)->getTitle(), originalTitle);
-        QCOMPARE(artItemsMock.getArtwork(i)->getKeywords(), originalKeywords);
-        QVERIFY(!artItemsMock.getArtwork(i)->isModified());
+        QCOMPARE(artworksListModel.getArtwork(i)->getDescription(), originalDescription);
+        QCOMPARE(artworksListModel.getArtwork(i)->getTitle(), originalTitle);
+        QCOMPARE(artworksListModel.getArtwork(i)->getKeywords(), originalKeywords);
+        QVERIFY(!artworksListModel.getArtwork(i)->isModified());
     }
 }
 
 void UndoRedoTests::undoClearKeywordsTest() {
     SETUP_TEST;
     int itemsToAdd = 2;
-    commandManagerMock.generateAndAddArtworks(itemsToAdd);
+    artworksListModel.generateAndAddArtworks(itemsToAdd);
 
     QString originalTitle = "title";
     QString originalDescription = "some description here";
@@ -412,8 +339,8 @@ void UndoRedoTests::undoClearKeywordsTest() {
     MetadataIO::ArtworksSnapshot::Container infos;
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        artItemsMock.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
-        infos.emplace_back(new Artworks::ArtworkMetadataLocker(artItemsMock.getArtwork(i)));
+        artworksListModel.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
+        infos.emplace_back(new Artworks::ArtworkMetadataLocker(artworksListModel.getArtwork(i)));
     }
 
     auto flags = Common::CombinedEditFlags::Clear | Common::CombinedEditFlags::EditKeywords;
@@ -426,20 +353,20 @@ void UndoRedoTests::undoClearKeywordsTest() {
     QCOMPARE(indices.length(), itemsToAdd);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        QCOMPARE(artItemsMock.getArtwork(i)->getDescription(), originalDescription);
-        QCOMPARE(artItemsMock.getArtwork(i)->getTitle(), originalTitle);
-        QVERIFY(artItemsMock.getArtwork(i)->getBasicModel()->areKeywordsEmpty());
-        QVERIFY(artItemsMock.getArtwork(i)->isModified());
+        QCOMPARE(artworksListModel.getArtwork(i)->getDescription(), originalDescription);
+        QCOMPARE(artworksListModel.getArtwork(i)->getTitle(), originalTitle);
+        QVERIFY(artworksListModel.getArtwork(i)->getBasicModel()->areKeywordsEmpty());
+        QVERIFY(artworksListModel.getArtwork(i)->isModified());
     }
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        QCOMPARE(artItemsMock.getArtwork(i)->getDescription(), originalDescription);
-        QCOMPARE(artItemsMock.getArtwork(i)->getTitle(), originalTitle);
-        QCOMPARE(artItemsMock.getArtwork(i)->getKeywords(), originalKeywords);
-        QVERIFY(!artItemsMock.getArtwork(i)->isModified());
+        QCOMPARE(artworksListModel.getArtwork(i)->getDescription(), originalDescription);
+        QCOMPARE(artworksListModel.getArtwork(i)->getTitle(), originalTitle);
+        QCOMPARE(artworksListModel.getArtwork(i)->getKeywords(), originalKeywords);
+        QVERIFY(!artworksListModel.getArtwork(i)->isModified());
     }
 }
 
@@ -449,13 +376,13 @@ void UndoRedoTests::undoReplaceCommandTest() {
     Models::FilteredArtItemsProxyModel filteredItemsModel;
     filteredItemsModel.setSourceModel(artItemsModel);
     commandManagerMock.InjectDependency(&filteredItemsModel);
-    commandManagerMock.generateAndAddArtworks(itemsToAdd);
+    artworksListModel.generateAndAddArtworks(itemsToAdd);
     QString originalDescription = "ReplaceMe";
     QString originalTitle = "ReplaceMe";
     QStringList originalKeywords = {"ReplaceMe"};
 
     for (int i = 0; i < itemsToAdd; i++) {
-        auto *metadata = artItemsMock.getMockArtwork(i);
+        auto *metadata = artworksListModel.getMockArtwork(i);
         metadata->set(originalDescription, originalTitle, originalKeywords);
     }
 
@@ -471,10 +398,10 @@ void UndoRedoTests::undoReplaceCommandTest() {
     QVERIFY(undoStatus);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        Artworks::ArtworkMetadata *metadata = artItemsMock.getArtwork(i);
+        Artworks::ArtworkMetadata *metadata = artworksListModel.getArtwork(i);
         QCOMPARE(metadata->getDescription(), originalDescription);
         QCOMPARE(metadata->getTitle(), originalTitle);
         QCOMPARE(metadata->getKeywords(), originalKeywords);
-        QVERIFY(!artItemsMock.getArtwork(i)->isModified());
+        QVERIFY(!artworksListModel.getArtwork(i)->isModified());
     }
 }

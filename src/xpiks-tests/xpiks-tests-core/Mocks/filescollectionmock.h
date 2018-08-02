@@ -23,6 +23,9 @@ namespace Mocks {
         FilesCollectionMock(QStringList const &images, QStringList const &vectors);
         FilesCollectionMock(int imagesCount, int vectorsCount = 0, int dirsCount = 1);
 
+    public:
+        void setFromFullDirectory();
+
         // IFilesCollection interface
     public:
         virtual std::vector<Filesystem::ArtworkFile> const &getFiles() override { return m_Files; }

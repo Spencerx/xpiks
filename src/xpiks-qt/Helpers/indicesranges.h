@@ -29,6 +29,11 @@ namespace Helpers {
         IndicesRanges(IndicesRanges &&other);
         IndicesRanges &operator=(IndicesRanges &&other);
 
+#ifdef CORE_TESTS
+        // this one is for tests since others check validity of ranges
+        IndicesRanges(std::vector<std::pair<int, int>> const &ranges);
+#endif
+
     public:
         const std::vector<std::pair<int, int> > &getRanges() const { return m_Ranges; }
         int length() const;
@@ -36,7 +41,7 @@ namespace Helpers {
         std::vector<int> retrieveIndices() const;
 
     private:
-        std::vector<std::pair<int, int> > m_Ranges;
+        std::vector<std::pair<int, int>> m_Ranges;
     };
 }
 

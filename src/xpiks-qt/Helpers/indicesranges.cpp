@@ -73,6 +73,13 @@ namespace Helpers {
         return *this;
     }
 
+#ifdef CORE_TESTS
+    IndicesRanges::IndicesRanges(const std::vector<std::pair<int, int> > &ranges):
+        m_Ranges(ranges)
+    {
+    }
+#endif
+
     int IndicesRanges::length() const {
         int sum = 0;
         for (auto &pair: m_Ranges) {

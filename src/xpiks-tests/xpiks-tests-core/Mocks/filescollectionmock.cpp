@@ -27,3 +27,9 @@ Mocks::FilesCollectionMock::FilesCollectionMock(int imagesCount, int vectorsCoun
         m_Files.emplace_back(vectorname, Filesystem::ArtworkFileType::Vector);
     }
 }
+
+void Mocks::FilesCollectionMock::setFromFullDirectory() {
+    for (auto &file: m_Files) {
+        file.m_IsPartOfFullDirectory = true;
+    }
+}
