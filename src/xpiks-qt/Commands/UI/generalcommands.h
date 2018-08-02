@@ -12,9 +12,24 @@
 #define GENERALCOMMANDS_H
 
 #include <Commands/Base/iuicommandtemplate.h>
+#include <QMLExtensions/uicommandid.h>
+#include "sourcetargetcommand.h"
+
+namespace Models {
+    class SettingsModel;
+}
+
+namespace Encryption {
+    class SecretsManager;
+}
 
 namespace Commands {
-
+    namespace UI {
+        SOURCE_TARGET_COMMAND(SetMasterPasswordCommand,
+                              QMLExtensions::UICommandID::SetMasterPassword,
+                              Encryption::SecretsManager,
+                              Models::SettingsModel);
+    }
 }
 
 #endif // GENERALCOMMANDS_H

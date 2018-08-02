@@ -9,4 +9,13 @@
  */
 
 #include "generalcommands.h"
+#include <Models/settingsmodel.h>
+#include <Encryption/secretsmanager.h>
 
+namespace Commands {
+    namespace UI {
+        void SetMasterPasswordCommand::execute(const QJSValue &value) {
+            m_Target.onMasterPasswordSet(m_Source);
+        }
+    }
+}

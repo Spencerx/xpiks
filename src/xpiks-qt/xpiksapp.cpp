@@ -30,12 +30,13 @@
 #include <Commands/artworksupdatetemplate.h>
 #include <Commands/UI/selectedartworkscommands.h>
 #include <Commands/UI/singleeditablecommands.h>
+#include <Commands/UI/generalcommands.h>
 #include <Commands/Base/commanduiwrapper.h>
 #include <Commands/Files/removeselectedfilescommand.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_SecretsManager(),
-    m_SettingsModel(environment, m_SecretsManager),
+    m_SettingsModel(environment),
     m_DatabaseManager(environment),
     m_SessionManager(environment),
     m_CommandManager(m_UndoRedoManager),
@@ -612,7 +613,10 @@ void XpiksApp::registerUICommands() {
                     m_CombinedArtworksModel, m_DuplicatesModel),
 
                     std::make_shared<Commands::UI::AcceptPresetCompletionForCombined>(
-                    m_KeywordsCompletions, m_CombinedArtworksModel)
+                    m_KeywordsCompletions, m_CombinedArtworksModel),
+
+                    std::make_shared<Commands::UI::SetMasterPasswordCommand>(
+                    m_SecretsManager, m_SettingsModel)
                 });
 }
 

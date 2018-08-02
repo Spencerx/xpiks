@@ -126,11 +126,9 @@ namespace Models {
     }
 
     SettingsModel::SettingsModel(Common::ISystemEnvironment &environment,
-                                 Encryption::SecretsManager &secretsManager,
                                  QObject *parent) :
         QObject(parent),
         Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
-        m_SecretsManager(secretsManager),
         m_State("settings", environment),
         m_Config(environment.path({SETTINGS_FILE}),
                  environment.getIsInMemoryOnly()),
@@ -607,9 +605,9 @@ namespace Models {
         m_SettingsMap->setValue(Constants::useMasterPassword, value);
     }
 
-    void SettingsModel::setMasterPasswordHash() {
+    void SettingsModel::setMasterPasswordHash(QString const &hash) {
         LOG_DEBUG << "#";
-        m_SettingsMap->setValue(Constants::masterPasswordHash, m_SecretsManager.getMasterPasswordHash());
+        m_SettingsMap->setValue(Constants::masterPasswordHash, hash);
     }
 
     void SettingsModel::setUserAgentId(const QString &id) {
@@ -618,10 +616,10 @@ namespace Models {
         m_State.sync();
     }
 
-    void SettingsModel::onMasterPasswordSet() {
+    void SettingsModel::onMasterPasswordSet(Encryption::SecretsManager &secretsManager) {
         LOG_INFO << "Master password changed";
 
-        setMasterPasswordHash();
+        setMasterPasswordHash(secretsManager.getMasterPasswordHash());
         setUseMasterPassword(true);
         setMustUseMasterPassword(true);
     }

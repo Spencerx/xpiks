@@ -78,7 +78,6 @@ namespace Models {
 
     public:
         explicit SettingsModel(Common::ISystemEnvironment &environment,
-                               Encryption::SecretsManager &secretsManager,
                                QObject *parent = 0);
         virtual ~SettingsModel() { }
 
@@ -133,9 +132,9 @@ namespace Models {
         Q_INVOKABLE bool needToShowTermsAndConditions();
         Q_INVOKABLE void userAgreeHandler();
         Q_INVOKABLE void setUseMasterPassword(bool value);
-        Q_INVOKABLE void setMasterPasswordHash();
+        Q_INVOKABLE void setMasterPasswordHash(const QString &hash);
         /*Q_INVOKABLE*/ void setUserAgentId(const QString &id);
-        Q_INVOKABLE void onMasterPasswordSet();
+        void onMasterPasswordSet(Encryption::SecretsManager &secretsManager);
         Q_INVOKABLE void onMasterPasswordUnset(bool firstTime);
 
     public:
@@ -279,7 +278,6 @@ namespace Models {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
-        Encryption::SecretsManager &m_SecretsManager;
         Common::StatefulEntity m_State;
         QMutex m_SettingsMutex;
         Helpers::LocalConfig m_Config;
