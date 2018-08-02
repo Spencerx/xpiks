@@ -161,7 +161,8 @@ SOURCES += main.cpp \
     Mocks/filescollectionmock.cpp \
     ../../xpiks-qt/UndoRedo/undoredomanager.cpp \
     ../../xpiks-qt/Models/Session/recentdirectoriesmodel.cpp \
-    ../../xpiks-qt/Models/Session/recentitemsmodel.cpp
+    ../../xpiks-qt/Models/Session/recentitemsmodel.cpp \
+    ../../xpiks-qt/Models/Connectivity/ziparchiver.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -274,5 +275,6 @@ HEADERS += \
     ../../xpiks-qt/Models/Session/recentitemsmodel.h \
     Mocks/selectedindicessourcemock.h \
     ../../xpiks-qt/Artworks/artworkelement.h \
-    ../../xpiks-qt/Services/AutoComplete/icompletionsource.h
+    ../../xpiks-qt/Services/AutoComplete/icompletionsource.h \
+    ../../xpiks-qt/Models/Connectivity/ziparchiver.h
 

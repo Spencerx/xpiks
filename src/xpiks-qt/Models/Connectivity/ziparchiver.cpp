@@ -106,7 +106,7 @@ namespace Models {
         emit percentChanged();
     }
 
-    void ZipArchiver::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
+    void ZipArchiver::setArtworks(Artworks::ArtworksSnapshot const &snapshot) {
         LOG_DEBUG << "#";
         auto imagesWithVectors = Helpers::filter<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(snapshot.getRawData(),
                                                                                                    [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
