@@ -22,23 +22,9 @@ namespace Commands {
     {
     }
 
-    void ExpandPresetTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
+    void ExpandPresetTemplate::execute(Artworks::ArtworksSnapshot const &snapshot) {
         LOG_DEBUG << "#";
-        Q_ASSERT(snapshot.size() == 1);
-        QStringList keywords;
-
-        if (m_PresetsManager.tryGetPreset(m_PresetID, keywords)) {
-            Artworks::ArtworkMetadata *artwork = snapshot.get(0);
-            m_ArtworksBackups.emplace_back(artwork);
-
-            if (m_KeywordIndex != -1) {
-                artwork->expandPreset(m_KeywordIndex, keywords);
-            } else {
-                artwork->appendKeywords(keywords);
-            }
-        } else {
-            LOG_INFO << "Not found preset" << m_PresetID;
-        }
+        expandPreset(snapshot);
     }
 
     void ExpandPresetTemplate::undo(const Artworks::ArtworksSnapshot &snapshot) {
@@ -51,5 +37,42 @@ namespace Commands {
             Artworks::ArtworkMetadata *artwork = snapshot.get(i);
             backup.restore(artwork);
         }
+    }
+
+    bool ExpandPresetTemplate::expandPreset(const Artworks::ArtworksSnapshot &snapshot) {
+        Q_ASSERT(snapshot.size() == 1);
+        QStringList keywords;
+
+        bool found = m_PresetsManager.tryGetPreset(m_PresetID, keywords);
+        if (found) {
+            Artworks::ArtworkMetadata *artwork = snapshot.get(0);
+            m_ArtworksBackups.emplace_back(artwork);
+
+            if (m_KeywordIndex != -1) {
+                artwork->expandPreset(m_KeywordIndex, keywords);
+            } else {
+                artwork->appendKeywords(keywords);
+            }
+        } else {
+            LOG_INFO << "Not found preset" << m_PresetID;
+        }
+
+        return found;
+    }
+
+    ExpandCompletionPreset::ExpandCompletionPreset(int completionID,
+                                                   KeywordsPresets::IPresetsManager &presetsManager,
+                                                   KeywordsPresets::ID_t presetID):
+        ExpandPresetTemplate(presetsManager, presetID),
+        m_CompletionID(completionID)
+    {
+    }
+
+    void ExpandCompletionPreset::execute(const Artworks::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "#";
+        bool accepted = expandPreset(snapshot);
+        Artworks::ArtworkMetadata *artwork = snapshot.get(0);
+        auto *basicModel = artwork->getBasicModel();
+        basicModel->notifyCompletionAccepted(accepted, m_CompletionID);
     }
 }

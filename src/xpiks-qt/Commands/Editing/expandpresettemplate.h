@@ -29,14 +29,31 @@ namespace Commands {
 
         // IArtworksCommandTemplate interface
     public:
-        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
-        virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void execute(Artworks::ArtworksSnapshot const &snapshot) override;
+        virtual void undo(Artworks::ArtworksSnapshot const &snapshot) override;
+
+    protected:
+        bool expandPreset(Artworks::ArtworksSnapshot const &snapshot);
 
     private:
         std::vector<UndoRedo::ArtworkMetadataBackup> m_ArtworksBackups;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         KeywordsPresets::ID_t m_PresetID;
         int m_KeywordIndex;
+    };
+
+    class ExpandCompletionPreset: public ExpandPresetTemplate {
+    public:
+        ExpandCompletionPreset(int completionID,
+                               KeywordsPresets::IPresetsManager &presetsManager,
+                               KeywordsPresets::ID_t presetID);
+
+        // IArtworksCommandTemplate interface
+    public:
+        virtual void execute(Artworks::ArtworksSnapshot const &snapshot) override;
+
+    private:
+        int m_CompletionID;
     };
 }
 

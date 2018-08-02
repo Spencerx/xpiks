@@ -145,7 +145,6 @@ namespace Models {
         void descriptionSpellingChanged();
         void keywordsSpellingChanged();
         void clearCurrentEditable();
-        void completionAccepted(bool accepted, int completionID);
 
     protected:
         virtual void signalDescriptionChanged() override { emit descriptionChanged(); }

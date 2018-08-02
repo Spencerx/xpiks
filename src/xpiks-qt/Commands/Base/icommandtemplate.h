@@ -16,8 +16,8 @@ namespace Commands {
     class ICommandTemplate {
     public:
         virtual ~ICommandTemplate() {}
-        virtual void execute(const T &param) = 0;
-        virtual void undo(const T&) { }
+        virtual void execute(T const &param) = 0;
+        virtual void undo(T const &) { }
     };
 }
 

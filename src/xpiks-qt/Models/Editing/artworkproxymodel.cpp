@@ -26,7 +26,6 @@
 namespace Models {
     ArtworkProxyModel::ArtworkProxyModel(Commands::ICommandManager &commandManager,
                                          KeywordsPresets::IPresetsManager &presetsManager,
-                                         AutoComplete::ICompletionSource &completionSource,
                                          Services::ArtworksUpdateHub &updateHub,
                                          QObject *parent) :
         QObject(parent),
@@ -34,7 +33,6 @@ namespace Models {
         m_ArtworkMetadata(nullptr),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
-        m_CompletionSource(completionSource),
         m_ArtworksUpdateHub(updateHub)
     {
     }
@@ -285,9 +283,14 @@ namespace Models {
         doAppendPreset((KeywordsPresets::ID_t)presetID, m_PresetsManager);
     }
 
-    bool ArtworkProxyModel::acceptCompletionAsPreset(int completionID) {
+    bool ArtworkProxyModel::acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID) {
         LOG_DEBUG << completionID;
-        return doAcceptCompletionAsPreset(completionID, m_CompletionSource, m_PresetsManager);
+        const bool accepted = doAcceptCompletionAsPreset(completionID, completionSource, m_PresetsManager);
+        auto *basicArtwork = getBasicMetadataModel();
+        if (basicArtwork != nullptr) {
+            basicArtwork->notifyCompletionAccepted(accepted, completionID);
+        }
+        return accepted;
     }
 
     Artworks::BasicMetadataModel *ArtworkProxyModel::getBasicMetadataModel() {

@@ -907,13 +907,14 @@ namespace Models {
                 const int presetID = completionItem->getPresetID();
                 using namespace Commands;
                 command = std::make_shared<ModifyArtworksCommand>(
-                              artwork,
-                              std::make_shared<ArtworksTemplateComposite>(
-                                  std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
-                                      std::make_shared<ExpandPresetTemplate>(presetsManager,
-                                      (KeywordsPresets::ID_t)presetID),
-                                      std::make_shared<ArtworksUpdateTemplate>(
-                                      *this, getStandardUpdateRoles())}));
+                            artwork,
+                            std::make_shared<ArtworksTemplateComposite>(
+                                std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                    std::make_shared<ExpandCompletionPreset>(completionID,
+                                    presetsManager,
+                                    (KeywordsPresets::ID_t)presetID),
+                                    std::make_shared<ArtworksUpdateTemplate>(
+                                    *this, getStandardUpdateRoles())}));
             }
             /* --------- this is handled in the edit field -----------
                 else if (completionItem->isKeyword()) {
@@ -1112,7 +1113,7 @@ namespace Models {
 
     void ArtworksListModel::foreachArtwork(std::function<bool (Artworks::ArtworkMetadata *)> pred,
                                            std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
-        foreachArtwork(Helpers::IndicesRanges(0, getArtworksSize()),
+        foreachArtwork(Helpers::IndicesRanges(0, (int)getArtworksSize()),
                        pred,
                        action);
     }

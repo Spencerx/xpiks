@@ -7,8 +7,9 @@ CONFIG += qtquickcompiler
 CONFIG += c++14
 TARGET = Xpiks
 
-QMAKE_CXXFLAGS += -std=c++14
-
+!win32 {
+    QMAKE_CXXFLAGS += -std=c++14
+}
 #CONFIG += force_debug_info
 
 CONFIG(release, debug|release)  {
@@ -427,7 +428,6 @@ HEADERS += \
     Services/artworksupdatehub.h \
     Services/artworkupdaterequest.h \
     Helpers/cpphelpers.h \
-    Artworks/artworksprocessingworker.h \
     Services/SpellCheck/userdictionary.h \
     Artworks/iartworksservice.h \
     Services/AutoComplete/icompletionsource.h \

@@ -82,7 +82,6 @@ namespace Models {
     public:
         explicit ArtworkProxyModel(Commands::ICommandManager &commandManager,
                                    KeywordsPresets::IPresetsManager &presetsManager,
-                                   AutoComplete::ICompletionSource &completionSource,
                                    Services::ArtworksUpdateHub &updateHub,
                                    QObject *parent = 0);
         virtual ~ArtworkProxyModel();
@@ -166,7 +165,9 @@ namespace Models {
         Q_INVOKABLE void expandPreset(int keywordIndex, unsigned int presetID);
         Q_INVOKABLE void expandLastKeywordAsPreset();
         Q_INVOKABLE void addPreset(unsigned int presetID);
-        Q_INVOKABLE bool acceptCompletionAsPreset(int completionID);
+
+    public:
+        bool acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID);
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override;
@@ -186,7 +187,6 @@ namespace Models {
         Artworks::ArtworkMetadata *m_ArtworkMetadata;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
-        AutoComplete::ICompletionSource &m_CompletionSource;
         Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
     };
 }
