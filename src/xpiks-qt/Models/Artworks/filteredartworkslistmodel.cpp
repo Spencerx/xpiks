@@ -32,14 +32,12 @@ namespace Models {
     FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel,
                                                          Commands::ICommandManager &commandManager,
                                                          KeywordsPresets::IPresetsManager &presetsManager,
-                                                         AutoComplete::ICompletionSource &completionSource,
                                                          SettingsModel &settingsModel,
                                                          QObject *parent):
         QSortFilterProxyModel(parent),
         m_ArtworksListModel(artworksListModel),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
-        m_CompletionSource(completionSource),
         m_SettingsModel(settingsModel),
         m_SelectedArtworksCount(0),
         m_SortingEnabled(false)
@@ -79,6 +77,14 @@ namespace Models {
                 [] (Artworks::ArtworkMetadata *artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
 
         return Artworks::ArtworksSnapshot(rawSnapshot);
+    }
+
+    void FilteredArtworksListModel::acceptCompletionAsPreset(int proxyIndex, AutoComplete::ICompletionSource &completionsSource, int completionID) {
+        LOG_INFO << "proxyIndex:" << proxyIndex;
+        int originalIndex = getOriginalIndex(proxyIndex);
+        auto command = m_ArtworksListModel.acceptCompletionAsPreset(originalIndex, completionID,
+                                                                    m_PresetsManager, completionsSource);
+        m_CommandManager.processCommand(command);
     }
 
     int FilteredArtworksListModel::getOriginalIndex(int proxyIndex) const {
@@ -342,14 +348,6 @@ namespace Models {
         LOG_INFO << "proxyIndex:" << proxyIndex;
         int originalIndex = getOriginalIndex(proxyIndex);
         auto command = m_ArtworksListModel.addPreset(originalIndex, presetID, m_PresetsManager);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::acceptCompletionAsPreset(int proxyIndex, int completionID) {
-        LOG_INFO << "proxyIndex:" << proxyIndex;
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.acceptCompletionAsPreset(originalIndex, completionID,
-                                                                    m_PresetsManager, m_CompletionSource);
         m_CommandManager.processCommand(command);
     }
 

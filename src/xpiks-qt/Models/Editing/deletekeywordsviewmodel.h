@@ -59,7 +59,7 @@ namespace Models {
         void caseSensitiveChanged();
 
     public:
-        virtual void setArtworks(const Artworks::ArtworksSnapshot &artworks) override;
+        virtual void setArtworks(Artworks::ArtworksSnapshot const &artworks) override;
         virtual bool removeUnavailableItems() override;
 
 #ifdef CORE_TESTS

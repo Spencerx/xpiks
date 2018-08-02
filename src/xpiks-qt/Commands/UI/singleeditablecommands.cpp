@@ -55,5 +55,16 @@ namespace Commands {
             LOG_DEBUG << "#";
             m_Target.setupModel(&m_Source.getBasicModel());
         }
+
+        void AcceptPresetCompletionForCombined::execute(const QJSValue &value) {
+            LOG_DEBUG << value.toString();
+            int completionID = 0;
+            if (value.isNumber()) {
+                completionID = value.toInt();
+            }
+
+            bool accepted = m_Target.acceptCompletionAsPreset(m_Source, completionID);
+            LOG_INFO << "completion" << completionID << "accepted:" << accepted;
+        }
     }
 }

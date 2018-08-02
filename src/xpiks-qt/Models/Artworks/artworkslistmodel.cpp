@@ -902,10 +902,9 @@ namespace Models {
                 return command;
             }
 
-            const int presetID = completionItem->getPresetID();
-
             if (completionItem->isPreset() ||
                     (completionItem->canBePreset() && completionItem->shouldExpandPreset())) {
+                const int presetID = completionItem->getPresetID();
                 using namespace Commands;
                 command = std::make_shared<ModifyArtworksCommand>(
                               artwork,

@@ -21,11 +21,17 @@
 #include <MetadataIO/csvexportmodel.h>
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
+#include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/findandreplacemodel.h>
 #include <Models/Connectivity/artworksuploader.h>
 
 namespace Commands {
     namespace UI {
+        void EditSelectedCommand::execute(const QJSValue &) {
+            LOG_DEBUG << "#";
+            m_Target.setArtworks(m_Source.getSelectedArtworks());
+        }
+
         void FixSpellingInSelectedCommand::execute(const QJSValue &) {
             LOG_DEBUG << "#";
             Artworks::ArtworksSnapshot snapshot = std::move(m_Source.getSelectedArtworks());

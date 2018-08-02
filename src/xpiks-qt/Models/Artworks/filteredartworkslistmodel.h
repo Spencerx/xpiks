@@ -56,7 +56,6 @@ namespace Models {
         FilteredArtworksListModel(ArtworksListModel &artworksListModel,
                                   Commands::ICommandManager &commandManager,
                                   KeywordsPresets::IPresetsManager &presetsManager,
-                                  AutoComplete::ICompletionSource &completionSource,
                                   Models::SettingsModel &settingsModel,
                                   QObject *parent=0);
 
@@ -78,6 +77,9 @@ namespace Models {
 #ifdef CORE_TESTS
         int retrieveNumberOfSelectedItems();
 #endif
+
+    public:
+        void acceptCompletionAsPreset(int proxyIndex, AutoComplete::ICompletionSource &completionsSource, int completionID);
 
     public:
         // indexing
@@ -117,7 +119,6 @@ namespace Models {
         Q_INVOKABLE void expandPreset(int proxyIndex, int keywordIndex, unsigned int presetID);
         Q_INVOKABLE void expandLastAsPreset(int proxyIndex);
         Q_INVOKABLE void addPreset(int proxyIndex, unsigned int presetID);
-        Q_INVOKABLE void acceptCompletionAsPreset(int proxyIndex, int completionID);
 
     public:
         // other modifications
@@ -182,7 +183,6 @@ namespace Models {
         ArtworksListModel &m_ArtworksListModel;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
-        AutoComplete::ICompletionSource &m_CompletionSource;
         Models::SettingsModel &m_SettingsModel;
         // ignore default regexp from proxymodel
         QString m_SearchTerm;

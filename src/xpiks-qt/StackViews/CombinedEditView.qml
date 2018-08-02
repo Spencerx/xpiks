@@ -928,6 +928,7 @@ Rectangle {
                             onDroppedIndexChanged: dropTimer.start()
 
                             function acceptCompletion(completionID) {
+                                // TODO: add signal handler
                                 var accepted = combinedArtworks.acceptCompletionAsPreset(completionID);
                                 if (!accepted) {
                                     var completion = acSource.getCompletion(completionID)

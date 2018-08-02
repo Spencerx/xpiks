@@ -30,7 +30,7 @@ namespace Models {
     {
     }
 
-    void DeleteKeywordsViewModel::setArtworks(const Artworks::ArtworksSnapshot &artworks) {
+    void DeleteKeywordsViewModel::setArtworks(Artworks::ArtworksSnapshot const &artworks) {
         LOG_DEBUG << "#";
         ArtworksViewModel::setArtworks(artworks);
         recombineKeywords();

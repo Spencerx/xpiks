@@ -127,6 +127,7 @@ namespace Artworks {
         virtual void notifySpellCheckResults(Common::SpellCheckFlags flags);
         void notifyAboutToBeRemoved() { emit aboutToBeRemoved(); }
         void notifyCompletionsAvailable() { emit completionsAvailable(); }
+        void notifyCompletionAccepted(bool accepted, int completionID) { emit completionAccepted(accepted, completionID); }
 
     protected:
         void notifyKeywordsSpellingChanged();
@@ -144,6 +145,7 @@ namespace Artworks {
         void spellingInfoUpdated();
         void hasDuplicatesChanged();
         void completionsAvailable();
+        void completionAccepted(bool accepted, int completionID);
         void aboutToBeRemoved();
         void afterSpellingErrorsFixed();
 

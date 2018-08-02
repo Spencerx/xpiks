@@ -38,12 +38,18 @@ namespace Models {
     class FilteredArtworksListModel;
     class FindAndReplaceModel;
     class ArtworksUploader;
+    class CombinedArtworksModel;
 }
 
 namespace Commands {
     class ICommand;
 
     namespace UI {
+        SOURCE_TARGET_COMMAND(EditSelectedCommand,
+                              QMLExtensions::UICommandID::EditSelectedArtworks,
+                              Artworks::ISelectedArtworksSource,
+                              Models::CombinedArtworksModel);
+
         SOURCE_TARGET_COMMAND(FixSpellingInSelectedCommand,
                               QMLExtensions::UICommandID::FixSpellingInSelected,
                               Artworks::ISelectedArtworksSource,

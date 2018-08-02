@@ -273,5 +273,6 @@ HEADERS += \
     ../../xpiks-qt/Models/Session/recentdirectoriesmodel.h \
     ../../xpiks-qt/Models/Session/recentitemsmodel.h \
     Mocks/selectedindicessourcemock.h \
-    ../../xpiks-qt/Artworks/artworkelement.h
+    ../../xpiks-qt/Artworks/artworkelement.h \
+    ../../xpiks-qt/Services/AutoComplete/icompletionsource.h
 

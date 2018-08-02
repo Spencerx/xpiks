@@ -70,11 +70,10 @@ namespace Models {
     public:
         CombinedArtworksModel(Commands::ICommandManager &commandManager,
                               KeywordsPresets::IPresetsManager &presetsManager,
-                              AutoComplete::ICompletionSource &completionSource,
                               QObject *parent=0);
 
-    protected:
-        virtual void setArtworks(const Artworks::ArtworksSnapshot &artworks) override;
+    public:
+        virtual void setArtworks(Artworks::ArtworksSnapshot const &artworks) override;
 
     private:
         enum CombinedEditModifiedFlags {
@@ -146,6 +145,7 @@ namespace Models {
         void descriptionSpellingChanged();
         void keywordsSpellingChanged();
         void clearCurrentEditable();
+        void completionAccepted(bool accepted, int completionID);
 
     protected:
         virtual void signalDescriptionChanged() override { emit descriptionChanged(); }
@@ -186,7 +186,9 @@ namespace Models {
         Q_INVOKABLE void expandLastKeywordAsPreset();
         Q_INVOKABLE void addPreset(unsigned int presetID);
         Q_INVOKABLE void copyToQuickBuffer();
-        Q_INVOKABLE bool acceptCompletionAsPreset(int completionID);
+
+    public:
+        bool acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID);
 
     private:
         void enableAllFields();
@@ -237,7 +239,6 @@ namespace Models {
         Common::Hold m_HoldPlaceholder;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
-        AutoComplete::ICompletionSource &m_CompletionSource;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
         Common::ArtworkEditFlags m_EditFlags;

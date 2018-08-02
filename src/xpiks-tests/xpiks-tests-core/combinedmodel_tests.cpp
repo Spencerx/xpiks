@@ -9,6 +9,15 @@
 #include <Artworks/artworkelement.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Models/settingsmodel.h>
+#include <UndoRedo/undoredomanager.h>
+#include <KeywordsPresets/presetkeywordsmodel.h>
+
+#define DECLARE_MODELS \
+    Mocks::CoreTestsEnvironment environment;\
+    UndoRedo::UndoRedoManager undoRedoManager;\
+    Mocks::CommandManagerMock commandManager(undoRedoManager);\
+    KeywordsPresets::PresetKeywordsModel presetsManager(environment);\
+    AutoComplete::KeywordsCompletionsModel keywordsCompletions;\
 
 Artworks::ArtworkMetadata *createArtworkMetadata(const QString &desc, const QString &title, const QStringList &keywords, int index=0) {
     Mocks::ArtworkMetadataMock *artwork = new Mocks::ArtworkMetadataMock("/random/file/path.jpg");
@@ -45,7 +54,7 @@ void CombinedModelTests::trivialCombineNoItemsTest() {
     MetadataIO::WeakArtworksSnapshot items;
 
     combinedModel.resetModel();
-    combinedModel.setArtworks(items);
+    combinedModel.(items);
 
     QCOMPARE(combinedModel.getArtworksCount(), 0);
     QVERIFY(combinedModel.getDescription().isEmpty());

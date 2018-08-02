@@ -568,6 +568,9 @@ void XpiksApp::registerUICommands() {
 
     m_UICommandDispatcher.registerCommands(
     {
+                    std::make_shared<Commands::UI::EditSelectedCommand>(
+                    m_FilteredArtworksListModel, m_CombinedArtworksModel),
+
                     std::make_shared<Commands::UI::FixSpellingInSelectedCommand>(
                     m_FilteredArtworksListModel, m_SpellSuggestionModel),
 
@@ -607,7 +610,10 @@ void XpiksApp::registerUICommands() {
                     m_ArtworkProxyModel, m_DuplicatesModel),
 
                     std::make_shared<Commands::UI::ShowDuplicatesForCombined>(
-                    m_CombinedArtworksModel, m_DuplicatesModel)
+                    m_CombinedArtworksModel, m_DuplicatesModel),
+
+                    std::make_shared<Commands::UI::AcceptPresetCompletionForCombined>(
+                    m_KeywordsCompletions, m_CombinedArtworksModel)
                 });
 }
 

@@ -27,6 +27,10 @@ namespace SpellCheck {
     class DuplicatesReviewModel;
 }
 
+namespace AutoComplete {
+    class ICompletionSource;
+}
+
 namespace Commands {
     namespace UI {
         SOURCE_TARGET_COMMAND(FixSpellingInCombinedEditCommand,
@@ -69,6 +73,11 @@ namespace Commands {
                               QMLExtensions::UICommandID::ShowDuplicatesCombined,
                               Models::CombinedArtworksModel,
                               SpellCheck::DuplicatesReviewModel);
+
+        SOURCE_TARGET_COMMAND(AcceptPresetCompletionForCombined,
+                              QMLExtensions::UICommandID::AcceptPresetCompletionCombined,
+                              AutoComplete::ICompletionSource,
+                              Models::CombinedArtworksModel);
     }
 }
 

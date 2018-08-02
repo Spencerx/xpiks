@@ -1590,6 +1590,7 @@ Item {
                                                 enabled: artworksHost.isEditingAllowed
 
                                                 function acceptCompletion(completionID) {
+                                                    // TODO: move to signal
                                                     var accepted = artItemsModel.acceptCompletionAsPreset(rowWrapper.getIndex(), completionID);
                                                     if (!accepted) {
                                                         var completion = acSource.getCompletion(completionID)

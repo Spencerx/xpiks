@@ -26,14 +26,12 @@
 namespace Models {
     CombinedArtworksModel::CombinedArtworksModel(Commands::ICommandManager &commandManager,
                                                  KeywordsPresets::IPresetsManager &presetsManager,
-                                                 AutoComplete::ICompletionSource &completionSource,
                                                  QObject *parent):
         ArtworksViewModel(parent),
         ArtworkProxyBase(),
         Common::DelayedActionEntity(1000, MAX_EDITING_PAUSE_RESTARTS),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
-        m_CompletionSource(completionSource),
         m_CommonKeywordsModel(m_HoldPlaceholder, this),
         m_EditFlags(Common::ArtworkEditFlags::None),
         m_ModifiedFlags(0)
@@ -62,7 +60,7 @@ namespace Models {
                          this, &CombinedArtworksModel::keywordsSpellingChanged);
     }
 
-    void CombinedArtworksModel::setArtworks(const Artworks::ArtworksSnapshot &artworks) {
+    void CombinedArtworksModel::setArtworks(Artworks::ArtworksSnapshot const &artworks) {
         ArtworksViewModel::setArtworks(artworks);
 
         recombineArtworks();
@@ -282,9 +280,10 @@ namespace Models {
                         false));
     }
 
-    bool CombinedArtworksModel::acceptCompletionAsPreset(int completionID) {
+    bool CombinedArtworksModel::acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID) {
         LOG_DEBUG << completionID;
-        const bool accepted = doAcceptCompletionAsPreset(completionID, m_CompletionSource, m_PresetsManager);
+        const bool accepted = doAcceptCompletionAsPreset(completionID, completionSource, m_PresetsManager);
+        emit completionAccepted(accepted, completionID);
         return accepted;
     }
 
