@@ -1,3 +1,4 @@
+#include "removefilesfs_tests.h"
 #include <QStringList>
 #include <QPair>
 #include <QTest>
@@ -6,29 +7,26 @@
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/coretestsenvironment.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "../../xpiks-qt/Models/artworksrepository.h"
-#include "../../xpiks-qt/Models/artworkelement.h"
-#include "../../xpiks-qt/Models/combinedartworksmodel.h"
-#include "../../xpiks-qt/Models/ziparchiver.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "removefilesfs_tests.h"
+#include <Models/Artworks/artworksrepository.h>
+#include <Artworks/artworkelement.h>
+#include <Models/Editing/combinedartworksmodel.h>
+#include <Models/Connectivity/ziparchiver.h>
+#include <Models/settingsmodel.h>
 
 #define DECLARE_MODELS_AND_GENERATE_(count) \
     Mocks::CoreTestsEnvironment environment; \
-    Mocks::CommandManagerMock commandManagerMock;\
-    Mocks::ArtworksListModelMock ArtworksListModelMock;\
-    Mocks::ArtworksRepositoryMock artworksRepository(environment);\
-    Models::FilteredArtItemsProxyModel filteredItemsModel;\
-    commandManagerMock.InjectDependency(&artworksRepository);\
-    commandManagerMock.InjectDependency(&ArtworksListModelMock);\
-    filteredItemsModel.setSourceModel(&ArtworksListModelMock);\
-    commandManagerMock.InjectDependency(&filteredItemsModel);\
-    Models::CombinedArtworksModel combinedModel; \
-    commandManagerMock.InjectDependency(&combinedModel);\
-    Models::ZipArchiver zipArchive; \
-    commandManagerMock.InjectDependency(&zipArchive); \
-    commandManagerMock.generateAndAddArtworks(10);
+    UndoRedo::UndoRedoManager undoRedoManager; \
+    Mocks::CommandManagerMock commandManager(undoRedoManager); \
+    Models::RecentDirectoriesModel recentDirectories(environment);\
+    Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);\
+    Mocks::ArtworksListModelMock artworksListModel(artworksRepository);\
+    KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
+    Models::SettingsModel settingsModel(environment);\
+    Models::FilteredArtworksListModel filteredArtworksModel(\
+    artworksListModel, commandManager, keywordsPresets, settingsModel);\
+    Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets); \
+    Models::ZipArchiver zipArchiver; \
+    artworksListModel.generateAndAddArtworks(10);
 
 void RemoveFilesFsTests::removeArtworksSignals() {
     Mocks::CommandManagerMock commandManagerMock;
@@ -46,9 +44,6 @@ void RemoveFilesFsTests::removeArtworksSignals() {
     QSignalSpy ArtItemFileDeleted(artItemsModel, SIGNAL(unavailableArtworksFound()));
 
     commandManagerMock.generateAndAddArtworks(itemsToAdd);
-
-    QObject::connect(artworksRepository, &Models::ArtworksRepository::filesUnavailable,
-                     artItemsModel, &Models::ArtItemsModel::onFilesUnavailableHandler);
 
     artworksRepositoryMock.removeFileAndEmitSignal();
 
@@ -77,7 +72,7 @@ void RemoveFilesFsTests::removeArtworksNumberItems() {
     zipArchive.setArtworks(snapshot);
 
 // delete
-   commandManagerMock.mockDeletion(itemsToDelete);
+   artworksListModel.mockDeletion(itemsToDelete);
 
 // send accept
     commandManagerMock.mockAcceptDeletion();
