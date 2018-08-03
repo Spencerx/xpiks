@@ -31,7 +31,7 @@ namespace Helpers {
 
 #ifdef CORE_TESTS
         // this one is for tests since others check validity of ranges
-        IndicesRanges(std::vector<std::pair<int, int>> const &ranges);
+        IndicesRanges(std::initializer_list<std::pair<int, int>> ranges);
 #endif
 
     public:

@@ -74,7 +74,7 @@ namespace Helpers {
     }
 
 #ifdef CORE_TESTS
-    IndicesRanges::IndicesRanges(const std::vector<std::pair<int, int> > &ranges):
+    IndicesRanges::IndicesRanges(std::initializer_list<std::pair<int, int> > ranges):
         m_Ranges(ranges)
     {
     }

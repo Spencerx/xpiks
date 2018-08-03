@@ -73,7 +73,7 @@ void RemoveFilesFsTests::removeArtworksNumberItems() {
     combinedModel.resetModel();
     combinedModel.setArtworks(artworksList);
 
-    MetadataIO::ArtworksSnapshot snapshot(artworksList);
+    Artworks::ArtworksSnapshot snapshot(artworksList);
     zipArchive.setArtworks(snapshot);
 
 // delete
@@ -104,7 +104,7 @@ void RemoveFilesFsTests::removeArtworksAllItems() {
     combinedModel.resetModel();
     combinedModel.setArtworks(artworksList);
 
-    MetadataIO::ArtworksSnapshot snapshot(artworksList);
+    Artworks::ArtworksSnapshot snapshot(artworksList);
     zipArchive.setArtworks(snapshot);
 
 // delete

@@ -66,7 +66,7 @@ namespace Mocks {
 
         int generateAndAddDirectories(int dirsCount, int fileInDir = 5, bool withVector=true) {
             auto files = std::make_shared<Mocks::FilesCollectionMock>(fileInDir*dirsCount,
-                                                                      withVector ? count : 0,
+                                                                      withVector ? fileInDir*dirsCount : 0,
                                                                       dirsCount);
             files->setFromFullDirectory();
             auto result = addFiles(files, Common::AddFilesFlags::FlagIsFullDirectory);

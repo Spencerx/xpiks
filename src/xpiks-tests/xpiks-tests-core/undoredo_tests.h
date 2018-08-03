@@ -13,9 +13,7 @@ private slots:
     void undoRemoveAddFullDirectoryTest();
     void undoRemoveNotFullDirectoryTest();
     void undoRemoveLaterFullDirectoryTest();
-    void undoUndoRemoveItemsTest();
     void undoModifyCommandTest();
-    void undoUndoModifyCommandTest();
     void undoPasteCommandTest();
     void undoClearAllTest();
     void undoClearKeywordsTest();

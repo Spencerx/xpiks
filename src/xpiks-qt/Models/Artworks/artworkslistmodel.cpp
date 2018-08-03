@@ -717,6 +717,7 @@ namespace Models {
             setCurrentIndex(artworkIndex);
 
             if (keywords.length() == 1) {
+                // TODO: add test for this
                 LOG_INFO << "Pasting only one keyword. Leaving it in the edit box.";
                 return std::make_shared<Commands::EmptyCommand>();
             }
@@ -937,7 +938,7 @@ namespace Models {
                     Artworks::ArtworksSnapshot(weakSnapshot),
                     std::make_shared<ArtworksTemplateComposite>(
                         std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
-                            std::make_shared<EditArtworksTemplate>(flags),
+                            std::make_shared<EditArtworksTemplate>(flags | Common::ArtworkEditFlags::Clear),
                             std::make_shared<ArtworksUpdateTemplate>(
                             *this, getStandardUpdateRoles())}));
     }
