@@ -51,19 +51,22 @@ namespace Models {
     class ArtworksRepository;
     class ICurrentEidtable;
 
+    using ArtworkSpellCheckMessage = Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>;
+    using ArtworksListSpellCheckMessage = Common::NamedType<std::vector<Artworks::ArtworkMetadata*>, Common::MessageType::SpellCheck>;
+
     class ArtworksListModel:
             public QAbstractListModel,
-            public Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>,
+            public Common::MessagesSource<ArtworkSpellCheckMessage>,
             public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>,
-            public Common::MessagesSource<std::vector<Artworks::ArtworkMetadata*>>
+            public Common::MessagesSource<ArtworksListSpellCheckMessage>
     {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
 
         using ArtworksContainer = std::deque<Artworks::ArtworkMetadata *>;
-        using Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>::sendMessage;
+        using Common::MessagesSource<ArtworkSpellCheckMessage>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
-        using Common::MessagesSource<std::vector<Artworks::ArtworkMetadata*>>::sendMessage;
+        using Common::MessagesSource<ArtworksListSpellCheckMessage>::sendMessage;
 
     public:
         ArtworksListModel(ArtworksRepository &repository,

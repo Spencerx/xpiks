@@ -14,6 +14,7 @@
 #include <QQmlEngine>
 #include <QHash>
 #include <Common/hold.h>
+#include <Common/types.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Models/Artworks/artworksviewmodel.h>
 #include <KeywordsPresets/ipresetsmanager.h>
@@ -30,7 +31,7 @@ namespace KeywordsPresets {
 namespace Models {
     class DeleteKeywordsViewModel:
             public Models::ArtworksViewModel,
-            public Common::MessagesSource<Artworks::BasicKeywordsModel*>
+            public Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>
     {
         Q_OBJECT
         Q_PROPERTY(int commonKeywordsCount READ getCommonKeywordsCount NOTIFY commonKeywordsCountChanged)

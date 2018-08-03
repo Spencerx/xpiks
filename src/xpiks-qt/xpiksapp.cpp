@@ -139,6 +139,7 @@ void XpiksApp::initialize() {
 
     connectEntitiesSignalsSlots();
     registerUICommands();
+    setupMessaging();
 
     m_LanguagesModel.initFirstLanguage();
     m_LanguagesModel.loadLanguages();
@@ -618,6 +619,37 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::UI::SetMasterPasswordCommand>(
                     m_SecretsManager, m_SettingsModel)
                 });
+}
+
+void XpiksApp::setupMessaging() {
+    LOG_DEBUG << "#";
+    Common::connectTarget<Common::NamedType<Connectivity::UserAction>>(
+                m_TelemetryService,
+    { m_ArtworksUploader, m_KeywordsSuggestor });
+
+    Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(
+                m_CurrentEditableModel,
+    { m_ArtworksListModel, m_ArtworkProxyModel });
+
+    Common::connectTarget<Models::QuickBufferMessage>(
+                m_QuickBuffer,
+    { m_FilteredArtworksListModel, m_CombinedArtworksModel, m_KeywordsSuggestor });
+
+    Common::connectTarget<Artworks::VideoArtwork*>(
+                m_VideoCachingService,
+    { m_ArtworkProxyModel });
+
+    Common::connectTarget<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>(
+                m_InspectionHub,
+    { m_ArtworksListModel, m_ArtworkProxyModel });
+
+    Common::connectTarget<Common::NamedType<std::vector<Artworks::ArtworkMetadata*>, Common::MessageType::SpellCheck>>(
+                m_InspectionHub,
+    { m_ArtworksListModel });
+
+    Common::connectTarget<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>(
+                m_InspectionHub,
+    { m_PresetsModel, m_CombinedArtworksModel, m_DeleteKeywordsModel, m_QuickBuffer });
 }
 
 void XpiksApp::servicesInitialized(int status) {

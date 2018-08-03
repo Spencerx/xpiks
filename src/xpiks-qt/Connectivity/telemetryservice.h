@@ -38,7 +38,7 @@ namespace Connectivity {
         void stopReporting(bool immediately=true);
 
     public:
-        virtual void handleMessage(const Common::NamedType<UserAction> &event) override;
+        virtual void handleMessage(Common::NamedType<UserAction> const &event) override;
 
     private:
         void ensureUserIdExists();

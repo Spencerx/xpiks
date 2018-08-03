@@ -18,7 +18,9 @@ namespace Common {
     // tag for events with same underlying type
     struct MessageType {
         enum Type {
-            SpellCheck
+            SpellCheck,
+            Update,
+            UnavailableFiles
         };
     };
 
@@ -39,7 +41,7 @@ namespace Common {
             m_Targets.push_back(target);
         }
 
-        void sendMessage(const T &message) const {
+        void sendMessage(T const &message) const {
             for (auto &target: m_Targets) {
                 target.get().handleMessage(message);
             }
@@ -53,7 +55,7 @@ namespace Common {
     void connectTarget(MessagesTarget<T> &t,
                        std::initializer_list<std::reference_wrapper<MessagesSource<T>>> sources) {
         for (auto s: sources) {
-            s.addTarget(t);
+            s.get().addTarget(t);
         }
     }
 }

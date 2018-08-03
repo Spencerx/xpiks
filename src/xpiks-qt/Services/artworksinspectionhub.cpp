@@ -23,17 +23,17 @@ namespace Services {
     {
     }
 
-    void ArtworksInspectionHub::handleMessage(Artworks::ArtworkMetadata* const &change) {
-        inspectArtwork(change);
+    void ArtworksInspectionHub::handleMessage(const ArtworkUpdateType &change) {
+        inspectArtwork(change.get());
     }
 
-    void ArtworksInspectionHub::handleMessage(Artworks::BasicKeywordsModel* const &change) {
-        inspectBasicModel(change);
+    void ArtworksInspectionHub::handleMessage(const BasicModelUpdateType &change) {
+        inspectBasicModel(change.get());
     }
 
-    void ArtworksInspectionHub::handleMessage(const std::vector<Artworks::ArtworkMetadata *> &change) {
+    void ArtworksInspectionHub::handleMessage(const ArtworksArrayUpdateType &change) {
         if (isSpellCheckAvailable()) {
-            m_SpellCheckService.submitItems(change);
+            m_SpellCheckService.submitItems(change.get());
         }
     }
 

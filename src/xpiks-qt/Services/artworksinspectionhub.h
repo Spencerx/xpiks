@@ -12,6 +12,7 @@
 #define ARTWORKSINSPECTIONHUB_H
 
 #include <Common/messages.h>
+#include <Common/types.h>
 
 namespace SpellCheck {
     class SpellCheckService;
@@ -32,14 +33,18 @@ namespace Artworks {
 }
 
 namespace Services {
+    using ArtworkUpdateType = Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>;
+    using BasicModelUpdateType = Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>;
+    using ArtworksArrayUpdateType = Common::NamedType<std::vector<Artworks::ArtworkMetadata*>, Common::MessageType::SpellCheck>;
+
     class ArtworksInspectionHub:
-            public Common::MessagesTarget<Artworks::ArtworkMetadata*>,
-            public Common::MessagesTarget<Artworks::BasicKeywordsModel*>,
-            public Common::MessagesTarget<std::vector<Artworks::ArtworkMetadata*>>
+            public Common::MessagesTarget<ArtworkUpdateType>,
+            public Common::MessagesTarget<BasicModelUpdateType>,
+            public Common::MessagesTarget<ArtworksArrayUpdateType>
     {
-        using Common::MessagesTarget<Artworks::ArtworkMetadata*>::handleMessage;
-        using Common::MessagesTarget<Artworks::BasicKeywordsModel*>::handleMessage;
-        using Common::MessagesTarget<std::vector<Artworks::ArtworkMetadata*>>::handleMessage;
+        using Common::MessagesTarget<ArtworkUpdateType>::handleMessage;
+        using Common::MessagesTarget<BasicModelUpdateType>::handleMessage;
+        using Common::MessagesTarget<ArtworksArrayUpdateType>::handleMessage;
 
     public:
         ArtworksInspectionHub(SpellCheck::SpellCheckService &spellCheckService,
@@ -47,9 +52,9 @@ namespace Services {
                               Models::SettingsModel &settingsModel);
 
     public:
-        virtual void handleMessage(Artworks::ArtworkMetadata* const &change) override;
-        virtual void handleMessage(Artworks::BasicKeywordsModel* const &change) override;
-        virtual void handleMessage(std::vector<Artworks::ArtworkMetadata*> const &change) override;
+        virtual void handleMessage(ArtworkUpdateType const &change) override;
+        virtual void handleMessage(BasicModelUpdateType const &change) override;
+        virtual void handleMessage(ArtworksArrayUpdateType const &change) override;
 
     public:
         void inspectArtwork(Artworks::ArtworkMetadata *artwork);

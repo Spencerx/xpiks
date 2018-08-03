@@ -44,7 +44,6 @@ namespace Helpers {
         Q_INVOKABLE void turnTaskbarProgressOn();
         Q_INVOKABLE void setTaskbarProgress(double value);
         Q_INVOKABLE void turnTaskbarProgressOff();
-        //Q_INVOKABLE void removeUnavailableFiles();
         Q_INVOKABLE void revealArtworkFile(const QString &path);
         Q_INVOKABLE bool isVector(const QString &path) const;
         Q_INVOKABLE bool isVideo(const QString &path) const;

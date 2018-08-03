@@ -1017,7 +1017,7 @@ ApplicationWindow {
         text: i18.n + qsTr("Some files are not available anymore.\nThey will be removed from the workflow.")
         standardButtons: StandardButton.Ok
         onAccepted: {
-            helpersWrapper.removeUnavailableFiles()
+            xpiksApp.removeUnavailableFiles()
         }
     }
 

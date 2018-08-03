@@ -32,14 +32,6 @@ namespace SpellCheck {
                          this, &SpellCheckService::userDictWordsNumberChanged);
     }
 
-    void SpellCheckService::handleMessage(const Common::NamedType<Artworks::ArtworkMetadata *, Common::MessageType::SpellCheck> &event) {
-        this->submitArtwork(event.get());
-    }
-
-    void SpellCheckService::handleMessage(const Common::NamedType<Artworks::BasicKeywordsModel *, Common::MessageType::SpellCheck> &event) {
-        this->submitItem(event.get(), Common::SpellCheckFlags::All);
-    }
-
     void SpellCheckService::startService(Helpers::AsyncCoordinator &initCoordinator) {
         if (m_SpellCheckWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";

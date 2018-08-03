@@ -18,7 +18,6 @@
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
 #include <Models/Artworks/artworksrepository.h>
-#include <Models/Connectivity/artworksuploader.h>
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/deletekeywordsviewmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
@@ -31,6 +30,7 @@
 #include <Models/settingsmodel.h>
 #include <Models/switchermodel.h>
 #include <Models/uimanager.h>
+#include <Models/Connectivity/artworksuploader.h>
 #include <Models/Connectivity/ziparchiver.h>
 #include <Models/Editing/currenteditablemodel.h>
 #include <Models/Editing/quickbuffer.h>
@@ -133,6 +133,7 @@ private:
     void executeMaintenanceJobs();
     void connectEntitiesSignalsSlots();
     void registerUICommands();
+    void setupMessaging();
 
 signals:
     void globalCloseRequested();

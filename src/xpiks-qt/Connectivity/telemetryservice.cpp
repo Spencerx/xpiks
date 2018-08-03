@@ -59,7 +59,7 @@ namespace Connectivity {
         }
     }
 
-    void TelemetryService::handleMessage(const Common::NamedType<UserAction> &event) {
+    void TelemetryService::handleMessage(Common::NamedType<UserAction> const &event) {
         reportAction(event.get());
     }
 

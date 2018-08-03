@@ -8,8 +8,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef ARTWORKUPLOADER_H
-#define ARTWORKUPLOADER_H
+#ifndef ARTWORKSUPLOADER_H
+#define ARTWORKSUPLOADER_H
 
 #include <QAbstractListModel>
 #include <QStringList>
@@ -48,13 +48,13 @@ namespace Models {
     class ArtworksUploader:
             public QObject,
             public Helpers::IFileNotAvailableModel,
-            public Common::MessagesSource<Connectivity::UserAction>
+            public Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>
     {
+        Q_OBJECT
         Q_PROPERTY(int percent READ getUIPercent NOTIFY percentChanged)
         Q_PROPERTY(bool inProgress READ getInProgress WRITE setInProgress NOTIFY inProgressChanged)
         Q_PROPERTY(bool isError READ getHasErrors WRITE setHasErrors NOTIFY hasErrorsChanged)
         Q_PROPERTY(int itemsCount READ getItemsCount NOTIFY itemsCountChanged)
-        Q_OBJECT
     public:
         ArtworksUploader(Common::ISystemEnvironment &environment,
                          Models::UploadInfoRepository &uploadInfoRepository,
@@ -148,4 +148,4 @@ namespace Models {
     };
 }
 
-#endif // ARTWORKUPLOADER_H
+#endif // ARTWORKSUPLOADER_H

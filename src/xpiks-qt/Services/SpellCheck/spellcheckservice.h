@@ -39,10 +39,9 @@ namespace Models {
 
 namespace SpellCheck {
     class SpellCheckService:
-            public QObject,
-            public Common::MessagesTarget<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>,
-            public Common::MessagesTarget<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>
+            public QObject
     {
+
         Q_OBJECT
         Q_PROPERTY(int userDictWordsNumber READ getUserDictWordsNumber NOTIFY userDictWordsNumberChanged)
 
@@ -50,10 +49,6 @@ namespace SpellCheck {
         SpellCheckService(Common::ISystemEnvironment &environment,
                             Warnings::WarningsService &warningsService,
                             Models::SettingsModel &settingsModel);
-
-    public:
-        virtual void handleMessage(const Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck> &event) override;
-        virtual void handleMessage(const Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck> &event) override;
 
     public:
         void startService(Helpers::AsyncCoordinator &initCoordinator);

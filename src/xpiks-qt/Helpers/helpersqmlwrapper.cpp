@@ -114,11 +114,6 @@ namespace Helpers {
 #endif
     }
 
-
-    /*void HelpersQmlWrapper::removeUnavailableFiles() {
-        xpiks()->removeUnavailableFiles();
-    }*/
-
     bool HelpersQmlWrapper::isVector(const QString &path) const {
         return path.endsWith("eps", Qt::CaseInsensitive) ||
                 path.endsWith("ai", Qt::CaseInsensitive);
