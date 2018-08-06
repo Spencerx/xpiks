@@ -17,6 +17,7 @@
 
 namespace Models {
     class SettingsModel;
+    class ArtworksListModel;
 }
 
 namespace Encryption {
@@ -29,6 +30,21 @@ namespace Commands {
                               QMLExtensions::UICommandID::SetMasterPassword,
                               Encryption::SecretsManager,
                               Models::SettingsModel);
+
+        class RemoveUnavailableFilesCommand: public IUICommandTemplate {
+        public:
+            RemoveUnavailableFilesCommand(Models::ArtworksListModel &artworksListModel):
+                m_ArtworksListModel(artworksListModel)
+            {}
+
+            // IUICommandTemplate interface
+        public:
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::RemoveUnavailableFiles; }
+            virtual void execute(const QJSValue &value) override;
+
+        private:
+            Models::ArtworksListModel &m_ArtworksListModel;
+        };
     }
 }
 

@@ -15,15 +15,17 @@
 #include <stack>
 #include <memory>
 #include <QMutex>
-#include "../Commands/commandmanager.h"
 #include "iundoredomanager.h"
+#include <Common/messages.h>
+#include <Common/types.h>
 
 namespace UndoRedo {
     class HistoryItem;
 
     class UndoRedoManager:
             public QObject,
-            public IUndoRedoManager
+            public IUndoRedoManager,
+            public Common::MessagesTarget<Common::NamedType<int, Common::MessageType::UnavailableFiles>>
     {
         Q_OBJECT
         Q_PROPERTY(bool canUndo READ getCanUndo NOTIFY canUndoChanged)
@@ -35,6 +37,9 @@ namespace UndoRedo {
 
     public:
         bool getCanUndo() const { return !m_HistoryStack.empty(); }
+
+    public:
+        virtual void handleMessage(Common::NamedType<int, Common::MessageType::UnavailableFiles> const &message) override;
 
     signals:
         void canUndoChanged();

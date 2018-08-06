@@ -59,6 +59,11 @@ namespace Models {
         }
     }
 
+    void ZipArchiver::handleMessage(UnavailableFilesMessage const &) {
+        LOG_DEBUG << "#";
+        removeUnavailableItems();
+    }
+
     void ZipArchiver::archiveCreated(int) {
         m_ProcessedArtworksCount.fetchAndAddOrdered(1);
         emit percentChanged();

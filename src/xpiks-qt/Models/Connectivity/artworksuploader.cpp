@@ -118,6 +118,11 @@ namespace Models {
         emit itemsCountChanged();
     }
 
+    void ArtworksUploader::handleMessage(const UnavaibleFilesMessage &) {
+        LOG_DEBUG << "#";
+        removeUnavailableItems();
+    }
+
     void ArtworksUploader::uploadArtworks() {
         doUploadArtworks(m_ArtworksSnapshot);
     }

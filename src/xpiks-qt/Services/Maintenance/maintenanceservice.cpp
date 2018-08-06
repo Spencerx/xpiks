@@ -25,8 +25,8 @@
 
 namespace Maintenance {
     MaintenanceService::MaintenanceService(Common::ISystemEnvironment &environment):
-        m_Environment(environment),
         m_MaintenanceThread(nullptr),
+        m_Environment(environment),
         m_MaintenanceWorker(nullptr),
         m_LastSessionBatchId(INVALID_BATCH_ID)
     {

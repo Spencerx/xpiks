@@ -16,13 +16,16 @@
 #include <Common/abstractlistmodel.h>
 #include <Artworks/artworkelement.h>
 #include <Artworks/artworkmetadata.h>
-#include <Helpers/ifilenotavailablemodel.h>
 #include <Artworks/artworkssnapshot.h>
+#include <Common/messages.h>
+#include <Common/types.h>
 
 namespace Models {
+    using UnavailableFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;
+
     class ArtworksViewModel:
             public Common::AbstractListModel,
-            public Helpers::IFileNotAvailableModel
+            public Common::MessagesTarget<UnavailableFilesMessage>
     {
         Q_OBJECT
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
@@ -39,6 +42,9 @@ namespace Models {
     public:
         ArtworksViewModel(QObject *parent=NULL);
         virtual ~ArtworksViewModel() { }
+
+    public:
+        virtual void handleMessage(UnavailableFilesMessage const &message) override;
 
     protected:
         virtual void setArtworks(const Artworks::ArtworksSnapshot &snapshot);
@@ -86,9 +92,8 @@ namespace Models {
         virtual QVariant data(const QModelIndex &index, int role) const override;
         virtual QHash<int, QByteArray> roleNames() const override;
 
-        // IFileNotAvailableModel interface
     public:
-        virtual bool removeUnavailableItems() override;
+        virtual bool removeUnavailableItems();
 
         // AbstractListModel interface
     protected:

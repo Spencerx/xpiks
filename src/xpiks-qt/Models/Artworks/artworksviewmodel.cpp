@@ -27,6 +27,11 @@ namespace Models {
     {
     }
 
+    void ArtworksViewModel::handleMessage(UnavailableFilesMessage const &) {
+        LOG_DEBUG << "#";
+        removeUnavailableItems();
+    }
+
     void ArtworksViewModel::setArtworks(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_INFO << snapshot.size() << "artworks";
         if (snapshot.empty()) { return; }

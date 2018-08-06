@@ -14,16 +14,19 @@
 #include <QFutureWatcher>
 #include <QPair>
 #include <QVector>
-#include <Helpers/ifilenotavailablemodel.h>
 #include <Artworks/artworkssnapshot.h>
+#include <Common/messages.h>
+#include <Common/types.h>
 
 class QStringList;
 class QString;
 
 namespace Models {
+    using UnavailableFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;
+
     class ZipArchiver:
             public QObject,
-            public Helpers::IFileNotAvailableModel
+            public Common::MessagesTarget<UnavailableFilesMessage>
     {
         Q_PROPERTY(int percent READ getPercent NOTIFY percentChanged)
         Q_PROPERTY(bool inProgress READ getInProgress WRITE setInProgress NOTIFY inProgressChanged)
@@ -43,6 +46,9 @@ namespace Models {
     public:
         void setInProgress(bool value);
         void setHasErrors(bool value);
+
+    public:
+        virtual void handleMessage(UnavailableFilesMessage const &message);
 
     signals:
         void inProgressChanged();
@@ -66,7 +72,7 @@ namespace Models {
         void resetArtworks();
 
     protected:
-        virtual bool removeUnavailableItems() override;
+        bool removeUnavailableItems();
 
     private:
         void fillFilenamesHash(QHash<QString, QStringList> &hash);

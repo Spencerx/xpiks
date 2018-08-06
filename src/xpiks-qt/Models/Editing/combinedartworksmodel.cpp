@@ -444,11 +444,6 @@ namespace Models {
         emit keywordsCountChanged();
     }
 
-    void CombinedArtworksModel::generateAboutToBeRemoved() {
-        LOG_DEBUG << "#";
-        m_CommonKeywordsModel.notifyAboutToBeRemoved();
-    }
-
     void CombinedArtworksModel::userDictUpdateHandler(const QStringList &keywords, bool overwritten) {
         LOG_DEBUG << "#";
         doHandleUserDictChanged(keywords, overwritten);

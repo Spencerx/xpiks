@@ -83,7 +83,6 @@
 #include <Plugins/uiprovider.h>
 
 #include <Helpers/helpersqmlwrapper.h>
-#include <Helpers/ifilenotavailablemodel.h>
 
 class QQmlContext;
 class QQuickWindow;
@@ -125,7 +124,6 @@ public:
 
 public:
     Q_INVOKABLE void removeDirectory(int index);
-    Q_INVOKABLE void removeUnavailableFiles();
 
 private:
     int doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);
@@ -228,7 +226,6 @@ protected:
     Helpers::HelpersQmlWrapper m_HelpersQmlWrapper;
 
     Helpers::AsyncCoordinator m_InitCoordinator;
-    QVector<Helpers::IFileNotAvailableModel*> m_AvailabilityListeners;
     volatile bool m_ServicesInitialized = false;
     volatile bool m_AfterInitCalled = false;
 };

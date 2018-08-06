@@ -12,6 +12,11 @@
 #include "../Common/defines.h"
 #include "../Common/logging.h"
 
+void UndoRedo::UndoRedoManager::handleMessage(const Common::NamedType<int, Common::MessageType::UnavailableFiles> &) {
+    LOG_DEBUG << "#";
+    undoLastAction();
+}
+
 void UndoRedo::UndoRedoManager::recordHistoryItem(const std::shared_ptr<Commands::ICommand> &historyItem) {
     LOG_INFO << "History item about to be recorded";
 

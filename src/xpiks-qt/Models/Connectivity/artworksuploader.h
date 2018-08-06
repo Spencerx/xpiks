@@ -17,7 +17,6 @@
 #include <Connectivity/testconnection.h>
 #include <Connectivity/uploadwatcher.h>
 #include <Connectivity/analyticsuserevent.h>
-#include <Helpers/ifilenotavailablemodel.h>
 #include <Common/isystemenvironment.h>
 #include <Common/messages.h>
 #include "uploadinforepository.h"
@@ -45,10 +44,12 @@ namespace Models {
     class SettingsModel;
 #define PERCENT_EPSILON 0.0001
 
+    using UnavaibleFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;
+
     class ArtworksUploader:
             public QObject,
-            public Helpers::IFileNotAvailableModel,
-            public Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>
+            public Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>,
+            public Common::MessagesTarget<UnavaibleFilesMessage>
     {
         Q_OBJECT
         Q_PROPERTY(int percent READ getUIPercent NOTIFY percentChanged)
@@ -98,6 +99,7 @@ namespace Models {
 
     public:
         void setArtworks(Artworks::ArtworksSnapshot &snapshot);
+        virtual void handleMessage(UnavaibleFilesMessage const &message);
 
     public:
         Q_INVOKABLE void uploadArtworks();
@@ -132,7 +134,7 @@ namespace Models {
         void doUploadArtworks(const Artworks::ArtworksSnapshot &snapshot);
 
     protected:
-        virtual bool removeUnavailableItems() override;
+        bool removeUnavailableItems();
 
     private:
         Common::ISystemEnvironment &m_Environment;

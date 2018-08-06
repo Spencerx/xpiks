@@ -11,11 +11,18 @@
 #include "generalcommands.h"
 #include <Models/settingsmodel.h>
 #include <Encryption/secretsmanager.h>
+#include <Models/Artworks/artworkslistmodel.h>
 
 namespace Commands {
     namespace UI {
         void SetMasterPasswordCommand::execute(const QJSValue &value) {
+            LOG_DEBUG << "#";
             m_Target.onMasterPasswordSet(m_Source);
+        }
+
+        void RemoveUnavailableFilesCommand::execute(const QJSValue &) {
+            LOG_DEBUG << "#";
+            m_ArtworksListModel.purgeUnavailableFiles();
         }
     }
 }

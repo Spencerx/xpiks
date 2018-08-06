@@ -7,138 +7,117 @@
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/coretestsenvironment.h"
-#include <Models/Artworks/artworksrepository.h>
 #include <Artworks/artworkelement.h>
+#include <Artworks/artworkssnapshot.h>
+#include <UndoRedo/undoredomanager.h>
+#include <KeywordsPresets/presetkeywordsmodel.h>
+#include <Models/Artworks/artworksrepository.h>
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Connectivity/ziparchiver.h>
 #include <Models/settingsmodel.h>
+#include <Models/Session/recentdirectoriesmodel.h>
+#include <Models/Artworks/filteredartworkslistmodel.h>
 
-#define DECLARE_MODELS_AND_GENERATE_(count) \
+#define DECLARE_BASIC_MODELS\
     Mocks::CoreTestsEnvironment environment; \
     UndoRedo::UndoRedoManager undoRedoManager; \
     Mocks::CommandManagerMock commandManager(undoRedoManager); \
     Models::RecentDirectoriesModel recentDirectories(environment);\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);\
-    Mocks::ArtworksListModelMock artworksListModel(artworksRepository);\
+    Mocks::ArtworksListModelMock artworksListModel(artworksRepository);
+
+#define DECLARE_MODELS_AND_GENERATE_(count) \
+    DECLARE_BASIC_MODELS\
     KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
     Models::SettingsModel settingsModel(environment);\
     Models::FilteredArtworksListModel filteredArtworksModel(\
     artworksListModel, commandManager, keywordsPresets, settingsModel);\
     Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets); \
     Models::ZipArchiver zipArchiver; \
-    artworksListModel.generateAndAddArtworks(10);
+    artworksListModel.generateAndAddArtworks(10);\
+    Common::connectSource<Common::NamedType<int, Common::MessageType::UnavailableFiles>>(artworksListModel,\
+{zipArchiver, combinedModel});
 
 void RemoveFilesFsTests::removeArtworksSignals() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtworksListModelMock artItemsMock;
-    Mocks::CoreTestsEnvironment environment;
-    Mocks::ArtworksRepositoryMock artworksRepositoryMock(environment);
+    DECLARE_BASIC_MODELS;
+    artworksListModel.generateAndAddArtworks(5);
 
-    Models::ArtworksRepository *artworksRepository = &artworksRepositoryMock;
-    Models::ArtItemsModel *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
-    commandManagerMock.InjectDependency(artworksRepository);
+    QSignalSpy artRepositoryFileDeleted(&artworksRepository, SIGNAL(filesUnavailable()));
+    QSignalSpy artworksListFileDeleted(&artworksListModel, SIGNAL(unavailableArtworksFound()));
 
-    int itemsToAdd = 5;
-    QSignalSpy artRepositoryFileDeleted(artworksRepository, SIGNAL(filesUnavailable()));
-    QSignalSpy ArtItemFileDeleted(artItemsModel, SIGNAL(unavailableArtworksFound()));
+    artworksRepository.removeFileAndEmitSignal();
 
-    commandManagerMock.generateAndAddArtworks(itemsToAdd);
-
-    artworksRepositoryMock.removeFileAndEmitSignal();
-
-// signals
+    // signals
     QCOMPARE(artRepositoryFileDeleted.count(), 1);
-    QCOMPARE(ArtItemFileDeleted.count(), 1);
+    QCOMPARE(artworksListFileDeleted.count(), 1);
 }
 
 void RemoveFilesFsTests::removeArtworksNumberItems() {
     int itemsToAdd = 10, itemsToDelete = 5;
     DECLARE_MODELS_AND_GENERATE_(itemsToAdd);
 
-    combinedModel.resetModel();
-
-    MetadataIO::WeakArtworksSnapshot artworksList;
+    Artworks::ArtworksSnapshot snapshot;
 
     for (int i = 0; i < itemsToAdd; i++) {
-         auto *metadata = ArtworksListModelMock.getMockArtwork(i);
-         artworksList.push_back(metadata);
+        auto *metadata = artworksListModel.getMockArtwork(i);
+        snapshot.append(metadata);
     }
 
-    combinedModel.resetModel();
-    combinedModel.setArtworks(artworksList);
+    combinedModel.setArtworks(snapshot);
 
-    Artworks::ArtworksSnapshot snapshot(artworksList);
-    zipArchive.setArtworks(snapshot);
+    zipArchiver.setArtworks(snapshot);
 
-// delete
-   artworksListModel.mockDeletion(itemsToDelete);
+    // delete
+    artworksListModel.mockDeletion(itemsToDelete);
 
-// send accept
-    commandManagerMock.mockAcceptDeletion();
+    // send accept
+    artworksListModel.purgeUnavailableFiles();
 
-//items
-    QCOMPARE(ArtworksListModelMock.getArtworksCount(), itemsToAdd - itemsToDelete);
+    //items
+    QCOMPARE(artworksListModel.getArtworksSize(), itemsToAdd - itemsToDelete);
     QCOMPARE(combinedModel.getArtworksCount(), itemsToAdd - itemsToDelete);
-    QCOMPARE(filteredItemsModel.getItemsCount(), itemsToAdd - itemsToDelete);
-    QCOMPARE(zipArchive.getItemsCount(), itemsToAdd - itemsToDelete);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd - itemsToDelete);
+    QCOMPARE(zipArchiver.getItemsCount(), itemsToAdd - itemsToDelete);
 }
 
 void RemoveFilesFsTests::removeArtworksAllItems() {
     int itemsToAdd = 10, itemsToDelete = 10;
     DECLARE_MODELS_AND_GENERATE_(itemsToAdd);
 
-    combinedModel.resetModel();
-    MetadataIO::WeakArtworksSnapshot artworksList;
+    Artworks::ArtworksSnapshot snapshot;
 
     for (int i = 0; i < itemsToAdd; i++) {
-         auto *metadata = ArtworksListModelMock.getMockArtwork(i);
-         artworksList.push_back(metadata);
+        auto *artwork = artworksListModel.getMockArtwork(i);
+        snapshot.append(artwork);
     }
 
-    combinedModel.resetModel();
-    combinedModel.setArtworks(artworksList);
+    combinedModel.setArtworks(snapshot);
+    zipArchiver.setArtworks(snapshot);
 
-    Artworks::ArtworksSnapshot snapshot(artworksList);
-    zipArchive.setArtworks(snapshot);
+    // delete
+    artworksListModel.mockDeletion(itemsToDelete);
 
-// delete
-   commandManagerMock.mockDeletion(itemsToDelete);
+    artworksListModel.purgeUnavailableFiles();
 
-// send accept
-    commandManagerMock.mockAcceptDeletion();
-
-//items
-    QCOMPARE(ArtworksListModelMock.getArtworksCount(), itemsToAdd - itemsToDelete);
+    //items
+    QCOMPARE(artworksListModel.getArtworksSize(), itemsToAdd - itemsToDelete);
     QCOMPARE(combinedModel.getArtworksCount(), itemsToAdd - itemsToDelete);
-    QCOMPARE(filteredItemsModel.getItemsCount(), itemsToAdd - itemsToDelete);
-    QCOMPARE(zipArchive.getItemsCount(), itemsToAdd - itemsToDelete);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd - itemsToDelete);
+    QCOMPARE(zipArchiver.getItemsCount(), itemsToAdd - itemsToDelete);
 }
 
 void RemoveFilesFsTests::removeVectorSmokeTest() {
-    Mocks::CommandManagerMock commandManagerMock;
-    Mocks::ArtworksListModelMock artItemsMock;
-    Mocks::CoreTestsEnvironment environment;
-    Mocks::ArtworksRepositoryMock artworksRepositoryMock(environment);
+    DECLARE_BASIC_MODELS;
 
-    Models::ArtworksRepository *artworksRepository = &artworksRepositoryMock;
-    Models::ArtItemsModel *artItemsModel = &artItemsMock;
-    commandManagerMock.InjectDependency(artItemsModel);
-    commandManagerMock.InjectDependency(artworksRepository);
+    QSignalSpy artRepositoryFileDeleted(&artworksRepository, SIGNAL(filesUnavailable()));
+    QSignalSpy vectorRemovedSpy(&artworksListModel, SIGNAL(unavailableVectorsFound()));
+    QSignalSpy artworkRemovedSpy(&artworksListModel, SIGNAL(unavailableArtworksFound()));
 
-    const int itemsToAdd = 5;
-    QSignalSpy artRepositoryFileDeleted(artworksRepository, SIGNAL(filesUnavailable()));
-    QSignalSpy vectorRemovedSpy(artItemsModel, SIGNAL(unavailableVectorsFound()));
-    QSignalSpy artworkRemovedSpy(artItemsModel, SIGNAL(unavailableArtworksFound()));
+    artworksListModel.generateAndAddArtworks(5);
 
-    commandManagerMock.generateAndAddArtworks(itemsToAdd);
+    artworksRepository.removeVectorAndEmitSignal();
 
-    QObject::connect(artworksRepository, &Models::ArtworksRepository::filesUnavailable,
-                     artItemsModel, &Models::ArtItemsModel::onFilesUnavailableHandler);
-
-    artworksRepositoryMock.removeVectorAndEmitSignal();
-
-// signals
+    // signals
     QCOMPARE(artRepositoryFileDeleted.count(), 1);
     QCOMPARE(vectorRemovedSpy.count(), 1);
     QCOMPARE(artworkRemovedSpy.count(), 0);

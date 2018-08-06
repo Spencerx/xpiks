@@ -53,12 +53,14 @@ namespace Models {
 
     using ArtworkSpellCheckMessage = Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>;
     using ArtworksListSpellCheckMessage = Common::NamedType<std::vector<Artworks::ArtworkMetadata*>, Common::MessageType::SpellCheck>;
+    using UnavailableFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;
 
     class ArtworksListModel:
             public QAbstractListModel,
             public Common::MessagesSource<ArtworkSpellCheckMessage>,
             public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>,
-            public Common::MessagesSource<ArtworksListSpellCheckMessage>
+            public Common::MessagesSource<ArtworksListSpellCheckMessage>,
+            public Common::MessagesSource<UnavailableFilesMessage>
     {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
@@ -67,6 +69,7 @@ namespace Models {
         using Common::MessagesSource<ArtworkSpellCheckMessage>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
         using Common::MessagesSource<ArtworksListSpellCheckMessage>::sendMessage;
+        using Common::MessagesSource<UnavailableFilesMessage>::sendMessage;
 
     public:
         ArtworksListModel(ArtworksRepository &repository,
@@ -119,6 +122,7 @@ namespace Models {
         void setCurrentIndex(size_t index);
         void setItemsSaved(const Helpers::IndicesRanges &ranges);
         void detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges);
+        void purgeUnavailableFiles();
 
     public:
         // update hub related
@@ -133,13 +137,13 @@ namespace Models {
         ArtworksRemoveResult removeFilesFromDirectory(int directoryIndex);
         void restoreRemoved();
         void deleteRemovedItems();
-        void deleteUnavailableItems();
         void deleteAllItems();
 
     protected:
         void deleteItems(const Helpers::IndicesRanges &ranges);
 
     private:
+        void deleteUnavailableItems();
         // general purpose internal methods
         int attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                            const Artworks::ArtworksSnapshot &snapshot,

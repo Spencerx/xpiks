@@ -149,10 +149,6 @@ void XpiksApp::initialize() {
 
     m_TelemetryService.setInterfaceLanguage(m_LanguagesModel.getCurrentLanguage());
     m_ColorsModel.applyTheme(m_SettingsModel.getSelectedThemeIndex());
-
-    m_AvailabilityListeners.append(&m_CombinedArtworksModel);
-    m_AvailabilityListeners.append(&m_ArtworksUploader);
-    m_AvailabilityListeners.append(&m_ZipArchiver);
 }
 
 void XpiksApp::setupUI(QQmlContext *context) {
@@ -372,27 +368,6 @@ void XpiksApp::removeDirectory(int index) {
     int originalIndex = m_FilteredArtworksRepository.getOriginalIndex(index);
     auto removeResult = m_ArtworksListModel.removeFilesFromDirectory(originalIndex);
     Commands::SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager).execute();
-}
-
-void XpiksApp::removeUnavailableFiles() {
-    LOG_DEBUG << "#";
-    m_CombinedArtworksModel.generateAboutToBeRemoved();
-    m_ArtworksListModel.generateAboutToBeRemoved();
-    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-
-    for (auto &listener: m_AvailabilityListeners) {
-        listener->removeUnavailableItems();
-    }
-
-    m_ArtworksListModel.deleteUnavailableItems();
-
-    m_UndoRedoManager.discardLastAction();
-
-    if (m_ArtworksRepository.canPurgeUnavailableFiles()) {
-        m_ArtworksRepository.purgeUnavailableFiles();
-    } else {
-        LOG_INFO << "Unavailable files purging postponed";
-    }
 }
 
 int XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
@@ -617,7 +592,10 @@ void XpiksApp::registerUICommands() {
                     m_KeywordsCompletions, m_CombinedArtworksModel),
 
                     std::make_shared<Commands::UI::SetMasterPasswordCommand>(
-                    m_SecretsManager, m_SettingsModel)
+                    m_SecretsManager, m_SettingsModel),
+
+                    std::make_shared<Commands::UI::RemoveUnavailableFilesCommand>(
+                    m_ArtworksListModel)
                 });
 }
 
@@ -650,6 +628,10 @@ void XpiksApp::setupMessaging() {
     Common::connectTarget<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>(
                 m_InspectionHub,
     { m_PresetsModel, m_CombinedArtworksModel, m_DeleteKeywordsModel, m_QuickBuffer });
+
+    Common::connectSource<Common::NamedType<int, Common::MessageType::UnavailableFiles>>(
+                m_ArtworksListModel,
+    { m_CombinedArtworksModel, m_ArtworksUploader, m_ZipArchiver, m_UndoRedoManager });
 }
 
 void XpiksApp::servicesInitialized(int status) {

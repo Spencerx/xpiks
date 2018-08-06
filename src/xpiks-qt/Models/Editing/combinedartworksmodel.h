@@ -151,10 +151,8 @@ namespace Models {
         virtual void signalTitleChanged() override { emit titleChanged(); }
         virtual void signalKeywordsCountChanged() override { emit keywordsCountChanged(); }
 
-    public:
-        void generateAboutToBeRemoved();
-
 #ifdef CORE_TESTS
+    public:
         QStringList getKeywords();
 #endif
 

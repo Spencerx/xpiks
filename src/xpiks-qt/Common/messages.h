@@ -19,7 +19,6 @@ namespace Common {
     struct MessageType {
         enum Type {
             SpellCheck,
-            Update,
             UnavailableFiles
         };
     };
@@ -56,6 +55,14 @@ namespace Common {
                        std::initializer_list<std::reference_wrapper<MessagesSource<T>>> sources) {
         for (auto s: sources) {
             s.get().addTarget(t);
+        }
+    }
+
+    template<typename T>
+    void connectSource(MessagesSource<T> &source,
+                       std::initializer_list<std::reference_wrapper<MessagesTarget<T>>> targets) {
+        for (auto t: targets) {
+            source.addTarget(t);
         }
     }
 }

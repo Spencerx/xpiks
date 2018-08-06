@@ -206,6 +206,21 @@ namespace Models {
         updateItems(ranges, QVector<int>() << HasVectorAttachedRole);
     }
 
+    void ArtworksListModel::purgeUnavailableFiles() {
+        LOG_DEBUG << "#";
+        generateAboutToBeRemoved();
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+        sendMessage(UnavailableFilesMessage(1));
+        deleteUnavailableItems();
+
+        if (m_ArtworksRepository.canPurgeUnavailableFiles()) {
+            m_ArtworksRepository.purgeUnavailableFiles();
+        } else {
+            LOG_INFO << "Unavailable files purging postponed";
+        }
+    }
+
     void ArtworksListModel::processUpdateRequests(const std::vector<std::shared_ptr<Services::ArtworkUpdateRequest> > &updateRequests) {
         LOG_INFO << updateRequests.size() << "requests to process";
 
@@ -341,14 +356,6 @@ namespace Models {
         deleteItems(Helpers::IndicesRanges(indices));
     }
 
-    void ArtworksListModel::deleteUnavailableItems() {
-        LOG_DEBUG << "#";
-        auto indices = filterArtworks<int>(
-                    [](Artworks::ArtworkMetadata *artwork){ return artwork->isUnavailable(); },
-                [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
-        deleteItems(Helpers::IndicesRanges(indices));
-    }
-
     void ArtworksListModel::deleteAllItems() {
         LOG_DEBUG << "#";
         // should be called only from beforeDestruction() !
@@ -403,6 +410,14 @@ namespace Models {
 
         if (willReset) { emit endResetModel(); }
         syncArtworksIndices();
+    }
+
+    void ArtworksListModel::deleteUnavailableItems() {
+        LOG_DEBUG << "#";
+        auto indices = filterArtworks<int>(
+                    [](Artworks::ArtworkMetadata *artwork){ return artwork->isUnavailable(); },
+                [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
+        deleteItems(Helpers::IndicesRanges(indices));
     }
 
     int ArtworksListModel::attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,

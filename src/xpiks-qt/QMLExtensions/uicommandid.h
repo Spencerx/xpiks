@@ -25,6 +25,7 @@ namespace QMLExtensions {
         enum CommandID {
             SaveSession,
             SetMasterPassword,
+            RemoveUnavailableFiles,
             // -------------------
             EditSelectedArtworks,
             FixSpellingInSelected,
