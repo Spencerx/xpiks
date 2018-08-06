@@ -21,11 +21,11 @@ namespace Helpers {
     public:
         IndicesRanges() { }
         IndicesRanges(std::initializer_list<int> l);
-        IndicesRanges(const std::vector<int> &indices);
-        IndicesRanges(const QVector<int> &indices);
+        IndicesRanges(std::vector<int> const &indices);
+        IndicesRanges(QVector<int> const &indices);
         IndicesRanges(int start, int count);
         IndicesRanges(size_t count);
-        IndicesRanges(const IndicesRanges &other);
+        IndicesRanges(IndicesRanges const &other);
         IndicesRanges(IndicesRanges &&other);
         IndicesRanges &operator=(IndicesRanges &&other);
 

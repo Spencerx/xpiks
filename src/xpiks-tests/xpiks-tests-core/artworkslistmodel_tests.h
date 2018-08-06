@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QtTest/QTest>
 
-class ArtItemsModelTests : public QObject
+class ArtworksListModelTests : public QObject
 {
     Q_OBJECT
 private slots:

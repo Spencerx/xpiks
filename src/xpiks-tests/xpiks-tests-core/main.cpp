@@ -18,7 +18,7 @@
 #include "artworkfilter_tests.h"
 #include "removefilesfs_tests.h"
 #include "recentitems_tests.h"
-#include "artitemsmodel_tests.h"
+#include "artworkslistmodel_tests.h"
 #include "fixspelling_tests.h"
 #include "deleteoldlogs_tests.h"
 #include "replace_tests.h"
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     QTEST_CLASS(ArtworkFilterTests, aft, result);
     QTEST_CLASS(RemoveFilesFsTests, del,result);
     QTEST_CLASS(RecentItemsTests, rdt, result);
-    QTEST_CLASS(ArtItemsModelTests, aimt, result);
+    QTEST_CLASS(ArtworksListModelTests, aimt, result);
     QTEST_CLASS(FixSpellingTests, fst, result);
     QTEST_CLASS(DeleteOldLogsTest, dolt, result);
     QTEST_CLASS(ReplaceTests, rpl, result);

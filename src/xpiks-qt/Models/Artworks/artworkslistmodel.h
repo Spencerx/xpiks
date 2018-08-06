@@ -281,10 +281,8 @@ namespace Models {
             }
         }
 
-#ifdef INTEGRATION_TESTS
-    public:
-        void fakeDeleteAllItems();
-#endif
+    protected:
+        ArtworksContainer const &getFinalizationList() const { return m_FinalizationList; }
 
     private:
         ArtworksContainer m_ArtworkList;

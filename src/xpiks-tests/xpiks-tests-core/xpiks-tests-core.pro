@@ -107,7 +107,6 @@ SOURCES += main.cpp \
     artworkfilter_tests.cpp \
     removefilesfs_tests.cpp \
     recentitems_tests.cpp \
-    artitemsmodel_tests.cpp \
     fixspelling_tests.cpp \
     replacepreview_tests.cpp \
     replace_tests.cpp \
@@ -162,7 +161,9 @@ SOURCES += main.cpp \
     ../../xpiks-qt/UndoRedo/undoredomanager.cpp \
     ../../xpiks-qt/Models/Session/recentdirectoriesmodel.cpp \
     ../../xpiks-qt/Models/Session/recentitemsmodel.cpp \
-    ../../xpiks-qt/Models/Connectivity/ziparchiver.cpp
+    ../../xpiks-qt/Models/Connectivity/ziparchiver.cpp \
+    artworkslistmodel_tests.cpp \
+    ../../xpiks-qt/Services/artworksupdatehub.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -184,7 +185,6 @@ HEADERS += \
     Mocks/artworksrepositorymock.h \
     recentitems_tests.h \
     removefilesfs_tests.h \
-    artitemsmodel_tests.h \
     fixspelling_tests.h \
     Mocks/spellcheckservicemock.h \
     replacepreview_tests.h \
@@ -276,5 +276,7 @@ HEADERS += \
     Mocks/selectedindicessourcemock.h \
     ../../xpiks-qt/Artworks/artworkelement.h \
     ../../xpiks-qt/Services/AutoComplete/icompletionsource.h \
-    ../../xpiks-qt/Models/Connectivity/ziparchiver.h
+    ../../xpiks-qt/Models/Connectivity/ziparchiver.h \
+    artworkslistmodel_tests.h \
+    ../../xpiks-qt/Services/artworksupdatehub.h
 

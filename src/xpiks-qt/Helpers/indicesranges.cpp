@@ -12,7 +12,7 @@
 #include <algorithm>
 
 namespace Helpers {
-    void indicesToRanges(const std::vector<int> &indices, std::vector<std::pair<int, int> > &ranges) {
+    void indicesToRanges(std::vector<int> const &indices, std::vector<std::pair<int, int> > &ranges) {
         if (indices.empty()) { return; }
 
         int currentStart = indices[0];
@@ -36,13 +36,13 @@ namespace Helpers {
         indicesToRanges(sortedIndices, m_Ranges);
     }
 
-    IndicesRanges::IndicesRanges(const std::vector<int> &indices) {
+    IndicesRanges::IndicesRanges(std::vector<int> const &indices) {
         std::vector<int> sortedIndices = indices;
         std::sort(sortedIndices.begin(), sortedIndices.end());
         indicesToRanges(sortedIndices, m_Ranges);
     }
 
-    IndicesRanges::IndicesRanges(const QVector<int> &indices) {
+    IndicesRanges::IndicesRanges(QVector<int> const &indices) {
         std::vector<int> sortedIndices = indices.toStdVector();
         std::sort(sortedIndices.begin(), sortedIndices.end());
         indicesToRanges(sortedIndices, m_Ranges);
@@ -56,7 +56,7 @@ namespace Helpers {
         m_Ranges.emplace_back(std::make_pair(0, count - 1));
     }
 
-    IndicesRanges::IndicesRanges(const IndicesRanges &other):
+    IndicesRanges::IndicesRanges(IndicesRanges const &other):
         m_Ranges(other.m_Ranges)
     {
     }
