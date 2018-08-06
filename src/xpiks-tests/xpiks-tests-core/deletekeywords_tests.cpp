@@ -4,23 +4,23 @@
 #include "Mocks/artworkmetadatamock.h"
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/artworksrepositorymock.h"
-#include "../../xpiks-qt/Models/deletekeywordsviewmodel.h"
-#include "../../xpiks-qt/Models/artworksrepository.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
+#include <Models/Editing/deletekeywordsviewmodel.h>
+#include <Models/Artworks/artworksrepository.h>
+#include <Models/Artworks/filteredartworkslistmodel.h>
+#include <Models/Session/recentdirectoriesmodel.h>
+#include <KeywordsPresets/presetkeywordsmodel.h>
+#include <UndoRedo/undoredomanager.h>
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \
-    Mocks::CommandManagerMock commandManagerMock; \
-    Mocks::ArtworksListModelMock ArtworksListModelMock; \
-    Mocks::ArtworksRepositoryMock artworksRepository(environment); \
-    Models::FilteredArtItemsProxyModel filteredItemsModel; \
-    Models::DeleteKeywordsViewModel deleteKeywordsModel; \
-    commandManagerMock.InjectDependency(&artworksRepository); \
-    commandManagerMock.InjectDependency(&ArtworksListModelMock); \
-    commandManagerMock.InjectDependency(&deleteKeywordsModel); \
-    filteredItemsModel.setSourceModel(&ArtworksListModelMock); \
-    commandManagerMock.InjectDependency(&filteredItemsModel); \
-    commandManagerMock.generateAndAddArtworks(count);
+    Models::RecentDirectoriesModel recentDirectories(environment);\
+    Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories); \
+    Mocks::ArtworksListModelMock artworksListModel(artworksRepository); \
+    UndoRedo::UndoRedoManager undoRedoManager;\
+    Mocks::CommandManagerMock commandManagerMock(undoRedoManager); \
+    KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
+    Models::DeleteKeywordsViewModel deleteKeywordsModel(commandManager, keywordsPresets); \
+    artworksListModel.generateAndAddArtworks(count);
 
 void DeleteKeywordsTests::smokeTest() {
     DECLARE_MODELS_AND_GENERATE(2);
@@ -29,16 +29,15 @@ void DeleteKeywordsTests::smokeTest() {
     QStringList keywords;
     keywords << keywordToDelete << "keyword2" << "keyword3";
 
-    ArtworksListModelMock.foreachArtwork([&keywords](int, Mocks::ArtworkMetadataMock *artwork) {
+    artworksListModel.foreachArtwork([&keywords](int, Mocks::ArtworkMetadataMock *artwork) {
         artwork->setKeywords(keywords);
     });
 
-    filteredItemsModel.selectFilteredArtworks();
-    filteredItemsModel.deleteKeywordsFromSelected();
+    deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
     deleteKeywordsModel.appendKeywordToDelete(keywordToDelete);
     deleteKeywordsModel.deleteKeywords();
 
-    ArtworksListModelMock.foreachArtwork([&](int, Mocks::ArtworkMetadataMock *artwork) {
+    artworksListModel.foreachArtwork([&](int, Mocks::ArtworkMetadataMock *artwork) {
         QCOMPARE(artwork->rowCount(), keywords.length() - 1);
         auto *keywordsModel = artwork->getBasicModel();
         QVERIFY(!keywordsModel->containsKeyword(keywordToDelete));
@@ -50,21 +49,20 @@ void DeleteKeywordsTests::keywordsCombinedTest() {
 
     const QString keywordToDelete = "keywordToDelete";
 
-    ArtworksListModelMock.foreachArtwork([&](int index, Mocks::ArtworkMetadataMock *artwork) {
+    artworksListModel.foreachArtwork([&](int index, Mocks::ArtworkMetadataMock *artwork) {
         artwork->clearKeywords();
         artwork->appendKeyword("keyword" + QString::number(index));
         artwork->appendKeyword(keywordToDelete);
     });
 
-    filteredItemsModel.selectFilteredArtworks();
-    filteredItemsModel.deleteKeywordsFromSelected();
+    deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
 
     QVERIFY(deleteKeywordsModel.containsCommonKeyword(keywordToDelete));
 
     deleteKeywordsModel.appendKeywordToDelete(keywordToDelete);
     deleteKeywordsModel.deleteKeywords();
 
-    ArtworksListModelMock.foreachArtwork([&](int, Mocks::ArtworkMetadataMock *artwork) {
+    artworksListModel.foreachArtwork([&](int, Mocks::ArtworkMetadataMock *artwork) {
         auto *keywordsModel = artwork->getBasicModel();
         QVERIFY(!keywordsModel->containsKeyword(keywordToDelete));
     });
@@ -75,19 +73,18 @@ void DeleteKeywordsTests::doesNotDeleteOtherCaseTest() {
 
     const QString keywordToDelete = "keywordToDelete";
 
-    ArtworksListModelMock.foreachArtwork([&](int index, Mocks::ArtworkMetadataMock *artwork) {
+    artworksListModel.foreachArtwork([&](int index, Mocks::ArtworkMetadataMock *artwork) {
         artwork->clearKeywords();
         artwork->appendKeyword("keyword" + QString::number(index));
         artwork->appendKeyword(keywordToDelete);
     });
 
-    filteredItemsModel.selectFilteredArtworks();
-    filteredItemsModel.deleteKeywordsFromSelected();
+    deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
     deleteKeywordsModel.appendKeywordToDelete(keywordToDelete.toUpper());
     deleteKeywordsModel.setCaseSensitive(true);
     deleteKeywordsModel.deleteKeywords();
 
-    ArtworksListModelMock.foreachArtwork([&](int, Mocks::ArtworkMetadataMock *artwork) {
+    artworksListModel.foreachArtwork([&](int, Mocks::ArtworkMetadataMock *artwork) {
         auto *keywordsModel = artwork->getBasicModel();
         QCOMPARE(keywordsModel->getKeywordsCount(), 2);
         QVERIFY(keywordsModel->containsKeyword(keywordToDelete));
@@ -99,17 +96,16 @@ void DeleteKeywordsTests::doesNotDeleteNoKeywordsTest() {
 
     const QString keywordToDelete = "keywordToDelete";
 
-    ArtworksListModelMock.foreachArtwork([&](int index, Mocks::ArtworkMetadataMock *artwork) {
+    artworksListModel.foreachArtwork([&](int index, Mocks::ArtworkMetadataMock *artwork) {
         artwork->clearKeywords();
         artwork->appendKeyword("keyword" + QString::number(index));
         artwork->appendKeyword(keywordToDelete);
     });
 
-    filteredItemsModel.selectFilteredArtworks();
-    filteredItemsModel.deleteKeywordsFromSelected();
+    deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
     deleteKeywordsModel.deleteKeywords();
 
-    ArtworksListModelMock.foreachArtwork([&](int, Mocks::ArtworkMetadataMock *artwork) {
+    artworksListModel.foreachArtwork([&](int, Mocks::ArtworkMetadataMock *artwork) {
         auto *keywordsModel = artwork->getBasicModel();
         QCOMPARE(keywordsModel->getKeywordsCount(), 2);
         QVERIFY(keywordsModel->containsKeyword(keywordToDelete));
@@ -121,19 +117,18 @@ void DeleteKeywordsTests::deleteCaseInsensitiveTest() {
 
     const QString keywordToDelete = "keywordToDelete";
 
-    ArtworksListModelMock.foreachArtwork([&](int index, Mocks::ArtworkMetadataMock *artwork) {
+    artworksListModel.foreachArtwork([&](int index, Mocks::ArtworkMetadataMock *artwork) {
         artwork->clearKeywords();
         artwork->appendKeyword("keyword" + QString::number(index));
         artwork->appendKeyword(index % 2 == 0 ? keywordToDelete.toLower() : keywordToDelete.toUpper());
     });
 
-    filteredItemsModel.selectFilteredArtworks();
-    filteredItemsModel.deleteKeywordsFromSelected();
+    deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
     deleteKeywordsModel.appendKeywordToDelete(keywordToDelete);
     deleteKeywordsModel.setCaseSensitive(false);
     deleteKeywordsModel.deleteKeywords();
 
-    ArtworksListModelMock.foreachArtwork([&](int, Mocks::ArtworkMetadataMock *artwork) {
+    artworksListModel.foreachArtwork([&](int, Mocks::ArtworkMetadataMock *artwork) {
         auto *keywordsModel = artwork->getBasicModel();
         QCOMPARE(keywordsModel->getKeywordsCount(), 1);
         QVERIFY(!keywordsModel->containsKeyword(keywordToDelete));

@@ -114,7 +114,8 @@ namespace Models {
         void unselectAllItems();
         virtual void updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles = QVector<int>());
         void updateSelection(SelectionType selectionType, const QVector<int> &roles = QVector<int>());
-        std::unique_ptr<Artworks::SessionSnapshot> snapshotAll();
+        std::unique_ptr<Artworks::SessionSnapshot> createSessionSnapshot();
+        Artworks::ArtworksSnapshot createArtworksSnapshot();
         void generateAboutToBeRemoved();
         void unlockAllForIO();
         bool isInSelectedDirectory(int artworkIndex);

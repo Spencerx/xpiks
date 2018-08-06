@@ -21,7 +21,7 @@ namespace Artworks {
         }
     }
 
-    SessionSnapshot::SessionSnapshot(const std::vector<ArtworkMetadata *> &artworksList, const QStringList &fullDirectories):
+    SessionSnapshot::SessionSnapshot(std::vector<ArtworkMetadata *> const &artworksList, QStringList const &fullDirectories):
         m_DirectoriesSnapshot(fullDirectories)
     {
         LOG_DEBUG << "Creating snapshot of" << artworksList.size() << "artwork(s) and" << m_DirectoriesSnapshot.size() << "full directory(ies)";
@@ -32,7 +32,7 @@ namespace Artworks {
         }
     }
 
-    ArtworksSnapshot::ArtworksSnapshot(const WeakArtworksSnapshot &artworks) {
+    ArtworksSnapshot::ArtworksSnapshot(WeakArtworksSnapshot const &artworks) {
         append(artworks);
     }
 
@@ -41,7 +41,7 @@ namespace Artworks {
         append(v);
     }
 
-    ArtworksSnapshot::ArtworksSnapshot(const std::deque<ArtworkMetadata *> &artworks) {
+    ArtworksSnapshot::ArtworksSnapshot(std::deque<ArtworkMetadata *> const &artworks) {
        append(artworks);
     }
 
@@ -67,7 +67,7 @@ namespace Artworks {
         LOG_DEBUG << "Destroying snapshot of" << m_ArtworksSnapshot.size() << "artwork(s)";
     }
 
-    void ArtworksSnapshot::append(const WeakArtworksSnapshot &artworks) {
+    void ArtworksSnapshot::append(WeakArtworksSnapshot const &artworks) {
         LOG_DEBUG << "Appending snapshot of" << artworks.size() << "artwork(s)";
         m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + artworks.size());
         for (auto &item: artworks) {
@@ -75,7 +75,7 @@ namespace Artworks {
         }
     }
 
-    void ArtworksSnapshot::append(const std::deque<ArtworkMetadata *> &artworks) {
+    void ArtworksSnapshot::append(std::deque<ArtworkMetadata *> const &artworks) {
         LOG_DEBUG << "Appending snapshot of" << artworks.size() << "artwork(s)";
         m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + artworks.size());
         for (auto &item: artworks) {
@@ -102,7 +102,7 @@ namespace Artworks {
         append(rawSnapshot);
     }
 
-    void ArtworksSnapshot::copyFrom(const ArtworksSnapshot &other) {
+    void ArtworksSnapshot::copyFrom(ArtworksSnapshot const &other) {
         clear();
         LOG_DEBUG << "Copying snapshot of" << other.m_ArtworksSnapshot.size() << "item(s)";
 

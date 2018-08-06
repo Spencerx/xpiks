@@ -13,6 +13,7 @@
 #include <QtQml>
 #include <functional>
 #include "artworksrepository.h"
+#include <Common/irefcountedobject.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Artworks/imageartwork.h>
 #include <Artworks/videoartwork.h>
@@ -37,6 +38,7 @@ namespace Models {
     using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
+    using ArtworkMetadataLocker = Common::HoldLocker<Artworks::ArtworkMetadata>;
 
     ArtworksListModel::ArtworksListModel(ArtworksRepository &repository,
                                          QObject *parent):
@@ -134,11 +136,17 @@ namespace Models {
         this->updateItems(Helpers::IndicesRanges(indices), roles);
     }
 
-    std::unique_ptr<Artworks::SessionSnapshot> ArtworksListModel::snapshotAll() {
+    std::unique_ptr<Artworks::SessionSnapshot> ArtworksListModel::createSessionSnapshot() {
         auto sessionSnapshot = std::make_unique<Artworks::SessionSnapshot>(
                                    filterAvailableArtworks<Artworks::ArtworkMetadata*>([](Artworks::ArtworkMetadata *artwork, size_t) {return artwork;}),
                 m_ArtworksRepository.retrieveFullDirectories());
         return sessionSnapshot;
+    }
+
+    Artworks::ArtworksSnapshot ArtworksListModel::createArtworksSnapshot() {
+        auto lockers = filterArtworks<std::shared_ptr<ArtworkMetadataLocker>>([](Artworks::ArtworkMetadata*) { return true; },
+                [](Artworks::ArtworkMetadata *artwork, size_t) { return std::make_shared<ArtworkMetadataLocker>(artwork); });
+        return Artworks::ArtworksSnapshot(lockers);
     }
 
     void ArtworksListModel::generateAboutToBeRemoved() {

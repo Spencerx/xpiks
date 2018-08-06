@@ -36,7 +36,7 @@ namespace Artworks {
 
     class SessionSnapshot {
     public:
-        SessionSnapshot(const std::vector<ArtworkMetadata *> &artworksList, const QStringList &fullDirectories);
+        SessionSnapshot(std::vector<ArtworkMetadata *> const &artworksList, QStringList const &fullDirectories);
 
         SessionSnapshot(SessionSnapshot &&other) {
             m_ArtworksSnapshot.swap(other.m_ArtworksSnapshot);
@@ -72,9 +72,9 @@ namespace Artworks {
 
     public:
         ArtworksSnapshot() { }
-        ArtworksSnapshot(const WeakArtworksSnapshot &artworks);
+        ArtworksSnapshot(WeakArtworksSnapshot const &artworks);
         ArtworksSnapshot(std::initializer_list<ArtworkMetadata *> artworks);
-        ArtworksSnapshot(const std::deque<ArtworkMetadata *> &artworks);
+        ArtworksSnapshot(std::deque<ArtworkMetadata *> const &artworks);
         ArtworksSnapshot(Container &rawSnapshot);
         ArtworksSnapshot(ArtworksSnapshot &&other);
         ArtworksSnapshot &operator=(ArtworksSnapshot &&other);
@@ -94,12 +94,12 @@ namespace Artworks {
         void append(const std::shared_ptr<ItemType> &item) {
             m_ArtworksSnapshot.push_back(item);
         }
-        void append(const WeakArtworksSnapshot &artworks);
-        void append(const std::deque<ArtworkMetadata *> &artworks);
+        void append(WeakArtworksSnapshot const &artworks);
+        void append(std::deque<ArtworkMetadata *> const &artworks);
         void append(Container &rawSnapshot);
         void set(Container &rawSnapshot);
         void set(WeakArtworksSnapshot &rawSnapshot);
-        void copyFrom(const ArtworksSnapshot &other);
+        void copyFrom(ArtworksSnapshot const &other);
         void remove(size_t index);
         ArtworkMetadata *get(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i)->getArtworkMetadata(); }
         const std::shared_ptr<ItemType> &at(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i); }

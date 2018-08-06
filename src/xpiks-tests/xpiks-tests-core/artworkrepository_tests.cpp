@@ -7,7 +7,6 @@
 #include <Models/Artworks/artworksrepository.h>
 #include <KeywordsPresets/presetkeywordsmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
-#include <Models/settingsmodel.h>
 #include <Models/Session/recentdirectoriesmodel.h>
 #include <UndoRedo/undoredomanager.h>
 #include "Mocks/coretestsenvironment.h"
@@ -22,19 +21,14 @@
     DECLARE_BASIC_MODELS\
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository);\
     KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
-    Models::SettingsModel settingsModel(environment);\
     UndoRedo::UndoRedoManager undoRedoManager;\
     Mocks::CommandManagerMock commandManager(undoRedoManager);\
-    Models::FilteredArtworksListModel filteredArtworksModel(\
-    artworksListModel, commandManager, keywordsPresets, settingsModel);\
     artworksListModel.generateAndAddArtworks(count, withVector);
 
 #define SETUP_SELECTION_TEST(count, dirsCount) \
     DECLARE_BASIC_MODELS\
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository);\
     UndoRedo::UndoRedoManager undoRedoManager; \
-    Models::SettingsModel settingsModel(environment); \
-    settingsModel.setAutoFindVectors(false); \
     artworksListModel.generateAndAddArtworksEx(count, dirsCount, false); \
     QCOMPARE((int)artworksRepository.accessRepos().size(), dirsCount);
 

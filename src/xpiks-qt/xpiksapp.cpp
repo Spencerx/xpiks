@@ -410,7 +410,7 @@ void XpiksApp::afterServicesStarted() {
         int addedCount = doAddFiles(std::get<0>(session), Common::AddFilesFlags::FlagIsSessionRestore);
         if (addedCount > 0) {
             m_ArtworksRepository.restoreFullDirectories(std::get<1>(session));
-            auto snapshot = m_ArtworksListModel.snapshotAll();
+            auto snapshot = m_ArtworksListModel.createSessionSnapshot();
             m_MaintenanceService.saveSession(snapshot, m_SessionManager);
         }
     }

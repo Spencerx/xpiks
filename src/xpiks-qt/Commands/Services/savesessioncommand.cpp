@@ -25,7 +25,7 @@ namespace Commands {
 
     void SaveSessionCommand::execute() {
         LOG_DEBUG << "#";
-        auto snapshot = m_ArtworksListModel.snapshotAll();
+        auto snapshot = m_ArtworksListModel.createSessionSnapshot();
         m_MaintenanceService.saveSession(snapshot, m_SessionManager);
     }
 }
