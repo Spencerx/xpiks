@@ -65,7 +65,7 @@ void QuickBufferTests::copyProxyModelToQuickBufferTest() {
     proxyModel.setDescription(descriptionForQB);
     proxyModel.setKeywords(keywordsForQB);
 
-    proxyModel.copyToQuickBuffer();
+    quickBuffer.copyFromCurrentEditable();
 
     QCOMPARE(quickBuffer.getTitle(), titleForQB);
     QCOMPARE(quickBuffer.getDescription(), descriptionForQB);
@@ -133,7 +133,7 @@ void QuickBufferTests::copyHalfEmptyProxyModelToQuickBufferTest() {
     proxyModel.setDescription(descriptionForQB);
     proxyModel.setKeywords(keywordsForQB);
 
-    proxyModel.copyToQuickBuffer();
+    quickBuffer.copyFromCurrentEditable();
 
     QCOMPARE(quickBuffer.getTitle(), titleForQB);
     QCOMPARE(quickBuffer.getDescription(), descriptionForQB);
@@ -207,7 +207,6 @@ void QuickBufferTests::applyQuickBufferToProxyModelTest() {
     quickBuffer.setKeywords(keywordsForQB);
 
     proxyModel.setSourceArtwork(artworksListModel.getArtwork(1));
-    proxyModel.registerAsCurrentItem();
 
     bool success = quickBuffer.copyToCurrentEditable();
     QVERIFY(success);
@@ -224,7 +223,6 @@ void QuickBufferTests::applyQuickBufferToProxyModelTest() {
 
 void QuickBufferTests::applyQuickBufferToCombinedModelTest() {
     DECLARE_MODELS_AND_GENERATE(2);
-    Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets);
 
     const QString titleForQB = "title for quick buffer";
     const QString descriptionForQB = "desc for quick buffer";
@@ -235,10 +233,8 @@ void QuickBufferTests::applyQuickBufferToCombinedModelTest() {
     quickBuffer.setDescription(descriptionForQB);
     quickBuffer.pasteKeywords(keywordsForQB);
 
-    filteredArtworksModel.selectFilteredArtworks();
-    filteredArtworksModel.combineSelectedArtworks();
-
-    combinedModel.registerAsCurrentItem();
+    Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets);
+    combinedModel.setArtworks(artworksListModel.createArtworksSnapshot());
 
     bool success = quickBuffer.copyToCurrentEditable();
     QVERIFY(success);
@@ -288,7 +284,7 @@ void QuickBufferTests::applyHalfEmptyQuickBufferToProxyModelTest() {
     quickBuffer.setDescription(descriptionForQB);
     quickBuffer.setKeywords(keywordsForQB);
 
-    proxyModel.setSourceArtwork(filteredArtworksModel.getArtworkMetadata(1));
+    proxyModel.setSourceArtwork(artworksListModel.getArtwork(1));
     proxyModel.setTitle(titleForModel);
 
     bool success = quickBuffer.copyToCurrentEditable();
@@ -317,10 +313,8 @@ void QuickBufferTests::applyHalfEmptyQuickBufferToCombinedModelTest() {
     //quickBuffer.setDescription(descriptionForModel);
     //quickBuffer.setKeywords(keywordsForModel);
 
-    filteredArtworksModel.selectFilteredArtworks();
-    filteredArtworksModel.combineSelectedArtworks();
+    combinedModel.setArtworks(artworksListModel.createArtworksSnapshot());
 
-    combinedModel.registerAsCurrentItem();
     combinedModel.setDescription(descriptionForModel);
     combinedModel.setKeywords(keywordsForModel);
 
