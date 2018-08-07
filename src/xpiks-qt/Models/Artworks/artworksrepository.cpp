@@ -244,6 +244,7 @@ namespace Models {
     }
 
     std::tuple<QSet<qint64>, bool> ArtworksRepository::removeFiles(const Artworks::WeakArtworksSnapshot &snapshot) {
+        if (snapshot.empty()) { return {}; }
         QStringList filepaths;
         QStringList removedAttachedVectors;
         filepaths.reserve(snapshot.size());

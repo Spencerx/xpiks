@@ -12,6 +12,7 @@
 #define DECLARE_MODELS \
     Mocks::CoreTestsEnvironment environment;\
     Models::RecentDirectoriesModel recentDirectories(environment);\
+    recentDirectories.initialize();\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);\
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository);
 
@@ -123,8 +124,8 @@ void AddCommandTests::addAndAttachVectorsLaterTest() {
 
     filesCollection = std::make_shared<Mocks::FilesCollectionMock>(QStringList(), vectors);
     addFilesCommand = std::make_shared<Commands::AddFilesCommand>(filesCollection,
-                                                                       Common::AddFilesFlags::None,
-                                                                       artworksListModel);
+                                                                  Common::AddFilesFlags::None,
+                                                                  artworksListModel);
     addFilesCommand->execute();
     newFilesCount = addFilesCommand->getAddedCount();
 
@@ -226,7 +227,7 @@ void AddCommandTests::addSingleDirectoryAndAttachLaterTest() {
     filenames << "/path/to/somefile1.jpg" << "/path/to/somefile2.jpg" << "/another/path/to/somefile1.jpg" << "/another/path/to/somefile2.jpg";
     vectors << "/path/to/somefile1.eps" << "/path/to/somefile2.eps" << "/another/path/to/somefile1.eps" << "/another/path/to/somefile2.eps";
 
-    auto filesCollection = std::make_shared<Mocks::FilesCollectionMock>(filenames, vectors);
+    auto filesCollection = std::make_shared<Mocks::FilesCollectionMock>(filenames);
     auto addFilesCommand = std::make_shared<Commands::AddFilesCommand>(filesCollection,
                                                                        Common::AddFilesFlags::None,
                                                                        artworksListModel);

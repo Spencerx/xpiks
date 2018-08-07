@@ -15,6 +15,7 @@
 #define DECLARE_BASIC_MODELS\
     Mocks::CoreTestsEnvironment environment; \
     Models::RecentDirectoriesModel recentDirectories(environment);\
+    recentDirectories.initialize();\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);
 
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \

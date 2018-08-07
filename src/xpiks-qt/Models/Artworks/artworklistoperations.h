@@ -6,6 +6,10 @@
 
 namespace Models {
     struct ArtworksAddResult {
+        ArtworksAddResult():
+            m_AttachedVectorsCount(0)
+        { }
+
         ArtworksAddResult(Artworks::ArtworksSnapshot &snapshot, int attachedVectorsCount):
             m_Snapshot(std::move(snapshot)),
             m_AttachedVectorsCount(attachedVectorsCount)

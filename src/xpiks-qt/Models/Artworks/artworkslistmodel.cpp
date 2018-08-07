@@ -276,11 +276,25 @@ namespace Models {
 
     ArtworksAddResult ArtworksListModel::addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                                   Common::AddFilesFlags flags) {
-        const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
-        Artworks::ArtworksSnapshot snapshot;
-        snapshot.reserve(newFilesCount);
         const int count = (int)getArtworksSize();
         QSet<qint64> fullDirectories;
+        Artworks::ArtworksSnapshot snapshot = addArtworks(filesCollection, fullDirectories);
+        const bool autoAttach = Common::HasFlag(flags, Common::AddFilesFlags::FlagAutoFindVectors);
+        const int attachedCount = attachVectors(filesCollection, snapshot, count, autoAttach);
+        m_ArtworksRepository.watchFiles(snapshot);
+        m_ArtworksRepository.setFullDirectories(fullDirectories);
+
+        return ArtworksAddResult(snapshot, attachedCount);
+    }
+
+    Artworks::ArtworksSnapshot ArtworksListModel::addArtworks(std::shared_ptr<Filesystem::IFilesCollection> const &filesCollection,
+                                                              QSet<qint64> &fullDirectories) {
+        const int newFilesCount = m_ArtworksRepository.getNewFilesCount(filesCollection);
+        Artworks::ArtworksSnapshot snapshot;
+        if (newFilesCount == 0) { return snapshot; }
+
+        snapshot.reserve(newFilesCount);
+        const int count = (int)getArtworksSize();
 
         emit beginInsertRows(QModelIndex(), count, count + newFilesCount - 1);
         {
@@ -298,29 +312,26 @@ namespace Models {
         }
         emit endInsertRows();
 
-        const bool autoAttach = Common::HasFlag(flags, Common::AddFilesFlags::FlagAutoFindVectors);
-        const int attachedCount = attachVectors(filesCollection, snapshot, count, autoAttach);
-        m_ArtworksRepository.watchFiles(snapshot);
-        m_ArtworksRepository.setFullDirectories(fullDirectories);
         syncArtworksIndices(count, -1);
 
-        return ArtworksAddResult(snapshot, attachedCount);
+        return snapshot;
     }
 
     ArtworksRemoveResult ArtworksListModel::removeFiles(const Helpers::IndicesRanges &ranges) {
         int selectedCount = 0;
-        foreachArtwork(ranges, [this, &selectedCount](Artworks::ArtworkMetadata *artwork, size_t) {
+        bool anyToDelete = false;
+        foreachArtwork(ranges, [this, &selectedCount, &anyToDelete](Artworks::ArtworkMetadata *artwork, size_t) {
             artwork->setRemoved();
+            anyToDelete = true;
             if (artwork->isSelected()) {
                 artwork->resetSelected();
                 selectedCount++;
             }
         });
 
-        if (selectedCount > 0) {
-            emit selectedArtworksRemoved(selectedCount);
-        }
+        if (!anyToDelete) { return ArtworksRemoveResult(); }
 
+        if (selectedCount > 0) { emit selectedArtworksRemoved(selectedCount); }
         emit modifiedArtworksCountChanged();
         emit artworksChanged(true);
 
@@ -1133,6 +1144,8 @@ namespace Models {
                                            std::function<bool (Artworks::ArtworkMetadata *)> pred,
                                            std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
         for (auto &r: ranges.getRanges()) {
+            if ((r.first < 0) || (r.second >= m_ArtworkList.size())) { continue; }
+
             for (int i = r.first; i <= r.second; i++) {
                 auto *artwork = accessArtwork(i);
                 if (pred(artwork)) {

@@ -13,6 +13,7 @@
 #define DECLARE_MODELS \
     Mocks::CoreTestsEnvironment environment;\
     Models::RecentDirectoriesModel recentDirectories(environment);\
+    recentDirectories.initialize();\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);\
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository);
 
@@ -77,6 +78,7 @@ void RemoveCommandTests::removeAllArtworksFromRepository() {
     QSignalSpy modifiedFilesChanged(&artworksListModel, SIGNAL(modifiedArtworksCountChanged()));
 
     removeCommand->execute();
+    artworksListModel.deleteRemovedItems();
 
     int artworksRemovedCount = removeCommand->getRemovedCount();
 

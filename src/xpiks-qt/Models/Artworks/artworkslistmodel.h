@@ -135,6 +135,8 @@ namespace Models {
         // add-remove ixtems methods
         ArtworksAddResult addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                    Common::AddFilesFlags flags);
+        Artworks::ArtworksSnapshot addArtworks(std::shared_ptr<Filesystem::IFilesCollection> const &filesCollection,
+                                               QSet<qint64> &fullDirectories);
         ArtworksRemoveResult removeFiles(const Helpers::IndicesRanges &ranges);
         ArtworksRemoveResult removeFilesFromDirectory(int directoryIndex);
         void restoreRemoved();
