@@ -19,13 +19,14 @@
 #include <QJsonObject>
 #include <QSettings>
 #include <QMutex>
+#include <Common/delayedactionentity.h>
+#include <Common/statefulentity.h>
+#include <Common/isystemenvironment.h>
+#include <Common/iflagsprovider.h>
+#include <Helpers/localconfig.h>
+#include <Helpers/constants.h>
+#include <Helpers/jsonobjectmap.h>
 #include <Models/Connectivity/proxysettings.h>
-#include "../Helpers/localconfig.h"
-#include "../Helpers/constants.h"
-#include "../Common/delayedactionentity.h"
-#include "../Common/statefulentity.h"
-#include "../Common/isystemenvironment.h"
-#include "../Helpers/jsonobjectmap.h"
 
 namespace Encryption {
     class SecretsManager;
@@ -34,7 +35,8 @@ namespace Encryption {
 namespace Models {
     class SettingsModel:
             public QObject,
-            public Common::DelayedActionEntity
+            public Common::DelayedActionEntity,
+            public Common::IFlagsProvider<Common::WordAnalysisFlags>
     {
         Q_OBJECT
         Q_PROPERTY(QString exifToolPath READ getExifToolPath WRITE setExifToolPath NOTIFY exifToolPathChanged)
@@ -86,6 +88,9 @@ namespace Models {
         void initializeConfigs();
         void syncronizeSettings() { sync(); }
         void clearLegacyUploadInfos();
+
+    public:
+        virtual Common::WordAnalysisFlags getFlags() const override;
 
     private:
         void moveSetting(QSettings &settingsQSettings, const QString &oldKey, const char* newKey, int type);

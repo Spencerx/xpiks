@@ -38,20 +38,17 @@ namespace Models {
 }
 
 namespace SpellCheck {
-    class SpellCheckService:
-            public QObject
+    class SpellCheckService: public QObject
     {
-
         Q_OBJECT
         Q_PROPERTY(int userDictWordsNumber READ getUserDictWordsNumber NOTIFY userDictWordsNumberChanged)
 
     public:
         SpellCheckService(Common::ISystemEnvironment &environment,
-                            Warnings::WarningsService &warningsService,
-                            Models::SettingsModel &settingsModel);
+                          Common::IFlagsProvider<Common::WordAnalysisFlags> &analysisFlagsProvider);
 
     public:
-        void startService(Helpers::AsyncCoordinator &initCoordinator);
+        void startService(Helpers::AsyncCoordinator &initCoordinator, Warnings::WarningsService &warningsService);
         void stopService();
 
         bool isAvailable() const { return true; }
@@ -92,15 +89,13 @@ namespace SpellCheck {
         void workerDestroyed(QObject *object);
 
     private:
-        Common::WordAnalysisFlags getWordAnalysisFlags() const;
         QString getDictsRoot() const;
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Warnings::WarningsService &m_WarningsService;
         SpellCheckWorker *m_SpellCheckWorker;
         UserDictionary m_UserDictionary;
-        Models::SettingsModel &m_SettingsModel;
+        Common::IFlagsProvider<Common::WordAnalysisFlags> &m_AnalysisFlagsProvider;
         QString m_DictionariesPath;
         volatile bool m_IsStopped;
     };

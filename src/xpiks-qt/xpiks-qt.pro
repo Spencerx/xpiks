@@ -523,7 +523,8 @@ HEADERS += \
     Models/Artworks/artworklistoperations.h \
     Models/Connectivity/artworksuploader.h \
     Commands/UI/sourcetargetcommand.h \
-    Commands/Files/removeselectedfilescommand.h
+    Commands/Files/removeselectedfilescommand.h \
+    Services/iartworksupdater.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

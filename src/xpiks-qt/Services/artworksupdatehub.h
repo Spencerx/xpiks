@@ -14,14 +14,18 @@
 #include <QObject>
 #include <QMutex>
 #include <QTimer>
+#include <QVector>
 #include <QSet>
 #include <vector>
 #include <memory>
 #include "artworksupdatehub.h"
-#include "../Artworks/artworkssnapshot.h"
+#include "iartworksupdater.h"
+#include <Common/types.h>
 
 namespace Artworks {
     class ArtworkMetadata;
+    class ArtworksSnapshot;
+    using WeakArtworksSnapshot = std::vector<ArtworkMetadata*>;
 }
 
 namespace Models {
@@ -31,15 +35,9 @@ namespace Models {
 namespace Services {
     class ArtworkUpdateRequest;
 
-    class ArtworksUpdateHub : public QObject
+    class ArtworksUpdateHub: public QObject, public IArtworksUpdater
     {
         Q_OBJECT
-    public:
-        enum UpdateMode {
-            FastUpdate,
-            FullUpdate
-        };
-
     public:
         explicit ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel,
                                    QObject *parent = 0);
@@ -50,8 +48,10 @@ namespace Services {
     public:
         void updateArtworkByID(Common::ID_t artworkID, size_t lastKnownIndex, const QVector<int> &rolesToUpdate = QVector<int>());
         void updateArtwork(Artworks::ArtworkMetadata *artwork);
-        void updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, UpdateMode updateMode=FastUpdate);
-        void updateArtworks(const Artworks::ArtworksSnapshot &artworks, UpdateMode updateMode=FastUpdate);
+        void updateArtworks(Artworks::WeakArtworksSnapshot const &artworks, UpdateMode updateMode=FastUpdate);
+
+    public:
+        virtual void updateArtworks(Artworks::ArtworksSnapshot const &artworks, UpdateMode updateMode=FastUpdate) override;
 
 #ifdef INTEGRATION_TESTS
     public:

@@ -163,7 +163,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/Session/recentitemsmodel.cpp \
     ../../xpiks-qt/Models/Connectivity/ziparchiver.cpp \
     artworkslistmodel_tests.cpp \
-    ../../xpiks-qt/Services/artworksupdatehub.cpp
+    ../../xpiks-qt/Services/artworksupdatehub.cpp \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckservice.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -278,5 +279,8 @@ HEADERS += \
     ../../xpiks-qt/Services/AutoComplete/icompletionsource.h \
     ../../xpiks-qt/Models/Connectivity/ziparchiver.h \
     artworkslistmodel_tests.h \
-    ../../xpiks-qt/Services/artworksupdatehub.h
+    ../../xpiks-qt/Services/artworksupdatehub.h \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckservice.h \
+    Mocks/flagsprovidermock.h \
+    Mocks/artworksupdatermock.h
 

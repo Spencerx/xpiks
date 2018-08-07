@@ -64,7 +64,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_RequestsService(m_SettingsModel.getProxySettings()),
     m_WarningsSettingsModel(environment),
     m_WarningsService(m_WarningsSettingsModel),
-    m_SpellCheckerService(environment, m_WarningsService, m_SettingsModel),
+    m_SpellCheckerService(environment, m_SettingsModel),
     m_MetadataIOService(),
     m_ImageCachingService(environment, m_DatabaseManager),
     m_TranslationService(),
@@ -233,8 +233,8 @@ void XpiksApp::start() {
     m_MetadataIOService.startService(m_DatabaseManager, m_ArtworksUpdateHub);
     m_VideoCachingService.startService(m_ImageCachingService, m_ArtworksUpdateHub, m_MetadataIOService);
 
-    m_SpellCheckerService.startService(m_InitCoordinator);
     m_WarningsService.startService();
+    m_SpellCheckerService.startService(m_InitCoordinator, m_WarningsService);
     m_AutoCompleteService.startService(m_InitCoordinator);
     m_TranslationService.startService(m_InitCoordinator);
 

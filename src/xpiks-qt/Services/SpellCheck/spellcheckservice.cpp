@@ -14,25 +14,22 @@
 #include <Artworks/artworkmetadata.h>
 #include <Common/logging.h>
 #include <Common/flags.h>
-#include <Models/settingsmodel.h>
 #include <Artworks/artworkssnapshot.h>
 #include <Helpers/cpphelpers.h>
 
 namespace SpellCheck {
     SpellCheckService::SpellCheckService(Common::ISystemEnvironment &environment,
-                                             Warnings::WarningsService &warningsService,
-                                             Models::SettingsModel &settingsModel):
+                                         Common::IFlagsProvider<Common::WordAnalysisFlags> &analysisFlagsProvider):
         m_Environment(environment),
-        m_WarningsService(warningsService),
         m_UserDictionary(environment),
-        m_SettingsModel(settingsModel),
+        m_AnalysisFlagsProvider(analysisFlagsProvider),
         m_IsStopped(false)
     {
         QObject::connect(&m_UserDictionary, &UserDictionary::sizeChanged,
                          this, &SpellCheckService::userDictWordsNumberChanged);
     }
 
-    void SpellCheckService::startService(Helpers::AsyncCoordinator &initCoordinator) {
+    void SpellCheckService::startService(Helpers::AsyncCoordinator &initCoordinator, Warnings::WarningsService &warningsService) {
         if (m_SpellCheckWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
@@ -44,7 +41,7 @@ namespace SpellCheck {
         m_SpellCheckWorker = new SpellCheckWorker(getDictsRoot(),
                                                   m_Environment,
                                                   m_UserDictionary,
-                                                  m_WarningsService,
+                                                  warningsService,
                                                   initCoordinator);
 
         QThread *thread = new QThread();
@@ -98,7 +95,7 @@ namespace SpellCheck {
         Q_ASSERT(itemToCheck != nullptr);
         LOG_INFO << "flags:" << (int)flags;
 
-        std::shared_ptr<SpellCheckItem> item(new SpellCheckItem(itemToCheck, flags, getWordAnalysisFlags()),
+        std::shared_ptr<SpellCheckItem> item(new SpellCheckItem(itemToCheck, flags, m_AnalysisFlagsProvider.getFlags()),
             [](SpellCheckItem *spi) {
             LOG_INTEGRATION_TESTS << "Delete later for single spellcheck item";
             spi->disconnect();
@@ -129,7 +126,9 @@ namespace SpellCheck {
         };
 
         std::shared_ptr<SpellCheckItem> item(
-                    new ArtworkSpellCheckItem(artwork, Common::SpellCheckFlags::All, getWordAnalysisFlags()),
+                    new ArtworkSpellCheckItem(artwork,
+                                              Common::SpellCheckFlags::All,
+                                              m_AnalysisFlagsProvider.getFlags()),
                     deleter);
         m_SpellCheckWorker->submitItem(item);
     }
@@ -148,7 +147,7 @@ namespace SpellCheck {
             spi->deleteLater();
         };
 
-        const Common::WordAnalysisFlags flags = getWordAnalysisFlags();
+        const Common::WordAnalysisFlags flags = m_AnalysisFlagsProvider.getFlags();
 
         for (auto itemToCheck: itemsToCheck) {
             Q_ASSERT(itemToCheck != nullptr);
@@ -179,7 +178,7 @@ namespace SpellCheck {
             spi->deleteLater();
         };
 
-        const Common::WordAnalysisFlags flags = getWordAnalysisFlags();
+        const Common::WordAnalysisFlags flags = m_AnalysisFlagsProvider.getFlags();
 
         for (auto itemToCheck: itemsToCheck) {
             Q_ASSERT(itemToCheck != nullptr);
@@ -212,7 +211,7 @@ namespace SpellCheck {
             spi->deleteLater();
         };
 
-        const Common::WordAnalysisFlags flags = getWordAnalysisFlags();
+        const Common::WordAnalysisFlags flags = m_AnalysisFlagsProvider.getFlags();
 
         for (auto itemToCheck: itemsToCheck) {
             std::shared_ptr<SpellCheckItem> item(
@@ -292,18 +291,6 @@ namespace SpellCheck {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
         m_SpellCheckWorker = NULL;
-    }
-
-    Common::WordAnalysisFlags SpellCheckService::getWordAnalysisFlags() const {
-        Common::WordAnalysisFlags result = Common::WordAnalysisFlags::None;
-        if (m_SettingsModel.getUseSpellCheck()) {
-            Common::SetFlag(result, Common::WordAnalysisFlags::Spelling);
-        }
-
-        if (m_SettingsModel.getDetectDuplicates()) {
-            Common::SetFlag(result, Common::WordAnalysisFlags::Stemming);
-        }
-        return result;
     }
 
     QString SpellCheckService::getDictsRoot() const {

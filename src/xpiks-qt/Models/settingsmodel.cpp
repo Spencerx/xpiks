@@ -207,6 +207,18 @@ namespace Models {
         }
     }
 
+    Common::WordAnalysisFlags SettingsModel::getFlags() const {
+        Common::WordAnalysisFlags result = Common::WordAnalysisFlags::None;
+        if (getUseSpellCheck()) {
+            Common::SetFlag(result, Common::WordAnalysisFlags::Spelling);
+        }
+
+        if (getDetectDuplicates()) {
+            Common::SetFlag(result, Common::WordAnalysisFlags::Stemming);
+        }
+        return result;
+    }
+
     void SettingsModel::moveSetting(QSettings &oldSettings, const QString &oldKey, const char *newKey, int type) {
         if (!oldSettings.contains(oldKey)) {
             LOG_WARNING << oldKey << "key is missing";

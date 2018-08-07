@@ -29,7 +29,7 @@ namespace Artworks {
 }
 
 namespace Services {
-    class ArtworksUpdateHub;
+    class IArtworksUpdater;
 }
 
 namespace SpellCheck {
@@ -48,7 +48,7 @@ namespace SpellCheck {
 
     public:
         SpellCheckSuggestionModel(SpellCheckService &spellCheckerService,
-                                  Services::ArtworksUpdateHub &artworksUpdateHub);
+                                  Services::IArtworksUpdater &artworksUpdater);
 
     public:
         enum KeywordSpellSuggestions_Roles {
@@ -97,7 +97,7 @@ namespace SpellCheck {
         // if we're checking basic model this list will be empty
         Artworks::ArtworksSnapshot m_CheckedItems;
         SpellCheckService &m_SpellCheckerService;
-        Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
+        Services::IArtworksUpdater &m_ArtworksUpdater;
     };
 }
 

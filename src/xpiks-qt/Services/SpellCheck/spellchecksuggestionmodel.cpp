@@ -18,7 +18,7 @@
 #include <Common/logging.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/basickeywordsmodel.h>
-#include <Services/artworksupdatehub.h>
+#include <Services/iartworksupdater.h>
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Helpers/indicesranges.h>
 #include <Helpers/cpphelpers.h>
@@ -172,10 +172,10 @@ namespace SpellCheck {
     }
 
     SpellCheckSuggestionModel::SpellCheckSuggestionModel(SpellCheckService &spellCheckerService,
-                                                         Services::ArtworksUpdateHub &artworksUpdateHub):
+                                                         Services::IArtworksUpdater &artworksUpdater):
         QAbstractListModel(),
         m_SpellCheckerService(spellCheckerService),
-        m_ArtworksUpdateHub(artworksUpdateHub)
+        m_ArtworksUpdater(artworksUpdater)
     {
     }
 
@@ -247,7 +247,7 @@ namespace SpellCheck {
             m_SpellCheckerService.submitArtworks(m_CheckedItems);
         }
 
-        m_ArtworksUpdateHub.updateArtworks(m_CheckedItems);
+        m_ArtworksUpdater.updateArtworks(m_CheckedItems);
     }
 
     void SpellCheckSuggestionModel::resetAllSuggestions() {

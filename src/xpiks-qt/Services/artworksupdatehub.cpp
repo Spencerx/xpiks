@@ -10,8 +10,9 @@
 
 #include "artworksupdatehub.h"
 #include "artworkupdaterequest.h"
+#include <Common/defines.h>
 #include <Models/Artworks/artworkslistmodel.h>
-#include "../Common/defines.h"
+#include <Artworks/artworkssnapshot.h>
 
 #define MAX_NOT_UPDATED_ARTWORKS_TO_HOLD 50
 #define MAX_UPDATE_TIMER_DELAYS 2
@@ -54,7 +55,7 @@ namespace Services {
         this->updateArtworkByID(artwork->getItemID(), artwork->getLastKnownIndex(), m_StandardRoles);
     }
 
-    void ArtworksUpdateHub::updateArtworks(const Artworks::WeakArtworksSnapshot &artworks, UpdateMode updateMode) {
+    void ArtworksUpdateHub::updateArtworks(Artworks::WeakArtworksSnapshot const &artworks, UpdateMode updateMode) {
         decltype(m_UpdateRequests) requests;
         requests.reserve(artworks.size());
         QSet<int> rolesToUpdate = m_StandardRoles.toList().toSet();
@@ -75,7 +76,7 @@ namespace Services {
         emit updateRequested();
     }
 
-    void ArtworksUpdateHub::updateArtworks(const Artworks::ArtworksSnapshot &artworks, UpdateMode updateMode) {
+    void ArtworksUpdateHub::updateArtworks(Artworks::ArtworksSnapshot const &artworks, UpdateMode updateMode) {
         if (artworks.empty()) { return; }
         decltype(m_UpdateRequests) requests;
         requests.reserve(artworks.size());
