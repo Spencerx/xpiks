@@ -19,21 +19,21 @@
 #include <Artworks/videoartwork.h>
 #include <Helpers/filehelpers.h>
 #include <QMLExtensions/videocachingservice.h>
-#include <Services/artworksupdatehub.h>
+#include <Services/iartworksupdater.h>
 #include <Models/Editing/currenteditableproxyartwork.h>
 #include <Commands/Base/compositecommandtemplate.h>
 
 namespace Models {
     ArtworkProxyModel::ArtworkProxyModel(Commands::ICommandManager &commandManager,
                                          KeywordsPresets::IPresetsManager &presetsManager,
-                                         Services::ArtworksUpdateHub &updateHub,
+                                         Services::IArtworksUpdater &artworksUpdater,
                                          QObject *parent) :
         QObject(parent),
         ArtworkProxyBase(),
         m_ArtworkMetadata(nullptr),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
-        m_ArtworksUpdateHub(updateHub)
+        m_ArtworksUpdater(artworksUpdater)
     {
     }
 
@@ -367,7 +367,7 @@ namespace Models {
         LOG_DEBUG << "#";
         if (m_ArtworkMetadata == nullptr) { return; }
 
-        m_ArtworksUpdateHub.updateArtwork(m_ArtworkMetadata);
+        m_ArtworksUpdater.updateArtwork(m_ArtworkMetadata);
         sendMessage(m_ArtworkMetadata);
 
         Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
@@ -375,7 +375,7 @@ namespace Models {
             if (!videoArtwork->isThumbnailGenerated()) {
                 sendMessage(videoArtwork);
             } else {
-                m_ArtworksUpdateHub.updateArtworkByID(videoArtwork->getItemID(),
+                m_ArtworksUpdater.updateArtworkByID(videoArtwork->getItemID(),
                                                       videoArtwork->getLastKnownIndex(),
                                                       QVector<int>() << Models::ArtworksListModel::ArtworkThumbnailRole);
             }
@@ -389,8 +389,10 @@ namespace Models {
         LOG_DEBUG << "#";
         if (m_ArtworkMetadata != nullptr) {
             auto *basicModel = m_ArtworkMetadata->getBasicModel();
+            m_ArtworkMetadata->disconnect(this);
             basicModel->disconnect(this);
             this->disconnect(basicModel);
+            this->disconnect(m_ArtworkMetadata);
         }
     }
 
@@ -403,6 +405,7 @@ namespace Models {
         }
 
         m_ArtworkMetadata = nullptr;
+        sendMessage(std::shared_ptr<ICurrentEditable>());
         emit isValidChanged();
     }
 }

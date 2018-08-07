@@ -19,7 +19,6 @@
 #include <Common/messages.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkssnapshot.h>
-#include <Models/Editing/icurrenteditable.h>
 #include <Filesystem/ifilescollection.h>
 #include <Helpers/indicesranges.h>
 #include <Commands/Base/icommandtemplate.h>
@@ -58,7 +57,6 @@ namespace Models {
     class ArtworksListModel:
             public QAbstractListModel,
             public Common::MessagesSource<ArtworkSpellCheckMessage>,
-            public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>,
             public Common::MessagesSource<ArtworksListSpellCheckMessage>,
             public Common::MessagesSource<UnavailableFilesMessage>
     {
@@ -67,7 +65,6 @@ namespace Models {
 
         using ArtworksContainer = std::deque<Artworks::ArtworkMetadata *>;
         using Common::MessagesSource<ArtworkSpellCheckMessage>::sendMessage;
-        using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
         using Common::MessagesSource<ArtworksListSpellCheckMessage>::sendMessage;
         using Common::MessagesSource<UnavailableFilesMessage>::sendMessage;
 

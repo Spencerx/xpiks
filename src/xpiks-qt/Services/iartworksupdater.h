@@ -11,8 +11,12 @@
 #ifndef IARTWORKSUPDATER_H
 #define IARTWORKSUPDATER_H
 
+#include <Common/types.h>
+#include <QVector>
+
 namespace Artworks {
     class ArtworksSnapshot;
+    class ArtworkMetadata;
 }
 
 namespace Services {
@@ -24,6 +28,8 @@ namespace Services {
     class IArtworksUpdater {
     public:
         virtual ~IArtworksUpdater() {}
+        virtual void updateArtwork(Artworks::ArtworkMetadata *artwork) = 0;
+        virtual void updateArtworkByID(Common::ID_t artworkID, size_t lastKnownIndex, QVector<int> const &rolesToUpdate = QVector<int>()) = 0;
         virtual void updateArtworks(Artworks::ArtworksSnapshot const &artworks, UpdateMode updateMode=FastUpdate) = 0;
     };
 }

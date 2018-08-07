@@ -16,12 +16,14 @@
 #include <Common/irefcountedobject.h>
 #include <Commands/commandmanager.h>
 #include <Commands/Editing/modifyartworkscommand.h>
+#include <Commands/artworksupdatetemplate.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkelement.h>
 #include <Artworks/videoartwork.h>
 #include <Helpers/indiceshelper.h>
 #include <Helpers/filterhelpers.h>
 #include <Models/Editing/previewartworkelement.h>
+#include <Models/Editing/currenteditableartwork.h>
 #include <Models/settingsmodel.h>
 
 namespace Artworks {
@@ -428,7 +430,17 @@ namespace Models {
 
     void FilteredArtworksListModel::registerCurrentItem(int proxyIndex) const {
         LOG_INFO << proxyIndex;
-        m_ArtworksListModel.setCurrentIndex(getOriginalIndex(proxyIndex));
+        int originalIndex = getOriginalIndex(proxyIndex);
+        m_ArtworksListModel.setCurrentIndex(originalIndex);
+        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
+        if (artwork != nullptr) {
+            using namespace Commands;
+            auto editable = std::make_shared<CurrentEditableArtwork>(
+                                artwork,
+                                std::make_shared<ArtworksUpdateTemplate>(m_ArtworksListModel,
+                                                                         m_ArtworksListModel.getStandardUpdateRoles()));
+            sendMessage(editable);
+        }
     }
 
     void FilteredArtworksListModel::copyToQuickBuffer(int proxyIndex) const {
@@ -498,7 +510,7 @@ namespace Models {
                                         QVector<int>() << ArtworksListModel::IsSelectedRole);
         emit allItemsSelectedChanged();
 
-        emit clearCurrentEditable();
+        sendMessage(std::shared_ptr<ICurrentEditable>());
     }
 
     Artworks::WeakArtworksSnapshot FilteredArtworksListModel::getSelectedOriginalItems() const {
@@ -546,7 +558,8 @@ namespace Models {
         m_SelectedArtworksCount = 0;
         emit selectedArtworksCountChanged();
         emit allItemsSelectedChanged();
-        emit clearCurrentEditable();
+
+        sendMessage(std::shared_ptr<ICurrentEditable>());
     }
 
     void FilteredArtworksListModel::updateSearchFlags() {

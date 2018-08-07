@@ -50,7 +50,8 @@ namespace Models {
             public ArtworkProxyBase,
             public Common::DelayedActionEntity,
             public Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>,
-            public Common::MessagesSource<QuickBufferMessage>
+            public Common::MessagesSource<QuickBufferMessage>,
+            public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
@@ -66,6 +67,7 @@ namespace Models {
 
         using Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>::sendMessage;
         using Common::MessagesSource<QuickBufferMessage>::sendMessage;
+        using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
 
     public:
         CombinedArtworksModel(Commands::ICommandManager &commandManager,
@@ -109,6 +111,7 @@ namespace Models {
         void initDescription(const QString &description) { setDescription(description); setDescriptionModified(false); }
         void initTitle(const QString &title) { setTitle(title); setTitleModified(false); }
         void recombineArtworks();
+        void registerAsCurrentEditable();
 
     public:
         Artworks::BasicMetadataModel &getBasicModel() { return m_CommonKeywordsModel; }
@@ -144,7 +147,6 @@ namespace Models {
         void titleSpellingChanged();
         void descriptionSpellingChanged();
         void keywordsSpellingChanged();
-        void clearCurrentEditable();
 
     protected:
         virtual void signalDescriptionChanged() override { emit descriptionChanged(); }

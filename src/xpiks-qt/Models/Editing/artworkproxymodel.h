@@ -47,7 +47,7 @@ namespace Artworks {
 }
 
 namespace Services {
-    class ArtworksUpdateHub;
+    class IArtworksUpdater;
 }
 
 namespace Models {
@@ -82,7 +82,7 @@ namespace Models {
     public:
         explicit ArtworkProxyModel(Commands::ICommandManager &commandManager,
                                    KeywordsPresets::IPresetsManager &presetsManager,
-                                   Services::ArtworksUpdateHub &updateHub,
+                                   Services::IArtworksUpdater &artworksUpdater,
                                    QObject *parent = 0);
         virtual ~ArtworkProxyModel();
 
@@ -187,7 +187,7 @@ namespace Models {
         Artworks::ArtworkMetadata *m_ArtworkMetadata;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
-        Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
+        Services::IArtworksUpdater &m_ArtworksUpdater;
     };
 }
 

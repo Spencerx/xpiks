@@ -20,6 +20,7 @@
 #include <Artworks/iselectedartworkssource.h>
 #include <Artworks/iselectedindicessource.h>
 #include <Models/Editing/quickbuffermessage.h>
+#include <Models/Editing/icurrenteditable.h>
 #include <Common/messages.h>
 
 namespace Commands {
@@ -45,12 +46,16 @@ namespace Models {
             public QSortFilterProxyModel,
             public Artworks::ISelectedArtworksSource,
             public Artworks::ISelectedIndicesSource,
-            public Common::MessagesSource<QuickBufferMessage>
+            public Common::MessagesSource<QuickBufferMessage>,
+            public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>
     {
         Q_OBJECT
         Q_PROPERTY(QString searchTerm READ getSearchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
         Q_PROPERTY(int selectedArtworksCount READ getSelectedArtworksCount NOTIFY selectedArtworksCountChanged)
         Q_PROPERTY(bool s READ getGlobalSelectionChanged NOTIFY allItemsSelectedChanged)
+
+        using Common::MessagesSource<QuickBufferMessage>::sendMessage;
+        using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
 
     public:
         FilteredArtworksListModel(ArtworksListModel &artworksListModel,
@@ -157,7 +162,6 @@ namespace Models {
         void selectedArtworksCountChanged();
         void afterInvalidateFilter();
         void allItemsSelectedChanged();
-        void clearCurrentEditable();
 
     private:
         void setFilteredItemsSelected(bool selected);

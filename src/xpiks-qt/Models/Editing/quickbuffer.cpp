@@ -125,6 +125,28 @@ namespace Models {
         return result;
     }
 
+    bool QuickBuffer::copyFromCurrentEditable() {
+        LOG_DEBUG << "#";
+        bool result = false;
+        auto currentEditable = m_CurrentEditableModel.getCurrentEditable();
+        if (currentEditable) {
+            QString title = currentEditable->getTitle();
+            if (!title.isEmpty()) { this->setTitle(title); }
+
+            QString description = currentEditable->getDescription();
+            if (!description.isEmpty()) { this->setDescription(description); }
+
+            QStringList keywords = currentEditable->getKeywords();
+            if (!keywords.empty()) { this->setKeywords(keywords); }
+
+            result = true;
+        } else {
+            LOG_WARNING << "Nothing registered as current item";
+        }
+
+        return result;
+    }
+
     bool QuickBuffer::getIsEmpty() {
         auto *model = getBasicMetadataModel();
         bool result = model->isTitleEmpty() && model->isDescriptionEmpty() && model->areKeywordsEmpty();

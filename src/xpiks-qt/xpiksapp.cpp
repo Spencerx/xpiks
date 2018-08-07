@@ -459,12 +459,6 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onMetadataWritingFinished);
 
-    // current editable
-    QObject::connect(&m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::clearCurrentEditable,
-                     &m_CurrentEditableModel, &Models::CurrentEditableModel::onClearCurrentEditable);
-    QObject::connect(&m_CombinedArtworksModel, &Models::CombinedArtworksModel::clearCurrentEditable,
-                     &m_CurrentEditableModel, &Models::CurrentEditableModel::onClearCurrentEditable);
-
     QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckService::serviceAvailable,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckerAvailable);
 
@@ -607,7 +601,7 @@ void XpiksApp::setupMessaging() {
 
     Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(
                 m_CurrentEditableModel,
-    { m_ArtworksListModel, m_ArtworkProxyModel });
+    { m_FilteredArtworksListModel, m_ArtworkProxyModel, m_CombinedArtworksModel });
 
     Common::connectTarget<Models::QuickBufferMessage>(
                 m_QuickBuffer,

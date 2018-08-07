@@ -10,13 +10,13 @@
 
 #include "combinedartworksmodel.h"
 #include <Helpers/indiceshelper.h>
+#include <Common/defines.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Editing/editartworkstemplate.h>
 #include <Commands/commandmanager.h>
-#include <Suggestion/keywordssuggestor.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkelement.h>
-#include <Common/defines.h>
+#include <Suggestion/keywordssuggestor.h>
 #include <QMLExtensions/uicommandid.h>
 #include <KeywordsPresets/ipresetsmanager.h>
 #include <Models/Editing/currenteditableproxyartwork.h>
@@ -68,6 +68,8 @@ namespace Models {
         if (getArtworksCount() == 1) {
             enableAllFields();
         }
+
+        registerAsCurrentEditable();
     }
 
     void CombinedArtworksModel::recombineArtworks() {
@@ -90,6 +92,11 @@ namespace Models {
         LOG_DEBUG << "After recombine keywords:" << getKeywordsString();
 
         sendMessage(&m_CommonKeywordsModel);
+    }
+
+    void CombinedArtworksModel::registerAsCurrentEditable() {
+        LOG_DEBUG << "#";
+        sendMessage(std::make_shared<CurrentEditableProxyArtwork>(*this));
     }
 
     void CombinedArtworksModel::setDescription(const QString &value) {
@@ -499,7 +506,8 @@ namespace Models {
         initTitle("");
         initKeywords(QStringList());
 
-        emit clearCurrentEditable();
+        // clear current editable
+        sendMessage(std::shared_ptr<ICurrentEditable>());
     }
 
     void CombinedArtworksModel::doOnTimer() {

@@ -4,6 +4,7 @@
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artworksrepositorymock.h"
+#include "Mocks/artworksupdatermock.h"
 #include <Models/Artworks/artworksrepository.h>
 #include <Models/Session/recentdirectoriesmodel.h>
 #include <Models/Editing/quickbuffer.h>
@@ -11,7 +12,6 @@
 #include <Models/Editing/artworkproxymodel.h>
 #include <UndoRedo/undoredomanager.h>
 #include <KeywordsPresets/presetkeywordsmodel.h>
-#include <Services/artworksupdatehub.h>
 
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \
     Mocks::CoreTestsEnvironment environment; \
@@ -326,9 +326,8 @@ void ArtworksListModelTests::proxyModelExitEmitsModifiedTest() {
     UndoRedo::UndoRedoManager undoRedoManager;
     Mocks::CommandManagerMock commandManager(undoRedoManager);
     KeywordsPresets::PresetKeywordsModel presetKeywordsModel(environment);
-    Services::ArtworksUpdateHub updateHub(artworksListModel);
-
-    Models::ArtworkProxyModel proxyModel(commandManager, presetKeywordsModel, updateHub);
+    Mocks::ArtworksUpdaterMock updater;
+    Models::ArtworkProxyModel proxyModel(commandManager, presetKeywordsModel, updater);
 
     proxyModel.setSourceArtwork((QObject*)artworksListModel.getMockArtwork(0));
     proxyModel.setDescription("other description");

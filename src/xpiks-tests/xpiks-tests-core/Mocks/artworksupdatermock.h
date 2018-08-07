@@ -8,8 +8,17 @@ namespace Mocks {
     class ArtworksUpdaterMock: public Services::IArtworksUpdater {
         // IArtworksUpdater interface
     public:
-        virtual void updateArtworks(const Artworks::ArtworksSnapshot &, Services::UpdateMode) override {
-            LOG_DEBUG << "Updated";
+        virtual void updateArtwork(Artworks::ArtworkMetadata *) override {
+            LOG_DEBUG << "Updated artwork";
+        }
+
+        virtual void updateArtworkByID(Common::ID_t, size_t, QVector<int> const &rolesToUpdate = QVector<int>()) override {
+            LOG_DEBUG << "Updated by id";
+        }
+
+        virtual void updateArtworks(Artworks::ArtworksSnapshot const &,
+                                    Services::UpdateMode) override {
+            LOG_DEBUG << "Updated snapshot";
         }
     };
 }

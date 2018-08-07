@@ -46,8 +46,8 @@ namespace Services {
         void setStandardRoles(const QVector<int> &roles);
 
     public:
-        void updateArtworkByID(Common::ID_t artworkID, size_t lastKnownIndex, const QVector<int> &rolesToUpdate = QVector<int>());
-        void updateArtwork(Artworks::ArtworkMetadata *artwork);
+        virtual void updateArtworkByID(Common::ID_t artworkID, size_t lastKnownIndex, const QVector<int> &rolesToUpdate = QVector<int>()) override;
+        virtual void updateArtwork(Artworks::ArtworkMetadata *artwork) override;
         void updateArtworks(Artworks::WeakArtworksSnapshot const &artworks, UpdateMode updateMode=FastUpdate);
 
     public:

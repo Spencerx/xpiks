@@ -86,6 +86,7 @@ namespace Models {
             return item;
         }
         Q_INVOKABLE bool copyToCurrentEditable();
+        Q_INVOKABLE bool copyFromCurrentEditable();
 
 #ifdef INTEGRATION_TESTS
     public:
