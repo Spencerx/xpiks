@@ -10,7 +10,7 @@
 
 #include "abstractconfigupdatermodel.h"
 #include <Models/settingsmodel.h>
-#include <Connectivity/requestsservice.h>
+#include <Connectivity/irequestsservice.h>
 
 namespace Models {
     AbstractConfigUpdaterModel::AbstractConfigUpdaterModel(const QString &localPath,
@@ -30,7 +30,7 @@ namespace Models {
                          this, &AbstractConfigUpdaterModel::remoteConfigArrived);
     }
 
-    void AbstractConfigUpdaterModel::initializeConfigs(Connectivity::RequestsService &requestsService) {
+    void AbstractConfigUpdaterModel::initializeConfigs(Connectivity::IRequestsService &requestsService) {
         LOG_DEBUG << "#";
 
         initLocalConfig();
@@ -52,7 +52,7 @@ namespace Models {
         processMergedConfig(document);
     }
 
-    void AbstractConfigUpdaterModel::initRemoteConfig(Connectivity::RequestsService &requestsService) {
+    void AbstractConfigUpdaterModel::initRemoteConfig(Connectivity::IRequestsService &requestsService) {
 #ifdef INTEGRATION_TESTS
         if (!m_RemoteOverrideLocalPath.isEmpty()) {
             LOG_DEBUG << "Using remote override" << m_RemoteOverrideLocalPath;

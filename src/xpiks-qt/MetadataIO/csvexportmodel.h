@@ -98,7 +98,7 @@ namespace MetadataIO {
 
     public:
         void initializeExportPlans(Helpers::AsyncCoordinator &initCoordinator,
-                                   Connectivity::RequestsService &requestsService);
+                                   Connectivity::IRequestsService &requestsService);
         void setArtworksToExport(Artworks::ArtworksSnapshot &&snapshot);
 
 #ifdef INTEGRATION_TESTS

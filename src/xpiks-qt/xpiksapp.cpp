@@ -601,7 +601,7 @@ void XpiksApp::setupMessaging() {
 
     Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(
                 m_CurrentEditableModel,
-    { m_FilteredArtworksListModel, m_ArtworkProxyModel, m_CombinedArtworksModel });
+    { m_ArtworksListModel, m_ArtworkProxyModel, m_CombinedArtworksModel });
 
     Common::connectTarget<Models::QuickBufferMessage>(
                 m_QuickBuffer,

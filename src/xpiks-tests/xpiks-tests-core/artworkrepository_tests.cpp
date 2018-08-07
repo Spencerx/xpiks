@@ -374,7 +374,7 @@ void ArtworkRepositoryTests::oneEmptyDirectoryStaysTest() {
     DECLARE_MODELS_AND_GENERATE(count, false);
 
     QCOMPARE(artworksRepository.getFilesCountForDirectory(0), 1);
-    QCOMPARE(artworksListModel.getArtworksSize(), count);
+    QCOMPARE((int)artworksListModel.getArtworksSize(), count);
 
     artworksListModel.removeFilesFromDirectory(0);
     QCOMPARE(artworksRepository.rowCount(), 1);
@@ -389,7 +389,7 @@ void ArtworkRepositoryTests::fewEmptyDirectoriesStayTest() {
 
     QCOMPARE(artworksRepository.getFilesCountForDirectory(0), 1);
     QCOMPARE(artworksRepository.getFilesCountForDirectory(1), 1);
-    QCOMPARE(artworksListModel.getArtworksSize(), count);
+    QCOMPARE((int)artworksListModel.getArtworksSize(), count);
 
     artworksListModel.removeFilesFromDirectory(0);
     artworksListModel.removeFilesFromDirectory(1);

@@ -1,14 +1,14 @@
 #include "dbimagecache_tests.h"
-#include "../../xpiks-qt/QMLExtensions/dbimagecacheindex.h"
 #include "Mocks/coretestsenvironment.h"
-#include "../../xpiks-qt/Storage/databasemanager.h"
-#include "../../xpiks-qt/QMLExtensions/cachedimage.h"
+#include <QMLExtensions/dbimagecacheindex.h>
+#include <Storage/databasemanager.h>
+#include <QMLExtensions/cachedimage.h>
 
 #define DECLARE_AND_INIT\
     Mocks::CoreTestsEnvironment environment;\
     Storage::DatabaseManager dbManager(environment);\
     dbManager.initialize();\
-    QMLExtensions::DbImageCacheIndex imageCache(&dbManager);\
+    QMLExtensions::DbImageCacheIndex imageCache(dbManager);\
     imageCache.initialize();
 
 #define FINALIZE\

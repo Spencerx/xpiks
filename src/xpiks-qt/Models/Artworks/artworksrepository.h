@@ -27,10 +27,6 @@
 #include <Common/flags.h>
 #include <Artworks/artworkssnapshot.h>
 
-namespace Maintenance {
-    class MaintenanceService;
-}
-
 namespace Filesystem {
     struct ArtworkFile;
     class IFilesCollection;
@@ -124,7 +120,6 @@ namespace Models {
         void watchFiles(const Artworks::ArtworksSnapshot &snapshot);
         void setFullDirectories(const QSet<qint64> &directoryIDs);
         std::tuple<QSet<qint64>, bool> removeFiles(const Artworks::WeakArtworksSnapshot &snapshot);
-        void cleanupOldBackups(const Artworks::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService);
         void unwatchFilePaths(const QStringList &filePaths);
         void updateFilesCounts();
         void updateSelectedState();

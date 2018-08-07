@@ -153,37 +153,6 @@ namespace Helpers {
     }
 }
 
-void Helpers::extractFilesFromDirectory(const QString &directory, QStringList &filesList) {
-#ifndef CORE_TESTS
-    QDir dir(directory);
-
-    dir.setFilter(QDir::NoDotAndDotDot | QDir::Files);
-
-    QFileInfoList items = dir.entryInfoList();
-    int size = items.size();
-    filesList.reserve(filesList.size() + size);
-
-    for (int i = 0; i < size; ++i) {
-        QString filepath = items.at(i).absoluteFilePath();
-        filesList.append(filepath);
-    }
-#else
-    QString filePattern = ARTWORK_JPG_PATTERN;
-    QString root = directory;
-
-    if (!root.endsWith('/')) {
-        root.append('/');
-    }
-
-    for (int i = 0; i < 10; i++) {
-        QString nextFile = root + filePattern.arg(i);
-        filesList.append(nextFile);
-    }
-#endif
-
-    LOG_INFO << filesList.length() << "file(s) found";
-}
-
 void Helpers::splitMediaFiles(const QStringList &rawFilenames, QStringList &filenames, QStringList &vectors) {
     LOG_INFO << rawFilenames.length() << "file(s)";
     filenames.reserve(rawFilenames.length());

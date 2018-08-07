@@ -14,6 +14,7 @@
 #include <QObject>
 #include <memory>
 #include "iconnectivityrequest.h"
+#include "irequestsservice.h"
 
 namespace Helpers {
     class RemoteConfig;
@@ -26,7 +27,7 @@ namespace Models {
 namespace Connectivity {
     class RequestsWorker;
 
-    class RequestsService : public QObject
+    class RequestsService : public QObject, public IRequestsService
     {
         Q_OBJECT
     public:
@@ -37,7 +38,7 @@ namespace Connectivity {
         void stopService();
 
     public:
-        void receiveConfig(Helpers::RemoteConfig *config);
+        virtual void receiveConfig(Helpers::RemoteConfig *config) override;
         void sendRequest(const std::shared_ptr<IConnectivityRequest> &request);
         void sendRequestSync(std::shared_ptr<IConnectivityRequest> &request);
 

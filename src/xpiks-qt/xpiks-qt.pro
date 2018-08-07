@@ -524,7 +524,8 @@ HEADERS += \
     Models/Connectivity/artworksuploader.h \
     Commands/UI/sourcetargetcommand.h \
     Commands/Files/removeselectedfilescommand.h \
-    Services/iartworksupdater.h
+    Services/iartworksupdater.h \
+    Connectivity/irequestsservice.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

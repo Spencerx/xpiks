@@ -323,8 +323,8 @@ void UndoRedoTests::undoReplaceCommandTest() {
 
     for (int i = 0; i < itemsToAdd; ++i) {
         Artworks::ArtworkMetadata *metadata = artworksListModel.getArtwork(i);
-        QCOMPARE(metadata->getTitle(), "ReplacedMyTitle");
-        QCOMPARE(metadata->getDescription(), "ReplacedMyDescription");
+        QCOMPARE(metadata->getTitle(), QString("ReplacedMyTitle"));
+        QCOMPARE(metadata->getDescription(), QString("ReplacedMyDescription"));
         QVERIFY(artworksListModel.getArtwork(i)->isModified());
     }
 

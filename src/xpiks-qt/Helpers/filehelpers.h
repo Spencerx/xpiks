@@ -25,7 +25,6 @@ namespace Helpers {
     bool isSupportedExtension(const QString &extension);
     QString describeFileSize(qint64 filesizeBytes);
     bool ensureDirectoryExists(const QString &path);
-    void extractFilesFromDirectory(const QString &directory, QStringList &filesList);
     void splitMediaFiles(const QStringList &rawFilenames, QStringList &filenames, QStringList &vectors);
 }
 

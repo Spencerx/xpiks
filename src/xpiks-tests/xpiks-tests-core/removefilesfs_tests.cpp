@@ -74,7 +74,7 @@ void RemoveFilesFsTests::removeArtworksNumberItems() {
     artworksListModel.purgeUnavailableFiles();
 
     //items
-    QCOMPARE(artworksListModel.getArtworksSize(), itemsToAdd - itemsToDelete);
+    QCOMPARE((int)artworksListModel.getArtworksSize(), itemsToAdd - itemsToDelete);
     QCOMPARE(combinedModel.getArtworksCount(), itemsToAdd - itemsToDelete);
     QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd - itemsToDelete);
     QCOMPARE(zipArchiver.getItemsCount(), itemsToAdd - itemsToDelete);
@@ -100,7 +100,7 @@ void RemoveFilesFsTests::removeArtworksAllItems() {
     artworksListModel.purgeUnavailableFiles();
 
     //items
-    QCOMPARE(artworksListModel.getArtworksSize(), itemsToAdd - itemsToDelete);
+    QCOMPARE((int)artworksListModel.getArtworksSize(), itemsToAdd - itemsToDelete);
     QCOMPARE(combinedModel.getArtworksCount(), itemsToAdd - itemsToDelete);
     QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd - itemsToDelete);
     QCOMPARE(zipArchiver.getItemsCount(), itemsToAdd - itemsToDelete);

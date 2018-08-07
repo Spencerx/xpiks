@@ -178,7 +178,7 @@ namespace MetadataIO {
     }
 
     void CsvExportPlansModel::initializeConfigs(Helpers::AsyncCoordinator &initCoordinator,
-                                                Connectivity::RequestsService &requestsService) {
+                                                Connectivity::IRequestsService &requestsService) {
         LOG_DEBUG << "#";
 
         Helpers::AsyncCoordinatorLocker locker(initCoordinator);

@@ -82,9 +82,9 @@ void ArtworksListModelTests::removeArtworkDirectorySimpleTest() {
 
     int firstDirCount = artworksRepository.getFilesCountForDirectory(indexToRemove);
 
-    QCOMPARE(artworksListModel.getArtworksSize(), count);
+    QCOMPARE((int)artworksListModel.getArtworksSize(), count);
     artworksListModel.removeFilesFromDirectory(indexToRemove);
-    QCOMPARE(artworksListModel.getArtworksSize(), count - firstDirCount);
+    QCOMPARE((int)artworksListModel.getArtworksSize(), count - firstDirCount);
 }
 
 void ArtworksListModelTests::addRemoveOneByOneFewDirsTest() {
@@ -94,7 +94,7 @@ void ArtworksListModelTests::addRemoveOneByOneFewDirsTest() {
 
     QCOMPARE(artworksRepository.getFilesCountForDirectory(0), 1);
     QCOMPARE(artworksRepository.getFilesCountForDirectory(1), 1);
-    QCOMPARE(artworksListModel.getArtworksSize(), count);
+    QCOMPARE((int)artworksListModel.getArtworksSize(), count);
 
     artworksListModel.removeFilesFromDirectory(0);
     artworksRepository.cleanupEmptyDirectories();
@@ -104,7 +104,7 @@ void ArtworksListModelTests::addRemoveOneByOneFewDirsTest() {
     artworksRepository.cleanupEmptyDirectories();
     QCOMPARE(artworksRepository.rowCount(), 0);
 
-    QCOMPARE(artworksListModel.getArtworksSize(), 0);
+    QCOMPARE((int)artworksListModel.getArtworksSize(), 0);
 }
 
 void ArtworksListModelTests::addRemoveOneByOneOneDirTest() {
@@ -113,12 +113,12 @@ void ArtworksListModelTests::addRemoveOneByOneOneDirTest() {
     DECLARE_MODELS_AND_GENERATE(count, false);
 
     QCOMPARE(artworksRepository.getFilesCountForDirectory(0), 1);
-    QCOMPARE(artworksListModel.getArtworksSize(), count);
+    QCOMPARE((int)artworksListModel.getArtworksSize(), count);
 
     artworksListModel.removeFilesFromDirectory(0);
     artworksRepository.cleanupEmptyDirectories();
     QCOMPARE(artworksRepository.rowCount(), 0);
-    QCOMPARE(artworksListModel.getArtworksSize(), 0);
+    QCOMPARE((int)artworksListModel.getArtworksSize(), 0);
 }
 
 void ArtworksListModelTests::setAllSavedResetsModifiedCountTest() {

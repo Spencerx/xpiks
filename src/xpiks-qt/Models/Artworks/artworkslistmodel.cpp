@@ -30,6 +30,7 @@
 #include <Commands/artworksupdatetemplate.h>
 #include <Commands/Editing/keywordedittemplate.h>
 #include <Commands/Base/emptycommand.h>
+#include <Models/Editing/currenteditableartwork.h>
 #include <Services/AutoComplete/icompletionsource.h>
 #include <Services/artworkupdaterequest.h>
 
@@ -105,6 +106,7 @@ namespace Models {
         foreachArtwork(Helpers::IndicesRanges(getArtworksSize()), [](Artworks::ArtworkMetadata *artwork, size_t){
             artwork->resetSelected();
         });
+        unsetCurrentIndex();
     }
 
     void ArtworksListModel::updateItems(const Helpers::IndicesRanges &ranges, const QVector<int> &roles) {
@@ -177,7 +179,22 @@ namespace Models {
         LOG_DEBUG << index;
         if (m_CurrentItemIndex != index) {
             m_CurrentItemIndex = index;
+
+            Artworks::ArtworkMetadata *artwork = getArtwork(index);
+            if (artwork != nullptr) {
+                using namespace Commands;
+                auto editable = std::make_shared<CurrentEditableArtwork>(
+                                    artwork,
+                                    std::make_shared<ArtworksUpdateTemplate>(*this, getStandardUpdateRoles()));
+                sendMessage(editable);
+            }
         }
+    }
+
+    void ArtworksListModel::unsetCurrentIndex() {
+        LOG_DEBUG << "#";
+        m_CurrentItemIndex = -1;
+        sendMessage(std::shared_ptr<ICurrentEditable>());
     }
 
     void ArtworksListModel::setItemsSaved(const Helpers::IndicesRanges &ranges) {

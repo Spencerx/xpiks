@@ -15,7 +15,6 @@
 #include <QRegExp>
 #include <Common/defines.h>
 #include <Filesystem/ifilescollection.h>
-#include <Services/Maintenance/maintenanceservice.h>
 
 namespace Models {
     ArtworksRepository::ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent) :
@@ -274,16 +273,6 @@ namespace Models {
         emit refreshRequired();
 
         return std::make_tuple(removedSelectedDirectoryIds, unselectAll);
-    }
-
-    void ArtworksRepository::cleanupOldBackups(const Artworks::ArtworksSnapshot &snapshot, Maintenance::MaintenanceService &maintenanceService) {
-        QString directoryPath;
-        for (auto &locker: snapshot.getRawData()) {
-            auto *artwork = locker->getArtworkMetadata();
-            if (tryGetDirectoryPath(artwork->getDirectoryID(), directoryPath)) {
-                maintenanceService.cleanupOldXpksBackups(directoryPath);
-            }
-        }
     }
 
     void ArtworksRepository::unwatchFilePaths(const QStringList &filePaths) {

@@ -119,6 +119,8 @@ SOURCES += main.cpp \
     jsonmerge_tests.cpp \
     warningscheck_tests.cpp \
     dbimagecache_tests.cpp \
+    ../../../vendors/tiny-aes/aes.cpp \
+    ../../../vendors/sqlite/sqlite3.c \
     ../../xpiks-qt/Common/logging.cpp \
     ../../xpiks-qt/Common/statefulentity.cpp \
     ../../xpiks-qt/Common/systemenvironment.cpp \
@@ -143,7 +145,6 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Helpers/keywordshelpers.cpp \
     ../../xpiks-qt/Helpers/localconfig.cpp \
     ../../xpiks-qt/Helpers/stringhelper.cpp \
-    ../../xpiks-qt/Helpers/ziphelper.cpp \
     ../../xpiks-qt/Models/settingsmodel.cpp \
     ../../xpiks-qt/Models/Artworks/artworkslistmodel.cpp \
     ../../xpiks-qt/Models/Artworks/artworksrepository.cpp \
@@ -164,7 +165,45 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/Connectivity/ziparchiver.cpp \
     artworkslistmodel_tests.cpp \
     ../../xpiks-qt/Services/artworksupdatehub.cpp \
-    ../../xpiks-qt/Services/SpellCheck/spellcheckservice.cpp
+    ../../xpiks-qt/Services/SpellCheck/spellcheckservice.cpp \
+    ../../xpiks-qt/Encryption/aes-qt.cpp \
+    ../../xpiks-qt/Commands/Files/removefilescommandbase.cpp \
+    ../../xpiks-qt/Commands/Files/removeselectedfilescommand.cpp \
+    ../../xpiks-qt/MetadataIO/cachedartwork.cpp \
+    ../../xpiks-qt/Helpers/threadhelpers.cpp \
+    ../../xpiks-qt/Commands/commandmanager.cpp \
+    ../../xpiks-qt/KeywordsPresets/presetkeywordsmodel.cpp \
+    ../../xpiks-qt/Commands/Editing/editartworkstemplate.cpp \
+    ../../xpiks-qt/Commands/Editing/findandreplacetemplate.cpp \
+    ../../xpiks-qt/Services/SpellCheck/spellsuggestionsitem.cpp \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckiteminfo.cpp \
+    ../../xpiks-qt/Models/Editing/deletekeywordsviewmodel.cpp \
+    ../../xpiks-qt/Services/Maintenance/logscleanupjobitem.cpp \
+    ../../xpiks-qt/Services/Warnings/warningsitem.cpp \
+    ../../xpiks-qt/Services/Warnings/warningssettingsmodel.cpp \
+    ../../xpiks-qt/QMLExtensions/cachedimage.cpp \
+    ../../xpiks-qt/QMLExtensions/dbimagecacheindex.cpp \
+    ../../xpiks-qt/Commands/Editing/expandpresettemplate.cpp \
+    ../../xpiks-qt/Commands/Editing/keywordedittemplate.cpp \
+    ../../xpiks-qt/Models/keyvaluelist.cpp \
+    ../../xpiks-qt/Services/SpellCheck/userdictionary.cpp \
+    ../../xpiks-qt/Models/Session/recentfilesmodel.cpp \
+    ../../xpiks-qt/Services/SpellCheck/spellchecksuggestionmodel.cpp \
+    ../../xpiks-qt/Storage/databasemanager.cpp \
+    ../../xpiks-qt/Commands/Editing/deletekeywordstemplate.cpp \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckitem.cpp \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckworker.cpp \
+    ../../xpiks-qt/KeywordsPresets/presetkeywordsmodelconfig.cpp \
+    ../../xpiks-qt/UndoRedo/artworkmetadatabackup.cpp \
+    ../../xpiks-qt/Models/Connectivity/abstractconfigupdatermodel.cpp \
+    ../../xpiks-qt/Storage/memorytable.cpp \
+    ../../xpiks-qt/Commands/artworksupdatetemplate.cpp \
+    ../../xpiks-qt/KeywordsPresets/presetgroupsmodel.cpp \
+    ../../xpiks-qt/Helpers/remoteconfig.cpp \
+    ../../xpiks-qt/Storage/database.cpp \
+    ../../xpiks-qt/Connectivity/configrequest.cpp \
+    ../../xpiks-qt/Encryption/obfuscation.cpp \
+    ../../xpiks-qt/Models/Connectivity/proxysettings.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -201,6 +240,8 @@ HEADERS += \
     Mocks/warningssettingsmock.h \
     Mocks/coretestsenvironment.h \
     dbimagecache_tests.h \
+    ../../../vendors/tiny-aes/aes.h \
+    ../../../vendors/sqlite/sqlite3.h \
     ../../xpiks-qt/Common/abstractlistmodel.h \
     ../../xpiks-qt/Common/defines.h \
     ../../xpiks-qt/Common/delayedactionentity.h \
@@ -247,7 +288,6 @@ HEADERS += \
     ../../xpiks-qt/Helpers/keywordshelpers.h \
     ../../xpiks-qt/Helpers/localconfig.h \
     ../../xpiks-qt/Helpers/stringhelper.h \
-    ../../xpiks-qt/Helpers/ziphelper.h \
     ../../xpiks-qt/Models/settingsmodel.h \
     ../../xpiks-qt/Models/Artworks/artworklistoperations.h \
     ../../xpiks-qt/Models/Artworks/artworkslistmodel.h \
@@ -282,5 +322,49 @@ HEADERS += \
     ../../xpiks-qt/Services/artworksupdatehub.h \
     ../../xpiks-qt/Services/SpellCheck/spellcheckservice.h \
     Mocks/flagsprovidermock.h \
-    Mocks/artworksupdatermock.h
+    Mocks/artworksupdatermock.h \
+    ../../xpiks-qt/Encryption/aes-qt.h \
+    ../../xpiks-qt/Commands/Files/removefilescommandbase.h \
+    ../../xpiks-qt/Commands/Files/removeselectedfilescommand.h \
+    ../../xpiks-qt/MetadataIO/cachedartwork.h \
+    ../../xpiks-qt/Helpers/threadhelpers.h \
+    ../../xpiks-qt/Commands/commandmanager.h \
+    ../../xpiks-qt/KeywordsPresets/ipresetsmanager.h \
+    ../../xpiks-qt/KeywordsPresets/presetkeywordsmodel.h \
+    ../../xpiks-qt/Commands/Editing/editartworkstemplate.h \
+    ../../xpiks-qt/Commands/Editing/findandreplacetemplate.h \
+    ../../xpiks-qt/Services/SpellCheck/spellsuggestionsitem.h \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckiteminfo.h \
+    ../../xpiks-qt/Models/Editing/deletekeywordsviewmodel.h \
+    ../../xpiks-qt/Services/Maintenance/imaintenanceitem.h \
+    ../../xpiks-qt/Services/Maintenance/logscleanupjobitem.h \
+    ../../xpiks-qt/Services/Warnings/iwarningsitem.h \
+    ../../xpiks-qt/Services/Warnings/warningsitem.h \
+    ../../xpiks-qt/Services/Warnings/warningssettingsmodel.h \
+    ../../xpiks-qt/QMLExtensions/cachedimage.h \
+    ../../xpiks-qt/Storage/idatabase.h \
+    ../../xpiks-qt/Storage/idatabasemanager.h \
+    ../../xpiks-qt/QMLExtensions/dbimagecacheindex.h \
+    ../../xpiks-qt/Commands/Editing/expandpresettemplate.h \
+    ../../xpiks-qt/Commands/Editing/keywordedittemplate.h \
+    ../../xpiks-qt/Models/keyvaluelist.h \
+    ../../xpiks-qt/Services/SpellCheck/userdictionary.h \
+    ../../xpiks-qt/Models/Session/recentfilesmodel.h \
+    ../../xpiks-qt/Services/SpellCheck/spellchecksuggestionmodel.h \
+    ../../xpiks-qt/Storage/databasemanager.h \
+    ../../xpiks-qt/Commands/Editing/deletekeywordstemplate.h \
+    ../../xpiks-qt/Services/SpellCheck/ispellcheckable.h \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckitem.h \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckworker.h \
+    ../../xpiks-qt/KeywordsPresets/presetkeywordsmodelconfig.h \
+    ../../xpiks-qt/UndoRedo/artworkmetadatabackup.h \
+    ../../xpiks-qt/Models/Connectivity/abstractconfigupdatermodel.h \
+    ../../xpiks-qt/Storage/memorytable.h \
+    ../../xpiks-qt/Commands/artworksupdatetemplate.h \
+    ../../xpiks-qt/KeywordsPresets/presetgroupsmodel.h \
+    ../../xpiks-qt/Helpers/remoteconfig.h \
+    ../../xpiks-qt/Storage/database.h \
+    ../../xpiks-qt/Connectivity/configrequest.h \
+    ../../xpiks-qt/Encryption/obfuscation.h \
+    ../../xpiks-qt/Models/Connectivity/proxysettings.h
 

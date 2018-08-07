@@ -1,7 +1,7 @@
 #ifndef WARNINGSSETTINGSMOCK_H
 #define WARNINGSSETTINGSMOCK_H
 
-#include "../../xpiks-qt/Warnings/iwarningssettings.h"
+#include <Services/Warnings/iwarningssettings.h>
 
 namespace Mocks {
     class WarningsSettingsMock: public Warnings::IWarningsSettings {

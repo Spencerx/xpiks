@@ -252,7 +252,7 @@ namespace MetadataIO {
     }
 
     void CsvExportModel::initializeExportPlans(Helpers::AsyncCoordinator &initCoordinator,
-                                               Connectivity::RequestsService &requestsService) {
+                                               Connectivity::IRequestsService &requestsService) {
         LOG_DEBUG << "#";
         m_ExportPlansModel.initializeConfigs(initCoordinator, requestsService);
     }

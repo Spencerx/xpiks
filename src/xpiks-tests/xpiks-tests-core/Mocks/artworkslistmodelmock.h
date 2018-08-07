@@ -27,7 +27,7 @@ namespace Mocks {
         void setUpdatesBlocked(bool value) { m_BlockUpdates = value; }
 
         ArtworkMetadataMock *getMockArtwork(int index) const { return dynamic_cast<ArtworkMetadataMock*>(getArtwork(index)); }
-        int getFinalizationListSize() const { return getFinalizationList().size(); }
+        size_t getFinalizationListSize() const { return getFinalizationList().size(); }
         void removeAll() { deleteItems(Helpers::IndicesRanges(getArtworksSize())); }
 
         void mockDeletion(int count) {

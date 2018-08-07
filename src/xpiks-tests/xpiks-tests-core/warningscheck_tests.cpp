@@ -1,10 +1,10 @@
 #include "warningscheck_tests.h"
-#include "../../xpiks-qt/Warnings/warningsitem.h"
+#include <Services/Warnings/warningsitem.h>
 #include "Mocks/artworkmetadatamock.h"
 #include "Mocks/warningssettingsmock.h"
-#include "../../xpiks-qt/Common/flags.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Common/basicmetadatamodel.h"
+#include <Common/flags.h>
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/basicmetadatamodel.h>
 #include "stringhelpersfortests.h"
 
 void WarningsCheckTests::emptyKeywordsTest() {
@@ -14,7 +14,7 @@ void WarningsCheckTests::emptyKeywordsTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::NoKeywords));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TooFewKeywords));
@@ -28,7 +28,7 @@ void WarningsCheckTests::tooFewKeywordsTest() {
     artwork.appendKeyword("random");
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::NoKeywords));
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TooFewKeywords));
@@ -39,14 +39,14 @@ void WarningsCheckTests::appendingKeywordChangesWarningsTest() {
     artwork.initialize();
     Mocks::WarningsSettingsMock warningsSettings;
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::NoKeywords));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TooFewKeywords));
 
     artwork.appendKeyword("random");
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::NoKeywords));
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TooFewKeywords));
@@ -63,7 +63,7 @@ void WarningsCheckTests::spellingKeywordsTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::SpellErrorsInKeywords));
 }
@@ -79,7 +79,7 @@ void WarningsCheckTests::spellingKeywordsChangesWhenRemovedTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::SpellErrorsInKeywords));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::NoKeywords));
@@ -87,7 +87,7 @@ void WarningsCheckTests::spellingKeywordsChangesWhenRemovedTest() {
     QString dummy;
     artwork.removeLastKeyword(dummy);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::SpellErrorsInKeywords));
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::NoKeywords));
@@ -103,7 +103,7 @@ void WarningsCheckTests::spellingDescriptionTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::SpellErrorsInDescription));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionIsEmpty));
@@ -119,14 +119,14 @@ void WarningsCheckTests::spellingDescriptionChangesTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::SpellErrorsInDescription));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionIsEmpty));
 
     artwork.getBasicModel()->getSpellCheckInfo()->clear();
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::SpellErrorsInDescription));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionIsEmpty));
@@ -139,7 +139,7 @@ void WarningsCheckTests::emptyDescriptionTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionIsEmpty));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionNotEnoughWords));
@@ -152,19 +152,19 @@ void WarningsCheckTests::descriptionLengthChangesTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionIsEmpty));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionNotEnoughWords));
 
     artwork.setDescription("two words");
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionIsEmpty));
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionNotEnoughWords));
 
     artwork.setDescription("three words now");
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionIsEmpty));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionNotEnoughWords));
@@ -179,7 +179,7 @@ void WarningsCheckTests::descriptionTooBigTest() {
 
     artwork.setDescription(getRandomString(warningsSettings.getMaxDescriptionLength() + 1, true));
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionTooBig));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionIsEmpty));
@@ -193,7 +193,7 @@ void WarningsCheckTests::emptyTitleTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleIsEmpty));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleNotEnoughWords));
@@ -206,19 +206,19 @@ void WarningsCheckTests::titleLengthChangesTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleIsEmpty));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleNotEnoughWords));
 
     artwork.setTitle("two words");
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleIsEmpty));
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleNotEnoughWords));
 
     artwork.setTitle("three words now");
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleIsEmpty));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleNotEnoughWords));
@@ -234,7 +234,7 @@ void WarningsCheckTests::spellingTitleTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::SpellErrorsInTitle));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleIsEmpty));
@@ -250,14 +250,14 @@ void WarningsCheckTests::spellingTitleChangesWhenRemovedTest() {
 
     QVERIFY(artwork.getWarningsFlags() == Common::WarningFlags::None);
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::SpellErrorsInTitle));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleIsEmpty));
 
     artwork.getSpellCheckInfo()->clear();
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::SpellErrorsInTitle));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleIsEmpty));
@@ -271,7 +271,7 @@ void WarningsCheckTests::keywordsInDescriptionTest() {
     artwork.setDescription("one two three");
     artwork.appendKeyword("two");
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::KeywordsInDescription));
 
@@ -288,7 +288,7 @@ void WarningsCheckTests::keywordsInTitleTest() {
     artwork.setTitle("one two three");
     artwork.appendKeyword("three");
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::KeywordsInTitle));
 
@@ -307,7 +307,7 @@ void WarningsCheckTests::titleTooBigTest() {
     while (words--) { titleWords.append(getRandomString(10)); }
     artwork.setTitle(titleWords.join(' '));
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleTooManyWords));
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::TitleIsEmpty));
@@ -323,13 +323,13 @@ void WarningsCheckTests::descriptionTooBigChangesTest() {
 
     artwork.setDescription(getRandomString(warningsSettings.getMaxDescriptionLength() + 1, true));
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionTooBig));
 
     artwork.setDescription(getRandomString(warningsSettings.getMaxDescriptionLength() - 1, true));
 
-    Warnings::WarningsItem(&artwork).checkWarnings(&warningsSettings);
+    Warnings::WarningsItem(&artwork).checkWarnings(warningsSettings);
 
     QVERIFY(!Common::HasFlag(artwork.getWarningsFlags(), Common::WarningFlags::DescriptionTooBig));
 }

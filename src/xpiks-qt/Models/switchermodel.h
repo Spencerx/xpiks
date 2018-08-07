@@ -38,7 +38,7 @@ namespace Models {
 
     public:
         void initialize();
-        void updateConfigs(Connectivity::RequestsService &requestsService);
+        void updateConfigs(Connectivity::IRequestsService &requestsService);
         void afterInitializedCallback();
 
     private:

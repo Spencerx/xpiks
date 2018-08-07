@@ -82,7 +82,7 @@ namespace Models {
         void initFromString(const QString &savedString);
         void initializeConfig();        
         void initializeStocksList(Helpers::AsyncCoordinator &initCoordinator,
-                                  Connectivity::RequestsService &requestsService);
+                                  Connectivity::IRequestsService &requestsService);
 
     public:
         Q_INVOKABLE void removeItem(int row);

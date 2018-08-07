@@ -37,7 +37,7 @@ namespace MetadataIO {
 
     public:
         void initializeConfigs(Helpers::AsyncCoordinator &initCoordinator,
-                               Connectivity::RequestsService &requestsService);
+                               Connectivity::IRequestsService &requestsService);
         void sync(const std::vector<std::shared_ptr<CsvExportPlan> > &exportPlans);
 
         // AbstractConfigUpdaterModel interface

@@ -17,7 +17,7 @@
 #include <Services/SpellCheck/spellcheckiteminfo.h>
 #include <Helpers/keywordshelpers.h>
 #include <Helpers/stringhelper.h>
-#include "defines.h"
+#include <Common/defines.h>
 #include <Helpers/indiceshelper.h>
 #include "basickeywordsmodelimpl.h"
 

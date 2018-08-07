@@ -20,7 +20,7 @@
 #include <Helpers/jsonhelper.h>
 
 namespace Connectivity {
-    class RequestsService;
+    class IRequestsService;
 }
 
 namespace Models {
@@ -35,7 +35,7 @@ namespace Models {
         virtual ~AbstractConfigUpdaterModel() {}
 
     public:
-        void initializeConfigs(Connectivity::RequestsService &requestsService);
+        void initializeConfigs(Connectivity::IRequestsService &requestsService);
         const Helpers::LocalConfig &getLocalConfig() const { return m_LocalConfig; }
         Helpers::LocalConfig &getLocalConfig() { return m_LocalConfig; }
 
@@ -55,7 +55,7 @@ namespace Models {
         virtual void processMergedConfig(const QJsonDocument &document) { Q_UNUSED(document); }
 
     private:
-        virtual void initRemoteConfig(Connectivity::RequestsService &requestsService);
+        virtual void initRemoteConfig(Connectivity::IRequestsService &requestsService);
         virtual void initLocalConfig();
 
     private:

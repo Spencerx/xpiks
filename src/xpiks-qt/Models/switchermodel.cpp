@@ -53,7 +53,7 @@ namespace Models {
         LOG_INFO << "Current threshold is" << m_Threshold;
     }
 
-    void SwitcherModel::updateConfigs(Connectivity::RequestsService &requestsService) {
+    void SwitcherModel::updateConfigs(Connectivity::IRequestsService &requestsService) {
         LOG_DEBUG << "#";
         m_Config.initializeConfigs(requestsService);
     }
