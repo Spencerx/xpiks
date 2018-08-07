@@ -79,7 +79,7 @@ void IndicesToRangesTests::allRangeIndicesTest() {
 }
 
 void IndicesToRangesTests::allRangeNotFromZeroTest() {
-    Indices indices = { 0, 1, 2, 3, 4, 5 };
+    Indices indices = { 1, 2, 3, 4, 5 };
     auto actualPairs = Helpers::IndicesRanges(indices).getRanges();
 
     Pairs expectedPairs = MAKE_PAIRS(1, 1, 5);

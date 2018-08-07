@@ -112,7 +112,7 @@ namespace Models {
         void onAvailabilityTimer();
 
     public:
-        bool accountFile(const QString &filepath, qint64 &directoryID);
+        Common::AccountFileFlags accountFile(const QString &filepath, qint64 &directoryID);
         bool removeFile(const QString &filepath, qint64 directoryID);
         void removeVector(const QString &vectorPath);
         void cleanupEmptyDirectories();

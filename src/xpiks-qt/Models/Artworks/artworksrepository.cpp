@@ -24,7 +24,7 @@ namespace Models {
         m_LastID(0)
     {
         QObject::connect(&m_FilesWatcher, &QFileSystemWatcher::fileChanged,
-                     this, &ArtworksRepository::checkFileUnavailable);
+                         this, &ArtworksRepository::checkFileUnavailable);
 
         m_Timer.setInterval(4000); //4 sec
         m_Timer.setSingleShot(true); //single shot
@@ -116,8 +116,8 @@ namespace Models {
         emit artworksSourcesChanged();
     }
 
-    bool ArtworksRepository::accountFile(const QString &filepath, qint64 &directoryID) {
-        bool wasModified = false, wasAdded = false;
+    Common::AccountFileFlags ArtworksRepository::accountFile(const QString &filepath, qint64 &directoryID) {
+        Common::AccountFileFlags flags = Common::AccountFileFlags::None;
         QString directoryPath;
 
         if (this->checkFileExists(filepath, directoryPath) &&
@@ -133,7 +133,7 @@ namespace Models {
                 item.setIsSelectedFlag(true);
                 index = m_DirectoriesList.size() - 1;
                 directoryID = id;
-                wasAdded = true;
+                Common::SetFlag(flags, Common::AccountFileFlags::FlagRepositoryCreated);
             } else {
                 auto &item = m_DirectoriesList[index];
                 occurances = item.m_FilesCount;
@@ -145,17 +145,17 @@ namespace Models {
             auto &item = m_DirectoriesList[index];
             item.setIsRemovedFlag(false);
             item.m_FilesCount = occurances + 1;
-            wasModified = true;
+            Common::SetFlag(flags, Common::AccountFileFlags::FlagRepositoryModified);
         }
 
-        if (wasAdded) {
+        if (Common::HasFlag(flags, Common::AccountFileFlags::FlagRepositoryCreated)) {
             m_RecentDirectories.pushItem(directoryPath);
             beginInsertRows(QModelIndex(), m_DirectoriesList.size() - 1, m_DirectoriesList.size() - 1);
             // ...
             endInsertRows();
         }
 
-        return wasModified;
+        return flags;
     }
 
     bool ArtworksRepository::removeFile(const QString &filepath, qint64 directoryID) {
@@ -251,12 +251,14 @@ namespace Models {
         removedAttachedVectors.reserve(snapshot.size()/2);
 
         for (auto *artwork: snapshot) {
-            filepaths.append(artwork->getFilepath());
+            if (removeFile(artwork->getFilepath(), artwork->getDirectoryID())) {
+                filepaths.append(artwork->getFilepath());
 
-            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
 
-            if (image != NULL && image->hasVectorAttached()) {
-                removedAttachedVectors.append(image->getAttachedVectorPath());
+                if (image != NULL && image->hasVectorAttached()) {
+                    removedAttachedVectors.append(image->getAttachedVectorPath());
+                }
             }
         }
 
@@ -396,20 +398,20 @@ namespace Models {
         auto &directory = m_DirectoriesList.at(index.row());
 
         switch (role) {
-        case PathRole: {
-            QDir dir(directory.m_AbsolutePath);
-            return dir.dirName();
-        }
-        case UsedImagesCountRole:
-            return directory.m_FilesCount;
-        case IsSelectedRole:
-            return !allAreSelected() && directory.getIsSelectedFlag();
-        case IsRemovedRole:
-            return directory.getIsRemovedFlag();
-        case IsFullRole:
-            return directory.getAddedAsDirectoryFlag();
-        default:
-            return QVariant();
+            case PathRole: {
+                QDir dir(directory.m_AbsolutePath);
+                return dir.dirName();
+            }
+            case UsedImagesCountRole:
+                return directory.m_FilesCount;
+            case IsSelectedRole:
+                return !allAreSelected() && directory.getIsSelectedFlag();
+            case IsRemovedRole:
+                return directory.getIsRemovedFlag();
+            case IsFullRole:
+                return directory.getAddedAsDirectoryFlag();
+            default:
+                return QVariant();
         }
     }
 

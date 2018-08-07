@@ -301,7 +301,8 @@ namespace Models {
             for (auto &file: filesCollection->getFiles()) {
                 if (file.m_Type == Filesystem::ArtworkFileType::Vector) { continue; }
                 qint64 directoryID = 0;
-                if (m_ArtworksRepository.accountFile(file.m_Path, directoryID)) {
+                auto flags = m_ArtworksRepository.accountFile(file.m_Path, directoryID);
+                if (flags != Common::AccountFileFlags::None) {
                     Artworks::ArtworkMetadata *artwork = createArtwork(file, directoryID);
                     m_ArtworkList.push_back(artwork);
                     snapshot.append(artwork);
@@ -366,8 +367,8 @@ namespace Models {
         foreachArtwork([](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
         [this](Artworks::ArtworkMetadata *artwork, size_t) {
             qint64 directoryID;
-            this->m_ArtworksRepository.accountFile(artwork->getFilepath(), directoryID);
-            Q_ASSERT(directoryID == artwork->getDirectoryID());
+            auto flags = this->m_ArtworksRepository.accountFile(artwork->getFilepath(), directoryID);
+            Q_ASSERT(flags == Common::AccountFileFlags::FlagRepositoryModified);
         });
 
         updateSelection(SelectionType::All, QVector<int>() << IsSelectedRole);
@@ -428,7 +429,6 @@ namespace Models {
             for (; it < itemsEnd; it++) {
                 Artworks::ArtworkMetadata *artwork = *it;
                 Q_ASSERT(artwork->isRemoved());
-                m_ArtworksRepository.removeFile(artwork->getFilepath(), artwork->getDirectoryID());
                 LOG_INTEGRATION_TESTS << "File removed:" << artwork->getFilepath();
                 destroyArtwork(artwork);
             }

@@ -14,7 +14,7 @@ TARGET = xpiks-tests-core
 CONFIG   += console
 CONFIG   += testcase
 CONFIG   -= app_bundle
-CONFIG   += c++11
+CONFIG   += c++14
 
 win32:QT += winextras
 
@@ -203,7 +203,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Storage/database.cpp \
     ../../xpiks-qt/Connectivity/configrequest.cpp \
     ../../xpiks-qt/Encryption/obfuscation.cpp \
-    ../../xpiks-qt/Models/Connectivity/proxysettings.cpp
+    ../../xpiks-qt/Models/Connectivity/proxysettings.cpp \
+    ../../xpiks-qt/Commands/Files/removedirectorycommand.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -366,5 +367,6 @@ HEADERS += \
     ../../xpiks-qt/Storage/database.h \
     ../../xpiks-qt/Connectivity/configrequest.h \
     ../../xpiks-qt/Encryption/obfuscation.h \
-    ../../xpiks-qt/Models/Connectivity/proxysettings.h
+    ../../xpiks-qt/Models/Connectivity/proxysettings.h \
+    ../../xpiks-qt/Commands/Files/removedirectorycommand.h
 

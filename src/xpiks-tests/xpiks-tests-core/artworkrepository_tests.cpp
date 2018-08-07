@@ -3,6 +3,7 @@
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/commandmanagermock.h"
+#include <Commands/Files/removedirectorycommand.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Models/Artworks/artworksrepository.h>
 #include <KeywordsPresets/presetkeywordsmodel.h>
@@ -30,6 +31,7 @@
     DECLARE_BASIC_MODELS\
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository);\
     UndoRedo::UndoRedoManager undoRedoManager; \
+    Mocks::CommandManagerMock commandManager(undoRedoManager);\
     artworksListModel.generateAndAddArtworksEx(count, dirsCount, false); \
     QCOMPARE((int)artworksRepository.accessRepos().size(), dirsCount);
 
@@ -70,9 +72,9 @@ void ArtworkRepositoryTests::simpleAccountFileTest() {
     QString directory = "/path/to/some";
 #endif
     qint64 dirID = 0;
-    bool status = artworksRepository.accountFile(filename, dirID);
+    auto flags = artworksRepository.accountFile(filename, dirID);
 
-    QCOMPARE(status, true);
+    QVERIFY(Common::HasFlag(flags, Common::AccountFileFlags::FlagRepositoryCreated));
     QCOMPARE(artworksRepository.rowCount(), 1);
     QCOMPARE(artworksRepository.getDirectoryPath(0), directory);
     QCOMPARE(artworksRepository.getFilesCountForDirectory(directory), 1);
@@ -90,10 +92,12 @@ void ArtworkRepositoryTests::accountSameFileTest() {
 #endif
 
     qint64 dirID = 0;
-    artworksRepository.accountFile(filename, dirID);
-    bool status = artworksRepository.accountFile(filename, dirID);
+    auto flags = artworksRepository.accountFile(filename, dirID);
+    QVERIFY(Common::HasFlag(flags, Common::AccountFileFlags::FlagRepositoryCreated));
 
-    QCOMPARE(status, false);
+    flags = artworksRepository.accountFile(filename, dirID);
+    QCOMPARE(flags, Common::AccountFileFlags::None);
+
     QCOMPARE(artworksRepository.rowCount(), 1);
     QCOMPARE(artworksRepository.getDirectoryPath(0), directory);
     QCOMPARE(artworksRepository.getFilesCountForDirectory(directory), 1);
@@ -115,7 +119,7 @@ void ArtworkRepositoryTests::addFilesFromOneDirectoryTest() {
     while (count--) {
         QString filename = filenameTemplate.arg(5 - count - 1);
         qint64 dirID = 0;
-        if (!artworksRepository.accountFile(filename, dirID)) {
+        if (artworksRepository.accountFile(filename, dirID) == Common::AccountFileFlags::None) {
             anyWrong = true;
         }
     }
@@ -135,8 +139,8 @@ void ArtworkRepositoryTests::addAndRemoveSameFileTest() {
 #endif
 
     qint64 dirID = 0;
-    bool status = artworksRepository.accountFile(filename, dirID);
-    QCOMPARE(status, true);
+    auto flags = artworksRepository.accountFile(filename, dirID);
+    QVERIFY(Common::HasFlag(flags, Common::AccountFileFlags::FlagRepositoryCreated));
 
     bool removeResult = artworksRepository.removeFile(filename, dirID);
     artworksRepository.cleanupEmptyDirectories();
@@ -157,8 +161,8 @@ void ArtworkRepositoryTests::removeNotExistingFileTest() {
 #endif
 
     qint64 dirID = 0;
-    bool status = artworksRepository.accountFile(filename1, dirID);
-    QCOMPARE(status, true);
+    auto flags = artworksRepository.accountFile(filename1, dirID);
+    QVERIFY(Common::HasFlag(flags, Common::AccountFileFlags::FlagRepositoryCreated));
     QCOMPARE(artworksRepository.rowCount(), 1);
 
     bool removeResult = artworksRepository.removeFile(filename2, dirID);
@@ -288,9 +292,9 @@ void ArtworkRepositoryTests::accountFileEmitsTest() {
     QSignalSpy beginSpy(&artworksRepository, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)));
     QSignalSpy endSpy(&artworksRepository, SIGNAL(rowsInserted(QModelIndex,int,int)));
     qint64 dirID = 0;
-    bool newFiles = artworksRepository.accountFile(filename, dirID);
+    auto flags = artworksRepository.accountFile(filename, dirID);
 
-    QCOMPARE(newFiles, true);
+    QVERIFY(Common::HasFlag(flags, Common::AccountFileFlags::FlagRepositoryCreated));
 
     QCOMPARE(beginSpy.count(), 1);
     QList<QVariant> addArguments = beginSpy.takeFirst();
@@ -481,7 +485,11 @@ void ArtworkRepositoryTests::undoRemoveOnlySelectedSelectsItTest() {
     artworksRepository.toggleDirectorySelected(toggleIndex);
     CHECK_ONLY_SELECTED(toggleIndex);
 
-    artworksListModel.removeFilesFromDirectory(toggleIndex);
+    commandManager.processCommand(
+                std::make_shared<Commands::RemoveDirectoryCommand>(
+                    toggleIndex,
+                    artworksListModel,
+                    artworksRepository));
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
@@ -495,7 +503,11 @@ void ArtworkRepositoryTests::undoRemoveOneOfFewSelectedTest() {
     CHECK_ALL_SELECTED;
 
     size_t toggleIndex = 2;
-    artworksListModel.removeFilesFromDirectory(toggleIndex);
+    commandManager.processCommand(
+                std::make_shared<Commands::RemoveDirectoryCommand>(
+                    toggleIndex,
+                    artworksListModel,
+                    artworksRepository));
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
@@ -510,7 +522,11 @@ void ArtworkRepositoryTests::undoRemoveAfterUserSelectsOtherTest() {
     artworksRepository.toggleDirectorySelected(toggleIndex);
     CHECK_ONLY_SELECTED(toggleIndex);
 
-    artworksListModel.removeFilesFromDirectory(toggleIndex);
+    commandManager.processCommand(
+                std::make_shared<Commands::RemoveDirectoryCommand>(
+                    toggleIndex,
+                    artworksListModel,
+                    artworksRepository));
 
     size_t selectedIndex = 0;
     artworksRepository.toggleDirectorySelected(selectedIndex);
@@ -531,7 +547,11 @@ void ArtworkRepositoryTests::undoRemoveAfterUserSelectsFewTest() {
     artworksRepository.toggleDirectorySelected(toggleIndex);
     CHECK_ONLY_SELECTED(toggleIndex);
 
-    artworksListModel.removeFilesFromDirectory(toggleIndex);
+    commandManager.processCommand(
+                std::make_shared<Commands::RemoveDirectoryCommand>(
+                    toggleIndex,
+                    artworksListModel,
+                    artworksRepository));
 
     CHECK_ALL_SELECTED;
 
@@ -557,7 +577,11 @@ void ArtworkRepositoryTests::undoRemoveOfTheOnlyOneSelectsItTest() {
 
     CHECK_ALL_SELECTED;
 
-    artworksListModel.removeFilesFromDirectory(0);
+    commandManager.processCommand(
+                std::make_shared<Commands::RemoveDirectoryCommand>(
+                    0,
+                    artworksListModel,
+                    artworksRepository));
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
@@ -572,7 +596,11 @@ void ArtworkRepositoryTests::undoRemoveAfterAllOtherSelectedTest() {
     artworksRepository.toggleDirectorySelected(toggleIndex);
     CHECK_ONLY_SELECTED(toggleIndex);
 
-    artworksListModel.removeFilesFromDirectory(toggleIndex);
+    commandManager.processCommand(
+                std::make_shared<Commands::RemoveDirectoryCommand>(
+                    toggleIndex,
+                    artworksListModel,
+                    artworksRepository));
 
     CHECK_ALL_SELECTED;
 
