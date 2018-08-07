@@ -1,10 +1,10 @@
 #include "basicmetadatamodel_tests.h"
 #include <QSignalSpy>
-#include "../../xpiks-qt/Common/basicmetadatamodel.h"
-#include "../../xpiks-qt/Common/flags.h"
+#include <Artworks/basicmetadatamodel.h>
+#include <Common/flags.h>
 
 void BasicKeywordsModelTests::constructEmptyTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QCOMPARE(basicModel.isDescriptionEmpty(), true);
     QCOMPARE(basicModel.isTitleEmpty(), true);
@@ -14,7 +14,7 @@ void BasicKeywordsModelTests::constructEmptyTest() {
 }
 
 void BasicKeywordsModelTests::simpleAddKeywordTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QSignalSpy addSignalSpy(&basicModel, SIGNAL(rowsInserted(QModelIndex,int,int)));
 
@@ -29,7 +29,7 @@ void BasicKeywordsModelTests::simpleAddKeywordTest() {
 }
 
 void BasicKeywordsModelTests::simpleSetKeywordsTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     basicModel.setKeywords(QStringList() << "downhill" << "slope" << "uphill" << "slope");
     QCOMPARE(basicModel.getKeywordsCount(), 3);
@@ -39,7 +39,7 @@ void BasicKeywordsModelTests::simpleSetKeywordsTest() {
 }
 
 void BasicKeywordsModelTests::addExistingKeywordTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     bool result = basicModel.appendKeyword("test keyword");
     QCOMPARE(result, true);
@@ -54,7 +54,7 @@ void BasicKeywordsModelTests::addExistingKeywordTest() {
 }
 
 void BasicKeywordsModelTests::addSeveralKeywordsTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QSignalSpy addSignalSpy(&basicModel, SIGNAL(rowsInserted(QModelIndex,int,int)));
 
@@ -72,7 +72,7 @@ void BasicKeywordsModelTests::addSeveralKeywordsTest() {
 }
 
 void BasicKeywordsModelTests::removeExistingKeywordTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QString keyword = "test keyword";
     int appendedCount = basicModel.appendKeyword(keyword);
@@ -94,7 +94,7 @@ void BasicKeywordsModelTests::removeExistingKeywordTest() {
 }
 
 void BasicKeywordsModelTests::removeNonExistingKeywordTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     bool result = basicModel.appendKeyword("test keyword");
     QCOMPARE(result, true);
@@ -114,7 +114,7 @@ void BasicKeywordsModelTests::removeNonExistingKeywordTest() {
 }
 
 void BasicKeywordsModelTests::appendSameKeywordsTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QSignalSpy addSignalSpy(&basicModel, SIGNAL(rowsInserted(QModelIndex,int,int)));
 
@@ -133,7 +133,7 @@ void BasicKeywordsModelTests::appendSameKeywordsTest() {
 }
 
 void BasicKeywordsModelTests::appendSameChangedKeywordTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QSignalSpy addSignalSpy(&basicModel, SIGNAL(rowsInserted(QModelIndex,int,int)));
 
@@ -151,7 +151,7 @@ void BasicKeywordsModelTests::appendSameChangedKeywordTest() {
 }
 
 void BasicKeywordsModelTests::appendNoKeywordsTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QSignalSpy addSignalSpy(&basicModel, SIGNAL(rowsInserted(QModelIndex,int,int)));
 
@@ -165,7 +165,7 @@ void BasicKeywordsModelTests::appendNoKeywordsTest() {
 }
 
 void BasicKeywordsModelTests::expandPresetTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
     basicModel.appendKeywords(QStringList() << "hills" << "mountains" << "away");
     const int initialSize = basicModel.getKeywordsCount();
 
@@ -187,7 +187,7 @@ void BasicKeywordsModelTests::expandPresetTest() {
 }
 
 void BasicKeywordsModelTests::clearKeywordsTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "keyword1" << "keyword2" << "keyword3";
@@ -209,7 +209,7 @@ void BasicKeywordsModelTests::clearKeywordsTest() {
 }
 
 void BasicKeywordsModelTests::clearModelTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "keyword1" << "keyword2" << "keyword3";
@@ -231,7 +231,7 @@ void BasicKeywordsModelTests::clearModelTest() {
 }
 
 void BasicKeywordsModelTests::containsKeywordTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "keyword1" << "keyword2" << "keyword3";
@@ -241,7 +241,7 @@ void BasicKeywordsModelTests::containsKeywordTest() {
 }
 
 void BasicKeywordsModelTests::containsKeywordStrictTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "something_keyword1" << "keyword2" << "keyword3";
@@ -256,7 +256,7 @@ void BasicKeywordsModelTests::containsKeywordStrictTest() {
 }
 
 void BasicKeywordsModelTests::containsKeywordFuzzyTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "something_keyword1" << "keyword2" << "KeyworD3";
@@ -269,7 +269,7 @@ void BasicKeywordsModelTests::containsKeywordFuzzyTest() {
 }
 
 void BasicKeywordsModelTests::doesNotContainKeywordTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "keyword1" << "keyword2" << "keyword3";
@@ -284,7 +284,7 @@ void BasicKeywordsModelTests::doesNotContainKeywordTest() {
 }
 
 void BasicKeywordsModelTests::setSameTitleTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
     bool result = basicModel.setTitle("new title");
     QCOMPARE(result, true);
     result = basicModel.setTitle("new title");
@@ -292,7 +292,7 @@ void BasicKeywordsModelTests::setSameTitleTest() {
 }
 
 void BasicKeywordsModelTests::setSameDescriptionTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
     bool result = basicModel.setDescription("new description");
     QCOMPARE(result, true);
     result = basicModel.setDescription("new description");
@@ -300,7 +300,7 @@ void BasicKeywordsModelTests::setSameDescriptionTest() {
 }
 
 void BasicKeywordsModelTests::editKeywordToAnotherTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "keyword1" << "keyword2" << "keyword3";
@@ -315,7 +315,7 @@ void BasicKeywordsModelTests::editKeywordToAnotherTest() {
 }
 
 void BasicKeywordsModelTests::editKeywordToSameTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "keyword1" << "keyword2" << "keyword3";
@@ -330,7 +330,7 @@ void BasicKeywordsModelTests::editKeywordToSameTest() {
 }
 
 void BasicKeywordsModelTests::editKeywordAnotherCaseTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "Mountain";
@@ -347,7 +347,7 @@ void BasicKeywordsModelTests::editKeywordAnotherCaseTest() {
 void BasicKeywordsModelTests::addRemoveAddUpperCaseWordTest() {
     const QString keyword = "Test";
 
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     bool addResult = basicModel.appendKeyword(keyword);
     QCOMPARE(addResult, true);
@@ -362,7 +362,7 @@ void BasicKeywordsModelTests::addRemoveAddUpperCaseWordTest() {
 }
 
 void BasicKeywordsModelTests::editToUpperCaseTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "keyword1" << "keyword2" << "keyword3";
@@ -378,7 +378,7 @@ void BasicKeywordsModelTests::editToUpperCaseTest() {
 }
 
 void BasicKeywordsModelTests::hasKeywordTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList keywords;
     keywords << "keyword1" << "keyword2" << "keyword3";
@@ -394,7 +394,7 @@ void BasicKeywordsModelTests::hasKeywordTest() {
 }
 
 void BasicKeywordsModelTests::simpleReplaceTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QString originalTitle = "Test title here";
     QString originalDescription = "Test description";
@@ -417,7 +417,7 @@ void BasicKeywordsModelTests::simpleReplaceTest() {
 }
 
 void BasicKeywordsModelTests::descriptionReplaceTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QString originalTitle = "Test title here";
     QString originalDescription = "Test description";
@@ -440,7 +440,7 @@ void BasicKeywordsModelTests::descriptionReplaceTest() {
 }
 
 void BasicKeywordsModelTests::titleReplaceTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QString originalTitle = "Test title here";
     QString originalDescription = "Test description";
@@ -463,7 +463,7 @@ void BasicKeywordsModelTests::titleReplaceTest() {
 }
 
 void BasicKeywordsModelTests::keywordsReplaceTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QString originalTitle = "Test title here";
     QString originalDescription = "Test description";
@@ -486,7 +486,7 @@ void BasicKeywordsModelTests::keywordsReplaceTest() {
 }
 
 void BasicKeywordsModelTests::noReplaceCaseSensitiveTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QString originalTitle = "Test title here";
     QString originalDescription = "Test description";
@@ -504,7 +504,7 @@ void BasicKeywordsModelTests::noReplaceCaseSensitiveTest() {
 }
 
 void BasicKeywordsModelTests::replaceCaseSensitiveTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QString originalTitle = "Test title test here";
     QString originalDescription = "Test description test";
@@ -527,7 +527,7 @@ void BasicKeywordsModelTests::replaceCaseSensitiveTest() {
 }
 
 void BasicKeywordsModelTests::replaceWholeWordsTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QString originalTitle = "Test title test here";
     QString originalDescription = "Testdescription test";
@@ -549,7 +549,7 @@ void BasicKeywordsModelTests::replaceWholeWordsTest() {
 }
 
 void BasicKeywordsModelTests::replaceKeywordsWithRemoveTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QString originalTitle = "Test title here";
     QString originalDescription = "Test description";
@@ -573,7 +573,7 @@ void BasicKeywordsModelTests::replaceKeywordsWithRemoveTest() {
 }
 
 void BasicKeywordsModelTests::removeKeywordsFromSetTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList originalKeywords;
     originalKeywords << "keyword1" << "keyword2" << "keyword3 Test";
@@ -588,7 +588,7 @@ void BasicKeywordsModelTests::removeKeywordsFromSetTest() {
 }
 
 void BasicKeywordsModelTests::noneKeywordsRemovedFromSetTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList originalKeywords;
     originalKeywords << "akeyword1" << "keyword2_" << "keyword3 Test";
@@ -602,7 +602,7 @@ void BasicKeywordsModelTests::noneKeywordsRemovedFromSetTest() {
 }
 
 void BasicKeywordsModelTests::removeKeywordsCaseSensitiveTest() {
-    Common::BasicMetadataModel basicModel(m_FakeHold);
+    Artworks::BasicMetadataModel basicModel(m_FakeHold);
 
     QStringList originalKeywords;
     originalKeywords << "Keyword1" << "keyworD2" << "keyWord3";

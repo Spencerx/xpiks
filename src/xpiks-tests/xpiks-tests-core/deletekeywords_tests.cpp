@@ -17,7 +17,7 @@
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories); \
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository); \
     UndoRedo::UndoRedoManager undoRedoManager;\
-    Mocks::CommandManagerMock commandManagerMock(undoRedoManager); \
+    Mocks::CommandManagerMock commandManager(undoRedoManager); \
     KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
     Models::DeleteKeywordsViewModel deleteKeywordsModel(commandManager, keywordsPresets); \
     artworksListModel.generateAndAddArtworks(count);
