@@ -45,6 +45,8 @@ namespace Models {
         // m_SortingEnabled = true;
         // this->sort(0);
         m_SearchFlags = Common::SearchFlags::AnyTermsEverything;
+
+        setSourceModel(&m_ArtworksListModel);
     }
 
     void FilteredArtworksListModel::setSearchTerm(const QString &value) {

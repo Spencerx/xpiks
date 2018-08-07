@@ -61,11 +61,7 @@ namespace Models {
             }
         }
 
-#if defined(QT_DEBUG) && !defined(INTEGRATION_TESTS)
-        // do not delete in release in order not to crash
-        // if artwork locks were still kept by other entities
-        qDeleteAll(m_FinalizationList);
-#endif
+        LOG_FOR_TESTS << "Artworks destroyed";
     }
 
     int ArtworksListModel::getModifiedArtworksCount() {
