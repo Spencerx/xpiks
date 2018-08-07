@@ -146,8 +146,7 @@ void UndoRedoTests::undoModifyCommandTest() {
     QString originalDescription = "some description here";
     QStringList originalKeywords = QString("test1,test2,test3").split(',');
 
-    filteredArtworksModel.selectFilteredArtworks();
-    Artworks::ArtworksSnapshot snapshot = filteredArtworksModel.getSelectedArtworks();
+    Artworks::ArtworksSnapshot snapshot = std::move(artworksListModel.createArtworksSnapshot());
 
     artworksListModel.getArtwork(0)->setModified();
 
@@ -314,12 +313,10 @@ void UndoRedoTests::undoReplaceCommandTest() {
     auto flags = Common::SearchFlags::CaseSensitive |Common::SearchFlags::Description |
                 Common::SearchFlags::Title | Common::SearchFlags::Keywords;
 
-    filteredArtworksModel.selectFilteredArtworks();
-
     using namespace Commands;
     commandManager.processCommand(
                 std::make_shared<ModifyArtworksCommand>(
-                    std::move(filteredArtworksModel.getSelectedArtworks()),
+                    std::move(artworksListModel.createArtworksSnapshot()),
                     std::make_shared<FindAndReplaceTemplate>(replaceFrom,
                                                              replaceTo,
                                                              flags)));
