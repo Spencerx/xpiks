@@ -52,6 +52,60 @@ void RemoveCommandTests::removeArtworksFromEmptyRepository() {
     QCOMPARE(modifiedFilesChanged.count(), 0);
 }
 
+void RemoveCommandTests::removeAndNotDeleteTest() {
+    DECLARE_MODELS;
+
+    int itemsToAdd = 5;
+    artworksListModel.generateAndAddArtworks(itemsToAdd);
+
+    int dirsCount = artworksRepository.rowCount();
+
+    Helpers::IndicesRanges ranges(itemsToAdd);
+    Mocks::SelectedIndicesSourceMock selectedIndices(ranges);
+    auto removeCommand = std::make_shared<Commands::RemoveSelectedFilesCommand>(
+                             selectedIndices,
+                             artworksListModel,
+                             artworksRepository);
+
+    QSignalSpy rowsRemovedItemsStart(&artworksListModel, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)));
+    QSignalSpy rowsRemovedItemsEnd(&artworksListModel, SIGNAL(rowsRemoved(QModelIndex,int,int)));
+
+    QSignalSpy rowsRemovedRepositoryStart(&artworksRepository, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)));
+    QSignalSpy rowsRemovedRepositoryEnd(&artworksRepository, SIGNAL(rowsRemoved(QModelIndex,int,int)));
+
+    QSignalSpy dataChangedInRepository(&artworksRepository, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)));
+
+    QSignalSpy modifiedFilesChanged(&artworksListModel, SIGNAL(modifiedArtworksCountChanged()));
+
+    removeCommand->execute();
+
+    int artworksRemovedCount = removeCommand->getRemovedCount();
+
+    QCOMPARE(artworksRemovedCount, itemsToAdd);
+
+    QCOMPARE(rowsRemovedItemsStart.count(), 0);
+
+    QCOMPARE(rowsRemovedRepositoryStart.count(), 0);
+    QCOMPARE(rowsRemovedRepositoryEnd.count(), 0);
+
+    QCOMPARE(rowsRemovedItemsEnd.count(), 0);
+
+    QCOMPARE(dataChangedInRepository.count(), 1);
+    QList<QVariant> dataChangedSpyArguments = dataChangedInRepository.takeFirst();
+    QCOMPARE(dataChangedSpyArguments.at(1).toInt(), 0);
+    // no more directories and rowCount() == 0 in event raising
+    QCOMPARE(dataChangedSpyArguments.at(2).toInt(), 0);
+
+    QCOMPARE(modifiedFilesChanged.count(), 1);
+
+    // ------
+
+    artworksRepository.cleanupEmptyDirectories();
+
+    QCOMPARE(rowsRemovedRepositoryStart.count(), 0);
+    QCOMPARE(rowsRemovedRepositoryEnd.count(), 0);
+}
+
 void RemoveCommandTests::removeAllArtworksFromRepository() {
     DECLARE_MODELS;
 

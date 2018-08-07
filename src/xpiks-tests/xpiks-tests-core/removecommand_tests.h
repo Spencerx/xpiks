@@ -10,6 +10,7 @@ class RemoveCommandTests : public QObject
 
 private slots:
     void removeArtworksFromEmptyRepository();
+    void removeAndNotDeleteTest();
     void removeAllArtworksFromRepository();
 };
 
