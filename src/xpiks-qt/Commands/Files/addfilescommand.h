@@ -62,8 +62,8 @@ namespace Commands {
         Models::ArtworksListModel &m_ArtworksListModel;
         std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> m_AddedArtworksTemplate;
         // undo
-        int m_OriginalCount = 0;
-        int m_AddedCount = 0;
+        size_t m_OriginalCount = 0;
+        size_t m_AddedCount = 0;
     };
 }
 

@@ -33,6 +33,7 @@
 #include <Commands/UI/generalcommands.h>
 #include <Commands/Base/commanduiwrapper.h>
 #include <Commands/Files/removeselectedfilescommand.h>
+#include <Commands/Files/removedirectorycommand.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_SecretsManager(),
@@ -365,9 +366,29 @@ void XpiksApp::dropItems(const QList<QUrl> &urls) {
 }
 
 void XpiksApp::removeDirectory(int index) {
+    LOG_INFO << index;
+    using namespace Commands;
+    using CompositeTemplate = CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
+    using ArtworksTemplate = std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>>;
+
+    std::vector<ArtworksTemplate> postAddActions = {
+        std::make_shared<ReadMetadataTemplate>(m_MetadataIOService, m_MetadataIOCoordinator),
+        std::make_shared<GenerateThumbnailsTemplate>(m_ImageCachingService, m_VideoCachingService),
+        std::make_shared<AutoImportMetadataCommand>(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel),
+        std::make_shared<SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager)
+    };
+
     int originalIndex = m_FilteredArtworksRepository.getOriginalIndex(index);
-    auto removeResult = m_ArtworksListModel.removeFilesFromDirectory(originalIndex);
-    Commands::SaveSessionCommand(m_MaintenanceService, m_ArtworksListModel, m_SessionManager).execute();
+    auto removeDirCommand = std::make_shared<RemoveDirectoryCommand>(
+                originalIndex,
+                m_ArtworksListModel,
+                m_ArtworksRepository,
+                m_SettingsModel,
+                std::make_shared<CompositeTemplate>(postAddActions));
+    QObject::connect(removeDirCommand.get(), &RemoveDirectoryCommand::artworksAdded,
+                     this, &XpiksApp::artworksAdded);
+
+    m_CommandManager.processCommand(removeDirCommand);
 }
 
 int XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
@@ -393,6 +414,8 @@ int XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &fi
 
     auto addFilesCommand = std::make_shared<AddFilesCommand>(
                                files, flags, m_ArtworksListModel, actions);
+    QObject::connect(addFilesCommand.get(), &AddFilesCommand::artworksAdded,
+                     this, &XpiksApp::artworksAdded);
 
     m_CommandManager.processCommand(addFilesCommand);
     return addFilesCommand->getAddedCount();

@@ -36,7 +36,7 @@ namespace Commands {
             m_AddedArtworksTemplate->execute(addResult.m_Snapshot);
         }
 
-        emit artworksAdded(addResult.m_Snapshot.size(), addResult.m_AttachedVectorsCount);
+        emit artworksAdded((int)addResult.m_Snapshot.size(), (int)addResult.m_AttachedVectorsCount);
 
         // clean resources if this will be stored in undo manager
         m_Files.reset();
@@ -44,7 +44,7 @@ namespace Commands {
 
     void AddFilesCommand::undo() {
         LOG_DEBUG << "#";
-        m_ArtworksListModel.removeFiles(Helpers::IndicesRanges(m_OriginalCount, m_AddedCount));
+        m_ArtworksListModel.removeFiles(Helpers::IndicesRanges((int)m_OriginalCount, (int)m_AddedCount));
 
         // TODO: update warnings
         //m_AddedArtworksCommand->execute();

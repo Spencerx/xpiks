@@ -26,9 +26,13 @@ namespace Commands {
             m_ArtworksRepository.unselectAllDirectories();
         }
 
-        m_ArtworksList.restoreRemoved();
+        restoreFiles();
 
         m_ArtworksRepository.restoreDirectoriesSelection(m_RemoveResult.m_SelectedDirectoryIds);
         // TODO: notify warnings model
+    }
+
+    void RemoveFilesCommandBase::restoreFiles() {
+        m_ArtworksList.restoreRemoved();
     }
 }

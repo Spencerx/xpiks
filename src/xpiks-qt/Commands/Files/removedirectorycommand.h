@@ -11,22 +11,44 @@
 #ifndef REMOVEDIRECTORYCOMMAND_H
 #define REMOVEDIRECTORYCOMMAND_H
 
+#include <QObject>
 #include "removefilescommandbase.h"
+#include <Commands/Base/icommandtemplate.h>
+
+namespace Models {
+    class SettingsModel;
+}
 
 namespace Commands {
-    class RemoveDirectoryCommand: public RemoveFilesCommandBase
+    class RemoveDirectoryCommand:
+            public QObject,
+            public RemoveFilesCommandBase
     {
+        Q_OBJECT
+        using ArtworksCommandTemplate = std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>>;
     public:
         RemoveDirectoryCommand(int directoryID,
                                Models::ArtworksListModel &artworksList,
-                               Models::ArtworksRepository &artworksRepository);
+                               Models::ArtworksRepository &artworksRepository,
+                               Models::SettingsModel &settingsModel,
+                               ArtworksCommandTemplate const &addedArtworksTemplate = ArtworksCommandTemplate());
 
         // ICommand interface
     public:
         virtual void execute() override;
 
+    signals:
+        void artworksAdded(int imagesCount, int vectorsCount);
+
+    protected:
+        virtual void restoreFiles() override;
+
     private:
         int m_DirectoryID;
+        QString m_DirectoryPath;
+        Models::SettingsModel &m_SettingsModel;
+        std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> m_AddedArtworksTemplate;
+        bool m_IsFullDirectory;
     };
 }
 

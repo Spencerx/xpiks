@@ -132,7 +132,6 @@ namespace Models {
     public:
         bool tryGetDirectoryPath(qint64 directoryID, QString &absolutePath) const;
         const QString &getDirectoryPath(int index) const { Q_ASSERT((0 <= index) && (index < (int)m_DirectoriesList.size())); return m_DirectoriesList[index].m_AbsolutePath; }
-        bool getIsFullDirectory(int index) const { return m_DirectoriesList[index].getAddedAsDirectoryFlag(); }
         bool isFileUnavailable(const QString &filepath) const;
 
 #ifdef INTEGRATION_TESTS

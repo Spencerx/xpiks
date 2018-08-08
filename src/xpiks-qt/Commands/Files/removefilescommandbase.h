@@ -37,7 +37,10 @@ namespace Commands {
         }
 
     public:
-        int getRemovedCount() const { return m_RemoveResult.m_RemovedCount; }
+        size_t getRemovedCount() const { return m_RemoveResult.m_RemovedCount; }
+
+    protected:
+        virtual void restoreFiles();
 
     protected:
         Models::ArtworksListModel &m_ArtworksList;

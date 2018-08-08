@@ -138,7 +138,7 @@ signals:
     void globalBeforeDestruction();
     void upgradeInitiated();
     void isUpdateDownloadedChanged();
-    void artworksAdded(int importID, int imagesCount, int vectorsCount);
+    void artworksAdded(int imagesCount, int vectorsCount);
 
 private slots:
     void servicesInitialized(int status);

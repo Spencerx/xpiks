@@ -33,6 +33,11 @@ namespace Filesystem {
         extractFiles(directories);
     }
 
+    DirectoriesCollection::DirectoriesCollection(std::initializer_list<QString> directories):
+        DirectoriesCollection(QStringList(directories))
+    {
+    }
+
     void DirectoriesCollection::extractFiles(const QStringList &directories) {
         LOG_DEBUG << directories.size() << "directories";
         QStringList files;

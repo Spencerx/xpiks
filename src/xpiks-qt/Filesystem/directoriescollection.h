@@ -12,6 +12,7 @@
 #define DIRECTORIESCOLLECTION_H
 
 #include <memory>
+#include <initializer_list>
 #include <QList>
 #include <QUrl>
 #include "ifilescollection.h"
@@ -23,6 +24,7 @@ namespace Filesystem {
     public:
         DirectoriesCollection(const QStringList &directories);
         DirectoriesCollection(const QList<QUrl> &urls);
+        DirectoriesCollection(std::initializer_list<QString> directories);
 
     private:
         void extractFiles(const QStringList &directories);
