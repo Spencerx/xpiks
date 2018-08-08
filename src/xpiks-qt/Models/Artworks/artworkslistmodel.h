@@ -15,7 +15,7 @@
 #include <functional>
 #include <deque>
 #include <vector>
-#include "artworklistoperations.h"
+#include "artworkslistoperations.h"
 #include <Common/messages.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkssnapshot.h>
@@ -132,7 +132,7 @@ namespace Models {
         void updateArtworksByIDs(const QSet<qint64> &artworkIDs, const QVector<int> &rolesToUpdate);
 
     public:
-        // add-remove ixtems methods
+        // add-remove items methods
         ArtworksAddResult addFiles(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
                                    Common::AddFilesFlags flags);
         Artworks::ArtworksSnapshot addArtworks(std::shared_ptr<Filesystem::IFilesCollection> const &filesCollection,
@@ -261,13 +261,13 @@ namespace Models {
             }, mapper);
         }
 
-        void foreachArtwork(const Helpers::IndicesRanges &ranges,
-                            std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                            std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const;
-        void foreachArtwork(std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                            std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const;
-        void foreachArtwork(const Helpers::IndicesRanges &ranges,
-                            std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const;
+        int foreachArtwork(const Helpers::IndicesRanges &ranges,
+                           std::function<bool (Artworks::ArtworkMetadata *)> pred,
+                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const;
+        int foreachArtwork(std::function<bool (Artworks::ArtworkMetadata *)> pred,
+                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const;
+        int foreachArtwork(const Helpers::IndicesRanges &ranges,
+                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const;
 
         template<typename T>
         void foreachArtworkAs(const Helpers::IndicesRanges &ranges,

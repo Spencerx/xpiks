@@ -151,6 +151,7 @@ namespace Models {
         void onSelectedArtworksRemoved(int value);
         void onSettingsUpdated();
         void onDirectoriesSelectionChanged() { updateFilter(); }
+        void onArtworksChanged(bool significantly) { if (significantly) { updateFilter(); } }
 
     signals:
         void searchTermChanged(const QString &searchTerm);

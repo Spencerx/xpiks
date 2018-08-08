@@ -21,7 +21,6 @@
 #include <QSortFilterProxyModel>
 #include <vector>
 #include <tuple>
-
 #include <Models/Session/recentdirectoriesmodel.h>
 #include <Common/abstractlistmodel.h>
 #include <Common/flags.h>
@@ -33,6 +32,8 @@ namespace Filesystem {
 }
 
 namespace Models {
+    struct ArtworksRemoveResult;
+
     class ArtworksRepository : public Common::AbstractListModel {
         Q_OBJECT
     public:
@@ -113,13 +114,13 @@ namespace Models {
 
     public:
         Common::AccountFileFlags accountFile(const QString &filepath, qint64 &directoryID);
-        bool removeFile(const QString &filepath, qint64 directoryID);
+        Common::RemoveFileFlags removeFile(const QString &filepath, qint64 directoryID);
         void removeVector(const QString &vectorPath);
         void cleanupEmptyDirectories();
         void purgeUnavailableFiles();
         void watchFiles(const Artworks::ArtworksSnapshot &snapshot);
         void setFullDirectories(const QSet<qint64> &directoryIDs);
-        std::tuple<QSet<qint64>, bool> removeFiles(const Artworks::WeakArtworksSnapshot &snapshot);
+        void removeFiles(Artworks::WeakArtworksSnapshot const &snapshot, ArtworksRemoveResult &removeResult);
         void unwatchFilePaths(const QStringList &filePaths);
         void updateFilesCounts();
         void updateSelectedState();

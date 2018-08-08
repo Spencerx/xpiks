@@ -15,6 +15,7 @@
 #include <QRegExp>
 #include <Common/defines.h>
 #include <Filesystem/ifilescollection.h>
+#include "artworkslistoperations.h"
 
 namespace Models {
     ArtworksRepository::ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent) :
@@ -158,27 +159,30 @@ namespace Models {
         return flags;
     }
 
-    bool ArtworksRepository::removeFile(const QString &filepath, qint64 directoryID) {
-        bool removed = false;
+    Common::RemoveFileFlags ArtworksRepository::removeFile(const QString &filepath, qint64 directoryID) {
+        Common::RemoveFileFlags result = Common::RemoveFileFlags::None;
 
         if (m_FilesSet.contains(filepath)) {
             size_t existingIndex = 0;
             if (tryFindDirectoryByID(directoryID, existingIndex)) {
                 auto &item = m_DirectoriesList[existingIndex];
                 item.m_FilesCount--;
+                Common::SetFlag(result, Common::RemoveFileFlags::FlagFileRemoved);
+                Common::ApplyFlag(result, item.getAddedAsDirectoryFlag(), Common::RemoveFileFlags::FlagFullRepository);
+
                 Q_ASSERT(item.m_FilesCount >= 0);
-                if (item.m_FilesCount == 0) { item.setIsRemovedFlag(true); }
+                if (item.m_FilesCount == 0) {
+                    item.setIsRemovedFlag(true);
+                    Common::SetFlag(result, Common::RemoveFileFlags::FlagRepositoryEmpty);
+                }
 
-                m_FilesWatcher.removePath(filepath);
                 m_FilesSet.remove(filepath);
-
-                removed = true;
             } else {
                 Q_ASSERT(false);
             }
         }
 
-        return removed;
+        return result;
     }
 
     void ArtworksRepository::removeVector(const QString &vectorPath) {
@@ -243,22 +247,27 @@ namespace Models {
         }
     }
 
-    std::tuple<QSet<qint64>, bool> ArtworksRepository::removeFiles(const Artworks::WeakArtworksSnapshot &snapshot) {
-        if (snapshot.empty()) { return {}; }
+    void ArtworksRepository::removeFiles(Artworks::WeakArtworksSnapshot const &snapshot, ArtworksRemoveResult &removeResult) {
+        if (snapshot.empty()) { return; }
         QStringList filepaths;
         QStringList removedAttachedVectors;
         filepaths.reserve(snapshot.size());
         removedAttachedVectors.reserve(snapshot.size()/2);
 
         for (auto *artwork: snapshot) {
-            if (removeFile(artwork->getFilepath(), artwork->getDirectoryID())) {
-                filepaths.append(artwork->getFilepath());
+            auto flags = removeFile(artwork->getFilepath(), artwork->getDirectoryID());
+            if (!Common::HasFlag(flags, Common::RemoveFileFlags::FlagFileRemoved)) { continue; }
 
-                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+            filepaths.append(artwork->getFilepath());
 
-                if (image != NULL && image->hasVectorAttached()) {
-                    removedAttachedVectors.append(image->getAttachedVectorPath());
-                }
+            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+            if (image != NULL && image->hasVectorAttached()) {
+                removedAttachedVectors.append(image->getAttachedVectorPath());
+            }
+
+            if (Common::HasFlag(flags, Common::RemoveFileFlags::FlagRepositoryEmpty) &&
+                    Common::HasFlag(flags, Common::RemoveFileFlags::FlagFullRepository)) {
+                removeResult.m_FullDirectoryIds.insert(artwork->getDirectoryID());
             }
         }
 
@@ -266,16 +275,14 @@ namespace Models {
         unwatchFilePaths(removedAttachedVectors);
 
         const size_t beforeSelectedCount = retrieveSelectedDirsCount();
-        const auto removedSelectedDirectoryIds = consolidateSelectionForEmpty();
+        removeResult.m_SelectedDirectoryIds = consolidateSelectionForEmpty();
         const size_t afterSelectedCount = retrieveSelectedDirsCount();
         // current selection logic: if all directories become deselected after some action, all become selected
         // this if statement is supposed to check if this has happened
-        const bool unselectAll = (afterSelectedCount + removedSelectedDirectoryIds.size()) != beforeSelectedCount;
+        removeResult.m_UnselectAll = (afterSelectedCount + removeResult.m_SelectedDirectoryIds.size()) != beforeSelectedCount;
 
         emit dataChanged(this->index(0), this->index(rowCount() - 1));
         emit refreshRequired();
-
-        return std::make_tuple(removedSelectedDirectoryIds, unselectAll);
     }
 
     void ArtworksRepository::unwatchFilePaths(const QStringList &filePaths) {

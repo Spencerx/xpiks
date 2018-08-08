@@ -187,6 +187,13 @@ namespace Common {
         FlagRepositoryModified = 1 << 1
     };
 
+    enum struct RemoveFileFlags: Common::flag_t {
+        None = 0,
+        FlagFileRemoved = 1 << 0,
+        FlagRepositoryEmpty = 1 << 1,
+        FlagFullRepository = 1 << 2
+    };
+
 #if !defined(XPIKS_TYPED_ENUMS_WORKAROUND)
     // visual studio 2013 bug
 
@@ -247,6 +254,11 @@ namespace Common {
 
     template<>
     struct enable_bitmask_operators<AccountFileFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<RemoveFileFlags> {
         static constexpr bool enable = true;
     };
 #else

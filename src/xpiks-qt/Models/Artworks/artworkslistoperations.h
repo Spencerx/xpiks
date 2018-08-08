@@ -1,5 +1,5 @@
-#ifndef ARTWORKLISTOPERATIONS_H
-#define ARTWORKLISTOPERATIONS_H
+#ifndef ARTWORKSLISTOPERATIONS_H
+#define ARTWORKSLISTOPERATIONS_H
 
 #include <QSet>
 #include <Artworks/artworkssnapshot.h>
@@ -15,14 +15,15 @@ namespace Models {
             m_AttachedVectorsCount(attachedVectorsCount)
         { }
         Artworks::ArtworksSnapshot m_Snapshot;
-        int m_AttachedVectorsCount;
+        int m_AttachedVectorsCount = 0;
     };
 
     struct ArtworksRemoveResult {
         QSet<qint64> m_SelectedDirectoryIds;
-        size_t m_RemovedCount;
-        bool m_UnselectAll;
+        QSet<qint64> m_FullDirectoryIds;
+        size_t m_RemovedCount = 0;
+        bool m_UnselectAll = false;
     };
 }
 
-#endif // ARTWORKLISTOPERATIONS_H
+#endif // ARTWORKSLISTOPERATIONS_H

@@ -450,12 +450,12 @@ void FilteredModelTests::filterTitleAndKeywordsTest() {
     QCOMPARE(filteredItemsModel.getItemsCount(), 5);
 }
 
-void FilteredModelTests::clearEmptyKeywordsTest() {
+void FilteredModelTests::clearEmptyKeywordsMarksModifiedTest() {
     DECLARE_MODELS_AND_GENERATE(1);
     Artworks::ArtworkMetadata *artwork = artworksListModel.getArtwork(0);
     artwork->clearKeywords();
+    artwork->resetModified();
 
-    commandManager.resetAnyCommandProcessed();
     filteredItemsModel.clearKeywords(0);
-    QVERIFY(!commandManager.anyCommandProcessed());
+    QVERIFY(!artwork->isModified());
 }

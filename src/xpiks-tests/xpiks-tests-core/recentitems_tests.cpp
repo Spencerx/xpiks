@@ -1,7 +1,7 @@
 #include "recentitems_tests.h"
-#include "../../xpiks-qt/Models/recentitemsmodel.h"
-#include "../../xpiks-qt/Models/recentdirectoriesmodel.h"
-#include "../../xpiks-qt/Models/recentfilesmodel.h"
+#include <Models/Session/recentitemsmodel.h>
+#include <Models/Session/recentdirectoriesmodel.h>
+#include <Models/Session/recentfilesmodel.h>
 #include "Mocks/coretestsenvironment.h"
 
 void checkCannotPushMoreThan(Models::RecentItemsModel &recentItems) {

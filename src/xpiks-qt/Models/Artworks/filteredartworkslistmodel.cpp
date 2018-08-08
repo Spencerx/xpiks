@@ -46,6 +46,9 @@ namespace Models {
         // this->sort(0);
         m_SearchFlags = Common::SearchFlags::AnyTermsEverything;
 
+        QObject::connect(&m_ArtworksListModel, &ArtworksListModel::artworksChanged,
+                         this, &FilteredArtworksListModel::onArtworksChanged);
+
         setSourceModel(&m_ArtworksListModel);
     }
 

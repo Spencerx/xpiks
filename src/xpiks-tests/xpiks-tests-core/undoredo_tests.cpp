@@ -8,16 +8,17 @@
 #include "Mocks/selectedindicessourcemock.h"
 #include <Commands/Files/addfilescommand.h>
 #include <Commands/Files/removeselectedfilescommand.h>
+#include <Commands/Files/removedirectorycommand.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Editing/findandreplacetemplate.h>
 #include <Commands/Editing/editartworkstemplate.h>
-#include <Models/settingsmodel.h>
 #include <UndoRedo/undoredomanager.h>
 #include <Common/flags.h>
 #include <Artworks/artworkelement.h>
 #include <Models/Editing/previewartworkelement.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Models/Session/recentdirectoriesmodel.h>
+#include <Models/settingsmodel.h>
 #include <KeywordsPresets/presetkeywordsmodel.h>
 
 #define SETUP_TEST \
@@ -25,10 +26,12 @@
     UndoRedo::UndoRedoManager undoRedoManager; \
     Mocks::CommandManagerMock commandManager(undoRedoManager); \
     Models::RecentDirectoriesModel recentDirectories(environment);\
+    recentDirectories.initialize();\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);\
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository);\
     KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
     Models::SettingsModel settingsModel(environment);\
+    settingsModel.initializeConfigs();\
     Models::FilteredArtworksListModel filteredArtworksModel(\
     artworksListModel, commandManager, keywordsPresets, settingsModel);
 
@@ -77,10 +80,19 @@ void UndoRedoTests::undoRemoveAddFullDirectoryTest() {
 
     int addedCount = artworksListModel.generateAndAddDirectories(1);
 
-    artworksListModel.removeFiles(Helpers::IndicesRanges({{1, 3}}));
+    Mocks::SelectedIndicesSourceMock selectedIndices(Helpers::IndicesRanges({{1, 3}}));
+    commandManager.processCommand(
+                std::make_shared<Commands::RemoveSelectedFilesCommand>(
+                    selectedIndices,
+                    artworksListModel,
+                    artworksRepository));
     QCOMPARE(filteredArtworksModel.getItemsCount(), addedCount - 3);
 
-    artworksListModel.removeFilesFromDirectory(0);
+    commandManager.processCommand(
+                std::make_shared<Commands::RemoveDirectoryCommand>(
+                    0,
+                    artworksListModel,
+                    artworksRepository));
 
     QCOMPARE(filteredArtworksModel.getItemsCount(), 0);
 
@@ -145,6 +157,10 @@ void UndoRedoTests::undoModifyCommandTest() {
     QString originalTitle = "title";
     QString originalDescription = "some description here";
     QStringList originalKeywords = QString("test1,test2,test3").split(',');
+
+    for (int i = 0; i < itemsToAdd; ++i) {
+        artworksListModel.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
+    }
 
     Artworks::ArtworksSnapshot snapshot = std::move(artworksListModel.createArtworksSnapshot());
 
@@ -304,7 +320,7 @@ void UndoRedoTests::undoReplaceCommandTest() {
     QStringList originalKeywords = {"ReplaceMyKeywords"};
 
     for (int i = 0; i < itemsToAdd; i++) {
-        artworksListModel.getMockArtwork(i)->set(originalDescription, originalTitle, originalKeywords);
+        artworksListModel.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
     }
 
 

@@ -520,7 +520,7 @@ HEADERS += \
     Artworks/iselectedindicessource.h \
     Commands/UI/singleeditablecommands.h \
     Commands/Base/commanduiwrapper.h \
-    Models/Artworks/artworklistoperations.h \
+    Models/Artworks/artworkslistoperations.h \
     Models/Connectivity/artworksuploader.h \
     Commands/UI/sourcetargetcommand.h \
     Commands/Files/removeselectedfilescommand.h \

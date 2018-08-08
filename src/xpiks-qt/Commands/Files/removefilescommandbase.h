@@ -12,7 +12,7 @@
 #define REMOVEFILESCOMMAND_H
 
 #include <Commands/Base/icommand.h>
-#include <Models/Artworks/artworklistoperations.h>
+#include <Models/Artworks/artworkslistoperations.h>
 
 namespace Models {
     class ArtworksRepository;

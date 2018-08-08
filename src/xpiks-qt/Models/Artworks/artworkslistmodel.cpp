@@ -336,12 +336,10 @@ namespace Models {
                     [](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
                 [](Artworks::ArtworkMetadata *artwork, size_t) { return artwork; });
 
-        auto removeResult = m_ArtworksRepository.removeFiles(snapshot);
-        return {
-            std::get<0>(removeResult), // directories ids set
-                    snapshot.size(), // removed count
-            std::get<1>(removeResult) // unselect all
-        };
+        ArtworksRemoveResult removeResult;
+        m_ArtworksRepository.removeFiles(snapshot, removeResult);
+        removeResult.m_RemovedCount = snapshot.size();
+        return removeResult;
     }
 
     ArtworksRemoveResult ArtworksListModel::removeFilesFromDirectory(int directoryIndex) {
@@ -368,6 +366,7 @@ namespace Models {
         });
 
         updateSelection(SelectionType::All, QVector<int>() << IsSelectedRole);
+        emit artworksChanged(true);
         // TODO: finish this
     }
 
@@ -736,7 +735,8 @@ namespace Models {
                               std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
                                   std::make_shared<EditArtworksTemplate>("", "",
                                   QStringList() << keyword,
-                                  Common::ArtworkEditFlags::AppendKeywords),
+                                  Common::ArtworkEditFlags::AppendKeywords |
+                                  Common::ArtworkEditFlags::EditKeywords),
                                   std::make_shared<ArtworksUpdateTemplate>(*this,
                                   QVector<int>() << IsModifiedRole << KeywordsCountRole)
                               }));
@@ -766,7 +766,8 @@ namespace Models {
                               std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
                                   std::make_shared<EditArtworksTemplate>("", "",
                                   keywords,
-                                  Common::ArtworkEditFlags::AppendKeywords),
+                                  Common::ArtworkEditFlags::AppendKeywords |
+                                  Common::ArtworkEditFlags::EditKeywords),
                                   std::make_shared<ArtworksUpdateTemplate>(
                                   *this, getStandardUpdateRoles())}));
         } else {
@@ -788,7 +789,8 @@ namespace Models {
                               std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
                                   std::make_shared<EditArtworksTemplate>("", "",
                                   keywords,
-                                  Common::ArtworkEditFlags::AppendKeywords),
+                                  Common::ArtworkEditFlags::AppendKeywords |
+                                  Common::ArtworkEditFlags::EditKeywords),
                                   std::make_shared<ArtworksUpdateTemplate>(
                                   *this, getStandardUpdateRoles())}));
         } else {
@@ -1136,11 +1138,13 @@ namespace Models {
         return m_LastID++;
     }
 
-    void ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
-                                           std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
+    int ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
+                                          std::function<bool (Artworks::ArtworkMetadata *)> pred,
+                                          std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
+        int itemsProcessed = 0;
         for (auto &r: ranges.getRanges()) {
             if ((r.first < 0) || (r.second >= m_ArtworkList.size())) { continue; }
+            itemsProcessed += r.second - r.first + 1;
 
             for (int i = r.first; i <= r.second; i++) {
                 auto *artwork = accessArtwork(i);
@@ -1149,19 +1153,20 @@ namespace Models {
                 }
             }
         }
+        return itemsProcessed;
     }
 
-    void ArtworksListModel::foreachArtwork(std::function<bool (Artworks::ArtworkMetadata *)> pred,
+    int ArtworksListModel::foreachArtwork(std::function<bool (Artworks::ArtworkMetadata *)> pred,
                                            std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
-        foreachArtwork(Helpers::IndicesRanges(0, (int)getArtworksSize()),
-                       pred,
-                       action);
+        return foreachArtwork(Helpers::IndicesRanges(0, (int)getArtworksSize()),
+                              pred,
+                              action);
     }
 
-    void ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
+    int ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
                                            std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
-        foreachArtwork(ranges,
-                       [](Artworks::ArtworkMetadata *){ return true; },
-                       action);
+        return foreachArtwork(ranges,
+                              [](Artworks::ArtworkMetadata *){ return true; },
+        action);
     }
 }

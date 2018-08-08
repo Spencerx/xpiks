@@ -139,14 +139,14 @@ void ArtworkRepositoryTests::addAndRemoveSameFileTest() {
 #endif
 
     qint64 dirID = 0;
-    auto flags = artworksRepository.accountFile(filename, dirID);
-    QVERIFY(Common::HasFlag(flags, Common::AccountFileFlags::FlagRepositoryCreated));
+    auto addFlags = artworksRepository.accountFile(filename, dirID);
+    QVERIFY(Common::HasFlag(addFlags, Common::AccountFileFlags::FlagRepositoryCreated));
 
-    bool removeResult = artworksRepository.removeFile(filename, dirID);
+    auto removeFlags = artworksRepository.removeFile(filename, dirID);
     artworksRepository.cleanupEmptyDirectories();
 
     QCOMPARE(artworksRepository.rowCount(), 0);
-    QCOMPARE(removeResult, true);
+    QVERIFY(Common::HasFlag(removeFlags, Common::RemoveFileFlags::FlagFileRemoved));
 }
 
 void ArtworkRepositoryTests::removeNotExistingFileTest() {
@@ -161,14 +161,14 @@ void ArtworkRepositoryTests::removeNotExistingFileTest() {
 #endif
 
     qint64 dirID = 0;
-    auto flags = artworksRepository.accountFile(filename1, dirID);
-    QVERIFY(Common::HasFlag(flags, Common::AccountFileFlags::FlagRepositoryCreated));
+    auto addFlags = artworksRepository.accountFile(filename1, dirID);
+    QVERIFY(Common::HasFlag(addFlags, Common::AccountFileFlags::FlagRepositoryCreated));
     QCOMPARE(artworksRepository.rowCount(), 1);
 
-    bool removeResult = artworksRepository.removeFile(filename2, dirID);
+    auto removeFlags = artworksRepository.removeFile(filename2, dirID);
     artworksRepository.cleanupEmptyDirectories();
 
-    QCOMPARE(removeResult, false);
+    QCOMPARE(removeFlags, Common::RemoveFileFlags::None);
     QCOMPARE(artworksRepository.rowCount(), 1);
 }
 

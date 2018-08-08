@@ -29,6 +29,8 @@ INCLUDEPATH += ../../xpiks-qt
 DEFINES += HUNSPELL_STATIC
 DEFINES += CORE_TESTS
 
+DEFINES += QT_MESSAGELOGCONTEXT
+
 DEFINES += QT_NO_CAST_TO_ASCII \
            QT_RESTRICTED_CAST_FROM_ASCII \
            QT_NO_CAST_FROM_BYTEARRAY
@@ -290,7 +292,6 @@ HEADERS += \
     ../../xpiks-qt/Helpers/localconfig.h \
     ../../xpiks-qt/Helpers/stringhelper.h \
     ../../xpiks-qt/Models/settingsmodel.h \
-    ../../xpiks-qt/Models/Artworks/artworklistoperations.h \
     ../../xpiks-qt/Models/Artworks/artworkslistmodel.h \
     ../../xpiks-qt/Models/Artworks/artworksrepository.h \
     ../../xpiks-qt/Models/Artworks/artworksviewmodel.h \
@@ -368,5 +369,6 @@ HEADERS += \
     ../../xpiks-qt/Connectivity/configrequest.h \
     ../../xpiks-qt/Encryption/obfuscation.h \
     ../../xpiks-qt/Models/Connectivity/proxysettings.h \
-    ../../xpiks-qt/Commands/Files/removedirectorycommand.h
+    ../../xpiks-qt/Commands/Files/removedirectorycommand.h \
+    ../../xpiks-qt/Models/Artworks/artworkslistoperations.h
 

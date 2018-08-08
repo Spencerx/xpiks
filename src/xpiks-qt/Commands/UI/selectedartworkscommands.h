@@ -14,7 +14,7 @@
 #include <memory>
 #include <Commands/Base/iuicommandtemplate.h>
 #include <QMLExtensions/uicommandid.h>
-#include <Models/Artworks/artworklistoperations.h>
+#include <Models/Artworks/artworkslistoperations.h>
 #include "sourcetargetcommand.h"
 
 namespace Artworks {
