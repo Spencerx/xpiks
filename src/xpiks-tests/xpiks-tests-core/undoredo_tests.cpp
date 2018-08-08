@@ -65,7 +65,7 @@ void UndoRedoTests::undoRemoveItemsTest() {
                              selectedIndices, artworksListModel, artworksRepository);
     commandManager.processCommand(removeCommand);
 
-    QCOMPARE(removeCommand->getRemovedCount(), 3);
+    QCOMPARE((int)removeCommand->getRemovedCount(), 3);
     QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd - 3);
 
     bool undoStatus = undoRedoManager.undoLastAction();
@@ -92,7 +92,8 @@ void UndoRedoTests::undoRemoveAddFullDirectoryTest() {
                 std::make_shared<Commands::RemoveDirectoryCommand>(
                     0,
                     artworksListModel,
-                    artworksRepository));
+                    artworksRepository,
+                    settingsModel));
 
     QCOMPARE(filteredArtworksModel.getItemsCount(), 0);
 

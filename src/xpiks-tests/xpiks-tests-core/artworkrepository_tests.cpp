@@ -9,6 +9,7 @@
 #include <KeywordsPresets/presetkeywordsmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
 #include <Models/Session/recentdirectoriesmodel.h>
+#include <Models/settingsmodel.h>
 #include <UndoRedo/undoredomanager.h>
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/filescollectionmock.h"
@@ -480,8 +481,10 @@ void ArtworkRepositoryTests::removeOneOfFewSelectedStaysSameTest() {
 
 void ArtworkRepositoryTests::undoRemoveOnlySelectedSelectsItTest() {
     SETUP_SELECTION_TEST(10, 3);
+    Models::SettingsModel settingsModel(environment);
+    settingsModel.initializeConfigs();
 
-    size_t toggleIndex = 2;
+    int toggleIndex = 2;
     artworksRepository.toggleDirectorySelected(toggleIndex);
     CHECK_ONLY_SELECTED(toggleIndex);
 
@@ -489,7 +492,8 @@ void ArtworkRepositoryTests::undoRemoveOnlySelectedSelectsItTest() {
                 std::make_shared<Commands::RemoveDirectoryCommand>(
                     toggleIndex,
                     artworksListModel,
-                    artworksRepository));
+                    artworksRepository,
+                    settingsModel));
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
@@ -499,15 +503,18 @@ void ArtworkRepositoryTests::undoRemoveOnlySelectedSelectsItTest() {
 
 void ArtworkRepositoryTests::undoRemoveOneOfFewSelectedTest() {
     SETUP_SELECTION_TEST(10, 3);
+    Models::SettingsModel settingsModel(environment);
+    settingsModel.initializeConfigs();
 
     CHECK_ALL_SELECTED;
 
-    size_t toggleIndex = 2;
+    int toggleIndex = 2;
     commandManager.processCommand(
                 std::make_shared<Commands::RemoveDirectoryCommand>(
                     toggleIndex,
                     artworksListModel,
-                    artworksRepository));
+                    artworksRepository,
+                    settingsModel));
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
@@ -517,8 +524,10 @@ void ArtworkRepositoryTests::undoRemoveOneOfFewSelectedTest() {
 
 void ArtworkRepositoryTests::undoRemoveAfterUserSelectsOtherTest() {
     SETUP_SELECTION_TEST(10, 3);
+    Models::SettingsModel settingsModel(environment);
+    settingsModel.initializeConfigs();
 
-    size_t toggleIndex = 2;
+    int toggleIndex = 2;
     artworksRepository.toggleDirectorySelected(toggleIndex);
     CHECK_ONLY_SELECTED(toggleIndex);
 
@@ -526,7 +535,8 @@ void ArtworkRepositoryTests::undoRemoveAfterUserSelectsOtherTest() {
                 std::make_shared<Commands::RemoveDirectoryCommand>(
                     toggleIndex,
                     artworksListModel,
-                    artworksRepository));
+                    artworksRepository,
+                    settingsModel));
 
     size_t selectedIndex = 0;
     artworksRepository.toggleDirectorySelected(selectedIndex);
@@ -542,8 +552,10 @@ void ArtworkRepositoryTests::undoRemoveAfterUserSelectsOtherTest() {
 
 void ArtworkRepositoryTests::undoRemoveAfterUserSelectsFewTest() {
     SETUP_SELECTION_TEST(10, 4);
+    Models::SettingsModel settingsModel(environment);
+    settingsModel.initializeConfigs();
 
-    size_t toggleIndex = 3;
+    int toggleIndex = 3;
     artworksRepository.toggleDirectorySelected(toggleIndex);
     CHECK_ONLY_SELECTED(toggleIndex);
 
@@ -551,7 +563,8 @@ void ArtworkRepositoryTests::undoRemoveAfterUserSelectsFewTest() {
                 std::make_shared<Commands::RemoveDirectoryCommand>(
                     toggleIndex,
                     artworksListModel,
-                    artworksRepository));
+                    artworksRepository,
+                    settingsModel));
 
     CHECK_ALL_SELECTED;
 
@@ -574,6 +587,8 @@ void ArtworkRepositoryTests::undoRemoveAfterUserSelectsFewTest() {
 
 void ArtworkRepositoryTests::undoRemoveOfTheOnlyOneSelectsItTest() {
     SETUP_SELECTION_TEST(10, 1);
+    Models::SettingsModel settingsModel(environment);
+    settingsModel.initializeConfigs();
 
     CHECK_ALL_SELECTED;
 
@@ -581,7 +596,8 @@ void ArtworkRepositoryTests::undoRemoveOfTheOnlyOneSelectsItTest() {
                 std::make_shared<Commands::RemoveDirectoryCommand>(
                     0,
                     artworksListModel,
-                    artworksRepository));
+                    artworksRepository,
+                    settingsModel));
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
@@ -591,6 +607,8 @@ void ArtworkRepositoryTests::undoRemoveOfTheOnlyOneSelectsItTest() {
 
 void ArtworkRepositoryTests::undoRemoveAfterAllOtherSelectedTest() {
     SETUP_SELECTION_TEST(10, 4);
+    Models::SettingsModel settingsModel(environment);
+    settingsModel.initializeConfigs();
 
     size_t toggleIndex = 3;
     artworksRepository.toggleDirectorySelected(toggleIndex);
@@ -600,7 +618,8 @@ void ArtworkRepositoryTests::undoRemoveAfterAllOtherSelectedTest() {
                 std::make_shared<Commands::RemoveDirectoryCommand>(
                     toggleIndex,
                     artworksListModel,
-                    artworksRepository));
+                    artworksRepository,
+                    settingsModel));
 
     CHECK_ALL_SELECTED;
 
