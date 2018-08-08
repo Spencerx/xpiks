@@ -19,6 +19,10 @@ namespace Models {
     class SettingsModel;
 }
 
+namespace Filesystem {
+    class IFilesCollection;
+}
+
 namespace Commands {
     class RemoveDirectoryCommand:
             public QObject,
@@ -40,6 +44,11 @@ namespace Commands {
     signals:
         void artworksAdded(int imagesCount, int vectorsCount);
 
+#ifdef CORE_TESTS
+    public:
+        void setFakeFullDirectoryFiles(std::shared_ptr<Filesystem::IFilesCollection> const &files) { m_FakeFiles = files; }
+#endif
+
     protected:
         virtual void restoreFiles() override;
 
@@ -49,6 +58,9 @@ namespace Commands {
         Models::SettingsModel &m_SettingsModel;
         std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> m_AddedArtworksTemplate;
         bool m_IsFullDirectory;
+#ifdef CORE_TESTS
+        std::shared_ptr<Filesystem::IFilesCollection> m_FakeFiles;
+#endif
     };
 }
 

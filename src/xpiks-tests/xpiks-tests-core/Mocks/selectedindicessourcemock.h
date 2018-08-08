@@ -24,6 +24,9 @@ namespace Mocks {
     public:
         virtual std::vector<int> getSelectedIndices() override { return m_Indices; }
 
+    public:
+        size_t size() const { return m_Indices.size(); }
+
     private:
         std::vector<int> m_Indices;
     };

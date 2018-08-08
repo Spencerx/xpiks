@@ -130,7 +130,7 @@ namespace Models {
     public:
         // other readonly
         Q_INVOKABLE int getItemsCount() const { return rowCount(); }
-        Q_INVOKABLE void updateFilter() { invalidateFilter(); emit afterInvalidateFilter(); }
+        Q_INVOKABLE void updateFilter();
         Q_INVOKABLE QString getKeywordsString(int proxyIndex);
         Q_INVOKABLE bool hasTitleWordSpellError(int proxyIndex, const QString &word);
         Q_INVOKABLE bool hasDescriptionWordSpellError(int proxyIndex, const QString &word);

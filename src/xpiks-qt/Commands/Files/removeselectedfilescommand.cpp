@@ -36,6 +36,9 @@ namespace Commands {
 
     void RemoveSelectedFilesCommand::undo() {
         LOG_DEBUG << "#";
+
+        RemoveFilesCommandBase::undo();
+
         if (m_SaveSessionCommand) {
             m_SaveSessionCommand->execute();
         }

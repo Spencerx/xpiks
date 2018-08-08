@@ -65,8 +65,8 @@ void UndoRedoTests::undoRemoveItemsTest() {
                              selectedIndices, artworksListModel, artworksRepository);
     commandManager.processCommand(removeCommand);
 
-    QCOMPARE((int)removeCommand->getRemovedCount(), 3);
-    QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd - 3);
+    QCOMPARE(removeCommand->getRemovedCount(), selectedIndices.size());
+    QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd - (int)selectedIndices.size());
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
@@ -78,7 +78,10 @@ void UndoRedoTests::undoRemoveAddFullDirectoryTest() {
     SETUP_TEST;
     settingsModel.setAutoFindVectors(false);
 
-    int addedCount = artworksListModel.generateAndAddDirectories(1);
+    auto files = std::make_shared<Mocks::FilesCollectionMock>(5, 0, 1);
+    files->setFromFullDirectory();
+    auto result = artworksListModel.addFiles(files, Common::AddFilesFlags::FlagIsFullDirectory);
+    int addedCount = (int)result.m_Snapshot.size();
 
     Mocks::SelectedIndicesSourceMock selectedIndices(Helpers::IndicesRanges({{1, 3}}));
     commandManager.processCommand(
@@ -88,15 +91,16 @@ void UndoRedoTests::undoRemoveAddFullDirectoryTest() {
                     artworksRepository));
     QCOMPARE(filteredArtworksModel.getItemsCount(), addedCount - 3);
 
-    commandManager.processCommand(
-                std::make_shared<Commands::RemoveDirectoryCommand>(
-                    0,
-                    artworksListModel,
-                    artworksRepository,
-                    settingsModel));
+    auto removeDirectoryCommand = std::make_shared<Commands::RemoveDirectoryCommand>(
+                                      0,
+                                      artworksListModel,
+                                      artworksRepository,
+                                      settingsModel);
+    commandManager.processCommand(removeDirectoryCommand);
 
     QCOMPARE(filteredArtworksModel.getItemsCount(), 0);
 
+    removeDirectoryCommand->setFakeFullDirectoryFiles(files);
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 

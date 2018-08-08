@@ -41,7 +41,11 @@ namespace Commands {
         RemoveFilesCommandBase::restoreFiles();
 
         if (m_IsFullDirectory) {
+#ifndef CORE_TESTS
             auto filesCollection = std::make_shared<Filesystem::DirectoriesCollection>(std::initializer_list<QString>{m_DirectoryPath});
+#else
+            auto filesCollection = m_FakeFiles;
+#endif
             Common::AddFilesFlags flags = Common::AddFilesFlags::FlagIsFullDirectory;
             auto addResult = m_ArtworksList.addFiles(filesCollection, flags);
 

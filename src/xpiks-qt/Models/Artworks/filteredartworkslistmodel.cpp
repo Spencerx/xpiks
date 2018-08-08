@@ -395,6 +395,12 @@ namespace Models {
         m_ArtworksListModel.detachVectorsFromArtworks(Helpers::IndicesRanges(originalIndex, 1));
     }
 
+    void FilteredArtworksListModel::updateFilter() {
+        LOG_DEBUG << "#";
+        invalidateFilter();
+        emit afterInvalidateFilter();
+    }
+
     QString FilteredArtworksListModel::getKeywordsString(int proxyIndex) {
         int originalIndex = getOriginalIndex(proxyIndex);
         Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);

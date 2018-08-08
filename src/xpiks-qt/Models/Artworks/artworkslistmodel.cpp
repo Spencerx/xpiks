@@ -357,13 +357,16 @@ namespace Models {
     }
 
     void ArtworksListModel::restoreRemoved() {
+        // TODO: restore only in ranges
         LOG_DEBUG << "#";
-        foreachArtwork([](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
-        [this](Artworks::ArtworkMetadata *artwork, size_t) {
+        int restoredCount = foreachArtwork([](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
+                [this](Artworks::ArtworkMetadata *artwork, size_t) {
             qint64 directoryID;
             auto flags = this->m_ArtworksRepository.accountFile(artwork->getFilepath(), directoryID);
             Q_ASSERT(flags == Common::AccountFileFlags::FlagRepositoryModified);
         });
+
+        LOG_INFO << restoredCount << "artworks restored";
 
         updateSelection(SelectionType::All, QVector<int>() << IsSelectedRole);
         emit artworksChanged(true);
@@ -1144,12 +1147,12 @@ namespace Models {
         int itemsProcessed = 0;
         for (auto &r: ranges.getRanges()) {
             if ((r.first < 0) || (r.second >= m_ArtworkList.size())) { continue; }
-            itemsProcessed += r.second - r.first + 1;
 
             for (int i = r.first; i <= r.second; i++) {
                 auto *artwork = accessArtwork(i);
                 if (pred(artwork)) {
                     action(artwork, i);
+                    itemsProcessed++;
                 }
             }
         }
