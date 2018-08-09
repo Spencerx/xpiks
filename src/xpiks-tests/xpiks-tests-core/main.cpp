@@ -60,13 +60,13 @@ int main(int argc, char *argv[]) {
 //    QTEST_CLASS(RemoveFilesFsTests, del,result);
 //    QTEST_CLASS(RecentItemsTests, rdt, result);
 //    QTEST_CLASS(ArtworksListModelTests, aimt, result);
-    QTEST_CLASS(FixSpellingTests, fst, result);
+//    QTEST_CLASS(FixSpellingTests, fst, result);
 //    QTEST_CLASS(DeleteOldLogsTest, dolt, result);
 //    QTEST_CLASS(ReplaceTests, rpl, result);
 //    QTEST_CLASS(ReplacePreviewTests, rplp, result);
 //    QTEST_CLASS(DeleteKeywordsTests, dkt, result);
 //    QTEST_CLASS(PresetTests, pst, result);
-//    QTEST_CLASS(QuickBufferTests, qbt, result);
+    QTEST_CLASS(QuickBufferTests, qbt, result);
 //    QTEST_CLASS(JsonMergeTests, jmt, result);
 //    QTEST_CLASS(WarningsCheckTests, wct, result);
 //    QTEST_CLASS(DbImageCacheTests, ict, result);

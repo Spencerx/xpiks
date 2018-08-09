@@ -15,6 +15,7 @@
 #include <Models/Editing/currenteditablemodel.h>
 #include <KeywordsPresets/presetkeywordsmodel.h>
 #include <UndoRedo/undoredomanager.h>
+#include <Suggestion/keywordssuggestor.h>
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \
@@ -31,7 +32,11 @@
     artworksListModel, commandManager, keywordsPresets, settingsModel);\
     Models::CurrentEditableModel currentEditableModel;\
     Models::QuickBuffer quickBuffer(currentEditableModel, commandManager);\
-    artworksListModel.generateAndAddArtworks(count);
+    artworksListModel.generateAndAddArtworks(count);\
+    Common::connectTarget<Models::QuickBufferMessage>(\
+    quickBuffer, { filteredArtworksModel });\
+    Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(\
+    currentEditableModel, { artworksListModel });
 
 void QuickBufferTests::copyArtworkToQuickBufferTest() {
     DECLARE_MODELS_AND_GENERATE(1);
@@ -56,6 +61,7 @@ void QuickBufferTests::copyProxyModelToQuickBufferTest() {
     QVERIFY(quickBuffer.getIsEmpty());
     Mocks::ArtworksUpdaterMock updater;
     Models::ArtworkProxyModel proxyModel(commandManager, keywordsPresets, updater);
+    Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(currentEditableModel, { proxyModel });
 
     const QString titleForQB = "title for quick buffer";
     const QString descriptionForQB = "desc for quick buffer";
@@ -78,6 +84,7 @@ void QuickBufferTests::copyCombinedModelToQuickBufferTest() {
     DECLARE_MODELS_AND_GENERATE(1);
     QVERIFY(quickBuffer.getIsEmpty());
     Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets);
+    Common::connectSource<Models::QuickBufferMessage>(combinedModel, {quickBuffer});
 
     const QString titleForQB = "title for quick buffer";
     const QString descriptionForQB = "desc for quick buffer";
@@ -121,6 +128,7 @@ void QuickBufferTests::copyHalfEmptyProxyModelToQuickBufferTest() {
     QVERIFY(quickBuffer.getIsEmpty());
     Mocks::ArtworksUpdaterMock updater;
     Models::ArtworkProxyModel proxyModel(commandManager, keywordsPresets, updater);
+    Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(currentEditableModel, { proxyModel });
 
     QStringList prevKeywordsForQB;
     prevKeywordsForQB << "quite" << "old" << "keywords";
@@ -146,6 +154,7 @@ void QuickBufferTests::copyHalfEmptyCombinedModelToQuickBufferTest() {
     DECLARE_MODELS_AND_GENERATE(1);
     QVERIFY(quickBuffer.getIsEmpty());
     Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets);
+    Common::connectTarget<Models::QuickBufferMessage>(quickBuffer, {combinedModel});
 
     QStringList prevKeywordsForQB;
     prevKeywordsForQB << "quite" << "old" << "keywords";
@@ -167,6 +176,12 @@ void QuickBufferTests::copyHalfEmptyCombinedModelToQuickBufferTest() {
     QCOMPARE(quickBuffer.getTitle(), titleForQB);
     QCOMPARE(quickBuffer.getDescription(), previousDescription);
     QCOMPARE(quickBuffer.getKeywords(), prevKeywordsForQB);
+}
+
+void QuickBufferTests::copyKeywordsSuggestorToQuickBufferTest() {
+    DECLARE_MODELS_AND_GENERATE(2);
+    //Suggestion::KeywordsSuggestor suggestor()
+    QFAIL("Not implemented");
 }
 
 void QuickBufferTests::applyQuickBufferToArtworkTest() {
@@ -198,6 +213,7 @@ void QuickBufferTests::applyQuickBufferToProxyModelTest() {
     DECLARE_MODELS_AND_GENERATE(2);
     Mocks::ArtworksUpdaterMock updater;
     Models::ArtworkProxyModel proxyModel(commandManager, keywordsPresets, updater);
+    Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(currentEditableModel, { proxyModel });
 
     const QString titleForQB = "title for quick buffer";
     const QString descriptionForQB = "desc for quick buffer";
@@ -236,6 +252,7 @@ void QuickBufferTests::applyQuickBufferToCombinedModelTest() {
     quickBuffer.pasteKeywords(keywordsForQB);
 
     Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets);
+    Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(currentEditableModel, { combinedModel });
     combinedModel.setArtworks(artworksListModel.createArtworksSnapshot());
 
     bool success = quickBuffer.copyToCurrentEditable();
@@ -276,6 +293,7 @@ void QuickBufferTests::applyHalfEmptyQuickBufferToProxyModelTest() {
     DECLARE_MODELS_AND_GENERATE(2);
     Mocks::ArtworksUpdaterMock updater;
     Models::ArtworkProxyModel proxyModel(commandManager, keywordsPresets, updater);
+    Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(currentEditableModel, { proxyModel });
 
     const QString titleForModel = "title for quick buffer";
     const QString descriptionForQB = "desc for quick buffer";
@@ -305,6 +323,7 @@ void QuickBufferTests::applyHalfEmptyQuickBufferToProxyModelTest() {
 void QuickBufferTests::applyHalfEmptyQuickBufferToCombinedModelTest() {
     DECLARE_MODELS_AND_GENERATE(2);
     Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets);
+    Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(currentEditableModel, { combinedModel });
 
     const QString titleForQB = "title for quick buffer";
     const QString descriptionForModel = "desc for quick buffer";
