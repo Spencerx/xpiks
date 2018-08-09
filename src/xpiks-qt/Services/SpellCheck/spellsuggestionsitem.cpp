@@ -143,10 +143,6 @@ namespace SpellCheck {
         Q_ASSERT(spellCheckable != nullptr);
     }
 
-    void MetadataSpellSuggestionsItem::finalizeReplacement() {
-        m_SpellCheckable->afterReplaceCallback();
-    }
-
     KeywordSpellSuggestions::KeywordSpellSuggestions(const QString &keyword,
                                                      size_t originalIndex,
                                                      const QString &origin,
@@ -251,12 +247,6 @@ namespace SpellCheck {
         }
 
         return keywordsSuggestions;
-    }
-
-    void CombinedSpellSuggestions::finalizeReplacement() {
-        for (auto &item: m_SpellSuggestions) {
-            item->finalizeReplacement();
-        }
     }
 
     void CombinedSpellSuggestions::replaceToSuggested() {

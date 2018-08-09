@@ -76,7 +76,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_UploadInfoRepository(environment, m_SecretsManager),
     m_ZipArchiver(),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
-    m_ApiClients(m_SecretsStorage.get()),
+    m_ApiClients(m_SecretsStorage),
     m_FtpCoordinator(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel)),
     m_ArtworksUploader(environment, m_UploadInfoRepository, m_SettingsModel),
     m_LanguagesModel(m_SettingsModel),

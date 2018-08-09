@@ -57,7 +57,6 @@ namespace SpellCheck {
         void setSuggestions(const QStringList &suggestions);
 
     public:
-        virtual void finalizeReplacement() = 0;
         virtual void replaceToSuggested() = 0;
 
         // doesn't work like that because of f&cking c++ standard
@@ -99,9 +98,6 @@ namespace SpellCheck {
                                      ISpellCheckable *spellCheckable);
     public:
         ISpellCheckable *getSpellCheckable() const { return m_SpellCheckable; }
-
-    public:
-        virtual void finalizeReplacement() override;
 
     private:
         ISpellCheckable *m_SpellCheckable;
@@ -181,7 +177,6 @@ namespace SpellCheck {
         virtual QString toDebugString() const override { return "Multireplace: " + SpellSuggestionsItem::toDebugString(); }
 #endif
         std::vector<std::shared_ptr<KeywordSpellSuggestions> > getKeywordsDuplicateSuggestions() const;
-        virtual void finalizeReplacement() override;
         virtual void replaceToSuggested() override;
 
     //protected:

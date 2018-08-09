@@ -13,12 +13,12 @@
 #include "../Encryption/aes-qt.h"
 #include "../Connectivity/simpleapirequest.h"
 #include "apisecrets.h"
+#include "../Encryption/isecretsstorage.h"
 
 namespace Microstocks {
-    GettyAPIClient::GettyAPIClient(Encryption::ISecretsStorage *secretsStorage):
+    GettyAPIClient::GettyAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):
         m_SecretsStorage(secretsStorage)
     {
-        Q_ASSERT(secretsStorage != nullptr);
     }
 
     std::shared_ptr<Connectivity::IConnectivityRequest> GettyAPIClient::search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {

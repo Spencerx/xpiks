@@ -19,7 +19,7 @@ namespace Suggestion {
     class FotoliaSuggestionResults: public SuggestionResultsResponse
     {
     public:
-        FotoliaSuggestionResults(ISuggestionsRepository *suggestions):
+        FotoliaSuggestionResults(ISuggestionsRepository &suggestions):
             SuggestionResultsResponse(suggestions)
         { }
 
@@ -32,8 +32,8 @@ namespace Suggestion {
         Q_OBJECT
     public:
         FotoliaSuggestionEngine(int id,
-                                     Microstocks::IMicrostockAPIClient *client,
-                                     Connectivity::RequestsService *requestsService):
+                                     Microstocks::IMicrostockAPIClient &client,
+                                     Connectivity::RequestsService &requestsService):
             MicrostockSuggestionEngine(id,
                                        "Fotolia",
                                        client,

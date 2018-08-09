@@ -13,13 +13,16 @@
 
 #include <QUrl>
 #include "imicrostockapiclient.h"
-#include "../Encryption/isecretsstorage.h"
+
+namespace Encryption {
+    class ISecretsStorage;
+}
 
 namespace Microstocks {
     class ShutterstockAPIClient: public IMicrostockAPIClient
     {
     public:
-        ShutterstockAPIClient(Encryption::ISecretsStorage *secretsStorage);
+        ShutterstockAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage);
 
         // IMicrostockAPIClient interface
     public:
@@ -31,7 +34,7 @@ namespace Microstocks {
         QString orderingToString(const SearchQuery &query) const;
 
     private:
-        Encryption::ISecretsStorage *m_SecretsStorage;
+        std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
     };
 }
 

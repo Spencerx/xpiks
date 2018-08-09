@@ -19,7 +19,7 @@ namespace Suggestion {
     class ShutterstockSuggestionResults: public SuggestionResultsResponse
     {
     public:
-        ShutterstockSuggestionResults(ISuggestionsRepository *suggestions):
+        ShutterstockSuggestionResults(ISuggestionsRepository &suggestions):
             SuggestionResultsResponse(suggestions)
         { }
 
@@ -35,8 +35,8 @@ namespace Suggestion {
         Q_OBJECT
     public:
         ShutterstockSuggestionEngine(int id,
-                                     Microstocks::IMicrostockAPIClient *client,
-                                     Connectivity::RequestsService *requestsService):
+                                     Microstocks::IMicrostockAPIClient &client,
+                                     Connectivity::RequestsService &requestsService):
             MicrostockSuggestionEngine(id,
                                        "Shutterstock",
                                        client,

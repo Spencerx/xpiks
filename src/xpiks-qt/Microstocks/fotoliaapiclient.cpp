@@ -13,11 +13,11 @@
 #include "../Connectivity/simpleapirequest.h"
 #include "../Encryption/aes-qt.h"
 #include "apisecrets.h"
+#include "../Encryption/isecretsstorage.h"
 
-Microstocks::FotoliaAPIClient::FotoliaAPIClient(Encryption::ISecretsStorage *secretsStorage):
+Microstocks::FotoliaAPIClient::FotoliaAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):
     m_SecretsStorage(secretsStorage)
 {
-    Q_ASSERT(secretsStorage != nullptr);
 }
 
 std::shared_ptr<Connectivity::IConnectivityRequest> Microstocks::FotoliaAPIClient::search(const Microstocks::SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {

@@ -11,25 +11,29 @@
 #ifndef MICROSTOCKAPICLIENTS_H
 #define MICROSTOCKAPICLIENTS_H
 
+#include <memory>
 #include "shutterstockapiclient.h"
 #include "fotoliaapiclient.h"
 #include "gettyapiclient.h"
-#include "../Encryption/isecretsstorage.h"
+
+namespace Encryption {
+    class ISecretsStorage;
+}
 
 namespace Microstocks {
     class MicrostockAPIClients
     {
     public:
-        MicrostockAPIClients(Encryption::ISecretsStorage *secretsStorage):
+        MicrostockAPIClients(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):
             m_ShutterstockClient(secretsStorage),
             m_FotoliaClient(secretsStorage),
             m_GettyClient(secretsStorage)
         { }
 
     public:
-        ShutterstockAPIClient &getShutterstockClient() { return m_ShutterstockClient; }
-        FotoliaAPIClient &getFotoliaClient() { return m_FotoliaClient; }
-        GettyAPIClient &getGettyClient() { return m_GettyClient; }
+        IMicrostockAPIClient &getShutterstockClient() { return m_ShutterstockClient; }
+        IMicrostockAPIClient &getFotoliaClient() { return m_FotoliaClient; }
+        IMicrostockAPIClient &getGettyClient() { return m_GettyClient; }
 
     private:
         ShutterstockAPIClient m_ShutterstockClient;

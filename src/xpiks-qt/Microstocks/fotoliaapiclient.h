@@ -12,13 +12,16 @@
 #define FOTOLIAAPICLIENT_H
 
 #include "imicrostockapiclient.h"
-#include "../Encryption/isecretsstorage.h"
+
+namespace Encryption {
+    class ISecretsStorage;
+}
 
 namespace Microstocks {
     class FotoliaAPIClient: public IMicrostockAPIClient
     {
     public:
-        FotoliaAPIClient(Encryption::ISecretsStorage *secretsStorage);
+        FotoliaAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage);
 
         // IMicrostockAPIClient interface
     public:
@@ -30,7 +33,7 @@ namespace Microstocks {
         QString orderingToString(const SearchQuery &query) const;
 
     private:
-        Encryption::ISecretsStorage *m_SecretsStorage;
+        std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
     };
 }
 

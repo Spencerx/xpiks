@@ -67,16 +67,16 @@ namespace Suggestion {
         int id = 0;
         auto shutterstockEngine = std::make_shared<ShutterstockSuggestionEngine>(
                                       id++,
-                                      &m_ApiClients.getShutterstockClient(),
-                                      &m_RequestsService);
+                                      m_ApiClients.getShutterstockClient(),
+                                      m_RequestsService);
         QObject::connect(shutterstockEngine.get(), &ShutterstockSuggestionEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
         m_QueryEngines.emplace_back(shutterstockEngine);
 
         auto gettyEngine = std::make_shared<GettySuggestionEngine>(
                                id++,
-                               &m_ApiClients.getGettyClient(),
-                               &m_RequestsService);
+                               m_ApiClients.getGettyClient(),
+                               m_RequestsService);
         QObject::connect(gettyEngine.get(), &GettySuggestionEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
         m_QueryEngines.emplace_back(gettyEngine);
@@ -86,8 +86,8 @@ namespace Suggestion {
 
         auto fotoliaEngine = std::make_shared<FotoliaSuggestionEngine>(
                                  id++,
-                                 &m_ApiClients.getFotoliaClient(),
-                                 &m_RequestsService);
+                                 m_ApiClients.getFotoliaClient(),
+                                 m_RequestsService);
         QObject::connect(fotoliaEngine.get(), &FotoliaSuggestionEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
         m_QueryEngines.emplace_back(fotoliaEngine);

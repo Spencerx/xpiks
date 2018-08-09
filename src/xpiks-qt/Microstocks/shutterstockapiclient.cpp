@@ -13,13 +13,13 @@
 #include "../Common/logging.h"
 #include "../Encryption/aes-qt.h"
 #include "../Connectivity/simpleapirequest.h"
+#include "../Encryption/isecretsstorage.h"
 #include "apisecrets.h"
 
 namespace Microstocks {
-    ShutterstockAPIClient::ShutterstockAPIClient(Encryption::ISecretsStorage *secretsStorage):
+    ShutterstockAPIClient::ShutterstockAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):
         m_SecretsStorage(secretsStorage)
     {
-        Q_ASSERT(secretsStorage != nullptr);
     }
 
     std::shared_ptr<Connectivity::IConnectivityRequest> ShutterstockAPIClient::search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {

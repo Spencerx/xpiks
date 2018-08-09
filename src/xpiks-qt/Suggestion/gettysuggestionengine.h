@@ -19,7 +19,7 @@ namespace Suggestion {
     class GettySuggestionResults : public SuggestionResultsResponse
     {
     public:
-        GettySuggestionResults(ISuggestionsRepository *suggestions):
+        GettySuggestionResults(ISuggestionsRepository &suggestions):
             SuggestionResultsResponse(suggestions)
         { }
 
@@ -35,8 +35,8 @@ namespace Suggestion {
         Q_OBJECT
     public:
         GettySuggestionEngine(int id,
-                              Microstocks::IMicrostockAPIClient *client,
-                              Connectivity::RequestsService *requestsService):
+                              Microstocks::IMicrostockAPIClient &client,
+                              Connectivity::RequestsService &requestsService):
             MicrostockSuggestionEngine(id,
                                        "iStock",
                                        client,
