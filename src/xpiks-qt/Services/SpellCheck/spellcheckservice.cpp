@@ -21,6 +21,7 @@ namespace SpellCheck {
     SpellCheckService::SpellCheckService(Common::ISystemEnvironment &environment,
                                          Common::IFlagsProvider<Common::WordAnalysisFlags> &analysisFlagsProvider):
         m_Environment(environment),
+        m_SpellCheckWorker(NULL),
         m_UserDictionary(environment),
         m_AnalysisFlagsProvider(analysisFlagsProvider),
         m_IsStopped(false)

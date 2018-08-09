@@ -62,7 +62,7 @@ namespace SpellCheck {
         bool getAnythingSelected() const;
 
     public:
-        Q_INVOKABLE QObject *getSuggestionItself(int index) const;
+        Q_INVOKABLE QObject *getSuggestionObject(int index) const;
         Q_INVOKABLE void clearModel();
         Q_INVOKABLE void submitCorrections() const;
         Q_INVOKABLE void resetAllSuggestions();
@@ -74,8 +74,8 @@ namespace SpellCheck {
         void anythingSelectedChanged();
 
     public:
-        void setupItem(Artworks::BasicMetadataModel *item);
-        void setupArtworks(Artworks::ArtworksSnapshot &snapshot);
+        void setupItem(Artworks::BasicMetadataModel *item, Common::SpellCheckFlags flags=Common::SpellCheckFlags::All);
+        void setupArtworks(Artworks::ArtworksSnapshot &snapshot, Common::SpellCheckFlags flags=Common::SpellCheckFlags::All);
 #if defined(INTEGRATION_TESTS) || defined(CORE_TESTS)
         SpellSuggestionsItem *getItem(int i) const { return m_SuggestionsList.at(i).get(); }
 #endif
@@ -96,6 +96,7 @@ namespace SpellCheck {
         std::vector<std::shared_ptr<SpellSuggestionsItem> > m_SuggestionsList;
         // if we're checking basic model this list will be empty
         Artworks::ArtworksSnapshot m_CheckedItems;
+        Artworks::BasicMetadataModel *m_CheckedItem;
         SpellCheckService &m_SpellCheckerService;
         Services::IArtworksUpdater &m_ArtworksUpdater;
     };

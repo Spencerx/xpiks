@@ -426,7 +426,7 @@ namespace Artworks {
 
     void BasicKeywordsModel::afterReplaceCallback() {
         LOG_DEBUG << "#";
-        emit notifyKeywordsSpellingChanged();
+        notifyKeywordsSpellingChanged();
         emit afterSpellingErrorsFixed();
         emit hasDuplicatesChanged();
         emit spellingInfoUpdated();

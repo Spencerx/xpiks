@@ -137,36 +137,48 @@ namespace SpellCheck {
         LOG_DEBUG << words.size() << "description requests";
     }
 
-    SuggestionsVector createSuggestionsRequests(const Artworks::ArtworksSnapshot &snapshot) {
+    SuggestionsVector createSuggestionsRequests(Artworks::ArtworksSnapshot const &snapshot, Common::SpellCheckFlags flags) {
         SuggestionsVector requests;
 
         for (auto &locker: snapshot.getRawData()) {
             auto *item = locker->getArtworkMetadata();
 
-            auto keywords = item->retrieveMisspelledKeywords();
-            addMisspelledKeywords(item, keywords, requests);
+            if (Common::HasFlag(flags, Common::SpellCheckFlags::Keywords)) {
+                auto keywords = item->retrieveMisspelledKeywords();
+                addMisspelledKeywords(item, keywords, requests);
+            }
 
-            auto words = item->retrieveMisspelledTitleWords();
-            addMisspelledTitle(item, words, requests);
+            if (Common::HasFlag(flags, Common::SpellCheckFlags::Title)) {
+                auto words = item->retrieveMisspelledTitleWords();
+                addMisspelledTitle(item, words, requests);
+            }
 
-            words = item->retrieveMisspelledDescriptionWords();
-            addMisspelledDescription(item, words, requests);
+            if (Common::HasFlag(flags, Common::SpellCheckFlags::Description)) {
+                auto words = item->retrieveMisspelledDescriptionWords();
+                addMisspelledDescription(item, words, requests);
+            }
         }
 
         return requests;
     }
 
-    SuggestionsVector createSuggestionsRequests(Artworks::BasicMetadataModel *basicModel) {
+    SuggestionsVector createSuggestionsRequests(Artworks::BasicMetadataModel *basicModel, Common::SpellCheckFlags flags) {
         SuggestionsVector requests;
 
-        auto keywords = basicModel->retrieveMisspelledKeywords();
-        addMisspelledKeywords(basicModel, keywords, requests);
+        if (Common::HasFlag(flags, Common::SpellCheckFlags::Keywords)) {
+            auto keywords = basicModel->retrieveMisspelledKeywords();
+            addMisspelledKeywords(basicModel, keywords, requests);
+        }
 
-        auto words = basicModel->retrieveMisspelledTitleWords();
-        addMisspelledTitle(basicModel, words, requests);
+        if (Common::HasFlag(flags, Common::SpellCheckFlags::Title)) {
+            auto words = basicModel->retrieveMisspelledTitleWords();
+            addMisspelledTitle(basicModel, words, requests);
+        }
 
-        words = basicModel->retrieveMisspelledDescriptionWords();
-        addMisspelledDescription(basicModel, words, requests);
+        if (Common::HasFlag(flags, Common::SpellCheckFlags::Description)) {
+            auto words = basicModel->retrieveMisspelledDescriptionWords();
+            addMisspelledDescription(basicModel, words, requests);
+        }
 
         return requests;
     }
@@ -174,6 +186,7 @@ namespace SpellCheck {
     SpellCheckSuggestionModel::SpellCheckSuggestionModel(SpellCheckService &spellCheckerService,
                                                          Services::IArtworksUpdater &artworksUpdater):
         QAbstractListModel(),
+        m_CheckedItem(nullptr),
         m_SpellCheckerService(spellCheckerService),
         m_ArtworksUpdater(artworksUpdater)
     {
@@ -196,7 +209,7 @@ namespace SpellCheck {
         return anySelected;
     }
 
-    QObject *SpellCheckSuggestionModel::getSuggestionItself(int index) const {
+    QObject *SpellCheckSuggestionModel::getSuggestionObject(int index) const {
         SpellSuggestionsItem *item = NULL;
 
         if (0 <= index && index < (int)m_SuggestionsList.size()) {
@@ -212,6 +225,7 @@ namespace SpellCheck {
         {
             m_SuggestionsList.clear();
             m_CheckedItems.clear();
+            m_CheckedItem = nullptr;
         }
         endResetModel();
         emit artworksCountChanged();
@@ -240,11 +254,15 @@ namespace SpellCheck {
         }
 
         if (anyChanged) {
-            for (auto &item: m_SuggestionsList) {
-                item->finalizeReplacement();
+            for (auto &locker: m_CheckedItems.getRawData()) {
+                locker->getArtworkMetadata()->afterReplaceCallback();
             }
-
             m_SpellCheckerService.submitArtworks(m_CheckedItems);
+
+            if (m_CheckedItem != nullptr) {
+                m_CheckedItem->afterReplaceCallback();
+                m_SpellCheckerService.submitItem(m_CheckedItem, Common::SpellCheckFlags::All);
+            }
         }
 
         m_ArtworksUpdater.updateArtworks(m_CheckedItems);
@@ -257,16 +275,19 @@ namespace SpellCheck {
         }
     }
 
-    void SpellCheckSuggestionModel::setupItem(Artworks::BasicMetadataModel *item) {
+    void SpellCheckSuggestionModel::setupItem(Artworks::BasicMetadataModel *item, Common::SpellCheckFlags flags) {
         Q_ASSERT(item != NULL);
+        Q_ASSERT(m_CheckedItems.empty());
         LOG_DEBUG << "#";
-        auto requests = createSuggestionsRequests(item);
+        auto requests = createSuggestionsRequests(item, flags);
         setupRequests(requests);
+        m_CheckedItem = item;
     }
 
-    void SpellCheckSuggestionModel::setupArtworks(Artworks::ArtworksSnapshot &snapshot) {
+    void SpellCheckSuggestionModel::setupArtworks(Artworks::ArtworksSnapshot &snapshot, Common::SpellCheckFlags flags) {
         LOG_INFO << snapshot.size() << "item(s)";
-        auto requests = createSuggestionsRequests(snapshot);
+        Q_ASSERT(m_CheckedItem == nullptr);
+        auto requests = createSuggestionsRequests(snapshot, flags);
         setupRequests(requests);
         m_CheckedItems = std::move(snapshot);
     }
