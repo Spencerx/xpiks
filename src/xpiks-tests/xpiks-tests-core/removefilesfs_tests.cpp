@@ -31,6 +31,7 @@
     DECLARE_BASIC_MODELS\
     KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
     Models::SettingsModel settingsModel(environment);\
+    settingsModel.initializeConfigs();\
     Models::FilteredArtworksListModel filteredArtworksModel(\
     artworksListModel, commandManager, keywordsPresets, settingsModel);\
     Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets); \
@@ -57,15 +58,9 @@ void RemoveFilesFsTests::removeArtworksNumberItems() {
     int itemsToAdd = 10, itemsToDelete = 5;
     DECLARE_MODELS_AND_GENERATE_(itemsToAdd);
 
-    Artworks::ArtworksSnapshot snapshot;
-
-    for (int i = 0; i < itemsToAdd; i++) {
-        auto *metadata = artworksListModel.getMockArtwork(i);
-        snapshot.append(metadata);
-    }
+    Artworks::ArtworksSnapshot snapshot = artworksListModel.createArtworksSnapshot();
 
     combinedModel.setArtworks(snapshot);
-
     zipArchiver.setArtworks(snapshot);
 
     // delete

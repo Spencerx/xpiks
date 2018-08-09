@@ -447,7 +447,9 @@ namespace Models {
         auto indices = filterArtworks<int>(
                     [](Artworks::ArtworkMetadata *artwork){ return artwork->isUnavailable(); },
                 [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
-        deleteItems(Helpers::IndicesRanges(indices));
+        Helpers::IndicesRanges ranges(indices);
+        removeFiles(ranges);
+        deleteItems(ranges);
     }
 
     int ArtworksListModel::attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
