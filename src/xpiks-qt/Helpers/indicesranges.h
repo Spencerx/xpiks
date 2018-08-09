@@ -28,6 +28,7 @@ namespace Helpers {
         IndicesRanges(IndicesRanges const &other);
         IndicesRanges(IndicesRanges &&other);
         IndicesRanges &operator=(IndicesRanges &&other);
+        IndicesRanges &operator=(IndicesRanges const &other);
 
 #ifdef CORE_TESTS
         // this one is for tests since others check validity of ranges

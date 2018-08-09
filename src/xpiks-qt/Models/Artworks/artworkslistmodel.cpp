@@ -314,7 +314,7 @@ namespace Models {
         return snapshot;
     }
 
-    ArtworksRemoveResult ArtworksListModel::removeFiles(const Helpers::IndicesRanges &ranges) {
+    ArtworksRemoveResult ArtworksListModel::removeFiles(Helpers::IndicesRanges const &ranges) {
         int selectedCount = 0;
         bool anyToDelete = false;
         foreachArtwork(ranges, [this, &selectedCount, &anyToDelete](Artworks::ArtworkMetadata *artwork, size_t) {
@@ -339,6 +339,7 @@ namespace Models {
         ArtworksRemoveResult removeResult;
         m_ArtworksRepository.removeFiles(snapshot, removeResult);
         removeResult.m_RemovedCount = snapshot.size();
+        removeResult.m_RemovedRanges = ranges;
         return removeResult;
     }
 
@@ -350,20 +351,25 @@ namespace Models {
         const QString directoryAbsolutePath = QDir(directory).absolutePath();
         std::vector<int> indices = filterArtworks<int>(
                     [&directoryAbsolutePath](Artworks::ArtworkMetadata *artwork) {
-                return artwork->isInDirectory(directoryAbsolutePath); },
+                // if we will remove all files in directory then undo operation might
+                // restore files that were removed separately from same directory
+                return artwork->isInDirectory(directoryAbsolutePath) && !artwork->isRemoved(); },
                 [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
 
         return removeFiles(Helpers::IndicesRanges(indices));
     }
 
-    void ArtworksListModel::restoreRemoved() {
-        // TODO: restore only in ranges
+    void ArtworksListModel::restoreRemoved(Helpers::IndicesRanges const &ranges) {
         LOG_DEBUG << "#";
-        int restoredCount = foreachArtwork([](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
+        int restoredCount = foreachArtwork(ranges,
+                                [](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
                 [this](Artworks::ArtworkMetadata *artwork, size_t) {
             qint64 directoryID;
             auto flags = this->m_ArtworksRepository.accountFile(artwork->getFilepath(), directoryID);
             Q_ASSERT(flags == Common::AccountFileFlags::FlagRepositoryModified);
+            if (flags != Common::AccountFileFlags::None) {
+                artwork->resetRemoved();
+            }
         });
 
         LOG_INFO << restoredCount << "artworks restored";

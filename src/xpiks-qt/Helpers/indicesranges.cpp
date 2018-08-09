@@ -61,14 +61,20 @@ namespace Helpers {
     {
     }
 
-    IndicesRanges::IndicesRanges(IndicesRanges &&other)
-    {
+    IndicesRanges::IndicesRanges(IndicesRanges &&other) {
         m_Ranges.swap(other.m_Ranges);
     }
 
     IndicesRanges &IndicesRanges::operator=(IndicesRanges &&other) {
         if (this != &other) {
             m_Ranges.swap(other.m_Ranges);
+        }
+        return *this;
+    }
+
+    IndicesRanges &IndicesRanges::operator=(IndicesRanges const &other) {
+        if (this != &other) {
+            m_Ranges = other.m_Ranges;
         }
         return *this;
     }

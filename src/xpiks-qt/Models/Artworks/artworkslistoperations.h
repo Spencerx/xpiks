@@ -19,6 +19,7 @@ namespace Models {
     };
 
     struct ArtworksRemoveResult {
+        Helpers::IndicesRanges m_RemovedRanges;
         QSet<qint64> m_SelectedDirectoryIds;
         QSet<qint64> m_FullDirectoryIds;
         size_t m_RemovedCount = 0;

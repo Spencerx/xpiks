@@ -33,6 +33,6 @@ namespace Commands {
     }
 
     void RemoveFilesCommandBase::restoreFiles() {
-        m_ArtworksList.restoreRemoved();
+        m_ArtworksList.restoreRemoved(m_RemoveResult.m_RemovedRanges);
     }
 }

@@ -137,9 +137,9 @@ namespace Models {
                                    Common::AddFilesFlags flags);
         Artworks::ArtworksSnapshot addArtworks(std::shared_ptr<Filesystem::IFilesCollection> const &filesCollection,
                                                QSet<qint64> &fullDirectories);
-        ArtworksRemoveResult removeFiles(const Helpers::IndicesRanges &ranges);
+        ArtworksRemoveResult removeFiles(Helpers::IndicesRanges const &ranges);
         ArtworksRemoveResult removeFilesFromDirectory(int directoryIndex);
-        void restoreRemoved();
+        void restoreRemoved(Helpers::IndicesRanges const &ranges);
         void deleteRemovedItems();
         void deleteAllItems();
 

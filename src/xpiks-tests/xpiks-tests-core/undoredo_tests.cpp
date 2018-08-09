@@ -78,10 +78,8 @@ void UndoRedoTests::undoRemoveAddFullDirectoryTest() {
     SETUP_TEST;
     settingsModel.setAutoFindVectors(false);
 
-    auto files = std::make_shared<Mocks::FilesCollectionMock>(5, 0, 1);
-    files->setFromFullDirectory();
-    auto result = artworksListModel.addFiles(files, Common::AddFilesFlags::FlagIsFullDirectory);
-    int addedCount = (int)result.m_Snapshot.size();
+    auto addResult = artworksListModel.generateAndAddDirectories(1, 5, false);
+    int addedCount = std::get<0>(addResult);
 
     Mocks::SelectedIndicesSourceMock selectedIndices(Helpers::IndicesRanges({{1, 3}}));
     commandManager.processCommand(
@@ -100,6 +98,7 @@ void UndoRedoTests::undoRemoveAddFullDirectoryTest() {
 
     QCOMPARE(filteredArtworksModel.getItemsCount(), 0);
 
+    auto files = std::get<1>(addResult);
     removeDirectoryCommand->setFakeFullDirectoryFiles(files);
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
@@ -111,20 +110,26 @@ void UndoRedoTests::undoRemoveNotFullDirectoryTest() {
     SETUP_TEST;
     settingsModel.setAutoFindVectors(false);
 
-    int addedCount = artworksListModel.generateAndAddDirectories(1);
+    auto addResult = artworksListModel.generateAndAddDirectories(1);
+    int addedCount = std::get<0>(addResult);
     artworksRepository.unsetWasAddedAsFullDirectory(0);
 
     artworksListModel.removeFiles(Helpers::IndicesRanges({{1, 3}}));
     QCOMPARE(filteredArtworksModel.getItemsCount(), addedCount - 3);
 
-    artworksListModel.removeFilesFromDirectory(0);
+    commandManager.processCommand(
+                std::make_shared<Commands::RemoveDirectoryCommand>(
+                    0,
+                    artworksListModel,
+                    artworksRepository,
+                    settingsModel));
 
     QCOMPARE(filteredArtworksModel.getItemsCount(), 0);
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
-    QVERIFY(filteredArtworksModel.getItemsCount() == addedCount - 3);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), addedCount - 3);
 }
 
 void UndoRedoTests::undoRemoveLaterFullDirectoryTest() {
@@ -135,7 +140,7 @@ void UndoRedoTests::undoRemoveLaterFullDirectoryTest() {
     artworksListModel.generateAndAddArtworks(itemsToAdd, false);
     const int addedFromSecondDir = artworksRepository.getFilesCountForDirectory(1);
 
-    artworksListModel.generateAndAddDirectories(1, itemsToAdd, false);
+    auto addResult = artworksListModel.generateAndAddDirectories(1, itemsToAdd, false);
 
     const int maxCount = filteredArtworksModel.getItemsCount();
     qDebug() << "max count is" << maxCount;
@@ -144,14 +149,21 @@ void UndoRedoTests::undoRemoveLaterFullDirectoryTest() {
     artworksListModel.removeFiles(Helpers::IndicesRanges({{0, 0}, {2, 2}, {4, 4}}));
     QCOMPARE(filteredArtworksModel.getItemsCount(), maxCount - 3);
 
-    artworksListModel.removeFilesFromDirectory(0);
+    auto removeDirectoryCommand = std::make_shared<Commands::RemoveDirectoryCommand>(
+                                      0,
+                                      artworksListModel,
+                                      artworksRepository,
+                                      settingsModel);
+
+    commandManager.processCommand(removeDirectoryCommand);
 
     QCOMPARE(filteredArtworksModel.getItemsCount(), addedFromSecondDir);
 
+    removeDirectoryCommand->setFakeFullDirectoryFiles(std::get<1>(addResult));
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
-    QVERIFY(filteredArtworksModel.getItemsCount() == maxCount);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), maxCount);
 }
 
 void UndoRedoTests::undoModifyCommandTest() {

@@ -23,6 +23,7 @@
     UndoRedo::UndoRedoManager undoRedoManager; \
     Mocks::CommandManagerMock commandManager(undoRedoManager); \
     Models::RecentDirectoriesModel recentDirectories(environment);\
+    recentDirectories.initialize();\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);\
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository);
 

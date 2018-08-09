@@ -2,7 +2,7 @@
 #define ArtworksListModelMock_H
 
 #include <QVector>
-#include <QPair>
+#include <tuple>
 #include <functional>
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Artworks/artworkmetadata.h>
@@ -64,13 +64,13 @@ namespace Mocks {
             return (int)result.m_Snapshot.size();
         }
 
-        int generateAndAddDirectories(int dirsCount, int fileInDir = 5, bool withVector=true) {
+        std::tuple<int, std::shared_ptr<Filesystem::IFilesCollection>> generateAndAddDirectories(int dirsCount, int fileInDir = 5, bool withVector=true) {
             auto files = std::make_shared<Mocks::FilesCollectionMock>(fileInDir*dirsCount,
                                                                       withVector ? fileInDir*dirsCount : 0,
                                                                       dirsCount);
             files->setFromFullDirectory();
             auto result = addFiles(files, Common::AddFilesFlags::FlagIsFullDirectory);
-            return (int)result.m_Snapshot.size();
+            return {(int)result.m_Snapshot.size(), files};
         }
 
     private:
