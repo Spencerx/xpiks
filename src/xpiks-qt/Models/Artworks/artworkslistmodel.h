@@ -245,20 +245,12 @@ namespace Models {
             return result;
         }
 
-
         template<typename T>
         std::vector<T> filterArtworks(std::function<bool (Artworks::ArtworkMetadata *)> pred,
                                       std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
             return filterArtworks(Helpers::IndicesRanges(getArtworksSize()),
                                   pred,
                                   mapper);
-        }
-
-        template<typename T>
-        std::vector<T> filterAvailableArtworks(std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
-            return filterArtworks([](Artworks::ArtworkMetadata *artwork) {
-                return !artwork->isUnavailable() && !artwork->isRemoved();
-            }, mapper);
         }
 
         int foreachArtwork(const Helpers::IndicesRanges &ranges,
@@ -286,6 +278,13 @@ namespace Models {
 
     protected:
         ArtworksContainer const &getFinalizationList() const { return m_FinalizationList; }
+
+        template<typename T>
+        std::vector<T> filterAvailableArtworks(std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
+            return filterArtworks([](Artworks::ArtworkMetadata *artwork) {
+                return !artwork->isUnavailable() && !artwork->isRemoved();
+            }, mapper);
+        }
 
     private:
         ArtworksContainer m_ArtworkList;

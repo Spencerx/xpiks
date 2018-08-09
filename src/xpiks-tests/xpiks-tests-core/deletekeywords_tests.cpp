@@ -14,6 +14,7 @@
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \
     Models::RecentDirectoriesModel recentDirectories(environment);\
+    recentDirectories.initialize();\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories); \
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository); \
     UndoRedo::UndoRedoManager undoRedoManager;\

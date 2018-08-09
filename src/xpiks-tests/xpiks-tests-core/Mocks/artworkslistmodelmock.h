@@ -73,6 +73,10 @@ namespace Mocks {
             return {(int)result.m_Snapshot.size(), files};
         }
 
+        size_t getAvailableArtworksSize() const {
+            return filterAvailableArtworks<size_t>([](Artworks::ArtworkMetadata*,size_t index) { return index; }).size();
+        }
+
     private:
         bool m_BlockUpdates;
     };

@@ -45,7 +45,7 @@ namespace Models {
         QAbstractListModel(parent),
         // all items before 1024 are reserved for internal models
         m_LastID(1024),
-        m_CurrentItemIndex(0),
+        m_CurrentItemIndex(-1),
         m_ArtworksRepository(repository)
     {
         QObject::connect(&m_ArtworksRepository, &ArtworksRepository::filesUnavailable,

@@ -21,10 +21,12 @@
     UndoRedo::UndoRedoManager undoRedoManager;\
     Mocks::CommandManagerMock commandManager(undoRedoManager);\
     Models::RecentDirectoriesModel recentDirectories(environment);\
+    recentDirectories.initialize();\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);\
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository);\
     KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
     Models::SettingsModel settingsModel(environment);\
+    settingsModel.initializeConfigs();\
     Models::FilteredArtworksListModel filteredArtworksModel(\
     artworksListModel, commandManager, keywordsPresets, settingsModel);\
     Models::CurrentEditableModel currentEditableModel;\

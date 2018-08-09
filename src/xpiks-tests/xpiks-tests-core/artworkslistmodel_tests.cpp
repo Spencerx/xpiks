@@ -10,17 +10,20 @@
 #include <Models/Editing/quickbuffer.h>
 #include <Models/Editing/currenteditablemodel.h>
 #include <Models/Editing/artworkproxymodel.h>
+#include <Services/artworksupdatehub.h>
 #include <UndoRedo/undoredomanager.h>
 #include <KeywordsPresets/presetkeywordsmodel.h>
 
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \
     Mocks::CoreTestsEnvironment environment; \
     Models::RecentDirectoriesModel recentDirectories(environment);\
+    recentDirectories.initialize();\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);\
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository);\
     artworksListModel.generateAndAddArtworks(count, withVector);
 
 #define MODIFIED_TEST_START\
+    artworksListModel.setUpdatesBlocked(false);\
     QSignalSpy artItemsModifiedSpy(&artworksListModel, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)));
 
 #define MODIFIED_TEST_END\
@@ -84,7 +87,7 @@ void ArtworksListModelTests::removeArtworkDirectorySimpleTest() {
 
     QCOMPARE((int)artworksListModel.getArtworksSize(), count);
     artworksListModel.removeFilesFromDirectory(indexToRemove);
-    QCOMPARE((int)artworksListModel.getArtworksSize(), count - firstDirCount);
+    QCOMPARE((int)artworksListModel.getAvailableArtworksSize(), count - firstDirCount);
 }
 
 void ArtworksListModelTests::addRemoveOneByOneFewDirsTest() {
@@ -94,7 +97,7 @@ void ArtworksListModelTests::addRemoveOneByOneFewDirsTest() {
 
     QCOMPARE(artworksRepository.getFilesCountForDirectory(0), 1);
     QCOMPARE(artworksRepository.getFilesCountForDirectory(1), 1);
-    QCOMPARE((int)artworksListModel.getArtworksSize(), count);
+    QCOMPARE((int)artworksListModel.getAvailableArtworksSize(), count);
 
     artworksListModel.removeFilesFromDirectory(0);
     artworksRepository.cleanupEmptyDirectories();
@@ -104,7 +107,7 @@ void ArtworksListModelTests::addRemoveOneByOneFewDirsTest() {
     artworksRepository.cleanupEmptyDirectories();
     QCOMPARE(artworksRepository.rowCount(), 0);
 
-    QCOMPARE((int)artworksListModel.getArtworksSize(), 0);
+    QCOMPARE((int)artworksListModel.getAvailableArtworksSize(), 0);
 }
 
 void ArtworksListModelTests::addRemoveOneByOneOneDirTest() {
@@ -113,12 +116,12 @@ void ArtworksListModelTests::addRemoveOneByOneOneDirTest() {
     DECLARE_MODELS_AND_GENERATE(count, false);
 
     QCOMPARE(artworksRepository.getFilesCountForDirectory(0), 1);
-    QCOMPARE((int)artworksListModel.getArtworksSize(), count);
+    QCOMPARE((int)artworksListModel.getAvailableArtworksSize(), count);
 
     artworksListModel.removeFilesFromDirectory(0);
     artworksRepository.cleanupEmptyDirectories();
     QCOMPARE(artworksRepository.rowCount(), 0);
-    QCOMPARE((int)artworksListModel.getArtworksSize(), 0);
+    QCOMPARE((int)artworksListModel.getAvailableArtworksSize(), 0);
 }
 
 void ArtworksListModelTests::setAllSavedResetsModifiedCountTest() {
@@ -326,17 +329,17 @@ void ArtworksListModelTests::proxyModelExitEmitsModifiedTest() {
     UndoRedo::UndoRedoManager undoRedoManager;
     Mocks::CommandManagerMock commandManager(undoRedoManager);
     KeywordsPresets::PresetKeywordsModel presetKeywordsModel(environment);
-    Mocks::ArtworksUpdaterMock updater;
-    Models::ArtworkProxyModel proxyModel(commandManager, presetKeywordsModel, updater);
+    Services::ArtworksUpdateHub updateHub(artworksListModel);
+    Models::ArtworkProxyModel proxyModel(commandManager, presetKeywordsModel, updateHub);
 
     proxyModel.setSourceArtwork((QObject*)artworksListModel.getMockArtwork(0));
     proxyModel.setDescription("other description");
 
-    artworksListModel.setUpdatesBlocked(false);
-
     MODIFIED_TEST_START;
 
     proxyModel.resetModel();
+    QThread::msleep(100);
+    QCoreApplication::processEvents();
 
     MODIFIED_TEST_END;
 }

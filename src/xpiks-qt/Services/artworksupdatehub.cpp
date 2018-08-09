@@ -15,8 +15,13 @@
 #include <Artworks/artworkssnapshot.h>
 
 #define MAX_NOT_UPDATED_ARTWORKS_TO_HOLD 50
+#ifndef CORE_TESTS
 #define MAX_UPDATE_TIMER_DELAYS 2
 #define UPDATE_TIMER_DELAY 400
+#else
+#define MAX_UPDATE_TIMER_DELAYS 1
+#define UPDATE_TIMER_DELAY 0
+#endif
 
 namespace Services {
     ArtworksUpdateHub::ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel,
@@ -31,10 +36,8 @@ namespace Services {
         QObject::connect(this, SIGNAL(updateRequested()), this, SLOT(onUpdateRequested()));
 
         m_UpdateRequests.reserve(100);
-    }
 
-    void ArtworksUpdateHub::setStandardRoles(const QVector<int> &roles) {
-        m_StandardRoles = roles;
+        m_StandardRoles = artworksListModel.getStandardUpdateRoles();
     }
 
     void ArtworksUpdateHub::updateArtworkByID(Common::ID_t artworkID,

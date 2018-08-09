@@ -367,6 +367,7 @@ namespace Models {
         LOG_DEBUG << "#";
         if (m_ArtworkMetadata == nullptr) { return; }
 
+        // TODO: consider refactoring this to a command template??
         m_ArtworksUpdater.updateArtwork(m_ArtworkMetadata);
         sendMessage(m_ArtworkMetadata);
 

@@ -20,12 +20,14 @@
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \
     Models::RecentDirectoriesModel recentDirectories(environment);\
+    recentDirectories.initialize();\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories); \
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository); \
     UndoRedo::UndoRedoManager undoRedoManager;\
     Mocks::CommandManagerMock commandManager(undoRedoManager); \
     KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
     Models::SettingsModel settingsModel(environment);\
+    settingsModel.initializeConfigs();\
     Models::FilteredArtworksListModel filteredItemsModel(\
     artworksListModel, commandManager, keywordsPresets, settingsModel); \
     artworksListModel.generateAndAddArtworks(count);

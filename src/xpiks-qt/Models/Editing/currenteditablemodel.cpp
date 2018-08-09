@@ -21,6 +21,7 @@ namespace Models {
     }
 
     void CurrentEditableModel::handleMessage(const std::shared_ptr<ICurrentEditable> &event) {
+        LOG_DEBUG << "#";
         setCurrentEditable(event);
     }
 
@@ -31,6 +32,7 @@ namespace Models {
     }
 
     void CurrentEditableModel::setCurrentEditable(std::shared_ptr<ICurrentEditable> currentEditable) {
+        LOG_DEBUG << "#";
         m_CurrentEditable = std::move(currentEditable);
         emit currentEditableChanged();
     }
