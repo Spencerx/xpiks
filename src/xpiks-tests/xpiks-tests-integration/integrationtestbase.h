@@ -6,10 +6,7 @@
 #include <QUrl>
 #include "integrationtestsenvironment.h"
 
-namespace Commands {
-    class CommandManager;
-    class MainDelegator;
-}
+class XpiksTestsApp;
 
 #define VERIFY(condition, message) \
     if (!(condition)) {\
@@ -20,7 +17,7 @@ namespace Commands {
 class IntegrationTestBase {
 public:
     IntegrationTestBase(IntegrationTestsEnvironment &environment,
-                        Commands::CommandManager *commandManager);
+                        XpiksTestsApp &testsApp);
     virtual ~IntegrationTestBase() { }
 
 public:
@@ -30,15 +27,13 @@ public:
     virtual void teardown();
 
 protected:
-    Commands::MainDelegator *xpiks();
-
     QUrl setupFilePathForTest(const QString &prefix);
     QUrl getFilePathForTest(const QString &prefix);
     QUrl getDirPathForTest(const QString &prefix);
     bool getIsInMemoryOnly() const { return m_Environment.getIsInMemoryOnly(); }
 
 protected:
-    Commands::CommandManager *m_CommandManager;
+    XpiksTestsApp &m_TestsApp;
     IntegrationTestsEnvironment &m_Environment;
 };
 

@@ -6,8 +6,8 @@
 class FindAndReplaceModelTest : public IntegrationTestBase
 {
 public:
-    FindAndReplaceModelTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    FindAndReplaceModelTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

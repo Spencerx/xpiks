@@ -10,8 +10,8 @@ namespace SpellCheck {
 class UserDictEditTest : public IntegrationTestBase
 {
 public:
-    UserDictEditTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    UserDictEditTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

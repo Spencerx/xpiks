@@ -17,7 +17,6 @@
 #include <Artworks/basickeywordsmodel.h>
 #include <Artworks/imageartwork.h>
 #include <Artworks/videoartwork.h>
-#include <Artworks/iartworksservice.h>
 #include <Helpers/artworkshelpers.h>
 #include <Helpers/stringhelper.h>
 #include <KeywordsPresets/ipresetsmanager.h>

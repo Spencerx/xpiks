@@ -37,12 +37,12 @@ int ReadLegacySavedTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
     const QStringList &keywords = metadata->getKeywords();
 
     QStringList expectedKeywords = QString("rock,nature,landscape,white,background,beautiful,sun,light,mountain,outdoor,top,rocky,snow,fog,horizon").split(',');
 
-    Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(metadata);
+    Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(metadata);
 
     VERIFY(expectedKeywords == keywords, "Keywords are not the same!");
     VERIFY(image->getImageSize().width() == 2752, "Image width was read incorrectly");

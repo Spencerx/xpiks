@@ -1,6 +1,7 @@
 #include "xpikstestsapp.h"
 #include "testshelpers.h"
 #include <QThread>
+#include "signalwaiter.h"
 
 XpiksTestsApp::XpiksTestsApp(Common::ISystemEnvironment &environment):
     XpiksApp(environment)
@@ -23,6 +24,76 @@ void XpiksTestsApp::waitInitialized() {
 }
 
 void XpiksTestsApp::cleanup() {
+    const QString exiftoolPath = m_SettingsModel.getExifToolPath();
+    {
+        doCleanup();
+    }
+    m_SettingsModel.setExifToolPath(exiftoolPath);
+
+}
+
+bool XpiksTestsApp::addFilesForTest(const QList<QUrl> &urls) {
+    bool success = false;
+
+    SignalWaiter waiter;
+    QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
+                     &waiter, &SignalWaiter::finished);
+
+    do {
+        int addedCount = addFiles(urls);
+        if (addedCount != urls.length()) {
+            LOG_WARNING << "Failed to add files:" << addedCount << "added instead of" << urls.length();
+            break;
+        }
+
+        m_MetadataIOCoordinator.continueReading(true);
+
+        if (!waiter.wait(20)) {
+            LOG_WARNING << "Timeout exceeded for reading metadata.";
+            break;
+        }
+
+        if (m_MetadataIOCoordinator.getHasErrors()) {
+            LOG_WARNING << "Errors in IO Coordinator while reading";
+            break;
+        }
+
+        if (m_MetadataIOCoordinator.getImportIDs().empty()) {
+            LOG_WARNING << "Import does not have any trace";
+            break;
+        }
+
+        success = true;
+    } while (false);
+
+    return success;
+}
+
+bool XpiksTestsApp::undoLastAction() {
+    return m_UndoRedoManager.undoLastAction();
+}
+
+void XpiksTestsApp::removeArtworks(Helpers::IndicesRanges const &ranges) {
+
+}
+
+Artworks::ArtworkMetadata *XpiksTestsApp::getArtwork(int index) {
+    return m_ArtworksListModel.getArtwork(index);
+}
+
+void XpiksTestsApp::setAutoFindVector(bool value) {
+    m_SettingsModel.setAutoFindVectors(value);
+}
+
+void XpiksTestsApp::setUseSpellCheck(bool value) {
+    m_SettingsModel.setUseSpellCheck(value);
+}
+
+void XpiksTestsApp::setUseAutoImport(bool value) {
+    m_SettingsModel.setUseAutoImport(value);
+}
+
+void XpiksTestsApp::doCleanup() {
     LOG_INTEGRATION_TESTS << "#";
 
     m_SpellCheckerService.cancelCurrentBatch();

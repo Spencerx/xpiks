@@ -99,8 +99,8 @@ int RestoreSessionTest::doTest() {
         VERIFY(oldItem->getDescription() == newItem->getDescription(), "Descriptions don't match");
         VERIFY(oldItem->getKeywords() == newItem->getKeywords(), "Keywords don't match");
 
-        Models::ImageArtwork *oldImage = dynamic_cast<Models::ImageArtwork*>(oldItem);
-        Models::ImageArtwork *newImage = dynamic_cast<Models::ImageArtwork*>(newItem);
+        Artworks::ImageArtwork *oldImage = dynamic_cast<Artworks::ImageArtwork*>(oldItem);
+        Artworks::ImageArtwork *newImage = dynamic_cast<Artworks::ImageArtwork*>(newItem);
         if (oldImage != nullptr && newImage != nullptr) {
             VERIFY(oldImage->hasVectorAttached() == newImage->hasVectorAttached(), "Vector attachment lost");
             VERIFY(oldImage->getAttachedVectorPath() == newImage->getAttachedVectorPath(), "Vector filepath lost");
@@ -117,7 +117,7 @@ int RestoreSessionTest::doTest() {
 
     QUrl path = getFilePathForTest("images-for-tests/pixmap/img_0007.jpg");
     QString pathString = path.toLocalFile();
-    std::deque<Models::ArtworkMetadata *> metadataVector(10000, new Models::ArtworkMetadata(pathString, 0, 0));
+    std::deque<Artworks::ArtworkMetadata *> metadataVector(10000, new Artworks::ArtworkMetadata(pathString, 0, 0));
     MetadataIO::SessionSnapshot sessionSnapshot(metadataVector);
     auto &snapshot = sessionSnapshot.getSnapshot();
 

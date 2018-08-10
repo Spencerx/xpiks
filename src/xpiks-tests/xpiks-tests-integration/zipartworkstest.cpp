@@ -58,8 +58,8 @@ int ZipArtworksTest::doTest() {
     VERIFY(!zipArchiver->getHasErrors(), "Errors while zipping");
 
     for (int i = 0; i < files.length(); ++i) {
-        Models::ArtworkMetadata *artwork = artItemsModel->getArtwork(i);
-        Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(artwork);
+        Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(i);
+        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
         Q_ASSERT(image != nullptr);
 
         if (image->hasVectorAttached()) {

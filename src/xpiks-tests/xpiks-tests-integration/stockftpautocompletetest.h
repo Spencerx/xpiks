@@ -6,8 +6,8 @@
 class StockFtpAutoCompleteTest : public IntegrationTestBase
 {
 public:
-    StockFtpAutoCompleteTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    StockFtpAutoCompleteTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

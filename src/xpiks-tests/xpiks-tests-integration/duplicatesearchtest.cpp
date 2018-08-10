@@ -38,7 +38,7 @@ int DuplicateSearchTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
     metadata->clearModel();
     artItemsModel->pasteKeywords(0, QStringList() << "cat" << "Mouse" << "mice" << "on");
 

@@ -118,8 +118,8 @@ public:
     Q_INVOKABLE void debugCrash();
 
 public:
-    Q_INVOKABLE void addFiles(const QList<QUrl> &urls);
-    Q_INVOKABLE void addDirectories(const QList<QUrl> &urls);
+    Q_INVOKABLE int addFiles(const QList<QUrl> &urls);
+    Q_INVOKABLE int addDirectories(const QList<QUrl> &urls);
     Q_INVOKABLE void dropItems(const QList<QUrl> &urls);
 
 public:

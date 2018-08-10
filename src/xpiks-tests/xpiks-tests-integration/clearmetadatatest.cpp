@@ -38,7 +38,7 @@ int ClearMetadataTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
     const QStringList &keywords = metadata->getKeywords();
 
     QStringList expectedKeywords = QString("picture,seagull,bird").split(',');

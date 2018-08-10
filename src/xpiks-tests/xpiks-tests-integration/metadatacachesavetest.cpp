@@ -65,7 +65,7 @@ int MetadataCacheSaveTest::doTest() {
 
     VERIFY(artItemsModel->getArtworksCount() == cachedArtworks.count(), "Metadata cache size does not match");
     for (MetadataIO::CachedArtwork &ca: cachedArtworks) {
-        Models::ArtworkMetadata *artwork = artItemsModel->findArtworkByFilepath(ca.m_Filepath);
+        Artworks::ArtworkMetadata *artwork = artItemsModel->findArtworkByFilepath(ca.m_Filepath);
         VERIFY(artwork != nullptr, "Metadata cache contains orphanned artworks");
 
         VERIFY(artwork->getTitle() == ca.m_Title, "Title does not match");

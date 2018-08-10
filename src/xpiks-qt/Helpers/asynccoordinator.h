@@ -15,7 +15,6 @@
 #include <QAtomicInt>
 #include <QTimer>
 #include <memory>
-#include <Services/iservicebase.h>
 
 namespace Helpers {
     class AsyncCoordinator: public QObject

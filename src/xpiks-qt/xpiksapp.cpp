@@ -347,29 +347,32 @@ void XpiksApp::debugCrash() {
     raise(SIGTERM);
 }
 
-void XpiksApp::addFiles(const QList<QUrl> &urls) {
+int XpiksApp::addFiles(const QList<QUrl> &urls) {
     LOG_DEBUG << urls.size() << "urls";
     Common::AddFilesFlags flags = Common::AddFilesFlags::None;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
     auto files = std::make_shared<Filesystem::FilesCollection>(urls);
-    doAddFiles(files, flags);
+    int added = doAddFiles(files, flags);
+    return added;
 }
 
-void XpiksApp::addDirectories(const QList<QUrl> &urls) {
+int XpiksApp::addDirectories(const QList<QUrl> &urls) {
     LOG_DEBUG << urls.size() << "urls";
     Common::AddFilesFlags flags = Common::AddFilesFlags::None;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
     Common::SetFlag(flags, Common::AddFilesFlags::FlagIsFullDirectory);
     auto directories = std::make_shared<Filesystem::DirectoriesCollection>(urls);
-    doAddFiles(directories, flags);
+    int added = doAddFiles(directories, flags);
+    return added;
 }
 
-void XpiksApp::dropItems(const QList<QUrl> &urls) {
+int XpiksApp::dropItems(const QList<QUrl> &urls) {
     LOG_DEBUG << urls.size() << "urls";
     Common::AddFilesFlags flags = Common::AddFilesFlags::None;
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
     auto files = std::make_shared<Filesystem::FilesDirectoriesCollection>(urls);
-    doAddFiles(files, flags);
+    int added = doAddFiles(files, flags);
+    return added;
 }
 
 void XpiksApp::removeDirectory(int index) {

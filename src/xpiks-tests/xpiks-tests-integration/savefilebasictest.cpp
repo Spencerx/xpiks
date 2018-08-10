@@ -36,9 +36,9 @@ int SaveFileBasicTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
-    Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(artwork);
+    Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
 
     VERIFY(image->getImageSize().width() == 1920, "Image width was read incorrectly");
     VERIFY(image->getImageSize().height() == 1272, "Image height was read incorrectly");

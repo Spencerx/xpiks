@@ -15,7 +15,6 @@
 #include <Common/flags.h>
 #include "warningssettingsmodel.h"
 #include <Common/isystemenvironment.h>
-#include <Services/iservicebase.h>
 
 namespace Artworks {
     class ArtworkMetadata;

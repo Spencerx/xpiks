@@ -1,8 +1,7 @@
 #include "integrationtestbase.h"
 #include <QDebug>
 #include <QDir>
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
+#include "xpikstestsapp.h"
 #include "testshelpers.h"
 
 void ensureDirectoryExistsForFile(const QString &filepath) {
@@ -37,21 +36,14 @@ bool copyFile(const QString &from, const QString &to) {
 }
 
 IntegrationTestBase::IntegrationTestBase(IntegrationTestsEnvironment &environment,
-                                         Commands::CommandManager *commandManager):
-    m_CommandManager(commandManager),
+                                         XpiksTestsApp &testsApp):
+    m_TestsApp(testsApp),
     m_Environment(environment)
 { }
 
 void IntegrationTestBase::teardown() {
-    auto *settingsModel = m_CommandManager->getSettingsModel();
-    const QString exiftoolPath = settingsModel->getExifToolPath();
-    {
-        m_CommandManager->cleanup();
-    }
-    settingsModel->setExifToolPath(exiftoolPath);
+    m_TestsApp.cleanup();
 }
-
-Commands::MainDelegator *IntegrationTestBase::xpiks() { return m_CommandManager->getDelegator(); }
 
 QUrl IntegrationTestBase::setupFilePathForTest(const QString &prefix) {
     QString fullPath;

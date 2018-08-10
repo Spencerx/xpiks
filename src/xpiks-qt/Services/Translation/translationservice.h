@@ -13,7 +13,6 @@
 
 #include <QObject>
 #include "translationmanager.h"
-#include <Services/iservicebase.h>
 
 namespace Translation {
     class TranslationWorker;

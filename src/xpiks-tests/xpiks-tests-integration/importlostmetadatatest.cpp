@@ -44,7 +44,7 @@ int ImportLostMetadataTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
     const QString filepath = artwork->getFilepath();
     VERIFY(artwork->getKeywords().count() == 0, "Initial keywords should not be found");
 
@@ -59,7 +59,7 @@ int ImportLostMetadataTest::doTest() {
 
     // wait for artwork backup request and metadata cache timer
     sleepWaitUntil(10, [&]() {
-        Models::ArtworkMetadata fakeArtwork(filepath, 12345, 0);
+        Artworks::ArtworkMetadata fakeArtwork(filepath, 12345, 0);
         MetadataIO::CachedArtwork cachedArtwork;
         bool anythingAvailable = cache.read(&fakeArtwork, cachedArtwork);
         fakeArtwork.release();
@@ -67,7 +67,7 @@ int ImportLostMetadataTest::doTest() {
     });
 
     {
-        Models::ArtworkMetadata tempFakeArtwork(filepath, artwork->getItemID(), artwork->getDirectoryID());
+        Artworks::ArtworkMetadata tempFakeArtwork(filepath, artwork->getItemID(), artwork->getDirectoryID());
         MetadataIO::CachedArtwork tempCachedArtwork;
         bool anythingAvailable = cache.read(&tempFakeArtwork, tempCachedArtwork);
         tempFakeArtwork.release();
@@ -79,9 +79,9 @@ int ImportLostMetadataTest::doTest() {
 
     qInfo() << "Now cache is saved after initial import";
 
-    std::shared_ptr<Models::ArtworkMetadata> fakeArtworkToRead(
-                new Models::ImageArtwork(filepath, artwork->getItemID(), artwork->getDirectoryID()),
-                [](Models::ImageArtwork *artwork) {
+    std::shared_ptr<Artworks::ArtworkMetadata> fakeArtworkToRead(
+                new Artworks::ImageArtwork(filepath, artwork->getItemID(), artwork->getDirectoryID()),
+                [](Artworks::ImageArtwork *artwork) {
         if (artwork->release()) {
             delete artwork;
         } else {
@@ -117,7 +117,7 @@ int ImportLostMetadataTest::doTest() {
     });
     metadataIOService->waitWorkerIdle();
 
-    Models::ArtworkMetadata tempFakeArtwork(filepath, artwork->getItemID(), artwork->getDirectoryID());
+    Artworks::ArtworkMetadata tempFakeArtwork(filepath, artwork->getItemID(), artwork->getDirectoryID());
     MetadataIO::CachedArtwork tempCachedArtwork;
     bool anythingAvailable = cache.read(&tempFakeArtwork, tempCachedArtwork);
     tempFakeArtwork.release();

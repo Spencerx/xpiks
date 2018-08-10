@@ -39,7 +39,7 @@ int RemoveFromUserDictionaryTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
 
     // wait for after-add spellchecking
     QThread::sleep(1);

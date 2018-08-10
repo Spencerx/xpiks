@@ -136,7 +136,6 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Filesystem/directoriescollection.cpp \
     ../../xpiks-qt/Filesystem/filescollection.cpp \
     ../../xpiks-qt/Filesystem/filesdirectoriescollection.cpp \
-    ../../xpiks-qt/Filesystem/indexedfilescollection.cpp \
     ../../xpiks-qt/Helpers/artworkshelpers.cpp \
     ../../xpiks-qt/Helpers/asynccoordinator.cpp \
     ../../xpiks-qt/Helpers/filehelpers.cpp \
@@ -269,7 +268,6 @@ HEADERS += \
     ../../xpiks-qt/Artworks/basickeywordsmodelimpl.h \
     ../../xpiks-qt/Artworks/basicmetadatamodel.h \
     ../../xpiks-qt/Artworks/iartworkmetadata.h \
-    ../../xpiks-qt/Artworks/iartworksservice.h \
     ../../xpiks-qt/Artworks/imageartwork.h \
     ../../xpiks-qt/Artworks/iselectedartworkssource.h \
     ../../xpiks-qt/Artworks/iselectedindicessource.h \
@@ -279,14 +277,12 @@ HEADERS += \
     ../../xpiks-qt/Filesystem/filescollection.h \
     ../../xpiks-qt/Filesystem/filesdirectoriescollection.h \
     ../../xpiks-qt/Filesystem/ifilescollection.h \
-    ../../xpiks-qt/Filesystem/indexedfilescollection.h \
     ../../xpiks-qt/Helpers/artworkshelpers.h \
     ../../xpiks-qt/Helpers/asynccoordinator.h \
     ../../xpiks-qt/Helpers/comparevaluesjson.h \
     ../../xpiks-qt/Helpers/cpphelpers.h \
     ../../xpiks-qt/Helpers/filehelpers.h \
     ../../xpiks-qt/Helpers/filterhelpers.h \
-    ../../xpiks-qt/Helpers/ifilenotavailablemodel.h \
     ../../xpiks-qt/Helpers/indiceshelper.h \
     ../../xpiks-qt/Helpers/indicesranges.h \
     ../../xpiks-qt/Helpers/jsonhelper.h \

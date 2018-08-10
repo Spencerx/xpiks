@@ -44,13 +44,13 @@ int UndoAddWithVectorsTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::ImageArtwork *firstImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(0));
+    Artworks::ImageArtwork *firstImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(0));
     Q_ASSERT(firstImage != NULL);
 
-    Models::ImageArtwork *secondImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(1));
+    Artworks::ImageArtwork *secondImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(1));
     Q_ASSERT(secondImage != NULL);
 
-    Models::ImageArtwork *thirdImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(2));
+    Artworks::ImageArtwork *thirdImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(2));
     Q_ASSERT(thirdImage != NULL);
 
     VERIFY(firstImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");
@@ -75,13 +75,13 @@ int UndoAddWithVectorsTest::doTest() {
 
     VERIFY(artItemsModel->getArtworksCount() == files.length(), "Items were not put back");
 
-    firstImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(0));
+    firstImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(0));
     Q_ASSERT(firstImage != NULL);
 
-    secondImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(1));
+    secondImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(1));
     Q_ASSERT(secondImage != NULL);
 
-    thirdImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(2));
+    thirdImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(2));
     Q_ASSERT(thirdImage != NULL);
 
     VERIFY(firstImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");

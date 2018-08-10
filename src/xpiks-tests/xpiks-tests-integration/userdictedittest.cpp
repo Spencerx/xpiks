@@ -46,7 +46,7 @@ int UserDictEditTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
     auto *quickBuffer = m_CommandManager->getQuickBuffer();
 
     // wait for after-add spellchecking

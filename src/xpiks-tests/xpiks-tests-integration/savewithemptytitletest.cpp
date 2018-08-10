@@ -36,8 +36,8 @@ int SaveWithEmptyTitleTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
-    Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(metadata);
+    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
+    Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(metadata);
 
     VERIFY(image->getImageSize().width() == 1920, "Image width was read incorrectly");
     VERIFY(image->getImageSize().height() == 1272, "Image height was read incorrectly");

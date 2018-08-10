@@ -35,7 +35,6 @@ namespace KeywordsPresets {
 }
 
 namespace Artworks {
-    class IArtworksService;
     class BasicMetadataModel;
 }
 

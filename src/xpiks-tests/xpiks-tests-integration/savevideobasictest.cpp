@@ -36,7 +36,7 @@ int SaveVideoBasicTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
     Models::VideoArtwork *video = dynamic_cast<Models::VideoArtwork*>(artwork);
 

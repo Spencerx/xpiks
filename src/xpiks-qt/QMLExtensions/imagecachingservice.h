@@ -28,10 +28,6 @@ namespace Storage {
     class IDatabaseManager;
 }
 
-namespace Services {
-    class ServiceStartParams;
-}
-
 namespace Helpers {
     class AsyncCoordinator;
 }

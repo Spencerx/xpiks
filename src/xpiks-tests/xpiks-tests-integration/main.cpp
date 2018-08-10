@@ -11,7 +11,7 @@
 
 #include "Connectivity/curlinithelper.h"
 
-#include "../../xpiks-qt/Helpers/logger.h"
+#include <Helpers/logger.h>
 #include "integrationtestsenvironment.h"
 #include "xpikstestsapp.h"
 #include "exiv2iohelpers.h"
@@ -183,68 +183,66 @@ int main(int argc, char *argv[]) {
 
     xpiksTests.waitInitialized();
 
-    auto &commandManager = xpiksTests.getCommandManager();
     int result = 0;
-
-    QVector<IntegrationTestBase*> integrationTests;
+    std::vector<std::shared_ptr<IntegrationTestBase>> integrationTests;
 
     // always the first one
-    integrationTests.append(new MetadataCacheSaveTest(environment, &commandManager));
+    integrationTests.emplace_back(std::make_shared<MetadataCacheSaveTest>(environment, xpiksTests));
     // and all others
-    integrationTests.append(new AddFilesBasicTest(environment, &commandManager));
-    integrationTests.append(new AutoAttachVectorsTest(environment, &commandManager));
-    integrationTests.append(new SaveFileBasicTest(environment, &commandManager));
-    integrationTests.append(new SaveFileLegacyTest(environment, &commandManager));
+    integrationTests.emplace_back(std::make_shared<AddFilesBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AutoAttachVectorsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SaveFileBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SaveFileLegacyTest>(environment, xpiksTests));
 #ifndef TRAVIS_CI
-    integrationTests.append(new SaveVideoBasicTest(environment, &commandManager));
+    integrationTests.emplace_back(std::make_shared<SaveVideoBasicTest>(environment, xpiksTests));
 #endif
-    integrationTests.append(new FailedUploadsTest(environment, &commandManager));
-    integrationTests.append(new SpellCheckMultireplaceTest(environment, &commandManager));
-    integrationTests.append(new SpellCheckCombinedModelTest(environment, &commandManager));
-    integrationTests.append(new ZipArtworksTest(environment, &commandManager));
-    integrationTests.append(new SpellCheckUndoTest(environment, &commandManager));
-    integrationTests.append(new AutoCompleteBasicTest(environment, &commandManager));
-    integrationTests.append(new SpellingProducesWarningsTest(environment, &commandManager));
-    integrationTests.append(new UndoAddWithVectorsTest(environment, &commandManager));
-    integrationTests.append(new ReadLegacySavedTest(environment, &commandManager));
-    integrationTests.append(new ClearMetadataTest(environment, &commandManager));
-    integrationTests.append(new SaveWithEmptyTitleTest(environment, &commandManager));
-    integrationTests.append(new CombinedEditFixSpellingTest(environment, &commandManager));
-    integrationTests.append(new FindAndReplaceModelTest(environment, &commandManager));
-    integrationTests.append(new AddToUserDictionaryTest(environment, &commandManager));
-    integrationTests.append(new AutoDetachVectorTest(environment, &commandManager));
-    integrationTests.append(new RemoveFromUserDictionaryTest(environment, &commandManager));
-    integrationTests.append(new ArtworkUploaderBasicTest(environment, &commandManager));
-    integrationTests.append(new PlainTextEditTest(environment, &commandManager));
-    integrationTests.append(new FixSpellingMarksModifiedTest(environment, &commandManager));
-    integrationTests.append(new PresetsTest(environment, &commandManager));
-    integrationTests.append(new TranslatorBasicTest(environment, &commandManager));
-    integrationTests.append(new UserDictEditTest(environment, &commandManager));
-    integrationTests.append(new WeirdNamesReadTest(environment, &commandManager));
-    integrationTests.append(new RestoreSessionTest(environment, &commandManager));
-    integrationTests.append(new DuplicateSearchTest(environment, &commandManager));
-    integrationTests.append(new AutoCompletePresetsTest(environment, &commandManager));
-    integrationTests.append(new CsvExportTest(environment, &commandManager));
-    integrationTests.append(new UnicodeIoTest(environment, &commandManager));
-    integrationTests.append(new UndoAddDirectoryTest(environment, &commandManager));
-    integrationTests.append(new UndoRestoreSessionTest(environment, &commandManager));
-    integrationTests.append(new MasterPasswordTest(environment, &commandManager));
-    integrationTests.append(new ReimportTest(environment, &commandManager));
-    integrationTests.append(new AutoImportTest(environment, &commandManager));
-    integrationTests.append(new ImportLostMetadataTest(environment, &commandManager));
-    integrationTests.append(new WarningsCombinedTest(environment, &commandManager));
-    integrationTests.append(new CsvDefaultExportTest(environment, &commandManager));
-    integrationTests.append(new LoadPluginBasicTest(environment, &commandManager));
-    integrationTests.append(new StockFtpAutoCompleteTest(environment, &commandManager));
+    integrationTests.emplace_back(std::make_shared<FailedUploadsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SpellCheckMultireplaceTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SpellCheckCombinedModelTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ZipArtworksTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SpellCheckUndoTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AutoCompleteBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SpellingProducesWarningsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UndoAddWithVectorsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ReadLegacySavedTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ClearMetadataTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SaveWithEmptyTitleTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<CombinedEditFixSpellingTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<FindAndReplaceModelTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AddToUserDictionaryTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AutoDetachVectorTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<RemoveFromUserDictionaryTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ArtworkUploaderBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<PlainTextEditTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<FixSpellingMarksModifiedTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<PresetsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<TranslatorBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UserDictEditTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<WeirdNamesReadTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<RestoreSessionTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<DuplicateSearchTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AutoCompletePresetsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<CsvExportTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UnicodeIoTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UndoAddDirectoryTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UndoRestoreSessionTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<MasterPasswordTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ReimportTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AutoImportTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ImportLostMetadataTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<WarningsCombinedTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<CsvDefaultExportTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<LoadPluginBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<StockFtpAutoCompleteTest>(environment, xpiksTests));
     // always the last one. insert new tests above
-    integrationTests.append(new LocalLibrarySearchTest(environment, &commandManager));
+    integrationTests.emplace_back(std::make_shared<LocalLibrarySearchTest>(environment, xpiksTests));
 
 
     qInfo("\n");
     int succeededTestsCount = 0, failedTestsCount = 0;
     QStringList failedTests;
 
-    foreach (IntegrationTestBase *test, integrationTests) {
+    for (auto &test: integrationTests) {
         QThread::msleep(500);
 
         qInfo("---------------------------------------------------------");
@@ -266,8 +264,6 @@ int main(int argc, char *argv[]) {
 
         qInfo("\n");
     }
-
-    qDeleteAll(integrationTests);
 
     qInfo() << "--------------------------";
     qInfo() << "In memory run:" << environment.getIsInMemoryOnly();

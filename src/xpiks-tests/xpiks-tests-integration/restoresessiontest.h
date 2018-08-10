@@ -16,8 +16,8 @@
 class RestoreSessionTest: public IntegrationTestBase
 {
 public:
-    RestoreSessionTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    RestoreSessionTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

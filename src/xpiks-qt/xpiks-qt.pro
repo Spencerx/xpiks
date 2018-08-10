@@ -150,7 +150,6 @@ SOURCES += main.cpp \
     Filesystem/directoriescollection.cpp \
     Filesystem/filesdirectoriescollection.cpp \
     Helpers/indicesranges.cpp \
-    Filesystem/indexedfilescollection.cpp \
     Artworks/artworkssnapshot.cpp \
     Artworks/artworkmetadata.cpp \
     Artworks/imageartwork.cpp \
@@ -287,7 +286,6 @@ HEADERS += \
     Connectivity/iftpcoordinator.h \
     QMLExtensions/triangleelement.h \
     Suggestion/locallibraryqueryengine.h \
-    Helpers/ifilenotavailablemodel.h \
     QMLExtensions/colorsmodel.h \
     Helpers/remoteconfig.h \
     Helpers/localconfig.h \
@@ -413,7 +411,6 @@ HEADERS += \
     Filesystem/directoriescollection.h \
     Filesystem/filesdirectoriescollection.h \
     Helpers/indicesranges.h \
-    Filesystem/indexedfilescollection.h \
     Artworks/artworkssnapshot.h \
     Artworks/artworkmetadata.h \
     Artworks/imageartwork.h \
@@ -427,7 +424,6 @@ HEADERS += \
     Services/artworkupdaterequest.h \
     Helpers/cpphelpers.h \
     Services/SpellCheck/userdictionary.h \
-    Artworks/iartworksservice.h \
     Services/AutoComplete/icompletionsource.h \
     QMLExtensions/uicommandid.h \
     Commands/Services/autoimportmetadatacommand.h \
@@ -503,7 +499,6 @@ HEADERS += \
     QMLExtensions/iuicommanddispatcher.h \
     Models/Editing/quickbuffer.h \
     Commands/Editing/findandreplacetemplate.h \
-    Services/iservicebase.h \
     Services/SpellCheck/spellcheckservice.h \
     Services/artworksinspectionhub.h \
     Common/messages.h \

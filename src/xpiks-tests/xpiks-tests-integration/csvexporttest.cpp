@@ -27,7 +27,7 @@ void CsvExportTest::setup() {
     settingsModel->setAutoFindVectors(false);
 }
 
-int parsePlan1Csv(const QString &filepath, const std::deque<Models::ArtworkMetadata*> &artworksList) {
+int parsePlan1Csv(const QString &filepath, const std::deque<Artworks::ArtworkMetadata*> &artworksList) {
 #define PLAN1_COLUMNS_COUNT 4
 #define COLUMNIZE1(arr) arr[0], arr[1], arr[2], arr[3]
 
@@ -50,7 +50,7 @@ int parsePlan1Csv(const QString &filepath, const std::deque<Models::ArtworkMetad
     const size_t size = artworksList.size();
 
     for (size_t i = 0; i < size; i++) {
-        Models::ArtworkMetadata *artwork = artworksList.at(i);
+        Artworks::ArtworkMetadata *artwork = artworksList.at(i);
 
         success = csvReader.read_row(COLUMNIZE1(columns));
         if (!success) { qWarning() << "Row cannot be read:" << i; }
@@ -69,7 +69,7 @@ int parsePlan1Csv(const QString &filepath, const std::deque<Models::ArtworkMetad
 #undef COLUMNIZE1
 }
 
-int parsePlan2Csv(const QString &filepath, const std::deque<Models::ArtworkMetadata*> &artworksList) {
+int parsePlan2Csv(const QString &filepath, const std::deque<Artworks::ArtworkMetadata*> &artworksList) {
 #define PLAN2_COLUMNS_COUNT 3
 #define COLUMNIZE2(arr) arr[0], arr[1], arr[2]
 
@@ -91,7 +91,7 @@ int parsePlan2Csv(const QString &filepath, const std::deque<Models::ArtworkMetad
     const size_t size = artworksList.size();
 
     for (size_t i = 0; i < size; i++) {
-        Models::ArtworkMetadata *artwork = artworksList.at(i);
+        Artworks::ArtworkMetadata *artwork = artworksList.at(i);
 
         success = csvReader.read_row(COLUMNIZE2(columns));
         if (!success) { qWarning() << "Row cannot be read:" << i; }

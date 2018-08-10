@@ -6,8 +6,8 @@
 class SpellCheckMultireplaceTest : public IntegrationTestBase
 {
 public:
-    SpellCheckMultireplaceTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    SpellCheckMultireplaceTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

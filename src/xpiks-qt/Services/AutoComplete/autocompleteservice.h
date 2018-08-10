@@ -14,7 +14,6 @@
 #include <QObject>
 #include <QString>
 #include <memory>
-#include <Services/iservicebase.h>
 
 namespace Artworks {
     class BasicKeywordsModel;
