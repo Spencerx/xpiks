@@ -70,7 +70,7 @@ namespace Mocks {
                                                                       dirsCount);
             files->setFromFullDirectory();
             auto result = addFiles(files, Common::AddFilesFlags::FlagIsFullDirectory);
-            return {(int)result.m_Snapshot.size(), files};
+            return std::make_tuple((int)result.m_Snapshot.size(), files);
         }
 
         size_t getAvailableArtworksSize() const {
