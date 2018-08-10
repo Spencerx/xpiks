@@ -11,6 +11,7 @@
 #ifndef IMICROSTOCKSERVICES_H
 #define IMICROSTOCKSERVICES_H
 
+#include <memory>
 #include "imicrostockservice.h"
 
 namespace Microstocks {
@@ -18,9 +19,7 @@ namespace Microstocks {
     public:
         virtual ~IMicrostockServices() {}
 
-        virtual IMicrostockService *getShutterstockService() = 0;
-        virtual IMicrostockService *getFotoliaService() = 0;
-        virtual IMicrostockService *getGettyService() = 0;
+        virtual std::shared_ptr<IMicrostockService> getService(MicrostockType type) = 0;
     };
 }
 

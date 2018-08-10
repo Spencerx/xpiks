@@ -31,7 +31,7 @@ namespace Plugins {
                                  KeywordsPresets::IPresetsManager &presetsManager,
                                  Storage::DatabaseManager &dbManager,
                                  Connectivity::RequestsService &requestsService,
-                                 Microstocks::MicrostockAPIClients &apiClients,
+                                 Microstocks::IMicrostockAPIClients &microstockClients,
                                  Models::ICurrentEditableSource &currentEditableSource,
                                  Models::UIManager &uiManager):
         QAbstractListModel(),
@@ -39,7 +39,7 @@ namespace Plugins {
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_DatabaseManager(dbManager),
-        m_MicrostockServices(requestsService, apiClients),
+        m_MicrostockServices(microstockClients, requestsService),
         m_CurrentEditableSource(currentEditableSource),
         m_UIProvider(uiManager),
         m_LastPluginID(0)

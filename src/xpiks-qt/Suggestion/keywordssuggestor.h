@@ -26,7 +26,6 @@
 #include <Common/statefulentity.h>
 #include <Common/isystemenvironment.h>
 #include <Artworks/basickeywordsmodel.h>
-#include <Microstocks/microstockapiclients.h>
 #include <Connectivity/requestsservice.h>
 #include <Connectivity/analyticsuserevent.h>
 #include <Models/Editing/quickbuffermessage.h>
@@ -38,6 +37,10 @@ namespace Models {
 
 namespace MetadataIO {
     class MetadataIOService;
+}
+
+namespace Microstocks {
+    class IMicrostockAPIClients;
 }
 
 namespace Suggestion {
@@ -62,16 +65,16 @@ namespace Suggestion {
         using Common::MessagesSource<Models::QuickBufferMessage>::sendMessage;
 
     public:
-        KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
-                          Connectivity::RequestsService &requestsService,
-                          Models::SwitcherModel &switcherModel,
+        KeywordsSuggestor(Models::SwitcherModel &switcherModel,
                           Models::SettingsModel &settingsModel,
                           Common::ISystemEnvironment &environment,
                           QObject *parent=NULL);
 
     public:
         void setExistingKeywords(const QSet<QString> &keywords);
-        void initSuggestionEngines(MetadataIO::MetadataIOService &metadataIOService);
+        void initSuggestionEngines(Microstocks::IMicrostockAPIClients &microstockClients,
+                                   Connectivity::RequestsService &requestsService,
+                                   MetadataIO::MetadataIOService &metadataIOService);
         void setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks);
         void clear();
 
@@ -173,14 +176,20 @@ namespace Suggestion {
         void calculateBounds(int &lowerBound, int &upperBound) const;
         std::shared_ptr<ISuggestionEngine> getSelectedEngine();
 
+#ifdef CORE_TESTS
+    public:
+        void setFakeSuggestions(std::vector<std::shared_ptr<SuggestionArtwork>> const &suggestions) {
+            m_Suggestions = suggestions;
+        }
+        void initialize() { m_State.init(); }
+#endif
+
     private:
         Common::StatefulEntity m_State;
-        Microstocks::MicrostockAPIClients &m_ApiClients;
-        Connectivity::RequestsService &m_RequestsService;
         Models::SwitcherModel &m_SwitcherModel;
         Models::SettingsModel &m_SettingsModel;
-        std::vector<std::shared_ptr<ISuggestionEngine> > m_QueryEngines;
-        std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
+        std::vector<std::shared_ptr<ISuggestionEngine>> m_QueryEngines;
+        std::vector<std::shared_ptr<SuggestionArtwork>> m_Suggestions;
         QString m_LastErrorString;
         QHash<QString, int> m_KeywordsHash;
         QSet<QString> m_ExistingKeywords;

@@ -12,7 +12,8 @@
 #include <QUrlQuery>
 #include "../Encryption/aes-qt.h"
 #include "../Connectivity/simpleapirequest.h"
-#include "apisecrets.h"
+#include "microstockenums.h"
+#include "searchquery.h"
 #include "../Encryption/isecretsstorage.h"
 
 namespace Microstocks {

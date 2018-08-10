@@ -17,26 +17,26 @@
 #include <Models/switchermodel.h>
 #include <Models/settingsmodel.h>
 #include <Helpers/constants.h>
+#include <Connectivity/analyticsuserevent.h>
+
+#ifndef CORE_TESTS
+#include "locallibraryqueryengine.h"
 #include "shutterstocksuggestionengine.h"
 #include "fotoliasuggestionengine.h"
 #include "gettysuggestionengine.h"
-#include "locallibraryqueryengine.h"
-#include <Connectivity/analyticsuserevent.h>
+#include <Microstocks/imicrostockapiclients.h>
+#endif
 
 #define LINEAR_TIMER_INTERVAL 1000
 #define DEFAULT_SEARCH_TYPE_INDEX 0
 
 namespace Suggestion {
-    KeywordsSuggestor::KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
-                                         Connectivity::RequestsService &requestsService,
-                                         Models::SwitcherModel &switcherModel,
+    KeywordsSuggestor::KeywordsSuggestor(Models::SwitcherModel &switcherModel,
                                          Models::SettingsModel &settingsModel,
                                          Common::ISystemEnvironment &environment,
                                          QObject *parent):
         QAbstractListModel(parent),
         m_State("ksuggest", environment),
-        m_ApiClients(apiClients),
-        m_RequestsService(requestsService),
         m_SwitcherModel(switcherModel),
         m_SettingsModel(settingsModel),
         m_SuggestedKeywords(m_HoldPlaceholder, this),
@@ -61,22 +61,24 @@ namespace Suggestion {
         m_ExistingKeywords.clear(); m_ExistingKeywords.unite(keywords);
     }
 
-    void KeywordsSuggestor::initSuggestionEngines(MetadataIO::MetadataIOService &metadataIOService) {
+    void KeywordsSuggestor::initSuggestionEngines(Microstocks::IMicrostockAPIClients &microstockClients,
+                                                  Connectivity::RequestsService &requestsService,
+                                                  MetadataIO::MetadataIOService &metadataIOService) {
         LOG_DEBUG << "#";
-
+#ifndef CORE_TESTS
         int id = 0;
         auto shutterstockEngine = std::make_shared<ShutterstockSuggestionEngine>(
                                       id++,
-                                      m_ApiClients.getShutterstockClient(),
-                                      m_RequestsService);
+                                      microstockClients.getClient(Microstocks::MicrostockType::Shutterstock),
+                                      requestsService);
         QObject::connect(shutterstockEngine.get(), &ShutterstockSuggestionEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
         m_QueryEngines.emplace_back(shutterstockEngine);
 
         auto gettyEngine = std::make_shared<GettySuggestionEngine>(
                                id++,
-                               m_ApiClients.getGettyClient(),
-                               m_RequestsService);
+                               microstockClients.getClient(Microstocks::MicrostockType::Getty),
+                               requestsService);
         QObject::connect(gettyEngine.get(), &GettySuggestionEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
         m_QueryEngines.emplace_back(gettyEngine);
@@ -86,8 +88,8 @@ namespace Suggestion {
 
         auto fotoliaEngine = std::make_shared<FotoliaSuggestionEngine>(
                                  id++,
-                                 m_ApiClients.getFotoliaClient(),
-                                 m_RequestsService);
+                                 microstockClients.getClient(Microstocks::MicrostockType::Fotolia),
+                                 requestsService);
         QObject::connect(fotoliaEngine.get(), &FotoliaSuggestionEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
         m_QueryEngines.emplace_back(fotoliaEngine);
@@ -99,7 +101,7 @@ namespace Suggestion {
                          this, &KeywordsSuggestor::resultsAvailableHandler);
         m_QueryEngines.emplace_back(localEngine);
         m_LocalSearchIndex = (int)m_QueryEngines.size() - 1;
-
+#endif
         m_State.init();
     }
 
@@ -235,7 +237,7 @@ namespace Suggestion {
     void KeywordsSuggestor::onSwitchesUpdated() {
         LOG_DEBUG << "#";
         bool found = false;
-
+#ifndef CORE_TESTS
         for (auto &engine: m_QueryEngines) {
             auto gettyEngine = std::dynamic_pointer_cast<GettySuggestionEngine>(engine);
             if (gettyEngine) {
@@ -244,6 +246,7 @@ namespace Suggestion {
                 break;
             }
         }
+#endif
 
         if (!found) {
             LOG_WARNING << "Failed to find Getty engine";
@@ -261,9 +264,12 @@ namespace Suggestion {
         const int index = getSelectedSourceIndex();
         if ((index < 0) || (index >= (int)m_QueryEngines.size())) { return false; }
 
+        bool result = false;
+#ifndef CORE_TESTS
         auto &engine = m_QueryEngines.at(index);
         auto localEngine = std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine);
-        bool result = localEngine != nullptr;
+        result = localEngine != nullptr;
+#endif
         return result;
     }
 
@@ -334,12 +340,13 @@ namespace Suggestion {
             if (engine) {
                 Microstocks::SearchQuery query(searchTerm, resultsType, engine->getMaxResultsPerPage());
                 engine->submitQuery(query);
-
+#ifndef CORE_TESTS
                 if (std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine) == nullptr) {
                     sendMessage(Connectivity::UserAction::SuggestionRemote);
                 } else {
                     sendMessage(Connectivity::UserAction::SuggestionLocal);
                 }
+#endif
             }
         }
     }

@@ -14,7 +14,8 @@
 #include "../Encryption/aes-qt.h"
 #include "../Connectivity/simpleapirequest.h"
 #include "../Encryption/isecretsstorage.h"
-#include "apisecrets.h"
+#include "microstockenums.h"
+#include "searchquery.h"
 
 namespace Microstocks {
     ShutterstockAPIClient::ShutterstockAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):

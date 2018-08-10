@@ -206,7 +206,10 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Connectivity/configrequest.cpp \
     ../../xpiks-qt/Encryption/obfuscation.cpp \
     ../../xpiks-qt/Models/Connectivity/proxysettings.cpp \
-    ../../xpiks-qt/Commands/Files/removedirectorycommand.cpp
+    ../../xpiks-qt/Commands/Files/removedirectorycommand.cpp \
+    ../../xpiks-qt/Suggestion/keywordssuggestor.cpp \
+    ../../xpiks-qt/Models/switchermodel.cpp \
+    ../../xpiks-qt/Connectivity/switcherconfig.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -370,5 +373,9 @@ HEADERS += \
     ../../xpiks-qt/Encryption/obfuscation.h \
     ../../xpiks-qt/Models/Connectivity/proxysettings.h \
     ../../xpiks-qt/Commands/Files/removedirectorycommand.h \
-    ../../xpiks-qt/Models/Artworks/artworkslistoperations.h
+    ../../xpiks-qt/Models/Artworks/artworkslistoperations.h \
+    Mocks/microstockclientsmock.h \
+    ../../xpiks-qt/Suggestion/keywordssuggestor.h \
+    ../../xpiks-qt/Models/switchermodel.h \
+    ../../xpiks-qt/Connectivity/switcherconfig.h
 

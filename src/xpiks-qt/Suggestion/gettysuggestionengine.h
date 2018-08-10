@@ -35,7 +35,7 @@ namespace Suggestion {
         Q_OBJECT
     public:
         GettySuggestionEngine(int id,
-                              Microstocks::IMicrostockAPIClient &client,
+                              std::shared_ptr<Microstocks::IMicrostockAPIClient> const &client,
                               Connectivity::RequestsService &requestsService):
             MicrostockSuggestionEngine(id,
                                        "iStock",

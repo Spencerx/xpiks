@@ -9,7 +9,7 @@
  */
 
 #include "sandboxeddependencies.h"
-#include "../Models/uimanager.h"
+#include <Models/uimanager.h>
 #include "uiprovider.h"
 
 namespace Plugins {
@@ -35,11 +35,16 @@ namespace Plugins {
         return result;
     }
 
-    MicrostockServicesSafe::MicrostockServicesSafe(Connectivity::RequestsService &requestsService,
-                                                   Microstocks::MicrostockAPIClients &apiClients):
-        m_ShutterstockService(&apiClients.getShutterstockClient(), requestsService),
-        m_FotoliaService(&apiClients.getFotoliaClient(), requestsService),
-        m_GettyService(&apiClients.getGettyClient(), requestsService)
+    MicrostockServicesSafe::MicrostockServicesSafe(Microstocks::IMicrostockAPIClients &apiClients,
+                                                   Connectivity::RequestsService &requestsService):
+        m_ApiClients(apiClients),
+        m_RequestsService(requestsService)
     {
+    }
+
+    std::shared_ptr<Microstocks::IMicrostockService> MicrostockServicesSafe::getService(Microstocks::MicrostockType type) {
+        return std::make_shared<Microstocks::MicrostockService>(
+                    m_ApiClients.getClient(type),
+                    m_RequestsService);
     }
 }

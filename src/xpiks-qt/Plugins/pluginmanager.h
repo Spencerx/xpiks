@@ -23,7 +23,6 @@
 #include "plugindatabasemanager.h"
 #include <Storage/idatabasemanager.h>
 #include "sandboxeddependencies.h"
-#include <Connectivity/requestsservice.h>
 
 namespace Commands {
     class ICommandManager;
@@ -34,11 +33,15 @@ namespace KeywordsPresets {
 }
 
 namespace Microstocks {
-    class MicrostockAPIClients;
+    class IMicrostockServices;
 }
 
 namespace Models {
     class ICurrentEditableSource;
+}
+
+namespace Connectivity {
+    class RequestsService;
 }
 
 namespace Plugins {
@@ -54,7 +57,7 @@ namespace Plugins {
                       KeywordsPresets::IPresetsManager &presetsManager,
                       Storage::DatabaseManager &dbManager,
                       Connectivity::RequestsService &requestsService,
-                      Microstocks::MicrostockAPIClients &apiClients,
+                      Microstocks::IMicrostockAPIClients &microstockClients,
                       Models::ICurrentEditableSource &currentEditableSource,
                       Models::UIManager &uiManager);
         virtual ~PluginManager();

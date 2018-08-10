@@ -6,16 +6,21 @@
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/artworksupdatermock.h"
+#include "Mocks/microstockclientsmock.h"
 #include <Models/Session/recentdirectoriesmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Models/Editing/quickbuffer.h>
 #include <Models/Editing/artworkproxymodel.h>
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/settingsmodel.h>
+#include <Models/switchermodel.h>
 #include <Models/Editing/currenteditablemodel.h>
+#include <Models/Connectivity/proxysettings.h>
 #include <KeywordsPresets/presetkeywordsmodel.h>
 #include <UndoRedo/undoredomanager.h>
+#include <Connectivity/requestsservice.h>
 #include <Suggestion/keywordssuggestor.h>
+#include <Suggestion/suggestionartwork.h>
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \
@@ -180,8 +185,34 @@ void QuickBufferTests::copyHalfEmptyCombinedModelToQuickBufferTest() {
 
 void QuickBufferTests::copyKeywordsSuggestorToQuickBufferTest() {
     DECLARE_MODELS_AND_GENERATE(2);
-    //Suggestion::KeywordsSuggestor suggestor()
-    QFAIL("Not implemented");
+    Models::SwitcherModel switcher(environment);
+    switcher.initialize();
+    Suggestion::KeywordsSuggestor suggestor(switcher,
+                                            settingsModel,
+                                            environment);
+    suggestor.initialize();
+    Common::connectTarget<Models::QuickBufferMessage>(quickBuffer, {suggestor});
+
+    quickBuffer.setTitle("own title");
+    quickBuffer.setDescription("own description");
+    quickBuffer.setKeywords(QStringList() << "some" << "other" << "keywords");
+
+    const QString title = "title";
+    const QString description = "description";
+    const QStringList keywords = QStringList() << "a keyword1" << "b keyword2";
+
+    std::vector<std::shared_ptr<Suggestion::SuggestionArtwork>> fakeSuggestions = {
+        std::make_shared<Suggestion::SuggestionArtwork>("url", title, description, keywords)
+    };
+    suggestor.setFakeSuggestions(fakeSuggestions);
+
+    suggestor.copyToQuickBuffer(0);
+
+    QCOMPARE(quickBuffer.getTitle(), title);
+    QCOMPARE(quickBuffer.getDescription(), description);
+    QStringList qbKeywords = quickBuffer.getKeywords();
+    qbKeywords.sort();
+    QCOMPARE(qbKeywords, keywords);
 }
 
 void QuickBufferTests::applyQuickBufferToArtworkTest() {

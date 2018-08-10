@@ -8,10 +8,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef APISECRETS_H
-#define APISECRETS_H
+#ifndef MICROSTOCKENUMS_H
+#define MICROSTOCKENUMS_H
 
 namespace Microstocks {
+    enum class MicrostockType {
+        Shutterstock,
+        Fotolia,
+        Getty
+    };
+
     enum APISecrets {
         ShutterstockClientID,
         ShutterstockClientSecret,
@@ -20,4 +26,4 @@ namespace Microstocks {
     };
 }
 
-#endif // APISECRETS_H
+#endif // MICROSTOCKENUMS_H

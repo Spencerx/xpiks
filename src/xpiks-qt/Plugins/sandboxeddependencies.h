@@ -21,6 +21,10 @@ namespace Models {
     class UIManager;
 }
 
+namespace Connectivity {
+    class RequestsService;
+}
+
 namespace Plugins {
     class UIProvider;
 
@@ -40,19 +44,16 @@ namespace Plugins {
 
     class MicrostockServicesSafe: public Microstocks::IMicrostockServices {
     public:
-        MicrostockServicesSafe(Connectivity::RequestsService &requestsService,
-                               Microstocks::MicrostockAPIClients &apiClients);
+        MicrostockServicesSafe(Microstocks::IMicrostockAPIClients &apiClients,
+                               Connectivity::RequestsService &requestsService);
 
         // IMicrostockServices interface
     public:
-        virtual Microstocks::IMicrostockService *getShutterstockService() override { return &m_ShutterstockService; }
-        virtual Microstocks::IMicrostockService *getFotoliaService() override { return &m_FotoliaService; }
-        virtual Microstocks::IMicrostockService *getGettyService() override { return &m_GettyService; }
+        virtual std::shared_ptr<Microstocks::IMicrostockService> getService(Microstocks::MicrostockType type) override;
 
     private:
-        Microstocks::MicrostockService m_ShutterstockService;
-        Microstocks::MicrostockService m_FotoliaService;
-        Microstocks::MicrostockService m_GettyService;
+        Microstocks::IMicrostockAPIClients &m_ApiClients;
+        Connectivity::RequestsService &m_RequestsService;
     };
 }
 

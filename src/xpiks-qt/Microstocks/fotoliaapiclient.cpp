@@ -12,7 +12,8 @@
 #include <QUrlQuery>
 #include "../Connectivity/simpleapirequest.h"
 #include "../Encryption/aes-qt.h"
-#include "apisecrets.h"
+#include "microstockenums.h"
+#include "searchquery.h"
 #include "../Encryption/isecretsstorage.h"
 
 Microstocks::FotoliaAPIClient::FotoliaAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):

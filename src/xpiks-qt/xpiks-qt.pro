@@ -396,7 +396,6 @@ HEADERS += \
     Suggestion/isuggestionengine.h \
     Microstocks/fotoliaapiclient.h \
     Microstocks/gettyapiclient.h \
-    Microstocks/microstockapiclients.h \
     Suggestion/shutterstocksuggestionengine.h \
     Suggestion/fotoliasuggestionengine.h \
     Suggestion/gettysuggestionengine.h \
@@ -405,7 +404,6 @@ HEADERS += \
     Microstocks/imicrostockservices.h \
     Encryption/secretpair.h \
     Encryption/isecretsstorage.h \
-    Microstocks/apisecrets.h \
     Storage/memorytable.h \
     xpiksapp.h \
     Microstocks/stockftpoptions.h \
@@ -525,7 +523,10 @@ HEADERS += \
     Commands/UI/sourcetargetcommand.h \
     Commands/Files/removeselectedfilescommand.h \
     Services/iartworksupdater.h \
-    Connectivity/irequestsservice.h
+    Connectivity/irequestsservice.h \
+    Microstocks/imicrostockapiclients.h \
+    Microstocks/microstockenums.h \
+    Microstocks/microstockapiclients.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

@@ -34,6 +34,9 @@
 #include <Commands/Base/commanduiwrapper.h>
 #include <Commands/Files/removeselectedfilescommand.h>
 #include <Commands/Files/removedirectorycommand.h>
+#include <Microstocks/shutterstockapiclient.h>
+#include <Microstocks/gettyapiclient.h>
+#include <Microstocks/fotoliaapiclient.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_SecretsManager(),
@@ -76,7 +79,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_UploadInfoRepository(environment, m_SecretsManager),
     m_ZipArchiver(),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
-    m_ApiClients(m_SecretsStorage),
+    m_ApiClients(),
     m_FtpCoordinator(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel)),
     m_ArtworksUploader(environment, m_UploadInfoRepository, m_SettingsModel),
     m_LanguagesModel(m_SettingsModel),
@@ -90,7 +93,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_MetadataIOCoordinator(m_MetadataReadingHub, m_SettingsModel, m_SwitcherModel, m_VideoCachingService),
     m_SpellSuggestionModel(m_SpellCheckerService, m_ArtworksUpdateHub),
     m_FilteredArtworksListModel(m_ArtworksListModel, m_CommandManager, m_PresetsModel, m_SettingsModel),
-    m_KeywordsSuggestor(m_ApiClients, m_RequestsService, m_SwitcherModel, m_SettingsModel, environment),
+    m_KeywordsSuggestor(m_SwitcherModel, m_SettingsModel, environment),
     m_PluginManager(environment, m_CommandManager, m_PresetsModel, m_DatabaseManager,
                     m_RequestsService, m_ApiClients, m_CurrentEditableModel, m_UIManager),
     m_PluginsWithActions(m_PluginManager),
@@ -98,6 +101,10 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
 {
     QObject::connect(&m_InitCoordinator, &Helpers::AsyncCoordinator::statusReported,
                      this, &XpiksApp::servicesInitialized);
+
+    m_ApiClients.addClient(std::make_shared<Microstocks::ShutterstockAPIClient>(m_SecretsStorage));
+    m_ApiClients.addClient(std::make_shared<Microstocks::GettyAPIClient>(m_SecretsStorage));
+    m_ApiClients.addClient(std::make_shared<Microstocks::FotoliaAPIClient>(m_SecretsStorage));
 }
 
 XpiksApp::~XpiksApp() {
@@ -254,7 +261,7 @@ void XpiksApp::start() {
     m_UploadInfoRepository.initializeConfig();
     m_PresetsModel.initializePresets();
     m_CsvExportModel.initializeExportPlans(m_InitCoordinator, m_RequestsService);
-    m_KeywordsSuggestor.initSuggestionEngines(m_MetadataIOService);
+    m_KeywordsSuggestor.initSuggestionEngines(m_ApiClients, m_RequestsService, m_MetadataIOService);
     m_UpdateService.initialize();
 }
 

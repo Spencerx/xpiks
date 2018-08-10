@@ -32,7 +32,7 @@ namespace Suggestion {
         Q_OBJECT
     public:
         FotoliaSuggestionEngine(int id,
-                                     Microstocks::IMicrostockAPIClient &client,
+                                     std::shared_ptr<Microstocks::IMicrostockAPIClient> const &client,
                                      Connectivity::RequestsService &requestsService):
             MicrostockSuggestionEngine(id,
                                        "Fotolia",
