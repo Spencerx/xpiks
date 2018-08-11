@@ -28,8 +28,8 @@ namespace Commands {
         // IUICommandTemplate interface
     public:
         virtual int getCommandID() override { return m_ID; }
-        virtual void execute(const QJSValue &) override { m_Command->execute(); }
-        virtual void undo() override { m_Command->undo(); }
+        virtual void execute(QVariant const &) override { m_Command->execute(); }
+        virtual void undo(QVariant const &) override { m_Command->undo(); }
         virtual bool canUndo() override { return m_Command->canUndo(); }
         virtual QString getDescription() const override { return m_Command->getDescription(); }
 

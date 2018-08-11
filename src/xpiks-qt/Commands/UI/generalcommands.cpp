@@ -15,12 +15,12 @@
 
 namespace Commands {
     namespace UI {
-        void SetMasterPasswordCommand::execute(const QJSValue &value) {
+        void SetMasterPasswordCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.onMasterPasswordSet(m_Source);
         }
 
-        void RemoveUnavailableFilesCommand::execute(const QJSValue &) {
+        void RemoveUnavailableFilesCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_ArtworksListModel.purgeUnavailableFiles();
         }

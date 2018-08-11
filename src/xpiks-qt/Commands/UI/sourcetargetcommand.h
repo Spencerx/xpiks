@@ -22,7 +22,7 @@ namespace Commands {
             {}\
         public:\
             virtual int getCommandID() override { return CommandID; }\
-            virtual void execute(const QJSValue &value) override;\
+            virtual void execute(QVariant const &value) override;\
         private:\
             Source &m_Source;\
             Target &m_Target;\

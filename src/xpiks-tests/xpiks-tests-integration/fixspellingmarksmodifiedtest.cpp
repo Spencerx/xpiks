@@ -47,12 +47,12 @@ int FixSpellingMarksModifiedTest::doTest() {
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
     Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-    Common::BasicMetadataModel *basicModel = qobject_cast<Common::BasicMetadataModel*>(filteredModel->getBasicModel(0));
+    Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(filteredModel->getBasicModel(0));
 
     QString wrongWord = "abbreviatioe";
     basicModel->appendKeyword(wrongWord);
 
-    QObject::connect(basicModel, &Common::BasicMetadataModel::keywordsSpellingChanged,
+    QObject::connect(basicModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
                      &waiter, &SignalWaiter::finished);
 
     xpiks()->submitItemForSpellCheck(basicModel);

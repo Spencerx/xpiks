@@ -18,24 +18,30 @@
 
 namespace Commands {
     namespace UI {
-        void FixSpellingInCombinedEditCommand::execute(const QJSValue &) {
+        int convertToInt(QVariant const &value, int defaultValue = 0) {
+            int result = defaultValue;
+            if (value.isValid()) {
+                if (value.type() == QVariant::Int) {
+                    result = value.toInt();
+                }
+            }
+            return result;
+        }
+
+        void FixSpellingInCombinedEditCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setupItem(&m_Source.getBasicModel());
         }
 
-        void FixSpellingInArtworkProxyCommand::execute(const QJSValue &) {
+        void FixSpellingInArtworkProxyCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             Artworks::ArtworksSnapshot snapshot({m_Source.getArtwork()});
             m_Target.setupArtworks(snapshot);
         }
 
-        void FixSpellingInArtworkCommand::execute(const QJSValue &value) {
-            LOG_DEBUG << value.toString();
-            int index = -1;
-            if (value.isNumber()) {
-                index = value.toInt();
-            }
-
+        void FixSpellingInArtworkCommand::execute(QVariant const &value) {
+            LOG_DEBUG << value;
+            int index = convertToInt(value, -1);
             int originalIndex = m_FilteredArtworksModel.getOriginalIndex(index);
             auto *artwork = m_ArtworksListModel.getArtwork(originalIndex);
             if (artwork != nullptr) {
@@ -46,22 +52,19 @@ namespace Commands {
             }
         }
 
-        void ShowDuplicatesForSingle::execute(const QJSValue &) {
+        void ShowDuplicatesForSingle::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setupModel(m_Source.getArtwork()->getBasicModel());
         }
 
-        void ShowDuplicatesForCombined::execute(const QJSValue &) {
+        void ShowDuplicatesForCombined::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setupModel(&m_Source.getBasicModel());
         }
 
-        void AcceptPresetCompletionForCombined::execute(const QJSValue &value) {
-            LOG_DEBUG << value.toString();
-            int completionID = 0;
-            if (value.isNumber()) {
-                completionID = value.toInt();
-            }
+        void AcceptPresetCompletionForCombined::execute(QVariant const &value) {
+            LOG_DEBUG << value;
+            int completionID = convertToInt(value, 0);
 
             bool accepted = m_Target.acceptCompletionAsPreset(m_Source, completionID);
             LOG_INFO << "completion" << completionID << "accepted:" << accepted;

@@ -32,30 +32,19 @@ int ClearMetadataTest::doTest() {
     artwork->setIsSelected(true);
     m_TestsApp.getFilteredArtworksModel().removeMetadataInSelected();
 
-    bool doOverwrite = true, dontSaveBackups = false;
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForExport(waiter);
 
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::SaveSelected, QJSValue(dontSaveBackups));
-
-    filteredModel->saveSelectedArtworks(doOverwrite, dontSaveBackups);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SaveSelected);
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");
+    VERIFY(m_TestsApp.checkExportSucceeded(), "Failed to export");
 
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while writing");
+    m_TestsApp.deleteArtworks(Helpers::IndicesRanges(files.size()));
 
-    filteredModel->removeSelectedArtworks();
-    addedCount = artItemsModel->addLocalArtworks(files);
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    VERIFY(addedCount == files.length(), "Failed to add file after removal");
-
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    artwork = artItemsModel->getArtwork(0);
+    artwork = m_TestsApp.getArtwork(0);
 
     VERIFY(artwork->getBasicModel()->isDescriptionEmpty(), "Description was not empty");
     VERIFY(artwork->getBasicModel()->isTitleEmpty(), "Title was not empty");

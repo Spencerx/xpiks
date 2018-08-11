@@ -53,7 +53,22 @@ bool XpiksTestsApp::checkImportSucceeded(size_t importsCount) {
     return success;
 }
 
-void XpiksTestsApp::dispatch(QMLExtensions::UICommandID::CommandID id, const QJSValue &value) {
+bool XpiksTestsApp::checkExportSucceeded() {
+    bool success = false;
+
+    do {
+        if (m_MetadataIOCoordinator.getHasErrors()) {
+            LOG_WARNING << "Errors in IO Coordinator while writing";
+            break;
+        }
+
+        success = true;
+    } while (false);
+
+    return success;
+}
+
+void XpiksTestsApp::dispatch(QMLExtensions::UICommandID::CommandID id, QVariant const &value) {
     m_UICommandDispatcher.dispatchCommand(id, value);
 }
 

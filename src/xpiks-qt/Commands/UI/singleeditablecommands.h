@@ -56,7 +56,7 @@ namespace Commands {
             // IUICommandTemplate interface
         public:
             virtual int getCommandID() override { return QMLExtensions::UICommandID::FixSpellingArtwork; }
-            virtual void execute(const QJSValue &value) override;
+            virtual void execute(QVariant const &value) override;
 
         private:
             Models::FilteredArtworksListModel &m_FilteredArtworksModel;

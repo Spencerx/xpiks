@@ -11,15 +11,15 @@
 #ifndef IUICOMMANDTEMPLATE_H
 #define IUICOMMANDTEMPLATE_H
 
-#include <QJSValue>
+#include <QVariant>
 
 namespace Commands {
     class IUICommandTemplate {
     public:
         virtual ~IUICommandTemplate() {}
         virtual int getCommandID() = 0;
-        virtual void execute(const QJSValue &value) = 0;
-        virtual void undo() { /*BUMP*/ }
+        virtual void execute(QVariant const &value) = 0;
+        virtual void undo(QVariant const &) { /*BUMP*/ }
         virtual bool canUndo() { return false; }
         virtual QString getDescription() const { return QString(); }
     };

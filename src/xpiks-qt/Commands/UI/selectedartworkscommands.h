@@ -68,12 +68,12 @@ namespace Commands {
                 m_FilteredArtworksList(filteredArtworksList),
                 m_MetadataIOCoordinator(metadataIOCoordinator),
                 m_MetadataIOService(metadataIOService)
-            {}
+            { }
 
             // IUICommandTemplate interface
         public:
             virtual int getCommandID() override { return QMLExtensions::UICommandID::SaveSelected; }
-            virtual void execute(const QJSValue &value) override;
+            virtual void execute(QVariant const &value) override;
 
         private:
             Models::FilteredArtworksListModel &m_FilteredArtworksList;

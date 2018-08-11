@@ -1,7 +1,7 @@
 #ifndef XPIKSTESTSAPP_H
 #define XPIKSTESTSAPP_H
 
-#include <QJSValue>
+#include <QVariant>
 #include <xpiksapp.h>
 #include <QMLExtensions/uicommandid.h>
 
@@ -18,9 +18,10 @@ public:
 
 public:
     bool checkImportSucceeded(size_t importsCount=1);
+    bool checkExportSucceeded();
 
 public:
-    void dispatch(QMLExtensions::UICommandID::CommandID id, QJSValue const &value = QJSValue());
+    void dispatch(QMLExtensions::UICommandID::CommandID id, QVariant const &value = QVariant());
     bool addFilesForTest(QList<QUrl> const &urls);
     void deleteArtworks(Helpers::IndicesRanges const &ranges);
     bool undoLastAction();
@@ -34,6 +35,7 @@ public:
     SpellCheck::UserDictionary &getUserDictionary() { return m_UserDictionary; }
     Models::ArtworksUploader &getArtworksUploader() { return m_ArtworksUploader; }
     Models::FilteredArtworksListModel &getFilteredArtworksModel() { return m_FilteredArtworksListModel; }
+    Models::CombinedArtworksModel &getCombinedArtworksModel() { return m_CombinedArtworksModel; }
     Artworks::ArtworkMetadata *getArtwork(int index);
 
 public:

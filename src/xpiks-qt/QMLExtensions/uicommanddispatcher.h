@@ -19,6 +19,8 @@ namespace Commands {
     class ICommandManager;
 }
 
+class QJSValue;
+
 namespace QMLExtensions {
     class UICommandDispatcher:
             public QObject,
@@ -29,7 +31,7 @@ namespace QMLExtensions {
         UICommandDispatcher(Commands::ICommandManager &commandManager, QObject *parent=0);
 
     public:
-        Q_INVOKABLE void dispatch(int commandID, QJSValue const &value) { dispatchCommand(commandID, value); }
+        Q_INVOKABLE void dispatch(int commandID, QJSValue const &value);
 
     public:
         void registerCommands(std::initializer_list<std::shared_ptr<Commands::IUICommandTemplate>> commands);
@@ -37,7 +39,7 @@ namespace QMLExtensions {
         // IUICommandDispatcher interface
     public:
         virtual void registerCommand(std::shared_ptr<Commands::IUICommandTemplate> const &command) override;
-        virtual void dispatchCommand(int commandID, QJSValue const &value) override;
+        virtual void dispatchCommand(int commandID, QVariant const &value) override;
 
     private:
         std::unordered_map<int, std::shared_ptr<Commands::IUICommandTemplate>> m_CommandsMap;

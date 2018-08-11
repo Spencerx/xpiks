@@ -40,7 +40,7 @@ int AutoCompleteBasicTest::doTest() {
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
     Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
-    Common::BasicMetadataModel *basicModel = metadata->getBasicModel();
+    Artworks::BasicMetadataModel *basicModel = metadata->getBasicModel();
 
     AutoComplete::AutoCompleteService *acService = m_CommandManager->getAutoCompleteService();
     AutoComplete::KeywordsAutoCompleteModel *acModel = acService->getAutoCompleteModel();

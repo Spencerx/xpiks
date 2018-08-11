@@ -27,60 +27,76 @@
 
 namespace Commands {
     namespace UI {
-        void EditSelectedCommand::execute(const QJSValue &) {
+        bool convertToBool(QVariant const &value, bool defaultValue = false) {
+            bool result = defaultValue;
+            if (value.isValid()) {
+                if (value.type() == QVariant::Bool) {
+                    result = value.toBool();
+                }
+            }
+            return result;
+        }
+
+        void EditSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setArtworks(m_Source.getSelectedArtworks());
         }
 
-        void FixSpellingInSelectedCommand::execute(const QJSValue &) {
+        void FixSpellingInSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             Artworks::ArtworksSnapshot snapshot = std::move(m_Source.getSelectedArtworks());
             m_Target.setupArtworks(snapshot);
         }
 
-        void ShowDuplicatesInSelectedCommand::execute(const QJSValue &) {
+        void ShowDuplicatesInSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setupModel(m_Source.getSelectedArtworks());
         }
 
-        void SaveSelectedCommand::execute(const QJSValue &value) {
-            LOG_DEBUG << value.toString();
+        void SaveSelectedCommand::execute(QVariant const &value) {
+            LOG_DEBUG << value;
             bool useBackups = false;
-            if (value.isBool()) {
-                useBackups = value.toBool();
+            bool overwrite = false;
+
+            if (value.isValid()) {
+                auto hash = value.toHash();
+                auto overwriteValue = hash.value("overwrite", QVariant(false));
+                if (overwriteValue.type() == QVariant::Bool) {
+                    overwrite = overwriteValue.toBool();
+                }
+                auto backupValue = hash.value("backup", QVariant(false));
+                if (backupValue.type() == QVariant::Bool) {
+                    useBackups = backupValue.toBool();
+                }
             }
 
-            Artworks::ArtworksSnapshot snapshot = std::move(m_FilteredArtworksList.getArtworksToSave(false));
+            Artworks::ArtworksSnapshot snapshot = std::move(m_FilteredArtworksList.getArtworksToSave(overwrite));
             m_MetadataIOService.writeArtworks(snapshot);
             m_MetadataIOCoordinator.writeMetadataExifTool(snapshot, useBackups);
         }
 
-        void WipeMetadataInSelectedCommand::execute(const QJSValue &value) {
+        void WipeMetadataInSelectedCommand::execute(QVariant const &value) {
             LOG_DEBUG << value.toString();
-            bool useBackups = false;
-            if (value.isBool()) {
-                useBackups = value.toBool();
-            }
-
+            bool useBackups = convertToBool(value, false);
             m_Target.wipeAllMetadataExifTool(m_Source.getSelectedArtworks(), useBackups);
         }
 
-        void ReimportMetadataForSelected::execute(const QJSValue &) {
+        void ReimportMetadataForSelected::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.readMetadataExifTool(m_Source.getSelectedArtworks(), INVALID_BATCH_ID);
         }
 
-        void ExportSelectedToCSV::execute(const QJSValue &) {
+        void ExportSelectedToCSV::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setArtworksToExport(m_Source.getSelectedArtworks());
         }
 
-        void FindAndReplaceInSelected::execute(const QJSValue &) {
+        void FindAndReplaceInSelected::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.findReplaceCandidates(m_Source.getSelectedArtworks());
         }
 
-        void UploadSelected::execute(const QJSValue &) {
+        void UploadSelected::execute(QVariant const &) {
             LOG_DEBUG << "#";
             auto selectedArtworks = m_Source.getSelectedArtworks();
             m_Target.setArtworks(selectedArtworks);

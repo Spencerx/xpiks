@@ -52,7 +52,7 @@ int SpellCheckCombinedModelTest::doTest() {
 
     Models::CombinedArtworksModel *combinedModel = m_CommandManager->getCombinedArtworksModel();
     auto *basicModel = combinedModel->retrieveBasicMetadataModel();
-    QObject::connect(basicModel, &Common::BasicMetadataModel::keywordsSpellingChanged,
+    QObject::connect(basicModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
                      &waiter, &SignalWaiter::finished);
 
     QString wrongWord = "abbreviatioe";

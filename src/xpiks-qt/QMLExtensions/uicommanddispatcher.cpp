@@ -9,6 +9,7 @@
  */
 
 #include "uicommanddispatcher.h"
+#include <QJSValue>
 #include <Common/logging.h>
 #include <Commands/commandmanager.h>
 #include <Commands/Base/templateduicommand.h>
@@ -18,6 +19,11 @@ namespace QMLExtensions {
         QObject(parent),
         m_CommandManager(commandManager)
     {
+    }
+
+    void UICommandDispatcher::dispatch(int commandID, QJSValue const &value) {
+        LOG_INFO << commandID;
+        dispatchCommand(commandID, value.toVariant());
     }
 
     void UICommandDispatcher::registerCommands(std::initializer_list<std::shared_ptr<Commands::IUICommandTemplate> > commands) {
@@ -34,7 +40,7 @@ namespace QMLExtensions {
         m_CommandsMap[commandID] = command;
     }
 
-    void UICommandDispatcher::dispatchCommand(int commandID, const QJSValue &value) {
+    void UICommandDispatcher::dispatchCommand(int commandID, QVariant const &value) {
         LOG_INFO << commandID << value.toString();
         auto it = m_CommandsMap.find(commandID);
         if (it != m_CommandsMap.end()) {
