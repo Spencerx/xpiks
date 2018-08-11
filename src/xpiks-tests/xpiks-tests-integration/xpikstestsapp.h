@@ -1,7 +1,11 @@
 #ifndef XPIKSTESTSAPP_H
 #define XPIKSTESTSAPP_H
 
+#include <QJSValue>
 #include <xpiksapp.h>
+#include <QMLExtensions/uicommandid.h>
+
+class SignalWaiter;
 
 class XpiksTestsApp: public XpiksApp
 {
@@ -13,12 +17,26 @@ public:
     void cleanup();
 
 public:
-    bool addFilesForTest(QList<QUrl> const &urls);
-    bool undoLastAction();
-    void removeArtworks(Helpers::IndicesRanges const &ranges);
+    bool checkImportSucceeded(size_t importsCount=1);
 
 public:
+    void dispatch(QMLExtensions::UICommandID::CommandID id, QJSValue const &value = QJSValue());
+    bool addFilesForTest(QList<QUrl> const &urls);
+    void deleteArtworks(Helpers::IndicesRanges const &ranges);
+    bool undoLastAction();
+
+public:
+    void connectWaiterForSpellcheck(SignalWaiter &waiter);
+    void connectWaiterForImport(SignalWaiter &waiter);
+    void connectWaiterForExport(SignalWaiter &waiter);
+
+public:
+    SpellCheck::UserDictionary &getUserDictionary() { return m_UserDictionary; }
+    Models::ArtworksUploader &getArtworksUploader() { return m_ArtworksUploader; }
+    Models::FilteredArtworksListModel &getFilteredArtworksModel() { return m_FilteredArtworksListModel; }
     Artworks::ArtworkMetadata *getArtwork(int index);
+
+public:
     void setAutoFindVector(bool value);
     void setUseSpellCheck(bool value);
     void setUseAutoImport(bool value);

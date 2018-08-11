@@ -28,15 +28,11 @@ int AddToUserDictionaryTest::doTest() {
     artwork->setDescription(artwork->getDescription() + ' ' + wrongWord);
     artwork->setTitle(artwork->getTitle() + ' ' + wrongWord);
     artwork->appendKeyword("correct part " + wrongWord);
-    artwork->setIsSelected(true);
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-    SpellCheck::SpellCheckerService *spellCheckService = m_CommandManager->getSpellCheckerService();
-    QObject::connect(spellCheckService, SIGNAL(spellCheckQueueIsEmpty()), &waiter, SIGNAL(finished()));
+    SignalWaiter spellCheckWaiter1;
+    m_TestsApp.connectWaiterForSpellcheck(spellCheckWaiter1);
 
-    filteredModel->spellCheckSelected();
-
-    VERIFY(waiter.wait(5), "Timeout for waiting for spellcheck results");
+    VERIFY(spellCheckWaiter1.wait(5), "Timeout for waiting for spellcheck results");
 
     // wait for finding suggestions
     QThread::sleep(1);
@@ -45,15 +41,9 @@ int AddToUserDictionaryTest::doTest() {
     VERIFY(basicKeywordsModel->hasTitleSpellError(), "Title spell error not detected");
     VERIFY(basicKeywordsModel->hasKeywordsSpellError(), "Keywords spell error not detected");
 
-    spellCheckService->addWordToUserDictionary(wrongWord);
-
-    SignalWaiter spellingWaiter;
-    QObject::connect(spellCheckService, SIGNAL(spellCheckQueueIsEmpty()), &spellingWaiter, SIGNAL(finished()));
+    m_TestsApp.getUserDictionary().addWord(wrongWord);
 
     QCoreApplication::processEvents(QEventLoop::AllEvents);
-
-    // wait add user word to finish
-    VERIFY(spellingWaiter.wait(5), "Timeout for waiting for spellcheck results");
 
     sleepWaitUntil(5, [=]() {
         return !basicKeywordsModel->hasDescriptionSpellError() &&

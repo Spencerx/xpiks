@@ -37,9 +37,9 @@ namespace Commands {
                                Models::SettingsModel &settingsModel,
                                ArtworksCommandTemplate const &addedArtworksTemplate = ArtworksCommandTemplate());
 
-        // ICommand interface
-    public:
-        virtual void execute() override;
+        // RemoveFilesCommandBase interface
+    protected:
+        virtual Models::ArtworksRemoveResult removeFiles() override;
 
     signals:
         void artworksAdded(int imagesCount, int vectorsCount);

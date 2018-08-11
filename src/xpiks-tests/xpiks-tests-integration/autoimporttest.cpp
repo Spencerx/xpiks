@@ -25,16 +25,15 @@ int AutoImportTest::doTest() {
 
     VERIFY(expectedKeywords == m_TestsApp.getArtwork(0)->getKeywords(), "Keywords are not the same after first import!");
 
-    artItemsModel->removeArtworks({{0, 0}});
+    m_TestsApp.deleteArtworks(Helpers::IndicesRanges({0}));
+
+    SignalWaiter waiter;
+    m_TestsApp.connectWaiterForImport(waiter);
 
     VERIFY(m_TestsApp.undoLastAction(), "Failed to Undo last action");
-
     VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata after undo.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-    VERIFY(ioCoordinator->getImportIDs().size() == 2, "Undo import does not have any trace");
-
-    VERIFY(expectedKeywords == artItemsModel->getArtwork(0)->getKeywords(), "Keywords are not the same after undo import!");
+    VERIFY(m_TestsApp.checkImportSucceeded(2), "Undo import does not have any trace");
+    VERIFY(expectedKeywords == m_TestsApp.getArtwork(0)->getKeywords(), "Keywords are not the same after undo import!");
 
     return 0;
 }

@@ -1,7 +1,9 @@
 #include "xpikstestsapp.h"
-#include "testshelpers.h"
 #include <QThread>
+#include <QJSValue>
+#include "testshelpers.h"
 #include "signalwaiter.h"
+#include <Commands/Files/removefilescommand.h>
 
 XpiksTestsApp::XpiksTestsApp(Common::ISystemEnvironment &environment):
     XpiksApp(environment)
@@ -29,7 +31,30 @@ void XpiksTestsApp::cleanup() {
         doCleanup();
     }
     m_SettingsModel.setExifToolPath(exiftoolPath);
+}
 
+bool XpiksTestsApp::checkImportSucceeded(size_t importsCount) {
+    bool success = false;
+
+    do {
+        if (m_MetadataIOCoordinator.getHasErrors()) {
+            LOG_WARNING << "Errors in IO Coordinator while reading";
+            break;
+        }
+
+        if (m_MetadataIOCoordinator.getImportIDs().size() != importsCount) {
+            LOG_WARNING << "Imports count doesn't match" << importsCount;
+            break;
+        }
+
+        success = true;
+    } while (false);
+
+    return success;
+}
+
+void XpiksTestsApp::dispatch(QMLExtensions::UICommandID::CommandID id, const QJSValue &value) {
+    m_UICommandDispatcher.dispatchCommand(id, value);
 }
 
 bool XpiksTestsApp::addFilesForTest(const QList<QUrl> &urls) {
@@ -69,12 +94,36 @@ bool XpiksTestsApp::addFilesForTest(const QList<QUrl> &urls) {
     return success;
 }
 
+void XpiksTestsApp::deleteArtworks(Helpers::IndicesRanges const &ranges) {
+    LOG_DEBUG << "#";
+    m_CommandManager.processCommand(
+                std::make_shared<Commands::RemoveFilesCommand>(
+                    ranges,
+                    m_ArtworksListModel,
+                    m_ArtworksRepository));
+
+    // delete artworks
+    m_ArtworksListModel.onUndoStackEmpty();
+}
+
 bool XpiksTestsApp::undoLastAction() {
+    LOG_DEBUG << "#";
     return m_UndoRedoManager.undoLastAction();
 }
 
-void XpiksTestsApp::removeArtworks(Helpers::IndicesRanges const &ranges) {
+void XpiksTestsApp::connectWaiterForSpellcheck(SignalWaiter &waiter) {
+    QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckService::spellCheckQueueIsEmpty,
+                     &waiter, &SignalWaiter::finished);
+}
 
+void XpiksTestsApp::connectWaiterForImport(SignalWaiter &waiter) {
+    QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
+                     &waiter, &SignalWaiter::finished);
+}
+
+void XpiksTestsApp::connectWaiterForExport(SignalWaiter &waiter) {
+    QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
+                     &waiter, &SignalWaiter::finished);
 }
 
 Artworks::ArtworkMetadata *XpiksTestsApp::getArtwork(int index) {

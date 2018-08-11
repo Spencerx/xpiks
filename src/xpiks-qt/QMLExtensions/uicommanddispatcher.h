@@ -29,7 +29,7 @@ namespace QMLExtensions {
         UICommandDispatcher(Commands::ICommandManager &commandManager, QObject *parent=0);
 
     public:
-        Q_INVOKABLE void dispatch(int commandID, const QJSValue &value) { dispatchCommand(commandID, value); }
+        Q_INVOKABLE void dispatch(int commandID, QJSValue const &value) { dispatchCommand(commandID, value); }
 
     public:
         void registerCommands(std::initializer_list<std::shared_ptr<Commands::IUICommandTemplate>> commands);

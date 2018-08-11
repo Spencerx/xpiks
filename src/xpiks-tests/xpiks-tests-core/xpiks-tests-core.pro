@@ -169,7 +169,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellcheckservice.cpp \
     ../../xpiks-qt/Encryption/aes-qt.cpp \
     ../../xpiks-qt/Commands/Files/removefilescommandbase.cpp \
-    ../../xpiks-qt/Commands/Files/removeselectedfilescommand.cpp \
+    ../../xpiks-qt/Commands/Files/removefilescommand.cpp \
     ../../xpiks-qt/MetadataIO/cachedartwork.cpp \
     ../../xpiks-qt/Helpers/threadhelpers.cpp \
     ../../xpiks-qt/Commands/commandmanager.cpp \
@@ -326,7 +326,7 @@ HEADERS += \
     Mocks/artworksupdatermock.h \
     ../../xpiks-qt/Encryption/aes-qt.h \
     ../../xpiks-qt/Commands/Files/removefilescommandbase.h \
-    ../../xpiks-qt/Commands/Files/removeselectedfilescommand.h \
+    ../../xpiks-qt/Commands/Files/removefilescommand.h \
     ../../xpiks-qt/MetadataIO/cachedartwork.h \
     ../../xpiks-qt/Helpers/threadhelpers.h \
     ../../xpiks-qt/Commands/commandmanager.h \

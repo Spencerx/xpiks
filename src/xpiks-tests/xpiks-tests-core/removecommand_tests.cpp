@@ -7,7 +7,7 @@
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/selectedindicessourcemock.h"
-#include <Commands/Files/removeselectedfilescommand.h>
+#include <Commands/Files/removefilescommand.h>
 #include <Models/Artworks/artworksrepository.h>
 
 #define DECLARE_MODELS \
@@ -20,9 +20,9 @@
 void RemoveCommandTests::removeArtworksFromEmptyRepository() {
     DECLARE_MODELS;
 
-    Mocks::SelectedIndicesSourceMock selectedIndices({0, 1, 2});
-    auto removeCommand = std::make_shared<Commands::RemoveSelectedFilesCommand>(
-                             selectedIndices,
+    Helpers::IndicesRanges ranges({0, 1, 2});
+    auto removeCommand = std::make_shared<Commands::RemoveFilesCommand>(
+                             ranges,
                              artworksListModel,
                              artworksRepository);
 
@@ -61,9 +61,8 @@ void RemoveCommandTests::removeAllArtworksFromRepository() {
     int dirsCount = artworksRepository.rowCount();
 
     Helpers::IndicesRanges ranges(itemsToAdd);
-    Mocks::SelectedIndicesSourceMock selectedIndices(ranges);
-    auto removeCommand = std::make_shared<Commands::RemoveSelectedFilesCommand>(
-                             selectedIndices,
+    auto removeCommand = std::make_shared<Commands::RemoveFilesCommand>(
+                             ranges,
                              artworksListModel,
                              artworksRepository);
 

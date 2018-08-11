@@ -229,7 +229,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Suggestion/suggestionresultsresponse.cpp \
     ../../xpiks-qt/UndoRedo/artworkmetadatabackup.cpp \
     ../../xpiks-qt/UndoRedo/undoredomanager.cpp \
-    ../../xpiks-qt/xpiksapp.cpp
+    ../../xpiks-qt/xpiksapp.cpp \
+    ../../xpiks-qt/QMLExtensions/uicommanddispatcher.cpp
 
 RESOURCES +=
 
@@ -525,7 +526,8 @@ HEADERS += \
     ../../xpiks-qt/UndoRedo/artworkmetadatabackup.h \
     ../../xpiks-qt/UndoRedo/iundoredomanager.h \
     ../../xpiks-qt/UndoRedo/undoredomanager.h \
-    ../../xpiks-qt/xpiksapp.h
+    ../../xpiks-qt/xpiksapp.h \
+    ../../xpiks-qt/QMLExtensions/uicommanddispatcher.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

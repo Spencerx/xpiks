@@ -20,6 +20,11 @@ namespace Commands {
     {
     }
 
+    void RemoveFilesCommandBase::execute() {
+        LOG_DEBUG << "#";
+        m_RemoveResult = removeFiles();
+    }
+
     void RemoveFilesCommandBase::undo() {
         LOG_DEBUG << "#";
         if (m_RemoveResult.m_UnselectAll && m_ArtworksRepository.allAreSelected()) {

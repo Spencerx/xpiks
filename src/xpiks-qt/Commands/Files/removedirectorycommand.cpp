@@ -28,12 +28,13 @@ namespace Commands {
     {
     }
 
-    void RemoveDirectoryCommand::execute() {
+    Models::ArtworksRemoveResult RemoveDirectoryCommand::removeFiles() {
         LOG_DEBUG << "#";
         bool foundDirectory = m_ArtworksRepository.tryGetDirectoryPath(m_DirectoryID, m_DirectoryPath);
         Q_ASSERT(foundDirectory);
-        m_RemoveResult = m_ArtworksList.removeFilesFromDirectory(m_DirectoryID);
-        m_IsFullDirectory = m_RemoveResult.m_FullDirectoryIds.contains(m_DirectoryID);
+        Models::ArtworksRemoveResult result = m_ArtworksList.removeFilesFromDirectory(m_DirectoryID);
+        m_IsFullDirectory = result.m_FullDirectoryIds.contains(m_DirectoryID);
+        return result;
     }
 
     void RemoveDirectoryCommand::restoreFiles() {

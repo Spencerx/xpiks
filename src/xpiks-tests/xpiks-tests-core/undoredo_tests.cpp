@@ -7,7 +7,7 @@
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/selectedindicessourcemock.h"
 #include <Commands/Files/addfilescommand.h>
-#include <Commands/Files/removeselectedfilescommand.h>
+#include <Commands/Files/removefilescommand.h>
 #include <Commands/Files/removedirectorycommand.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Editing/findandreplacetemplate.h>
@@ -60,13 +60,14 @@ void UndoRedoTests::undoRemoveItemsTest() {
     int itemsToAdd = 5;
     artworksListModel.generateAndAddArtworks(itemsToAdd);
 
-    Mocks::SelectedIndicesSourceMock selectedIndices({1, 2, 3});
-    auto removeCommand = std::make_shared<Commands::RemoveSelectedFilesCommand>(
-                             selectedIndices, artworksListModel, artworksRepository);
+    Helpers::IndicesRanges ranges({1, 2, 3});
+    int itemToRemove = ranges.length();
+    auto removeCommand = std::make_shared<Commands::RemoveFilesCommand>(
+                             ranges, artworksListModel, artworksRepository);
     commandManager.processCommand(removeCommand);
 
-    QCOMPARE(removeCommand->getRemovedCount(), selectedIndices.size());
-    QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd - (int)selectedIndices.size());
+    QCOMPARE(removeCommand->getRemovedCount(), (size_t)itemToRemove);
+    QCOMPARE(filteredArtworksModel.getItemsCount(), itemsToAdd - itemToRemove);
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
@@ -81,10 +82,10 @@ void UndoRedoTests::undoRemoveAddFullDirectoryTest() {
     auto addResult = artworksListModel.generateAndAddDirectories(1, 5, false);
     int addedCount = std::get<0>(addResult);
 
-    Mocks::SelectedIndicesSourceMock selectedIndices(Helpers::IndicesRanges({{1, 3}}));
+    Helpers::IndicesRanges ranges({{1, 3}});
     commandManager.processCommand(
-                std::make_shared<Commands::RemoveSelectedFilesCommand>(
-                    selectedIndices,
+                std::make_shared<Commands::RemoveFilesCommand>(
+                    ranges,
                     artworksListModel,
                     artworksRepository));
     QCOMPARE(filteredArtworksModel.getItemsCount(), addedCount - 3);

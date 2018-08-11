@@ -212,6 +212,7 @@ SOURCES += main.cpp \
     Commands/UI/singleeditablecommands.cpp \
     Common/logging.cpp \
     Models/Connectivity/artworksuploader.cpp \
+    Commands/Files/removefilescommand.cpp \
     Commands/Files/removeselectedfilescommand.cpp
 
 RESOURCES += qml.qrc
@@ -516,12 +517,13 @@ HEADERS += \
     Models/Artworks/artworkslistoperations.h \
     Models/Connectivity/artworksuploader.h \
     Commands/UI/sourcetargetcommand.h \
-    Commands/Files/removeselectedfilescommand.h \
     Services/iartworksupdater.h \
     Connectivity/irequestsservice.h \
     Microstocks/imicrostockapiclients.h \
     Microstocks/microstockenums.h \
-    Microstocks/microstockapiclients.h
+    Microstocks/microstockapiclients.h \
+    Commands/Files/removefilescommand.h \
+    Commands/Files/removeselectedfilescommand.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

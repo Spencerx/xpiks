@@ -8,8 +8,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef REMOVEFILESCOMMAND_H
-#define REMOVEFILESCOMMAND_H
+#ifndef REMOVEFILESCOMMANDBASE_H
+#define REMOVEFILESCOMMANDBASE_H
 
 #include <Commands/Base/icommand.h>
 #include <Models/Artworks/artworkslistoperations.h>
@@ -28,6 +28,7 @@ namespace Commands {
 
         // IUndoCommand interface
     public:
+        virtual void execute() override;
         virtual bool canUndo() override { return true; }
         virtual void undo() override;
         virtual QString getDescription() const override {
@@ -41,6 +42,7 @@ namespace Commands {
 
     protected:
         virtual void restoreFiles();
+        virtual Models::ArtworksRemoveResult removeFiles() = 0;
 
     protected:
         Models::ArtworksListModel &m_ArtworksList;
@@ -49,4 +51,4 @@ namespace Commands {
     };
 }
 
-#endif // REMOVEFILESCOMMAND_H
+#endif // REMOVEFILESCOMMANDBASE_H

@@ -11,14 +11,14 @@
 #ifndef REMOVESELECTEDFILESCOMMAND_H
 #define REMOVESELECTEDFILESCOMMAND_H
 
-#include "removefilescommandbase.h"
+#include "removefilescommand.h"
 
 namespace Artworks {
     class ISelectedIndicesSource;
 }
 
 namespace Commands {
-    class RemoveSelectedFilesCommand: public RemoveFilesCommandBase
+    class RemoveSelectedFilesCommand: public RemoveFilesCommand
     {
     public:
         RemoveSelectedFilesCommand(Artworks::ISelectedIndicesSource &indicesSource,
@@ -30,11 +30,9 @@ namespace Commands {
         // ICommand interface
     public:
         virtual void execute() override;
-        virtual void undo() override;
 
     private:
         Artworks::ISelectedIndicesSource &m_IndicesSource;
-        std::shared_ptr<ICommand> m_SaveSessionCommand;
     };
 }
 
