@@ -22,16 +22,16 @@ QString SpellCheckCombinedModelTest::testName() {
 }
 
 void SpellCheckCombinedModelTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setUseSpellCheck(true);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setUseSpellCheck(true);
 }
 
 int SpellCheckCombinedModelTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -43,14 +43,14 @@ int SpellCheckCombinedModelTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
+    Models::FilteredArtItemsProxyModel *filteredModel = m_TestsApp.getFilteredArtItemsModel();
     filteredModel->selectFilteredArtworks();
     filteredModel->combineSelectedArtworks();
 
     // wait for after-add spellchecking
     QThread::sleep(1);
 
-    Models::CombinedArtworksModel *combinedModel = m_CommandManager->getCombinedArtworksModel();
+    Models::CombinedArtworksModel *combinedModel = m_TestsApp.getCombinedArtworksModel();
     auto *basicModel = combinedModel->retrieveBasicMetadataModel();
     QObject::connect(basicModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
                      &waiter, &SignalWaiter::finished);
@@ -69,7 +69,7 @@ int SpellCheckCombinedModelTest::doTest() {
 
     combinedModel->suggestCorrections();
 
-    SpellCheck::SpellCheckSuggestionModel *spellSuggestor = m_CommandManager->getSpellSuggestionsModel();
+    SpellCheck::SpellCheckSuggestionModel *spellSuggestor = m_TestsApp.getSpellSuggestionsModel();
     int rowCount = spellSuggestor->rowCount();
     VERIFY(rowCount > 0, "Spell suggestions are not set");
 

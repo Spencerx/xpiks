@@ -18,16 +18,16 @@ QString WeirdNamesReadTest::testName() {
 }
 
 void WeirdNamesReadTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(false);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int WeirdNamesReadTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> directories;
     directories << getDirPathForTest("images-for-tests/weird/");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -38,7 +38,7 @@ int WeirdNamesReadTest::doTest() {
     VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-    VERIFY(artItemsModel->getArtworksCount() == FILES_IN_WEIRD_DIRECTORY, "Did not read all files!");
+    VERIFY(m_TestsApp.getArtworksCount() == FILES_IN_WEIRD_DIRECTORY, "Did not read all files!");
 
     return 0;
 }

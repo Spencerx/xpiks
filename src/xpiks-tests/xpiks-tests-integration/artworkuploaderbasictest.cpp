@@ -25,5 +25,8 @@ int ArtworkUploaderBasicTest::doTest() {
     m_TestsApp.dispatch(QMLExtensions::UICommandID::UploadSelected);
 
     VERIFY(m_TestsApp.getArtworksUploader().getItemsCount() == files.size(), "Artworks didn't get to the uploader");
+
+    // TODO: add actual uploading here
+
     return 0;
 }

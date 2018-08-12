@@ -20,7 +20,7 @@ void StockFtpAutoCompleteTest::setup() {
 }
 
 int StockFtpAutoCompleteTest::doTest() {
-    auto *uploadInfos = m_CommandManager->getUploadInfoRepository();
+    auto *uploadInfos = m_TestsApp.getUploadInfoRepository();
     AutoComplete::StringsAutoCompleteModel *acModel = uploadInfos->getStocksCompletionSource();
 
     VERIFY(acModel->getCount() > 1, "Stocks AC model is not full");

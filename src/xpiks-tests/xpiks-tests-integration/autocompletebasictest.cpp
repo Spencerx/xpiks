@@ -5,89 +5,72 @@
 #include <QDebug>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/AutoComplete/autocompleteservice.h"
-#include "../../xpiks-qt/AutoComplete/keywordsautocompletemodel.h"
+#include "xpikstestsapp.h"
 
 QString AutoCompleteBasicTest::testName() {
     return QLatin1String("AutoCompleteBasicTest");
 }
 
 void AutoCompleteBasicTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setUseKeywordsAutoComplete(true);
+    m_TestsApp.getSettingsModel().setUseKeywordsAutoComplete(true);
 }
 
 int AutoCompleteBasicTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
+    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    Artworks::BasicMetadataModel *basicModel = artwork->getBasicModel();
 
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
-    Artworks::BasicMetadataModel *basicModel = metadata->getBasicModel();
-
-    AutoComplete::AutoCompleteService *acService = m_CommandManager->getAutoCompleteService();
-    AutoComplete::KeywordsAutoCompleteModel *acModel = acService->getAutoCompleteModel();
-    AutoComplete::KeywordsCompletionsModel &completionsModel = acModel->getInnerModel();
+    AutoComplete::AutoCompleteService &acService = m_TestsApp.getAutoCompleteService();
+    AutoComplete::KeywordsAutoCompleteModel &acModel = acService.getAutoCompleteModel();
+    AutoComplete::KeywordsCompletionsModel &completionsModel = acModel.getInnerModel();
 
     SignalWaiter completionWaiter;
-    QObject::connect(basicModel, SIGNAL(completionsAvailable()), &completionWaiter, SIGNAL(finished()));
+    QObject::connect(basicModel, &Artworks::BasicMetadataModel::completionsAvailable,
+                     &completionWaiter, &SignalWaiter::finished);
 
-    VERIFY(acModel->getCount() == 0, "AC model was not empty");
+    VERIFY(acModel.getCount() == 0, "AC model was not empty");
 
     // --------------------------------------------------------------
 
-    xpiks()->generateCompletions("tes", metadata->getBasicModel());
+    acService.generateCompletions("tes", basicModel);
 
     VERIFY(completionWaiter.wait(10), "Timeout while waiting for the completion");
 
-    acModel->initializeCompletions();
+    acModel.initializeCompletions();
 
-    qInfo() << "Generated" << acModel->getCount() << "completions";
+    qInfo() << "Generated" << acModel.getCount() << "completions";
     qInfo() << "Completions:" << completionsModel.getLastGeneratedCompletions();
 
-    VERIFY(acModel->getCount() > 0, "AC model didn't receive the completions");
+    VERIFY(acModel.getCount() > 0, "AC model didn't receive the completions");
     VERIFY(completionsModel.containsWord("test"), "AC model has irrelevant results");
 
-    acModel->clear();
+    acModel.clear();
 
     // --------------------------------------------------------------
 
-    xpiks()->generateCompletions("Tes", metadata->getBasicModel());
+    acService.generateCompletions("Tes", basicModel);
 
     VERIFY(completionWaiter.wait(10), "Timeout while waiting for the completion");
 
-    acModel->initializeCompletions();
+    acModel.initializeCompletions();
 
-    qInfo() << "Generated" << acModel->getCount() << "completions";
+    qInfo() << "Generated" << acModel.getCount() << "completions";
     qInfo() << "Completions:" << completionsModel.getLastGeneratedCompletions();
 
-    VERIFY(acModel->getCount() > 0, "AC model didn't receive the completions second time");
+    VERIFY(acModel.getCount() > 0, "AC model didn't receive the completions second time");
     VERIFY(completionsModel.containsWord("test"), "AC model has irrelevant results");
 
     // --------------------------------------------------------------
 
-    VERIFY(acModel->moveSelectionDown(), "AC model can't move selection down");
+    VERIFY(acModel.moveSelectionDown(), "AC model can't move selection down");
     // in the beginning the selection index is -1
-    VERIFY(acModel->moveSelectionDown(), "AC model can't move selection down");
-    VERIFY(acModel->moveSelectionUp(), "AC model can't move selection back up");
-    VERIFY(!acModel->moveSelectionUp(), "AC model can move selection back up while being at a top");
+    VERIFY(acModel.moveSelectionDown(), "AC model can't move selection down");
+    VERIFY(acModel.moveSelectionUp(), "AC model can't move selection back up");
+    VERIFY(!acModel.moveSelectionUp(), "AC model can move selection back up while being at a top");
 
     return 0;
 }

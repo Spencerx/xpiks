@@ -15,18 +15,18 @@ QString UndoRestoreSessionTest::testName() {
 }
 
 void UndoRestoreSessionTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
 
-    settingsModel->setUseSpellCheck(false);
-    settingsModel->setSaveSession(true);
-    settingsModel->setAutoFindVectors(true);
+    m_TestsApp.getSettingsModel().setUseSpellCheck(false);
+    m_TestsApp.getSettingsModel().setSaveSession(true);
+    m_TestsApp.getSettingsModel().setAutoFindVectors(true);
 }
 
 int UndoRestoreSessionTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
-    Models::SessionManager *sessionManager = m_CommandManager->getSessionManager();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
+    Models::SessionManager *sessionManager = m_TestsApp.getSessionManager();
     //VERIFY(sessionManager->itemsCount() == 0, "Session is not cleared");
-    Models::ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
+    Models::ArtworksRepository *artworksRepository = m_TestsApp.getArtworksRepository();
 
     QList<QUrl> sources;
     sources << setupFilePathForTest("images-for-tests/pixmap/img_0007.jpg")
@@ -35,7 +35,7 @@ int UndoRestoreSessionTest::doTest() {
             << getDirPathForTest("images-for-tests/mixed/")
             << getDirPathForTest("images-for-tests/vector/");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -68,12 +68,12 @@ int UndoRestoreSessionTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    UndoRedo::UndoRedoManager *undoRedoManager = m_CommandManager->getUndoRedoManager();
+    UndoRedo::UndoRedoManager *undoRedoManager = m_TestsApp.getUndoRedoManager();
 
     bool undoSuccess = undoRedoManager->undoLastAction();
     VERIFY(undoSuccess, "Failed to Undo last action");
 
-    VERIFY(artItemsModel->getArtworksCount() == 0, "Items were not removed");
+    VERIFY(m_TestsApp.getArtworksCount() == 0, "Items were not removed");
 
     return 0;
 }

@@ -23,11 +23,11 @@ void UnicodeIoTest::setup() {
 int UnicodeIoTest::doTest() {
     // reading part ---------------------------------
 
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/utf8-meta/Eiffel_Wikimedia_Commons.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -39,7 +39,7 @@ int UnicodeIoTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
 
     BasicMetadata basicMetadata;
     ::readMetadata(artwork->getFilepath(), basicMetadata);
@@ -61,7 +61,7 @@ int UnicodeIoTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    artwork = artItemsModel->getArtwork(1);
+    artwork = m_TestsApp.getArtwork(1);
 
     const QString titleu8 = QStringLiteral("πύργος του Άιφελ");
     const QString description8u = QStringLiteral("První plány stavby byly zahájeny už v roce 1878.");
@@ -76,7 +76,7 @@ int UnicodeIoTest::doTest() {
     bool doOverwrite = true, dontSaveBackups = false;
 
     QObject::connect(ioCoordinator, SIGNAL(metadataWritingFinished()), &waiter, SIGNAL(finished()));
-    auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
+    auto *filteredModel = m_TestsApp.getFilteredArtItemsModel();
     filteredModel->saveSelectedArtworks(doOverwrite, dontSaveBackups);
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");

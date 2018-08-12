@@ -13,7 +13,7 @@ void PresetsTest::setup() {
 }
 
 int PresetsTest::doTest() {
-    auto *presetKeywordsModel = m_CommandManager->getPresetsModel();
+    auto *presetKeywordsModel = m_TestsApp.getPresetsModel();
     auto *presetKeywordsModelConfig = presetKeywordsModel->getKeywordsModelConfig();
 
     typedef KeywordsPresets::PresetData PresetData;

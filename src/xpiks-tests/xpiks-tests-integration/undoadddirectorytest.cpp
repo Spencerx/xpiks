@@ -19,11 +19,11 @@ void UndoAddDirectoryTest::setup() {
 }
 
 int UndoAddDirectoryTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
 
     const auto dir = getDirPathForTest("images-for-tests/mixed/");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
     QList<QUrl> dirs;
@@ -38,14 +38,14 @@ int UndoAddDirectoryTest::doTest() {
 
     // remove 2 artworks
     artItemsModel->removeItemsFromRanges({{0, 1}});
-    VERIFY(artItemsModel->getArtworksCount() == artworksCount - 2, "Artworks were not removed");
+    VERIFY(m_TestsApp.getArtworksCount() == artworksCount - 2, "Artworks were not removed");
 
     // remove directory
     artItemsModel->removeArtworksDirectory(0);
 
-    VERIFY(artItemsModel->getArtworksCount() == 0, "All items were not removed");
+    VERIFY(m_TestsApp.getArtworksCount() == 0, "All items were not removed");
 
-    UndoRedo::UndoRedoManager *undoRedoManager = m_CommandManager->getUndoRedoManager();
+    UndoRedo::UndoRedoManager *undoRedoManager = m_TestsApp.getUndoRedoManager();
 
     bool undoSuccess = undoRedoManager->undoLastAction();
     VERIFY(undoSuccess, "Failed to Undo last action");
@@ -54,7 +54,7 @@ int UndoAddDirectoryTest::doTest() {
 
     VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
-    VERIFY(artItemsModel->getArtworksCount() == artworksCount, "Items were not put back");
+    VERIFY(m_TestsApp.getArtworksCount() == artworksCount, "Items were not put back");
 
     return 0;
 }

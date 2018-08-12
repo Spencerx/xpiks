@@ -17,8 +17,8 @@ QString UndoAddWithVectorsTest::testName() {
 }
 
 void UndoAddWithVectorsTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(true);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setAutoFindVectors(true);
 
     // copy files
     setupFilePathForTest("images-for-tests/mixed/026.eps");
@@ -26,13 +26,13 @@ void UndoAddWithVectorsTest::setup() {
 }
 
 int UndoAddWithVectorsTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/mixed/026.jpg");
     files << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
     files << setupFilePathForTest("images-for-tests/mixed/027.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));    
 
@@ -44,13 +44,13 @@ int UndoAddWithVectorsTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ImageArtwork *firstImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(0));
+    Artworks::ImageArtwork *firstImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(0));
     Q_ASSERT(firstImage != NULL);
 
-    Artworks::ImageArtwork *secondImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(1));
+    Artworks::ImageArtwork *secondImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(1));
     Q_ASSERT(secondImage != NULL);
 
-    Artworks::ImageArtwork *thirdImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(2));
+    Artworks::ImageArtwork *thirdImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(2));
     Q_ASSERT(thirdImage != NULL);
 
     VERIFY(firstImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");
@@ -62,9 +62,9 @@ int UndoAddWithVectorsTest::doTest() {
     QString thirdVector = thirdImage->getAttachedVectorPath();
 
     artItemsModel->removeArtworksDirectory(0);
-    VERIFY(artItemsModel->getArtworksCount() == 0, "Items were not removed");
+    VERIFY(m_TestsApp.getArtworksCount() == 0, "Items were not removed");
 
-    UndoRedo::UndoRedoManager *undoRedoManager = m_CommandManager->getUndoRedoManager();
+    UndoRedo::UndoRedoManager *undoRedoManager = m_TestsApp.getUndoRedoManager();
 
     bool undoSuccess = undoRedoManager->undoLastAction();
     VERIFY(undoSuccess, "Failed to Undo last action");
@@ -73,15 +73,15 @@ int UndoAddWithVectorsTest::doTest() {
 
     VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
 
-    VERIFY(artItemsModel->getArtworksCount() == files.length(), "Items were not put back");
+    VERIFY(m_TestsApp.getArtworksCount() == files.length(), "Items were not put back");
 
-    firstImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(0));
+    firstImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(0));
     Q_ASSERT(firstImage != NULL);
 
-    secondImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(1));
+    secondImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(1));
     Q_ASSERT(secondImage != NULL);
 
-    thirdImage = dynamic_cast<Artworks::ImageArtwork*>(artItemsModel->getArtwork(2));
+    thirdImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(2));
     Q_ASSERT(thirdImage != NULL);
 
     VERIFY(firstImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");

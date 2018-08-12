@@ -17,16 +17,16 @@ QString WarningsCombinedTest::testName() {
 }
 
 void WarningsCombinedTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(false);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int WarningsCombinedTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/read-only/Nokota_Horses.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -38,7 +38,7 @@ int WarningsCombinedTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
     VERIFY(artwork->isInitialized(), "Artwork is not initialized after import");
 
     sleepWaitUntil(3, [artwork]() {

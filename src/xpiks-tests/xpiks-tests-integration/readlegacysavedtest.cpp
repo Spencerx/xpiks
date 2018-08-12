@@ -16,16 +16,16 @@ QString ReadLegacySavedTest::testName() {
 }
 
 void ReadLegacySavedTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(false);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int ReadLegacySavedTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/img_0007.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -37,7 +37,7 @@ int ReadLegacySavedTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = m_TestsApp.getArtwork(0);
     const QStringList &keywords = metadata->getKeywords();
 
     QStringList expectedKeywords = QString("rock,nature,landscape,white,background,beautiful,sun,light,mountain,outdoor,top,rocky,snow,fog,horizon").split(',');

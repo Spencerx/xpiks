@@ -13,7 +13,7 @@ void TranslatorBasicTest::setup() {
 }
 
 int TranslatorBasicTest::doTest() {
-    auto *translationManager = m_CommandManager->getTranslationManager();
+    auto *translationManager = m_TestsApp.getTranslationManager();
     QUrl pathToDict = getFilePathForTest("dicts-for-tests/eng_fin.ifo");
 
     bool success = translationManager->addDictionary(pathToDict);

@@ -536,6 +536,7 @@ INCLUDEPATH += ../../../vendors/hunspell-repo/src
 INCLUDEPATH += ../../../vendors/libthmbnlr
 INCLUDEPATH += ../../../vendors/libxpks
 INCLUDEPATH += ../../../vendors/chillout/src/chillout
+INCLUDEPATH += ../../../vendors/csv
 INCLUDEPATH += ../../xpiks-qt
 
 CONFIG(debug, debug|release)  {

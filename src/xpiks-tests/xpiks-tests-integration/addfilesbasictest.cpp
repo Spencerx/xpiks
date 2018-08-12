@@ -14,12 +14,13 @@ QString AddFilesBasicTest::testName() {
 }
 
 void AddFilesBasicTest::setup() {
-    m_TestsApp.setAutoFindVector(false);
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int AddFilesBasicTest::doTest() {
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
+
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     auto *artwork = m_TestsApp.getArtwork(0);

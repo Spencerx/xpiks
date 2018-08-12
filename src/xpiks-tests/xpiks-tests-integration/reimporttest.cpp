@@ -17,16 +17,16 @@ QString ReimportTest::testName() {
 }
 
 void ReimportTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(false);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int ReimportTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -38,7 +38,7 @@ int ReimportTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
 
     const QString originalDescription = artwork->getDescription();
@@ -52,7 +52,7 @@ int ReimportTest::doTest() {
     artwork->setTitle(title);
     artwork->getBasicModel()->setKeywords(keywords);
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
+    Models::FilteredArtItemsProxyModel *filteredModel = m_TestsApp.getFilteredArtItemsModel();
     filteredModel->selectFilteredArtworks();
     filteredModel->reimportMetadataForSelected();
 

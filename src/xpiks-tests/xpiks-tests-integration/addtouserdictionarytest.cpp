@@ -9,7 +9,7 @@ QString AddToUserDictionaryTest::testName() {
 }
 
 void AddToUserDictionaryTest::setup() {
-    m_TestsApp.setUseSpellCheck(true);
+    m_TestsApp.getSettingsModel().setUseSpellCheck(true);
 }
 
 int AddToUserDictionaryTest::doTest() {

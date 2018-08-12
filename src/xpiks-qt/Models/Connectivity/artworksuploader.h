@@ -127,7 +127,7 @@ namespace Models {
 
 #ifdef INTEGRATION_TESTS
     public:
-        Connectivity::UploadWatcher *accessWatcher() { return &m_UploadWatcher; }
+        Connectivity::UploadWatcher &accessWatcher() { return m_UploadWatcher; }
 #endif
 
     private:

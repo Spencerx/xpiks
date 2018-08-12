@@ -20,11 +20,11 @@ void SaveWithEmptyTitleTest::setup() {
 }
 
 int SaveWithEmptyTitleTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -36,7 +36,7 @@ int SaveWithEmptyTitleTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = m_TestsApp.getArtwork(0);
     Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(metadata);
 
     VERIFY(image->getImageSize().width() == 1920, "Image width was read incorrectly");
@@ -50,7 +50,7 @@ int SaveWithEmptyTitleTest::doTest() {
     bool doOverwrite = true, dontSaveBackups = false;
 
     QObject::connect(ioCoordinator, SIGNAL(metadataWritingFinished()), &waiter, SIGNAL(finished()));
-    auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
+    auto *filteredModel = m_TestsApp.getFilteredArtItemsModel();
     filteredModel->saveSelectedArtworks(doOverwrite, dontSaveBackups);
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");
@@ -69,7 +69,7 @@ int SaveWithEmptyTitleTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    metadata = artItemsModel->getArtwork(0);
+    metadata = m_TestsApp.getArtwork(0);
     const QString &title = metadata->getTitle();
 
     VERIFY(description == title, "Title was not set from description");

@@ -18,16 +18,16 @@ QString LocalLibrarySearchTest::testName() {
 }
 
 void LocalLibrarySearchTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(false);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int LocalLibrarySearchTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -41,7 +41,7 @@ int LocalLibrarySearchTest::doTest() {
 
     artItemsModel->initSuggestion(0);
 
-    Suggestion::KeywordsSuggestor *suggestor = m_CommandManager->getKeywordsSuggestor();
+    Suggestion::KeywordsSuggestor *suggestor = m_TestsApp.getKeywordsSuggestor();
 
     suggestor->setSelectedSourceIndex(suggestor->getEnginesCount() - 1); // local search is the last one
     VERIFY(suggestor->getIsLocalSearch(), "Local search cannot be chosen");

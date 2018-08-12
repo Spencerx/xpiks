@@ -21,7 +21,7 @@ int LoadPluginBasicTest::doTest() {
     const QString p = "*xpiks-helloworld-plugin";
     QString pluginPath = findWildcartPathForTests(dirPath, QStringList() << (p + "*.dll") << (p + "*.so") << (p + "*.dylib"));
 
-    Plugins::PluginManager *pluginManager = m_CommandManager->getPluginManager();
+    Plugins::PluginManager *pluginManager = m_TestsApp.getPluginManager();
     bool success = pluginManager->installPlugin(QUrl::fromLocalFile(pluginPath));
     VERIFY(success, "Failed to install plugin");
 

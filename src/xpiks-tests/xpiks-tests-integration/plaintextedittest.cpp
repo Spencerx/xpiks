@@ -21,16 +21,16 @@ QString PlainTextEditTest::testName() {
 }
 
 void PlainTextEditTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setUseSpellCheck(true);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setUseSpellCheck(true);
 }
 
 int PlainTextEditTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));    
 
@@ -42,17 +42,17 @@ int PlainTextEditTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    SpellCheck::SpellCheckerService *spellCheckService = m_CommandManager->getSpellCheckerService();
+    SpellCheck::SpellCheckerService *spellCheckService = m_TestsApp.getSpellCheckerService();
     QObject::connect(spellCheckService, SIGNAL(spellCheckQueueIsEmpty()), &waiter, SIGNAL(finished()));
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
+    Models::FilteredArtItemsProxyModel *filteredModel = m_TestsApp.getFilteredArtItemsModel();
     filteredModel->selectFilteredArtworks();
     filteredModel->combineSelectedArtworks();
 
     // wait for after-add spellchecking
     VERIFY(waiter.wait(5), "Timeout for waiting for initial spellchecks");
 
-    Models::CombinedArtworksModel *combinedModel = m_CommandManager->getCombinedArtworksModel();
+    Models::CombinedArtworksModel *combinedModel = m_TestsApp.getCombinedArtworksModel();
     auto *basicModel = combinedModel->retrieveBasicMetadataModel();
     VERIFY(!basicModel->hasKeywordsSpellError(), "Should not have errors initially");
 

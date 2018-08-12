@@ -10,7 +10,7 @@ QString MasterPasswordTest::testName() {
 }
 
 void MasterPasswordTest::setup() {
-    Models::UploadInfoRepository *uploadRepo = m_CommandManager->getUploadInfoRepository();
+    Models::UploadInfoRepository *uploadRepo = m_TestsApp.getUploadInfoRepository();
 
     auto remote1 = uploadRepo->appendItem();
     const QString host1 = "ftp://random.host.com/";
@@ -26,10 +26,10 @@ void MasterPasswordTest::setup() {
 }
 
 int MasterPasswordTest::doTest() {
-    Encryption::SecretsManager *secretsManager = m_CommandManager->getSecretsManager();
+    Encryption::SecretsManager *secretsManager = m_TestsApp.getSecretsManager();
     const QString masterPassword = "brand new mp";
 
-    Models::UploadInfoRepository *uploadRepo = m_CommandManager->getUploadInfoRepository();
+    Models::UploadInfoRepository *uploadRepo = m_TestsApp.getUploadInfoRepository();
     auto &uploadInfos = uploadRepo->accessUploadInfos();
 
     QString pswd1 = uploadRepo->data(uploadRepo->index(0), Models::UploadInfoRepository::PasswordRole).toString();
@@ -45,7 +45,7 @@ int MasterPasswordTest::doTest() {
     VERIFY(!secretsManager->testMasterPassword("some other mp"), "Other master password works");
     VERIFY(secretsManager->testMasterPassword(masterPassword), "Original master password does not work");
 
-    Models::ArtworkUploader *uploader = m_CommandManager->getArtworkUploader();
+    Models::ArtworkUploader *uploader = m_TestsApp.getArtworkUploader();
 
     uploader->resetModel();
 

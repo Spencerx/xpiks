@@ -4,65 +4,44 @@
 #include <QStringList>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/imageartwork.h"
-#include "../../xpiks-qt/UndoRedo/undoredomanager.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "../../xpiks-qt/Models/findandreplacemodel.h"
+#include "xpikstestsapp.h"
 
 QString FindAndReplaceModelTest::testName() {
     return QLatin1String("FindAndReplaceModelTest");
 }
 
 void FindAndReplaceModelTest::setup() {
-
 }
 
 int FindAndReplaceModelTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/mixed/026.jpg");
     files << setupFilePathForTest("images-for-tests/mixed/027.jpg");
     files << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));    
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
+    m_TestsApp.getArtwork(0)->setDescription("wall inside the Wall is not a wall");
 
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
+    m_TestsApp.selectAllArtworks();
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::FindAndReplaceInSelected);
 
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
+    Models::FindAndReplaceModel &findAndReplaceModel = m_TestsApp.getFindAndReplaceModel();
 
-    artItemsModel->getArtwork(0)->setDescription("wall inside the Wall is not a wall");
+    findAndReplaceModel.setReplaceFrom("wall");
+    findAndReplaceModel.setReplaceTo("wallpaper");
+    findAndReplaceModel.setSearchWholeWords(true);
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-    filteredModel->selectFilteredArtworks();
+    VERIFY(findAndReplaceModel.getArtworksCount() == 2, "Items are missing!");
+    findAndReplaceModel.setItemSelected(1, false);
 
-    Models::FindAndReplaceModel *findAndReplaceModel = m_CommandManager->getFindAndReplaceModel();
+    int keywordsCount = m_TestsApp.getArtwork(0)->getKeywords().size();
 
-    findAndReplaceModel->setReplaceFrom("wall");
-    findAndReplaceModel->setReplaceTo("wallpaper");
-    findAndReplaceModel->setSearchWholeWords(true);
-    findAndReplaceModel->initArtworksList();
+    findAndReplaceModel.replace();
 
-    VERIFY(findAndReplaceModel->getArtworksCount() == 2, "Items are missing!");
-    findAndReplaceModel->setItemSelected(1, false);
-
-    int keywordsCount = artItemsModel->getBasicModel(0)->getKeywordsCount();
-
-    findAndReplaceModel->replace();
-
-    VERIFY(artItemsModel->getBasicModel(0)->getKeywordsCount() == (keywordsCount - 1), "Keyword duplicate wasn't removed");
-    VERIFY(artItemsModel->getBasicModel(0)->getKeywords().last() == "wallpaper", "Keyword wasn't replaced");
-    VERIFY(artItemsModel->getBasicModel(0)->getDescription() == "wallpaper inside the Wall is not a wallpaper", "Description wasn't replaced");
+    VERIFY(m_TestsApp.getArtwork(0)->getKeywords().size() == (keywordsCount - 1), "Keyword duplicate wasn't removed");
+    VERIFY(m_TestsApp.getArtwork(0)->getKeywords().last() == "wallpaper", "Keyword wasn't replaced");
+    VERIFY(m_TestsApp.getArtwork(0)->getDescription() == "wallpaper inside the Wall is not a wallpaper", "Description wasn't replaced");
 
     return 0;
 }

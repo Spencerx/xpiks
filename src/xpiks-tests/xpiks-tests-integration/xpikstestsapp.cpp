@@ -126,6 +126,23 @@ bool XpiksTestsApp::undoLastAction() {
     return m_UndoRedoManager.undoLastAction();
 }
 
+bool XpiksTestsApp::selectSpellSuggestions(int index) {
+    LOG_DEBUG << index;
+    for (int i = 0; i < m_SpellSuggestionModel.rowCount(); ++i) {
+        SpellCheck::SpellSuggestionsItem *suggestionsItem = m_SpellSuggestionModel.getItem(i);
+        if (suggestionsItem->rowCount() == 0) {
+            LOG_WARNING << "No suggestions found for index" << i;
+            return false;
+        }
+        suggestionsItem->setReplacementIndex(index);
+    }
+    return true;
+}
+
+void XpiksTestsApp::selectAllArtworks() {
+    m_FilteredArtworksListModel.selectFilteredArtworks();
+}
+
 void XpiksTestsApp::connectWaiterForSpellcheck(SignalWaiter &waiter) {
     QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckService::spellCheckQueueIsEmpty,
                      &waiter, &SignalWaiter::finished);
@@ -143,18 +160,6 @@ void XpiksTestsApp::connectWaiterForExport(SignalWaiter &waiter) {
 
 Artworks::ArtworkMetadata *XpiksTestsApp::getArtwork(int index) {
     return m_ArtworksListModel.getArtwork(index);
-}
-
-void XpiksTestsApp::setAutoFindVector(bool value) {
-    m_SettingsModel.setAutoFindVectors(value);
-}
-
-void XpiksTestsApp::setUseSpellCheck(bool value) {
-    m_SettingsModel.setUseSpellCheck(value);
-}
-
-void XpiksTestsApp::setUseAutoImport(bool value) {
-    m_SettingsModel.setUseAutoImport(value);
 }
 
 void XpiksTestsApp::doCleanup() {

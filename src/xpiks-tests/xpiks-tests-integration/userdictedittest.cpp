@@ -24,17 +24,17 @@ void UserDictEditTest::setup() {
     m_UserDictEditModel->setCommandManager(m_CommandManager);
     m_UserDictEditModel->initializeModel();
 
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setUseSpellCheck(true);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setUseSpellCheck(true);
 }
 
 int UserDictEditTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
 
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -46,8 +46,8 @@ int UserDictEditTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
-    auto *quickBuffer = m_CommandManager->getQuickBuffer();
+    Artworks::ArtworkMetadata *metadata = m_TestsApp.getArtwork(0);
+    auto *quickBuffer = m_TestsApp.getQuickBuffer();
 
     // wait for after-add spellchecking
     QThread::sleep(1);
@@ -60,8 +60,8 @@ int UserDictEditTest::doTest() {
     metadata->appendKeyword("correct part " + wrongWord);
     metadata->setIsSelected(true);
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-    SpellCheck::SpellCheckerService *spellCheckService = m_CommandManager->getSpellCheckerService();
+    Models::FilteredArtItemsProxyModel *filteredModel = m_TestsApp.getFilteredArtItemsModel();
+    SpellCheck::SpellCheckerService *spellCheckService = m_TestsApp.getSpellCheckerService();
     QObject::connect(spellCheckService, SIGNAL(spellCheckQueueIsEmpty()), &waiter, SIGNAL(finished()));
 
     filteredModel->spellCheckSelected();

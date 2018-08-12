@@ -25,16 +25,16 @@ QString SpellingProducesWarningsTest::testName() {
 }
 
 void SpellingProducesWarningsTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setUseSpellCheck(true);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setUseSpellCheck(true);
 }
 
 int SpellingProducesWarningsTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));    
 
@@ -46,7 +46,7 @@ int SpellingProducesWarningsTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
     VERIFY(artwork->isInitialized(), "Artwork is not initialized after import");
 
     sleepWaitUntil(3, [artwork]() {
@@ -65,8 +65,8 @@ int SpellingProducesWarningsTest::doTest() {
     artwork->appendKeyword("correct part " + wrongWord);
     artwork->setIsSelected(true);
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-    SpellCheck::SpellCheckerService *spellCheckService = m_CommandManager->getSpellCheckerService();
+    Models::FilteredArtItemsProxyModel *filteredModel = m_TestsApp.getFilteredArtItemsModel();
+    SpellCheck::SpellCheckerService *spellCheckService = m_TestsApp.getSpellCheckerService();
 
     SignalWaiter spellingWaiter;
     QObject::connect(spellCheckService, SIGNAL(spellCheckQueueIsEmpty()), &spellingWaiter, SIGNAL(finished()));

@@ -11,7 +11,7 @@ QString ClearMetadataTest::testName() {
 }
 
 void ClearMetadataTest::setup() {
-    m_TestsApp.setAutoFindVector(false);
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int ClearMetadataTest::doTest() {
@@ -35,6 +35,7 @@ int ClearMetadataTest::doTest() {
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForExport(waiter);
 
+    m_TestsApp.selectAllArtworks();
     m_TestsApp.dispatch(QMLExtensions::UICommandID::SaveSelected);
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");

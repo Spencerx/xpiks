@@ -65,7 +65,7 @@ namespace AutoComplete {
 
 #ifdef INTEGRATION_TESTS
     public:
-        KeywordsAutoCompleteModel *getAutoCompleteModel() const { return m_AutoCompleteModel; }
+        KeywordsAutoCompleteModel &getAutoCompleteModel() const { return m_AutoCompleteModel; }
 #endif
 
     private:

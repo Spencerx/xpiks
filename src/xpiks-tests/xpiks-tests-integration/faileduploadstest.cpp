@@ -1,81 +1,59 @@
 #include "faileduploadstest.h"
 #include <QDebug>
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artworkuploader.h"
-#include "../../xpiks-qt/Models/uploadinforepository.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "../../xpiks-qt/Models/uploadinfo.h"
-#include "../../xpiks-qt/Connectivity/uploadwatcher.h"
 #include "signalwaiter.h"
 #include "testshelpers.h"
+#include "xpikstestsapp.h"
 
 QString FailedUploadsTest::testName() {
     return QLatin1String("FailedUploadsTest");
 }
 
 void FailedUploadsTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(false);
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int FailedUploadsTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
+    const QString filepath = m_TestsApp.getArtwork(0)->getFilepath();
 
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
+    m_TestsApp.selectAllArtworks();
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::UploadSelected);
 
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
+    Models::UploadInfoRepository &uploadRepo = m_TestsApp.getUploadInfoRepository();
 
-    const QString filepath = artItemsModel->getArtworkFilepath(0);
-
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-    filteredModel->selectFilteredArtworks();
-    filteredModel->setSelectedForUpload();
-
-    Models::UploadInfoRepository *uploadRepo = m_CommandManager->getUploadInfoRepository();
-
-    auto remote1 = uploadRepo->appendItem();
+    auto remote1 = uploadRepo.appendItem();
     const QString host1 = "ftp://random.host.com/";
     remote1->setHost(host1);
     remote1->setUsername("john");
     remote1->setPassword("doe");
     remote1->setIsSelected(true);
 
-    auto remote2 = uploadRepo->appendItem();
+    auto remote2 = uploadRepo.appendItem();
     const QString host2 = "ftp://another.host.com/";
     remote2->setHost(host2);
     remote2->setUsername("doe");
     remote2->setPassword("john");
     remote2->setIsSelected(true);
 
-    Models::ArtworkUploader *uploader = m_CommandManager->getArtworkUploader();
-    uploader->uploadArtworks();
+    Models::ArtworksUploader &uploader = m_TestsApp.getArtworksUploader();
+    uploader.uploadArtworks();
 
     sleepWaitUntil(10, [&uploader]() {
-        return uploader->getInProgress() == false;
+        return uploader.getInProgress() == false;
     });
 
-    VERIFY(uploader->getInProgress() == false, "Uploader is still in progress");
+    VERIFY(uploader.getInProgress() == false, "Uploader is still in progress");
     QCoreApplication::processEvents();
 
-    Connectivity::UploadWatcher *watcher = uploader->accessWatcher();
-    auto &failedUploads = watcher->getFailedUploads();
-    qDebug() << "Failed images count is" << watcher->getFailedImagesCount();
+    Connectivity::UploadWatcher &watcher = uploader.accessWatcher();
+    auto &failedUploads = watcher.getFailedUploads();
+    qDebug() << "Failed images count is" << watcher.getFailedImagesCount();
 
-    VERIFY(watcher->getFailedImagesCount() == 2, "Wrong failed images count");
+    VERIFY(watcher.getFailedImagesCount() == 2, "Wrong failed images count");
     VERIFY(failedUploads.size() == 2, "Both hosts did not fail");
 
     for (auto &pair: failedUploads) {

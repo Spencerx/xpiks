@@ -17,16 +17,16 @@ QString SaveFileLegacyTest::testName() {
 }
 
 void SaveFileLegacyTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setUseDirectExiftoolExport(false);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setUseDirectExiftoolExport(false);
 }
 
 int SaveFileLegacyTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -38,7 +38,7 @@ int SaveFileLegacyTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
     Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
 
@@ -56,7 +56,7 @@ int SaveFileLegacyTest::doTest() {
     bool doOverwrite = true, dontSaveBackups = false;
 
     QObject::connect(ioCoordinator, SIGNAL(metadataWritingFinished()), &waiter, SIGNAL(finished()));
-    auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
+    auto *filteredModel = m_TestsApp.getFilteredArtItemsModel();
     filteredModel->saveSelectedArtworks(doOverwrite, dontSaveBackups);
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");
@@ -75,7 +75,7 @@ int SaveFileLegacyTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    artwork = artItemsModel->getArtwork(0);
+    artwork = m_TestsApp.getArtwork(0);
     const QStringList &actualKeywords = artwork->getKeywords();
     const QString &actualTitle = artwork->getTitle();
     const QString &actualDescription = artwork->getDescription();

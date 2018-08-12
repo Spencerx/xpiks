@@ -21,16 +21,16 @@ QString SpellCheckUndoTest::testName() {
 }
 
 void SpellCheckUndoTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setUseSpellCheck(true);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setUseSpellCheck(true);
 }
 
 int SpellCheckUndoTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));    
 
@@ -42,7 +42,7 @@ int SpellCheckUndoTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *metadata = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *metadata = m_TestsApp.getArtwork(0);
 
     QString wrongWord = "abbreviatioe";
     metadata->setDescription(metadata->getDescription() + ' ' + wrongWord);
@@ -53,8 +53,8 @@ int SpellCheckUndoTest::doTest() {
     // wait for after-add spellchecking
     QThread::sleep(1);
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-    SpellCheck::SpellCheckerService *spellCheckService = m_CommandManager->getSpellCheckerService();
+    Models::FilteredArtItemsProxyModel *filteredModel = m_TestsApp.getFilteredArtItemsModel();
+    SpellCheck::SpellCheckerService *spellCheckService = m_TestsApp.getSpellCheckerService();
     QObject::connect(spellCheckService, SIGNAL(spellCheckQueueIsEmpty()), &waiter, SIGNAL(finished()));
 
     filteredModel->spellCheckSelected();
@@ -74,7 +74,7 @@ int SpellCheckUndoTest::doTest() {
 
     VERIFY(!basicKeywordsModel->hasKeywordsSpellError(), "Keywords spell error not cleared");
 
-    UndoRedo::UndoRedoManager *undoRedoManager = m_CommandManager->getUndoRedoManager();
+    UndoRedo::UndoRedoManager *undoRedoManager = m_TestsApp.getUndoRedoManager();
     undoRedoManager->undoLastAction();
 
     VERIFY(waiter.wait(5), "Timeout for waiting for second spellcheck results");

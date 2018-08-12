@@ -20,11 +20,11 @@ void SaveVideoBasicTest::setup() {
 }
 
 int SaveVideoBasicTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("videos-for-tests/Untitled.mp4");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -36,7 +36,7 @@ int SaveVideoBasicTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
     Models::VideoArtwork *video = dynamic_cast<Models::VideoArtwork*>(artwork);
 
@@ -63,7 +63,7 @@ int SaveVideoBasicTest::doTest() {
     bool doOverwrite = true, dontSaveBackups = false;
 
     QObject::connect(ioCoordinator, SIGNAL(metadataWritingFinished()), &waiter, SIGNAL(finished()));
-    auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
+    auto *filteredModel = m_TestsApp.getFilteredArtItemsModel();
     filteredModel->saveSelectedArtworks(doOverwrite, dontSaveBackups);
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");
@@ -82,7 +82,7 @@ int SaveVideoBasicTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    artwork = artItemsModel->getArtwork(0);
+    artwork = m_TestsApp.getArtwork(0);
     const QStringList &actualKeywords = artwork->getKeywords();
     const QString &actualTitle = artwork->getTitle();
     const QString &actualDescription = artwork->getDescription();

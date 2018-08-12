@@ -23,16 +23,16 @@ QString ImportLostMetadataTest::testName() {
 }
 
 void ImportLostMetadataTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(false);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int ImportLostMetadataTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/read-only/Nokota_Horses.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -44,7 +44,7 @@ int ImportLostMetadataTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
     const QString filepath = artwork->getFilepath();
     VERIFY(artwork->getKeywords().count() == 0, "Initial keywords should not be found");
 
@@ -54,7 +54,7 @@ int ImportLostMetadataTest::doTest() {
         artItemsModel->appendKeyword(0, keyword);
     }
 
-    MetadataIO::MetadataIOService *metadataIOService = m_CommandManager->getMetadataIOService();
+    MetadataIO::MetadataIOService *metadataIOService = m_TestsApp.getMetadataIOService();
     MetadataIO::MetadataCache &cache = metadataIOService->getWorker()->getMetadataCache();
 
     // wait for artwork backup request and metadata cache timer
@@ -92,7 +92,7 @@ int ImportLostMetadataTest::doTest() {
     MetadataIO::ArtworksSnapshot snapshotToRead;
     snapshotToRead.append(fakeArtworkToRead.get());
 
-    auto *metadataIOCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    auto *metadataIOCoordinator = m_TestsApp.getMetadataIOCoordinator();
 
     quint32 batchID = INVALID_BATCH_ID;
 

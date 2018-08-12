@@ -11,8 +11,8 @@ QString AutoImportTest::testName() {
 }
 
 void AutoImportTest::setup() {
-    m_TestsApp.setAutoFindVector(false);
-    m_TestsApp.setUseAutoImport(true);
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
+    m_TestsApp.getSettingsModel().setUseAutoImport(true);
 }
 
 int AutoImportTest::doTest() {

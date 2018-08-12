@@ -11,7 +11,7 @@ QString AutoAttachVectorsTest::testName() {
 }
 
 void AutoAttachVectorsTest::setup() {
-    m_TestsApp.setAutoFindVector(true);
+    m_TestsApp.getSettingsModel().setAutoFindVectors(true);
 
     // copy files
     setupFilePathForTest("images-for-tests/vector/026.eps");

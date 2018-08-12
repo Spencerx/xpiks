@@ -19,18 +19,18 @@ QString ZipArtworksTest::testName() {
 }
 
 void ZipArtworksTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(true);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setAutoFindVectors(true);
 }
 
 int ZipArtworksTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
     files << setupFilePathForTest("images-for-tests/vector/027.jpg");
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -42,11 +42,11 @@ int ZipArtworksTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
+    Models::FilteredArtItemsProxyModel *filteredModel = m_TestsApp.getFilteredArtItemsModel();
     filteredModel->selectFilteredArtworks();
     filteredModel->setSelectedForZipping();
 
-    Models::ZipArchiver *zipArchiver = m_CommandManager->getZipArchiver();
+    Models::ZipArchiver *zipArchiver = m_TestsApp.getZipArchiver();
 
     QObject::connect(zipArchiver, SIGNAL(finishedProcessing()), &waiter, SIGNAL(finished()));
 
@@ -58,7 +58,7 @@ int ZipArtworksTest::doTest() {
     VERIFY(!zipArchiver->getHasErrors(), "Errors while zipping");
 
     for (int i = 0; i < files.length(); ++i) {
-        Artworks::ArtworkMetadata *artwork = artItemsModel->getArtwork(i);
+        Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(i);
         Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
         Q_ASSERT(image != nullptr);
 

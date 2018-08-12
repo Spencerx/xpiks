@@ -20,12 +20,12 @@ QString MetadataCacheSaveTest::testName() {
 }
 
 void MetadataCacheSaveTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(false);
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int MetadataCacheSaveTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/img_0007.jpg")
           << setupFilePathForTest("images-for-tests/pixmap/seagull-for-clear.jpg")
@@ -34,11 +34,11 @@ int MetadataCacheSaveTest::doTest() {
           << setupFilePathForTest("images-for-tests/vector/027.jpg")
           << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
-    MetadataIO::MetadataIOService *metadataIOService = m_CommandManager->getMetadataIOService();
+    MetadataIO::MetadataIOService *metadataIOService = m_TestsApp.getMetadataIOService();
     MetadataIO::MetadataIOWorker *worker = metadataIOService->getWorker();
     MetadataIO::MetadataCache &metadataCache = worker->getMetadataCache();
 
@@ -63,7 +63,7 @@ int MetadataCacheSaveTest::doTest() {
     QVector<MetadataIO::CachedArtwork> cachedArtworks;
     metadataCache.dumpToArray(cachedArtworks);
 
-    VERIFY(artItemsModel->getArtworksCount() == cachedArtworks.count(), "Metadata cache size does not match");
+    VERIFY(m_TestsApp.getArtworksCount() == cachedArtworks.count(), "Metadata cache size does not match");
     for (MetadataIO::CachedArtwork &ca: cachedArtworks) {
         Artworks::ArtworkMetadata *artwork = artItemsModel->findArtworkByFilepath(ca.m_Filepath);
         VERIFY(artwork != nullptr, "Metadata cache contains orphanned artworks");

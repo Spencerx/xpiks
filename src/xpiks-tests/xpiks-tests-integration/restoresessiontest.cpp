@@ -24,18 +24,18 @@ QString RestoreSessionTest::testName() {
 }
 
 void RestoreSessionTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
+    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
 
-    settingsModel->setUseSpellCheck(false);
-    settingsModel->setSaveSession(true);
-    settingsModel->setAutoFindVectors(true);
+    m_TestsApp.getSettingsModel().setUseSpellCheck(false);
+    m_TestsApp.getSettingsModel().setSaveSession(true);
+    m_TestsApp.getSettingsModel().setAutoFindVectors(true);
 }
 
 int RestoreSessionTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
-    Models::SessionManager *sessionManager = m_CommandManager->getSessionManager();
+    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
+    Models::SessionManager *sessionManager = m_TestsApp.getSessionManager();
     //VERIFY(sessionManager->itemsCount() == 0, "Session is not cleared");
-    Models::ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
+    Models::ArtworksRepository *artworksRepository = m_TestsApp.getArtworksRepository();
 
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/img_0007.jpg")
@@ -45,7 +45,7 @@ int RestoreSessionTest::doTest() {
           << setupFilePathForTest("images-for-tests/vector/027.jpg")
           << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
+    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
     SignalWaiter waiter;
     QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
 
@@ -62,7 +62,7 @@ int RestoreSessionTest::doTest() {
     });
     VERIFY(sessionManager->itemsCount() == files.length(), "Session does not contain all files");
 
-    MetadataIO::ArtworksSnapshot oldArtworksSnapshot(artItemsModel->getArtworkList());
+    MetadataIO::ArtworksSnapshot oldArtworksSnapshot(m_TestsApp.getArtworkList());
 
     artworksRepository->resetEverything();
     artItemsModel->fakeDeleteAllItems();
@@ -82,7 +82,7 @@ int RestoreSessionTest::doTest() {
 
     VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
 
-    MetadataIO::ArtworksSnapshot newArtworksSnapshot(artItemsModel->getArtworkList());
+    MetadataIO::ArtworksSnapshot newArtworksSnapshot(m_TestsApp.getArtworkList());
     auto &oldArtworksList = oldArtworksSnapshot.getRawData();
     auto &newArtworksList = newArtworksSnapshot.getRawData();
 
