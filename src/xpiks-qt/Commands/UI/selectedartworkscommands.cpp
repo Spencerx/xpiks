@@ -24,6 +24,7 @@
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/findandreplacemodel.h>
 #include <Models/Connectivity/artworksuploader.h>
+#include <Models/Connectivity/ziparchiver.h>
 
 namespace Commands {
     namespace UI {
@@ -100,6 +101,11 @@ namespace Commands {
             LOG_DEBUG << "#";
             auto selectedArtworks = m_Source.getSelectedArtworks();
             m_Target.setArtworks(selectedArtworks);
+        }
+
+        void ZipSelectedCommand::execute(QVariant const &) {
+            LOG_DEBUG << "#";
+            m_Target.setArtworks(m_Source.getSelectedArtworks());
         }
     }
 }

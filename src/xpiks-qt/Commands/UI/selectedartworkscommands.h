@@ -39,6 +39,7 @@ namespace Models {
     class FindAndReplaceModel;
     class ArtworksUploader;
     class CombinedArtworksModel;
+    class ZipArchiver;
 }
 
 namespace Commands {
@@ -105,6 +106,11 @@ namespace Commands {
                               QMLExtensions::UICommandID::UploadSelected,
                               Artworks::ISelectedArtworksSource,
                               Models::ArtworksUploader);
+
+        SOURCE_TARGET_COMMAND(ZipSelectedCommand,
+                              QMLExtensions::UICommandID::ZipSelected,
+                              Artworks::ISelectedArtworksSource,
+                              Models::ZipArchiver);
     }
 }
 

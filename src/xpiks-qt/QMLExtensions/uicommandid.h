@@ -37,6 +37,7 @@ namespace QMLExtensions {
             ExportSelectedToCSV,
             FindAndReplaceInSelected,
             UploadSelected,
+            ZipSelected,
             // ------------------
             FixSpellingCombined,
             FixSpellingSingle,

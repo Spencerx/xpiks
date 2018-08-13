@@ -19,9 +19,6 @@ public:
     virtual QString testName();
     virtual void setup();
     virtual int doTest();
-
-private:
-    SpellCheck::UserDictEditModel *m_UserDictEditModel;
 };
 
 #endif // USERDICTEDITTEST_H

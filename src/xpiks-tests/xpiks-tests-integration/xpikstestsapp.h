@@ -60,6 +60,9 @@ public:
     Models::SessionManager &getSessionManager() { return m_SessionManager; }
     SpellCheck::SpellCheckService &getSpellCheckService() { return m_SpellCheckerService; }
     Translation::TranslationManager &getTranslationManager() { return m_TranslationManager; }
+    Models::QuickBuffer &getQuickBuffer() { return m_QuickBuffer; }
+    SpellCheck::UserDictEditModel &getUserDictEditModel() { return m_UserDictEditModel; }
+    Models::ZipArchiver &getZipArchiver() { return m_ZipArchiver; }
 
 public:
     Artworks::ArtworkMetadata *getArtwork(int index);

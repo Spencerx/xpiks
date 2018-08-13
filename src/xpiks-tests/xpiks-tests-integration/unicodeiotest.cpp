@@ -1,16 +1,8 @@
 #include "unicodeiotest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include <QStringList>
-#include "integrationtestbase.h"
+#include <QList>
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "../../xpiks-qt/Models/imageartwork.h"
+#include "xpikstestsapp.h"
 #include "exiv2iohelpers.h"
 
 QString UnicodeIoTest::testName() {
@@ -22,22 +14,10 @@ void UnicodeIoTest::setup() {
 
 int UnicodeIoTest::doTest() {
     // reading part ---------------------------------
-
-    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/utf8-meta/Eiffel_Wikimedia_Commons.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
-
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
 
@@ -53,13 +33,7 @@ int UnicodeIoTest::doTest() {
     files.clear();
     files << setupFilePathForTest("images-for-tests/utf8-meta/Maurice_koechlin_pylone.jpg");
 
-    addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     artwork = m_TestsApp.getArtwork(1);
 
@@ -73,15 +47,13 @@ int UnicodeIoTest::doTest() {
     artwork->setKeywords(keywordsu8);
     artwork->setIsSelected(true);
 
-    bool doOverwrite = true, dontSaveBackups = false;
-
-    QObject::connect(ioCoordinator, SIGNAL(metadataWritingFinished()), &waiter, SIGNAL(finished()));
-    auto *filteredModel = m_TestsApp.getFilteredArtItemsModel();
-    filteredModel->saveSelectedArtworks(doOverwrite, dontSaveBackups);
+    SignalWaiter waiter;
+    m_TestsApp.connectWaiterForExport(waiter);
+    QVariantMap params{{"overwrite", QVariant(true)}, {"backup", QVariant(false)}};
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SaveSelected, QVariant::fromValue(params));
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while writing");
+    VERIFY(m_TestsApp.checkExportSucceeded(), "Failed to export artworks");
 
     BasicMetadata exifMetadata, iptcMetadata, xmpMetadata;
     ::readMetadataEx(artwork->getFilepath(), xmpMetadata, exifMetadata, iptcMetadata);
