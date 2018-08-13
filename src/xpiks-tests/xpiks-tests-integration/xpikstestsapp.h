@@ -55,6 +55,7 @@ public:
     Suggestion::KeywordsSuggestor &getKeywordsSuggestor() { return m_KeywordsSuggestor; }
     Encryption::SecretsManager &getSecretsManager() { return m_SecretsManager; }
     Models::SessionManager &getSessionManager() { return m_SessionManager; }
+    SpellCheck::SpellCheckService &getSpellCheckService() { return m_SpellCheckerService; }
 
 public:
     Artworks::ArtworkMetadata *getArtwork(int index);

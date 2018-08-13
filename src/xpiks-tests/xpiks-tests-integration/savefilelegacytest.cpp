@@ -25,9 +25,9 @@ int SaveFileLegacyTest::doTest() {
     VERIFY(image->getImageSize().width() == 1920, "Image width was read incorrectly");
     VERIFY(image->getImageSize().height() == 1272, "Image height was read incorrectly");
 
-    const QStringList keywords = QStringList() << "DIRECT" << "picture" << "seagull" << "bird";
-    const QString title = "DIRECT Brand new title";
-    const QString description = "DIRECT Brand new description";
+    const QStringList keywords = QStringList() << "THROUGH ARGFILE" << "picture" << "seagull" << "bird";
+    const QString title = "THROUGH ARGFILE Brand new title";
+    const QString description = "THROUGH ARGFILE Brand new description";
     artwork->setDescription(description);
     artwork->setTitle(title);
     artwork->getBasicModel()->setKeywords(keywords);
