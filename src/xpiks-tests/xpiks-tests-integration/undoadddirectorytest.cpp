@@ -1,59 +1,34 @@
 #include "undoadddirectorytest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include "integrationtestbase.h"
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/imageartwork.h"
-#include "../../xpiks-qt/UndoRedo/undoredomanager.h"
+#include "xpikstestsapp.h"
 
 QString UndoAddDirectoryTest::testName() {
     return QLatin1String("UndoAddDirectoryTest");
 }
 
 void UndoAddDirectoryTest::setup() {
+    m_TestsApp.getSettingsModel().setUseAutoImport(true);
 }
 
 int UndoAddDirectoryTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
-
-    const auto dir = getDirPathForTest("images-for-tests/mixed/");
-
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
     QList<QUrl> dirs;
-    dirs << dir;
+    dirs << getDirPathForTest("images-for-tests/mixed/");
 
-    const int artworksCount = artItemsModel->addLocalDirectories(dirs);
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
+    VERIFY(m_TestsApp.addDirectoriesForTest(dirs), "Failed to add directories");
 
     // remove 2 artworks
-    artItemsModel->removeItemsFromRanges({{0, 1}});
+    m_TestsApp.deleteArtworks(Helpers::IndicesRanges({0, 1}));
     VERIFY(m_TestsApp.getArtworksCount() == artworksCount - 2, "Artworks were not removed");
 
     // remove directory
-    artItemsModel->removeArtworksDirectory(0);
-
+    m_TestsApp.deleteArtworksFromDirectory(0);
     VERIFY(m_TestsApp.getArtworksCount() == 0, "All items were not removed");
 
-    UndoRedo::UndoRedoManager *undoRedoManager = m_TestsApp.getUndoRedoManager();
-
-    bool undoSuccess = undoRedoManager->undoLastAction();
-    VERIFY(undoSuccess, "Failed to Undo last action");
-
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
+    SignalWaiter waiter;
+    m_TestsApp.connectWaiterForImport(waiter);
+    VERIFY(m_TestsApp.undoLastAction(), "Failed to undo remove directory");
+    VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport files");
     VERIFY(m_TestsApp.getArtworksCount() == artworksCount, "Items were not put back");
 
     return 0;

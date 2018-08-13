@@ -23,8 +23,10 @@ public:
 public:
     void dispatch(QMLExtensions::UICommandID::CommandID id, QVariant const &value = QVariant());
     bool addFilesForTest(QList<QUrl> const &urls);
-    void continueReading(bool ignoreBackups);
+    bool addDirectoriesForTest(QList<QUrl> const &urls);
+    void continueReading(bool ignoreBackups=true);
     void deleteArtworks(Helpers::IndicesRanges const &ranges);
+    void deleteArtworksFromDirectory(int id);
     void deleteAllArtworks();
     bool undoLastAction();
     bool selectSpellSuggestions(int index);
@@ -56,6 +58,7 @@ public:
     Encryption::SecretsManager &getSecretsManager() { return m_SecretsManager; }
     Models::SessionManager &getSessionManager() { return m_SessionManager; }
     SpellCheck::SpellCheckService &getSpellCheckService() { return m_SpellCheckerService; }
+    Translation::TranslationManager &getTranslationManager() { return m_TranslationManager; }
 
 public:
     Artworks::ArtworkMetadata *getArtwork(int index);
@@ -63,6 +66,7 @@ public:
 
 private:
     void doCleanup();
+    bool doContinueReading(SignalWaiter &waiter);
 
 public:
     virtual void initialize() override;

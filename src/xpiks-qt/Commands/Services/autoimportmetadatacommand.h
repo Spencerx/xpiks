@@ -33,7 +33,8 @@ namespace Commands {
     public:
         AutoImportMetadataCommand(MetadataIO::MetadataIOCoordinator &metadataIOCoordinator,
                                   Models::SettingsModel &settingsModel,
-                                  Models::SwitcherModel &switcherModel);
+                                  Models::SwitcherModel &switcherModel,
+                                  bool ignoreBackups = false);
 
         // ICommand interface
     public:
@@ -47,6 +48,7 @@ namespace Commands {
         MetadataIO::MetadataIOCoordinator &m_MetadataIOCoordinator;
         Models::SettingsModel &m_SettingsModel;
         Models::SwitcherModel &m_SwitcherModel;
+        bool m_IgnoreBackups;
     };
 }
 

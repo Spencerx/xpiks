@@ -16,10 +16,12 @@
 namespace Commands {
     AutoImportMetadataCommand::AutoImportMetadataCommand(MetadataIO::MetadataIOCoordinator &metadataIOCoordinator,
                                                          Models::SettingsModel &settingsModel,
-                                                         Models::SwitcherModel &switcherModel):
+                                                         Models::SwitcherModel &switcherModel,
+                                                         bool ignoreBackups):
         m_MetadataIOCoordinator(metadataIOCoordinator),
         m_SettingsModel(settingsModel),
-        m_SwitcherModel(switcherModel)
+        m_SwitcherModel(switcherModel),
+        m_IgnoreBackups(ignoreBackups)
     {
     }
 
@@ -27,7 +29,7 @@ namespace Commands {
         LOG_DEBUG << "#";
         if (m_SettingsModel.getUseAutoImport() && m_SwitcherModel.getUseAutoImport()) {
             LOG_DEBUG << "Autoimport is ON. Proceeding...";
-            m_MetadataIOCoordinator.continueReading(false);
+            m_MetadataIOCoordinator.continueReading(m_IgnoreBackups);
         }
     }
 }

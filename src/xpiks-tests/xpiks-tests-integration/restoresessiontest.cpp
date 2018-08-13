@@ -59,10 +59,7 @@ int RestoreSessionTest::doTest() {
     }
 
     VERIFY(files.size() == restoredCount, "Failed to properly restore");
-    m_TestsApp.continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading session metadata.");
-    VERIFY(m_TestsApp.checkImportSucceeded(), "Failed to reimport session");
+    VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport session");
 
     Artworks::ArtworksSnapshot newArtworksSnapshot = std::move(m_TestsApp.getArtworksListModel().createArtworksSnapshot());
     auto &oldArtworksList = oldArtworksSnapshot.getRawData();

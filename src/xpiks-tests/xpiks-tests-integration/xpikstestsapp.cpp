@@ -4,6 +4,7 @@
 #include "testshelpers.h"
 #include "signalwaiter.h"
 #include <Commands/Files/removefilescommand.h>
+#include <Commands/Files/removedirectorycommand.h>
 
 XpiksTestsApp::XpiksTestsApp(Common::ISystemEnvironment &environment):
     XpiksApp(environment)
@@ -75,44 +76,52 @@ void XpiksTestsApp::dispatch(QMLExtensions::UICommandID::CommandID id, QVariant 
 }
 
 bool XpiksTestsApp::addFilesForTest(const QList<QUrl> &urls) {
-    bool success = false;
-
     SignalWaiter waiter;
     QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
                      &waiter, &SignalWaiter::finished);
 
-    do {
-        int addedCount = addFiles(urls);
-        if (addedCount != urls.length()) {
-            LOG_WARNING << "Failed to add files:" << addedCount << "added instead of" << urls.length();
-            break;
-        }
+    int addedCount = addFiles(urls);
+    if (addedCount != urls.length()) {
+        LOG_WARNING << "Failed to add files:" << addedCount << "added instead of" << urls.length();
+        return false;
+    }
 
-        m_MetadataIOCoordinator.continueReading(true);
-
-        if (!waiter.wait(20)) {
-            LOG_WARNING << "Timeout exceeded for reading metadata.";
-            break;
-        }
-
-        if (m_MetadataIOCoordinator.getHasErrors()) {
-            LOG_WARNING << "Errors in IO Coordinator while reading";
-            break;
-        }
-
-        if (m_MetadataIOCoordinator.getImportIDs().empty()) {
-            LOG_WARNING << "Import does not have any trace";
-            break;
-        }
-
-        success = true;
-    } while (false);
-
+    bool success = doContinueReading(waiter);
     return success;
 }
 
-void XpiksTestsApp::continueReading(bool ignoreBackups) {
-    m_MetadataIOCoordinator.continueReading(ignoreBackups);
+bool XpiksTestsApp::addDirectoriesForTest(const QList<QUrl> &urls) {
+    SignalWaiter waiter;
+    QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
+                     &waiter, &SignalWaiter::finished);
+
+    int addedCount = addDirectories(urls);
+    if (addedCount != urls.length()) {
+        LOG_WARNING << "Failed to add directories:" << addedCount << "added instead of" << urls.length();
+        return false;
+    }
+
+    bool success = doContinueReading(waiter);
+    return success;
+}
+
+bool XpiksTestsApp::dropItemsForTest(const QList<QUrl> &urls) {
+    SignalWaiter waiter;
+    QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
+                     &waiter, &SignalWaiter::finished);
+
+    int addedCount = dropItems(urls);
+    if (addedCount != urls.length()) {
+        LOG_WARNING << "Failed to add directories:" << addedCount << "added instead of" << urls.length();
+        return false;
+    }
+
+    bool success = doContinueReading(waiter);
+    return success;
+}
+
+bool XpiksTestsApp::continueReading(SignalWaiter &waiter, bool ignoreBackups) {
+    return doContinueReading(waiter, ignoreBackups);
 }
 
 void XpiksTestsApp::deleteArtworks(Helpers::IndicesRanges const &ranges) {
@@ -123,6 +132,13 @@ void XpiksTestsApp::deleteArtworks(Helpers::IndicesRanges const &ranges) {
                     m_ArtworksListModel,
                     m_ArtworksRepository));
 
+    // delete artworks
+    m_ArtworksListModel.onUndoStackEmpty();
+}
+
+void XpiksTestsApp::deleteArtworksFromDirectory(int id) {
+    LOG_DEBUG << "#";
+    this->removeDirectory(id);
     // delete artworks
     m_ArtworksListModel.onUndoStackEmpty();
 }
@@ -200,6 +216,34 @@ void XpiksTestsApp::doCleanup() {
     m_SpellCheckerService.clearUserDictionary();
     m_SessionManager.clearSession();
     m_MetadataIOCoordinator.clear();
+}
+
+bool XpiksTestsApp::doContinueReading(SignalWaiter &waiter, bool ignoreBackups) {
+    bool success = false;
+
+    do {
+        const int importIDsSize = m_MetadataIOCoordinator.getImportIDs().size();
+        m_MetadataIOCoordinator.continueReading(ignoreBackups);
+
+        if (!waiter.wait(20)) {
+            LOG_WARNING << "Timeout exceeded for reading metadata.";
+            break;
+        }
+
+        if (m_MetadataIOCoordinator.getHasErrors()) {
+            LOG_WARNING << "Errors in IO Coordinator while reading";
+            break;
+        }
+
+        if (importIDsSize == m_MetadataIOCoordinator.getImportIDs().size()) {
+            LOG_WARNING << "Import does not have any trace";
+            break;
+        }
+
+        success = true;
+    } while (false);
+
+    return success;
 }
 
 void XpiksTestsApp::initialize() {

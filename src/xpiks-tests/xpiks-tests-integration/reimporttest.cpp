@@ -37,9 +37,7 @@ int ReimportTest::doTest() {
     m_TestsApp.connectWaiterForImport(waiter);
     m_TestsApp.selectAllArtworks();
     m_TestsApp.dispatch(QMLExtensions::UICommandID::ReimportFromSelected);
-    m_TestsApp.continueReading(true);
-    VERIFY(waiter.wait(20), "Timeout exceeded for reimporting metadata.");
-    VERIFY(m_TestsApp.checkImportSucceeded(2), "Failed to reimport metadata");
+    VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport metadata");
 
     const QStringList &actualKeywords = artwork->getKeywords();
     const QString &actualTitle = artwork->getTitle();

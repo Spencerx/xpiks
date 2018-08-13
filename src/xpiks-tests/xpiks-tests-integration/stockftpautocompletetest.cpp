@@ -1,14 +1,8 @@
 #include "stockftpautocompletetest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include <QStringList>
-#include <QDebug>
-#include "integrationtestbase.h"
+#include <QList>
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artworkuploader.h"
-#include "../../xpiks-qt/AutoComplete/autocompleteservice.h"
-#include "../../xpiks-qt/AutoComplete/stringsautocompletemodel.h"
+#include "xpikstestsapp.h"
 #include "testshelpers.h"
 
 QString StockFtpAutoCompleteTest::testName() {
@@ -20,8 +14,8 @@ void StockFtpAutoCompleteTest::setup() {
 }
 
 int StockFtpAutoCompleteTest::doTest() {
-    auto *uploadInfos = m_TestsApp.getUploadInfoRepository();
-    AutoComplete::StringsAutoCompleteModel *acModel = uploadInfos->getStocksCompletionSource();
+    auto &uploadInfos = m_TestsApp.getUploadInfoRepository();
+    AutoComplete::StringsAutoCompleteModel *acModel = uploadInfos.getStocksCompletionSource();
 
     VERIFY(acModel->getCount() > 1, "Stocks AC model is not full");
     // TODO: uncomment after smarter ftp list rollout
