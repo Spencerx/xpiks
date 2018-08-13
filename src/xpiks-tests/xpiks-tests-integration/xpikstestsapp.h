@@ -24,7 +24,8 @@ public:
     void dispatch(QMLExtensions::UICommandID::CommandID id, QVariant const &value = QVariant());
     bool addFilesForTest(QList<QUrl> const &urls);
     bool addDirectoriesForTest(QList<QUrl> const &urls);
-    void continueReading(bool ignoreBackups=true);
+    bool dropItemsForTest(QList<QUrl> const &urls);
+    bool continueReading(SignalWaiter &waiter, bool ignoreBackups=true);
     void deleteArtworks(Helpers::IndicesRanges const &ranges);
     void deleteArtworksFromDirectory(int id);
     void deleteAllArtworks();
@@ -66,7 +67,7 @@ public:
 
 private:
     void doCleanup();
-    bool doContinueReading(SignalWaiter &waiter);
+    bool doContinueReading(SignalWaiter &waiter, bool ignoreBackups = true);
 
 public:
     virtual void initialize() override;
