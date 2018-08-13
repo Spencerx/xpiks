@@ -30,6 +30,7 @@ namespace SpellCheck {
 
     public:
         QStringList getWords();
+        int getWordsCount();
         bool contains(const QString &word);
 
         void addWords(const QStringList &words);

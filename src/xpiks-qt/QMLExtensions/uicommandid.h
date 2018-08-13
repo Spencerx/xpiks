@@ -43,7 +43,10 @@ namespace QMLExtensions {
             FixSpellingArtwork,
             ShowDuplicatesSingle,
             ShowDuplicatesCombined,
-            AcceptPresetCompletionCombined
+            AcceptPresetCompletionCombined,
+            InitSuggestionArtwork,
+            InitSuggestionCombined,
+            InitSuggestionSingle
         };
         Q_ENUMS(CommandID)
     };

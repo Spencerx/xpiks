@@ -438,15 +438,7 @@ void XpiksApp::afterServicesStarted() {
     m_PluginManager.loadPlugins();
 #endif
 
-    if (m_SettingsModel.getSaveSession() || m_SessionManager.getIsEmergencyRestore()) {
-        auto session = m_SessionManager.restoreSession();
-        int addedCount = doAddFiles(std::get<0>(session), Common::AddFilesFlags::FlagIsSessionRestore);
-        if (addedCount > 0) {
-            m_ArtworksRepository.restoreFullDirectories(std::get<1>(session));
-            auto snapshot = m_ArtworksListModel.createSessionSnapshot();
-            m_MaintenanceService.saveSession(snapshot, m_SessionManager);
-        }
-    }
+    restoreSession();
 
 #if !defined(INTEGRATION_TESTS)
     m_SwitcherModel.afterInitializedCallback();
@@ -462,6 +454,22 @@ void XpiksApp::executeMaintenanceJobs() {
     m_MaintenanceService.launchExiftool(m_SettingsModel.getExifToolPath());
     m_MaintenanceService.cleanupLogs();
     m_MaintenanceService.cleanupUpdatesArtifacts();
+}
+
+int XpiksApp::restoreSession() {
+    LOG_DEBUG << "#";
+    int restoredCount = 0;
+    if (m_SettingsModel.getSaveSession() || m_SessionManager.getIsEmergencyRestore()) {
+        auto session = m_SessionManager.restoreSession();
+        restoredCount = doAddFiles(std::get<0>(session), Common::AddFilesFlags::FlagIsSessionRestore);
+        if (restoredCount > 0) {
+            m_ArtworksRepository.restoreFullDirectories(std::get<1>(session));
+            auto snapshot = m_ArtworksListModel.createSessionSnapshot();
+            m_MaintenanceService.saveSession(snapshot, m_SessionManager);
+        }
+    }
+
+    return restoredCount;
 }
 
 void XpiksApp::connectEntitiesSignalsSlots() {
@@ -591,7 +599,7 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::RemoveSelectedFilesCommand>(
                     m_FilteredArtworksListModel, m_ArtworksListModel, m_ArtworksRepository, saveSessionCommand)),
 
-                    std::make_shared<Commands::UI::ReimportMetadataForSelected>(
+                    std::make_shared<Commands::UI::ReimportMetadataForSelectedCommand>(
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator),
 
                     std::make_shared<Commands::UI::FixSpellingInCombinedEditCommand>(
@@ -600,29 +608,38 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::UI::FixSpellingInArtworkProxyCommand>(
                     m_ArtworkProxyModel, m_SpellSuggestionModel),
 
-                    std::make_shared<Commands::UI::FixSpellingInArtworkCommand>(
-                    m_FilteredArtworksListModel, m_ArtworksListModel, m_SpellSuggestionModel),
+                    std::make_shared<Commands::UI::FixSpellingForArtworkCommand>(
+                    m_FilteredArtworksListModel, m_SpellSuggestionModel),
 
                     std::make_shared<Commands::CommandUIWrapper>(
                     QMLExtensions::UICommandID::SaveSession, saveSessionCommand),
 
-                    std::make_shared<Commands::UI::UploadSelected>(
+                    std::make_shared<Commands::UI::UploadSelectedCommand>(
                     m_FilteredArtworksListModel, m_ArtworksUploader),
 
-                    std::make_shared<Commands::UI::ShowDuplicatesForSingle>(
+                    std::make_shared<Commands::UI::ShowDuplicatesForSingleCommand>(
                     m_ArtworkProxyModel, m_DuplicatesModel),
 
-                    std::make_shared<Commands::UI::ShowDuplicatesForCombined>(
+                    std::make_shared<Commands::UI::ShowDuplicatesForCombinedCommand>(
                     m_CombinedArtworksModel, m_DuplicatesModel),
 
-                    std::make_shared<Commands::UI::AcceptPresetCompletionForCombined>(
+                    std::make_shared<Commands::UI::AcceptPresetCompletionForCombinedCommand>(
                     m_KeywordsCompletions, m_CombinedArtworksModel),
 
                     std::make_shared<Commands::UI::SetMasterPasswordCommand>(
                     m_SecretsManager, m_SettingsModel),
 
                     std::make_shared<Commands::UI::RemoveUnavailableFilesCommand>(
-                    m_ArtworksListModel)
+                    m_ArtworksListModel),
+
+                    std::make_shared<Commands::UI::InitSuggestionForArtworkCommand>(
+                    m_FilteredArtworksListModel, m_KeywordsSuggestor),
+
+                    std::make_shared<Commands::UI::InitSuggestionForSingleCommand>(
+                    m_ArtworkProxyModel, m_KeywordsSuggestor),
+
+                    std::make_shared<Commands::UI::InitSuggestionForCombinedCommand>(
+                    m_CombinedArtworksModel, m_KeywordsSuggestor)
                 });
 }
 

@@ -76,6 +76,11 @@ namespace Models {
         return Artworks::ArtworksSnapshot(rawSnapshot);
     }
 
+    Artworks::ArtworkMetadata *FilteredArtworksListModel::getArtwork(int proxyIndex) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        return m_ArtworksListModel.getArtwork(originalIndex);
+    }
+
     Artworks::ArtworksSnapshot FilteredArtworksListModel::getSelectedArtworks() {
         auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
                     [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },

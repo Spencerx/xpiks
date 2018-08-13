@@ -1,48 +1,26 @@
 #include "importlostmetadatatest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include <QStringList>
+#include <QList>
 #include <QDebug>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/imageartwork.h"
-#include "../../xpiks-qt/MetadataIO/metadataioservice.h"
-#include "../../xpiks-qt/MetadataIO/metadatacache.h"
-#include "../../xpiks-qt/MetadataIO/metadataioworker.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/imageartwork.h"
 #include "testshelpers.h"
+#include "xpikstestsapp.h"
+#include <MetadataIO/metadatacache.h>
 
 QString ImportLostMetadataTest::testName() {
     return QLatin1String("ImportLostMetadataTest");
 }
 
 void ImportLostMetadataTest::setup() {
-    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
     m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int ImportLostMetadataTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/read-only/Nokota_Horses.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
-
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
     const QString filepath = artwork->getFilepath();
@@ -50,12 +28,13 @@ int ImportLostMetadataTest::doTest() {
 
     QStringList keywordsToCheck = QStringList() << "some" << "random" << "keywords";
 
+    auto &filteredArtworksListModel = m_TestsApp.getFilteredArtworksModel();
     for (auto &keyword: keywordsToCheck) {
-        artItemsModel->appendKeyword(0, keyword);
+        filteredArtworksListModel.appendKeyword(0, keyword);
     }
 
     MetadataIO::MetadataIOService *metadataIOService = m_TestsApp.getMetadataIOService();
-    MetadataIO::MetadataCache &cache = metadataIOService->getWorker()->getMetadataCache();
+    MetadataIO::MetadataCache &cache = metadataIOService.getWorker()->getMetadataCache();
 
     // wait for artwork backup request and metadata cache timer
     sleepWaitUntil(10, [&]() {
@@ -89,23 +68,19 @@ int ImportLostMetadataTest::doTest() {
         }
     });
 
-    MetadataIO::ArtworksSnapshot snapshotToRead;
+    Artworks::ArtworksSnapshot snapshotToRead;
     snapshotToRead.append(fakeArtworkToRead.get());
 
-    auto *metadataIOCoordinator = m_TestsApp.getMetadataIOCoordinator();
-
+    auto &metadataIOCoordinator = m_TestsApp.getMetadataIOCoordinator();
     quint32 batchID = INVALID_BATCH_ID;
+    SignalWaiter waiter;
+    m_TestsApp.connectWaiterForImport(waiter);
 
-    if (metadataIOCoordinator != nullptr) {
-        metadataIOCoordinator->readMetadataExifTool(snapshotToRead, batchID);
-    }
-
-    ioCoordinator->continueReading(false);
+    metadataIOCoordinator.readMetadataExifTool(snapshotToRead, batchID);
+    metadataIOCoordinator.continueReading(false);
 
     VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata second time.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
+    VERIFY(m_TestsApp.checkImportSucceeded(), "Failed to read metadata");
     VERIFY(fakeArtworkToRead->areKeywordsEmpty(), "Keywords are not empty after exiftool read");
 
     qInfo() << "Secondary import has just finished";
@@ -113,9 +88,9 @@ int ImportLostMetadataTest::doTest() {
     // wait for the metadata cache to receive new values
     // wait any pending writes to storage
     sleepWaitUntil(5, [&metadataIOService] {
-        return !metadataIOService->isBusy();
+        return !metadataIOService.isBusy();
     });
-    metadataIOService->waitWorkerIdle();
+    metadataIOService.waitWorkerIdle();
 
     Artworks::ArtworkMetadata tempFakeArtwork(filepath, artwork->getItemID(), artwork->getDirectoryID());
     MetadataIO::CachedArtwork tempCachedArtwork;

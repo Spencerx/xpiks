@@ -31,6 +31,10 @@ namespace AutoComplete {
     class ICompletionSource;
 }
 
+namespace Suggestion {
+    class KeywordsSuggestor;
+}
+
 namespace Commands {
     namespace UI {
         SOURCE_TARGET_COMMAND(FixSpellingInCombinedEditCommand,
@@ -43,41 +47,41 @@ namespace Commands {
                               Models::ArtworkProxyModel,
                               SpellCheck::SpellCheckSuggestionModel);
 
-        class FixSpellingInArtworkCommand: public IUICommandTemplate {
-        public:
-            FixSpellingInArtworkCommand(Models::FilteredArtworksListModel &filteredArtworksModel,
-                                        Models::ArtworksListModel &artworksListModel,
-                                        SpellCheck::SpellCheckSuggestionModel &suggestionsModel):
-                m_FilteredArtworksModel(filteredArtworksModel),
-                m_ArtworksListModel(artworksListModel),
-                m_SuggestionsModel(suggestionsModel)
-            {}
 
-            // IUICommandTemplate interface
-        public:
-            virtual int getCommandID() override { return QMLExtensions::UICommandID::FixSpellingArtwork; }
-            virtual void execute(QVariant const &value) override;
+        SOURCE_TARGET_COMMAND(FixSpellingForArtworkCommand,
+                              QMLExtensions::UICommandID::FixSpellingArtwork,
+                              Models::FilteredArtworksListModel,
+                              SpellCheck::SpellCheckSuggestionModel);
 
-        private:
-            Models::FilteredArtworksListModel &m_FilteredArtworksModel;
-            Models::ArtworksListModel &m_ArtworksListModel;
-            SpellCheck::SpellCheckSuggestionModel &m_SuggestionsModel;
-        };
-
-        SOURCE_TARGET_COMMAND(ShowDuplicatesForSingle,
+        SOURCE_TARGET_COMMAND(ShowDuplicatesForSingleCommand,
                               QMLExtensions::UICommandID::ShowDuplicatesSingle,
                               Models::ArtworkProxyModel,
                               SpellCheck::DuplicatesReviewModel);
 
-        SOURCE_TARGET_COMMAND(ShowDuplicatesForCombined,
+        SOURCE_TARGET_COMMAND(ShowDuplicatesForCombinedCommand,
                               QMLExtensions::UICommandID::ShowDuplicatesCombined,
                               Models::CombinedArtworksModel,
                               SpellCheck::DuplicatesReviewModel);
 
-        SOURCE_TARGET_COMMAND(AcceptPresetCompletionForCombined,
+        SOURCE_TARGET_COMMAND(AcceptPresetCompletionForCombinedCommand,
                               QMLExtensions::UICommandID::AcceptPresetCompletionCombined,
                               AutoComplete::ICompletionSource,
                               Models::CombinedArtworksModel);
+
+        SOURCE_TARGET_COMMAND(InitSuggestionForArtworkCommand,
+                              QMLExtensions::UICommandID::InitSuggestionArtwork,
+                              Models::FilteredArtworksListModel,
+                              Suggestion::KeywordsSuggestor);
+
+        SOURCE_TARGET_COMMAND(InitSuggestionForCombinedCommand,
+                              QMLExtensions::UICommandID::InitSuggestionCombined,
+                              Models::CombinedArtworksModel,
+                              Suggestion::KeywordsSuggestor);
+
+        SOURCE_TARGET_COMMAND(InitSuggestionForSingleCommand,
+                              QMLExtensions::UICommandID::InitSuggestionSingle,
+                              Models::ArtworkProxyModel,
+                              Suggestion::KeywordsSuggestor);
     }
 }
 

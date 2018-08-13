@@ -230,7 +230,10 @@ SOURCES += main.cpp \
     ../../xpiks-qt/UndoRedo/artworkmetadatabackup.cpp \
     ../../xpiks-qt/UndoRedo/undoredomanager.cpp \
     ../../xpiks-qt/xpiksapp.cpp \
-    ../../xpiks-qt/QMLExtensions/uicommanddispatcher.cpp
+    ../../xpiks-qt/QMLExtensions/uicommanddispatcher.cpp \
+    ../../xpiks-qt/Commands/UI/generalcommands.cpp \
+    ../../xpiks-qt/Commands/UI/selectedartworkscommands.cpp \
+    ../../xpiks-qt/Commands/UI/singleeditablecommands.cpp
 
 RESOURCES +=
 
@@ -527,7 +530,11 @@ HEADERS += \
     ../../xpiks-qt/UndoRedo/iundoredomanager.h \
     ../../xpiks-qt/UndoRedo/undoredomanager.h \
     ../../xpiks-qt/xpiksapp.h \
-    ../../xpiks-qt/QMLExtensions/uicommanddispatcher.h
+    ../../xpiks-qt/QMLExtensions/uicommanddispatcher.h \
+    ../../xpiks-qt/Commands/UI/generalcommands.h \
+    ../../xpiks-qt/Commands/UI/selectedartworkscommands.h \
+    ../../xpiks-qt/Commands/UI/singleeditablecommands.h \
+    ../../xpiks-qt/Commands/UI/sourcetargetcommand.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

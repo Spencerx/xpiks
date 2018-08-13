@@ -1,7 +1,6 @@
 #include "duplicatesearchtest.h"
 #include "signalwaiter.h"
 #include "testshelpers.h"
-#include <QObject>
 #include "xpikstestsapp.h"
 
 QString DuplicateSearchTest::testName() {

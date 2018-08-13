@@ -1,8 +1,9 @@
 #include "addtouserdictionarytest.h"
+#include <QList>
+#include <QUrl>
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
-#include <QObject>
 
 QString AddToUserDictionaryTest::testName() {
     return QLatin1String("AddToUserDictionaryTest");

@@ -1,76 +1,60 @@
 #include "removefromuserdictionarytest.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/SpellCheck/spellcheckerservice.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "../../xpiks-qt/Models/combinedartworksmodel.h"
-#include "../../xpiks-qt/Common/basickeywordsmodel.h"
+#include <QList>
+#include <QUrl>
 #include "signalwaiter.h"
 #include "testshelpers.h"
-#include <QObject>
+#include "xpikstestsapp.h"
 
 QString RemoveFromUserDictionaryTest::testName() {
     return QLatin1String("RemoveFromUserDictionaryTest");
 }
 
 void RemoveFromUserDictionaryTest::setup() {
-    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
     m_TestsApp.getSettingsModel().setUseSpellCheck(true);
 }
 
-int RemoveFromUserDictionaryTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
+#define CHECK_HAS_ERRORS_EVERYWHERE(basicModel)\
+    VERIFY(basicModel->hasDescriptionSpellError(), "Description spell error not detected");\
+    VERIFY(basicModel->hasTitleSpellError(), "Title spell error not detected");\
+    VERIFY(basicModel->hasKeywordsSpellError(), "Keywords spell error not detected")
 
+#define CHECK_HAS_NO_ERRORS_ANYWHERE(basicModel)\
+    VERIFY(!basicModel->hasDescriptionSpellError(), "After adding word. Description spell error is still present");\
+    VERIFY(!basicModel->hasTitleSpellError(), "After adding word. Title spell error is still present");\
+    VERIFY(!basicModel->hasKeywordsSpellError(), "After adding word. Keywords spell error is still present");
+
+
+int RemoveFromUserDictionaryTest::doTest() {
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    Artworks::ArtworkMetadata *metadata = m_TestsApp.getArtwork(0);
+    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
 
     // wait for after-add spellchecking
     QThread::sleep(1);
 
-    auto *basicKeywordsModel = metadata->getBasicModel();
+    SignalWaiter spellingWaiter;
+    m_TestsApp.connectWaiterForSpellcheck(spellingWaiter);
+
+    auto *basicKeywordsModel = artwork->getBasicModel();
 
     QString wrongWord = "abbreviatioe";
-    metadata->setDescription(metadata->getDescription() + " " + wrongWord);
-    metadata->setTitle(metadata->getTitle() + " " + wrongWord);
-    metadata->appendKeyword("correct part " + wrongWord);
-    metadata->setIsSelected(true);
+    artwork->setDescription(artwork->getDescription() + " " + wrongWord);
+    artwork->setTitle(artwork->getTitle() + " " + wrongWord);
+    artwork->appendKeyword("correct part " + wrongWord);
+    artwork->setIsSelected(true);
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_TestsApp.getFilteredArtItemsModel();
-    SpellCheck::SpellCheckerService *spellCheckService = m_TestsApp.getSpellCheckerService();
-    QObject::connect(spellCheckService, SIGNAL(spellCheckQueueIsEmpty()), &waiter, SIGNAL(finished()));
-
-    filteredModel->spellCheckSelected();
-
-    VERIFY(waiter.wait(5), "Timeout for waiting for spellcheck results");
+    VERIFY(spellingWaiter.wait(5), "Timeout for waiting for spellcheck results");
 
     // wait for finding suggestions
     QThread::sleep(1);
 
-    VERIFY(basicKeywordsModel->hasDescriptionSpellError(), "Description spell error not detected");
-    VERIFY(basicKeywordsModel->hasTitleSpellError(), "Title spell error not detected");
-    VERIFY(basicKeywordsModel->hasKeywordsSpellError(), "Keywords spell error not detected");
+    CHECK_HAS_ERRORS_EVERYWHERE(basicKeywordsModel);
 
-    spellCheckService->addWordToUserDictionary(wrongWord);
-
-    SignalWaiter spellingWaiter;
-    QObject::connect(spellCheckService, SIGNAL(spellCheckQueueIsEmpty()), &spellingWaiter, SIGNAL(finished()));
+    auto &userDictionary = m_TestsApp.getUserDictionary();
+    userDictionary.addWord(wrongWord);
 
     QCoreApplication::processEvents(QEventLoop::AllEvents);
 
@@ -83,26 +67,19 @@ int RemoveFromUserDictionaryTest::doTest() {
                 !basicKeywordsModel->hasKeywordsSpellError();
     });
 
-    int userDictWords = spellCheckService->getUserDictWordsNumber();
+    int userDictWords = userDictionary.getWordsCount();
 
     VERIFY(userDictWords == 1, "Wrong number of words in user dictionary");
-    VERIFY(!basicKeywordsModel->hasDescriptionSpellError(), "After adding word. Description spell error is still present");
-    VERIFY(!basicKeywordsModel->hasTitleSpellError(), "After adding word. Title spell error is still present");
-    VERIFY(!basicKeywordsModel->hasKeywordsSpellError(), "After adding word. Keywords spell error is still present");
+    CHECK_HAS_NO_ERRORS_ANYWHERE(basicKeywordsModel);
 
     // now clean user dict
-
-    SignalWaiter clearWaiter;
-    QObject::connect(spellCheckService, SIGNAL(spellCheckQueueIsEmpty()), &clearWaiter, SIGNAL(finished()));
-
-    spellCheckService->clearUserDictionary();
+    userDictionary.clear();
 
     // wait clear user dict to finish
-
     QCoreApplication::processEvents(QEventLoop::AllEvents);
 
     // wait clear user word to finish
-    VERIFY(clearWaiter.wait(5), "Timeout for waiting for spellcheck results");
+    VERIFY(spellingWaiter.wait(5), "Timeout for waiting for spellcheck results");
 
     sleepWaitUntil(5, [=]() {
         return basicKeywordsModel->hasDescriptionSpellError() &&
@@ -110,12 +87,10 @@ int RemoveFromUserDictionaryTest::doTest() {
                 basicKeywordsModel->hasKeywordsSpellError();
     });
 
-    userDictWords = spellCheckService->getUserDictWordsNumber();
+    userDictWords = userDictionary.getWordsCount();
 
-    VERIFY(userDictWords == 0, "Wrong number of words in user dictionary");
-    VERIFY(basicKeywordsModel->hasDescriptionSpellError(), "Description spell error not detected again");
-    VERIFY(basicKeywordsModel->hasTitleSpellError(), "Title spell error not detected again");
-    VERIFY(basicKeywordsModel->hasKeywordsSpellError(), "Keywords spell error not detected again");
+    VERIFY(userDictWords == 0, "Wrong number of words in user dictionary");    
+    CHECK_HAS_ERRORS_EVERYWHERE(basicKeywordsModel);
 
     return 0;
 }

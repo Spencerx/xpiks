@@ -17,16 +17,19 @@ public:
     void cleanup();
 
 public:
-    bool checkImportSucceeded(size_t importsCount=1);
+    bool checkImportSucceeded(int importsCount=-1);
     bool checkExportSucceeded();
 
 public:
     void dispatch(QMLExtensions::UICommandID::CommandID id, QVariant const &value = QVariant());
     bool addFilesForTest(QList<QUrl> const &urls);
+    void continueReading(bool ignoreBackups);
     void deleteArtworks(Helpers::IndicesRanges const &ranges);
+    void deleteAllArtworks();
     bool undoLastAction();
     bool selectSpellSuggestions(int index);
     void selectAllArtworks();
+    int restoreSavedSession();
 
 public:
     void connectWaiterForSpellcheck(SignalWaiter &waiter);
@@ -46,7 +49,16 @@ public:
     MetadataIO::CsvExportModel &getCsvExportModel() { return m_CsvExportModel; }
     Models::UploadInfoRepository &getUploadInfoRepository() { return m_UploadInfoRepository; }
     Models::FindAndReplaceModel &getFindAndReplaceModel() { return m_ReplaceModel; }
+    MetadataIO::MetadataIOService &getMetadataIOService() { return m_MetadataIOService; }
+    MetadataIO::MetadataIOCoordinator &getMetadataIOCoordinator() { return m_MetadataIOCoordinator; }
+    Plugins::PluginManager &getPluginManager() { return m_PluginManager; }
+    Suggestion::KeywordsSuggestor &getKeywordsSuggestor() { return m_KeywordsSuggestor; }
+    Encryption::SecretsManager &getSecretsManager() { return m_SecretsManager; }
+    Models::SessionManager &getSessionManager() { return m_SessionManager; }
+
+public:
     Artworks::ArtworkMetadata *getArtwork(int index);
+    int getArtworksCount();
 
 private:
     void doCleanup();

@@ -44,7 +44,7 @@ namespace KeywordsPresets {
 
 #ifdef INTEGRATION_TESTS
     public:
-        PresetKeywordsModelConfig *getKeywordsModelConfig() { return &m_PresetsConfig; }
+        PresetKeywordsModelConfig &getKeywordsModelConfig() { return m_PresetsConfig; }
         void reload() { loadModelFromConfig(); }
 #endif
 

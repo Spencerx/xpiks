@@ -59,6 +59,12 @@ namespace SpellCheck {
         return m_WordsList;
     }
 
+    int UserDictionary::getWordsCount() {
+        QMutexLocker locker(&m_Mutex);
+        Q_UNUSED(locker);
+        return m_WordsList.size();
+    }
+
     bool UserDictionary::contains(const QString &word) {
         QMutexLocker locker(&m_Mutex);
         Q_UNUSED(locker);

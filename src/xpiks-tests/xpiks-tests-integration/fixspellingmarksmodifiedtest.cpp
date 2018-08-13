@@ -1,8 +1,7 @@
 #include "fixspellingmarksmodifiedtest.h"
 #include <QUrl>
-#include <QFileInfo>
 #include <QThread>
-#include <QStringList>
+#include <QList>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
 #include "testshelpers.h"

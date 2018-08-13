@@ -1,7 +1,6 @@
 #include "clearmetadatatest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include <QStringList>
+#include <QList>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"

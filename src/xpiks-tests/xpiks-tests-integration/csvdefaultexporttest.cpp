@@ -1,8 +1,7 @@
 #include "csvdefaultexporttest.h"
 #include <QUrl>
+#include <QList>
 #include <QDir>
-#include <QFileInfo>
-#include <QStringList>
 #include <QDebug>
 #include <deque>
 #include "integrationtestbase.h"

@@ -125,10 +125,11 @@ public:
 public:
     Q_INVOKABLE void removeDirectory(int index);
 
-private:
+protected:
     int doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);
     void afterServicesStarted();
     void executeMaintenanceJobs();
+    int restoreSession();
     void connectEntitiesSignalsSlots();
     void registerUICommands();
     void setupMessaging();

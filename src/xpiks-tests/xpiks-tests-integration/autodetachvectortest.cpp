@@ -1,7 +1,6 @@
 #include "autodetachvectortest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include <QStringList>
+#include <QList>
 #include <QFile>
 #include <QDebug>
 #include "integrationtestbase.h"

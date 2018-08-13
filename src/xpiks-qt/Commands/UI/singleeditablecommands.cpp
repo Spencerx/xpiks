@@ -15,6 +15,7 @@
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include <Services/SpellCheck/duplicatesreviewmodel.h>
+#include <Suggestion/keywordssuggestor.h>
 
 namespace Commands {
     namespace UI {
@@ -39,35 +40,53 @@ namespace Commands {
             m_Target.setupArtworks(snapshot);
         }
 
-        void FixSpellingInArtworkCommand::execute(QVariant const &value) {
+        void FixSpellingForArtworkCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             int index = convertToInt(value, -1);
-            int originalIndex = m_FilteredArtworksModel.getOriginalIndex(index);
-            auto *artwork = m_ArtworksListModel.getArtwork(originalIndex);
+            auto *artwork = m_Source.getArtwork(index);
             if (artwork != nullptr) {
                 Artworks::ArtworksSnapshot snapshot({artwork});
-                m_SuggestionsModel.setupArtworks(snapshot);
+                m_Target.setupArtworks(snapshot);
             } else {
                 LOG_WARNING << "Cannot find artwork at" << index;
             }
         }
 
-        void ShowDuplicatesForSingle::execute(QVariant const &) {
+        void ShowDuplicatesForSingleCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setupModel(m_Source.getArtwork()->getBasicModel());
         }
 
-        void ShowDuplicatesForCombined::execute(QVariant const &) {
+        void ShowDuplicatesForCombinedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setupModel(&m_Source.getBasicModel());
         }
 
-        void AcceptPresetCompletionForCombined::execute(QVariant const &value) {
+        void AcceptPresetCompletionForCombinedCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             int completionID = convertToInt(value, 0);
 
             bool accepted = m_Target.acceptCompletionAsPreset(m_Source, completionID);
             LOG_INFO << "completion" << completionID << "accepted:" << accepted;
+        }
+
+        void InitSuggestionForArtworkCommand::execute(QVariant const &value) {
+            LOG_DEBUG << value;
+            int index = convertToInt(value, -1);
+            auto *artwork = m_Source.getArtwork(index);
+            if (artwork != nullptr) {
+                m_Target.setExistingKeywords(artwork->getKeywords().toSet());
+            }
+        }
+
+        void InitSuggestionForCombinedCommand::execute(QVariant const &) {
+            LOG_DEBUG << "#";
+            m_Target.setExistingKeywords(m_Source.getKeywords().toSet());
+        }
+
+        void InitSuggestionForSingleCommand::execute(QVariant const &) {
+            LOG_DEBUG << "#";
+            m_Target.setExistingKeywords(m_Source.getKeywords().toSet());
         }
     }
 }

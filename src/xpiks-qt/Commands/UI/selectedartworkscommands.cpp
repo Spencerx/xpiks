@@ -81,22 +81,22 @@ namespace Commands {
             m_Target.wipeAllMetadataExifTool(m_Source.getSelectedArtworks(), useBackups);
         }
 
-        void ReimportMetadataForSelected::execute(QVariant const &) {
+        void ReimportMetadataForSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.readMetadataExifTool(m_Source.getSelectedArtworks(), INVALID_BATCH_ID);
         }
 
-        void ExportSelectedToCSV::execute(QVariant const &) {
+        void ExportSelectedToCSVCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setArtworksToExport(m_Source.getSelectedArtworks());
         }
 
-        void FindAndReplaceInSelected::execute(QVariant const &) {
+        void FindAndReplaceInSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.findReplaceCandidates(m_Source.getSelectedArtworks());
         }
 
-        void UploadSelected::execute(QVariant const &) {
+        void UploadSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             auto selectedArtworks = m_Source.getSelectedArtworks();
             m_Target.setArtworks(selectedArtworks);

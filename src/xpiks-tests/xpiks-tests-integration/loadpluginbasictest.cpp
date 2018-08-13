@@ -1,9 +1,8 @@
 #include "loadpluginbasictest.h"
 #include <QDebug>
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Plugins/pluginmanager.h"
 #include "signalwaiter.h"
 #include "testshelpers.h"
+#include "xpikstestsapp.h"
 
 QString LoadPluginBasicTest::testName() {
     return QLatin1String("LoadPluginBasicTest");
@@ -21,11 +20,11 @@ int LoadPluginBasicTest::doTest() {
     const QString p = "*xpiks-helloworld-plugin";
     QString pluginPath = findWildcartPathForTests(dirPath, QStringList() << (p + "*.dll") << (p + "*.so") << (p + "*.dylib"));
 
-    Plugins::PluginManager *pluginManager = m_TestsApp.getPluginManager();
-    bool success = pluginManager->installPlugin(QUrl::fromLocalFile(pluginPath));
+    Plugins::PluginManager &pluginManager = m_TestsApp.getPluginManager();
+    bool success = pluginManager.installPlugin(QUrl::fromLocalFile(pluginPath));
     VERIFY(success, "Failed to install plugin");
 
-    bool removed = pluginManager->removePlugin(0);
+    bool removed = pluginManager.removePlugin(0);
     VERIFY(removed, "Failed to remove plugin");
 
     return 0;

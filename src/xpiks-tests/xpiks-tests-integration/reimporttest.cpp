@@ -1,42 +1,23 @@
 #include "reimporttest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include <QStringList>
+#include <QList>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "../../xpiks-qt/Models/imageartwork.h"
+#include "xpikstestsapp.h"
 
 QString ReimportTest::testName() {
     return QLatin1String("ReimportTest");
 }
 
 void ReimportTest::setup() {
-    Models::SettingsModel *settingsModel = m_TestsApp.getSettingsModel();
     m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int ReimportTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_TestsApp.getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_TestsApp.getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
-
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
@@ -52,15 +33,13 @@ int ReimportTest::doTest() {
     artwork->setTitle(title);
     artwork->getBasicModel()->setKeywords(keywords);
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_TestsApp.getFilteredArtItemsModel();
-    filteredModel->selectFilteredArtworks();
-    filteredModel->reimportMetadataForSelected();
-
-    ioCoordinator->continueReading(true);
-
+    SignalWaiter waiter;
+    m_TestsApp.connectWaiterForImport(waiter);
+    m_TestsApp.selectAllArtworks();
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::ReimportFromSelected);
+    m_TestsApp.continueReading(true);
     VERIFY(waiter.wait(20), "Timeout exceeded for reimporting metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reimporting");
+    VERIFY(m_TestsApp.checkImportSucceeded(2), "Failed to reimport metadata");
 
     const QStringList &actualKeywords = artwork->getKeywords();
     const QString &actualTitle = artwork->getTitle();

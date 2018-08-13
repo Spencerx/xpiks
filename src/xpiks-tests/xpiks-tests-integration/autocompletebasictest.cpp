@@ -1,7 +1,6 @@
 #include "autocompletebasictest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include <QStringList>
+#include <QList>
 #include <QDebug>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"

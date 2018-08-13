@@ -86,22 +86,22 @@ namespace Commands {
                               Artworks::ISelectedArtworksSource,
                               MetadataIO::MetadataIOCoordinator);
 
-        SOURCE_TARGET_COMMAND(ReimportMetadataForSelected,
+        SOURCE_TARGET_COMMAND(ReimportMetadataForSelectedCommand,
                               QMLExtensions::UICommandID::ReimportFromSelected,
                               Artworks::ISelectedArtworksSource,
                               MetadataIO::MetadataIOCoordinator);
 
-        SOURCE_TARGET_COMMAND(ExportSelectedToCSV,
+        SOURCE_TARGET_COMMAND(ExportSelectedToCSVCommand,
                               QMLExtensions::UICommandID::ExportSelectedToCSV,
                               Artworks::ISelectedArtworksSource,
                               MetadataIO::CsvExportModel);
 
-        SOURCE_TARGET_COMMAND(FindAndReplaceInSelected,
+        SOURCE_TARGET_COMMAND(FindAndReplaceInSelectedCommand,
                               QMLExtensions::UICommandID::FindAndReplaceInSelected,
                               Artworks::ISelectedArtworksSource,
                               Models::FindAndReplaceModel);
 
-        SOURCE_TARGET_COMMAND(UploadSelected,
+        SOURCE_TARGET_COMMAND(UploadSelectedCommand,
                               QMLExtensions::UICommandID::UploadSelected,
                               Artworks::ISelectedArtworksSource,
                               Models::ArtworksUploader);

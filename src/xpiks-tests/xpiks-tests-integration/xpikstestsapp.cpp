@@ -33,7 +33,7 @@ void XpiksTestsApp::cleanup() {
     m_SettingsModel.setExifToolPath(exiftoolPath);
 }
 
-bool XpiksTestsApp::checkImportSucceeded(size_t importsCount) {
+bool XpiksTestsApp::checkImportSucceeded(int importsCount) {
     bool success = false;
 
     do {
@@ -42,9 +42,11 @@ bool XpiksTestsApp::checkImportSucceeded(size_t importsCount) {
             break;
         }
 
-        if (m_MetadataIOCoordinator.getImportIDs().size() != importsCount) {
-            LOG_WARNING << "Imports count doesn't match" << importsCount;
-            break;
+        if (importsCount != -1) {
+            if (m_MetadataIOCoordinator.getImportIDs().size() != importsCount) {
+                LOG_WARNING << "Imports count doesn't match" << importsCount;
+                break;
+            }
         }
 
         success = true;
@@ -109,6 +111,10 @@ bool XpiksTestsApp::addFilesForTest(const QList<QUrl> &urls) {
     return success;
 }
 
+void XpiksTestsApp::continueReading(bool ignoreBackups) {
+    m_MetadataIOCoordinator.continueReading(ignoreBackups);
+}
+
 void XpiksTestsApp::deleteArtworks(Helpers::IndicesRanges const &ranges) {
     LOG_DEBUG << "#";
     m_CommandManager.processCommand(
@@ -119,6 +125,10 @@ void XpiksTestsApp::deleteArtworks(Helpers::IndicesRanges const &ranges) {
 
     // delete artworks
     m_ArtworksListModel.onUndoStackEmpty();
+}
+
+void XpiksTestsApp::deleteAllArtworks() {
+    deleteArtworks(Helpers::IndicesRanges(m_ArtworksListModel.getArtworksSize()));
 }
 
 bool XpiksTestsApp::undoLastAction() {
@@ -143,6 +153,10 @@ void XpiksTestsApp::selectAllArtworks() {
     m_FilteredArtworksListModel.selectFilteredArtworks();
 }
 
+int XpiksTestsApp::restoreSavedSession() {
+    return restoreSession();
+}
+
 void XpiksTestsApp::connectWaiterForSpellcheck(SignalWaiter &waiter) {
     QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckService::spellCheckQueueIsEmpty,
                      &waiter, &SignalWaiter::finished);
@@ -160,6 +174,10 @@ void XpiksTestsApp::connectWaiterForExport(SignalWaiter &waiter) {
 
 Artworks::ArtworkMetadata *XpiksTestsApp::getArtwork(int index) {
     return m_ArtworksListModel.getArtwork(index);
+}
+
+int XpiksTestsApp::getArtworksCount() {
+    return (int)m_ArtworksListModel.getArtworksSize();
 }
 
 void XpiksTestsApp::doCleanup() {

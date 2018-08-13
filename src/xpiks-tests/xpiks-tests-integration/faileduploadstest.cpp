@@ -1,5 +1,6 @@
 #include "faileduploadstest.h"
 #include <QDebug>
+#include <QList>
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
