@@ -31,7 +31,7 @@ int LocalLibrarySearchTest::doTest() {
     suggestor.searchArtworks("abstract", 0);
     VERIFY(suggestor.getIsInProgress(), "Keywords suggestor did not start");
 
-    sleepWaitUntil(5, [suggestor]() {
+    sleepWaitUntil(5, [&suggestor]() {
         return suggestor.getIsInProgress() == false;
     });
 

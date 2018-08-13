@@ -25,6 +25,13 @@ namespace Common {
         NamedType(const NamedType &other): m_Value(other.m_Value) {}
         T& get() { return m_Value; }
         T const& get() const { return m_Value; }
+        bool operator==(NamedType<T> const &t) const {
+            return m_Value == t.m_Value;
+        }
+        bool operator!=(NamedType<T> const &t) const {
+            return m_Value != t.m_Value;
+        }
+
     private:
         T m_Value;
     };

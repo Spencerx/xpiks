@@ -246,7 +246,7 @@ namespace SpellCheck {
     }
 
 #ifdef INTEGRATION_TESTS
-    int SpellCheckerService::getSuggestionsCount() {
+    int SpellCheckService::getSuggestionsCount() {
         return m_SpellCheckWorker->getSuggestionsCount();
     }
 #endif

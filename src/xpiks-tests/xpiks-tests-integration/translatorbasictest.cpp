@@ -21,7 +21,8 @@ int TranslatorBasicTest::doTest() {
     translationManager.setSelectedDictionaryIndex(0);
 
     SignalWaiter waiter;
-    QObject::connect(translationManager, SIGNAL(shortTranslationChanged()), &waiter, SIGNAL(finished()));
+    QObject::connect(&translationManager, &Translation::TranslationManager::shortTranslationChanged,
+                     &waiter, &SignalWaiter::finished);
 
     translationManager.setQuery("test");
     VERIFY(waiter.wait(), "Timeout for waiting for translation");

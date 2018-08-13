@@ -24,13 +24,14 @@ int UndoRestoreSessionTest::doTest() {
             << getDirPathForTest("images-for-tests/vector/");
 
     VERIFY(m_TestsApp.dropItemsForTest(sources), "Failed to add items");
+    int addedCount = m_TestsApp.getArtworksCount();
 
     Models::SessionManager &sessionManager = m_TestsApp.getSessionManager();
 
     sleepWaitUntil(10, [&]() {
-        return sessionManager->itemsCount() == addedCount;
+        return sessionManager.itemsCount() == addedCount;
     });
-    VERIFY(sessionManager->itemsCount() == addedCount, "Session does not contain all files");
+    VERIFY(sessionManager.itemsCount() == addedCount, "Session does not contain all files");
 
     m_TestsApp.deleteAllArtworks();
     LOG_DEBUG << "About to restore...";

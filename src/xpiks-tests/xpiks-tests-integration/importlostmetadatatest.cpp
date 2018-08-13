@@ -6,7 +6,9 @@
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
+#include <MetadataIO/metadataioworker.h>
 #include <MetadataIO/metadatacache.h>
+#include <Artworks/imageartwork.h>
 
 QString ImportLostMetadataTest::testName() {
     return QLatin1String("ImportLostMetadataTest");
@@ -33,7 +35,7 @@ int ImportLostMetadataTest::doTest() {
         filteredArtworksListModel.appendKeyword(0, keyword);
     }
 
-    MetadataIO::MetadataIOService *metadataIOService = m_TestsApp.getMetadataIOService();
+    MetadataIO::MetadataIOService &metadataIOService = m_TestsApp.getMetadataIOService();
     MetadataIO::MetadataCache &cache = metadataIOService.getWorker()->getMetadataCache();
 
     // wait for artwork backup request and metadata cache timer

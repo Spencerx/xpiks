@@ -10,7 +10,7 @@ QT -= gui
 CONFIG   += console
 CONFIG   -= app_bundle
 
-CONFIG += c++11
+CONFIG += c++14
 
 BUILDNO = $$system(git log -n 1 --pretty=format:"%H")
 

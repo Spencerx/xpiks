@@ -49,7 +49,7 @@ int UndoAddWithVectorsTest::doTest() {
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForImport(waiter);
     VERIFY(m_TestsApp.undoLastAction(), "Failed to Undo last action");
-    VERIFY(m_TestsApp.continueReading(waiter, "Failed to reimport files");
+    VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport files");
     VERIFY(m_TestsApp.getArtworksCount() == files.length(), "Items were not put back");
 
     firstImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(0));

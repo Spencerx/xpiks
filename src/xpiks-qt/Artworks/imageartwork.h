@@ -22,7 +22,7 @@ namespace Artworks {
     {
         Q_OBJECT
     public:
-        ImageArtwork(const QString &filepath, qint64 ID, qint64 directoryID);
+        ImageArtwork(const QString &filepath, Common::ID_t ID, qint64 directoryID);
 
     private:
         enum ImageArtworkFlags {

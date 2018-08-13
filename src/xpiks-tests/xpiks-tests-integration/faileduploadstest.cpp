@@ -4,6 +4,7 @@
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
+#include <Models/Connectivity/uploadinfo.h>
 
 QString FailedUploadsTest::testName() {
     return QLatin1String("FailedUploadsTest");

@@ -49,8 +49,8 @@ int CombinedEditFixSpellingTest::doTest() {
 
     m_TestsApp.dispatch(QMLExtensions::UICommandID::FixSpellingCombined);
 
-    SpellCheck::SpellCheckSuggestionModel *spellSuggestor = m_TestsApp.getSpellSuggestionsModel();
-    int rowCount = spellSuggestor->rowCount();
+    SpellCheck::SpellCheckSuggestionModel &spellSuggestor = m_TestsApp.getSpellSuggestionsModel();
+    int rowCount = spellSuggestor.rowCount();
     VERIFY(rowCount > 0, "Spell suggestions are not set");
 
     auto *combinedKeywordsModel = m_TestsApp.getCombinedArtworksModel().retrieveBasicMetadataModel();

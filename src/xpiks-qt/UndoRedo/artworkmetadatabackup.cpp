@@ -37,8 +37,8 @@ UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(const UndoRedo::ArtworkMe
 }
 
 void UndoRedo::ArtworkMetadataBackup::restore(Artworks::ArtworkMetadata *artwork) const {
-    Q_ASSERT(m_ArtworkID.get() == artwork->getItemID().get());
-    if (m_ArtworkID.get() != artwork->getItemID().get()) {
+    Q_ASSERT(m_ArtworkID == artwork->getItemID());
+    if (m_ArtworkID != artwork->getItemID()) {
         LOG_WARNING << "Cannot restore to different artwork";
         return;
     }

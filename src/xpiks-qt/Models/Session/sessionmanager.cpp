@@ -133,7 +133,7 @@ namespace Models {
             do {
                 success = m_Config.writeMap(sessionMap);
 #ifdef INTEGRATION_TESTS
-                m_LastSavedFilesCount = success ? (int)filesSnapshot.size() : m_LastSavedFilesCount;
+                m_LastSavedFilesCount = success ? (int)sessionSnapshot->getSnapshot().size() : m_LastSavedFilesCount;
 #endif
             } while (false);
         }
@@ -168,9 +168,10 @@ namespace Models {
 
 #ifdef INTEGRATION_TESTS
     void SessionManager::clearSession() {
-        std::vector<std::shared_ptr<Artworks::ArtworkSessionSnapshot> > emptyFiles;
+        std::vector<Artworks::ArtworkMetadata*> emptyFiles;
         QStringList emptyDirs;
-        bool cleared = save(emptyFiles, emptyDirs);
+        auto sessionSnapshot = std::make_unique<Artworks::SessionSnapshot>(emptyFiles, emptyDirs);
+        bool cleared = save(sessionSnapshot);
         Q_ASSERT(cleared);
     }
 #endif

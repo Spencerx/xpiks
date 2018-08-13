@@ -37,7 +37,7 @@ int PlainTextEditTest::doTest() {
     combinedModel.plainTextEdit("test, keyword, abbreviatoe");
 
     sleepWaitUntil(5, [&]() {
-        return (!spellCheckService->isBusy()) && basicModel->hasKeywordsSpellError();
+        return (!m_TestsApp.getSpellCheckService().isBusy()) && basicModel->hasKeywordsSpellError();
     });
 
     VERIFY(basicModel->hasKeywordsSpellError(), "Keywords spell error not detected");

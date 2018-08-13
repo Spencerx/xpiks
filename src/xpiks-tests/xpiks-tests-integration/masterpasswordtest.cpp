@@ -1,5 +1,6 @@
 #include "masterpasswordtest.h"
 #include "xpikstestsapp.h"
+#include <Models/Connectivity/uploadinfo.h>
 
 QString MasterPasswordTest::testName() {
     return QLatin1String("MasterPasswordTest");

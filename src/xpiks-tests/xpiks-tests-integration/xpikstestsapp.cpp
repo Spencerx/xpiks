@@ -77,7 +77,7 @@ void XpiksTestsApp::dispatch(QMLExtensions::UICommandID::CommandID id, QVariant 
 
 bool XpiksTestsApp::addFilesForTest(const QList<QUrl> &urls) {
     SignalWaiter waiter;
-    QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
+    QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
                      &waiter, &SignalWaiter::finished);
 
     int addedCount = addFiles(urls);
@@ -92,7 +92,7 @@ bool XpiksTestsApp::addFilesForTest(const QList<QUrl> &urls) {
 
 bool XpiksTestsApp::addDirectoriesForTest(const QList<QUrl> &urls) {
     SignalWaiter waiter;
-    QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
+    QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
                      &waiter, &SignalWaiter::finished);
 
     int addedCount = addDirectories(urls);
@@ -107,7 +107,7 @@ bool XpiksTestsApp::addDirectoriesForTest(const QList<QUrl> &urls) {
 
 bool XpiksTestsApp::dropItemsForTest(const QList<QUrl> &urls) {
     SignalWaiter waiter;
-    QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
+    QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
                      &waiter, &SignalWaiter::finished);
 
     int addedCount = dropItems(urls);
@@ -174,17 +174,17 @@ int XpiksTestsApp::restoreSavedSession() {
 }
 
 void XpiksTestsApp::connectWaiterForSpellcheck(SignalWaiter &waiter) {
-    QObject::connect(m_SpellCheckerService, &SpellCheck::SpellCheckService::spellCheckQueueIsEmpty,
+    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckService::spellCheckQueueIsEmpty,
                      &waiter, &SignalWaiter::finished);
 }
 
 void XpiksTestsApp::connectWaiterForImport(SignalWaiter &waiter) {
-    QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
+    QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
                      &waiter, &SignalWaiter::finished);
 }
 
 void XpiksTestsApp::connectWaiterForExport(SignalWaiter &waiter) {
-    QObject::connect(m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
+    QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
                      &waiter, &SignalWaiter::finished);
 }
 

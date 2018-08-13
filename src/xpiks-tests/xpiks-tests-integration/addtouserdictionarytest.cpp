@@ -52,7 +52,7 @@ int AddToUserDictionaryTest::doTest() {
                 !basicKeywordsModel->hasKeywordsSpellError();
     });
 
-    int userDictWords = spellCheckService->getUserDictWordsNumber();
+    int userDictWords = m_TestsApp.getUserDictionary().getWordsCount();
     LOG_DEBUG << "User dict words count:" << userDictWords;
 
     VERIFY(userDictWords == 1, "Wrong number of words in user dictionary");

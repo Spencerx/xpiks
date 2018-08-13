@@ -26,7 +26,8 @@ int ZipArtworksTest::doTest() {
 
     Models::ZipArchiver &zipArchiver = m_TestsApp.getZipArchiver();
     SignalWaiter waiter;
-    QObject::connect(zipArchiver, SIGNAL(finishedProcessing()), &waiter, SIGNAL(finished()));
+    QObject::connect(&zipArchiver, &Models::ZipArchiver::finishedProcessing,
+                     &waiter, &SignalWaiter::finished);
 
     zipArchiver.archiveArtworks();
 

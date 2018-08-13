@@ -5,6 +5,7 @@
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
+#include <Artworks/videoartwork.h>
 
 QString SaveVideoBasicTest::testName() {
     return QLatin1String("SaveVideoBasicTest");

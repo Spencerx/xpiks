@@ -16,6 +16,7 @@ int UndoAddDirectoryTest::doTest() {
     dirs << getDirPathForTest("images-for-tests/mixed/");
 
     VERIFY(m_TestsApp.addDirectoriesForTest(dirs), "Failed to add directories");
+    int artworksCount = m_TestsApp.getArtworksCount();
 
     // remove 2 artworks
     m_TestsApp.deleteArtworks(Helpers::IndicesRanges({0, 1}));

@@ -47,7 +47,7 @@ int SaveFileLegacyTest::doTest() {
 
     artwork = m_TestsApp.getArtwork(0);
 
-    VERIFY(id != artwork->getItemID(), "ID should not match");
+    VERIFY(id.get() != artwork->getItemID().get(), "ID should not match");
     VERIFY(artwork->getKeywords() == keywords, "Read keywords are not the same");
     VERIFY(artwork->getTitle() == title, "Real title is not the same");
     VERIFY(artwork->getDescription() == description, "Real description is not the same");

@@ -20,7 +20,7 @@ int UserDictEditTest::doTest() {
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     Artworks::ArtworkMetadata *metadata = m_TestsApp.getArtwork(0);
-    auto &quickBuffer = m_TestsApp.getQuickBuffer();
+    Models::QuickBuffer &quickBuffer = m_TestsApp.getQuickBuffer();
 
     // wait for after-add spellchecking
     QThread::sleep(1);
@@ -52,7 +52,7 @@ int UserDictEditTest::doTest() {
     userDictEditModel.appendKeyword(wrongWord);
     userDictEditModel.saveUserDict();
 
-    sleepWaitUntil(5, [=]() {
+    sleepWaitUntil(5, [=, &quickBuffer]() {
         return !basicKeywordsModel->hasDescriptionSpellError() &&
                 !basicKeywordsModel->hasTitleSpellError() &&
                 !basicKeywordsModel->hasKeywordsSpellError() &&
