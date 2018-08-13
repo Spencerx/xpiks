@@ -203,15 +203,15 @@ void XpiksTestsApp::doCleanup() {
     m_WarningsService.cancelCurrentBatch();
     m_MaintenanceService.cleanup();
     m_ArtworksUpdateHub.clear();
-    m_AutoCompleteModel.clear();
+    m_AutoCompleteService.getAutoCompleteModel().clear();
 
     m_CsvExportModel.clearModel();
     m_CsvExportModel.resetModel();
     m_CombinedArtworksModel.resetModel();
     m_ZipArchiver.resetModel();
-    m_ArtworkUploader.resetModel();
+    m_ArtworksUploader.resetModel();
     m_ArtworksRepository.resetEverything();
-    m_ArtItemsModel.deleteAllItems();
+    m_ArtworksListModel.deleteAllItems();
     m_SettingsModel.resetToDefault();
     m_SpellCheckerService.clearUserDictionary();
     m_SessionManager.clearSession();
