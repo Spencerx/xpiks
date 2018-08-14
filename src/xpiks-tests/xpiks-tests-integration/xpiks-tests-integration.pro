@@ -233,7 +233,36 @@ SOURCES += main.cpp \
     ../../xpiks-qt/QMLExtensions/uicommanddispatcher.cpp \
     ../../xpiks-qt/Commands/UI/generalcommands.cpp \
     ../../xpiks-qt/Commands/UI/selectedartworkscommands.cpp \
-    ../../xpiks-qt/Commands/UI/singleeditablecommands.cpp
+    ../../xpiks-qt/Commands/UI/singleeditablecommands.cpp \
+    ../../xpiks-qt/Services/Maintenance/initializedictionariesjobitem.cpp \
+    ../../xpiks-qt/Services/Maintenance/launchexiftooljobitem.cpp \
+    ../../xpiks-qt/Services/Maintenance/logscleanupjobitem.cpp \
+    ../../xpiks-qt/Services/Maintenance/maintenanceservice.cpp \
+    ../../xpiks-qt/Services/Maintenance/maintenanceworker.cpp \
+    ../../xpiks-qt/Services/Maintenance/savesessionjobitem.cpp \
+    ../../xpiks-qt/Services/Maintenance/updatebundlecleanupjobitem.cpp \
+    ../../xpiks-qt/Services/Maintenance/updatescleanupjobitem.cpp \
+    ../../xpiks-qt/Services/Maintenance/xpkscleanupjob.cpp \
+    ../../xpiks-qt/Connectivity/updatescheckerworker.cpp \
+    ../../xpiks-qt/Connectivity/updateservice.cpp \
+    ../../xpiks-qt/Connectivity/uploadwatcher.cpp \
+    ../../xpiks-qt/QMLExtensions/colorsmodel.cpp \
+    ../../xpiks-qt/QMLExtensions/cachedimage.cpp \
+    ../../xpiks-qt/QMLExtensions/cachedvideo.cpp \
+    ../../xpiks-qt/QMLExtensions/dbimagecacheindex.cpp \
+    ../../xpiks-qt/QMLExtensions/dbvideocacheindex.cpp \
+    ../../xpiks-qt/QMLExtensions/imagecachingservice.cpp \
+    ../../xpiks-qt/QMLExtensions/imagecachingworker.cpp \
+    ../../xpiks-qt/QMLExtensions/videocachingservice.cpp \
+    ../../xpiks-qt/QMLExtensions/videocachingworker.cpp \
+    ../../xpiks-qt/Commands/Files/removefilescommand.cpp \
+    ../../xpiks-qt/Models/uimanager.cpp \
+    ../../xpiks-qt/Commands/artworksupdatetemplate.cpp \
+    ../../xpiks-qt/QMLExtensions/tabsmodel.cpp \
+    ../../xpiks-qt/Helpers/updatehelpers.cpp \
+    ../../xpiks-qt/Connectivity/testconnection.cpp \
+    ../../xpiks-qt/Helpers/loghighlighter.cpp \
+    ../../xpiks-qt/Helpers/helpersqmlwrapper.cpp
 
 RESOURCES +=
 
@@ -534,7 +563,40 @@ HEADERS += \
     ../../xpiks-qt/Commands/UI/generalcommands.h \
     ../../xpiks-qt/Commands/UI/selectedartworkscommands.h \
     ../../xpiks-qt/Commands/UI/singleeditablecommands.h \
-    ../../xpiks-qt/Commands/UI/sourcetargetcommand.h
+    ../../xpiks-qt/Commands/UI/sourcetargetcommand.h \
+    ../../xpiks-qt/Services/Maintenance/imaintenanceitem.h \
+    ../../xpiks-qt/Services/Maintenance/initializedictionariesjobitem.h \
+    ../../xpiks-qt/Services/Maintenance/launchexiftooljobitem.h \
+    ../../xpiks-qt/Services/Maintenance/logscleanupjobitem.h \
+    ../../xpiks-qt/Services/Maintenance/maintenanceservice.h \
+    ../../xpiks-qt/Services/Maintenance/maintenanceworker.h \
+    ../../xpiks-qt/Services/Maintenance/savesessionjobitem.h \
+    ../../xpiks-qt/Services/Maintenance/updatebundlecleanupjobitem.h \
+    ../../xpiks-qt/Services/Maintenance/updatescleanupjobitem.h \
+    ../../xpiks-qt/Services/Maintenance/xpkscleanupjob.h \
+    ../../xpiks-qt/Connectivity/updatescheckerworker.h \
+    ../../xpiks-qt/Connectivity/updateservice.h \
+    ../../xpiks-qt/Connectivity/uploadwatcher.h \
+    ../../xpiks-qt/QMLExtensions/colorsmodel.h \
+    ../../xpiks-qt/QMLExtensions/cachedimage.h \
+    ../../xpiks-qt/QMLExtensions/cachedvideo.h \
+    ../../xpiks-qt/QMLExtensions/dbcacheindex.h \
+    ../../xpiks-qt/QMLExtensions/dbimagecacheindex.h \
+    ../../xpiks-qt/QMLExtensions/dbvideocacheindex.h \
+    ../../xpiks-qt/QMLExtensions/imagecacherequest.h \
+    ../../xpiks-qt/QMLExtensions/imagecachingservice.h \
+    ../../xpiks-qt/QMLExtensions/imagecachingworker.h \
+    ../../xpiks-qt/QMLExtensions/videocacherequest.h \
+    ../../xpiks-qt/QMLExtensions/videocachingservice.h \
+    ../../xpiks-qt/QMLExtensions/videocachingworker.h \
+    ../../xpiks-qt/Commands/Files/removefilescommand.h \
+    ../../xpiks-qt/Models/uimanager.h \
+    ../../xpiks-qt/Commands/artworksupdatetemplate.h \
+    ../../xpiks-qt/QMLExtensions/tabsmodel.h \
+    ../../xpiks-qt/Helpers/updatehelpers.h \
+    ../../xpiks-qt/Connectivity/testconnection.h \
+    ../../xpiks-qt/Helpers/loghighlighter.h \
+    ../../xpiks-qt/Helpers/helpersqmlwrapper.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface
