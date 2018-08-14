@@ -57,19 +57,21 @@ namespace Translation {
         QString request = query.simplified().toLower();
         LOG_INFO << "translation request:" << query;
 
-        if (!request.isEmpty()) {
+        bool translated = false;
+        do {
+            if (request.isEmpty()) { break; }
+
             ensureDictionaryLoaded();
             std::string word = request.toUtf8().toStdString();
 
-            if (m_LookupDictionary->translate(word, translationData)) {
-                QString translation = QString::fromUtf8(translationData.c_str());
-                item->setTranslation(translation);
-            } else {
-                item->setFailed();
-            }
-        } else {
-            item->setFailed();
-        }
+            if (!m_LookupDictionary->translate(word, translationData)) { break; }
+
+            QString translation = QString::fromUtf8(translationData.c_str());
+            item->setTranslation(translation);
+            translated = true;
+        } while (false);
+
+        if (!translated) { item->setFailed(); }
     }
 
     void TranslationWorker::ensureDictionaryLoaded() {

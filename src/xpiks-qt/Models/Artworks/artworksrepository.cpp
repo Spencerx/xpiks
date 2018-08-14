@@ -32,7 +32,7 @@ namespace Models {
         QObject::connect(&m_Timer, &QTimer::timeout, this, &ArtworksRepository::onAvailabilityTimer);
     }
 
-    int ArtworksRepository::isEmpty(int index) const {
+    bool ArtworksRepository::isEmpty(int index) const {
         bool empty = false;
         if ((0 <= index) && (index < (int)m_DirectoriesList.size())) {
             empty = (m_DirectoriesList[index].m_FilesCount == 0);
@@ -696,13 +696,12 @@ namespace Models {
     bool FilteredArtworksRepository::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
         Q_UNUSED(sourceParent);
 
-#ifndef QT_DEBUG
-        ArtworksRepository *artworksRepository = getArtworksRepository();
-        bool isEmpty = artworksRepository->isEmpty(sourceRow);
-        return !isEmpty;
-#else
+#if !defined(CORE_TESTS) && !defined(INTEGRATION_TESTS) && defined(QT_DEBUG)
         Q_UNUSED(sourceRow);
         return true;
+#else
+        bool isEmpty = m_ArtworksRepository.isEmpty(sourceRow);
+        return !isEmpty;
 #endif
     }
 

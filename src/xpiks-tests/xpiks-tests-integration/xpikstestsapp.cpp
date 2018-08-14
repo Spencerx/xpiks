@@ -213,6 +213,7 @@ void XpiksTestsApp::doCleanup() {
     m_ArtworksRepository.resetEverything();
     m_ArtworksListModel.deleteAllItems();
     m_SettingsModel.resetToDefault();
+    m_SpellSuggestionModel.clearModel();
     m_SpellCheckerService.clearUserDictionary();
     m_SessionManager.clearSession();
     m_MetadataIOCoordinator.clear();

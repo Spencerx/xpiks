@@ -20,6 +20,9 @@ int TranslatorBasicTest::doTest() {
 
     translationManager.setSelectedDictionaryIndex(0);
 
+    VERIFY(translationManager.getFullTranslation().isEmpty(), "Full translation is not empty");
+    VERIFY(translationManager.getShortTranslation().isEmpty(), "Short translation is not empty");
+
     SignalWaiter waiter;
     QObject::connect(&translationManager, &Translation::TranslationManager::shortTranslationChanged,
                      &waiter, &SignalWaiter::finished);

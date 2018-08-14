@@ -73,7 +73,7 @@ namespace Models {
         };
 
     public:
-        int isEmpty(int index) const;
+        bool isEmpty(int index) const;
         void resetLastUnavailableFilesCount() { m_LastUnavailableFilesCount = 0; }
         void stopListeningToUnavailableFiles();
 

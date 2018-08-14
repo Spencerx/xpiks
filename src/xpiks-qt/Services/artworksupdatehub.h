@@ -63,10 +63,13 @@ namespace Services {
         void onUpdateTimer();
 
     private:
+        void resubmitFailedRequests(std::vector<std::shared_ptr<ArtworkUpdateRequest>> &requests);
+
+    private:
         QMutex m_Lock;
         QVector<int> m_StandardRoles;
         Models::ArtworksListModel &m_ArtworksListModel;
-        std::vector<std::shared_ptr<ArtworkUpdateRequest> > m_UpdateRequests;
+        std::vector<std::shared_ptr<ArtworkUpdateRequest>> m_UpdateRequests;
         QTimer m_UpdateTimer;
         int m_TimerRestartedCount;
     };

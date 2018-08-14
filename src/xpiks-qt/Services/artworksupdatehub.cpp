@@ -145,11 +145,15 @@ namespace Services {
 
         m_ArtworksListModel.processUpdateRequests(requests);
 
+        resubmitFailedRequests(requests);
+    }
+
+    void ArtworksUpdateHub::resubmitFailedRequests(std::vector<std::shared_ptr<ArtworkUpdateRequest> > &requests) {
         QSet<qint64> artworkIDsToUpdate;
         QSet<int> commonRoles;
 
         const size_t size = requests.size();
-        std::vector<std::shared_ptr<ArtworkUpdateRequest> > requestsToResubmit;
+        std::vector<std::shared_ptr<ArtworkUpdateRequest>> requestsToResubmit;
         requestsToResubmit.reserve(size / 3);
 
         for (auto &request: requests) {

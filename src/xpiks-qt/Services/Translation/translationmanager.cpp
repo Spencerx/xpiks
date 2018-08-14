@@ -310,6 +310,7 @@ namespace Translation {
     }
 
     void TranslationManager::updateTranslationTimer() {
+        LOG_DEBUG << "#";
         m_TranslationService.translate(m_Query);
         setIsBusy(true);
     }

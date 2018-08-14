@@ -233,6 +233,7 @@ namespace Models {
 
     void ArtworksListModel::processUpdateRequests(const std::vector<std::shared_ptr<Services::ArtworkUpdateRequest> > &updateRequests) {
         LOG_INFO << updateRequests.size() << "requests to process";
+        if (m_ArtworkList.empty()) { return; }
 
         std::vector<int> indicesToUpdate;
         indicesToUpdate.reserve(updateRequests.size());
@@ -241,8 +242,10 @@ namespace Models {
 
         for (auto &request: updateRequests) {
             size_t index = request->getLastKnownIndex();
+            if (index >= m_ArtworkList.size()) { continue; }
             auto *artwork = getArtwork(index);
-            if (artwork->getItemID().get() == request->getArtworkID().get()) {
+            if ((artwork != nullptr) &&
+                    (artwork->getItemID().get() == request->getArtworkID().get())) {
                 indicesToUpdate.push_back((int)index);
                 rolesToUpdateSet.unite(request->getRolesToUpdate());
             } else {
@@ -261,6 +264,7 @@ namespace Models {
     void ArtworksListModel::updateArtworksByIDs(const QSet<qint64> &artworkIDs, const QVector<int> &rolesToUpdate) {
         LOG_INFO << artworkIDs.size() << "artworks to find by IDs";
         if (artworkIDs.isEmpty()) { return; }
+        if (m_ArtworkList.empty()) { return; }
 
         std::vector<int> indices = filterArtworks<int>(
                     [&artworkIDs](Artworks::ArtworkMetadata *artwork) { return artworkIDs.contains(artwork->getItemID().get()); },

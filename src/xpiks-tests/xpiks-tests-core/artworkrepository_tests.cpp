@@ -6,7 +6,6 @@
 #include <Commands/Files/removedirectorycommand.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Models/Artworks/artworksrepository.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
 #include <Models/Session/recentdirectoriesmodel.h>
 #include <Models/settingsmodel.h>
@@ -23,7 +22,6 @@
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \
     DECLARE_BASIC_MODELS\
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository);\
-    KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
     UndoRedo::UndoRedoManager undoRedoManager;\
     Mocks::CommandManagerMock commandManager(undoRedoManager);\
     artworksListModel.generateAndAddArtworks(count, withVector);
@@ -401,6 +399,33 @@ void ArtworkRepositoryTests::fewEmptyDirectoriesStayTest() {
     artworksListModel.removeFilesFromDirectory(1);
     QCOMPARE(artworksRepository.rowCount(), 2);
 
+    artworksRepository.cleanupEmptyDirectories();
+    QCOMPARE(artworksRepository.rowCount(), 0);
+}
+
+void ArtworkRepositoryTests::removeDirectoryWithHighIDNumberTest() {
+    DECLARE_BASIC_MODELS;
+    Mocks::ArtworksListModelMock artworksListModel(artworksRepository);
+    UndoRedo::UndoRedoManager undoRedoManager;
+    Mocks::CommandManagerMock commandManager(undoRedoManager);
+    Models::SettingsModel settingsModel(environment);
+    settingsModel.initializeConfigs();
+    Models::FilteredArtworksRepository filteredRepository(artworksRepository);
+
+    int dirsCount = 10;
+
+    artworksListModel.generateAndAddDirectories(dirsCount, 5, false);
+
+    while (dirsCount--) {
+        commandManager.processCommand(
+                    std::make_shared<Commands::RemoveDirectoryCommand>(
+                        filteredRepository.getOriginalIndex(0),
+                        artworksListModel,
+                        artworksRepository,
+                        settingsModel));
+    }
+
+    QCOMPARE(artworksListModel.getAvailableArtworksSize(), (size_t)0);
     artworksRepository.cleanupEmptyDirectories();
     QCOMPARE(artworksRepository.rowCount(), 0);
 }
