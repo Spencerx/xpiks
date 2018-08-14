@@ -41,7 +41,7 @@ int SaveFileBasicTest::doTest() {
     VERIFY(m_TestsApp.checkExportSucceeded(), "Failed to export artworks");
 
     m_TestsApp.deleteAllArtworks();
-    VERIFY(m_TestsApp.getArtwork(0) == nullptr, "Failed to remove all artworks");
+    VERIFY(m_TestsApp.getArtworksCount() == 0, "Failed to remove all artworks");
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 

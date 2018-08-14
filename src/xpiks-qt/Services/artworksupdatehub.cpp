@@ -59,6 +59,7 @@ namespace Services {
     }
 
     void ArtworksUpdateHub::updateArtworks(Artworks::WeakArtworksSnapshot const &artworks, UpdateMode updateMode) {
+        LOG_INFO << "Update" << artworks.size() << "artwork(s)";
         decltype(m_UpdateRequests) requests;
         requests.reserve(artworks.size());
         QSet<int> rolesToUpdate = m_StandardRoles.toList().toSet();
@@ -80,6 +81,7 @@ namespace Services {
     }
 
     void ArtworksUpdateHub::updateArtworks(Artworks::ArtworksSnapshot const &artworks, UpdateMode updateMode) {
+        LOG_INFO << "Update" << artworks.size() << "artwork(s)";
         if (artworks.empty()) { return; }
         decltype(m_UpdateRequests) requests;
         requests.reserve(artworks.size());
@@ -103,12 +105,12 @@ namespace Services {
     }
 
 #ifdef INTEGRATION_TESTS
-        void ArtworksUpdateHub::clear() {
-            {
-                QMutexLocker locker(&m_Lock);
-                m_UpdateRequests.clear();
-            }
+    void ArtworksUpdateHub::clear() {
+        {
+            QMutexLocker locker(&m_Lock);
+            m_UpdateRequests.clear();
         }
+    }
 #endif
 
     void ArtworksUpdateHub::onUpdateRequested() {

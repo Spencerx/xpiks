@@ -15,13 +15,13 @@
 #include <Filesystem/directoriescollection.h>
 
 namespace Commands {
-    RemoveDirectoryCommand::RemoveDirectoryCommand(int directoryID,
+    RemoveDirectoryCommand::RemoveDirectoryCommand(int originalIndex,
                                                    Models::ArtworksListModel &artworksList,
                                                    Models::ArtworksRepository &artworksRepository,
                                                    Models::SettingsModel &settingsModel,
                                                    ArtworksCommandTemplate const &addedArtworksTemplate):
         RemoveFilesCommandBase(artworksList, artworksRepository),
-        m_DirectoryID(directoryID),
+        m_DirectoryIndex(originalIndex),
         m_SettingsModel(settingsModel),
         m_AddedArtworksTemplate(addedArtworksTemplate),
         m_IsFullDirectory(false)
@@ -30,10 +30,10 @@ namespace Commands {
 
     Models::ArtworksRemoveResult RemoveDirectoryCommand::removeFiles() {
         LOG_DEBUG << "#";
-        bool foundDirectory = m_ArtworksRepository.tryGetDirectoryPath(m_DirectoryID, m_DirectoryPath);
-        Q_ASSERT(foundDirectory);
-        Models::ArtworksRemoveResult result = m_ArtworksList.removeFilesFromDirectory(m_DirectoryID);
-        m_IsFullDirectory = result.m_FullDirectoryIds.contains(m_DirectoryID);
+        const qint64 directoryID = m_ArtworksRepository.getDirectoryID(m_DirectoryIndex);
+        m_DirectoryPath = m_ArtworksRepository.getDirectoryPath(m_DirectoryIndex);
+        Models::ArtworksRemoveResult result = m_ArtworksList.removeFilesFromDirectory(m_DirectoryIndex);
+        m_IsFullDirectory = result.m_FullDirectoryIds.contains(directoryID);
         return result;
     }
 
@@ -43,7 +43,8 @@ namespace Commands {
 
         if (m_IsFullDirectory) {
 #ifndef CORE_TESTS
-            auto filesCollection = std::make_shared<Filesystem::DirectoriesCollection>(std::initializer_list<QString>{m_DirectoryPath});
+            auto filesCollection = std::make_shared<Filesystem::DirectoriesCollection>(
+                                       std::initializer_list<QString>{m_DirectoryPath});
 #else
             auto filesCollection = m_FakeFiles;
 #endif

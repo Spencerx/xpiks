@@ -54,7 +54,7 @@ int SaveVideoBasicTest::doTest() {
     // --
 
     m_TestsApp.deleteAllArtworks();
-    VERIFY(m_TestsApp.getArtwork(0) == nullptr, "Failed to remove files");
+    VERIFY(m_TestsApp.getArtworksCount() == 0, "Failed to remove files");
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     artwork = m_TestsApp.getArtwork(0);

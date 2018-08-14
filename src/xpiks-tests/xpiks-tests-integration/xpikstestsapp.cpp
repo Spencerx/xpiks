@@ -136,9 +136,9 @@ void XpiksTestsApp::deleteArtworks(Helpers::IndicesRanges const &ranges) {
     m_ArtworksListModel.onUndoStackEmpty();
 }
 
-void XpiksTestsApp::deleteArtworksFromDirectory(int id) {
+void XpiksTestsApp::deleteArtworksFromDirectory(int index) {
     LOG_DEBUG << "#";
-    this->removeDirectory(id);
+    this->removeDirectory(index);
     // delete artworks
     m_ArtworksListModel.onUndoStackEmpty();
 }

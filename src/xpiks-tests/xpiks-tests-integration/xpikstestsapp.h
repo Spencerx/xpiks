@@ -27,7 +27,7 @@ public:
     bool dropItemsForTest(QList<QUrl> const &urls);
     bool continueReading(SignalWaiter &waiter, bool ignoreBackups=true);
     void deleteArtworks(Helpers::IndicesRanges const &ranges);
-    void deleteArtworksFromDirectory(int id);
+    void deleteArtworksFromDirectory(int index);
     void deleteAllArtworks();
     bool undoLastAction();
     bool selectSpellSuggestions(int index);

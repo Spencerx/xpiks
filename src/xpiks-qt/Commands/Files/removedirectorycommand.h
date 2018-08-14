@@ -31,7 +31,7 @@ namespace Commands {
         Q_OBJECT
         using ArtworksCommandTemplate = std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>>;
     public:
-        RemoveDirectoryCommand(int directoryID,
+        RemoveDirectoryCommand(int originalIndex,
                                Models::ArtworksListModel &artworksList,
                                Models::ArtworksRepository &artworksRepository,
                                Models::SettingsModel &settingsModel,
@@ -53,7 +53,7 @@ namespace Commands {
         virtual void restoreFiles() override;
 
     private:
-        int m_DirectoryID;
+        int m_DirectoryIndex;
         QString m_DirectoryPath;
         Models::SettingsModel &m_SettingsModel;
         std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> m_AddedArtworksTemplate;
