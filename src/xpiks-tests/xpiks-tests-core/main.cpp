@@ -30,6 +30,7 @@
 #include "jsonmerge_tests.h"
 #include "warningscheck_tests.h"
 #include "dbimagecache_tests.h"
+#include "common_tests.h"
 
 #define QTEST_CLASS(TestObject, vName, result) \
     TestObject vName; \
@@ -43,6 +44,7 @@ int main(int argc, char *argv[]) {
 
     int result = 0;
 
+    QTEST_CLASS(CommonTests, ct, result);
     QTEST_CLASS(EncryptionTests, et, result);
     QTEST_CLASS(IndicesToRangesTests, itrt, result);
     QTEST_CLASS(AddCommandTests, act, result);

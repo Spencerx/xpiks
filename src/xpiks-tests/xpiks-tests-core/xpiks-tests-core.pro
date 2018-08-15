@@ -208,7 +208,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Commands/Files/removedirectorycommand.cpp \
     ../../xpiks-qt/Suggestion/keywordssuggestor.cpp \
     ../../xpiks-qt/Models/switchermodel.cpp \
-    ../../xpiks-qt/Connectivity/switcherconfig.cpp
+    ../../xpiks-qt/Connectivity/switcherconfig.cpp \
+    common_tests.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -373,5 +374,8 @@ HEADERS += \
     Mocks/microstockclientsmock.h \
     ../../xpiks-qt/Suggestion/keywordssuggestor.h \
     ../../xpiks-qt/Models/switchermodel.h \
-    ../../xpiks-qt/Connectivity/switcherconfig.h
+    ../../xpiks-qt/Connectivity/switcherconfig.h \
+    ../../xpiks-qt/Common/lrucache.h\
+    ../../xpiks-qt/Helpers/hashhelpers.h \
+    common_tests.h
 

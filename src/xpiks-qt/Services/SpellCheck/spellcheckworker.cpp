@@ -179,6 +179,7 @@ namespace SpellCheck {
 
     QStringList SpellCheckWorker::retrieveCorrections(const QString &word) {
         QReadLocker locker(&m_SuggestionsLock);
+        Q_UNUSED(locker);
         QStringList result;
 
         auto it = m_Suggestions.find(word);
