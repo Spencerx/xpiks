@@ -12,9 +12,12 @@
 #define TRANSLATIONWORKER_H
 
 #include <QObject>
+#include <QMutex>
 #include <memory>
 #include <Common/itemprocessingworker.h>
 #include "translationquery.h"
+#include <Common/lrucache.h>
+#include <Helpers/hashhelpers.h>
 
 class LookupDictionary;
 
@@ -34,6 +37,9 @@ namespace Translation {
 
     public:
         void selectDictionary(const QString &dictionaryPath);
+
+    public:
+        bool retrieveTranslation(const QString &query, QString &translation);
 
     protected:
         virtual bool initWorker() override;
@@ -57,6 +63,8 @@ namespace Translation {
     private:
         std::unique_ptr<LookupDictionary> m_LookupDictionary;
         Helpers::AsyncCoordinator &m_InitCoordinator;
+        QMutex m_Mutex;
+        Common::LRUCache<QString, QString> m_Translations;
     };
 }
 

@@ -13,21 +13,7 @@
 namespace Translation {
     TranslationQuery::TranslationQuery(const QString &query, QObject *parent) :
         QObject(parent),
-        m_Query(query),
-        m_Success(false)
+        m_Query(query)
     {
-    }
-
-    void TranslationQuery::setTranslation(const QString &translation) {
-        if (!translation.isEmpty()) {
-            m_Translation = translation;
-            m_Success = true;
-            emit translationAvailable();
-        }
-    }
-
-    void TranslationQuery::setFailed() {
-        m_Success = false;
-        emit translationAvailable();
     }
 }

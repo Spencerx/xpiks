@@ -27,7 +27,7 @@ int TranslatorBasicTest::doTest() {
     QObject::connect(&translationManager, &Translation::TranslationManager::shortTranslationChanged,
                      &waiter, &SignalWaiter::finished);
 
-    translationManager.setQuery("test");
+    translationManager.setQuery(" test  ");
     VERIFY(waiter.wait(), "Timeout for waiting for translation");
 
     VERIFY(!translationManager.getFullTranslation().simplified().isEmpty(), "Full translation is empty");

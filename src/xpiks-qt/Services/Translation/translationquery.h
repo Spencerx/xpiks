@@ -23,20 +23,15 @@ namespace Translation {
 
     public:
         const QString &getQuery() const { return m_Query; }
-        const QString &getTranslation() const { return m_Translation; }
-        bool hasTranslation() const { return m_Success; }
 
     public:
-        void setTranslation(const QString &translation);
-        void setFailed();
+        void notifyTranslated() { emit translationAvailable(); }
 
     signals:
         void translationAvailable();
 
     private:
         QString m_Query;
-        QString m_Translation;
-        bool m_Success;
     };
 }
 

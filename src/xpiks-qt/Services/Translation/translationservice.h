@@ -33,6 +33,7 @@ namespace Translation {
     public:
         void selectDictionary(const QString &dictionaryPath);
         void translate(const QString &what);
+        bool retrieveTranslation(const QString &what, QString &translation);
 
     signals:
         void translationAvailable();

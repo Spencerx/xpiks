@@ -596,7 +596,8 @@ HEADERS += \
     ../../xpiks-qt/Helpers/updatehelpers.h \
     ../../xpiks-qt/Connectivity/testconnection.h \
     ../../xpiks-qt/Helpers/loghighlighter.h \
-    ../../xpiks-qt/Helpers/helpersqmlwrapper.h
+    ../../xpiks-qt/Helpers/helpersqmlwrapper.h \
+    ../../xpiks-qt/Helpers/hashhelpers.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

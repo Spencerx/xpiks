@@ -17,7 +17,8 @@
 namespace Translation {
     TranslationWorker::TranslationWorker(Helpers::AsyncCoordinator &initCoordinator, QObject *parent) :
         QObject(parent),
-        m_InitCoordinator(initCoordinator)
+        m_InitCoordinator(initCoordinator),
+        m_Translations(10)
     {
     }
 
@@ -40,6 +41,12 @@ namespace Translation {
 #endif
     }
 
+    bool TranslationWorker::retrieveTranslation(const QString &query, QString &translation) {
+        QMutexLocker locker(&m_Mutex);
+        Q_UNUSED(locker);
+        return m_Translations.tryGet(query, translation);
+    }
+
     bool TranslationWorker::initWorker() {
         LOG_DEBUG << "#";        
 
@@ -54,24 +61,27 @@ namespace Translation {
     void TranslationWorker::processOneItem(std::shared_ptr<TranslationQuery> &item) {
         std::string translationData;
         auto &query = item->getQuery();
-        QString request = query.simplified().toLower();
         LOG_INFO << "translation request:" << query;
 
         bool translated = false;
         do {
-            if (request.isEmpty()) { break; }
+            if (query.isEmpty()) { break; }
 
             ensureDictionaryLoaded();
-            std::string word = request.toUtf8().toStdString();
+            std::string word = query.toUtf8().toStdString();
 
             if (!m_LookupDictionary->translate(word, translationData)) { break; }
 
             QString translation = QString::fromUtf8(translationData.c_str());
-            item->setTranslation(translation);
-            translated = true;
-        } while (false);
+            if (translation.isEmpty()) { break; }
 
-        if (!translated) { item->setFailed(); }
+            {
+                QMutexLocker locker(&m_Mutex);
+                Q_UNUSED(locker);
+                m_Translations.put(query, translation);
+            }
+            item->notifyTranslated();
+        } while (false);
     }
 
     void TranslationWorker::ensureDictionaryLoaded() {

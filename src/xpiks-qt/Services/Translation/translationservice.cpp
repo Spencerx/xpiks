@@ -78,12 +78,24 @@ namespace Translation {
         QStringList words = what.split(QChar::Space, QString::SkipEmptyParts);
         QString wordToTranslate = words.isEmpty() ? "" : words.last();
 
-        std::shared_ptr<TranslationQuery> query(new TranslationQuery(wordToTranslate),
+        std::shared_ptr<TranslationQuery> query(new TranslationQuery(wordToTranslate.simplified().toLower()),
                                                 [](TranslationQuery *tq) { tq->deleteLater(); });
         QObject::connect(query.get(), &TranslationQuery::translationAvailable,
                          this, &TranslationService::translationAvailable);
 
         m_TranslationWorker->submitItem(query);
+    }
+
+    bool TranslationService::retrieveTranslation(const QString &what, QString &translation) {
+        Q_ASSERT(m_TranslationWorker != nullptr);
+        if (m_TranslationWorker == nullptr) { return false; }
+
+        QStringList words = what.split(QChar::Space, QString::SkipEmptyParts);
+        QString wordToTranslate = words.isEmpty() ? "" : words.last();
+
+        bool found = m_TranslationWorker->retrieveTranslation(wordToTranslate.simplified().toLower(),
+                                                              translation);
+        return found;
     }
 
     void TranslationService::workerFinished() {

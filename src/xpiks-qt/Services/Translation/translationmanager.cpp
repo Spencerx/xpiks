@@ -281,12 +281,9 @@ namespace Translation {
 
     void TranslationManager::translationArrived() {
         LOG_DEBUG << "#";
-        TranslationQuery *query = qobject_cast<TranslationQuery *>(sender());
-        Q_ASSERT(query != nullptr);
+        QString translation;
 
-        if (query->hasTranslation()) {
-            QString translation = query->getTranslation();
-
+        if (m_TranslationService.retrieveTranslation(m_Query, translation)) {
             m_FullTranslation = translation;
             m_ShortenedTranslation = translation.left(SHORT_TRANSLATION_SYMBOLS);
         } else {
