@@ -12,6 +12,7 @@ private slots:
     void lruCacheFrequentGetTest();
     void lruCacheOnlyLastOneTest();
     void lruCacheAddEnoughTest();
+    void lruCacheAddManyMoreTest();
 };
 
 #endif // COMMON_TESTS_H

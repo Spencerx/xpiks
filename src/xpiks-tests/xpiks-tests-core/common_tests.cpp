@@ -25,6 +25,8 @@ void CommonTests::lruCacheGetMissingTest() {
     Common::LRUCache<QString, int> cache(3);
 
     QCOMPARE(cache.get("test", -1), -1);
+    int v;
+    QVERIFY(!cache.tryGet("test", v));
 }
 
 void CommonTests::lruCacheFrequentGetTest() {
@@ -44,6 +46,8 @@ void CommonTests::lruCacheFrequentGetTest() {
     QCOMPARE(cache.get("test 2", -1), -1);
     QCOMPARE(cache.get("test 3", -1), -1);
     QCOMPARE(cache.get("test 4", -1), -1);
+    int v;
+    QVERIFY(!cache.tryGet("test", v));
 }
 
 void CommonTests::lruCacheOnlyLastOneTest() {
@@ -81,4 +85,19 @@ void CommonTests::lruCacheAddEnoughTest() {
     while (times--) {
         QVERIFY(cache.get(QString("test %1").arg(times), -1) != -1);
     }
+}
+
+void CommonTests::lruCacheAddManyMoreTest() {
+    Common::LRUCache<QString, int> cache(500, 100);
+
+    int times = 50000;
+    while (times--) {
+        cache.put(QString("test %1").arg(times), times);
+    }
+
+    cache.normalize();
+
+    QCOMPARE(cache.size(), (size_t)500);
+
+    QCOMPARE(cache.get("test 0", -1), 0);
 }
