@@ -1171,7 +1171,7 @@ namespace Models {
     }
 
     int ArtworksListModel::foreachArtwork(std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
+                                          std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
         return foreachArtwork(Helpers::IndicesRanges(0, (int)getArtworksSize()),
                               pred,
                               action);

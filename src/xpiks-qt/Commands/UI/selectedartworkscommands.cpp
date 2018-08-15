@@ -84,7 +84,13 @@ namespace Commands {
 
         void ReimportMetadataForSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
-            m_Target.readMetadataExifTool(m_Source.getSelectedArtworks(), INVALID_BATCH_ID);
+            auto snapshot = std::move(m_Source.getSelectedArtworks());
+            for (auto &locker: snapshot.getRawData()) {
+                Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
+                artwork->prepareForReimport();
+            }
+
+            m_Target.readMetadataExifTool(snapshot, INVALID_BATCH_ID);
         }
 
         void ExportSelectedToCSVCommand::execute(QVariant const &) {
