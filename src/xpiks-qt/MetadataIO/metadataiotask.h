@@ -16,19 +16,15 @@
 #include <Common/irefcountedobject.h>
 
 namespace MetadataIO {
-    class MetadataIOTaskBase: public Common::HoldLocker<Artworks::ArtworkMetadata>
+    class MetadataIOTaskBase
     {
     public:
-        MetadataIOTaskBase(Artworks::ArtworkMetadata *artwork):
-            Common::HoldLocker<Artworks::ArtworkMetadata>(artwork)
-        {
-        }
+        virtual ~MetadataIOTaskBase() {}
     };
 
     class MetadataSearchTask: public MetadataIOTaskBase {
     public:
         MetadataSearchTask(Suggestion::LocalLibraryQuery *query):
-            MetadataIOTaskBase(nullptr),
             m_Query(query)
         {
         }
@@ -49,15 +45,17 @@ namespace MetadataIO {
         };
 
     public:
-        MetadataReadWriteTask(Artworks::ArtworkMetadata *metadata, ReadWriteAction readWriteAction):
-            MetadataIOTaskBase(metadata),
+        MetadataReadWriteTask(Artworks::ArtworkMetadata *artwork, ReadWriteAction readWriteAction):
+            m_Locker(artwork),
             m_ReadWriteAction(readWriteAction)
         {}
 
     public:
         ReadWriteAction getReadWriteAction() const { return m_ReadWriteAction; }
+        Artworks::ArtworkMetadata *getArtworkMetadata() { return m_Locker.getArtworkMetadata(); }
 
     private:
+        Common::HoldLocker<Artworks::ArtworkMetadata> m_Locker;
         ReadWriteAction m_ReadWriteAction;
     };
 }
