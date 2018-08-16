@@ -50,8 +50,8 @@ namespace Models {
     class ArtworksRepository;
     class ICurrentEidtable;
 
-    using ArtworkSpellCheckMessage = Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>;
-    using ArtworksListSpellCheckMessage = Common::NamedType<std::vector<Artworks::ArtworkMetadata*>, Common::MessageType::SpellCheck>;
+    using ArtworkSpellCheckMessage = Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>, Common::MessageType::SpellCheck>;
+    using ArtworksListSpellCheckMessage = Common::NamedType<std::vector<std::shared_ptr<Artworks::ArtworkMetadata>>, Common::MessageType::SpellCheck>;
     using UnavailableFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;
 
     class ArtworksListModel:
@@ -64,7 +64,8 @@ namespace Models {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
 
-        using ArtworksContainer = std::deque<Artworks::ArtworkMetadata *>;
+        using ArtworkItem = std::shared_ptr<Artworks::ArtworkMetadata>;
+
         using Common::MessagesSource<ArtworkSpellCheckMessage>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
         using Common::MessagesSource<ArtworksListSpellCheckMessage>::sendMessage;
@@ -173,7 +174,7 @@ namespace Models {
     public:
         Artworks::ArtworkMetadata *getArtworkObject(int index) const;
         Artworks::BasicMetadataModel *getBasicModelObject(int index) const;
-        Artworks::ArtworkMetadata *getArtwork(size_t index) const;
+        ArtworkItem getArtwork(size_t index) const;
 
     public:
         std::shared_ptr<Commands::ICommand> removeKeywordAt(int artworkIndex, int keywordIndex);
@@ -217,18 +218,18 @@ namespace Models {
 
     protected:
         virtual QHash<int, QByteArray> roleNames() const override;
-        virtual Artworks::ArtworkMetadata *createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID);
+        virtual ArtworkItem createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID);
 
     private:
-        Artworks::ArtworkMetadata *accessArtwork(size_t index) const;
-        void destroyArtwork(Artworks::ArtworkMetadata *artwork);
+        std::shared_ptr<Artworks::ArtworkMetadata> accessArtwork(size_t index) const;
+        void destroyArtwork(ArtworkItem const &artwork);
         int getNextID();
 
     private:
         template<typename T>
         std::vector<T> filterArtworks(const Helpers::IndicesRanges &ranges,
-                                      std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                                      std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
+                                      std::function<bool (ArtworkItem const &)> pred,
+                                      std::function<T(ArtworkItem const &, size_t)> mapper) const {
             std::vector<T> result;
             result.reserve(ranges.size());
             for (auto &r: ranges.getRanges()) {
@@ -245,29 +246,29 @@ namespace Models {
         }
 
         template<typename T>
-        std::vector<T> filterArtworks(std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                                      std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
+        std::vector<T> filterArtworks(std::function<bool (ArtworkItem const &)> pred,
+                                      std::function<T(ArtworkItem const &, size_t)> mapper) const {
             return filterArtworks(Helpers::IndicesRanges(getArtworksSize()),
                                   pred,
                                   mapper);
         }
 
         int foreachArtwork(const Helpers::IndicesRanges &ranges,
-                           std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const;
-        int foreachArtwork(std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const;
+                           std::function<bool (ArtworkItem const &)> pred,
+                           std::function<void (ArtworkItem const &, size_t)> action) const;
+        int foreachArtwork(std::function<bool (ArtworkItem const &)> pred,
+                           std::function<void (ArtworkItem const &, size_t)> action) const;
         int foreachArtwork(const Helpers::IndicesRanges &ranges,
-                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const;
+                           std::function<void (ArtworkItem const &, size_t)> action) const;
 
         template<typename T>
         void foreachArtworkAs(const Helpers::IndicesRanges &ranges,
-                              std::function<bool (T *)> pred,
-                              std::function<void (T *, size_t)> action) const {
+                              std::function<bool (std::shared_ptr<T> const &)> pred,
+                              std::function<void (std::shared_ptr<T> const &, size_t)> action) const {
             for (auto &r: ranges.getRanges()) {
                 for (int i = r.first; i <= r.second; i++) {
-                    auto *artwork = accessArtwork(i);
-                    T *t = dynamic_cast<T*>(artwork);
+                    auto &artwork = accessArtwork(i);
+                    std::shared_ptr<T> t = std::dynamic_pointer_cast<T>(artwork);
                     if ((t != nullptr) && pred(t)) {
                         action(t, i);
                     }
@@ -276,24 +277,18 @@ namespace Models {
         }
 
     protected:
-        ArtworksContainer const &getFinalizationList() const { return m_FinalizationList; }
-
         template<typename T>
-        std::vector<T> filterAvailableArtworks(std::function<T(Artworks::ArtworkMetadata *, size_t)> mapper) const {
-            return filterArtworks([](Artworks::ArtworkMetadata *artwork) {
+        std::vector<T> filterAvailableArtworks(std::function<T(ArtworkItem const &, size_t)> mapper) const {
+            return filterArtworks([](ArtworkItem const &artwork) {
                 return !artwork->isUnavailable() && !artwork->isRemoved();
             }, mapper);
         }
 
     private:
-        ArtworksContainer m_ArtworkList;
+        std::deque<std::shared_ptr<Artworks::ArtworkMetadata>> m_ArtworkList;
         qint64 m_LastID;
         size_t m_CurrentItemIndex;
         ArtworksRepository &m_ArtworksRepository;
-        ArtworksContainer m_FinalizationList;
-#ifdef QT_DEBUG
-        ArtworksContainer m_DestroyedList;
-#endif
     };
 }
 

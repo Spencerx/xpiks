@@ -13,7 +13,6 @@
 #include "artworkslistmodel.h"
 #include <Common/flags.h>
 #include <Common/defines.h>
-#include <Common/irefcountedobject.h>
 #include <Commands/commandmanager.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Artworks/artworkmetadata.h>

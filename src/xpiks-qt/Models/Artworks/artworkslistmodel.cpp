@@ -13,7 +13,6 @@
 #include <QtQml>
 #include <functional>
 #include "artworksrepository.h"
-#include <Common/irefcountedobject.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Artworks/imageartwork.h>
 #include <Artworks/videoartwork.h>
@@ -34,6 +33,10 @@
 #include <Services/artworkupdaterequest.h>
 
 namespace Models {
+    void artworkDeleter(Artworks::ArtworkMetadata *artwork) {
+        artwork->deleteLater();
+    }
+
     using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
@@ -52,14 +55,6 @@ namespace Models {
     }
 
     ArtworksListModel::~ArtworksListModel() {
-        for (auto *artwork: m_ArtworkList) {
-            if (artwork->release()) {
-                delete artwork;
-            } else {
-                m_FinalizationList.push_back(artwork);
-            }
-        }
-
         LOG_FOR_TESTS << "Artworks destroyed";
     }
 
@@ -162,7 +157,7 @@ namespace Models {
 
     bool ArtworksListModel::isInSelectedDirectory(int artworkIndex) {
         bool result = false;
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        ArtworkItem &artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             auto dirID = artwork->getDirectoryID();
             result = m_ArtworksRepository.isDirectorySelected(dirID);
@@ -175,7 +170,7 @@ namespace Models {
         if (m_CurrentItemIndex != index) {
             m_CurrentItemIndex = index;
 
-            Artworks::ArtworkMetadata *artwork = getArtwork(index);
+            ArtworkItem &artwork = getArtwork(index);
             if (artwork != nullptr) {
                 using namespace Commands;
                 auto editable = std::make_shared<CurrentEditableArtwork>(
@@ -243,7 +238,7 @@ namespace Models {
         for (auto &request: updateRequests) {
             size_t index = request->getLastKnownIndex();
             if (index >= m_ArtworkList.size()) { continue; }
-            auto *artwork = getArtwork(index);
+            ArtworkItem &artwork = getArtwork(index);
             if ((artwork != nullptr) &&
                     (artwork->getItemID().get() == request->getArtworkID().get())) {
                 indicesToUpdate.push_back((int)index);
@@ -302,7 +297,7 @@ namespace Models {
                 qint64 directoryID = 0;
                 auto flags = m_ArtworksRepository.accountFile(file.m_Path, directoryID);
                 if (flags != Common::AccountFileFlags::None) {
-                    Artworks::ArtworkMetadata *artwork = createArtwork(file, directoryID);
+                    ArtworkItem artwork = createArtwork(file, directoryID);
                     m_ArtworkList.push_back(artwork);
                     snapshot.append(artwork);
                     connectArtworkSignals(artwork);
@@ -403,7 +398,7 @@ namespace Models {
         }
         endResetModel();
 
-        for (auto *artwork: artworksToDestroy) {
+        for (auto &artwork: artworksToDestroy) {
             destroyArtwork(artwork);
         }
     }
@@ -424,17 +419,17 @@ namespace Models {
             auto itBegin = m_ArtworkList.begin() + r.first;
             auto itEnd = m_ArtworkList.begin() + (r.second + 1);
 
-            std::vector<Artworks::ArtworkMetadata *> itemsToDelete(itBegin, itEnd);
+            std::vector<ArtworkItem> itemsToDelete(itBegin, itEnd);
             if (!willReset) { emit beginRemoveRows(dummy, r.first, r.second); }
             {
                 m_ArtworkList.erase(itBegin, itEnd);
             }
             if (!willReset) { emit endRemoveRows(); }
 
-            std::vector<Artworks::ArtworkMetadata *>::iterator it = itemsToDelete.begin();
-            std::vector<Artworks::ArtworkMetadata *>::iterator itemsEnd = itemsToDelete.end();
+            std::vector<ArtworkItem>::iterator it = itemsToDelete.begin();
+            std::vector<ArtworkItem>::iterator itemsEnd = itemsToDelete.end();
             for (; it < itemsEnd; it++) {
-                Artworks::ArtworkMetadata *artwork = *it;
+                auto &artwork = *it;
                 Q_ASSERT(artwork->isRemoved());
                 LOG_INTEGRATION_TESTS << "File removed:" << artwork->getFilepath();
                 destroyArtwork(artwork);
@@ -562,7 +557,7 @@ namespace Models {
 
     void ArtworksListModel::spellCheckAll() {
         LOG_DEBUG << "#";
-        std::vector<Artworks::ArtworkMetadata*> artworks(m_ArtworkList.begin(), m_ArtworkList.end());
+        std::vector<std::shared_ptr<Artworks::ArtworkMetadata>> artworks(m_ArtworkList.begin(), m_ArtworkList.end());
         sendMessage(artworks);
     }
 
@@ -683,19 +678,19 @@ namespace Models {
         return keywordsModel;
     }
 
-    Artworks::ArtworkMetadata *ArtworksListModel::getArtwork(size_t index) const {
+    ArtworksListModel::ArtworkItem ArtworksListModel::getArtwork(size_t index) const {
         Q_ASSERT(index < m_ArtworkList.size());
         if (index < m_ArtworkList.size()) {
             return accessArtwork(index);
         }
 
-        return nullptr;
+        return ArtworkItem();
     }
 
     std::shared_ptr<Commands::ICommand> ArtworksListModel::removeKeywordAt(int artworkIndex, int keywordIndex) {
         LOG_INFO << "artwork index" << artworkIndex << "| keyword index" << keywordIndex;
         std::shared_ptr<Commands::ICommand> command;
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        ArtworkItem &artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
@@ -739,7 +734,7 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::appendKeyword(int artworkIndex, const QString &keyword) {
         LOG_INFO << "artwork index" << artworkIndex << "| keyword" << keyword;
         std::shared_ptr<Commands::ICommand> command;
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        ArtworkItem &artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
@@ -763,7 +758,7 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::pasteKeywords(int artworkIndex, const QStringList &keywords) {
         std::shared_ptr<Commands::ICommand> command;
         LOG_INFO << "artwork index" << artworkIndex << "|" << keywords;
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        ArtworkItem &artwork = getArtwork(artworkIndex);
         if ((artwork != nullptr) && !keywords.empty()) {
             setCurrentIndex(artworkIndex);
 
@@ -793,7 +788,7 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::addSuggestedKeywords(int artworkIndex, const QStringList &keywords) {
         std::shared_ptr<Commands::ICommand> command;
         LOG_DEBUG << "artwork index" << artworkIndex;
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        ArtworkItem &artwork = getArtwork(artworkIndex);
         if (artwork != nullptr && !keywords.empty()) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
@@ -840,7 +835,7 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::plainTextEdit(int artworkIndex, const QString &rawKeywords, bool spaceIsSeparator) {
         LOG_DEBUG << "Plain text edit for item" << artworkIndex;
         std::shared_ptr<Commands::ICommand> command;
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        ArtworkItem &artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             QVector<QChar> separators;
@@ -871,7 +866,7 @@ namespace Models {
                                                                         KeywordsPresets::IPresetsManager &presetsManager) {
         LOG_INFO << "item" << artworkIndex << "keyword" << keywordIndex << "preset" << presetID;
         std::shared_ptr<Commands::ICommand> command;
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        ArtworkItem &artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
@@ -894,7 +889,7 @@ namespace Models {
                                                                               KeywordsPresets::IPresetsManager &presetsManager) {
         LOG_INFO << "item" << artworkIndex;
         std::shared_ptr<Commands::ICommand> command = std::make_shared<Commands::EmptyCommand>();
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        ArtworkItem &artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
 
@@ -922,7 +917,7 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::addPreset(int artworkIndex, unsigned int presetID, KeywordsPresets::IPresetsManager &presetsManager) {
         LOG_INFO << "item" << artworkIndex << "preset" << presetID;
         std::shared_ptr<Commands::ICommand> command;
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        ArtworkItem &artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
@@ -946,7 +941,7 @@ namespace Models {
                                                                                     AutoComplete::ICompletionSource &completionsSource) {
         LOG_INFO << "item" << artworkIndex << "completionID" << completionID;
         std::shared_ptr<Commands::ICommand> command = std::make_shared<Commands::EmptyCommand>();
-        Artworks::ArtworkMetadata *artwork = getArtwork(artworkIndex);
+        ArtworkItem &artwork = getArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
 
@@ -1058,13 +1053,13 @@ namespace Models {
 
     void ArtworksListModel::userDictUpdateHandler(const QStringList &keywords, bool overwritten) {
         LOG_DEBUG << "#";
-        for (auto *artwork: m_ArtworkList) {
-            auto *basicModel = artwork->getBasicModel();
-            SpellCheck::SpellCheckItemInfo *info = basicModel->getSpellCheckInfo();
+        for (auto &artwork: m_ArtworkList) {
+            auto &basicModel = artwork->getBasicModel();
+            SpellCheck::SpellCheckItemInfo &info = basicModel.getSpellCheckInfo();
             if (!overwritten) {
-                info->removeWordsFromErrors(keywords);
+                info.removeWordsFromErrors(keywords);
             } else {
-                info->clear();
+                info.clear();
             }
         }
 
@@ -1102,50 +1097,37 @@ namespace Models {
         return roles;
     }
 
-    Artworks::ArtworkMetadata *ArtworksListModel::createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID) {
-        Artworks::ArtworkMetadata *artwork = nullptr;
+    ArtworksListModel::ArtworkItem ArtworksListModel::createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID) {
+        ArtworkItem artwork;
         if (file.m_Type == Filesystem::ArtworkFileType::Image) {
-            artwork = new Artworks::ImageArtwork(file.m_Path, getNextID(), directoryID);
+            artwork.reset(new Artworks::ImageArtwork(file.m_Path, getNextID(), directoryID),
+                          artworkDeleter);
         } else if (file.m_Type == Filesystem::ArtworkFileType::Video) {
-            artwork = new Artworks::VideoArtwork(file.m_Path, getNextID(), directoryID);
+            artwork.reset(new Artworks::VideoArtwork(file.m_Path, getNextID(), directoryID),
+                          artworkDeleter);
         }
         Q_ASSERT(artwork != nullptr);
         return artwork;
     }
 
-    Artworks::ArtworkMetadata *ArtworksListModel::accessArtwork(size_t index) const {
+    std::shared_ptr<Artworks::ArtworkMetadata> ArtworksListModel::accessArtwork(size_t index) const {
         Q_ASSERT(index < m_ArtworkList.size());
-        Artworks::ArtworkMetadata *artwork = m_ArtworkList.at(index);
+        auto &artwork = m_ArtworkList.at(index);
         artwork->setCurrentIndex(index);
         return artwork;
     }
 
-    void ArtworksListModel::destroyArtwork(Artworks::ArtworkMetadata *artwork) {
-        if (artwork->release()) {
-            LOG_INTEGRATION_TESTS << "Destroying metadata" << artwork->getItemID() << "for real";
+    void ArtworksListModel::destroyArtwork(ArtworkItem const &artwork) {
+        LOG_INTEGRATION_TESTS << "Destroying metadata" << artwork->getItemID();
 
-            bool disconnectStatus = QObject::disconnect(artwork, 0, this, 0);
-            if (disconnectStatus == false) { LOG_DEBUG << "Disconnect Artwork from ArtworksListModel returned false"; }
-            disconnectStatus = QObject::disconnect(this, 0, artwork, 0);
-            if (disconnectStatus == false) { LOG_DEBUG << "Disconnect ArtworksListModel from Artwork returned false"; }
+        bool disconnectStatus = QObject::disconnect(artwork, 0, this, 0);
+        if (disconnectStatus == false) { LOG_DEBUG << "Disconnect Artwork from ArtworksListModel returned false"; }
+        disconnectStatus = QObject::disconnect(this, 0, artwork, 0);
+        if (disconnectStatus == false) { LOG_DEBUG << "Disconnect ArtworksListModel from Artwork returned false"; }
 
-            artwork->deepDisconnect();
-            artwork->clearSpellingInfo();
-#ifdef QT_DEBUG
-            m_DestroyedList.push_back(artwork);
-#else
-            artwork->deleteLater();
-#endif
-        } else {
-            LOG_DEBUG << "Metadata #" << artwork->getItemID() << "is locked. Postponing destruction...";
-
-            artwork->disconnect();
-            auto *metadataModel = artwork->getBasicModel();
-            metadataModel->disconnect();
-            metadataModel->clearModel();
-
-            m_FinalizationList.push_back(artwork);
-        }
+        artwork->getBasicModel().clearModel();
+        artwork->deepDisconnect();
+        artwork->clearSpellingInfo();
     }
 
     int ArtworksListModel::getNextID() {
@@ -1153,14 +1135,14 @@ namespace Models {
     }
 
     int ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
-                                          std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                                          std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
+                                          std::function<bool (ArtworkItem const &)> pred,
+                                          std::function<void (ArtworkItem const &, size_t)> action) const {
         int itemsProcessed = 0;
         for (auto &r: ranges.getRanges()) {
             if ((r.first < 0) || (r.second >= m_ArtworkList.size())) { continue; }
 
             for (int i = r.first; i <= r.second; i++) {
-                auto *artwork = accessArtwork(i);
+                auto &artwork = accessArtwork(i);
                 if (pred(artwork)) {
                     action(artwork, i);
                     itemsProcessed++;
@@ -1170,17 +1152,17 @@ namespace Models {
         return itemsProcessed;
     }
 
-    int ArtworksListModel::foreachArtwork(std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                                          std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
+    int ArtworksListModel::foreachArtwork(std::function<bool (ArtworkItem const &)> pred,
+                                          std::function<void (ArtworkItem const &, size_t)> action) const {
         return foreachArtwork(Helpers::IndicesRanges(0, (int)getArtworksSize()),
                               pred,
                               action);
     }
 
     int ArtworksListModel::foreachArtwork(const Helpers::IndicesRanges &ranges,
-                                           std::function<void (Artworks::ArtworkMetadata *, size_t)> action) const {
+                                           std::function<void (ArtworkItem const &, size_t)> action) const {
         return foreachArtwork(ranges,
-                              [](Artworks::ArtworkMetadata *){ return true; },
+                              [](ArtworkItem const &){ return true; },
         action);
     }
 }

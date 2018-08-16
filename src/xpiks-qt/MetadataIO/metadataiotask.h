@@ -13,7 +13,6 @@
 
 #include <Artworks/artworkmetadata.h>
 #include <Suggestion/locallibraryquery.h>
-#include <Common/irefcountedobject.h>
 
 namespace MetadataIO {
     class MetadataIOTaskBase

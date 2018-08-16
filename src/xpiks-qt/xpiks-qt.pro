@@ -480,7 +480,6 @@ HEADERS += \
     Common/defines.h \
     Common/delayedactionentity.h \
     Common/flags.h \
-    Common/hold.h \
     Common/iflagsprovider.h \
     Common/isystemenvironment.h \
     Common/itemprocessingworker.h \
@@ -504,7 +503,6 @@ HEADERS += \
     Services/artworksinspectionhub.h \
     Common/messages.h \
     Models/Editing/quickbuffermessage.h \
-    Common/irefcountedobject.h \
     Services/SpellCheck/ispellcheckable.h \
     Artworks/iartworkmetadata.h \
     QMLExtensions/uicommanddispatcher.h \

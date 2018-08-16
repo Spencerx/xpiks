@@ -14,7 +14,6 @@
 #include <QRegExp>
 #include <QDir>
 #include <Common/defines.h>
-#include <Common/irefcountedobject.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/imageartwork.h>
 #include <Helpers/filehelpers.h>

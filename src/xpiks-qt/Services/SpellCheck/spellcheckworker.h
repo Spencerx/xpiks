@@ -19,7 +19,6 @@
 #include "spellcheckitem.h"
 #include <Common/itemprocessingworker.h>
 #include <Common/isystemenvironment.h>
-#include <Common/irefcountedobject.h>
 #include <Models/settingsmodel.h>
 #include <Helpers/asynccoordinator.h>
 

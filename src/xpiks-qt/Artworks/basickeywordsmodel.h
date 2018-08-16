@@ -157,7 +157,6 @@ namespace Artworks {
 
     private:
         QReadWriteLock m_KeywordsLock;
-        Common::Hold &m_Hold;
         std::shared_ptr<BasicKeywordsModelImpl> m_Impl;
     };
 }

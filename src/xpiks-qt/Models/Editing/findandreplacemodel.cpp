@@ -12,7 +12,6 @@
 #include <QAbstractListModel>
 #include <Common/logging.h>
 #include <Common/defines.h>
-#include <Common/irefcountedobject.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/videoartwork.h>
 #include <Models/settingsmodel.h>

@@ -18,7 +18,6 @@
 #include <Common/flags.h>
 #include "iartworkmetadata.h"
 #include <Services/SpellCheck/ispellcheckable.h>
-#include <Common/irefcountedobject.h>
 
 namespace SpellCheck {
     class SpellCheckQueryItem;
@@ -31,21 +30,19 @@ namespace Artworks {
     class BasicMetadataModel :
             public BasicKeywordsModel,
             public IArtworkMetadata,
-            public SpellCheck::ISpellCheckable,
-            public Common::IRefCountedObject
+            public SpellCheck::ISpellCheckable
     {
         Q_OBJECT
         Q_PROPERTY(bool hasTitleSpellErrors READ hasTitleSpellError NOTIFY titleSpellingChanged)
         Q_PROPERTY(bool hasDescriptionSpellErrors READ hasDescriptionSpellError NOTIFY descriptionSpellingChanged)
     public:
-        BasicMetadataModel(Common::Hold &hold, QObject *parent=0);
+        BasicMetadataModel(SpellCheck::SpellCheckItemInfo &spellCheckInfo, QObject *parent=0);
 
     public:
         Q_INVOKABLE bool hasAnySpellingErrors() { return hasSpellErrors(); }
 
     public:
-        void setSpellCheckInfo(SpellCheck::SpellCheckItemInfo *info) { m_SpellCheckInfo = info; }
-        SpellCheck::SpellCheckItemInfo *getSpellCheckInfo() const { return m_SpellCheckInfo; }
+        SpellCheck::SpellCheckItemInfo &getSpellCheckInfo() const { return m_SpellCheckInfo; }
         QString getDescription();
         QString getTitle();
 
@@ -129,7 +126,7 @@ namespace Artworks {
     private:
         QReadWriteLock m_DescriptionLock;
         QReadWriteLock m_TitleLock;
-        SpellCheck::SpellCheckItemInfo *m_SpellCheckInfo;
+        SpellCheck::SpellCheckItemInfo &m_SpellCheckInfo;
         QString m_Description;
         QString m_Title;
     };

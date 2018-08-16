@@ -12,7 +12,6 @@
 #include <QVector>
 #include <Helpers/indiceshelper.h>
 #include <Common/defines.h>
-#include <Common/irefcountedobject.h>
 #include <Artworks/imageartwork.h>
 #include <Artworks/videoartwork.h>
 #include <Helpers/cpphelpers.h>

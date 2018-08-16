@@ -27,7 +27,6 @@
 #include <Common/hold.h>
 #include <Common/types.h>
 #include <Common/delayedactionentity.h>
-#include <Common/irefcountedobject.h>
 #include <Services/SpellCheck/spellcheckiteminfo.h>
 #include <Services/SpellCheck/ispellcheckable.h>
 #include <UndoRedo/artworkmetadatabackup.h>
@@ -46,8 +45,7 @@ namespace Artworks {
             public QObject,
             public Common::DelayedActionEntity,
             public Artworks::IArtworkMetadata,
-            public SpellCheck::ISpellCheckable,
-            public Common::IRefCountedObject
+            public SpellCheck::ISpellCheckable
     {
         Q_OBJECT
 
@@ -146,8 +144,8 @@ namespace Artworks {
         void setWarningsFlags(Common::WarningFlags flags) { m_WarningsFlags = flags; }
 
     public:
-        BasicMetadataModel *getBasicModel() { return &m_MetadataModel; }
-        const BasicMetadataModel *getBasicModel() const { return &m_MetadataModel; }
+        BasicMetadataModel &getBasicModel() { return m_MetadataModel; }
+        BasicMetadataModel const &getBasicModel() const { return m_MetadataModel; }
 
         bool isLockedForEditing() { return getIsLockedForEditingFlag(); }
         void setIsLockedForEditing(bool value) { setIsLockedForEditingFlag(value); }

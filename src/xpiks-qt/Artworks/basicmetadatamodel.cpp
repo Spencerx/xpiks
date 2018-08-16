@@ -21,9 +21,9 @@
 #include <Common/flags.h>
 
 namespace Artworks {
-    BasicMetadataModel::BasicMetadataModel(Common::Hold &hold, QObject *parent):
+    BasicMetadataModel::BasicMetadataModel(SpellCheck::SpellCheckItemInfo &spellCheckInfo, QObject *parent):
         BasicKeywordsModel(hold, parent),
-        m_SpellCheckInfo(NULL)
+        m_SpellCheckInfo(spellCheckInfo)
     { }
 
     QString BasicMetadataModel::getDescription() {
@@ -72,7 +72,7 @@ namespace Artworks {
 
         for (int i = 0; i < length; ++i) {
             const QString &word = descriptionWords.at(i);
-            if (m_SpellCheckInfo->hasDescriptionError(word.toLower())) {
+            if (m_SpellCheckInfo.hasDescriptionError(word.toLower())) {
                 LOG_DEBUG << word << "has wrong spelling";
 
                 misspelledWords.append(word);
@@ -92,7 +92,7 @@ namespace Artworks {
 
         for (int i = 0; i < length; ++i) {
             const QString &word = titleWords.at(i);
-            if (m_SpellCheckInfo->hasTitleError(word.toLower())) {
+            if (m_SpellCheckInfo.hasTitleError(word.toLower())) {
                 LOG_DEBUG << word << "has wrong spelling";
 
                 misspelledWords.append(word);
@@ -237,7 +237,7 @@ namespace Artworks {
         const QStringList &descriptionWords = getDescriptionWords();
 
         foreach(const QString &word, descriptionWords) {
-            if (m_SpellCheckInfo->hasDescriptionError(word.toLower())) {
+            if (m_SpellCheckInfo.hasDescriptionError(word.toLower())) {
                 anyError = true;
                 break;
             }
@@ -252,7 +252,7 @@ namespace Artworks {
         const QStringList &titleWords = getTitleWords();
 
         foreach(const QString &word, titleWords) {
-            if (m_SpellCheckInfo->hasTitleError(word.toLower())) {
+            if (m_SpellCheckInfo.hasTitleError(word.toLower())) {
                 anyError = true;
                 break;
             }
@@ -262,11 +262,11 @@ namespace Artworks {
     }
 
     bool BasicMetadataModel::hasDescriptionWordSpellError(const QString &word) {
-        return m_SpellCheckInfo->hasDescriptionError(word.toLower());
+        return m_SpellCheckInfo.hasDescriptionError(word.toLower());
     }
 
     bool BasicMetadataModel::hasTitleWordSpellError(const QString &word) {
-        return m_SpellCheckInfo->hasTitleError(word.toLower());
+        return m_SpellCheckInfo.hasTitleError(word.toLower());
     }
 
     bool BasicMetadataModel::hasSpellErrors() {
@@ -278,8 +278,8 @@ namespace Artworks {
     }
 
     bool BasicMetadataModel::hasDuplicates() {
-        bool result = m_SpellCheckInfo->anyDescriptionDuplicates() ||
-                m_SpellCheckInfo->anyTitleDuplicates() ||
+        bool result = m_SpellCheckInfo.anyDescriptionDuplicates() ||
+                m_SpellCheckInfo.anyTitleDuplicates() ||
                 BasicKeywordsModel::hasDuplicates();
         return result;
     }
@@ -385,10 +385,10 @@ namespace Artworks {
             }
         }
 
-        m_SpellCheckInfo->setDescriptionErrors(descriptionErrors);
+        m_SpellCheckInfo.setDescriptionErrors(descriptionErrors);
 
         if (withStemInfo) {
-            m_SpellCheckInfo->setDescriptionDuplicates(descriptionDuplicates);
+            m_SpellCheckInfo.setDescriptionDuplicates(descriptionDuplicates);
         }
     }
 
@@ -411,10 +411,10 @@ namespace Artworks {
             }
         }
 
-        m_SpellCheckInfo->setTitleErrors(titleErrors);
+        m_SpellCheckInfo.setTitleErrors(titleErrors);
 
         if (withStemInfo) {
-            m_SpellCheckInfo->setTitleDuplicates(titleDuplicates);
+            m_SpellCheckInfo.setTitleDuplicates(titleDuplicates);
         }
     }
 }

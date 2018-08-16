@@ -17,7 +17,6 @@
 #include <initializer_list>
 #include "artworkmetadata.h"
 #include "imageartwork.h"
-#include <Common/irefcountedobject.h>
 
 namespace Artworks {
     class ArtworkSessionSnapshot

@@ -14,7 +14,6 @@
 #include <QString>
 #include <QSet>
 #include "artworkmetadata.h"
-#include <Common/irefcountedobject.h>
 #include <Common/flags.h>
 
 namespace Artworks {
