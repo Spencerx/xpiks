@@ -32,21 +32,18 @@ namespace Artworks {
         }
     }
 
-    ArtworksSnapshot::ArtworksSnapshot(WeakArtworksSnapshot const &artworks) {
-        append(artworks);
+    ArtworksSnapshot::ArtworksSnapshot(std::initializer_list<ItemType> artworks):
+        m_ArtworksSnapshot(artworks)
+    {
     }
 
-    ArtworksSnapshot::ArtworksSnapshot(std::initializer_list<ArtworkMetadata *> artworks) {
-        std::vector<ArtworkMetadata*> v(artworks.begin(), artworks.end());
-        append(v);
-    }
-
-    ArtworksSnapshot::ArtworksSnapshot(std::deque<ArtworkMetadata *> const &artworks) {
-       append(artworks);
+    ArtworksSnapshot::ArtworksSnapshot(std::deque<ItemType> const &artworks):
+        m_ArtworksSnapshot(artworks.begin(), artworks.end())
+    {
     }
 
     ArtworksSnapshot::ArtworksSnapshot(Container &rawSnapshot) {
-        set(rawSnapshot);
+        m_ArtworksSnapshot = std::move(rawSnapshot);
     }
 
     ArtworksSnapshot::ArtworksSnapshot(ArtworksSnapshot &&other):
@@ -67,39 +64,23 @@ namespace Artworks {
         LOG_DEBUG << "Destroying snapshot of" << m_ArtworksSnapshot.size() << "artwork(s)";
     }
 
-    void ArtworksSnapshot::append(WeakArtworksSnapshot const &artworks) {
-        LOG_DEBUG << "Appending snapshot of" << artworks.size() << "artwork(s)";
-        m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + artworks.size());
-        for (auto &item: artworks) {
-            m_ArtworksSnapshot.emplace_back(std::make_shared<ItemType>(item));
-        }
+    void ArtworksSnapshot::append(ArtworksSnapshot::ItemType const &item) {
+        m_ArtworksSnapshot.push_back(item);
     }
 
-    void ArtworksSnapshot::append(std::deque<ArtworkMetadata *> const &artworks) {
+    void ArtworksSnapshot::append(std::deque<ItemType> const &artworks) {
         LOG_DEBUG << "Appending snapshot of" << artworks.size() << "artwork(s)";
-        m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + artworks.size());
-        for (auto &item: artworks) {
-            m_ArtworksSnapshot.emplace_back(std::make_shared<ItemType>(item));
-        }
+        m_ArtworksSnapshot.insert(m_ArtworksSnapshot.end(), artworks.begin(), artworks.end());
     }
 
-    void ArtworksSnapshot::append(ArtworksSnapshot::Container &rawSnapshot) {
+    void ArtworksSnapshot::append(Container const &rawSnapshot) {
         LOG_DEBUG << "Appending snapshot of" << rawSnapshot.size() << "artwork(s)";
 
-        m_ArtworksSnapshot.reserve(m_ArtworksSnapshot.size() + rawSnapshot.size());
-        for (auto &item: rawSnapshot) {
-            m_ArtworksSnapshot.push_back(item);
-        }
+        m_ArtworksSnapshot.insert(m_ArtworksSnapshot.end(), rawSnapshot.begin(), rawSnapshot.end());
     }
 
     void ArtworksSnapshot::set(Container &rawSnapshot) {
-        clear();
-        append(rawSnapshot);
-    }
-
-    void ArtworksSnapshot::set(WeakArtworksSnapshot &rawSnapshot) {
-        clear();
-        append(rawSnapshot);
+        m_ArtworksSnapshot = std::move(rawSnapshot);
     }
 
     void ArtworksSnapshot::copyFrom(ArtworksSnapshot const &other) {

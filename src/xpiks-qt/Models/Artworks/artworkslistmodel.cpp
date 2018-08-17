@@ -157,8 +157,8 @@ namespace Models {
 
     bool ArtworksListModel::isInSelectedDirectory(int artworkIndex) {
         bool result = false;
-        ArtworkItem &artwork = getArtwork(artworkIndex);
-        if (artwork != nullptr) {
+        ArtworkItem artwork;
+        if (tryGetArtwork(artworkIndex, artwork)) {
             auto dirID = artwork->getDirectoryID();
             result = m_ArtworksRepository.isDirectorySelected(dirID);
         }
@@ -170,8 +170,8 @@ namespace Models {
         if (m_CurrentItemIndex != index) {
             m_CurrentItemIndex = index;
 
-            ArtworkItem &artwork = getArtwork(index);
-            if (artwork != nullptr) {
+            ArtworkItem artwork;
+            if (tryGetArtwork(artworkIndex, artwork)) {
                 using namespace Commands;
                 auto editable = std::make_shared<CurrentEditableArtwork>(
                                     artwork,
@@ -238,9 +238,9 @@ namespace Models {
         for (auto &request: updateRequests) {
             size_t index = request->getLastKnownIndex();
             if (index >= m_ArtworkList.size()) { continue; }
-            ArtworkItem &artwork = getArtwork(index);
-            if ((artwork != nullptr) &&
-                    (artwork->getItemID().get() == request->getArtworkID().get())) {
+            ArtworkItem artwork;
+            if (tryGetArtwork(artworkIndex, artwork) &&
+                    (artwork->getItemID() == request->getArtworkID())) {
                 indicesToUpdate.push_back((int)index);
                 rolesToUpdateSet.unite(request->getRolesToUpdate());
             } else {
@@ -300,7 +300,7 @@ namespace Models {
                     ArtworkItem artwork = createArtwork(file, directoryID);
                     m_ArtworkList.push_back(artwork);
                     snapshot.append(artwork);
-                    connectArtworkSignals(artwork);
+                    connectArtworkSignals(artwork.get());
                     if (file.isPartOfFullDirectory()) { fullDirectories.insert(directoryID); }
                 }
             }
@@ -660,7 +660,7 @@ namespace Models {
         Artworks::ArtworkMetadata *item = NULL;
 
         if (0 <= index && (size_t)index < getArtworksSize()) {
-            item = accessArtwork(index);
+            item = accessArtwork(index).get();
             QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
         }
 
@@ -671,27 +671,27 @@ namespace Models {
         Artworks::BasicMetadataModel *keywordsModel = NULL;
 
         if (0 <= index && (size_t)index < getArtworksSize()) {
-            keywordsModel = accessArtwork(index)->getBasicModel();
+            keywordsModel = &accessArtwork(index)->getBasicModel();
             QQmlEngine::setObjectOwnership(keywordsModel, QQmlEngine::CppOwnership);
         }
 
         return keywordsModel;
     }
 
-    ArtworksListModel::ArtworkItem ArtworksListModel::getArtwork(size_t index) const {
-        Q_ASSERT(index < m_ArtworkList.size());
+    bool ArtworksListModel::tryGetArtwork(size_t index, ArtworkItem &item) const {
+        bool found = false;
         if (index < m_ArtworkList.size()) {
-            return accessArtwork(index);
+            item = accessArtwork(index);
+            found = true;
         }
-
-        return ArtworkItem();
+        return found;
     }
 
     std::shared_ptr<Commands::ICommand> ArtworksListModel::removeKeywordAt(int artworkIndex, int keywordIndex) {
         LOG_INFO << "artwork index" << artworkIndex << "| keyword index" << keywordIndex;
-        std::shared_ptr<Commands::ICommand> command;
-        ArtworkItem &artwork = getArtwork(artworkIndex);
-        if (artwork != nullptr) {
+        std::shared_ptr<Commands::ICommand> command;        
+        ArtworkItem artwork;
+        if (tryGetArtwork(artworkIndex, artwork)) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
             command = std::make_shared<ArtworksCommand>(
@@ -734,8 +734,8 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::appendKeyword(int artworkIndex, const QString &keyword) {
         LOG_INFO << "artwork index" << artworkIndex << "| keyword" << keyword;
         std::shared_ptr<Commands::ICommand> command;
-        ArtworkItem &artwork = getArtwork(artworkIndex);
-        if (artwork != nullptr) {
+        ArtworkItem artwork;
+        if (tryGetArtwork(artworkIndex, artwork)) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
             command = std::make_shared<ArtworksCommand>(
@@ -758,8 +758,8 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::pasteKeywords(int artworkIndex, const QStringList &keywords) {
         std::shared_ptr<Commands::ICommand> command;
         LOG_INFO << "artwork index" << artworkIndex << "|" << keywords;
-        ArtworkItem &artwork = getArtwork(artworkIndex);
-        if ((artwork != nullptr) && !keywords.empty()) {
+        ArtworkItem artwork;
+        if (tryGetArtwork(artworkIndex, artwork) && !keywords.empty()) {
             setCurrentIndex(artworkIndex);
 
             if (keywords.length() == 1) {
@@ -835,8 +835,8 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::plainTextEdit(int artworkIndex, const QString &rawKeywords, bool spaceIsSeparator) {
         LOG_DEBUG << "Plain text edit for item" << artworkIndex;
         std::shared_ptr<Commands::ICommand> command;
-        ArtworkItem &artwork = getArtwork(artworkIndex);
-        if (artwork != nullptr) {
+        ArtworkItem artwork;
+        if (tryGetArtwork(artworkIndex, artwork)) {
             setCurrentIndex(artworkIndex);
             QVector<QChar> separators;
             separators << QChar(',');
@@ -866,8 +866,8 @@ namespace Models {
                                                                         KeywordsPresets::IPresetsManager &presetsManager) {
         LOG_INFO << "item" << artworkIndex << "keyword" << keywordIndex << "preset" << presetID;
         std::shared_ptr<Commands::ICommand> command;
-        ArtworkItem &artwork = getArtwork(artworkIndex);
-        if (artwork != nullptr) {
+        ArtworkItem artwork;
+        if (tryGetArtwork(artworkIndex, artwork)) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
             command = std::make_shared<ModifyArtworksCommand>(
@@ -889,8 +889,8 @@ namespace Models {
                                                                               KeywordsPresets::IPresetsManager &presetsManager) {
         LOG_INFO << "item" << artworkIndex;
         std::shared_ptr<Commands::ICommand> command = std::make_shared<Commands::EmptyCommand>();
-        ArtworkItem &artwork = getArtwork(artworkIndex);
-        if (artwork != nullptr) {
+        ArtworkItem artwork;
+        if (tryGetArtwork(artworkIndex, artwork)) {
             setCurrentIndex(artworkIndex);
 
             auto *basicModel = artwork->getBasicModel();
@@ -917,8 +917,8 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::addPreset(int artworkIndex, unsigned int presetID, KeywordsPresets::IPresetsManager &presetsManager) {
         LOG_INFO << "item" << artworkIndex << "preset" << presetID;
         std::shared_ptr<Commands::ICommand> command;
-        ArtworkItem &artwork = getArtwork(artworkIndex);
-        if (artwork != nullptr) {
+        ArtworkItem artwork;
+        if (tryGetArtwork(artworkIndex, artwork)) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
             command = std::make_shared<ModifyArtworksCommand>(
@@ -941,8 +941,8 @@ namespace Models {
                                                                                     AutoComplete::ICompletionSource &completionsSource) {
         LOG_INFO << "item" << artworkIndex << "completionID" << completionID;
         std::shared_ptr<Commands::ICommand> command = std::make_shared<Commands::EmptyCommand>();
-        ArtworkItem &artwork = getArtwork(artworkIndex);
-        if (artwork != nullptr) {
+        ArtworkItem artwork;
+        if (tryGetArtwork(artworkIndex, artwork)) {
             setCurrentIndex(artworkIndex);
 
             auto completionItem = completionsSource.getAcceptedCompletion(completionID);

@@ -60,20 +60,15 @@ namespace Artworks {
         QStringList m_DirectoriesSnapshot;
     };
 
-    // designed to be used only temporarily
-    // artworks are not locked and therefore can be deleted
-    using WeakArtworksSnapshot = std::vector<ArtworkMetadata*>;
-
     class ArtworksSnapshot {
     public:
-        using ItemType = Common::HoldLocker<Artworks::ArtworkMetadata>;
-        using Container = std::vector<std::shared_ptr<ItemType>>;
+        using ItemType = std::shared_ptr<Artworks::ArtworkMetadata>;
+        using Container = std::vector<ItemType>;
 
     public:
         ArtworksSnapshot() { }
-        ArtworksSnapshot(WeakArtworksSnapshot const &artworks);
-        ArtworksSnapshot(std::initializer_list<ArtworkMetadata *> artworks);
-        ArtworksSnapshot(std::deque<ArtworkMetadata *> const &artworks);
+        ArtworksSnapshot(std::initializer_list<ItemType> artworks);
+        ArtworksSnapshot(const std::deque<ItemType> &artworks);
         ArtworksSnapshot(Container &rawSnapshot);
         ArtworksSnapshot(ArtworksSnapshot &&other);
         ArtworksSnapshot &operator=(ArtworksSnapshot &&other);
@@ -87,21 +82,13 @@ namespace Artworks {
 
     public:
         void reserve(size_t size) { m_ArtworksSnapshot.reserve(size); }
-        void append(ArtworkMetadata *artwork) {
-            m_ArtworksSnapshot.emplace_back(std::make_shared<ItemType>(artwork));
-        }
-        void append(const std::shared_ptr<ItemType> &item) {
-            m_ArtworksSnapshot.push_back(item);
-        }
-        void append(WeakArtworksSnapshot const &artworks);
-        void append(std::deque<ArtworkMetadata *> const &artworks);
-        void append(Container &rawSnapshot);
+        void append(ItemType const &artwork);
+        void append(const std::deque<ItemType> &artworks);
+        void append(Container const &rawSnapshot);
         void set(Container &rawSnapshot);
-        void set(WeakArtworksSnapshot &rawSnapshot);
-        void copyFrom(ArtworksSnapshot const &other);
         void remove(size_t index);
-        ArtworkMetadata *get(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i)->getArtworkMetadata(); }
-        const std::shared_ptr<ItemType> &at(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i); }
+        ItemType const &get(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i); }
+        ItemType const &at(size_t i) const { return get(i); }
         void clear();
         bool empty() const { return m_ArtworksSnapshot.empty(); }
 

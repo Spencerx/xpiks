@@ -43,8 +43,8 @@ namespace Commands {
         void FixSpellingForArtworkCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             int index = convertToInt(value, -1);
-            auto *artwork = m_Source.getArtwork(index);
-            if (artwork != nullptr) {
+            std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+            if (m_Source.tryGetArtwork(index, artwork)) {
                 Artworks::ArtworksSnapshot snapshot({artwork});
                 m_Target.setupArtworks(snapshot);
             } else {
@@ -73,8 +73,8 @@ namespace Commands {
         void InitSuggestionForArtworkCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             int index = convertToInt(value, -1);
-            auto *artwork = m_Source.getArtwork(index);
-            if (artwork != nullptr) {
+            std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+            if (m_Source.tryGetArtwork(index, artwork)) {
                 m_Target.setExistingKeywords(artwork->getKeywords().toSet());
             }
         }

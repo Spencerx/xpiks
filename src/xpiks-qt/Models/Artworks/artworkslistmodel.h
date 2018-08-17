@@ -64,8 +64,6 @@ namespace Models {
         Q_OBJECT
         Q_PROPERTY(int modifiedArtworksCount READ getModifiedArtworksCount NOTIFY modifiedArtworksCountChanged)
 
-        using ArtworkItem = std::shared_ptr<Artworks::ArtworkMetadata>;
-
         using Common::MessagesSource<ArtworkSpellCheckMessage>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
         using Common::MessagesSource<ArtworksListSpellCheckMessage>::sendMessage;
@@ -77,6 +75,8 @@ namespace Models {
         virtual ~ArtworksListModel();
 
     public:
+        using ArtworkItem = std::shared_ptr<Artworks::ArtworkMetadata>;
+
         enum class SelectionType {
             All,
             Modified,
@@ -150,9 +150,9 @@ namespace Models {
         void deleteUnavailableItems();
         // general purpose internal methods
         int attachVectors(const std::shared_ptr<Filesystem::IFilesCollection> &filesCollection,
-                           const Artworks::ArtworksSnapshot &snapshot,
-                           int initialCount,
-                           bool autoAttach);
+                          const Artworks::ArtworksSnapshot &snapshot,
+                          int initialCount,
+                          bool autoAttach);
         int attachKnownVectors(const QHash<QString, QHash<QString, QString> > &vectorsPaths,
                                QVector<int> &indicesToUpdate) const;
         void connectArtworkSignals(Artworks::ArtworkMetadata *artwork);
@@ -174,7 +174,7 @@ namespace Models {
     public:
         Artworks::ArtworkMetadata *getArtworkObject(int index) const;
         Artworks::BasicMetadataModel *getBasicModelObject(int index) const;
-        ArtworkItem getArtwork(size_t index) const;
+        bool tryGetArtwork(size_t index, ArtworkItem &item) const;
 
     public:
         std::shared_ptr<Commands::ICommand> removeKeywordAt(int artworkIndex, int keywordIndex);

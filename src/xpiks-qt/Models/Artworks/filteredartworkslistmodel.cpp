@@ -75,9 +75,9 @@ namespace Models {
         return Artworks::ArtworksSnapshot(rawSnapshot);
     }
 
-    Artworks::ArtworkMetadata *FilteredArtworksListModel::getArtwork(int proxyIndex) {
+    bool FilteredArtworksListModel::tryGetArtwork(int proxyIndex, std::shared_ptr<Artworks::ArtworkMetadata> &artwork) {
         int originalIndex = getOriginalIndex(proxyIndex);
-        return m_ArtworksListModel.getArtwork(originalIndex);
+        return m_ArtworksListModel.tryGetArtwork(originalIndex, artwork);
     }
 
     Artworks::ArtworksSnapshot FilteredArtworksListModel::getSelectedArtworks() {
@@ -130,8 +130,8 @@ namespace Models {
 
         for (int row = 0; row < size; ++row) {
             int index = getOriginalIndex(row);
-            Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(index);
-            if (artwork != NULL) {
+            auto &artwork = m_ArtworksListModel.getArtwork(index);
+            if (artwork != nullptr) {
                 artwork->invertSelection();
                 indices.push_back(index);
             }
@@ -250,24 +250,27 @@ namespace Models {
 
     void FilteredArtworksListModel::focusNextItem(int proxyIndex) {
         LOG_INFO << "index:" << proxyIndex;
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(getOriginalIndex(proxyIndex + 1));
-        if (artwork != NULL) {
+        int originalIndex = getOriginalIndex(proxyIndex + 1);
+        ArtworksListModel::ArtworkItem artwork;
+        if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
             artwork->requestFocus(Artworks::ArtworkMetadata::FocusFromPrev);
         }
     }
 
     void FilteredArtworksListModel::focusPreviousItem(int proxyIndex) {
         LOG_INFO << "index:" << proxyIndex;
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(getOriginalIndex(proxyIndex - 1));
-        if (artwork != nullptr) {
+        int originalIndex = getOriginalIndex(proxyIndex - 1);
+        ArtworksListModel::ArtworkItem artwork;
+        if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
             artwork->requestFocus(Artworks::ArtworkMetadata::FocusFromNext);
         }
     }
 
     void FilteredArtworksListModel::focusCurrentItemKeywords(int proxyIndex) {
         LOG_INFO << "index:" << proxyIndex;
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(getOriginalIndex(proxyIndex));
-        if (artwork != nullptr) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        ArtworksListModel::ArtworkItem artwork;
+        if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
             artwork->requestFocus(Artworks::ArtworkMetadata::FocusFromNext);
         }
     }
@@ -406,10 +409,10 @@ namespace Models {
     }
 
     QString FilteredArtworksListModel::getKeywordsString(int proxyIndex) {
-        int originalIndex = getOriginalIndex(proxyIndex);
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
         QString keywords;
-        if (artwork != nullptr) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        ArtworksListModel::ArtworkItem artwork;
+        if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
             keywords = artwork->getKeywordsString();
         }
         return keywords;
@@ -419,8 +422,8 @@ namespace Models {
         bool result = false;
         int originalIndex = getOriginalIndex(proxyIndex);
         LOG_INFO << originalIndex << word;
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
-        if (artwork != NULL) {
+        ArtworksListModel::ArtworkItem artwork;
+        if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
             auto *keywordsModel = artwork->getBasicModel();
             result = keywordsModel->hasTitleWordSpellError(word);
         }
@@ -432,8 +435,8 @@ namespace Models {
         bool result = false;
         int originalIndex = getOriginalIndex(proxyIndex);
         LOG_INFO << originalIndex << word;
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
-        if (artwork != NULL) {
+        ArtworksListModel::ArtworkItem artwork;
+        if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
             auto *keywordsModel = artwork->getBasicModel();
             result = keywordsModel->hasDescriptionWordSpellError(word);
         }
@@ -448,8 +451,9 @@ namespace Models {
 
     void FilteredArtworksListModel::copyToQuickBuffer(int proxyIndex) const {
         LOG_INFO << proxyIndex;
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(getOriginalIndex(proxyIndex));
-        if (artwork != nullptr) {
+        int originalIndex = getOriginalIndex(proxyIndex);
+        ArtworksListModel::ArtworkItem artwork;
+        if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
             sendMessage(
                         QuickBufferMessage(
                             artwork->getTitle(),
@@ -493,8 +497,8 @@ namespace Models {
 
         for (int row = 0; row < size; ++row) {
             int index = getOriginalIndex(row);
-            Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(index);
-            if (artwork == nullptr) { continue; }
+            ArtworksListModel::ArtworkItem artwork;
+            if (!m_ArtworksListModel.tryGetArtwork(index, artwork)) { break; }
 
             if (unselectAllFirst) {
                 artwork->setIsSelected(false);
@@ -533,12 +537,13 @@ namespace Models {
 
         for (int proxyIndex = 0; proxyIndex < size; ++proxyIndex) {
             int originalIndex = getOriginalIndex(proxyIndex);
-            Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
-            if (artwork == nullptr) { continue; }
-            Q_ASSERT(!artwork->isRemoved());
+            ArtworksListModel::ArtworkItem artwork;
+            if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
+                Q_ASSERT(!artwork->isRemoved());
 
-            if (pred(artwork)) {
-                filteredArtworks.push_back(mapper(artwork, originalIndex, proxyIndex));
+                if (pred(artwork)) {
+                    filteredArtworks.push_back(mapper(artwork, originalIndex, proxyIndex));
+                }
             }
         }
 
@@ -575,9 +580,8 @@ namespace Models {
     bool FilteredArtworksListModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
         Q_UNUSED(sourceParent);
 
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(sourceRow);
-
-        if (artwork == nullptr) { return false; }
+        ArtworksListModel::ArtworkItem artwork;
+        if (!m_ArtworksListModel.tryGetArtwork(sourceRow, artwork)) { return false; }
         if (artwork->isRemoved()) { return false; }
 
         bool hasMatch = false;
@@ -598,14 +602,13 @@ namespace Models {
             return QSortFilterProxyModel::lessThan(sourceLeft, sourceRight);
         }
 
-        Artworks::ArtworkMetadata *leftMetadata = m_ArtworksListModel.getArtwork(sourceLeft.row());
-        Artworks::ArtworkMetadata *rightMetadata = m_ArtworksListModel.getArtwork(sourceRight.row());
-
+        ArtworksListModel::ArtworkItem leftArtwork, rightArtwork;
         bool result = false;
 
-        if (leftMetadata != NULL && rightMetadata != NULL) {
-            const QString &leftFilepath = leftMetadata->getFilepath();
-            const QString &rightFilepath = rightMetadata->getFilepath();
+        if (m_ArtworksListModel.tryGetArtwork(sourceLeft.row(), leftArtwork) &&
+                m_ArtworksListModel.tryGetArtwork(sourceRight.row(), rightArtwork)) {
+            const QString &leftFilepath = leftArtwork->getFilepath();
+            const QString &rightFilepath = rightArtwork->getFilepath();
 
             QFileInfo leftFI(leftFilepath);
             QFileInfo rightFI(rightFilepath);

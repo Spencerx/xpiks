@@ -68,7 +68,7 @@ namespace Models {
 
         Artworks::ArtworksSnapshot::Container getSearchablePreviewOriginalItems(const QString &searchTerm, Common::SearchFlags flags) const;
         Artworks::ArtworksSnapshot getArtworksToSave(bool overwriteAll=false) const;
-        Artworks::ArtworkMetadata *getArtwork(int proxyIndex);
+        bool tryGetArtwork(int proxyIndex, std::shared_ptr<Artworks::ArtworkMetadata> &artwork);
 
     public:
         // returns currently selected artworks as a snapshot

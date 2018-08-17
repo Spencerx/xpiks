@@ -21,12 +21,12 @@
 
 namespace Warnings {
     void describeWarningFlags(Common::WarningFlags warningsFlags,
-                              Artworks::ArtworkMetadata *metadata,
+                              std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
                               const WarningsSettingsModel &settingsModel,
                               QStringList &descriptions) {
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::SizeLessThanMinimum)) {
-            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(metadata);
+            auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
 #ifdef QT_DEBUG
             Q_ASSERT(image != NULL);
             {
@@ -50,7 +50,7 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::TooManyKeywords)) {
-            Artworks::BasicKeywordsModel *keywordsModel = metadata->getBasicModel();
+            Artworks::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
             descriptions.append(QObject::tr("There are too many keywords (%1)").arg(keywordsModel->getKeywordsCount()));
         }
 
@@ -64,7 +64,7 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::DescriptionTooBig)) {
-            descriptions.append(QObject::tr("Description is too long (%1 symbols)").arg(metadata->getDescription().length()));
+            descriptions.append(QObject::tr("Description is too long (%1 symbols)").arg(artwork->getDescription().length()));
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::TitleIsEmpty)) {
@@ -81,7 +81,7 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::TitleTooBig)) {
-            descriptions.append(QObject::tr("Title is too long (%1 symbols)").arg(metadata->getTitle().length()));
+            descriptions.append(QObject::tr("Title is too long (%1 symbols)").arg(artwork->getTitle().length()));
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::SpellErrorsInKeywords)) {
@@ -158,8 +158,8 @@ namespace Warnings {
 
         if (0 <= index && index < rowCount()) {
             int originalIndex = getOriginalIndex(index);
-            Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(originalIndex);
-            if (artwork != NULL) {
+            std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+            if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
                 Common::WarningFlags warningsFlags = artwork->getWarningsFlags();
                 describeWarningFlags(warningsFlags, artwork, m_WarningsSettingsModel, descriptions);
             }
@@ -218,9 +218,8 @@ namespace Warnings {
 
     bool WarningsModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
         Q_UNUSED(sourceParent);
-        Artworks::ArtworkMetadata *artwork = m_ArtworksListModel.getArtwork(sourceRow);
-        bool rowIsOk = false;
-        if (artwork != nullptr && !artwork->isRemoved()) {
+        std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+        if (m_ArtworksListModel.tryGetArtwork(sourceRow, artwork) && !artwork->isRemoved()) {
             auto warningsFlags = artwork->getWarningsFlags();
             const bool anyWarnings = warningsFlags != Common::WarningFlags::None;
 
