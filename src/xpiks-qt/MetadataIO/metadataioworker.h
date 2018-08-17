@@ -33,7 +33,7 @@ namespace Storage {
 namespace MetadataIO {
     struct StorageReadRequest {
         CachedArtwork m_CachedArtwork;
-        Artworks::ArtworkMetadata *m_Artwork;
+        std::shared_ptr<Artworks::ArtworkMetadata> m_Artwork;
     };
 
     class MetadataIOWorker : public QObject, public Common::ItemProcessingWorker<MetadataIOTaskBase>

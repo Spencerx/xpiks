@@ -68,21 +68,21 @@ namespace MetadataIO {
     }
 
     void MetadataIOWorker::processReadWriteItem(std::shared_ptr<MetadataReadWriteTask> &item) {
-        Artworks::ArtworkMetadata *artworkMetadata = item->getArtworkMetadata();
-        Q_ASSERT(artworkMetadata != nullptr);
-        if (artworkMetadata == nullptr) { return; }
+        auto &artwork = item->getArtworkMetadata();
+        Q_ASSERT(artwork != nullptr);
+        if (artwork == nullptr) { return; }
 
         const MetadataReadWriteTask::ReadWriteAction action = item->getReadWriteAction();
         if (action == MetadataReadWriteTask::Read) {
             auto readRequest = std::make_shared<StorageReadRequest>();
-            if (m_MetadataCache.read(artworkMetadata, readRequest->m_CachedArtwork)) {
-                readRequest->m_Artwork = artworkMetadata;
+            if (m_MetadataCache.read(artwork, readRequest->m_CachedArtwork)) {
+                readRequest->m_Artwork = artwork;
                 m_StorageReadQueue.push(readRequest);
             }
         } else if (action == MetadataReadWriteTask::Write) {
-            m_MetadataCache.save(artworkMetadata, true);
+            m_MetadataCache.save(artwork, true);
         } else if (action == MetadataReadWriteTask::Add) {
-            m_MetadataCache.save(artworkMetadata, false);
+            m_MetadataCache.save(artwork, false);
         }
 
         m_ProcessedItemsCount++;

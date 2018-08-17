@@ -23,15 +23,15 @@ namespace Services {
     {
     }
 
-    void ArtworksInspectionHub::handleMessage(const ArtworkUpdateType &change) {
+    void ArtworksInspectionHub::handleMessage(const ArtworkInspectionType &change) {
         inspectArtwork(change.get());
     }
 
-    void ArtworksInspectionHub::handleMessage(const BasicModelUpdateType &change) {
+    void ArtworksInspectionHub::handleMessage(const BasicModelInspectionType &change) {
         inspectBasicModel(change.get());
     }
 
-    void ArtworksInspectionHub::handleMessage(const ArtworksArrayUpdateType &change) {
+    void ArtworksInspectionHub::handleMessage(const ArtworksArrayInspectionType &change) {
         if (isSpellCheckAvailable()) {
             m_SpellCheckService.submitItems(change.get());
         }

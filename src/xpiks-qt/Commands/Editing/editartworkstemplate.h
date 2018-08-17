@@ -37,9 +37,9 @@ namespace Commands {
         virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override;
 
     private:
-        void editKeywords(Artworks::ArtworkMetadata *artwork) const;
-        void editDescription(Artworks::ArtworkMetadata *artwork) const;
-        void editTitle(Artworks::ArtworkMetadata *artwork) const;
+        void editKeywords(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) const;
+        void editDescription(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) const;
+        void editTitle(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) const;
 
     private:
         QString m_Title;

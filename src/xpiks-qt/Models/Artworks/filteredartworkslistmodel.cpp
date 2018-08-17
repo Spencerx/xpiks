@@ -68,9 +68,9 @@ namespace Models {
 
     Artworks::ArtworksSnapshot FilteredArtworksListModel::getArtworksToSave(bool overwriteAll) const {
         auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
-                    [overwriteAll](Artworks::ArtworkMetadata *artwork) {
+                    [overwriteAll](ArtworkItem const &artwork) {
                        return artwork->isSelected() && !artwork->isReadOnly() && (artwork->isModified() || overwriteAll); },
-                [] (Artworks::ArtworkMetadata *artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
+                [] (ArtworkItem const &artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
 
         return Artworks::ArtworksSnapshot(rawSnapshot);
     }
@@ -82,8 +82,8 @@ namespace Models {
 
     Artworks::ArtworksSnapshot FilteredArtworksListModel::getSelectedArtworks() {
         auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
-                    [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
-                [] (Artworks::ArtworkMetadata *artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
+                    [](ArtworkItem const &artwork) { return artwork->isSelected(); },
+                [] (ArtworkItem const &artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
 
         return Artworks::ArtworksSnapshot(rawSnapshot);
     }
@@ -175,7 +175,7 @@ namespace Models {
         auto selectedArtworks = getSelectedOriginalItems();
         int modifiedCount = 0;
 
-        for (Artworks::ArtworkMetadata *artwork: selectedArtworks) {
+        for (auto &artwork: selectedArtworks) {
             if (!artwork->isReadOnly() && (artwork->isModified() || overwriteAll)) {
                 modifiedCount++;
             }
@@ -188,8 +188,8 @@ namespace Models {
         int index = -1;
 
         std::vector<int> items = filterItems<int>(
-            [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
-            [] (Artworks::ArtworkMetadata *, int, int originalIndex) { return originalIndex; });
+            [](ArtworkItem const &artwork) { return artwork->isSelected(); },
+            [] (ArtworkItem const &, int, int originalIndex) { return originalIndex; });
 
         if (items.size() == 1) {
             index = items.front();
@@ -215,22 +215,22 @@ namespace Models {
         }
         case 2: {
             // select Modified
-            this->setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata *artwork) {
+            this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
                 return artwork->isModified();
             }, isSelected, unselectFirst);
             break;
         }
         case 3: {
             // select Images
-            this->setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata *artwork) {
-                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+            this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
+                auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
                 return (image != nullptr) ? !image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
             break;
         }
         case 4: {
             // select Vectors
-            this->setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata *artwork) {
+            this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
                 Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
                 return (image != nullptr) ? image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
@@ -238,7 +238,7 @@ namespace Models {
         }
         case 5: {
             // select Videos
-            this->setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata *artwork) {
+            this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
                 return dynamic_cast<Artworks::VideoArtwork*>(artwork) != nullptr;
             }, isSelected, unselectFirst);
             break;
@@ -485,7 +485,7 @@ namespace Models {
         setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata*) { return true; }, selected, false);
     }
 
-    void FilteredArtworksListModel::setFilteredItemsSelectedEx(const std::function<bool (Artworks::ArtworkMetadata *)> pred,
+    void FilteredArtworksListModel::setFilteredItemsSelectedEx(const std::function<bool (ArtworkItem const &)> pred,
                                                                bool selected,
                                                                bool unselectAllFirst) {
         LOG_INFO << selected;
@@ -520,17 +520,17 @@ namespace Models {
         m_ArtworksListModel.unsetCurrentIndex();
     }
 
-    Artworks::WeakArtworksSnapshot FilteredArtworksListModel::getSelectedOriginalItems() const {
-        Artworks::WeakArtworksSnapshot items = filterItems<Artworks::ArtworkMetadata *>(
-            [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
-            [] (Artworks::ArtworkMetadata *artwork, int, int) { return artwork; });
+    Artworks::ArtworksSnapshot FilteredArtworksListModel::getSelectedOriginalItems() const {
+        Artworks::ArtworksSnapshot items = filterItems<std::shared_ptr<Artworks::ArtworkMetadata>>(
+            [](ArtworkItem const &artwork) { return artwork->isSelected(); },
+            [] (ArtworkItem const &artwork, int, int) { return artwork; });
 
         return items;
     }
 
     template<typename T>
-    std::vector<T> FilteredArtworksListModel::filterItems(std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                                                          std::function<T(Artworks::ArtworkMetadata *, int, int)> mapper) const {
+    std::vector<T> FilteredArtworksListModel::filterItems(std::function<bool (ArtworkItem const &)> pred,
+                                                          std::function<T(ArtworkItem const &, int, int)> mapper) const {
         std::vector<T> filteredArtworks;
         const int size = this->rowCount();
         filteredArtworks.reserve(size);
@@ -554,8 +554,8 @@ namespace Models {
 
     std::vector<int> FilteredArtworksListModel::getSelectedOriginalIndices() const {
         std::vector<int> items = filterItems<int>(
-            [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); },
-            [] (Artworks::ArtworkMetadata *, int index, int) { return index; });
+            [](ArtworkItem const &artwork) { return artwork->isSelected(); },
+            [] (ArtworkItem const &, int index, int) { return index; });
 
         return items;
     }

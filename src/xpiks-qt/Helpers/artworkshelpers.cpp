@@ -47,17 +47,15 @@ namespace Helpers {
         imagesRawSnapshot.reserve(size / 2);
         videoRawSnapshot.reserve(size / 2);
 
-        for (auto &locker: rawSnapshot.getRawData()) {
-            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
-
+        for (auto &artwork: rawSnapshot.getRawData()) {
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
-            Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+            auto &imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
             if (imageArtwork != nullptr) {
                 imagesRawSnapshot.append(locker);
             } else {
-                Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(artwork);
+                auto &videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
                 if (videoArtwork != nullptr) {
                     videoRawSnapshot.append(locker);
                 } else {
@@ -71,9 +69,7 @@ namespace Helpers {
     int retrieveImagesCount(const Artworks::ArtworksSnapshot &rawSnapshot) {
         int count = 0;
 
-        for (auto &locker: rawSnapshot.getRawData()) {
-            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
-
+        for (auto &artwork: rawSnapshot.getRawData()) {
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
@@ -89,9 +85,7 @@ namespace Helpers {
     int retrieveVideosCount(const Artworks::ArtworksSnapshot &rawSnapshot) {
         int count = 0;
 
-        for (auto &locker: rawSnapshot.getRawData()) {
-            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
-
+        for (auto &artwork: rawSnapshot.getRawData()) {
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
@@ -111,7 +105,7 @@ namespace Helpers {
         modifiedIndices.reserve((int)size);
 
         for (size_t i = 0; i < size; ++i) {
-            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            auto &artwork = snapshot.get(i);
             Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
 
             if (image == NULL) { continue; }

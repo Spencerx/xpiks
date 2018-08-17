@@ -13,7 +13,6 @@
 
 #include <QQmlEngine>
 #include <QHash>
-#include <Common/hold.h>
 #include <Common/types.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Models/Artworks/artworksviewmodel.h>

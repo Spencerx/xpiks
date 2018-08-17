@@ -16,7 +16,6 @@
 #include <Models/Editing/artworkproxybase.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Services/SpellCheck/spellcheckiteminfo.h>
-#include <Common/hold.h>
 
 namespace SpellCheck {
     class UserDictionary;

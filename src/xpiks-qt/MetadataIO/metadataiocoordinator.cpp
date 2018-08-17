@@ -30,7 +30,7 @@ namespace MetadataIO {
         LOG_DEBUG << size << "item(s)";
 
         for (size_t i = 0; i < size; i++) {
-            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            auto &artwork = snapshot.get(i);
             artwork->setIsLockedIO(true);
         }
     }

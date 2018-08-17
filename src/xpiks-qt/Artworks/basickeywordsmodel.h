@@ -23,7 +23,6 @@
 #include <Common/flags.h>
 #include <Common/wordanalysisresult.h>
 #include "keyword.h"
-#include <Common/hold.h>
 
 namespace SpellCheck {
     class SpellCheckQueryItem;

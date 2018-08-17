@@ -65,8 +65,8 @@ namespace MetadataIO {
 #endif
 
     public:
-        bool read(Artworks::ArtworkMetadata *artwork, CachedArtwork &cachedArtwork);
-        void save(Artworks::ArtworkMetadata *metadata, bool overwrite = true);
+        bool read(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork, CachedArtwork &cachedArtwork);
+        void save(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork, bool overwrite = true);
 
     public:
         void search(const Microstocks::SearchQuery &query, QVector<CachedArtwork> &results);

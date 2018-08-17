@@ -33,7 +33,7 @@ namespace MetadataIO {
         };
 
         CachedArtwork();
-        CachedArtwork(Artworks::ArtworkMetadata *metadata);
+        CachedArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
         CachedArtwork(const CachedArtwork &from);
         CachedArtwork &operator=(const CachedArtwork &other);
 

@@ -27,7 +27,7 @@ namespace MetadataIO {
         initSerializationVersion();
     }
 
-    CachedArtwork::CachedArtwork(Artworks::ArtworkMetadata *metadata):
+    CachedArtwork::CachedArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork):
         m_Version(0),
         m_Flags(0),
         m_CategoryID_1(0),
@@ -37,20 +37,20 @@ namespace MetadataIO {
 
         m_ArtworkType = Unknown;
 
-        m_FilesizeBytes = metadata->getFileSize();
-        m_Filepath = metadata->getFilepath();
-        m_Title = metadata->getTitle();
-        m_Description = metadata->getDescription();
-        m_Keywords = metadata->getKeywords();
-        m_ThumbnailPath = metadata->getThumbnailPath();
+        m_FilesizeBytes = artwork->getFileSize();
+        m_Filepath = artwork->getFilepath();
+        m_Title = artwork->getTitle();
+        m_Description = artwork->getDescription();
+        m_Keywords = artwork->getKeywords();
+        m_ThumbnailPath = artwork->getThumbnailPath();
 
-        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(metadata);
+        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
         if (image != nullptr) {
             m_ArtworkType = image->hasVectorAttached() ? Vector : Image;
             m_AttachedVector = image->getAttachedVectorPath();
             m_CreationTime = image->getDateTimeOriginal();
         } else {
-            Artworks::VideoArtwork *video = dynamic_cast<Artworks::VideoArtwork*>(metadata);
+            Artworks::VideoArtwork *video = dynamic_cast<Artworks::VideoArtwork*>(artwork);
             Q_ASSERT(video != nullptr);
             m_ArtworkType = Video;
             m_CodecName = video->getCodecName();

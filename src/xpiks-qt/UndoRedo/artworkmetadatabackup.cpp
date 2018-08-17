@@ -13,15 +13,15 @@
 #include <Artworks/imageartwork.h>
 #include <Common/defines.h>
 
-UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(Artworks::ArtworkMetadata *artwork):
+UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork):
     m_ArtworkID(artwork->getItemID()),
     m_Description(artwork->getDescription()),
     m_Title(artwork->getTitle()),
     m_KeywordsList(artwork->getKeywords()),
     m_IsModified(artwork->isModified())
 {
-    Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
-    if (image != NULL && image->hasVectorAttached()) {
+    auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+    if (image != nullptr && image->hasVectorAttached()) {
         m_AttachedVector = image->getAttachedVectorPath();
     }
 }
@@ -49,7 +49,7 @@ void UndoRedo::ArtworkMetadataBackup::restore(Artworks::ArtworkMetadata *artwork
     else { artwork->resetModified(); }
 
     if (!m_AttachedVector.isEmpty()) {
-        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
+        auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
         if (image != NULL) {
             image->attachVector(m_AttachedVector);
         } else {

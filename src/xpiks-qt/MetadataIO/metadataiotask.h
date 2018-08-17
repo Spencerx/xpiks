@@ -44,17 +44,17 @@ namespace MetadataIO {
         };
 
     public:
-        MetadataReadWriteTask(Artworks::ArtworkMetadata *artwork, ReadWriteAction readWriteAction):
-            m_Locker(artwork),
+        MetadataReadWriteTask(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork, ReadWriteAction readWriteAction):
+            m_Artwork(artwork),
             m_ReadWriteAction(readWriteAction)
         {}
 
     public:
         ReadWriteAction getReadWriteAction() const { return m_ReadWriteAction; }
-        Artworks::ArtworkMetadata *getArtworkMetadata() { return m_Locker.getArtworkMetadata(); }
+        std::shared_ptr<Artworks::ArtworkMetadata> const &getArtworkMetadata() const { return m_Artwork; }
 
     private:
-        Common::HoldLocker<Artworks::ArtworkMetadata> m_Locker;
+        std::shared_ptr<Artworks::ArtworkMetadata> m_Artwork;
         ReadWriteAction m_ReadWriteAction;
     };
 }

@@ -26,7 +26,7 @@ namespace Commands {
         m_ArtworksBackups.reserve(size);
 
         for (size_t i = 0; i < size; ++i) {
-            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            auto &artwork = snapshot.get(i);
             m_ArtworksBackups.emplace_back(UndoRedo::ArtworkMetadataBackup(artwork));
             artwork->removeKeywords(m_KeywordsSet, m_CaseSensitive);
         }
@@ -37,7 +37,7 @@ namespace Commands {
         Q_ASSERT(snapshot.size() == m_ArtworksBackups.size());
         const size_t size = snapshot.size();
         for (size_t i = 0; i < size; i++) {
-            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            auto &artwork = snapshot.get(i);
             auto &backup = m_ArtworksBackups.at(i);
             backup.restore(artwork);
         }

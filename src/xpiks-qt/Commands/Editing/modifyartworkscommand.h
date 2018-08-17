@@ -26,7 +26,7 @@ namespace Commands {
             m_Count = m_Argument.size();
         }
 
-        ModifyArtworksCommand(Artworks::ArtworkMetadata *artwork,
+        ModifyArtworksCommand(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
                               const std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>> &editTemplate):
             TemplatedCommand(Artworks::ArtworksSnapshot({artwork}), editTemplate),
             m_Count(1)

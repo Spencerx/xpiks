@@ -203,7 +203,7 @@ namespace Models {
 
         artwork->acquire();
         artwork->setIsLockedForEditing(true);
-        m_ArtworkMetadata = artwork;
+        m_ArtworkMetadata = artwork->getptr();
 
         connectArtworkSignals(artwork);
         updateModelProperties();

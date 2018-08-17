@@ -23,7 +23,7 @@ namespace Commands {
         m_ArtworksBackups.reserve(size);
 
         for (size_t i = 0; i < size; ++i) {
-            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            auto &artwork = snapshot.get(i);
             m_ArtworksBackups.emplace_back(UndoRedo::ArtworkMetadataBackup(artwork));
             bool succeeded = artwork->replace(m_ReplaceWhat, m_ReplaceTo, m_Flags);
             LOG_FOR_TESTS << (succeeded ? "Succeeded" : "Failed");
@@ -36,7 +36,7 @@ namespace Commands {
         const size_t size = m_ArtworksBackups.size();
         for (size_t i = 0; i < size; i++) {
             auto &backup = m_ArtworksBackups.at(i);
-            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            auto &artwork = snapshot.get(i);
             backup.restore(artwork);
         }
     }

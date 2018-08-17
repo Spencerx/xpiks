@@ -52,6 +52,8 @@ namespace Models {
         Q_PROPERTY(int selectedArtworksCount READ getSelectedArtworksCount NOTIFY selectedArtworksCountChanged)
         Q_PROPERTY(bool s READ getGlobalSelectionChanged NOTIFY allItemsSelectedChanged)
 
+        using ArtworkItem = std::shared_ptr<Artworks::ArtworkMetadata>;
+
     public:
         FilteredArtworksListModel(ArtworksListModel &artworksListModel,
                                   Commands::ICommandManager &commandManager,
@@ -162,15 +164,15 @@ namespace Models {
 
     private:
         void setFilteredItemsSelected(bool selected);
-        void setFilteredItemsSelectedEx(const std::function<bool (Artworks::ArtworkMetadata *)> pred,
+        void setFilteredItemsSelectedEx(const std::function<bool (ArtworkItem const &)> pred,
                                         bool selected,
                                         bool unselectAllFirst);
 
         Artworks::WeakArtworksSnapshot getSelectedOriginalItems() const;
 
         template<typename T>
-        std::vector<T> filterItems(std::function<bool (Artworks::ArtworkMetadata *)> pred,
-                                   std::function<T(Artworks::ArtworkMetadata *, int, int)> mapper) const;
+        std::vector<T> filterItems(std::function<bool (ArtworkItem const &)> pred,
+                                   std::function<T(ArtworkItem const &, int, int)> mapper) const;
 
         std::vector<int> getSelectedOriginalIndices() const;
         void forceUnselectAllItems();

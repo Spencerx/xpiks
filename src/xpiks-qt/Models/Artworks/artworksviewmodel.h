@@ -64,19 +64,19 @@ namespace Models {
 #else
     protected:
 #endif
-        Artworks::ArtworkElement *accessItem(size_t index) const;
+        const std::shared_ptr<Artworks::ArtworkElement> &accessItem(size_t index) const;
         bool getIsSelected(size_t i) const;
         void setIsSelected(size_t i, bool value);
 
     protected:
         bool isEmpty() const { return m_ArtworksSnapshot.empty(); }
-        Artworks::ArtworkMetadata *getArtworkMetadata(size_t i) const;
+        std::shared_ptr<Artworks::ArtworkMetadata> const &getArtworkMetadata(size_t i) const;
         virtual bool doRemoveSelectedArtworks();
         virtual void doResetModel();
-        void processArtworks(std::function<bool (const Artworks::ArtworkElement *element)> pred,
-                             std::function<void (size_t, Artworks::ArtworkMetadata *)> action) const;
-        void processArtworksEx(std::function<bool (const Artworks::ArtworkElement *element)> pred,
-                               std::function<bool (size_t, Artworks::ArtworkMetadata *)> action) const;
+        void processArtworks(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &element)> pred,
+                             std::function<void (size_t, std::shared_ptr<Artworks::ArtworkMetadata> const &)> action) const;
+        void processArtworksEx(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &element)> pred,
+                               std::function<bool (size_t, std::shared_ptr<Artworks::ArtworkMetadata> const &)> action) const;
 
     protected:
         const Artworks::ArtworksSnapshot &getSnapshot() const { return m_ArtworksSnapshot; }

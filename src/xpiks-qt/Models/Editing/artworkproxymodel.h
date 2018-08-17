@@ -22,7 +22,6 @@
 #include <memory>
 #include <vector>
 #include <Common/flags.h>
-#include <Common/hold.h>
 #include <Common/messages.h>
 #include "artworkproxybase.h"
 #include <Models/Editing/icurrenteditable.h>
@@ -99,7 +98,7 @@ namespace Models {
         virtual void setKeywords(const QStringList &keywords) override;
 
     public:
-        Artworks::ArtworkMetadata *getArtwork() { return m_ArtworkMetadata; }
+        std::shared_ptr<Artworks::ArtworkMetadata> const &getArtwork() const { return m_ArtworkMetadata; }
 
     signals:
         void imagePathChanged();
@@ -184,7 +183,7 @@ namespace Models {
 
     private:
         ArtworkPropertiesMap m_PropertiesMap;
-        Artworks::ArtworkMetadata *m_ArtworkMetadata;
+        std::shared_ptr<Artworks::ArtworkMetadata> m_ArtworkMetadata;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         Services::IArtworksUpdater &m_ArtworksUpdater;

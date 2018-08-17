@@ -33,18 +33,18 @@ namespace Artworks {
 }
 
 namespace Services {
-    using ArtworkUpdateType = Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>;
-    using BasicModelUpdateType = Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>;
-    using ArtworksArrayUpdateType = Common::NamedType<std::vector<Artworks::ArtworkMetadata*>, Common::MessageType::SpellCheck>;
+    using ArtworkInspectionType = Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>;
+    using BasicModelInspectionType = Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>;
+    using ArtworksArrayInspectionType = Common::NamedType<std::vector<Artworks::ArtworkMetadata*>, Common::MessageType::SpellCheck>;
 
     class ArtworksInspectionHub:
-            public Common::MessagesTarget<ArtworkUpdateType>,
-            public Common::MessagesTarget<BasicModelUpdateType>,
-            public Common::MessagesTarget<ArtworksArrayUpdateType>
+            public Common::MessagesTarget<ArtworkInspectionType>,
+            public Common::MessagesTarget<BasicModelInspectionType>,
+            public Common::MessagesTarget<ArtworksArrayInspectionType>
     {
-        using Common::MessagesTarget<ArtworkUpdateType>::handleMessage;
-        using Common::MessagesTarget<BasicModelUpdateType>::handleMessage;
-        using Common::MessagesTarget<ArtworksArrayUpdateType>::handleMessage;
+        using Common::MessagesTarget<ArtworkInspectionType>::handleMessage;
+        using Common::MessagesTarget<BasicModelInspectionType>::handleMessage;
+        using Common::MessagesTarget<ArtworksArrayInspectionType>::handleMessage;
 
     public:
         ArtworksInspectionHub(SpellCheck::SpellCheckService &spellCheckService,
@@ -52,9 +52,9 @@ namespace Services {
                               Models::SettingsModel &settingsModel);
 
     public:
-        virtual void handleMessage(ArtworkUpdateType const &change) override;
-        virtual void handleMessage(BasicModelUpdateType const &change) override;
-        virtual void handleMessage(ArtworksArrayUpdateType const &change) override;
+        virtual void handleMessage(ArtworkInspectionType const &change) override;
+        virtual void handleMessage(BasicModelInspectionType const &change) override;
+        virtual void handleMessage(ArtworksArrayInspectionType const &change) override;
 
     public:
         void inspectArtwork(Artworks::ArtworkMetadata *artwork);

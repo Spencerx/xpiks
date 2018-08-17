@@ -51,10 +51,10 @@ namespace MetadataIO {
         void waitWorkerIdle();
 
     public:
-        void writeArtwork(Artworks::ArtworkMetadata *metadata);
+        void writeArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
         quint32 readArtworks(const Artworks::ArtworksSnapshot &snapshot) const;
         void writeArtworks(const Artworks::ArtworksSnapshot &artworks) const;
-        void addArtworks(const Artworks::ArtworksSnapshot &artworks) const;
+        void addArtworks(const Artworks::ArtworksSnapshot &snapshot) const;
 
     public:
         void searchArtworks(Suggestion::LocalLibraryQuery *query);

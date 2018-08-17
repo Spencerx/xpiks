@@ -17,7 +17,6 @@
 #include <Artworks/basicmetadatamodel.h>
 #include <Services/SpellCheck/spellcheckiteminfo.h>
 #include <Suggestion/suggestionartwork.h>
-#include <Common/hold.h>
 #include <Common/delayedactionentity.h>
 #include <Common/messages.h>
 #include "quickbuffermessage.h"

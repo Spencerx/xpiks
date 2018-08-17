@@ -13,7 +13,6 @@
 
 #include <QString>
 #include <Artworks/basickeywordsmodel.h>
-#include <Common/hold.h>
 #include <Common/flags.h>
 #include "groupmodel.h"
 

@@ -80,12 +80,12 @@ namespace MetadataIO {
         m_MetadataIOWorker->waitIdle();
     }
 
-    void MetadataIOService::writeArtwork(Artworks::ArtworkMetadata *metadata) {
-        Q_ASSERT(metadata != nullptr);
+    void MetadataIOService::writeArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) {
+        Q_ASSERT(artwork != nullptr);
         if (m_IsStopped) { return; }
-        LOG_DEBUG << "Saving" << metadata->getItemID();
+        LOG_DEBUG << "Saving" << artwork->getItemID();
 
-        auto jobItem = std::make_shared<MetadataReadWriteTask>(metadata, MetadataReadWriteTask::Write);
+        auto jobItem = std::make_shared<MetadataReadWriteTask>(artwork, MetadataReadWriteTask::Write);
         m_MetadataIOWorker->submitItem(jobItem);
 
         emit cacheSyncRequest();
@@ -97,10 +97,7 @@ namespace MetadataIO {
         std::vector<std::shared_ptr<MetadataIOTaskBase> > jobs;
         jobs.reserve(snapshot.size());
 
-        auto &items = snapshot.getRawData();
-
-        for (auto &item: items) {
-            Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
+        for (auto &artwork: snapshot.getRawData()) {
             jobs.emplace_back(std::make_shared<MetadataReadWriteTask>(artwork, MetadataReadWriteTask::Read));
         }
 
@@ -111,15 +108,13 @@ namespace MetadataIO {
         return batchID;
     }
 
-    void MetadataIOService::writeArtworks(const Artworks::ArtworksSnapshot &artworks) const {
-        LOG_INFO << artworks.size() << "artwork(s)";
+    void MetadataIOService::writeArtworks(const Artworks::ArtworksSnapshot &snapshot) const {
+        LOG_INFO << snapshot.size() << "artwork(s)";
         if (m_IsStopped) { return; }
         std::vector<std::shared_ptr<MetadataIOTaskBase> > jobs;
-        jobs.reserve(artworks.size());
+        jobs.reserve(snapshot.size());
 
-        const size_t size = artworks.size();
-        for (size_t i = 0; i < size; ++i) {
-            Artworks::ArtworkMetadata *artwork = artworks.get(i);
+        for (auto &artwork: snapshot.getRawData()) {
             jobs.emplace_back(std::make_shared<MetadataReadWriteTask>(artwork, MetadataReadWriteTask::Write));
         }
 
@@ -127,15 +122,13 @@ namespace MetadataIO {
         m_MetadataIOWorker->submitSeparator();
     }
 
-    void MetadataIOService::addArtworks(const Artworks::ArtworksSnapshot &artworks) const {
-        LOG_INFO << artworks.size() << "artwork(s)";
+    void MetadataIOService::addArtworks(const Artworks::ArtworksSnapshot &snapshot) const {
+        LOG_INFO << snapshot.size() << "artwork(s)";
         if (m_IsStopped) { return; }
         std::vector<std::shared_ptr<MetadataIOTaskBase> > jobs;
-        jobs.reserve(artworks.size());
+        jobs.reserve(snapshot.size());
 
-        const size_t size = artworks.size();
-        for (size_t i = 0; i < size; ++i) {
-            Artworks::ArtworkMetadata *artwork = artworks.get(i);
+        for (auto &artwork: snapshot.getRawData()) {
             jobs.emplace_back(std::make_shared<MetadataReadWriteTask>(artwork, MetadataReadWriteTask::Add));
         }
 

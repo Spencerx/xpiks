@@ -20,7 +20,6 @@
 #include <QTimer>
 #include "suggestionartwork.h"
 #include "isuggestionengine.h"
-#include <Common/hold.h>
 #include <Common/types.h>
 #include <Common/messages.h>
 #include <Common/statefulentity.h>

@@ -119,7 +119,7 @@ namespace MetadataIO {
 
 #endif
 
-    bool MetadataCache::read(Artworks::ArtworkMetadata *artwork, CachedArtwork &cachedArtwork) {
+    bool MetadataCache::read(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork, CachedArtwork &cachedArtwork) {
         Q_ASSERT(artwork != nullptr);
         if (artwork == nullptr) { return false; }
         if (!m_DbCacheIndex) { return false; }
@@ -151,13 +151,13 @@ namespace MetadataIO {
         return found;
     }
 
-    void MetadataCache::save(Artworks::ArtworkMetadata *metadata, bool overwrite) {
-        Q_ASSERT(metadata != nullptr);
-        if (metadata == nullptr) { return; }
+    void MetadataCache::save(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork, bool overwrite) {
+        Q_ASSERT(artwork != nullptr);
+        if (artwork == nullptr) { return; }
         if (!m_DbCacheIndex) { return; }
 
-        CachedArtwork value(metadata);
-        const QString &key = metadata->getFilepath();
+        CachedArtwork value(artwork);
+        const QString &key = artwork->getFilepath();
 
         if (overwrite) {
             m_SetWAL.set(key, value);

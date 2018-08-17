@@ -19,7 +19,9 @@ namespace Artworks {
 }
 
 namespace Helpers {
-    bool hasSearchMatch(const QString &searchTerm, Artworks::ArtworkMetadata *metadata, Common::SearchFlags searchFlags);
+    bool hasSearchMatch(const QString &searchTerm,
+                        std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
+                        Common::SearchFlags searchFlags);
 }
 
 #endif // FILTERHELPERS_H

@@ -83,17 +83,6 @@ namespace Artworks {
         m_ArtworksSnapshot = std::move(rawSnapshot);
     }
 
-    void ArtworksSnapshot::copyFrom(ArtworksSnapshot const &other) {
-        clear();
-        LOG_DEBUG << "Copying snapshot of" << other.m_ArtworksSnapshot.size() << "item(s)";
-
-        m_ArtworksSnapshot.reserve(other.m_ArtworksSnapshot.size());
-        for (auto &locker: other.m_ArtworksSnapshot) {
-            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
-            m_ArtworksSnapshot.emplace_back(std::make_shared<ItemType>(artwork));
-        }
-    }
-
     void ArtworksSnapshot::remove(size_t index) {
         if (index >= m_ArtworksSnapshot.size()) { return; }
 

@@ -22,7 +22,6 @@
 #include <vector>
 #include "artworkproxybase.h"
 #include <Common/flags.h>
-#include <Common/hold.h>
 #include <Common/delayedactionentity.h>
 #include <Common/messages.h>
 #include <Artworks/artworkelement.h>

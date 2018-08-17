@@ -84,12 +84,12 @@ namespace Models {
         emit dataChanged(this->index(0), this->index(rowCount() - 1), QVector<int>() << IsSelectedRole);
     }
 
-    Artworks::ArtworkElement *ArtworksViewModel::accessItem(size_t index) const {
+    std::shared_ptr<Artworks::ArtworkElement> const &ArtworksViewModel::accessItem(size_t index) const {
         Q_ASSERT(index < m_ArtworksSnapshot.size());
         auto &locker = m_ArtworksSnapshot.at(index);
         auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
-        Q_ASSERT(element);
-        return element.get();
+        Q_ASSERT(element != nullptr);
+        return element;
     }
 
     bool ArtworksViewModel::getIsSelected(size_t i) const {
@@ -107,7 +107,7 @@ namespace Models {
         element->setIsSelected(value);
     }
 
-    Artworks::ArtworkMetadata *ArtworksViewModel::getArtworkMetadata(size_t i) const {
+    std::shared_ptr<Artworks::ArtworkMetadata> const &ArtworksViewModel::getArtworkMetadata(size_t i) const {
         Q_ASSERT((i >= 0) && (i < m_ArtworksSnapshot.size()));
         return m_ArtworksSnapshot.get(i);
     }
@@ -151,8 +151,8 @@ namespace Models {
         endResetModel();
     }
 
-    void ArtworksViewModel::processArtworks(std::function<bool (const Artworks::ArtworkElement *element)> pred,
-                                            std::function<void (size_t, Artworks::ArtworkMetadata *)> action) const {
+    void ArtworksViewModel::processArtworks(std::function<bool (const std::shared_ptr<Artworks::ArtworkElement> &element)> pred,
+                                            std::function<void (size_t, std::shared_ptr<Artworks::ArtworkMetadata> const &)> action) const {
         LOG_DEBUG << "#";
 
         auto &rawSnapshot = m_ArtworksSnapshot.getRawData();
@@ -162,26 +162,26 @@ namespace Models {
             const auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(item);
             Q_ASSERT(element);
 
-            if (pred(element.get())) {
-                action(i, item->getArtworkMetadata());
+            if (pred(element)) {
+                action(i, item);
             }
         }
     }
 
-    void ArtworksViewModel::processArtworksEx(std::function<bool (const Artworks::ArtworkElement *element)> pred,
-                                              std::function<bool (size_t, Artworks::ArtworkMetadata *)> action) const {
+    void ArtworksViewModel::processArtworksEx(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &element)> pred,
+                                              std::function<bool (size_t, std::shared_ptr<Artworks::ArtworkMetadata> const &)> action) const {
         LOG_DEBUG << "#";
         bool canContinue = false;
 
         auto &rawSnapshot = m_ArtworksSnapshot.getRawData();
         const size_t size = rawSnapshot.size();
         for (size_t i = 0; i < size; i++) {
-            auto &locker = rawSnapshot.at(i);
-            auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
+            auto &artwork = rawSnapshot.at(i);
+            auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(artwork);
             Q_ASSERT(element);
 
             if (pred(element.get())) {
-                canContinue = action(i, locker->getArtworkMetadata());
+                canContinue = action(i, artwork);
 
                 if (!canContinue) { break; }
             }

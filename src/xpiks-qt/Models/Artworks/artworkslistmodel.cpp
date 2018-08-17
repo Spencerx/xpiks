@@ -60,11 +60,11 @@ namespace Models {
 
     int ArtworksListModel::getModifiedArtworksCount() {
         int modifiedCount = 0;
-        foreachArtwork([](Artworks::ArtworkMetadata *artwork) { return
+        foreachArtwork([](ArtworkItem const &artwork) { return
                     !artwork->isUnavailable() &&
                     !artwork->isRemoved() &&
                     artwork->isModified(); },
-        [&modifiedCount](Artworks::ArtworkMetadata *, size_t) { modifiedCount++; });
+        [&modifiedCount](ArtworkItem const &, size_t) { modifiedCount++; });
         return modifiedCount;
     }
 
@@ -80,20 +80,20 @@ namespace Models {
 
         const QString directoryAbsolutePath = QDir(directory).absolutePath();
         auto indices = this->filterArtworks<int>(
-                    [&directoryAbsolutePath](Artworks::ArtworkMetadata *artwork) {
+                    [&directoryAbsolutePath](ArtworkItem const &artwork) {
                 return artwork->isInDirectory(directoryAbsolutePath); },
-                [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
+                [](ArtworkItem const &, size_t index) { return (int)index; });
 
         Helpers::IndicesRanges ranges(indices);
 
-        this->foreachArtwork(ranges, [](Artworks::ArtworkMetadata *artwork, size_t) {
+        this->foreachArtwork(ranges, [](ArtworkItem const &artwork, size_t) {
             artwork->setIsSelected(true); });
         this->updateItems(ranges, QVector<int>() << IsSelectedRole);
     }
 
     void ArtworksListModel::unselectAllItems() {
         LOG_DEBUG << "#";
-        foreachArtwork(Helpers::IndicesRanges(getArtworksSize()), [](Artworks::ArtworkMetadata *artwork, size_t){
+        foreachArtwork(Helpers::IndicesRanges(getArtworksSize()), [](ArtworkItem const &artwork, size_t){
             artwork->resetSelected();
         });
         unsetCurrentIndex();
@@ -114,10 +114,10 @@ namespace Models {
             this->updateItems(Helpers::IndicesRanges(getArtworksSize()), roles);
             return;
         case SelectionType::Modified:
-            pred = [](Artworks::ArtworkMetadata *artwork) { return artwork->isModified(); };
+            pred = [](ArtworkItem const &artwork) { return artwork->isModified(); };
             break;
         case SelectionType::Selected:
-            pred = [](Artworks::ArtworkMetadata *artwork) { return artwork->isSelected(); };
+            pred = [](ArtworkItem const &artwork) { return artwork->isSelected(); };
             break;
         default:
             return;
@@ -129,21 +129,21 @@ namespace Models {
 
     std::unique_ptr<Artworks::SessionSnapshot> ArtworksListModel::createSessionSnapshot() {
         auto sessionSnapshot = std::make_unique<Artworks::SessionSnapshot>(
-                                   filterAvailableArtworks<Artworks::ArtworkMetadata*>([](Artworks::ArtworkMetadata *artwork, size_t) {return artwork;}),
+                                   filterAvailableArtworks<Artworks::ArtworkMetadata*>([](ArtworkItem const &artwork, size_t) {return artwork;}),
                 m_ArtworksRepository.retrieveFullDirectories());
         return sessionSnapshot;
     }
 
     Artworks::ArtworksSnapshot ArtworksListModel::createArtworksSnapshot() {
         auto lockers = filterArtworks<std::shared_ptr<ArtworkMetadataLocker>>([](Artworks::ArtworkMetadata*) { return true; },
-                [](Artworks::ArtworkMetadata *artwork, size_t) { return std::make_shared<ArtworkMetadataLocker>(artwork); });
+                [](ArtworkItem const &artwork, size_t) { return std::make_shared<ArtworkMetadataLocker>(artwork); });
         return Artworks::ArtworksSnapshot(lockers);
     }
 
     void ArtworksListModel::generateAboutToBeRemoved() {
         LOG_DEBUG << "#";
-        foreachArtwork([](Artworks::ArtworkMetadata *artwork) { return artwork->isUnavailable(); },
-        [](Artworks::ArtworkMetadata *artwork, size_t) {
+        foreachArtwork([](ArtworkItem const &artwork) { return artwork->isUnavailable(); },
+        [](ArtworkItem const &artwork, size_t) {
             Artworks::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
             keywordsModel->notifyAboutToBeRemoved();
         });
@@ -151,8 +151,8 @@ namespace Models {
 
     void ArtworksListModel::unlockAllForIO() {
         LOG_DEBUG << "#";
-        foreachArtwork([](Artworks::ArtworkMetadata *){return true;},
-        [](Artworks::ArtworkMetadata *artwork, size_t) { artwork->setIsLockedIO(false); });
+        foreachArtwork([](ArtworkItem const &){return true;},
+        [](ArtworkItem const &artwork, size_t) { artwork->setIsLockedIO(false); });
     }
 
     bool ArtworksListModel::isInSelectedDirectory(int artworkIndex) {
@@ -189,7 +189,7 @@ namespace Models {
 
     void ArtworksListModel::setItemsSaved(const Helpers::IndicesRanges &ranges) {
         LOG_DEBUG << "#";
-        foreachArtwork(ranges, [](Artworks::ArtworkMetadata *artwork, size_t) {
+        foreachArtwork(ranges, [](ArtworkItem const &artwork, size_t) {
             artwork->resetModified();
         });
 
@@ -262,8 +262,8 @@ namespace Models {
         if (m_ArtworkList.empty()) { return; }
 
         std::vector<int> indices = filterArtworks<int>(
-                    [&artworkIDs](Artworks::ArtworkMetadata *artwork) { return artworkIDs.contains(artwork->getItemID().get()); },
-                [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
+                    [&artworkIDs](ArtworkItem const &artwork) { return artworkIDs.contains(artwork->getItemID().get()); },
+                [](ArtworkItem const &, size_t index) { return (int)index; });
 
         this->updateItems(Helpers::IndicesRanges(indices), rolesToUpdate);
     }
@@ -315,7 +315,7 @@ namespace Models {
     ArtworksRemoveResult ArtworksListModel::removeFiles(Helpers::IndicesRanges const &ranges) {
         int selectedCount = 0;
         bool anyToDelete = false;
-        foreachArtwork(ranges, [this, &selectedCount, &anyToDelete](Artworks::ArtworkMetadata *artwork, size_t) {
+        foreachArtwork(ranges, [this, &selectedCount, &anyToDelete](ArtworkItem const &artwork, size_t) {
             artwork->setRemoved();
             anyToDelete = true;
             if (artwork->isSelected()) {
@@ -331,8 +331,8 @@ namespace Models {
         emit artworksChanged(true);
 
         Artworks::WeakArtworksSnapshot snapshot = filterArtworks<Artworks::ArtworkMetadata*>(
-                    [](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
-                [](Artworks::ArtworkMetadata *artwork, size_t) { return artwork; });
+                    [](ArtworkItem const &artwork) { return artwork->isRemoved(); },
+                [](ArtworkItem const &artwork, size_t) { return artwork; });
 
         ArtworksRemoveResult removeResult;
         m_ArtworksRepository.removeFiles(snapshot, removeResult);
@@ -348,11 +348,11 @@ namespace Models {
 
         const QString directoryAbsolutePath = QDir(directory).absolutePath();
         std::vector<int> indices = filterArtworks<int>(
-                    [&directoryAbsolutePath](Artworks::ArtworkMetadata *artwork) {
+                    [&directoryAbsolutePath](ArtworkItem const &artwork) {
                 // if we will remove all files in directory then undo operation might
                 // restore files that were removed separately from same directory
                 return artwork->isInDirectory(directoryAbsolutePath) && !artwork->isRemoved(); },
-                [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
+                [](ArtworkItem const &, size_t index) { return (int)index; });
 
         return removeFiles(Helpers::IndicesRanges(indices));
     }
@@ -360,8 +360,8 @@ namespace Models {
     void ArtworksListModel::restoreRemoved(Helpers::IndicesRanges const &ranges) {
         LOG_DEBUG << "#";
         int restoredCount = foreachArtwork(ranges,
-                                [](Artworks::ArtworkMetadata *artwork) { return artwork->isRemoved(); },
-                [this](Artworks::ArtworkMetadata *artwork, size_t) {
+                                [](ArtworkItem const &artwork) { return artwork->isRemoved(); },
+                [this](ArtworkItem const &artwork, size_t) {
             qint64 directoryID;
             auto flags = this->m_ArtworksRepository.accountFile(artwork->getFilepath(), directoryID);
             Q_ASSERT(flags == Common::AccountFileFlags::FlagRepositoryModified);
@@ -380,8 +380,8 @@ namespace Models {
     void ArtworksListModel::deleteRemovedItems() {
         LOG_DEBUG << "#";
         auto indices = filterArtworks<int>(
-                    [](Artworks::ArtworkMetadata *artwork){ return artwork->isRemoved(); },
-                [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
+                    [](ArtworkItem const &artwork){ return artwork->isRemoved(); },
+                [](ArtworkItem const &, size_t index) { return (int)index; });
         deleteItems(Helpers::IndicesRanges(indices));
     }
 
@@ -443,8 +443,8 @@ namespace Models {
     void ArtworksListModel::deleteUnavailableItems() {
         LOG_DEBUG << "#";
         auto indices = filterArtworks<int>(
-                    [](Artworks::ArtworkMetadata *artwork){ return artwork->isUnavailable(); },
-                [](Artworks::ArtworkMetadata *, size_t index) { return (int)index; });
+                    [](ArtworkItem const &artwork){ return artwork->isUnavailable(); },
+                [](ArtworkItem const &, size_t index) { return (int)index; });
         Helpers::IndicesRanges ranges(indices);
         removeFiles(ranges);
         deleteItems(ranges);
@@ -497,9 +497,9 @@ namespace Models {
         indicesToUpdate.reserve((int)size);
 
         for (size_t i = 0; i < size; ++i) {
-            Artworks::ArtworkMetadata *metadata = accessArtwork(i);
-            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(metadata);
-            if (image == NULL) { continue; }
+            auto &artwork = accessArtwork(i);
+            auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+            if (image == nullptr) { continue; }
 
             const QString &filepath = image->getFilepath();
             QFileInfo fi(filepath);
@@ -538,19 +538,19 @@ namespace Models {
     void ArtworksListModel::syncArtworksIndices(int startIndex, int count) {
         if (count == -1) { count = getArtworksSize(); }
         foreachArtwork(Helpers::IndicesRanges(startIndex, count),
-        [this](Artworks::ArtworkMetadata *, size_t i) { this->accessArtwork(i); });
+        [this](ArtworkItem const &, size_t i) { this->accessArtwork(i); });
     }
 
     void ArtworksListModel::resetSpellCheckResults() {
         foreachArtwork(Helpers::IndicesRanges(getArtworksSize()),
-                       [](Artworks::ArtworkMetadata *artwork, size_t) {
+                       [](ArtworkItem const &artwork, size_t) {
             artwork->resetSpellingInfo();
         });
     }
 
     void ArtworksListModel::resetDuplicatesResults() {
         foreachArtwork(Helpers::IndicesRanges(getArtworksSize()),
-                       [](Artworks::ArtworkMetadata *artwork, size_t) {
+                       [](ArtworkItem const &artwork, size_t) {
             artwork->resetDuplicatesInfo();
         });
     }
@@ -568,7 +568,7 @@ namespace Models {
             return QVariant();
         }
 
-        Artworks::ArtworkMetadata *artwork = accessArtwork(row);
+        ArtworkItem const &artwork = accessArtwork(row);
         switch (role) {
             case ArtworkDescriptionRole:
                 return artwork->getDescription();
@@ -624,7 +624,7 @@ namespace Models {
             return false;
         }
 
-        Artworks::ArtworkMetadata *metadata = accessArtwork(row);
+        ArtworkItem const &metadata = accessArtwork(row);
         if (metadata->isLockedForEditing()) { return false; }
 
         int roleToUpdate = 0;
@@ -712,7 +712,7 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::removeLastKeyword(int artworkIndex) {
         LOG_INFO << "index" << artworkIndex;
         std::shared_ptr<Commands::ICommand> command;
-        Artworks::ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        auto &artwork = accessArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
@@ -811,7 +811,7 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> ArtworksListModel::editKeyword(int artworkIndex, int keywordIndex, const QString &replacement) {
         LOG_INFO << "metadata index:" << artworkIndex;
         std::shared_ptr<Commands::ICommand> command;
-        Artworks::ArtworkMetadata *artwork = accessArtwork(artworkIndex);
+        auto &artwork = accessArtwork(artworkIndex);
         if (artwork != nullptr) {
             setCurrentIndex(artworkIndex);
             using namespace Commands;
@@ -979,8 +979,8 @@ namespace Models {
                                                                           Common::ArtworkEditFlags flags) {
         auto weakSnapshot = filterArtworks<Artworks::ArtworkMetadata*>(
                                 ranges,
-                                [](Artworks::ArtworkMetadata *) { return true; },
-                [](Artworks::ArtworkMetadata *artwork, size_t) { return artwork; });
+                                [](ArtworkItem const &) { return true; },
+                [](ArtworkItem const &artwork, size_t) { return artwork; });
         using namespace Commands;
         return std::make_shared<ModifyArtworksCommand>(
                     Artworks::ArtworksSnapshot(weakSnapshot),
@@ -996,9 +996,9 @@ namespace Models {
         bool anyArtworkUnavailable = false;
         bool anyVectorUnavailable = false;
 
-        foreachArtwork([this](Artworks::ArtworkMetadata *artwork) {
+        foreachArtwork([this](ArtworkItem const &artwork) {
             return this->m_ArtworksRepository.isFileUnavailable(artwork->getFilepath()); },
-        [&anyArtworkUnavailable](Artworks::ArtworkMetadata *artwork, size_t) {
+        [&anyArtworkUnavailable](ArtworkItem const &artwork, size_t) {
             artwork->setUnavailable(); anyArtworkUnavailable = true; });
 
         foreachArtworkAs<Artworks::ImageArtwork>(Helpers::IndicesRanges(getArtworksSize()),
@@ -1015,10 +1015,12 @@ namespace Models {
     }
 
     void ArtworksListModel::onArtworkEditingPaused() {
+        LOG_DEBUG << "#";
         Artworks::ArtworkMetadata *artwork = qobject_cast<Artworks::ArtworkMetadata *>(sender());
         Q_ASSERT(artwork != nullptr);
         if (artwork != nullptr) {
-            sendMessage(artwork);
+            auto &ptr = artwork->getptr();
+            sendMessage(ptr);
         }
     }
 

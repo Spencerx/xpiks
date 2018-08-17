@@ -63,7 +63,7 @@ namespace Commands {
         m_ArtworksBackups.reserve(size);
 
         for (size_t i = 0; i < size; ++i) {
-            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            auto &artwork = snapshot.get(i);
 
             m_ArtworksBackups.emplace_back(UndoRedo::ArtworkMetadataBackup(artwork));
 
@@ -78,13 +78,13 @@ namespace Commands {
         Q_ASSERT(snapshot.size() == m_ArtworksBackups.size());
         const size_t size = snapshot.size();
         for (size_t i = 0; i < size; i++) {
-            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            auto &artwork = snapshot.get(i);
             auto &backup = m_ArtworksBackups.at(i);
             backup.restore(artwork);
         }
     }
 
-    void EditArtworksTemplate::editKeywords(Artworks::ArtworkMetadata *artwork) const {
+    void EditArtworksTemplate::editKeywords(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) const {
         if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::EditKeywords)) {
             if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::AppendKeywords)) {
                 artwork->appendKeywords(m_Keywords);
@@ -99,7 +99,7 @@ namespace Commands {
         }
     }
 
-    void EditArtworksTemplate::editDescription(Artworks::ArtworkMetadata *artwork) const {
+    void EditArtworksTemplate::editDescription(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) const {
         if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::EditDescription)) {
             if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::Clear)) {
                 artwork->setDescription("");
@@ -109,7 +109,7 @@ namespace Commands {
         }
     }
 
-    void EditArtworksTemplate::editTitle(Artworks::ArtworkMetadata *artwork) const {
+    void EditArtworksTemplate::editTitle(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) const {
         if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::EditTitle)) {
             if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::Clear)) {
                 artwork->setTitle("");

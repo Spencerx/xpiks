@@ -19,6 +19,7 @@ namespace Common {
     struct MessageType {
         enum Type {
             SpellCheck,
+            EditingPaused,
             UnavailableFiles
         };
     };

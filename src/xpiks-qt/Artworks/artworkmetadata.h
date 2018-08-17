@@ -18,13 +18,11 @@
 #include <QString>
 #include <QVector>
 #include <QSet>
-#include <QTimer>
 #include <QMutex>
-#include <QQmlEngine>
+#include <memory>
 #include "basicmetadatamodel.h"
 #include "iartworkmetadata.h"
 #include <Common/flags.h>
-#include <Common/hold.h>
 #include <Common/types.h>
 #include <Common/delayedactionentity.h>
 #include <Services/SpellCheck/spellcheckiteminfo.h>
@@ -37,6 +35,7 @@ namespace MetadataIO {
 }
 
 class QTextDocument;
+class QTimerEvent;
 
 namespace Artworks {
     class SettingsModel;
@@ -45,7 +44,8 @@ namespace Artworks {
             public QObject,
             public Common::DelayedActionEntity,
             public Artworks::IArtworkMetadata,
-            public SpellCheck::ISpellCheckable
+            public SpellCheck::ISpellCheckable,
+            public std::enable_shared_from_this<ArtworkMetadata>
     {
         Q_OBJECT
 
@@ -102,6 +102,11 @@ namespace Artworks {
 #undef PROTECT_FLAGS_WRITE
 
     public:
+        // exists only because of onArtworkEditingPaused() in ArtworksListModel
+        // where we only receive raw ptr from Qt signal-slot sender() method
+        std::shared_ptr<ArtworkMetadata> getptr() { return shared_from_this(); }
+
+    public:
         void prepareForReimport();
         bool initFromOrigin(const MetadataIO::OriginalMetadata &originalMetadata, bool overwrite=false);
         bool initFromStorage(const MetadataIO::CachedArtwork &cachedArtwork);
@@ -122,7 +127,7 @@ namespace Artworks {
     public:
         const QString &getFilepath() const { return m_ArtworkFilepath; }
         virtual const QString &getThumbnailPath() const { return m_ArtworkFilepath; }
-        virtual QString getDirectory() const { QFileInfo fi(m_ArtworkFilepath); return fi.absolutePath(); }
+        virtual QString getDirectory() const;
         QString getBaseFilename() const;
         bool isInDirectory(const QString &directoryAbsolutePath) const;
 

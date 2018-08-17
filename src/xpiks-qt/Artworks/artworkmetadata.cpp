@@ -210,6 +210,11 @@ namespace Artworks {
         return anythingChanged;
     }
 
+    QString ArtworkMetadata::getDirectory() const {
+        QFileInfo fi(m_ArtworkFilepath);
+        return fi.absolutePath();
+    }
+
     QString ArtworkMetadata::getBaseFilename() const {
         QFileInfo fi(m_ArtworkFilepath);
         return fi.fileName();

@@ -112,10 +112,9 @@ namespace Models {
 
     void ZipArchiver::setArtworks(Artworks::ArtworksSnapshot const &snapshot) {
         LOG_DEBUG << "#";
-        auto imagesWithVectors = Helpers::filter<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(snapshot.getRawData(),
-                                                                                                   [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
-            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
-            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+        auto imagesWithVectors = Helpers::filter<std::shared_ptr<Artworks::ArtworkMetadata>>(snapshot.getRawData(),
+                                                                                             [](std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) {
+            auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
             return (image != NULL) && image->hasVectorAttached();
         });
         m_ArtworksSnapshot.set(imagesWithVectors);

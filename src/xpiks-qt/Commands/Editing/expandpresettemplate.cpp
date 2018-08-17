@@ -34,7 +34,7 @@ namespace Commands {
         const size_t size = m_ArtworksBackups.size();
         for (size_t i = 0; i < size; i++) {
             auto &backup = m_ArtworksBackups.at(i);
-            Artworks::ArtworkMetadata *artwork = snapshot.get(i);
+            auto &artwork = snapshot.get(i);
             backup.restore(artwork);
         }
     }
@@ -45,7 +45,7 @@ namespace Commands {
 
         bool found = m_PresetsManager.tryGetPreset(m_PresetID, keywords);
         if (found) {
-            Artworks::ArtworkMetadata *artwork = snapshot.get(0);
+            auto &artwork = snapshot.get(0);
             m_ArtworksBackups.emplace_back(artwork);
 
             if (m_KeywordIndex != -1) {
@@ -71,7 +71,7 @@ namespace Commands {
     void ExpandCompletionPreset::execute(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
         bool accepted = expandPreset(snapshot);
-        Artworks::ArtworkMetadata *artwork = snapshot.get(0);
+        auto &artwork = snapshot.get(0);
         auto *basicModel = artwork->getBasicModel();
         basicModel->notifyCompletionAccepted(accepted, m_CompletionID);
     }
