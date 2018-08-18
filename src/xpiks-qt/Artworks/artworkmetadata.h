@@ -22,10 +22,11 @@
 #include <memory>
 #include "basicmetadatamodel.h"
 #include "iartworkmetadata.h"
+#include "ibasicmodelsource.h"
 #include <Common/flags.h>
 #include <Common/types.h>
 #include <Common/delayedactionentity.h>
-#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Services/SpellCheck/spellcheckinfo.h>
 #include <Services/SpellCheck/ispellcheckable.h>
 #include <UndoRedo/artworkmetadatabackup.h>
 
@@ -44,6 +45,7 @@ namespace Artworks {
             public QObject,
             public Common::DelayedActionEntity,
             public Artworks::IArtworkMetadata,
+            public Artworks::IBasicModelSource,
             public SpellCheck::ISpellCheckable,
             public std::enable_shared_from_this<ArtworkMetadata>
     {
@@ -148,8 +150,10 @@ namespace Artworks {
         void setWarningsFlags(Common::WarningFlags flags) { m_WarningsFlags = flags; }
 
     public:
-        BasicMetadataModel &getBasicModel() { return m_MetadataModel; }
-        BasicMetadataModel const &getBasicModel() const { return m_MetadataModel; }
+        BasicMetadataModel const &getBasicMetadataModel() const { return m_MetadataModel; }
+        BasicMetadataModel &getBasicMetadataModel() { return m_MetadataModel; }
+        // IBasicModelSource interface
+        virtual BasicKeywordsModel &getBasicModel() override { return m_MetadataModel; }
 
         bool isLockedForEditing() { return getIsLockedForEditingFlag(); }
         void setIsLockedForEditing(bool value) { setIsLockedForEditingFlag(value); }
@@ -198,7 +202,6 @@ namespace Artworks {
         virtual QStringList retrieveMisspelledDescriptionWords() override;
         virtual bool processFailedKeywordReplacements(const std::vector<std::shared_ptr<SpellCheck::KeywordSpellSuggestions> > &candidatesForRemoval) override;
         virtual void afterReplaceCallback() override;
-        virtual BasicKeywordsModel *getBasicKeywordsModel() override;
 
     public:
         QStringList getKeywords() { return m_MetadataModel.getKeywords(); }
@@ -262,7 +265,7 @@ namespace Artworks {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
-        SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
+        SpellCheck::SpellCheckInfo m_SpellCheckInfo;
         BasicMetadataModel m_MetadataModel;
         QReadWriteLock m_FlagsLock;
         QMutex m_InitMutex;

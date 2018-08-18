@@ -25,8 +25,8 @@ namespace Models {
 namespace SpellCheck {
     class SpellCheckSuggestionModel;
     class DuplicatesReviewModel;
-    class IBasicModelSpellCheckService;
-    class IArtworkSpellCheckService;
+    class ISpellCheckService;
+    class ISpellCheckService;
 }
 
 namespace AutoComplete {
@@ -47,7 +47,7 @@ namespace Commands {
         public:
             FixSpellingInBasicModelCommand(QMLExtensions::UICommandID::CommandID commandID,
                                            Artworks::IBasicModelSource &basicModelSource,
-                                           SpellCheck::IBasicModelSpellCheckService &spellCheckService,
+                                           SpellCheck::ISpellCheckService &spellCheckService,
                                            SpellCheck::SpellCheckSuggestionModel &spellSuggestionsModel):
                 m_CommandID(commandID),
                 m_BasicModelSource(basicModelSource),
@@ -63,7 +63,7 @@ namespace Commands {
         private:
             QMLExtensions::UICommandID::CommandID m_CommandID;
             Artworks::IBasicModelSource &m_BasicModelSource;
-            SpellCheck::IBasicModelSpellCheckService &m_SpellCheckService;
+            SpellCheck::ISpellCheckService &m_SpellCheckService;
             SpellCheck::SpellCheckSuggestionModel &m_SpellSuggestionsModel;
         };
 

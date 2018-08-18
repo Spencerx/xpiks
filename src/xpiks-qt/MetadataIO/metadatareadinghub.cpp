@@ -106,7 +106,7 @@ namespace MetadataIO {
         }
 
         m_UpdateHub.updateArtworks(m_ArtworksToRead);
-        m_InspectionHub.inspectArtworks(m_ArtworksToRead);
+        m_InspectionHub.inspectItems(m_ArtworksToRead);
 
         finalizeImport();
     }

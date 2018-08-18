@@ -21,7 +21,7 @@ namespace SpellCheck {
     }
 
     QString BasicModelDuplicates::getDescriptionDuplicates() {
-        SpellCheck::SpellCheckItemInfo &spellCheckInfo = m_BasicModel.getSpellCheckInfo();
+        SpellCheck::SpellCheckInfo &spellCheckInfo = m_BasicModel.getSpellCheckInfo();
 
         QString description = m_BasicModel.getDescription();
         QString result;
@@ -51,7 +51,7 @@ namespace SpellCheck {
     }
 
     QString BasicModelDuplicates::getTitleDuplicates() {
-        SpellCheck::SpellCheckItemInfo &spellCheckInfo = m_BasicModel.getSpellCheckInfo();
+        SpellCheck::SpellCheckInfo &spellCheckInfo = m_BasicModel.getSpellCheckInfo();
 
         QString title = m_BasicModel.getTitle();
         QString result;

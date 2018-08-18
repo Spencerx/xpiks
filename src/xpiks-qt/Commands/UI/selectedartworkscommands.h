@@ -47,7 +47,7 @@ namespace Services {
 }
 
 namespace SpellCheck {
-    class IArtworkSpellCheckService;
+    class ISpellCheckService;
 }
 
 namespace Commands {

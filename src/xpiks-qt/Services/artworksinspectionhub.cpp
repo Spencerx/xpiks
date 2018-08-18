@@ -10,11 +10,14 @@
 
 #include "artworksinspectionhub.h"
 #include <Services/Warnings/warningsservice.h>
-#include <Services/SpellCheck/spellcheckservice.h>
+#include <Services/SpellCheck/ispellcheckservice.h>
 #include <Models/settingsmodel.h>
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/artworkssnapshot.h>
+#include <Helpers/cpphelpers.h>
 
 namespace Services {
-    ArtworksInspectionHub::ArtworksInspectionHub(SpellCheck::SpellCheckService &spellCheckService,
+    ArtworksInspectionHub::ArtworksInspectionHub(SpellCheck::ISpellCheckService &spellCheckService,
                                                  Warnings::WarningsService &warningsService,
                                                  Models::SettingsModel &settingsModel):
         m_SpellCheckService(spellCheckService),
@@ -23,39 +26,56 @@ namespace Services {
     {
     }
 
-    void ArtworksInspectionHub::handleMessage(const ArtworkInspectionType &change) {
-        inspectArtwork(change.get());
+    void ArtworksInspectionHub::handleMessage(const ItemInspectionType &change) {
+        inspectItem(change.get());
     }
 
-    void ArtworksInspectionHub::handleMessage(const BasicModelInspectionType &change) {
-        inspectBasicModel(change.get());
+    void ArtworksInspectionHub::handleMessage(const ItemArrayInspectionType &change) {
+        inspectItems(change.get());
     }
 
-    void ArtworksInspectionHub::handleMessage(const ArtworksArrayInspectionType &change) {
+    void ArtworksInspectionHub::inspectItem(const std::shared_ptr<Artworks::IBasicModelSource> &item) {
+        LOG_INFO << items.size() << "item";
         if (isSpellCheckAvailable()) {
-            m_SpellCheckService.submitItems(change.get());
-        }
-    }
-
-    void ArtworksInspectionHub::inspectArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) {
-        if (isSpellCheckAvailable()) {
-            m_SpellCheckService.submitArtwork(artwork);
+            m_SpellCheckService.submitItem(item);
         } else {
-            m_WarningsService.submitItem(artwork);
+            auto artwork = std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(item);
+            if (artwork != nullptr) {
+                m_WarningsService.submitItem(artwork);
+            }
         }
     }
 
-    void ArtworksInspectionHub::inspectArtworks(Artworks::ArtworksSnapshot const &snapshot) {
+    void ArtworksInspectionHub::inspectItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items) {
+        LOG_INFO << items.size() << "items";
         if (isSpellCheckAvailable()) {
-            m_SpellCheckService.submitArtworks(snapshot);
+            m_SpellCheckService.submitItems(items, QStringList());
+        } else {
+            if (!items.empty() &&
+                    (std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(items.front()) != nullptr)) {
+                using ArtworkPtr = std::shared_ptr<Artworks::ArtworkMetadata>;
+                using SourcePtr = std::shared_ptr<Artworks::IBasicModelSource>;
+                m_WarningsService.submitItems(
+                            Helpers::map<SourcePtr, ArtworkPtr>(items,
+                                                                [](const SourcePtr &src) {
+                    return std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(src);
+                }));
+            }
+        }
+    }
+
+    void ArtworksInspectionHub::inspectItems(const Artworks::ArtworksSnapshot &snapshot) {
+        if (isSpellCheckAvailable()) {
+            using ArtworkPtr = std::shared_ptr<Artworks::ArtworkMetadata>;
+            using SourcePtr = std::shared_ptr<Artworks::IBasicModelSource>;
+            m_SpellCheckService.submitItems(
+                        Helpers::map<ArtworkPtr, SourcePtr>(snapshot.getRawData(),
+                                                            [](const ArtworkPtr &src) {
+                return std::dynamic_pointer_cast<Artworks::IBasicModelSource>(src);
+            }),
+                        QStringList());
         } else {
             m_WarningsService.submitItems(snapshot);
-        }
-    }
-
-    void ArtworksInspectionHub::inspectBasicModel(Artworks::BasicKeywordsModel const &basicModel) {
-        if (isSpellCheckAvailable()) {
-            m_SpellCheckService.submitItem(basicModel, Common::SpellCheckFlags::All);
         }
     }
 

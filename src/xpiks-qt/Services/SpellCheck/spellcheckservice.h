@@ -42,8 +42,7 @@ namespace Models {
 namespace SpellCheck {
     class SpellCheckService:
             public QObject,
-            public IBasicModelSpellCheckService,
-            public IArtworkSpellCheckService
+            public ISpellCheckService
     {
         Q_OBJECT
         Q_PROPERTY(int userDictWordsNumber READ getUserDictWordsNumber NOTIFY userDictWordsNumberChanged)
@@ -57,13 +56,13 @@ namespace SpellCheck {
         void startService(Helpers::AsyncCoordinator &initCoordinator, Warnings::WarningsService &warningsService);
         void stopService();
 
-        bool isAvailable() const { return true; }
-        bool isBusy() const;
+        // ISpellCheckService interface
+    private:
+        virtual quint32 submitItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items,
+                                    const QStringList &wordsToCheck = QStringList()) override;
+        virtual void submitItem(const std::shared_ptr<Artworks::IBasicModelSource> &item) override;
 
-        virtual void submitItem(Artworks::BasicKeywordsModel const &itemToCheck, Common::SpellCheckFlags flags) override;
-        virtual SpellCheckWorker::batch_id_t submitArtworks(const Artworks::ArtworksSnapshot &snapshot, const QStringList &wordsToCheck) override;
-        virtual void submitArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) override;
-        SpellCheckWorker::batch_id_t submitItems(const std::vector<std::reference_wrapper<Artworks::BasicKeywordsModel>> &itemsToCheck);
+    public:
         virtual QStringList suggestCorrections(const QString &word) const;
         int getUserDictWordsNumber();
 

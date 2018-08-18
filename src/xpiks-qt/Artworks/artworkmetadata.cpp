@@ -17,7 +17,7 @@
 #include <Helpers/keywordshelpers.h>
 #include <Services/SpellCheck/spellsuggestionsitem.h>
 #include <Services/SpellCheck/spellcheckitem.h>
-#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Services/SpellCheck/spellcheckinfo.h>
 #include <Common/defines.h>
 #include <MetadataIO/cachedartwork.h>
 #include <MetadataIO/originalmetadata.h>
@@ -35,6 +35,7 @@
 namespace Artworks {
     ArtworkMetadata::ArtworkMetadata(const QString &filepath, Common::ID_t ID, qint64 directoryID):
         Common::DelayedActionEntity(ARTWORK_EDITING_PAUSE, MAX_EDITING_PAUSE_RESTARTS),
+        m_MetadataModel(m_SpellCheckInfo),
         m_FileSize(0),
         m_ArtworkFilepath(filepath),
         m_ID(ID),
@@ -43,8 +44,6 @@ namespace Artworks {
         m_LastKnownIndex(INVALID_INDEX),
         m_WarningsFlags(Common::WarningFlags::None)
     {
-        m_MetadataModel.setSpellCheckInfo(&m_SpellCheckInfo);
-
         QFileInfo fi(filepath);
         setIsReadOnlyFlag(!fi.isWritable());
     }
@@ -488,10 +487,6 @@ namespace Artworks {
 
     void ArtworkMetadata::afterReplaceCallback() {
         m_MetadataModel.afterReplaceCallback();
-    }
-
-    BasicKeywordsModel *ArtworkMetadata::getBasicKeywordsModel() {
-        return &m_MetadataModel;
     }
 
     void ArtworkMetadata::markModified() {

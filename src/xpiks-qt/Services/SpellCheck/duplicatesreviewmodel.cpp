@@ -66,7 +66,7 @@ namespace SpellCheck {
 
         auto &item = m_DuplicatesList.at(index);
         auto &basicModel = item->getBasicModel();
-        SpellCheck::SpellCheckItemInfo &spellCheckInfo = basicModel.getSpellCheckInfo();
+        SpellCheck::SpellCheckInfo &spellCheckInfo = basicModel.getSpellCheckInfo();
 
         SpellCheck::DuplicatesHighlighter *highlighter = new SpellCheck::DuplicatesHighlighter(
                     document->textDocument(),
@@ -92,7 +92,7 @@ namespace SpellCheck {
 
         auto &item = m_DuplicatesList.at(index);
         auto &basicModel = item->getBasicModel();
-        SpellCheck::SpellCheckItemInfo &spellCheckInfo = basicModel.getSpellCheckInfo();
+        SpellCheck::SpellCheckInfo &spellCheckInfo = basicModel.getSpellCheckInfo();
 
         SpellCheck::DuplicatesHighlighter *highlighter = new SpellCheck::DuplicatesHighlighter(
                     document->textDocument(),

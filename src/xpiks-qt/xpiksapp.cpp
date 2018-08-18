@@ -662,19 +662,15 @@ void XpiksApp::setupMessaging() {
                 m_VideoCachingService,
     { m_ArtworkProxyModel });
 
-    Common::connectTarget<Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>,
-            Common::MessageType::EditingPaused>>(
+    Common::connectTarget<Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>,
+            Common::MessageType::SpellCheck>>(
                 m_InspectionHub,
-    { m_ArtworksListModel, m_ArtworkProxyModel });
+    { m_ArtworksListModel, m_ArtworkProxyModel, m_PresetsModel, m_CombinedArtworksModel, m_DeleteKeywordsModel, m_QuickBuffer });
 
-    Common::connectTarget<Common::NamedType<std::vector<std::shared_ptr<Artworks::ArtworkMetadata>>,
+    Common::connectTarget<Common::NamedType<std::vector<std::shared_ptr<Artworks::IBasicModelSource>>,
             Common::MessageType::SpellCheck>>(
                 m_InspectionHub,
     { m_ArtworksListModel });
-
-    Common::connectTarget<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>(
-                m_InspectionHub,
-    { m_PresetsModel, m_CombinedArtworksModel, m_DeleteKeywordsModel, m_QuickBuffer });
 
     Common::connectSource<Common::NamedType<int, Common::MessageType::UnavailableFiles>>(
                 m_ArtworksListModel,

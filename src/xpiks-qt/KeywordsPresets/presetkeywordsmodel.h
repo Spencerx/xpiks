@@ -21,6 +21,7 @@
 #include <Common/isystemenvironment.h>
 #include <Common/messages.h>
 #include <Common/types.h>
+#include <Artworks/ibasicmodelsource.h>
 #include "ipresetsmanager.h"
 #include "presetkeywordsmodelconfig.h"
 #include "presetgroupsmodel.h"
@@ -28,12 +29,13 @@
 namespace KeywordsPresets {
     struct PresetModel;
     class FilteredPresetKeywordsModel;
+    using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
 
     class PresetKeywordsModel:
             public QAbstractListModel,
             public Common::DelayedActionEntity,
             public IPresetsManager,
-            public Common::MessagesSource<Common::NamedType<std::shared_ptr<PresetModel>, Common::MessageType::SpellCheck>>
+            public Common::MessagesSource<BasicSpellCheckMessageType>
     {
         Q_OBJECT
 
@@ -101,6 +103,7 @@ namespace KeywordsPresets {
         bool tryFindPresetByFullNameUnsafe(const QString &name, bool caseSensitive, size_t &index);
         bool removeItemUnsafe(size_t index);
         ID_t getPresetID(size_t index);
+        void checkSpelling(std::shared_ptr<PresetModel> const &preset);
 
     private:
         enum PresetKeywords_Roles {

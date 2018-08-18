@@ -50,8 +50,8 @@ namespace Models {
     class ArtworksRepository;
     class ICurrentEidtable;
 
-    using ArtworkSpellCheckMessage = Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>, Common::MessageType::EditingPaused>;
-    using ArtworksListSpellCheckMessage = Common::NamedType<std::vector<std::shared_ptr<Artworks::ArtworkMetadata>>, Common::MessageType::SpellCheck>;
+    using ArtworkSpellCheckMessage = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
+    using ArtworksListSpellCheckMessage = Common::NamedType<std::vector<std::shared_ptr<Artworks::IBasicModelSource>>, Common::MessageType::SpellCheck>;
     using UnavailableFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;
 
     class ArtworksListModel:

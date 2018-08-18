@@ -33,7 +33,7 @@ namespace Commands {
     public:\
         ClassName(Source &source,\
                   Services::IArtworksUpdater &artworksUpdater,\
-                  SpellCheck::IArtworkSpellCheckService &spellCheckService,\
+                  SpellCheck::ISpellCheckService &spellCheckService,\
                   SpellCheck::SpellCheckSuggestionModel &spellSuggestionsModel):\
             m_Source(source),\
             m_ArtworksUpdater(artworksUpdater),\
@@ -46,7 +46,7 @@ namespace Commands {
     private:\
         Source &m_Source;\
         Services::IArtworksUpdater &m_ArtworksUpdater;\
-        SpellCheck::IArtworkSpellCheckService &m_SpellCheckService;\
+        SpellCheck::ISpellCheckService &m_SpellCheckService;\
         SpellCheck::SpellCheckSuggestionModel &m_SpellSuggestionsModel;\
     };
     }

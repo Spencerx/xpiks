@@ -12,12 +12,12 @@
 #define IBASICMODELSOURCE_H
 
 namespace Artworks {
-    class BasicMetadataModel;
+    class BasicKeywordsModel;
 
     class IBasicModelSource {
     public:
         virtual ~IBasicModelSource() {}
-        virtual BasicMetadataModel &getBasicModel() = 0;
+        virtual BasicKeywordsModel &getBasicModel() = 0;
     };
 }
 

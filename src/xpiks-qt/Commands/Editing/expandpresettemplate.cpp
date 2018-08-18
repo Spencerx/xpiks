@@ -72,7 +72,7 @@ namespace Commands {
         LOG_DEBUG << "#";
         bool accepted = expandPreset(snapshot);
         auto &artwork = snapshot.get(0);
-        auto *basicModel = artwork->getBasicModel();
-        basicModel->notifyCompletionAccepted(accepted, m_CompletionID);
+        auto &basicModel = artwork->getBasicModel();
+        basicModel.notifyCompletionAccepted(accepted, m_CompletionID);
     }
 }

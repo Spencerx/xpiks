@@ -30,7 +30,7 @@ namespace KeywordsPresets {
 namespace Models {
     class DeleteKeywordsViewModel:
             public Models::ArtworksViewModel,
-            public Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>
+            public Common::MessagesSource<Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>>
     {
         Q_OBJECT
         Q_PROPERTY(int commonKeywordsCount READ getCommonKeywordsCount NOTIFY commonKeywordsCountChanged)

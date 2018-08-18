@@ -144,7 +144,7 @@ namespace Models {
     void UIManager::initDescriptionHighlighting(QObject *basicModelObject, QQuickTextDocument *document) {
         Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(basicModelObject);
         if (basicModel != nullptr) {
-            SpellCheck::SpellCheckItemInfo *info = basicModel->getSpellCheckInfo();
+            SpellCheck::SpellCheckInfo *info = basicModel->getSpellCheckInfo();
             info->createHighlighterForDescription(document->textDocument(), &m_ColorsModel, basicModel);
             basicModel->notifyDescriptionSpellingChanged();
         }
@@ -153,7 +153,7 @@ namespace Models {
     void UIManager::initTitleHighlighting(QObject *basicModelObject, QQuickTextDocument *document) {
         Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(basicModelObject);
         if (basicModel != nullptr) {
-            SpellCheck::SpellCheckItemInfo *info = basicModel->getSpellCheckInfo();
+            SpellCheck::SpellCheckInfo *info = basicModel->getSpellCheckInfo();
             info->createHighlighterForTitle(document->textDocument(), &m_ColorsModel, basicModel);
             basicModel->notifyDescriptionSpellingChanged();
         }

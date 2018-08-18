@@ -43,7 +43,6 @@ SOURCES += main.cpp \
     Services/SpellCheck/spellcheckworker.cpp \
     Services/SpellCheck/spellchecksuggestionmodel.cpp \
     Services/SpellCheck/spellcheckerrorshighlighter.cpp \
-    Services/SpellCheck/spellcheckiteminfo.cpp \
     Services/SpellCheck/spellsuggestionsitem.cpp \
     Connectivity/telemetryservice.cpp \
     Connectivity/updatescheckerworker.cpp \
@@ -215,7 +214,8 @@ SOURCES += main.cpp \
     Commands/Files/removefilescommand.cpp \
     Commands/Files/removeselectedfilescommand.cpp \
     Services/SpellCheck/metadataduplicates.cpp \
-    Services/SpellCheck/spellsuggestionstarget.cpp
+    Services/SpellCheck/spellsuggestionstarget.cpp \
+    Services/SpellCheck/spellcheckinfo.cpp
 
 RESOURCES += qml.qrc
 
@@ -264,7 +264,6 @@ HEADERS += \
     Services/SpellCheck/spellcheckworker.h \
     Services/SpellCheck/spellchecksuggestionmodel.h \
     Services/SpellCheck/spellcheckerrorshighlighter.h \
-    Services/SpellCheck/spellcheckiteminfo.h \
     Services/SpellCheck/spellsuggestionsitem.h \
     Connectivity/analyticsuserevent.h \
     Connectivity/telemetryservice.h \
@@ -529,7 +528,9 @@ HEADERS += \
     Services/SpellCheck/ispellsuggestionstarget.h \
     Services/SpellCheck/spellsuggestionstarget.h \
     Services/SpellCheck/ispellcheckservice.h \
-    Artworks/ibasicmodelsource.h
+    Artworks/ibasicmodelsource.h \
+    Services/SpellCheck/spellcheckinfo.h \
+    Artworks/basicmodelsource.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

@@ -27,7 +27,7 @@
 #include <Artworks/artworkelement.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Artworks/ibasicmodelsource.h>
-#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Services/SpellCheck/spellcheckinfo.h>
 #include <Models/Artworks/artworksviewmodel.h>
 #include <Models/Editing/icurrenteditable.h>
 #include <Models/Editing/quickbuffermessage.h>
@@ -45,12 +45,14 @@ namespace AutoComplete {
 }
 
 namespace Models {
+    using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
+
     class CombinedArtworksModel:
             public ArtworksViewModel,
             public ArtworkProxyBase,
             public Artworks::IBasicModelSource,
             public Common::DelayedActionEntity,
-            public Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>,
+            public Common::MessagesSource<BasicSpellCheckMessageType>,
             public Common::MessagesSource<QuickBufferMessage>,
             public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>
     {
@@ -66,7 +68,7 @@ namespace Models {
         Q_PROPERTY(bool changeKeywords READ getChangeKeywords WRITE setChangeKeywords NOTIFY changeKeywordsChanged)
         Q_PROPERTY(bool appendKeywords READ getAppendKeywords WRITE setAppendKeywords NOTIFY appendKeywordsChanged)
 
-        using Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>::sendMessage;
+        using Common::MessagesSource<BasicSpellCheckMessageType>::sendMessage;
         using Common::MessagesSource<QuickBufferMessage>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
 
@@ -239,7 +241,7 @@ namespace Models {
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;
-        SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
+        SpellCheck::SpellCheckInfo m_SpellCheckInfo;
         Common::ArtworkEditFlags m_EditFlags;
         Common::flag_t m_ModifiedFlags;
     };

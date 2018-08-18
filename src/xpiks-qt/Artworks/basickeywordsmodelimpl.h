@@ -29,7 +29,7 @@ namespace SpellCheck {
     class SpellCheckQueryItem;
     class KeywordSpellSuggestions;
     class SpellCheckItem;
-    class SpellCheckItemInfo;
+    class SpellCheckInfo;
 }
 
 namespace Artworks {

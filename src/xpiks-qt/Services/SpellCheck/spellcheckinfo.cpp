@@ -8,7 +8,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "spellcheckiteminfo.h"
+#include "spellcheckinfo.h"
 #include <QReadLocker>
 #include <QWriteLocker>
 #include <QReadWriteLock>
@@ -108,23 +108,23 @@ namespace SpellCheck {
         return QStringList::fromSet(m_WordsWithErrors);
     }
 
-    void SpellCheckItemInfo::setDescriptionErrors(const QSet<QString> &errors) {
+    void SpellCheckInfo::setDescriptionErrors(const QSet<QString> &errors) {
         m_DescriptionErrors.setErrorWords(errors);
     }
 
-    void SpellCheckItemInfo::setTitleErrors(const QSet<QString> &errors) {
+    void SpellCheckInfo::setTitleErrors(const QSet<QString> &errors) {
         m_TitleErrors.setErrorWords(errors);
     }
 
-    void SpellCheckItemInfo::setDescriptionDuplicates(const QSet<QString> &duplicates) {
+    void SpellCheckInfo::setDescriptionDuplicates(const QSet<QString> &duplicates) {
         m_DescriptionErrors.setDuplicates(duplicates);
     }
 
-    void SpellCheckItemInfo::setTitleDuplicates(const QSet<QString> &duplicates) {
+    void SpellCheckInfo::setTitleDuplicates(const QSet<QString> &duplicates) {
         m_TitleErrors.setDuplicates(duplicates);
     }
 
-    void SpellCheckItemInfo::removeWordsFromErrors(const QStringList &words) {
+    void SpellCheckInfo::removeWordsFromErrors(const QStringList &words) {
         LOG_DEBUG << "#";
 
         for (const QString &word: words) {
@@ -133,7 +133,7 @@ namespace SpellCheck {
         }
     }
 
-    QSyntaxHighlighter *SpellCheckItemInfo::createHighlighterForDescription(QTextDocument *document,
+    QSyntaxHighlighter *SpellCheckInfo::createHighlighterForDescription(QTextDocument *document,
                                                                             QMLExtensions::ColorsModel *colorsModel,
                                                                             Artworks::BasicMetadataModel *basicModel) {
         // is freed by the document
@@ -156,7 +156,7 @@ namespace SpellCheck {
 #endif
     }
 
-    QSyntaxHighlighter *SpellCheckItemInfo::createHighlighterForTitle(QTextDocument *document,
+    QSyntaxHighlighter *SpellCheckInfo::createHighlighterForTitle(QTextDocument *document,
                                                                       QMLExtensions::ColorsModel *colorsModel,
                                                                       Artworks::BasicMetadataModel *basicModel) {
 #ifndef CORE_TESTS

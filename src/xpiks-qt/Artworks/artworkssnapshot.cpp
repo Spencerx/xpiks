@@ -11,17 +11,18 @@
 #include "artworkssnapshot.h"
 
 namespace Artworks {
-    ArtworkSessionSnapshot::ArtworkSessionSnapshot(ArtworkMetadata *metadata) {
-        Q_ASSERT(metadata != nullptr);
-        m_ArtworkPath = metadata->getFilepath();
+    ArtworkSessionSnapshot::ArtworkSessionSnapshot(std::shared_ptr<ArtworkMetadata> const &artwork) {
+        Q_ASSERT(artwork != nullptr);
+        m_ArtworkPath = artwork->getFilepath();
 
-        ImageArtwork *image = dynamic_cast<ImageArtwork*>(metadata);
+        auto image = std::dynamic_pointer_cast<ImageArtwork>(artwork);
         if (image != nullptr && image->hasVectorAttached()){
             m_VectorPath = image->getAttachedVectorPath();
         }
     }
 
-    SessionSnapshot::SessionSnapshot(std::vector<ArtworkMetadata *> const &artworksList, QStringList const &fullDirectories):
+    SessionSnapshot::SessionSnapshot(const std::vector<std::shared_ptr<ArtworkMetadata> > &artworksList,
+                                     QStringList const &fullDirectories):
         m_DirectoriesSnapshot(fullDirectories)
     {
         LOG_DEBUG << "Creating snapshot of" << artworksList.size() << "artwork(s) and" << m_DirectoriesSnapshot.size() << "full directory(ies)";
@@ -39,6 +40,11 @@ namespace Artworks {
 
     ArtworksSnapshot::ArtworksSnapshot(std::deque<ItemType> const &artworks):
         m_ArtworksSnapshot(artworks.begin(), artworks.end())
+    {
+    }
+
+    ArtworksSnapshot::ArtworksSnapshot(std::vector<ItemType> const &artworks):
+        m_ArtworksSnapshot(artworks)
     {
     }
 

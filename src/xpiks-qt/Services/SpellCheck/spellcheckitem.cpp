@@ -14,7 +14,7 @@
 #include <Common/defines.h>
 #include <Helpers/indiceshelper.h>
 #include <Helpers/stringhelper.h>
-#include <Artworks/artworkmetadata.h>
+#include <Artworks/ibasicmodelsource.h>
 #include <Artworks/basicmetadatamodel.h>
 
 /*
@@ -26,28 +26,30 @@
 #define IMPOSSIBLE_DESCRIPTION_INDEX 200000
 
 namespace SpellCheck {
-    SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel &spellCheckable,
+    SpellCheckItem::SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> &basicModelSource,
                                    Common::SpellCheckFlags spellCheckFlags,
                                    Common::WordAnalysisFlags wordAnalysisFlags):
         QObject(),
-        m_BasicModel(spellCheckable),
+        m_BasicModelSource(basicModelSource),
         m_WordAnalysisFlags(wordAnalysisFlags),
         m_SpellCheckFlags(spellCheckFlags),
         m_NeedsSuggestions(false),
         m_OnlyOneKeyword(false)
     {
+        auto &basicModel = m_BasicModelSource->getBasicModel();
+
         QObject::connect(this, &SpellCheck::SpellCheckItem::resultsReady,
-                         &m_BasicModel, &Artworks::BasicKeywordsModel::onSpellCheckRequestReady);
+                         &basicModel, &Artworks::BasicKeywordsModel::onSpellCheckRequestReady);
 
         std::function<bool (const QString &word)> alwaysTrue = [](const QString &) {return true; };
 
         if (Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Keywords)) {
-            QStringList keywords = spellCheckable.getKeywords();
+            QStringList keywords = basicModel.getKeywords();
             addWords(keywords, 0, alwaysTrue);
         }
 
         if (Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Description)) {
-            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(&spellCheckable);
+            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(&basicModel);
             if (metadataModel != nullptr) {
                 QStringList descriptionWords = metadataModel->getDescriptionWords();
                 addWords(descriptionWords, IMPOSSIBLE_DESCRIPTION_INDEX, alwaysTrue);
@@ -55,7 +57,7 @@ namespace SpellCheck {
         }
 
         if (Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Title)) {
-            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(&spellCheckable);
+            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(&basicModel);
             if (metadataModel != nullptr) {
                 QStringList titleWords = metadataModel->getTitleWords();
                 addWords(titleWords, IMPOSSIBLE_TITLE_INDEX, alwaysTrue);
@@ -63,18 +65,19 @@ namespace SpellCheck {
         }
     }
 
-    SpellCheckItem::SpellCheckItem(Artworks::BasicKeywordsModel &spellCheckable,
+    SpellCheckItem::SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> &basicModelSource,
                                    const QStringList &keywordsToCheck,
                                    Common::WordAnalysisFlags wordAnalysisFlags):
         QObject(),
-        m_BasicModel(spellCheckable),
+        m_BasicModelSource(basicModelSource),
         m_WordAnalysisFlags(wordAnalysisFlags),
         m_SpellCheckFlags(Common::SpellCheckFlags::All),
         m_NeedsSuggestions(false),
         m_OnlyOneKeyword(false)
     {
+        auto &basicModel = m_BasicModelSource->getBasicModel();
         QObject::connect(this, &SpellCheck::SpellCheckItem::resultsReady,
-                         &m_BasicModel, &Artworks::BasicKeywordsModel::onSpellCheckRequestReady);
+                         &basicModel, &Artworks::BasicKeywordsModel::onSpellCheckRequestReady);
 
         std::function<bool (const QString &word)> containsFunc = [&keywordsToCheck](const QString &word) {
                                                                      bool contains = false;
@@ -89,7 +92,7 @@ namespace SpellCheck {
                                                                      return contains;
                                                                  };
 
-        QStringList keywords = spellCheckable.getKeywords();
+        QStringList keywords = basicModel.getKeywords();
         addWords(keywords, 0, containsFunc);
 
         std::function<bool (const QString &word)> sameKeywordFunc = [&keywordsToCheck](const QString &word) {
@@ -105,7 +108,7 @@ namespace SpellCheck {
                                                                         return match;
                                                                     };
 
-        Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(&m_BasicModel);
+        Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(&basicModel);
         if (metadataModel != nullptr) {
             QStringList descriptionWords = metadataModel->getDescriptionWords();
             addWords(descriptionWords, IMPOSSIBLE_DESCRIPTION_INDEX, sameKeywordFunc);
@@ -149,16 +152,17 @@ namespace SpellCheck {
 
     /*virtual */
     void SpellCheckItem::submitSpellCheckResult() {
+        auto &basicModel = m_BasicModelSource->getBasicModel();
         const std::vector<std::shared_ptr<SpellCheckQueryItem> > &items = getQueries();
 
         // can be empty in case of clear command
         if (Common::HasFlag(m_SpellCheckFlags, Common::SpellCheckFlags::Keywords) && !items.empty()) {
-            m_BasicModel.setKeywordsSpellCheckResults(items);
+            basicModel.setKeywordsSpellCheckResults(items);
         }
 
         if (Common::HasFlag(m_SpellCheckFlags, Common::SpellCheckFlags::Description) ||
             Common::HasFlag(m_SpellCheckFlags, Common::SpellCheckFlags::Title)) {
-            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(&m_BasicModel);
+            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(&basicModel);
             if (metadataModel != nullptr) {
                 metadataModel->setSpellCheckResults(getHash(), m_SpellCheckFlags);
             }
@@ -175,21 +179,5 @@ namespace SpellCheck {
                                                                   item->m_IsCorrect,
                                                                   item->m_IsDuplicate));
         }
-    }
-
-    ArtworkSpellCheckItem::ArtworkSpellCheckItem(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
-                                                 Common::SpellCheckFlags spellCheckFlags,
-                                                 Common::WordAnalysisFlags wordAnalysisFlags):
-        SpellCheckItem(artwork->getBasicModel(), spellCheckFlags, wordAnalysisFlags),
-        m_Artwork(artwork)
-    {
-    }
-
-    ArtworkSpellCheckItem::ArtworkSpellCheckItem(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
-                                                 QStringList const &keywordsToCheck,
-                                                 Common::WordAnalysisFlags wordAnalysisFlags):
-        SpellCheckItem(artwork->getBasicModel(), keywordsToCheck, wordAnalysisFlags),
-        m_Artwork(artwork)
-    {
     }
 }

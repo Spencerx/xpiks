@@ -21,8 +21,7 @@
 #include <Common/wordanalysisresult.h>
 
 namespace Artworks {
-    class ArtworkMetadata;
-    class BasicKeywordsModel;
+    class IBasicModelSource;
 }
 
 namespace SpellCheck {
@@ -62,11 +61,11 @@ namespace SpellCheck {
          * spelling is also checked in classes that are not Artworks like
          * Combined model, QuickBuffer etc.
          */
-        SpellCheckItem(Artworks::BasicKeywordsModel &spellCheckable,
+        SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> &basicModelSource,
                        Common::SpellCheckFlags spellCheckFlags,
                        Common::WordAnalysisFlags wordAnalysisFlags);
         // this constructor used for trick with user dictionary update
-        SpellCheckItem(Artworks::BasicKeywordsModel &spellCheckable,
+        SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> &basicModelSource,
                        const QStringList &keywordsToCheck,
                        Common::WordAnalysisFlags wordAnalysisFlags);
         virtual ~SpellCheckItem();
@@ -80,6 +79,7 @@ namespace SpellCheck {
         void requestSuggestions() { m_NeedsSuggestions = true; }
 
     public:
+        std::shared_ptr<Artworks::IBasicModelSource> const &getBasicModelSource() const { return m_BasicModelSource; }
         bool getIsOnlyOneKeyword() const { return m_OnlyOneKeyword; }
         bool needsSuggestions() const { return m_NeedsSuggestions; }
         const std::vector<std::shared_ptr<SpellCheckQueryItem> > &getQueries() const { return m_QueryItems; }
@@ -90,30 +90,13 @@ namespace SpellCheck {
         void resultsReady(Common::SpellCheckFlags flags, int index);
 
     private:
-        Artworks::BasicKeywordsModel &m_BasicModel;
+        std::shared_ptr<Artworks::IBasicModelSource> m_BasicModelSource;
         std::vector<std::shared_ptr<SpellCheckQueryItem>> m_QueryItems;
         QHash<QString, Common::WordAnalysisResult> m_SpellCheckResults;
         Common::WordAnalysisFlags m_WordAnalysisFlags;
         Common::SpellCheckFlags m_SpellCheckFlags;
         volatile bool m_NeedsSuggestions;
         volatile bool m_OnlyOneKeyword;
-    };
-
-    class ArtworkSpellCheckItem: public SpellCheckItem {
-        Q_OBJECT
-    public:
-        ArtworkSpellCheckItem(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
-                              Common::SpellCheckFlags spellCheckFlags,
-                              Common::WordAnalysisFlags wordAnalysisFlags);
-        ArtworkSpellCheckItem(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
-                              QStringList const &keywordsToCheck,
-                              Common::WordAnalysisFlags wordAnalysisFlags);
-
-    public:
-        std::shared_ptr<Artworks::ArtworkMetadata> const &getArtwork() const { return m_Artwork; }
-
-    private:
-        std::shared_ptr<Artworks::ArtworkMetadata> m_Artwork;
     };
 }
 

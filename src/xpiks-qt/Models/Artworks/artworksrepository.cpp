@@ -221,11 +221,10 @@ namespace Models {
 
         QStringList filepaths;
         filepaths.reserve(snapshot.size());
-        for (auto &locker: snapshot.getRawData()) {
-            auto *artwork = locker->getArtworkMetadata();
+        for (auto &artwork: snapshot.getRawData()) {
             filepaths.append(artwork->getFilepath());
 
-            Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork *>(artwork);
+            auto imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
             if ((imageArtwork != nullptr) && imageArtwork->hasVectorAttached()) {
                 filepaths.append(imageArtwork->getAttachedVectorPath());
             }
@@ -260,7 +259,7 @@ namespace Models {
 
             filepaths.append(artwork->getFilepath());
 
-            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+            auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
             if (image != NULL && image->hasVectorAttached()) {
                 removedAttachedVectors.append(image->getAttachedVectorPath());
             }

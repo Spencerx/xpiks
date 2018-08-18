@@ -22,7 +22,7 @@ namespace Artworks {
     class ArtworkSessionSnapshot
     {
     public:
-        ArtworkSessionSnapshot(ArtworkMetadata *metadata);
+        ArtworkSessionSnapshot(std::shared_ptr<ArtworkMetadata> const &metadata);
 
     public:
         const QString &getArtworkFilePath() const { return m_ArtworkPath; }
@@ -35,7 +35,8 @@ namespace Artworks {
 
     class SessionSnapshot {
     public:
-        SessionSnapshot(std::vector<ArtworkMetadata *> const &artworksList, QStringList const &fullDirectories);
+        SessionSnapshot(std::vector<std::shared_ptr<ArtworkMetadata>> const &artworksList,
+                        QStringList const &fullDirectories);
 
         SessionSnapshot(SessionSnapshot &&other) {
             m_ArtworksSnapshot.swap(other.m_ArtworksSnapshot);
@@ -69,6 +70,7 @@ namespace Artworks {
         ArtworksSnapshot() { }
         ArtworksSnapshot(std::initializer_list<ItemType> artworks);
         ArtworksSnapshot(const std::deque<ItemType> &artworks);
+        ArtworksSnapshot(const std::vector<ItemType> &artworks);
         ArtworksSnapshot(Container &rawSnapshot);
         ArtworksSnapshot(ArtworksSnapshot &&other);
         ArtworksSnapshot &operator=(ArtworksSnapshot &&other);

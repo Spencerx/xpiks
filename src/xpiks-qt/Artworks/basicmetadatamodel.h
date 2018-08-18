@@ -23,7 +23,7 @@ namespace SpellCheck {
     class SpellCheckQueryItem;
     class KeywordSpellSuggestions;
     class SpellCheckItem;
-    class SpellCheckItemInfo;
+    class SpellCheckInfo;
 }
 
 namespace Artworks {
@@ -36,13 +36,13 @@ namespace Artworks {
         Q_PROPERTY(bool hasTitleSpellErrors READ hasTitleSpellError NOTIFY titleSpellingChanged)
         Q_PROPERTY(bool hasDescriptionSpellErrors READ hasDescriptionSpellError NOTIFY descriptionSpellingChanged)
     public:
-        BasicMetadataModel(SpellCheck::SpellCheckItemInfo &spellCheckInfo, QObject *parent=0);
+        BasicMetadataModel(SpellCheck::SpellCheckInfo &spellCheckInfo, QObject *parent=0);
 
     public:
         Q_INVOKABLE bool hasAnySpellingErrors() { return hasSpellErrors(); }
 
     public:
-        SpellCheck::SpellCheckItemInfo &getSpellCheckInfo() const { return m_SpellCheckInfo; }
+        SpellCheck::SpellCheckInfo &getSpellCheckInfo() const { return m_SpellCheckInfo; }
         QString getDescription();
         QString getTitle();
 
@@ -62,7 +62,6 @@ namespace Artworks {
         virtual std::vector<KeywordItem> retrieveMisspelledKeywords() override;
         virtual Common::KeywordReplaceResult fixKeywordSpelling(size_t index, const QString &existing, const QString &replacement) override;
         virtual void afterReplaceCallback() override;
-        virtual BasicKeywordsModel *getBasicKeywordsModel() override;
         virtual QStringList getDescriptionWords();
         virtual QStringList getTitleWords();
         virtual bool expandPreset(size_t keywordIndex, const QStringList &presetList) override;
@@ -122,7 +121,7 @@ namespace Artworks {
     private:
         QReadWriteLock m_DescriptionLock;
         QReadWriteLock m_TitleLock;
-        SpellCheck::SpellCheckItemInfo &m_SpellCheckInfo;
+        SpellCheck::SpellCheckInfo &m_SpellCheckInfo;
         QString m_Description;
         QString m_Title;
     };

@@ -13,13 +13,14 @@
 
 #include <QString>
 #include <Artworks/basickeywordsmodel.h>
+#include <Artworks/ibasicmodelsource.h>
 #include <Common/flags.h>
 #include "groupmodel.h"
 
 namespace KeywordsPresets {
     typedef unsigned int ID_t;
 
-    struct PresetModel {
+    struct PresetModel: public Artworks::IBasicModelSource {
         enum PresetModelFlags {
             FlagIsNameDupcate = 1 << 0
         };
@@ -47,6 +48,10 @@ namespace KeywordsPresets {
         {
             m_KeywordsModel.setKeywords(keywords);
         }
+
+        // IBasicModelSource interface
+    public:
+        virtual Artworks::BasicKeywordsModel &getBasicModel() override { return m_KeywordsModel; }
 
         inline bool getIsNameDuplicateFlag() const { return Common::HasFlag(m_Flags, FlagIsNameDupcate); }
         inline void setIsNameDuplicateFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagIsNameDupcate); }

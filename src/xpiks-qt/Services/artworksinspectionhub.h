@@ -15,7 +15,7 @@
 #include <Common/types.h>
 
 namespace SpellCheck {
-    class SpellCheckService;
+    class ISpellCheckService;
 }
 
 namespace Warnings {
@@ -27,47 +27,40 @@ namespace Models {
 }
 
 namespace Artworks {
+    class IBasicModelSource;
     class ArtworksSnapshot;
-    class ArtworkMetadata;
-    class BasicKeywordsModel;
 }
 
 namespace Services {
-    using ArtworkInspectionType = Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>,
-    Common::MessageType::EditingPaused>;
-    using BasicModelInspectionType = Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>;
-    using ArtworksArrayInspectionType = Common::NamedType<std::vector<std::shared_ptr<Artworks::ArtworkMetadata>>,
-    Common::MessageType::SpellCheck>;
+    using ItemInspectionType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
+    using ItemArrayInspectionType = Common::NamedType<std::vector<std::shared_ptr<Artworks::IBasicModelSource>>, Common::MessageType::SpellCheck>;
 
     class ArtworksInspectionHub:
-            public Common::MessagesTarget<ArtworkInspectionType>,
-            public Common::MessagesTarget<BasicModelInspectionType>,
-            public Common::MessagesTarget<ArtworksArrayInspectionType>
+            public Common::MessagesTarget<ItemInspectionType>,
+            public Common::MessagesTarget<ItemArrayInspectionType>
     {
-        using Common::MessagesTarget<ArtworkInspectionType>::handleMessage;
-        using Common::MessagesTarget<BasicModelInspectionType>::handleMessage;
-        using Common::MessagesTarget<ArtworksArrayInspectionType>::handleMessage;
+        using Common::MessagesTarget<ItemInspectionType>::handleMessage;
+        using Common::MessagesTarget<ItemArrayInspectionType>::handleMessage;
 
     public:
-        ArtworksInspectionHub(SpellCheck::SpellCheckService &spellCheckService,
+        ArtworksInspectionHub(SpellCheck::ISpellCheckService &spellCheckService,
                               Warnings::WarningsService &warningsService,
                               Models::SettingsModel &settingsModel);
 
     public:
-        virtual void handleMessage(ArtworkInspectionType const &change) override;
-        virtual void handleMessage(BasicModelInspectionType const &change) override;
-        virtual void handleMessage(ArtworksArrayInspectionType const &change) override;
+        virtual void handleMessage(ItemInspectionType const &change) override;
+        virtual void handleMessage(ItemArrayInspectionType const &change) override;
 
     public:
-        void inspectArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
-        void inspectArtworks(Artworks::ArtworksSnapshot const &snapshot);
-        void inspectBasicModel(Artworks::BasicKeywordsModel const &basicModel);
+        void inspectItem(std::shared_ptr<Artworks::IBasicModelSource> const &item);
+        void inspectItems(std::vector<std::shared_ptr<Artworks::IBasicModelSource>> const &items);
+        void inspectItems(Artworks::ArtworksSnapshot const &snapshot);
 
     private:
         bool isSpellCheckAvailable() const;
 
     private:
-        SpellCheck::SpellCheckService &m_SpellCheckService;
+        SpellCheck::ISpellCheckService &m_SpellCheckService;
         Warnings::WarningsService &m_WarningsService;
         Models::SettingsModel &m_SettingsModel;
     };

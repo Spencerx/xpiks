@@ -18,7 +18,7 @@ namespace Artworks {
 }
 
 namespace SpellCheck {
-    class SpellCheckItemInfo;
+    class SpellCheckInfo;
 
     class IMetadataDuplicates {
     public:

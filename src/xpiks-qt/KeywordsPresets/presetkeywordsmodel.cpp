@@ -438,6 +438,10 @@ namespace KeywordsPresets {
         return m_PresetsList[index]->m_ID;
     }
 
+    void PresetKeywordsModel::checkSpelling(const std::shared_ptr<PresetModel> &preset) {
+        sendMessage(std::dynamic_pointer_cast<Artworks::IBasicModelSource>(preset));
+    }
+
     void PresetKeywordsModel::removeItem(int row) {
         if (row < 0 || row >= getPresetsCount()){
             return;
@@ -479,7 +483,7 @@ namespace KeywordsPresets {
             if (keywordsModel.editKeyword(keywordIndex, replacement)) {
                 justChanged();
 
-                sendMessage(preset);
+                checkSpelling(preset);
             }
         }
     }
@@ -498,7 +502,7 @@ namespace KeywordsPresets {
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-                sendMessage(preset);
+                checkSpelling(preset);
             }
         }
     }
@@ -517,7 +521,7 @@ namespace KeywordsPresets {
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-                sendMessage(preset);
+                checkSpelling(preset);
             }
         }
     }
@@ -537,7 +541,7 @@ namespace KeywordsPresets {
                 QModelIndex indexToUpdate = this->index(index);
                 emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-                sendMessage(preset);
+                checkSpelling(preset);
             }
         }
 
@@ -556,7 +560,7 @@ namespace KeywordsPresets {
             QModelIndex indexToUpdate = this->index(index);
             emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-            sendMessage(preset);
+            checkSpelling(preset);
         }
     }
 
@@ -579,7 +583,7 @@ namespace KeywordsPresets {
             QModelIndex indexToUpdate = this->index(index);
             emit dataChanged(indexToUpdate, indexToUpdate, QVector<int>() << KeywordsCountRole);
 
-            sendMessage(preset);
+            checkSpelling(preset);
         }
     }
 
@@ -680,7 +684,7 @@ namespace KeywordsPresets {
                 auto preset = std::make_shared<PresetModel>(nextID, name, keywords, item.m_GroupID);
                 m_PresetsList.push_back(preset);
 
-                sendMessage(preset);
+                checkSpelling(preset);
             } else {
                 LOG_WARNING << "Preset" << name << "already exists. Skipping...";
             }

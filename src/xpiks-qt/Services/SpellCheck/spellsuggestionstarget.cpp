@@ -113,7 +113,7 @@ namespace SpellCheck {
     }
 
     ArtworksSuggestionTarget::ArtworksSuggestionTarget(Artworks::ArtworksSnapshot &snapshot,
-                                                       IArtworkSpellCheckService &spellCheckService,
+                                                       ISpellCheckService &spellCheckService,
                                                        Services::IArtworksUpdater &artworksUpdater):
         m_Snapshot(std::move(snapshot)),
         m_SpellCheckService(spellCheckService),

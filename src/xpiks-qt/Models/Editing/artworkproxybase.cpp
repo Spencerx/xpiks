@@ -312,7 +312,7 @@ namespace Models {
         Q_ASSERT(!keywords.isEmpty());
 
         auto *metadataModel = getBasicMetadataModel();
-        SpellCheck::SpellCheckItemInfo *info = metadataModel->getSpellCheckInfo();
+        SpellCheck::SpellCheckInfo *info = metadataModel->getSpellCheckInfo();
 
         if (!overwritten) {
             info->removeWordsFromErrors(keywords);

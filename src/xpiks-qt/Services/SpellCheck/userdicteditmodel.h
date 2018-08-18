@@ -15,7 +15,7 @@
 #include <QQmlEngine>
 #include <Models/Editing/artworkproxybase.h>
 #include <Artworks/basicmetadatamodel.h>
-#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Services/SpellCheck/spellcheckinfo.h>
 
 namespace SpellCheck {
     class UserDictionary;
@@ -61,7 +61,7 @@ namespace SpellCheck {
 
     private:
         Artworks::BasicMetadataModel m_BasicModel;
-        SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
+        SpellCheck::SpellCheckInfo m_SpellCheckInfo;
         UserDictionary &m_UserDictionary;
     };
 }

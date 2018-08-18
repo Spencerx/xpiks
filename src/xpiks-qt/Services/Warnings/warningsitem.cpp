@@ -224,6 +224,7 @@ namespace Warnings {
         Q_UNUSED(warningsSettings);
 
         auto &keywordsModel = m_CheckableItem->getBasicModel();
+        auto &metadataModel = dynamic_cast<Artworks::BasicMetadataModel&>(keywordsModel);
 
         {
             const bool keywordsSpellingErrors = (keywordsModel.hasKeywordsSpellError());
@@ -232,13 +233,13 @@ namespace Warnings {
         }
 
         {
-            const bool descriptionSpellingErrors = (keywordsModel.hasDescriptionSpellError());
+            const bool descriptionSpellingErrors = (metadataModel.hasDescriptionSpellError());
             LOG_INTEGRATION_TESTS << "Detected description spell error:" << descriptionSpellingErrors;
             accountFlag(Common::WarningFlags::SpellErrorsInDescription, descriptionSpellingErrors);
         }
 
         {
-            const bool titleSpellingErrors = (keywordsModel.hasTitleSpellError());
+            const bool titleSpellingErrors = (metadataModel.hasTitleSpellError());
             LOG_INTEGRATION_TESTS << "Detected title spell error:" << titleSpellingErrors;
             accountFlag(Common::WarningFlags::SpellErrorsInTitle, titleSpellingErrors);
         }

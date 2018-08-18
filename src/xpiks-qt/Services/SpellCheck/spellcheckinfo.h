@@ -52,7 +52,7 @@ namespace SpellCheck {
         QReadWriteLock m_DuplicatesLock;
     };
 
-    class SpellCheckItemInfo
+    class SpellCheckInfo
     {
     public:
         void setDescriptionErrors(const QSet<QString> &errors);

@@ -14,7 +14,7 @@
 #include <QWriteLocker>
 #include <Services/SpellCheck/spellcheckitem.h>
 #include <Services/SpellCheck/spellsuggestionsitem.h>
-#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Services/SpellCheck/spellcheckinfo.h>
 #include <Helpers/keywordshelpers.h>
 #include <Helpers/stringhelper.h>
 #include <Common/defines.h>

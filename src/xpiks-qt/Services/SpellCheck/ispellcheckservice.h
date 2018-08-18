@@ -15,21 +15,15 @@
 #include <QStringList>
 
 namespace Artworks {
-    class BasicKeywordsModel;
-    class ArtworksSnapshot;
-    class ArtworkMetadata;
+    class IBasicModelSource;
 }
 
 namespace SpellCheck {
-    class IBasicModelSpellCheckService {
-        virtual ~IBasicModelSpellCheckService() {}
-        virtual void submitItem(Artworks::BasicKeywordsModel const &itemToCheck, Common::SpellCheckFlags flags) = 0;
-    };
-
-    class IArtworkSpellCheckService {
-        virtual ~IArtworkSpellCheckService() {}
-        virtual quint32 submitArtworks(Artworks::ArtworksSnapshot const &snapshot, QStringList const &wordsToCheck) = 0;
-        virtual void submitArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) = 0;
+    class ISpellCheckService {
+        virtual ~ISpellCheckService() { }
+        virtual quint32 submitItems(std::vector<std::shared_ptr<Artworks::IBasicModelSource>> const &items,
+                                       QStringList const &wordsToCheck) = 0;
+        virtual void submitItem(std::shared_ptr<Artworks::IBasicModelSource> const &item) = 0;
     };
 }
 

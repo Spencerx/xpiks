@@ -12,7 +12,7 @@
 #include <QColor>
 #include <QSet>
 #include <QString>
-#include "spellcheckiteminfo.h"
+#include "spellcheckinfo.h"
 #include <QMLExtensions/colorsmodel.h>
 #include <Helpers/stringhelper.h>
 #include <Common/defines.h>

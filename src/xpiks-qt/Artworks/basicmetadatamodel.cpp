@@ -14,14 +14,14 @@
 #include <QWriteLocker>
 #include <Services/SpellCheck/spellcheckitem.h>
 #include <Services/SpellCheck/spellsuggestionsitem.h>
-#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Services/SpellCheck/spellcheckinfo.h>
 #include <Helpers/keywordshelpers.h>
 #include <Helpers/stringhelper.h>
 #include <Common/defines.h>
 #include <Common/flags.h>
 
 namespace Artworks {
-    BasicMetadataModel::BasicMetadataModel(SpellCheck::SpellCheckItemInfo &spellCheckInfo, QObject *parent):
+    BasicMetadataModel::BasicMetadataModel(SpellCheck::SpellCheckInfo &spellCheckInfo, QObject *parent):
         BasicKeywordsModel(parent),
         m_SpellCheckInfo(spellCheckInfo)
     { }
@@ -138,10 +138,6 @@ namespace Artworks {
 
     void BasicMetadataModel::afterReplaceCallback() {
         BasicKeywordsModel::afterReplaceCallback();
-    }
-
-    BasicKeywordsModel *BasicMetadataModel::getBasicKeywordsModel() {
-        return this;
     }
 
     QStringList BasicMetadataModel::getDescriptionWords() {

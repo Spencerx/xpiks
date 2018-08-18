@@ -50,11 +50,12 @@ namespace Services {
 }
 
 namespace Models {
+    using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
+
     class ArtworkProxyModel:
             public QObject,
             public ArtworkProxyBase,
-            public Common::MessagesSource<Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>,
-            Common::MessageType::EditingPaused>>,
+            public Common::MessagesSource<BasicSpellCheckMessageType>,
             public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>,
             public Common::MessagesSource<std::shared_ptr<Artworks::VideoArtwork>>
     {
@@ -75,8 +76,7 @@ namespace Models {
         Q_PROPERTY(bool isVideo READ getIsVideo NOTIFY imagePathChanged)
         Q_PROPERTY(bool isValid READ getIsValid NOTIFY isValidChanged)
 
-        using Common::MessagesSource<Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>,
-        Common::MessageType::EditingPaused>>::sendMessage;
+        using Common::MessagesSource<BasicSpellCheckMessageType>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<Artworks::VideoArtwork>>::sendMessage;
 

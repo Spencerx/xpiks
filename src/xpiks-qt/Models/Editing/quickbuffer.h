@@ -15,7 +15,7 @@
 #include <QQmlEngine>
 #include <Models/Editing/artworkproxybase.h>
 #include <Artworks/basicmetadatamodel.h>
-#include <Services/SpellCheck/spellcheckiteminfo.h>
+#include <Services/SpellCheck/spellcheckinfo.h>
 #include <Suggestion/suggestionartwork.h>
 #include <Common/delayedactionentity.h>
 #include <Common/messages.h>
@@ -32,7 +32,7 @@ namespace Models {
             public QObject,
             public Models::ArtworkProxyBase,
             public Common::DelayedActionEntity,
-            public Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>,
+            public Common::MessagesSource<Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>>,
             public Common::MessagesTarget<QuickBufferMessage>
     {
         Q_OBJECT
@@ -116,7 +116,7 @@ namespace Models {
 
     private:
         Artworks::BasicMetadataModel m_BasicModel;
-        SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
+        SpellCheck::SpellCheckInfo m_SpellCheckInfo;
         CurrentEditableModel &m_CurrentEditableModel;
         Commands::ICommandManager &m_CommandManager;
     };

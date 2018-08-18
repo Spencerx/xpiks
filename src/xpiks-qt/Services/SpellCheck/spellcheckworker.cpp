@@ -114,11 +114,7 @@ namespace SpellCheck {
             }
         }
 
-        std::shared_ptr<Artworks::ArtworkMetadata> result;
-        auto artworkItem = std::dynamic_pointer_cast<ArtworkSpellCheckItem>(workItem.m_Item);
-        if (artworkItem) {
-            result = artworkItem->getArtwork();
-        }
+        auto result = std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(workItem.m_Item->getBasicModelSource());
         return result;
     }
 
@@ -378,7 +374,9 @@ namespace SpellCheck {
         if (needsCorrections) {
             QStringList suggestions = suggestCorrections(word);
             m_SuggestionsLock.lockForWrite();
-            m_Suggestions.insert(word, suggestions);
+            {
+                m_Suggestions.insert(word, suggestions);
+            }
             m_SuggestionsLock.unlock();
         }
     }

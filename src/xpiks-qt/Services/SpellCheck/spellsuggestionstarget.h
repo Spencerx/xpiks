@@ -22,12 +22,11 @@ namespace Services {
 }
 
 namespace SpellCheck {
-    class IBasicModelSpellCheckService;
-    class IArtworkSpellCheckService;
+    class ISpellCheckService;
 
     class BasicModelSuggestionTarget: public ISpellSuggestionsTarget {
     public:
-        BasicModelSuggestionTarget(Artworks::BasicMetadataModel &basicModel, IBasicModelSpellCheckService &spellCheckService);
+        BasicModelSuggestionTarget(Artworks::BasicMetadataModel &basicModel, ISpellCheckService &spellCheckService);
 
         // ISpellSuggestionsTarget interface
     public:
@@ -37,13 +36,13 @@ namespace SpellCheck {
 
     private:
         Artworks::BasicMetadataModel &m_BasicModel;
-        IBasicModelSpellCheckService &m_SpellCheckService;
+        ISpellCheckService &m_SpellCheckService;
     };
 
     class ArtworksSuggestionTarget: public ISpellSuggestionsTarget {
     public:
         ArtworksSuggestionTarget(Artworks::ArtworksSnapshot &snapshot,
-                                 IArtworkSpellCheckService &spellCheckService,
+                                 ISpellCheckService &spellCheckService,
                                  Services::IArtworksUpdater &artworksUpdater);
 
         // ISpellSuggestionsTarget interface
@@ -54,7 +53,7 @@ namespace SpellCheck {
 
     private:
         Artworks::ArtworksSnapshot m_Snapshot;
-        IArtworkSpellCheckService &m_SpellCheckService;
+        ISpellCheckService &m_SpellCheckService;
         Services::IArtworksUpdater &m_ArtworksUpdater;
     };
 }
