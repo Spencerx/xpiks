@@ -57,9 +57,9 @@ namespace Services {
         virtual void handleMessage(ArtworksArrayInspectionType const &change) override;
 
     public:
-        void inspectArtwork(Artworks::ArtworkMetadata *artwork);
+        void inspectArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
         void inspectArtworks(Artworks::ArtworksSnapshot const &snapshot);
-        void inspectBasicModel(Artworks::BasicKeywordsModel *basicModel);
+        void inspectBasicModel(Artworks::BasicKeywordsModel const &basicModel);
 
     private:
         bool isSpellCheckAvailable() const;

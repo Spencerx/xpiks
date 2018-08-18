@@ -53,7 +53,7 @@ namespace Services {
         emit updateRequested();
     }
 
-    void ArtworksUpdateHub::updateArtwork(Artworks::ArtworkMetadata *artwork) {
+    void ArtworksUpdateHub::updateArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) {
         Q_ASSERT(artwork != nullptr);
         this->updateArtworkByID(artwork->getItemID(), artwork->getLastKnownIndex(), m_StandardRoles);
     }

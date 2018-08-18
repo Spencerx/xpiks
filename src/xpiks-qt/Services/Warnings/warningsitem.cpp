@@ -32,7 +32,7 @@ namespace Warnings {
         return result;
     }
 
-    WarningsItem::WarningsItem(Artworks::ArtworkMetadata *checkableItem, Common::WarningsCheckFlags checkingFlags):
+    WarningsItem::WarningsItem(std::shared_ptr<Artworks::ArtworkMetadata> const &checkableItem, Common::WarningsCheckFlags checkingFlags):
         m_CheckableItem(checkableItem),
         m_CheckingFlags(checkingFlags),
         m_FlagsToSet(Common::WarningFlags::None),
@@ -75,8 +75,7 @@ namespace Warnings {
     }
 
     void WarningsItem::checkImageProperties(IWarningsSettings &warningsSettings) {
-        Artworks::ArtworkMetadata *item = m_CheckableItem;
-        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(item);
+        auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_CheckableItem);
         if (image == nullptr) {
             dropFlag(Common::WarningFlags::SizeLessThanMinimum);
             dropFlag(Common::WarningFlags::ImageFileIsTooBig);
@@ -90,7 +89,7 @@ namespace Warnings {
         const bool sizeNotEnoughValue = (0.1 < currentProd) && (currentProd < minimumMegapixels);
         accountFlag(Common::WarningFlags::SizeLessThanMinimum, sizeNotEnoughValue);
 
-        qint64 filesize = item->getFileSize();
+        qint64 filesize = image->getFileSize();
         double filesizeMB = (double)filesize;
         filesizeMB /= (1024.0*1024.0);
 
@@ -100,8 +99,7 @@ namespace Warnings {
     }
 
     void WarningsItem::checkVideoProperties(IWarningsSettings &warningsSettings) {
-        Artworks::ArtworkMetadata *item = m_CheckableItem;
-        Artworks::VideoArtwork *video = dynamic_cast<Artworks::VideoArtwork *>(item);
+        auto &video = std::dynamic_pointer_cast<Artworks::VideoArtwork>(m_CheckableItem);
 
         if (video == nullptr) {
             dropFlag(Common::WarningFlags::VideoFileIsTooBig);
@@ -110,7 +108,7 @@ namespace Warnings {
             return;
         }
 
-        qint64 filesize = item->getFileSize();
+        qint64 filesize = video->getFileSize();
         double filesizeMB = (double)filesize;
         filesizeMB /= (1024.0*1024.0);
 

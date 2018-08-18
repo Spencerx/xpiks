@@ -16,6 +16,7 @@
 #include <QVector>
 #include <vector>
 #include <deque>
+#include <functional>
 #include <Artworks/basickeywordsmodel.h>
 #include <Common/flags.h>
 #include <Common/isystemenvironment.h>
@@ -54,12 +55,10 @@ namespace SpellCheck {
         bool isAvailable() const { return true; }
         bool isBusy() const;
 
-        void submitItem(Artworks::BasicKeywordsModel *itemToCheck, Common::SpellCheckFlags flags);
-        void submitArtworks(const Artworks::ArtworksSnapshot &snapshot);
-        void submitArtwork(Artworks::ArtworkMetadata *artwork);
-        SpellCheckWorker::batch_id_t submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck);
-        SpellCheckWorker::batch_id_t submitItems(const std::vector<Artworks::BasicKeywordsModel *> &itemsToCheck);
-        void submitItems(const std::vector<Artworks::ArtworkMetadata *> &itemsToCheck, const QStringList &wordsToCheck);
+        void submitItem(Artworks::BasicKeywordsModel const &itemToCheck, Common::SpellCheckFlags flags);
+        SpellCheckWorker::batch_id_t submitArtworks(const Artworks::ArtworksSnapshot &snapshot, const QStringList &wordsToCheck);
+        void submitArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
+        SpellCheckWorker::batch_id_t submitItems(const std::vector<std::reference_wrapper<Artworks::BasicKeywordsModel>> &itemsToCheck);
         virtual QStringList suggestCorrections(const QString &word) const;
         int getUserDictWordsNumber();
 

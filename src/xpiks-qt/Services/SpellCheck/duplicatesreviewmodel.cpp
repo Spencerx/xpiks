@@ -27,24 +27,27 @@ namespace SpellCheck {
     {
     }
 
-    void DuplicatesReviewModel::setupModel(Artworks::BasicMetadataModel *basicModel) {
+    void DuplicatesReviewModel::setupModel(Artworks::BasicMetadataModel &basicModel) {
         Q_ASSERT(m_DuplicatesList.empty());
         beginResetModel();
         {
-            m_DuplicatesList.emplace_back(basicModel);
+            m_DuplicatesList.emplace_back(std::make_shared<BasicModelDuplicates>(basicModel));
         }
         endResetModel();
     }
 
     void DuplicatesReviewModel::setupModel(const Artworks::ArtworksSnapshot &snapshot) {
         Q_ASSERT(m_DuplicatesList.empty());
+        decltype(m_DuplicatesList) duplicates;
+        const size_t size = snapshot.size();
+        duplicates.reserve(size);
+        for (auto &artwork: snapshot.getRawData()) {
+            duplicates.emplace_back(std::make_shared<ArtworkMetadataDuplicates>(artwork));
+        }
+
         beginResetModel();
         {
-            const size_t size = snapshot.size();
-            m_DuplicatesList.reserve(size);
-            for (auto &locker: snapshot.getRawData()) {
-                m_DuplicatesList.emplace_back(locker->getArtworkMetadata());
-            }
+            m_DuplicatesList.swap(duplicates);
         }
         endResetModel();
     }
@@ -204,38 +207,34 @@ namespace SpellCheck {
         if ((row < 0) || (row >= (int)m_DuplicatesList.size())) { return QVariant(); }
 
         auto &item = m_DuplicatesList.at(row);
+
         auto &artworkItem = std::dynamic_pointer_cast<ArtworkMetadataDuplicates>(item);
+        if (artworkItem == nullptr) {
+            return QVariant();
+        }
 
         switch (role) {
-        case HasPathRole: {
-            return artworkItem != nullptr;
-        }
-        case PathRole: {
-            return artworkItem != nullptr ? artworkItem->getThumbnailPath() : "";
-        }
-        case OriginalIndexRole: {
-            return (int)(artworkItem != nullptr ? artworkItem->getLastKnownIndex() : 0);
-        }
-        case HasVectorAttachedRole: {
-                if (artworkItem != nullptr) {
-                    auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artworkItem->getArtwork());
-                    return (image != nullptr) && image->hasVectorAttached();
-                } else {
-                    return false;
-                }
-        }
-        case BaseFilenameRole:
-            return artworkItem != nullptr ? artworkItem->getBaseFilename() : "";
-        case IsVideoRole: {
-                return (artworkItem != nullptr) ?
-                            (std::dynamic_pointer_cast<Artworks::VideoArtwork>(artworkItem) != nullptr) :
-                            false;
-        }
-        case TriggerRole: {
-            return QString();
-        }
-        default:
-            return QVariant();
+            case HasPathRole: {
+                return true;
+            }
+            case PathRole: {
+                return artworkItem->getThumbnailPath();
+            }
+            case OriginalIndexRole: {
+                return (int)artworkItem->getLastKnownIndex();
+            }
+            case HasVectorAttachedRole: {
+                auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artworkItem->getArtwork());
+                return (image != nullptr) && image->hasVectorAttached();
+            }
+            case BaseFilenameRole:
+                return artworkItem->getBaseFilename();
+            case IsVideoRole: {
+                auto &videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artworkItem);
+                return (videoArtwork != nullptr);
+            }
+            case TriggerRole: return QString();
+            default: return QVariant();
         }
     }
 

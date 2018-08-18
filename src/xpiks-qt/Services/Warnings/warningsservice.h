@@ -42,8 +42,9 @@ namespace Warnings {
         virtual bool isAvailable() const { return true; }
         virtual bool isBusy() const;
 
-        virtual void submitItem(Artworks::ArtworkMetadata *item);
-        virtual void submitItem(Artworks::ArtworkMetadata *item, Common::WarningsCheckFlags flags);
+        virtual void submitItem(std::shared_ptr<Artworks::ArtworkMetadata> const &item);
+        virtual void submitItem(std::shared_ptr<Artworks::ArtworkMetadata> const &item,
+                                Common::WarningsCheckFlags flags);
         virtual void submitItems(const Artworks::ArtworksSnapshot &items);
 
     private slots:

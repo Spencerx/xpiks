@@ -28,7 +28,7 @@ namespace Services {
     class IArtworksUpdater {
     public:
         virtual ~IArtworksUpdater() {}
-        virtual void updateArtwork(Artworks::ArtworkMetadata *artwork) = 0;
+        virtual void updateArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) = 0;
         virtual void updateArtworkByID(Common::ID_t artworkID, size_t lastKnownIndex, QVector<int> const &rolesToUpdate = QVector<int>()) = 0;
         virtual void updateArtworks(Artworks::ArtworksSnapshot const &artworks, UpdateMode updateMode=FastUpdate) = 0;
     };

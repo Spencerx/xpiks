@@ -62,11 +62,11 @@ namespace SpellCheck {
          * spelling is also checked in classes that are not Artworks like
          * Combined model, QuickBuffer etc.
          */
-        SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable,
+        SpellCheckItem(Artworks::BasicKeywordsModel &spellCheckable,
                        Common::SpellCheckFlags spellCheckFlags,
                        Common::WordAnalysisFlags wordAnalysisFlags);
         // this constructor used for trick with user dictionary update
-        SpellCheckItem(Artworks::BasicKeywordsModel *spellCheckable,
+        SpellCheckItem(Artworks::BasicKeywordsModel &spellCheckable,
                        const QStringList &keywordsToCheck,
                        Common::WordAnalysisFlags wordAnalysisFlags);
         virtual ~SpellCheckItem();
@@ -90,8 +90,8 @@ namespace SpellCheck {
         void resultsReady(Common::SpellCheckFlags flags, int index);
 
     private:
-        Artworks::BasicKeywordsModel *m_BasicModel;
-        std::vector<std::shared_ptr<SpellCheckQueryItem> > m_QueryItems;
+        Artworks::BasicKeywordsModel &m_BasicModel;
+        std::vector<std::shared_ptr<SpellCheckQueryItem>> m_QueryItems;
         QHash<QString, Common::WordAnalysisResult> m_SpellCheckResults;
         Common::WordAnalysisFlags m_WordAnalysisFlags;
         Common::SpellCheckFlags m_SpellCheckFlags;
@@ -102,18 +102,18 @@ namespace SpellCheck {
     class ArtworkSpellCheckItem: public SpellCheckItem {
         Q_OBJECT
     public:
-        ArtworkSpellCheckItem(Artworks::ArtworkMetadata *artwork,
+        ArtworkSpellCheckItem(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
                               Common::SpellCheckFlags spellCheckFlags,
                               Common::WordAnalysisFlags wordAnalysisFlags);
-        ArtworkSpellCheckItem(Artworks::ArtworkMetadata *artwork,
-                              const QStringList &keywordsToCheck,
+        ArtworkSpellCheckItem(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
+                              QStringList const &keywordsToCheck,
                               Common::WordAnalysisFlags wordAnalysisFlags);
 
     public:
-        Artworks::ArtworkMetadata *getArtwork() const { return m_Artwork; }
+        std::shared_ptr<Artworks::ArtworkMetadata> const &getArtwork() const { return m_Artwork; }
 
     private:
-        Artworks::ArtworkMetadata *m_Artwork;
+        std::shared_ptr<Artworks::ArtworkMetadata> m_Artwork;
     };
 }
 

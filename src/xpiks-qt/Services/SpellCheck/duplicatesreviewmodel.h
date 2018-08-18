@@ -43,7 +43,7 @@ namespace SpellCheck {
         };
 
     public:
-        void setupModel(Artworks::BasicMetadataModel *basicModel);
+        void setupModel(Artworks::BasicMetadataModel &basicModel);
         void setupModel(const Artworks::ArtworksSnapshot &snapshot);
         void clearDuplicates();
 

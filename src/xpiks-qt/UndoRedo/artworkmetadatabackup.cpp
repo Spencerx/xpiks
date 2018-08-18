@@ -36,7 +36,7 @@ UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(const UndoRedo::ArtworkMe
 {
 }
 
-void UndoRedo::ArtworkMetadataBackup::restore(Artworks::ArtworkMetadata *artwork) const {
+void UndoRedo::ArtworkMetadataBackup::restore(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) const {
     Q_ASSERT(m_ArtworkID == artwork->getItemID());
     if (m_ArtworkID != artwork->getItemID()) {
         LOG_WARNING << "Cannot restore to different artwork";
@@ -50,7 +50,7 @@ void UndoRedo::ArtworkMetadataBackup::restore(Artworks::ArtworkMetadata *artwork
 
     if (!m_AttachedVector.isEmpty()) {
         auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
-        if (image != NULL) {
+        if (image != nullptr) {
             image->attachVector(m_AttachedVector);
         } else {
             LOG_WARNING << "Inconsistency for attached vector";

@@ -24,7 +24,7 @@ namespace Warnings {
 
     class WarningsItem: public IWarningsItem {
     public:
-        WarningsItem(Artworks::ArtworkMetadata *checkableItem,
+        WarningsItem(std::shared_ptr<Artworks::ArtworkMetadata> const &checkableItem,
                      Common::WarningsCheckFlags checkingFlags = Common::WarningsCheckFlags::All);
         virtual ~WarningsItem();
 
@@ -60,7 +60,7 @@ namespace Warnings {
         QStringList getTitleWords() const;
 
     private:
-        Artworks::ArtworkMetadata *m_CheckableItem;
+        std::shared_ptr<Artworks::ArtworkMetadata> m_CheckableItem;
         Common::WarningsCheckFlags m_CheckingFlags;
         Common::WarningFlags m_FlagsToSet;
         Common::WarningFlags m_FlagsToDrop;

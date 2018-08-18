@@ -27,7 +27,7 @@ namespace UndoRedo {
         virtual ~ArtworkMetadataBackup() {}
 
     public:
-        void restore(Artworks::ArtworkMetadata *artwork) const;
+        void restore(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) const;
 
     private:
         Common::ID_t m_ArtworkID;

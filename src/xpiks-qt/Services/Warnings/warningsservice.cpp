@@ -116,7 +116,7 @@ namespace Warnings {
         return isBusy;
     }
 
-    void WarningsService::submitItem(Artworks::ArtworkMetadata *item) {
+    void WarningsService::submitItem(std::shared_ptr<Artworks::ArtworkMetadata> const &item) {
         if (m_WarningsWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
@@ -126,7 +126,8 @@ namespace Warnings {
         m_WarningsWorker->submitItem(wItem);
     }
 
-    void WarningsService::submitItem(Artworks::ArtworkMetadata *item, Common::WarningsCheckFlags flags) {
+    void WarningsService::submitItem(std::shared_ptr<Artworks::ArtworkMetadata> const &item,
+                                     Common::WarningsCheckFlags flags) {
         if (m_WarningsWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
@@ -145,8 +146,7 @@ namespace Warnings {
         std::vector<std::shared_ptr<IWarningsItem> > itemsToSubmit;
         itemsToSubmit.reserve(size);
 
-        for (size_t i = 0; i < size; ++i) {
-            Artworks::ArtworkMetadata *item = items.get(i);
+        for (auto &item: items.getRawData()) {
             itemsToSubmit.emplace_back(std::make_shared<WarningsItem>(item));
         }
 
