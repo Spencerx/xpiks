@@ -32,24 +32,19 @@ namespace QMLExtensions {
         };
 
     public:
-        VideoCacheRequest(Artworks::VideoArtwork *videoArtwork, bool recache, bool quickThumbnail=true, bool withDelay=false, bool allowGoodQuality=false):
+        VideoCacheRequest(std::shared_ptr<Artworks::VideoArtwork> const &videoArtwork,
+                          bool recache,
+                          bool quickThumbnail=true,
+                          bool withDelay=false,
+                          bool allowGoodQuality=false):
             m_VideoArtwork(videoArtwork),
             m_Flags(0)
         {
-            if (m_VideoArtwork != nullptr) {
-                m_VideoArtwork->acquire();
-            }
 
             Common::ApplyFlag(m_Flags, recache, RecacheFlag);
             Common::ApplyFlag(m_Flags, quickThumbnail, QuickThumbnailFlag);
             Common::ApplyFlag(m_Flags, withDelay, WithDelayFlag);
             Common::ApplyFlag(m_Flags, allowGoodQuality, GoodQualityAllowed);
-        }
-
-        virtual ~VideoCacheRequest() {
-            if (m_VideoArtwork != NULL) {
-                m_VideoArtwork->release();
-            }
         }
 
     public:
@@ -68,10 +63,10 @@ namespace QMLExtensions {
         void setGoodQualityRequest() { Common::ApplyFlag(m_Flags, false, QuickThumbnailFlag); }
         void setThumbnailPath(const QString &path) { m_VideoArtwork->setThumbnailPath(path); }
         void setVideoMetadata(const libthmbnlr::VideoFileMetadata &metadata) { m_VideoArtwork->setVideoMetadata(metadata); }
-        Artworks::VideoArtwork *getArtwork() { return m_VideoArtwork; }
+        std::shared_ptr<Artworks::VideoArtwork> const &getArtwork() const { return m_VideoArtwork; }
 
     private:
-        Artworks::VideoArtwork *m_VideoArtwork;
+        std::shared_ptr<Artworks::VideoArtwork> m_VideoArtwork;
         Common::flag_t m_Flags;
     };
 }

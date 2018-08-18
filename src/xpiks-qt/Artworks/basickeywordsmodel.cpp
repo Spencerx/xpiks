@@ -505,14 +505,6 @@ namespace Artworks {
         emit keywordsSpellingChanged();
     }
 
-    void BasicKeywordsModel::acquire() {
-        m_Hold.acquire();
-    }
-
-    bool BasicKeywordsModel::release() {
-        return m_Hold.release();
-    }
-
     bool BasicKeywordsModel::hasKeyword(const QString &keyword) {
         QReadLocker locker(&m_KeywordsLock);
         Q_UNUSED(locker);

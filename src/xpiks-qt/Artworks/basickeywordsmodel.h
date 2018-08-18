@@ -132,10 +132,6 @@ namespace Artworks {
         void notifyKeywordsSpellingChanged();
 
     public:
-        void acquire();
-        bool release();
-
-    public:
         Q_INVOKABLE bool hasKeyword(const QString &keyword);
         Q_INVOKABLE bool canEditKeyword(int index, const QString &replacement);
 

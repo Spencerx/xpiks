@@ -35,13 +35,6 @@ namespace Models {
         m_UpdateTemplate(updateTemplate)
     {
         Q_ASSERT(artworkMetadata != nullptr);
-        m_ArtworkMetadata->acquire();
-    }
-
-    CurrentEditableArtwork::~CurrentEditableArtwork() {
-        if (m_ArtworkMetadata->release()) {
-            LOG_WARNING << "Item #" << m_ArtworkMetadata->getItemID() << "could have been removed";
-        }
     }
 
     size_t CurrentEditableArtwork::getOriginalIndex() const {

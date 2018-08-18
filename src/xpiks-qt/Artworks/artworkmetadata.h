@@ -202,10 +202,6 @@ namespace Artworks {
         virtual BasicKeywordsModel *getBasicKeywordsModel() override;
 
     public:
-        virtual void acquire() override { m_Hold.acquire(); }
-        virtual bool release() override { return m_Hold.release(); }
-
-    public:
         QStringList getKeywords() { return m_MetadataModel.getKeywords(); }
         bool isEmpty() { return m_MetadataModel.isEmpty(); }
         QString getDescription() { return m_MetadataModel.getDescription(); }

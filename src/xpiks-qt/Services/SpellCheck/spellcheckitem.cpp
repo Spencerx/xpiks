@@ -36,8 +36,6 @@ namespace SpellCheck {
         m_NeedsSuggestions(false),
         m_OnlyOneKeyword(false)
     {
-        m_BasicModel.acquire();
-
         QObject::connect(this, &SpellCheck::SpellCheckItem::resultsReady,
                          &m_BasicModel, &Artworks::BasicKeywordsModel::onSpellCheckRequestReady);
 
@@ -75,8 +73,6 @@ namespace SpellCheck {
         m_NeedsSuggestions(false),
         m_OnlyOneKeyword(false)
     {
-        m_BasicModel.acquire();
-
         QObject::connect(this, &SpellCheck::SpellCheckItem::resultsReady,
                          &m_BasicModel, &Artworks::BasicKeywordsModel::onSpellCheckRequestReady);
 
@@ -121,10 +117,6 @@ namespace SpellCheck {
 
     SpellCheckItem::~SpellCheckItem() {
         LOG_INTEGRATION_TESTS << "Actually deleting SpellCheckItem";
-
-        if (m_BasicModel.release()) {
-            LOG_WARNING << "Item could have been removed";
-        }
     }
 
     void SpellCheckItem::addWords(const QStringList &words, int startingIndex, const std::function<bool (const QString &word)> &pred) {

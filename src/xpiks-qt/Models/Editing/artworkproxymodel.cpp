@@ -201,7 +201,6 @@ namespace Models {
         updateCurrentArtwork();
         releaseCurrentArtwork();
 
-        artwork->acquire();
         artwork->setIsLockedForEditing(true);
         m_ArtworkMetadata = artwork->getptr();
 
@@ -401,7 +400,6 @@ namespace Models {
         LOG_DEBUG << "#";
         if (m_ArtworkMetadata != nullptr) {
             m_ArtworkMetadata->setIsLockedForEditing(false);
-            m_ArtworkMetadata->release();
             LOG_DEBUG << "Metadata released";
         }
 

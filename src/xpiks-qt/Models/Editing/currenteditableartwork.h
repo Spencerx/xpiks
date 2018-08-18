@@ -27,7 +27,6 @@ namespace Models {
     public:
         CurrentEditableArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artworkMetadata,
                                const std::shared_ptr<IArtworksCommandTemplate> &updateTemplate);
-        virtual ~CurrentEditableArtwork();
 
     public:
         size_t getOriginalIndex() const;

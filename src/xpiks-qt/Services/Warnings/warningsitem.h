@@ -26,7 +26,6 @@ namespace Warnings {
     public:
         WarningsItem(std::shared_ptr<Artworks::ArtworkMetadata> const &checkableItem,
                      Common::WarningsCheckFlags checkingFlags = Common::WarningsCheckFlags::All);
-        virtual ~WarningsItem();
 
     public:
         virtual void checkWarnings(IWarningsSettings &warningsSettings) override;
