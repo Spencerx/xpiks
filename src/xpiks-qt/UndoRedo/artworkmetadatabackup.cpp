@@ -20,7 +20,7 @@ UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(std::shared_ptr<Artworks:
     m_KeywordsList(artwork->getKeywords()),
     m_IsModified(artwork->isModified())
 {
-    auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+    auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
     if (image != nullptr && image->hasVectorAttached()) {
         m_AttachedVector = image->getAttachedVectorPath();
     }
@@ -49,7 +49,7 @@ void UndoRedo::ArtworkMetadataBackup::restore(std::shared_ptr<Artworks::ArtworkM
     else { artwork->resetModified(); }
 
     if (!m_AttachedVector.isEmpty()) {
-        auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+        auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
         if (image != nullptr) {
             image->attachVector(m_AttachedVector);
         } else {

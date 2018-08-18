@@ -42,7 +42,8 @@ namespace KeywordsPresets {
     public:
         PresetKeywordsModelConfig(Common::ISystemEnvironment &environment);
         void initializeConfigs();
-        void loadFromModel(const std::vector<PresetModel *> &presets, const std::vector<GroupModel> &presetGroups);
+        void loadFromModel(const std::vector<std::shared_ptr<PresetModel> > &presets,
+                           const std::vector<GroupModel> &presetGroups);
         void sync();
 
     private:

@@ -23,10 +23,6 @@
 #include <Models/Editing/previewartworkelement.h>
 #include <Models/settingsmodel.h>
 
-namespace Artworks {
-    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
-}
-
 namespace Models {    
     FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel,
                                                          Commands::ICommandManager &commandManager,
@@ -67,10 +63,10 @@ namespace Models {
     }
 
     Artworks::ArtworksSnapshot FilteredArtworksListModel::getArtworksToSave(bool overwriteAll) const {
-        auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
+        auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadata>>(
                     [overwriteAll](ArtworkItem const &artwork) {
                        return artwork->isSelected() && !artwork->isReadOnly() && (artwork->isModified() || overwriteAll); },
-                [] (ArtworkItem const &artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
+                [] (ArtworkItem const &artwork, int, int) { return artwork; });
 
         return Artworks::ArtworksSnapshot(rawSnapshot);
     }
@@ -81,9 +77,9 @@ namespace Models {
     }
 
     Artworks::ArtworksSnapshot FilteredArtworksListModel::getSelectedArtworks() {
-        auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
+        auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadata>>(
                     [](ArtworkItem const &artwork) { return artwork->isSelected(); },
-                [] (ArtworkItem const &artwork, int, int) { return std::make_shared<Artworks::ArtworkMetadataLocker>(artwork); });
+                [] (ArtworkItem const &artwork, int, int) { return artwork; });
 
         return Artworks::ArtworksSnapshot(rawSnapshot);
     }
@@ -223,7 +219,7 @@ namespace Models {
         case 3: {
             // select Images
             this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
-                auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+                auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
                 return (image != nullptr) ? !image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
             break;

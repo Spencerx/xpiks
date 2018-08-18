@@ -17,13 +17,14 @@
 #include <vector>
 #include <deque>
 #include <functional>
+#include <Common/messages.h>
+#include "spellcheckworker.h"
+#include "userdictionary.h"
+#include "ispellcheckservice.h"
 #include <Artworks/basickeywordsmodel.h>
 #include <Common/flags.h>
 #include <Common/isystemenvironment.h>
 #include <Common/types.h>
-#include <Common/messages.h>
-#include "spellcheckworker.h"
-#include "userdictionary.h"
 
 namespace Artworks {
     class ArtworkMetadata;
@@ -39,7 +40,10 @@ namespace Models {
 }
 
 namespace SpellCheck {
-    class SpellCheckService: public QObject
+    class SpellCheckService:
+            public QObject,
+            public IBasicModelSpellCheckService,
+            public IArtworkSpellCheckService
     {
         Q_OBJECT
         Q_PROPERTY(int userDictWordsNumber READ getUserDictWordsNumber NOTIFY userDictWordsNumberChanged)
@@ -47,6 +51,7 @@ namespace SpellCheck {
     public:
         SpellCheckService(Common::ISystemEnvironment &environment,
                           Common::IFlagsProvider<Common::WordAnalysisFlags> &analysisFlagsProvider);
+        virtual ~SpellCheckService();
 
     public:
         void startService(Helpers::AsyncCoordinator &initCoordinator, Warnings::WarningsService &warningsService);
@@ -55,9 +60,9 @@ namespace SpellCheck {
         bool isAvailable() const { return true; }
         bool isBusy() const;
 
-        void submitItem(Artworks::BasicKeywordsModel const &itemToCheck, Common::SpellCheckFlags flags);
-        SpellCheckWorker::batch_id_t submitArtworks(const Artworks::ArtworksSnapshot &snapshot, const QStringList &wordsToCheck);
-        void submitArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
+        virtual void submitItem(Artworks::BasicKeywordsModel const &itemToCheck, Common::SpellCheckFlags flags) override;
+        virtual SpellCheckWorker::batch_id_t submitArtworks(const Artworks::ArtworksSnapshot &snapshot, const QStringList &wordsToCheck) override;
+        virtual void submitArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) override;
         SpellCheckWorker::batch_id_t submitItems(const std::vector<std::reference_wrapper<Artworks::BasicKeywordsModel>> &itemsToCheck);
         virtual QStringList suggestCorrections(const QString &word) const;
         int getUserDictWordsNumber();

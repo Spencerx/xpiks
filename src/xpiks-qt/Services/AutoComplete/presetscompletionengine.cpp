@@ -37,7 +37,7 @@ namespace AutoComplete {
 
         const size_t initialSize = completions.size();
 
-        m_PresetsManager.foreachPreset([&completions, &searchTerm](size_t, KeywordsPresets::PresetModel *preset) {
+        m_PresetsManager.foreachPreset([&completions, &searchTerm](size_t, std::shared_ptr<KeywordsPresets::PresetModel> const &preset) {
             const QString &presetName = preset->m_PresetName;
 
             bool canAdd = false;

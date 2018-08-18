@@ -20,7 +20,6 @@
 
 namespace Artworks {
     class ArtworkMetadata;
-    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
     class VideoArtwork;
     class ArtworksSnapshot;
 }
@@ -47,7 +46,7 @@ namespace QMLExtensions {
 
     class VideoCachingService :
             public QObject,
-            public Common::MessagesTarget<Artworks::VideoArtwork*>
+            public Common::MessagesTarget<std::shared_ptr<Artworks::VideoArtwork>>
     {
         Q_OBJECT
     public:
@@ -63,11 +62,11 @@ namespace QMLExtensions {
         void stopService();
 
     public:
-        virtual void handleMessage(Artworks::VideoArtwork * const &message) override { generateThumbnail(message); }
+        virtual void handleMessage(std::shared_ptr<Artworks::VideoArtwork> const &message) override { generateThumbnail(message); }
 
     public:
         void generateThumbnails(const Artworks::ArtworksSnapshot &snapshot);
-        void generateThumbnail(Artworks::VideoArtwork *videoArtwork);
+        void generateThumbnail(const std::shared_ptr<Artworks::VideoArtwork> &videoArtwork);
         void waitWorkerIdle();
 
     private:

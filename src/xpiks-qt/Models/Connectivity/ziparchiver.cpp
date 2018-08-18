@@ -23,10 +23,6 @@
 #include <Helpers/ziphelper.h>
 #endif
 
-namespace Artworks {
-    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
-}
-
 namespace Models {
     ZipArchiver::ZipArchiver():
         m_IsInProgress(false),

@@ -16,10 +16,6 @@
 #include <Artworks/videoartwork.h>
 #include <Helpers/cpphelpers.h>
 
-namespace Artworks {
-    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
-}
-
 namespace Models {
     ArtworksViewModel::ArtworksViewModel(QObject *parent):
         AbstractListModel(parent)
@@ -36,10 +32,10 @@ namespace Models {
         if (snapshot.empty()) { return; }
 
         using namespace Artworks;
-        auto elements = Helpers::map<std::shared_ptr<ArtworkMetadataLocker>, std::shared_ptr<ArtworkMetadataLocker>>(
+        auto elements = Helpers::map<std::shared_ptr<ArtworkMetadata>, std::shared_ptr<ArtworkMetadata>>(
                             snapshot.getRawData(),
-                            [](const std::shared_ptr<ArtworkMetadataLocker> &locker) {
-            return std::make_shared<ArtworkElement>(locker->getArtworkMetadata());
+                            [](const std::shared_ptr<ArtworkMetadata> &artwork) {
+            return std::make_shared<ArtworkElement>(artwork);
         });
 
         beginResetModel();

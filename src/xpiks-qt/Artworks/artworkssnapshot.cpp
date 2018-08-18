@@ -83,6 +83,12 @@ namespace Artworks {
         m_ArtworksSnapshot = std::move(rawSnapshot);
     }
 
+    void ArtworksSnapshot::copyFrom(const ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "Copying" << snapshot.size() << "artwork(s)";
+        m_ArtworksSnapshot.clear();
+        m_ArtworksSnapshot = snapshot.m_ArtworksSnapshot;
+    }
+
     void ArtworksSnapshot::remove(size_t index) {
         if (index >= m_ArtworksSnapshot.size()) { return; }
 

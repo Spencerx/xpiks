@@ -19,7 +19,6 @@
 
 namespace Artworks {
     class ArtworkMetadata;
-    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
     class ArtworksSnapshot;
 }
 

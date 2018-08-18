@@ -221,7 +221,7 @@ namespace Models {
         virtual ArtworkItem createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID);
 
     private:
-        std::shared_ptr<Artworks::ArtworkMetadata> accessArtwork(size_t index) const;
+        std::shared_ptr<Artworks::ArtworkMetadata> const &accessArtwork(size_t index) const;
         void destroyArtwork(ArtworkItem const &artwork);
         int getNextID();
 
@@ -234,7 +234,7 @@ namespace Models {
             result.reserve(ranges.size());
             for (auto &r: ranges.getRanges()) {
                 for (int i = r.first; i <= r.second; i++) {
-                    auto *artwork = accessArtwork(i);
+                    auto &artwork = accessArtwork(i);
                     if (pred(artwork)) {
                         result.emplace_back(
                                     std::forward<T>(

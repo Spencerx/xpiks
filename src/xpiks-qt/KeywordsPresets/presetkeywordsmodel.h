@@ -33,7 +33,7 @@ namespace KeywordsPresets {
             public QAbstractListModel,
             public Common::DelayedActionEntity,
             public IPresetsManager,
-            public Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>
+            public Common::MessagesSource<Common::NamedType<std::shared_ptr<PresetModel>, Common::MessageType::SpellCheck>>
     {
         Q_OBJECT
 
@@ -80,7 +80,7 @@ namespace KeywordsPresets {
 
     public:
         bool tryFindPresetByFullName(const QString &name, bool caseSensitive, ID_t &id);
-        void foreachPreset(const std::function<bool (size_t, PresetModel *)> &action);
+        void foreachPreset(const std::function<bool (size_t, std::shared_ptr<PresetModel> const &)> &action);
 
         // safe and unsafe versions exist because of plugins which
         // can use presets manager in multithreaded way

@@ -168,7 +168,7 @@ namespace Models {
                                         bool selected,
                                         bool unselectAllFirst);
 
-        Artworks::WeakArtworksSnapshot getSelectedOriginalItems() const;
+        Artworks::ArtworksSnapshot getSelectedOriginalItems() const;
 
         template<typename T>
         std::vector<T> filterItems(std::function<bool (ArtworkItem const &)> pred,

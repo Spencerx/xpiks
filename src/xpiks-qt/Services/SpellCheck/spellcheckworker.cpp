@@ -103,7 +103,7 @@ namespace SpellCheck {
         return initResult;
     }
 
-    std::shared_ptr<Artworks::ArtworkMetadataLocker> SpellCheckWorker::processWorkItem(WorkItem &workItem) {
+    std::shared_ptr<Artworks::ArtworkMetadata> SpellCheckWorker::processWorkItem(WorkItem &workItem) {
         if (workItem.isSeparator()) {
             emit queueIsEmpty();
         } else {
@@ -114,10 +114,10 @@ namespace SpellCheck {
             }
         }
 
-        std::shared_ptr<Artworks::ArtworkMetadataLocker> result;
+        std::shared_ptr<Artworks::ArtworkMetadata> result;
         auto artworkItem = std::dynamic_pointer_cast<ArtworkSpellCheckItem>(workItem.m_Item);
         if (artworkItem) {
-            result = std::make_shared<Artworks::ArtworkMetadataLocker>(artworkItem->getArtwork());
+            result = artworkItem->getArtwork();
         }
         return result;
     }
@@ -168,11 +168,9 @@ namespace SpellCheck {
     }
 
     void SpellCheckWorker::onResultsAvailable(std::vector<WorkResult> &results) {
-        auto rawSnapshot = Helpers::map<WorkResult, std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
+        auto rawSnapshot = Helpers::map<WorkResult, std::shared_ptr<Artworks::ArtworkMetadata>>(
                     results,
-                    [](const WorkResult &result) {
-            return std::make_shared<Artworks::ArtworkMetadataLocker>(result.m_Result->getArtworkMetadata());
-        });
+                    [](const WorkResult &result) { return result.m_Result; });
         m_WarningsService.submitItems(
                     Artworks::ArtworksSnapshot(rawSnapshot));
     }

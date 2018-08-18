@@ -31,7 +31,6 @@ namespace Warnings {
 
 namespace Artworks {
     class ArtworkMetadata;
-    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
 }
 
 namespace SpellCheck {
@@ -39,7 +38,7 @@ namespace SpellCheck {
 
     class SpellCheckWorker:
             public QObject,
-            public Common::ItemProcessingWorker<SpellCheckItem, Artworks::ArtworkMetadataLocker>
+            public Common::ItemProcessingWorker<SpellCheckItem, Artworks::ArtworkMetadata>
     {
         Q_OBJECT
 
@@ -59,7 +58,7 @@ namespace SpellCheck {
 
     protected:
         virtual bool initWorker() override;        
-        virtual std::shared_ptr<Artworks::ArtworkMetadataLocker> processWorkItem(WorkItem &workItem) override;
+        virtual std::shared_ptr<Artworks::ArtworkMetadata> processWorkItem(WorkItem &workItem) override;
         void processSpellingQuery(std::shared_ptr<SpellCheckItem> &item);
 
     protected:

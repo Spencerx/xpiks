@@ -30,6 +30,10 @@ namespace SpellCheck {
                          this, &SpellCheckService::userDictWordsNumberChanged);
     }
 
+    SpellCheckService::~SpellCheckService() {
+        LOG_DEBUG << "#";
+    }
+
     void SpellCheckService::startService(Helpers::AsyncCoordinator &initCoordinator, Warnings::WarningsService &warningsService) {
         if (m_SpellCheckWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";

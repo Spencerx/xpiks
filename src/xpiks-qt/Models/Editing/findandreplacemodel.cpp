@@ -55,10 +55,6 @@ QString searchFlagsToString(Common::SearchFlags flags) {
     return items.join(" | ");
 }
 
-namespace Artworks {
-    using ArtworkMetadataLocker = Common::HoldLocker<ArtworkMetadata>;
-}
-
 namespace Models {
     FindAndReplaceModel::FindAndReplaceModel(QMLExtensions::ColorsModel &colorsModel,
                                              Commands::ICommandManager &commandManager,
@@ -196,14 +192,14 @@ namespace Models {
 
         normalizeSearchCriteria();
 
-        auto previewElements = Helpers::filterMap<std::shared_ptr<Artworks::ArtworkMetadataLocker>,
-                std::shared_ptr<Artworks::ArtworkMetadataLocker>>(
+        auto previewElements = Helpers::filterMap<std::shared_ptr<Artworks::ArtworkMetadata>,
+                std::shared_ptr<Artworks::ArtworkMetadata>>(
                     snapshot.getRawData(),
-                    [this](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
-            return Helpers::hasSearchMatch(this->m_ReplaceFrom, locker->getArtworkMetadata(), this->m_Flags);
+                    [this](const std::shared_ptr<Artworks::ArtworkMetadata> &artwork) {
+            return Helpers::hasSearchMatch(this->m_ReplaceFrom, artwork, this->m_Flags);
         },
-        [](const std::shared_ptr<Artworks::ArtworkMetadataLocker> &locker) {
-            return std::make_shared<PreviewArtworkElement>(locker->getArtworkMetadata());
+        [](const std::shared_ptr<Artworks::ArtworkMetadata> &artwork) {
+            return std::make_shared<PreviewArtworkElement>(artwork);
         });
 
         m_ArtworksSnapshot.set(previewElements);

@@ -22,7 +22,7 @@
 
 namespace Artworks {
     BasicMetadataModel::BasicMetadataModel(SpellCheck::SpellCheckItemInfo &spellCheckInfo, QObject *parent):
-        BasicKeywordsModel(hold, parent),
+        BasicKeywordsModel(parent),
         m_SpellCheckInfo(spellCheckInfo)
     { }
 

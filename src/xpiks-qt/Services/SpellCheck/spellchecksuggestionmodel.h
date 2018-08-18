@@ -36,6 +36,7 @@ namespace SpellCheck {
     class SpellSuggestionsItem;
     class SpellCheckService;
     class KeywordSpellSuggestions;
+    class ISpellSuggestionsTarget;
 
     typedef std::vector<std::shared_ptr<SpellSuggestionsItem> > SuggestionsVector;
     typedef std::vector<std::shared_ptr<KeywordSpellSuggestions> > KeywordsSuggestionsVector;
@@ -47,8 +48,7 @@ namespace SpellCheck {
         Q_PROPERTY(bool anythingSelected READ getAnythingSelected NOTIFY anythingSelectedChanged)
 
     public:
-        SpellCheckSuggestionModel(SpellCheckService &spellCheckerService,
-                                  Services::IArtworksUpdater &artworksUpdater);
+        SpellCheckSuggestionModel(SpellCheckService &spellCheckerService);
 
     public:
         enum KeywordSpellSuggestions_Roles {
@@ -74,8 +74,7 @@ namespace SpellCheck {
         void anythingSelectedChanged();
 
     public:
-        void setupItem(Artworks::BasicMetadataModel *item, Common::SpellCheckFlags flags=Common::SpellCheckFlags::All);
-        void setupArtworks(Artworks::ArtworksSnapshot &snapshot, Common::SpellCheckFlags flags=Common::SpellCheckFlags::All);
+        void setupModel(std::shared_ptr<ISpellSuggestionsTarget> const &target, Common::SpellCheckFlags flags);
 #if defined(INTEGRATION_TESTS) || defined(CORE_TESTS)
         SpellSuggestionsItem *getItem(int i) const { return m_SuggestionsList.at(i).get(); }
 #endif
@@ -94,11 +93,8 @@ namespace SpellCheck {
 
     private:
         std::vector<std::shared_ptr<SpellSuggestionsItem> > m_SuggestionsList;
-        // if we're checking basic model this list will be empty
-        Artworks::ArtworksSnapshot m_CheckedItems;
-        Artworks::BasicMetadataModel *m_CheckedItem;
-        SpellCheckService &m_SpellCheckerService;
-        Services::IArtworksUpdater &m_ArtworksUpdater;
+        std::shared_ptr<ISpellSuggestionsTarget> m_SpellSuggestionsTarget;
+        SpellCheckService &m_SpellCheckService;
     };
 }
 

@@ -14,7 +14,7 @@
 #include <QStringList>
 
 namespace Artworks {
-    class BasicKeywordsModel;
+    class BasicMetadataModel;
 }
 
 namespace SpellCheck {
@@ -23,7 +23,7 @@ namespace SpellCheck {
     class IMetadataDuplicates {
     public:
         virtual ~IMetadataDuplicates() { }
-        virtual Artworks::BasicKeywordsModel &getBasicModel() = 0;
+        virtual Artworks::BasicMetadataModel &getBasicModel() = 0;
         virtual QString getDescriptionDuplicates() = 0;
         virtual QString getTitleDuplicates() = 0;
         virtual QString getKeywordsDuplicates() = 0;

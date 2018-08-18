@@ -44,13 +44,13 @@ namespace MetadataIO {
         m_Keywords = artwork->getKeywords();
         m_ThumbnailPath = artwork->getThumbnailPath();
 
-        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+        auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
         if (image != nullptr) {
             m_ArtworkType = image->hasVectorAttached() ? Vector : Image;
             m_AttachedVector = image->getAttachedVectorPath();
             m_CreationTime = image->getDateTimeOriginal();
         } else {
-            Artworks::VideoArtwork *video = dynamic_cast<Artworks::VideoArtwork*>(artwork);
+            auto video = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
             Q_ASSERT(video != nullptr);
             m_ArtworkType = Video;
             m_CodecName = video->getCodecName();

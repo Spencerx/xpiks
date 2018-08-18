@@ -22,8 +22,6 @@ namespace Models {
                                                      KeywordsPresets::IPresetsManager &presetsManager,
                                                      QObject *parent):
         Models::ArtworksViewModel(parent),
-        m_KeywordsToDeleteModel(m_HoldForDeleters),
-        m_CommonKeywordsModel(m_HoldForCommon),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_CaseSensitive(false)

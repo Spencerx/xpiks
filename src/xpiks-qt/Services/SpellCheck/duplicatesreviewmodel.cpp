@@ -66,12 +66,12 @@ namespace SpellCheck {
 
         auto &item = m_DuplicatesList.at(index);
         auto &basicModel = item->getBasicModel();
-        SpellCheck::SpellCheckItemInfo &spellCheckInfo = basicModel->getSpellCheckInfo();
+        SpellCheck::SpellCheckItemInfo &spellCheckInfo = basicModel.getSpellCheckInfo();
 
         SpellCheck::DuplicatesHighlighter *highlighter = new SpellCheck::DuplicatesHighlighter(
                     document->textDocument(),
                     m_ColorsModel,
-                    spellCheckInfo.getTitleErrors());
+                    &spellCheckInfo.getTitleErrors());
 
         QObject::connect(&basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
                          highlighter, &DuplicatesHighlighter::rehighlight);
@@ -91,13 +91,13 @@ namespace SpellCheck {
         if ((index < 0) || (index >= (int)m_DuplicatesList.size())) { return; }
 
         auto &item = m_DuplicatesList.at(index);
-        auto *basicModel = item->getBasicModel();
-        SpellCheck::SpellCheckItemInfo &spellCheckInfo = basicModel->getSpellCheckInfo();
+        auto &basicModel = item->getBasicModel();
+        SpellCheck::SpellCheckItemInfo &spellCheckInfo = basicModel.getSpellCheckInfo();
 
         SpellCheck::DuplicatesHighlighter *highlighter = new SpellCheck::DuplicatesHighlighter(
                     document->textDocument(),
                     m_ColorsModel,
-                    spellCheckInfo->getDescriptionErrors());
+                    &spellCheckInfo.getDescriptionErrors());
 
         QObject::connect(&basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
                          highlighter, &DuplicatesHighlighter::rehighlight);
@@ -176,7 +176,7 @@ namespace SpellCheck {
         QSet<size_t> indicesSet = m_PendingUpdates.toList().toSet();
         std::vector<int> indicesToUpdate;
         for (auto &item: m_DuplicatesList) {
-            auto &artworkItem = std::dynamic_pointer_cast<ArtworkMetadataDuplicates>(item);
+            auto artworkItem = std::dynamic_pointer_cast<ArtworkMetadataDuplicates>(item);
             if (artworkItem == nullptr) { continue; }
             auto &artwork = artworkItem->getArtwork();
             if (indicesSet.contains(artwork->getLastKnownIndex())) {
@@ -208,7 +208,7 @@ namespace SpellCheck {
 
         auto &item = m_DuplicatesList.at(row);
 
-        auto &artworkItem = std::dynamic_pointer_cast<ArtworkMetadataDuplicates>(item);
+        auto artworkItem = std::dynamic_pointer_cast<ArtworkMetadataDuplicates>(item);
         if (artworkItem == nullptr) {
             return QVariant();
         }
@@ -218,19 +218,19 @@ namespace SpellCheck {
                 return true;
             }
             case PathRole: {
-                return artworkItem->getThumbnailPath();
+                return artworkItem->getArtwork()->getThumbnailPath();
             }
             case OriginalIndexRole: {
-                return (int)artworkItem->getLastKnownIndex();
+                return (int)artworkItem->getArtwork()->getLastKnownIndex();
             }
             case HasVectorAttachedRole: {
-                auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artworkItem->getArtwork());
+                auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artworkItem->getArtwork());
                 return (image != nullptr) && image->hasVectorAttached();
             }
             case BaseFilenameRole:
-                return artworkItem->getBaseFilename();
+                return artworkItem->getArtwork()->getBaseFilename();
             case IsVideoRole: {
-                auto &videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artworkItem);
+                auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artworkItem);
                 return (videoArtwork != nullptr);
             }
             case TriggerRole: return QString();

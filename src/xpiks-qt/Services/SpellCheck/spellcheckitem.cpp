@@ -42,12 +42,12 @@ namespace SpellCheck {
         std::function<bool (const QString &word)> alwaysTrue = [](const QString &) {return true; };
 
         if (Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Keywords)) {
-            QStringList keywords = spellCheckable->getKeywords();
+            QStringList keywords = spellCheckable.getKeywords();
             addWords(keywords, 0, alwaysTrue);
         }
 
         if (Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Description)) {
-            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(spellCheckable);
+            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(&spellCheckable);
             if (metadataModel != nullptr) {
                 QStringList descriptionWords = metadataModel->getDescriptionWords();
                 addWords(descriptionWords, IMPOSSIBLE_DESCRIPTION_INDEX, alwaysTrue);
@@ -55,7 +55,7 @@ namespace SpellCheck {
         }
 
         if (Common::HasFlag(spellCheckFlags, Common::SpellCheckFlags::Title)) {
-            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(spellCheckable);
+            Artworks::BasicMetadataModel *metadataModel = dynamic_cast<Artworks::BasicMetadataModel*>(&spellCheckable);
             if (metadataModel != nullptr) {
                 QStringList titleWords = metadataModel->getTitleWords();
                 addWords(titleWords, IMPOSSIBLE_TITLE_INDEX, alwaysTrue);
@@ -89,7 +89,7 @@ namespace SpellCheck {
                                                                      return contains;
                                                                  };
 
-        QStringList keywords = spellCheckable->getKeywords();
+        QStringList keywords = spellCheckable.getKeywords();
         addWords(keywords, 0, containsFunc);
 
         std::function<bool (const QString &word)> sameKeywordFunc = [&keywordsToCheck](const QString &word) {

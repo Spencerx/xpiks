@@ -42,25 +42,18 @@ namespace Models {
     class ZipArchiver;
 }
 
+namespace Services {
+    class IArtworksUpdater;
+}
+
+namespace SpellCheck {
+    class IArtworkSpellCheckService;
+}
+
 namespace Commands {
     class ICommand;
 
     namespace UI {
-        SOURCE_TARGET_COMMAND(EditSelectedCommand,
-                              QMLExtensions::UICommandID::EditSelectedArtworks,
-                              Artworks::ISelectedArtworksSource,
-                              Models::CombinedArtworksModel);
-
-        SOURCE_TARGET_COMMAND(FixSpellingInSelectedCommand,
-                              QMLExtensions::UICommandID::FixSpellingInSelected,
-                              Artworks::ISelectedArtworksSource,
-                              SpellCheck::SpellCheckSuggestionModel);
-
-        SOURCE_TARGET_COMMAND(ShowDuplicatesInSelectedCommand,
-                              QMLExtensions::UICommandID::ReviewDuplicatesInSelected,
-                              Artworks::ISelectedArtworksSource,
-                              SpellCheck::DuplicatesReviewModel);
-
         class SaveSelectedCommand: public IUICommandTemplate {
         public:
             SaveSelectedCommand(Models::FilteredArtworksListModel &filteredArtworksList,
@@ -81,6 +74,20 @@ namespace Commands {
             MetadataIO::MetadataIOCoordinator &m_MetadataIOCoordinator;
             MetadataIO::MetadataIOService &m_MetadataIOService;
         };
+
+        FIX_ARTWORK_SPELLING_COMMAND(FixSpellingInSelectedCommand,
+                                     QMLExtensions::UICommandID::FixSpellingInSelected,
+                                     Artworks::ISelectedArtworksSource);
+
+        SOURCE_TARGET_COMMAND(EditSelectedCommand,
+                              QMLExtensions::UICommandID::EditSelectedArtworks,
+                              Artworks::ISelectedArtworksSource,
+                              Models::CombinedArtworksModel);
+
+        SOURCE_TARGET_COMMAND(ShowDuplicatesInSelectedCommand,
+                              QMLExtensions::UICommandID::ReviewDuplicatesInSelected,
+                              Artworks::ISelectedArtworksSource,
+                              SpellCheck::DuplicatesReviewModel);
 
         SOURCE_TARGET_COMMAND(WipeMetadataInSelectedCommand,
                               QMLExtensions::UICommandID::WipeMetadataInSelected,

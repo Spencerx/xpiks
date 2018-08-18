@@ -27,6 +27,28 @@ namespace Commands {
             Source &m_Source;\
             Target &m_Target;\
         };
+
+#define FIX_ARTWORK_SPELLING_COMMAND(ClassName, CommandID, Source)\
+    class ClassName: public IUICommandTemplate {\
+    public:\
+        ClassName(Source &source,\
+                  Services::IArtworksUpdater &artworksUpdater,\
+                  SpellCheck::IArtworkSpellCheckService &spellCheckService,\
+                  SpellCheck::SpellCheckSuggestionModel &spellSuggestionsModel):\
+            m_Source(source),\
+            m_ArtworksUpdater(artworksUpdater),\
+            m_SpellCheckService(spellCheckService),\
+            m_SpellSuggestionsModel(spellSuggestionsModel)\
+        {}\
+    public:\
+        virtual int getCommandID() override { return CommandID; }\
+        virtual void execute(const QVariant &value) override;\
+    private:\
+        Source &m_Source;\
+        Services::IArtworksUpdater &m_ArtworksUpdater;\
+        SpellCheck::IArtworkSpellCheckService &m_SpellCheckService;\
+        SpellCheck::SpellCheckSuggestionModel &m_SpellSuggestionsModel;\
+    };
     }
 }
 

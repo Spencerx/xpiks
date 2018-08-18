@@ -32,7 +32,7 @@ namespace Models {
         Common::DelayedActionEntity(1000, MAX_EDITING_PAUSE_RESTARTS),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
-        m_CommonKeywordsModel(m_HoldPlaceholder, this),
+        m_CommonKeywordsModel(this),
         m_EditFlags(Common::ArtworkEditFlags::None),
         m_ModifiedFlags(0)
     {

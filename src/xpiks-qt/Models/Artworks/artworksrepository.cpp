@@ -247,14 +247,14 @@ namespace Models {
         }
     }
 
-    void ArtworksRepository::removeFiles(Artworks::WeakArtworksSnapshot const &snapshot, ArtworksRemoveResult &removeResult) {
+    void ArtworksRepository::removeFiles(const Artworks::ArtworksSnapshot &snapshot, ArtworksRemoveResult &removeResult) {
         if (snapshot.empty()) { return; }
         QStringList filepaths;
         QStringList removedAttachedVectors;
         filepaths.reserve(snapshot.size());
         removedAttachedVectors.reserve(snapshot.size()/2);
 
-        for (auto *artwork: snapshot) {
+        for (auto &artwork: snapshot.getRawData()) {
             auto flags = removeFile(artwork->getFilepath(), artwork->getDirectoryID());
             if (!Common::HasFlag(flags, Common::RemoveFileFlags::FlagFileRemoved)) { continue; }
 

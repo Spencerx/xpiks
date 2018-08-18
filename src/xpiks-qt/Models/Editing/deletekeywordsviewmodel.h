@@ -99,8 +99,6 @@ namespace Models {
         void submitForSpellCheck();
 
     private:
-        Common::Hold m_HoldForDeleters;
-        Common::Hold m_HoldForCommon;
         Artworks::BasicKeywordsModel m_KeywordsToDeleteModel;
         Artworks::BasicKeywordsModel m_CommonKeywordsModel;
         Commands::ICommandManager &m_CommandManager;

@@ -186,7 +186,7 @@ protected:
     Connectivity::RequestsService m_RequestsService;
     Warnings::WarningsSettingsModel m_WarningsSettingsModel;
     Warnings::WarningsService m_WarningsService;
-    SpellCheck::SpellCheckService m_SpellCheckerService;
+    SpellCheck::SpellCheckService m_SpellCheckService;
     MetadataIO::MetadataIOService m_MetadataIOService;
     QMLExtensions::ImageCachingService m_ImageCachingService;
     Translation::TranslationService m_TranslationService;

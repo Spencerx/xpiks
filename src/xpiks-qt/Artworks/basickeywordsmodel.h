@@ -42,7 +42,7 @@ namespace Artworks {
         Q_PROPERTY(bool hasAnySpellingError READ hasSpellErrors NOTIFY spellingInfoUpdated)
 
     public:
-        BasicKeywordsModel(Common::Hold &hold, QObject *parent=0);
+        BasicKeywordsModel(QObject *parent=0);
 
     public:
         enum BasicKeywordsModel_Roles {

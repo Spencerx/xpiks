@@ -35,7 +35,6 @@
 namespace Artworks {
     ArtworkMetadata::ArtworkMetadata(const QString &filepath, Common::ID_t ID, qint64 directoryID):
         Common::DelayedActionEntity(ARTWORK_EDITING_PAUSE, MAX_EDITING_PAUSE_RESTARTS),
-        m_MetadataModel(m_Hold),
         m_FileSize(0),
         m_ArtworkFilepath(filepath),
         m_ID(ID),
@@ -48,12 +47,6 @@ namespace Artworks {
 
         QFileInfo fi(filepath);
         setIsReadOnlyFlag(!fi.isWritable());
-    }
-
-    ArtworkMetadata::~ArtworkMetadata() {
-#if defined(QT_DEBUG) && defined(INTEGRATION_TESTS)
-        Q_ASSERT(m_Hold.get() == 0);
-#endif
     }
 
     void ArtworkMetadata::prepareForReimport() {

@@ -86,6 +86,7 @@ namespace Artworks {
         void append(const std::deque<ItemType> &artworks);
         void append(Container const &rawSnapshot);
         void set(Container &rawSnapshot);
+        void copyFrom(ArtworksSnapshot const &snapshot);
         void remove(size_t index);
         ItemType const &get(size_t i) const { Q_ASSERT(i < m_ArtworksSnapshot.size()); return m_ArtworksSnapshot.at(i); }
         ItemType const &at(size_t i) const { return get(i); }

@@ -33,9 +33,11 @@ namespace Artworks {
 }
 
 namespace Services {
-    using ArtworkInspectionType = Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>;
+    using ArtworkInspectionType = Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>,
+    Common::MessageType::EditingPaused>;
     using BasicModelInspectionType = Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>;
-    using ArtworksArrayInspectionType = Common::NamedType<std::vector<Artworks::ArtworkMetadata*>, Common::MessageType::SpellCheck>;
+    using ArtworksArrayInspectionType = Common::NamedType<std::vector<std::shared_ptr<Artworks::ArtworkMetadata>>,
+    Common::MessageType::SpellCheck>;
 
     class ArtworksInspectionHub:
             public Common::MessagesTarget<ArtworkInspectionType>,

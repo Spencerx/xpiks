@@ -26,6 +26,7 @@
 #include <Common/messages.h>
 #include <Artworks/artworkelement.h>
 #include <Artworks/basicmetadatamodel.h>
+#include <Artworks/ibasicmodelsource.h>
 #include <Services/SpellCheck/spellcheckiteminfo.h>
 #include <Models/Artworks/artworksviewmodel.h>
 #include <Models/Editing/icurrenteditable.h>
@@ -47,6 +48,7 @@ namespace Models {
     class CombinedArtworksModel:
             public ArtworksViewModel,
             public ArtworkProxyBase,
+            public Artworks::IBasicModelSource,
             public Common::DelayedActionEntity,
             public Common::MessagesSource<Common::NamedType<Artworks::BasicKeywordsModel*, Common::MessageType::SpellCheck>>,
             public Common::MessagesSource<QuickBufferMessage>,
@@ -113,7 +115,7 @@ namespace Models {
         void registerAsCurrentEditable();
 
     public:
-        Artworks::BasicMetadataModel &getBasicModel() { return m_CommonKeywordsModel; }
+        virtual Artworks::BasicMetadataModel &getBasicModel() override { return m_CommonKeywordsModel; }
 
     public:
         virtual void setDescription(const QString &value) override;
@@ -234,7 +236,6 @@ namespace Models {
         virtual bool removeUnavailableItems() override;
 
     private:
-        Common::Hold m_HoldPlaceholder;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;

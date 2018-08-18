@@ -20,13 +20,13 @@ namespace Artworks {
 }
 
 namespace SpellCheck {
-    class BasicModelDuplicates: IMetadataDuplicates {
+    class BasicModelDuplicates: public IMetadataDuplicates {
     public:
         BasicModelDuplicates(Artworks::BasicMetadataModel &basicModel);
 
         // IMetadataDuplicates interface
     public:
-        virtual Artworks::BasicKeywordsModel &getBasicModel() override { return m_BasicModel; }
+        virtual Artworks::BasicMetadataModel &getBasicModel() override { return m_BasicModel; }
         virtual QString getDescriptionDuplicates() override;
         virtual QString getTitleDuplicates() override;
         virtual QString getKeywordsDuplicates() override;
@@ -35,7 +35,7 @@ namespace SpellCheck {
         Artworks::BasicMetadataModel &m_BasicModel;
     };
 
-    class ArtworkMetadataDuplicates: BasicModelDuplicates {
+    class ArtworkMetadataDuplicates: public BasicModelDuplicates {
     public:
         ArtworkMetadataDuplicates(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
 

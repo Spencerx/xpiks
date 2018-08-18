@@ -53,9 +53,10 @@ namespace Models {
     class ArtworkProxyModel:
             public QObject,
             public ArtworkProxyBase,
-            public Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>,
+            public Common::MessagesSource<Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>,
+            Common::MessageType::EditingPaused>>,
             public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>,
-            public Common::MessagesSource<Artworks::VideoArtwork*>
+            public Common::MessagesSource<std::shared_ptr<Artworks::VideoArtwork>>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
@@ -74,9 +75,10 @@ namespace Models {
         Q_PROPERTY(bool isVideo READ getIsVideo NOTIFY imagePathChanged)
         Q_PROPERTY(bool isValid READ getIsValid NOTIFY isValidChanged)
 
-        using Common::MessagesSource<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>::sendMessage;
+        using Common::MessagesSource<Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>,
+        Common::MessageType::EditingPaused>>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
-        using Common::MessagesSource<Artworks::VideoArtwork*>::sendMessage;
+        using Common::MessagesSource<std::shared_ptr<Artworks::VideoArtwork>>::sendMessage;
 
     public:
         explicit ArtworkProxyModel(Commands::ICommandManager &commandManager,

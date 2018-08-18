@@ -40,7 +40,6 @@ namespace Models {
     using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
-    using ArtworkMetadataLocker = Common::HoldLocker<Artworks::ArtworkMetadata>;
 
     ArtworksListModel::ArtworksListModel(ArtworksRepository &repository,
                                          QObject *parent):
@@ -135,8 +134,8 @@ namespace Models {
     }
 
     Artworks::ArtworksSnapshot ArtworksListModel::createArtworksSnapshot() {
-        auto lockers = filterArtworks<std::shared_ptr<ArtworkMetadataLocker>>([](Artworks::ArtworkMetadata*) { return true; },
-                [](ArtworkItem const &artwork, size_t) { return std::make_shared<ArtworkMetadataLocker>(artwork); });
+        auto lockers = filterArtworks<std::shared_ptr<ArtworkItem>>([](Artworks::ArtworkMetadata*) { return true; },
+                [](ArtworkItem const &artwork, size_t) { return artwork; });
         return Artworks::ArtworksSnapshot(lockers);
     }
 
@@ -498,7 +497,7 @@ namespace Models {
 
         for (size_t i = 0; i < size; ++i) {
             auto &artwork = accessArtwork(i);
-            auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+            auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
             if (image == nullptr) { continue; }
 
             const QString &filepath = image->getFilepath();
@@ -1112,7 +1111,7 @@ namespace Models {
         return artwork;
     }
 
-    std::shared_ptr<Artworks::ArtworkMetadata> ArtworksListModel::accessArtwork(size_t index) const {
+    std::shared_ptr<Artworks::ArtworkMetadata> const &ArtworksListModel::accessArtwork(size_t index) const {
         Q_ASSERT(index < m_ArtworkList.size());
         auto &artwork = m_ArtworkList.at(index);
         artwork->setCurrentIndex(index);

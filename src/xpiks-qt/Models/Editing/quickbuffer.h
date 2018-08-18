@@ -115,7 +115,6 @@ namespace Models {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
-        Common::Hold m_HoldPlaceholder;
         Artworks::BasicMetadataModel m_BasicModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
         CurrentEditableModel &m_CurrentEditableModel;

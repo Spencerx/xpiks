@@ -107,9 +107,8 @@ namespace QMLExtensions {
 
         updateDefaultSize();
 
-        for (size_t i = 0; i < size; i++) {
-            auto *artwork = snapshot.get(i);
-            Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+        for (auto &artwork: snapshot.getRawData()) {
+            auto imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
             if (imageArtwork != nullptr) {
                 requests.emplace_back(std::make_shared<ImageCacheRequest>(artwork->getThumbnailPath(),
                                                                           m_DefaultSize,

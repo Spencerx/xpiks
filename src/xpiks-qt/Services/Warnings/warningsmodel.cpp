@@ -26,9 +26,9 @@ namespace Warnings {
                               QStringList &descriptions) {
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::SizeLessThanMinimum)) {
-            auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+            auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
 #ifdef QT_DEBUG
-            Q_ASSERT(image != NULL);
+            Q_ASSERT(image != nullptr);
             {
 #else
             if (image != NULL) {
@@ -50,8 +50,8 @@ namespace Warnings {
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::TooManyKeywords)) {
-            Artworks::BasicKeywordsModel *keywordsModel = artwork->getBasicModel();
-            descriptions.append(QObject::tr("There are too many keywords (%1)").arg(keywordsModel->getKeywordsCount()));
+            Artworks::BasicKeywordsModel &keywordsModel = artwork->getBasicModel();
+            descriptions.append(QObject::tr("There are too many keywords (%1)").arg(keywordsModel.getKeywordsCount()));
         }
 
         if (Common::HasFlag(warningsFlags, Common::WarningFlags::DescriptionIsEmpty)) {
@@ -218,6 +218,7 @@ namespace Warnings {
 
     bool WarningsModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
         Q_UNUSED(sourceParent);
+        bool rowIsOk = false;
         std::shared_ptr<Artworks::ArtworkMetadata> artwork;
         if (m_ArtworksListModel.tryGetArtwork(sourceRow, artwork) && !artwork->isRemoved()) {
             auto warningsFlags = artwork->getWarningsFlags();

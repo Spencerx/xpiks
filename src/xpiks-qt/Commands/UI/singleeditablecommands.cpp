@@ -15,6 +15,7 @@
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include <Services/SpellCheck/duplicatesreviewmodel.h>
+#include <Services/SpellCheck/spellsuggestionstarget.h>
 #include <Suggestion/keywordssuggestor.h>
 
 namespace Commands {
@@ -29,15 +30,20 @@ namespace Commands {
             return result;
         }
 
-        void FixSpellingInCombinedEditCommand::execute(QVariant const &) {
-            LOG_DEBUG << "#";
-            m_Target.setupItem(&m_Source.getBasicModel());
+        void FixSpellingInBasicModelCommand::execute(const QVariant &) {
+            LOG_DEBUG << m_CommandID;
+            m_SpellSuggestionsModel.setupModel(
+                        std::make_shared<SpellCheck::BasicModelSuggestionTarget>(
+                            m_BasicModelSource.getBasicModel(), m_SpellCheckService),
+                        Common::SpellCheckFlags::All);
         }
 
         void FixSpellingInArtworkProxyCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             Artworks::ArtworksSnapshot snapshot({m_Source.getArtwork()});
-            m_Target.setupArtworks(snapshot);
+            m_SpellSuggestionsModel.setupModel(
+                        std::make_shared<SpellCheck::ArtworksSuggestionTarget>(
+                            snapshot, m_SpellCheckService, m_ArtworksUpdater));
         }
 
         void FixSpellingForArtworkCommand::execute(QVariant const &value) {
@@ -46,7 +52,9 @@ namespace Commands {
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;
             if (m_Source.tryGetArtwork(index, artwork)) {
                 Artworks::ArtworksSnapshot snapshot({artwork});
-                m_Target.setupArtworks(snapshot);
+                m_SpellSuggestionsModel.setupModel(
+                            std::make_shared<SpellCheck::ArtworksSuggestionTarget>(
+                                snapshot, m_SpellCheckService, m_ArtworksUpdater));
             } else {
                 LOG_WARNING << "Cannot find artwork at" << index;
             }
@@ -88,5 +96,6 @@ namespace Commands {
             LOG_DEBUG << "#";
             m_Target.setExistingKeywords(m_Source.getKeywords().toSet());
         }
+
     }
 }

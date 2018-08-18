@@ -214,7 +214,8 @@ SOURCES += main.cpp \
     Models/Connectivity/artworksuploader.cpp \
     Commands/Files/removefilescommand.cpp \
     Commands/Files/removeselectedfilescommand.cpp \
-    Services/SpellCheck/metadataduplicates.cpp
+    Services/SpellCheck/metadataduplicates.cpp \
+    Services/SpellCheck/spellsuggestionstarget.cpp
 
 RESOURCES += qml.qrc
 
@@ -524,7 +525,11 @@ HEADERS += \
     Commands/Files/removefilescommand.h \
     Commands/Files/removeselectedfilescommand.h \
     Services/SpellCheck/imetadataduplicates.h \
-    Services/SpellCheck/metadataduplicates.h
+    Services/SpellCheck/metadataduplicates.h \
+    Services/SpellCheck/ispellsuggestionstarget.h \
+    Services/SpellCheck/spellsuggestionstarget.h \
+    Services/SpellCheck/ispellcheckservice.h \
+    Artworks/ibasicmodelsource.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

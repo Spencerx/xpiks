@@ -16,6 +16,7 @@
 #include <Artworks/artworkssnapshot.h>
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include <Services/SpellCheck/duplicatesreviewmodel.h>
+#include <Services/SpellCheck/spellsuggestionstarget.h>
 #include <MetadataIO/metadataiocoordinator.h>
 #include <MetadataIO/metadataioservice.h>
 #include <MetadataIO/csvexportmodel.h>
@@ -38,22 +39,6 @@ namespace Commands {
             return result;
         }
 
-        void EditSelectedCommand::execute(QVariant const &) {
-            LOG_DEBUG << "#";
-            m_Target.setArtworks(m_Source.getSelectedArtworks());
-        }
-
-        void FixSpellingInSelectedCommand::execute(QVariant const &) {
-            LOG_DEBUG << "#";
-            Artworks::ArtworksSnapshot snapshot = std::move(m_Source.getSelectedArtworks());
-            m_Target.setupArtworks(snapshot);
-        }
-
-        void ShowDuplicatesInSelectedCommand::execute(QVariant const &) {
-            LOG_DEBUG << "#";
-            m_Target.setupModel(m_Source.getSelectedArtworks());
-        }
-
         void SaveSelectedCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             bool useBackups = false;
@@ -74,6 +59,25 @@ namespace Commands {
             Artworks::ArtworksSnapshot snapshot = std::move(m_FilteredArtworksList.getArtworksToSave(overwrite));
             m_MetadataIOService.writeArtworks(snapshot);
             m_MetadataIOCoordinator.writeMetadataExifTool(snapshot, useBackups);
+        }
+
+        void FixSpellingInSelectedCommand::execute(QVariant const &) {
+            LOG_DEBUG << "#";
+            Artworks::ArtworksSnapshot snapshot = std::move(m_Source.getSelectedArtworks());
+            m_SpellSuggestionsModel.setupModel(
+                        std::make_shared<SpellCheck::ArtworksSuggestionTarget>(
+                            snapshot, m_SpellCheckService, m_ArtworksUpdater),
+                        Common::SpellCheckFlags::All);
+        }
+
+        void EditSelectedCommand::execute(QVariant const &) {
+            LOG_DEBUG << "#";
+            m_Target.setArtworks(m_Source.getSelectedArtworks());
+        }
+
+        void ShowDuplicatesInSelectedCommand::execute(QVariant const &) {
+            LOG_DEBUG << "#";
+            m_Target.setupModel(m_Source.getSelectedArtworks());
         }
 
         void WipeMetadataInSelectedCommand::execute(QVariant const &value) {

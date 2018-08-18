@@ -120,7 +120,7 @@ namespace Models {
         void purgeUnavailableFiles();
         void watchFiles(const Artworks::ArtworksSnapshot &snapshot);
         void setFullDirectories(const QSet<qint64> &directoryIDs);
-        void removeFiles(Artworks::WeakArtworksSnapshot const &snapshot, ArtworksRemoveResult &removeResult);
+        void removeFiles(Artworks::ArtworksSnapshot const &snapshot, ArtworksRemoveResult &removeResult);
         void unwatchFilePaths(const QStringList &filePaths);
         void updateFilesCounts();
         void updateSelectedState();

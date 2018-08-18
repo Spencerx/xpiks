@@ -26,7 +26,7 @@ namespace Models {
         QObject(parent),
         ArtworkProxyBase(),
         Common::DelayedActionEntity(QUICKBUFFER_EDITING_PAUSE, MAX_EDITING_PAUSE_RESTARTS),
-        m_BasicModel(m_HoldPlaceholder, this),
+        m_BasicModel(this),
         m_CurrentEditableModel(currentEditableModel),
         m_CommandManager(commandManager)
     {

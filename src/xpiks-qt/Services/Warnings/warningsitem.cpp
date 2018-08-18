@@ -38,13 +38,6 @@ namespace Warnings {
         m_FlagsToSet(Common::WarningFlags::None),
         m_FlagsToDrop(Common::WarningFlags::None)
     {
-        checkableItem->acquire();
-    }
-
-    WarningsItem::~WarningsItem() {
-        if (m_CheckableItem->release()) {
-            LOG_WARNING << "Item #" << m_CheckableItem->getItemID() << "could have been removed";
-        }
     }
 
     void WarningsItem::checkWarnings(IWarningsSettings &warningsSettings) {
@@ -75,7 +68,7 @@ namespace Warnings {
     }
 
     void WarningsItem::checkImageProperties(IWarningsSettings &warningsSettings) {
-        auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_CheckableItem);
+        auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_CheckableItem);
         if (image == nullptr) {
             dropFlag(Common::WarningFlags::SizeLessThanMinimum);
             dropFlag(Common::WarningFlags::ImageFileIsTooBig);
@@ -99,7 +92,7 @@ namespace Warnings {
     }
 
     void WarningsItem::checkVideoProperties(IWarningsSettings &warningsSettings) {
-        auto &video = std::dynamic_pointer_cast<Artworks::VideoArtwork>(m_CheckableItem);
+        auto video = std::dynamic_pointer_cast<Artworks::VideoArtwork>(m_CheckableItem);
 
         if (video == nullptr) {
             dropFlag(Common::WarningFlags::VideoFileIsTooBig);
@@ -152,9 +145,9 @@ namespace Warnings {
     void WarningsItem::checkKeywords(IWarningsSettings &warningsSettings) {
         LOG_INTEGRATION_TESTS << "#";
         Q_UNUSED(warningsSettings);
-        Artworks::BasicKeywordsModel *keywordsModel = m_CheckableItem->getBasicModel();
+        Artworks::BasicKeywordsModel &keywordsModel = m_CheckableItem->getBasicModel();
 
-        const int keywordsCount = keywordsModel->getKeywordsCount();
+        const int keywordsCount = keywordsModel.getKeywordsCount();
 
         {
             const bool keywordsEmptyValue = (keywordsCount == 0);
@@ -230,22 +223,22 @@ namespace Warnings {
         LOG_INTEGRATION_TESTS << "#";
         Q_UNUSED(warningsSettings);
 
-        auto *keywordsModel = m_CheckableItem->getBasicModel();
+        auto &keywordsModel = m_CheckableItem->getBasicModel();
 
         {
-            const bool keywordsSpellingErrors = (keywordsModel->hasKeywordsSpellError());
+            const bool keywordsSpellingErrors = (keywordsModel.hasKeywordsSpellError());
             LOG_INTEGRATION_TESTS << "Detected keywords spell error:" << keywordsSpellingErrors;
             accountFlag(Common::WarningFlags::SpellErrorsInKeywords, keywordsSpellingErrors);
         }
 
         {
-            const bool descriptionSpellingErrors = (keywordsModel->hasDescriptionSpellError());
+            const bool descriptionSpellingErrors = (keywordsModel.hasDescriptionSpellError());
             LOG_INTEGRATION_TESTS << "Detected description spell error:" << descriptionSpellingErrors;
             accountFlag(Common::WarningFlags::SpellErrorsInDescription, descriptionSpellingErrors);
         }
 
         {
-            const bool titleSpellingErrors = (keywordsModel->hasTitleSpellError());
+            const bool titleSpellingErrors = (keywordsModel.hasTitleSpellError());
             LOG_INTEGRATION_TESTS << "Detected title spell error:" << titleSpellingErrors;
             accountFlag(Common::WarningFlags::SpellErrorsInTitle, titleSpellingErrors);
         }

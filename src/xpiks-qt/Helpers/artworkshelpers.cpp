@@ -51,13 +51,13 @@ namespace Helpers {
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
-            auto &imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+            auto imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
             if (imageArtwork != nullptr) {
-                imagesRawSnapshot.append(locker);
+                imagesRawSnapshot.append(artwork);
             } else {
-                auto &videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
+                auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
                 if (videoArtwork != nullptr) {
-                    videoRawSnapshot.append(locker);
+                    videoRawSnapshot.append(artwork);
                 } else {
                     Q_ASSERT(false);
                     LOG_WARNING << "Unknown type";
@@ -73,7 +73,7 @@ namespace Helpers {
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
-            Artworks::ImageArtwork *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+            auto imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
             if (imageArtwork != nullptr) {
                 count++;
             }
@@ -89,8 +89,8 @@ namespace Helpers {
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
-            Artworks::VideoArtwork *imageArtwork = dynamic_cast<Artworks::VideoArtwork*>(artwork);
-            if (imageArtwork != nullptr) {
+            auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
+            if (videoArtwork != nullptr) {
                 count++;
             }
         }
@@ -106,7 +106,7 @@ namespace Helpers {
 
         for (size_t i = 0; i < size; ++i) {
             auto &artwork = snapshot.get(i);
-            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
+            auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
 
             if (image == NULL) { continue; }
 

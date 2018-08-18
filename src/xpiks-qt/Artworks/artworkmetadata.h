@@ -51,7 +51,6 @@ namespace Artworks {
 
     public:
         ArtworkMetadata(const QString &filepath, Common::ID_t ID, qint64 directoryID);
-        virtual ~ArtworkMetadata();
 
     public:
         enum FocusRequestType {
@@ -263,7 +262,6 @@ namespace Artworks {
         virtual void callBaseTimer(QTimerEvent *event) override { QObject::timerEvent(event); }
 
     private:
-        Common::Hold m_Hold;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
         BasicMetadataModel m_MetadataModel;
         QReadWriteLock m_FlagsLock;

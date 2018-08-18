@@ -16,10 +16,9 @@ namespace SpellCheck {
     UserDictEditModel::UserDictEditModel(UserDictionary &userDictionary, QObject *parent):
         QObject(parent),
         ArtworkProxyBase(),
-        m_BasicModel(m_HoldPlaceholder, this),
+        m_BasicModel(m_SpellCheckInfo, this),
         m_UserDictionary(userDictionary)
     {
-        m_BasicModel.setSpellCheckInfo(&m_SpellCheckInfo);
     }
 
     void UserDictEditModel::initializeModel() {

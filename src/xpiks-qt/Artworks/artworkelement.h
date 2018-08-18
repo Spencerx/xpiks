@@ -41,7 +41,7 @@ namespace Artworks {
 
     public:
         std::shared_ptr<ArtworkMetadata> const &getArtwork() { return m_Artwork; }
-        size_t getOriginalIndex() const { return getArtworkMetadata()->getLastKnownIndex(); }
+        size_t getOriginalIndex() const { return m_Artwork->getLastKnownIndex(); }
 
 #ifdef CORE_TESTS
         void freeMetadata() {

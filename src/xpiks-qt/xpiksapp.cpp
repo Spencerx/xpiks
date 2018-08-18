@@ -68,14 +68,14 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_RequestsService(m_SettingsModel.getProxySettings()),
     m_WarningsSettingsModel(environment),
     m_WarningsService(m_WarningsSettingsModel),
-    m_SpellCheckerService(environment, m_SettingsModel),
+    m_SpellCheckService(environment, m_SettingsModel),
     m_MetadataIOService(),
     m_ImageCachingService(environment, m_DatabaseManager),
     m_TranslationService(),
     m_VideoCachingService(environment, m_DatabaseManager, m_SwitcherModel),
     m_UpdateService(environment, m_SettingsModel, m_SwitcherModel, m_MaintenanceService),
     m_TelemetryService(m_SwitcherModel, m_SettingsModel),
-    m_InspectionHub(m_SpellCheckerService, m_WarningsService, m_SettingsModel),
+    m_InspectionHub(m_SpellCheckService, m_WarningsService, m_SettingsModel),
     m_UploadInfoRepository(environment, m_SecretsManager),
     m_ZipArchiver(),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
@@ -91,7 +91,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_CsvExportModel(environment),
     m_MetadataReadingHub(m_MetadataIOService, m_ArtworksUpdateHub, m_InspectionHub),
     m_MetadataIOCoordinator(m_MetadataReadingHub, m_SettingsModel, m_SwitcherModel, m_VideoCachingService),
-    m_SpellSuggestionModel(m_SpellCheckerService, m_ArtworksUpdateHub),
+    m_SpellSuggestionModel(m_SpellCheckService),
     m_FilteredArtworksListModel(m_ArtworksListModel, m_CommandManager, m_PresetsModel, m_SettingsModel),
     m_KeywordsSuggestor(m_SwitcherModel, m_SettingsModel, environment),
     m_PluginManager(environment, m_CommandManager, m_PresetsModel, m_DatabaseManager,
@@ -242,7 +242,7 @@ void XpiksApp::start() {
     m_VideoCachingService.startService(m_ImageCachingService, m_ArtworksUpdateHub, m_MetadataIOService);
 
     m_WarningsService.startService();
-    m_SpellCheckerService.startService(m_InitCoordinator, m_WarningsService);
+    m_SpellCheckService.startService(m_InitCoordinator, m_WarningsService);
     m_AutoCompleteService.startService(m_InitCoordinator);
     m_TranslationService.startService(m_InitCoordinator);
 
@@ -286,7 +286,7 @@ void XpiksApp::stop() {
     m_UpdateService.stopChecking();
     m_MetadataIOService.stopService();
 
-    m_SpellCheckerService.stopService();
+    m_SpellCheckService.stopService();
     m_WarningsService.stopService();
     m_AutoCompleteService.stopService();
     m_TranslationService.stopService();
@@ -500,7 +500,7 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onMetadataWritingFinished);
 
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckService::serviceAvailable,
+    QObject::connect(&m_SpellCheckService, &SpellCheck::SpellCheckService::serviceAvailable,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckerAvailable);
 
     QObject::connect(&m_ArtworksRepository, &Models::ArtworksRepository::selectionChanged,
@@ -583,7 +583,7 @@ void XpiksApp::registerUICommands() {
                     m_FilteredArtworksListModel, m_CombinedArtworksModel),
 
                     std::make_shared<Commands::UI::FixSpellingInSelectedCommand>(
-                    m_FilteredArtworksListModel, m_SpellSuggestionModel),
+                    m_FilteredArtworksListModel, m_ArtworksUpdateHub, m_SpellCheckService, m_SpellSuggestionModel),
 
                     std::make_shared<Commands::UI::ShowDuplicatesInSelectedCommand>(
                     m_FilteredArtworksListModel, m_DuplicatesModel),
@@ -602,14 +602,15 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::UI::ReimportMetadataForSelectedCommand>(
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator),
 
-                    std::make_shared<Commands::UI::FixSpellingInCombinedEditCommand>(
-                    m_CombinedArtworksModel, m_SpellSuggestionModel),
+                    std::make_shared<Commands::UI::FixSpellingInBasicModelCommand>(
+                    QMLExtensions::UICommandID::FixSpellingCombined,
+                    m_CombinedArtworksModel, m_SpellCheckService, m_SpellSuggestionModel),
 
                     std::make_shared<Commands::UI::FixSpellingInArtworkProxyCommand>(
-                    m_ArtworkProxyModel, m_SpellSuggestionModel),
+                    m_ArtworkProxyModel, m_ArtworksUpdateHub, m_SpellCheckService, m_SpellSuggestionModel),
 
                     std::make_shared<Commands::UI::FixSpellingForArtworkCommand>(
-                    m_FilteredArtworksListModel, m_SpellSuggestionModel),
+                    m_FilteredArtworksListModel, m_ArtworksUpdateHub, m_SpellCheckService, m_SpellSuggestionModel),
 
                     std::make_shared<Commands::CommandUIWrapper>(
                     QMLExtensions::UICommandID::SaveSession, saveSessionCommand),
@@ -657,15 +658,17 @@ void XpiksApp::setupMessaging() {
                 m_QuickBuffer,
     { m_FilteredArtworksListModel, m_CombinedArtworksModel, m_KeywordsSuggestor });
 
-    Common::connectTarget<Artworks::VideoArtwork*>(
+    Common::connectTarget<std::shared_ptr<Artworks::VideoArtwork>>(
                 m_VideoCachingService,
     { m_ArtworkProxyModel });
 
-    Common::connectTarget<Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>>(
+    Common::connectTarget<Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>,
+            Common::MessageType::EditingPaused>>(
                 m_InspectionHub,
     { m_ArtworksListModel, m_ArtworkProxyModel });
 
-    Common::connectTarget<Common::NamedType<std::vector<Artworks::ArtworkMetadata*>, Common::MessageType::SpellCheck>>(
+    Common::connectTarget<Common::NamedType<std::vector<std::shared_ptr<Artworks::ArtworkMetadata>>,
+            Common::MessageType::SpellCheck>>(
                 m_InspectionHub,
     { m_ArtworksListModel });
 

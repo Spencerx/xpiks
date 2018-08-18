@@ -60,7 +60,6 @@ namespace SpellCheck {
         virtual void submitForInspection() override { /*BUMP*/ }
 
     private:
-        Common::Hold m_HoldPlaceholder;
         Artworks::BasicMetadataModel m_BasicModel;
         SpellCheck::SpellCheckItemInfo m_SpellCheckInfo;
         UserDictionary &m_UserDictionary;

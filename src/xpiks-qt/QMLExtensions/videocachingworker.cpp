@@ -232,7 +232,7 @@ namespace QMLExtensions {
     bool VideoCachingWorker::checkLockedIO(std::shared_ptr<VideoCacheRequest> &item) {
         bool isLocked = false;
 
-        Artworks::VideoArtwork *video = item->getArtwork();
+        auto &video = item->getArtwork();
         Q_ASSERT(video != nullptr);
         if (video->isLockedIO()) {
             LOG_DEBUG << "video is locked for IO";
