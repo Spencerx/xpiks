@@ -25,7 +25,6 @@ namespace KeywordsPresets {
         };
 
         PresetModel(ID_t id):
-            m_KeywordsModel(m_Hold),
             m_PresetName(QObject::tr("Untitled")),
             m_ID(id),
             m_GroupID(DEFAULT_GROUP_ID),
@@ -34,7 +33,6 @@ namespace KeywordsPresets {
         }
 
         PresetModel(ID_t id, const QString &name):
-            m_KeywordsModel(m_Hold),
             m_PresetName(name),
             m_ID(id),
             m_GroupID(DEFAULT_GROUP_ID),
@@ -42,7 +40,6 @@ namespace KeywordsPresets {
         {}
 
         PresetModel(ID_t id, const QString &name, const QStringList &keywords, int groupID):
-            m_KeywordsModel(m_Hold),
             m_PresetName(name),
             m_ID(id),
             m_GroupID(groupID),
@@ -51,9 +48,6 @@ namespace KeywordsPresets {
             m_KeywordsModel.setKeywords(keywords);
         }
 
-        void acquire() { m_Hold.acquire(); }
-        bool release() { return m_Hold.release(); }
-
         inline bool getIsNameDuplicateFlag() const { return Common::HasFlag(m_Flags, FlagIsNameDupcate); }
         inline void setIsNameDuplicateFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagIsNameDupcate); }
 
@@ -61,7 +55,6 @@ namespace KeywordsPresets {
         QString m_PresetName;
         ID_t m_ID;
         int m_GroupID;
-        Common::Hold m_Hold;
         Common::flag_t m_Flags;
     };
 }

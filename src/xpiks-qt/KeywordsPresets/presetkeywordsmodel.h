@@ -170,8 +170,7 @@ namespace KeywordsPresets {
         PresetKeywordsModelConfig m_PresetsConfig;
         PresetGroupsModel m_GroupsModel;
         QReadWriteLock m_PresetsLock;
-        std::vector<PresetModel *> m_PresetsList;
-        std::vector<PresetModel *> m_Finalizers;
+        std::vector<std::shared_ptr<PresetModel>> m_PresetsList;
         QAtomicInt m_LastUsedID;
         // timer needs to be here because of the multithreading
         QTimer m_SavingTimer;
@@ -190,7 +189,10 @@ namespace KeywordsPresets {
         Q_INVOKABLE int getItemsCount() const { return rowCount(); }
         Q_INVOKABLE QString getName(int index);
     protected:
-        PresetKeywordsModel *getPresetsModel() const;
+        PresetKeywordsModel &getPresetsModel() const;
+
+    private:
+        PresetKeywordsModel &m_PresetKeywordsModel;
     };
 
     class FilteredPresetKeywordsModel:
