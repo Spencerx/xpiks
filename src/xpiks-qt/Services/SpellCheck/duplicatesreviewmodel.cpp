@@ -11,11 +11,9 @@
 #include "duplicatesreviewmodel.h"
 #include <QQuickTextDocument>
 #include <QFileInfo>
+#include "imetadataduplicates.h"
+#include "metadataduplicates.h"
 #include <Services/SpellCheck/duplicateshighlighter.h>
-#include <Services/SpellCheck/spellcheckiteminfo.h>
-#include <Artworks/basicmetadatamodel.h>
-#include <Helpers/stringhelper.h>
-#include <Helpers/indicesranges.h>
 #include <Helpers/cpphelpers.h>
 #include <Artworks/keyword.h>
 #include <Artworks/videoartwork.h>
@@ -64,16 +62,15 @@ namespace SpellCheck {
         if ((index < 0) || (index >= (int)m_DuplicatesList.size())) { return; }
 
         auto &item = m_DuplicatesList.at(index);
-        auto *basicModel = item.m_BasicModel;
-        Q_ASSERT(basicModel != nullptr);
-        SpellCheck::SpellCheckItemInfo *spellCheckInfo = basicModel->getSpellCheckInfo();
+        auto &basicModel = item->getBasicModel();
+        SpellCheck::SpellCheckItemInfo &spellCheckInfo = basicModel->getSpellCheckInfo();
 
         SpellCheck::DuplicatesHighlighter *highlighter = new SpellCheck::DuplicatesHighlighter(
                     document->textDocument(),
                     m_ColorsModel,
-                    spellCheckInfo->getTitleErrors());
+                    spellCheckInfo.getTitleErrors());
 
-        QObject::connect(basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
+        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
                          highlighter, &DuplicatesHighlighter::rehighlight);
 
         //QObject::connect(this, &DuplicatesReviewModel::rehighlightRequired,
@@ -91,16 +88,15 @@ namespace SpellCheck {
         if ((index < 0) || (index >= (int)m_DuplicatesList.size())) { return; }
 
         auto &item = m_DuplicatesList.at(index);
-        auto *basicModel = item.m_BasicModel;
-        Q_ASSERT(basicModel != nullptr);
-        SpellCheck::SpellCheckItemInfo *spellCheckInfo = basicModel->getSpellCheckInfo();
+        auto *basicModel = item->getBasicModel();
+        SpellCheck::SpellCheckItemInfo &spellCheckInfo = basicModel->getSpellCheckInfo();
 
         SpellCheck::DuplicatesHighlighter *highlighter = new SpellCheck::DuplicatesHighlighter(
                     document->textDocument(),
                     m_ColorsModel,
                     spellCheckInfo->getDescriptionErrors());
 
-        QObject::connect(basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
+        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
                          highlighter, &DuplicatesHighlighter::rehighlight);
 
         //QObject::connect(this, &DuplicatesReviewModel::rehighlightRequired,
@@ -118,10 +114,9 @@ namespace SpellCheck {
         if ((index < 0) || (index >= (int)m_DuplicatesList.size())) { return; }
 
         auto &item = m_DuplicatesList.at(index);
-        auto *basicModel = item.m_BasicModel;
-        Q_ASSERT(basicModel != nullptr);
+        auto &basicModel = item->getBasicModel();
 
-        bool hasKeywordsDuplicates = basicModel->hasKeywordsDuplicates();
+        bool hasKeywordsDuplicates = basicModel.hasKeywordsDuplicates();
 
         SpellCheck::DuplicatesHighlighter *highlighter = new SpellCheck::DuplicatesHighlighter(
                     document->textDocument(),
@@ -129,7 +124,7 @@ namespace SpellCheck {
                     nullptr, // highlight all words
                     hasKeywordsDuplicates);
 
-        QObject::connect(basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
+        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::hasDuplicatesChanged,
                          highlighter, &DuplicatesHighlighter::keywordsDuplicatesChanged);
 
         Q_UNUSED(highlighter);
@@ -144,34 +139,7 @@ namespace SpellCheck {
         if ((index < 0) || (index >= (int)m_DuplicatesList.size())) { return QString(); }
 
         auto &item = m_DuplicatesList.at(index);
-        auto *basicModel = item.m_BasicModel;
-        SpellCheck::SpellCheckItemInfo *spellCheckInfo = basicModel->getSpellCheckInfo();
-
-        QString title = basicModel->getTitle();
-        QString result;
-
-        if (spellCheckInfo->anyTitleDuplicates()) {
-            std::vector<int> hits;
-            QString titleLower = title.toLower();
-
-            Helpers::foreachWord(titleLower,
-                                 [&spellCheckInfo](const QString &word) {
-                return spellCheckInfo->hasTitleDuplicate(word);
-            },
-            [&hits](int start, int length, const QString &) {
-                hits.push_back(start + length/2);
-            });
-
-            result = Helpers::getUnitedHitsString(title, hits, DUPLICATEOFFSET);
-        } else {
-            if (title.size() > PREVIEWOFFSET*2) {
-                result = title.left(PREVIEWOFFSET*2) + " ...";
-            } else {
-                result = title;
-            }
-        }
-
-        return result;
+        return item->getTitleDuplicates();
     }
 
     QString DuplicatesReviewModel::getDescriptionDuplicates(int index) {
@@ -179,34 +147,7 @@ namespace SpellCheck {
         if ((index < 0) || (index >= (int)m_DuplicatesList.size())) { return QString(); }
 
         auto &item = m_DuplicatesList.at(index);
-        auto *basicModel = item.m_BasicModel;
-        SpellCheck::SpellCheckItemInfo *spellCheckInfo = basicModel->getSpellCheckInfo();
-
-        QString description = basicModel->getDescription();
-        QString result;
-
-        if (spellCheckInfo->anyDescriptionDuplicates()) {
-            std::vector<int> hits;
-            QString descriptionLower = description.toLower();
-
-            Helpers::foreachWord(descriptionLower,
-                                 [&spellCheckInfo](const QString &word) {
-                return spellCheckInfo->hasDescriptionDuplicate(word);
-            },
-            [&hits](int start, int length, const QString &) {
-                hits.push_back(start + length/2);
-            });
-
-            result = Helpers::getUnitedHitsString(description, hits, DUPLICATEOFFSET);
-        } else {
-            if (description.size() > PREVIEWOFFSET*2) {
-                result = description.left(PREVIEWOFFSET*2) + " ...";
-            } else {
-                result = description;
-            }
-        }
-
-        return result;
+        return item->getDescriptionDuplicates();
     }
 
     QString DuplicatesReviewModel::getKeywordsDuplicates(int index) {
@@ -214,30 +155,7 @@ namespace SpellCheck {
         if ((index < 0) || (index >= (int)m_DuplicatesList.size())) { return QString(); }
 
         auto &item = m_DuplicatesList.at(index);
-        Artworks::BasicMetadataModel *basicModel = item.m_BasicModel;
-        std::vector<Artworks::KeywordItem> duplicatedKeywords = basicModel->retrieveDuplicatedKeywords();
-
-        QString text;
-
-        if (!duplicatedKeywords.empty()) {
-            QStringList keywords;
-            keywords.reserve((int)duplicatedKeywords.size());
-            for (auto &item: duplicatedKeywords) {
-                keywords.append(item.m_Word);
-            }
-
-            text = keywords.join(", ");
-        } else {
-            QStringList keywords = basicModel->getKeywords();
-            if (keywords.length() > DUPLICATESKEYWORDSCOUNT) {
-                QStringList part = keywords.mid(0, DUPLICATESKEYWORDSCOUNT);
-                text = part.join(", ") + " ...";
-            } else {
-                text = keywords.join(", ");
-            }
-        }
-
-        return text;
+        return item->getKeywordsDuplicates();
     }
 
     void DuplicatesReviewModel::clearModel() {
@@ -253,14 +171,15 @@ namespace SpellCheck {
         }
 
         QSet<size_t> indicesSet = m_PendingUpdates.toList().toSet();
-
-        auto indicesToUpdate = Helpers::filterMap<MetadataDuplicatesItem, int>(
-                                   m_DuplicatesList,
-                                   [&indicesSet](const MetadataDuplicatesItem& item) {
-            return item.m_ArtworkMetadata != nullptr &&
-                                             indicesSet.contains(item.m_ArtworkMetadata->getLastKnownIndex());
-        },
-        [](const MetadataDuplicatesItem& item) { return item.m_ArtworkMetadata->getLastKnownIndex(); });
+        std::vector<int> indicesToUpdate;
+        for (auto &item: m_DuplicatesList) {
+            auto &artworkItem = std::dynamic_pointer_cast<ArtworkMetadataDuplicates>(item);
+            if (artworkItem == nullptr) { continue; }
+            auto &artwork = artworkItem->getArtwork();
+            if (indicesSet.contains(artwork->getLastKnownIndex())) {
+                indicesToUpdate.push_back(artwork->getLastKnownIndex());
+            }
+        }
 
         LOG_INTEGR_TESTS_OR_DEBUG << QVector<int>::fromStdVector(indicesToUpdate);
         Helpers::IndicesRanges ranges(indicesToUpdate);
@@ -285,26 +204,32 @@ namespace SpellCheck {
         if ((row < 0) || (row >= (int)m_DuplicatesList.size())) { return QVariant(); }
 
         auto &item = m_DuplicatesList.at(row);
+        auto &artworkItem = std::dynamic_pointer_cast<ArtworkMetadataDuplicates>(item);
 
         switch (role) {
         case HasPathRole: {
-            return item.m_ArtworkMetadata != nullptr;
+            return artworkItem != nullptr;
         }
         case PathRole: {
-            return item.m_ArtworkMetadata != nullptr ? item.m_ArtworkMetadata->getThumbnailPath() : "";
+            return artworkItem != nullptr ? artworkItem->getThumbnailPath() : "";
         }
         case OriginalIndexRole: {
-            return (int)(item.m_ArtworkMetadata != nullptr ? item.m_ArtworkMetadata->getLastKnownIndex() : 0);
+            return (int)(artworkItem != nullptr ? artworkItem->getLastKnownIndex() : 0);
         }
         case HasVectorAttachedRole: {
-            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(item.m_ArtworkMetadata);
-            return (image != NULL) && image->hasVectorAttached();
+                if (artworkItem != nullptr) {
+                    auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artworkItem->getArtwork());
+                    return (image != nullptr) && image->hasVectorAttached();
+                } else {
+                    return false;
+                }
         }
         case BaseFilenameRole:
-            return item.m_ArtworkMetadata != nullptr ? item.m_ArtworkMetadata->getBaseFilename() : "";
+            return artworkItem != nullptr ? artworkItem->getBaseFilename() : "";
         case IsVideoRole: {
-            bool isVideo = dynamic_cast<Artworks::VideoArtwork*>(item.m_ArtworkMetadata) != nullptr;
-            return isVideo;
+                return (artworkItem != nullptr) ?
+                            (std::dynamic_pointer_cast<Artworks::VideoArtwork>(artworkItem) != nullptr) :
+                            false;
         }
         case TriggerRole: {
             return QString();

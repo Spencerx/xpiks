@@ -77,8 +77,8 @@ namespace SpellCheck {
         bool anyTitleDuplicates() { return m_TitleErrors.anyDuplicate(); }
         bool anyDescriptionDuplicates() { return m_DescriptionErrors.anyDuplicate(); }
 
-        SpellCheckErrorsInfo *getTitleErrors() { return &m_TitleErrors; }
-        SpellCheckErrorsInfo *getDescriptionErrors() { return &m_DescriptionErrors; }
+        SpellCheckErrorsInfo &getTitleErrors() { return m_TitleErrors; }
+        SpellCheckErrorsInfo &getDescriptionErrors() { return m_DescriptionErrors; }
 
     private:
         SpellCheckErrorsInfo m_DescriptionErrors;

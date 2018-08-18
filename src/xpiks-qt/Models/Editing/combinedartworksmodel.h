@@ -192,9 +192,9 @@ namespace Models {
         void enableAllFields();
         void assignFromOneArtwork();
         void assignFromManyArtworks();
-        void recombineArtworks(std::function<bool (const Artworks::ArtworkElement *)> pred);
-        bool findNonEmptyData(std::function<bool (const Artworks::ArtworkElement *)> pred, int &index,
-                              Artworks::ArtworkMetadata *&artworkMetadata);
+        void recombineArtworks(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &)> pred);
+        bool findNonEmptyData(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &)> pred, int &index,
+                              std::shared_ptr<Artworks::ArtworkMetadata> &artworkMetadata);
 
     public slots:
         void onDescriptionSpellingChanged();

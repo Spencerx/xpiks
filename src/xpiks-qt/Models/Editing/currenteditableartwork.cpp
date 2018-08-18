@@ -29,7 +29,7 @@ namespace Models {
     using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
 
-    CurrentEditableArtwork::CurrentEditableArtwork(Artworks::ArtworkMetadata *artworkMetadata,
+    CurrentEditableArtwork::CurrentEditableArtwork(const std::shared_ptr<Artworks::ArtworkMetadata> &artworkMetadata,
                                                    const std::shared_ptr<IArtworksCommandTemplate> &updateTemplate):
         m_ArtworkMetadata(artworkMetadata),
         m_UpdateTemplate(updateTemplate)

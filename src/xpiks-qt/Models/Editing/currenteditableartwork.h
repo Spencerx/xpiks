@@ -25,7 +25,7 @@ namespace Models {
         using IArtworksCommandTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
 
     public:
-        CurrentEditableArtwork(Artworks::ArtworkMetadata *artworkMetadata,
+        CurrentEditableArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artworkMetadata,
                                const std::shared_ptr<IArtworksCommandTemplate> &updateTemplate);
         virtual ~CurrentEditableArtwork();
 
@@ -62,7 +62,7 @@ namespace Models {
                                                                const QStringList &keywords) override;
 
     private:
-        Artworks::ArtworkMetadata *m_ArtworkMetadata;
+        std::shared_ptr<Artworks::ArtworkMetadata> m_ArtworkMetadata;
         std::shared_ptr<IArtworksCommandTemplate> m_UpdateTemplate;
     };
 }

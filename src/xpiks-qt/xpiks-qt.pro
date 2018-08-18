@@ -213,7 +213,8 @@ SOURCES += main.cpp \
     Common/logging.cpp \
     Models/Connectivity/artworksuploader.cpp \
     Commands/Files/removefilescommand.cpp \
-    Commands/Files/removeselectedfilescommand.cpp
+    Commands/Files/removeselectedfilescommand.cpp \
+    Services/SpellCheck/metadataduplicates.cpp
 
 RESOURCES += qml.qrc
 
@@ -521,7 +522,9 @@ HEADERS += \
     Microstocks/microstockenums.h \
     Microstocks/microstockapiclients.h \
     Commands/Files/removefilescommand.h \
-    Commands/Files/removeselectedfilescommand.h
+    Commands/Files/removeselectedfilescommand.h \
+    Services/SpellCheck/imetadataduplicates.h \
+    Services/SpellCheck/metadataduplicates.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

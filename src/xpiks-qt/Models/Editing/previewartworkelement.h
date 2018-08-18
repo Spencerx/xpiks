@@ -17,7 +17,7 @@ namespace Models {
     class PreviewArtworkElement: public Artworks::ArtworkElement
     {
     public:
-        PreviewArtworkElement(Artworks::ArtworkMetadata *artwork):
+        PreviewArtworkElement(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork):
             ArtworkElement(artwork)
         {
             setIsSelected(true);

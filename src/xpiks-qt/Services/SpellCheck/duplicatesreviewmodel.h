@@ -15,11 +15,6 @@
 #include <vector>
 #include <Artworks/artworkssnapshot.h>
 
-namespace Artworks {
-    class BasicMetadataModel;
-    class ArtworksSnapshot;
-}
-
 namespace QMLExtensions {
     class ColorsModel;
 }
@@ -27,29 +22,12 @@ namespace QMLExtensions {
 class QQuickTextDocument;
 
 namespace SpellCheck {
-    struct MetadataDuplicatesItem {
-        MetadataDuplicatesItem(Artworks::BasicMetadataModel *basicModel):
-            m_BasicModel(basicModel),
-            m_ArtworkMetadata(nullptr)
-        {
-            Q_ASSERT(basicModel != nullptr);
-        }
-
-        MetadataDuplicatesItem(Artworks::ArtworkMetadata *artwork):
-            m_BasicModel(nullptr),
-            m_ArtworkMetadata(artwork)
-        {
-            Q_ASSERT(artwork != nullptr);
-            m_BasicModel = artwork->getBasicModel();
-        }
-
-        Artworks::BasicMetadataModel *m_BasicModel;
-        Artworks::ArtworkMetadata *m_ArtworkMetadata;
-    };
+    class IMetadataDuplicates;
 
     class DuplicatesReviewModel: public QAbstractListModel
     {
         Q_OBJECT
+        using DuplicatesItem = std::shared_ptr<IMetadataDuplicates>;
     public:
         DuplicatesReviewModel(QMLExtensions::ColorsModel &colorsModel);
 
@@ -92,7 +70,7 @@ namespace SpellCheck {
         void onDuplicatesCouldHaveChanged(size_t originalIndex);
 
     private:
-        std::vector<MetadataDuplicatesItem> m_DuplicatesList;
+        std::vector<std::shared_ptr<IMetadataDuplicates>> m_DuplicatesList;
         QVector<size_t> m_PendingUpdates;
         QMLExtensions::ColorsModel &m_ColorsModel;
     };

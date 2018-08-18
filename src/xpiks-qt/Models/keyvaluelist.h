@@ -54,11 +54,11 @@ namespace Models {
         ArtworkPropertiesMap(): m_IsImage(false) {}
 
     public:
-        void updateProperties(Artworks::ArtworkMetadata *artwork);
+        void updateProperties(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
 
     private:
-        void setForTheImage(Artworks::ImageArtwork *imageArtwork);
-        void setForTheVideo(Artworks::VideoArtwork *videoArtwork);
+        void setForTheImage(std::shared_ptr<Artworks::ImageArtwork> const &imageArtwork);
+        void setForTheVideo(std::shared_ptr<Artworks::VideoArtwork> const &videoArtwork);
 
     private:
         enum class ImageProperties {

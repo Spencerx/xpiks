@@ -148,10 +148,9 @@ namespace Models {
 
     void FindAndReplaceModel::updatePreviewFlags() {
         LOG_DEBUG << "#";
-        for (auto &locker: m_ArtworksSnapshot.getRawData()) {
-            std::shared_ptr<PreviewArtworkElement> preview = std::dynamic_pointer_cast<PreviewArtworkElement>(locker);
+        for (auto &artwork: m_ArtworksSnapshot.getRawData()) {
+            std::shared_ptr<PreviewArtworkElement> preview = std::dynamic_pointer_cast<PreviewArtworkElement>(artwork);
             Q_ASSERT(preview);
-            Artworks::ArtworkMetadata *artwork = locker->getArtworkMetadata();
             bool hasMatch = false;
             Common::SearchFlags flags = Common::SearchFlags::None;
 
@@ -229,8 +228,8 @@ namespace Models {
             return text;
         }
 
-        Models::PreviewArtworkElement *item = accessPreviewElement(index);
-        Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
+        auto &item = accessPreviewElement(index);
+        auto &artwork = item->getArtwork();
 
         if (item->hasTitleMatch()) {
             text = filterText(artwork->getTitle());
@@ -253,8 +252,8 @@ namespace Models {
             return text;
         }
 
-        Models::PreviewArtworkElement *item = accessPreviewElement(index);
-        Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
+        auto &item = accessPreviewElement(index);
+        auto &artwork = item->getArtwork();
 
         if (item->hasDescriptionMatch()) {
             text = filterText(artwork->getDescription());
@@ -277,8 +276,8 @@ namespace Models {
             return text;
         }
 
-        Models::PreviewArtworkElement *item = accessPreviewElement(index);
-        Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
+        auto &item = accessPreviewElement(index);
+        auto &artwork = item->getArtwork();
         QStringList list = artwork->getKeywords();
 
         if (item->hasKeywordsMatch()) {

@@ -17,11 +17,11 @@
 #include <Common/flags.h>
 
 namespace Artworks {
-    class ArtworkElement: public Common::HoldLocker<ArtworkMetadata>
+    class ArtworkElement
     {
     public:
-        ArtworkElement(ArtworkMetadata *artwork):
-            Common::HoldLocker<ArtworkMetadata>(artwork),
+        ArtworkElement(std::shared_ptr<ArtworkMetadata> const &artwork):
+            m_Artwork(artwork),
             m_Flags(0)
         {
             Q_ASSERT(artwork != nullptr);
@@ -40,6 +40,7 @@ namespace Artworks {
         void setIsSelected(bool value) { setIsSelectedFlag(value); }
 
     public:
+        std::shared_ptr<ArtworkMetadata> const &getArtwork() { return m_Artwork; }
         size_t getOriginalIndex() const { return getArtworkMetadata()->getLastKnownIndex(); }
 
 #ifdef CORE_TESTS
@@ -53,6 +54,7 @@ namespace Artworks {
         ArtworkElement &operator=(const ArtworkElement &);
 
     protected:
+        std::shared_ptr<ArtworkMetadata> m_Artwork;
         Common::flag_t m_Flags;
     };
 }

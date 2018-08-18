@@ -303,7 +303,7 @@ namespace Models {
     void CombinedArtworksModel::assignFromOneArtwork() {
         LOG_DEBUG << "#";
         Q_ASSERT(getArtworksCount() == 1);
-        Artworks::ArtworkMetadata *artwork = accessItem(0)->getArtworkMetadata();
+        auto &artwork = accessItem(0)->getArtwork();
 
         if (!isDescriptionModified()) {
             initDescription(artwork->getDescription());
@@ -322,7 +322,7 @@ namespace Models {
         recombineArtworks([](const Artworks::ArtworkElement *) { return true; });
     }
 
-    void CombinedArtworksModel::recombineArtworks(std::function<bool (const Artworks::ArtworkElement *)> pred) {
+    void CombinedArtworksModel::recombineArtworks(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &)> pred) {
         LOG_DEBUG << "#";
 
         bool descriptionsDiffer = false;
@@ -333,7 +333,7 @@ namespace Models {
         QStringList firstItemKeywords;
         int firstItemKeywordsCount = 0;
         int firstNonEmptyIndex = 0;
-        Artworks::ArtworkMetadata *firstNonEmpty = nullptr;
+        std::shared_ptr<Artworks::ArtworkMetadata> firstNonEmpty;
 
         if (findNonEmptyData(pred, firstNonEmptyIndex, firstNonEmpty)) {
             description = firstNonEmpty->getDescription();
@@ -346,16 +346,16 @@ namespace Models {
         }
 
         processArtworks(pred,
-                        [&](size_t index, Artworks::ArtworkMetadata *metadata) {
+                        [&](size_t index, std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) {
             if ((int)index == firstNonEmptyIndex) { return; }
 
-            QString currDescription = metadata->getDescription();
-            QString currTitle = metadata->getTitle();
+            QString currDescription = artwork->getDescription();
+            QString currTitle = artwork->getTitle();
             descriptionsDiffer = descriptionsDiffer || ((!currDescription.isEmpty()) && (description != currDescription));
             titleDiffer = titleDiffer || ((!currTitle.isEmpty()) && (title != currTitle));
 
             // preserve case with List to Set convertion
-            auto currentSet = metadata->getKeywords().toSet();
+            auto currentSet = artwork->getKeywords().toSet();
 
             if (!currentSet.isEmpty()) {
                 commonKeywords.intersect(currentSet);
@@ -393,26 +393,26 @@ namespace Models {
         }
     }
 
-    bool CombinedArtworksModel::findNonEmptyData(std::function<bool (const Artworks::ArtworkElement *)> pred,
+    bool CombinedArtworksModel::findNonEmptyData(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &)> pred,
                                                  int &index,
-                                                 Artworks::ArtworkMetadata *&artworkMetadata) {
+                                                 std::shared_ptr<Artworks::ArtworkMetadata> &artworkMetadata) {
         bool found = false, foundOther = false;
         int nonEmptyKeywordsIndex = -1, nonEmptyOtherIndex = -1;
-        Artworks::ArtworkMetadata *nonEmptyKeywordsArtwork = nullptr;
-        Artworks::ArtworkMetadata *nonEmptyOtherMetadata = nullptr;
+        std::shared_ptr<Artworks::ArtworkMetadata> nonEmptyKeywordsArtwork;
+        std::shared_ptr<Artworks::ArtworkMetadata> nonEmptyOtherMetadata;
 
         processArtworksEx(pred,
-                        [&](size_t index, Artworks::ArtworkMetadata *artworks) -> bool {
-            if (!artworks->areKeywordsEmpty()) {
+                        [&](size_t index, std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) -> bool {
+            if (!artwork->areKeywordsEmpty()) {
                 nonEmptyKeywordsIndex = (int)index;
-                nonEmptyKeywordsArtwork = artworks;
+                nonEmptyKeywordsArtwork = artwork;
                 found = true;
             } else {
                 if (!foundOther) {
-                    if (!artworks->getDescription().trimmed().isEmpty() ||
-                            !artworks->getTitle().trimmed().isEmpty()) {
+                    if (!artwork->getDescription().trimmed().isEmpty() ||
+                            !artwork->getTitle().trimmed().isEmpty()) {
                         nonEmptyOtherIndex = (int)index;
-                        nonEmptyOtherMetadata = artworks;
+                        nonEmptyOtherMetadata = artwork;
                         foundOther = true;
                     }
                 }
