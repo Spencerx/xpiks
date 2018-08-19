@@ -82,25 +82,15 @@ namespace Models {
 
     std::shared_ptr<Artworks::ArtworkElement> const &ArtworksViewModel::accessItem(size_t index) const {
         Q_ASSERT(index < m_ArtworksElements.size());
-        auto &locker = m_ArtworksElements.at(index);
-        auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
-        Q_ASSERT(element != nullptr);
-        return element;
+        return m_ArtworksElements[index];
     }
 
     bool ArtworksViewModel::getIsSelected(size_t i) const {
-        auto &locker = m_ArtworksElements.at(i);
-        auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
-        Q_ASSERT(element);
-        bool result = element->getIsSelected();
-        return result;
+        return m_ArtworksElements.at(i)->getIsSelected();
     }
 
     void ArtworksViewModel::setIsSelected(size_t i, bool value) {
-        auto &locker = m_ArtworksElements.at(i);
-        auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
-        Q_ASSERT(element);
-        element->setIsSelected(value);
+        m_ArtworksElements.at(i)->setIsSelected(value);
     }
 
     std::shared_ptr<Artworks::ArtworkMetadata> const &ArtworksViewModel::getArtwork(size_t i) const {
