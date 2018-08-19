@@ -16,7 +16,8 @@ namespace Commands {
     RemoveFilesCommandBase::RemoveFilesCommandBase(Models::ArtworksListModel &artworksList,
                                                    Models::ArtworksRepository &artworksRepository):
         m_ArtworksList(artworksList),
-        m_ArtworksRepository(artworksRepository)
+        m_ArtworksRepository(artworksRepository),
+        m_RemoveResult()
     {
     }
 
