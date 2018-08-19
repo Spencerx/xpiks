@@ -155,10 +155,9 @@ namespace Models {
 
         if (m_UploadInfos.isZippingRequired()) {
             auto &snapshot = this->getArtworksSnapshot();
-            for (auto &locker: snapshot.getRawData()) {
-                auto *artwork = locker->getArtworkMetadata();
-                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
-                if (image == NULL || !image->hasVectorAttached()) { continue; }
+            for (auto &artwork: snapshot.getRawData()) {
+                auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+                if (image == nullptr || !image->hasVectorAttached()) { continue; }
 
                 const QString &filepath = artwork->getFilepath();
                 QString archivePath = Helpers::getArchivePath(filepath);
@@ -230,11 +229,8 @@ namespace Models {
         auto &artworksListOld = getArtworksSnapshot();
         Artworks::ArtworksSnapshot::Container artworksListNew;
 
-        const size_t size = artworksListOld.size();
-        for (size_t i = 0; i < size; ++i) {
-            auto &item = artworksListOld.at(i);
-
-            if (!item->getArtworkMetadata()->isUnavailable()) {
+        for (auto &item: artworksListOld.getRawData()) {
+            if (!item->isUnavailable()) {
                 artworksListNew.push_back(item);
             }
         }

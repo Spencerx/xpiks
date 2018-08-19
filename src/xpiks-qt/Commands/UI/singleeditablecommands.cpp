@@ -32,9 +32,10 @@ namespace Commands {
 
         void FixSpellingInBasicModelCommand::execute(const QVariant &) {
             LOG_DEBUG << m_CommandID;
+            auto &basicMetadataModel = dynamic_cast<Artworks::BasicMetadataModel&>(m_BasicModelSource.getBasicModel());
             m_SpellSuggestionsModel.setupModel(
                         std::make_shared<SpellCheck::BasicModelSuggestionTarget>(
-                            m_BasicModelSource.getBasicModel(), m_SpellCheckService),
+                            basicMetadataModel, m_SpellCheckService),
                         Common::SpellCheckFlags::All);
         }
 

@@ -13,7 +13,9 @@
 #include "spellsuggestionsitem.h"
 #include "ispellcheckservice.h"
 #include <Common/logging.h>
+#include <Helpers/cpphelpers.h>
 #include <Artworks/artworkssnapshot.h>
+#include <Artworks/basicmodelsource.h>
 #include <Services/iartworksupdater.h>
 
 namespace SpellCheck {
@@ -64,17 +66,17 @@ namespace SpellCheck {
         for (auto &artwork: snapshot.getRawData()) {
             if (Common::HasFlag(flags, Common::SpellCheckFlags::Keywords)) {
                 auto keywords = artwork->retrieveMisspelledKeywords();
-                addMisspelledKeywords(artwork, keywords, requests);
+                addMisspelledKeywords(artwork.get(), keywords, requests);
             }
 
             if (Common::HasFlag(flags, Common::SpellCheckFlags::Title)) {
                 auto words = artwork->retrieveMisspelledTitleWords();
-                addMisspelledTitle(artwork, words, requests);
+                addMisspelledTitle(artwork.get(), words, requests);
             }
 
             if (Common::HasFlag(flags, Common::SpellCheckFlags::Description)) {
                 auto words = artwork->retrieveMisspelledDescriptionWords();
-                addMisspelledDescription(artwork, words, requests);
+                addMisspelledDescription(artwork.get(), words, requests);
             }
         }
 
@@ -102,14 +104,23 @@ namespace SpellCheck {
         return requests;
     }
 
-    std::vector<std::shared_ptr<SpellSuggestionsItem> > BasicModelSuggestionTarget::generateSuggestionItems(Common::SpellCheckFlags flags) {
-        return createSuggestionsRequests(m_BasicModel, flags);
+    BasicModelSuggestionTarget::BasicModelSuggestionTarget(Artworks::BasicMetadataModel &basicModel,
+                                                           ISpellCheckService &spellCheckService):
+        m_BasicModel(basicModel),
+        m_SpellCheckService(spellCheckService)
+    {
+    }
+
+    std::vector<std::shared_ptr<SpellSuggestionsItem>> BasicModelSuggestionTarget::generateSuggestionItems(Common::SpellCheckFlags flags) {
+        return createSuggestionsRequests(&m_BasicModel, flags);
     }
 
     void BasicModelSuggestionTarget::afterReplaceCallback() {
         LOG_DEBUG << "#";
         m_BasicModel.afterReplaceCallback();
-        m_SpellCheckService.submitItem(m_BasicModel, Common::SpellCheckFlags::All);
+        m_SpellCheckService.submitItem(
+                    std::make_shared<Artworks::BasicModelSource>(m_BasicModel),
+                    Common::SpellCheckFlags::All);
     }
 
     ArtworksSuggestionTarget::ArtworksSuggestionTarget(Artworks::ArtworksSnapshot &snapshot,
@@ -131,7 +142,15 @@ namespace SpellCheck {
             artwork->afterReplaceCallback();
         }
 
-        m_SpellCheckService.submitArtworks(m_Snapshot, QStringList());
+        using ArtworkPtr = std::shared_ptr<Artworks::ArtworkMetadata>;
+        using SourcePtr = std::shared_ptr<Artworks::IBasicModelSource>;
+        auto items = Helpers::map<ArtworkPtr, SourcePtr>(
+                    m_Snapshot.getRawData(),
+                    [](ArtworkPtr const &artwork) {
+            return artwork;
+        });
+
+        m_SpellCheckService.submitItems(items, Common::SpellCheckFlags::All);
         m_ArtworksUpdater.updateArtworks(m_Snapshot);
     }
 

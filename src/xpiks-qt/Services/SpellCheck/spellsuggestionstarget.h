@@ -12,6 +12,7 @@
 #define SPELLSUGGESTIONSTARGET_H
 
 #include "ispellsuggestionstarget.h"
+#include <Artworks/artworkssnapshot.h>
 
 namespace Artworks {
     class BasicMetadataModel;
