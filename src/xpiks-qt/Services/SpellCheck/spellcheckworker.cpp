@@ -104,6 +104,7 @@ namespace SpellCheck {
     }
 
     std::shared_ptr<Artworks::ArtworkMetadata> SpellCheckWorker::processWorkItem(WorkItem &workItem) {
+        std::shared_ptr<Artworks::ArtworkMetadata> result;
         if (workItem.isSeparator()) {
             emit queueIsEmpty();
         } else {
@@ -112,9 +113,10 @@ namespace SpellCheck {
             if (workItem.isMilestone()) {
                 QThread::msleep(SPELLCHECK_WORKER_SLEEP_DELAY);
             }
+
+            result = std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(workItem.m_Item->getBasicModelSource());
         }
 
-        auto result = std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(workItem.m_Item->getBasicModelSource());
         return result;
     }
 
