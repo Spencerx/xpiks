@@ -27,12 +27,13 @@ namespace Commands {
 
 namespace Models {
     class CurrentEditableModel;
+    using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
 
     class QuickBuffer:
             public QObject,
             public Models::ArtworkProxyBase,
             public Common::DelayedActionEntity,
-            public Common::MessagesSource<Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>>,
+            public Common::MessagesSource<BasicSpellCheckMessageType>,
             public Common::MessagesTarget<QuickBufferMessage>
     {
         Q_OBJECT

@@ -9,9 +9,10 @@
  */
 
 #include "quickbuffer.h"
-#include <Commands/Base/icommandmanager.h>
 #include <Models/Editing/icurrenteditable.h>
 #include <Models/Editing/currenteditablemodel.h>
+#include <Artworks/basicmodelsource.h>
+#include <Commands/Base/icommandmanager.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Base/compositecommandtemplate.h>
 #include <Commands/Editing/editartworkstemplate.h>
@@ -26,12 +27,10 @@ namespace Models {
         QObject(parent),
         ArtworkProxyBase(),
         Common::DelayedActionEntity(QUICKBUFFER_EDITING_PAUSE, MAX_EDITING_PAUSE_RESTARTS),
-        m_BasicModel(this),
+        m_BasicModel(m_SpellCheckInfo, this),
         m_CurrentEditableModel(currentEditableModel),
         m_CommandManager(commandManager)
     {
-        m_BasicModel.setSpellCheckInfo(&m_SpellCheckInfo);
-
         QObject::connect(&m_BasicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                          this, &QuickBuffer::titleSpellingChanged);
         QObject::connect(&m_BasicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
@@ -165,7 +164,8 @@ namespace Models {
     }
 
     void QuickBuffer::submitForInspection() {
-        sendMessage(&m_BasicModel);
+        sendMessage(BasicSpellCheckMessageType(
+                        std::make_shared<Artworks::BasicModelSource>(m_BasicModel)));
     }
 
     void QuickBuffer::doJustEdited() {

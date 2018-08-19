@@ -43,7 +43,8 @@ namespace Commands {
             Artworks::ArtworksSnapshot snapshot({m_Source.getArtwork()});
             m_SpellSuggestionsModel.setupModel(
                         std::make_shared<SpellCheck::ArtworksSuggestionTarget>(
-                            snapshot, m_SpellCheckService, m_ArtworksUpdater));
+                            snapshot, m_SpellCheckService, m_ArtworksUpdater),
+                        Common::SpellCheckFlags::All);
         }
 
         void FixSpellingForArtworkCommand::execute(QVariant const &value) {
@@ -54,7 +55,8 @@ namespace Commands {
                 Artworks::ArtworksSnapshot snapshot({artwork});
                 m_SpellSuggestionsModel.setupModel(
                             std::make_shared<SpellCheck::ArtworksSuggestionTarget>(
-                                snapshot, m_SpellCheckService, m_ArtworksUpdater));
+                                snapshot, m_SpellCheckService, m_ArtworksUpdater),
+                            Common::SpellCheckFlags::All);
             } else {
                 LOG_WARNING << "Cannot find artwork at" << index;
             }
@@ -62,12 +64,12 @@ namespace Commands {
 
         void ShowDuplicatesForSingleCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
-            m_Target.setupModel(m_Source.getArtwork()->getBasicModel());
+            m_Target.setupModel(m_Source.getArtwork()->getBasicMetadataModel());
         }
 
         void ShowDuplicatesForCombinedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
-            m_Target.setupModel(&m_Source.getBasicModel());
+            m_Target.setupModel(m_Source.getBasicModel());
         }
 
         void AcceptPresetCompletionForCombinedCommand::execute(QVariant const &value) {

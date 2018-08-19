@@ -34,7 +34,7 @@ namespace Models {
         int first = qMax(0, length - maxFiles);
 
         for (; first < length; ++first) {
-            auto *artwork = snapshot.get(first);
+            auto &artwork = snapshot.get(first);
             pushItem(artwork->getFilepath());
         }
     }

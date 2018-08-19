@@ -59,8 +59,9 @@ namespace SpellCheck {
         // ISpellCheckService interface
     private:
         virtual quint32 submitItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items,
-                                    const QStringList &wordsToCheck = QStringList()) override;
-        virtual void submitItem(const std::shared_ptr<Artworks::IBasicModelSource> &item) override;
+                                    Common::SpellCheckFlags flags) override;
+        virtual void submitItem(const std::shared_ptr<Artworks::IBasicModelSource> &item,
+                                Common::SpellCheckFlags flags) override;
 
     public:
         virtual QStringList suggestCorrections(const QString &word) const;

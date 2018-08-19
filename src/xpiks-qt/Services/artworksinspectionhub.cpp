@@ -35,9 +35,9 @@ namespace Services {
     }
 
     void ArtworksInspectionHub::inspectItem(const std::shared_ptr<Artworks::IBasicModelSource> &item) {
-        LOG_INFO << items.size() << "item";
+        LOG_DEBUG << "#";
         if (isSpellCheckAvailable()) {
-            m_SpellCheckService.submitItem(item);
+            m_SpellCheckService.submitItem(item, Common::SpellCheckFlags::All);
         } else {
             auto artwork = std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(item);
             if (artwork != nullptr) {
@@ -49,7 +49,7 @@ namespace Services {
     void ArtworksInspectionHub::inspectItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items) {
         LOG_INFO << items.size() << "items";
         if (isSpellCheckAvailable()) {
-            m_SpellCheckService.submitItems(items, QStringList());
+            m_SpellCheckService.submitItems(items, Common::SpellCheckFlags::All);
         } else {
             if (!items.empty() &&
                     (std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(items.front()) != nullptr)) {
@@ -73,7 +73,7 @@ namespace Services {
                                                             [](const ArtworkPtr &src) {
                 return std::dynamic_pointer_cast<Artworks::IBasicModelSource>(src);
             }),
-                        QStringList());
+                        Common::SpellCheckFlags::All);
         } else {
             m_WarningsService.submitItems(snapshot);
         }

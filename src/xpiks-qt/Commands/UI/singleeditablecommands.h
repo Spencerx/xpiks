@@ -41,6 +41,10 @@ namespace Artworks {
     class IBasicModelSource;
 }
 
+namespace Services {
+    class IArtworksUpdater;
+}
+
 namespace Commands {
     namespace UI {
         class FixSpellingInBasicModelCommand: public IUICommandTemplate {

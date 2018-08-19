@@ -16,6 +16,7 @@
 #include <Commands/commandmanager.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkelement.h>
+#include <Artworks/basicmodelsource.h>
 #include <Suggestion/keywordssuggestor.h>
 #include <QMLExtensions/uicommandid.h>
 #include <KeywordsPresets/ipresetsmanager.h>
@@ -32,12 +33,10 @@ namespace Models {
         Common::DelayedActionEntity(1000, MAX_EDITING_PAUSE_RESTARTS),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
-        m_CommonKeywordsModel(this),
+        m_CommonKeywordsModel(m_SpellCheckInfo, this),
         m_EditFlags(Common::ArtworkEditFlags::None),
         m_ModifiedFlags(0)
     {
-        m_CommonKeywordsModel.setSpellCheckInfo(&m_SpellCheckInfo);
-
         QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                          this, &CombinedArtworksModel::onTitleSpellingChanged);
         QObject::connect(&m_CommonKeywordsModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
@@ -91,7 +90,7 @@ namespace Models {
         LOG_DEBUG << "After recombine title:" << getTitle();
         LOG_DEBUG << "After recombine keywords:" << getKeywordsString();
 
-        sendMessage(&m_CommonKeywordsModel);
+        submitForInspection();
     }
 
     void CombinedArtworksModel::registerAsCurrentEditable() {
@@ -216,8 +215,7 @@ namespace Models {
 
         if (needToSave) {
             using namespace Commands;
-            Artworks::ArtworksSnapshot snapshot;
-            snapshot.copyFrom(getSnapshot());
+            auto snapshot = createSnapshot();
             m_CommandManager.processCommand(
                         std::make_shared<ModifyArtworksCommand>(
                             std::move(snapshot),
@@ -239,13 +237,13 @@ namespace Models {
 
     void CombinedArtworksModel::assignFromSelected() {
         LOG_DEBUG << "#";
-        recombineArtworks([](const Artworks::ArtworkElement *item) { return item->getIsSelected(); });
+        recombineArtworks([](std::shared_ptr<Artworks::ArtworkElement> const &item) { return item->getIsSelected(); });
 
         LOG_DEBUG << "After recombine description:" << getDescription();
         LOG_DEBUG << "After recombine title:" << getTitle();
         LOG_DEBUG << "After recombine keywords:" << getKeywordsString();
 
-        sendMessage(&m_CommonKeywordsModel);
+        submitForInspection();
     }
 
     void CombinedArtworksModel::plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {
@@ -319,7 +317,7 @@ namespace Models {
     }
 
     void CombinedArtworksModel::assignFromManyArtworks() {
-        recombineArtworks([](const Artworks::ArtworkElement *) { return true; });
+        recombineArtworks([](std::shared_ptr<Artworks::ArtworkElement> const &) { return true; });
     }
 
     void CombinedArtworksModel::recombineArtworks(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &)> pred) {
@@ -471,7 +469,9 @@ namespace Models {
     }
 
     void CombinedArtworksModel::submitForInspection() {
-        sendMessage(&m_CommonKeywordsModel);
+        sendMessage(
+                    BasicSpellCheckMessageType(
+                        std::make_shared<Artworks::BasicModelSource>(m_CommonKeywordsModel)));
     }
 
     Common::ID_t CombinedArtworksModel::getSpecialItemID() {

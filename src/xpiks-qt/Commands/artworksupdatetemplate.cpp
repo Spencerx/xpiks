@@ -9,8 +9,9 @@
  */
 
 #include "artworksupdatetemplate.h"
-#include "../Helpers/cpphelpers.h"
-#include "../Artworks/artworkssnapshot.h"
+#include <Helpers/cpphelpers.h>
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/artworkssnapshot.h>
 #include <Models/Artworks/artworkslistmodel.h>
 
 namespace Commands {
@@ -25,10 +26,10 @@ namespace Commands {
     }
 
     void ArtworksUpdateTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
-        auto indices = Helpers::map<std::shared_ptr<Artworks::ArtworksSnapshot::ItemType>, int>(
+        auto indices = Helpers::map<Artworks::ArtworksSnapshot::ItemType, int>(
                     snapshot.getRawData(),
-                    [](const std::shared_ptr<Artworks::ArtworksSnapshot::ItemType> &locker) {
-            return locker->getArtworkMetadata()->getLastKnownIndex();
+                    [](const Artworks::ArtworksSnapshot::ItemType &artwork) {
+            return artwork->getLastKnownIndex();
         });
 
         m_ArtworksListModel.updateItems(Helpers::IndicesRanges(indices), m_Roles);

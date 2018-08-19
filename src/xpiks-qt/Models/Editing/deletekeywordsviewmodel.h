@@ -28,9 +28,11 @@ namespace KeywordsPresets {
 }
 
 namespace Models {
+    using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
+
     class DeleteKeywordsViewModel:
             public Models::ArtworksViewModel,
-            public Common::MessagesSource<Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>>
+            public Common::MessagesSource<BasicSpellCheckMessageType>
     {
         Q_OBJECT
         Q_PROPERTY(int commonKeywordsCount READ getCommonKeywordsCount NOTIFY commonKeywordsCountChanged)

@@ -61,11 +61,11 @@ namespace SpellCheck {
          * spelling is also checked in classes that are not Artworks like
          * Combined model, QuickBuffer etc.
          */
-        SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> &basicModelSource,
+        SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> const &basicModelSource,
                        Common::SpellCheckFlags spellCheckFlags,
                        Common::WordAnalysisFlags wordAnalysisFlags);
         // this constructor used for trick with user dictionary update
-        SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> &basicModelSource,
+        SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> const &basicModelSource,
                        const QStringList &keywordsToCheck,
                        Common::WordAnalysisFlags wordAnalysisFlags);
         virtual ~SpellCheckItem();

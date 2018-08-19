@@ -126,8 +126,8 @@ namespace Models {
 
         for (int row = 0; row < size; ++row) {
             int index = getOriginalIndex(row);
-            auto &artwork = m_ArtworksListModel.getArtwork(index);
-            if (artwork != nullptr) {
+            ArtworksListModel::ArtworkItem artwork;
+            if (m_ArtworksListModel.tryGetArtwork(index, artwork)) {
                 artwork->invertSelection();
                 indices.push_back(index);
             }
@@ -155,7 +155,7 @@ namespace Models {
         auto selectedArtworks = getSelectedOriginalItems();
         bool anyModified = false;
 
-        for (auto *artwork: selectedArtworks) {
+        for (auto &artwork: selectedArtworks.getRawData()) {
             if (artwork->isModified()) {
                 anyModified = true;
                 break;
@@ -171,7 +171,7 @@ namespace Models {
         auto selectedArtworks = getSelectedOriginalItems();
         int modifiedCount = 0;
 
-        for (auto &artwork: selectedArtworks) {
+        for (auto &artwork: selectedArtworks.getRawData()) {
             if (!artwork->isReadOnly() && (artwork->isModified() || overwriteAll)) {
                 modifiedCount++;
             }
@@ -227,7 +227,7 @@ namespace Models {
         case 4: {
             // select Vectors
             this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
-                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+                auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
                 return (image != nullptr) ? image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
             break;
@@ -235,7 +235,7 @@ namespace Models {
         case 5: {
             // select Videos
             this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
-                return dynamic_cast<Artworks::VideoArtwork*>(artwork) != nullptr;
+                return std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork) != nullptr;
             }, isSelected, unselectFirst);
             break;
         }
@@ -420,8 +420,8 @@ namespace Models {
         LOG_INFO << originalIndex << word;
         ArtworksListModel::ArtworkItem artwork;
         if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
-            auto *keywordsModel = artwork->getBasicModel();
-            result = keywordsModel->hasTitleWordSpellError(word);
+            auto &keywordsModel = artwork->getBasicMetadataModel();
+            result = keywordsModel.hasTitleWordSpellError(word);
         }
 
         return result;
@@ -433,8 +433,8 @@ namespace Models {
         LOG_INFO << originalIndex << word;
         ArtworksListModel::ArtworkItem artwork;
         if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
-            auto *keywordsModel = artwork->getBasicModel();
-            result = keywordsModel->hasDescriptionWordSpellError(word);
+            auto &keywordsModel = artwork->getBasicMetadataModel();
+            result = keywordsModel.hasDescriptionWordSpellError(word);
         }
 
         return result;
@@ -478,7 +478,7 @@ namespace Models {
     }
 
     void FilteredArtworksListModel::setFilteredItemsSelected(bool selected) {
-        setFilteredItemsSelectedEx([](Artworks::ArtworkMetadata*) { return true; }, selected, false);
+        setFilteredItemsSelectedEx([](ArtworkItem const &) { return true; }, selected, false);
     }
 
     void FilteredArtworksListModel::setFilteredItemsSelectedEx(const std::function<bool (ArtworkItem const &)> pred,

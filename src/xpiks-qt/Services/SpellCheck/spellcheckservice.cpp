@@ -88,14 +88,13 @@ namespace SpellCheck {
         m_IsStopped = true;
     }
 
-    quint32 SpellCheckService::submitItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items, const QStringList &wordsToCheck) {
-        LOG_INFO << snapshot.size() << "items to check";
+    quint32 SpellCheckService::submitItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items, Common::SpellCheckFlags flags) {
+        LOG_INFO << items.size() << "items to check";
         if (m_SpellCheckWorker == NULL) { return INVALID_BATCH_ID; }
         if (m_IsStopped) { return INVALID_BATCH_ID; }
 
-        std::vector<std::shared_ptr<SpellCheckItem>> items;
-        const size_t size = itemsToCheck.size();
-        items.reserve(size);
+        std::vector<std::shared_ptr<SpellCheckItem>> spellCheckItems;
+        spellCheckItems.reserve(items.size());
 
         auto deleter = [](SpellCheckItem *spi) {
             LOG_INTEGRATION_TESTS << "Delete later for multiple spellcheck item";
@@ -103,34 +102,27 @@ namespace SpellCheck {
             spi->deleteLater();
         };
 
-        const Common::WordAnalysisFlags flags = m_AnalysisFlagsProvider.getFlags();
-
         for (auto &item: items) {
-            if (wordsToCheck.empty()) {
-                items.push_back(std::shared_ptr<SpellCheckItem>(
-                                    new SpellCheckItem(item, Common::SpellCheckFlags::All, flags),
-                                    deleter));
-            } else {
-                items.push_back(std::shared_ptr<SpellCheckItem>(
-                                    new SpellCheckItem(item, wordsToCheck, flags),
-                                    deleter));
-            }
+            spellCheckItems.push_back(
+                        std::shared_ptr<SpellCheckItem>(
+                            new SpellCheckItem(item, flags, m_AnalysisFlagsProvider.getFlags()),
+                            deleter));
         }
 
-        auto batchID = m_SpellCheckWorker->submitItems(items);
+        auto batchID = m_SpellCheckWorker->submitItems(spellCheckItems);
         m_SpellCheckWorker->submitSeparator();
         return batchID;
     }
 
-    void SpellCheckService::submitItem(const std::shared_ptr<Artworks::IBasicModelSource> &item) {
+    void SpellCheckService::submitItem(const std::shared_ptr<Artworks::IBasicModelSource> &item, Common::SpellCheckFlags flags) {
         if (m_SpellCheckWorker == NULL) { return; }
         if (m_IsStopped) { return; }
 
         Q_ASSERT(item != nullptr);
-        LOG_INFO << "flags:" << (int)flags;
 
-        std::shared_ptr<SpellCheckItem> spellCheckItem(new SpellCheckItem(item, flags, m_AnalysisFlagsProvider.getFlags()),
-                                                       [](SpellCheckItem *spi) {
+        std::shared_ptr<SpellCheckItem> spellCheckItem(
+                    new SpellCheckItem(item, flags, m_AnalysisFlagsProvider.getFlags()),
+                    [](SpellCheckItem *spi) {
             LOG_INTEGRATION_TESTS << "Delete later for single spellcheck item";
             spi->disconnect();
             spi->deleteLater();

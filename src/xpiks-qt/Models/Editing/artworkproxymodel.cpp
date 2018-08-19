@@ -43,7 +43,7 @@ namespace Models {
     }
 
     bool ArtworkProxyModel::getIsVideo() const {
-        Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
+        auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(m_ArtworkMetadata);
         bool isVideo = videoArtwork != nullptr;
         return isVideo;
     }
@@ -217,9 +217,9 @@ namespace Models {
 
     QSize ArtworkProxyModel::retrieveImageSize() const {
         Q_ASSERT(getIsValid());
-        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(m_ArtworkMetadata);
+        auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_ArtworkMetadata);
 
-        if (image == NULL) {
+        if (image == nullptr) {
             return QSize();
         }
 
@@ -252,8 +252,8 @@ namespace Models {
 
     QString ArtworkProxyModel::getDateTaken() const {
         Q_ASSERT(getIsValid());
-        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(m_ArtworkMetadata);
-        if (image != NULL) {
+        auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_ArtworkMetadata);
+        if (image != nullptr) {
             return image->getDateTaken();
         } else {
             return QLatin1String("");
@@ -262,8 +262,8 @@ namespace Models {
 
     QString ArtworkProxyModel::getAttachedVectorPath() const {
         Q_ASSERT(getIsValid());
-        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(m_ArtworkMetadata);
-        if (image != NULL) {
+        auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_ArtworkMetadata);
+        if (image != nullptr) {
             return image->getAttachedVectorPath();
         } else {
             return QLatin1String("");
@@ -294,12 +294,12 @@ namespace Models {
 
     Artworks::BasicMetadataModel *ArtworkProxyModel::getBasicMetadataModel() {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
-        return m_ArtworkMetadata->getBasicModel();
+        return &m_ArtworkMetadata->getBasicMetadataModel();
     }
 
     Artworks::IArtworkMetadata *ArtworkProxyModel::getArtworkMetadata() {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
-        return m_ArtworkMetadata;
+        return m_ArtworkMetadata.get();
     }
 
     Common::ID_t ArtworkProxyModel::getSpecialItemID() {
@@ -317,28 +317,28 @@ namespace Models {
     void ArtworkProxyModel::submitForInspection() {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         if (m_ArtworkMetadata == nullptr) { return; }
-        sendMessage(Common::NamedType<Artworks::ArtworkMetadata*, Common::MessageType::SpellCheck>(m_ArtworkMetadata));
+        sendMessage(Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>(m_ArtworkMetadata));
     }
 
     void ArtworkProxyModel::connectArtworkSignals(Artworks::ArtworkMetadata *artwork) {
-        auto *basicModel = artwork->getBasicModel();
+        auto &basicModel = artwork->getBasicMetadataModel();
 
-        QObject::connect(basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
+        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
                          this, &ArtworkProxyModel::onDescriptionSpellingChanged);
-        QObject::connect(basicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
+        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                          this, &ArtworkProxyModel::onTitleSpellingChanged);
 
-        QObject::connect(basicModel, &Artworks::BasicMetadataModel::completionsAvailable,
+        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::completionsAvailable,
                          this, &ArtworkProxyModel::completionsAvailable);
 
-        QObject::connect(basicModel, &Artworks::BasicMetadataModel::afterSpellingErrorsFixed,
+        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::afterSpellingErrorsFixed,
                          this, &ArtworkProxyModel::afterSpellingErrorsFixedHandler);
 
-        QObject::connect(basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
+        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
                          this, &ArtworkProxyModel::descriptionSpellingChanged);
-        QObject::connect(basicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
+        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                          this, &ArtworkProxyModel::titleSpellingChanged);
-        QObject::connect(basicModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
+        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
                          this, &ArtworkProxyModel::keywordsSpellingChanged);
 
         QObject::connect(artwork, SIGNAL(thumbnailUpdated()),
@@ -368,9 +368,9 @@ namespace Models {
 
         // TODO: consider refactoring this to a command template??
         m_ArtworksUpdater.updateArtwork(m_ArtworkMetadata);
-        sendMessage(m_ArtworkMetadata);
+        submitForInspection();
 
-        Artworks::VideoArtwork *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(m_ArtworkMetadata);
+        auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(m_ArtworkMetadata);
         if (videoArtwork != nullptr) {
             if (!videoArtwork->isThumbnailGenerated()) {
                 sendMessage(videoArtwork);
@@ -388,11 +388,11 @@ namespace Models {
     void ArtworkProxyModel::disconnectCurrentArtwork() {
         LOG_DEBUG << "#";
         if (m_ArtworkMetadata != nullptr) {
-            auto *basicModel = m_ArtworkMetadata->getBasicModel();
+            auto &basicModel = m_ArtworkMetadata->getBasicMetadataModel();
             m_ArtworkMetadata->disconnect(this);
-            basicModel->disconnect(this);
-            this->disconnect(basicModel);
-            this->disconnect(m_ArtworkMetadata);
+            basicModel.disconnect(this);
+            this->disconnect(&basicModel);
+            this->disconnect(m_ArtworkMetadata.get());
         }
     }
 

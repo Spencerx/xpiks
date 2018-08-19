@@ -26,7 +26,7 @@
 #define IMPOSSIBLE_DESCRIPTION_INDEX 200000
 
 namespace SpellCheck {
-    SpellCheckItem::SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> &basicModelSource,
+    SpellCheckItem::SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> const &basicModelSource,
                                    Common::SpellCheckFlags spellCheckFlags,
                                    Common::WordAnalysisFlags wordAnalysisFlags):
         QObject(),
@@ -65,7 +65,7 @@ namespace SpellCheck {
         }
     }
 
-    SpellCheckItem::SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> &basicModelSource,
+    SpellCheckItem::SpellCheckItem(std::shared_ptr<Artworks::IBasicModelSource> const &basicModelSource,
                                    const QStringList &keywordsToCheck,
                                    Common::WordAnalysisFlags wordAnalysisFlags):
         QObject(),

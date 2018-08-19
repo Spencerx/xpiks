@@ -46,7 +46,7 @@ namespace Models {
         virtual Common::SearchFlags getFlags() const override { return m_Flags; }
         const QString &getReplaceFrom() const{ return m_ReplaceFrom; }
         const QString &getReplaceTo() const { return m_ReplaceTo; }
-        int getArtworksCount() const { return (int)m_ArtworksSnapshot.size(); }
+        int getArtworksCount() const { return (int)m_PreviewElements.size(); }
 
         void setReplaceFrom(const QString &value) {
             if (value != m_ReplaceFrom) {
@@ -179,10 +179,9 @@ namespace Models {
         void setAllSelected(bool isSelected);
         void initDefaultFlags();
         void normalizeSearchCriteria();
-        PreviewArtworkElement *accessPreviewElement(size_t index) const;
 
     private:
-        Artworks::ArtworksSnapshot m_ArtworksSnapshot;
+        std::vector<std::shared_ptr<PreviewArtworkElement>> m_PreviewElements;
         QString m_ReplaceFrom;
         QString m_ReplaceTo;
         QMLExtensions::ColorsModel &m_ColorsModel;

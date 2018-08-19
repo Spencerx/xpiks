@@ -110,8 +110,8 @@ namespace Models {
         LOG_DEBUG << "#";
         auto imagesWithVectors = Helpers::filter<std::shared_ptr<Artworks::ArtworkMetadata>>(snapshot.getRawData(),
                                                                                              [](std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) {
-            auto &image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
-            return (image != NULL) && image->hasVectorAttached();
+            auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+            return (image != nullptr) && image->hasVectorAttached();
         });
         m_ArtworksSnapshot.set(imagesWithVectors);
         emit itemsCountChanged();
@@ -133,7 +133,7 @@ namespace Models {
         for (size_t i = 0; i < size; ++i) {
             auto &item = artworksListOld.at(i);
 
-            if (!item->getArtworkMetadata()->isUnavailable()) {
+            if (!item->isUnavailable()) {
                 artworksListNew.push_back(item);
             }
         }
@@ -156,15 +156,14 @@ namespace Models {
         auto &snapshot = getArtworksSnapshot();
         LOG_DEBUG << "Processing" << snapshot.size() << "item(s)";
 
-        for (auto &locker: snapshot.getRawData()) {
-            auto *artwork = locker->getArtworkMetadata();
+        for (auto &artwork: snapshot.getRawData()) {
             const QString &filepath = artwork->getFilepath();
 
             QFileInfo fi(filepath);
             QString basename = fi.baseName();
 
-            Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
-            if (image != NULL) {
+            auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+            if (image != nullptr) {
                 if (image->hasVectorAttached()) {
                     LOG_INTEGRATION_TESTS << filepath << "is zipping candidate";
                     if (!hash.contains(basename)) {

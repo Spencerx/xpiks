@@ -20,10 +20,12 @@ namespace Artworks {
 
 namespace SpellCheck {
     class ISpellCheckService {
+    public:
         virtual ~ISpellCheckService() { }
         virtual quint32 submitItems(std::vector<std::shared_ptr<Artworks::IBasicModelSource>> const &items,
-                                       QStringList const &wordsToCheck) = 0;
-        virtual void submitItem(std::shared_ptr<Artworks::IBasicModelSource> const &item) = 0;
+                                    Common::SpellCheckFlags flags) = 0;
+        virtual void submitItem(std::shared_ptr<Artworks::IBasicModelSource> const &item,
+                                Common::SpellCheckFlags flags) = 0;
     };
 }
 

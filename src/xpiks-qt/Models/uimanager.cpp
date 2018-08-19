@@ -11,11 +11,11 @@
 #include "uimanager.h"
 #include <QQuickTextDocument>
 #include <QScreen>
+#include <QQmlEngine>
 #include <Common/defines.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Models/settingsmodel.h>
 #include <Models/Artworks/artworkslistmodel.h>
-
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 
@@ -144,8 +144,8 @@ namespace Models {
     void UIManager::initDescriptionHighlighting(QObject *basicModelObject, QQuickTextDocument *document) {
         Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(basicModelObject);
         if (basicModel != nullptr) {
-            SpellCheck::SpellCheckInfo *info = basicModel->getSpellCheckInfo();
-            info->createHighlighterForDescription(document->textDocument(), &m_ColorsModel, basicModel);
+            SpellCheck::SpellCheckInfo &info = basicModel->getSpellCheckInfo();
+            info.createHighlighterForDescription(document->textDocument(), &m_ColorsModel, basicModel);
             basicModel->notifyDescriptionSpellingChanged();
         }
     }
@@ -153,8 +153,8 @@ namespace Models {
     void UIManager::initTitleHighlighting(QObject *basicModelObject, QQuickTextDocument *document) {
         Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(basicModelObject);
         if (basicModel != nullptr) {
-            SpellCheck::SpellCheckInfo *info = basicModel->getSpellCheckInfo();
-            info->createHighlighterForTitle(document->textDocument(), &m_ColorsModel, basicModel);
+            SpellCheck::SpellCheckInfo &info = basicModel->getSpellCheckInfo();
+            info.createHighlighterForTitle(document->textDocument(), &m_ColorsModel, basicModel);
             basicModel->notifyDescriptionSpellingChanged();
         }
     }

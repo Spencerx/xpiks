@@ -13,6 +13,7 @@
 #include <Common/defines.h>
 #include <Helpers/indiceshelper.h>
 #include <Artworks/artworkelement.h>
+#include <Artworks/basicmodelsource.h>
 #include <Commands/Editing/deletekeywordstemplate.h>
 #include <Commands/Base/icommandmanager.h>
 #include <Commands/Editing/modifyartworkscommand.h>
@@ -130,8 +131,7 @@ namespace Models {
             }
         }
         auto keywordsSet = keywordsList.toSet();
-        Artworks::ArtworksSnapshot snapshot;
-        snapshot.copyFrom(getSnapshot());
+        auto snapshot = createSnapshot();
 
         using namespace Commands;
         m_CommandManager.processCommand(
@@ -214,6 +214,8 @@ namespace Models {
     }
 
     void DeleteKeywordsViewModel::submitForSpellCheck() {
-        sendMessage(&m_KeywordsToDeleteModel);
+        sendMessage(
+                    BasicSpellCheckMessageType(
+                        std::make_shared<Artworks::BasicModelSource>(m_KeywordsToDeleteModel)));
     }
 }

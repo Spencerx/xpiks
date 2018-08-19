@@ -32,7 +32,7 @@ namespace Models {
         if (snapshot.empty()) { return; }
 
         using namespace Artworks;
-        auto elements = Helpers::map<std::shared_ptr<ArtworkMetadata>, std::shared_ptr<ArtworkMetadata>>(
+        auto elements = Helpers::map<std::shared_ptr<ArtworkMetadata>, std::shared_ptr<ArtworkElement>>(
                             snapshot.getRawData(),
                             [](const std::shared_ptr<ArtworkMetadata> &artwork) {
             return std::make_shared<ArtworkElement>(artwork);
@@ -40,7 +40,7 @@ namespace Models {
 
         beginResetModel();
         {
-            m_ArtworksSnapshot.set(elements);
+            m_ArtworksElements.swap(elements);
         }
         endResetModel();
 
@@ -49,7 +49,7 @@ namespace Models {
 
     int ArtworksViewModel::getSelectedArtworksCount() const {
         int selectedCount = 0;
-        size_t size = m_ArtworksSnapshot.size();
+        size_t size = m_ArtworksElements.size();
         for (size_t i = 0; i < size; i++) {
             if (getIsSelected(i)) {
                 selectedCount++;
@@ -60,7 +60,7 @@ namespace Models {
     }
 
     void ArtworksViewModel::setArtworkSelected(int index, bool value) {
-        if (index < 0 || index >= (int)m_ArtworksSnapshot.size()) {
+        if (index < 0 || index >= (int)m_ArtworksElements.size()) {
             return;
         }
 
@@ -72,7 +72,7 @@ namespace Models {
     }
 
     void ArtworksViewModel::unselectAllItems() {
-        const size_t size = m_ArtworksSnapshot.size();
+        const size_t size = m_ArtworksElements.size();
         for (size_t i = 0; i < size; i++) {
             setIsSelected(i, false);
         }
@@ -81,15 +81,15 @@ namespace Models {
     }
 
     std::shared_ptr<Artworks::ArtworkElement> const &ArtworksViewModel::accessItem(size_t index) const {
-        Q_ASSERT(index < m_ArtworksSnapshot.size());
-        auto &locker = m_ArtworksSnapshot.at(index);
+        Q_ASSERT(index < m_ArtworksElements.size());
+        auto &locker = m_ArtworksElements.at(index);
         auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
         Q_ASSERT(element != nullptr);
         return element;
     }
 
     bool ArtworksViewModel::getIsSelected(size_t i) const {
-        auto &locker = m_ArtworksSnapshot.at(i);
+        auto &locker = m_ArtworksElements.at(i);
         auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
         Q_ASSERT(element);
         bool result = element->getIsSelected();
@@ -97,22 +97,22 @@ namespace Models {
     }
 
     void ArtworksViewModel::setIsSelected(size_t i, bool value) {
-        auto &locker = m_ArtworksSnapshot.at(i);
+        auto &locker = m_ArtworksElements.at(i);
         auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(locker);
         Q_ASSERT(element);
         element->setIsSelected(value);
     }
 
-    std::shared_ptr<Artworks::ArtworkMetadata> const &ArtworksViewModel::getArtworkMetadata(size_t i) const {
-        Q_ASSERT((i >= 0) && (i < m_ArtworksSnapshot.size()));
-        return m_ArtworksSnapshot.get(i);
+    std::shared_ptr<Artworks::ArtworkMetadata> const &ArtworksViewModel::getArtwork(size_t i) const {
+        Q_ASSERT((i >= 0) && (i < m_ArtworksElements.size()));
+        return m_ArtworksElements[i]->getArtwork();
     }
 
     /*virtual*/
     bool ArtworksViewModel::doRemoveSelectedArtworks() {
         LOG_DEBUG << "#";
 
-        const size_t size = m_ArtworksSnapshot.size();
+        const size_t size = m_ArtworksElements.size();
         std::vector<int> indicesToRemove;
         indicesToRemove.reserve(size);
 
@@ -127,7 +127,7 @@ namespace Models {
             LOG_INFO << "Removing" << indicesToRemove.size() << "item(s)";
             removeItems(Helpers::IndicesRanges(indicesToRemove));
 
-            if (m_ArtworksSnapshot.empty()) {
+            if (m_ArtworksElements.empty()) {
                 emit requestCloseWindow();
             }
 
@@ -142,24 +142,32 @@ namespace Models {
 
         beginResetModel();
         {
-            m_ArtworksSnapshot.clear();
+            m_ArtworksElements.clear();
         }
         endResetModel();
+    }
+
+    Artworks::ArtworksSnapshot ArtworksViewModel::createSnapshot() {
+        using ElementPtr = std::shared_ptr<Artworks::ArtworkElement>;
+        using ArtworkPtr = std::shared_ptr<Artworks::ArtworkMetadata>;
+        return Artworks::ArtworksSnapshot(
+                    Helpers::map<ElementPtr, ArtworkPtr>(
+                        m_ArtworksElements,
+                        [](ElementPtr const &element){
+                        return element->getArtwork();
+                    }));
     }
 
     void ArtworksViewModel::processArtworks(std::function<bool (const std::shared_ptr<Artworks::ArtworkElement> &element)> pred,
                                             std::function<void (size_t, std::shared_ptr<Artworks::ArtworkMetadata> const &)> action) const {
         LOG_DEBUG << "#";
 
-        auto &rawSnapshot = m_ArtworksSnapshot.getRawData();
-        const size_t size = rawSnapshot.size();
+        const size_t size = m_ArtworksElements.size();
         for (size_t i = 0; i < size; i++) {
-            auto &item = rawSnapshot.at(i);
-            const auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(item);
-            Q_ASSERT(element);
+            auto &element = m_ArtworksElements.at(i);
 
             if (pred(element)) {
-                action(i, item);
+                action(i, element->getArtwork());
             }
         }
     }
@@ -169,15 +177,12 @@ namespace Models {
         LOG_DEBUG << "#";
         bool canContinue = false;
 
-        auto &rawSnapshot = m_ArtworksSnapshot.getRawData();
-        const size_t size = rawSnapshot.size();
+        const size_t size = m_ArtworksElements.size();
         for (size_t i = 0; i < size; i++) {
-            auto &artwork = rawSnapshot.at(i);
-            auto element = std::dynamic_pointer_cast<Artworks::ArtworkElement>(artwork);
-            Q_ASSERT(element);
+            auto &element = m_ArtworksElements.at(i);
 
-            if (pred(element.get())) {
-                canContinue = action(i, artwork);
+            if (pred(element)) {
+                canContinue = action(i, element->getArtwork());
 
                 if (!canContinue) { break; }
             }
@@ -186,27 +191,27 @@ namespace Models {
 
     int ArtworksViewModel::rowCount(const QModelIndex &parent) const {
         Q_UNUSED(parent);
-        return (int)m_ArtworksSnapshot.size();
+        return (int)m_ArtworksElements.size();
     }
 
     QVariant ArtworksViewModel::data(const QModelIndex &index, int role) const {
         int row = index.row();
-        if (row < 0 || row >= (int)m_ArtworksSnapshot.size()) { return QVariant(); }
+        if (row < 0 || row >= (int)m_ArtworksElements.size()) { return QVariant(); }
 
-        auto &item = m_ArtworksSnapshot.at(row);
-        auto *artwork = item->getArtworkMetadata();
+        auto &item = m_ArtworksElements.at(row);
+        auto &artwork = item->getArtwork();
 
         switch (role) {
         case FilepathRole: return artwork->getFilepath();
         case IsSelectedRole: return accessItem(row)->getIsSelected();
         case HasVectorAttachedRole: {
-            auto *imageArtwork = dynamic_cast<Artworks::ImageArtwork*>(artwork);
-            return (imageArtwork != nullptr) && (imageArtwork->hasVectorAttached());
+            auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+            return (image != nullptr) && (image->hasVectorAttached());
         }
         case ThumbnailPathRole: return artwork->getThumbnailPath();
         case IsVideoRole: {
-            auto *videoArtwork = dynamic_cast<Artworks::VideoArtwork*>(artwork);
-            return videoArtwork != nullptr;
+            auto video = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
+            return video != nullptr;
         }
         default: return QVariant();
         }
@@ -227,10 +232,10 @@ namespace Models {
 
         bool anyUnavailable = false;
         std::vector<int> indicesToRemove;
-        const size_t size = m_ArtworksSnapshot.size();
+        const size_t size = m_ArtworksElements.size();
 
         for (size_t i = 0; i < size; i++) {
-            auto *artwork = m_ArtworksSnapshot.get(i);
+            auto &artwork = m_ArtworksElements[i]->getArtwork();
 
             if (artwork->isUnavailable()) {
                 indicesToRemove.push_back((int)i);
@@ -242,7 +247,7 @@ namespace Models {
             LOG_INFO << "Found" << indicesToRemove.size() << "unavailable item(s)";
             removeItems(Helpers::IndicesRanges(indicesToRemove));
 
-            if (m_ArtworksSnapshot.empty()) {
+            if (m_ArtworksElements.empty()) {
                 emit requestCloseWindow();
             }
 
@@ -253,6 +258,6 @@ namespace Models {
     }
 
     void ArtworksViewModel::removeInnerItem(int row) {
-        m_ArtworksSnapshot.remove(row);
+        m_ArtworksElements.erase(m_ArtworksElements.begin() + row);
     }
 }

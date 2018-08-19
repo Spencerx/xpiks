@@ -312,13 +312,13 @@ namespace Models {
         Q_ASSERT(!keywords.isEmpty());
 
         auto *metadataModel = getBasicMetadataModel();
-        SpellCheck::SpellCheckInfo *info = metadataModel->getSpellCheckInfo();
+        SpellCheck::SpellCheckInfo &info = metadataModel->getSpellCheckInfo();
 
         if (!overwritten) {
-            info->removeWordsFromErrors(keywords);
+            info.removeWordsFromErrors(keywords);
         }
         else {
-            info->clear();
+            info.clear();
         }
 
         submitForInspection();

@@ -71,8 +71,8 @@ namespace Models {
 
     void ArtworkPropertiesMap::updateProperties(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork) {
         Q_ASSERT(artwork != nullptr);
-        auto &imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
-        auto &videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
+        auto imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+        auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
 
         beginResetModel();
         {

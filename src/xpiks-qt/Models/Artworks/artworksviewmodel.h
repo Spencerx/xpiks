@@ -50,7 +50,7 @@ namespace Models {
         virtual void setArtworks(const Artworks::ArtworksSnapshot &snapshot);
 
     public:
-        int getArtworksCount() const { return (int)m_ArtworksSnapshot.size(); }
+        int getArtworksCount() const { return (int)m_ArtworksElements.size(); }
         int getSelectedArtworksCount() const;
 
     public:
@@ -69,17 +69,15 @@ namespace Models {
         void setIsSelected(size_t i, bool value);
 
     protected:
-        bool isEmpty() const { return m_ArtworksSnapshot.empty(); }
-        std::shared_ptr<Artworks::ArtworkMetadata> const &getArtworkMetadata(size_t i) const;
+        bool isEmpty() const { return m_ArtworksElements.empty(); }
+        std::shared_ptr<Artworks::ArtworkMetadata> const &getArtwork(size_t i) const;
         virtual bool doRemoveSelectedArtworks();
         virtual void doResetModel();
+        Artworks::ArtworksSnapshot createSnapshot();
         void processArtworks(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &element)> pred,
                              std::function<void (size_t, std::shared_ptr<Artworks::ArtworkMetadata> const &)> action) const;
         void processArtworksEx(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &element)> pred,
                                std::function<bool (size_t, std::shared_ptr<Artworks::ArtworkMetadata> const &)> action) const;
-
-    protected:
-        const Artworks::ArtworksSnapshot &getSnapshot() const { return m_ArtworksSnapshot; }
 
     signals:
         void artworksCountChanged();
@@ -100,7 +98,7 @@ namespace Models {
         virtual void removeInnerItem(int row) override;
 
     private:
-        Artworks::ArtworksSnapshot m_ArtworksSnapshot;
+        std::vector<std::shared_ptr<Artworks::ArtworkElement>> m_ArtworksElements;
     };
 }
 
