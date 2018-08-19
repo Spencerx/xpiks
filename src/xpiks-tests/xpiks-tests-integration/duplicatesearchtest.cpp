@@ -20,7 +20,7 @@ int DuplicateSearchTest::doTest() {
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForSpellcheck(waiter);
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     artwork->clearModel();
     m_TestsApp
             .getFilteredArtworksModel()

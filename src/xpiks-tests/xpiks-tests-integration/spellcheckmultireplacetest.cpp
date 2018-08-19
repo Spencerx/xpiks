@@ -23,7 +23,7 @@ int SpellCheckMultireplaceTest::doTest() {
     // wait for after-add spellchecking
     QThread::sleep(1);
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForSpellcheck(waiter);
 
@@ -38,11 +38,11 @@ int SpellCheckMultireplaceTest::doTest() {
     // wait for finding suggestions
     QThread::sleep(1);
 
-    auto *basicKeywordsModel = artwork->getBasicModel();
+    auto &basicMetadataModel = artwork->getBasicMetadataModel();
 
-    VERIFY(basicKeywordsModel->hasDescriptionSpellError(), "Description spell error not detected");
-    VERIFY(basicKeywordsModel->hasTitleSpellError(), "Title spell error not detected");
-    VERIFY(basicKeywordsModel->hasKeywordsSpellError(), "Keywords spell error not detected");
+    VERIFY(basicMetadataModel.hasDescriptionSpellError(), "Description spell error not detected");
+    VERIFY(basicMetadataModel.hasTitleSpellError(), "Title spell error not detected");
+    VERIFY(basicMetadataModel.hasKeywordsSpellError(), "Keywords spell error not detected");
 
     sleepWaitUntil(5, [=]() {
         return m_TestsApp.getSpellCheckService().getSuggestionsCount() > 0;
@@ -64,9 +64,9 @@ int SpellCheckMultireplaceTest::doTest() {
 
     VERIFY(waiter.wait(5), "Timeout for waiting for corrected spellcheck results");
 
-    VERIFY(!basicKeywordsModel->hasDescriptionSpellError(), "Description spell error was not fixed");
-    VERIFY(!basicKeywordsModel->hasTitleSpellError(), "Title spell error was not fixed");
-    VERIFY(!basicKeywordsModel->hasKeywordsSpellError(), "Keywords spell error was not fixed");
+    VERIFY(!basicMetadataModel.hasDescriptionSpellError(), "Description spell error was not fixed");
+    VERIFY(!basicMetadataModel.hasTitleSpellError(), "Title spell error was not fixed");
+    VERIFY(!basicMetadataModel.hasKeywordsSpellError(), "Keywords spell error was not fixed");
 
     return 0;
 }

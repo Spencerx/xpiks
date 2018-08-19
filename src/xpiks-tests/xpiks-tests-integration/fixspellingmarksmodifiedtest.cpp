@@ -21,11 +21,11 @@ int FixSpellingMarksModifiedTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
-    Artworks::BasicMetadataModel *basicModel = artwork->getBasicModel();
+    auto artwork = m_TestsApp.getArtwork(0);
+    auto &basicModel = artwork->getBasicModel();
 
     SignalWaiter waiter;
-    QObject::connect(basicModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged,
+    QObject::connect(&basicModel, &Artworks::BasicKeywordsModel::keywordsSpellingChanged,
                      &waiter, &SignalWaiter::finished);
 
     QString wrongWord = "abbreviatioe";
@@ -33,8 +33,8 @@ int FixSpellingMarksModifiedTest::doTest() {
 
     VERIFY(waiter.wait(5), "Timeout for waiting for initial spellcheck results");
 
-    sleepWaitUntil(5, [&]() { return basicModel->hasKeywordsSpellError(); });
-    VERIFY(basicModel->hasKeywordsSpellError(), "Keywords spell error not detected");
+    sleepWaitUntil(5, [&basicModel]() { return basicModel.hasKeywordsSpellError(); });
+    VERIFY(basicModel.hasKeywordsSpellError(), "Keywords spell error not detected");
 
     artwork->setIsSelected(true);
     m_TestsApp.dispatch(QMLExtensions::UICommandID::FixSpellingInSelected);
@@ -46,7 +46,7 @@ int FixSpellingMarksModifiedTest::doTest() {
 
     VERIFY(waiter.wait(5), "Timeout for waiting for corrected spellcheck results");
 
-    VERIFY(!basicModel->hasKeywordsSpellError(), "Keywords spell error was not fixed");
+    VERIFY(!basicModel.hasKeywordsSpellError(), "Keywords spell error was not fixed");
     VERIFY(m_TestsApp.getArtwork(0)->isModified(), "Artwork was not modified");
 
     return 0;

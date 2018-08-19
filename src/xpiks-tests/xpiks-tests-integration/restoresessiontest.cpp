@@ -69,8 +69,8 @@ int RestoreSessionTest::doTest() {
     LOG_INFO << "Comparing" << oldArtworksList.size() << "items";
 
     for (size_t i = 0; i < newArtworksList.size(); i++) {
-        auto oldItem = oldArtworksList.at(i)->getArtworkMetadata();
-        auto newItem = newArtworksList.at(i)->getArtworkMetadata();
+        auto oldItem = oldArtworksList.at(i);
+        auto newItem = newArtworksList.at(i);
 
         VERIFY(oldItem->getItemID() != newItem->getItemID(), "Comparing same IDs");
         VERIFY(oldItem->getFilepath() == newItem->getFilepath(), "Filepaths don't match");
@@ -78,14 +78,13 @@ int RestoreSessionTest::doTest() {
         VERIFY(oldItem->getDescription() == newItem->getDescription(), "Descriptions don't match");
         VERIFY(oldItem->getKeywords() == newItem->getKeywords(), "Keywords don't match");
 
-        Artworks::ImageArtwork *oldImage = dynamic_cast<Artworks::ImageArtwork*>(oldItem);
-        Artworks::ImageArtwork *newImage = dynamic_cast<Artworks::ImageArtwork*>(newItem);
-        if (oldImage != nullptr && newImage != nullptr) {
-            VERIFY(oldImage->hasVectorAttached() == newImage->hasVectorAttached(), "Vector attachment lost");
-            VERIFY(oldImage->getAttachedVectorPath() == newImage->getAttachedVectorPath(), "Vector filepath lost");
-            VERIFY(oldImage->getImageSize().width() == newImage->getImageSize().width(), "Image widths don't match");
-            VERIFY(oldImage->getImageSize().height() == newImage->getImageSize().height(), "Image heights don't match");
-        }
+        auto oldImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(oldItem);
+        auto newImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(newItem);
+        VERIFY (oldImage != nullptr && newImage != nullptr, "Artworks are not images");
+        VERIFY(oldImage->hasVectorAttached() == newImage->hasVectorAttached(), "Vector attachment lost");
+        VERIFY(oldImage->getAttachedVectorPath() == newImage->getAttachedVectorPath(), "Vector filepath lost");
+        VERIFY(oldImage->getImageSize().width() == newImage->getImageSize().width(), "Image widths don't match");
+        VERIFY(oldImage->getImageSize().height() == newImage->getImageSize().height(), "Image heights don't match");
     }
 
     // -------------------------------------

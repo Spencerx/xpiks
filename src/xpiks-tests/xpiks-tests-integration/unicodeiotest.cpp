@@ -19,7 +19,7 @@ int UnicodeIoTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
 
     BasicMetadata basicMetadata;
     ::readMetadata(artwork->getFilepath(), basicMetadata);

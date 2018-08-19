@@ -24,8 +24,8 @@ int AutoDetachVectorTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *metadata = m_TestsApp.getArtwork(0);
-    Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(metadata);
+    auto metadata = m_TestsApp.getArtwork(0);
+    auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(metadata);
     VERIFY(image != NULL && image->hasVectorAttached(), "Vector is not attached!");
 
     const QString vectorPath = image->getAttachedVectorPath();

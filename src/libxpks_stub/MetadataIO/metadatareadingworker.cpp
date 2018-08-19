@@ -269,8 +269,8 @@ namespace libxpks {
             arguments << "-ImageWidth" << "-ImageHeight";
             size_t size = m_ItemsToReadSnapshot.size();
             for (size_t i = 0; i < size; ++i) {
-                Artworks::ArtworkMetadata *metadata = m_ItemsToReadSnapshot.get(i);
-                arguments << metadata->getFilepath();
+                auto &artwork = m_ItemsToReadSnapshot.get(i);
+                arguments << artwork->getFilepath();
             }
 
             return arguments;

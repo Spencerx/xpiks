@@ -14,14 +14,14 @@ void RemoveFromUserDictionaryTest::setup() {
 }
 
 #define CHECK_HAS_ERRORS_EVERYWHERE(basicModel)\
-    VERIFY(basicModel->hasDescriptionSpellError(), "Description spell error not detected");\
-    VERIFY(basicModel->hasTitleSpellError(), "Title spell error not detected");\
-    VERIFY(basicModel->hasKeywordsSpellError(), "Keywords spell error not detected")
+    VERIFY(basicModel.hasDescriptionSpellError(), "Description spell error not detected");\
+    VERIFY(basicModel.hasTitleSpellError(), "Title spell error not detected");\
+    VERIFY(basicModel.hasKeywordsSpellError(), "Keywords spell error not detected")
 
 #define CHECK_HAS_NO_ERRORS_ANYWHERE(basicModel)\
-    VERIFY(!basicModel->hasDescriptionSpellError(), "After adding word. Description spell error is still present");\
-    VERIFY(!basicModel->hasTitleSpellError(), "After adding word. Title spell error is still present");\
-    VERIFY(!basicModel->hasKeywordsSpellError(), "After adding word. Keywords spell error is still present");
+    VERIFY(!basicModel.hasDescriptionSpellError(), "After adding word. Description spell error is still present");\
+    VERIFY(!basicModel.hasTitleSpellError(), "After adding word. Title spell error is still present");\
+    VERIFY(!basicModel.hasKeywordsSpellError(), "After adding word. Keywords spell error is still present");
 
 
 int RemoveFromUserDictionaryTest::doTest() {
@@ -30,7 +30,7 @@ int RemoveFromUserDictionaryTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
 
     // wait for after-add spellchecking
     QThread::sleep(1);
@@ -38,7 +38,7 @@ int RemoveFromUserDictionaryTest::doTest() {
     SignalWaiter spellingWaiter;
     m_TestsApp.connectWaiterForSpellcheck(spellingWaiter);
 
-    auto *basicKeywordsModel = artwork->getBasicModel();
+    auto &basicModel = artwork->getBasicMetadataModel();
 
     QString wrongWord = "abbreviatioe";
     artwork->setDescription(artwork->getDescription() + " " + wrongWord);
@@ -51,7 +51,7 @@ int RemoveFromUserDictionaryTest::doTest() {
     // wait for finding suggestions
     QThread::sleep(1);
 
-    CHECK_HAS_ERRORS_EVERYWHERE(basicKeywordsModel);
+    CHECK_HAS_ERRORS_EVERYWHERE(basicModel);
 
     auto &userDictionary = m_TestsApp.getUserDictionary();
     userDictionary.addWord(wrongWord);
@@ -61,16 +61,16 @@ int RemoveFromUserDictionaryTest::doTest() {
     // wait add user word to finish
     VERIFY(spellingWaiter.wait(5), "Timeout for waiting for spellcheck results");
 
-    sleepWaitUntil(5, [=]() {
-        return !basicKeywordsModel->hasDescriptionSpellError() &&
-                !basicKeywordsModel->hasTitleSpellError() &&
-                !basicKeywordsModel->hasKeywordsSpellError();
+    sleepWaitUntil(5, [&basicModel]() {
+        return !basicModel.hasDescriptionSpellError() &&
+                !basicModel.hasTitleSpellError() &&
+                !basicModel.hasKeywordsSpellError();
     });
 
     int userDictWords = userDictionary.getWordsCount();
 
     VERIFY(userDictWords == 1, "Wrong number of words in user dictionary");
-    CHECK_HAS_NO_ERRORS_ANYWHERE(basicKeywordsModel);
+    CHECK_HAS_NO_ERRORS_ANYWHERE(basicModel);
 
     // now clean user dict
     userDictionary.clear();
@@ -81,16 +81,16 @@ int RemoveFromUserDictionaryTest::doTest() {
     // wait clear user word to finish
     VERIFY(spellingWaiter.wait(5), "Timeout for waiting for spellcheck results");
 
-    sleepWaitUntil(5, [=]() {
-        return basicKeywordsModel->hasDescriptionSpellError() &&
-                basicKeywordsModel->hasTitleSpellError() &&
-                basicKeywordsModel->hasKeywordsSpellError();
+    sleepWaitUntil(5, [&basicModel]() {
+        return basicModel.hasDescriptionSpellError() &&
+                basicModel.hasTitleSpellError() &&
+                basicModel.hasKeywordsSpellError();
     });
 
     userDictWords = userDictionary.getWordsCount();
 
     VERIFY(userDictWords == 0, "Wrong number of words in user dictionary");    
-    CHECK_HAS_ERRORS_EVERYWHERE(basicKeywordsModel);
+    CHECK_HAS_ERRORS_EVERYWHERE(basicModel);
 
     return 0;
 }

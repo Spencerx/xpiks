@@ -17,6 +17,7 @@
 #include <QDir>
 #include <QTemporaryFile>
 #include <QTextStream>
+#include <memory>
 #include <Artworks/artworkmetadata.h>
 #include <Models/settingsmodel.h>
 #include <Common/defines.h>
@@ -49,15 +50,15 @@ namespace libxpks {
             }
         }
 
-        void metadataToJsonObject(Artworks::ArtworkMetadata *metadata, QJsonObject &jsonObject) {
-            QString title = metadata->getTitle().simplified();
-            QString description = metadata->getDescription().simplified();
+        void metadataToJsonObject(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork, QJsonObject &jsonObject) {
+            QString title = artwork->getTitle().simplified();
+            QString description = artwork->getDescription().simplified();
 
             if (title.isEmpty()) {
                 title = description;
             }
 
-            jsonObject.insert(SOURCEFILE, QJsonValue(metadata->getFilepath()));
+            jsonObject.insert(SOURCEFILE, QJsonValue(artwork->getFilepath()));
 
             QJsonValue titleValue(title);
             jsonObject.insert(XMP_TITLE, titleValue);
@@ -68,7 +69,7 @@ namespace libxpks {
             jsonObject.insert(EXIF_IMAGEDESCRIPTION, descriptionValue);
             jsonObject.insert(IPTC_CAPTIONABSTRACT, descriptionValue);
 
-            QStringList keywords = metadata->getKeywords();
+            QStringList keywords = artwork->getKeywords();
             QJsonArray keywordsArray;
             keywordsToJsonArray(keywords, keywordsArray);
             jsonObject.insert(IPTC_KEYWORDS, keywordsArray);
@@ -219,8 +220,8 @@ namespace libxpks {
 
             size_t size = m_ItemsToWriteSnapshot.size();
             for (size_t i = 0; i < size; ++i) {
-                Artworks::ArtworkMetadata *metadata = m_ItemsToWriteSnapshot.get(i);
-                arguments << metadata->getFilepath();
+                auto &artwork = m_ItemsToWriteSnapshot.get(i);
+                arguments << artwork->getFilepath();
             }
 
             return arguments;
@@ -228,8 +229,7 @@ namespace libxpks {
 
         void ExiftoolImageWritingWorker::setArtworksSaved() {
             auto &items = m_ItemsToWriteSnapshot.getRawData();
-            for (auto &item: items) {
-                Artworks::ArtworkMetadata *artwork = item->getArtworkMetadata();
+            for (auto &artwork: items) {
                 artwork->resetModified();
             }
         }

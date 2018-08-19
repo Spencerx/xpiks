@@ -202,7 +202,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Services/SpellCheck/duplicatesreviewmodel.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellcheckerrorshighlighter.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellcheckitem.cpp \
-    ../../xpiks-qt/Services/SpellCheck/spellcheckiteminfo.cpp \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckinfo.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellcheckservice.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellchecksuggestionmodel.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellcheckworker.cpp \
@@ -262,7 +262,9 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Helpers/updatehelpers.cpp \
     ../../xpiks-qt/Connectivity/testconnection.cpp \
     ../../xpiks-qt/Helpers/loghighlighter.cpp \
-    ../../xpiks-qt/Helpers/helpersqmlwrapper.cpp
+    ../../xpiks-qt/Helpers/helpersqmlwrapper.cpp \
+    ../../xpiks-qt/Services/SpellCheck/metadataduplicates.cpp \
+    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.cpp
 
 RESOURCES +=
 
@@ -370,9 +372,7 @@ HEADERS += \
     ../../xpiks-qt/Common/defines.h \
     ../../xpiks-qt/Common/delayedactionentity.h \
     ../../xpiks-qt/Common/flags.h \
-    ../../xpiks-qt/Common/hold.h \
     ../../xpiks-qt/Common/iflagsprovider.h \
-    ../../xpiks-qt/Common/irefcountedobject.h \
     ../../xpiks-qt/Common/isystemenvironment.h \
     ../../xpiks-qt/Common/itemprocessingworker.h \
     ../../xpiks-qt/Common/logging.h \
@@ -520,7 +520,7 @@ HEADERS += \
     ../../xpiks-qt/Services/SpellCheck/ispellcheckable.h \
     ../../xpiks-qt/Services/SpellCheck/spellcheckerrorshighlighter.h \
     ../../xpiks-qt/Services/SpellCheck/spellcheckitem.h \
-    ../../xpiks-qt/Services/SpellCheck/spellcheckiteminfo.h \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckinfo.h \
     ../../xpiks-qt/Services/SpellCheck/spellcheckservice.h \
     ../../xpiks-qt/Services/SpellCheck/spellchecksuggestionmodel.h \
     ../../xpiks-qt/Services/SpellCheck/spellcheckworker.h \
@@ -597,7 +597,12 @@ HEADERS += \
     ../../xpiks-qt/Connectivity/testconnection.h \
     ../../xpiks-qt/Helpers/loghighlighter.h \
     ../../xpiks-qt/Helpers/helpersqmlwrapper.h \
-    ../../xpiks-qt/Helpers/hashhelpers.h
+    ../../xpiks-qt/Helpers/hashhelpers.h \
+    ../../xpiks-qt/Services/SpellCheck/imetadataduplicates.h \
+    ../../xpiks-qt/Services/SpellCheck/ispellcheckservice.h \
+    ../../xpiks-qt/Services/SpellCheck/ispellsuggestionstarget.h \
+    ../../xpiks-qt/Services/SpellCheck/metadataduplicates.h \
+    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

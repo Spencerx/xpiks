@@ -56,6 +56,11 @@ namespace SpellCheck {
         void startService(Helpers::AsyncCoordinator &initCoordinator, Warnings::WarningsService &warningsService);
         void stopService();
 
+#ifdef INTEGRATION_TESTS
+    public:
+        bool isBusy() const;
+#endif
+
         // ISpellCheckService interface
     private:
         virtual quint32 submitItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items,

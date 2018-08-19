@@ -19,7 +19,7 @@ int ClearMetadataTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     const QStringList &keywords = artwork->getKeywords();
 
     QStringList expectedKeywords = QString("picture,seagull,bird").split(',');
@@ -46,9 +46,9 @@ int ClearMetadataTest::doTest() {
 
     artwork = m_TestsApp.getArtwork(0);
 
-    VERIFY(artwork->getBasicModel()->isDescriptionEmpty(), "Description was not empty");
-    VERIFY(artwork->getBasicModel()->isTitleEmpty(), "Title was not empty");
-    VERIFY(artwork->getBasicModel()->areKeywordsEmpty(), "Keywords were not empty");
+    VERIFY(artwork->getBasicMetadataModel().isDescriptionEmpty(), "Description was not empty");
+    VERIFY(artwork->getBasicMetadataModel().isTitleEmpty(), "Title was not empty");
+    VERIFY(artwork->getBasicMetadataModel().areKeywordsEmpty(), "Keywords were not empty");
 
     return 0;
 }

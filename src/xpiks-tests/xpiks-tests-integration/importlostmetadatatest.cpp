@@ -24,7 +24,7 @@ int ImportLostMetadataTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     const QString filepath = artwork->getFilepath();
     VERIFY(artwork->getKeywords().count() == 0, "Initial keywords should not be found");
 
@@ -40,18 +40,16 @@ int ImportLostMetadataTest::doTest() {
 
     // wait for artwork backup request and metadata cache timer
     sleepWaitUntil(10, [&]() {
-        Artworks::ArtworkMetadata fakeArtwork(filepath, 12345, 0);
+        auto fakeArtwork = std::make_shared<Artworks::ArtworkMetadata>(filepath, 12345, 0);
         MetadataIO::CachedArtwork cachedArtwork;
-        bool anythingAvailable = cache.read(&fakeArtwork, cachedArtwork);
-        fakeArtwork.release();
+        bool anythingAvailable = cache.read(fakeArtwork, cachedArtwork);
         return anythingAvailable && (cachedArtwork.m_Keywords == keywordsToCheck);
     });
 
     {
-        Artworks::ArtworkMetadata tempFakeArtwork(filepath, artwork->getItemID(), artwork->getDirectoryID());
+        auto tempFakeArtwork = std::make_shared<Artworks::ArtworkMetadata>(filepath, artwork->getItemID(), artwork->getDirectoryID());
         MetadataIO::CachedArtwork tempCachedArtwork;
-        bool anythingAvailable = cache.read(&tempFakeArtwork, tempCachedArtwork);
-        tempFakeArtwork.release();
+        bool anythingAvailable = cache.read(tempFakeArtwork, tempCachedArtwork);
         VERIFY(anythingAvailable, "Artwork has not been saved to cache");
         VERIFY(tempCachedArtwork.m_Keywords == keywordsToCheck, "Saved keywords do not match real keywords");
     }
@@ -63,15 +61,11 @@ int ImportLostMetadataTest::doTest() {
     std::shared_ptr<Artworks::ArtworkMetadata> fakeArtworkToRead(
                 new Artworks::ImageArtwork(filepath, artwork->getItemID(), artwork->getDirectoryID()),
                 [](Artworks::ImageArtwork *artwork) {
-        if (artwork->release()) {
-            delete artwork;
-        } else {
-            // leak artwork to overcome assert for hold
-        }
+        artwork->deleteLater();
     });
 
     Artworks::ArtworksSnapshot snapshotToRead;
-    snapshotToRead.append(fakeArtworkToRead.get());
+    snapshotToRead.append(fakeArtworkToRead);
 
     auto &metadataIOCoordinator = m_TestsApp.getMetadataIOCoordinator();
     quint32 batchID = INVALID_BATCH_ID;
@@ -94,10 +88,9 @@ int ImportLostMetadataTest::doTest() {
     });
     metadataIOService.waitWorkerIdle();
 
-    Artworks::ArtworkMetadata tempFakeArtwork(filepath, artwork->getItemID(), artwork->getDirectoryID());
+    auto tempFakeArtwork = std::make_shared<Artworks::ArtworkMetadata>(filepath, artwork->getItemID(), artwork->getDirectoryID());
     MetadataIO::CachedArtwork tempCachedArtwork;
-    bool anythingAvailable = cache.read(&tempFakeArtwork, tempCachedArtwork);
-    tempFakeArtwork.release();
+    bool anythingAvailable = cache.read(tempFakeArtwork, tempCachedArtwork);
     VERIFY(anythingAvailable, "Artwork has not been saved to cache");
     VERIFY(!tempCachedArtwork.m_Keywords.empty(), "Keywords are not empty after adding to library after import");
 

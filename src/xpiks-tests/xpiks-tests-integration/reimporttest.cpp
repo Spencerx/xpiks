@@ -19,7 +19,7 @@ int ReimportTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
 
     const QString originalDescription = artwork->getDescription();
@@ -31,7 +31,7 @@ int ReimportTest::doTest() {
     QString description = "Brand new description";
     artwork->setDescription(description);
     artwork->setTitle(title);
-    artwork->getBasicModel()->setKeywords(keywords);
+    artwork->getBasicModel().setKeywords(keywords);
 
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForImport(waiter);

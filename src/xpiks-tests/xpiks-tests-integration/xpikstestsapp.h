@@ -58,14 +58,14 @@ public:
     Suggestion::KeywordsSuggestor &getKeywordsSuggestor() { return m_KeywordsSuggestor; }
     Encryption::SecretsManager &getSecretsManager() { return m_SecretsManager; }
     Models::SessionManager &getSessionManager() { return m_SessionManager; }
-    SpellCheck::SpellCheckService &getSpellCheckService() { return m_SpellCheckerService; }
+    SpellCheck::SpellCheckService &getSpellCheckService() { return m_SpellCheckService; }
     Translation::TranslationManager &getTranslationManager() { return m_TranslationManager; }
     Models::QuickBuffer &getQuickBuffer() { return m_QuickBuffer; }
     SpellCheck::UserDictEditModel &getUserDictEditModel() { return m_UserDictEditModel; }
     Models::ZipArchiver &getZipArchiver() { return m_ZipArchiver; }
 
 public:
-    Artworks::ArtworkMetadata *getArtwork(int index);
+    std::shared_ptr<Artworks::ArtworkMetadata> getArtwork(int index);
     int getArtworksCount();
 
 private:

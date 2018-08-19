@@ -41,7 +41,8 @@ int parsePlan1Csv(const QString &filepath, Models::ArtworksListModel &artworksLi
     const size_t size = artworksListModel.getArtworksSize();
 
     for (size_t i = 0; i < size; i++) {
-        Artworks::ArtworkMetadata *artwork = artworksListModel.getArtwork(i);
+        std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+        if (!artworksListModel.tryGetArtwork(i, artwork)) { continue; }
 
         success = csvReader.read_row(COLUMNIZE1(columns));
         if (!success) { qWarning() << "Row cannot be read:" << i; }
@@ -82,7 +83,8 @@ int parsePlan2Csv(const QString &filepath, Models::ArtworksListModel &artworksLi
     const size_t size = artworksListModel.getArtworksSize();
 
     for (size_t i = 0; i < size; i++) {
-        Artworks::ArtworkMetadata *artwork = artworksListModel.getArtwork(i);
+        std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+        if (!artworksListModel.tryGetArtwork(i, artwork)) { continue; }
 
         success = csvReader.read_row(COLUMNIZE2(columns));
         if (!success) { qWarning() << "Row cannot be read:" << i; }

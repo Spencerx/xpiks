@@ -18,12 +18,12 @@ int AddToUserDictionaryTest::doTest() {
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
 
     // wait for after-add spellchecking
     QThread::sleep(1);
 
-    auto *basicKeywordsModel = artwork->getBasicModel();
+    auto &basicModel = artwork->getBasicMetadataModel();
 
     QString wrongWord = "abbreviatioe";
     artwork->setDescription(artwork->getDescription() + ' ' + wrongWord);
@@ -38,27 +38,27 @@ int AddToUserDictionaryTest::doTest() {
     // wait for finding suggestions
     QThread::sleep(1);
 
-    VERIFY(basicKeywordsModel->hasDescriptionSpellError(), "Description spell error not detected");
-    VERIFY(basicKeywordsModel->hasTitleSpellError(), "Title spell error not detected");
-    VERIFY(basicKeywordsModel->hasKeywordsSpellError(), "Keywords spell error not detected");
+    VERIFY(basicModel.hasDescriptionSpellError(), "Description spell error not detected");
+    VERIFY(basicModel.hasTitleSpellError(), "Title spell error not detected");
+    VERIFY(basicModel.hasKeywordsSpellError(), "Keywords spell error not detected");
 
     m_TestsApp.getUserDictionary().addWord(wrongWord);
 
     QCoreApplication::processEvents(QEventLoop::AllEvents);
 
-    sleepWaitUntil(5, [=]() {
-        return !basicKeywordsModel->hasDescriptionSpellError() &&
-                !basicKeywordsModel->hasTitleSpellError() &&
-                !basicKeywordsModel->hasKeywordsSpellError();
+    sleepWaitUntil(5, [&basicModel]() {
+        return !basicModel.hasDescriptionSpellError() &&
+                !basicModel.hasTitleSpellError() &&
+                !basicModel.hasKeywordsSpellError();
     });
 
     int userDictWords = m_TestsApp.getUserDictionary().getWordsCount();
     LOG_DEBUG << "User dict words count:" << userDictWords;
 
     VERIFY(userDictWords == 1, "Wrong number of words in user dictionary");
-    VERIFY(!basicKeywordsModel->hasDescriptionSpellError(), "After adding word. Description spell error is still present");
-    VERIFY(!basicKeywordsModel->hasTitleSpellError(), "After adding word. Title spell error is still present");
-    VERIFY(!basicKeywordsModel->hasKeywordsSpellError(), "After adding word. Keywords spell error is still present");
+    VERIFY(!basicModel.hasDescriptionSpellError(), "After adding word. Description spell error is still present");
+    VERIFY(!basicModel.hasTitleSpellError(), "After adding word. Title spell error is still present");
+    VERIFY(!basicModel.hasKeywordsSpellError(), "After adding word. Keywords spell error is still present");
 
     return 0;
 }

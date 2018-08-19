@@ -148,7 +148,7 @@ namespace Models {
 
 #ifdef INTEGRATION_TESTS
         void setItemSelected(int index, bool selected) {
-            accessPreviewElement(index)->setIsSelected(selected);
+            m_PreviewElements[index]->setIsSelected(selected);
         }
 #endif
 

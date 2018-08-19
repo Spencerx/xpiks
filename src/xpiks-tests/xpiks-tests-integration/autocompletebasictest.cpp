@@ -20,22 +20,22 @@ int AutoCompleteBasicTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
-    Artworks::BasicMetadataModel *basicModel = artwork->getBasicModel();
+    auto artwork = m_TestsApp.getArtwork(0);
+    auto &basicModel = artwork->getBasicMetadataModel();
 
     AutoComplete::AutoCompleteService &acService = m_TestsApp.getAutoCompleteService();
     AutoComplete::KeywordsAutoCompleteModel &acModel = acService.getAutoCompleteModel();
     AutoComplete::KeywordsCompletionsModel &completionsModel = acModel.getInnerModel();
 
     SignalWaiter completionWaiter;
-    QObject::connect(basicModel, &Artworks::BasicMetadataModel::completionsAvailable,
+    QObject::connect(&basicModel, &Artworks::BasicMetadataModel::completionsAvailable,
                      &completionWaiter, &SignalWaiter::finished);
 
     VERIFY(acModel.getCount() == 0, "AC model was not empty");
 
     // --------------------------------------------------------------
 
-    acService.generateCompletions("tes", basicModel);
+    acService.generateCompletions("tes", &basicModel);
 
     VERIFY(completionWaiter.wait(10), "Timeout while waiting for the completion");
 
@@ -51,7 +51,7 @@ int AutoCompleteBasicTest::doTest() {
 
     // --------------------------------------------------------------
 
-    acService.generateCompletions("Tes", basicModel);
+    acService.generateCompletions("Tes", &basicModel);
 
     VERIFY(completionWaiter.wait(10), "Timeout while waiting for the completion");
 

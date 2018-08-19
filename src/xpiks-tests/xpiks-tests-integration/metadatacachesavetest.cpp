@@ -16,15 +16,17 @@ void MetadataCacheSaveTest::setup() {
     m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
-Artworks::ArtworkMetadata *findArtworkByFilepath(Models::ArtworksListModel &artworksList, QString const &filepath) {
+std::shared_ptr<Artworks::ArtworkMetadata> findArtworkByFilepath(Models::ArtworksListModel &artworksList, QString const &filepath) {
     const size_t size = artworksList.getArtworksSize();
     for (size_t i = 0; i < size; i++) {
-        Artworks::ArtworkMetadata *artwork = artworksList.getArtwork(i);
-        if (artwork->getFilepath() == filepath) {
-            return artwork;
+        std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+        if (artworksList.tryGetArtwork(i, artwork)) {
+            if (artwork->getFilepath() == filepath) {
+                return artwork;
+            }
         }
     }
-    return nullptr;
+    return std::shared_ptr<Artworks::ArtworkMetadata>();
 }
 
 int MetadataCacheSaveTest::doTest() {
@@ -56,7 +58,7 @@ int MetadataCacheSaveTest::doTest() {
 
     VERIFY(m_TestsApp.getArtworksCount() == cachedArtworks.count(), "Metadata cache size does not match");
     for (MetadataIO::CachedArtwork &ca: cachedArtworks) {
-        Artworks::ArtworkMetadata *artwork = findArtworkByFilepath(m_TestsApp.getArtworksListModel(), ca.m_Filepath);
+        auto artwork = findArtworkByFilepath(m_TestsApp.getArtworksListModel(), ca.m_Filepath);
         VERIFY(artwork != nullptr, "Metadata cache contains orphanned artworks");
 
         VERIFY(artwork->getTitle() == ca.m_Title, "Title does not match");

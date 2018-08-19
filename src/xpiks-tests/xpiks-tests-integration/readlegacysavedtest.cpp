@@ -19,12 +19,12 @@ int ReadLegacySavedTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     const QStringList &keywords = artwork->getKeywords();
 
     QStringList expectedKeywords = QString("rock,nature,landscape,white,background,beautiful,sun,light,mountain,outdoor,top,rocky,snow,fog,horizon").split(',');
 
-    Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+    auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
 
     VERIFY(expectedKeywords == keywords, "Keywords are not the same!");
     VERIFY(image->getImageSize().width() == 2752, "Image width was read incorrectly");

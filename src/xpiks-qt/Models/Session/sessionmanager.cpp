@@ -168,7 +168,7 @@ namespace Models {
 
 #ifdef INTEGRATION_TESTS
     void SessionManager::clearSession() {
-        std::vector<Artworks::ArtworkMetadata*> emptyFiles;
+        std::vector<std::shared_ptr<Artworks::ArtworkMetadata>> emptyFiles;
         QStringList emptyDirs;
         auto sessionSnapshot = std::make_unique<Artworks::SessionSnapshot>(emptyFiles, emptyDirs);
         bool cleared = save(sessionSnapshot);
