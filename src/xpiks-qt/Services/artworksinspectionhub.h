@@ -11,6 +11,7 @@
 #ifndef ARTWORKSINSPECTIONHUB_H
 #define ARTWORKSINSPECTIONHUB_H
 
+#include <memory>
 #include <Common/messages.h>
 #include <Common/types.h>
 

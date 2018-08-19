@@ -13,6 +13,7 @@
 
 #include <Common/flags.h>
 #include <QSet>
+#include <memory>
 #include "iwarningsitem.h"
 
 namespace Artworks {

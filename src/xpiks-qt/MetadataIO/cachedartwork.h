@@ -16,6 +16,7 @@
 #include <QString>
 #include <QDateTime>
 #include <QVector>
+#include <memory>
 #include <Common/flags.h>
 
 namespace Artworks {
