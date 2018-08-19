@@ -18,14 +18,13 @@ int SpellCheckMultireplaceTest::doTest() {
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
     files << setupFilePathForTest("images-for-tests/vector/027.jpg");
 
-    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
-
-    // wait for after-add spellchecking
-    QThread::sleep(1);
-
-    auto artwork = m_TestsApp.getArtwork(0);
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForSpellcheck(waiter);
+
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
+    VERIFY(waiter.wait(5), "Timeout for waiting for initial spellcheck results");
+
+    auto artwork = m_TestsApp.getArtwork(0);
 
     QString wrongWord = "abbreviatioe";
     artwork->setDescription(artwork->getDescription() + ' ' + wrongWord);
@@ -33,10 +32,9 @@ int SpellCheckMultireplaceTest::doTest() {
     artwork->appendKeyword("correct part " + wrongWord);
     artwork->setIsSelected(true);
 
-    VERIFY(waiter.wait(5), "Timeout for waiting for spellcheck results");
-
-    // wait for finding suggestions
-    QThread::sleep(1);
+    sleepWaitUntil(5, [&artwork]() {
+        return artwork->getBasicModel().hasKeywordsSpellError();
+    });
 
     auto &basicMetadataModel = artwork->getBasicMetadataModel();
 
@@ -44,7 +42,7 @@ int SpellCheckMultireplaceTest::doTest() {
     VERIFY(basicMetadataModel.hasTitleSpellError(), "Title spell error not detected");
     VERIFY(basicMetadataModel.hasKeywordsSpellError(), "Keywords spell error not detected");
 
-    sleepWaitUntil(5, [=]() {
+    sleepWaitUntil(5, [&]() {
         return m_TestsApp.getSpellCheckService().getSuggestionsCount() > 0;
     });
 

@@ -44,7 +44,7 @@ int SpellingProducesWarningsTest::doTest() {
 
     LOG_INFO << "Spellchecking finished. Waiting for warnings...";
 
-    sleepWaitUntil(5, [=]() {
+    sleepWaitUntil(5, [&artwork]() {
         return Common::HasFlag(artwork->getWarningsFlags(), Common::WarningFlags::SpellErrorsInTitle) &&
                 Common::HasFlag(artwork->getWarningsFlags(), Common::WarningFlags::SpellErrorsInDescription) &&
                 Common::HasFlag(artwork->getWarningsFlags(), Common::WarningFlags::SpellErrorsInKeywords);
