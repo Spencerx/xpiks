@@ -36,11 +36,11 @@ namespace libxpks {
             LOG_DEBUG << "Generating filepathes for" << size << "item(s)";
 
             for (size_t i = 0; i < size; ++i) {
-                Artworks::ArtworkMetadata *metadata = artworksSnapshot.get(i);
-                QString filepath = metadata->getFilepath();
+                auto &artwork = artworksSnapshot.get(i);
+                QString filepath = artwork->getFilepath();
                 filePathes.append(filepath);
 
-                Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(metadata);
+                auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
 
                 if (image != NULL && image->hasVectorAttached()) {
                     filePathes.append(image->getAttachedVectorPath());
