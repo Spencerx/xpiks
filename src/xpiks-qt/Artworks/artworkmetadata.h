@@ -234,7 +234,7 @@ namespace Artworks {
 
 #ifdef CORE_TESTS
     public:
-        SpellCheck::SpellCheckItemInfo *getSpellCheckInfo() { return &m_SpellCheckInfo; }
+        SpellCheck::SpellCheckInfo &getSpellCheckInfo() { return m_SpellCheckInfo; }
 #endif
 
 #ifndef CORE_TESTS

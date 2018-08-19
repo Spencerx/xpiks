@@ -83,7 +83,7 @@ void RemoveFilesFsTests::removeArtworksAllItems() {
     Artworks::ArtworksSnapshot snapshot;
 
     for (int i = 0; i < itemsToAdd; i++) {
-        auto *artwork = artworksListModel.getMockArtwork(i);
+        auto artwork = artworksListModel.getMockArtwork(i);
         snapshot.append(artwork);
     }
 

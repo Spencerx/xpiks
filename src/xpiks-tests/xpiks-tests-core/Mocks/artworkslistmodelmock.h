@@ -19,20 +19,21 @@ namespace Mocks {
         { }
 
     public:
-        virtual Artworks::ArtworkMetadata *createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID) override {
-            ArtworkMetadataMock *artwork = new ArtworkMetadataMock(file.m_Path, directoryID);
+        virtual std::shared_ptr<Artworks::ArtworkMetadata> createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID) override {
+            auto artwork = std::make_shared<ArtworkMetadataMock>(file.m_Path, directoryID);
             artwork->initialize("Test title", "Test description", QStringList() << "keyword1" << "keyword2" << "keyword3");
             return artwork;
         }
         void setUpdatesBlocked(bool value) { m_BlockUpdates = value; }
 
-        ArtworkMetadataMock *getMockArtwork(int index) const { return dynamic_cast<ArtworkMetadataMock*>(getArtwork(index)); }
-        size_t getFinalizationListSize() const { return getFinalizationList().size(); }
+        std::shared_ptr<ArtworkMetadataMock> getMockArtwork(int index) const {
+            return std::dynamic_pointer_cast<ArtworkMetadataMock>(accessArtwork(index));
+        }
         void removeAll() { deleteItems(Helpers::IndicesRanges(getArtworksSize())); }
 
         void mockDeletion(int count) {
             for (int i = 0; i < count; ++i) {
-                getArtwork(i)->setUnavailable();
+                accessArtwork(i)->setUnavailable();
             }
         }
 
@@ -42,10 +43,10 @@ namespace Mocks {
             }
         }
 
-        void foreachArtwork(std::function<void (int index, ArtworkMetadataMock *metadata)> action) {
+        void foreachArtwork(std::function<void (int index, std::shared_ptr<ArtworkMetadataMock> const &metadata)> action) {
             int size = getArtworksSize();
             for (int i = 0; i < size; ++i) {
-                auto *item = dynamic_cast<ArtworkMetadataMock*>(getArtwork(i));
+                auto item = std::dynamic_pointer_cast<ArtworkMetadataMock>(accessArtwork(i));
                 action(i, item);
             }
         }
@@ -74,7 +75,9 @@ namespace Mocks {
         }
 
         size_t getAvailableArtworksSize() const {
-            return filterAvailableArtworks<size_t>([](Artworks::ArtworkMetadata*,size_t index) { return index; }).size();
+            return filterAvailableArtworks<size_t>(
+                        [](std::shared_ptr<Artworks::ArtworkMetadata> const &,size_t index) { return index; })
+            .size();
         }
 
     private:

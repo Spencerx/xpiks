@@ -75,6 +75,7 @@ namespace KeywordsPresets {
 
         m_PresetsList[presetIndex]->m_PresetName = name;
     }
+
     ID_t PresetKeywordsModel::addItem(const QString &presetName, const QStringList &keywords) {
         LOG_DEBUG << "#";
         int lastIndex = getPresetsCount();
@@ -82,7 +83,7 @@ namespace KeywordsPresets {
 
         beginInsertRows(QModelIndex(), lastIndex, lastIndex);
         {
-            m_PresetsList.push_back(new PresetModel(nextID, presetName, keywords, DEFAULT_GROUP_ID));
+            m_PresetsList.push_back(std::make_shared<PresetModel>(nextID, presetName, keywords, DEFAULT_GROUP_ID));
         }
         endInsertRows();
 

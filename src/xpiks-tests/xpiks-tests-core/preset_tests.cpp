@@ -42,12 +42,12 @@ void PresetTests::expandFromPresetTrivial()
     presetKeywordsModel.appendKeyword(0, "keyword_5");
 
     for (int i = 0; i < itemsToGenerate; i++) {
-        auto *metadata = artworksListModel.getMockArtwork(i);
+        auto metadata = artworksListModel.getMockArtwork(i);
         metadata->set("title", "description", QStringList() << "keyword_0");
     }
 
     artworksListModel.expandPreset(0, 0, 0, presetKeywordsModel)->execute();
-    Artworks::ArtworkMetadata *metadata = artworksListModel.getArtwork(0);
+    auto metadata = artworksListModel.getMockArtwork(0);
     QStringList finalString;
     finalString << "keyword_1" << "keyword_2" << "keyword_3" << "keyword_4" << "keyword_5";
     QCOMPARE(metadata->getKeywords(), finalString);
@@ -67,12 +67,12 @@ void PresetTests::expandFromPresetWithDuplicates()
     presetKeywordsModel.appendKeyword(0, "keyword_5");
 
     for (int i = 0; i < itemsToGenerate; i++) {
-        auto *metadata = artworksListModel.getMockArtwork(i);
+        auto metadata = artworksListModel.getMockArtwork(i);
         metadata->set("title", "description", QStringList() << "keyword_0" << "keyword_1" << "keyword_2");
     }
 
     artworksListModel.expandPreset(0, 0, 0, presetKeywordsModel)->execute();
-    Artworks::ArtworkMetadata *metadata = artworksListModel.getArtwork(0);
+    auto metadata = artworksListModel.getMockArtwork(0);
     QStringList finalString;
     finalString << "keyword_1" << "keyword_2" << "keyword_3" << "keyword_4" << "keyword_5";
     QCOMPARE(metadata->getKeywords(), finalString);
@@ -91,12 +91,12 @@ void PresetTests::appendFromPresetTrivial() {
     presetKeywordsModel.appendKeyword(0, "keyword_5");
 
     for (int i = 0; i < itemsToGenerate; i++) {
-        auto *metadata = artworksListModel.getMockArtwork(i);
+        auto metadata = artworksListModel.getMockArtwork(i);
         metadata->set("title", "description", QStringList() << "keyword_0" << "keyword_1" << "keyword_2");
     }
 
     artworksListModel.addPreset(0, 0, presetKeywordsModel)->execute();
-    Artworks::ArtworkMetadata *metadata = artworksListModel.getArtwork(0);
+    auto metadata = artworksListModel.getMockArtwork(0);
     QStringList finalString;
     finalString << "keyword_0" << "keyword_1" << "keyword_2" << "keyword_3" << "keyword_4" << "keyword_5";
     QCOMPARE(metadata->getKeywords(), finalString);
@@ -115,12 +115,12 @@ void PresetTests::appendFromPresetWithDuplicates() {
     presetKeywordsModel.appendKeyword(0, "keyword_5");
 
     for (int i = 0; i < itemsToGenerate; i++) {
-        auto *metadata = artworksListModel.getMockArtwork(i);
+        auto metadata = artworksListModel.getMockArtwork(i);
         metadata->set("title", "description", QStringList() << "keyword_0" << "keyword_1" << "keyword_2");
     }
 
     artworksListModel.addPreset(0, 0, presetKeywordsModel)->execute();
-    Artworks::ArtworkMetadata *metadata = artworksListModel.getArtwork(0);
+    auto metadata = artworksListModel.getMockArtwork(0);
     QStringList finalString;
     finalString << "keyword_0" << "keyword_1" << "keyword_2" << "keyword_3" << "keyword_4" << "keyword_5";
     QCOMPARE(metadata->getKeywords(), finalString);
@@ -131,13 +131,13 @@ void PresetTests::appendToProxyModelTest() {
     const int itemsToGenerate = 5;
     DECLARE_MODELS_AND_GENERATE(itemsToGenerate);
     for (int i = 0; i < itemsToGenerate; i++) {
-        auto *metadata = artworksListModel.getMockArtwork(i);
+        auto metadata = artworksListModel.getMockArtwork(i);
         metadata->set("title", "description", QStringList());
     }
 
     Mocks::ArtworksUpdaterMock updater;
     Models::ArtworkProxyModel proxyModel(commandManager, presetKeywordsModel, updater);
-    proxyModel.setSourceArtwork((QObject*)artworksListModel.getMockArtwork(0));
+    proxyModel.setSourceArtwork((QObject*)artworksListModel.getMockArtwork(0).get());
     artworksListModel.setUpdatesBlocked(false);
 
     QStringList keywords;
@@ -154,13 +154,13 @@ void PresetTests::expandLastKeywordInProxyModelTest() {
     const int itemsToGenerate = 5;
     DECLARE_MODELS_AND_GENERATE(itemsToGenerate);
     for (int i = 0; i < itemsToGenerate; i++) {
-        auto *metadata = artworksListModel.getMockArtwork(i);
+        auto metadata = artworksListModel.getMockArtwork(i);
         metadata->set("title", "description", QStringList() << "keyword_0" << "preset name");
     }
 
     Mocks::ArtworksUpdaterMock updater;
     Models::ArtworkProxyModel proxyModel(commandManager, presetKeywordsModel, updater);
-    proxyModel.setSourceArtwork((QObject*)artworksListModel.getMockArtwork(0));
+    proxyModel.setSourceArtwork((QObject*)artworksListModel.getMockArtwork(0).get());
     artworksListModel.setUpdatesBlocked(false);
 
     QStringList keywords;

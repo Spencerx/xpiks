@@ -38,13 +38,13 @@ namespace Mocks {
             this->resetModified();
         }
 
-        QString retrieveKeyword(int index) { return getBasicModel()->retrieveKeyword(index); }
-        int rowCount() const { return getBasicModel()->rowCount(); }
+        QString retrieveKeyword(int index) { return getBasicModel().retrieveKeyword(index); }
+        int rowCount() const { return getBasicMetadataModel().rowCount(); }
 
-        bool isTitleEmpty() { return getBasicModel()->isTitleEmpty(); }
-        bool isDescriptionEmpty() { return getBasicModel()->isDescriptionEmpty(); }
+        bool isTitleEmpty() { return getBasicMetadataModel().isTitleEmpty(); }
+        bool isDescriptionEmpty() { return getBasicMetadataModel().isDescriptionEmpty(); }
 
-        bool areKeywordsEmpty() { return getBasicModel()->areKeywordsEmpty(); }
+        bool areKeywordsEmpty() { return getBasicModel().areKeywordsEmpty(); }
 
         void resetAll() { this->clearModel(); this->resetFlags(); }
 

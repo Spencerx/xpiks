@@ -177,7 +177,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Commands/Editing/editartworkstemplate.cpp \
     ../../xpiks-qt/Commands/Editing/findandreplacetemplate.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionsitem.cpp \
-    ../../xpiks-qt/Services/SpellCheck/spellcheckiteminfo.cpp \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckinfo.cpp \
     ../../xpiks-qt/Models/Editing/deletekeywordsviewmodel.cpp \
     ../../xpiks-qt/Services/Maintenance/logscleanupjobitem.cpp \
     ../../xpiks-qt/Services/Warnings/warningsitem.cpp \
@@ -209,7 +209,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Suggestion/keywordssuggestor.cpp \
     ../../xpiks-qt/Models/switchermodel.cpp \
     ../../xpiks-qt/Connectivity/switcherconfig.cpp \
-    common_tests.cpp
+    common_tests.cpp \
+    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -252,9 +253,7 @@ HEADERS += \
     ../../xpiks-qt/Common/defines.h \
     ../../xpiks-qt/Common/delayedactionentity.h \
     ../../xpiks-qt/Common/flags.h \
-    ../../xpiks-qt/Common/hold.h \
     ../../xpiks-qt/Common/iflagsprovider.h \
-    ../../xpiks-qt/Common/irefcountedobject.h \
     ../../xpiks-qt/Common/isystemenvironment.h \
     ../../xpiks-qt/Common/logging.h \
     ../../xpiks-qt/Common/messages.h \
@@ -336,7 +335,7 @@ HEADERS += \
     ../../xpiks-qt/Commands/Editing/editartworkstemplate.h \
     ../../xpiks-qt/Commands/Editing/findandreplacetemplate.h \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionsitem.h \
-    ../../xpiks-qt/Services/SpellCheck/spellcheckiteminfo.h \
+    ../../xpiks-qt/Services/SpellCheck/spellcheckinfo.h \
     ../../xpiks-qt/Models/Editing/deletekeywordsviewmodel.h \
     ../../xpiks-qt/Services/Maintenance/imaintenanceitem.h \
     ../../xpiks-qt/Services/Maintenance/logscleanupjobitem.h \
@@ -377,5 +376,7 @@ HEADERS += \
     ../../xpiks-qt/Connectivity/switcherconfig.h \
     ../../xpiks-qt/Common/lrucache.h\
     ../../xpiks-qt/Helpers/hashhelpers.h \
-    common_tests.h
+    common_tests.h \
+    ../../xpiks-qt/Services/SpellCheck/ispellsuggestionstarget.h \
+    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.h
 

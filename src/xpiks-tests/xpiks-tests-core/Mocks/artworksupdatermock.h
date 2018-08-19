@@ -8,7 +8,7 @@ namespace Mocks {
     class ArtworksUpdaterMock: public Services::IArtworksUpdater {
         // IArtworksUpdater interface
     public:
-        virtual void updateArtwork(Artworks::ArtworkMetadata *) override {
+        virtual void updateArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &) override {
             LOG_DEBUG << "Updated artwork";
         }
 

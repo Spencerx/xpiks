@@ -19,8 +19,8 @@
     KeywordsPresets::PresetKeywordsModel presetsManager(environment);\
     Models::CombinedArtworksModel combinedModel(commandManager, presetsManager);
 
-Artworks::ArtworkMetadata *createArtworkMetadata(const QString &desc, const QString &title, const QStringList &keywords, int index=0) {
-    Mocks::ArtworkMetadataMock *artwork = new Mocks::ArtworkMetadataMock("/random/file/path.jpg");
+std::shared_ptr<Artworks::ArtworkMetadata> createArtworkMetadata(const QString &desc, const QString &title, const QStringList &keywords, int index=0) {
+    auto artwork = std::make_shared<Mocks::ArtworkMetadataMock>("/random/file/path.jpg");
     artwork->initAsEmpty();
     artwork->appendKeywords(keywords);
     artwork->setTitle(title);
@@ -338,8 +338,8 @@ void CombinedModelTests::editSeveralWithSameKeywordsTest() {
 
     LOG_DEBUG << "Checking" << snapshot.size() << "items";
 
-    for (auto &locker: snapshot.getRawData()) {
-        QStringList keywordsSlice = locker->getArtworkMetadata()->getKeywords().mid(0, 4);
+    for (auto &artwork: snapshot.getRawData()) {
+        QStringList keywordsSlice = artwork->getKeywords().mid(0, 4);
         QCOMPARE(keywordsSlice, commonKeywords);
     }
 }
@@ -384,12 +384,12 @@ void CombinedModelTests::recombineAfterRemoveAllButOneTest() {
     combinedModel.setIsSelected(1, true);
     combinedModel.setIsSelected(2, true);
     combinedModel.removeSelectedArtworks();
-    Artworks::ArtworkMetadata *first = combinedModel.accessItem(0)->getArtworkMetadata();
+    auto &first = combinedModel.accessItem(0)->getArtwork();
 
     QCOMPARE(combinedModel.getArtworksCount(), 1);
     QCOMPARE(combinedModel.getTitle(), first->getTitle());
     QCOMPARE(combinedModel.getDescription(), first->getDescription());
-    QCOMPARE(combinedModel.getKeywordsCount(), first->getBasicModel()->getKeywordsCount());
+    QCOMPARE(combinedModel.getKeywordsCount(), first->getBasicModel().getKeywordsCount());
     QCOMPARE(combinedModel.getKeywords(), first->getKeywords());
     QCOMPARE(combinedModel.areKeywordsModified(), false);
 }
@@ -411,12 +411,12 @@ void CombinedModelTests::recombineAfterChangesTest() {
     combinedModel.setIsSelected(1, true);
     combinedModel.setIsSelected(2, true);
     combinedModel.removeSelectedArtworks();
-    Artworks::ArtworkMetadata *first = combinedModel.accessItem(0)->getArtworkMetadata();
+    auto &first = combinedModel.accessItem(0)->getArtwork();
 
     QCOMPARE(combinedModel.getArtworksCount(), 1);
     QVERIFY(combinedModel.getTitle() != first->getTitle());
     QVERIFY(combinedModel.getDescription() != first->getDescription());
-    QVERIFY(combinedModel.getKeywordsCount() != first->getBasicModel()->getKeywordsCount());
+    QVERIFY(combinedModel.getKeywordsCount() != first->getBasicModel().getKeywordsCount());
     QVERIFY(combinedModel.getKeywords() != first->getKeywords());
     QCOMPARE(combinedModel.areKeywordsModified(), true);
 }

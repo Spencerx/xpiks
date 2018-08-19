@@ -13,6 +13,7 @@
 
 #include <QString>
 #include <Common/flags.h>
+#include <memory>
 
 namespace Artworks {
     class ArtworkMetadata;

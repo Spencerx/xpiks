@@ -36,14 +36,14 @@ void ArtworksListModelTests::removeUnavailableTest() {
 
     for (int i = 0; i < count; ++i) {
         if (i%3 == 0) {
-            artworksListModel.getArtwork(i)->setUnavailable();
+            artworksListModel.getMockArtwork(i)->setUnavailable();
         }
     }
 
     artworksListModel.purgeUnavailableFiles();
 
     for (int i = 0; i < artworksListModel.getArtworksSize(); ++i) {
-        QVERIFY(!artworksListModel.getArtwork(i)->isUnavailable());
+        QVERIFY(!artworksListModel.getMockArtwork(i)->isUnavailable());
     }
 }
 
@@ -53,14 +53,14 @@ void ArtworksListModelTests::unselectAllTest() {
 
     for (int i = 0; i < count; ++i) {
         if (i%3 == 0) {
-            artworksListModel.getArtwork(i)->setIsSelected(true);
+            artworksListModel.getMockArtwork(i)->setIsSelected(true);
         }
     }
 
     artworksListModel.unselectAllItems();
 
     for (int i = 0; i < count; ++i) {
-        QVERIFY(!artworksListModel.getArtwork(i)->isSelected());
+        QVERIFY(!artworksListModel.getMockArtwork(i)->isSelected());
     }
 }
 
@@ -71,9 +71,9 @@ void ArtworksListModelTests::modificationChangesModifiedCountTest() {
     const int index = 3;
 
     QCOMPARE(artworksListModel.getModifiedArtworksCount(), 0);
-    artworksListModel.getArtwork(index)->setModified();
+    artworksListModel.getMockArtwork(index)->setModified();
     QCOMPARE(artworksListModel.getModifiedArtworksCount(), 1);
-    artworksListModel.getArtwork(index)->resetModified();
+    artworksListModel.getMockArtwork(index)->resetModified();
     QCOMPARE(artworksListModel.getModifiedArtworksCount(), 0);
 }
 
@@ -131,7 +131,7 @@ void ArtworksListModelTests::setAllSavedResetsModifiedCountTest() {
 
     for (int i = 0; i < count; ++i) {
         if (i%3 == 0) {
-            artworksListModel.getArtwork(i)->setModified();
+            artworksListModel.getMockArtwork(i)->setModified();
             selectedItems.append(i);
         }
     }
@@ -140,19 +140,6 @@ void ArtworksListModelTests::setAllSavedResetsModifiedCountTest() {
 
     artworksListModel.setItemsSaved(Helpers::IndicesRanges(selectedItems));
     QCOMPARE(artworksListModel.getModifiedArtworksCount(), 0);
-}
-
-void ArtworksListModelTests::removingLockedArtworksTest() {
-    const size_t count = 10;
-    DECLARE_MODELS_AND_GENERATE(count, false);
-
-    for (int i = 0; i < (int)count; ++i) {
-        artworksListModel.getArtwork(i)->acquire();
-    }
-
-    QCOMPARE(artworksListModel.getFinalizationListSize(), (size_t)0);
-    artworksListModel.deleteAllItems();
-    QCOMPARE(artworksListModel.getFinalizationListSize(), count);
 }
 
 void ArtworksListModelTests::plainTextEditToEmptyKeywordsTest() {
@@ -332,7 +319,7 @@ void ArtworksListModelTests::proxyModelExitEmitsModifiedTest() {
     Services::ArtworksUpdateHub updateHub(artworksListModel);
     Models::ArtworkProxyModel proxyModel(commandManager, presetKeywordsModel, updateHub);
 
-    proxyModel.setSourceArtwork((QObject*)artworksListModel.getMockArtwork(0));
+    proxyModel.setSourceArtwork((QObject*)artworksListModel.getMockArtwork(0).get());
     proxyModel.setDescription("other description");
 
     MODIFIED_TEST_START;

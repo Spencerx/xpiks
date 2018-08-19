@@ -219,9 +219,9 @@ namespace Models {
     protected:
         virtual QHash<int, QByteArray> roleNames() const override;
         virtual ArtworkItem createArtwork(const Filesystem::ArtworkFile &file, qint64 directoryID);
+        std::shared_ptr<Artworks::ArtworkMetadata> const &accessArtwork(size_t index) const;
 
     private:
-        std::shared_ptr<Artworks::ArtworkMetadata> const &accessArtwork(size_t index) const;
         void destroyArtwork(ArtworkItem const &artwork);
         int getNextID();
 

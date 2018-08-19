@@ -137,6 +137,7 @@ namespace SpellCheck {
         beginResetModel();
         {
             m_SuggestionsList.clear();
+            m_SpellSuggestionsTarget.reset();
         }
         endResetModel();
         emit artworksCountChanged();
@@ -178,6 +179,7 @@ namespace SpellCheck {
 
     void SpellCheckSuggestionModel::setupModel(const std::shared_ptr<ISpellSuggestionsTarget> &target, Common::SpellCheckFlags flags) {
         LOG_DEBUG << "#";
+        m_SpellSuggestionsTarget = target;
         setupRequests(target->generateSuggestionItems(flags));
     }
 

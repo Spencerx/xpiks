@@ -182,7 +182,7 @@ void UndoRedoTests::undoModifyCommandTest() {
 
     Artworks::ArtworksSnapshot snapshot = std::move(artworksListModel.createArtworksSnapshot());
 
-    artworksListModel.getArtwork(0)->setModified();
+    artworksListModel.getMockArtwork(0)->setModified();
 
     auto flags = Common::ArtworkEditFlags::EditEverything;
     QString otherDescription = "brand new description";
@@ -203,16 +203,16 @@ void UndoRedoTests::undoModifyCommandTest() {
     QVERIFY(undoStatus);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        Artworks::ArtworkMetadata *artwork = artworksListModel.getArtwork(i);
+        auto artwork = artworksListModel.getMockArtwork(i);
         QCOMPARE(artwork->getDescription(), originalDescription);
         QCOMPARE(artwork->getTitle(), originalTitle);
         QCOMPARE(artwork->getKeywords(), originalKeywords);
         if (i > 0) {
-            QVERIFY(!artworksListModel.getArtwork(i)->isModified());
+            QVERIFY(!artworksListModel.getMockArtwork(i)->isModified());
         }
     }
 
-    QVERIFY(artworksListModel.getArtwork(0)->isModified());
+    QVERIFY(artworksListModel.getMockArtwork(0)->isModified());
 }
 
 void UndoRedoTests::undoPasteCommandTest() {
@@ -239,22 +239,22 @@ void UndoRedoTests::undoPasteCommandTest() {
 
     for (int i = 0; i < itemsToAdd; ++i) {
         if (i == pasteToIndex) { continue; }
-        QCOMPARE(artworksListModel.getArtwork(i)->getDescription(), originalDescription);
-        QCOMPARE(artworksListModel.getArtwork(i)->getTitle(), originalTitle);
-        QVERIFY(!artworksListModel.getArtwork(i)->isModified());
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getDescription(), originalDescription);
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getTitle(), originalTitle);
+        QVERIFY(!artworksListModel.getMockArtwork(i)->isModified());
     }
 
-    QCOMPARE(artworksListModel.getArtwork(pasteToIndex)->getKeywords(), merged);
-    QVERIFY(artworksListModel.getArtwork(pasteToIndex)->isModified());
+    QCOMPARE(artworksListModel.getMockArtwork(pasteToIndex)->getKeywords(), merged);
+    QVERIFY(artworksListModel.getMockArtwork(pasteToIndex)->isModified());
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        QCOMPARE(artworksListModel.getArtwork(i)->getDescription(), originalDescription);
-        QCOMPARE(artworksListModel.getArtwork(i)->getTitle(), originalTitle);
-        QCOMPARE(artworksListModel.getArtwork(i)->getKeywords(), originalKeywords);
-        QVERIFY(!artworksListModel.getArtwork(i)->isModified());
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getDescription(), originalDescription);
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getTitle(), originalTitle);
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getKeywords(), originalKeywords);
+        QVERIFY(!artworksListModel.getMockArtwork(i)->isModified());
     }
 }
 
@@ -276,21 +276,21 @@ void UndoRedoTests::undoClearAllTest() {
     commandManager.processCommand(command);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        auto *keywordsModel = artworksListModel.getArtwork(i)->getBasicModel();
-        QVERIFY(keywordsModel->isDescriptionEmpty());
-        QVERIFY(keywordsModel->isTitleEmpty());
-        QVERIFY(keywordsModel->areKeywordsEmpty());
-        QVERIFY(artworksListModel.getArtwork(i)->isModified());
+        auto &keywordsModel = artworksListModel.getMockArtwork(i)->getBasicMetadataModel();
+        QVERIFY(keywordsModel.isDescriptionEmpty());
+        QVERIFY(keywordsModel.isTitleEmpty());
+        QVERIFY(keywordsModel.areKeywordsEmpty());
+        QVERIFY(artworksListModel.getMockArtwork(i)->isModified());
     }
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        QCOMPARE(artworksListModel.getArtwork(i)->getDescription(), originalDescription);
-        QCOMPARE(artworksListModel.getArtwork(i)->getTitle(), originalTitle);
-        QCOMPARE(artworksListModel.getArtwork(i)->getKeywords(), originalKeywords);
-        QVERIFY(!artworksListModel.getArtwork(i)->isModified());
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getDescription(), originalDescription);
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getTitle(), originalTitle);
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getKeywords(), originalKeywords);
+        QVERIFY(!artworksListModel.getMockArtwork(i)->isModified());
     }
 }
 
@@ -312,20 +312,20 @@ void UndoRedoTests::undoClearKeywordsTest() {
     commandManager.processCommand(command);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        QCOMPARE(artworksListModel.getArtwork(i)->getDescription(), originalDescription);
-        QCOMPARE(artworksListModel.getArtwork(i)->getTitle(), originalTitle);
-        QVERIFY(artworksListModel.getArtwork(i)->getBasicModel()->areKeywordsEmpty());
-        QVERIFY(artworksListModel.getArtwork(i)->isModified());
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getDescription(), originalDescription);
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getTitle(), originalTitle);
+        QVERIFY(artworksListModel.getMockArtwork(i)->getBasicModel().areKeywordsEmpty());
+        QVERIFY(artworksListModel.getMockArtwork(i)->isModified());
     }
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        QCOMPARE(artworksListModel.getArtwork(i)->getDescription(), originalDescription);
-        QCOMPARE(artworksListModel.getArtwork(i)->getTitle(), originalTitle);
-        QCOMPARE(artworksListModel.getArtwork(i)->getKeywords(), originalKeywords);
-        QVERIFY(!artworksListModel.getArtwork(i)->isModified());
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getDescription(), originalDescription);
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getTitle(), originalTitle);
+        QCOMPARE(artworksListModel.getMockArtwork(i)->getKeywords(), originalKeywords);
+        QVERIFY(!artworksListModel.getMockArtwork(i)->isModified());
     }
 }
 
@@ -356,20 +356,20 @@ void UndoRedoTests::undoReplaceCommandTest() {
                                                              flags)));
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        Artworks::ArtworkMetadata *metadata = artworksListModel.getArtwork(i);
-        QCOMPARE(metadata->getTitle(), QString("ReplacedMyTitle"));
-        QCOMPARE(metadata->getDescription(), QString("ReplacedMyDescription"));
-        QVERIFY(artworksListModel.getArtwork(i)->isModified());
+        auto artwork = artworksListModel.getMockArtwork(i);
+        QCOMPARE(artwork->getTitle(), QString("ReplacedMyTitle"));
+        QCOMPARE(artwork->getDescription(), QString("ReplacedMyDescription"));
+        QVERIFY(artworksListModel.getMockArtwork(i)->isModified());
     }
 
     bool undoStatus = undoRedoManager.undoLastAction();
     QVERIFY(undoStatus);
 
     for (int i = 0; i < itemsToAdd; ++i) {
-        Artworks::ArtworkMetadata *metadata = artworksListModel.getArtwork(i);
-        QCOMPARE(metadata->getDescription(), originalDescription);
-        QCOMPARE(metadata->getTitle(), originalTitle);
-        QCOMPARE(metadata->getKeywords(), originalKeywords);
-        QVERIFY(!artworksListModel.getArtwork(i)->isModified());
+        auto artwork = artworksListModel.getMockArtwork(i);
+        QCOMPARE(artwork->getDescription(), originalDescription);
+        QCOMPARE(artwork->getTitle(), originalTitle);
+        QCOMPARE(artwork->getKeywords(), originalKeywords);
+        QVERIFY(!artworksListModel.getMockArtwork(i)->isModified());
     }
 }
