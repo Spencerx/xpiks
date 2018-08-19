@@ -7,4 +7,4 @@ git clone --depth=10 --branch=vs2015 https://bitbucket.org/ribtoks/xpiks-deps.gi
 
 cd xpiks-deps
 
-git checkout 6b48bf0
+git checkout e78792f
