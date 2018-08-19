@@ -19,12 +19,12 @@ int AddFilesBasicTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    auto *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     const QStringList &keywords = artwork->getKeywords();
 
     QStringList expectedKeywords = QString("abstract,art,black,blue,creative,dark,decor,decoration,decorative,design,dot,drops,elegance,element,geometric,interior,light,modern,old,ornate,paper,pattern,purple,retro,seamless,style,textile,texture,vector,wall,wallpaper").split(',');
 
-    Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+    auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
     VERIFY(image != nullptr, "Cannot convert artwork to image");
 
     VERIFY(expectedKeywords == keywords, "Keywords are not the same!");

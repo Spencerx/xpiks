@@ -20,7 +20,7 @@ int WarningsCombinedTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     VERIFY(artwork->isInitialized(), "Artwork is not initialized after import");
 
     sleepWaitUntil(3, [artwork]() {

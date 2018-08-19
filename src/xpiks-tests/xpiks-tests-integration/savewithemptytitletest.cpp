@@ -17,8 +17,8 @@ int SaveWithEmptyTitleTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
-    Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+    auto artwork = m_TestsApp.getArtwork(0);
+    auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
 
     VERIFY(image->getImageSize().width() == 1920, "Image width was read incorrectly");
     VERIFY(image->getImageSize().height() == 1272, "Image height was read incorrectly");

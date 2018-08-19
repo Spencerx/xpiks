@@ -19,7 +19,7 @@ int SpellingProducesWarningsTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     VERIFY(artwork->isInitialized(), "Artwork is not initialized after import");
 
     sleepWaitUntil(3, [artwork]() {
@@ -50,11 +50,11 @@ int SpellingProducesWarningsTest::doTest() {
                 Common::HasFlag(artwork->getWarningsFlags(), Common::WarningFlags::SpellErrorsInKeywords);
     });
 
-    auto *keywordsModel = artwork->getBasicModel();
+    auto &keywordsModel = artwork->getBasicMetadataModel();
 
-    VERIFY(keywordsModel->hasDescriptionSpellError(), "Description spell error not detected");
-    VERIFY(keywordsModel->hasTitleSpellError(), "Title spell error not detected");
-    VERIFY(keywordsModel->hasKeywordsSpellError(), "Keywords spell error not detected");
+    VERIFY(keywordsModel.hasDescriptionSpellError(), "Description spell error not detected");
+    VERIFY(keywordsModel.hasTitleSpellError(), "Title spell error not detected");
+    VERIFY(keywordsModel.hasKeywordsSpellError(), "Keywords spell error not detected");
 
     VERIFY(Common::HasFlag(artwork->getWarningsFlags(), Common::WarningFlags::SpellErrorsInTitle),
            "Warning was not produced for title spelling error");

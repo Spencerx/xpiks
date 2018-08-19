@@ -88,6 +88,13 @@ namespace SpellCheck {
         m_IsStopped = true;
     }
 
+#ifdef INTEGRATION_TESTS
+    bool SpellCheckService::isBusy() const {
+        bool isBusy = (m_SpellCheckWorker != NULL) && (m_SpellCheckWorker->hasPendingJobs());
+        return isBusy;
+    }
+#endif
+
     quint32 SpellCheckService::submitItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items, Common::SpellCheckFlags flags) {
         LOG_INFO << items.size() << "items to check";
         if (m_SpellCheckWorker == NULL) { return INVALID_BATCH_ID; }

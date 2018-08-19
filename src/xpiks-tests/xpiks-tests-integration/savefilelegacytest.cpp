@@ -18,9 +18,9 @@ int SaveFileLegacyTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
-    Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork*>(artwork);
+    auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
 
     VERIFY(image->getImageSize().width() == 1920, "Image width was read incorrectly");
     VERIFY(image->getImageSize().height() == 1272, "Image height was read incorrectly");
@@ -30,7 +30,7 @@ int SaveFileLegacyTest::doTest() {
     const QString description = "THROUGH ARGFILE Brand new description";
     artwork->setDescription(description);
     artwork->setTitle(title);
-    artwork->getBasicModel()->setKeywords(keywords);
+    artwork->getBasicModel().setKeywords(keywords);
     artwork->setIsSelected(true);
 
     SignalWaiter waiter;

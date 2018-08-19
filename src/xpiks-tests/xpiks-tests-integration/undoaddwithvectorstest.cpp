@@ -25,13 +25,13 @@ int UndoAddWithVectorsTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    Artworks::ImageArtwork *firstImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(0));
+    auto firstImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(0));
     Q_ASSERT(firstImage != NULL);
 
-    Artworks::ImageArtwork *secondImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(1));
+    auto secondImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(1));
     Q_ASSERT(secondImage != NULL);
 
-    Artworks::ImageArtwork *thirdImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(2));
+    auto thirdImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(2));
     Q_ASSERT(thirdImage != NULL);
 
     VERIFY(firstImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");
@@ -52,13 +52,13 @@ int UndoAddWithVectorsTest::doTest() {
     VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport files");
     VERIFY(m_TestsApp.getArtworksCount() == files.length(), "Items were not put back");
 
-    firstImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(0));
+    firstImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(0));
     Q_ASSERT(firstImage != NULL);
 
-    secondImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(1));
+    secondImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(1));
     Q_ASSERT(secondImage != NULL);
 
-    thirdImage = dynamic_cast<Artworks::ImageArtwork*>(m_TestsApp.getArtwork(2));
+    thirdImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(2));
     Q_ASSERT(thirdImage != NULL);
 
     VERIFY(firstImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");

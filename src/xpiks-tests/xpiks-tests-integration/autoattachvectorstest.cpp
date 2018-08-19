@@ -25,8 +25,8 @@ int AutoAttachVectorsTest::doTest() {
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     for (int i = 0; i < files.length(); ++i) {
-        Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(i);
-        Artworks::ImageArtwork *image = dynamic_cast<Artworks::ImageArtwork *>(artwork);
+        auto artwork = m_TestsApp.getArtwork(i);
+        auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
         VERIFY(image != NULL && image->hasVectorAttached(), "Vector is not attached!");
     }
 

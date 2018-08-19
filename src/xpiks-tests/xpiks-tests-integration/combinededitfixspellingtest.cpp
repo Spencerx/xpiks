@@ -25,10 +25,10 @@ int CombinedEditFixSpellingTest::doTest() {
 
     QString wrongWord = "abbreviatioe";
 
-    auto *artwork = m_TestsApp.getArtwork(0);
-    Artworks::BasicMetadataModel *basicModel = artwork->getBasicModel();
+    auto artwork = m_TestsApp.getArtwork(0);
+    auto &basicModel = artwork->getBasicMetadataModel();
     SignalWaiter waiter;
-    QObject::connect(basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
+    QObject::connect(&basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
                      &waiter, &SignalWaiter::finished);
 
     QString nextDescription = artwork->getDescription() + ' ' + wrongWord;
@@ -39,7 +39,7 @@ int CombinedEditFixSpellingTest::doTest() {
     // wait for finding suggestions
     QThread::sleep(1);
 
-    VERIFY(basicModel->hasDescriptionSpellError(), "Description spell error not detected");
+    VERIFY(basicModel.hasDescriptionSpellError(), "Description spell error not detected");
 
     artwork->setIsSelected(true);
     m_TestsApp.dispatch(QMLExtensions::UICommandID::EditSelectedArtworks);
@@ -70,7 +70,7 @@ int CombinedEditFixSpellingTest::doTest() {
     QString correctDescription = combinedKeywordsModel->getDescription();
     m_TestsApp.getCombinedArtworksModel().saveEdits();
 
-    VERIFY(basicModel->getDescription() == correctDescription, "Description was not saved");
+    VERIFY(basicModel.getDescription() == correctDescription, "Description was not saved");
 
     return 0;
 }

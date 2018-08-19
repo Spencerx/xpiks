@@ -174,7 +174,7 @@ int XpiksTestsApp::restoreSavedSession() {
 }
 
 void XpiksTestsApp::connectWaiterForSpellcheck(SignalWaiter &waiter) {
-    QObject::connect(&m_SpellCheckerService, &SpellCheck::SpellCheckService::spellCheckQueueIsEmpty,
+    QObject::connect(&m_SpellCheckService, &SpellCheck::SpellCheckService::spellCheckQueueIsEmpty,
                      &waiter, &SignalWaiter::finished);
 }
 
@@ -188,8 +188,10 @@ void XpiksTestsApp::connectWaiterForExport(SignalWaiter &waiter) {
                      &waiter, &SignalWaiter::finished);
 }
 
-Artworks::ArtworkMetadata *XpiksTestsApp::getArtwork(int index) {
-    return m_ArtworksListModel.getArtwork(index);
+std::shared_ptr<Artworks::ArtworkMetadata> XpiksTestsApp::getArtwork(int index) {
+    std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+    m_ArtworksListModel.tryGetArtwork(index, artwork);
+    return artwork;
 }
 
 int XpiksTestsApp::getArtworksCount() {
@@ -199,7 +201,7 @@ int XpiksTestsApp::getArtworksCount() {
 void XpiksTestsApp::doCleanup() {
     LOG_INTEGRATION_TESTS << "#";
 
-    m_SpellCheckerService.cancelCurrentBatch();
+    m_SpellCheckService.cancelCurrentBatch();
     m_WarningsService.cancelCurrentBatch();
     m_MaintenanceService.cleanup();
     m_ArtworksUpdateHub.clear();
@@ -214,7 +216,7 @@ void XpiksTestsApp::doCleanup() {
     m_ArtworksListModel.deleteAllItems();
     m_SettingsModel.resetToDefault();
     m_SpellSuggestionModel.clearModel();
-    m_SpellCheckerService.clearUserDictionary();
+    m_SpellCheckService.clearUserDictionary();
     m_SessionManager.clearSession();
     m_MetadataIOCoordinator.clear();
 }

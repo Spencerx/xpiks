@@ -13,9 +13,9 @@ void SpellCheckUndoTest::setup() {
 }
 
 #define CHECK_HAS_ERRORS_EVERYWHERE(basicModel)\
-    VERIFY(basicModel->hasDescriptionSpellError(), "Description spell error not detected");\
-    VERIFY(basicModel->hasTitleSpellError(), "Title spell error not detected");\
-    VERIFY(basicModel->hasKeywordsSpellError(), "Keywords spell error not detected")
+    VERIFY(basicModel.hasDescriptionSpellError(), "Description spell error not detected");\
+    VERIFY(basicModel.hasTitleSpellError(), "Title spell error not detected");\
+    VERIFY(basicModel.hasKeywordsSpellError(), "Keywords spell error not detected")
 
 int SpellCheckUndoTest::doTest() {
     QList<QUrl> files;
@@ -28,7 +28,7 @@ int SpellCheckUndoTest::doTest() {
 
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForSpellcheck(waiter);
-    Artworks::ArtworkMetadata *artwork = m_TestsApp.getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
 
     QString wrongWord = "abbreviatioe";
     artwork->setDescription(artwork->getDescription() + ' ' + wrongWord);
@@ -40,14 +40,14 @@ int SpellCheckUndoTest::doTest() {
 
     // wait for finding suggestions
     QThread::sleep(1);
-    auto *basicKeywordsModel = artwork->getBasicModel();
+    auto &basicModel = artwork->getBasicMetadataModel();
 
-    CHECK_HAS_ERRORS_EVERYWHERE(basicKeywordsModel);
+    CHECK_HAS_ERRORS_EVERYWHERE(basicModel);
 
     m_TestsApp.getFilteredArtworksModel().clearKeywords(0);
     QThread::sleep(1);
 
-    VERIFY(!basicKeywordsModel->hasKeywordsSpellError(), "Keywords spell error not cleared");
+    VERIFY(!basicModel.hasKeywordsSpellError(), "Keywords spell error not cleared");
     VERIFY(m_TestsApp.undoLastAction(), "Failed to undo last action");
     VERIFY(waiter.wait(5), "Timeout for waiting for second spellcheck results");
 
@@ -55,7 +55,7 @@ int SpellCheckUndoTest::doTest() {
     QThread::sleep(1);
 
     qDebug() << "Checking second time...";
-    CHECK_HAS_ERRORS_EVERYWHERE(basicKeywordsModel);
+    CHECK_HAS_ERRORS_EVERYWHERE(basicModel);
 
     return 0;
 }
