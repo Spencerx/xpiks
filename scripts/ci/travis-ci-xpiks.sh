@@ -20,7 +20,8 @@ echo "Building Xpiks... Done"
 
 echo "Starting cppcheck..."
 
-cppcheck --language=c++ -j 4 --inconclusive --quiet -DQT_DEBUG -DWITH_LOGS -DWITH_PLUGINS -DWITH_STDOUT_LOGS -DTRAVIS_CI -UCORE_TESTS -UINTEGRATION_TESTS -UQ_OS_WIN -DQ_OS_LINUX --error-exitcode=1 --suppress=missingIncludeSystem --suppress='*:moc_*.cpp' --max-configs=15 --verbose --enable=warning .
+cppcheck --version
+cppcheck --language=c++ --std=c++11 -j 8 --inconclusive --quiet -DQT_DEBUG -DWITH_LOGS -DWITH_PLUGINS -DWITH_STDOUT_LOGS -DTRAVIS_CI -UCORE_TESTS -UINTEGRATION_TESTS -UQ_OS_WIN -DQ_OS_LINUX --error-exitcode=1 --suppress=missingIncludeSystem --suppress='*:moc_*.cpp' --verbose --enable=warning --showtime=summary --max-configs=7 .
 
 echo "cppcheck exited with code $?"
 
