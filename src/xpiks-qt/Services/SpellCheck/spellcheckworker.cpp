@@ -173,6 +173,14 @@ namespace SpellCheck {
                     Artworks::ArtworksSnapshot(rawSnapshot));
     }
 
+#ifdef INTEGRATION_TESTS
+    void SpellCheckWorker::clearSuggestions() {
+        QWriteLocker locker(&m_SuggestionsLock);
+        Q_UNUSED(locker);
+        m_Suggestions.clear();
+    }
+#endif
+
     QStringList SpellCheckWorker::retrieveCorrections(const QString &word) {
         QReadLocker locker(&m_SuggestionsLock);
         Q_UNUSED(locker);
@@ -181,6 +189,8 @@ namespace SpellCheck {
         auto it = m_Suggestions.find(word);
         if (it != m_Suggestions.end()) {
             result = it.value();
+        } else {
+            LOG_INTEGRATION_TESTS << "Suggestion not found for:" << word;
         }
 
         return result;

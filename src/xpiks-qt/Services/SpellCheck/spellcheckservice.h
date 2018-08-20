@@ -77,6 +77,7 @@ namespace SpellCheck {
 #ifdef INTEGRATION_TESTS
     public:
         int getSuggestionsCount();
+        void clearSuggestions();
 #endif
 
     public:

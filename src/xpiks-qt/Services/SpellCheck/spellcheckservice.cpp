@@ -151,6 +151,11 @@ namespace SpellCheck {
     int SpellCheckService::getSuggestionsCount() {
         return m_SpellCheckWorker->getSuggestionsCount();
     }
+
+    void SpellCheckService::clearSuggestions() {
+        LOG_DEBUG << "#";
+        m_SpellCheckWorker->clearSuggestions();
+    }
 #endif
 
     void SpellCheckService::cancelCurrentBatch() {

@@ -42,8 +42,8 @@ int SpellCheckMultireplaceTest::doTest() {
     VERIFY(basicMetadataModel.hasTitleSpellError(), "Title spell error not detected");
     VERIFY(basicMetadataModel.hasKeywordsSpellError(), "Keywords spell error not detected");
 
-    sleepWaitUntil(5, [&]() {
-        return m_TestsApp.getSpellCheckService().getSuggestionsCount() > 0;
+    sleepWaitUntil(2, [&]() {
+        return !m_TestsApp.getSpellCheckService().suggestCorrections(wrongWord).empty();
     });
 
     m_TestsApp.dispatch(QMLExtensions::UICommandID::FixSpellingArtwork, QVariant(0));

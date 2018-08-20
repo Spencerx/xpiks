@@ -225,7 +225,7 @@ namespace SpellCheck {
         LOG_INFO << combinedRequests.size() << "combined request(s)";
 
         auto executedRequests = setupSuggestions(combinedRequests);
-        LOG_INFO << executedRequests.size() << "executed request(s)";
+        LOG_INFO << executedRequests.size() << "found suggestions(s)";
 
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
         for (auto &executedItem: executedRequests) {

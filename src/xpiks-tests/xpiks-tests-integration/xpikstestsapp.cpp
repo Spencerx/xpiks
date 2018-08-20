@@ -197,6 +197,7 @@ void XpiksTestsApp::doCleanup() {
     LOG_INTEGRATION_TESTS << "#";
 
     m_SpellCheckService.cancelCurrentBatch();
+    m_SpellCheckService.clearSuggestions();
     m_WarningsService.cancelCurrentBatch();
     m_MaintenanceService.cleanup();
     m_ArtworksUpdateHub.clear();
