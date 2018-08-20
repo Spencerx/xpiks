@@ -15,9 +15,9 @@ void ZipArtworksTest::setup() {
 
 int ZipArtworksTest::doTest() {
     QList<QUrl> files;
-    files << setupFilePathForTest("images-for-tests/vector/026.jpg");
-    files << setupFilePathForTest("images-for-tests/vector/027.jpg");
-    files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
+    files << setupFilePathForTest("images-for-tests/vector/026.jpg", true);
+    files << setupFilePathForTest("images-for-tests/vector/027.jpg", true);
+    files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg", true);
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
@@ -25,6 +25,8 @@ int ZipArtworksTest::doTest() {
     m_TestsApp.dispatch(QMLExtensions::UICommandID::ZipSelected);
 
     Models::ZipArchiver &zipArchiver = m_TestsApp.getZipArchiver();
+    VERIFY(zipArchiver.getItemsCount() == 2, "ZipArchiver didn't get all the files");
+
     SignalWaiter waiter;
     QObject::connect(&zipArchiver, &Models::ZipArchiver::finishedProcessing,
                      &waiter, &SignalWaiter::finished);
@@ -32,8 +34,6 @@ int ZipArtworksTest::doTest() {
     zipArchiver.archiveArtworks();
 
     VERIFY(waiter.wait(20), "Timeout while zipping artworks");
-
-    VERIFY(zipArchiver.getItemsCount() == 2, "ZipArchiver didn't get all the files");
     VERIFY(!zipArchiver.getHasErrors(), "Errors while zipping");
 
     for (int i = 0; i < files.length(); ++i) {

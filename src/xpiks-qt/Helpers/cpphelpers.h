@@ -26,8 +26,9 @@ namespace Helpers {
         auto it = v.begin();
         while (it != itEnd) {
             if (pred(*it)) {
-                result.emplace_back(mapper(*it++));
+                result.emplace_back(mapper(*it));
             }
+            it++;
         }
         return result;
     }

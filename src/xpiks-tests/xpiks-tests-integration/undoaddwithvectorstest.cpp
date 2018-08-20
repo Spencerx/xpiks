@@ -11,28 +11,24 @@ QString UndoAddWithVectorsTest::testName() {
 
 void UndoAddWithVectorsTest::setup() {
     m_TestsApp.getSettingsModel().setAutoFindVectors(true);
-
-    // copy files
-    setupFilePathForTest("images-for-tests/mixed/026.eps");
-    setupFilePathForTest("images-for-tests/mixed/027.eps");
 }
 
 int UndoAddWithVectorsTest::doTest() {
     QList<QUrl> files;
-    files << setupFilePathForTest("images-for-tests/mixed/026.jpg");
-    files << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
-    files << setupFilePathForTest("images-for-tests/mixed/027.jpg");
+    files << setupFilePathForTest("images-for-tests/mixed/026.jpg", true);
+    files << setupFilePathForTest("images-for-tests/mixed/0267.jpg", true);
+    files << setupFilePathForTest("images-for-tests/mixed/027.jpg", true);
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     auto firstImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(0));
-    Q_ASSERT(firstImage != NULL);
+    Q_ASSERT(firstImage != nullptr);
 
     auto secondImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(1));
-    Q_ASSERT(secondImage != NULL);
+    Q_ASSERT(secondImage != nullptr);
 
     auto thirdImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(2));
-    Q_ASSERT(thirdImage != NULL);
+    Q_ASSERT(thirdImage != nullptr);
 
     VERIFY(firstImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");
     QString firstVector = firstImage->getAttachedVectorPath();
@@ -43,23 +39,23 @@ int UndoAddWithVectorsTest::doTest() {
     QString thirdVector = thirdImage->getAttachedVectorPath();
 
     // remove directory
-    m_TestsApp.deleteArtworksFromDirectory(0);
+    m_TestsApp.removeDirectory(0);
     VERIFY(m_TestsApp.getArtworksCount() == 0, "All items were not removed");
 
-    SignalWaiter waiter;
-    m_TestsApp.connectWaiterForImport(waiter);
+    //SignalWaiter waiter;
+    //m_TestsApp.connectWaiterForImport(waiter);
     VERIFY(m_TestsApp.undoLastAction(), "Failed to Undo last action");
-    VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport files");
+    //VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport files");
     VERIFY(m_TestsApp.getArtworksCount() == files.length(), "Items were not put back");
 
     firstImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(0));
-    Q_ASSERT(firstImage != NULL);
+    Q_ASSERT(firstImage != nullptr);
 
     secondImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(1));
-    Q_ASSERT(secondImage != NULL);
+    Q_ASSERT(secondImage != nullptr);
 
     thirdImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(2));
-    Q_ASSERT(thirdImage != NULL);
+    Q_ASSERT(thirdImage != nullptr);
 
     VERIFY(firstImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");
     VERIFY(firstImage->getAttachedVectorPath() == firstVector, "Vector paths do not match for first item!")

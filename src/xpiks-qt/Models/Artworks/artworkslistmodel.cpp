@@ -1028,19 +1028,7 @@ namespace Models {
 
     void ArtworksListModel::onUndoStackEmpty() {
         LOG_DEBUG << "#";
-
         deleteRemovedItems();
-
-        /*if (m_ArtworkList.empty()) {
-            if (!m_FinalizationList.empty()) {
-                LOG_DEBUG << "Clearing the finalization list";
-                for (auto *item: m_FinalizationList) {
-                    item->deepDisconnect();
-                    item->deleteLater();
-                }
-                m_FinalizationList.clear();
-            }
-        }*/
     }
 
     void ArtworksListModel::onSpellCheckerAvailable() {

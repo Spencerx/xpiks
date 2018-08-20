@@ -195,7 +195,7 @@ std::shared_ptr<Artworks::ArtworkMetadata> XpiksTestsApp::getArtwork(int index) 
 }
 
 int XpiksTestsApp::getArtworksCount() {
-    return (int)m_ArtworksListModel.getArtworksSize();
+    return (int)m_FilteredArtworksListModel.getItemsCount();
 }
 
 void XpiksTestsApp::doCleanup() {

@@ -1,6 +1,7 @@
 #include "integrationtestbase.h"
 #include <QDebug>
 #include <QDir>
+#include <Helpers/filehelpers.h>
 #include "xpikstestsapp.h"
 #include "testshelpers.h"
 
@@ -45,14 +46,30 @@ void IntegrationTestBase::teardown() {
     m_TestsApp.cleanup();
 }
 
-QUrl IntegrationTestBase::setupFilePathForTest(const QString &prefix) {
+QUrl IntegrationTestBase::setupFilePathForTest(const QString &prefix, bool withVector) {
     QString fullPath;
     if (tryFindFullPathForTests(prefix, fullPath)) {
-        qInfo() << "Found file at" << fullPath;
+        qInfo() << "Found artwork at" << fullPath;
         QString sessionPath = QDir::cleanPath(m_Environment.getSessionRoot() + QChar('/') + prefix);
         ensureDirectoryExistsForFile(sessionPath);
         if (copyFile(fullPath, sessionPath)) {
-            qInfo() << "Copied to" << sessionPath;
+            qInfo() << "Copied artwork to" << sessionPath;
+
+            if (withVector) {
+                QStringList vectors = Helpers::convertToVectorFilenames(fullPath);
+                QStringList vectorPrefixes = Helpers::convertToVectorFilenames(prefix);
+                Q_ASSERT(vectors.size() == vectorPrefixes.size());
+                for (int i = 0; i < vectors.size(); i++) {
+                    if (QFileInfo(vectors[i]).exists()) {
+                        qInfo() << "Found vector at" << vectors[i];
+                        QString vectorSessionPath = QDir::cleanPath(m_Environment.getSessionRoot() + QChar('/') + vectorPrefixes[i]);
+                        copyFile(vectors[i], vectorSessionPath);
+                        qInfo() << "Copied vector to" << vectorSessionPath;
+                        break;
+                    }
+                }
+            }
+
             return QUrl::fromLocalFile(sessionPath);
         } else {
             return QUrl::fromLocalFile(fullPath);

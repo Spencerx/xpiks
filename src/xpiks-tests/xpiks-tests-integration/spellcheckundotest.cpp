@@ -2,6 +2,7 @@
 #include <QUrl>
 #include <QList>
 #include "signalwaiter.h"
+#include "testshelpers.h"
 #include "xpikstestsapp.h"
 
 QString SpellCheckUndoTest::testName() {
@@ -21,13 +22,12 @@ int SpellCheckUndoTest::doTest() {
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/vector/026.jpg");
 
-    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
-
-    // wait for after-add spellchecking
-    QThread::sleep(1);
-
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForSpellcheck(waiter);
+
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
+    VERIFY(waiter.wait(5), "Timeout for waiting for first spellcheck results");
+
     auto artwork = m_TestsApp.getArtwork(0);
 
     QString wrongWord = "abbreviatioe";
@@ -36,10 +36,13 @@ int SpellCheckUndoTest::doTest() {
     artwork->appendKeyword("correct part " + wrongWord);
     artwork->setIsSelected(true);
 
-    VERIFY(waiter.wait(5), "Timeout for waiting for first spellcheck results");
+    sleepWaitUntil(5, [&artwork]() {
+        return artwork->getBasicModel().hasKeywordsSpellError();
+    });
 
     // wait for finding suggestions
     QThread::sleep(1);
+
     auto &basicModel = artwork->getBasicMetadataModel();
 
     CHECK_HAS_ERRORS_EVERYWHERE(basicModel);
@@ -49,12 +52,12 @@ int SpellCheckUndoTest::doTest() {
 
     VERIFY(!basicModel.hasKeywordsSpellError(), "Keywords spell error not cleared");
     VERIFY(m_TestsApp.undoLastAction(), "Failed to undo last action");
-    VERIFY(waiter.wait(5), "Timeout for waiting for second spellcheck results");
-
-    // wait for finding suggestions
-    QThread::sleep(1);
 
     qDebug() << "Checking second time...";
+    sleepWaitUntil(5, [&artwork]() {
+        return artwork->getBasicModel().hasKeywordsSpellError();
+    });
+
     CHECK_HAS_ERRORS_EVERYWHERE(basicModel);
 
     return 0;

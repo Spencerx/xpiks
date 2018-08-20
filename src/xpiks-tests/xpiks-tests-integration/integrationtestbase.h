@@ -27,7 +27,7 @@ public:
     virtual void teardown();
 
 protected:
-    QUrl setupFilePathForTest(const QString &prefix);
+    QUrl setupFilePathForTest(const QString &prefix, bool withVector=false);
     QUrl getFilePathForTest(const QString &prefix);
     QUrl getDirPathForTest(const QString &prefix);
     bool getIsInMemoryOnly() const { return m_Environment.getIsInMemoryOnly(); }

@@ -136,6 +136,7 @@ void XpiksApp::initialize() {
     m_SettingsModel.retrieveAllValues();
 
     m_TelemetryService.initialize();
+    m_UIManager.initialize();
 
     m_FtpCoordinator.reset(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel));
     m_ArtworksUploader.setFtpCoordinator(m_FtpCoordinator);
@@ -210,7 +211,6 @@ void XpiksApp::setupUI(QQmlContext *context) {
     m_UIManager.addSystemTab(QUICKBUFFER_TAB_ID, "qrc:/CollapserTabs/QuickBufferIcon.qml", "qrc:/CollapserTabs/QuickBufferTab.qml");
     m_UIManager.addSystemTab(TRANSLATOR_TAB_ID, "qrc:/CollapserTabs/TranslatorIcon.qml", "qrc:/CollapserTabs/TranslatorTab.qml");
     m_UIManager.initializeSystemTabs();
-    m_UIManager.initialize();
 }
 
 void XpiksApp::start() {
@@ -593,6 +593,9 @@ void XpiksApp::registerUICommands() {
 
                     std::make_shared<Commands::UI::WipeMetadataInSelectedCommand>(
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator),
+
+                    std::make_shared<Commands::UI::ZipSelectedCommand>(
+                    m_FilteredArtworksListModel, m_ZipArchiver),
 
                     std::make_shared<Commands::CommandUIWrapper>(
                     QMLExtensions::UICommandID::RemoveSelected,

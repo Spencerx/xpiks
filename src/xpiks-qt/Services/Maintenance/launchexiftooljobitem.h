@@ -35,7 +35,6 @@ namespace Maintenance {
 
     private:
         const QString m_SettingsExiftoolPath;
-        MetadataIO::MetadataIOCoordinator *m_MetadataIOCoordinator;
     };
 }
 
