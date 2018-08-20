@@ -46,7 +46,7 @@ namespace Models {
 
     public:
         bool save(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot);
-        SessionTuple restoreSession();
+        bool tryRestoreSession(SessionTuple &session);
 
     public:
         bool getIsEmergencyRestore() const { return m_EmergencyRestore; }

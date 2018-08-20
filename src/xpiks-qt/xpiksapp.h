@@ -147,6 +147,7 @@ private slots:
 
 protected:
     // general
+    Common::ISystemEnvironment &m_Environment;
     Encryption::SecretsManager m_SecretsManager;
     QMLExtensions::ColorsModel m_ColorsModel;
     Models::LogsModel m_LogsModel;

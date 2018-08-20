@@ -142,7 +142,7 @@ namespace Models {
         return success;
     }
 
-    SessionManager::SessionTuple SessionManager::restoreSession() {
+    bool SessionManager::tryRestoreSession(SessionManager::SessionTuple &session) {
         LOG_DEBUG << "#";
 
         QMutexLocker locker(&m_Mutex);
@@ -154,17 +154,15 @@ namespace Models {
         parseFiles(sessionMap, filenames, vectors);
         parseDirectories(sessionMap, fullDirectories);
 
-        if (filenames.empty()) {
-            LOG_INFO << "Session was empty";
-            return SessionTuple(
-                        std::make_shared<Filesystem::FilesCollection>(QStringList()),
-                        QStringList());
+        bool success = filenames.empty();
+        if (success) {
+            session = SessionTuple(
+                          std::make_shared<Filesystem::FilesCollection>(
+                              std::initializer_list<QStringList>({filenames, vectors})),
+                          fullDirectories);
         }
 
-        return SessionTuple(
-                    std::make_shared<Filesystem::FilesCollection>(
-                        std::initializer_list<QStringList>({filenames, vectors})),
-                    fullDirectories);
+        return success;
     }
 
 #ifdef INTEGRATION_TESTS

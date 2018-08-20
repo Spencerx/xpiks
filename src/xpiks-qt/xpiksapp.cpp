@@ -39,6 +39,7 @@
 #include <Microstocks/fotoliaapiclient.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
+    m_Environment(environment),
     m_SecretsManager(),
     m_SettingsModel(environment),
     m_DatabaseManager(environment),
@@ -461,12 +462,14 @@ int XpiksApp::restoreSession() {
     int restoredCount = 0;
     if (m_SettingsModel.getSaveSession() || m_SessionManager.getIsEmergencyRestore()) {
         LOG_DEBUG << "Trying to restore";
-        auto session = m_SessionManager.restoreSession();
-        restoredCount = doAddFiles(std::get<0>(session), Common::AddFilesFlags::FlagIsSessionRestore);
-        if (restoredCount > 0) {
-            m_ArtworksRepository.restoreFullDirectories(std::get<1>(session));
-            auto snapshot = m_ArtworksListModel.createSessionSnapshot();
-            m_MaintenanceService.saveSession(snapshot, m_SessionManager);
+        Models::SessionManager::SessionTuple session;
+        if (m_SessionManager.tryRestoreSession(session)) {
+            restoredCount = doAddFiles(std::get<0>(session), Common::AddFilesFlags::FlagIsSessionRestore);
+            if (restoredCount > 0) {
+                m_ArtworksRepository.restoreFullDirectories(std::get<1>(session));
+                auto snapshot = m_ArtworksListModel.createSessionSnapshot();
+                m_MaintenanceService.saveSession(snapshot, m_SessionManager);
+            }
         }
     } else {
         LOG_DEBUG << "Skipping restoring";
