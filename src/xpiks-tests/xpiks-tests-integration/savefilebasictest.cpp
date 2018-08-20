@@ -16,6 +16,7 @@ int SaveFileBasicTest::doTest() {
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
+    VERIFY(m_TestsApp.getArtworksCount() == 1, "Wrong number of files");
 
     auto artwork = m_TestsApp.getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
@@ -24,9 +25,9 @@ int SaveFileBasicTest::doTest() {
     VERIFY(image->getImageSize().width() == 1920, "Image width was read incorrectly");
     VERIFY(image->getImageSize().height() == 1272, "Image height was read incorrectly");
 
-    QStringList keywords; keywords << "picture" << "seagull" << "bird";
-    QString title = "Brand new title";
-    QString description = "Brand new description";
+    QStringList keywords; keywords << "brand" << "new" << "keywords";
+    QString title = "A very different title";
+    QString description = "A very different description";
     artwork->setDescription(description);
     artwork->setTitle(title);
     artwork->getBasicModel().setKeywords(keywords);
