@@ -27,30 +27,40 @@ namespace Models {
     class SettingsModel;
 }
 
+namespace MetadataIO {
+    class MetadataIOService;
+}
+
 namespace Artworks {
     class IBasicModelSource;
     class ArtworksSnapshot;
+    class ArtworkMetadata;
 }
 
 namespace Services {
+    using ArtworkeEditingType = Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>, Common::MessageType::EditingPaused>;
     using ItemInspectionType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
     using ItemArrayInspectionType = Common::NamedType<std::vector<std::shared_ptr<Artworks::IBasicModelSource>>, Common::MessageType::SpellCheck>;
 
-    class ArtworksInspectionHub:
+    class ArtworksEditingHub:
             public Common::MessagesTarget<ItemInspectionType>,
-            public Common::MessagesTarget<ItemArrayInspectionType>
+            public Common::MessagesTarget<ItemArrayInspectionType>,
+            public Common::MessagesTarget<ArtworkeEditingType>
     {
         using Common::MessagesTarget<ItemInspectionType>::handleMessage;
         using Common::MessagesTarget<ItemArrayInspectionType>::handleMessage;
+        using Common::MessagesTarget<ArtworkeEditingType>::handleMessage;
 
     public:
-        ArtworksInspectionHub(SpellCheck::ISpellCheckService &spellCheckService,
-                              Warnings::WarningsService &warningsService,
-                              Models::SettingsModel &settingsModel);
+        ArtworksEditingHub(SpellCheck::ISpellCheckService &spellCheckService,
+                           Warnings::WarningsService &warningsService,
+                           MetadataIO::MetadataIOService &metadataIOService,
+                           Models::SettingsModel &settingsModel);
 
     public:
         virtual void handleMessage(ItemInspectionType const &change) override;
         virtual void handleMessage(ItemArrayInspectionType const &change) override;
+        virtual void handleMessage(ArtworkeEditingType const &change) override;
 
     public:
         void inspectItem(std::shared_ptr<Artworks::IBasicModelSource> const &item);
@@ -63,6 +73,7 @@ namespace Services {
     private:
         SpellCheck::ISpellCheckService &m_SpellCheckService;
         Warnings::WarningsService &m_WarningsService;
+        MetadataIO::MetadataIOService &m_MetadataIOService;
         Models::SettingsModel &m_SettingsModel;
     };
 }

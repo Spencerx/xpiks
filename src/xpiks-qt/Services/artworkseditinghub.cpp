@@ -8,33 +8,41 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "artworksinspectionhub.h"
+#include "artworkseditinghub.h"
 #include <Services/Warnings/warningsservice.h>
 #include <Services/SpellCheck/ispellcheckservice.h>
+#include <MetadataIO/metadataioservice.h>
 #include <Models/settingsmodel.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkssnapshot.h>
 #include <Helpers/cpphelpers.h>
 
 namespace Services {
-    ArtworksInspectionHub::ArtworksInspectionHub(SpellCheck::ISpellCheckService &spellCheckService,
-                                                 Warnings::WarningsService &warningsService,
-                                                 Models::SettingsModel &settingsModel):
+    ArtworksEditingHub::ArtworksEditingHub(SpellCheck::ISpellCheckService &spellCheckService,
+                                           Warnings::WarningsService &warningsService,
+                                           MetadataIO::MetadataIOService &metadataIOService,
+                                           Models::SettingsModel &settingsModel):
         m_SpellCheckService(spellCheckService),
         m_WarningsService(warningsService),
+        m_MetadataIOService(metadataIOService),
         m_SettingsModel(settingsModel)
     {
     }
 
-    void ArtworksInspectionHub::handleMessage(const ItemInspectionType &change) {
+    void ArtworksEditingHub::handleMessage(const ItemInspectionType &change) {
         inspectItem(change.get());
     }
 
-    void ArtworksInspectionHub::handleMessage(const ItemArrayInspectionType &change) {
+    void ArtworksEditingHub::handleMessage(const ItemArrayInspectionType &change) {
         inspectItems(change.get());
     }
 
-    void ArtworksInspectionHub::inspectItem(const std::shared_ptr<Artworks::IBasicModelSource> &item) {
+    void ArtworksEditingHub::handleMessage(const ArtworkeEditingType &change) {
+        inspectItem(change.get());
+        m_MetadataIOService.writeArtwork(change.get());
+    }
+
+    void ArtworksEditingHub::inspectItem(const std::shared_ptr<Artworks::IBasicModelSource> &item) {
         LOG_DEBUG << "#";
         if (isSpellCheckAvailable()) {
             m_SpellCheckService.submitItem(item, Common::SpellCheckFlags::All);
@@ -46,7 +54,7 @@ namespace Services {
         }
     }
 
-    void ArtworksInspectionHub::inspectItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items) {
+    void ArtworksEditingHub::inspectItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items) {
         LOG_INFO << items.size() << "items";
         if (isSpellCheckAvailable()) {
             m_SpellCheckService.submitItems(items, Common::SpellCheckFlags::All);
@@ -64,7 +72,7 @@ namespace Services {
         }
     }
 
-    void ArtworksInspectionHub::inspectItems(const Artworks::ArtworksSnapshot &snapshot) {
+    void ArtworksEditingHub::inspectItems(const Artworks::ArtworksSnapshot &snapshot) {
         if (isSpellCheckAvailable()) {
             using ArtworkPtr = std::shared_ptr<Artworks::ArtworkMetadata>;
             using SourcePtr = std::shared_ptr<Artworks::IBasicModelSource>;
@@ -79,7 +87,7 @@ namespace Services {
         }
     }
 
-    bool ArtworksInspectionHub::isSpellCheckAvailable() const {
+    bool ArtworksEditingHub::isSpellCheckAvailable() const {
         return m_SettingsModel.getUseSpellCheck();
     }
 }

@@ -85,7 +85,7 @@ namespace SpellCheck {
     private:
         void detectAffEncoding();
         QStringList suggestCorrections(const QString &word);
-        bool checkWordSpelling(const std::shared_ptr<SpellCheckQueryItem> &queryItem);
+        bool checkQuerySpelling(const std::shared_ptr<SpellCheckQueryItem> &queryItem);
         bool checkWordSpelling(const QString &word);
         void stemWord(const std::shared_ptr<SpellCheckQueryItem> &queryItem);
         QString getWordStem(const QString &word);

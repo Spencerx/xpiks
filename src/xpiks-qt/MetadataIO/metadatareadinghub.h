@@ -20,7 +20,7 @@
 
 namespace Services {
     class ArtworksUpdateHub;
-    class ArtworksInspectionHub;
+    class ArtworksEditingHub;
 }
 
 namespace Helpers {
@@ -36,7 +36,7 @@ namespace MetadataIO {
     public:
         MetadataReadingHub(MetadataIOService &metadataIOService,
                            Services::ArtworksUpdateHub &updateHub,
-                           Services::ArtworksInspectionHub &inspectionHub);
+                           Services::ArtworksEditingHub &inspectionHub);
 
     public:
         Artworks::ArtworksSnapshot const &getSnapshot() const { return m_ArtworksToRead; }
@@ -72,7 +72,7 @@ namespace MetadataIO {
         Helpers::AsyncCoordinator m_AsyncCoordinator;
         MetadataIOService &m_MetadataIOService;
         Services::ArtworksUpdateHub &m_UpdateHub;
-        Services::ArtworksInspectionHub &m_InspectionHub;
+        Services::ArtworksEditingHub &m_InspectionHub;
         Common::ReaderWriterQueue<OriginalMetadata> m_ImportQueue;
         int m_ImportID;
         quint32 m_StorageReadBatchID;

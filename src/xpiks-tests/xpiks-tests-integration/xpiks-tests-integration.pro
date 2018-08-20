@@ -189,7 +189,6 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Plugins/pluginwrapper.cpp \
     ../../xpiks-qt/Plugins/sandboxeddependencies.cpp \
     ../../xpiks-qt/Plugins/uiprovider.cpp \
-    ../../xpiks-qt/Services/artworksinspectionhub.cpp \
     ../../xpiks-qt/Services/artworksupdatehub.cpp \
     ../../xpiks-qt/Services/AutoComplete/autocompletemodel.cpp \
     ../../xpiks-qt/Services/AutoComplete/autocompleteservice.cpp \
@@ -264,7 +263,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Helpers/loghighlighter.cpp \
     ../../xpiks-qt/Helpers/helpersqmlwrapper.cpp \
     ../../xpiks-qt/Services/SpellCheck/metadataduplicates.cpp \
-    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.cpp
+    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.cpp \
+    ../../xpiks-qt/Services/artworkseditinghub.cpp
 
 RESOURCES +=
 
@@ -500,7 +500,6 @@ HEADERS += \
     ../../xpiks-qt/Plugins/sandboxeddependencies.h \
     ../../xpiks-qt/Plugins/uiprovider.h \
     ../../xpiks-qt/Plugins/xpiksplugininterface.h \
-    ../../xpiks-qt/Services/artworksinspectionhub.h \
     ../../xpiks-qt/Services/artworksupdatehub.h \
     ../../xpiks-qt/Services/artworkupdaterequest.h \
     ../../xpiks-qt/Services/iartworksupdater.h \
@@ -602,7 +601,8 @@ HEADERS += \
     ../../xpiks-qt/Services/SpellCheck/ispellcheckservice.h \
     ../../xpiks-qt/Services/SpellCheck/ispellsuggestionstarget.h \
     ../../xpiks-qt/Services/SpellCheck/metadataduplicates.h \
-    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.h
+    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.h \
+    ../../xpiks-qt/Services/artworkseditinghub.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

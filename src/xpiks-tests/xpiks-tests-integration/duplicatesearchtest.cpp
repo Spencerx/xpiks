@@ -17,16 +17,13 @@ int DuplicateSearchTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    SignalWaiter waiter;
-    m_TestsApp.connectWaiterForSpellcheck(waiter);
-
     auto artwork = m_TestsApp.getArtwork(0);
     artwork->clearModel();
     m_TestsApp
             .getFilteredArtworksModel()
             .pasteKeywords(0, QStringList() << "cat" << "Mouse" << "mice" << "on");
 
-    VERIFY(waiter.wait(5), "Timeout for waiting for first spellcheck results");
+    sleepWaitUntil(5, [&artwork]() { return artwork->hasDuplicates(0); });
 
     VERIFY(!artwork->hasDuplicates(0), "Duplicates detected for unique keyword");
     VERIFY(artwork->hasDuplicates(1), "Duplicate not detected for mouse");
@@ -37,9 +34,7 @@ int DuplicateSearchTest::doTest() {
             .getFilteredArtworksModel()
             .appendKeyword(0, "cats");
 
-    sleepWaitUntil(5, [&artwork]() {
-        return artwork->hasDuplicates(0);
-    });
+    sleepWaitUntil(5, [&artwork]() { return artwork->hasDuplicates(0); });
 
     VERIFY(artwork->hasDuplicates(0), "Duplicates not detected singular");
     VERIFY(artwork->hasDuplicates(1), "Duplicate not detected for mouse after append");

@@ -97,11 +97,11 @@ namespace SpellCheck {
     void UserDictionary::addWord(const QString &word) {
         LOG_INFO << word;
         {
-            QMutexLocker locker(&m_Mutex);
-            Q_UNUSED(locker);
-
             QStringList parts;
             Helpers::splitText(word, parts);
+
+            QMutexLocker locker(&m_Mutex);
+            Q_UNUSED(locker);
 
             for (auto &part: parts) {
                 addWordUnsafe(part);
@@ -112,6 +112,7 @@ namespace SpellCheck {
     }
 
     void UserDictionary::clear() {
+        LOG_DEBUG << "#";
         {
             QMutexLocker locker(&m_Mutex);
             Q_UNUSED(locker);

@@ -11,6 +11,7 @@
 #include "spellcheckservice.h"
 #include <QThread>
 #include "spellcheckitem.h"
+#include "userdictionary.h"
 #include <Artworks/artworkmetadata.h>
 #include <Common/logging.h>
 #include <Common/flags.h>
@@ -22,19 +23,18 @@ namespace SpellCheck {
                                          Common::IFlagsProvider<Common::WordAnalysisFlags> &analysisFlagsProvider):
         m_Environment(environment),
         m_SpellCheckWorker(NULL),
-        m_UserDictionary(environment),
         m_AnalysisFlagsProvider(analysisFlagsProvider),
         m_IsStopped(false)
     {
-        QObject::connect(&m_UserDictionary, &UserDictionary::sizeChanged,
-                         this, &SpellCheckService::userDictWordsNumberChanged);
     }
 
     SpellCheckService::~SpellCheckService() {
         LOG_DEBUG << "#";
     }
 
-    void SpellCheckService::startService(Helpers::AsyncCoordinator &initCoordinator, Warnings::WarningsService &warningsService) {
+    void SpellCheckService::startService(Helpers::AsyncCoordinator &initCoordinator,
+                                         UserDictionary &userDictionary,
+                                         Warnings::WarningsService &warningsService) {
         if (m_SpellCheckWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
@@ -45,7 +45,7 @@ namespace SpellCheck {
 
         m_SpellCheckWorker = new SpellCheckWorker(getDictsRoot(),
                                                   m_Environment,
-                                                  m_UserDictionary,
+                                                  userDictionary,
                                                   warningsService,
                                                   initCoordinator);
 
@@ -147,25 +147,11 @@ namespace SpellCheck {
         return corrections;
     }
 
-    int SpellCheckService::getUserDictWordsNumber() {
-        return m_UserDictionary.size();
-    }
-
-    QStringList SpellCheckService::getUserDictionary() {
-        return m_UserDictionary.getWords();
-    }
-
 #ifdef INTEGRATION_TESTS
     int SpellCheckService::getSuggestionsCount() {
         return m_SpellCheckWorker->getSuggestionsCount();
     }
 #endif
-
-    void SpellCheckService::updateUserDictionary(const QStringList &words) {
-        LOG_INFO << words;
-        m_UserDictionary.reset(words);
-        m_UserDictionary.save();
-    }
 
     void SpellCheckService::cancelCurrentBatch() {
         LOG_DEBUG << "#";
@@ -182,16 +168,6 @@ namespace SpellCheck {
         }
 
         return hasPending;
-    }
-
-    void SpellCheckService::addWordToUserDictionary(const QString &word) {
-        m_UserDictionary.addWord(word);
-        m_UserDictionary.save();
-    }
-
-    void SpellCheckService::clearUserDictionary() {
-        m_UserDictionary.clear();
-        m_UserDictionary.save();
     }
 
     void SpellCheckService::workerFinished() {

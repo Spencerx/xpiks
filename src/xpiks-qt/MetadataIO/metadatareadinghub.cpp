@@ -14,12 +14,12 @@
 #include <Common/defines.h>
 #include <MetadataIO/metadataioservice.h>
 #include <Services/artworksupdatehub.h>
-#include <Services/artworksinspectionhub.h>
+#include <Services/artworkseditinghub.h>
 
 namespace MetadataIO {
     MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService,
                                            Services::ArtworksUpdateHub &updateHub,
-                                           Services::ArtworksInspectionHub &inspectionHub):
+                                           Services::ArtworksEditingHub &inspectionHub):
         m_MetadataIOService(metadataIOService),
         m_UpdateHub(updateHub),
         m_InspectionHub(inspectionHub),

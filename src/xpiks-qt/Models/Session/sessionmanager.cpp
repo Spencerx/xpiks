@@ -123,6 +123,7 @@ namespace Models {
     }
 
     bool SessionManager::save(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot) {
+        LOG_DEBUG << "#";
         auto sessionMap = serializeSnapshot(sessionSnapshot->getSnapshot(), sessionSnapshot->getDirectoriesSnapshot());
         bool success = false;
 

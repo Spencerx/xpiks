@@ -19,7 +19,6 @@
 #include <functional>
 #include <Common/messages.h>
 #include "spellcheckworker.h"
-#include "userdictionary.h"
 #include "ispellcheckservice.h"
 #include <Artworks/basickeywordsmodel.h>
 #include <Common/flags.h>
@@ -40,12 +39,13 @@ namespace Models {
 }
 
 namespace SpellCheck {
+    class UserDictionary;
+
     class SpellCheckService:
             public QObject,
             public ISpellCheckService
     {
         Q_OBJECT
-        Q_PROPERTY(int userDictWordsNumber READ getUserDictWordsNumber NOTIFY userDictWordsNumberChanged)
 
     public:
         SpellCheckService(Common::ISystemEnvironment &environment,
@@ -53,7 +53,9 @@ namespace SpellCheck {
         virtual ~SpellCheckService();
 
     public:
-        void startService(Helpers::AsyncCoordinator &initCoordinator, Warnings::WarningsService &warningsService);
+        void startService(Helpers::AsyncCoordinator &initCoordinator,
+                          UserDictionary &userDictionary,
+                          Warnings::WarningsService &warningsService);
         void stopService();
 
 #ifdef INTEGRATION_TESTS
@@ -78,20 +80,13 @@ namespace SpellCheck {
 #endif
 
     public:
-        QStringList getUserDictionary();
-        void updateUserDictionary(const QStringList &words);
-
-    public:
         Q_INVOKABLE void cancelCurrentBatch();
         Q_INVOKABLE bool hasAnyPending();
-        Q_INVOKABLE void addWordToUserDictionary(const QString &word);
-        Q_INVOKABLE void clearUserDictionary();
 
     signals:
         void cancelSpellChecking();
         void spellCheckQueueIsEmpty();
         void serviceAvailable();
-        void userDictWordsNumberChanged();
 
     private slots:
         void workerFinished();
@@ -103,7 +98,6 @@ namespace SpellCheck {
     private:
         Common::ISystemEnvironment &m_Environment;
         SpellCheckWorker *m_SpellCheckWorker;
-        UserDictionary m_UserDictionary;
         Common::IFlagsProvider<Common::WordAnalysisFlags> &m_AnalysisFlagsProvider;
         QString m_DictionariesPath;
         volatile bool m_IsStopped;

@@ -22,9 +22,6 @@ int UserDictEditTest::doTest() {
     auto artwork = m_TestsApp.getArtwork(0);
     Models::QuickBuffer &quickBuffer = m_TestsApp.getQuickBuffer();
 
-    // wait for after-add spellchecking
-    QThread::sleep(1);
-
     auto &basicModel = artwork->getBasicMetadataModel();
 
     QString wrongWord = "Abbreviatioe";
@@ -33,20 +30,16 @@ int UserDictEditTest::doTest() {
     artwork->appendKeyword("correct part " + wrongWord);
     artwork->setIsSelected(true);
 
-    SignalWaiter waiter;
-    m_TestsApp.connectWaiterForSpellcheck(waiter);
-
-    m_TestsApp.getFilteredArtworksModel().copyToQuickBuffer(0);
-
-    VERIFY(waiter.wait(5), "Timeout for waiting for spellcheck results");
-
-    // wait for finding suggestions
-    QThread::sleep(1);
+    sleepWaitUntil(5, [&artwork]() { return artwork->getBasicModel().hasKeywordsSpellError(); });
 
     VERIFY(basicModel.hasDescriptionSpellError(), "Description spell error not detected");
     VERIFY(basicModel.hasTitleSpellError(), "Title spell error not detected");
     VERIFY(basicModel.hasKeywordsSpellError(), "Keywords spell error not detected");
-    VERIFY(quickBuffer.hasSpellErrors(), "Quick Buffer does not contain spelling erros");
+
+    VERIFY(!quickBuffer.hasSpellErrors(), "Quick Buffer has spelling errors");
+    m_TestsApp.getFilteredArtworksModel().copyToQuickBuffer(0);
+    sleepWaitUntil(5, [&quickBuffer]() { return quickBuffer.hasSpellErrors(); });
+    VERIFY(quickBuffer.hasSpellErrors(), "Quick Buffer does not contain spelling errors");
 
     auto &userDictEditModel = m_TestsApp.getUserDictEditModel();
     userDictEditModel.appendKeyword(wrongWord);

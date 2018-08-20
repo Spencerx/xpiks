@@ -20,9 +20,6 @@ int AddToUserDictionaryTest::doTest() {
 
     auto artwork = m_TestsApp.getArtwork(0);
 
-    // wait for after-add spellchecking
-    QThread::sleep(1);
-
     auto &basicModel = artwork->getBasicMetadataModel();
 
     QString wrongWord = "abbreviatioe";
@@ -30,21 +27,13 @@ int AddToUserDictionaryTest::doTest() {
     artwork->setTitle(artwork->getTitle() + ' ' + wrongWord);
     artwork->appendKeyword("correct part " + wrongWord);
 
-    SignalWaiter spellCheckWaiter1;
-    m_TestsApp.connectWaiterForSpellcheck(spellCheckWaiter1);
-
-    VERIFY(spellCheckWaiter1.wait(5), "Timeout for waiting for spellcheck results");
-
-    // wait for finding suggestions
-    QThread::sleep(1);
+    sleepWaitUntil(5, [&artwork]() { return artwork->getBasicModel().hasKeywordsSpellError(); });
 
     VERIFY(basicModel.hasDescriptionSpellError(), "Description spell error not detected");
     VERIFY(basicModel.hasTitleSpellError(), "Title spell error not detected");
     VERIFY(basicModel.hasKeywordsSpellError(), "Keywords spell error not detected");
 
     m_TestsApp.getUserDictionary().addWord(wrongWord);
-
-    QCoreApplication::processEvents(QEventLoop::AllEvents);
 
     sleepWaitUntil(5, [&basicModel]() {
         return !basicModel.hasDescriptionSpellError() &&

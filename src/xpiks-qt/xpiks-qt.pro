@@ -204,7 +204,7 @@ SOURCES += main.cpp \
     Models/Editing/quickbuffer.cpp \
     Commands/Editing/findandreplacetemplate.cpp \
     Services/SpellCheck/spellcheckservice.cpp \
-    Services/artworksinspectionhub.cpp \
+    Services/artworkseditinghub.cpp \
     QMLExtensions/uicommanddispatcher.cpp \
     Commands/UI/selectedartworkscommands.cpp \
     Commands/UI/generalcommands.cpp \
@@ -501,7 +501,7 @@ HEADERS += \
     Models/Editing/quickbuffer.h \
     Commands/Editing/findandreplacetemplate.h \
     Services/SpellCheck/spellcheckservice.h \
-    Services/artworksinspectionhub.h \
+    Services/artworkseditinghub.h \
     Common/messages.h \
     Models/Editing/quickbuffermessage.h \
     Services/SpellCheck/ispellcheckable.h \

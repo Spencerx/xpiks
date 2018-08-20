@@ -33,19 +33,19 @@ int RestoreSessionTest::doTest() {
     files << setupFilePathForTest("images-for-tests/pixmap/img_0007.jpg")
           << setupFilePathForTest("images-for-tests/pixmap/seagull-for-clear.jpg")
           << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg")
-          << setupFilePathForTest("images-for-tests/vector/026.jpg")
-          << setupFilePathForTest("images-for-tests/vector/027.jpg")
-          << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
+          << setupFilePathForTest("images-for-tests/vector/026.jpg", true)
+          << setupFilePathForTest("images-for-tests/vector/027.jpg", true)
+          << setupFilePathForTest("images-for-tests/mixed/0267.jpg", true);
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
+    int addedCount = m_TestsApp.getArtworksCount();
 
-    sleepWaitUntil(10, [&]() {
+    sleepWaitUntil(5, [&]() {
         return sessionManager.itemsCount() == files.length();
     });
     VERIFY(sessionManager.itemsCount() == files.length(), "Session does not contain all files");
 
-    Artworks::ArtworksSnapshot oldArtworksSnapshot = std::move(m_TestsApp.getArtworksListModel().createArtworksSnapshot());
-
+    auto oldArtworksSnapshot = m_TestsApp.getArtworksListModel().createArtworksSnapshot();
     m_TestsApp.deleteAllArtworks();
     LOG_DEBUG << "About to restore...";
 
@@ -58,10 +58,10 @@ int RestoreSessionTest::doTest() {
         return 0;
     }
 
-    VERIFY(files.size() == restoredCount, "Failed to properly restore");
+    VERIFY(addedCount == restoredCount, "Failed to properly restore");
     VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport session");
 
-    Artworks::ArtworksSnapshot newArtworksSnapshot = std::move(m_TestsApp.getArtworksListModel().createArtworksSnapshot());
+    auto newArtworksSnapshot = m_TestsApp.getArtworksListModel().createArtworksSnapshot();
     auto &oldArtworksList = oldArtworksSnapshot.getRawData();
     auto &newArtworksList = newArtworksSnapshot.getRawData();
 

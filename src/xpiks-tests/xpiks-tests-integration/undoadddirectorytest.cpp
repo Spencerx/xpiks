@@ -15,22 +15,23 @@ int UndoAddDirectoryTest::doTest() {
     QList<QUrl> dirs;
     dirs << getDirPathForTest("images-for-tests/mixed/");
 
-    VERIFY(m_TestsApp.addDirectoriesForTest(dirs), "Failed to add directories");
-    int artworksCount = m_TestsApp.getArtworksCount();
+    SignalWaiter waiter;
+    m_TestsApp.connectWaiterForImport(waiter);
+    const int addedCount = m_TestsApp.addDirectories(dirs);
+    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata on first import");
+    VERIFY(m_TestsApp.checkImportSucceeded(), "Failed to auto import");
 
     // remove 2 artworks
     m_TestsApp.deleteArtworks(Helpers::IndicesRanges({0, 1}));
-    VERIFY(m_TestsApp.getArtworksCount() == artworksCount - 2, "Artworks were not removed");
+    VERIFY(m_TestsApp.getArtworksCount() == addedCount - 2, "Artworks were not removed");
 
     // remove directory
-    m_TestsApp.deleteArtworksFromDirectory(0);
+    m_TestsApp.removeDirectory(0);
     VERIFY(m_TestsApp.getArtworksCount() == 0, "All items were not removed");
 
-    SignalWaiter waiter;
-    m_TestsApp.connectWaiterForImport(waiter);
     VERIFY(m_TestsApp.undoLastAction(), "Failed to undo remove directory");
     VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport files");
-    VERIFY(m_TestsApp.getArtworksCount() == artworksCount, "Items were not put back");
+    VERIFY(m_TestsApp.getArtworksCount() == addedCount, "Items were not put back");
 
     return 0;
 }

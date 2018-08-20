@@ -22,7 +22,7 @@ namespace Artworks {
     class ArtworkSessionSnapshot
     {
     public:
-        ArtworkSessionSnapshot(std::shared_ptr<ArtworkMetadata> const &metadata);
+        ArtworkSessionSnapshot(std::shared_ptr<ArtworkMetadata> const &artwork);
 
     public:
         const QString &getArtworkFilePath() const { return m_ArtworkPath; }

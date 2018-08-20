@@ -31,13 +31,6 @@ int RemoveFromUserDictionaryTest::doTest() {
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     auto artwork = m_TestsApp.getArtwork(0);
-
-    // wait for after-add spellchecking
-    QThread::sleep(1);
-
-    SignalWaiter spellingWaiter;
-    m_TestsApp.connectWaiterForSpellcheck(spellingWaiter);
-
     auto &basicModel = artwork->getBasicMetadataModel();
 
     QString wrongWord = "abbreviatioe";
@@ -46,7 +39,7 @@ int RemoveFromUserDictionaryTest::doTest() {
     artwork->appendKeyword("correct part " + wrongWord);
     artwork->setIsSelected(true);
 
-    VERIFY(spellingWaiter.wait(5), "Timeout for waiting for spellcheck results");
+    sleepWaitUntil(5, [&artwork]() { return artwork->getBasicModel().hasKeywordsSpellError(); });
 
     // wait for finding suggestions
     QThread::sleep(1);
@@ -57,9 +50,6 @@ int RemoveFromUserDictionaryTest::doTest() {
     userDictionary.addWord(wrongWord);
 
     QCoreApplication::processEvents(QEventLoop::AllEvents);
-
-    // wait add user word to finish
-    VERIFY(spellingWaiter.wait(5), "Timeout for waiting for spellcheck results");
 
     sleepWaitUntil(5, [&basicModel]() {
         return !basicModel.hasDescriptionSpellError() &&
@@ -77,9 +67,6 @@ int RemoveFromUserDictionaryTest::doTest() {
 
     // wait clear user dict to finish
     QCoreApplication::processEvents(QEventLoop::AllEvents);
-
-    // wait clear user word to finish
-    VERIFY(spellingWaiter.wait(5), "Timeout for waiting for spellcheck results");
 
     sleepWaitUntil(5, [&basicModel]() {
         return basicModel.hasDescriptionSpellError() &&

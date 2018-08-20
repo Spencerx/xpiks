@@ -135,7 +135,7 @@ namespace SpellCheck {
                 bool isOk = true;
 
                 if (shouldCheckSpelling) {
-                    isOk = checkWordSpelling(queryItem);
+                    isOk = checkQuerySpelling(queryItem);
                 }
 
                 if (shouldStemWord) {
@@ -212,7 +212,7 @@ namespace SpellCheck {
         return suggestions;
     }
 
-    bool SpellCheckWorker::checkWordSpelling(const std::shared_ptr<SpellCheckQueryItem> &queryItem) {
+    bool SpellCheckWorker::checkQuerySpelling(const std::shared_ptr<SpellCheckQueryItem> &queryItem) {
         bool isOk = false;
 
         const QString &word = queryItem->m_Word;

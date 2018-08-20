@@ -22,16 +22,16 @@ int FindAndReplaceModelTest::doTest() {
 
     m_TestsApp.getArtwork(0)->setDescription("wall inside the Wall is not a wall");
 
-    m_TestsApp.selectAllArtworks();
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::FindAndReplaceInSelected);
-
     Models::FindAndReplaceModel &findAndReplaceModel = m_TestsApp.getFindAndReplaceModel();
 
     findAndReplaceModel.setReplaceFrom("wall");
     findAndReplaceModel.setReplaceTo("wallpaper");
     findAndReplaceModel.setSearchWholeWords(true);
 
+    m_TestsApp.selectAllArtworks();
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::FindAndReplaceInSelected);
     VERIFY(findAndReplaceModel.getArtworksCount() == 2, "Items are missing!");
+
     findAndReplaceModel.setItemSelected(1, false);
 
     int keywordsCount = m_TestsApp.getArtwork(0)->getKeywords().size();

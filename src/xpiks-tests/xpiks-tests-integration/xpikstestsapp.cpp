@@ -96,11 +96,7 @@ bool XpiksTestsApp::addDirectoriesForTest(const QList<QUrl> &urls) {
                      &waiter, &SignalWaiter::finished);
 
     int addedCount = addDirectories(urls);
-    if (addedCount != urls.length()) {
-        LOG_WARNING << "Failed to add directories:" << addedCount << "added instead of" << urls.length();
-        return false;
-    }
-
+    LOG_INFO << "Added" << addedCount << "files";
     bool success = doContinueReading(waiter);
     return success;
 }
@@ -111,10 +107,7 @@ bool XpiksTestsApp::dropItemsForTest(const QList<QUrl> &urls) {
                      &waiter, &SignalWaiter::finished);
 
     int addedCount = dropItems(urls);
-    if (addedCount != urls.length()) {
-        LOG_WARNING << "Failed to add directories:" << addedCount << "added instead of" << urls.length();
-        return false;
-    }
+    LOG_INFO << "Added" << addedCount << "files";
 
     bool success = doContinueReading(waiter);
     return success;
@@ -133,14 +126,16 @@ void XpiksTestsApp::deleteArtworks(Helpers::IndicesRanges const &ranges) {
                     m_ArtworksRepository));
 
     // delete artworks
-    m_ArtworksListModel.onUndoStackEmpty();
+    m_UndoRedoManager.discardLastAction();
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 void XpiksTestsApp::deleteArtworksFromDirectory(int index) {
     LOG_DEBUG << "#";
     this->removeDirectory(index);
     // delete artworks
-    m_ArtworksListModel.onUndoStackEmpty();
+    m_UndoRedoManager.discardLastAction();
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 void XpiksTestsApp::deleteAllArtworks() {
@@ -216,7 +211,7 @@ void XpiksTestsApp::doCleanup() {
     m_ArtworksListModel.deleteAllItems();
     m_SettingsModel.resetToDefault();
     m_SpellSuggestionModel.clearModel();
-    m_SpellCheckService.clearUserDictionary();
+    m_UserDictionary.clear();
     m_SessionManager.clearSession();
     m_MetadataIOCoordinator.clear();
 }

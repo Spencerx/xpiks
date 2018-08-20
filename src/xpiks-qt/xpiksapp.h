@@ -51,8 +51,9 @@
 #include <Services/SpellCheck/spellcheckservice.h>
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include <Services/SpellCheck/userdicteditmodel.h>
+#include <Services/SpellCheck/userdictionary.h>
 #include <Services/Maintenance/maintenanceservice.h>
-#include <Services/artworksinspectionhub.h>
+#include <Services/artworkseditinghub.h>
 #include <Services/artworksupdatehub.h>
 
 #include <QMLExtensions/colorsmodel.h>
@@ -193,7 +194,7 @@ protected:
     QMLExtensions::VideoCachingService m_VideoCachingService;
     Connectivity::UpdateService m_UpdateService;
     Connectivity::TelemetryService m_TelemetryService;
-    Services::ArtworksInspectionHub m_InspectionHub;
+    Services::ArtworksEditingHub m_EditingHub;
 
     // connectivity
     Models::UploadInfoRepository m_UploadInfoRepository;

@@ -21,6 +21,7 @@
 namespace SpellCheck {
     class UserDictionary: public QObject {
         Q_OBJECT
+        Q_PROPERTY(int wordsNumber READ getWordsCount NOTIFY sizeChanged)
     public:
         UserDictionary(Common::ISystemEnvironment &environment);
 

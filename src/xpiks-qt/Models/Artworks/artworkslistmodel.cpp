@@ -1021,8 +1021,7 @@ namespace Models {
         Artworks::ArtworkMetadata *artwork = qobject_cast<Artworks::ArtworkMetadata *>(sender());
         Q_ASSERT(artwork != nullptr);
         if (artwork != nullptr) {
-            auto ptr = artwork->getptr();
-            sendMessage(std::dynamic_pointer_cast<Artworks::IBasicModelSource>(ptr));
+            sendMessage(artwork->getptr());
         }
     }
 
@@ -1117,7 +1116,9 @@ namespace Models {
         disconnectStatus = QObject::disconnect(this, 0, artwork.get(), 0);
         if (disconnectStatus == false) { LOG_DEBUG << "Disconnect ArtworksListModel from Artwork returned false"; }
 
+#if !defined(CORE_TESTS) && !defined(INTEGRATION_TESTS)
         artwork->getBasicMetadataModel().clearModel();
+#endif
         artwork->deepDisconnect();
         artwork->clearSpellingInfo();
     }

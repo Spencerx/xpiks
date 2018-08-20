@@ -75,7 +75,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_VideoCachingService(environment, m_DatabaseManager, m_SwitcherModel),
     m_UpdateService(environment, m_SettingsModel, m_SwitcherModel, m_MaintenanceService),
     m_TelemetryService(m_SwitcherModel, m_SettingsModel),
-    m_InspectionHub(m_SpellCheckService, m_WarningsService, m_SettingsModel),
+    m_EditingHub(m_SpellCheckService, m_WarningsService, m_MetadataIOService, m_SettingsModel),
     m_UploadInfoRepository(environment, m_SecretsManager),
     m_ZipArchiver(),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
@@ -89,7 +89,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_WarningsModel(m_ArtworksListModel, m_WarningsSettingsModel),
     m_TranslationManager(environment, m_TranslationService),
     m_CsvExportModel(environment),
-    m_MetadataReadingHub(m_MetadataIOService, m_ArtworksUpdateHub, m_InspectionHub),
+    m_MetadataReadingHub(m_MetadataIOService, m_ArtworksUpdateHub, m_EditingHub),
     m_MetadataIOCoordinator(m_MetadataReadingHub, m_SettingsModel, m_SwitcherModel, m_VideoCachingService),
     m_SpellSuggestionModel(m_SpellCheckService),
     m_FilteredArtworksListModel(m_ArtworksListModel, m_CommandManager, m_PresetsModel, m_SettingsModel),
@@ -242,7 +242,7 @@ void XpiksApp::start() {
     m_VideoCachingService.startService(m_ImageCachingService, m_ArtworksUpdateHub, m_MetadataIOService);
 
     m_WarningsService.startService();
-    m_SpellCheckService.startService(m_InitCoordinator, m_WarningsService);
+    m_SpellCheckService.startService(m_InitCoordinator, m_UserDictionary, m_WarningsService);
     m_AutoCompleteService.startService(m_InitCoordinator);
     m_TranslationService.startService(m_InitCoordinator);
 
@@ -460,6 +460,7 @@ int XpiksApp::restoreSession() {
     LOG_DEBUG << "#";
     int restoredCount = 0;
     if (m_SettingsModel.getSaveSession() || m_SessionManager.getIsEmergencyRestore()) {
+        LOG_DEBUG << "Trying to restore";
         auto session = m_SessionManager.restoreSession();
         restoredCount = doAddFiles(std::get<0>(session), Common::AddFilesFlags::FlagIsSessionRestore);
         if (restoredCount > 0) {
@@ -467,6 +468,8 @@ int XpiksApp::restoreSession() {
             auto snapshot = m_ArtworksListModel.createSessionSnapshot();
             m_MaintenanceService.saveSession(snapshot, m_SessionManager);
         }
+    } else {
+        LOG_DEBUG << "Skipping restoring";
     }
 
     return restoredCount;
@@ -597,6 +600,12 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::UI::ZipSelectedCommand>(
                     m_FilteredArtworksListModel, m_ZipArchiver),
 
+                    std::make_shared<Commands::UI::FindAndReplaceInSelectedCommand>(
+                    m_FilteredArtworksListModel, m_ReplaceModel),
+
+                    std::make_shared<Commands::UI::ExportSelectedToCSVCommand>(
+                    m_FilteredArtworksListModel, m_CsvExportModel),
+
                     std::make_shared<Commands::CommandUIWrapper>(
                     QMLExtensions::UICommandID::RemoveSelected,
                     std::make_shared<Commands::RemoveSelectedFilesCommand>(
@@ -667,12 +676,17 @@ void XpiksApp::setupMessaging() {
 
     Common::connectTarget<Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>,
             Common::MessageType::SpellCheck>>(
-                m_InspectionHub,
-    { m_ArtworksListModel, m_ArtworkProxyModel, m_PresetsModel, m_CombinedArtworksModel, m_DeleteKeywordsModel, m_QuickBuffer });
+                m_EditingHub,
+    { m_ArtworkProxyModel, m_PresetsModel, m_CombinedArtworksModel, m_DeleteKeywordsModel, m_QuickBuffer });
 
     Common::connectTarget<Common::NamedType<std::vector<std::shared_ptr<Artworks::IBasicModelSource>>,
             Common::MessageType::SpellCheck>>(
-                m_InspectionHub,
+                m_EditingHub,
+    { m_ArtworksListModel });
+
+    Common::connectTarget<Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>,
+            Common::MessageType::EditingPaused>>(
+                m_EditingHub,
     { m_ArtworksListModel });
 
     Common::connectSource<Common::NamedType<int, Common::MessageType::UnavailableFiles>>(

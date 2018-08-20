@@ -28,9 +28,7 @@ int UndoRestoreSessionTest::doTest() {
 
     Models::SessionManager &sessionManager = m_TestsApp.getSessionManager();
 
-    sleepWaitUntil(10, [&]() {
-        return sessionManager.itemsCount() == addedCount;
-    });
+    sleepWaitUntil(5, [&]() { return sessionManager.itemsCount() == addedCount; });
     VERIFY(sessionManager.itemsCount() == addedCount, "Session does not contain all files");
 
     m_TestsApp.deleteAllArtworks();
@@ -45,7 +43,7 @@ int UndoRestoreSessionTest::doTest() {
         return 0;
     }
 
-    VERIFY(sources.size() == restoredCount, "Failed to properly restore");
+    VERIFY(addedCount == restoredCount, "Failed to properly restore");
     VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport session");
 
     VERIFY(m_TestsApp.undoLastAction(), "Failed to Undo last action");
