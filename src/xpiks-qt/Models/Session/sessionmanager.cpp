@@ -154,7 +154,7 @@ namespace Models {
         parseFiles(sessionMap, filenames, vectors);
         parseDirectories(sessionMap, fullDirectories);
 
-        bool success = filenames.empty();
+        bool success = filenames.size() > 0;
         if (success) {
             session = SessionTuple(
                           std::make_shared<Filesystem::FilesCollection>(
