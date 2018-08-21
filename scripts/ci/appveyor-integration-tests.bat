@@ -51,8 +51,8 @@ if "%mode%" == "run" (
 goto :EOF
 
 :error
+Taskkill /IM exiftool.exe /F
 echo "Handling error..."
-echo %cd%
 
 for %%f in (*.dmp) do (
     echo Trying to upload dump %%~nf
