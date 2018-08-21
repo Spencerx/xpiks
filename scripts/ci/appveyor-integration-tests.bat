@@ -29,7 +29,6 @@ if "%mode%" == "run" (
     if errorlevel 1 (
        set testsexitcode=!errorlevel!
        echo Integration tests failed with code !testsexitcode!
-       appveyor PushArtifact tests.log
        rem type tests.log
        goto :error
     )
@@ -39,7 +38,6 @@ if "%mode%" == "run" (
     if errorlevel 1 (
         set testsexitcode=!errorlevel!
         echo In-memory tests failed with code !testsexitcode!
-        appveyor PushArtifact tests_in_memory.log
         rem type tests_in_memory.log
         goto :error
     )
@@ -53,6 +51,8 @@ goto :EOF
 :error
 Taskkill /IM exiftool.exe /F
 echo "Handling error..."
+appveyor PushArtifact tests.log
+appveyor PushArtifact tests_in_memory.log
 
 for %%f in (*.dmp) do (
     echo Trying to upload dump %%~nf
