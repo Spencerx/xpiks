@@ -69,7 +69,6 @@ public:
     int getArtworksCount();
 
 private:
-    void doCleanup();
     bool doContinueReading(SignalWaiter &waiter, bool ignoreBackups = true);
 
 public:

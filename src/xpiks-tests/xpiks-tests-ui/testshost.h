@@ -2,9 +2,10 @@
 #define TESTSHOST_H
 
 #include <QObject>
-#include <QMLExtensions/colorsmodel.h>
+#include <functional>
 
 class QQmlEngine;
+class XpiksUITestsApp;
 
 class TestsHost : public QObject
 {
@@ -24,6 +25,7 @@ public:
 
 public:
     QString getName() const { return "testsHost"; }
+    void setApp(XpiksUITestsApp *app);
 
 private:
     explicit TestsHost(QObject *parent = 0);
@@ -36,7 +38,7 @@ signals:
 public slots:
 
 private:
-    QMLExtensions::ColorsModel m_ColorsModel;
+    XpiksUITestsApp *m_XpiksApp;
 };
 
 #endif // TESTSHOST_H

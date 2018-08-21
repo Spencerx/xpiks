@@ -697,6 +697,32 @@ void XpiksApp::setupMessaging() {
     { m_CombinedArtworksModel, m_ArtworksUploader, m_ZipArchiver, m_UndoRedoManager });
 }
 
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+void XpiksApp::cleanupModels() {
+    LOG_FOR_DEBUG << "#";
+
+    m_SpellCheckService.cancelCurrentBatch();
+    m_SpellCheckService.clearSuggestions();
+    m_WarningsService.cancelCurrentBatch();
+    m_MaintenanceService.cleanup();
+    m_ArtworksUpdateHub.clear();
+    m_AutoCompleteService.getAutoCompleteModel().clear();
+
+    m_CsvExportModel.clearModel();
+    m_CsvExportModel.resetModel();
+    m_CombinedArtworksModel.resetModel();
+    m_ZipArchiver.resetModel();
+    m_ArtworksUploader.resetModel();
+    m_ArtworksRepository.resetEverything();
+    m_ArtworksListModel.deleteAllItems();
+    m_SettingsModel.resetToDefault();
+    m_SpellSuggestionModel.clearModel();
+    m_UserDictionary.clear();
+    m_SessionManager.clearSession();
+    m_MetadataIOCoordinator.clear();
+}
+#endif
+
 void XpiksApp::servicesInitialized(int status) {
     LOG_DEBUG << "#";
     Q_ASSERT(m_ServicesInitialized == false);

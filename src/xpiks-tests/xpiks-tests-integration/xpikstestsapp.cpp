@@ -29,7 +29,7 @@ void XpiksTestsApp::waitInitialized() {
 void XpiksTestsApp::cleanup() {
     const QString exiftoolPath = m_SettingsModel.getExifToolPath();
     {
-        doCleanup();
+        cleanupModels();
     }
     m_SettingsModel.setExifToolPath(exiftoolPath);
 }
@@ -191,30 +191,6 @@ std::shared_ptr<Artworks::ArtworkMetadata> XpiksTestsApp::getArtwork(int index) 
 
 int XpiksTestsApp::getArtworksCount() {
     return (int)m_FilteredArtworksListModel.getItemsCount();
-}
-
-void XpiksTestsApp::doCleanup() {
-    LOG_INTEGRATION_TESTS << "#";
-
-    m_SpellCheckService.cancelCurrentBatch();
-    m_SpellCheckService.clearSuggestions();
-    m_WarningsService.cancelCurrentBatch();
-    m_MaintenanceService.cleanup();
-    m_ArtworksUpdateHub.clear();
-    m_AutoCompleteService.getAutoCompleteModel().clear();
-
-    m_CsvExportModel.clearModel();
-    m_CsvExportModel.resetModel();
-    m_CombinedArtworksModel.resetModel();
-    m_ZipArchiver.resetModel();
-    m_ArtworksUploader.resetModel();
-    m_ArtworksRepository.resetEverything();
-    m_ArtworksListModel.deleteAllItems();
-    m_SettingsModel.resetToDefault();
-    m_SpellSuggestionModel.clearModel();
-    m_UserDictionary.clear();
-    m_SessionManager.clearSession();
-    m_MetadataIOCoordinator.clear();
 }
 
 bool XpiksTestsApp::doContinueReading(SignalWaiter &waiter, bool ignoreBackups) {

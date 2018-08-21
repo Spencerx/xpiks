@@ -6,6 +6,8 @@
 #include "../../xpiks-qt/Helpers/clipboardhelper.h"
 #include "../../xpiks-qt/QMLExtensions/triangleelement.h"
 #include "testshost.h"
+#include "xpiksuitestsapp.h"
+#include "uitestsenvironment.h"
 
 #define STRINGIZE_(x) #x
 #define STRINGIZE(x) STRINGIZE_(x)
@@ -26,12 +28,23 @@ static QObject *createTestsHostsQmlObject(QQmlEngine *engine, QJSEngine *scriptE
 int main(int argc, char **argv) {
     // hack to overcome URI warning when loading Stubs plugin
 #if defined(Q_OS_WIN) || defined(Q_OS_MAC)
-    QString importPath = qgetenv(QML2_IMPORT_PATH_VAR);
+    QString importPath = QString::fromLatin1(qgetenv(QML2_IMPORT_PATH_VAR));
     if (!importPath.isEmpty()) { importPath += ";"; }
     importPath += QDir::toNativeSeparators(STRINGIZE(PLUGIN_STUB_IMPORT_DIR));
     qDebug() << "Setting QML2_IMPORT_PATH path to" << importPath;
     qputenv(QML2_IMPORT_PATH_VAR, importPath.toUtf8());
 #endif
+
+    UITestsEnvironment uiTestsEnvironment;
+    XpiksUITestsApp xpiksTests(uiTestsEnvironment);
+
+    xpiksTests.startLogging();
+    xpiksTests.initialize();
+    xpiksTests.start();
+    xpiksTests.waitInitialized();
+
+    TestsHost &host = TestsHost::getInstance();
+    host.setApp(&xpiksTests);
 
     qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
     qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");

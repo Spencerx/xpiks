@@ -50,5 +50,3 @@ win32|linux {
     QMAKE_EXTRA_TARGETS += copywhatsnew copydicts copytranslations copyfreqtables
     POST_TARGETDEPS += copywhatsnew copydicts copytranslations copyfreqtables
 }
-
-

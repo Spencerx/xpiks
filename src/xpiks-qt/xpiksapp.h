@@ -135,6 +135,11 @@ protected:
     void registerUICommands();
     void setupMessaging();
 
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+protected:
+    virtual void cleanupModels();
+#endif
+
 signals:
     void globalCloseRequested();
     void globalBeforeDestruction();
