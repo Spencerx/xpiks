@@ -164,3 +164,5 @@ if not "%BUILD_MODE%"=="appveyor" (
 )
 
 echo "%PRINT_PREFIX% Vendors preparation for %BUILD_MODE%: done"
+
+cd %ROOT_DIR%
