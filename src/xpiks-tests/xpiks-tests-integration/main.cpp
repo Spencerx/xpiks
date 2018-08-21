@@ -116,7 +116,12 @@ void initCrashRecovery(Common::ISystemEnvironment &environment) {
     auto &chillout = Debug::Chillout::getInstance();
     QString crashesDirPath = QDir::toNativeSeparators(environment.path({Constants::CRASHES_DIR}));
 #ifdef Q_OS_WIN
-    chillout.init(L"xpiks-tests-integration", crashesDirPath.toStdWString());
+    #ifdef APPVEYOR
+        // crash next to exe so appveyor could make artifact out of dump
+        chillout.init(L"xpiks-tests-integration", L".");
+    #else
+        chillout.init(L"xpiks-tests-integration", crashesDirPath.toStdWString());
+    #endif
 #else
     chillout.init("xpiks-tests-integration", crashesDirPath.toStdString());
 #endif
