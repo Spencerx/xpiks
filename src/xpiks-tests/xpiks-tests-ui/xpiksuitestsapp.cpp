@@ -48,5 +48,6 @@ void XpiksUITestsApp::waitInitialized() {
 }
 
 void XpiksUITestsApp::cleanup() {
+    LOG_DEBUG << "#";
     cleanupModels();
 }

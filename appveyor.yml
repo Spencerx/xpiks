@@ -63,8 +63,8 @@ before_build:
   - git checkout FETCH_HEAD -- api
 
 build_script:
-  - if not defined UI_TESTS scripts\build\checkout_deps_windows.bat
-  - if not defined UI_TESTS scripts\build\build_vendors_windows.bat appveyor
+  - scripts\build\checkout_deps_windows.bat
+  - scripts\build\build_vendors_windows.bat appveyor
   - if defined XPIKS_BINARY scripts\ci\appveyor-xpiks.bat
   - if defined CORE_TESTS scripts\ci\appveyor-core-tests.bat build
   - if defined INTEGRATION_TESTS scripts\ci\appveyor-integration-tests.bat build

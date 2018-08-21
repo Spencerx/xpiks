@@ -24,84 +24,6 @@ Item {
         property bool leftSideCollapsed: false
     }
 
-    QtObject {
-        id: artworkProxy
-
-        property string basename
-        property string thumbPath
-        property bool isVideo: false
-        property string title
-        property string description
-        property int keywordsCount: 0
-        property bool isValid: true
-        property bool hasKeywordsSpellErrors: false
-        property bool hasTitleSpellErrors: false
-        property bool hasDescriptionSpellErrors: false
-
-        function getPropertiesMap() { return {} }
-        function initTitleHighlighting() {}
-        function initDescriptionHighlighting() {}
-        function resetModel() {}
-        function registerAsCurrentItem() {}
-        function initSuggestion() {}
-
-        signal itemBecomeUnavailable()
-        signal completionsAvailable();
-    }
-
-    QtObject {
-        id: filteredArtItemsModel
-
-        property string thumbpath: ""
-        property bool isvideo: false
-        property bool hasvectorattached: false
-    }
-
-    QtObject {
-        id: acSource
-        property bool isActive: false
-        property bool tryExpandPresetFlag: false
-        property bool isCancelled: false
-        property bool isAccepted: false
-        property bool isAnySelected: false
-
-        function moveSelectionUp() {}
-        function cancelCompletion() { isCancelled = true }
-        function moveSelectionDown() {}
-        function acceptSelected(tryExpandPreset) { }
-        function hasSelectedCompletion() { return isAnySelected }
-    }
-
-    ListModel {
-        id: presetsModel
-
-        ListElement { name: "Jane" }
-        ListElement { name: "Harry" }
-        ListElement { name: "Wendy" }
-    }
-
-    ListModel {
-        id: presetsGroups
-
-        ListElement { gname: "Default" }
-        ListElement { gname: "Nature" }
-
-        function getGroupModel(index) { return {} }
-        function getDefaultGroupModel() { return {} }
-    }
-
-    ListModel {
-        id: filteredPresetsModel
-        ListElement { name: "Alice" }
-        ListElement { name: "Bob" }
-    }
-
-    QtObject {
-        id: keywordsSuggestor
-        property bool isInProgress: false
-        property string externalurl: ''
-    }
-
     ArtworkEditView {
         id: artworkEditView
         anchors.fill: parent
@@ -116,6 +38,10 @@ Item {
         function initTestCase() {
             //moreLink = findChild(artworkEditView, "moreLinkHost")
             //moreMenu = findChild(artworkEditView, "keywordsMoreMenuObject")
+        }
+
+        function cleanupTestCase() {
+            TestsHost.cleanup()
         }
     }
 }

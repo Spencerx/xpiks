@@ -39,6 +39,10 @@ Item {
             descriptionCheckBox = findChild(combinedView, "descriptionCheckBox")
         }
 
+        function cleanupTestCase() {
+            TestsHost.cleanup()
+        }
+
         function test_TabTopToBottom() {
             combinedArtworks.changeTitle = true
             descriptionCheckBox.checked = true

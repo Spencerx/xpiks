@@ -10,29 +10,8 @@ Item {
     property string scoreme: TestsHost.scoreme
 
     QtObject {
-        id: uiManager
-        property real keywordHeight: 10
-    }
-
-    QtObject {
         id: applicationWindow
         property bool leftSideCollapsed: false
-    }
-
-    QtObject {
-        id: settingsModel
-        property int keywordSizeScale: 1
-    }
-
-    QtObject {
-        id: helpersWrapper
-
-        signal globalBeforeDestruction()
-    }
-
-    QtObject {
-        id: i18
-        property string n: ""
     }
 
     WhatsNewDialog {

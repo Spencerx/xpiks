@@ -24,6 +24,9 @@ public:
     void qmlEngineCallback(QQmlEngine *engine);
 
 public:
+    Q_INVOKABLE void cleanup();
+
+public:
     QString getName() const { return QLatin1String("testsHost"); }
     void setApp(XpiksUITestsApp *app);
 

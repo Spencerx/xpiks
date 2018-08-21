@@ -10,46 +10,8 @@ Item {
     property string scoreme: TestsHost.scoreme
 
     QtObject {
-        id: uiManager
-        property real keywordHeight: 10
-    }
-
-    QtObject {
         id: applicationWindow
         property bool leftSideCollapsed: false
-    }
-
-    QtObject {
-        id: settingsModel
-        property int keywordSizeScale: 1
-    }
-
-    QtObject {
-        id: archiver
-
-        property bool isError: false
-        property bool inProgress: false
-        property int itemsCount: 0
-        property int percent: 50
-
-        function resetModel() {}
-        function archiveArtworks() {}
-
-        signal finishedProcessing()
-        signal requestCloseWindow()
-    }
-
-    QtObject {
-        id: helpersWrapper
-
-        signal globalBeforeDestruction()
-
-        function getZipArchiver() { return archiver }
-    }
-
-    QtObject {
-        id: i18
-        property string n: ""
     }
 
     ZipArtworksDialog {

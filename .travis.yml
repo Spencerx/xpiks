@@ -40,7 +40,7 @@ before_script:
   - git checkout FETCH_HEAD -- api
 
 script:
-  - if [ -z "${UI_TESTS+xxx}" ]; then "$TRAVIS_BUILD_DIR/scripts/build/build_vendors_linux.sh" travis-ci; fi
+  - "$TRAVIS_BUILD_DIR/scripts/build/build_vendors_linux.sh" travis-ci
   - ls -la libs/*
   - if [ -n "$XPIKS_BINARY" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-xpiks.sh"; fi
   - if [ -n "$CORE_TESTS" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-core-tests.sh"; fi

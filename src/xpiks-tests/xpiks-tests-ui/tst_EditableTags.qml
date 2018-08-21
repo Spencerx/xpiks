@@ -73,6 +73,10 @@ Item {
             input = findChild(editableTags, "nextTagTextInput")
         }
 
+        function cleanupTestCase() {
+            TestsHost.cleanup()
+        }
+
         function test_PressCommaAddsKeyword() {
             tagAddedSpy.clear()
             acSource.clear()
