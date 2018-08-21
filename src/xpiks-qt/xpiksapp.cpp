@@ -133,6 +133,7 @@ void XpiksApp::startLogging() {
 }
 
 void XpiksApp::initialize() {
+    LOG_DEBUG << "#";
     m_SettingsModel.initializeConfigs();
     m_SettingsModel.retrieveAllValues();
 
@@ -151,8 +152,10 @@ void XpiksApp::initialize() {
     registerUICommands();
     setupMessaging();
 
+#ifndef UI_TESTS
     m_LanguagesModel.initFirstLanguage();
     m_LanguagesModel.loadLanguages();
+#endif
 
     m_ColorsModel.initializeBuiltInThemes();
     m_LogsModel.InjectDependency(&m_ColorsModel);
@@ -162,7 +165,7 @@ void XpiksApp::initialize() {
 }
 
 void XpiksApp::setupUI(QQmlContext *context) {
-    context->setContextProperty("ArtworksListModel", &m_ArtworksListModel);
+    context->setContextProperty("artworksListModel", &m_ArtworksListModel);
     context->setContextProperty("artworkRepository", &m_FilteredArtworksRepository);
     context->setContextProperty("combinedArtworks", &m_CombinedArtworksModel);
     context->setContextProperty("secretsManager", &m_SecretsManager);

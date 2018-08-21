@@ -11,76 +11,8 @@ Item {
     property string scoreme: TestsHost.scoreme
 
     QtObject {
-        id: uiManager
-        property real keywordHeight: 10
-    }
-
-    QtObject {
         id: applicationWindow
         property bool leftSideCollapsed: false
-    }
-
-    QtObject {
-        id: settingsModel
-        property int keywordSizeScale: 1
-    }
-
-    QtObject {
-        id: i18
-        property string n: ''
-    }
-
-    QtObject {
-        id: fakeKeywordsModel
-        property bool hasduplicate: false
-        property bool iscorrect: true
-        property string keyword: "stuff"
-        signal completionsAvailable()
-    }
-
-    ListModel {
-        id: presetsModel
-
-        ListElement { name: "Jane"; keywordscount: 1; isnamevalid: true }
-        ListElement { name: "Harry"; keywordscount: 2; isnamevalid: true }
-        ListElement { name: "Wendy"; keywordscount: 3; isnamevalid: true }
-
-        function getKeywordsModel(index) { return fakeKeywordsModel }
-    }
-
-    ListModel {
-        id: presetsGroups
-
-        ListElement { gname: "Default" }
-        ListElement { gname: "Nature" }
-
-        function getGroupModel(index) { return {} }
-        function getDefaultGroupModel() { return {} }
-
-        function findGroupIndexById(id) { return 0 }
-
-        property var groupNames: ["Default", "Nature"]
-    }
-
-    ListModel {
-        id: filteredPresetsModel
-        ListElement { name: "Alice" }
-        ListElement { name: "Bob" }
-    }
-
-    QtObject {
-        id: acSource
-        property bool isActive: false
-        property bool tryExpandPresetFlag: false
-        property bool isCancelled: false
-        property bool isAccepted: false
-        property bool isAnySelected: false
-
-        function moveSelectionUp() {}
-        function cancelCompletion() { isCancelled = true }
-        function moveSelectionDown() {}
-        function acceptSelected(tryExpandPreset) { }
-        function hasSelectedCompletion() { return isAnySelected }
     }
 
     PresetsEditDialog {

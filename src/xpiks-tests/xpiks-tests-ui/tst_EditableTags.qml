@@ -10,51 +10,6 @@ Item {
     height: 600
     property string scoreme: TestsHost.scoreme
 
-    QtObject {
-        id: settingsModel
-        property int keywordSizeScale: 1
-    }
-
-    QtObject {
-        id: helpersWrapper
-
-        function sanitizeKeyword(keyword) {
-            return keyword;
-        }
-
-        function isKeywordValid(keyword) {
-            return keyword.length >= 2 || keyword === "$"
-        }
-    }
-
-    QtObject {
-        id: acSource
-        property bool isActive: false
-        property bool tryExpandPresetFlag: false
-        property bool isCancelled: false
-        property bool isAccepted: false
-        property bool isAnySelected: false
-
-        function moveSelectionUp() {}
-        function cancelCompletion() { isCancelled = true }
-        function moveSelectionDown() {}
-
-        function acceptSelected(tryExpandPreset) {
-            tryExpandPresetFlag = tryExpandPreset
-            isAccepted = true
-        }
-
-        function hasSelectedCompletion() { return isAnySelected }
-
-        function clear() {
-            isActive = false
-            isCancelled = false
-            tryExpandPresetFlag = false
-            isAccepted = false
-            isAnySelected = false
-        }
-    }
-
     Rectangle {
         anchors.fill: parent
         color: uiColors.defaultControlColor
@@ -115,7 +70,6 @@ Item {
         property var input
 
         function initTestCase() {
-            sleep(2000)
             input = findChild(editableTags, "nextTagTextInput")
         }
 

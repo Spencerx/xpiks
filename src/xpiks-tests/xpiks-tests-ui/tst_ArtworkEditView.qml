@@ -15,50 +15,8 @@ Item {
     property string scoreme: TestsHost.scoreme
 
     QtObject {
-        id: settingsModel
-        property int keywordSizeScale: 1
-    }
-
-    QtObject {
-        id: i18
-        property string n: ''
-    }
-
-    QtObject {
         id: keywordsWrapper
         property bool keywordsModel: false
-    }
-
-    QtObject {
-        id: helpersWrapper
-        signal globalCloseRequested();
-
-        function sanitizeKeyword(keyword) {
-            return keyword;
-        }
-
-        function isKeywordValid(keyword) {
-            return keyword.length >= 2 || keyword === "$"
-        }
-    }
-
-    QtObject {
-        id: xpiksApp
-
-        signal globalBeforeDestruction()
-    }
-
-    QtObject {
-        id: warningsModel
-        property int minKeywordsCount: 7
-    }
-
-    QtObject {
-        id: uiManager
-        property real keywordHeight: 10
-        property int artworkEditRightPaneWidth: 300
-
-        function clearCurrentItem() { }
     }
 
     QtObject {
@@ -156,7 +114,6 @@ Item {
         property var moreMenu
 
         function initTestCase() {
-            sleep(2000)
             //moreLink = findChild(artworkEditView, "moreLinkHost")
             //moreMenu = findChild(artworkEditView, "keywordsMoreMenuObject")
         }

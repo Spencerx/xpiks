@@ -3,8 +3,9 @@
 #include <QDir>
 #include <QDebug>
 #include <QQmlEngine>
-#include "../../xpiks-qt/Helpers/clipboardhelper.h"
-#include "../../xpiks-qt/QMLExtensions/triangleelement.h"
+#include <Helpers/clipboardhelper.h>
+#include <QMLExtensions/triangleelement.h>
+#include <Helpers/logger.h>
 #include "testshost.h"
 #include "xpiksuitestsapp.h"
 #include "uitestsenvironment.h"
@@ -25,6 +26,22 @@ static QObject *createTestsHostsQmlObject(QQmlEngine *engine, QJSEngine *scriptE
     return object;
 }
 
+void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+    Q_UNUSED(context);
+    QString logLine = qFormatLogMessage(type, context, msg);
+
+    Helpers::Logger &logger = Helpers::Logger::getInstance();
+    logger.log(type, logLine);
+
+    if ((type == QtFatalMsg) || (type == QtWarningMsg)) {
+        logger.abortFlush();
+    }
+
+    if (type == QtFatalMsg) {
+        abort();
+    }
+}
+
 int main(int argc, char **argv) {
     // hack to overcome URI warning when loading Stubs plugin
 #if defined(Q_OS_WIN) || defined(Q_OS_MAC)
@@ -35,7 +52,16 @@ int main(int argc, char **argv) {
     qputenv(QML2_IMPORT_PATH_VAR, importPath.toUtf8());
 #endif
 
+    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
+    qInstallMessageHandler(myMessageHandler);
+
     UITestsEnvironment uiTestsEnvironment;
+
+#ifdef WITH_LOGS
+    Helpers::Logger &logger = Helpers::Logger::getInstance();
+    logger.setMemoryOnly(uiTestsEnvironment.getIsInMemoryOnly());
+#endif
+
     XpiksUITestsApp xpiksTests(uiTestsEnvironment);
 
     xpiksTests.startLogging();
