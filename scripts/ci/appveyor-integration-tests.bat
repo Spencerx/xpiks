@@ -44,14 +44,14 @@ if "%mode%" == "run" (
         goto :error
     )
 
-    type tests.log
+    rem type tests.log
     popd
 )
 
 goto :EOF
 
 :error
-
+echo "Handling error..."
 echo %cd%
 
 for %%f in (*.dmp) do (
@@ -59,6 +59,6 @@ for %%f in (*.dmp) do (
     appveyor PushArtifact %%~nf
 )
 popd
-echo Failed with error #!testsexitcode!.
+echo Failed with error #!testsexitcode!
 exit /b !testsexitcode!
 

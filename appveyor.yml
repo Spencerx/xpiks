@@ -76,6 +76,7 @@ test_script:
   - if defined UI_TESTS scripts\ci\appveyor-ui-tests.bat run
 
 on_failure:
+  - ps: Get-EventLog AppVeyor -newest 10 | Format-List
   - ps: Get-ChildItem .\*.dmp | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
   - if defined INTEGRATION_TESTS appveyor PushArtifact %configuration%\xpiks-tests-integration.exe
   - if defined INTEGRATION_TESTS appveyor PushArtifact %configuration%\xpiks-tests-integration.pdb
