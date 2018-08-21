@@ -24,7 +24,7 @@ public:
     void qmlEngineCallback(QQmlEngine *engine);
 
 public:
-    QString getName() const { return "testsHost"; }
+    QString getName() const { return QLatin1String("testsHost"); }
     void setApp(XpiksUITestsApp *app);
 
 private:
