@@ -1,5 +1,5 @@
 import QtQuick 2.0
-
+import XpiksTests 1.0
 import QtQuick 2.0
 import QtTest 1.1
 import "../../xpiks-qt/Dialogs"
@@ -8,10 +8,7 @@ Item {
     id: root
     width: 800
     height: 600
-
-    FakeColors {
-        id: uiColors
-    }
+    property string scoreme: TestsHost.scoreme
 
     QtObject {
         id: uiManager

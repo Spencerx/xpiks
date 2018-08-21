@@ -1,16 +1,14 @@
 import QtQuick 2.0
 import QtTest 1.1
 import xpiks 1.0
+import XpiksTests 1.0
 import "../../xpiks-qt/Components"
 
 Item {
     id: root
     width: 800
     height: 600
-
-    FakeColors {
-        id: uiColors
-    }
+    property string scoreme: TestsHost.scoreme
 
     QtObject {
         id: settingsModel
@@ -57,8 +55,18 @@ Item {
         }
     }
 
-    EditableTags {
-        id: editableTags
+    Rectangle {
+        anchors.fill: parent
+        color: uiColors.defaultControlColor
+
+        EditableTags {
+            id: editableTags
+            anchors.fill: parent
+
+            delegate: KeywordWrapper {
+                itemHeight: 10
+            }
+        }
     }
 
     SignalSpy {
@@ -107,6 +115,7 @@ Item {
         property var input
 
         function initTestCase() {
+            sleep(2000)
             input = findChild(editableTags, "nextTagTextInput")
         }
 

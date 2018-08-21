@@ -1,16 +1,20 @@
 TEMPLATE = app
 
 QT += qml quick
-CONFIG += qmltestcase plugin c++11
+CONFIG += qmltestcase plugin c++14
 TARGET = xpiks-tests-ui
 
 DEFINES += QML_IMPORT_TRACE
 DEFINES += QT_DEBUG_PLUGINS
 
+INCLUDEPATH += ../../xpiks-qt/
+
 #DEFINES += QT_FATAL_WARNINGS
 
 SOURCES += main.cpp \
-    ../../xpiks-qt/QMLExtensions/triangleelement.cpp
+    ../../xpiks-qt/QMLExtensions/triangleelement.cpp \
+    testshost.cpp \
+    ../../xpiks-qt/QMLExtensions/colorsmodel.cpp
 
 STUB_PLUGIN_NAME = UiTestsStubPlugin
 
@@ -25,7 +29,6 @@ include(deployment.pri)
 DISTFILES += \
     ../../xpiks-qt/Components/EditableTags.qml \
     tst_EditableTags.qml \
-    FakeColors.qml \
     ../../xpiks-qt/StackViews/CombinedEditView.qml \
     tst_CombinedEditView.qml \
     tst_ArtworkEditView.qml \
@@ -38,7 +41,9 @@ DISTFILES += \
 
 HEADERS += \
     ../../xpiks-qt/Helpers/clipboardhelper.h \
-    ../../xpiks-qt/QMLExtensions/triangleelement.h
+    ../../xpiks-qt/QMLExtensions/triangleelement.h \
+    testshost.h \
+    ../../xpiks-qt/QMLExtensions/colorsmodel.h
 
 RESOURCES += \
     xpiks-tests-ui.qrc

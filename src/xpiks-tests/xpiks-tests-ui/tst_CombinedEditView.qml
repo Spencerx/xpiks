@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtTest 1.1
 import xpiks 1.0
+import XpiksTests 1.0
 import "../../xpiks-qt/StackViews"
 import "UiTestsStubPlugin"
 
@@ -11,10 +12,7 @@ Item {
 
     property string path: ''
     property bool isselected: false
-
-    FakeColors {
-        id: uiColors
-    }
+    property string scoreme: TestsHost.scoreme
 
     QtObject {
         id: settingsModel
@@ -152,6 +150,7 @@ Item {
         property var descriptionCheckBox
 
         function initTestCase() {
+            sleep(2000)
             titleInput = findChild(combinedView, "titleTextInput")
             descriptionInput = findChild(combinedView, "descriptionTextInput")
             keywordsInput = findChild(combinedView, "keywordsInput")
