@@ -23,20 +23,24 @@ set testsexitcode=0
 if "%mode%" == "run" (
     pushd src\xpiks-tests\xpiks-tests-integration
     copy ..\..\..\libs\%configuration%\*.dll .
+
+    echo "Starting integration tests..."
     %configuration%\xpiks-tests-integration.exe > tests.log
-	if errorlevel 1 (
-		set testsexitcode=!errorlevel!
-		echo Integration tests failed with code !testsexitcode!
-		type tests.log
-		goto :error
-	)
+    if errorlevel 1 (
+       set testsexitcode=!errorlevel!
+       echo Integration tests failed with code !testsexitcode!
+       appveyor PushArtifact tests.log
+       rem type tests.log
+       goto :error
+    )
 
     echo "Starting integration tests in memory..."
     %configuration%\xpiks-tests-integration.exe --in-memory  > tests_in_memory.log
     if errorlevel 1 (
         set testsexitcode=!errorlevel!
         echo In-memory tests failed with code !testsexitcode!
-        type tests_in_memory.log
+        appveyor PushArtifact tests_in_memory.log
+        rem type tests_in_memory.log
         goto :error
     )
 
@@ -47,7 +51,14 @@ if "%mode%" == "run" (
 goto :EOF
 
 :error
+
+echo %cd%
+
+for %%f in (*.dmp) do (
+    echo Trying to upload dump %%~nf
+    appveyor PushArtifact %%~nf
+)
+popd
 echo Failed with error #!testsexitcode!.
 exit /b !testsexitcode!
-
 
