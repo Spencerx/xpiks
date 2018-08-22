@@ -143,11 +143,11 @@ namespace QMLExtensions {
             thumbnailCreator.setCreationOption(option);
             thumbnailCreator.setSeekPercentage(50);
             thumbnailCreated = thumbnailCreator.createThumbnail(buffer, width, height);
-            LOG_INTEGR_TESTS_OR_DEBUG << "Thumb generated for" << originalPath;
             if (thumbnailCreated) {
+                LOG_INTEGR_TESTS_OR_DEBUG << "Thumb generated for" << originalPath;
                 item->setVideoMetadata(thumbnailCreator.getMetadata());
             } else {
-                LOG_WARNING << "Failed to create thumbnail";
+                LOG_WARNING << "Failed to create thumbnail for" << originalPath;
             }
         } catch (...) {
             LOG_WARNING << "Unknown exception while creating thumbnail";
