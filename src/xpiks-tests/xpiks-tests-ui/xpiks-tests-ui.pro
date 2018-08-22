@@ -329,7 +329,8 @@ DISTFILES += \
     tst_UploadDialog.qml \
     tst_PresetsEditDialog.qml \
     tst_ZipArchiver.qml \
-    tst_WhatsNew.qml
+    tst_WhatsNew.qml \
+    ../../xpiks-qt/Common.js
 
 HEADERS += \
     testshost.h \

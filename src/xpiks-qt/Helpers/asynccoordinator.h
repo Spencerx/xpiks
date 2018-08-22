@@ -14,6 +14,7 @@
 #include <QObject>
 #include <QAtomicInt>
 #include <QTimer>
+#include <Common/logging.h>
 #include <memory>
 
 namespace Helpers {
@@ -57,6 +58,7 @@ namespace Helpers {
         AsyncCoordinatorLocker(AsyncCoordinator &coordinator):
             m_Coordinator(coordinator)
         {
+            LOG_DEBUG << "#";
             m_Coordinator.aboutToBegin();
         }
 
@@ -81,6 +83,7 @@ namespace Helpers {
         }
 
         virtual ~AsyncCoordinatorUnlocker() {
+            LOG_DEBUG << "#";
             m_Coordinator.justEnded();
         }
 
@@ -97,6 +100,7 @@ namespace Helpers {
         }
 
         virtual ~AsyncCoordinatorStarter() {
+            LOG_DEBUG << "#";
             m_Coordinator.allBegun(m_Timeout);
         }
 
