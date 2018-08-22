@@ -30,7 +30,8 @@ int UndoAddDirectoryTest::doTest() {
     VERIFY(m_TestsApp.getArtworksCount() == 0, "All items were not removed");
 
     VERIFY(m_TestsApp.undoLastAction(), "Failed to undo remove directory");
-    VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport files");
+    VERIFY(waiter.wait(20), "Timeout exceeded for auto import");
+    VERIFY(m_TestsApp.checkImportSucceeded(), "Failed to auto import");
     VERIFY(m_TestsApp.getArtworksCount() == addedCount, "Items were not put back");
 
     return 0;

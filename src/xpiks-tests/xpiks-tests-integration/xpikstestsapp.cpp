@@ -76,6 +76,7 @@ void XpiksTestsApp::dispatch(QMLExtensions::UICommandID::CommandID id, QVariant 
 }
 
 bool XpiksTestsApp::addFilesForTest(const QList<QUrl> &urls) {
+    LOG_INFO << urls.size() << "urls";
     SignalWaiter waiter;
     QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
                      &waiter, &SignalWaiter::finished);
@@ -114,6 +115,7 @@ bool XpiksTestsApp::dropItemsForTest(const QList<QUrl> &urls) {
 }
 
 bool XpiksTestsApp::continueReading(SignalWaiter &waiter, bool ignoreBackups) {
+    LOG_INFO << "#";
     return doContinueReading(waiter, ignoreBackups);
 }
 
@@ -195,6 +197,7 @@ int XpiksTestsApp::getArtworksCount() {
 
 bool XpiksTestsApp::doContinueReading(SignalWaiter &waiter, bool ignoreBackups) {
     bool success = false;
+    LOG_DEBUG << "ignore backups:" << ignoreBackups;
 
     do {
         const int importIDsSize = m_MetadataIOCoordinator.getImportIDs().size();
@@ -228,7 +231,7 @@ void XpiksTestsApp::initialize() {
     #if defined(APPVEYOR)
         m_SettingsModel.setExifToolPath("c:/projects/xpiks-deps/windows-3rd-party-bin/exiftool.exe");
     #else
-        m_SettingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool.exe"));
+        m_SettingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool/exiftool.exe"));
     #endif
 #elif defined(Q_OS_MAC)
     m_SettingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool/exiftool"));

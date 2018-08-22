@@ -41,7 +41,11 @@ int SpellCheckCombinedModelTest::doTest() {
 
     VERIFY(basicModel->hasDescriptionSpellError(), "Description spell error not detected");
     VERIFY(!basicModel->hasTitleSpellError(), "Title spell error not detected");
-    VERIFY(basicModel->hasKeywordsSpellError(), "Keywords spell error not detected");
+    VERIFY(basicModel->hasKeywordsSpellError(), "Keywords spell error not detected");    
+
+    sleepWaitUntil(2, [&]() {
+        return !m_TestsApp.getSpellCheckService().suggestCorrections(wrongWord).empty();
+    });
 
     m_TestsApp.dispatch(QMLExtensions::UICommandID::FixSpellingCombined);
 

@@ -34,7 +34,10 @@ int FixSpellingMarksModifiedTest::doTest() {
     VERIFY(waiter.wait(5), "Timeout for waiting for initial spellcheck results");
 
     sleepWaitUntil(5, [&basicModel]() { return basicModel.hasKeywordsSpellError(); });
-    VERIFY(basicModel.hasKeywordsSpellError(), "Keywords spell error not detected");
+    VERIFY(basicModel.hasKeywordsSpellError(), "Keywords spell error not detected");    
+    sleepWaitUntil(2, [&]() {
+        return !m_TestsApp.getSpellCheckService().suggestCorrections(wrongWord).empty();
+    });
 
     artwork->setIsSelected(true);
     m_TestsApp.dispatch(QMLExtensions::UICommandID::FixSpellingInSelected);

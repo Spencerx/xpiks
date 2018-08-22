@@ -33,6 +33,7 @@ namespace MetadataIO {
     }
 
     void MetadataReadingHub::initializeImport(Artworks::ArtworksSnapshot const &artworksToRead, int importID, quint32 storageReadBatchID) {
+        LOG_DEBUG << "#";
         m_ArtworksToRead.copyFrom(artworksToRead);
         m_ImportQueue.reservePush(artworksToRead.size());
         m_ImportID = importID;
@@ -46,6 +47,7 @@ namespace MetadataIO {
     }
 
     void MetadataReadingHub::finalizeImport() {
+        LOG_DEBUG << "#";
         m_ArtworksToRead.clear();
         m_ImportQueue.clear();
     }
