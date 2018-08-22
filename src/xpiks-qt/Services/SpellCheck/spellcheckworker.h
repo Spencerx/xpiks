@@ -80,7 +80,7 @@ namespace SpellCheck {
 
 #ifdef INTEGRATION_TESTS
     public:
-        int getSuggestionsCount() const { return m_Suggestions.count(); }
+        int getSuggestionsCount() const { return m_Suggestions.size(); }
         void clearSuggestions();
 #endif
 

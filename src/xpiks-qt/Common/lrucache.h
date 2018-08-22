@@ -35,7 +35,7 @@ namespace Common {
         }
 
     public:
-        size_t size() { return m_Data.size(); }
+        size_t size() const { return m_Data.size(); }
 
         TValue const &get(TKey const &key, TValue const &defaultValue = TValue()) {
             auto it = m_KeysMap.find(key);
