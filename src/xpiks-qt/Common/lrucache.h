@@ -73,6 +73,11 @@ namespace Common {
             }
         }
 
+        void clear() {
+            m_KeysMap.clear();
+            m_Data.clear();
+        }
+
         void normalize() {
             Q_ASSERT(m_Data.size() >= m_KeysMap.size());
             while (m_Data.size() > m_MaxCacheSize) {
