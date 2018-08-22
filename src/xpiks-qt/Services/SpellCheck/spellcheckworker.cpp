@@ -36,6 +36,14 @@
 #define SPELLCHECK_WORKER_SLEEP_DELAY 500
 #define SPELLCHECK_DELAY_PERIOD 50
 
+#if defined(INTEGRATION_TESTS) || defined(CORE_TESTS)
+    #define SUGGESTIONS_CACHE_SIZE 2
+    #define SUGGESTIONS_CACHE_ELASTICITY 1
+#else
+    #define SUGGESTIONS_CACHE_SIZE 2000
+    #define SUGGESTIONS_CACHE_ELASTICITY 500
+#endif
+
 namespace SpellCheck {
     SpellCheckWorker::SpellCheckWorker(const QString &dictsRoot,
                                        Common::ISystemEnvironment &environment,
@@ -49,6 +57,7 @@ namespace SpellCheck {
         m_InitCoordinator(initCoordinator),
         m_UserDictionary(userDictionary),
         m_WarningsService(warningsService),
+        m_Suggestions(SUGGESTIONS_CACHE_SIZE, SUGGESTIONS_CACHE_ELASTICITY),
         m_DictsRoot(dictsRoot),
         m_Hunspell(NULL),
         m_Codec(NULL)
@@ -186,10 +195,7 @@ namespace SpellCheck {
         Q_UNUSED(locker);
         QStringList result;
 
-        auto it = m_Suggestions.find(word);
-        if (it != m_Suggestions.end()) {
-            result = it.value();
-        } else {
+        if (!m_Suggestions.tryGet(word, result)) {
             LOG_INTEGRATION_TESTS << "Suggestion not found for:" << word;
         }
 
@@ -378,16 +384,17 @@ namespace SpellCheck {
     void SpellCheckWorker::findSuggestions(const QString &word) {
         LOG_INTEGRATION_TESTS << word;
         bool needsCorrections = false;
+        QStringList suggestions;
 
         m_SuggestionsLock.lockForRead();
-        needsCorrections = !m_Suggestions.contains(word);
+        needsCorrections = !m_Suggestions.tryGet(word, suggestions);
         m_SuggestionsLock.unlock();
 
         if (needsCorrections) {
-            QStringList suggestions = suggestCorrections(word);
+            suggestions = suggestCorrections(word);
             m_SuggestionsLock.lockForWrite();
             {
-                m_Suggestions.insert(word, suggestions);
+                m_Suggestions.put(word, suggestions);
             }
             m_SuggestionsLock.unlock();
         }

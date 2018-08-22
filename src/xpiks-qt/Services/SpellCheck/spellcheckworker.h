@@ -14,13 +14,14 @@
 #include <QString>
 #include <QStringList>
 #include <QReadWriteLock>
-#include <QHash>
 #include <QSet>
 #include "spellcheckitem.h"
 #include <Common/itemprocessingworker.h>
 #include <Common/isystemenvironment.h>
+#include <Common/lrucache.h>
 #include <Models/settingsmodel.h>
 #include <Helpers/asynccoordinator.h>
+#include <Helpers/hashhelpers.h>
 
 class Hunspell;
 class QTextCodec;
@@ -99,7 +100,7 @@ namespace SpellCheck {
         Helpers::AsyncCoordinator &m_InitCoordinator;
         UserDictionary &m_UserDictionary;
         Warnings::WarningsService &m_WarningsService;
-        QHash<QString, QStringList> m_Suggestions;
+        Common::LRUCache<QString, QStringList> m_Suggestions;
         QSet<QString> m_WrongWords;
         QReadWriteLock m_SuggestionsLock;
         QString m_DictsRoot;
