@@ -114,14 +114,16 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
 
 void initCrashRecovery(Common::ISystemEnvironment &environment) {
     auto &chillout = Debug::Chillout::getInstance();
-    QString crashesDirPath = QDir::toNativeSeparators(environment.path({Constants::CRASHES_DIR}));
+
+#ifdef APPVEYOR
+    QString crashesDirRoot = QDir::currentPath();
+#else
+    QString crashesDirRoot = environment.path({Constants::CRASHES_DIR});
+#endif
+    QString crashesDirPath = QDir::toNativeSeparators(crashesDirRoot);
+
 #ifdef Q_OS_WIN
-    #ifdef APPVEYOR
-        // crash next to exe so appveyor could make artifact out of dump
-        chillout.init(L"xpiks-tests-integration", L".");
-    #else
-        chillout.init(L"xpiks-tests-integration", crashesDirPath.toStdWString());
-    #endif
+    chillout.init(L"xpiks-tests-integration", crashesDirPath.toStdWString());
 #else
     chillout.init("xpiks-tests-integration", crashesDirPath.toStdString());
 #endif
