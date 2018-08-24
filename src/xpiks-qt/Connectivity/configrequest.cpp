@@ -14,7 +14,7 @@
 namespace Connectivity {
     void ConfigRequest::setResult(bool success, const QByteArray &body) {
         if (success) {
-            m_RemoteConfig->setRemoteResponse(body);
+            m_RemoteConfig.setRemoteResponse(body);
         }
     }
 }

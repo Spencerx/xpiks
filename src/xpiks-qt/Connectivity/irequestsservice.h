@@ -19,7 +19,7 @@ namespace Connectivity {
     class IRequestsService {
     public:
         virtual ~IRequestsService() {}
-        virtual void receiveConfig(Helpers::RemoteConfig *config) = 0;
+        virtual void receiveConfig(Helpers::RemoteConfig &config) = 0;
     };
 }
 

@@ -61,7 +61,7 @@ namespace Models {
         } else
 #endif
         {
-            requestsService.receiveConfig(&m_RemoteConfig);
+            requestsService.receiveConfig(m_RemoteConfig);
         }
     }
 
