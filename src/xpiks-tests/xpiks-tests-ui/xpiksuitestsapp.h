@@ -12,6 +12,10 @@ public:
     virtual void initialize() override;
     void waitInitialized();
     void cleanup();
+    bool setupCommonFiles();
+
+public:
+    Models::ArtworkProxyModel &getArtworkProxyModel() { return m_ArtworkProxyModel; }
 };
 
 #endif // XPIKSUITESTSAPP_H

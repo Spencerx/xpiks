@@ -711,6 +711,10 @@ void XpiksApp::cleanupModels() {
     m_ArtworksUpdateHub.clear();
     m_AutoCompleteService.getAutoCompleteModel().clear();
 
+#ifndef UI_TESTS
+    m_ArtworkProxyModel.resetModel();
+#endif
+
     m_CsvExportModel.clearModel();
     m_CsvExportModel.resetModel();
     m_CombinedArtworksModel.resetModel();

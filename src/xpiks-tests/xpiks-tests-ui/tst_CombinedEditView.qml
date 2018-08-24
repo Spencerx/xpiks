@@ -33,6 +33,7 @@ Item {
         property var descriptionCheckBox
 
         function initTestCase() {
+            TestsHost.setup()
             titleInput = findChild(combinedView, "titleTextInput")
             descriptionInput = findChild(combinedView, "descriptionTextInput")
             keywordsInput = findChild(combinedView, "keywordsInput")

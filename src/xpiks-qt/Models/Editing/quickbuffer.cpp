@@ -9,6 +9,7 @@
  */
 
 #include "quickbuffer.h"
+#include <QQmlEngine>
 #include <Models/Editing/icurrenteditable.h>
 #include <Models/Editing/currenteditablemodel.h>
 #include <Artworks/basicmodelsource.h>
@@ -107,6 +108,13 @@ namespace Models {
         LOG_DEBUG << "#";
         m_BasicModel.clearModel();
         emit isEmptyChanged();
+    }
+
+    QObject *QuickBuffer::getBasicModelObject() {
+        QObject *item = getBasicMetadataModel();
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+
+        return item;
     }
 
     bool QuickBuffer::copyToCurrentEditable() {

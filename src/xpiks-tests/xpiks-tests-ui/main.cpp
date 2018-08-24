@@ -6,9 +6,11 @@
 #include <Helpers/clipboardhelper.h>
 #include <QMLExtensions/triangleelement.h>
 #include <Helpers/logger.h>
+#include <chillout.h>
 #include "testshost.h"
 #include "xpiksuitestsapp.h"
 #include "uitestsenvironment.h"
+#include "../xpiks-tests-integration/testshelpers.h"
 
 #define STRINGIZE_(x) #x
 #define STRINGIZE(x) STRINGIZE_(x)
@@ -42,6 +44,36 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
     }
 }
 
+void initCrashRecovery(Common::ISystemEnvironment &environment) {
+    auto &chillout = Debug::Chillout::getInstance();
+
+#ifdef APPVEYOR
+    QString crashesDirRoot = QDir::currentPath();
+#else
+    QString crashesDirRoot = environment.path({Constants::CRASHES_DIR});
+#endif
+    QString crashesDirPath = QDir::toNativeSeparators(crashesDirRoot);
+
+#ifdef Q_OS_WIN
+    chillout.init(L"xpiks-tests-integration", crashesDirPath.toStdWString());
+#else
+    chillout.init("xpiks-tests-integration", crashesDirPath.toStdString());
+#endif
+    Helpers::Logger &logger = Helpers::Logger::getInstance();
+
+    chillout.setBacktraceCallback([&logger](const char * const stackTrace) {
+        logger.emergencyLog(stackTrace);
+    });
+
+    chillout.setCrashCallback([&logger, &chillout]() {
+        chillout.backtrace();
+        logger.emergencyFlush();
+#ifdef Q_OS_WIN
+        chillout.createCrashDump(Debug::CrashDumpFull);
+#endif
+    });
+}
+
 int main(int argc, char **argv) {
     // hack to overcome URI warning when loading Stubs plugin
 #if defined(Q_OS_WIN) || defined(Q_OS_MAC)
@@ -52,10 +84,12 @@ int main(int argc, char **argv) {
     qputenv(QML2_IMPORT_PATH_VAR, importPath.toUtf8());
 #endif
 
+    UITestsEnvironment uiTestsEnvironment;
+
+    //initCrashRecovery(uiTestsEnvironment);
+
     qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
     qInstallMessageHandler(myMessageHandler);
-
-    UITestsEnvironment uiTestsEnvironment;
 
 #ifdef WITH_LOGS
     Helpers::Logger &logger = Helpers::Logger::getInstance();
@@ -69,11 +103,17 @@ int main(int argc, char **argv) {
     xpiksTests.start();
     xpiksTests.waitInitialized();
 
+    if (!xpiksTests.setupCommonFiles()) {
+        return 1;
+    }
+
     TestsHost &host = TestsHost::getInstance();
     host.setApp(&xpiksTests);
 
     qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
     qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
+
+    qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
 
     qmlRegisterSingletonType<TestsHost>("XpiksTests", 1, 0, "TestsHost", createTestsHostsQmlObject);
 

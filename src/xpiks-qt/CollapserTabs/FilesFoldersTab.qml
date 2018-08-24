@@ -157,7 +157,7 @@ ColumnLayout {
                                 confirmRemoveDirectoryDialog.directoryIndex = sourceWrapper.getDirectoryIndex()
                                 confirmRemoveDirectoryDialog.open()
                             } else {
-                                filteredArtItemsModel.removeArtworksDirectory(sourceWrapper.getDirectoryIndex())
+                                filteredArtworksListModel.removeArtworksDirectory(sourceWrapper.getDirectoryIndex())
                             }
                         }
                     }

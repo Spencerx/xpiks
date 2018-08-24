@@ -121,8 +121,11 @@ linux {
     SOURCES += ../../../vendors/libthmbnlr/thumbnailcreator_stub.cpp \
     xpiksuitestsapp.cpp \
     ../../xpiks-qt/QMLExtensions/triangleelement.cpp \
-    ../xpiks-tests-integration/testshelpers.cpp
+    ../xpiks-tests-integration/testshelpers.cpp \
+    ../xpiks-tests-core/Mocks/filescollectionmock.cpp
 }
+
+include(../../xpiks-common/xpiks-common.pri)
 
 DEFINES += BUILDNUMBER=$${BUILDNO}
 DEFINES += BRANCHNAME=$${BRANCH_NAME}
@@ -330,7 +333,86 @@ DISTFILES += \
     tst_PresetsEditDialog.qml \
     tst_ZipArchiver.qml \
     tst_WhatsNew.qml \
-    ../../xpiks-qt/Common.js
+    ../../xpiks-qt/Common.js \
+    ../../xpiks-qt/StackViews/ArtworkEditView.qml \
+    ../../xpiks-qt/StackViews/ArtworkEditView.qmlc \
+    ../../xpiks-qt/StackViews/CombinedEditView.qmlc \
+    ../../xpiks-qt/StackViews/DuplicatesReView.qml \
+    ../../xpiks-qt/StackViews/MainGrid.qml \
+    ../../xpiks-qt/StackViews/WarningsView.qml \
+    ../../xpiks-qt/Dialogs/CsvExportDialog.qmlc \
+    ../../xpiks-qt/Dialogs/PresetsEditDialog.qmlc \
+    ../../xpiks-qt/Dialogs/UploadArtworks.qmlc \
+    ../../xpiks-qt/Dialogs/WhatsNewDialog.qmlc \
+    ../../xpiks-qt/Dialogs/AboutWindow.qml \
+    ../../xpiks-qt/Dialogs/AddPresetGroupDialog.qml \
+    ../../xpiks-qt/Dialogs/DeleteKeywordsDialog.qml \
+    ../../xpiks-qt/Dialogs/DonateDialog.qml \
+    ../../xpiks-qt/Dialogs/EditKeywordDialog.qml \
+    ../../xpiks-qt/Dialogs/EnterMasterPasswordDialog.qml \
+    ../../xpiks-qt/Dialogs/ExportMetadata.qml \
+    ../../xpiks-qt/Dialogs/FailedUploadArtworks.qml \
+    ../../xpiks-qt/Dialogs/FindAndReplace.qml \
+    ../../xpiks-qt/Dialogs/ImportMetadata.qml \
+    ../../xpiks-qt/Dialogs/InstallUpdateDialog.qml \
+    ../../xpiks-qt/Dialogs/KeywordsSuggestion.qml \
+    ../../xpiks-qt/Dialogs/LogsDialog.qml \
+    ../../xpiks-qt/Dialogs/MasterPasswordSetupDialog.qml \
+    ../../xpiks-qt/Dialogs/PlainTextKeywordsDialog.qml \
+    ../../xpiks-qt/Dialogs/PluginsDialog.qml \
+    ../../xpiks-qt/Dialogs/PresetsEditDialog.qml \
+    ../../xpiks-qt/Dialogs/ProxySetupDialog.qml \
+    ../../xpiks-qt/Dialogs/ReplacePreview.qml \
+    ../../xpiks-qt/Dialogs/SettingsWindow.qml \
+    ../../xpiks-qt/Dialogs/SimplePreview.qml \
+    ../../xpiks-qt/Dialogs/SpellCheckSuggestionsDialog.qml \
+    ../../xpiks-qt/Dialogs/TermsAndConditionsDialog.qml \
+    ../../xpiks-qt/Dialogs/TranslationPreviewDialog.qml \
+    ../../xpiks-qt/Dialogs/UpdateWindow.qml \
+    ../../xpiks-qt/Dialogs/UploadArtworks.qml \
+    ../../xpiks-qt/Dialogs/UserDictEditDialog.qml \
+    ../../xpiks-qt/Dialogs/WarningsDialog.qml \
+    ../../xpiks-qt/Dialogs/WhatsNewDialog.qml \
+    ../../xpiks-qt/Dialogs/WhatsNewMinorDialog.qml \
+    ../../xpiks-qt/Dialogs/WipeMetadata.qml \
+    ../../xpiks-qt/Dialogs/ZipArtworksDialog.qml \
+    ../../xpiks-qt/Components/BackGlyphButton.qmlc \
+    ../../xpiks-qt/Components/CheckedComponent.qmlc \
+    ../../xpiks-qt/Components/CloseIcon.qmlc \
+    ../../xpiks-qt/Components/ComboBoxPopup.qmlc \
+    ../../xpiks-qt/Components/CustomScrollbar.qmlc \
+    ../../xpiks-qt/Components/CustomTab.qmlc \
+    ../../xpiks-qt/Components/DotsButton.qmlc \
+    ../../xpiks-qt/Components/EditableTags.qmlc \
+    ../../xpiks-qt/Components/GlyphButton.qmlc \
+    ../../xpiks-qt/Components/KeywordWrapper.qmlc \
+    ../../xpiks-qt/Components/LoaderIcon.qmlc \
+    ../../xpiks-qt/Components/PresentationSlide.qmlc \
+    ../../xpiks-qt/Components/SelectedIcon.qmlc \
+    ../../xpiks-qt/Components/AddIcon.qml \
+    ../../xpiks-qt/Components/BackGlyphButton.qml \
+    ../../xpiks-qt/Components/CheckedComponent.qml \
+    ../../xpiks-qt/Components/CloseIcon.qml \
+    ../../xpiks-qt/Components/ComboBoxPopup.qml \
+    ../../xpiks-qt/Components/CompletionBox.qml \
+    ../../xpiks-qt/Components/CustomBorder.qml \
+    ../../xpiks-qt/Components/CustomScrollbar.qml \
+    ../../xpiks-qt/Components/CustomTab.qml \
+    ../../xpiks-qt/Components/CustomTooltip.qml \
+    ../../xpiks-qt/Components/DonateComponent.qml \
+    ../../xpiks-qt/Components/DotsButton.qml \
+    ../../xpiks-qt/Components/DraggableKeywordWrapper.qml \
+    ../../xpiks-qt/Components/DropdownPopup.qml \
+    ../../xpiks-qt/Components/GlyphButton.qml \
+    ../../xpiks-qt/Components/KeywordWrapper.qml \
+    ../../xpiks-qt/Components/LargeAddIcon.qml \
+    ../../xpiks-qt/Components/LayoutButton.qml \
+    ../../xpiks-qt/Components/LoaderIcon.qml \
+    ../../xpiks-qt/Components/PresentationSlide.qml \
+    ../../xpiks-qt/Components/SelectedIcon.qml \
+    ../../xpiks-qt/Components/SuggestionWrapper.qml \
+    ../../xpiks-qt/Components/ToolButton.qml \
+    ../../xpiks-qt/Components/ZoomAmplifier.qml
 
 HEADERS += \
     testshost.h \
@@ -616,7 +698,8 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/triangleelement.h \
     ../../xpiks-qt/Helpers/clipboardhelper.h \
     ../xpiks-tests-integration/signalwaiter.h \
-    ../xpiks-tests-integration/testshelpers.h
+    ../xpiks-tests-integration/testshelpers.h \
+    ../xpiks-tests-core/Mocks/filescollectionmock.h
 
 RESOURCES += \
     xpiks-tests-ui.qrc

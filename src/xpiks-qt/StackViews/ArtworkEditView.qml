@@ -51,12 +51,11 @@ Rectangle {
         closeAutoComplete()
         flv.submitCurrentKeyword()
 
-        var originalIndex = filteredArtItemsModel.getOriginalIndex(itemIndex)
-        var metadata = filteredArtItemsModel.getArtworkMetadata(itemIndex)
-        var keywordsModel = filteredArtItemsModel.getBasicModel(itemIndex)
+        var originalIndex = filteredArtworksListModel.getOriginalIndex(itemIndex)
+        var metadata = filteredArtworksListModel.getArtworkMetadata(itemIndex)
+        var keywordsModel = filteredArtworksListModel.getBasicModel(itemIndex)
 
         artworkProxy.setSourceArtwork(metadata)
-        artworkProxy.registerAsCurrentItem()
 
         artworkEditComponent.artworkIndex = itemIndex
         artworkEditComponent.keywordsModel = keywordsModel
@@ -69,8 +68,8 @@ Rectangle {
         titleTextInput.forceActiveFocus()
         titleTextInput.cursorPosition = titleTextInput.text.length
 
-        artworkProxy.initTitleHighlighting(titleTextInput.textDocument)
-        artworkProxy.initDescriptionHighlighting(descriptionTextInput.textDocument)
+        uiManager.initTitleHighlighting(artworkProxy.getBasicModelObject(), titleTextInput.textDocument)
+        uiManager.initDescriptionHighlighting(artworkProxy.getBasicModelObject(), descriptionTextInput.textDocument)
 
         savedTimer.start()
     }
@@ -248,7 +247,7 @@ Rectangle {
         MenuItem {
             text: i18.n + qsTr("Copy to Quick Buffer")
             onTriggered: {
-                filteredArtItemsModel.copyToQuickBuffer(itemPreviewMenu.index)
+                filteredArtworksListModel.copyToQuickBuffer(itemPreviewMenu.index)
                 uiManager.activateQuickBufferTab()
             }
         }
@@ -361,7 +360,6 @@ Rectangle {
     Component.onCompleted: {
         focus = true
 
-        artworkProxy.registerAsCurrentItem()
         titleTextInput.forceActiveFocus()
         titleTextInput.cursorPosition = titleTextInput.text.length
 
@@ -393,7 +391,7 @@ Rectangle {
         text: i18.n + qsTr("Clear all keywords?")
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
-            filteredArtItemsModel.clearKeywords(artworkEditComponent.artworkIndex)
+            filteredArtworksListModel.clearKeywords(artworkEditComponent.artworkIndex)
             artworkProxy.updateKeywords()
             updateChangesText()
         }
@@ -795,7 +793,9 @@ Rectangle {
                                     }
 
                                     Component.onCompleted: {
-                                        artworkProxy.initTitleHighlighting(titleTextInput.textDocument)
+                                        uiManager.initTitleHighlighting(
+                                                    artworkProxy.getBasicModelObject(),
+                                                    titleTextInput.textDocument)
                                     }
 
                                     onCursorRectangleChanged: titleFlick.ensureVisible(cursorRectangle)
@@ -920,7 +920,9 @@ Rectangle {
                                     textFormat: TextEdit.PlainText
 
                                     Component.onCompleted: {
-                                        artworkProxy.initDescriptionHighlighting(descriptionTextInput.textDocument)
+                                        uiManager.initDescriptionHighlighting(
+                                                    artworkProxy.getBasicModelObject(),
+                                                    descriptionTextInput.textDocument)
                                     }
 
                                     Keys.onBacktabPressed: {
@@ -1405,7 +1407,7 @@ Rectangle {
             anchors.right: selectNextButton.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            model: listViewEnabled ? filteredArtItemsModel : undefined
+            model: listViewEnabled ? filteredArtworksListModel : undefined
             highlightFollowsCurrentItem: false
             highlightMoveDuration: 0
             flickableDirection: Flickable.HorizontalFlick

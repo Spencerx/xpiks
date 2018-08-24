@@ -22,5 +22,13 @@ Item {
     TestCase {
         name: "WhatsNew"
         when: windowShown
+
+        function initTestCase() {
+            TestsHost.setup()
+        }
+
+        function cleanupTestCase() {
+            TestsHost.cleanup()
+        }
     }
 }

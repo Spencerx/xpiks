@@ -12,7 +12,6 @@
 #define QUICKBUFFER_H
 
 #include <QObject>
-#include <QQmlEngine>
 #include <Models/Editing/artworkproxybase.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Services/SpellCheck/spellcheckinfo.h>
@@ -79,12 +78,7 @@ namespace Models {
         Q_INVOKABLE bool hasTitleWordSpellError(const QString &word);
         Q_INVOKABLE bool hasDescriptionWordSpellError(const QString &word);
         Q_INVOKABLE void resetModel();
-        Q_INVOKABLE QObject *getBasicModel() {
-            QObject *item = getBasicMetadataModel();
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-
-            return item;
-        }
+        Q_INVOKABLE QObject *getBasicModelObject();
         Q_INVOKABLE bool copyToCurrentEditable();
         Q_INVOKABLE bool copyFromCurrentEditable();
 

@@ -1,6 +1,8 @@
 #include "xpiksuitestsapp.h"
 #include "../xpiks-tests-integration/signalwaiter.h"
 #include "../xpiks-tests-integration/testshelpers.h"
+#include "../xpiks-tests-core/Mocks/filescollectionmock.h"
+#include <Commands/Files/addfilescommand.h>
 
 XpiksUITestsApp::XpiksUITestsApp(Common::ISystemEnvironment &environment):
     XpiksApp(environment)
@@ -49,5 +51,24 @@ void XpiksUITestsApp::waitInitialized() {
 
 void XpiksUITestsApp::cleanup() {
     LOG_DEBUG << "#";
-    cleanupModels();
+    const QString exiftoolPath = m_SettingsModel.getExifToolPath();
+    {
+        cleanupModels();
+    }
+    m_SettingsModel.setExifToolPath(exiftoolPath);
+}
+
+bool XpiksUITestsApp::setupCommonFiles() {
+    LOG_DEBUG << "#";
+    int imagesCount = 10, vectorsCount = 5, directoriesCount = 2;
+    auto files = std::make_shared<Mocks::FilesCollectionMock>(imagesCount, vectorsCount, directoriesCount);
+
+    auto addFilesCommand = std::make_shared<Commands::AddFilesCommand>(files,
+                                                                       Common::AddFilesFlags::None,
+                                                                       m_ArtworksListModel);
+    m_CommandManager.processCommand(addFilesCommand);
+    bool success = addFilesCommand->getAddedCount() == imagesCount;
+
+    m_ArtworkProxyModel.setSourceArtwork(m_ArtworksListModel.getArtworkObject(0));
+    return success;
 }

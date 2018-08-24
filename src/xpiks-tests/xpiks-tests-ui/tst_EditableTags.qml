@@ -70,6 +70,7 @@ Item {
         property var input
 
         function initTestCase() {
+            TestsHost.setup()
             input = findChild(editableTags, "nextTagTextInput")
         }
 

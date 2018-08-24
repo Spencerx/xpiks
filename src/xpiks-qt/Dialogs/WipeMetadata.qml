@@ -73,7 +73,7 @@ Item {
             spinner.height = spinner.width
             dialogWindow.height += spinner.height + column.spacing
             spinner.running = true
-            filteredArtItemsModel.wipeMetadataFromSelectedArtworks(useBackupsCheckbox.checked)
+            filteredArtworksListModel.wipeMetadataFromSelectedArtworks(useBackupsCheckbox.checked)
         }
     }
 
@@ -195,7 +195,7 @@ Item {
 
                     StyledText {
                         anchors.right: parent.right
-                        text: i18.n + qsTr("%1 file(s) selected").arg(filteredArtItemsModel.selectedArtworksCount)
+                        text: i18.n + qsTr("%1 file(s) selected").arg(filteredArtworksListModel.selectedArtworksCount)
                         color: uiColors.inputForegroundColor
                     }
                 }

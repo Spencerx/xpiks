@@ -628,7 +628,7 @@ namespace Models {
         bool exists = false;
         QFileInfo fi(filename);
 
-#ifndef CORE_TESTS
+#if !defined(CORE_TESTS) && !defined(UI_TESTS)
         exists = fi.exists();
 #else
         exists = true;

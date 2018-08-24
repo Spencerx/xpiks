@@ -28,7 +28,7 @@ Item {
     property bool emptyPasswords: false
     property bool skipUploadItems: false
     property variant componentParent
-    property bool uploadEnabled: (artworkRepository.artworksSourcesCount > 0) && (filteredArtItemsModel.selectedArtworksCount > 0)
+    property bool uploadEnabled: (artworkRepository.artworksSourcesCount > 0) && (filteredArtworksListModel.selectedArtworksCount > 0)
     property var ftpListAC: helpersWrapper.getFtpACList()
     property var artworkUploader: helpersWrapper.getArtworkUploader()
     property var uploadWatcher: artworkUploader.getUploadWatcher()
@@ -71,7 +71,7 @@ Item {
                 }
             }
 
-            filteredArtItemsModel.setSelectedForZipping()
+            filteredArtworksListModel.setSelectedForZipping()
             Common.launchDialog("Dialogs/ZipArtworksDialog.qml",
                                 uploadArtworksComponent.componentParent,
                                 {

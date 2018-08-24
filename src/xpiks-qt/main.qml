@@ -150,7 +150,7 @@ ApplicationWindow {
         artworkUploader.clearModel()
 
         if (!skipUploadItems) {
-            filteredArtItemsModel.setSelectedForUpload()
+            filteredArtworksListModel.setSelectedForUpload()
             warningsModel.setShowSelected()
         }
 
@@ -188,7 +188,7 @@ ApplicationWindow {
     }
 
     function startOneItemEditing(metadata, index, originalIndex, showInfoFirst) {
-        var keywordsModel = filteredArtItemsModel.getBasicModel(index)
+        var keywordsModel = filteredArtworksListModel.getBasicModel(index)
         artworkProxy.setSourceArtwork(metadata)
         var wasCollapsed = applicationWindow.leftSideCollapsed
         applicationWindow.collapseLeftPane()
@@ -264,23 +264,23 @@ ApplicationWindow {
         shortcut: "Ctrl+E"
         enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
-            if (filteredArtItemsModel.selectedArtworksCount === 0) {
+            if (filteredArtworksListModel.selectedArtworksCount === 0) {
                 mustSelectDialog.open()
             }
             else {
                 var launched = false
-                var index = filteredArtItemsModel.findSelectedItemIndex()
+                var index = filteredArtworksListModel.findSelectedItemIndex()
 
                 if (index !== -1) {
-                    var originalIndex = filteredArtItemsModel.getOriginalIndex(index)
-                    var metadata = filteredArtItemsModel.getArtworkMetadata(index)
+                    var originalIndex = filteredArtworksListModel.getOriginalIndex(index)
+                    var metadata = filteredArtworksListModel.getArtworkMetadata(index)
                     startOneItemEditing(metadata, index, originalIndex)
                     launched = true
                 }
 
                 if (!launched) {
                     // also as fallback in case of errors in findSelectedIndex
-                    filteredArtItemsModel.combineSelectedArtworks();
+                    filteredArtworksListModel.combineSelectedArtworks();
                     mainStackView.push({
                                            item: "qrc:/StackViews/CombinedEditView.qml",
                                            properties: {
@@ -298,12 +298,12 @@ ApplicationWindow {
         shortcut: StandardKey.Save
         enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
-            if (filteredArtItemsModel.selectedArtworksCount == 0) {
+            if (filteredArtworksListModel.selectedArtworksCount == 0) {
                 mustSelectDialog.open()
             } else {
-                var modifiedSelectedCount = filteredArtItemsModel.getModifiedSelectedCount();
+                var modifiedSelectedCount = filteredArtworksListModel.getModifiedSelectedCount();
 
-                if (filteredArtItemsModel.selectedArtworksCount > 0 && modifiedSelectedCount > 0) {
+                if (filteredArtworksListModel.selectedArtworksCount > 0 && modifiedSelectedCount > 0) {
                     Common.launchDialog("Dialogs/ExportMetadata.qml", applicationWindow, {})
                 } else {
                     if (modifiedSelectedCount === 0) {
@@ -326,10 +326,10 @@ ApplicationWindow {
         shortcut: "Ctrl+Del"
         enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
-            if (filteredArtItemsModel.selectedArtworksCount === 0) {
+            if (filteredArtworksListModel.selectedArtworksCount === 0) {
                 mustSelectDialog.open()
             } else {
-                var itemsCount = filteredArtItemsModel.selectedArtworksCount
+                var itemsCount = filteredArtworksListModel.selectedArtworksCount
                 if (itemsCount > 0) {
                     if (mustUseConfirmation()) {
                         confirmRemoveSelectedDialog.itemsCount = itemsCount
@@ -347,11 +347,11 @@ ApplicationWindow {
         shortcut: "Shift+Ctrl+U"
         enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
-            if (filteredArtItemsModel.selectedArtworksCount === 0) {
-                filteredArtItemsModel.selectFilteredArtworks();
+            if (filteredArtworksListModel.selectedArtworksCount === 0) {
+                filteredArtworksListModel.selectFilteredArtworks();
             }
 
-            if (filteredArtItemsModel.selectedArtworksCount > 0) {
+            if (filteredArtworksListModel.selectedArtworksCount > 0) {
                 tryUploadArtworks();
             }
         }
@@ -382,10 +382,10 @@ ApplicationWindow {
     Action {
         id: fixSpellingInSelectedAction
         text: i18.n + qsTr("&Fix spelling")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Fix spelling in selected triggered")
-            filteredArtItemsModel.suggestCorrectionsForSelected()
+            filteredArtworksListModel.suggestCorrectionsForSelected()
             Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                                 applicationWindow,
                                 {})
@@ -395,10 +395,10 @@ ApplicationWindow {
     Action {
         id: fixDuplicatesInSelectedAction
         text: i18.n + qsTr("&Show duplicates")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Fix duplicates in selected triggered")
-            filteredArtItemsModel.reviewDuplicatesInSelected()
+            filteredArtworksListModel.reviewDuplicatesInSelected()
 
             var wasCollapsed = applicationWindow.leftSideCollapsed
             applicationWindow.collapseLeftPane()
@@ -416,7 +416,7 @@ ApplicationWindow {
     Action {
         id: removeMetadataAction
         text: i18.n + qsTr("&Remove metadata")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Remove metadata from selected triggered")
             removeMetadataDialog.open()
@@ -426,10 +426,10 @@ ApplicationWindow {
     Action {
         id: deleteKeywordsAction
         text: i18.n + qsTr("&Delete keywords")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Delete keywords from selected triggered")
-            filteredArtItemsModel.deleteKeywordsFromSelected()
+            filteredArtworksListModel.deleteKeywordsFromSelected()
             openDeleteKeywordsDialog()
         }
     }
@@ -437,21 +437,21 @@ ApplicationWindow {
     Action {
         id: detachVectorsAction
         text: i18.n + qsTr("&Detach vectors")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Detach vectors from selected triggered")
-            filteredArtItemsModel.detachVectorFromSelected()
+            filteredArtworksListModel.detachVectorFromSelected()
         }
     }
 
     Action {
         id: createArchivesAction
         text: i18.n + qsTr("&Create archives")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Zip archives triggered")
 
-            filteredArtItemsModel.setSelectedForZipping()
+            filteredArtworksListModel.setSelectedForZipping()
             Common.launchDialog("Dialogs/ZipArtworksDialog.qml",
                                 applicationWindow,
                                 {});
@@ -461,11 +461,11 @@ ApplicationWindow {
     Action {
         id: exportToCsvAction
         text: i18.n + qsTr("&Export to CSV")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("CSV export triggered")
 
-            filteredArtItemsModel.setSelectedForCsvExport()
+            filteredArtworksListModel.setSelectedForCsvExport()
             Common.launchDialog("Dialogs/CsvExportDialog.qml",
                                 applicationWindow,
                                 {});
@@ -475,7 +475,7 @@ ApplicationWindow {
     Action {
         id: reimportMetadataAction
         text: i18.n + qsTr("&Reimport metadata")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Reimport metadata triggered")
             reimportConfirmationDialog.open()
@@ -485,7 +485,7 @@ ApplicationWindow {
     Action {
         id: overwriteMetadataAction
         text: i18.n + qsTr("&Overwrite metadata")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Overwrite metadata triggered")
             Common.launchDialog("Dialogs/ExportMetadata.qml", applicationWindow, {overwriteAll: true})
@@ -613,8 +613,8 @@ ApplicationWindow {
                 enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
                 onTriggered: {
                     console.info("Invert selection triggered")
-                    if (filteredArtItemsModel.getItemsCount() > 0) {
-                        filteredArtItemsModel.invertSelectionArtworks()
+                    if (filteredArtworksListModel.getItemsCount() > 0) {
+                        filteredArtworksListModel.invertSelectionArtworks()
                     }
                 }
             }
@@ -625,8 +625,8 @@ ApplicationWindow {
                 checkable: true
                 onToggled: {
                     console.info("Sort by filename")
-                    if (filteredArtItemsModel.getItemsCount() > 0) {
-                        filteredArtItemsModel.toggleSorted();
+                    if (filteredArtworksListModel.getItemsCount() > 0) {
+                        filteredArtworksListModel.toggleSorted();
                     }
                 }
             }
@@ -755,9 +755,9 @@ ApplicationWindow {
                     text: i18.n + qsTr("&Wipe all metadata from files")
                     onTriggered: {
                         console.info("Wipe metadata triggered")
-                        if (filteredArtItemsModel.selectedArtworksCount == 0) {
+                        if (filteredArtworksListModel.selectedArtworksCount == 0) {
                             mustSelectDialog.open()
-                        } else if (filteredArtItemsModel.selectedArtworksCount > 0) {
+                        } else if (filteredArtworksListModel.selectedArtworksCount > 0) {
                             Common.launchDialog("Dialogs/WipeMetadata.qml", applicationWindow, {})
                         }
                     }
@@ -953,8 +953,8 @@ ApplicationWindow {
         MenuItem {
             text: i18.n + qsTr("Edit")
             onTriggered: {
-                var originalIndex = filteredArtItemsModel.getOriginalIndex(artworkContextMenu.index)
-                var metadata = filteredArtItemsModel.getArtworkMetadata(artworkContextMenu.index)
+                var originalIndex = filteredArtworksListModel.getOriginalIndex(artworkContextMenu.index)
+                var metadata = filteredArtworksListModel.getArtworkMetadata(artworkContextMenu.index)
                 startOneItemEditing(metadata, artworkContextMenu.index, originalIndex)
             }
         }
@@ -962,8 +962,8 @@ ApplicationWindow {
         MenuItem {
             text: i18.n + qsTr("Show info")
             onTriggered: {
-                var originalIndex = filteredArtItemsModel.getOriginalIndex(artworkContextMenu.index)
-                var metadata = filteredArtItemsModel.getArtworkMetadata(artworkContextMenu.index)
+                var originalIndex = filteredArtworksListModel.getOriginalIndex(artworkContextMenu.index)
+                var metadata = filteredArtworksListModel.getArtworkMetadata(artworkContextMenu.index)
                 startOneItemEditing(metadata, artworkContextMenu.index, originalIndex, true)
             }
         }
@@ -973,21 +973,21 @@ ApplicationWindow {
             enabled: artworkContextMenu.hasVectorAttached
             visible: artworkContextMenu.hasVectorAttached
             onTriggered: {
-                filteredArtItemsModel.detachVectorFromArtwork(artworkContextMenu.index)
+                filteredArtworksListModel.detachVectorFromArtwork(artworkContextMenu.index)
             }
         }
 
         MenuItem {
             text: i18.n + qsTr("Copy to Quick Buffer")
             onTriggered: {
-                filteredArtItemsModel.copyToQuickBuffer(artworkContextMenu.index)
+                filteredArtworksListModel.copyToQuickBuffer(artworkContextMenu.index)
                 uiManager.activateQuickBufferTab()
             }
         }
 
         MenuItem {
             text: i18.n + qsTr("Fill from Quick Buffer")
-            onTriggered: filteredArtItemsModel.fillFromQuickBuffer(artworkContextMenu.index)
+            onTriggered: filteredArtworksListModel.fillFromQuickBuffer(artworkContextMenu.index)
         }
 
         MenuItem {
@@ -1035,7 +1035,7 @@ ApplicationWindow {
         text: i18.n + qsTr("Remove metadata from selected artworks?")
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
-            filteredArtItemsModel.removeMetadataInSelected()
+            filteredArtworksListModel.removeMetadataInSelected()
         }
     }
 
@@ -1051,11 +1051,11 @@ ApplicationWindow {
     }
 
     function doRemoveSelectedArtworks() {
-        filteredArtItemsModel.removeSelectedArtworks()
+        filteredArtworksListModel.removeSelectedArtworks()
     }
 
     function tryUploadArtworks() {
-        if (filteredArtItemsModel.areSelectedArtworksSaved()) {
+        if (filteredArtworksListModel.areSelectedArtworksSaved()) {
             openUploadDialog(false)
         } else {
             mustSaveWarning.open()
@@ -1068,7 +1068,7 @@ ApplicationWindow {
         text: i18.n + qsTr("You will lose all unsaved changes after reimport. Proceed?")
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
-            filteredArtItemsModel.reimportMetadataForSelected()
+            filteredArtworksListModel.reimportMetadataForSelected()
         }
     }
 
@@ -1079,7 +1079,7 @@ ApplicationWindow {
         text: i18.n + qsTr("Are you sure you want to remove this directory?")
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
-            filteredArtItemsModel.removeArtworksDirectory(directoryIndex)
+            filteredArtworksListModel.removeArtworksDirectory(directoryIndex)
         }
     }
 
@@ -1475,7 +1475,7 @@ ApplicationWindow {
                             asynchronous: true
                             property int myIndex: index
                             property var tabModel: uiManager.retrieveTabsModel(tabid)
-                            property int selectedArtworksCount: filteredArtItemsModel.selectedArtworksCount
+                            property int selectedArtworksCount: filteredArtworksListModel.selectedArtworksCount
                             property bool areActionsAllowed: mainStackView.areActionsAllowed
 
                             Connections {
@@ -1634,7 +1634,7 @@ ApplicationWindow {
                 normalLinkColor: uiColors.labelActiveForeground
                 onClicked: {
                     warningsModel.update()
-                    //filteredArtItemsModel.checkForWarnings()
+                    //filteredArtworksListModel.checkForWarnings()
 
                     var wasCollapsed = applicationWindow.leftSideCollapsed
                     applicationWindow.collapseLeftPane()
@@ -1679,7 +1679,7 @@ ApplicationWindow {
                 enabled: artItemsModel.modifiedArtworksCount == 0
 
                 function updateText() {
-                    var itemsCount = filteredArtItemsModel.getItemsCount()
+                    var itemsCount = filteredArtworksListModel.getItemsCount()
                     if (itemsCount > 0) {
                         text = itemsCount > 1 ? qsTr("%1 items available").arg(itemsCount) : qsTr("1 item available")
                     } else {
@@ -1689,7 +1689,7 @@ ApplicationWindow {
 
                 Component.onCompleted: updateText()
                 Connections {
-                    target: filteredArtItemsModel
+                    target: filteredArtworksListModel
                     onRowsInserted: filteredCountText.updateText()
                     onRowsRemoved: filteredCountText.updateText()
                 }
@@ -1718,7 +1718,7 @@ ApplicationWindow {
                     cursorShape: artItemsModel.modifiedArtworksCount > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
                     onClicked: {
                         if (artItemsModel.modifiedArtworksCount > 0) {
-                            filteredArtItemsModel.searchTerm = "x:modified"
+                            filteredArtworksListModel.searchTerm = "x:modified"
                         }
                     }
                 }

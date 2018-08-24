@@ -11,6 +11,7 @@ class TestsHost : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString scoreme READ getName CONSTANT)
+    Q_PROPERTY(bool isReady READ getIsReady NOTIFY isReadyChanged)
 
 public:
     static TestsHost& getInstance()
@@ -21,9 +22,11 @@ public:
     }
 
 public:
+    bool getIsReady() const { return m_IsReady; }
     void qmlEngineCallback(QQmlEngine *engine);
 
 public:
+    Q_INVOKABLE void setup();
     Q_INVOKABLE void cleanup();
 
 public:
@@ -37,11 +40,13 @@ private:
     void operator=(TestsHost const&);
 
 signals:
+    void isReadyChanged();
 
 public slots:
 
 private:
     XpiksUITestsApp *m_XpiksApp;
+    bool m_IsReady;
 };
 
 #endif // TESTSHOST_H

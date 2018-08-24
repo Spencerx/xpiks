@@ -604,7 +604,9 @@ Rectangle {
                                 }
 
                                 Component.onCompleted: {
-                                    combinedArtworks.initTitleHighlighting(titleTextInput.textDocument)
+                                    uiManager.initTitleHighlighting(
+                                                combinedArtworks.getBasicModelObject(),
+                                                titleTextInput.textDocument)
                                 }
 
                                 onCursorRectangleChanged: titleFlick.ensureVisible(cursorRectangle)
@@ -770,7 +772,9 @@ Rectangle {
                                 textFormat: TextEdit.PlainText
 
                                 Component.onCompleted: {
-                                    combinedArtworks.initDescriptionHighlighting(descriptionTextInput.textDocument)
+                                    uiManager.initDescriptionHighlighting(
+                                                combinedArtworks.getBasicModelObject(),
+                                                descriptionTextInput.textDocument)
                                 }
 
                                 onCursorRectangleChanged: descriptionFlick.ensureVisible(cursorRectangle)

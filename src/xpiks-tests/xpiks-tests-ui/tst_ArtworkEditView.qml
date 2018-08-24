@@ -36,6 +36,7 @@ Item {
         property var moreMenu
 
         function initTestCase() {
+            TestsHost.setup()
             //moreLink = findChild(artworkEditView, "moreLinkHost")
             //moreMenu = findChild(artworkEditView, "keywordsMoreMenuObject")
         }

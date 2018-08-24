@@ -27,5 +27,13 @@ Item {
     TestCase {
         name: "UploadArtworks"
         when: windowShown
+
+        function initTestCase() {
+            TestsHost.setup()
+        }
+
+        function cleanupTestCase() {
+            TestsHost.cleanup()
+        }
     }
 }

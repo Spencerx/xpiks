@@ -34,7 +34,7 @@ ColumnLayout {
             var result = (!quickBuffer.isEmpty) && uiManager.hasCurrentEditable;
             if (result) {
                 if (mainStackView.areActionsAllowed) {
-                    result = (filteredArtItemsModel.selectedArtworksCount <= 1);
+                    result = (filteredArtworksListModel.selectedArtworksCount <= 1);
                 }
             }
 
@@ -142,7 +142,9 @@ ColumnLayout {
                 }
 
                 Component.onCompleted: {
-                    quickBuffer.initTitleHighlighting(titleTextInput.textDocument)
+                    uiManager.initTitleHighlighting(
+                                quickBuffer.getBasicModelObject(),
+                                titleTextInput.textDocument)
                 }
 
                 onCursorRectangleChanged: titleFlick.ensureVisible(cursorRectangle)
@@ -258,7 +260,8 @@ ColumnLayout {
                 textFormat: TextEdit.PlainText
 
                 Component.onCompleted: {
-                    quickBuffer.initDescriptionHighlighting(descriptionTextInput.textDocument)
+                    uiManager.initDescriptionHighlighting(quickBuffer.getBasicModelObject(),
+                                                          descriptionTextInput.textDocument)
                 }
 
                 Keys.onBacktabPressed: {

@@ -149,12 +149,14 @@ namespace SpellCheck {
 
 #ifdef INTEGRATION_TESTS
     int SpellCheckService::getSuggestionsCount() {
-        return m_SpellCheckWorker->getSuggestionsCount();
+        return m_SpellCheckWorker != nullptr ? m_SpellCheckWorker->getSuggestionsCount() : 0;
     }
 
     void SpellCheckService::clearSuggestions() {
         LOG_DEBUG << "#";
-        m_SpellCheckWorker->clearSuggestions();
+        if (m_SpellCheckWorker != nullptr) {
+            m_SpellCheckWorker->clearSuggestions();
+        }
     }
 #endif
 

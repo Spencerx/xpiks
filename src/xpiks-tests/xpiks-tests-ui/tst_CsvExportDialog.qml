@@ -22,5 +22,13 @@ Item {
     TestCase {
         name: "CsvExport"
         when: windowShown
+
+        function initTestCase() {
+            TestsHost.setup()
+        }
+
+        function cleanupTestCase() {
+            TestsHost.cleanup()
+        }
     }
 }
