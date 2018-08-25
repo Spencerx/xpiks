@@ -322,8 +322,6 @@ Rectangle {
     Component.onCompleted: {
         focus = true
 
-        combinedArtworks.registerAsCurrentItem()
-
         titleTextInput.forceActiveFocus()
         titleTextInput.cursorPosition = titleTextInput.text.length
     }

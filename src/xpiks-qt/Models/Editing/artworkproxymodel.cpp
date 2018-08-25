@@ -295,6 +295,12 @@ namespace Models {
         doAppendPreset((KeywordsPresets::ID_t)presetID, m_PresetsManager);
     }
 
+#ifdef UI_TESTS
+    void ArtworkProxyModel::clearModel() {
+        getBasicMetadataModel()->clearModel();
+    }
+#endif
+
     bool ArtworkProxyModel::acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID) {
         LOG_DEBUG << completionID;
         const bool accepted = doAcceptCompletionAsPreset(completionID, completionSource, m_PresetsManager);

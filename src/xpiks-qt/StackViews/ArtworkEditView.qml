@@ -43,6 +43,7 @@ Rectangle {
     }
 
     function reloadItemEditing(itemIndex) {
+        console.debug("reloadItemEditing # " + itemIndex)
         if (itemIndex === artworkIndex) { return }
         if ((itemIndex < 0) || (itemIndex >= rosterListView.count)) { return }
 
@@ -51,14 +52,11 @@ Rectangle {
         closeAutoComplete()
         flv.submitCurrentKeyword()
 
-        var originalIndex = filteredArtworksListModel.getOriginalIndex(itemIndex)
-        var metadata = filteredArtworksListModel.getArtworkMetadata(itemIndex)
-        var keywordsModel = filteredArtworksListModel.getBasicModel(itemIndex)
-
-        artworkProxy.setSourceArtwork(metadata)
+        var artwork = filteredArtworksListModel.getArtworkObject(itemIndex)
+        artworkProxy.setSourceArtwork(artwork)
 
         artworkEditComponent.artworkIndex = itemIndex
-        artworkEditComponent.keywordsModel = keywordsModel
+        artworkEditComponent.keywordsModel = artworkProxy.getBasicModelObject()
 
         if (listViewEnabled) {
             rosterListView.currentIndex = itemIndex
@@ -1363,6 +1361,7 @@ Rectangle {
 
         Item {
             id: selectPrevButton
+            objectName: "selectPrevButton"
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -1402,6 +1401,7 @@ Rectangle {
 
         ListView {
             id: rosterListView
+            objectName: "rosterListView"
             enabled: listViewEnabled
             boundsBehavior: Flickable.StopAtBounds
             orientation: ListView.Horizontal
@@ -1524,6 +1524,7 @@ Rectangle {
 
         Item {
             id: selectNextButton
+            objectName: "selectNextButton"
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom

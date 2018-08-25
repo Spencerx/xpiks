@@ -19,6 +19,11 @@ Item {
         property bool keywordsModel: false
     }
 
+    QtObject {
+        id: applicationWindow
+        property bool leftSideCollapsed: false
+    }
+
     CombinedEditView {
         id: combinedView
         anchors.fill: parent
