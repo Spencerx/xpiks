@@ -41,7 +41,7 @@ namespace SpellCheck {
         decltype(m_DuplicatesList) duplicates;
         const size_t size = snapshot.size();
         duplicates.reserve(size);
-        for (auto &artwork: snapshot.getRawData()) {
+        for (auto &artwork: snapshot) {
             duplicates.emplace_back(std::make_shared<ArtworkMetadataDuplicates>(artwork));
         }
 

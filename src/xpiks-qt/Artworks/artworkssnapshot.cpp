@@ -105,4 +105,10 @@ namespace Artworks {
         LOG_DEBUG << "Removing" << size() << "item(s)";
         m_ArtworksSnapshot.clear();
     }
+
+    ArtworksSnapshot::Container::iterator begin(ArtworksSnapshot &snapshot) { return snapshot.begin(); }
+    ArtworksSnapshot::Container::iterator end(ArtworksSnapshot &snapshot) { return snapshot.end(); }
+    ArtworksSnapshot::Container::const_iterator begin(ArtworksSnapshot const &snapshot) { return snapshot.begin(); }
+    ArtworksSnapshot::Container::const_iterator end(ArtworksSnapshot const &snapshot) { return snapshot.end(); }
+
 }

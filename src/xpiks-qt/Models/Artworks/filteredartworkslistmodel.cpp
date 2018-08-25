@@ -155,7 +155,7 @@ namespace Models {
         auto selectedArtworks = getSelectedOriginalItems();
         bool anyModified = false;
 
-        for (auto &artwork: selectedArtworks.getRawData()) {
+        for (auto &artwork: selectedArtworks) {
             if (artwork->isModified()) {
                 anyModified = true;
                 break;
@@ -171,7 +171,7 @@ namespace Models {
         auto selectedArtworks = getSelectedOriginalItems();
         int modifiedCount = 0;
 
-        for (auto &artwork: selectedArtworks.getRawData()) {
+        for (auto &artwork: selectedArtworks) {
             if (!artwork->isReadOnly() && (artwork->isModified() || overwriteAll)) {
                 modifiedCount++;
             }

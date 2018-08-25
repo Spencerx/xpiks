@@ -86,7 +86,7 @@ namespace Services {
         decltype(m_UpdateRequests) requests;
         requests.reserve(artworks.size());
         QSet<int> rolesToUpdate = m_StandardRoles.toList().toSet();
-        for (auto &artwork: artworks.getRawData()) {
+        for (auto &artwork: artworks) {
             auto updateRequest = std::make_shared<ArtworkUpdateRequest>(
                             artwork->getItemID(),
                             artwork->getLastKnownIndex(),

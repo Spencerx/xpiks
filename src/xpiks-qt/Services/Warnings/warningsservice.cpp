@@ -146,7 +146,7 @@ namespace Warnings {
         std::vector<std::shared_ptr<IWarningsItem> > itemsToSubmit;
         itemsToSubmit.reserve(size);
 
-        for (auto &item: items.getRawData()) {
+        for (auto &item: items) {
             itemsToSubmit.emplace_back(std::make_shared<WarningsItem>(item));
         }
 

@@ -155,7 +155,7 @@ namespace Models {
 
         if (m_UploadInfos.isZippingRequired()) {
             auto &snapshot = this->getArtworksSnapshot();
-            for (auto &artwork: snapshot.getRawData()) {
+            for (auto &artwork: snapshot) {
                 auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
                 if (image == nullptr || !image->hasVectorAttached()) { continue; }
 
@@ -229,7 +229,7 @@ namespace Models {
         auto &artworksListOld = getArtworksSnapshot();
         Artworks::ArtworksSnapshot::Container artworksListNew;
 
-        for (auto &item: artworksListOld.getRawData()) {
+        for (auto &item: artworksListOld) {
             if (!item->isUnavailable()) {
                 artworksListNew.push_back(item);
             }

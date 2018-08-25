@@ -137,7 +137,7 @@ namespace MetadataIO {
         const bool shouldOverwrite = ignoreBackups;
         MetadataIO::OriginalMetadata emptyOriginalMetadata;
 
-        for (auto &artwork: m_ArtworksToRead.getRawData()) {
+        for (auto &artwork: m_ArtworksToRead) {
             const QString &filepath = artwork->getFilepath();
 
             const size_t index = filepathToIndexMap.value(filepath, size);

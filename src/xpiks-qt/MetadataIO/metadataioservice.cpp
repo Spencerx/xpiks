@@ -97,7 +97,7 @@ namespace MetadataIO {
         std::vector<std::shared_ptr<MetadataIOTaskBase> > jobs;
         jobs.reserve(snapshot.size());
 
-        for (auto &artwork: snapshot.getRawData()) {
+        for (auto &artwork: snapshot) {
             jobs.emplace_back(std::make_shared<MetadataReadWriteTask>(artwork, MetadataReadWriteTask::Read));
         }
 
@@ -114,7 +114,7 @@ namespace MetadataIO {
         std::vector<std::shared_ptr<MetadataIOTaskBase> > jobs;
         jobs.reserve(snapshot.size());
 
-        for (auto &artwork: snapshot.getRawData()) {
+        for (auto &artwork: snapshot) {
             jobs.emplace_back(std::make_shared<MetadataReadWriteTask>(artwork, MetadataReadWriteTask::Write));
         }
 
@@ -128,7 +128,7 @@ namespace MetadataIO {
         std::vector<std::shared_ptr<MetadataIOTaskBase> > jobs;
         jobs.reserve(snapshot.size());
 
-        for (auto &artwork: snapshot.getRawData()) {
+        for (auto &artwork: snapshot) {
             jobs.emplace_back(std::make_shared<MetadataReadWriteTask>(artwork, MetadataReadWriteTask::Add));
         }
 

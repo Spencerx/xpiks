@@ -338,7 +338,7 @@ void CombinedModelTests::editSeveralWithSameKeywordsTest() {
 
     LOG_DEBUG << "Checking" << snapshot.size() << "items";
 
-    for (auto &artwork: snapshot.getRawData()) {
+    for (auto &artwork: snapshot) {
         QStringList keywordsSlice = artwork->getKeywords().mid(0, 4);
         QCOMPARE(keywordsSlice, commonKeywords);
     }

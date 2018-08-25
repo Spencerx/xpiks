@@ -47,7 +47,7 @@ namespace Helpers {
         imagesRawSnapshot.reserve(size / 2);
         videoRawSnapshot.reserve(size / 2);
 
-        for (auto &artwork: rawSnapshot.getRawData()) {
+        for (auto &artwork: rawSnapshot) {
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
@@ -69,7 +69,7 @@ namespace Helpers {
     int retrieveImagesCount(const Artworks::ArtworksSnapshot &rawSnapshot) {
         int count = 0;
 
-        for (auto &artwork: rawSnapshot.getRawData()) {
+        for (auto &artwork: rawSnapshot) {
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 
@@ -85,7 +85,7 @@ namespace Helpers {
     int retrieveVideosCount(const Artworks::ArtworksSnapshot &rawSnapshot) {
         int count = 0;
 
-        for (auto &artwork: rawSnapshot.getRawData()) {
+        for (auto &artwork: rawSnapshot) {
             Q_ASSERT(artwork != nullptr);
             if (artwork == nullptr) { continue; }
 

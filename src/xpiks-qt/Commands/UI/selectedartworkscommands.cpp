@@ -89,7 +89,7 @@ namespace Commands {
         void ReimportMetadataForSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             auto snapshot = std::move(m_Source.getSelectedArtworks());
-            for (auto &artwork: snapshot.getRawData()) {
+            for (auto &artwork: snapshot) {
                 artwork->prepareForReimport();
             }
 

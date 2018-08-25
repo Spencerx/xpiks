@@ -95,9 +95,21 @@ namespace Artworks {
         void clear();
         bool empty() const { return m_ArtworksSnapshot.empty(); }
 
+        // iterator
+    public:
+        Container::iterator begin() { return m_ArtworksSnapshot.begin(); }
+        Container::iterator end() { return m_ArtworksSnapshot.end(); }
+        Container::const_iterator begin() const { return m_ArtworksSnapshot.begin(); }
+        Container::const_iterator end() const { return m_ArtworksSnapshot.end(); }
+
     private:
         Container m_ArtworksSnapshot;
     };
+
+    ArtworksSnapshot::Container::iterator begin(ArtworksSnapshot &snapshot);
+    ArtworksSnapshot::Container::iterator end(ArtworksSnapshot &snapshot);
+    ArtworksSnapshot::Container::const_iterator begin(ArtworksSnapshot const &snapshot);
+    ArtworksSnapshot::Container::const_iterator end(ArtworksSnapshot const &snapshot);
 }
 
 #endif // ARTWORKMETADATASNAPSHOT_H

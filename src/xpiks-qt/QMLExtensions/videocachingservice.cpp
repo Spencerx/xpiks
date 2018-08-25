@@ -81,7 +81,7 @@ namespace QMLExtensions {
         std::vector<std::shared_ptr<VideoCacheRequest> > requests;
         requests.reserve(size);
 
-        for (auto &artwork: snapshot.getRawData()) {
+        for (auto &artwork: snapshot) {
             auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
             if (videoArtwork != nullptr) {
                 const bool quickThumbnail = true, dontRecache = false;

@@ -221,7 +221,7 @@ namespace Models {
 
         QStringList filepaths;
         filepaths.reserve(snapshot.size());
-        for (auto &artwork: snapshot.getRawData()) {
+        for (auto &artwork: snapshot) {
             filepaths.append(artwork->getFilepath());
 
             auto imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
@@ -253,7 +253,7 @@ namespace Models {
         filepaths.reserve(snapshot.size());
         removedAttachedVectors.reserve(snapshot.size()/2);
 
-        for (auto &artwork: snapshot.getRawData()) {
+        for (auto &artwork: snapshot) {
             auto flags = removeFile(artwork->getFilepath(), artwork->getDirectoryID());
             if (!Common::HasFlag(flags, Common::RemoveFileFlags::FlagFileRemoved)) { continue; }
 

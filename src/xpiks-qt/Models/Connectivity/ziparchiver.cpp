@@ -156,7 +156,7 @@ namespace Models {
         auto &snapshot = getArtworksSnapshot();
         LOG_DEBUG << "Processing" << snapshot.size() << "item(s)";
 
-        for (auto &artwork: snapshot.getRawData()) {
+        for (auto &artwork: snapshot) {
             const QString &filepath = artwork->getFilepath();
 
             QFileInfo fi(filepath);

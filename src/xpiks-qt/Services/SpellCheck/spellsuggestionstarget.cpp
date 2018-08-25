@@ -63,7 +63,7 @@ namespace SpellCheck {
     SuggestionsVector createSuggestionsRequests(Artworks::ArtworksSnapshot const &snapshot, Common::SpellCheckFlags flags) {
         SuggestionsVector requests;
 
-        for (auto &artwork: snapshot.getRawData()) {
+        for (auto &artwork: snapshot) {
             if (Common::HasFlag(flags, Common::SpellCheckFlags::Keywords)) {
                 auto keywords = artwork->retrieveMisspelledKeywords();
                 addMisspelledKeywords(artwork.get(), keywords, requests);
@@ -138,7 +138,7 @@ namespace SpellCheck {
 
     void ArtworksSuggestionTarget::afterReplaceCallback() {
         LOG_DEBUG << "#";
-        for (auto &artwork: m_Snapshot.getRawData()) {
+        for (auto &artwork: m_Snapshot) {
             artwork->afterReplaceCallback();
         }
 
