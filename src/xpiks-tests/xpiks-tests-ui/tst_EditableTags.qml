@@ -64,6 +64,34 @@ Item {
         id: clipboard
     }
 
+    QtObject {
+        id: acSource
+        property bool isActive: false
+        property bool tryExpandPresetFlag: false
+        property bool isCancelled: false
+        property bool isAccepted: false
+        property bool isAnySelected: false
+
+        function moveSelectionUp() {}
+        function cancelCompletion() { isCancelled = true }
+        function moveSelectionDown() {}
+
+        function acceptSelected(tryExpandPreset) {
+            tryExpandPresetFlag = tryExpandPreset
+            isAccepted = true
+        }
+
+        function hasSelectedCompletion() { return isAnySelected }
+
+        function clear() {
+            isActive = false
+            isCancelled = false
+            tryExpandPresetFlag = false
+            isAccepted = false
+            isAnySelected = false
+        }
+    }
+
     TestCase {
         name: "EditableTagsTests"
         when: windowShown
