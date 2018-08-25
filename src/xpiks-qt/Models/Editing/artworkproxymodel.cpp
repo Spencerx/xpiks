@@ -9,6 +9,7 @@
  */
 
 #include "artworkproxymodel.h"
+#include <QQmlEngine>
 #include <QImageReader>
 #include <QSyntaxHighlighter>
 #include <Commands/Base/icommandmanager.h>
@@ -213,6 +214,18 @@ namespace Models {
         disconnectCurrentArtwork();
         updateCurrentArtwork();
         releaseCurrentArtwork();
+    }
+
+    QObject *ArtworkProxyModel::getBasicModelObject() {
+        QObject *item = getBasicMetadataModel();
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        return item;
+    }
+
+    QObject *ArtworkProxyModel::getPropertiesMap() {
+        QObject *item = &m_PropertiesMap;
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        return item;
     }
 
     QSize ArtworkProxyModel::retrieveImageSize() const {

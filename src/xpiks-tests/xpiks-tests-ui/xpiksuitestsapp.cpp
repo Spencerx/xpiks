@@ -3,6 +3,7 @@
 #include "../xpiks-tests-integration/testshelpers.h"
 #include "../xpiks-tests-core/Mocks/filescollectionmock.h"
 #include <Commands/Files/addfilescommand.h>
+#include "fakeinitartworkstemplate.h"
 
 XpiksUITestsApp::XpiksUITestsApp(Common::ISystemEnvironment &environment):
     XpiksApp(environment)
@@ -63,11 +64,16 @@ bool XpiksUITestsApp::setupCommonFiles() {
     int imagesCount = 10, vectorsCount = 5, directoriesCount = 2;
     auto files = std::make_shared<Mocks::FilesCollectionMock>(imagesCount, vectorsCount, directoriesCount);
 
+    auto initTemplate = std::make_shared<FakeInitArtworksTemplate>();
+
     auto addFilesCommand = std::make_shared<Commands::AddFilesCommand>(files,
                                                                        Common::AddFilesFlags::None,
-                                                                       m_ArtworksListModel);
+                                                                       m_ArtworksListModel,
+                                                                       initTemplate);
     m_CommandManager.processCommand(addFilesCommand);
     bool success = addFilesCommand->getAddedCount() == imagesCount;
+
+
 
     m_ArtworkProxyModel.setSourceArtwork(m_ArtworksListModel.getArtworkObject(0));
     return success;

@@ -32,17 +32,46 @@ Item {
     TestCase {
         name: "ArtworkEdit"
         when: windowShown
-        property var moreLink
-        property var moreMenu
+        property var titleEdit
+        property var descriptionEdit
+        property var keywordsEdit
 
         function initTestCase() {
             TestsHost.setup()
-            //moreLink = findChild(artworkEditView, "moreLinkHost")
-            //moreMenu = findChild(artworkEditView, "keywordsMoreMenuObject")
+
+            titleEdit = findChild(artworkEditView, "titleTextInput")
+            descriptionEdit = findChild(artworkEditView, "descriptionTextInput")
+            keywordsEdit = findChild(artworkEditView, "nextTagTextInput")
         }
 
         function cleanupTestCase() {
             TestsHost.cleanup()
+        }
+
+        function test_editTitleSmokeTest() {
+            var testTitle = "test title here"
+            titleEdit.forceActiveFocus()
+            titleEdit.text = testTitle
+            compare(artworkProxy.title, testTitle)
+        }
+
+        function test_editDescriptionSmokeTest() {
+            var testDescription = "test description"
+            descriptionEdit.forceActiveFocus()
+            descriptionEdit.text = testDescription
+            compare(artworkProxy.description, testDescription)
+        }
+
+        function test_addKeywordsSmokeTest() {
+            compare(artworkProxy.keywordsCount, 0)
+
+            var testKeyword = "keyword"
+            keywordsEdit.forceActiveFocus()
+            keywordsEdit.text = testKeyword
+            keyClick(Qt.Key_Comma)
+
+            compare(artworkProxy.keywordsCount, 1)
+            compare(artworkProxy.getKeywordsString(), testKeyword)
         }
     }
 }

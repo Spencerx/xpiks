@@ -95,27 +95,34 @@ int main(int argc, char **argv) {
     Helpers::Logger &logger = Helpers::Logger::getInstance();
     logger.setMemoryOnly(uiTestsEnvironment.getIsInMemoryOnly());
 #endif
+    int result = 0;
+    {
+        XpiksUITestsApp xpiksTests(uiTestsEnvironment);
 
-    XpiksUITestsApp xpiksTests(uiTestsEnvironment);
+        xpiksTests.startLogging();
+        xpiksTests.initialize();
+        xpiksTests.start();
+        xpiksTests.waitInitialized();
 
-    xpiksTests.startLogging();
-    xpiksTests.initialize();
-    xpiksTests.start();
-    xpiksTests.waitInitialized();
+        if (!xpiksTests.setupCommonFiles()) {
+            return 1;
+        }
 
-    if (!xpiksTests.setupCommonFiles()) {
-        return 1;
+        TestsHost &host = TestsHost::getInstance();
+        host.setApp(&xpiksTests);
+
+        qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
+        qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
+
+        qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
+
+        qmlRegisterSingletonType<TestsHost>("XpiksTests", 1, 0, "TestsHost", createTestsHostsQmlObject);
+
+        result = quick_test_main(argc, argv, "xpiks_tests_ui", QUICK_TEST_SOURCE_DIR);
+
+        xpiksTests.stop();
+        QThread::sleep(1);
     }
 
-    TestsHost &host = TestsHost::getInstance();
-    host.setApp(&xpiksTests);
-
-    qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
-    qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
-
-    qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
-
-    qmlRegisterSingletonType<TestsHost>("XpiksTests", 1, 0, "TestsHost", createTestsHostsQmlObject);
-
-    return quick_test_main(argc, argv, "xpiks_tests_ui", QUICK_TEST_SOURCE_DIR);
+    return result;
 }

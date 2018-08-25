@@ -13,7 +13,6 @@
 
 #include <QObject>
 #include <QAbstractListModel>
-#include <QQmlEngine>
 #include <QStringList>
 #include <QString>
 #include <QList>
@@ -147,18 +146,8 @@ namespace Models {
         Q_INVOKABLE void setSourceArtwork(QObject *artworkMetadata);
         // --
         Q_INVOKABLE void resetModel();
-        Q_INVOKABLE QObject *getBasicModelObject() {
-            QObject *item = getBasicMetadataModel();
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-
-            return item;
-        }
-        Q_INVOKABLE QObject *getPropertiesMap() {
-            QObject *item = &m_PropertiesMap;
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-
-            return item;
-        }
+        Q_INVOKABLE QObject *getBasicModelObject();
+        Q_INVOKABLE QObject *getPropertiesMap();
         Q_INVOKABLE QSize retrieveImageSize() const;
         Q_INVOKABLE QString retrieveFileSize() const;
         Q_INVOKABLE QString getDateTaken() const;

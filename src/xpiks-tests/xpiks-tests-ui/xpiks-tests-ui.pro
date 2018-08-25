@@ -122,7 +122,8 @@ linux {
     xpiksuitestsapp.cpp \
     ../../xpiks-qt/QMLExtensions/triangleelement.cpp \
     ../xpiks-tests-integration/testshelpers.cpp \
-    ../xpiks-tests-core/Mocks/filescollectionmock.cpp
+    ../xpiks-tests-core/Mocks/filescollectionmock.cpp \
+    fakeinitartworkstemplate.cpp
 }
 
 include(../../xpiks-common/xpiks-common.pri)
@@ -699,7 +700,8 @@ HEADERS += \
     ../../xpiks-qt/Helpers/clipboardhelper.h \
     ../xpiks-tests-integration/signalwaiter.h \
     ../xpiks-tests-integration/testshelpers.h \
-    ../xpiks-tests-core/Mocks/filescollectionmock.h
+    ../xpiks-tests-core/Mocks/filescollectionmock.h \
+    fakeinitartworkstemplate.h
 
 RESOURCES += \
     xpiks-tests-ui.qrc
