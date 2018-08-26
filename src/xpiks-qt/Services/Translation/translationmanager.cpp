@@ -97,8 +97,8 @@ namespace Translation {
 
     void TranslationManager::setSelectedDictionaryIndex(int value) {
         LOG_INFO << value;
-        LOG_INTEGRATION_TESTS << "Current index" << m_SelectedDictionaryIndex;
-        LOG_INTEGRATION_TESTS << "Overall" << m_DictionariesList.length() << "dictionaries";
+        LOG_VERBOSE << "Current index" << m_SelectedDictionaryIndex;
+        LOG_VERBOSE << "Overall" << m_DictionariesList.length() << "dictionaries";
 
         if (m_SelectedDictionaryIndex != value) {
             LOG_INFO << "Changing current dictionary";

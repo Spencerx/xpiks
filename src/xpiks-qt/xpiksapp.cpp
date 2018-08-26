@@ -445,7 +445,7 @@ void XpiksApp::afterServicesStarted() {
 
     restoreSession();
 
-#if !defined(INTEGRATION_TESTS)
+#if !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
     m_SwitcherModel.afterInitializedCallback();
 #endif
 

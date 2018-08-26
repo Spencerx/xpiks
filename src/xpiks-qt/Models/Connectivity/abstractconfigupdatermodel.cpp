@@ -22,7 +22,7 @@ namespace Models {
       ,m_RemoteConfig(remoteResource, this)
       ,m_LocalConfig(localPath, memoryOnly)
       ,m_ForceOverwrite(forceOverwrite)
-  #ifdef INTEGRATION_TESTS
+  #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
       ,m_MemoryOnly(memoryOnly)
   #endif
     {
@@ -53,7 +53,7 @@ namespace Models {
     }
 
     void AbstractConfigUpdaterModel::initRemoteConfig(Connectivity::IRequestsService &requestsService) {
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
         if (!m_RemoteOverrideLocalPath.isEmpty()) {
             LOG_DEBUG << "Using remote override" << m_RemoteOverrideLocalPath;
             QJsonDocument localDocument = Helpers::LocalConfig(m_RemoteOverrideLocalPath).readConfig();

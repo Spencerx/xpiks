@@ -34,15 +34,15 @@
 #endif
 
 #if defined(INTEGRATION_TESTS) || defined(VERBOSE_LOGGING)
-#define LOG_INTEGRATION_TESTS qDebug()
+#define LOG_VERBOSE qDebug()
 #else
-#define LOG_INTEGRATION_TESTS if (1) {} else qDebug()
+#define LOG_VERBOSE if (1) {} else qDebug()
 #endif
 
-#if defined(INTEGRATION_TESTS) || defined(QT_DEBUG) || defined(VERBOSE_LOGGING)
-#define LOG_INTEGR_TESTS_OR_DEBUG qDebug()
+#if defined(QT_DEBUG) || defined(VERBOSE_LOGGING)
+#define LOG_VERBOSE_OR_DEBUG qDebug()
 #else
-#define LOG_INTEGR_TESTS_OR_DEBUG if (1) {} else qDebug()
+#define LOG_VERBOSE_OR_DEBUG if (1) {} else qDebug()
 #endif
 
 #if defined(FAKE_WARNINGS)

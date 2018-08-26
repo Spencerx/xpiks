@@ -109,7 +109,7 @@ namespace QMLExtensions {
                 }
 
                 if (isQuickThumbnail && item->getGoodQualityAllowed()) {
-                    LOG_INTEGR_TESTS_OR_DEBUG << "Regenerating good quality thumb for" << originalPath;
+                    LOG_VERBOSE_OR_DEBUG << "Regenerating good quality thumb for" << originalPath;
                     item->setGoodQualityRequest();
                     needsRefresh = true;
                 }
@@ -144,7 +144,7 @@ namespace QMLExtensions {
             thumbnailCreator.setSeekPercentage(50);
             thumbnailCreated = thumbnailCreator.createThumbnail(buffer, width, height);
             if (thumbnailCreated) {
-                LOG_INTEGR_TESTS_OR_DEBUG << "Thumb generated for" << originalPath;
+                LOG_VERBOSE_OR_DEBUG << "Thumb generated for" << originalPath;
                 item->setVideoMetadata(thumbnailCreator.getMetadata());
             } else {
                 LOG_WARNING << "Failed to create thumbnail for" << originalPath;

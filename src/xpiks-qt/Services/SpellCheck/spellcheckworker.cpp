@@ -182,7 +182,7 @@ namespace SpellCheck {
                     Artworks::ArtworksSnapshot(rawSnapshot));
     }
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     void SpellCheckWorker::clearSuggestions() {
         QWriteLocker locker(&m_SuggestionsLock);
         Q_UNUSED(locker);
@@ -196,7 +196,7 @@ namespace SpellCheck {
         QStringList result;
 
         if (!m_Suggestions.tryGet(word, result)) {
-            LOG_INTEGRATION_TESTS << "Suggestion not found for:" << word;
+            LOG_VERBOSE << "Suggestion not found for:" << word;
         }
 
         return result;
@@ -212,7 +212,7 @@ namespace SpellCheck {
             // Encode from Unicode to the encoding used by current dictionary
             std::string encodedWord = m_Codec->fromUnicode(word).toStdString();
             suggestWordList = m_Hunspell->suggest(encodedWord);
-            LOG_INTEGRATION_TESTS << "Found" << suggestWordList.size() << "suggestions for" << word;
+            LOG_VERBOSE << "Found" << suggestWordList.size() << "suggestions for" << word;
             QString lowerWord = word.toLower();
 
             for (size_t i = 0; i < suggestWordList.size(); ++i) {
@@ -327,7 +327,7 @@ namespace SpellCheck {
     }
 
     void SpellCheckWorker::findSemanticDuplicates(const std::vector<std::shared_ptr<SpellCheckQueryItem> > &queries) {
-        LOG_INTEGR_TESTS_OR_DEBUG << "#";
+        LOG_VERBOSE_OR_DEBUG << "#";
         const size_t size = queries.size();
 
         QHash<QString, QVector<size_t> > stemToIndexMap;
@@ -344,8 +344,8 @@ namespace SpellCheck {
             stemToIndexMap[queryItem->m_Stem].append(i);
         }
 
-        LOG_INTEGR_TESTS_OR_DEBUG << "Stems hash has" << stemToIndexMap.size() << "item(s)";
-        LOG_INTEGRATION_TESTS << stemToIndexMap;
+        LOG_VERBOSE_OR_DEBUG << "Stems hash has" << stemToIndexMap.size() << "item(s)";
+        LOG_VERBOSE << stemToIndexMap;
 
         auto itEnd = stemToIndexMap.constEnd();
         auto it = stemToIndexMap.constBegin();
@@ -369,7 +369,7 @@ namespace SpellCheck {
                         if (query1->m_IsDuplicate && query2->m_IsDuplicate) { continue; }
 
                         if (Helpers::areSemanticDuplicates(query1->m_Word, query2->m_Word)) {
-                            LOG_INTEGR_TESTS_OR_DEBUG << "detected as duplicates:" << "[" << query1->m_Index << "]:" << query1->m_Word << "[" << query2->m_Index << "]:" << query2->m_Word;
+                            LOG_VERBOSE_OR_DEBUG << "detected as duplicates:" << "[" << query1->m_Index << "]:" << query1->m_Word << "[" << query2->m_Index << "]:" << query2->m_Word;
                             query1->m_IsDuplicate = true;
                             query2->m_IsDuplicate = true;
                         }
@@ -382,7 +382,7 @@ namespace SpellCheck {
     }
 
     void SpellCheckWorker::findSuggestions(const QString &word) {
-        LOG_INTEGRATION_TESTS << word;
+        LOG_VERBOSE << word;
         bool needsCorrections = false;
         QStringList suggestions;
 

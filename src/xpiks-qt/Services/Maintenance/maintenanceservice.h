@@ -45,7 +45,7 @@ namespace Maintenance {
         void startService();
         void stopService();
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         bool hasPendingJobs();
         void cleanup();

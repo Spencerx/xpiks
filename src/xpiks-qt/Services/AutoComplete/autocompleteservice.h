@@ -63,7 +63,7 @@ namespace AutoComplete {
         void cancelAutoCompletion();
         void serviceAvailable();
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         KeywordsAutoCompleteModel &getAutoCompleteModel() const { return m_AutoCompleteModel; }
 #endif

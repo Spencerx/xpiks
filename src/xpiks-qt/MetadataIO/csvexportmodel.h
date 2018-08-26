@@ -101,7 +101,7 @@ namespace MetadataIO {
                                    Connectivity::IRequestsService &requestsService);
         void setArtworksToExport(Artworks::ArtworksSnapshot &&snapshot);
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         void setRemoteConfigOverride(const QString &localPath) { m_ExportPlansModel.setRemoteOverride(localPath); }
 #endif
@@ -138,7 +138,7 @@ namespace MetadataIO {
         void saveExportPlans();
         int retrieveSelectedPlansCount();
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         std::vector<std::shared_ptr<CsvExportPlan> > &accessExportPlans() { return m_ExportPlans; }
         void resetModel() {

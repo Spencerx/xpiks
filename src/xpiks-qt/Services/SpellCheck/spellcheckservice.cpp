@@ -104,7 +104,7 @@ namespace SpellCheck {
         spellCheckItems.reserve(items.size());
 
         auto deleter = [](SpellCheckItem *spi) {
-            LOG_INTEGRATION_TESTS << "Delete later for multiple spellcheck item";
+            LOG_VERBOSE << "Delete later for multiple spellcheck item";
             spi->disconnect();
             spi->deleteLater();
         };
@@ -130,7 +130,7 @@ namespace SpellCheck {
         std::shared_ptr<SpellCheckItem> spellCheckItem(
                     new SpellCheckItem(item, flags, m_AnalysisFlagsProvider.getFlags()),
                     [](SpellCheckItem *spi) {
-            LOG_INTEGRATION_TESTS << "Delete later for single spellcheck item";
+            LOG_VERBOSE << "Delete later for single spellcheck item";
             spi->disconnect();
             spi->deleteLater();
         });
@@ -147,7 +147,7 @@ namespace SpellCheck {
         return corrections;
     }
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     int SpellCheckService::getSuggestionsCount() {
         return m_SpellCheckWorker != nullptr ? m_SpellCheckWorker->getSuggestionsCount() : 0;
     }

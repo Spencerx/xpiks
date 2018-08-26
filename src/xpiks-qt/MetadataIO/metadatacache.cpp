@@ -169,7 +169,7 @@ namespace MetadataIO {
     void MetadataCache::search(const Microstocks::SearchQuery &query, QVector<CachedArtwork> &results) {
         Q_ASSERT(results.empty());
         QStringList searchTerms = query.getSearchQuery().split(QChar::Space, QString::SkipEmptyParts);
-        LOG_INTEGR_TESTS_OR_DEBUG << searchTerms;
+        LOG_VERBOSE_OR_DEBUG << searchTerms;
         if (!m_DbCacheIndex) { return; }
         CachedArtwork::CachedArtworkType searchType = queryFlagToCachedType(query);
 
@@ -178,7 +178,7 @@ namespace MetadataIO {
             QDataStream ds(&rawValue, QIODevice::ReadOnly);
             ds >> value;
 
-            LOG_INTEGRATION_TESTS << value.m_Filepath << "|" << value.m_Title << "|" << value.m_Description << "|" << value.m_Keywords;
+            LOG_VERBOSE << value.m_Filepath << "|" << value.m_Title << "|" << value.m_Description << "|" << value.m_Keywords;
 
             if (ds.status() != QDataStream::Ok) { /*continue;*/ return true; }
             if ((searchType != CachedArtwork::Unknown) && (value.m_ArtworkType != searchType)) { /*continue;*/ return true; }

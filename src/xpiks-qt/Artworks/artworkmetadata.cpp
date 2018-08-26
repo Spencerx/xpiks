@@ -49,12 +49,12 @@ namespace Artworks {
     }
 
     void ArtworkMetadata::prepareForReimport() {
-        LOG_INTEGRATION_TESTS << "#" << m_ID;
+        LOG_VERBOSE << "#" << m_ID;
         setIsReimportPendingFlag(true);
     }
 
     bool ArtworkMetadata::initFromOrigin(const MetadataIO::OriginalMetadata &originalMetadata, bool overwrite) {
-        LOG_INTEGR_TESTS_OR_DEBUG << "#" << m_ID << originalMetadata.m_Title << originalMetadata.m_Description << originalMetadata.m_Keywords;
+        LOG_VERBOSE_OR_DEBUG << "#" << m_ID << originalMetadata.m_Title << originalMetadata.m_Description << originalMetadata.m_Keywords;
         bool anythingChanged = false;
         QMutexLocker initLocker(&m_InitMutex);
         Q_UNUSED(initLocker);
@@ -75,7 +75,7 @@ namespace Artworks {
     }
 
     bool ArtworkMetadata::initFromStorage(const MetadataIO::CachedArtwork &cachedArtwork) {
-        LOG_INTEGR_TESTS_OR_DEBUG << "#" << m_ID << cachedArtwork.m_Title <<
+        LOG_VERBOSE_OR_DEBUG << "#" << m_ID << cachedArtwork.m_Title <<
                                  cachedArtwork.m_Description << cachedArtwork.m_Keywords;
         bool anythingChanged = false;
         QMutexLocker initLocker(&m_InitMutex);
@@ -539,7 +539,7 @@ namespace Artworks {
     }
 
     void ArtworkMetadata::clearSpellingInfo() {
-        LOG_INTEGR_TESTS_OR_DEBUG << "#";
+        LOG_VERBOSE_OR_DEBUG << "#";
         m_SpellCheckInfo.clear();
     }
 

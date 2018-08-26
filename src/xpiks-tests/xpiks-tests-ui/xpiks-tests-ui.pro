@@ -23,7 +23,6 @@ DEFINES += WITH_STDOUT_LOGS
 DEFINES += WITH_LOGS
 
 DEFINES += UI_TESTS
-DEFINES += INTEGRATION_TESTS
 
 DEFINES += FAKE_WARNINGS
 
@@ -126,7 +125,8 @@ linux {
     ../xpiks-tests-integration/testshelpers.cpp \
     ../xpiks-tests-core/Mocks/filescollectionmock.cpp \
     fakeinitartworkstemplate.cpp \
-    uitestsenvironment.cpp
+    uitestsenvironment.cpp \
+    ../../xpiks-qt/Helpers/metadatahighlighter.cpp
 }
 
 include(../../xpiks-common/xpiks-common.pri)
@@ -704,7 +704,8 @@ HEADERS += \
     ../xpiks-tests-integration/signalwaiter.h \
     ../xpiks-tests-integration/testshelpers.h \
     ../xpiks-tests-core/Mocks/filescollectionmock.h \
-    fakeinitartworkstemplate.h
+    fakeinitartworkstemplate.h \
+    ../../xpiks-qt/Helpers/metadatahighlighter.h
 
 RESOURCES += \
     xpiks-tests-ui.qrc

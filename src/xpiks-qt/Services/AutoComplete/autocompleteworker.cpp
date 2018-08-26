@@ -70,7 +70,7 @@ namespace AutoComplete {
 
     void AutoCompleteWorker::generateCompletions(std::shared_ptr<CompletionQuery> &item) {
         const QString &prefix = item->getPrefix();
-        LOG_INTEGR_TESTS_OR_DEBUG << prefix;
+        LOG_VERBOSE_OR_DEBUG << prefix;
 
         bool onlyFindPresets = false;
 
@@ -119,12 +119,12 @@ namespace AutoComplete {
     }
 
     void AutoCompleteWorker::updateCompletions(std::shared_ptr<CompletionQuery> &item) {
-        LOG_INTEGR_TESTS_OR_DEBUG << item->getPrefix();
+        LOG_VERBOSE_OR_DEBUG << item->getPrefix();
 
         bool anyChanges = false;
         auto &completionsList = item->getCompletions();
 
-        LOG_INTEGR_TESTS_OR_DEBUG << "Updating" << completionsList.size() << "items";
+        LOG_VERBOSE_OR_DEBUG << "Updating" << completionsList.size() << "items";
 
         for (auto &result: completionsList) {
             KeywordsPresets::ID_t presetID;
@@ -135,7 +135,7 @@ namespace AutoComplete {
         }
 
         if (anyChanges) {
-            LOG_INTEGR_TESTS_OR_DEBUG << "Propagating update to the model";
+            LOG_VERBOSE_OR_DEBUG << "Propagating update to the model";
             auto &completionsModel = m_AutoCompleteModel.getInnerModel();
             completionsModel.setPresetsMembership(completionsList);
         }

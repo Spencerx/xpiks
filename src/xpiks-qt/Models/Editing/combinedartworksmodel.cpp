@@ -460,7 +460,7 @@ namespace Models {
     }
 
     void CombinedArtworksModel::onEditingPaused() {
-        LOG_INTEGR_TESTS_OR_DEBUG << "#";
+        LOG_VERBOSE_OR_DEBUG << "#";
         submitForInspection();
     }
 

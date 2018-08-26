@@ -119,7 +119,7 @@ namespace SpellCheck {
     }
 
     SpellCheckItem::~SpellCheckItem() {
-        LOG_INTEGRATION_TESTS << "Actually deleting SpellCheckItem";
+        LOG_VERBOSE << "Actually deleting SpellCheckItem";
     }
 
     void SpellCheckItem::addWords(const QStringList &words, int startingIndex, const std::function<bool (const QString &word)> &pred) {

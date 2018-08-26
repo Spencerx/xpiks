@@ -341,7 +341,7 @@ namespace Artworks {
     }
 
     void BasicMetadataModel::notifySpellCheckResults(Common::SpellCheckFlags flags) {
-        LOG_INTEGR_TESTS_OR_DEBUG << (int)flags;
+        LOG_VERBOSE_OR_DEBUG << (int)flags;
 
         if (Common::HasFlag(flags, Common::SpellCheckFlags::Description)) {
             notifyDescriptionSpellingChanged();

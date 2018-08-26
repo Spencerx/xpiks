@@ -316,7 +316,7 @@ namespace Artworks {
             auto &item = m_KeywordsList.at(i);
             if (!item.m_IsCorrect) {
                 const QString &keyword = item.m_Value;
-                LOG_INTEGR_TESTS_OR_DEBUG << keyword << "has wrong spelling";
+                LOG_VERBOSE_OR_DEBUG << keyword << "has wrong spelling";
 
                 if (!keyword.contains(QChar::Space)) {
                     misspelledKeywords.emplace_back(keyword, i);

@@ -143,7 +143,7 @@ namespace Warnings {
     }
 
     void WarningsItem::checkKeywords(IWarningsSettings &warningsSettings) {
-        LOG_INTEGRATION_TESTS << "#";
+        LOG_VERBOSE << "#";
         Q_UNUSED(warningsSettings);
         Artworks::BasicKeywordsModel &keywordsModel = m_CheckableItem->getBasicModel();
 
@@ -168,7 +168,7 @@ namespace Warnings {
     }
 
     void WarningsItem::checkDescription(IWarningsSettings &warningsSettings) {
-        LOG_INTEGRATION_TESTS << "#";
+        LOG_VERBOSE << "#";
 
         const int descriptionLength = getDescription().length();
 
@@ -194,7 +194,7 @@ namespace Warnings {
     }
 
     void WarningsItem::checkTitle(IWarningsSettings &warningsSettings) {
-        LOG_INTEGRATION_TESTS << "#";
+        LOG_VERBOSE << "#";
 
         const int titleLength = getTitle().length();
 
@@ -220,7 +220,7 @@ namespace Warnings {
     }
 
     void WarningsItem::checkSpelling(IWarningsSettings &warningsSettings) {
-        LOG_INTEGRATION_TESTS << "#";
+        LOG_VERBOSE << "#";
         Q_UNUSED(warningsSettings);
 
         auto &keywordsModel = m_CheckableItem->getBasicModel();
@@ -228,19 +228,19 @@ namespace Warnings {
 
         {
             const bool keywordsSpellingErrors = (keywordsModel.hasKeywordsSpellError());
-            LOG_INTEGRATION_TESTS << "Detected keywords spell error:" << keywordsSpellingErrors;
+            LOG_VERBOSE << "Detected keywords spell error:" << keywordsSpellingErrors;
             accountFlag(Common::WarningFlags::SpellErrorsInKeywords, keywordsSpellingErrors);
         }
 
         {
             const bool descriptionSpellingErrors = (metadataModel.hasDescriptionSpellError());
-            LOG_INTEGRATION_TESTS << "Detected description spell error:" << descriptionSpellingErrors;
+            LOG_VERBOSE << "Detected description spell error:" << descriptionSpellingErrors;
             accountFlag(Common::WarningFlags::SpellErrorsInDescription, descriptionSpellingErrors);
         }
 
         {
             const bool titleSpellingErrors = (metadataModel.hasTitleSpellError());
-            LOG_INTEGRATION_TESTS << "Detected title spell error:" << titleSpellingErrors;
+            LOG_VERBOSE << "Detected title spell error:" << titleSpellingErrors;
             accountFlag(Common::WarningFlags::SpellErrorsInTitle, titleSpellingErrors);
         }
     }

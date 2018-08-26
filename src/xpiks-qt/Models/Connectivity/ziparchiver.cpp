@@ -165,7 +165,7 @@ namespace Models {
             auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
             if (image != nullptr) {
                 if (image->hasVectorAttached()) {
-                    LOG_INTEGRATION_TESTS << filepath << "is zipping candidate";
+                    LOG_VERBOSE << filepath << "is zipping candidate";
                     if (!hash.contains(basename)) {
                         hash.insert(basename, QStringList());
                     }
@@ -173,10 +173,10 @@ namespace Models {
                     hash[basename].append(filepath);
                     hash[basename].append(image->getAttachedVectorPath());
                 } else {
-                    LOG_INTEGRATION_TESTS << filepath << "does not have vector attached";
+                    LOG_VERBOSE << filepath << "does not have vector attached";
                 }
             } else {
-                LOG_INTEGRATION_TESTS << filepath << "is not an image";
+                LOG_VERBOSE << filepath << "is not an image";
             }
         }
     }

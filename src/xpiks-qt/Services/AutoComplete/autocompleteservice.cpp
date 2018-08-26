@@ -85,10 +85,10 @@ namespace AutoComplete {
         const bool completeKeywords = m_SettingsModel.getUseKeywordsAutoComplete();
         const bool completePresets = m_SettingsModel.getUsePresetsAutoComplete();
 
-        LOG_INTEGR_TESTS_OR_DEBUG << "Complete keywords:" << completeKeywords << "presets:" << completePresets;
+        LOG_VERBOSE_OR_DEBUG << "Complete keywords:" << completeKeywords << "presets:" << completePresets;
 
         if (!completeKeywords && !completePresets) {
-            LOG_INTEGR_TESTS_OR_DEBUG << "Completions are disabled";
+            LOG_VERBOSE_OR_DEBUG << "Completions are disabled";
             return;
         }
 

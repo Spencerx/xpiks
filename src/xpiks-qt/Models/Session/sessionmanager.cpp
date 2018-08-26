@@ -165,7 +165,7 @@ namespace Models {
         return success;
     }
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     void SessionManager::clearSession() {
         std::vector<std::shared_ptr<Artworks::ArtworkMetadata>> emptyFiles;
         QStringList emptyDirs;

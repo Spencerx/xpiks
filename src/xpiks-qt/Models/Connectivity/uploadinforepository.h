@@ -106,7 +106,7 @@ namespace Models {
         void updatePercentages();
         void resetPercents();
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         std::shared_ptr<UploadInfo> appendItem() { addItem(); return m_UploadInfos.back(); }
         std::vector<std::shared_ptr<UploadInfo> > &accessUploadInfos() { return m_UploadInfos; }

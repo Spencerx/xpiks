@@ -345,6 +345,13 @@ namespace Models {
         return isUnavailable;
     }
 
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+    void ArtworksRepository::resetEverything() {
+        m_DirectoriesList.clear();
+        m_FilesSet.clear();
+    }
+#endif
+
     QStringList ArtworksRepository::retrieveFullDirectories() const {
         LOG_DEBUG << "#";
         QStringList directoriesList;
@@ -355,7 +362,7 @@ namespace Models {
             }
         }
 
-        LOG_INTEGR_TESTS_OR_DEBUG << directoriesList;
+        LOG_VERBOSE_OR_DEBUG << directoriesList;
 
         return directoriesList;
     }
@@ -382,13 +389,6 @@ namespace Models {
         }
 #endif
     }
-
-#ifdef INTEGRATION_TESTS
-    void ArtworksRepository::resetEverything() {
-        m_DirectoriesList.clear();
-        m_FilesSet.clear();
-    }
-#endif
 
     int ArtworksRepository::rowCount(const QModelIndex &parent) const {
         Q_UNUSED(parent);

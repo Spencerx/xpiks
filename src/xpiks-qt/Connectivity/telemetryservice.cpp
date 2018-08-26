@@ -28,7 +28,7 @@ namespace Connectivity {
     }
 
     void TelemetryService::initialize() {
-#ifndef INTEGRATION_TESTS
+#if !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
     ensureUserIdExists();
 
     QString userId = m_SettingsModel.getUserAgentId();

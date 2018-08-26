@@ -101,7 +101,7 @@ namespace MetadataIO {
         void writeMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWrite, bool useBackups);
         void wipeAllMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWipe, bool useBackups);
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         const std::set<int> &getImportIDs() const { return m_PreviousImportIDs; }
         void clear() { m_PreviousImportIDs.clear(); }

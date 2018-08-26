@@ -51,7 +51,7 @@ namespace Models {
     public:
         bool getIsEmergencyRestore() const { return m_EmergencyRestore; }
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
         int itemsCount() const { return m_LastSavedFilesCount; }
         void clearSession();
     private:

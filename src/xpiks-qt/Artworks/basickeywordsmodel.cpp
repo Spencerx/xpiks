@@ -50,7 +50,7 @@ namespace Artworks {
         bool wasCorrect = false;
 
         m_Impl->takeKeywordAt(row, removedKeyword, wasCorrect);
-        LOG_INTEGRATION_TESTS << "keyword:" << removedKeyword << "was correct:" << wasCorrect;
+        LOG_VERBOSE << "keyword:" << removedKeyword << "was correct:" << wasCorrect;
         Q_UNUSED(removedKeyword);
         Q_UNUSED(wasCorrect);
     }
@@ -291,7 +291,7 @@ namespace Artworks {
     }
 
     bool BasicKeywordsModel::replace(const QString &replaceWhat, const QString &replaceTo, Common::SearchFlags flags) {
-        LOG_INTEGR_TESTS_OR_DEBUG << replaceWhat << "->" << replaceTo << "with flags:" << (int)flags;
+        LOG_VERBOSE_OR_DEBUG << replaceWhat << "->" << replaceTo << "with flags:" << (int)flags;
         Q_ASSERT(!replaceWhat.isEmpty());
         Q_ASSERT(((int)flags & (int)Common::SearchFlags::Metadata) != 0);
 

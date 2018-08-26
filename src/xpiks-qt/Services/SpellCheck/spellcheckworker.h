@@ -78,7 +78,7 @@ namespace SpellCheck {
         void stopped();
         void queueIsEmpty();
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         int getSuggestionsCount() const { return m_Suggestions.size(); }
         void clearSuggestions();

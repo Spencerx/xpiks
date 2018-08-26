@@ -26,14 +26,14 @@ namespace Helpers {
 
     void RemoteConfig::setRemoteResponse(const QByteArray &responseData) {
         QJsonParseError error;
-        LOG_INTEGR_TESTS_OR_DEBUG << responseData;
+        LOG_VERBOSE_OR_DEBUG << responseData;
 
         m_Config = QJsonDocument::fromJson(responseData, &error);
 
         if (error.error == QJsonParseError::NoError) {
             emit configArrived();
         } else {
-            LOG_INTEGRATION_TESTS << m_ConfigUrl;
+            LOG_VERBOSE << m_ConfigUrl;
             LOG_WARNING << "Failed to parse remote json" << error.errorString();
         }
     }

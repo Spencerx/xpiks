@@ -39,7 +39,7 @@ namespace Models {
         const Helpers::LocalConfig &getLocalConfig() const { return m_LocalConfig; }
         Helpers::LocalConfig &getLocalConfig() { return m_LocalConfig; }
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
         void setRemoteOverride(const QString &localPath) {
             Q_ASSERT(QFileInfo(localPath).exists());
             m_RemoteOverrideLocalPath = localPath;
@@ -63,7 +63,7 @@ namespace Models {
         Helpers::LocalConfig m_LocalConfig;
         bool m_ForceOverwrite;
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
         bool m_MemoryOnly;
         QString m_RemoteOverrideLocalPath;
 #endif

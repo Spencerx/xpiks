@@ -259,7 +259,7 @@ namespace Models {
     public slots:
         void onRecommendedExiftoolFound(const QString &path);
 
-#ifndef INTEGRATION_TESTS
+#if !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
     private:
 #else
     public:

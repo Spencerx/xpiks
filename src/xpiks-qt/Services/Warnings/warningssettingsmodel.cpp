@@ -80,7 +80,7 @@ namespace Warnings {
     }
 
     bool WarningsSettingsModel::processLocalConfig(const QJsonDocument &document) {
-        LOG_INTEGR_TESTS_OR_DEBUG << document;
+        LOG_VERBOSE_OR_DEBUG << document;
         bool result = parseConfig(document);
         if (result) {
             emit settingsUpdated();

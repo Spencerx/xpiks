@@ -266,7 +266,7 @@ namespace SpellCheck {
             auto &suggestionItem = m_SpellSuggestions.at(i);
             suggestionItem->replaceToSuggested(word, replacement);
 
-            LOG_INTEGRATION_TESTS << i << "item's result is:" << suggestionItem->getReplacementSucceeded();
+            LOG_VERBOSE << i << "item's result is:" << suggestionItem->getReplacementSucceeded();
 
             if (suggestionItem->getReplacementSucceeded()) {
                 anySucceeded = true;

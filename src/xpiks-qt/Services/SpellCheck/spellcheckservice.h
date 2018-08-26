@@ -74,7 +74,7 @@ namespace SpellCheck {
         virtual QStringList suggestCorrections(const QString &word) const;
         int getUserDictWordsNumber();
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         int getSuggestionsCount();
         void clearSuggestions();

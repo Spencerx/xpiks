@@ -71,7 +71,7 @@ namespace AutoComplete {
 
                 if (lastCompletion->getCompletion() == updatedCompletion.m_Completion) {
                     if (updatedCompletion.m_PresetID != -1) {
-                        LOG_INTEGR_TESTS_OR_DEBUG << "Completion" << i << "is preset with ID" << updatedCompletion.m_PresetID;
+                        LOG_VERBOSE_OR_DEBUG << "Completion" << i << "is preset with ID" << updatedCompletion.m_PresetID;
                         lastCompletion->setPresetID(updatedCompletion.m_PresetID);
                         lastCompletion->setCanBePreset();
                         anyChanged = true;

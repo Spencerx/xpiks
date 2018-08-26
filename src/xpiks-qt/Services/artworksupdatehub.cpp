@@ -103,7 +103,7 @@ namespace Services {
         emit updateRequested();
     }
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     void ArtworksUpdateHub::clear() {
         {
             QMutexLocker locker(&m_Lock);

@@ -172,7 +172,7 @@ namespace Microstocks {
             m_StocksList.swap(ftpOptionsList);
             emit stocksListUpdated();
         } else {
-            LOG_INTEGR_TESTS_OR_DEBUG << "List is empty!";
+            LOG_VERBOSE_OR_DEBUG << "List is empty!";
         }
     }
 

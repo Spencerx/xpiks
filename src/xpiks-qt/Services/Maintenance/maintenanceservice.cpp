@@ -71,7 +71,7 @@ namespace Maintenance {
         }
     }
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     bool MaintenanceService::hasPendingJobs() {
         if (m_MaintenanceWorker != nullptr) {
             return m_MaintenanceWorker->hasPendingJobs();

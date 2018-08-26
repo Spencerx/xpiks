@@ -184,7 +184,7 @@ namespace SpellCheck {
             }
         }
 
-        LOG_INTEGR_TESTS_OR_DEBUG << QVector<int>::fromStdVector(indicesToUpdate);
+        LOG_VERBOSE_OR_DEBUG << QVector<int>::fromStdVector(indicesToUpdate);
         Helpers::IndicesRanges ranges(indicesToUpdate);
         auto roles = QVector<int>() << TriggerRole;
 

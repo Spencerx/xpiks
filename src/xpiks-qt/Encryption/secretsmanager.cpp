@@ -44,7 +44,7 @@ namespace Encryption {
     }
 
     void SecretsManager::setMasterPasswordHash(const QString &hash) {
-        LOG_INTEGRATION_TESTS << hash;
+        LOG_VERBOSE << hash;
         m_MasterPasswordHash = QByteArray::fromHex(hash.toLatin1());
     }
 
@@ -68,7 +68,7 @@ namespace Encryption {
 
         if (!encodedPassword.isEmpty()) {
             QString key = getKeyForEncryption();
-            LOG_INTEGRATION_TESTS << "key:" << key << "pswd:" << encodedPassword;
+            LOG_VERBOSE << "key:" << key << "pswd:" << encodedPassword;
             decodedPassword = decodeText(encodedPassword, key);
         }
 

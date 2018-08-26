@@ -22,7 +22,7 @@ namespace AutoComplete {
 
     void AutoCompleteModel::setSelectedIndex(int value) {
         if (value != m_SelectedIndex) {
-            LOG_INTEGR_TESTS_OR_DEBUG << value;
+            LOG_VERBOSE_OR_DEBUG << value;
             m_SelectedIndex = value;
             emit selectedIndexChanged(value);
         }
@@ -43,7 +43,7 @@ namespace AutoComplete {
 
     bool AutoCompleteModel::moveSelectionUp() {
         const bool canMove = m_SelectedIndex > 0;
-        LOG_INTEGR_TESTS_OR_DEBUG << "can move:" << canMove;
+        LOG_VERBOSE_OR_DEBUG << "can move:" << canMove;
         if (canMove) {
             setSelectedIndex(m_SelectedIndex - 1);
         }
@@ -53,7 +53,7 @@ namespace AutoComplete {
     bool AutoCompleteModel::moveSelectionDown() {
         const int size = getCompletionsCount();
         const bool canMove = m_SelectedIndex < size - 1;
-        LOG_INTEGR_TESTS_OR_DEBUG << "can move:" << canMove;
+        LOG_VERBOSE_OR_DEBUG << "can move:" << canMove;
         if (canMove) {
             setSelectedIndex(m_SelectedIndex + 1);
         }

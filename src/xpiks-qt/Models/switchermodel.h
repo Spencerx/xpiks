@@ -60,7 +60,7 @@ namespace Models {
         bool getDonateCampaign1LinkClicked() const;
         QString getDonateCampaign1Link() const { return QString("http://xpiksapp.com/donatecampaign/"); }
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         void setRemoteConfigOverride(const QString &localPath) { m_Config.setRemoteOverride(localPath); }
 #endif

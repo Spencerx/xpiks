@@ -245,7 +245,7 @@ namespace Models {
                 indicesToUpdate.push_back((int)index);
                 rolesToUpdateSet.unite(request->getRolesToUpdate());
             } else {
-                LOG_INTEGRATION_TESTS << "Cache miss. Found" << (artwork ? artwork->getItemID() : -1) << "instead of" << request->getArtworkID();
+                LOG_VERBOSE << "Cache miss. Found" << (artwork ? artwork->getItemID() : -1) << "instead of" << request->getArtworkID();
                 request->setCacheMiss();
                 cacheMisses++;
             }
@@ -433,7 +433,7 @@ namespace Models {
             for (; it < itemsEnd; it++) {
                 auto &artwork = *it;
                 Q_ASSERT(artwork->isRemoved());
-                LOG_INTEGRATION_TESTS << "File removed:" << artwork->getFilepath();
+                LOG_VERBOSE << "File removed:" << artwork->getFilepath();
                 destroyArtwork(artwork);
             }
         }
@@ -1109,7 +1109,7 @@ namespace Models {
     }
 
     void ArtworksListModel::destroyArtwork(ArtworkItem const &artwork) {
-        LOG_INTEGRATION_TESTS << "Destroying metadata" << artwork->getItemID();
+        LOG_VERBOSE << "Destroying metadata" << artwork->getItemID();
 
         bool disconnectStatus = QObject::disconnect(artwork.get(), 0, this, 0);
         if (disconnectStatus == false) { LOG_DEBUG << "Disconnect Artwork from ArtworksListModel returned false"; }
