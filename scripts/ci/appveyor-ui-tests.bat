@@ -51,6 +51,6 @@ for %%f in (*.dmp) do (
 )
 
 popd
-echo Failed with error #!errorlevel!.
-exit /b !errorlevel!
+echo Failed with error #!testsexitcode!
+exit /b !testsexitcode!
 
