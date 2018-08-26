@@ -7,6 +7,7 @@ set errorlevel=1
 set errorlevel=
 
 if "%mode%" == "build" (
+    echo "Building integration tests..."
     pushd src\xpiks-tests\plugins-for-tests\helloworld\xpiks-helloworld-plugin
     qmake "CONFIG+=%configuration% appveyor" xpiks-helloworld-plugin.pro
     nmake.exe || exit /b !errorlevel!
@@ -43,6 +44,7 @@ if "%mode%" == "run" (
     )
 
     type tests.log | findstr /v /i /c:" debug "
+    appveyor PushArtifact tests.log
     popd
 )
 
