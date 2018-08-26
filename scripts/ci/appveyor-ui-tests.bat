@@ -19,6 +19,8 @@ if "%mode%" == "build" (
     popd
 )
 
+set testsexitcode=0
+
 if "%mode%" == "run" (
     pushd src\xpiks-tests\xpiks-tests-ui
     copy ..\..\..\libs\%configuration%\*.dll .
