@@ -125,7 +125,6 @@ linux {
     ../xpiks-tests-integration/testshelpers.cpp \
     ../xpiks-tests-core/Mocks/filescollectionmock.cpp \
     fakeinitartworkstemplate.cpp \
-    uitestsenvironment.cpp \
     ../../xpiks-qt/Helpers/metadatahighlighter.cpp
 }
 

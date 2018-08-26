@@ -20,7 +20,7 @@ if "%mode%" == "build" (
 
 if "%mode%" == "run" (
     pushd src\xpiks-tests\xpiks-tests-ui
-    %configuration%\xpiks-tests-ui.exe --in-memory > uitests_in_memory.log
+    %configuration%\xpiks-tests-ui.exe > uitests_in_memory.log
     if errorlevel 1 (
         set testsexitcode=!errorlevel!
         echo UI tests failed with code !testsexitcode!

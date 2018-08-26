@@ -85,8 +85,9 @@ int main(int argc, char **argv) {
 #endif
 
     QGuiApplication app(argc, argv);
+    Q_UNUSED(app);
 
-    UITestsEnvironment uiTestsEnvironment(app.arguments());
+    UITestsEnvironment uiTestsEnvironment;
 
 #if defined(TRAVIS_CI) || defined(APPVEYOR)
     initCrashRecovery(uiTestsEnvironment);

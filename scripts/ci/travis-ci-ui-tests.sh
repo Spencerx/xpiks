@@ -18,7 +18,7 @@ echo "Building UI tests... Done"
 echo "Starting UI tests..."
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
-./xpiks-tests-ui --in-memory > uitests_in_memory.log
+./xpiks-tests-ui > uitests_in_memory.log
 exitcode=$?
 
 if [ $exitcode != 0 ]; then
