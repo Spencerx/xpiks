@@ -12,7 +12,7 @@ Item {
 
     property string path: ''
     property bool isselected: false
-    property string scoreme: TestsHost.scoreme
+    property string testsHostMention: TestsHost.scoreme
 
     QtObject {
         id: keywordsWrapper

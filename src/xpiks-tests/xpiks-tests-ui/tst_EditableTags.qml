@@ -8,7 +8,7 @@ Item {
     id: root
     width: 800
     height: 600
-    property string scoreme: TestsHost.scoreme
+    property string testsHostMention: TestsHost.scoreme
 
     Rectangle {
         anchors.fill: parent
