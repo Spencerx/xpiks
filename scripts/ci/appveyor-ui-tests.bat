@@ -20,12 +20,24 @@ if "%mode%" == "build" (
 
 if "%mode%" == "run" (
     pushd src\xpiks-tests\xpiks-tests-ui
-    %configuration%\xpiks-tests-ui.exe || goto :error
+    %configuration%\xpiks-tests-ui.exe --in-memory > uitests_in_memory.log
+    if errorlevel 1 (
+        set testsexitcode=!errorlevel!
+        echo UI tests failed with code !testsexitcode!
+        type uitests_in_memory.log
+        goto :error
+    )
+
+    type uitests_in_memory.log
     popd
 )
 
 goto :EOF
 
 :error
+echo "Handling error..."
+appveyor PushArtifact uitests_in_memory.log
+popd
 echo Failed with error #!errorlevel!.
 exit /b !errorlevel!
+

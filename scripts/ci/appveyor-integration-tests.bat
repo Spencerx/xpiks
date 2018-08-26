@@ -29,7 +29,7 @@ if "%mode%" == "run" (
     if errorlevel 1 (
        set testsexitcode=!errorlevel!
        echo Integration tests failed with code !testsexitcode!
-       type tests.log
+       type tests.log | findstr /v /i /c:" debug "
        goto :error
     )
 
@@ -38,11 +38,11 @@ if "%mode%" == "run" (
     if errorlevel 1 (
         set testsexitcode=!errorlevel!
         echo In-memory tests failed with code !testsexitcode!
-        type tests_in_memory.log
+        type tests_in_memory.log | findstr /v /i /c:" debug "
         goto :error
     )
 
-    type tests.log
+    type tests.log | findstr /v /i /c:" debug "
     popd
 )
 
