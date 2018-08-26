@@ -8,7 +8,10 @@ Item {
     id: root
     width: 800
     height: 600
-    property string testsHostMention: TestsHost.scoreme
+
+    Component.onCompleted: {
+        console.log(TestsHost.scoreme)
+    }
 
     QtObject {
         id: applicationWindow

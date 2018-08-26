@@ -189,7 +189,7 @@ namespace SpellCheck {
 
     QString SpellCheckService::getDictsRoot() const {
         QString resourcesPath;
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
         resourcesPath = STRINGIZE(DEPS_DIR);
 #else
         resourcesPath = QCoreApplication::applicationDirPath();

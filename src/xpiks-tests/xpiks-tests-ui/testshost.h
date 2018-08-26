@@ -10,7 +10,7 @@ class XpiksUITestsApp;
 class TestsHost : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString scoreme READ getName CONSTANT)
+    Q_PROPERTY(QString scoreme READ getName NOTIFY nameChanged)
     Q_PROPERTY(bool isReady READ getIsReady NOTIFY isReadyChanged)
 
 public:
@@ -41,6 +41,7 @@ private:
 
 signals:
     void isReadyChanged();
+    void nameChanged();
 
 public slots:
 

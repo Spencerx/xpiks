@@ -12,7 +12,10 @@ Item {
 
     property string path: ''
     property bool isselected: false
-    property string testsHostMention: TestsHost.scoreme
+
+    Component.onCompleted: {
+        console.log(TestsHost.scoreme)
+    }
 
     QtObject {
         id: keywordsWrapper
