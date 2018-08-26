@@ -36,7 +36,7 @@ namespace Common {
     SystemEnvironment::SystemEnvironment(const QStringList &appArguments) {
         m_Root = XPIKS_USERDATA_PATH;
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
         m_SessionTag = "session-" + QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss");
         m_Root += "/" + m_SessionTag;
 #endif

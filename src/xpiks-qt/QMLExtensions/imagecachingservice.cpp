@@ -20,11 +20,9 @@
 
 namespace QMLExtensions {
     ImageCachingService::ImageCachingService(Common::ISystemEnvironment &environment,
-                                             Storage::IDatabaseManager &dbManager,
                                              QObject *parent) :
         QObject(parent),
         m_Environment(environment),
-        m_DatabaseManager(dbManager),
         m_CachingWorker(NULL),
         m_IsCancelled(false),
         m_Scale(1.0)
@@ -32,8 +30,8 @@ namespace QMLExtensions {
         updateDefaultSize();
     }
 
-    void ImageCachingService::startService(Helpers::AsyncCoordinator &coordinator) {
-        m_CachingWorker = new ImageCachingWorker(m_Environment, coordinator, m_DatabaseManager);
+    void ImageCachingService::startService(Helpers::AsyncCoordinator &coordinator, Storage::IDatabaseManager &dbManager) {
+        m_CachingWorker = new ImageCachingWorker(m_Environment, coordinator, dbManager);
 
         QThread *thread = new QThread();
         m_CachingWorker->moveToThread(thread);

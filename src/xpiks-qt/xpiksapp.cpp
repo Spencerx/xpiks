@@ -71,9 +71,9 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_WarningsService(m_WarningsSettingsModel),
     m_SpellCheckService(environment, m_SettingsModel),
     m_MetadataIOService(),
-    m_ImageCachingService(environment, m_DatabaseManager),
+    m_ImageCachingService(environment),
     m_TranslationService(),
-    m_VideoCachingService(environment, m_DatabaseManager, m_SwitcherModel),
+    m_VideoCachingService(environment, m_SwitcherModel),
     m_UpdateService(environment, m_SettingsModel, m_SwitcherModel, m_MaintenanceService),
     m_TelemetryService(m_SwitcherModel, m_SettingsModel),
     m_EditingHub(m_SpellCheckService, m_WarningsService, m_MetadataIOService, m_SettingsModel),
@@ -241,9 +241,10 @@ void XpiksApp::start() {
     }
 
     m_MaintenanceService.startService();
-    m_ImageCachingService.startService(m_InitCoordinator);
+    m_ImageCachingService.startService(m_InitCoordinator, m_DatabaseManager);
     m_MetadataIOService.startService(m_DatabaseManager, m_ArtworksUpdateHub);
-    m_VideoCachingService.startService(m_ImageCachingService, m_ArtworksUpdateHub, m_MetadataIOService);
+    m_VideoCachingService.startService(m_ImageCachingService, m_ArtworksUpdateHub,
+                                       m_MetadataIOService, m_DatabaseManager);
 
     m_WarningsService.startService();
     m_SpellCheckService.startService(m_InitCoordinator, m_UserDictionary, m_WarningsService);

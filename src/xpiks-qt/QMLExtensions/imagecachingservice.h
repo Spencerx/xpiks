@@ -40,11 +40,10 @@ namespace QMLExtensions {
         Q_OBJECT
     public:
         explicit ImageCachingService(Common::ISystemEnvironment &environment,
-                                     Storage::IDatabaseManager &dbManager,
                                      QObject *parent = 0);
 
     public:
-        void startService(Helpers::AsyncCoordinator &coordinator);
+        void startService(Helpers::AsyncCoordinator &coordinator, Storage::IDatabaseManager &dbManager);
         void stopService();
         void upgradeCacheStorage();
 
@@ -67,7 +66,6 @@ namespace QMLExtensions {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Storage::IDatabaseManager &m_DatabaseManager;
         ImageCachingWorker *m_CachingWorker;
         QSize m_DefaultSize;
         volatile bool m_IsCancelled;

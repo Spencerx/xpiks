@@ -125,7 +125,8 @@ linux {
     ../../xpiks-qt/QMLExtensions/triangleelement.cpp \
     ../xpiks-tests-integration/testshelpers.cpp \
     ../xpiks-tests-core/Mocks/filescollectionmock.cpp \
-    fakeinitartworkstemplate.cpp
+    fakeinitartworkstemplate.cpp \
+    uitestsenvironment.cpp
 }
 
 include(../../xpiks-common/xpiks-common.pri)

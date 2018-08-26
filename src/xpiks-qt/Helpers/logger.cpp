@@ -77,13 +77,7 @@ namespace Helpers {
         flushAll();
     }
 
-#ifdef INTEGRATION_TESTS
-    void Logger::log(QtMsgType type, const QString &message) {
-        // basically this thing is here because Travis CI does not like long logs
-        if (m_MemoryOnly && (type == QtDebugMsg)) { return; }
-        log(message);
-    }
-
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     void Logger::abortFlush() {
         doLog("Starting abort flush.");
         flushAll();

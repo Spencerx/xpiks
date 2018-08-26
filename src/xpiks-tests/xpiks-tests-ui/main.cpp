@@ -11,7 +11,6 @@
 #include "testshost.h"
 #include "xpiksuitestsapp.h"
 #include "uitestsenvironment.h"
-#include "../xpiks-tests-integration/testshelpers.h"
 
 #define STRINGIZE_(x) #x
 #define STRINGIZE(x) STRINGIZE_(x)
@@ -34,7 +33,7 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
     QString logLine = qFormatLogMessage(type, context, msg);
 
     Helpers::Logger &logger = Helpers::Logger::getInstance();
-    logger.log(type, logLine);
+    logger.log(logLine);
 
     if ((type == QtFatalMsg) || (type == QtWarningMsg)) {
         logger.abortFlush();
@@ -85,9 +84,13 @@ int main(int argc, char **argv) {
     qputenv(QML2_IMPORT_PATH_VAR, importPath.toUtf8());
 #endif
 
-    UITestsEnvironment uiTestsEnvironment;
+    QGuiApplication app(argc, argv);
 
-    //initCrashRecovery(uiTestsEnvironment);
+    UITestsEnvironment uiTestsEnvironment(app.arguments());
+
+#if defined(TRAVIS_CI) || defined(APPVEYOR)
+    initCrashRecovery(uiTestsEnvironment);
+#endif
 
     qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
     qInstallMessageHandler(myMessageHandler);
@@ -123,6 +126,7 @@ int main(int argc, char **argv) {
 
         xpiksTests.stop();
         QThread::sleep(1);
+        eventLoop.processEvents(QEventLoop::AllEvents);
     }
 
     return result;

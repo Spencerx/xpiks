@@ -21,12 +21,10 @@
 
 namespace QMLExtensions {
     VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment,
-                                             Storage::IDatabaseManager &dbManager,
                                              Models::SwitcherModel &switcherModel,
                                              QObject *parent) :
         QObject(parent),
         m_Environment(environment),
-        m_DatabaseManager(dbManager),
         m_SwitcherModel(switcherModel),
         m_CachingWorker(nullptr),
         m_IsCancelled(false)
@@ -35,9 +33,10 @@ namespace QMLExtensions {
 
     void VideoCachingService::startService(ImageCachingService &imageCachingService,
                                            Services::ArtworksUpdateHub &updateHub,
-                                           MetadataIO::MetadataIOService &metadataIOService) {
+                                           MetadataIO::MetadataIOService &metadataIOService,
+                                           Storage::IDatabaseManager &dbManager) {
         m_CachingWorker = new VideoCachingWorker(m_Environment,
-                                                 m_DatabaseManager,
+                                                 dbManager,
                                                  imageCachingService,
                                                  updateHub,
                                                  metadataIOService);
