@@ -20,6 +20,7 @@
 
 namespace Maintenance {
     bool tryGetExiftoolVersion(const QString &path, QString &version) {
+        Q_ASSERT(!path.isEmpty());
         QProcess process;
         process.start(path, QStringList() << "-ver");
         const bool finishedInTime = process.waitForFinished(EXIFTOOL_VERSION_TIMEOUT);
@@ -78,6 +79,7 @@ namespace Maintenance {
 
         foreach (const QString &path, possiblePaths) {
             LOG_DEBUG << "Trying path" << path;
+            if (path.isEmpty()) { continue; }
 
             if (!QFileInfo(path).exists()) {
                 LOG_DEBUG << "File" << path << "does not exist";

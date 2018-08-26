@@ -1025,6 +1025,7 @@ Rectangle {
 
                             EditableTags {
                                 id: flv
+                                objectName: "editableTags"
                                 anchors.fill: parent
                                 model: artworkEditComponent.keywordsModel
                                 property int keywordHeight: uiManager.keywordHeight
@@ -1227,6 +1228,7 @@ Rectangle {
 
                             StyledLink {
                                 id: copyLink
+                                objectName: "copyLink"
                                 property bool canBeShown: (artworkProxy.keywordsCount > 0)
                                 text: i18.n + qsTr("Copy")
                                 enabled: canBeShown
@@ -1428,6 +1430,7 @@ Rectangle {
 
             delegate: Rectangle {
                 id: cellItem
+                objectName: "rosterDelegateItem"
                 property int delegateIndex: index
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom

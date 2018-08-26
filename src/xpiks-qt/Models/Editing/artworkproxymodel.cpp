@@ -298,6 +298,7 @@ namespace Models {
 #ifdef UI_TESTS
     void ArtworkProxyModel::clearModel() {
         getBasicMetadataModel()->clearModel();
+        updateModelProperties();
     }
 #endif
 

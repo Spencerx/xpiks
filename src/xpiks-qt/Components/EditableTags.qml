@@ -248,6 +248,7 @@ Flickable {
 
         Repeater {
             id: repeater
+            objectName: "repeater"
 
             onItemRemoved: {
                 adjustEdit()

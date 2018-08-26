@@ -415,7 +415,8 @@ DISTFILES += \
     ../../xpiks-qt/Components/SelectedIcon.qml \
     ../../xpiks-qt/Components/SuggestionWrapper.qml \
     ../../xpiks-qt/Components/ToolButton.qml \
-    ../../xpiks-qt/Components/ZoomAmplifier.qml
+    ../../xpiks-qt/Components/ZoomAmplifier.qml \
+    ../../xpiks-qt/Constants/UIConfig.js
 
 HEADERS += \
     testshost.h \
