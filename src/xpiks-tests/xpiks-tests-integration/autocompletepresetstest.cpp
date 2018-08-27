@@ -48,11 +48,12 @@ int AutoCompletePresetsTest::doTest() {
 
     // --------------------------------------------------------------
 
-    acService.generateCompletions("pr:stock", nullptr);
+    SignalWaiter waiter;
+    QObject::connect(&acModel, &AutoComplete::KeywordsAutoCompleteModel::completionsAvailable,
+                     &waiter, &SignalWaiter::finished);
+    acService.generateCompletions("pr:stock");
 
-    sleepWaitUntil(5, [&]() {
-        return completionsModel.getLastGeneratedCompletionsCount() > 0;
-    });
+    VERIFY(waiter.wait(5), "Failed to get completions");
 
     acModel.initializeCompletions();
 
@@ -67,11 +68,9 @@ int AutoCompletePresetsTest::doTest() {
 
     // --------------------------------------------------------------
 
-    acService.generateCompletions("pr:shttrst", nullptr);
+    acService.generateCompletions("pr:shttrst");
 
-    sleepWaitUntil(5, [&]() {
-        return completionsModel.getLastGeneratedCompletionsCount() > 0;
-    });
+    VERIFY(waiter.wait(5), "Failed to get completions");
 
     acModel.initializeCompletions();
 

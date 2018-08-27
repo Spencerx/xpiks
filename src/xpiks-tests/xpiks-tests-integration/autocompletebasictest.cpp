@@ -35,7 +35,7 @@ int AutoCompleteBasicTest::doTest() {
 
     // --------------------------------------------------------------
 
-    acService.generateCompletions("tes", &basicModel);
+    acService.generateCompletions("tes", basicModel);
 
     VERIFY(completionWaiter.wait(10), "Timeout while waiting for the completion");
 
@@ -51,7 +51,7 @@ int AutoCompleteBasicTest::doTest() {
 
     // --------------------------------------------------------------
 
-    acService.generateCompletions("Tes", &basicModel);
+    acService.generateCompletions("Tes", basicModel);
 
     VERIFY(completionWaiter.wait(10), "Timeout while waiting for the completion");
 

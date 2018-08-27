@@ -11,6 +11,7 @@
 #ifndef COMPLETIONQUERY_H
 #define COMPLETIONQUERY_H
 
+#include <QObject>
 #include <QString>
 #include <QStringList>
 #include <Common/flags.h>
@@ -37,16 +38,14 @@ namespace AutoComplete {
         int m_PresetID;
     };
 
-    class CompletionQuery {
+    class CompletionQuery: public QObject
+    {
+        Q_OBJECT
     public:
-        CompletionQuery(const QString &prefix, Artworks::BasicKeywordsModel *basicModel):
-            m_BasicKeywordsModel(basicModel),
+        CompletionQuery(const QString &prefix):
             m_Prefix(prefix),
             m_CompletionFlags(0)
         {
-#ifndef INTEGRATION_TESTS
-            Q_ASSERT(basicModel != nullptr);
-#endif
         }
 
     private:
@@ -76,10 +75,12 @@ namespace AutoComplete {
         void setCompleteKeywords(bool value) { setCompleteKeywordsFlag(value); }
         void setCompletePresets(bool value) { setCompletePresetsFlag(value); }
         void setCompletions(std::vector<CompletionResult> &completions) { m_Completions.swap(completions); }
-        Artworks::BasicKeywordsModel *getBasicModel() { return m_BasicKeywordsModel; }
+        void notifyCompletionsAvailable() { emit completionsAvailable(); }
+
+    signals:
+        void completionsAvailable();
 
     private:
-        Artworks::BasicKeywordsModel *m_BasicKeywordsModel;
         QString m_Prefix;
         std::vector<CompletionResult> m_Completions;
         // QString m_Context;

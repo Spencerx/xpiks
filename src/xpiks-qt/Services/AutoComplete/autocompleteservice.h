@@ -34,6 +34,7 @@ namespace Helpers {
 namespace AutoComplete {
     class AutoCompleteWorker;
     class KeywordsAutoCompleteModel;
+    class CompletionQuery;
 
     class AutoCompleteService:
             public QObject
@@ -41,11 +42,11 @@ namespace AutoComplete {
         Q_OBJECT
     public:
         AutoCompleteService(Models::SettingsModel &settingsModel,
+                            KeywordsAutoCompleteModel &autoCompleteModel,
                             QObject *parent = 0);
 
     public:
         void startService(Helpers::AsyncCoordinator &coordinator,
-                          KeywordsAutoCompleteModel &autoCompleteModel,
                           KeywordsPresets::PresetKeywordsModel &presetsManager);
         void stopService();
 
@@ -53,7 +54,11 @@ namespace AutoComplete {
         bool isBusy() const;
 
     public:
-        void generateCompletions(const QString &prefix, Artworks::BasicKeywordsModel *basicModel);
+        void generateCompletions(QString const &prefix, Artworks::BasicKeywordsModel &basicModel);
+        void generateCompletions(QString const &prefix);
+
+    private:
+        std::shared_ptr<CompletionQuery> createQuery(QString const &prefix);
 
     private slots:
         void workerFinished();
@@ -64,7 +69,9 @@ namespace AutoComplete {
         void serviceAvailable();
 
     private:
+        QThread *m_WorkerThread;
         AutoCompleteWorker *m_AutoCompleteWorker;
+        KeywordsAutoCompleteModel &m_AutoCompleteModel;
         Models::SettingsModel &m_SettingsModel;
     };
 }

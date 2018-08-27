@@ -16,25 +16,28 @@
 #include <Artworks/basickeywordsmodel.h>
 #include <Helpers/asynccoordinator.h>
 #include <Models/settingsmodel.h>
+#include "keywordsautocompletemodel.h"
 
 namespace AutoComplete {
     AutoCompleteService::AutoCompleteService(Models::SettingsModel &settingsModel,
+                                             KeywordsAutoCompleteModel &autoCompleteModel,
                                              QObject *parent):
         QObject(parent),
-        m_AutoCompleteWorker(NULL),
+        m_WorkerThread(nullptr),
+        m_AutoCompleteWorker(nullptr),
+        m_AutoCompleteModel(autoCompleteModel),
         m_SettingsModel(settingsModel)
     {
     }
 
     void AutoCompleteService::startService(Helpers::AsyncCoordinator &coordinator,
-                                           KeywordsAutoCompleteModel &autoCompleteModel,
                                            KeywordsPresets::PresetKeywordsModel &presetsManager) {
         if (m_AutoCompleteWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
         }
 
-        m_AutoCompleteWorker = new AutoCompleteWorker(coordinator, autoCompleteModel, presetsManager);
+        m_AutoCompleteWorker = new AutoCompleteWorker(coordinator, m_AutoCompleteModel, presetsManager);
 
         QThread *thread = new QThread();
         m_AutoCompleteWorker->moveToThread(thread);
@@ -56,6 +59,7 @@ namespace AutoComplete {
 
         LOG_DEBUG << "starting thread...";
         thread->start();
+        m_WorkerThread = thread;
 
         emit serviceAvailable();
     }
@@ -74,12 +78,37 @@ namespace AutoComplete {
         return isBusy;
     }
 
-    void AutoCompleteService::generateCompletions(const QString &prefix, Artworks::BasicKeywordsModel *basicModel) {
+    void AutoCompleteService::generateCompletions(const QString &prefix, Artworks::BasicKeywordsModel &basicModel) {
         if (m_AutoCompleteWorker == NULL) {
             LOG_WARNING << "Worker is NULL";
             return;
         }
 
+        auto query = createQuery(prefix);
+        if (query == nullptr) { return; }
+        QObject::connect(query.get(), &CompletionQuery::completionsAvailable,
+                         &basicModel, &Artworks::BasicKeywordsModel::completionsAvailable);
+        query.get()->moveToThread(m_WorkerThread);
+
+        m_AutoCompleteWorker->submitItem(query);
+    }
+
+    void AutoCompleteService::generateCompletions(const QString &prefix) {
+        if (m_AutoCompleteWorker == NULL) {
+            LOG_WARNING << "Worker is NULL";
+            return;
+        }
+
+        auto query = createQuery(prefix);
+        if (query == nullptr) { return; }
+        QObject::connect(query.get(), &CompletionQuery::completionsAvailable,
+                         &m_AutoCompleteModel, &KeywordsAutoCompleteModel::completionsAvailable);
+        query.get()->moveToThread(m_WorkerThread);
+
+        m_AutoCompleteWorker->submitItem(query);
+    }
+
+    std::shared_ptr<CompletionQuery> AutoCompleteService::createQuery(const QString &prefix) {
         const bool completeKeywords = m_SettingsModel.getUseKeywordsAutoComplete();
         const bool completePresets = m_SettingsModel.getUsePresetsAutoComplete();
 
@@ -87,17 +116,18 @@ namespace AutoComplete {
 
         if (!completeKeywords && !completePresets) {
             LOG_VERBOSE_OR_DEBUG << "Completions are disabled";
-            return;
+            return std::shared_ptr<CompletionQuery>();
         }
 
         LOG_INFO << "Received:" << prefix;
         QString requestPrefix = prefix.toLower();
         LOG_INFO << "Requesting for" << requestPrefix;
 
-        auto query = std::make_shared<CompletionQuery>(requestPrefix, basicModel);
+        std::shared_ptr<CompletionQuery> query(new CompletionQuery(requestPrefix),
+                                               [](CompletionQuery *q) { q->deleteLater(); });
         query->setCompleteKeywords(completeKeywords);
         query->setCompletePresets(completePresets);
-        m_AutoCompleteWorker->submitItem(query);
+        return query;
     }
 
     void AutoCompleteService::workerFinished() {

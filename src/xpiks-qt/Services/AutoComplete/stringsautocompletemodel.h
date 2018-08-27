@@ -63,7 +63,6 @@ namespace AutoComplete {
 
     signals:
         void searchTermChanged(const QString &value);
-        void completionsAvailable();
 
         // AutoCompleteModel interface
     protected:

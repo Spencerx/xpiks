@@ -85,7 +85,6 @@ namespace AutoComplete {
         }
 
         std::vector<CompletionResult> completionsList;
-        auto *basicModel = item->getBasicModel();
         size_t generatedCount = 0;
 
         if (onlyFindPresets) {
@@ -107,14 +106,8 @@ namespace AutoComplete {
             }
         }
 
-#ifdef INTEGRATION_TESTS
-        if (basicModel != nullptr) {
-#else
-        Q_ASSERT(basicModel != nullptr); {
-#endif
-            if (generatedCount > 0) {
-                basicModel->notifyCompletionsAvailable();
-            }
+        if (generatedCount > 0) {
+            item->notifyCompletionsAvailable();
         }
     }
 

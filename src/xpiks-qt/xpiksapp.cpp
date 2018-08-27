@@ -64,7 +64,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_ArtworkProxyModel(m_CommandManager, m_PresetsModel, m_ArtworksUpdateHub),
     m_DuplicatesModel(m_ColorsModel),
     m_MaintenanceService(environment),
-    m_AutoCompleteService(m_SettingsModel),
+    m_AutoCompleteService(m_SettingsModel, m_KeywordsAutoCompleteModel),
     m_RequestsService(m_SettingsModel.getProxySettings()),
     m_WarningsSettingsModel(environment),
     m_WarningsService(m_WarningsSettingsModel),
@@ -247,7 +247,7 @@ void XpiksApp::start() {
 
     m_WarningsService.startService();
     m_SpellCheckService.startService(m_InitCoordinator, m_UserDictionary, m_WarningsService);
-    m_AutoCompleteService.startService(m_InitCoordinator, m_KeywordsAutoCompleteModel, m_PresetsModel);
+    m_AutoCompleteService.startService(m_InitCoordinator, m_PresetsModel);
     m_TranslationService.startService(m_InitCoordinator);
 
     QCoreApplication::processEvents();

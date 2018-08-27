@@ -57,7 +57,6 @@ namespace AutoComplete {
     public:
         bool containsWord(const QString &word) const;
         QStringList getLastGeneratedCompletions();
-        size_t getLastGeneratedCompletionsCount() const { return m_LastGeneratedCompletions.size(); }
 #endif
     signals:
         void updateRequired();
@@ -82,9 +81,6 @@ namespace AutoComplete {
     public:
         std::shared_ptr<CompletionItem> getAcceptedCompletion(int completionID) { return m_KeywordsCompletion.getAcceptedCompletion(completionID); }
         KeywordsCompletionsModel &getCompletionsSource() { return m_KeywordsCompletion; }
-
-    signals:
-        void completionsAvailable();
 
         // AutoCompleteModel interface
     protected:
