@@ -167,7 +167,6 @@ protected:
     // models
     KeywordsPresets::PresetKeywordsModel m_PresetsModel;
     KeywordsPresets::FilteredPresetKeywordsModel m_FilteredPresetsModel;
-    AutoComplete::KeywordsCompletionsModel m_KeywordsCompletions;
     AutoComplete::KeywordsAutoCompleteModel m_KeywordsAutoCompleteModel;
     Models::CurrentEditableModel m_CurrentEditableModel;
 

@@ -47,6 +47,7 @@ public:
     Models::CombinedArtworksModel &getCombinedArtworksModel() { return m_CombinedArtworksModel; }
     SpellCheck::SpellCheckSuggestionModel &getSpellSuggestionsModel() { return m_SpellSuggestionModel; }
     AutoComplete::AutoCompleteService &getAutoCompleteService() { return m_AutoCompleteService; }
+    AutoComplete::KeywordsAutoCompleteModel &getKeywordsAutoCompleteModel() { return m_KeywordsAutoCompleteModel; }
     KeywordsPresets::PresetKeywordsModel &getKeywordsPresets() { return m_PresetsModel; }
     Models::SettingsModel &getSettingsModel() { return m_SettingsModel; }
     MetadataIO::CsvExportModel &getCsvExportModel() { return m_CsvExportModel; }

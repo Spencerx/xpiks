@@ -42,7 +42,7 @@ namespace AutoComplete {
         Q_INVOKABLE int getCount() { return getCompletionsCount(); }
         Q_INVOKABLE bool hasSelectedCompletion() { return (0 <= m_SelectedIndex) && (m_SelectedIndex < getCompletionsCount()); }
         Q_INVOKABLE QString getCompletion(int completionID) { return doGetCompletion(completionID); }
-        Q_INVOKABLE QObject *getCompletionsModel();
+        Q_INVOKABLE QObject *getCompletionsModelObject();
 
     signals:
         void selectedIndexChanged(int index);

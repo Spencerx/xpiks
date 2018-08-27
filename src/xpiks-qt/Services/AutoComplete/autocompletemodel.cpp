@@ -81,7 +81,7 @@ namespace AutoComplete {
         setIsActive(false);
     }
 
-    QObject *AutoCompleteModel::getCompletionsModel() {
+    QObject *AutoCompleteModel::getCompletionsModelObject() {
         auto *listModel = doGetCompletionsModel();
         QQmlEngine::setObjectOwnership(listModel, QQmlEngine::CppOwnership);
         return listModel;

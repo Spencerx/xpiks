@@ -187,8 +187,7 @@ namespace AutoComplete {
     }
 #endif
 
-    KeywordsAutoCompleteModel::KeywordsAutoCompleteModel(KeywordsCompletionsModel &keywordsCompletions):
-        m_KeywordsCompletion(keywordsCompletions)
+    KeywordsAutoCompleteModel::KeywordsAutoCompleteModel()
     {
     }
 

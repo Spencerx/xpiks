@@ -24,8 +24,8 @@ int AutoCompleteBasicTest::doTest() {
     auto &basicModel = artwork->getBasicMetadataModel();
 
     AutoComplete::AutoCompleteService &acService = m_TestsApp.getAutoCompleteService();
-    AutoComplete::KeywordsAutoCompleteModel &acModel = acService.getAutoCompleteModel();
-    AutoComplete::KeywordsCompletionsModel &completionsModel = acModel.getInnerModel();
+    AutoComplete::KeywordsAutoCompleteModel &acModel = m_TestsApp.getKeywordsAutoCompleteModel();
+    AutoComplete::KeywordsCompletionsModel &completionsModel = acModel.getCompletionsSource();
 
     SignalWaiter completionWaiter;
     QObject::connect(&basicModel, &Artworks::BasicMetadataModel::completionsAvailable,

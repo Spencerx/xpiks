@@ -49,8 +49,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_UICommandDispatcher(m_CommandManager),
     m_PresetsModel(environment),
     m_FilteredPresetsModel(m_PresetsModel),
-    m_KeywordsCompletions(),
-    m_KeywordsAutoCompleteModel(m_KeywordsCompletions),
+    m_KeywordsAutoCompleteModel(),
     m_CurrentEditableModel(),
     m_RecentDirectorieModel(environment),
     m_RecentFileModel(environment),
@@ -65,7 +64,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_ArtworkProxyModel(m_CommandManager, m_PresetsModel, m_ArtworksUpdateHub),
     m_DuplicatesModel(m_ColorsModel),
     m_MaintenanceService(environment),
-    m_AutoCompleteService(m_KeywordsAutoCompleteModel, m_PresetsModel, m_SettingsModel),
+    m_AutoCompleteService(m_SettingsModel),
     m_RequestsService(m_SettingsModel.getProxySettings()),
     m_WarningsSettingsModel(environment),
     m_WarningsService(m_WarningsSettingsModel),
@@ -248,7 +247,7 @@ void XpiksApp::start() {
 
     m_WarningsService.startService();
     m_SpellCheckService.startService(m_InitCoordinator, m_UserDictionary, m_WarningsService);
-    m_AutoCompleteService.startService(m_InitCoordinator);
+    m_AutoCompleteService.startService(m_InitCoordinator, m_KeywordsAutoCompleteModel, m_PresetsModel);
     m_TranslationService.startService(m_InitCoordinator);
 
     QCoreApplication::processEvents();
@@ -644,7 +643,7 @@ void XpiksApp::registerUICommands() {
                     m_CombinedArtworksModel, m_DuplicatesModel),
 
                     std::make_shared<Commands::UI::AcceptPresetCompletionForCombinedCommand>(
-                    m_KeywordsCompletions, m_CombinedArtworksModel),
+                    m_KeywordsAutoCompleteModel.getCompletionsSource(), m_CombinedArtworksModel),
 
                     std::make_shared<Commands::UI::SetMasterPasswordCommand>(
                     m_SecretsManager, m_SettingsModel),
@@ -710,7 +709,7 @@ void XpiksApp::cleanupModels() {
     m_WarningsService.cancelCurrentBatch();
     m_MaintenanceService.cleanup();
     m_ArtworksUpdateHub.clear();
-    m_AutoCompleteService.getAutoCompleteModel().clear();
+    m_KeywordsAutoCompleteModel.clear();
 
 #ifndef UI_TESTS
     m_ArtworkProxyModel.resetModel();

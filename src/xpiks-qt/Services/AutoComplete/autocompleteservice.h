@@ -40,13 +40,13 @@ namespace AutoComplete {
     {
         Q_OBJECT
     public:
-        AutoCompleteService(KeywordsAutoCompleteModel &autoCompleteModel,
-                            KeywordsPresets::PresetKeywordsModel &presetsManager,
-                            Models::SettingsModel &settingsModel,
+        AutoCompleteService(Models::SettingsModel &settingsModel,
                             QObject *parent = 0);
 
     public:
-        void startService(Helpers::AsyncCoordinator &coordinator);
+        void startService(Helpers::AsyncCoordinator &coordinator,
+                          KeywordsAutoCompleteModel &autoCompleteModel,
+                          KeywordsPresets::PresetKeywordsModel &presetsManager);
         void stopService();
 
         bool isAvailable() const { return true; }
@@ -63,15 +63,8 @@ namespace AutoComplete {
         void cancelAutoCompletion();
         void serviceAvailable();
 
-#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
-    public:
-        KeywordsAutoCompleteModel &getAutoCompleteModel() const { return m_AutoCompleteModel; }
-#endif
-
     private:
         AutoCompleteWorker *m_AutoCompleteWorker;
-        KeywordsAutoCompleteModel &m_AutoCompleteModel;
-        KeywordsPresets::PresetKeywordsModel &m_PresetsManager;
         Models::SettingsModel &m_SettingsModel;
     };
 }

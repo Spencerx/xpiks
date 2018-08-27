@@ -91,13 +91,13 @@ namespace AutoComplete {
         if (onlyFindPresets) {
             if (m_PresetsCompletionEngine.generateCompletions(*item.get(), completionsList)) {
                 generatedCount = completionsList.size();
-                auto &completionsModel = m_AutoCompleteModel.getInnerModel();
+                auto &completionsModel = m_AutoCompleteModel.getCompletionsSource();
                 completionsModel.setPresetCompletions(completionsList);
             }
         } else {
             if (m_FaceCompletionEngine.generateCompletions(*item.get(), completionsList)) {
                 generatedCount = completionsList.size();
-                auto &completionsModel = m_AutoCompleteModel.getInnerModel();
+                auto &completionsModel = m_AutoCompleteModel.getCompletionsSource();
                 completionsModel.setKeywordCompletions(completionsList);
 
                 item->setCompletions(completionsList);
@@ -136,7 +136,7 @@ namespace AutoComplete {
 
         if (anyChanges) {
             LOG_VERBOSE_OR_DEBUG << "Propagating update to the model";
-            auto &completionsModel = m_AutoCompleteModel.getInnerModel();
+            auto &completionsModel = m_AutoCompleteModel.getCompletionsSource();
             completionsModel.setPresetsMembership(completionsList);
         }
     }

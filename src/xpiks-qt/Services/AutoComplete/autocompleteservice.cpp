@@ -18,25 +18,23 @@
 #include <Models/settingsmodel.h>
 
 namespace AutoComplete {
-    AutoCompleteService::AutoCompleteService(KeywordsAutoCompleteModel &autoCompleteModel,
-                                             KeywordsPresets::PresetKeywordsModel &presetsManager,
-                                             Models::SettingsModel &settingsModel,
+    AutoCompleteService::AutoCompleteService(Models::SettingsModel &settingsModel,
                                              QObject *parent):
         QObject(parent),
         m_AutoCompleteWorker(NULL),
-        m_AutoCompleteModel(autoCompleteModel),
-        m_PresetsManager(presetsManager),
         m_SettingsModel(settingsModel)
     {
     }
 
-    void AutoCompleteService::startService(Helpers::AsyncCoordinator &coordinator) {
+    void AutoCompleteService::startService(Helpers::AsyncCoordinator &coordinator,
+                                           KeywordsAutoCompleteModel &autoCompleteModel,
+                                           KeywordsPresets::PresetKeywordsModel &presetsManager) {
         if (m_AutoCompleteWorker != NULL) {
             LOG_WARNING << "Attempt to start running worker";
             return;
         }
 
-        m_AutoCompleteWorker = new AutoCompleteWorker(coordinator, m_AutoCompleteModel, m_PresetsManager);
+        m_AutoCompleteWorker = new AutoCompleteWorker(coordinator, autoCompleteModel, presetsManager);
 
         QThread *thread = new QThread();
         m_AutoCompleteWorker->moveToThread(thread);

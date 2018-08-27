@@ -40,9 +40,9 @@ void AutoCompletePresetsTest::teardown() {
 }
 
 int AutoCompletePresetsTest::doTest() {
-    AutoComplete::AutoCompleteService &acService = m_TestsApp.getAutoCompleteService();
-    AutoComplete::KeywordsAutoCompleteModel &acModel = acService.getAutoCompleteModel();
-    AutoComplete::KeywordsCompletionsModel &completionsModel = acModel.getInnerModel();
+    auto &acService = m_TestsApp.getAutoCompleteService();
+    auto &acModel = m_TestsApp.getKeywordsAutoCompleteModel();
+    auto &completionsModel = acModel.getCompletionsSource();
 
     VERIFY(acModel.getCount() == 0, "AC model was not empty");
 
