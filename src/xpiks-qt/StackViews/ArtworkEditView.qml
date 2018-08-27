@@ -398,7 +398,7 @@ Rectangle {
     // Keys.onEscapePressed: closePopup()
 
     Connections {
-        target: artworkProxy
+        target: acSource
 
         onCompletionsAvailable: {
             acSource.initializeCompletions()

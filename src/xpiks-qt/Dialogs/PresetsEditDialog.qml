@@ -274,7 +274,7 @@ Item {
                 property var keywordsModel: presetsModel.getKeywordsModel(presetNamesListView.currentIndex)
 
                 Connections {
-                    target: rightPanel.keywordsModel
+                    target: acSource
 
                     onCompletionsAvailable: {
                         acSource.initializeCompletions()
