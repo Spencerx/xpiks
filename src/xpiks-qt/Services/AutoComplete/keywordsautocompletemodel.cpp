@@ -188,7 +188,18 @@ namespace AutoComplete {
 #endif
 
     KeywordsAutoCompleteModel::KeywordsAutoCompleteModel()
-    {
+    { }
+
+    bool KeywordsAutoCompleteModel::isPreset(int completionID) {
+        LOG_INFO << completionID;
+        auto completionItem = m_KeywordsCompletion.getAcceptedCompletion(completionID);
+        if (!completionItem) {
+            LOG_WARNING << "Completion is not available anymore";
+            return false;
+        }
+
+        bool isPreset = completionItem->isPreset() || (completionItem->canBePreset() && completionItem->shouldExpandPreset());
+        return isPreset;
     }
 
     int KeywordsAutoCompleteModel::getCompletionsCount() {

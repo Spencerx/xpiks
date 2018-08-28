@@ -46,6 +46,7 @@ namespace QMLExtensions {
             ShowDuplicatesSingle,
             ShowDuplicatesCombined,
             AcceptPresetCompletionCombined,
+            AcceptPresetCompletionForSingle,
             InitSuggestionArtwork,
             InitSuggestionCombined,
             InitSuggestionSingle

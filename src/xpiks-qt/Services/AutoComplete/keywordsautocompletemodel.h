@@ -82,6 +82,9 @@ namespace AutoComplete {
         std::shared_ptr<CompletionItem> getAcceptedCompletion(int completionID) { return m_KeywordsCompletion.getAcceptedCompletion(completionID); }
         KeywordsCompletionsModel &getCompletionsSource() { return m_KeywordsCompletion; }
 
+    public:
+        Q_INVOKABLE bool isPreset(int completionID);
+
         // AutoCompleteModel interface
     protected:
         virtual int getCompletionsCount() override;

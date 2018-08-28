@@ -78,3 +78,14 @@ bool XpiksUITestsApp::setupCommonFiles() {
     m_ArtworkProxyModel.setSourceArtwork(m_ArtworksListModel.getArtworkObject(0));
     return success;
 }
+
+void XpiksUITestsApp::setupUITests() {
+    LOG_DEBUG << "#";
+
+    KeywordsPresets::ID_t id;
+    bool added = false;
+    m_PresetsModel.addOrUpdatePreset("interface",
+                                     QStringList() << "some" << "other" << "keywords",
+                                     id,
+                                     added);
+}

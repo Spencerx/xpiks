@@ -81,6 +81,14 @@ namespace Commands {
             LOG_INFO << "completion" << completionID << "accepted:" << accepted;
         }
 
+        void AcceptPresetCompletionForSingleCommand::execute(QVariant const &value) {
+            LOG_DEBUG << value;
+            int completionID = convertToInt(value, 0);
+
+            bool accepted = m_Target.acceptCompletionAsPreset(m_Source, completionID);
+            LOG_INFO << "completion" << completionID << "accepted:" << accepted;
+        }
+
         void InitSuggestionForArtworkCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             int index = convertToInt(value, -1);

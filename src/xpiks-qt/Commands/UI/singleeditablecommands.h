@@ -94,6 +94,11 @@ namespace Commands {
                               AutoComplete::ICompletionSource,
                               Models::CombinedArtworksModel);
 
+        SOURCE_TARGET_COMMAND(AcceptPresetCompletionForSingleCommand,
+                              QMLExtensions::UICommandID::AcceptPresetCompletionForSingle,
+                              AutoComplete::ICompletionSource,
+                              Models::ArtworkProxyModel);
+
         SOURCE_TARGET_COMMAND(InitSuggestionForArtworkCommand,
                               QMLExtensions::UICommandID::InitSuggestionArtwork,
                               Models::FilteredArtworksListModel,

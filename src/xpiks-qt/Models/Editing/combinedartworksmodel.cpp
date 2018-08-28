@@ -288,7 +288,6 @@ namespace Models {
     bool CombinedArtworksModel::acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID) {
         LOG_DEBUG << completionID;
         const bool accepted = doAcceptCompletionAsPreset(completionID, completionSource, m_PresetsManager);
-        m_CommonKeywordsModel.notifyCompletionAccepted(accepted, completionID);
         return accepted;
     }
 

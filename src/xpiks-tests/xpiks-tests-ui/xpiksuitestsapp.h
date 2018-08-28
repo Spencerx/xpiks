@@ -13,6 +13,7 @@ public:
     void waitInitialized();
     void cleanup();
     bool setupCommonFiles();
+    void setupUITests();
 
 public:
     Models::ArtworkProxyModel &getArtworkProxyModel() { return m_ArtworkProxyModel; }

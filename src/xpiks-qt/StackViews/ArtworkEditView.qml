@@ -1035,12 +1035,12 @@ Rectangle {
                                 onDroppedIndexChanged: dropTimer.start()
 
                                 function acceptCompletion(completionID) {
-                                    var accepted = artworkProxy.acceptCompletionAsPreset(completionID);
-                                    if (!accepted) {
+                                    if (acSource.isPreset(completionID)) {
+                                        dispatcher.dispatch(UICommand.AcceptPresetCompletionForSingle, completionID)
+                                        flv.editControl.acceptCompletion('')
+                                    } else {
                                         var completion = acSource.getCompletion(completionID)
                                         flv.editControl.acceptCompletion(completion)
-                                    } else {
-                                        flv.editControl.acceptCompletion('')
                                     }
                                 }
 

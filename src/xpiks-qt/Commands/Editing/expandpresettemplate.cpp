@@ -70,9 +70,6 @@ namespace Commands {
 
     void ExpandCompletionPreset::execute(const Artworks::ArtworksSnapshot &snapshot) {
         LOG_DEBUG << "#";
-        bool accepted = expandPreset(snapshot);
-        auto &artwork = snapshot.get(0);
-        auto &basicModel = artwork->getBasicModel();
-        basicModel.notifyCompletionAccepted(accepted, m_CompletionID);
+        expandPreset(snapshot);
     }
 }

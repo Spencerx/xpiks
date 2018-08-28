@@ -224,10 +224,12 @@ void XpiksApp::setupUI(QQmlContext *context) {
 void XpiksApp::registerQtMetaTypes() {
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
 
+#ifndef INTEGRATION_TESTS
     qmlRegisterType<QMLExtensions::UICommandID>("xpiks", 1, 0, "UICommand");
     qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
     qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
     qmlRegisterType<QMLExtensions::FolderElement>("xpiks", 1, 0, "FolderElement");
+#endif
 }
 
 void XpiksApp::start() {
@@ -658,6 +660,9 @@ void XpiksApp::registerUICommands() {
 
                     std::make_shared<Commands::UI::AcceptPresetCompletionForCombinedCommand>(
                     m_KeywordsAutoCompleteModel.getCompletionsSource(), m_CombinedArtworksModel),
+
+                    std::make_shared<Commands::UI::AcceptPresetCompletionForSingleCommand>(
+                    m_KeywordsAutoCompleteModel.getCompletionsSource(), m_ArtworkProxyModel),
 
                     std::make_shared<Commands::UI::SetMasterPasswordCommand>(
                     m_SecretsManager, m_SettingsModel),

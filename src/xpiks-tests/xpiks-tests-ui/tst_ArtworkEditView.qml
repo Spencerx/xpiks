@@ -74,6 +74,8 @@ Item {
         function cleanup() {
             // assigning .text directly breaks binding
             artworkProxy.clearModel()
+            wait(100)
+            keywordsEdit.remove(0, keywordsEdit.length)
         }
 
         function getRandomInt(max) {
@@ -218,7 +220,7 @@ Item {
             keyClick(Qt.Key_E)
             keyClick(Qt.Key_A)
 
-            wait(500)
+            wait(200)
 
             verify(typeof artworkEditView.autoCompleteBox !== "undefined")
 
@@ -226,16 +228,152 @@ Item {
             keyClick(Qt.Key_H)
             keyClick(Qt.Key_E)
 
-            wait(500)
+            wait(200)
 
             keyClick(Qt.Key_Down)
-            wait(500)
+            wait(200)
 
             keyClick(Qt.Key_Return)
-            wait(500)
+            wait(200)
 
             compare(artworkProxy.keywordsCount, 1)
             compare(artworkProxy.getKeywordsString(), "weather")
+        }
+
+        function test_autoCompleteCancelWhenShortText() {
+            verify(typeof artworkEditView.autoCompleteBox === "undefined")
+
+            keywordsEdit.forceActiveFocus()
+
+            keyClick(Qt.Key_T)
+            keyClick(Qt.Key_R)
+            keyClick(Qt.Key_U)
+
+            wait(200)
+
+            verify(typeof artworkEditView.autoCompleteBox !== "undefined")
+
+            keyClick(Qt.Key_Backspace)
+
+            wait(200)
+
+            verify(typeof artworkEditView.autoCompleteBox === "undefined")
+        }
+
+        function test_autoCompletePreset() {
+            verify(typeof artworkEditView.autoCompleteBox === "undefined")
+
+            keywordsEdit.forceActiveFocus()
+
+            keyClick(Qt.Key_I)
+            keyClick(Qt.Key_N)
+            keyClick(Qt.Key_T)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_R)
+            keyClick(Qt.Key_F)
+            keyClick(Qt.Key_A)
+            keyClick(Qt.Key_C)
+
+            wait(200)
+
+            verify(typeof artworkEditView.autoCompleteBox !== "undefined")
+
+            keyClick(Qt.Key_Down)
+            wait(200)
+
+            keyClick(Qt.Key_Return, Qt.ControlModifier)
+            wait(200)
+
+            compare(artworkProxy.keywordsCount, 3)
+            compare(artworkProxy.getKeywordsString(), "some, other, keywords")
+        }
+
+        function test_autoCompleteIntoNonEmptyEdit() {
+            verify(typeof artworkEditView.autoCompleteBox === "undefined")
+
+            keywordsEdit.forceActiveFocus()
+
+            keyClick(Qt.Key_I)
+            keyClick(Qt.Key_N)
+            keyClick(Qt.Key_Space)
+
+            keyClick(Qt.Key_S)
+            keyClick(Qt.Key_P)
+            keyClick(Qt.Key_A)
+            keyClick(Qt.Key_C)
+
+            wait(200)
+
+            keyClick(Qt.Key_Down)
+            wait(200)
+
+            keyClick(Qt.Key_Return)
+            wait(200)
+
+            compare(keywordsEdit.text, "in space")
+        }
+
+        function test_spellingIsCheckedForWrong() {
+            keywordsEdit.forceActiveFocus()
+            var testKeyword = keyboardEnterSomething()
+            keyClick(Qt.Key_Comma)
+
+            wait(200)
+
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+
+            tryCompare(keywordWrapper, "hasSpellCheckError", true, 2000)
+        }
+
+        function test_spellingIsCheckedForCorrect() {
+            keywordsEdit.forceActiveFocus()
+
+            keyClick(Qt.Key_I)
+            keyClick(Qt.Key_N)
+            keyClick(Qt.Key_Space)
+
+            keyClick(Qt.Key_S)
+            keyClick(Qt.Key_P)
+            keyClick(Qt.Key_A)
+            keyClick(Qt.Key_C)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_Comma)
+
+            wait(200)
+
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+
+            wait(1500)
+
+            compare(keywordWrapper.hasSpellCheckError, false)
+        }
+
+        function test_duplicateIsDetectedWithDescription() {
+            descriptionEdit.forceActiveFocus()
+            keyClick(Qt.Key_S)
+            keyClick(Qt.Key_P)
+            keyClick(Qt.Key_A)
+            keyClick(Qt.Key_C)
+            keyClick(Qt.Key_E)
+
+            keywordsEdit.forceActiveFocus()
+            keyClick(Qt.Key_S)
+            keyClick(Qt.Key_P)
+            keyClick(Qt.Key_A)
+            keyClick(Qt.Key_C)
+            keyClick(Qt.Key_E)
+
+            keyClick(Qt.Key_Comma)
+
+            wait(200)
+
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+
+            tryCompare(keywordWrapper, "hasDuplicate", true, 2000)
+            compare(keywordWrapper.hasSpellCheckError, false)
         }
     }
 }

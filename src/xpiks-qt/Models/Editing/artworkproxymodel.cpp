@@ -305,10 +305,6 @@ namespace Models {
     bool ArtworkProxyModel::acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID) {
         LOG_DEBUG << completionID;
         const bool accepted = doAcceptCompletionAsPreset(completionID, completionSource, m_PresetsManager);
-        auto *basicArtwork = getBasicMetadataModel();
-        if (basicArtwork != nullptr) {
-            basicArtwork->notifyCompletionAccepted(accepted, completionID);
-        }
         return accepted;
     }
 

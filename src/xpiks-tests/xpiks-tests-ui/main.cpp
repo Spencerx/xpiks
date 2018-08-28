@@ -115,6 +115,8 @@ int main(int argc, char **argv) {
             return 1;
         }
 
+        xpiksTests.setupUITests();
+
         TestsHost &host = TestsHost::getInstance();
         host.setApp(&xpiksTests);
 
