@@ -348,9 +348,6 @@ namespace Models {
         QObject::connect(&basicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
                          this, &ArtworkProxyModel::onTitleSpellingChanged);
 
-        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::completionsAvailable,
-                         this, &ArtworkProxyModel::completionsAvailable);
-
         QObject::connect(&basicModel, &Artworks::BasicMetadataModel::afterSpellingErrorsFixed,
                          this, &ArtworkProxyModel::afterSpellingErrorsFixedHandler);
 

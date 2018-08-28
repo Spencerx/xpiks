@@ -24,6 +24,10 @@ namespace Encryption {
     class SecretsManager;
 }
 
+namespace AutoComplete {
+    class AutoCompleteService;
+}
+
 namespace Commands {
     namespace UI {
         SOURCE_TARGET_COMMAND(SetMasterPasswordCommand,
@@ -44,6 +48,22 @@ namespace Commands {
 
         private:
             Models::ArtworksListModel &m_ArtworksListModel;
+        };
+
+        class GenerateCompletionsCommand: public IUICommandTemplate {
+        public:
+            GenerateCompletionsCommand(AutoComplete::AutoCompleteService &autoCompleteService):
+                m_AutoCompleteService(autoCompleteService)
+            {
+            }
+
+            // IUICommandTemplate interface
+        public:
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::GenerateCompletions; }
+            virtual void execute(const QVariant &value) override;
+
+        private:
+            AutoComplete::AutoCompleteService &m_AutoCompleteService;
         };
     }
 }

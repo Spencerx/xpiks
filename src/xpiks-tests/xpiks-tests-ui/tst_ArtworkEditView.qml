@@ -199,7 +199,7 @@ Item {
             compare(clipboard.getText(), testKeyword1 + ", " + testKeyword2)
         }
 
-        function test_doubleClickKeyword() {
+        /*function test_doubleClickKeyword() {
             keywordsEdit.forceActiveFocus()
             var testKeyword = keyboardEnterSomething()
 
@@ -207,6 +207,35 @@ Item {
             var keywordWrapper = repeater.itemAt(0)
 
             mouseDoubleClick(keywordWrapper)
+        }*/
+
+        function test_autoCompleteKeywordBasic() {
+            verify(typeof artworkEditView.autoCompleteBox === "undefined")
+
+            keywordsEdit.forceActiveFocus()
+
+            keyClick(Qt.Key_W)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_A)
+
+            wait(500)
+
+            verify(typeof artworkEditView.autoCompleteBox !== "undefined")
+
+            keyClick(Qt.Key_T)
+            keyClick(Qt.Key_H)
+            keyClick(Qt.Key_E)
+
+            wait(500)
+
+            keyClick(Qt.Key_Down)
+            wait(500)
+
+            keyClick(Qt.Key_Return)
+            wait(500)
+
+            compare(artworkProxy.keywordsCount, 1)
+            compare(artworkProxy.getKeywordsString(), "weather")
         }
     }
 }

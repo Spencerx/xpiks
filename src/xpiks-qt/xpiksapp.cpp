@@ -37,6 +37,9 @@
 #include <Microstocks/shutterstockapiclient.h>
 #include <Microstocks/gettyapiclient.h>
 #include <Microstocks/fotoliaapiclient.h>
+#include <Helpers/clipboardhelper.h>
+#include <QMLExtensions/folderelement.h>
+#include <QMLExtensions/triangleelement.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_Environment(environment),
@@ -149,6 +152,7 @@ void XpiksApp::initialize() {
 
     connectEntitiesSignalsSlots();
     registerUICommands();
+    registerQtMetaTypes();
     setupMessaging();
 
 #ifndef UI_TESTS
@@ -201,6 +205,7 @@ void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("inactiveTabs", m_UIManager.getInactiveTabs());
 
     context->setContextProperty("xpiksApp", this);
+    context->setContextProperty("dispatcher", &m_UICommandDispatcher);
 
 #ifdef QT_DEBUG
     QVariant isDebug(true);
@@ -214,6 +219,15 @@ void XpiksApp::setupUI(QQmlContext *context) {
     m_UIManager.addSystemTab(QUICKBUFFER_TAB_ID, "qrc:/CollapserTabs/QuickBufferIcon.qml", "qrc:/CollapserTabs/QuickBufferTab.qml");
     m_UIManager.addSystemTab(TRANSLATOR_TAB_ID, "qrc:/CollapserTabs/TranslatorIcon.qml", "qrc:/CollapserTabs/TranslatorTab.qml");
     m_UIManager.initializeSystemTabs();
+}
+
+void XpiksApp::registerQtMetaTypes() {
+    qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
+
+    qmlRegisterType<QMLExtensions::UICommandID>("xpiks", 1, 0, "UICommand");
+    qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
+    qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
+    qmlRegisterType<QMLExtensions::FolderElement>("xpiks", 1, 0, "FolderElement");
 }
 
 void XpiksApp::start() {
@@ -658,7 +672,10 @@ void XpiksApp::registerUICommands() {
                     m_ArtworkProxyModel, m_KeywordsSuggestor),
 
                     std::make_shared<Commands::UI::InitSuggestionForCombinedCommand>(
-                    m_CombinedArtworksModel, m_KeywordsSuggestor)
+                    m_CombinedArtworksModel, m_KeywordsSuggestor),
+
+                    std::make_shared<Commands::UI::GenerateCompletionsCommand>(
+                    m_AutoCompleteService)
                 });
 }
 

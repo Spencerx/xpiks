@@ -12,9 +12,20 @@
 #include <Models/settingsmodel.h>
 #include <Encryption/secretsmanager.h>
 #include <Models/Artworks/artworkslistmodel.h>
+#include <Services/AutoComplete/autocompleteservice.h>
 
 namespace Commands {
     namespace UI {
+        QString convertToString(QVariant const &value, QString const &defaultValue = QString("")) {
+            QString result = defaultValue;
+            if (value.isValid()) {
+                if (value.type() == QVariant::String) {
+                    result = value.toString();
+                }
+            }
+            return result;
+        }
+
         void SetMasterPasswordCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.onMasterPasswordSet(m_Source);
@@ -23,6 +34,12 @@ namespace Commands {
         void RemoveUnavailableFilesCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_ArtworksListModel.purgeUnavailableFiles();
+        }
+
+        void GenerateCompletionsCommand::execute(const QVariant &value) {
+            QString prefix = convertToString(value);
+            LOG_DEBUG << prefix;
+            m_AutoCompleteService.generateCompletions(prefix);
         }
     }
 }

@@ -131,7 +131,6 @@ int main(int argc, char *argv[]) {
 
     qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
     qInstallMessageHandler(myMessageHandler);
-    qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
 
     // -----------------------------------------------
     QCoreApplication app(argc, argv);

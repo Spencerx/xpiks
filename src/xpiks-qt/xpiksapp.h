@@ -109,6 +109,7 @@ public:
     void startLogging();
     virtual void initialize();
     void setupUI(QQmlContext *context);
+    void registerQtMetaTypes();
     void start();
     void stop();
     void setupWindow(QQuickWindow *window);

@@ -40,7 +40,7 @@ namespace AutoComplete {
         QString wordlistPath;
 
 
-#if defined(INTEGRATION_TESTS)
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
         resourcesPath = STRINGIZE(DEPS_DIR);
 #else
         resourcesPath = QCoreApplication::applicationDirPath();

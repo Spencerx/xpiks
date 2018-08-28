@@ -107,7 +107,6 @@ namespace Models {
         void descriptionChanged();
         void titleChanged();
         void keywordsCountChanged();
-        void completionsAvailable();
         void itemBecomeUnavailable();
         void warningsCouldHaveChanged(size_t originalIndex);
         void duplicatesCouldHaveChanged(size_t originalIndex);

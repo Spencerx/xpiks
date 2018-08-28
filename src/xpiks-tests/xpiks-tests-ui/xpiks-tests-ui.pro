@@ -102,6 +102,25 @@ linux {
     LIBS += -ldl
 }
 
+travis-ci {
+    message("for Travis CI")
+    INCLUDEPATH += "../../../vendors/quazip"
+
+    LIBS -= -lz
+    LIBS += /usr/lib/x86_64-linux-gnu/libz.so
+
+    DEFINES += TRAVIS_CI
+
+    # gcov
+    QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
+    LIBS += -lgcov
+}
+
+appveyor {
+    message("for Appveyor")
+    DEFINES += APPVEYOR
+}
+
 # without-video {
 {
     message("Without video")
@@ -125,7 +144,8 @@ linux {
     ../xpiks-tests-integration/testshelpers.cpp \
     ../xpiks-tests-core/Mocks/filescollectionmock.cpp \
     fakeinitartworkstemplate.cpp \
-    ../../xpiks-qt/Helpers/metadatahighlighter.cpp
+    ../../xpiks-qt/Helpers/metadatahighlighter.cpp \
+    ../../xpiks-qt/QMLExtensions/folderelement.cpp
 }
 
 include(../../xpiks-common/xpiks-common.pri)
@@ -705,7 +725,9 @@ HEADERS += \
     ../xpiks-tests-integration/testshelpers.h \
     ../xpiks-tests-core/Mocks/filescollectionmock.h \
     fakeinitartworkstemplate.h \
-    ../../xpiks-qt/Helpers/metadatahighlighter.h
+    ../../xpiks-qt/Helpers/metadatahighlighter.h \
+    ../../xpiks-qt/QMLExtensions/folderelement.h \
+    ../../xpiks-qt/QMLExtensions/uicommandid.h
 
 RESOURCES += \
     xpiks-tests-ui.qrc

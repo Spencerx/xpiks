@@ -26,6 +26,7 @@ namespace QMLExtensions {
             SaveSession,
             SetMasterPassword,
             RemoveUnavailableFiles,
+            GenerateCompletions,
             // -------------------
             EditSelectedArtworks,
             FixSpellingInSelected,

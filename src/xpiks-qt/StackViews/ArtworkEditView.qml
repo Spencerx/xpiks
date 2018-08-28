@@ -1118,7 +1118,7 @@ Rectangle {
                                 }
 
                                 onCompletionRequested: {
-                                    artworkProxy.generateCompletions(prefix)
+                                    dispatcher.dispatch(UICommand.GenerateCompletions, prefix)
                                 }
 
                                 onExpandLastAsPreset: {

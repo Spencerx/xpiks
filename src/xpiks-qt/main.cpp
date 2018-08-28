@@ -36,11 +36,8 @@
 #include "Helpers/globalimageprovider.h"
 #include "Helpers/logger.h"
 #include "Helpers/runguard.h"
-#include "Helpers/clipboardhelper.h"
 #include "Connectivity/curlinithelper.h"
 #include "QMLExtensions/cachingimageprovider.h"
-#include "QMLExtensions/folderelement.h"
-#include "QMLExtensions/triangleelement.h"
 #include "QMLExtensions/uicommandid.h"
 
 // -------------------------------------
@@ -202,11 +199,6 @@ int main(int argc, char *argv[]) {
     LOG_INFO << "Working directory of Xpiks is:" << QDir::currentPath();
 
     xpiks.initialize();
-
-    qmlRegisterType<QMLExtensions::UICommandID>("xpiks", 1, 0, "UICommand");
-    qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
-    qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
-    qmlRegisterType<QMLExtensions::FolderElement>("xpiks", 1, 0, "FolderElement");
 
     QQmlApplicationEngine engine;
     auto &imageCachingService = xpiks.getImageCachingService();
