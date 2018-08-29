@@ -235,6 +235,12 @@ namespace Models {
         }
     }
 
+    QObject *CombinedArtworksModel::getBasicModelObject() {
+        QObject *item = &m_CommonKeywordsModel;
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        return item;
+    }
+
     void CombinedArtworksModel::assignFromSelected() {
         LOG_DEBUG << "#";
         recombineArtworks([](std::shared_ptr<Artworks::ArtworkElement> const &item) { return item->getIsSelected(); });
@@ -283,6 +289,13 @@ namespace Models {
                         m_CommonKeywordsModel.getDescription(),
                         m_CommonKeywordsModel.getKeywords(),
                         false));
+    }
+
+    void CombinedArtworksModel::clearModel() {
+        m_CommonKeywordsModel.clearModel();
+        emit descriptionChanged();
+        emit titleChanged();
+        emit keywordsCountChanged();
     }
 
     bool CombinedArtworksModel::acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID) {

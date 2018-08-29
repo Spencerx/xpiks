@@ -920,7 +920,7 @@ Rectangle {
 
                         EditableTags {
                             id: flv
-                            objectName: "keywordsInput"
+                            objectName: "editableTags"
                             anchors.fill: parent
                             model: keywordsWrapper.keywordsModel
                             property int keywordHeight: uiManager.keywordHeight

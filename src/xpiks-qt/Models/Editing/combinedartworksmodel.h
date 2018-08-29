@@ -172,12 +172,7 @@ namespace Models {
         Q_INVOKABLE void clearKeywords();
 
         Q_INVOKABLE QString getKeywordsString() { return m_CommonKeywordsModel.getKeywordsString(); }
-        Q_INVOKABLE QObject *getBasicModelObject () {
-            QObject *item = &m_CommonKeywordsModel;
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-
-            return item;
-        }
+        Q_INVOKABLE QObject *getBasicModelObject();
 
         Q_INVOKABLE void assignFromSelected();
         Q_INVOKABLE void plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator=false);
@@ -188,6 +183,9 @@ namespace Models {
         Q_INVOKABLE void expandLastKeywordAsPreset();
         Q_INVOKABLE void addPreset(unsigned int presetID);
         Q_INVOKABLE void copyToQuickBuffer();
+#ifdef UI_TESTS
+        Q_INVOKABLE void clearModel();
+#endif
 
     public:
         bool acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID);

@@ -4,6 +4,7 @@ import xpiks 1.0
 import XpiksTests 1.0
 import "../../xpiks-qt/StackViews"
 import "UiTestsStubPlugin"
+import "TestUtils.js" as TestUtils
 
 Item {
     id: root
@@ -44,6 +45,7 @@ Item {
     }
 
     TestCase {
+        id: testCase
         name: "ArtworkEdit"
         when: windowShown && (loader.status == Loader.Ready)
         property var titleEdit
@@ -84,10 +86,6 @@ Item {
             keywordsEdit.remove(0, keywordsEdit.length)
         }
 
-        function getRandomInt(max) {
-            return Math.floor(Math.random() * Math.floor(max));
-        }
-
         function getDelegateInstanceAt(contentItem, delegateObjectName, index) {
             for(var i = 0; i < contentItem.children.length; ++i) {
                 var item = contentItem.children[i];
@@ -100,28 +98,15 @@ Item {
             return undefined;
         }
 
-        function keyboardEnterSomething() {
-            var keys = [Qt.Key_A, Qt.Key_B, Qt.Key_C, Qt.Key_D, Qt.Key_E, Qt.Key_F, Qt.Key_0, Qt.Key_1]
-            var values = ['a', 'b', 'c', 'd', 'e', 'f', '0', '1']
-            var count = keys.length + getRandomInt(keys.length)
-            var text = "";
-            for (var i = 0; i < count; i++) {
-                var keyIndex = getRandomInt(keys.length)
-                keyClick(keys[keyIndex])
-                text += values[keyIndex]
-            }
-            return text
-        }
-
         function test_editTitleSimple() {
             titleEdit.forceActiveFocus()
-            var testTitle = keyboardEnterSomething()
+            var testTitle = TestUtils.keyboardEnterSomething(testCase)
             compare(artworkProxy.title, testTitle)
         }
 
         function test_editDescriptionSimple() {
             descriptionEdit.forceActiveFocus()
-            var testDescription = keyboardEnterSomething()
+            var testDescription = TestUtils.keyboardEnterSomething(testCase)
             compare(artworkProxy.description, testDescription)
         }
 
@@ -129,7 +114,7 @@ Item {
             compare(artworkProxy.keywordsCount, 0)
 
             keywordsEdit.forceActiveFocus()
-            var testKeyword = keyboardEnterSomething()
+            var testKeyword = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
             compare(artworkProxy.keywordsCount, 1)
@@ -138,9 +123,9 @@ Item {
 
         function test_switchCurrentArtworkButtons() {
             titleEdit.forceActiveFocus()
-            var testTitle = keyboardEnterSomething()
+            var testTitle = TestUtils.keyboardEnterSomething(testCase)
             descriptionEdit.forceActiveFocus()
-            var testDescription = keyboardEnterSomething()
+            var testDescription = TestUtils.keyboardEnterSomething(testCase)
 
             compare(rosterListView.currentIndex, 0)
             compare(artworkProxy.description, testDescription)
@@ -162,9 +147,9 @@ Item {
 
         function test_switchCurrentArtworkMouseClick() {
             titleEdit.forceActiveFocus()
-            var testTitle = keyboardEnterSomething()
+            var testTitle = TestUtils.keyboardEnterSomething(testCase)
             descriptionEdit.forceActiveFocus()
-            var testDescription = keyboardEnterSomething()
+            var testDescription = TestUtils.keyboardEnterSomething(testCase)
 
             compare(rosterListView.currentIndex, 0)
             compare(artworkProxy.description, testDescription)
@@ -194,9 +179,9 @@ Item {
             compare(copyLink.enabled, false)
 
             keywordsEdit.forceActiveFocus()
-            var testKeyword1 = keyboardEnterSomething()
+            var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
-            var testKeyword2 = keyboardEnterSomething()
+            var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
             // do not press comma - test adding keyword on losing focus
 
             compare(copyLink.enabled, true)
@@ -311,7 +296,7 @@ Item {
 
         function test_spellingIsCheckedForWrong() {
             keywordsEdit.forceActiveFocus()
-            var testKeyword = keyboardEnterSomething()
+            var testKeyword = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
             wait(200)
@@ -374,7 +359,7 @@ Item {
 
         function test_doubleClickEditsKeyword() {
             keywordsEdit.forceActiveFocus()
-            var testKeyword1 = keyboardEnterSomething()
+            var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
             wait(200)
@@ -393,7 +378,7 @@ Item {
 
             wait(200)
 
-            var testKeyword2 = keyboardEnterSomething()
+            var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Enter)
 
             wait(200)
@@ -403,7 +388,7 @@ Item {
 
         function test_editInPlainText() {
             keywordsEdit.forceActiveFocus()
-            var testKeyword1 = keyboardEnterSomething()
+            var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
             wait(200)
@@ -413,7 +398,7 @@ Item {
             wait(200)
 
             keyClick(Qt.Key_Comma)
-            var testKeyword2 = keyboardEnterSomething()
+            var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
 
             wait(200)
 
