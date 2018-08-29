@@ -147,6 +147,25 @@ Rectangle {
         updateChangesText()
     }
 
+    function editInPlainText() {
+        var callbackObject = {
+            onSuccess: function(text, spaceIsSeparator) {
+                artworkProxy.plainTextEdit(text, spaceIsSeparator)
+            },
+            onClose: function() {
+                flv.activateEdit()
+            }
+        }
+
+        Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
+                            applicationWindow,
+                            {
+                                callbackObject: callbackObject,
+                                keywordsText: artworkProxy.getKeywordsString(),
+                                keywordsModel: artworkProxy.getBasicModelObject()
+                            });
+    }
+
     Menu {
         id: wordRightClickMenu
         property string word
@@ -309,22 +328,7 @@ Rectangle {
         MenuItem {
             text: i18.n + qsTr("Edit in plain text")
             onTriggered: {
-                var callbackObject = {
-                    onSuccess: function(text, spaceIsSeparator) {
-                        artworkProxy.plainTextEdit(text, spaceIsSeparator)
-                    },
-                    onClose: function() {
-                        flv.activateEdit()
-                    }
-                }
-
-                Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
-                                    applicationWindow,
-                                    {
-                                        callbackObject: callbackObject,
-                                        keywordsText: artworkProxy.getKeywordsString(),
-                                        keywordsModel: artworkProxy.getBasicModel()
-                                    });
+                editInPlainText()
             }
         }
 
@@ -1073,7 +1077,7 @@ Rectangle {
                                                                 callbackObject: callbackObject,
                                                                 previousKeyword: keyword,
                                                                 keywordIndex: kw.delegateIndex,
-                                                                keywordsModel: artworkProxy.getBasicModel()
+                                                                keywordsModel: artworkProxy.getBasicModelObject()
                                                             })
                                     }
 

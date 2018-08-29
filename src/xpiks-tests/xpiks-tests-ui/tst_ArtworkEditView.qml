@@ -31,6 +31,7 @@ Item {
         id: artworkEditView
         anchors.fill: parent
         artworkIndex: 0
+        componentParent: root
         keywordsModel: artworkProxy.getBasicModelObject()
     }
 
@@ -201,16 +202,6 @@ Item {
             compare(clipboard.getText(), testKeyword1 + ", " + testKeyword2)
         }
 
-        /*function test_doubleClickKeyword() {
-            keywordsEdit.forceActiveFocus()
-            var testKeyword = keyboardEnterSomething()
-
-            var repeater = findChild(editableTags, "repeater")
-            var keywordWrapper = repeater.itemAt(0)
-
-            mouseDoubleClick(keywordWrapper)
-        }*/
-
         function test_autoCompleteKeywordBasic() {
             verify(typeof artworkEditView.autoCompleteBox === "undefined")
 
@@ -374,6 +365,58 @@ Item {
 
             tryCompare(keywordWrapper, "hasDuplicate", true, 2000)
             compare(keywordWrapper.hasSpellCheckError, false)
+        }
+
+        function test_doubleClickEditsKeyword() {
+            keywordsEdit.forceActiveFocus()
+            var testKeyword1 = keyboardEnterSomething()
+            keyClick(Qt.Key_Comma)
+
+            wait(200)
+
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+
+            compare(artworkProxy.getKeywordsString(), testKeyword1)
+            mouseDoubleClick(keywordWrapper)
+
+            wait(200)
+
+            for (var i = 0; i < testKeyword1.length; i++) {
+                keyClick(Qt.Key_Backspace)
+            }
+
+            wait(200)
+
+            var testKeyword2 = keyboardEnterSomething()
+            keyClick(Qt.Key_Enter)
+
+            wait(200)
+
+            compare(artworkProxy.getKeywordsString(), testKeyword2)
+        }
+
+        function test_editInPlainText() {
+            keywordsEdit.forceActiveFocus()
+            var testKeyword1 = keyboardEnterSomething()
+            keyClick(Qt.Key_Comma)
+
+            wait(200)
+
+            artworkEditView.editInPlainText()
+
+            wait(200)
+
+            keyClick(Qt.Key_Comma)
+            var testKeyword2 = keyboardEnterSomething()
+
+            wait(200)
+
+            keyClick(Qt.Key_Enter, Qt.ControlModifier)
+
+            wait(200)
+
+            compare(artworkProxy.getKeywordsString(), testKeyword1 + ", " + testKeyword2)
         }
     }
 }
