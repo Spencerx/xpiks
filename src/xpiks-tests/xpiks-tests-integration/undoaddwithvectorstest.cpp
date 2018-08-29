@@ -66,5 +66,3 @@ int UndoAddWithVectorsTest::doTest() {
 
     return 0;
 }
-
-

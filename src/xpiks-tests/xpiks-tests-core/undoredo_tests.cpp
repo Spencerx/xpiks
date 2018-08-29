@@ -341,7 +341,6 @@ void UndoRedoTests::undoReplaceCommandTest() {
         artworksListModel.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
     }
 
-
     QString replaceFrom = "Replace";
     QString replaceTo = "Replaced";
     auto flags = Common::SearchFlags::CaseSensitive |Common::SearchFlags::Description |

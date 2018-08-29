@@ -25,6 +25,8 @@ Most useful pages are **[Build instructions](https://github.com/ribtoks/xpiks/wi
 
 ### C++ Coding guidelines
 
+**NB! Build will not pass if some of the guidelines are violated!**
+
 - curly bracket opens on the same line as previous statement
 - always put a class into a namespace
 - asterisk or ampersand should be aligned with variable/method name

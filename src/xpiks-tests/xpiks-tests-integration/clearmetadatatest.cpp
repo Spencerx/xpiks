@@ -52,5 +52,3 @@ int ClearMetadataTest::doTest() {
 
     return 0;
 }
-
-

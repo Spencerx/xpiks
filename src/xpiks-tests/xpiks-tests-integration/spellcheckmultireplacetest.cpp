@@ -68,5 +68,3 @@ int SpellCheckMultireplaceTest::doTest() {
 
     return 0;
 }
-
-

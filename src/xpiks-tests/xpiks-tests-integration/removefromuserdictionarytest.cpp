@@ -23,7 +23,6 @@ void RemoveFromUserDictionaryTest::setup() {
     VERIFY(!basicModel.hasTitleSpellError(), "After adding word. Title spell error is still present");\
     VERIFY(!basicModel.hasKeywordsSpellError(), "After adding word. Keywords spell error is still present");
 
-
 int RemoveFromUserDictionaryTest::doTest() {
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");

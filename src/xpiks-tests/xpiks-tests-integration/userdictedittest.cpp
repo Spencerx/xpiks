@@ -60,5 +60,3 @@ int UserDictEditTest::doTest() {
 
     return 0;
 }
-
-

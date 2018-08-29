@@ -212,7 +212,6 @@ int main(int argc, char *argv[]) {
     // always the last one. insert new tests above
     integrationTests.emplace_back(std::make_shared<LocalLibrarySearchTest>(environment, xpiksTests));
 
-
     qInfo("\n");
     int succeededTestsCount = 0, failedTestsCount = 0;
     QStringList failedTests;
@@ -274,4 +273,3 @@ int main(int argc, char *argv[]) {
 
     return result;
 }
-

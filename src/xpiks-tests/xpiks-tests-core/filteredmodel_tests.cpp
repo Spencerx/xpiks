@@ -335,7 +335,6 @@ void FilteredModelTests::filterStrictKeywordTest() {
     filteredItemsModel.setSearchTerm("!keyword");
     QCOMPARE(filteredItemsModel.getItemsCount(), 0);
 
-
     filteredItemsModel.setSearchTerm("!keyword1");
     QCOMPARE(filteredItemsModel.getItemsCount(), 5);
 }

@@ -44,5 +44,3 @@ int PlainTextEditTest::doTest() {
 
     return 0;
 }
-
-

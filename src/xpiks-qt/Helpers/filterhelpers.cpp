@@ -84,7 +84,6 @@ namespace Helpers {
             if (hasMatch) { break; }
         }
 
-
         const bool needToCheckKeywords = Common::HasFlag(searchFlags, Common::SearchFlags::Keywords);
 
         if (!hasMatch && needToCheckKeywords) {            
@@ -200,5 +199,4 @@ namespace Helpers {
 
         return hasMatch;
     }
-
 }

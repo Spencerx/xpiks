@@ -44,6 +44,3 @@ int FindAndReplaceModelTest::doTest() {
 
     return 0;
 }
-
-
-

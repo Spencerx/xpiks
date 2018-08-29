@@ -373,7 +373,6 @@ void CombinedModelTests::recombineAfterRemoveDifferentTest() {
 void CombinedModelTests::recombineAfterRemoveAllButOneTest() {
     DECLARE_MODELS;
 
-
     Artworks::ArtworksSnapshot snapshot;
     snapshot.append(createArtworkMetadata("Description1", "title1", QStringList() << "Keyword1" << "adfafdaf", 0));
     snapshot.append(createArtworkMetadata("Description2", "title2", QStringList() << "Keyword2" << "21345425421", 1));

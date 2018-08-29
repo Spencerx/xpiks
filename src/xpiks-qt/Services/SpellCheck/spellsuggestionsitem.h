@@ -65,7 +65,6 @@ namespace SpellCheck {
         //protected:
         virtual void replaceToSuggested(const QString &word, const QString &replacement) = 0;
 
-
     signals:
         void replacementIndexChanged();
 

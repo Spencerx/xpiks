@@ -45,5 +45,3 @@ int AutoDetachVectorTest::doTest() {
 
     return 0;
 }
-
-

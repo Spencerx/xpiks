@@ -75,6 +75,3 @@ namespace Encryption {
         return result;
     }
 }
-
-
-

@@ -36,5 +36,3 @@ int TranslatorBasicTest::doTest() {
 
     return 0;
 }
-
-

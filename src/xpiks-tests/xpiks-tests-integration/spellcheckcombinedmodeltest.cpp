@@ -69,5 +69,3 @@ int SpellCheckCombinedModelTest::doTest() {
 
     return 0;
 }
-
-

@@ -62,7 +62,3 @@ int SpellCheckUndoTest::doTest() {
 
     return 0;
 }
-
-
-
-

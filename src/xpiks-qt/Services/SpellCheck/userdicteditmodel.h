@@ -51,7 +51,6 @@ namespace SpellCheck {
         }
         Q_INVOKABLE void saveUserDict();
 
-
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }
         virtual Artworks::IArtworkMetadata *getArtworkMetadata() override { return &m_BasicModel; }
@@ -65,4 +64,5 @@ namespace SpellCheck {
         UserDictionary &m_UserDictionary;
     };
 }
+
 #endif // SPELLCHECKUSERDICT_H

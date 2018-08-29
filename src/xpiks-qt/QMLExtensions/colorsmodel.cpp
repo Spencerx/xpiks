@@ -18,7 +18,6 @@
 
 #include "../Common/logging.h"
 
-
 #define DEFAULT_DARK_COLOR "defaultDarkColor"
 #define DEFAULT_DARKER_COLOR "defaultDarkerColor"
 #define DEFAULT_CONTROL_COLOR "defaultControlColor"

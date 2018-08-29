@@ -49,5 +49,3 @@ int ZipArtworksTest::doTest() {
 
     return 0;
 }
-
-

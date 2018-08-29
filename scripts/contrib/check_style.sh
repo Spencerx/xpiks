@@ -48,4 +48,25 @@ if [ "$LINES_COUNT" -gt 0 ]; then
     exit 2
 fi
 
-echo "Done"
+##################################
+#### Check empty double lines ####
+##################################
+
+DBL_LINES_OK=1
+
+find "$SRC_DIR" -type f \( -name '*.cpp' -and ! -name 'moc_*.cpp' -and ! -name 'qrc_*.cpp' -o  -name '*.h' \) | while read -r file; do
+    STRIPPED_WC=`cat -s ${file} | wc -l | cut -d " " -f 1`
+    USUAL_WC=`cat ${file} | wc -l | cut -d " " -f 1`
+
+    if [ "$STRIPPED_WC" -ne "$USUAL_WC" ]; then
+	echo "Detected double empty lines in file $file"
+	DBL_LINES_OK=0
+    fi
+done
+
+if [ "$DBL_LINES_OK" -eq 0 ]; then
+    echo "Double lines test failed"
+    exit 3
+fi
+
+echo "Style checking finished."
