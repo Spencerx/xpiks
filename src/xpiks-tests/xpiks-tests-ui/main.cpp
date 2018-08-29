@@ -4,8 +4,6 @@
 #include <QDebug>
 #include <QQmlEngine>
 #include <QEventLoop>
-#include <Helpers/clipboardhelper.h>
-#include <QMLExtensions/triangleelement.h>
 #include <Helpers/logger.h>
 #include <chillout.h>
 #include "testshost.h"
@@ -120,9 +118,6 @@ int main(int argc, char **argv) {
         TestsHost &host = TestsHost::getInstance();
         host.setApp(&xpiksTests);
 
-        qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
-        qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
-        qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
         qmlRegisterSingletonType<TestsHost>("XpiksTests", 1, 0, "TestsHost", createTestsHostsQmlObject);
 
         result = quick_test_main(argc, argv, "xpiks_tests_ui", QUICK_TEST_SOURCE_DIR);

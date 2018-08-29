@@ -13,9 +13,7 @@ Item {
     property string path: ''
     property bool isselected: false
 
-    Component.onCompleted: {
-        console.log(TestsHost.scoreme)
-    }
+    Component.onCompleted: TestsHost.bump()
 
     QtObject {
         id: keywordsWrapper
@@ -27,12 +25,18 @@ Item {
         property bool leftSideCollapsed: false
     }
 
-    ArtworkEditView {
-        id: artworkEditView
+    Loader {
+        id: loader
         anchors.fill: parent
-        artworkIndex: 0
-        componentParent: root
-        keywordsModel: artworkProxy.getBasicModelObject()
+        asynchronous: true
+        focus: true
+
+        sourceComponent: ArtworkEditView {
+            anchors.fill: parent
+            artworkIndex: 0
+            componentParent: root
+            keywordsModel: artworkProxy.getBasicModelObject()
+        }
     }
 
     ClipboardHelper {
@@ -41,7 +45,7 @@ Item {
 
     TestCase {
         name: "ArtworkEdit"
-        when: windowShown
+        when: windowShown && (loader.status == Loader.Ready)
         property var titleEdit
         property var descriptionEdit
         property var keywordsEdit
@@ -50,6 +54,7 @@ Item {
         property var rosterListView
         property var copyLink
         property var editableTags
+        property var artworkEditView: loader.item
 
         function initTestCase() {
             TestsHost.setup()

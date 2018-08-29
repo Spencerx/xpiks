@@ -10,7 +10,6 @@ class XpiksUITestsApp;
 class TestsHost : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString scoreme READ getName NOTIFY nameChanged)
     Q_PROPERTY(bool isReady READ getIsReady NOTIFY isReadyChanged)
 
 public:
@@ -28,9 +27,9 @@ public:
 public:
     Q_INVOKABLE void setup();
     Q_INVOKABLE void cleanup();
+    Q_INVOKABLE QString bump() { return QLatin1String("testsHost"); }
 
 public:
-    QString getName() const { return QLatin1String("testsHost"); }
     void setApp(XpiksUITestsApp *app);
 
 private:
@@ -41,7 +40,6 @@ private:
 
 signals:
     void isReadyChanged();
-    void nameChanged();
 
 public slots:
 
