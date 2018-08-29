@@ -22,11 +22,11 @@ namespace Helpers {
         Q_OBJECT
     public:
         explicit ClipboardHelper(QObject *parent = 0) : QObject(parent) {
-            clipboard = QApplication::clipboard();
+            m_Clipboard = QApplication::clipboard();
         }
 
         Q_INVOKABLE QString getText() {
-            QString clipboardText = clipboard->text(QClipboard::Clipboard);
+            QString clipboardText = m_Clipboard->text(QClipboard::Clipboard);
 
             if (clipboardText.length() >= MAX_PASTE_SIZE) {
                 clipboardText = clipboardText.left(MAX_PASTE_SIZE);
@@ -36,11 +36,11 @@ namespace Helpers {
         }
 
         Q_INVOKABLE void setText(const QString &text) {
-            clipboard->setText(text, QClipboard::Clipboard);
+            m_Clipboard->setText(text, QClipboard::Clipboard);
         }
 
     private:
-        QClipboard *clipboard;
+        QClipboard *m_Clipboard;
     };
 }
 

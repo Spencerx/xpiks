@@ -26,3 +26,7 @@ cppcheck --language=c++ --std=c++11 -j 8 --inconclusive --quiet -DQT_DEBUG -DWIT
 echo "cppcheck exited with code $?"
 
 popd
+
+echo "Checking style guidelines..."
+
+./scripts/contrib/check_style.sh ./src

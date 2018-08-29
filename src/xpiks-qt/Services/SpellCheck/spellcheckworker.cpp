@@ -369,7 +369,8 @@ namespace SpellCheck {
                         if (query1->m_IsDuplicate && query2->m_IsDuplicate) { continue; }
 
                         if (Helpers::areSemanticDuplicates(query1->m_Word, query2->m_Word)) {
-                            LOG_VERBOSE_OR_DEBUG << "detected as duplicates:" << "[" << query1->m_Index << "]:" << query1->m_Word << "[" << query2->m_Index << "]:" << query2->m_Word;
+                            LOG_VERBOSE_OR_DEBUG << "detected as duplicates:" << "[" << query1->m_Index << "]:"
+                                                 << query1->m_Word << "[" << query2->m_Index << "]:" << query2->m_Word;
                             query1->m_IsDuplicate = true;
                             query2->m_IsDuplicate = true;
                         }

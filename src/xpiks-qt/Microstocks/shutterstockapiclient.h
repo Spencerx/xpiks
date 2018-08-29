@@ -28,7 +28,8 @@ namespace Microstocks {
         // IMicrostockAPIClient interface
     public:
         virtual MicrostockType type() const override { return MicrostockType::Shutterstock; }
-        virtual std::shared_ptr<Connectivity::IConnectivityRequest> search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) override;
+        virtual std::shared_ptr<Connectivity::IConnectivityRequest> search(const SearchQuery &query,
+                                                                           const std::shared_ptr<Connectivity::IConnectivityResponse> &response) override;
 
     private:
         QUrl buildSearchQuery(const SearchQuery &query) const;

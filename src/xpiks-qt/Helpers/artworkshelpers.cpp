@@ -16,7 +16,9 @@
 #include "filehelpers.h"
 
 namespace Helpers {
-    void splitImagesVideo(const QVector<Artworks::ArtworkMetadata *> &artworks, QVector<Artworks::ArtworkMetadata *> &imageArtworks, QVector<Artworks::ArtworkMetadata *> &videoArtworks) {
+    void splitImagesVideo(const QVector<Artworks::ArtworkMetadata *> &artworks,
+                          QVector<Artworks::ArtworkMetadata *> &imageArtworks,
+                          QVector<Artworks::ArtworkMetadata *> &videoArtworks) {
         int size = artworks.size();
         imageArtworks.reserve(size / 2);
         videoArtworks.reserve(size / 2);

@@ -139,7 +139,8 @@ namespace QMLExtensions {
         libthmbnlr::ThumbnailCreator thumbnailCreator(filepath.toStdString());
 #endif
         try {
-            const libthmbnlr::ThumbnailCreator::CreationOption option = item->getIsQuickThumbnail() ? libthmbnlr::ThumbnailCreator::Quick : libthmbnlr::ThumbnailCreator::GoodQuality;
+            const libthmbnlr::ThumbnailCreator::CreationOption option = item->getIsQuickThumbnail() ?
+                        libthmbnlr::ThumbnailCreator::Quick : libthmbnlr::ThumbnailCreator::GoodQuality;
             thumbnailCreator.setCreationOption(option);
             thumbnailCreator.setSeekPercentage(50);
             thumbnailCreated = thumbnailCreator.createThumbnail(buffer, width, height);

@@ -21,7 +21,8 @@ Microstocks::FotoliaAPIClient::FotoliaAPIClient(std::shared_ptr<Encryption::ISec
 {
 }
 
-std::shared_ptr<Connectivity::IConnectivityRequest> Microstocks::FotoliaAPIClient::search(const Microstocks::SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
+std::shared_ptr<Connectivity::IConnectivityRequest> Microstocks::FotoliaAPIClient::search(const Microstocks::SearchQuery &query,
+                                                                                          const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
     Encryption::SecretPair apiSecret;
     if (!m_SecretsStorage->tryFindPair(FotoliaAPIKey, apiSecret)) { Q_ASSERT(false); }
 

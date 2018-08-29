@@ -23,7 +23,8 @@ namespace Microstocks {
     {
     }
 
-    std::shared_ptr<Connectivity::IConnectivityRequest> ShutterstockAPIClient::search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
+    std::shared_ptr<Connectivity::IConnectivityRequest> ShutterstockAPIClient::search(const SearchQuery &query,
+                                                                                      const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
         LOG_INFO << query.getSearchQuery();
         QUrl url = buildSearchQuery(query);
 
