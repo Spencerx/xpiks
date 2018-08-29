@@ -54,7 +54,7 @@ fi
 
 DBL_LINES_OK=1
 
-find "$SRC_DIR" -type f \( -name '*.cpp' -and ! -name 'moc_*.cpp' -and ! -name 'qrc_*.cpp' -o  -name '*.h' \) | while read -r file; do
+while read -r file; do
     STRIPPED_WC=`cat -s ${file} | wc -l | cut -d " " -f 1`
     USUAL_WC=`cat ${file} | wc -l | cut -d " " -f 1`
 
@@ -62,7 +62,7 @@ find "$SRC_DIR" -type f \( -name '*.cpp' -and ! -name 'moc_*.cpp' -and ! -name '
 	echo "Detected double empty lines in file $file"
 	DBL_LINES_OK=0
     fi
-done
+done < <(find "$SRC_DIR" -type f \( -name '*.cpp' -and ! -name 'moc_*.cpp' -and ! -name 'qrc_*.cpp' -o  -name '*.h' \))
 
 if [ "$DBL_LINES_OK" -eq 0 ]; then
     echo "Double lines test failed"
