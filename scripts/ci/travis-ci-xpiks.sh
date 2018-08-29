@@ -30,3 +30,11 @@ popd
 echo "Checking style guidelines..."
 
 ./scripts/contrib/check_style.sh ./src
+exitcode=$?
+
+if [ $exitcode != 0 ]; then
+    echo "Style check failed"
+    exit $exitcode
+fi
+
+echo "Done"
