@@ -53,9 +53,9 @@ void initCrashRecovery(Common::ISystemEnvironment &environment) {
     QString crashesDirPath = QDir::toNativeSeparators(crashesDirRoot);
 
 #ifdef Q_OS_WIN
-    chillout.init(L"xpiks-tests-integration", crashesDirPath.toStdWString());
+    chillout.init(L"xpiks-tests-ui", crashesDirPath.toStdWString());
 #else
-    chillout.init("xpiks-tests-integration", crashesDirPath.toStdString());
+    chillout.init("xpiks-tests-ui", crashesDirPath.toStdString());
 #endif
     Helpers::Logger &logger = Helpers::Logger::getInstance();
 

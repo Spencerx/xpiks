@@ -11,11 +11,11 @@ environment:
   matrix:
     - XPIKS_BINARY: true
     - CORE_TESTS: true
-      QT_FATAL_WARNINGS: true
+      QT_FATAL_WARNINGS: 1
     - INTEGRATION_TESTS: true
-      QT_FATAL_WARNINGS: true
+      QT_FATAL_WARNINGS: 1
     - UI_TESTS: true
-      QT_FATAL_WARNINGS: true
+      QT_FATAL_WARNINGS: 1
 
 branches:
   # blacklist
@@ -78,5 +78,3 @@ test_script:
 on_failure:
   - ps: Get-EventLog AppVeyor -newest 10 | Format-List
   - ps: Get-ChildItem .\*.dmp | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
-  - if defined INTEGRATION_TESTS appveyor PushArtifact %configuration%\xpiks-tests-integration.exe
-  - if defined INTEGRATION_TESTS appveyor PushArtifact %configuration%\xpiks-tests-integration.pdb

@@ -56,10 +56,14 @@ echo "Handling error..."
 appveyor PushArtifact tests.log
 appveyor PushArtifact tests_in_memory.log
 
+appveyor PushArtifact %configuration%\xpiks-tests-integration.exe
+appveyor PushArtifact %configuration%\xpiks-tests-integration.pdb
+
 for %%f in (*.dmp) do (
     echo Trying to upload dump %%~nf
     appveyor PushArtifact %%~nf
 )
+
 popd
 echo Failed with error #!testsexitcode!
 exit /b !testsexitcode!

@@ -45,6 +45,9 @@ goto :EOF
 echo "Handling error..."
 appveyor PushArtifact uitests_in_memory.log
 
+appveyor PushArtifact %configuration%\xpiks-tests-ui.exe
+appveyor PushArtifact %configuration%\xpiks-tests-ui.pdb
+
 for %%f in (*.dmp) do (
     echo Trying to upload dump %%~nf
     appveyor PushArtifact %%~nf
