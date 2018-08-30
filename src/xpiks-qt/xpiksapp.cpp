@@ -514,8 +514,10 @@ void XpiksApp::connectEntitiesSignalsSlots() {
                      &m_ArtworksListModel, &Models::ArtworksListModel::onSpellCheckDisabled);
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::duplicatesCheckDisabled,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onDuplicatesDisabled);
+#if !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
     QObject::connect(&m_SettingsModel, &Models::SettingsModel::exiftoolSettingChanged,
                      &m_MaintenanceService, &Maintenance::MaintenanceService::onExiftoolPathChanged);
+#endif
 
     QObject::connect(&m_MaintenanceService, &Maintenance::MaintenanceService::exiftoolDetected,
                      &m_SettingsModel, &Models::SettingsModel::onRecommendedExiftoolFound);

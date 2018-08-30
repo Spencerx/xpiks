@@ -100,7 +100,7 @@ namespace Maintenance {
     }
 
     void MaintenanceService::launchExiftool(const QString &settingsExiftoolPath) {
-        LOG_DEBUG << "#";
+        LOG_INFO << settingsExiftoolPath;
         Q_ASSERT(m_MaintenanceThread != nullptr);
         auto jobItem = std::make_shared<LaunchExiftoolJobItem>(settingsExiftoolPath);
         QObject::connect(jobItem.get(), &LaunchExiftoolJobItem::exiftoolDetected,
