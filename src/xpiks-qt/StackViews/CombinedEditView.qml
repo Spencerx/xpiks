@@ -70,7 +70,7 @@ Rectangle {
         mainStackView.push({
                                item: "qrc:/StackViews/DuplicatesReView.qml",
                                properties: {
-                                   componentParent: applicationWindow,
+                                   componentParent: componentParent,
                                    wasLeftSideCollapsed: wasCollapsed
                                },
                                destroyOnPop: true
@@ -96,6 +96,25 @@ Rectangle {
         Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                             componentParent,
                             {})
+    }
+
+    function editInPlainText() {
+        var callbackObject = {
+            onSuccess: function(text, spaceIsSeparator) {
+                combinedArtworks.plainTextEdit(text, spaceIsSeparator)
+            },
+            onClose: function() {
+                flv.activateEdit()
+            }
+        }
+
+        Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
+                            componentParent,
+                            {
+                                callbackObject: callbackObject,
+                                keywordsText: combinedArtworks.getKeywordsString(),
+                                keywordsModel: combinedArtworks.getBasicModelObject()
+                            });
     }
 
     MessageDialog {
@@ -263,22 +282,7 @@ Rectangle {
         MenuItem {
             text: i18.n + qsTr("Edit in plain text")
             onTriggered: {
-                var callbackObject = {
-                    onSuccess: function(text, spaceIsSeparator) {
-                        combinedArtworks.plainTextEdit(text, spaceIsSeparator)
-                    },
-                    onClose: function() {
-                        flv.activateEdit()
-                    }
-                }
-
-                Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
-                                    applicationWindow,
-                                    {
-                                        callbackObject: callbackObject,
-                                        keywordsText: combinedArtworks.getKeywordsString(),
-                                        keywordsModel: combinedArtworks.getBasicModel()
-                                    });
+                editInPlainText()
             }
         }
 

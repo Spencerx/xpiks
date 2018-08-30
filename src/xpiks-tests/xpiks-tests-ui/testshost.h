@@ -33,6 +33,9 @@ public:
     void setApp(XpiksUITestsApp *app);
 
 private:
+    void processPendingEvents();
+
+private:
     explicit TestsHost(QObject *parent = 0);
 
     TestsHost(TestsHost const&);

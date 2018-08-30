@@ -735,22 +735,22 @@ void XpiksApp::cleanupModels() {
     m_ArtworksUpdateHub.clear();
     m_KeywordsAutoCompleteModel.clear();
 
-#ifndef UI_TESTS
-    m_ArtworkProxyModel.resetModel();
-#endif
-
     m_CsvExportModel.clearModel();
     m_CsvExportModel.resetModel();
-    m_CombinedArtworksModel.resetModel();
     m_ZipArchiver.resetModel();
     m_ArtworksUploader.resetModel();
-    m_ArtworksRepository.resetEverything();
-    m_ArtworksListModel.deleteAllItems();
-    m_SettingsModel.resetToDefault();
     m_SpellSuggestionModel.clearModel();
     m_UserDictionary.clear();
     m_SessionManager.clearSession();
     m_MetadataIOCoordinator.clear();
+
+#ifndef UI_TESTS
+    m_SettingsModel.resetToDefault();
+    m_ArtworkProxyModel.resetModel();
+    m_CombinedArtworksModel.resetModel();
+    m_ArtworksListModel.deleteAllItems();
+    m_ArtworksRepository.resetEverything();
+#endif
 }
 #endif
 

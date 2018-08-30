@@ -253,6 +253,7 @@ namespace Models {
     }
 
     void CombinedArtworksModel::plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {
+        LOG_DEBUG << "#";
         doPlainTextEdit(rawKeywords, spaceIsSeparator);
         setKeywordsModified(true);
     }

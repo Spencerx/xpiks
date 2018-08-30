@@ -16,15 +16,22 @@ void TestsHost::qmlEngineCallback(QQmlEngine *engine) {
 void TestsHost::setup() {
     m_IsReady = true;
     emit isReadyChanged();
+    processPendingEvents();
 }
 
 void TestsHost::cleanup() {
     m_XpiksApp->cleanup();
     m_IsReady = false;
     emit isReadyChanged();
+    processPendingEvents();
 }
 
 void TestsHost::setApp(XpiksUITestsApp *app) {
     Q_ASSERT(app != nullptr);
     m_XpiksApp = app;
+}
+
+void TestsHost::processPendingEvents() {
+    QEventLoop loop;
+    loop.processEvents(QEventLoop::AllEvents);
 }

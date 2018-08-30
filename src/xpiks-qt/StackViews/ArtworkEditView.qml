@@ -117,7 +117,7 @@ Rectangle {
         mainStackView.push({
                                item: "qrc:/StackViews/DuplicatesReView.qml",
                                properties: {
-                                   componentParent: applicationWindow,
+                                   componentParent: componentParent,
                                    wasLeftSideCollapsed: wasCollapsed
                                },
                                destroyOnPop: true
@@ -158,7 +158,7 @@ Rectangle {
         }
 
         Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
-                            applicationWindow,
+                            componentParent,
                             {
                                 callbackObject: callbackObject,
                                 keywordsText: artworkProxy.getKeywordsString(),

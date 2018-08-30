@@ -80,10 +80,10 @@ Item {
         }
 
         function cleanup() {
-            // assigning .text directly breaks binding
             artworkProxy.clearModel()
-            wait(100)
+            // assigning .text directly breaks binding
             keywordsEdit.remove(0, keywordsEdit.length)
+            wait(500)
         }
 
         function getDelegateInstanceAt(contentItem, delegateObjectName, index) {
@@ -391,11 +391,15 @@ Item {
             var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
-            wait(200)
+            wait(500)
 
             artworkEditView.editInPlainText()
 
-            wait(200)
+            wait(500)
+
+            // hack to detect if plain text edit hasn't started
+            keyClick(Qt.Key_Comma)
+            keyClick(Qt.Key_Backspace)
 
             keyClick(Qt.Key_Comma)
             var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
