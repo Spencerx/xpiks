@@ -291,12 +291,14 @@ namespace Models {
                         false));
     }
 
+#ifdef UI_TESTS
     void CombinedArtworksModel::clearModel() {
         m_CommonKeywordsModel.clearModel();
         emit descriptionChanged();
         emit titleChanged();
         emit keywordsCountChanged();
     }
+#endif
 
     bool CombinedArtworksModel::acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID) {
         LOG_DEBUG << completionID;
