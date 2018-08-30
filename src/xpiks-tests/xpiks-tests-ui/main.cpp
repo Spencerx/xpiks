@@ -33,11 +33,13 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
     Helpers::Logger &logger = Helpers::Logger::getInstance();
     logger.log(logLine);
 
-    if ((type == QtFatalMsg) || (type == QtWarningMsg)) {
+    if ((type == QtFatalMsg) ||
+            (type == QtCriticalMsg) ||
+            (type == QtWarningMsg)) {
         logger.abortFlush();
     }
 
-    if (type == QtFatalMsg) {
+    if ((type == QtFatalMsg) || (type == QtCriticalMsg)) {
         abort();
     }
 }
@@ -119,6 +121,10 @@ int main(int argc, char **argv) {
         host.setApp(&xpiksTests);
 
         qmlRegisterSingletonType<TestsHost>("XpiksTests", 1, 0, "TestsHost", createTestsHostsQmlObject);
+
+        LOG_DEBUG << "------------------------------------------------";
+        LOG_DEBUG << "------------------------------------------------";
+        LOG_DEBUG << "------------------------------------------------";
 
         result = quick_test_main(argc, argv, "xpiks_tests_ui", QUICK_TEST_SOURCE_DIR);
 

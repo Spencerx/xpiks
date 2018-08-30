@@ -90,7 +90,7 @@ namespace Commands {
                               SpellCheck::DuplicatesReviewModel);
 
         SOURCE_TARGET_COMMAND(AcceptPresetCompletionForCombinedCommand,
-                              QMLExtensions::UICommandID::AcceptPresetCompletionCombined,
+                              QMLExtensions::UICommandID::AcceptPresetCompletionForCombined,
                               AutoComplete::ICompletionSource,
                               Models::CombinedArtworksModel);
 

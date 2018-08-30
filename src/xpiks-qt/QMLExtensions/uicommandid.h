@@ -45,7 +45,7 @@ namespace QMLExtensions {
             FixSpellingArtwork,
             ShowDuplicatesSingle,
             ShowDuplicatesCombined,
-            AcceptPresetCompletionCombined,
+            AcceptPresetCompletionForCombined,
             AcceptPresetCompletionForSingle,
             InitSuggestionArtwork,
             InitSuggestionCombined,

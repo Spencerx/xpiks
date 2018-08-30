@@ -4,6 +4,7 @@
 #include "../xpiks-tests-core/Mocks/filescollectionmock.h"
 #include <Commands/Files/addfilescommand.h>
 #include "fakeinitartworkstemplate.h"
+#include <QMLExtensions/uicommandid.h>
 
 XpiksUITestsApp::XpiksUITestsApp(Common::ISystemEnvironment &environment):
     XpiksApp(environment)
@@ -86,4 +87,8 @@ void XpiksUITestsApp::setupUITests() {
                                      QStringList() << "some" << "other" << "keywords",
                                      id,
                                      added);
+
+    // select vectors
+    m_FilteredArtworksListModel.selectArtworksEx(4);
+    m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::EditSelectedArtworks, QVariant());
 }

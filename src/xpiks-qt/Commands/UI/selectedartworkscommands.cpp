@@ -72,6 +72,7 @@ namespace Commands {
 
         void EditSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
+            m_Target.resetModel();
             m_Target.setArtworks(m_Source.getSelectedArtworks());
         }
 

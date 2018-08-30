@@ -342,7 +342,7 @@ Rectangle {
     }
 
     Connections {
-        target: combinedArtworks
+        target: acSource
 
         onCompletionsAvailable: {
             acSource.initializeCompletions()
@@ -419,7 +419,6 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            height: childrenRect.height
             spacing: 20
 
             StyledButton {
@@ -891,7 +890,7 @@ Rectangle {
                         anchors.right: parent.right
                         Layout.fillHeight: true
                         color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                        property var keywordsModel: combinedArtworks.getBasicModel()
+                        property var keywordsModel: combinedArtworks.getBasicModelObject()
                         state: ""
 
                         function removeKeyword(index) {
@@ -930,13 +929,12 @@ Rectangle {
                             onDroppedIndexChanged: dropTimer.start()
 
                             function acceptCompletion(completionID) {
-                                // TODO: add signal handler
-                                var accepted = combinedArtworks.acceptCompletionAsPreset(completionID);
-                                if (!accepted) {
+                                if (acSource.isPreset(completionID)) {
+                                    dispatcher.dispatch(UICommand.AcceptPresetCompletionForCombined, completionID)
+                                    flv.editControl.acceptCompletion('')
+                                } else {
                                     var completion = acSource.getCompletion(completionID)
                                     flv.editControl.acceptCompletion(completion)
-                                } else {
-                                    flv.editControl.acceptCompletion('')
                                 }
                             }
 
@@ -1019,7 +1017,7 @@ Rectangle {
                             }
 
                             onCompletionRequested: {
-                                combinedArtworks.generateCompletions(prefix)
+                                dispatcher.dispatch(UICommand.GenerateCompletions, prefix)
                             }
 
                             onExpandLastAsPreset: {
@@ -1071,7 +1069,7 @@ Rectangle {
                         anchors.leftMargin: 3
                         anchors.right: parent.right
                         anchors.rightMargin: 3
-                        height: childrenRect.height
+                        height: 15
                         spacing: 5
 
                         StyledCheckbox {
@@ -1236,7 +1234,6 @@ Rectangle {
             anchors.right: parent.right
             anchors.leftMargin: 20
             anchors.rightMargin: 20
-            height: childrenRect.height
             anchors.verticalCenter: parent.verticalCenter
 
             StyledButton {

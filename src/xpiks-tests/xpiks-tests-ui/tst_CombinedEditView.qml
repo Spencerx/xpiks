@@ -30,6 +30,7 @@ Item {
         sourceComponent: CombinedEditView {
             componentParent: root
             anchors.fill: parent
+            wasLeftSideCollapsed: false
         }
     }
 
@@ -105,6 +106,35 @@ Item {
 
             compare(combinedArtworks.keywordsCount, 1)
             compare(combinedArtworks.getKeywordsString(), testKeyword)
+        }
+
+        function test_autoCompleteKeywordBasic() {
+            verify(typeof combinedView.autoCompleteBox === "undefined")
+
+            keywordsEdit.forceActiveFocus()
+
+            keyClick(Qt.Key_W)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_A)
+
+            wait(200)
+
+            verify(typeof combinedView.autoCompleteBox !== "undefined")
+
+            keyClick(Qt.Key_T)
+            keyClick(Qt.Key_H)
+            keyClick(Qt.Key_E)
+
+            wait(200)
+
+            keyClick(Qt.Key_Down)
+            wait(200)
+
+            keyClick(Qt.Key_Return)
+            wait(200)
+
+            compare(combinedArtworks.keywordsCount, 1)
+            compare(combinedArtworks.getKeywordsString(), "weather")
         }
     }
 }
