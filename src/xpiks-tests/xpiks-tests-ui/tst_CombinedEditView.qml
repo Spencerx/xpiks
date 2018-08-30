@@ -328,5 +328,26 @@ Item {
 
             compare(combinedArtworks.getKeywordsString(), testKeyword1 + ", " + testKeyword2)
         }
+
+        function test_copyToQuickBuffer() {
+            titleInput.forceActiveFocus()
+            TestUtils.keyboardEnterSomething(testCase)
+
+            descriptionInput.forceActiveFocus()
+            TestUtils.keyboardEnterSomething(testCase)
+
+            keywordsEdit.forceActiveFocus()
+            TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+            TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            var qbButton = findChild(combinedView, "copyToQuickBufferButton")
+            mouseClick(qbButton)
+
+            compare(quickBuffer.title, combinedArtworks.title)
+            compare(quickBuffer.description, combinedArtworks.description)
+            compare(quickBuffer.keywordsCount, combinedArtworks.keywordsCount)
+        }
     }
 }
