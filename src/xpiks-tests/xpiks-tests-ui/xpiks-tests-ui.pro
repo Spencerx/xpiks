@@ -9,8 +9,6 @@ DEFINES += QT_DEBUG_PLUGINS
 
 INCLUDEPATH += ../../xpiks-qt/
 
-#DEFINES += QT_FATAL_WARNINGS
-
 BUILDNO = $$system(git log -n 1 --pretty=format:"%H")
 
 DEFINES += QT_NO_CAST_TO_ASCII \
@@ -119,6 +117,7 @@ travis-ci {
 appveyor {
     message("for Appveyor")
     DEFINES += APPVEYOR
+    DEFINES += QT_FATAL_WARNINGS
 }
 
 # without-video {
