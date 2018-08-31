@@ -12,8 +12,8 @@
 #include <QThread>
 #include <QUuid>
 #include "telemetryworker.h"
-#include "../Common/defines.h"
-#include "../Common/version.h"
+#include <Common/defines.h>
+#include <Common/version.h>
 
 namespace Connectivity {
     TelemetryService::TelemetryService(Models::SwitcherModel &switcher,
@@ -28,7 +28,7 @@ namespace Connectivity {
     }
 
     void TelemetryService::initialize() {
-#ifndef INTEGRATION_TESTS
+#if !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
     ensureUserIdExists();
 
     QString userId = m_SettingsModel.getUserAgentId();
@@ -57,6 +57,10 @@ namespace Connectivity {
         } else {
             LOG_WARNING << "TelemetryWorker is NULL";
         }
+    }
+
+    void TelemetryService::handleMessage(Common::NamedType<UserAction> const &event) {
+        reportAction(event.get());
     }
 
     void TelemetryService::ensureUserIdExists() {
@@ -100,7 +104,7 @@ namespace Connectivity {
 
     void TelemetryService::doReportAction(UserAction action) {
         if (m_TelemetryWorker != nullptr) {
-            std::shared_ptr<AnalyticsUserEvent> item(new AnalyticsUserEvent(action));
+            auto item = std::make_shared<AnalyticsUserEvent>(action);
             m_TelemetryWorker->submitItem(item);
         } else {
             LOG_WARNING << "Worker is null";

@@ -21,9 +21,9 @@ namespace Models {
 #define SWITCHER_SESSION_START "sessionStart"
 #define SWITCHER_TIMER_DELAY 2000
 
-    SwitcherModel::SwitcherModel(Common::ISystemEnvironment &environment, QObject *parent):
+    SwitcherModel::SwitcherModel(Common::ISystemEnvironment &environment,
+                                 QObject *parent):
         QObject(parent),
-        Common::BaseEntity(),
         m_State("switcher", environment),
         m_Config(environment),
         // effectively meaning all features are OFF
@@ -34,11 +34,6 @@ namespace Models {
 
         m_DelayTimer.setSingleShot(true);
         QObject::connect(&m_DelayTimer, &QTimer::timeout, this, &SwitcherModel::onDelayTimer);
-    }
-
-    void SwitcherModel::setCommandManager(Commands::CommandManager *commandManager) {
-        Common::BaseEntity::setCommandManager(commandManager);
-        m_Config.setCommandManager(commandManager);
     }
 
     void SwitcherModel::initialize() {
@@ -58,9 +53,9 @@ namespace Models {
         LOG_INFO << "Current threshold is" << m_Threshold;
     }
 
-    void SwitcherModel::updateConfigs() {
+    void SwitcherModel::updateConfigs(Connectivity::IRequestsService &requestsService) {
         LOG_DEBUG << "#";
-        m_Config.initializeConfigs();
+        m_Config.initializeConfigs(requestsService);
     }
 
     void SwitcherModel::afterInitializedCallback() {

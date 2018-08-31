@@ -11,73 +11,79 @@
 #ifndef XPIKSAPP_H
 #define XPIKSAPP_H
 
-#include "QMLExtensions/artworksupdatehub.h"
-#include "QMLExtensions/colorsmodel.h"
-#include "QMLExtensions/imagecachingservice.h"
-#include "QMLExtensions/videocachingservice.h"
+#include <Commands/commandmanager.h>
 
-#include "Models/artitemsmodel.h"
-#include "Models/artworkproxymodel.h"
-#include "Models/artworksrepository.h"
-#include "Models/artworkuploader.h"
-#include "Models/combinedartworksmodel.h"
-#include "Models/deletekeywordsviewmodel.h"
-#include "Models/filteredartitemsproxymodel.h"
-#include "Models/findandreplacemodel.h"
-#include "Models/languagesmodel.h"
-#include "Models/logsmodel.h"
-#include "Models/recentdirectoriesmodel.h"
-#include "Models/recentfilesmodel.h"
-#include "Models/sessionmanager.h"
-#include "Models/settingsmodel.h"
-#include "Models/switchermodel.h"
-#include "Models/uimanager.h"
-#include "Models/ziparchiver.h"
+#include <Common/isystemenvironment.h>
 
-#include "Connectivity/requestsservice.h"
-#include "Connectivity/telemetryservice.h"
-#include "Connectivity/updateservice.h"
+#include <Models/Artworks/artworkslistmodel.h>
+#include <Models/Editing/artworkproxymodel.h>
+#include <Models/Artworks/artworksrepository.h>
+#include <Models/Editing/combinedartworksmodel.h>
+#include <Models/Editing/deletekeywordsviewmodel.h>
+#include <Models/Artworks/filteredartworkslistmodel.h>
+#include <Models/Editing/findandreplacemodel.h>
+#include <Models/languagesmodel.h>
+#include <Models/logsmodel.h>
+#include <Models/Session/recentdirectoriesmodel.h>
+#include <Models/Session/recentfilesmodel.h>
+#include <Models/Session/sessionmanager.h>
+#include <Models/settingsmodel.h>
+#include <Models/switchermodel.h>
+#include <Models/uimanager.h>
+#include <Models/Connectivity/artworksuploader.h>
+#include <Models/Connectivity/ziparchiver.h>
+#include <Models/Editing/currenteditablemodel.h>
+#include <Models/Editing/quickbuffer.h>
 
-#include "Warnings/warningsmodel.h"
-#include "Warnings/warningsservice.h"
+#include <Connectivity/requestsservice.h>
+#include <Connectivity/telemetryservice.h>
+#include <Connectivity/updateservice.h>
 
-#include "UndoRedo/undoredomanager.h"
+#include <Services/Warnings/warningsmodel.h>
+#include <Services/Warnings/warningsservice.h>
+#include <Services/Warnings/warningssettingsmodel.h>
+#include <Services/artworksupdatehub.h>
+#include <Services/AutoComplete/autocompleteservice.h>
+#include <Services/AutoComplete/keywordsautocompletemodel.h>
+#include <Services/Translation/translationmanager.h>
+#include <Services/Translation/translationservice.h>
+#include <Services/SpellCheck/duplicatesreviewmodel.h>
+#include <Services/SpellCheck/spellcheckservice.h>
+#include <Services/SpellCheck/spellchecksuggestionmodel.h>
+#include <Services/SpellCheck/userdicteditmodel.h>
+#include <Services/SpellCheck/userdictionary.h>
+#include <Services/Maintenance/maintenanceservice.h>
+#include <Services/artworkseditinghub.h>
+#include <Services/artworksupdatehub.h>
 
-#include "Storage/databasemanager.h"
+#include <QMLExtensions/colorsmodel.h>
+#include <QMLExtensions/imagecachingservice.h>
+#include <QMLExtensions/videocachingservice.h>
+#include <QMLExtensions/uicommanddispatcher.h>
 
-#include "Encryption/isecretsstorage.h"
+#include <UndoRedo/undoredomanager.h>
 
-#include "Microstocks/microstockapiclients.h"
+#include <Storage/databasemanager.h>
 
-#include "Suggestion/keywordssuggestor.h"
+#include <Encryption/isecretsstorage.h>
 
-#include "ftpcoordinator.h"
+#include <Microstocks/microstockapiclients.h>
 
-#include "SpellCheck/duplicatesreviewmodel.h"
-#include "SpellCheck/spellcheckerservice.h"
-#include "SpellCheck/spellchecksuggestionmodel.h"
-#include "SpellCheck/userdicteditmodel.h"
+#include <Suggestion/keywordssuggestor.h>
 
-#include "MetadataIO/csvexportmodel.h"
-#include "MetadataIO/metadataiocoordinator.h"
-#include "MetadataIO/metadataioservice.h"
+#include <KeywordsPresets/presetkeywordsmodel.h>
 
-#include "AutoComplete/autocompleteservice.h"
-#include "AutoComplete/keywordsautocompletemodel.h"
+#include <ftpcoordinator.h>
 
-#include "Translation/translationmanager.h"
-#include "Translation/translationservice.h"
+#include <MetadataIO/csvexportmodel.h>
+#include <MetadataIO/metadataiocoordinator.h>
+#include <MetadataIO/metadataioservice.h>
+#include <MetadataIO/metadatareadinghub.h>
 
-#include "QuickBuffer/quickbuffer.h"
+#include <Plugins/pluginmanager.h>
+#include <Plugins/uiprovider.h>
 
-#include "Maintenance/maintenanceservice.h"
-
-#include "Plugins/pluginmanager.h"
-#include "Plugins/uiprovider.h"
-
-#include "Helpers/helpersqmlwrapper.h"
-
-#include "Common/isystemenvironment.h"
+#include <Helpers/helpersqmlwrapper.h>
 
 class QQmlContext;
 class QQuickWindow;
@@ -96,13 +102,14 @@ public:
     bool getPluginsAvailable() const;
 
 public:
-    Plugins::UIProvider *getUIProvider();
+    Plugins::UIProvider &getUIProvider();
     QMLExtensions::ImageCachingService &getImageCachingService() { return m_ImageCachingService; }
 
 public:
     void startLogging();
     virtual void initialize();
     void setupUI(QQmlContext *context);
+    void registerQtMetaTypes();
     void start();
     void stop();
     void setupWindow(QQuickWindow *window);
@@ -112,78 +119,120 @@ public:
     Q_INVOKABLE void upgradeNow();
     Q_INVOKABLE void debugCrash();
 
-private:
-    void injectDependencies();
+public:
+    Q_INVOKABLE int addFiles(const QList<QUrl> &urls);
+    Q_INVOKABLE int addDirectories(const QList<QUrl> &urls);
+    Q_INVOKABLE int dropItems(const QList<QUrl> &urls);
+
+public:
+    Q_INVOKABLE void removeDirectory(int index);
+
+protected:
+    int doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);
     void afterServicesStarted();
     void executeMaintenanceJobs();
+    int restoreSession();
     void connectEntitiesSignalsSlots();
+    void registerUICommands();
+    void setupMessaging();
+
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+protected:
+    virtual void cleanupModels();
+#endif
 
 signals:
     void globalCloseRequested();
     void globalBeforeDestruction();
     void upgradeInitiated();
     void isUpdateDownloadedChanged();
+    void artworksAdded(int imagesCount, int vectorsCount);
 
 private slots:
     void servicesInitialized(int status);
 
 protected:
+    // general
+    Common::ISystemEnvironment &m_Environment;
+    Encryption::SecretsManager m_SecretsManager;
     QMLExtensions::ColorsModel m_ColorsModel;
     Models::LogsModel m_LogsModel;
     Models::SettingsModel m_SettingsModel;
-    Models::ArtworksRepository m_ArtworksRepository;
-    Models::FilteredArtworksRepository m_FilteredArtworksRepository;
-    Models::ArtItemsModel m_ArtItemsModel;
-    Models::CombinedArtworksModel m_CombinedArtworksModel;
-    Models::UploadInfoRepository m_UploadInfoRepository;
-    Connectivity::RequestsService m_RequestsService;
+    Storage::DatabaseManager m_DatabaseManager;
+    Models::SessionManager m_SessionManager;
+    UndoRedo::UndoRedoManager m_UndoRedoManager;
+    Commands::CommandManager m_CommandManager;
+    Models::SwitcherModel m_SwitcherModel;
+    QMLExtensions::UICommandDispatcher m_UICommandDispatcher;
+
+    // models
     KeywordsPresets::PresetKeywordsModel m_PresetsModel;
     KeywordsPresets::FilteredPresetKeywordsModel m_FilteredPresetsModel;
-    Warnings::WarningsService m_WarningsService;
-    Encryption::SecretsManager m_SecretsManager;
-    UndoRedo::UndoRedoManager m_UndoRedoManager;
-    Models::ZipArchiver m_ZipArchiver;
-    Storage::DatabaseManager m_DatabaseManager;
-    std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
-    Microstocks::MicrostockAPIClients m_ApiClients;
-    Models::FilteredArtItemsProxyModel m_FilteredArtItemsModel;
+    AutoComplete::KeywordsAutoCompleteModel m_KeywordsAutoCompleteModel;
+    Models::CurrentEditableModel m_CurrentEditableModel;
+
+    // artworks
     Models::RecentDirectoriesModel m_RecentDirectorieModel;
     Models::RecentFilesModel m_RecentFileModel;
-    std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
-    Models::ArtworkUploader m_ArtworkUploader;
-    SpellCheck::SpellCheckerService m_SpellCheckerService;
-    SpellCheck::SpellCheckSuggestionModel m_SpellCheckSuggestionModel;
-    SpellCheck::UserDictEditModel m_UserDictEditModel;
-    MetadataIO::MetadataIOService m_MetadataIOService;
-    Warnings::WarningsModel m_WarningsModel;
-    Models::LanguagesModel m_LanguagesModel;
-    AutoComplete::KeywordsAutoCompleteModel m_AutoCompleteModel;
-    AutoComplete::AutoCompleteService m_AutoCompleteService;
-    QMLExtensions::ImageCachingService m_ImageCachingService;
+    Models::ArtworksRepository m_ArtworksRepository;
+    Models::FilteredArtworksRepository m_FilteredArtworksRepository;
+    Models::ArtworksListModel m_ArtworksListModel;
+    Services::ArtworksUpdateHub m_ArtworksUpdateHub;
+
+    // editing
+    Models::CombinedArtworksModel m_CombinedArtworksModel;
+    Models::QuickBuffer m_QuickBuffer;
     Models::FindAndReplaceModel m_ReplaceModel;
     Models::DeleteKeywordsViewModel m_DeleteKeywordsModel;
     Models::ArtworkProxyModel m_ArtworkProxyModel;
-    Translation::TranslationManager m_TranslationManager;
-    Translation::TranslationService m_TranslationService;
-    Models::UIManager m_UIManager;
-    Models::SessionManager m_SessionManager;
-    QuickBuffer::QuickBuffer m_QuickBuffer;
-    Maintenance::MaintenanceService m_MaintenanceService;
-    QMLExtensions::VideoCachingService m_VideoCachingService;
-    QMLExtensions::ArtworksUpdateHub m_ArtworksUpdateHub;
-    Models::SwitcherModel m_SwitcherModel;
     SpellCheck::DuplicatesReviewModel m_DuplicatesModel;
-    MetadataIO::CsvExportModel m_CsvExportModel;
+
+    // services
+    Maintenance::MaintenanceService m_MaintenanceService;
+    AutoComplete::AutoCompleteService m_AutoCompleteService;
+    Connectivity::RequestsService m_RequestsService;
+    Warnings::WarningsSettingsModel m_WarningsSettingsModel;
+    Warnings::WarningsService m_WarningsService;
+    SpellCheck::SpellCheckService m_SpellCheckService;
+    MetadataIO::MetadataIOService m_MetadataIOService;
+    QMLExtensions::ImageCachingService m_ImageCachingService;
+    Translation::TranslationService m_TranslationService;
+    QMLExtensions::VideoCachingService m_VideoCachingService;
     Connectivity::UpdateService m_UpdateService;
-    Suggestion::KeywordsSuggestor m_KeywordsSuggestor;
-    MetadataIO::MetadataIOCoordinator m_MetadataIOCoordinator;
     Connectivity::TelemetryService m_TelemetryService;
+    Services::ArtworksEditingHub m_EditingHub;
+
+    // connectivity
+    Models::UploadInfoRepository m_UploadInfoRepository;
+    Models::ZipArchiver m_ZipArchiver;
+    std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
+    Microstocks::MicrostockAPIClients m_ApiClients;
+    std::shared_ptr<libxpks::net::FtpCoordinator> m_FtpCoordinator;
+    Models::ArtworksUploader m_ArtworksUploader;
+
+    // other
+    Models::LanguagesModel m_LanguagesModel;
+    Models::UIManager m_UIManager;
+    SpellCheck::UserDictionary m_UserDictionary;
+    SpellCheck::UserDictEditModel m_UserDictEditModel;
+    Warnings::WarningsModel m_WarningsModel;
+    Translation::TranslationManager m_TranslationManager;
+    MetadataIO::CsvExportModel m_CsvExportModel;
+    MetadataIO::MetadataReadingHub m_MetadataReadingHub;
+    MetadataIO::MetadataIOCoordinator m_MetadataIOCoordinator;
+    SpellCheck::SpellCheckSuggestionModel m_SpellSuggestionModel;
+
+    // dependent
+    Models::FilteredArtworksListModel m_FilteredArtworksListModel;
+    Suggestion::KeywordsSuggestor m_KeywordsSuggestor;
+
+    // plugins
     Plugins::PluginManager m_PluginManager;
     Plugins::PluginsWithActionsModel m_PluginsWithActions;
-    Helpers::HelpersQmlWrapper m_HelpersQmlWrapper;
-    Commands::CommandManager m_CommandManager;
 
-    Commands::MainDelegator m_MainDelegator;
+    // ui
+    Helpers::HelpersQmlWrapper m_HelpersQmlWrapper;
+
     Helpers::AsyncCoordinator m_InitCoordinator;
     volatile bool m_ServicesInitialized = false;
     volatile bool m_AfterInitCalled = false;

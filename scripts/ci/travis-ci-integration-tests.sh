@@ -21,7 +21,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
 exitcode=$?
 
 if [ $exitcode != 0 ]; then
-    cat tests.log
+    cat tests.log | grep -v " debug "
     
     for i in $(find ./ -maxdepth 1 -name 'core*' -print); do
         gdb $(pwd)/xpiks-tests-integration core* -ex "thread apply all bt" -ex "set pagination 0" -batch
@@ -34,7 +34,8 @@ fi
 exitcode=$?
 
 if [ $exitcode != 0 ]; then
-    cat tests_in_memory.log
+    # travis doesn't like long logs
+    cat tests_in_memory.log | grep -v " debug "
     
     for i in $(find ./ -maxdepth 1 -name 'core*' -print); do
         gdb $(pwd)/xpiks-tests-integration core* -ex "thread apply all bt" -ex "set pagination 0" -batch
@@ -43,7 +44,7 @@ if [ $exitcode != 0 ]; then
     exit $exitcode
 fi
 
-cat tests.log
+cat tests.log | grep -v " debug "
 
 "$TRAVIS_BUILD_DIR/scripts/ci/get_code_cov.sh" "$PWD/../../"
 bash <(curl -s https://codecov.io/bash) -X gcov || echo 'Codecov failed to upload';

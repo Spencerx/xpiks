@@ -21,9 +21,6 @@ namespace Helpers {
 
     template<class T>
     int splitIntoChunks(const QVector<T> &items, int chunksCount, QVector<QVector<T> > &chunks);
-
-    void indicesToRanges(const QVector<int> &indices, QVector<QPair<int, int> > &ranges);
-    int getRangesLength(const QVector<QPair<int, int> > &ranges);
     RangesVector unionRanges(RangesVector &ranges);
 }
 

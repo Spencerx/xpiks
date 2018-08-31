@@ -31,7 +31,7 @@ private slots:
     void filterTitleTest();
     void filterDescriptionAndKeywordsTest();
     void filterTitleAndKeywordsTest();
-    void clearEmptyKeywordsTest();
+    void clearEmptyKeywordsMarksModifiedTest();
 };
 
 #endif // FILTEREDMODELTESTS_H

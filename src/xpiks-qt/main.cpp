@@ -36,11 +36,9 @@
 #include "Helpers/globalimageprovider.h"
 #include "Helpers/logger.h"
 #include "Helpers/runguard.h"
-#include "Helpers/clipboardhelper.h"
 #include "Connectivity/curlinithelper.h"
 #include "QMLExtensions/cachingimageprovider.h"
-#include "QMLExtensions/folderelement.h"
-#include "QMLExtensions/triangleelement.h"
+#include "QMLExtensions/uicommandid.h"
 
 // -------------------------------------
 
@@ -48,38 +46,7 @@
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
     QString logLine = qFormatLogMessage(type, context, msg);
-#else
-    QString msgType;
-    switch (type) {
-        case QtDebugMsg:
-            msgType = "debug";
-            break;
-        case QtWarningMsg:
-            msgType = "warning";
-            break;
-        case QtCriticalMsg:
-            msgType = "critical";
-            break;
-        case QtFatalMsg:
-            msgType = "fatal";
-            break;
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 1))
-        case QtInfoMsg:
-            msgType = "info";
-            break;
-#endif
-    }
-
-    // %{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}
-    QString time = QDateTime::currentDateTimeUtc().toString("hh:mm:ss.zzz");
-    QString logLine = QString("%1 %2 T#%3 %4 - %5")
-                          .arg(time).arg(msgType)
-                          .arg(0).arg(context.function)
-                          .arg(msg);
-#endif
 
     Helpers::Logger &logger = Helpers::Logger::getInstance();
     logger.log(logLine);
@@ -233,10 +200,6 @@ int main(int argc, char *argv[]) {
 
     xpiks.initialize();
 
-    qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
-    qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
-    qmlRegisterType<QMLExtensions::FolderElement>("xpiks", 1, 0, "FolderElement");
-
     QQmlApplicationEngine engine;
     auto &imageCachingService = xpiks.getImageCachingService();
     Helpers::GlobalImageProvider *globalProvider = new Helpers::GlobalImageProvider(QQmlImageProviderBase::Image);
@@ -253,8 +216,8 @@ int main(int argc, char *argv[]) {
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     LOG_DEBUG << "Main view loaded";
 
-    auto *uiProvider = xpiks.getUIProvider();
-    uiProvider->setQmlEngine(&engine);
+    auto &uiProvider = xpiks.getUIProvider();
+    uiProvider.setQmlEngine(&engine);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(engine.rootObjects().at(0));
     imageCachingService.setScale(window->effectiveDevicePixelRatio());
     LOG_INFO << "Effective pixel ratio:" << window->effectiveDevicePixelRatio();

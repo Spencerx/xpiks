@@ -12,35 +12,25 @@
 #include <QThread>
 #include <QVector>
 #include <QMutexLocker>
-#include <Models/artworkmetadata.h>
+#include <Artworks/artworkmetadata.h>
 #include <Common/defines.h>
 #include <MetadataIO/metadatareadinghub.h>
 #include "metadatareadingworker.h"
 
 namespace libxpks {
     namespace io {
-        ReadingOrchestrator::ReadingOrchestrator(MetadataIO::MetadataReadingHub *readingHub,
-                                                 Models::SettingsModel *settingsModel):
-            m_ItemsToReadSnapshot(readingHub->getSnapshot()),
+        ReadingOrchestrator::ReadingOrchestrator(MetadataIO::MetadataReadingHub &readingHub,
+                                                 Models::SettingsModel &settingsModel):
+            m_ItemsToReadSnapshot(readingHub.getSnapshot()),
             m_ReadingHub(readingHub),
             m_SettingsModel(settingsModel)
         {
-            Q_ASSERT(readingHub != nullptr);
-            Q_ASSERT(settingsModel != nullptr);
         }
 
         ReadingOrchestrator::~ReadingOrchestrator() {
         }
 
         void ReadingOrchestrator::startReading() {
-            auto *asyncCoordinator = m_ReadingHub->getCoordinator();
-
-            Helpers::AsyncCoordinatorStarter deferredStarter(asyncCoordinator, -1);
-            Q_UNUSED(deferredStarter);
-
-            Helpers::AsyncCoordinatorLocker locker(asyncCoordinator);
-            Q_UNUSED(locker);
-
             ExiftoolImageReadingWorker *readingWorker = new ExiftoolImageReadingWorker(m_ItemsToReadSnapshot,
                                                                                        m_SettingsModel,
                                                                                        m_ReadingHub);
@@ -53,8 +43,12 @@ namespace libxpks {
             QObject::connect(readingWorker, &ExiftoolImageReadingWorker::stopped, readingWorker, &ExiftoolImageReadingWorker::deleteLater);
             QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 
+            m_ReadingHub.accountReadIO();
+
             LOG_DEBUG << "Starting thread...";
             thread->start();
+
+            m_ReadingHub.startAcceptingIOResults();
         }
     }
 }

@@ -12,15 +12,17 @@
 #include <QUrlQuery>
 #include "../Connectivity/simpleapirequest.h"
 #include "../Encryption/aes-qt.h"
-#include "apisecrets.h"
+#include "microstockenums.h"
+#include "searchquery.h"
+#include "../Encryption/isecretsstorage.h"
 
-Microstocks::FotoliaAPIClient::FotoliaAPIClient(Encryption::ISecretsStorage *secretsStorage):
+Microstocks::FotoliaAPIClient::FotoliaAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):
     m_SecretsStorage(secretsStorage)
 {
-    Q_ASSERT(secretsStorage != nullptr);
 }
 
-std::shared_ptr<Connectivity::IConnectivityRequest> Microstocks::FotoliaAPIClient::search(const Microstocks::SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
+std::shared_ptr<Connectivity::IConnectivityRequest> Microstocks::FotoliaAPIClient::search(const Microstocks::SearchQuery &query,
+                                                                                          const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
     Encryption::SecretPair apiSecret;
     if (!m_SecretsStorage->tryFindPair(FotoliaAPIKey, apiSecret)) { Q_ASSERT(false); }
 
@@ -31,8 +33,8 @@ std::shared_ptr<Connectivity::IConnectivityRequest> Microstocks::FotoliaAPIClien
     QString authStr = QString("%1:").arg(decodedAPIKey);
     QString headerData = "Authorization: Basic " + QString::fromLatin1(authStr.toLocal8Bit().toBase64());
 
-    std::shared_ptr<Connectivity::IConnectivityRequest> request(
-                new Connectivity::SimpleAPIRequest(resourceUrl, QStringList() << headerData, response));
+    auto request = std::make_shared<Connectivity::SimpleAPIRequest>(
+                       resourceUrl, QStringList() << headerData, response);
     return request;
 }
 

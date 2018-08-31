@@ -1,73 +1,21 @@
 #include "integrationtestbase.h"
 #include <QDebug>
 #include <QDir>
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
+#include "xpikstestsapp.h"
 #include "testshelpers.h"
 
-void ensureDirectoryExistsForFile(const QString &filepath) {
-    QFileInfo fi(filepath);
-
-    if (fi.exists()) { return; }
-
-    QDir filesDir = fi.absoluteDir();
-    if (!filesDir.exists()) {
-        if (!filesDir.mkpath(".")) {
-            qWarning() << "Failed to create a path:" << filesDir.path();
-        }
-    }
-}
-
-bool copyFile(const QString &from, const QString &to) {
-    bool success = false;
-
-    QFile destination(to);
-    if (destination.exists()) {
-        if (!destination.remove()) {
-            return success;
-        }
-    }
-
-    QFile source(from);
-    if (source.exists()) {
-        success = source.copy(to);
-    }
-
-    return success;
-}
-
 IntegrationTestBase::IntegrationTestBase(IntegrationTestsEnvironment &environment,
-                                         Commands::CommandManager *commandManager):
-    m_CommandManager(commandManager),
+                                         XpiksTestsApp &testsApp):
+    m_TestsApp(testsApp),
     m_Environment(environment)
 { }
 
 void IntegrationTestBase::teardown() {
-    auto *settingsModel = m_CommandManager->getSettingsModel();
-    const QString exiftoolPath = settingsModel->getExifToolPath();
-    {
-        m_CommandManager->cleanup();
-    }
-    settingsModel->setExifToolPath(exiftoolPath);
+    m_TestsApp.cleanup();
 }
 
-Commands::MainDelegator *IntegrationTestBase::xpiks() { return m_CommandManager->getDelegator(); }
-
-QUrl IntegrationTestBase::setupFilePathForTest(const QString &prefix) {
-    QString fullPath;
-    if (tryFindFullPathForTests(prefix, fullPath)) {
-        qInfo() << "Found file at" << fullPath;
-        QString sessionPath = QDir::cleanPath(m_Environment.getSessionRoot() + QChar('/') + prefix);
-        ensureDirectoryExistsForFile(sessionPath);
-        if (copyFile(fullPath, sessionPath)) {
-            qInfo() << "Copied to" << sessionPath;
-            return QUrl::fromLocalFile(sessionPath);
-        } else {
-            return QUrl::fromLocalFile(fullPath);
-        }
-    }
-
-    return QUrl::fromLocalFile(prefix);
+QUrl IntegrationTestBase::setupFilePathForTest(const QString &prefix, bool withVector) {
+    return ::setupFilePathForTest(m_Environment.getSessionRoot(), prefix, withVector);
 }
 
 QUrl IntegrationTestBase::getFilePathForTest(const QString &prefix) {

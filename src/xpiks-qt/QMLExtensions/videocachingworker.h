@@ -14,28 +14,43 @@
 #include <QObject>
 #include <QString>
 #include <QImage>
-#include <QSet>
+#include <QVector>
 #include <vector>
-#include "../Common/itemprocessingworker.h"
-#include "../Common/baseentity.h"
+#include <Common/itemprocessingworker.h>
 #include "videocacherequest.h"
 #include "cachedvideo.h"
 #include "dbvideocacheindex.h"
-#include "../Common/isystemenvironment.h"
-#include "../Storage/idatabasemanager.h"
+#include <Common/isystemenvironment.h>
+
+namespace Services {
+    class ArtworksUpdateHub;
+}
+
+namespace MetadataIO {
+    class MetadataIOService;
+}
+
+namespace Storage {
+    class IDatabaseManager;
+}
 
 namespace QMLExtensions {
-    class VideoCachingWorker : public QObject, public Common::BaseEntity, public Common::ItemProcessingWorker<VideoCacheRequest>
+    class ImageCachingService;
+
+    class VideoCachingWorker : public QObject, public Common::ItemProcessingWorker<VideoCacheRequest>
     {
         Q_OBJECT
     public:
         explicit VideoCachingWorker(Common::ISystemEnvironment &environment,
-                                    Storage::IDatabaseManager *dbManager,
+                                    Storage::IDatabaseManager &dbManager,
+                                    ImageCachingService &imageCachingService,
+                                    Services::ArtworksUpdateHub &updateHub,
+                                    MetadataIO::MetadataIOService &metadataIOService,
                                     QObject *parent = 0);
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItemEx(std::shared_ptr<VideoCacheRequest> &item, batch_id_t batchID, Common::flag_t flags) override;
+        virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
         virtual void processOneItem(std::shared_ptr<VideoCacheRequest> &item) override;
 
     private:
@@ -43,7 +58,7 @@ namespace QMLExtensions {
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
-        virtual void workerStopped() override;
+        virtual void onWorkerStopped() override;
 
     public slots:
         void process() { doWork(); }
@@ -66,11 +81,14 @@ namespace QMLExtensions {
 
     private:
         Common::ISystemEnvironment &m_Environment;
+        ImageCachingService &m_ImageCachingService;
+        Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
+        MetadataIO::MetadataIOService &m_MetadataIOService;
         volatile int m_ProcessedItemsCount;
         qreal m_Scale;
         QString m_VideosCacheDir;
         DbVideoCacheIndex m_Cache;
-        QSet<int> m_RolesToUpdate;
+        QVector<int> m_RolesToUpdate;
     };
 }
 

@@ -19,24 +19,24 @@
 #include <QJsonObject>
 #include <QSettings>
 #include <QMutex>
-#include "../Common/baseentity.h"
-#include "../Common/version.h"
-#include "../Models/proxysettings.h"
-#include "../Helpers/localconfig.h"
-#include "../Helpers/constants.h"
-#include "../Commands/commandmanager.h"
-#include "../Encryption/secretsmanager.h"
-#include "../Models/uploadinforepository.h"
-#include "../Common/delayedactionentity.h"
-#include "../Common/statefulentity.h"
-#include "../Common/isystemenvironment.h"
-#include "../Helpers/jsonobjectmap.h"
+#include <Common/delayedactionentity.h>
+#include <Common/statefulentity.h>
+#include <Common/isystemenvironment.h>
+#include <Common/iflagsprovider.h>
+#include <Helpers/localconfig.h>
+#include <Helpers/constants.h>
+#include <Helpers/jsonobjectmap.h>
+#include <Models/Connectivity/proxysettings.h>
+
+namespace Encryption {
+    class SecretsManager;
+}
 
 namespace Models {
     class SettingsModel:
             public QObject,
-            public Common::BaseEntity,
-            public Common::DelayedActionEntity
+            public Common::DelayedActionEntity,
+            public Common::IFlagsProvider<Common::WordAnalysisFlags>
     {
         Q_OBJECT
         Q_PROPERTY(QString exifToolPath READ getExifToolPath WRITE setExifToolPath NOTIFY exifToolPathChanged)
@@ -79,21 +79,22 @@ namespace Models {
         Q_PROPERTY(QString whatsNewText READ getWhatsNewText CONSTANT)
 
     public:
-        explicit SettingsModel(Common::ISystemEnvironment &environment, QObject *parent = 0);
+        explicit SettingsModel(Common::ISystemEnvironment &environment,
+                               QObject *parent = 0);
         virtual ~SettingsModel() { }
 
     public:
         void saveLocale();
         void initializeConfigs();
         void syncronizeSettings() { sync(); }
-        void migrateSettings();
         void clearLegacyUploadInfos();
+
+    public:
+        virtual Common::WordAnalysisFlags getFlags() const override;
 
     private:
         void moveSetting(QSettings &settingsQSettings, const QString &oldKey, const char* newKey, int type);
         void moveProxyHostSetting(QSettings &settingsQSettings);
-        void wipeOldSettings(QSettings &settingsQSettings);
-        void moveSettingsFromQSettingsToJson();
 
     public:
         ProxySettings *retrieveProxySettings();
@@ -109,12 +110,10 @@ namespace Models {
         Q_INVOKABLE void retrieveAllValues();
         Q_INVOKABLE void raiseMasterPasswordSignal() { emit mustUseMasterPasswordChanged(m_MustUseMasterPassword); }
         Q_INVOKABLE void saveProxySetting(const QString &address, const QString &user, const QString &password, const QString &port);
-        Q_INVOKABLE void updateSaveSession(bool value);
 
     private:
         void doReadAllValues();
         void consolidateSettings();
-        void doMoveSettingsFromQSettingsToJson();
         void doResetToDefault();
         void doSaveAllValues();
         void afterSaveHandler();
@@ -138,9 +137,9 @@ namespace Models {
         Q_INVOKABLE bool needToShowTermsAndConditions();
         Q_INVOKABLE void userAgreeHandler();
         Q_INVOKABLE void setUseMasterPassword(bool value);
-        Q_INVOKABLE void setMasterPasswordHash();
+        Q_INVOKABLE void setMasterPasswordHash(const QString &hash);
         /*Q_INVOKABLE*/ void setUserAgentId(const QString &id);
-        Q_INVOKABLE void onMasterPasswordSet();
+        void onMasterPasswordSet(Encryption::SecretsManager &secretsManager);
         Q_INVOKABLE void onMasterPasswordUnset(bool firstTime);
 
     public:
@@ -173,7 +172,7 @@ namespace Models {
         QString getProxyUser() const { return m_ProxySettings.m_User; }
         QString getProxyPassword() const { return m_ProxySettings.m_Password; }
         QString getProxyPort() const { return m_ProxySettings.m_Port; }
-        ProxySettings *getProxySettings() { return &m_ProxySettings; }
+        ProxySettings const &getProxySettings() { return m_ProxySettings; }
         bool getAutoCacheImages() const { return m_AutoCacheImages; }
         bool getVerboseUpload() const { return m_VerboseUpload; }
         bool getUseProgressiveSuggestionPreviews() const { return m_UseProgressiveSuggestionPreviews; }
@@ -219,6 +218,11 @@ namespace Models {
         void progressiveSuggestionIncrementChanged(int progressiveSuggestionIncrement);
         void useAutoImportChanged(bool value);
 
+    signals:
+        void spellCheckDisabled();
+        void duplicatesCheckDisabled();
+        void exiftoolSettingChanged(const QString &path);
+
     public:
         void setExifToolPath(QString value);
         void setUploadTimeout(int uploadTimeout);
@@ -252,13 +256,10 @@ namespace Models {
         void setUseDirectExiftoolExport(bool value);
         void setUseAutoImport(bool value);
 
-    private slots:
-        void onSettingsMigrationRequest() { moveSettingsFromQSettingsToJson(); }
-
     public slots:
         void onRecommendedExiftoolFound(const QString &path);
 
-#ifndef INTEGRATION_TESTS
+#if !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
     private:
 #else
     public:
@@ -307,7 +308,6 @@ namespace Models {
         bool m_UserStatistics;
         bool m_CheckForUpdates;
         bool m_AutoDownloadUpdates;
-        bool m_DictsPathChanged;
         bool m_UseSpellCheckChanged;
         bool m_DetectDuplicatesChanged;
         bool m_AutoFindVectors;

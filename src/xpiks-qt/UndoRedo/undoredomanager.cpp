@@ -10,11 +10,15 @@
 
 #include "undoredomanager.h"
 #include "../Common/defines.h"
+#include "../Common/logging.h"
 
-UndoRedo::UndoRedoManager::~UndoRedoManager() { }
+void UndoRedo::UndoRedoManager::handleMessage(const Common::NamedType<int, Common::MessageType::UnavailableFiles> &) {
+    LOG_DEBUG << "#";
+    undoLastAction();
+}
 
-void UndoRedo::UndoRedoManager::recordHistoryItem(std::unique_ptr<IHistoryItem> &historyItem) {
-    LOG_INFO << "History item about to be recorded:" << historyItem->getActionType();
+void UndoRedo::UndoRedoManager::recordHistoryItem(const std::shared_ptr<Commands::ICommand> &historyItem) {
+    LOG_INFO << "History item about to be recorded";
 
     QMutexLocker locker(&m_Mutex);
 
@@ -23,7 +27,7 @@ void UndoRedo::UndoRedoManager::recordHistoryItem(std::unique_ptr<IHistoryItem> 
         Q_ASSERT(m_HistoryStack.empty());
     }
 
-    m_HistoryStack.push(std::move(historyItem));
+    m_HistoryStack.push(historyItem);
     emit canUndoChanged();
     emit itemRecorded();
     emit undoDescriptionChanged();
@@ -37,15 +41,13 @@ bool UndoRedo::UndoRedoManager::undoLastAction() {
     anyItem = !m_HistoryStack.empty();
 
     if (anyItem) {
-        std::unique_ptr<UndoRedo::IHistoryItem> historyItem(std::move(m_HistoryStack.top()));
+        std::shared_ptr<Commands::ICommand> historyItem(std::move(m_HistoryStack.top()));
         m_HistoryStack.pop();
         m_Mutex.unlock();
 
         emit canUndoChanged();
         emit undoDescriptionChanged();
-        int commandID = historyItem->getCommandID();
-        historyItem->undo(m_CommandManager);
-        emit actionUndone(commandID);
+        historyItem->undo();
     } else {
         m_Mutex.unlock();
         LOG_WARNING << "No item for undo";
@@ -58,11 +60,7 @@ void UndoRedo::UndoRedoManager::discardLastAction() {
     LOG_DEBUG << "#";
     m_Mutex.lock();
 
-    bool anyItem = false;
-    anyItem = !m_HistoryStack.empty();
-
-    if (anyItem) {
-        std::unique_ptr<UndoRedo::IHistoryItem> historyItem(std::move(m_HistoryStack.top()));
+    if (!m_HistoryStack.empty()) {
         m_HistoryStack.pop();
         bool isNowEmpty = m_HistoryStack.empty();
 

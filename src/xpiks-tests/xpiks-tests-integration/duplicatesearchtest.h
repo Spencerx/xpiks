@@ -6,8 +6,8 @@
 class DuplicateSearchTest: public IntegrationTestBase
 {
 public:
-    DuplicateSearchTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    DuplicateSearchTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

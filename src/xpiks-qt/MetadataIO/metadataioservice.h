@@ -13,9 +13,8 @@
 
 #include <QObject>
 #include <QVector>
-#include "../Common/baseentity.h"
 #include "../Suggestion/locallibraryquery.h"
-#include "artworkssnapshot.h"
+#include "../Artworks/artworkssnapshot.h"
 #include "../Common/delayedactionentity.h"
 
 namespace Models {
@@ -26,20 +25,24 @@ namespace Storage {
     class IDatabaseManager;
 }
 
+namespace Services {
+    class ArtworksUpdateHub;
+}
+
 namespace MetadataIO {
     class MetadataIOWorker;
 
     class MetadataIOService:
             public QObject,
-            public Common::BaseEntity,
             public Common::DelayedActionEntity
     {
         Q_OBJECT
     public:
-        MetadataIOService(Storage::IDatabaseManager *dbManager, QObject *parent = nullptr);
+        MetadataIOService(QObject *parent = nullptr);
 
     public:
-        void startService();
+        void startService(Storage::IDatabaseManager &databaseManager,
+                          Services::ArtworksUpdateHub &artworksUpdateHub);
         void stopService();
 
     public:
@@ -48,10 +51,10 @@ namespace MetadataIO {
         void waitWorkerIdle();
 
     public:
-        void writeArtwork(Models::ArtworkMetadata *metadata);
-        quint32 readArtworks(const ArtworksSnapshot &snapshot) const;
-        void writeArtworks(const WeakArtworksSnapshot &artworks) const;
-        void addArtworks(const WeakArtworksSnapshot &artworks) const;
+        void writeArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
+        quint32 readArtworks(const Artworks::ArtworksSnapshot &snapshot) const;
+        void writeArtworks(const Artworks::ArtworksSnapshot &artworks) const;
+        void addArtworks(const Artworks::ArtworksSnapshot &snapshot) const;
 
     public:
         void searchArtworks(Suggestion::LocalLibraryQuery *query);
@@ -79,7 +82,6 @@ namespace MetadataIO {
 
     private:
         MetadataIOWorker *m_MetadataIOWorker;
-        Storage::IDatabaseManager *m_DatabaseManager;
         bool m_IsStopped;
     };
 }

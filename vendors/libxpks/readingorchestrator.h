@@ -7,13 +7,16 @@
 #include <QHash>
 
 namespace Models {
-    class ArtworkMetadata;
     class SettingsModel;
 }
 
 namespace MetadataIO {
     class MetadataReadingHub;
+}
+
+namespace Artworks {
     class ArtworksSnapshot;
+    class ArtworkMetadata;
 }
 
 namespace libxpks {
@@ -21,8 +24,8 @@ namespace libxpks {
         class ReadingOrchestrator
         {
         public:
-            explicit ReadingOrchestrator(MetadataIO::MetadataReadingHub *readingHub,
-                                         Models::SettingsModel *settingsModel);
+            explicit ReadingOrchestrator(MetadataIO::MetadataReadingHub &readingHub,
+                                         Models::SettingsModel &settingsModel);
             virtual ~ReadingOrchestrator();
 
         public:
@@ -33,9 +36,9 @@ namespace libxpks {
             void startReadingVideos();
 
         private:
-            const MetadataIO::ArtworksSnapshot &m_ItemsToReadSnapshot;
-            MetadataIO::MetadataReadingHub *m_ReadingHub;
-            Models::SettingsModel *m_SettingsModel;
+            Artworks::ArtworksSnapshot const &m_ItemsToReadSnapshot;
+            MetadataIO::MetadataReadingHub &m_ReadingHub;
+            Models::SettingsModel &m_SettingsModel;
         };
     }
 }

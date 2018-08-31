@@ -9,15 +9,15 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-      env: CORE_TESTS=tests QT_FATAL_WARNINGS=true
+      env: CORE_TESTS=tests QT_FATAL_WARNINGS=1
     - os: linux
       dist: trusty
       sudo: required
-      env: INTEGRATION_TESTS=tests QT_FATAL_WARNINGS=true
+      env: INTEGRATION_TESTS=tests QT_FATAL_WARNINGS=1
     - os: linux
       dist: trusty
       sudo: required
-      env: UI_TESTS=tests QT_FATAL_WARNINGS=true
+      env: UI_TESTS=tests
       
 git:
   depth: 3
@@ -40,7 +40,7 @@ before_script:
   - git checkout FETCH_HEAD -- api
 
 script:
-  - if [ -z "${UI_TESTS+xxx}" ]; then "$TRAVIS_BUILD_DIR/scripts/build/build_vendors_linux.sh" travis-ci; fi
+  - ${TRAVIS_BUILD_DIR}/scripts/build/build_vendors_linux.sh travis-ci
   - ls -la libs/*
   - if [ -n "$XPIKS_BINARY" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-xpiks.sh"; fi
   - if [ -n "$CORE_TESTS" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-core-tests.sh"; fi

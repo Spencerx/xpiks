@@ -13,8 +13,7 @@
 
 #include <QObject>
 #include <QString>
-#include "../Common/baseentity.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/isystemenvironment.h>
 
 namespace Commands {
     class CommandManager;
@@ -30,11 +29,11 @@ namespace QMLExtensions {
 }
 
 namespace Helpers {
-    class HelpersQmlWrapper : public QObject, public Common::BaseEntity
+    class HelpersQmlWrapper : public QObject
     {
         Q_OBJECT
     public:
-        HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel *colorsModel);
+        HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel &colorsModel);
 
     public:
         Q_INVOKABLE bool isKeywordValid(const QString &keyword) const;
@@ -45,7 +44,6 @@ namespace Helpers {
         Q_INVOKABLE void turnTaskbarProgressOn();
         Q_INVOKABLE void setTaskbarProgress(double value);
         Q_INVOKABLE void turnTaskbarProgressOff();
-        Q_INVOKABLE void removeUnavailableFiles();
         Q_INVOKABLE void revealArtworkFile(const QString &path);
         Q_INVOKABLE bool isVector(const QString &path) const;
         Q_INVOKABLE bool isVideo(const QString &path) const;
@@ -53,14 +51,14 @@ namespace Helpers {
         Q_INVOKABLE QString getAssetForTheme(const QString &assetName, int themeIndex) const;
 
     public:
-        Q_INVOKABLE QObject *getLogsModel();
+        /*Q_INVOKABLE QObject *getLogsModel();
         Q_INVOKABLE QObject *getFtpACList();
         Q_INVOKABLE QObject *getArtworkUploader();
         Q_INVOKABLE QObject *getZipArchiver();
         Q_INVOKABLE QObject *getSpellCheckerService();
         Q_INVOKABLE QObject *getDeleteKeywordsModel();
         Q_INVOKABLE QObject *getUploadInfos();
-        Q_INVOKABLE QObject *getSpellCheckSuggestionsModel();
+        Q_INVOKABLE QObject *getSpellCheckSuggestionsModel();*/
 
    private:
         void revealFile(const QString &path);
@@ -77,7 +75,7 @@ namespace Helpers {
         bool m_WinTaskbarButtonApplicable;
 #endif
         Common::ISystemEnvironment &m_Environment;
-        QMLExtensions::ColorsModel *m_ColorsModel;
+        QMLExtensions::ColorsModel &m_ColorsModel;
     };
 }
 

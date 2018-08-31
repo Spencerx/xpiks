@@ -6,8 +6,8 @@
 class SaveWithEmptyTitleTest : public IntegrationTestBase
 {
 public:
-    SaveWithEmptyTitleTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    SaveWithEmptyTitleTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

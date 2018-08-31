@@ -44,9 +44,8 @@ namespace Helpers {
         void emergencyFlush();
         void stop();
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
-        void log(QtMsgType type, const QString &message);
         void abortFlush();
 #endif
 

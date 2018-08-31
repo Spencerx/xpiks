@@ -12,13 +12,14 @@
 #include <QUrlQuery>
 #include "../Encryption/aes-qt.h"
 #include "../Connectivity/simpleapirequest.h"
-#include "apisecrets.h"
+#include "microstockenums.h"
+#include "searchquery.h"
+#include "../Encryption/isecretsstorage.h"
 
 namespace Microstocks {
-    GettyAPIClient::GettyAPIClient(Encryption::ISecretsStorage *secretsStorage):
+    GettyAPIClient::GettyAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):
         m_SecretsStorage(secretsStorage)
     {
-        Q_ASSERT(secretsStorage != nullptr);
     }
 
     std::shared_ptr<Connectivity::IConnectivityRequest> GettyAPIClient::search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
@@ -31,7 +32,8 @@ namespace Microstocks {
         QString decodedAPIKey = Encryption::decodeText(apiSecret.m_Value, apiSecret.m_Key);
         QString headerData = "Api-Key: " + decodedAPIKey;
 
-        std::shared_ptr<Connectivity::IConnectivityRequest> request(new Connectivity::SimpleAPIRequest(resourceUrl, QStringList() << headerData, response));
+        auto request = std::make_shared<Connectivity::SimpleAPIRequest>(
+                           resourceUrl, QStringList() << headerData, response);
         return request;
     }
 

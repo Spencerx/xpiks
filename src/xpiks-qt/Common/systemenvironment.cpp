@@ -20,7 +20,9 @@
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
     #define XPIKS_DATA_LOCATION_TYPE QStandardPaths::AppDataLocation
-    #if defined(INTEGRATION_TESTS)
+    #if defined(UI_TESTS)
+        #define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "_ui-tests/" + STRINGIZE(BRANCHNAME))
+    #elif defined(INTEGRATION_TESTS)
         #define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "_integration-tests/" + STRINGIZE(BRANCHNAME))
     #elif defined(QT_DEBUG)
         #define XPIKS_USERDATA_PATH (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "_debug/" + STRINGIZE(BRANCHNAME))
@@ -36,7 +38,7 @@ namespace Common {
     SystemEnvironment::SystemEnvironment(const QStringList &appArguments) {
         m_Root = XPIKS_USERDATA_PATH;
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
         m_SessionTag = "session-" + QDateTime::currentDateTimeUtc().toString("ddMMyyyy-hhmmss");
         m_Root += "/" + m_SessionTag;
 #endif

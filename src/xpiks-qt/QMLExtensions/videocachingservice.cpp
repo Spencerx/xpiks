@@ -13,27 +13,33 @@
 #include <vector>
 #include <memory>
 #include "videocachingworker.h"
-#include "../Models/videoartwork.h"
-#include "../QMLExtensions/videocacherequest.h"
-#include "../Commands/commandmanager.h"
-#include "../Models/switchermodel.h"
-#include "../Common/logging.h"
+#include <Artworks/videoartwork.h>
+#include <Artworks/artworkssnapshot.h>
+#include <QMLExtensions/videocacherequest.h>
+#include <Models/switchermodel.h>
+#include <Common/logging.h>
 
 namespace QMLExtensions {
-    VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent) :
+    VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment,
+                                             Models::SwitcherModel &switcherModel,
+                                             QObject *parent) :
         QObject(parent),
-        Common::BaseEntity(),
         m_Environment(environment),
-        m_DatabaseManager(dbManager),
+        m_SwitcherModel(switcherModel),
         m_CachingWorker(nullptr),
         m_IsCancelled(false)
     {
-        Q_ASSERT(dbManager != nullptr);
     }
 
-    void VideoCachingService::startService() {
-        m_CachingWorker = new VideoCachingWorker(m_Environment, m_DatabaseManager);
-        m_CachingWorker->setCommandManager(m_CommandManager);
+    void VideoCachingService::startService(ImageCachingService &imageCachingService,
+                                           Services::ArtworksUpdateHub &updateHub,
+                                           MetadataIO::MetadataIOService &metadataIOService,
+                                           Storage::IDatabaseManager &dbManager) {
+        m_CachingWorker = new VideoCachingWorker(m_Environment,
+                                                 dbManager,
+                                                 imageCachingService,
+                                                 updateHub,
+                                                 metadataIOService);
 
         QThread *thread = new QThread();
         m_CachingWorker->moveToThread(thread);
@@ -59,13 +65,12 @@ namespace QMLExtensions {
         }
     }
 
-    void VideoCachingService::generateThumbnails(const MetadataIO::ArtworksSnapshot &snapshot) {
+    void VideoCachingService::generateThumbnails(const Artworks::ArtworksSnapshot &snapshot) {
         Q_ASSERT(m_CachingWorker != nullptr);
         LOG_INFO << snapshot.size() << "artworks";
 
 #ifndef INTEGRATION_TESTS
-        Models::SwitcherModel *switcher = m_CommandManager->getSwitcherModel();
-        const bool goodQualityAllowed = switcher->getGoodQualityVideoPreviews();
+        const bool goodQualityAllowed = m_SwitcherModel.getGoodQualityVideoPreviews();
 #else
         const bool goodQualityAllowed = false;
 #endif
@@ -75,15 +80,14 @@ namespace QMLExtensions {
         std::vector<std::shared_ptr<VideoCacheRequest> > requests;
         requests.reserve(size);
 
-        for (size_t i = 0; i < size; i++) {
-            auto *artwork = snapshot.get(i);
-            Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork *>(artwork);
+        for (auto &artwork: snapshot) {
+            auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
             if (videoArtwork != nullptr) {
                 const bool quickThumbnail = true, dontRecache = false;
-                requests.emplace_back(new VideoCacheRequest(videoArtwork,
-                                                            dontRecache,
-                                                            quickThumbnail,
-                                                            goodQualityAllowed));
+                requests.emplace_back(std::make_shared<VideoCacheRequest>(videoArtwork,
+                                                                          dontRecache,
+                                                                          quickThumbnail,
+                                                                          goodQualityAllowed));
             }
         }
 
@@ -91,14 +95,13 @@ namespace QMLExtensions {
         m_CachingWorker->submitSeparator();
     }
 
-    void VideoCachingService::generateThumbnail(Models::VideoArtwork *videoArtwork) {
+    void VideoCachingService::generateThumbnail(std::shared_ptr<Artworks::VideoArtwork> const &videoArtwork) {
         Q_ASSERT(videoArtwork != nullptr);
         if (videoArtwork == nullptr) { return; }
         LOG_DEBUG << "#" << videoArtwork->getItemID();
 
 #ifndef INTEGRATION_TESTS
-        Models::SwitcherModel *switcher = m_CommandManager->getSwitcherModel();
-        const bool goodQualityAllowed = switcher->getGoodQualityVideoPreviews();
+        const bool goodQualityAllowed = m_SwitcherModel.getGoodQualityVideoPreviews();
 #else
         const bool goodQualityAllowed = false;
 #endif

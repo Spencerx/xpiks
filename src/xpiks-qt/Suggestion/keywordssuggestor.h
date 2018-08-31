@@ -18,21 +18,35 @@
 #include <QHash>
 #include <QSet>
 #include <QTimer>
-#include "../Common/baseentity.h"
-#include "../Common/basickeywordsmodel.h"
 #include "suggestionartwork.h"
-#include "../Common/hold.h"
-#include "../Common/statefulentity.h"
-#include "../Common/isystemenvironment.h"
 #include "isuggestionengine.h"
-#include "../Microstocks/microstockapiclients.h"
-#include "../Connectivity/requestsservice.h"
-#include "../Models/switchermodel.h"
+#include <Common/types.h>
+#include <Common/messages.h>
+#include <Common/statefulentity.h>
+#include <Common/isystemenvironment.h>
+#include <Artworks/basickeywordsmodel.h>
+#include <Connectivity/requestsservice.h>
+#include <Connectivity/analyticsuserevent.h>
+#include <Models/Editing/quickbuffermessage.h>
+
+namespace Models {
+    class SwitcherModel;
+    class SettingsModel;
+}
+
+namespace MetadataIO {
+    class MetadataIOService;
+}
+
+namespace Microstocks {
+    class IMicrostockAPIClients;
+}
 
 namespace Suggestion {
     class KeywordsSuggestor:
             public QAbstractListModel,
-            public Common::BaseEntity
+            public Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>,
+            public Common::MessagesSource<Models::QuickBufferMessage>
     {
         Q_OBJECT
         Q_PROPERTY(int suggestedKeywordsCount READ getSuggestedKeywordsCount NOTIFY suggestedKeywordsCountChanged)
@@ -45,16 +59,21 @@ namespace Suggestion {
         Q_PROPERTY(int searchTypeIndex READ getSearchTypeIndex WRITE setSearchTypeIndex NOTIFY searchTypeIndexChanged)
         Q_PROPERTY(QStringList engineNames READ getEngineNames NOTIFY engineNamesChanged)
 
+    private:
+        using Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>::sendMessage;
+        using Common::MessagesSource<Models::QuickBufferMessage>::sendMessage;
+
     public:
-        KeywordsSuggestor(Microstocks::MicrostockAPIClients &apiClients,
-                          Connectivity::RequestsService &requestsService,
-                          Models::SwitcherModel &switcherModel,
+        KeywordsSuggestor(Models::SwitcherModel &switcherModel,
+                          Models::SettingsModel &settingsModel,
                           Common::ISystemEnvironment &environment,
                           QObject *parent=NULL);
 
     public:
         void setExistingKeywords(const QSet<QString> &keywords);
-        void initSuggestionEngines();
+        void initSuggestionEngines(Microstocks::IMicrostockAPIClients &microstockClients,
+                                   Connectivity::RequestsService &requestsService,
+                                   MetadataIO::MetadataIOService &metadataIOService);
         void setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks);
         void clear();
 
@@ -156,19 +175,25 @@ namespace Suggestion {
         void calculateBounds(int &lowerBound, int &upperBound) const;
         std::shared_ptr<ISuggestionEngine> getSelectedEngine();
 
+#ifdef CORE_TESTS
+    public:
+        void setFakeSuggestions(std::vector<std::shared_ptr<SuggestionArtwork>> const &suggestions) {
+            m_Suggestions = suggestions;
+        }
+        void initialize() { m_State.init(); }
+#endif
+
     private:
         Common::StatefulEntity m_State;
-        Microstocks::MicrostockAPIClients &m_ApiClients;
-        Connectivity::RequestsService &m_RequestsService;
         Models::SwitcherModel &m_SwitcherModel;
-        std::vector<std::shared_ptr<ISuggestionEngine> > m_QueryEngines;
-        std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
+        Models::SettingsModel &m_SettingsModel;
+        std::vector<std::shared_ptr<ISuggestionEngine>> m_QueryEngines;
+        std::vector<std::shared_ptr<SuggestionArtwork>> m_Suggestions;
         QString m_LastErrorString;
         QHash<QString, int> m_KeywordsHash;
         QSet<QString> m_ExistingKeywords;
-        Common::FakeHold m_HoldPlaceholder;
-        Common::BasicKeywordsModel m_SuggestedKeywords;
-        Common::BasicKeywordsModel m_AllOtherKeywords;
+        Artworks::BasicKeywordsModel m_SuggestedKeywords;
+        Artworks::BasicKeywordsModel m_AllOtherKeywords;
         // hack to load previews gradually
         QTimer m_LinearTimer;
         volatile int m_LoadedPreviewsNumber;

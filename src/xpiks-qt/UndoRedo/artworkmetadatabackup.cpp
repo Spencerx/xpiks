@@ -9,23 +9,25 @@
  */
 
 #include "artworkmetadatabackup.h"
-#include "../Models/artworkmetadata.h"
-#include "../Models/imageartwork.h"
-#include "../Common/defines.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Common/defines.h>
 
-UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(Models::ArtworkMetadata *metadata) {
-    m_Description = metadata->getDescription();
-    m_Title = metadata->getTitle();
-    m_KeywordsList = metadata->getKeywords();
-    m_IsModified = metadata->isModified();
-
-    Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork *>(metadata);
-    if (image != NULL && image->hasVectorAttached()) {
+UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork):
+    m_ArtworkID(artwork->getItemID()),
+    m_Description(artwork->getDescription()),
+    m_Title(artwork->getTitle()),
+    m_KeywordsList(artwork->getKeywords()),
+    m_IsModified(artwork->isModified())
+{
+    auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+    if (image != nullptr && image->hasVectorAttached()) {
         m_AttachedVector = image->getAttachedVectorPath();
     }
 }
 
 UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(const UndoRedo::ArtworkMetadataBackup &copy):
+    m_ArtworkID(copy.m_ArtworkID),
     m_Description(copy.m_Description),
     m_Title(copy.m_Title),
     m_AttachedVector(copy.m_AttachedVector),
@@ -34,16 +36,21 @@ UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(const UndoRedo::ArtworkMe
 {
 }
 
-void UndoRedo::ArtworkMetadataBackup::restore(Models::ArtworkMetadata *metadata) const {
-    metadata->setDescription(m_Description);
-    metadata->setTitle(m_Title);
-    metadata->setKeywords(m_KeywordsList);
-    if (m_IsModified) { metadata->setModified(); }
-    else { metadata->resetModified(); }
+void UndoRedo::ArtworkMetadataBackup::restore(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) const {
+    Q_ASSERT(m_ArtworkID == artwork->getItemID());
+    if (m_ArtworkID != artwork->getItemID()) {
+        LOG_WARNING << "Cannot restore to different artwork";
+        return;
+    }
+    artwork->setDescription(m_Description);
+    artwork->setTitle(m_Title);
+    artwork->setKeywords(m_KeywordsList);
+    if (m_IsModified) { artwork->setModified(); }
+    else { artwork->resetModified(); }
 
     if (!m_AttachedVector.isEmpty()) {
-        Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork *>(metadata);
-        if (image != NULL) {
+        auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+        if (image != nullptr) {
             image->attachVector(m_AttachedVector);
         } else {
             LOG_WARNING << "Inconsistency for attached vector";

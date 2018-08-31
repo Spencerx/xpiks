@@ -226,8 +226,8 @@ Rectangle {
                     onClicked: {
                         var index = imageWrapper.delegateIndex
                         var originalIndex = warningsModel.getOriginalIndex(index);
-                        var derivedIndex = filteredArtItemsModel.getDerivedIndex(originalIndex)
-                        var metadata = filteredArtItemsModel.getArtworkMetadata(derivedIndex)
+                        var derivedIndex = filteredArtworksListModel.getDerivedIndex(originalIndex)
+                        var metadata = filteredArtworksListModel.getArtworkMetadata(derivedIndex)
                         startOneItemEditing(metadata, derivedIndex, originalIndex)
                     }
                 }

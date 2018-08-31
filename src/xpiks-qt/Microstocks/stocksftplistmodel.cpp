@@ -14,7 +14,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include "../Models/abstractconfigupdatermodel.h"
 #include "../Common/logging.h"
 #include "../Helpers/localconfig.h"
 #include "../Connectivity/apimanager.h"
@@ -136,7 +135,7 @@ namespace Microstocks {
             QJsonValue item = array.at(i);
             if (!item.isObject()) { continue; }
 
-            std::shared_ptr<StockFtpOptions> ftpOptions(new StockFtpOptions());
+            auto ftpOptions = std::make_shared<StockFtpOptions>();
             QJsonObject ftpItem = item.toObject();
 
             QJsonValue addressValue = ftpItem[FTP_ADDRESS_KEY];
@@ -173,7 +172,7 @@ namespace Microstocks {
             m_StocksList.swap(ftpOptionsList);
             emit stocksListUpdated();
         } else {
-            LOG_INTEGR_TESTS_OR_DEBUG << "List is empty!";
+            LOG_VERBOSE_OR_DEBUG << "List is empty!";
         }
     }
 

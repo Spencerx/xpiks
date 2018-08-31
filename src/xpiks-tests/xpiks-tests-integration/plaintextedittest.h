@@ -6,8 +6,8 @@
 class PlainTextEditTest : public IntegrationTestBase
 {
 public:
-    PlainTextEditTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    PlainTextEditTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

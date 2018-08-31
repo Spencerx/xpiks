@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtTest 1.1
+import XpiksTests 1.0
 import "../../xpiks-qt/Dialogs"
 
 Item {
@@ -7,65 +8,49 @@ Item {
     width: 800
     height: 600
 
-    FakeColors {
-        id: uiColors
-    }
-
-    QtObject {
-        id: uiManager
-        property real keywordHeight: 10
-    }
+    Component.onCompleted: TestsHost.setup()
 
     QtObject {
         id: applicationWindow
         property bool leftSideCollapsed: false
     }
 
-    QtObject {
-        id: settingsModel
-        property int keywordSizeScale: 1
-    }
-
-    ListModel {
-        id: columnsModel
-
-        ListElement { property: 1; column: "test" }
-        ListElement { property: 2; column: "filename" }
-
-        function getPropertiesList() { return {} }
-    }
-
-    ListModel {
-        id: csvExportModel
-
-        property bool isExporting: false
-        property int artworksCount: 0
-        property string outputDirectory: ""
-
-        ListElement { name: "Jane"; isselected: false; issystem: false }
-        ListElement { name: "Harry"; isselected: false; issystem: false }
-        ListElement { name: "Wendy"; isselected: false; issystem: false }
-
-        function startExport() {}
-        function setCurrentItem() {}
-        function getColumnsModel() { return columnsModel; }
-        function requestSave() {}
-
-        signal exportFinished()
-    }
-
-    QtObject {
-        id: i18
-        property string n: ""
-    }
-
-    CsvExportDialog {
-        id: exportDialog
+    Loader {
+        id: loader
         anchors.fill: parent
+        asynchronous: true
+        focus: true
+
+        sourceComponent: CsvExportDialog {
+            anchors.fill: parent
+        }
     }
 
     TestCase {
         name: "CsvExport"
-        when: windowShown
+        when: windowShown && (loader.status == Loader.Ready)
+        property var columnsListView
+        property var exportPlanModelsListView
+        property var exportDialog: loader.item
+
+        function initTestCase() {
+            columnsListView = findChild(exportDialog, "columnsListView")
+            exportPlanModelsListView = findChild(exportDialog, "exportPlanModelsListView")
+        }
+
+        function cleanupTestCase() {
+            TestsHost.cleanup()
+        }
+
+        function cleanup() {
+            csvExportModel.clearModel()
+        }
+
+        function test_addNewRowClickAddsNewRow() {
+            var initialCount = exportPlanModelsListView.count
+            var button = findChild(exportDialog, "addExportPlanButton")
+            mouseClick(button)
+            compare(exportPlanModelsListView.count, initialCount + 1)
+        }
     }
 }

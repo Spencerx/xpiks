@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QtTest/QtTest>
-#include "../../xpiks-qt/Common/hold.h"
 
 class FixSpellingTests: public QObject
 {
@@ -17,9 +16,6 @@ private slots:
     void replaceWithCorrectDescriptionTest();
     void replaceWithCorrectTitleTest();
     void replaceWithCorrectKeywordsTest();
-
-private:
-    Common::Hold m_FakeHold;
 };
 
 #endif // FIXSPELLINGTESTS_H

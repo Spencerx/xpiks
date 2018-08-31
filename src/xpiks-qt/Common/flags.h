@@ -14,14 +14,13 @@
 #include <type_traits>
 #include <QObject>
 #include <cstdint>
+#include "types.h"
 
 #if defined(Q_OS_WIN32) && defined(Q_PROCESSOR_X86_32) && (_MSC_VER == 1800)
 #define XPIKS_TYPED_ENUMS_WORKAROUND
 #endif
 
 namespace Common {
-    typedef uint32_t flag_t;
-
 #if !defined(XPIKS_TYPED_ENUMS_WORKAROUND)
     // visual studio 2013 bug
 
@@ -65,7 +64,7 @@ namespace Common {
     }
 #endif
 
-    enum struct CombinedEditFlags: flag_t {
+    enum struct ArtworkEditFlags: flag_t {
         None = 0,
         EditTitle = 1 << 0,
         EditDescription = 1 << 1,
@@ -75,12 +74,11 @@ namespace Common {
         EditEverything = EditTitle | EditDescription | EditKeywords
     };
 
-    enum struct SuggestionFlags: flag_t {
+    enum struct KeywordEditFlags: flag_t {
         None = 0,
-        Title = 1 << 0,
-        Description = 1 << 1,
-        Keywords = 1 << 2,
-        All = Title | Description | Keywords
+        Remove = 1 << 0,
+        RemoveLast = 1 << 1,
+        Replace = 1 << 2
     };
 
     enum struct SpellCheckFlags: flag_t {
@@ -171,25 +169,41 @@ namespace Common {
     enum struct PluginNotificationFlags: Common::flag_t {
         None = 0,
         CurrentEditableChanged = 1 << 0,
-        ActionUndone = 1 << 1,
-        PresetsUpdated = 1 << 2
+        PresetsUpdated = 1 << 1
+    };
+
+    enum struct AddFilesFlags: Common::flag_t {
+        None = 0,
+        FlagAutoFindVectors = 1 << 0,
+        FlagIsFullDirectory = 1 << 1,
+        FlagIsSessionRestore = 1 << 2,
+        FlagAutoImport = 1 << 3,
+        FlagIsRemoveUndo = 1 << 4
+    };
+
+    enum struct AccountFileFlags: Common::flag_t {
+        None = 0,
+        FlagRepositoryCreated = 1 << 0,
+        FlagRepositoryModified = 1 << 1
+    };
+
+    enum struct RemoveFileFlags: Common::flag_t {
+        None = 0,
+        FlagFileRemoved = 1 << 0,
+        FlagRepositoryEmpty = 1 << 1,
+        FlagFullRepository = 1 << 2
     };
 
 #if !defined(XPIKS_TYPED_ENUMS_WORKAROUND)
     // visual studio 2013 bug
 
     template<>
-    struct enable_bitmask_operators<CombinedEditFlags> {
+    struct enable_bitmask_operators<ArtworkEditFlags> {
         static constexpr bool enable = true;
     };
 
     template<>
     struct enable_bitmask_operators<PluginNotificationFlags> {
-        static constexpr bool enable = true;
-    };
-
-    template<>
-    struct enable_bitmask_operators<SuggestionFlags> {
         static constexpr bool enable = true;
     };
 
@@ -227,6 +241,26 @@ namespace Common {
     struct enable_bitmask_operators<WordAnalysisFlags> {
         static constexpr bool enable = true;
     };
+
+    template<>
+    struct enable_bitmask_operators<AddFilesFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<KeywordEditFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<AccountFileFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<RemoveFileFlags> {
+        static constexpr bool enable = true;
+    };
 #else
 #define ENUM_OR(ENUM_TYPE) inline ENUM_TYPE operator | (ENUM_TYPE a, ENUM_TYPE b) { \
     using T = std::underlying_type_t <ENUM_TYPE>; \
@@ -247,7 +281,6 @@ namespace Common {
     return ~(static_cast<T>(a)); \
 }
 
-    ENUM_OR(SuggestionFlags)
     ENUM_OR(CombinedEditFlags)
     ENUM_OR(SearchFlags)
     ENUM_OR(DirectoryFlags)
@@ -259,7 +292,6 @@ namespace Common {
     ENUM_AND(DirectoryFlags)
     ENUM_AND(WordAnalysisFlags)
     ENUM_AND(SpellCheckFlags)
-    ENUM_AND(SuggestionFlags)
     ENUM_AND(WarningFlags)
     ENUM_AND(WarningsCheckFlags)
     ENUM_AND(PluginNotificationFlags)

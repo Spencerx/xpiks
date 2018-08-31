@@ -16,9 +16,10 @@
 #include <QString>
 #include <QDateTime>
 #include <QVector>
-#include "../Common/flags.h"
+#include <memory>
+#include <Common/flags.h>
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
 }
 
@@ -33,7 +34,7 @@ namespace MetadataIO {
         };
 
         CachedArtwork();
-        CachedArtwork(Models::ArtworkMetadata *metadata);
+        CachedArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
         CachedArtwork(const CachedArtwork &from);
         CachedArtwork &operator=(const CachedArtwork &other);
 

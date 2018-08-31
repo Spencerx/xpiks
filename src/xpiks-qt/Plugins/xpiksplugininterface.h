@@ -17,21 +17,21 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
-#include "../Commands/icommandmanager.h"
-#include "../UndoRedo/iundoredomanager.h"
+#include <Common/flags.h>
+#include <Commands/Base/icommandmanager.h>
+#include <UndoRedo/iundoredomanager.h>
 #include "ipluginaction.h"
 #include "iuiprovider.h"
-#include "../Common/isystemenvironment.h"
-#include "../Common/iartworkssource.h"
-#include "../KeywordsPresets/ipresetsmanager.h"
-#include "../Common/flags.h"
-#include "../Storage/idatabasemanager.h"
-#include "../Microstocks/imicrostockservices.h"
+#include <Common/isystemenvironment.h>
+#include <KeywordsPresets/ipresetsmanager.h>
+#include <Storage/idatabasemanager.h>
+#include <Microstocks/imicrostockservices.h>
+#include <Models/Editing/icurrenteditable.h>
 
 namespace Plugins {
     class XpiksPluginInterface {
     public:
-        virtual ~XpiksPluginInterface() {}
+        virtual ~XpiksPluginInterface() { }
 
     public:
         virtual const QString &getPrettyName() const = 0;
@@ -58,12 +58,11 @@ namespace Plugins {
 
     public:
         virtual void injectCommandManager(Commands::ICommandManager *commandManager) { Q_UNUSED(commandManager); }
-        virtual void injectUndoRedoManager(UndoRedo::IUndoRedoManager *undoRedoManager) { Q_UNUSED(undoRedoManager); }
-        virtual void injectArtworksSource(Common::IArtworksSource *artworksSource) { Q_UNUSED(artworksSource); }
         virtual void injectUIProvider(IUIProvider *uiProvider) { Q_UNUSED(uiProvider); }
         virtual void injectPresetsManager(KeywordsPresets::IPresetsManager *presetsManager) { Q_UNUSED(presetsManager); }
         virtual void injectDatabaseManager(Storage::IDatabaseManager *databaseManager) { Q_UNUSED(databaseManager); }
         virtual void injectMicrostockServices(Microstocks::IMicrostockServices *microstockServices) { Q_UNUSED(microstockServices); }
+        virtual void injectCurrentEditable(Models::ICurrentEditableSource *currentEditableSource) { Q_UNUSED(currentEditableSource); }
     };
 }
 

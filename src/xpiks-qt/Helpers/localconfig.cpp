@@ -42,9 +42,9 @@ namespace Helpers {
         QJsonDocument config = readConfig();
         if (config.isObject()) {
             QJsonObject json = config.object();
-            stateMap.reset(new Helpers::JsonObjectMap(json));
+            stateMap = std::make_shared<Helpers::JsonObjectMap>(json);
         } else {
-            stateMap.reset(new Helpers::JsonObjectMap());
+            stateMap = std::make_shared<Helpers::JsonObjectMap>();
         }
         return stateMap;
     }

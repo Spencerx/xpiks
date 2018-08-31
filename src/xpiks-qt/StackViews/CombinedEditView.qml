@@ -70,7 +70,7 @@ Rectangle {
         mainStackView.push({
                                item: "qrc:/StackViews/DuplicatesReView.qml",
                                properties: {
-                                   componentParent: applicationWindow,
+                                   componentParent: componentParent,
                                    wasLeftSideCollapsed: wasCollapsed
                                },
                                destroyOnPop: true
@@ -96,6 +96,25 @@ Rectangle {
         Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                             componentParent,
                             {})
+    }
+
+    function editInPlainText() {
+        var callbackObject = {
+            onSuccess: function(text, spaceIsSeparator) {
+                combinedArtworks.plainTextEdit(text, spaceIsSeparator)
+            },
+            onClose: function() {
+                flv.activateEdit()
+            }
+        }
+
+        Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
+                            componentParent,
+                            {
+                                callbackObject: callbackObject,
+                                keywordsText: combinedArtworks.getKeywordsString(),
+                                keywordsModel: combinedArtworks.getBasicModelObject()
+                            });
     }
 
     MessageDialog {
@@ -263,22 +282,7 @@ Rectangle {
         MenuItem {
             text: i18.n + qsTr("Edit in plain text")
             onTriggered: {
-                var callbackObject = {
-                    onSuccess: function(text, spaceIsSeparator) {
-                        combinedArtworks.plainTextEdit(text, spaceIsSeparator)
-                    },
-                    onClose: function() {
-                        flv.activateEdit()
-                    }
-                }
-
-                Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
-                                    applicationWindow,
-                                    {
-                                        callbackObject: callbackObject,
-                                        keywordsText: combinedArtworks.getKeywordsString(),
-                                        keywordsModel: combinedArtworks.getBasicModel()
-                                    });
+                editInPlainText()
             }
         }
 
@@ -322,8 +326,6 @@ Rectangle {
     Component.onCompleted: {
         focus = true
 
-        combinedArtworks.registerAsCurrentItem()
-
         titleTextInput.forceActiveFocus()
         titleTextInput.cursorPosition = titleTextInput.text.length
     }
@@ -344,7 +346,7 @@ Rectangle {
     }
 
     Connections {
-        target: combinedArtworks
+        target: acSource
 
         onCompletionsAvailable: {
             acSource.initializeCompletions()
@@ -367,7 +369,7 @@ Rectangle {
             var isBelow = (tmp.y + popupHeight) < directParent.height;
 
             var options = {
-                model: acSource.getCompletionsModel(),
+                model: acSource.getCompletionsModelObject(),
                 autoCompleteSource: acSource,
                 editableTags: flv,
                 isBelowEdit: isBelow,
@@ -421,7 +423,6 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            height: childrenRect.height
             spacing: 20
 
             StyledButton {
@@ -494,7 +495,7 @@ Rectangle {
             Item {
                 Layout.fillWidth: true
                 height: parent.height
-                enabled: titleCheckBox.checked
+                enabled: combinedArtworks.changeTitle
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -593,18 +594,20 @@ Rectangle {
                                 }
 
                                 Keys.onTabPressed: {
-                                    if (descriptionCheckBox.checked) {
+                                    if (combinedArtworks.changeDescription) {
                                         descriptionTextInput.forceActiveFocus()
                                         descriptionTextInput.cursorPosition = descriptionTextInput.text.length
                                         event.accepted = true
-                                    } else if (keywordsCheckBox.checked) {
+                                    } else if (combinedArtworks.changeKeywords) {
                                         flv.activateEdit()
                                         event.accepted = true
                                     }
                                 }
 
                                 Component.onCompleted: {
-                                    combinedArtworks.initTitleHighlighting(titleTextInput.textDocument)
+                                    uiManager.initTitleHighlighting(
+                                                combinedArtworks.getBasicModelObject(),
+                                                titleTextInput.textDocument)
                                 }
 
                                 onCursorRectangleChanged: titleFlick.ensureVisible(cursorRectangle)
@@ -661,7 +664,7 @@ Rectangle {
             Item {
                 Layout.fillWidth: true
                 height: parent.height
-                enabled: descriptionCheckBox.checked
+                enabled: combinedArtworks.changeDescription
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -770,13 +773,15 @@ Rectangle {
                                 textFormat: TextEdit.PlainText
 
                                 Component.onCompleted: {
-                                    combinedArtworks.initDescriptionHighlighting(descriptionTextInput.textDocument)
+                                    uiManager.initDescriptionHighlighting(
+                                                combinedArtworks.getBasicModelObject(),
+                                                descriptionTextInput.textDocument)
                                 }
 
                                 onCursorRectangleChanged: descriptionFlick.ensureVisible(cursorRectangle)
 
                                 Keys.onBacktabPressed: {
-                                    if (titleCheckBox.checked) {
+                                    if (combinedArtworks.changeTitle) {
                                         titleTextInput.forceActiveFocus()
                                         titleTextInput.cursorPosition = titleTextInput.text.length
                                         event.accepted = true
@@ -784,7 +789,7 @@ Rectangle {
                                 }
 
                                 Keys.onTabPressed: {
-                                    if (keywordsCheckBox.checked) {
+                                    if (combinedArtworks.changeKeywords) {
                                         flv.activateEdit()
                                         event.accepted = true
                                     }
@@ -842,7 +847,7 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                enabled: keywordsCheckBox.checked
+                enabled: combinedArtworks.changeKeywords
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -889,7 +894,7 @@ Rectangle {
                         anchors.right: parent.right
                         Layout.fillHeight: true
                         color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                        property var keywordsModel: combinedArtworks.getBasicModel()
+                        property var keywordsModel: combinedArtworks.getBasicModelObject()
                         state: ""
 
                         function removeKeyword(index) {
@@ -918,7 +923,7 @@ Rectangle {
 
                         EditableTags {
                             id: flv
-                            objectName: "keywordsInput"
+                            objectName: "editableTags"
                             anchors.fill: parent
                             model: keywordsWrapper.keywordsModel
                             property int keywordHeight: uiManager.keywordHeight
@@ -928,18 +933,18 @@ Rectangle {
                             onDroppedIndexChanged: dropTimer.start()
 
                             function acceptCompletion(completionID) {
-                                var accepted = combinedArtworks.acceptCompletionAsPreset(completionID);
-                                if (!accepted) {
+                                if (acSource.isPreset(completionID)) {
+                                    dispatcher.dispatch(UICommand.AcceptPresetCompletionForCombined, completionID)
+                                    flv.editControl.acceptCompletion('')
+                                } else {
                                     var completion = acSource.getCompletion(completionID)
                                     flv.editControl.acceptCompletion(completion)
-                                } else {
-                                    flv.editControl.acceptCompletion('')
                                 }
                             }
 
                             delegate: DraggableKeywordWrapper {
                                 id: kw
-                                isHighlighted: keywordsCheckBox.checked
+                                isHighlighted: combinedArtworks.changeKeywords
                                 keywordText: keyword
                                 hasSpellCheckError: !iscorrect
                                 hasDuplicate: hasduplicate
@@ -1006,17 +1011,17 @@ Rectangle {
                             }
 
                             onBackTabPressed: {
-                                if (descriptionCheckBox.checked) {
+                                if (combinedArtworks.changeDescription) {
                                     descriptionTextInput.forceActiveFocus()
                                     descriptionTextInput.cursorPosition = descriptionTextInput.text.length
-                                } else if (titleCheckBox.checked) {
+                                } else if (combinedArtworks.changeTitle) {
                                     titleTextInput.forceActiveFocus()
                                     titleTextInput.cursorPosition = titleTextInput.text.length
                                 }
                             }
 
                             onCompletionRequested: {
-                                combinedArtworks.generateCompletions(prefix)
+                                dispatcher.dispatch(UICommand.GenerateCompletions, prefix)
                             }
 
                             onExpandLastAsPreset: {
@@ -1068,7 +1073,7 @@ Rectangle {
                         anchors.leftMargin: 3
                         anchors.right: parent.right
                         anchors.rightMargin: 3
-                        height: childrenRect.height
+                        height: 15
                         spacing: 5
 
                         StyledCheckbox {
@@ -1233,10 +1238,10 @@ Rectangle {
             anchors.right: parent.right
             anchors.leftMargin: 20
             anchors.rightMargin: 20
-            height: childrenRect.height
             anchors.verticalCenter: parent.verticalCenter
 
             StyledButton {
+                objectName: "copyToQuickBufferButton"
                 text: i18.n + qsTr("Copy to Quick Buffer")
                 width: 160
                 enabled: (combinedArtworks.title.length > 0) || (combinedArtworks.description.length > 0) || (combinedArtworks.keywordsCount > 0)

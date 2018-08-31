@@ -12,14 +12,20 @@
 #define IMICROSTOCKAPICLIENT_H
 
 #include <memory>
-#include "../Connectivity/iconnectivityrequest.h"
-#include "../Connectivity/iconnectivityresponse.h"
-#include "searchquery.h"
+#include "microstockenums.h"
+
+namespace Connectivity {
+    class IConnectivityRequest;
+    class IConnectivityResponse;
+}
 
 namespace Microstocks {
+    class SearchQuery;
+
     class IMicrostockAPIClient {
     public:
         virtual ~IMicrostockAPIClient() {}
+        virtual MicrostockType type() const = 0;
         virtual std::shared_ptr<Connectivity::IConnectivityRequest> search(const SearchQuery &query,
                                                                            const std::shared_ptr<Connectivity::IConnectivityResponse> &response) = 0;
     };

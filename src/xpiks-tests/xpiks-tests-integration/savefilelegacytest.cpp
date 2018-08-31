@@ -1,89 +1,56 @@
 #include "savefilelegacytest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include <QStringList>
-#include "integrationtestbase.h"
+#include <QList>
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "../../xpiks-qt/Models/imageartwork.h"
+#include "xpikstestsapp.h"
 
 QString SaveFileLegacyTest::testName() {
     return QLatin1String("SaveFileLegacyTest");
 }
 
 void SaveFileLegacyTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setUseDirectExiftoolExport(false);
+    m_TestsApp.getSettingsModel().setUseDirectExiftoolExport(false);
 }
 
 int SaveFileLegacyTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    Models::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
-    Models::ImageArtwork *image = dynamic_cast<Models::ImageArtwork*>(artwork);
+    auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
 
     VERIFY(image->getImageSize().width() == 1920, "Image width was read incorrectly");
     VERIFY(image->getImageSize().height() == 1272, "Image height was read incorrectly");
 
-    QStringList keywords; keywords << "DIRECT" << "picture" << "seagull" << "bird";
-    QString title = "DIRECT Brand new title";
-    QString description = "DIRECT Brand new description";
+    const QStringList keywords = QStringList() << "THROUGH ARGFILE" << "picture" << "seagull" << "bird";
+    const QString title = "THROUGH ARGFILE Brand new title";
+    const QString description = "THROUGH ARGFILE Brand new description";
     artwork->setDescription(description);
     artwork->setTitle(title);
-    artwork->getBasicModel()->setKeywords(keywords);
+    artwork->getBasicModel().setKeywords(keywords);
     artwork->setIsSelected(true);
 
-    bool doOverwrite = true, dontSaveBackups = false;
-
-    QObject::connect(ioCoordinator, SIGNAL(metadataWritingFinished()), &waiter, SIGNAL(finished()));
-    auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-    filteredModel->saveSelectedArtworks(doOverwrite, dontSaveBackups);
+    SignalWaiter waiter;
+    m_TestsApp.connectWaiterForExport(waiter);
+    QVariantMap params{{"overwrite", QVariant(true)}, {"backup", QVariant(false)}};
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SaveSelected, QVariant::fromValue(params));
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");
+    VERIFY(m_TestsApp.checkExportSucceeded(), "Failed to export artworks");
 
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while writing");
+    m_TestsApp.deleteAllArtworks();
+    VERIFY(m_TestsApp.getArtworksCount() == 0, "Failed to remove files");
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    artItemsModel->removeSelectedArtworks(QVector<int>() << 0);
+    artwork = m_TestsApp.getArtwork(0);
 
-    addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == 1, "Failed to add file");
-
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    artwork = artItemsModel->getArtwork(0);
-    const QStringList &actualKeywords = artwork->getKeywords();
-    const QString &actualTitle = artwork->getTitle();
-    const QString &actualDescription = artwork->getDescription();
-
-    VERIFY(id != artwork->getItemID(), "ID should not match");
-    VERIFY(actualKeywords == keywords, "Read keywords are not the same");
-    VERIFY(actualTitle == title, "Real title is not the same");
-    VERIFY(actualDescription == description, "Real description is not the same");
+    VERIFY(id.get() != artwork->getItemID().get(), "ID should not match");
+    VERIFY(artwork->getKeywords() == keywords, "Read keywords are not the same");
+    VERIFY(artwork->getTitle() == title, "Real title is not the same");
+    VERIFY(artwork->getDescription() == description, "Real description is not the same");
 
     return 0;
 }

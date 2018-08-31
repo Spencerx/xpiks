@@ -13,16 +13,18 @@
 #include "../Common/logging.h"
 #include "../Encryption/aes-qt.h"
 #include "../Connectivity/simpleapirequest.h"
-#include "apisecrets.h"
+#include "../Encryption/isecretsstorage.h"
+#include "microstockenums.h"
+#include "searchquery.h"
 
 namespace Microstocks {
-    ShutterstockAPIClient::ShutterstockAPIClient(Encryption::ISecretsStorage *secretsStorage):
+    ShutterstockAPIClient::ShutterstockAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):
         m_SecretsStorage(secretsStorage)
     {
-        Q_ASSERT(secretsStorage != nullptr);
     }
 
-    std::shared_ptr<Connectivity::IConnectivityRequest> ShutterstockAPIClient::search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
+    std::shared_ptr<Connectivity::IConnectivityRequest> ShutterstockAPIClient::search(const SearchQuery &query,
+                                                                                      const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
         LOG_INFO << query.getSearchQuery();
         QUrl url = buildSearchQuery(query);
 
@@ -38,8 +40,8 @@ namespace Microstocks {
 
         QString resourceUrl = QString::fromLocal8Bit(url.toEncoded());
 
-        std::shared_ptr<Connectivity::IConnectivityRequest> request(
-                    new Connectivity::SimpleAPIRequest(resourceUrl, QStringList() << headerData, response));
+        auto request = std::make_shared<Connectivity::SimpleAPIRequest>(
+                           resourceUrl, QStringList() << headerData, response);
         return request;
     }
 

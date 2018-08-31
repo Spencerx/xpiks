@@ -6,8 +6,8 @@
 class TranslatorBasicTest : public IntegrationTestBase
 {
 public:
-    TranslatorBasicTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    TranslatorBasicTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

@@ -6,8 +6,8 @@
 class SaveFileLegacyTest : public IntegrationTestBase
 {
 public:
-    SaveFileLegacyTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    SaveFileLegacyTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

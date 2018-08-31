@@ -120,7 +120,7 @@ namespace MetadataIO {
                 continue;
             }
 
-            exportPlan.reset(new CsvExportPlan());
+            exportPlan = std::make_shared<CsvExportPlan>();
 
             exportPlan->m_Name = nameValue.toString();
 
@@ -165,7 +165,8 @@ namespace MetadataIO {
         return result;
     }
 
-    CsvExportPlansModel::CsvExportPlansModel(Common::ISystemEnvironment &environment, QObject *parent):
+    CsvExportPlansModel::CsvExportPlansModel(Common::ISystemEnvironment &environment,
+                                             QObject *parent):
         Models::AbstractConfigUpdaterModel(
             environment.path({EXPORT_PLANS_FILE}),
             Connectivity::ApiManager::getInstance().getCsvExportPlansAddr(),
@@ -176,14 +177,15 @@ namespace MetadataIO {
     {
     }
 
-    void CsvExportPlansModel::initializeConfigs(Helpers::AsyncCoordinator *initCoordinator) {
+    void CsvExportPlansModel::initializeConfigs(Helpers::AsyncCoordinator &initCoordinator,
+                                                Connectivity::IRequestsService &requestsService) {
         LOG_DEBUG << "#";
 
         Helpers::AsyncCoordinatorLocker locker(initCoordinator);
         Helpers::AsyncCoordinatorUnlocker unlocker(initCoordinator);
         Q_UNUSED(locker); Q_UNUSED(unlocker);
 
-        AbstractConfigUpdaterModel::initializeConfigs();
+        AbstractConfigUpdaterModel::initializeConfigs(requestsService);
     }
 
     void CsvExportPlansModel::sync(const std::vector<std::shared_ptr<CsvExportPlan> > &exportPlans) {

@@ -11,23 +11,19 @@
 #ifndef METADATAIOTASK_H
 #define METADATAIOTASK_H
 
-#include "../Models/artworkmetadata.h"
-#include "../Suggestion/locallibraryquery.h"
+#include <Artworks/artworkmetadata.h>
+#include <Suggestion/locallibraryquery.h>
 
 namespace MetadataIO {
-    class MetadataIOTaskBase: public Models::ArtworkMetadataLocker
+    class MetadataIOTaskBase
     {
     public:
-        MetadataIOTaskBase(Models::ArtworkMetadata *metadata):
-            Models::ArtworkMetadataLocker(metadata)
-        {
-        }
+        virtual ~MetadataIOTaskBase() {}
     };
 
     class MetadataSearchTask: public MetadataIOTaskBase {
     public:
         MetadataSearchTask(Suggestion::LocalLibraryQuery *query):
-            MetadataIOTaskBase(nullptr),
             m_Query(query)
         {
         }
@@ -48,15 +44,17 @@ namespace MetadataIO {
         };
 
     public:
-        MetadataReadWriteTask(Models::ArtworkMetadata *metadata, ReadWriteAction readWriteAction):
-            MetadataIOTaskBase(metadata),
+        MetadataReadWriteTask(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork, ReadWriteAction readWriteAction):
+            m_Artwork(artwork),
             m_ReadWriteAction(readWriteAction)
         {}
 
     public:
         ReadWriteAction getReadWriteAction() const { return m_ReadWriteAction; }
+        std::shared_ptr<Artworks::ArtworkMetadata> const &getArtworkMetadata() const { return m_Artwork; }
 
     private:
+        std::shared_ptr<Artworks::ArtworkMetadata> m_Artwork;
         ReadWriteAction m_ReadWriteAction;
     };
 }

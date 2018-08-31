@@ -27,7 +27,7 @@ namespace libxpks {
 namespace Connectivity {
     void fillCurlOptions(void *curlHandle, const std::shared_ptr<libxpks::net::UploadContext> &context, const QString &remoteUrl);
     QString sanitizeHost(const QString &inputHost);
-    void fillProxySettings(void *curlHandle, Models::ProxySettings *proxySettings);
+    void fillProxySettings(void *curlHandle, const Models::ProxySettings *proxySettings);
 }
 
 #endif // FTPHELPERS_H

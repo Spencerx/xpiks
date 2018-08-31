@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtTest 1.1
+import XpiksTests 1.0
 import "../../xpiks-qt/Dialogs"
 
 Item {
@@ -7,51 +8,11 @@ Item {
     width: 800
     height: 600
 
-    FakeColors {
-        id: uiColors
-    }
-
-    QtObject {
-        id: uiManager
-        property real keywordHeight: 10
-    }
+    Component.onCompleted: TestsHost.setup()
 
     QtObject {
         id: applicationWindow
         property bool leftSideCollapsed: false
-    }
-
-    QtObject {
-        id: settingsModel
-        property int keywordSizeScale: 1
-    }
-
-    QtObject {
-        id: archiver
-
-        property bool isError: false
-        property bool inProgress: false
-        property int itemsCount: 0
-        property int percent: 50
-
-        function resetModel() {}
-        function archiveArtworks() {}
-
-        signal finishedProcessing()
-        signal requestCloseWindow()
-    }
-
-    QtObject {
-        id: helpersWrapper
-
-        signal globalBeforeDestruction()
-
-        function getZipArchiver() { return archiver }
-    }
-
-    QtObject {
-        id: i18
-        property string n: ""
     }
 
     ZipArtworksDialog {
@@ -62,5 +23,12 @@ Item {
     TestCase {
         name: "ZipArchiver"
         when: windowShown
+
+        function initTestCase() {
+        }
+
+        function cleanupTestCase() {
+            TestsHost.cleanup()
+        }
     }
 }

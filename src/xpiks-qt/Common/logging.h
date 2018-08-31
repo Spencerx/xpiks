@@ -12,6 +12,7 @@
 #define LOGGING_H
 
 #include <QDebug>
+#include "types.h"
 
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 4, 2))
 #define qInfo qDebug
@@ -33,27 +34,29 @@
 #endif
 
 #if defined(INTEGRATION_TESTS) || defined(VERBOSE_LOGGING)
-#define LOG_INTEGRATION_TESTS qDebug()
+#define LOG_VERBOSE qDebug()
 #else
-#define LOG_INTEGRATION_TESTS if (1) {} else qDebug()
+#define LOG_VERBOSE if (1) {} else qDebug()
 #endif
 
-#if defined(INTEGRATION_TESTS) || defined(QT_DEBUG) || defined(VERBOSE_LOGGING)
-#define LOG_INTEGR_TESTS_OR_DEBUG qDebug()
+#if defined(QT_DEBUG) || defined(VERBOSE_LOGGING)
+#define LOG_VERBOSE_OR_DEBUG qDebug()
 #else
-#define LOG_INTEGR_TESTS_OR_DEBUG if (1) {} else qDebug()
+#define LOG_VERBOSE_OR_DEBUG if (1) {} else qDebug()
 #endif
 
-#if defined(INTEGRATION_TESTS) || defined(CORE_TESTS) || defined(FAKE_WARNINGS)
+#if defined(FAKE_WARNINGS)
 #define LOG_WARNING qInfo() << "FAKE_WARNING"
 #else
 #define LOG_WARNING qWarning()
 #endif
 
-#if defined(INTEGRATION_TESTS) || defined(CORE_TESTS)
+#if defined(INTEGRATION_TESTS) || defined(CORE_TESTS) || defined(UI_TESTS)
 #define LOG_FOR_TESTS qDebug()
 #else
 #define LOG_FOR_TESTS if (1) {} else qDebug()
 #endif
+
+QDebug& operator<< (QDebug &debug, const Common::ID_t &t);
 
 #endif // LOGGING_H

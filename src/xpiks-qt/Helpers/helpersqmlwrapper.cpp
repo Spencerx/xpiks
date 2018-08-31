@@ -17,21 +17,20 @@
 #include <QCoreApplication>
 #include <QQmlEngine>
 #include "keywordshelpers.h"
-#include "../Commands/commandmanager.h"
-#include "../Models/logsmodel.h"
-#include "../Models/artworkuploader.h"
-#include "../AutoComplete/stringsautocompletemodel.h"
-#include "../Models/ziparchiver.h"
-#include "../SpellCheck/spellcheckerservice.h"
-#include "../Models/deletekeywordsviewmodel.h"
-#include "../Models/uploadinforepository.h"
-#include "../SpellCheck/spellchecksuggestionmodel.h"
+#include <Models/logsmodel.h>
+#include <Models/Connectivity/artworksuploader.h>
+#include <Services/AutoComplete/stringsautocompletemodel.h>
+#include <Models/Connectivity/ziparchiver.h>
+#include <Services/SpellCheck/spellcheckservice.h>
+#include <Models/Editing/deletekeywordsviewmodel.h>
+#include <Models/Connectivity/uploadinforepository.h>
+#include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include "logger.h"
-#include "../Common/defines.h"
-#include "../Helpers/filehelpers.h"
-#include "../Helpers/updatehelpers.h"
-#include "../QMLExtensions/colorsmodel.h"
-#include "../Helpers/filehelpers.h"
+#include <Common/defines.h>
+#include <Helpers/filehelpers.h>
+#include <Helpers/updatehelpers.h>
+#include <QMLExtensions/colorsmodel.h>
+#include <Helpers/filehelpers.h>
 
 #ifdef Q_OS_WIN
 #include <QWinTaskbarButton>
@@ -39,13 +38,11 @@
 #endif
 
 namespace Helpers {
-    HelpersQmlWrapper::HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel *colorsModel):
+    HelpersQmlWrapper::HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel &colorsModel):
         m_Environment(environment),
         m_ColorsModel(colorsModel)
     {
-        Q_ASSERT(colorsModel != nullptr);
-
-#if defined(Q_OS_WIN) && !defined(INTEGRATION_TESTS)
+#if defined(Q_OS_WIN) && !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
         m_WinTaskbarButtonApplicable = QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS7;
         if (m_WinTaskbarButtonApplicable) {
             m_TaskbarButton = new QWinTaskbarButton(this);
@@ -74,7 +71,7 @@ namespace Helpers {
     }
 
     void Helpers::HelpersQmlWrapper::reportOpen() {
-        xpiks()->reportUserAction(Connectivity::UserAction::Open);
+        //xpiks()->reportUserAction(Connectivity::UserAction::Open);
     }
 
     void HelpersQmlWrapper::setProgressIndicator(QQuickWindow *window) {
@@ -117,10 +114,6 @@ namespace Helpers {
 #endif
     }
 
-    void HelpersQmlWrapper::removeUnavailableFiles() {
-        xpiks()->removeUnavailableFiles();
-    }
-
     bool HelpersQmlWrapper::isVector(const QString &path) const {
         return path.endsWith("eps", Qt::CaseInsensitive) ||
                 path.endsWith("ai", Qt::CaseInsensitive);
@@ -135,13 +128,13 @@ namespace Helpers {
     }
 
     QString HelpersQmlWrapper::getAssetForTheme(const QString &assetName, int themeIndex) const {
-        QString themeName = m_ColorsModel->getThemeName(themeIndex);
+        QString themeName = m_ColorsModel.getThemeName(themeIndex);
         themeName.remove(QChar::Space);
         QString result = QString("qrc:/Graphics/%1/%2").arg(themeName.toLower()).arg(assetName);
         return result;
     }
 
-    QObject *HelpersQmlWrapper::getLogsModel() {
+    /*QObject *HelpersQmlWrapper::getLogsModel() {
         Models::LogsModel *model = m_CommandManager->getLogsModel();
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
         return model;
@@ -188,7 +181,8 @@ namespace Helpers {
         auto *model = m_CommandManager->getSpellSuggestionsModel();
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
         return model;
-    }
+    }*/
+
     void HelpersQmlWrapper::revealFile(const QString &path) {
 #ifdef Q_OS_MAC
         QStringList args;

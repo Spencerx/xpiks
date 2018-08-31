@@ -13,35 +13,36 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QImageReader>
-#include "../Models/artworkmetadata.h"
-#include "../Models/settingsmodel.h"
-#include "../Commands/commandmanager.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
 #include "../Models/settingsmodel.h"
 #include "../Common/defines.h"
-#include "../Models/imageartwork.h"
-#include "../Maintenance/maintenanceservice.h"
-#include "../Warnings/warningsmodel.h"
 #include "metadataioservice.h"
 #include <readingorchestrator.h>
 #include <writingorchestrator.h>
 #include "../Models/switchermodel.h"
-#include "../QMLExtensions/artworksupdatehub.h"
-#include "../Models/filteredartitemsproxymodel.h"
+#include <Services/artworksupdatehub.h>
 #include "../QMLExtensions/videocachingservice.h"
 
 namespace MetadataIO {
-    void lockForIO(const MetadataIO::ArtworksSnapshot &snapshot) {
+    void lockForIO(const Artworks::ArtworksSnapshot &snapshot) {
         const size_t size = snapshot.size();
         LOG_DEBUG << size << "item(s)";
 
         for (size_t i = 0; i < size; i++) {
-            Models::ArtworkMetadata *artwork = snapshot.get(i);
+            auto &artwork = snapshot.get(i);
             artwork->setIsLockedIO(true);
         }
     }
 
-    MetadataIOCoordinator::MetadataIOCoordinator():
-        Common::BaseEntity(),
+    MetadataIOCoordinator::MetadataIOCoordinator(MetadataReadingHub &readingHub,
+                                                 Models::SettingsModel &settingsModel,
+                                                 Models::SwitcherModel &switcherModel,
+                                                 QMLExtensions::VideoCachingService &videoCachingService):
+        m_ReadingHub(readingHub),
+        m_SettingsModel(settingsModel),
+        m_SwitcherModel(switcherModel),
+        m_VideoCachingService(videoCachingService),
         m_LastImportID(1),
         m_ProcessingItemsCount(0),
         m_IsInProgress(false),
@@ -57,48 +58,28 @@ namespace MetadataIO {
                          this, &MetadataIOCoordinator::onReadingFinished);
     }
 
-    void MetadataIOCoordinator::setCommandManager(Commands::CommandManager *commandManager) {
-        Common::BaseEntity::setCommandManager(commandManager);
-        m_ReadingHub.setCommandManager(commandManager);
-    }
-
-    void MetadataIOCoordinator::setRecommendedExiftoolPath(const QString &recommendedExiftool) {
-        LOG_DEBUG << recommendedExiftool;
-        setExiftoolNotFound(recommendedExiftool.isEmpty());
-        m_RecommendedExiftoolPath = recommendedExiftool;
-
-        if (!m_ExiftoolNotFound && !m_RecommendedExiftoolPath.isEmpty()) {
-            LOG_DEBUG << "Recommended exiftool path is" << m_RecommendedExiftoolPath;
-            emit recommendedExiftoolFound(m_RecommendedExiftoolPath);
-        }
-    }
-
     bool MetadataIOCoordinator::shouldUseAutoImport() const {
         bool autoImport = false;
 
-#if !defined(CORE_TESTS)
-        Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-        Models::SwitcherModel *switcherModel = m_CommandManager->getSwitcherModel();
-        if (settingsModel->getUseAutoImport() && switcherModel->getUseAutoImport()) {
+        if (m_SettingsModel.getUseAutoImport() && m_SwitcherModel.getUseAutoImport()) {
             autoImport = true;
         }
-#endif
 
         return autoImport;
     }
 
-    int MetadataIOCoordinator::readMetadataExifTool(const ArtworksSnapshot &artworksToRead, quint32 storageReadBatchID) {
+    int MetadataIOCoordinator::readMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToRead, quint32 storageReadBatchID) {
         int importID = getNextImportID();
         initializeImport(artworksToRead, importID, storageReadBatchID);
 
-        libxpks::io::ReadingOrchestrator readingOrchestrator(&m_ReadingHub,
-                                                             m_CommandManager->getSettingsModel());
+        libxpks::io::ReadingOrchestrator readingOrchestrator(m_ReadingHub,
+                                                             m_SettingsModel);
         readingOrchestrator.startReading();
 
         return importID;
     }
 
-    void MetadataIOCoordinator::writeMetadataExifTool(const ArtworksSnapshot &artworksToWrite, bool useBackups) {
+    void MetadataIOCoordinator::writeMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWrite, bool useBackups) {
         LOG_DEBUG << "use backups:" << useBackups;
         m_WritingAsyncCoordinator.reset();
 
@@ -107,28 +88,25 @@ namespace MetadataIO {
         // this should prevent a race between video thumbnails and exiftool
         // https://github.com/ribtoks/xpiks/issues/477
         // ---
-        QMLExtensions::VideoCachingService *videoCachingService = m_CommandManager->getVideoCachingService();
-        videoCachingService->waitWorkerIdle();
+        m_VideoCachingService.waitWorkerIdle();
         // ---
 
         libxpks::io::WritingOrchestrator writingOrchestrator(artworksToWrite,
-                                                             &m_WritingAsyncCoordinator,
-                                                             m_CommandManager->getSettingsModel());
+                                                             m_WritingAsyncCoordinator,
+                                                             m_SettingsModel);
 
 #ifndef INTEGRATION_TESTS
-        auto *switcher = m_CommandManager->getSwitcherModel();
-        const bool directExportOn = switcher->getUseDirectMetadataExport();
+        const bool directExportOn = m_SwitcherModel.getUseDirectMetadataExport();
 #else
         const bool directExportOn = false;
 #endif
 
-        auto *settingsModel = m_CommandManager->getSettingsModel();
-        const bool useDirectExport = settingsModel->getUseDirectExiftoolExport();
+        const bool useDirectExport = m_SettingsModel.getUseDirectExiftoolExport();
 
         writingOrchestrator.startWriting(useBackups, useDirectExport || directExportOn);
     }
 
-    void MetadataIOCoordinator::wipeAllMetadataExifTool(const ArtworksSnapshot &artworksToWipe, bool useBackups) {
+    void MetadataIOCoordinator::wipeAllMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWipe, bool useBackups) {
         LOG_DEBUG << "use backups:" << useBackups;
         m_WritingAsyncCoordinator.reset();
 
@@ -137,23 +115,14 @@ namespace MetadataIO {
         // this should prevent a race between video thumbnails and exiftool
         // https://github.com/ribtoks/xpiks/issues/477
         // ---
-        QMLExtensions::VideoCachingService *videoCachingService = m_CommandManager->getVideoCachingService();
-        videoCachingService->waitWorkerIdle();
+        m_VideoCachingService.waitWorkerIdle();
         // ---
 
         libxpks::io::WritingOrchestrator writingOrchestrator(artworksToWipe,
-                                                             &m_WritingAsyncCoordinator,
-                                                             m_CommandManager->getSettingsModel());
+                                                             m_WritingAsyncCoordinator,
+                                                             m_SettingsModel);
 
         writingOrchestrator.startMetadataWiping(useBackups);
-    }
-
-    void MetadataIOCoordinator::autoDiscoverExiftool() {
-        LOG_DEBUG << "#";
-        Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-        QString existingExiftoolPath = settingsModel->getExifToolPath();
-        Maintenance::MaintenanceService *maintenanceService = m_CommandManager->getMaintenanceService();
-        maintenanceService->launchExiftool(existingExiftoolPath, this);
     }
 
     void MetadataIOCoordinator::continueReading(bool ignoreBackups) {
@@ -182,12 +151,6 @@ namespace MetadataIO {
     void MetadataIOCoordinator::writingWorkersFinished(int status) {
         LOG_DEBUG << status;
 
-        Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-        filteredModel->updateSelectedArtworksEx(QVector<int>() << Models::ArtItemsModel::IsModifiedRole);
-
-        Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
-        artItemsModel->unlockAllForIO();
-
         emit metadataWritingFinished();
     }
 
@@ -199,12 +162,17 @@ namespace MetadataIO {
         setIsInProgress(false);
     }
 
+    void MetadataIOCoordinator::onRecommendedExiftoolFound(const QString &path) {
+        LOG_DEBUG << path;
+        setExiftoolNotFound(path.isEmpty());
+    }
+
     int MetadataIOCoordinator::getNextImportID() {
         int id = m_LastImportID++;
         return id;
     }
 
-    void MetadataIOCoordinator::initializeImport(const ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID) {
+    void MetadataIOCoordinator::initializeImport(const Artworks::ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID) {
         m_ReadingHub.initializeImport(artworksToRead, importID, storageReadBatchID);
 
         setHasErrors(false);

@@ -19,10 +19,14 @@ namespace Common {
         m_StateName(stateName),
         m_Config(environment.path({Constants::STATES_DIR, QString("%1.json").arg(stateName)}),
                  environment.getIsInMemoryOnly()),
-        m_StateMap(new Helpers::JsonObjectMap()),
+        m_StateMap(std::make_shared<Helpers::JsonObjectMap>()),
         m_InitCounter(0)
     {
         Q_ASSERT(!stateName.endsWith(".json", Qt::CaseInsensitive));
+    }
+
+    StatefulEntity::~StatefulEntity() {
+        Q_ASSERT(m_InitCounter.load() > 0);
     }
 
     void StatefulEntity::init() {

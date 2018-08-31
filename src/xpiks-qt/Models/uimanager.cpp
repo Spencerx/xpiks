@@ -9,13 +9,13 @@
  */
 
 #include "uimanager.h"
-#include "../Common/defines.h"
-#include "../QuickBuffer/currenteditableartwork.h"
-#include "../QuickBuffer/currenteditableproxyartwork.h"
-#include "artworkmetadata.h"
-#include "../Models/settingsmodel.h"
-
+#include <QQuickTextDocument>
 #include <QScreen>
+#include <QQmlEngine>
+#include <Common/defines.h>
+#include <Artworks/basicmetadatamodel.h>
+#include <Models/settingsmodel.h>
+#include <Models/Artworks/artworkslistmodel.h>
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 
@@ -26,16 +26,20 @@
 #define DEFAULT_APP_POSITION -1
 
 namespace Models {
-    UIManager::UIManager(Common::ISystemEnvironment &environment, SettingsModel *settingsModel, QObject *parent) :
+    UIManager::UIManager(Common::ISystemEnvironment &environment,
+                         QMLExtensions::ColorsModel &colorsModel,
+                         SettingsModel &settingsModel,
+                         QObject *parent) :
         QObject(parent),
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
         m_State("uimanager", environment),
+        m_ColorsModel(colorsModel),
         m_SettingsModel(settingsModel),
         m_TabID(42),
         m_ScreenDPI(96.0)
     {
-        Q_ASSERT(settingsModel != nullptr);
-        QObject::connect(m_SettingsModel, &Models::SettingsModel::keywordSizeScaleChanged, this, &UIManager::keywordHeightChanged);
+        QObject::connect(&m_SettingsModel, &Models::SettingsModel::keywordSizeScaleChanged,
+                         this, &UIManager::keywordHeightChanged);
 
         m_ActiveTabs.setSourceModel(&m_TabsModel);
         m_InactiveTabs.setSourceModel(&m_TabsModel);
@@ -58,21 +62,9 @@ namespace Models {
     }
 
     double UIManager::getKeywordHeight() const {
-        double keywordScale = m_SettingsModel->getKeywordSizeScale();
+        double keywordScale = m_SettingsModel.getKeywordSizeScale();
         double height = 20.0 * keywordScale + (keywordScale - 1.0) * 10.0;
         return height;
-    }
-
-    void UIManager::registerCurrentItem(std::shared_ptr<QuickBuffer::ICurrentEditable> &currentItem) {
-        LOG_DEBUG << "#";
-        m_CurrentEditable = std::move(currentItem);
-        emit currentEditableChanged();
-    }
-
-    void UIManager::clearCurrentItem() {
-        LOG_DEBUG << "#";
-        m_CurrentEditable.reset();
-        emit currentEditableChanged();
     }
 
     QObject *UIManager::retrieveTabsModel(int tabID) {
@@ -147,6 +139,24 @@ namespace Models {
         LOG_DEBUG << y;
         m_State.setValue(Constants::appWindowY, y);
         justChanged();
+    }
+
+    void UIManager::initDescriptionHighlighting(QObject *basicModelObject, QQuickTextDocument *document) {
+        Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(basicModelObject);
+        if (basicModel != nullptr) {
+            SpellCheck::SpellCheckInfo &info = basicModel->getSpellCheckInfo();
+            info.createHighlighterForDescription(document->textDocument(), &m_ColorsModel, basicModel);
+            basicModel->notifyDescriptionSpellingChanged();
+        }
+    }
+
+    void UIManager::initTitleHighlighting(QObject *basicModelObject, QQuickTextDocument *document) {
+        Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(basicModelObject);
+        if (basicModel != nullptr) {
+            SpellCheck::SpellCheckInfo &info = basicModel->getSpellCheckInfo();
+            info.createHighlighterForTitle(document->textDocument(), &m_ColorsModel, basicModel);
+            basicModel->notifyDescriptionSpellingChanged();
+        }
     }
 
     void UIManager::activateQuickBufferTab() {

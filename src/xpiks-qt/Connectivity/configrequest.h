@@ -28,13 +28,12 @@ namespace Connectivity {
         Q_OBJECT
 
     public:
-        ConfigRequest(Helpers::RemoteConfig *config, const QString &url, bool noCache = false):
+        ConfigRequest(Helpers::RemoteConfig &config, const QString &url, bool noCache = false):
             QObject(),
             m_RemoteConfig(config),
             m_Url(url),
             m_Flags(0)
         {
-            Q_ASSERT(config != nullptr);
             m_Flags = (Common::flag_t)(noCache ? Connectivity::IConnectivityRequest::NoCache :
                                                  Connectivity::IConnectivityRequest::None);
         }
@@ -51,7 +50,7 @@ namespace Connectivity {
         virtual void setResult(bool result, const QByteArray &body) override;
 
     private:
-        Helpers::RemoteConfig *m_RemoteConfig;
+        Helpers::RemoteConfig &m_RemoteConfig;
         QString m_Url;
         Common::flag_t m_Flags;
     };

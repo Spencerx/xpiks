@@ -39,7 +39,7 @@ namespace Storage {
     // to make it look like a key-value storage
     class Database: public IDatabase {
     public:
-        Database(int id, Helpers::AsyncCoordinator *finalizeCoordinator);
+        Database(int id, Helpers::AsyncCoordinator &finalizeCoordinator);
         virtual ~Database();
 
     private:
@@ -101,7 +101,7 @@ namespace Storage {
 
     private:
         int m_ID;
-        Helpers::AsyncCoordinator *m_FinalizeCoordinator = nullptr;
+        Helpers::AsyncCoordinator &m_FinalizeCoordinator;
         sqlite3 *m_Database = nullptr;
         sqlite3_stmt *m_GetTablesStatement = nullptr;
         std::vector<std::shared_ptr<Database::Table> > m_Tables;

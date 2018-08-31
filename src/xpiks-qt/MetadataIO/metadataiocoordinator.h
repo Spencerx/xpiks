@@ -15,32 +15,41 @@
 #include <QVector>
 #include <QAtomicInt>
 #include <set>
-#include "../Common/baseentity.h"
 #include "../Common/defines.h"
 #include "../Common/readerwriterqueue.h"
 #include "originalmetadata.h"
 #include "metadatareadinghub.h"
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
+    class ArtworksSnapshot;
+}
+
+namespace Models {
+    class SettingsModel;
+    class SwitcherModel;
+}
+
+namespace QMLExtensions {
+    class VideoCachingService;
 }
 
 namespace MetadataIO {
     class MetadataWritingWorker;
-    class ArtworksSnapshot;
 
-    class MetadataIOCoordinator : public QObject, public Common::BaseEntity
+    class MetadataIOCoordinator : public QObject
     {
         Q_OBJECT
         Q_PROPERTY(int processingItemsCount READ getProcessingItemsCount WRITE setProcessingItemsCount NOTIFY processingItemsCountChanged)
         Q_PROPERTY(bool hasErrors READ getHasErrors WRITE setHasErrors NOTIFY hasErrorsChanged)
         Q_PROPERTY(bool exiftoolNotFound READ getExiftoolNotFound WRITE setExiftoolNotFound NOTIFY exiftoolNotFoundChanged)
         Q_PROPERTY(bool isInProgress READ getIsInProgress WRITE setIsInProgress NOTIFY isInProgressChanged)
-    public:
-        MetadataIOCoordinator();
 
     public:
-        virtual void setCommandManager(Commands::CommandManager *commandManager) override;
+        MetadataIOCoordinator(MetadataReadingHub &readingHub,
+                              Models::SettingsModel &settingsModel,
+                              Models::SwitcherModel &switcherModel,
+                              QMLExtensions::VideoCachingService &videoCachingService);
 
     signals:
         void metadataReadingFinished();
@@ -88,13 +97,11 @@ namespace MetadataIO {
         }
 
     public:
-        int readMetadataExifTool(const ArtworksSnapshot &artworksToRead, quint32 storageReadBatchID);
-        void writeMetadataExifTool(const ArtworksSnapshot &artworksToWrite, bool useBackups);
-        void wipeAllMetadataExifTool(const ArtworksSnapshot &artworksToWipe, bool useBackups);
-        void autoDiscoverExiftool();
-        void setRecommendedExiftoolPath(const QString &recommendedExiftool);
+        int readMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToRead, quint32 storageReadBatchID);
+        void writeMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWrite, bool useBackups);
+        void wipeAllMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWipe, bool useBackups);
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         const std::set<int> &getImportIDs() const { return m_PreviousImportIDs; }
         void clear() { m_PreviousImportIDs.clear(); }
@@ -110,16 +117,21 @@ namespace MetadataIO {
         void writingWorkersFinished(int status);
         void onReadingFinished(int importID);
 
-    private:
-        int getNextImportID();
-        void initializeImport(const ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);
-        void readingFinishedHandler(bool ignoreBackups);
-        void afterImportHandler(const QVector<Models::ArtworkMetadata*> &itemsToRead, bool ignoreBackups);
+    public slots:
+        void onRecommendedExiftoolFound(const QString &path);
 
     private:
-        MetadataReadingHub m_ReadingHub;
+        int getNextImportID();
+        void initializeImport(const Artworks::ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);
+        void readingFinishedHandler(bool ignoreBackups);
+        void afterImportHandler(const QVector<Artworks::ArtworkMetadata*> &itemsToRead, bool ignoreBackups);
+
+    private:
         Helpers::AsyncCoordinator m_WritingAsyncCoordinator;
-        QString m_RecommendedExiftoolPath;
+        MetadataReadingHub &m_ReadingHub;
+        Models::SettingsModel &m_SettingsModel;
+        Models::SwitcherModel &m_SwitcherModel;
+        QMLExtensions::VideoCachingService &m_VideoCachingService;
         int m_LastImportID;
         std::set<int> m_PreviousImportIDs;
         volatile int m_ProcessingItemsCount;
