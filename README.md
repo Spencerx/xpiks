@@ -27,7 +27,7 @@ Translations: https://crowdin.com/project/xpiks/
 ![license](https://img.shields.io/badge/license-MPL_2.0-blue.svg)
 ![copyright](https://img.shields.io/badge/%C2%A9-Taras_Kushnir-blue.svg)
 ![language](https://img.shields.io/badge/language-c++-blue.svg)
-![c++](https://img.shields.io/badge/std-c++11-blue.svg) 
+![c++](https://img.shields.io/badge/std-c++14-blue.svg) 
 ![Qt](https://img.shields.io/badge/Qt-5-blue.svg)
 
 Xpiks is a free and open source keywording and uploading tool for microstock photographers and illustrators. It was written from scratch with aim to make it more usefull, convenient and quicker than existing tools.
