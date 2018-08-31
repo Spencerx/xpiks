@@ -91,11 +91,12 @@ namespace KeywordsPresets {
     }
 
     void PresetKeywordsModel::cleanup() {
-         beginResetModel();
-         {
-             removeAllPresets();
-         }
-         endResetModel();
+        LOG_DEBUG << "#";
+        beginResetModel();
+        {
+            removeAllPresets();
+        }
+        endResetModel();
     }
 
     QString PresetKeywordsModel::getKeywordsString(int presetIndex) {
@@ -599,7 +600,8 @@ namespace KeywordsPresets {
     }
 
     QObject *PresetKeywordsModel::getKeywordsModelObject(int index) {
-        QObject *result = nullptr;
+        LOG_FOR_TESTS << index;
+        Artworks::BasicKeywordsModel *result = nullptr;
 
         if (0 <= index && index < getPresetsCount()) {
             result = &m_PresetsList[index]->m_KeywordsModel;
@@ -695,6 +697,12 @@ namespace KeywordsPresets {
     void PresetKeywordsModel::removeAllPresets() {
         QWriteLocker locker(&m_PresetsLock);
         Q_UNUSED(locker);
+
+#ifdef UI_TESTS
+        for (auto &preset: m_PresetsList) {
+            preset->m_KeywordsModel.clearKeywords();
+        }
+#endif
 
         m_PresetsList.clear();
     }

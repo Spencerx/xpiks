@@ -2,6 +2,7 @@
 #include <QQmlEngine>
 #include <QQmlContext>
 #include "xpiksuitestsapp.h"
+#include <Common/logging.h>
 
 TestsHost::TestsHost(QObject *parent) :
     QObject(parent),
@@ -14,6 +15,7 @@ void TestsHost::qmlEngineCallback(QQmlEngine *engine) {
 }
 
 void TestsHost::setup() {
+    LOG_DEBUG << "#";
     m_XpiksApp->setupUITests();
     m_IsReady = true;
     emit isReadyChanged();
@@ -21,6 +23,7 @@ void TestsHost::setup() {
 }
 
 void TestsHost::cleanup() {
+    LOG_DEBUG << "#";
     m_XpiksApp->cleanup();
     m_IsReady = false;
     emit isReadyChanged();

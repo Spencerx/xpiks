@@ -37,6 +37,7 @@ Item {
         property var presetNamesListView
         property var keywordsEdit
         property var addPresetButton
+        property var editableTags
 
         function initTestCase() {
             TestsHost.setup()
@@ -44,6 +45,7 @@ Item {
             presetNamesListView = findChild(presetEditsDialog, "presetNamesListView")
             keywordsEdit = findChild(presetEditsDialog, "nextTagTextInput")
             addPresetButton = findChild(presetEditsDialog, "addPresetButton")
+            editableTags = findChild(presetEditsDialog, "editableTags")
         }
 
         function cleanupTestCase() {
@@ -51,15 +53,9 @@ Item {
         }
 
         function cleanup() {
-            presetsModel.cleanup()
             keywordsEdit.remove(0, keywordsEdit.length)
+            presetsModel.cleanup()
             wait(500)
-        }
-
-        function test_addNewPreset() {
-            var initialCount = presetNamesListView.count
-            mouseClick(addPresetButton)
-            compare(presetNamesListView.count, initialCount + 1)
         }
 
         function test_addKeywordBasic() {
@@ -70,6 +66,15 @@ Item {
             keyClick(Qt.Key_Comma)
 
             compare(presetsModel.getKeywordsString(0), testKeyword)
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+            verify(typeof keywordWrapper !== "undefined")
+        }
+
+        function test_addNewPreset() {
+            var initialCount = presetNamesListView.count
+            mouseClick(addPresetButton)
+            compare(presetNamesListView.count, initialCount + 1)
         }
 
         function test_autoCompleteBasic() {
@@ -175,6 +180,83 @@ Item {
             wait(200)
 
             compare(keywordsEdit.text, "in space")
+        }
+
+        function test_makeTitleValid() {
+            mouseClick(addPresetButton)
+            var titleEdit = findChild(presetEditsDialog, "titleEdit")
+            titleEdit.forceActiveFocus()
+
+            var testKeyword = TestUtils.keyboardEnterSomething(testCase)
+
+            for (var i = 0; i < testKeyword.length; i++) {
+                keyClick(Qt.Key_Backspace)
+            }
+
+            keyClick(Qt.Key_Tab)
+
+            compare(titleEdit.text, "Untitled")
+        }
+
+        function test_editInPlainText() {
+            mouseClick(addPresetButton)
+
+            keywordsEdit.forceActiveFocus()
+            var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            wait(200)
+
+            var link = findChild(presetEditsDialog, "plainTextLink")
+            mouseClick(link)
+
+            wait(500)
+
+            // hack to detect if plain text edit hasn't started
+            keyClick(Qt.Key_Comma)
+            keyClick(Qt.Key_Backspace)
+
+            keyClick(Qt.Key_Comma)
+            var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
+
+            wait(200)
+
+            keyClick(Qt.Key_Enter, Qt.ControlModifier)
+
+            wait(500)
+
+            compare(presetsModel.getKeywordsString(0), testKeyword1 + ", " + testKeyword2)
+        }
+
+        function test_doubleClickEditsKeyword() {
+            mouseClick(addPresetButton)
+
+            keywordsEdit.forceActiveFocus()
+            var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            wait(200)
+
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+
+            compare(presetsModel.getKeywordsString(0), testKeyword1)
+            mouseDoubleClick(keywordWrapper)
+
+            wait(200)
+
+            for (var i = 0; i < testKeyword1.length; i++) {
+                keyClick(Qt.Key_Backspace)
+            }
+
+            wait(200)
+
+            var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Enter)
+
+            wait(200)
+
+            compare(presetsModel.getKeywordsString(0), testKeyword2)
         }
     }
 }

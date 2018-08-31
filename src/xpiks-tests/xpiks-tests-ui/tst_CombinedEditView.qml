@@ -66,19 +66,21 @@ Item {
 
         function test_TabTopToBottom() {
             combinedArtworks.changeTitle = true
-            descriptionCheckBox.checked = true
+            combinedArtworks.changeDescription = true
             combinedArtworks.changeKeywords = true
 
             titleInput.forceActiveFocus()
+            wait(1000)
             keyClick(Qt.Key_Tab)
             verify(descriptionInput.activeFocus)
+            wait(1000)
             keyClick(Qt.Key_Tab)
             verify(editableTags.isFocused)
         }
 
         function test_TabOverTitle() {
             combinedArtworks.changeTitle = true
-            descriptionCheckBox.checked = false
+            combinedArtworks.changeDescription = false
             combinedArtworks.changeKeywords = true
 
             titleInput.forceActiveFocus()
@@ -89,7 +91,7 @@ Item {
 
         function test_TabFromKeywords() {
             combinedArtworks.changeTitle = true
-            descriptionCheckBox.checked = false
+            combinedArtworks.changeDescription = false
             combinedArtworks.changeKeywords = true
 
             editableTags.activateEdit()

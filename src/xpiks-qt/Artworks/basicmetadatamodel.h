@@ -127,4 +127,6 @@ namespace Artworks {
     };
 }
 
+Q_DECLARE_METATYPE(Artworks::BasicMetadataModel *)
+
 #endif // BASICMETADATAMODEL_H

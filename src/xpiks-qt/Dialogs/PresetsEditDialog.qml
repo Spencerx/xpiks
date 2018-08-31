@@ -270,7 +270,6 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: footer.top
-                property var keywordsModel: presetsModel.getKeywordsModelObject(presetNamesListView.currentIndex)
 
                 Connections {
                     target: acSource
@@ -519,7 +518,8 @@ Item {
                         Layout.fillHeight: true
                         border.color: uiColors.artworkActiveColor
                         border.width: flv.isFocused ? 1 : 0
-                        color: uiColors.inputBackgroundColor
+                        color: uiColors.inputBackgroundColor                        
+                        property var keywordsModel: presetNamesListView.currentItem ? presetsModel.getKeywordsModelObject(presetNamesListView.currentIndex) : []
                         state: ""
 
                         function removeKeyword(index) {
@@ -547,7 +547,7 @@ Item {
                             objectName: "editableTags"
                             anchors.fill: parent
                             enabled: presetNamesListView.currentIndex >= 0
-                            model: rightPanel.keywordsModel
+                            model: keywordsWrapper.keywordsModel
                             property int keywordHeight: uiManager.keywordHeight
                             scrollStep: keywordHeight
 
@@ -576,15 +576,13 @@ Item {
                                         }
                                     }
 
-                                    var basicModel = presetsModel.getKeywordsModel(presetNamesListView.currentIndex)
-
                                     Common.launchDialog("Dialogs/EditKeywordDialog.qml",
                                                         componentParent,
                                                         {
                                                             callbackObject: callbackObject,
                                                             previousKeyword: keyword,
                                                             keywordIndex: kw.delegateIndex,
-                                                            keywordsModel: basicModel
+                                                            keywordsModel: keywordsWrapper.keywordsModel
                                                         })
                                 }
                             }
@@ -655,7 +653,7 @@ Item {
                     spacing: 20
 
                     StyledLink {
-                        id: plainTextText
+                        objectName: "plainTextLink"
                         text: i18.n + qsTr("<u>edit in plain text</u>")
                         normalLinkColor: uiColors.labelActiveForeground
                         enabled: presetNamesListView.currentItem ? true : false
@@ -673,14 +671,12 @@ Item {
                                 }
                             }
 
-                            var basicModel = presetsModel.getKeywordsModel(presetNamesListView.currentIndex)
-
-                            Common.launchDialog("../Dialogs/PlainTextKeywordsDialog.qml",
-                                                applicationWindow,
+                            Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
+                                                componentParent,
                                                 {
                                                     callbackObject: callbackObject,
                                                     keywordsText: presetNamesListView.currentItem.myData.keywordsstring,
-                                                    keywordsModel: basicModel
+                                                    keywordsModel: keywordsWrapper.keywordsModel
                                                 });
                         }
                     }

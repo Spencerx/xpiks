@@ -495,7 +495,7 @@ Rectangle {
             Item {
                 Layout.fillWidth: true
                 height: parent.height
-                enabled: titleCheckBox.checked
+                enabled: combinedArtworks.changeTitle
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -594,11 +594,11 @@ Rectangle {
                                 }
 
                                 Keys.onTabPressed: {
-                                    if (descriptionCheckBox.checked) {
+                                    if (combinedArtworks.changeDescription) {
                                         descriptionTextInput.forceActiveFocus()
                                         descriptionTextInput.cursorPosition = descriptionTextInput.text.length
                                         event.accepted = true
-                                    } else if (keywordsCheckBox.checked) {
+                                    } else if (combinedArtworks.changeKeywords) {
                                         flv.activateEdit()
                                         event.accepted = true
                                     }
@@ -664,7 +664,7 @@ Rectangle {
             Item {
                 Layout.fillWidth: true
                 height: parent.height
-                enabled: descriptionCheckBox.checked
+                enabled: combinedArtworks.changeDescription
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -781,7 +781,7 @@ Rectangle {
                                 onCursorRectangleChanged: descriptionFlick.ensureVisible(cursorRectangle)
 
                                 Keys.onBacktabPressed: {
-                                    if (titleCheckBox.checked) {
+                                    if (combinedArtworks.changeTitle) {
                                         titleTextInput.forceActiveFocus()
                                         titleTextInput.cursorPosition = titleTextInput.text.length
                                         event.accepted = true
@@ -789,7 +789,7 @@ Rectangle {
                                 }
 
                                 Keys.onTabPressed: {
-                                    if (keywordsCheckBox.checked) {
+                                    if (combinedArtworks.changeKeywords) {
                                         flv.activateEdit()
                                         event.accepted = true
                                     }
@@ -847,7 +847,7 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                enabled: keywordsCheckBox.checked
+                enabled: combinedArtworks.changeKeywords
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -944,7 +944,7 @@ Rectangle {
 
                             delegate: DraggableKeywordWrapper {
                                 id: kw
-                                isHighlighted: keywordsCheckBox.checked
+                                isHighlighted: combinedArtworks.changeKeywords
                                 keywordText: keyword
                                 hasSpellCheckError: !iscorrect
                                 hasDuplicate: hasduplicate
@@ -1011,10 +1011,10 @@ Rectangle {
                             }
 
                             onBackTabPressed: {
-                                if (descriptionCheckBox.checked) {
+                                if (combinedArtworks.changeDescription) {
                                     descriptionTextInput.forceActiveFocus()
                                     descriptionTextInput.cursorPosition = descriptionTextInput.text.length
-                                } else if (titleCheckBox.checked) {
+                                } else if (combinedArtworks.changeTitle) {
                                     titleTextInput.forceActiveFocus()
                                     titleTextInput.cursorPosition = titleTextInput.text.length
                                 }
