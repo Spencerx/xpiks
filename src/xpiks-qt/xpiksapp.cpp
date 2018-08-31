@@ -744,9 +744,9 @@ void XpiksApp::cleanupModels() {
     m_PresetsModel.cleanup();
     m_SettingsModel.resetToDefault();
 
-    m_ArtworkProxyModel.resetModel();
     m_CombinedArtworksModel.resetModel();
 #ifndef UI_TESTS
+    m_ArtworkProxyModel.resetModel();
     m_ArtworksListModel.deleteAllItems();
     m_ArtworksRepository.resetEverything();
 #endif

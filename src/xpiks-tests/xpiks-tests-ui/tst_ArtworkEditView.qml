@@ -36,7 +36,6 @@ Item {
             anchors.fill: parent
             artworkIndex: 0
             componentParent: root
-            keywordsModel: artworkProxy.getBasicModelObject()
         }
     }
 
@@ -60,6 +59,8 @@ Item {
 
         function initTestCase() {
             TestsHost.setup()
+
+            artworkEditView.keywordsModel = artworkProxy.getBasicModelObject()
 
             titleEdit = findChild(artworkEditView, "titleTextInput")
             descriptionEdit = findChild(artworkEditView, "descriptionTextInput")
