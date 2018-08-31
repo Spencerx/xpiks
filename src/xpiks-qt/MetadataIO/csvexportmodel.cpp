@@ -380,11 +380,6 @@ namespace MetadataIO {
         setIsExporting(true);
     }
 
-    void CsvExportModel::clearModel() {
-        LOG_DEBUG << "#";
-        m_ArtworksToExport.clear();
-    }
-
     void CsvExportModel::removePlanAt(int row) {
         LOG_INFO << row;
 
@@ -462,6 +457,24 @@ namespace MetadataIO {
 
         return count;
     }
+
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+    void CsvExportModel::clearModel() {
+        LOG_DEBUG << "#";
+        m_ExportPlans.erase(
+                    std::remove_if(m_ExportPlans.begin(), m_ExportPlans.end(),
+                                   [](const std::shared_ptr<CsvExportPlan> &plan) { return !plan->m_IsSystemPlan; }),
+                    m_ExportPlans.end());
+
+        for (auto &p: m_ExportPlans) { p->m_IsSelected = false; }
+    }
+
+    void CsvExportModel::resetModel() {
+        LOG_DEBUG << "#";
+        clearModel();
+        m_ArtworksToExport.clear();
+    }
+#endif
 
     void CsvExportModel::onWorkerFinished() {
         LOG_DEBUG << "#";

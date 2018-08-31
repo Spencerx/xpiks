@@ -73,13 +73,13 @@ bool XpiksUITestsApp::setupCommonFiles() {
                                                                        initTemplate);
     m_CommandManager.processCommand(addFilesCommand);
     bool success = addFilesCommand->getAddedCount() == imagesCount;
-
-    m_ArtworkProxyModel.setSourceArtwork(m_ArtworksListModel.getArtworkObject(0));
     return success;
 }
 
 void XpiksUITestsApp::setupUITests() {
     LOG_DEBUG << "#";
+
+    m_ArtworkProxyModel.setSourceArtwork(m_ArtworksListModel.getArtworkObject(0));
 
     KeywordsPresets::ID_t id;
     bool added = false;
@@ -88,7 +88,9 @@ void XpiksUITestsApp::setupUITests() {
                                      id,
                                      added);
 
+    m_FilteredArtworksListModel.unselectFilteredArtworks();
     // select vectors
     m_FilteredArtworksListModel.selectArtworksEx(4);
     m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::EditSelectedArtworks, QVariant());
+    m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::ExportSelectedToCSV, QVariant());
 }

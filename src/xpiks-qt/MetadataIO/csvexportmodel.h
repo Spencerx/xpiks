@@ -125,7 +125,6 @@ namespace MetadataIO {
 
     public:
         Q_INVOKABLE void startExport();
-        Q_INVOKABLE void clearModel();
         Q_INVOKABLE void removePlanAt(int row);
         Q_INVOKABLE void addNewPlan();
         Q_INVOKABLE QObject *getColumnsModel();
@@ -141,14 +140,8 @@ namespace MetadataIO {
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         std::vector<std::shared_ptr<CsvExportPlan> > &accessExportPlans() { return m_ExportPlans; }
-        void resetModel() {
-            m_ExportPlans.erase(
-                        std::remove_if(m_ExportPlans.begin(), m_ExportPlans.end(),
-                                       [](const std::shared_ptr<CsvExportPlan> &plan) { return !plan->m_IsSystemPlan; }),
-                        m_ExportPlans.end());
-
-            for (auto &p: m_ExportPlans) { p->m_IsSelected = false; }
-        }
+        Q_INVOKABLE void clearModel();
+        void resetModel();
 #endif
 
     signals:

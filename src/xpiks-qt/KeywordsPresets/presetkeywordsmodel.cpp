@@ -67,7 +67,7 @@ namespace KeywordsPresets {
         return result;
     }
 
-#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
+#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     void PresetKeywordsModel::setName(int presetIndex, const QString &name) {
         if (presetIndex < 0 || presetIndex >= getPresetsCount()) {
             return;
@@ -96,6 +96,16 @@ namespace KeywordsPresets {
              removeAllPresets();
          }
          endResetModel();
+    }
+
+    QString PresetKeywordsModel::getKeywordsString(int presetIndex) {
+        QReadLocker locker(&m_PresetsLock);
+        Q_UNUSED(locker);
+        if (presetIndex < m_PresetsList.size()) {
+            return m_PresetsList[presetIndex]->m_KeywordsModel.getKeywordsString();
+        } else {
+            return QString();
+        }
     }
 
     bool PresetKeywordsModel::removePresetByID(ID_t id) {
@@ -588,7 +598,7 @@ namespace KeywordsPresets {
         }
     }
 
-    QObject *PresetKeywordsModel::getKeywordsModel(int index) {
+    QObject *PresetKeywordsModel::getKeywordsModelObject(int index) {
         QObject *result = nullptr;
 
         if (0 <= index && index < getPresetsCount()) {
@@ -631,16 +641,6 @@ namespace KeywordsPresets {
             justChanged();
             QModelIndex index = this->index(row);
             emit dataChanged(index, index, QVector<int>() << NameRole << IsNameValidRole);
-        }
-    }
-
-    void PresetKeywordsModel::generateCompletions(int index, const QString &prefix) {
-        LOG_DEBUG << "#" << index << prefix;
-
-        if (0 <= index && index < getPresetsCount()) {
-            auto *basicArwork = &m_PresetsList[index]->m_KeywordsModel;
-            // TODO: request completions
-            //xpiks()->generateCompletions(prefix, basicArwork);
         }
     }
 

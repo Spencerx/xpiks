@@ -15,7 +15,7 @@ environment:
     - INTEGRATION_TESTS: true
       QT_FATAL_WARNINGS: 1
     - UI_TESTS: true
-      QT_FATAL_WARNINGS: 1
+      QT_FATAL_WARNINGS: 0
 
 branches:
   # blacklist

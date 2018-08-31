@@ -115,18 +115,20 @@ int main(int argc, char **argv) {
             return 1;
         }
 
-        xpiksTests.setupUITests();
-
         TestsHost &host = TestsHost::getInstance();
         host.setApp(&xpiksTests);
 
         qmlRegisterSingletonType<TestsHost>("XpiksTests", 1, 0, "TestsHost", createTestsHostsQmlObject);
 
-        LOG_DEBUG << "------------------------------------------------";
-        LOG_DEBUG << "------------------------------------------------";
-        LOG_DEBUG << "------------------------------------------------";
+        LOG_DEBUG << "////////////////////////////////////////////////";
+        LOG_DEBUG << "////////////////////////////////////////////////";
+        LOG_DEBUG << "////////////////////////////////////////////////";
 
         result = quick_test_main(argc, argv, "xpiks_tests_ui", QUICK_TEST_SOURCE_DIR);
+
+        LOG_DEBUG << "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\";
+        LOG_DEBUG << "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\";
+        LOG_DEBUG << "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\";
 
         xpiksTests.stop();
         QThread::sleep(1);

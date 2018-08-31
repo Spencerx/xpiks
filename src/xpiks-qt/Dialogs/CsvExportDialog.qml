@@ -204,6 +204,7 @@ Item {
 
                 ListView {
                     id: exportPlanModelsListView
+                    objectName: "exportPlanModelsListView"
                     model: csvExportModel
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -333,6 +334,7 @@ Item {
 
                     StyledBlackButton {
                         id: addExportPlanButton
+                        objectName: "addExportPlanButton"
                         text: i18.n + qsTr("Add new", "csv export plan")
                         width: 210
                         height: 30
@@ -509,6 +511,7 @@ Item {
 
                         ListView {
                             id: columnsListView
+                            objectName: "columnsListView"
                             model: columnsModel
                             clip: columnsScrollbar.visible
                             anchors.fill: parent
@@ -666,6 +669,7 @@ Item {
 
                                 GlyphButton {
                                     id: addColumnButton
+                                    objectName: "addColumnButton"
                                     text: i18.n + qsTr("Add column")
                                     width: 180
                                     height: 30

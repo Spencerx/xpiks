@@ -31,9 +31,6 @@ Item {
         autoCompleteBox = undefined
     }
 
-    Component.onCompleted: {
-    }
-
     Keys.onEscapePressed: closePopup()
 
     signal dialogDestruction();
@@ -135,6 +132,7 @@ Item {
 
                 ListView {
                     id: presetNamesListView
+                    objectName: "presetNamesListView"
                     model: presetsModel
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -247,6 +245,7 @@ Item {
 
                     StyledBlackButton {
                         id: addPresetButton
+                        objectName: "addPresetButton"
                         width: 210
                         height: 30
                         anchors.centerIn: parent
@@ -271,7 +270,7 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: footer.top
-                property var keywordsModel: presetsModel.getKeywordsModel(presetNamesListView.currentIndex)
+                property var keywordsModel: presetsModel.getKeywordsModelObject(presetNamesListView.currentIndex)
 
                 Connections {
                     target: acSource
@@ -367,6 +366,7 @@ Item {
 
                         StyledTextInput {
                             id: titleText
+                            objectName: "titleEdit"
                             height: parent.height
                             anchors.left: parent.left
                             anchors.right: parent.right
@@ -544,6 +544,7 @@ Item {
 
                         EditableTags {
                             id: flv
+                            objectName: "editableTags"
                             anchors.fill: parent
                             enabled: presetNamesListView.currentIndex >= 0
                             model: rightPanel.keywordsModel
@@ -606,7 +607,7 @@ Item {
                             }
 
                             onCompletionRequested: {
-                                presetsModel.generateCompletions(presetNamesListView.currentIndex, prefix)
+                                dispatcher.dispatch(UICommand.GenerateCompletions, prefix)
                             }
                         }
 

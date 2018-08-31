@@ -23,6 +23,7 @@ DEFINES += WITH_LOGS
 DEFINES += UI_TESTS
 
 DEFINES += FAKE_WARNINGS
+#DEFINES += QT_FATAL_WARNINGS
 
 STUB_PLUGIN_NAME = UiTestsStubPlugin
 
@@ -117,7 +118,6 @@ travis-ci {
 appveyor {
     message("for Appveyor")
     DEFINES += APPVEYOR
-    DEFINES += QT_FATAL_WARNINGS
 }
 
 # without-video {

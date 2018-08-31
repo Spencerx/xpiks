@@ -59,11 +59,12 @@ namespace KeywordsPresets {
         bool tryGetNameFromIndex(int index, QString &name);
         bool tryGetGroupFromIndex(int index, int &groupID);
 
-#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
+#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         void setName(int presetIndex, const QString &name);
         ID_t addItem(const QString &presetName, const QStringList &keywords);
-        void cleanup();
+        Q_INVOKABLE void cleanup();
+        Q_INVOKABLE QString getKeywordsString(int presetIndex);
         bool removePresetByID(ID_t id);
 #endif
 
@@ -140,10 +141,9 @@ namespace KeywordsPresets {
         Q_INVOKABLE bool appendKeyword(int index, const QString &keyword);
         Q_INVOKABLE void pasteKeywords(int index, const QStringList &keywords);
         Q_INVOKABLE void plainTextEdit(int index, const QString &rawKeywords, bool spaceIsSeparator);
-        Q_INVOKABLE QObject *getKeywordsModel(int index);
+        Q_INVOKABLE QObject *getKeywordsModelObject(int index);
         Q_INVOKABLE void saveToConfig();
         Q_INVOKABLE void makeTitleValid(int row);
-        Q_INVOKABLE void generateCompletions(int index, const QString &prefix);
 
     private:
         /*Q_INVOKABLE*/ void loadModelFromConfig();

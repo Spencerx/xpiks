@@ -14,6 +14,7 @@ void TestsHost::qmlEngineCallback(QQmlEngine *engine) {
 }
 
 void TestsHost::setup() {
+    m_XpiksApp->setupUITests();
     m_IsReady = true;
     emit isReadyChanged();
     processPendingEvents();

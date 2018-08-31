@@ -38,7 +38,7 @@ Most useful pages are **[Build instructions](https://github.com/ribtoks/xpiks/wi
 - methods should be separated by 1 empty line as well as all files should have 1 last empty line
 - always put space around assignments, after comma, before curly bracket etc.
 - in the cpp file first include should be appropriate header, then system Qt headers, then system standard C++ headers and only then local headers followed by third-party libs headers
-- you can use Uncrustify withe the config in `src/xpiks-qt/` directory for code formatting to ensure you comply with project rules
+- you can use Uncrustify with the config in `src/xpiks-qt/` directory for code formatting to ensure you comply with project rules
 - log using INFO when you have useful parameters and using DEBUG when just marking execution place
 - write expressive code instead of comments
 - do not commit commented code though sometimes comments are left in order to demonstrate that something was done on purpose

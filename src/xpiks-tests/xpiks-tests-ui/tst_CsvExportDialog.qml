@@ -8,30 +8,50 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: {
-        console.log(TestsHost.scoreme)
-    }
+    Component.onCompleted: TestsHost.bump()
 
     QtObject {
         id: applicationWindow
         property bool leftSideCollapsed: false
     }
 
-    CsvExportDialog {
-        id: exportDialog
+    Loader {
+        id: loader
         anchors.fill: parent
+        asynchronous: true
+        focus: true
+
+        sourceComponent: CsvExportDialog {
+            anchors.fill: parent
+        }
     }
 
     TestCase {
         name: "CsvExport"
-        when: windowShown
+        when: windowShown && (loader.status == Loader.Ready)
+        property var columnsListView
+        property var exportPlanModelsListView
+        property var exportDialog: loader.item
 
         function initTestCase() {
             TestsHost.setup()
+            columnsListView = findChild(exportDialog, "columnsListView")
+            exportPlanModelsListView = findChild(exportDialog, "exportPlanModelsListView")
         }
 
         function cleanupTestCase() {
             TestsHost.cleanup()
+        }
+
+        function cleanup() {
+            csvExportModel.clearModel()
+        }
+
+        function test_addNewRowClickAddsNewRow() {
+            var initialCount = exportPlanModelsListView.count
+            var button = findChild(exportDialog, "addExportPlanButton")
+            mouseClick(button)
+            compare(exportPlanModelsListView.count, initialCount + 1)
         }
     }
 }
