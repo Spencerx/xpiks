@@ -8,7 +8,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: TestsHost.bump()
+    Component.onCompleted: TestsHost.setup()
 
     QtObject {
         id: applicationWindow
@@ -34,7 +34,6 @@ Item {
         property var exportDialog: loader.item
 
         function initTestCase() {
-            TestsHost.setup()
             columnsListView = findChild(exportDialog, "columnsListView")
             exportPlanModelsListView = findChild(exportDialog, "exportPlanModelsListView")
         }

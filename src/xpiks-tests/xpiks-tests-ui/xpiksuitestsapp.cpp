@@ -73,7 +73,6 @@ bool XpiksUITestsApp::setupCommonFiles() {
                                                                        initTemplate);
     m_CommandManager.processCommand(addFilesCommand);
     bool success = addFilesCommand->getAddedCount() == imagesCount;
-    m_ArtworkProxyModel.setSourceArtwork(m_ArtworksListModel.getArtworkObject(0));
     return success;
 }
 

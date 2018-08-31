@@ -8,9 +8,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: {
-        console.log(TestsHost.scoreme)
-    }
+    Component.onCompleted: TestsHost.setup()
 
     QtObject {
         id: applicationWindow
@@ -32,7 +30,6 @@ Item {
         when: windowShown
 
         function initTestCase() {
-            TestsHost.setup()
         }
 
         function cleanupTestCase() {

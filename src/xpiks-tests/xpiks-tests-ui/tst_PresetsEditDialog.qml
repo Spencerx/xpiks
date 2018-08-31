@@ -10,7 +10,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: TestsHost.bump()
+    Component.onCompleted: TestsHost.setup()
 
     QtObject {
         id: applicationWindow
@@ -40,7 +40,6 @@ Item {
         property var editableTags
 
         function initTestCase() {
-            TestsHost.setup()
             presetsModel.cleanup()
             presetNamesListView = findChild(presetEditsDialog, "presetNamesListView")
             keywordsEdit = findChild(presetEditsDialog, "nextTagTextInput")

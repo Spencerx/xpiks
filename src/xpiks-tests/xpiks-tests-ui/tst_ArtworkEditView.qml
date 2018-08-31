@@ -14,7 +14,7 @@ Item {
     property string path: ''
     property bool isselected: false
 
-    Component.onCompleted: TestsHost.bump()
+    Component.onCompleted: TestsHost.setup()
 
     QtObject {
         id: keywordsWrapper
@@ -58,8 +58,6 @@ Item {
         property var artworkEditView: loader.item
 
         function initTestCase() {
-            TestsHost.setup()
-
             artworkEditView.keywordsModel = artworkProxy.getBasicModelObject()
 
             titleEdit = findChild(artworkEditView, "titleTextInput")

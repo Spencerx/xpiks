@@ -14,7 +14,7 @@ Item {
     property string path: ''
     property bool isselected: false
 
-    Component.onCompleted: TestsHost.bump()
+    Component.onCompleted: TestsHost.setup()
 
     QtObject {
         id: applicationWindow
@@ -46,7 +46,6 @@ Item {
         property var combinedView: loader.item
 
         function initTestCase() {
-            TestsHost.setup()
             titleInput = findChild(combinedView, "titleTextInput")
             descriptionInput = findChild(combinedView, "descriptionTextInput")
             editableTags = findChild(combinedView, "editableTags")
