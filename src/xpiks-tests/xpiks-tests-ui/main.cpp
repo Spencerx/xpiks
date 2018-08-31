@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
 
     UITestsEnvironment uiTestsEnvironment;
 
-#if defined(TRAVIS_CI) || defined(APPVEYOR)
+#if defined(APPVEYOR)
     initCrashRecovery(uiTestsEnvironment);
 #endif
 

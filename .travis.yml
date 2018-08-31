@@ -17,7 +17,7 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-      env: UI_TESTS=tests QT_FATAL_WARNINGS=0
+      env: UI_TESTS=tests
       
 git:
   depth: 3
