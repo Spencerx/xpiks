@@ -54,7 +54,7 @@ Item {
         function cleanup() {
             keywordsEdit.remove(0, keywordsEdit.length)
             presetsModel.cleanup()
-            wait(TestUtils.normalSleepTime)
+            TestsHost.bump()
         }
 
         function test_addKeywordBasic() {

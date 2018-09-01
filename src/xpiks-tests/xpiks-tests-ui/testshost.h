@@ -27,7 +27,7 @@ public:
 public:
     Q_INVOKABLE void setup();
     Q_INVOKABLE void cleanup();
-    Q_INVOKABLE QString bump() { return QLatin1String("testsHost"); }
+    Q_INVOKABLE void bump() { processPendingEvents(); }
 
 public:
     void setApp(XpiksUITestsApp *app);

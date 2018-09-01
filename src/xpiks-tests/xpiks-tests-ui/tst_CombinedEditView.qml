@@ -60,7 +60,7 @@ Item {
         function cleanup() {
             combinedArtworks.clearModel()
             keywordsEdit.remove(0, keywordsEdit.length)
-            wait(TestUtils.normalSleepTime)
+            TestsHost.bump()
         }
 
         function test_TabTopToBottom() {

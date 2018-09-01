@@ -44,6 +44,7 @@ Item {
 
         function cleanup() {
             csvExportModel.clearModel()
+            TestsHost.bump()
         }
 
         function test_addNewRowClickAddsNewRow() {

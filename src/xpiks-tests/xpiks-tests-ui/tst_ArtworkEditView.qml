@@ -82,7 +82,7 @@ Item {
             artworkProxy.clearModel()
             // assigning .text directly breaks binding
             keywordsEdit.remove(0, keywordsEdit.length)
-            wait(TestUtils.normalSleepTime)
+            TestsHost.bump()
         }
 
         function getDelegateInstanceAt(contentItem, delegateObjectName, index) {

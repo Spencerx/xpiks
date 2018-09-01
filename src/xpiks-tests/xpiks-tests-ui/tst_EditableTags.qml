@@ -117,6 +117,7 @@ Item {
             completionRequestedSpy.clear()
             copyAllSpy.clear()
             input.text = ""
+            TestsHost.bump()
         }
 
         function test_PressCommaAddsKeyword() {
