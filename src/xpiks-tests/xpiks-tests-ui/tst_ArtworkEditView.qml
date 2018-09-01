@@ -82,7 +82,7 @@ Item {
             artworkProxy.clearModel()
             // assigning .text directly breaks binding
             keywordsEdit.remove(0, keywordsEdit.length)
-            wait(500)
+            wait(TestUtils.normalSleepTime)
         }
 
         function getDelegateInstanceAt(contentItem, delegateObjectName, index) {
@@ -200,7 +200,7 @@ Item {
             keyClick(Qt.Key_E)
             keyClick(Qt.Key_A)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             verify(typeof artworkEditView.autoCompleteBox !== "undefined")
 
@@ -208,13 +208,13 @@ Item {
             keyClick(Qt.Key_H)
             keyClick(Qt.Key_E)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             keyClick(Qt.Key_Down)
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             keyClick(Qt.Key_Return)
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             compare(artworkProxy.keywordsCount, 1)
             compare(artworkProxy.getKeywordsString(), "weather")
@@ -229,13 +229,13 @@ Item {
             keyClick(Qt.Key_R)
             keyClick(Qt.Key_U)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             verify(typeof artworkEditView.autoCompleteBox !== "undefined")
 
             keyClick(Qt.Key_Backspace)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             verify(typeof artworkEditView.autoCompleteBox === "undefined")
         }
@@ -254,15 +254,15 @@ Item {
             keyClick(Qt.Key_A)
             keyClick(Qt.Key_C)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             verify(typeof artworkEditView.autoCompleteBox !== "undefined")
 
             keyClick(Qt.Key_Down)
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             keyClick(Qt.Key_Return, Qt.ControlModifier)
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             compare(artworkProxy.keywordsCount, 3)
             compare(artworkProxy.getKeywordsString(), "some, other, keywords")
@@ -282,13 +282,13 @@ Item {
             keyClick(Qt.Key_A)
             keyClick(Qt.Key_C)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             keyClick(Qt.Key_Down)
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             keyClick(Qt.Key_Return)
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             compare(keywordsEdit.text, "in space")
         }
@@ -298,7 +298,7 @@ Item {
             var testKeyword = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             var repeater = findChild(editableTags, "repeater")
             var keywordWrapper = repeater.itemAt(0)
@@ -320,7 +320,7 @@ Item {
             keyClick(Qt.Key_E)
             keyClick(Qt.Key_Comma)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             var repeater = findChild(editableTags, "repeater")
             var keywordWrapper = repeater.itemAt(0)
@@ -347,7 +347,7 @@ Item {
 
             keyClick(Qt.Key_Comma)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             var repeater = findChild(editableTags, "repeater")
             var keywordWrapper = repeater.itemAt(0)
@@ -361,7 +361,7 @@ Item {
             var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             var repeater = findChild(editableTags, "repeater")
             var keywordWrapper = repeater.itemAt(0)
@@ -369,18 +369,18 @@ Item {
             compare(artworkProxy.getKeywordsString(), testKeyword1)
             mouseDoubleClick(keywordWrapper)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             for (var i = 0; i < testKeyword1.length; i++) {
                 keyClick(Qt.Key_Backspace)
             }
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Enter)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             compare(artworkProxy.getKeywordsString(), testKeyword2)
         }
@@ -390,11 +390,11 @@ Item {
             var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
-            wait(500)
+            wait(TestUtils.normalSleepTime)
 
             artworkEditView.editInPlainText()
 
-            wait(500)
+            wait(TestUtils.normalSleepTime)
 
             // hack to detect if plain text edit hasn't started
             keyClick(Qt.Key_Comma)
@@ -403,11 +403,11 @@ Item {
             keyClick(Qt.Key_Comma)
             var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             keyClick(Qt.Key_Enter, Qt.ControlModifier)
 
-            wait(200)
+            wait(TestUtils.smallSleepTime)
 
             compare(artworkProxy.getKeywordsString(), testKeyword1 + ", " + testKeyword2)
         }

@@ -14,3 +14,6 @@ function keyboardEnterSomething(testCase) {
     }
     return text
 }
+
+var smallSleepTime = 500;//200;
+var normalSleepTime = 800;//500;
