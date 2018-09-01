@@ -1183,7 +1183,11 @@ Rectangle {
 
                             StyledText {
                                 id: moreLink
-                                color: enabled ? (moreMA.pressed ? uiColors.linkClickedColor : uiColors.artworkActiveColor) : (isActive ? uiColors.labelActiveForeground : uiColors.labelInactiveForeground)
+                                color: enabled ? (moreMA.pressed ?
+                                                      uiColors.linkClickedColor :
+                                                      uiColors.artworkActiveColor) :
+                                                 (isActive ? uiColors.labelActiveForeground :
+                                                             uiColors.labelInactiveForeground)
                                 text: i18.n + qsTr("More")
                                 anchors.verticalCenter: parent.verticalCenter
                                 // \u25BE - triangle

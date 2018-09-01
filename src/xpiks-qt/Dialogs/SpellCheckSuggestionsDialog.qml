@@ -121,7 +121,9 @@ Item {
                         text: i18.n + getOriginalText()
 
                         function getOriginalText() {
-                            return spellCheckSuggestionModel.artworksCount === 1 ? qsTr("1 artwork selected") : qsTr("%1 artworks selected").arg(spellCheckSuggestionModel.artworksCount)
+                            return spellCheckSuggestionModel.artworksCount === 1 ?
+                                        qsTr("1 artwork selected") :
+                                        qsTr("%1 artworks selected").arg(spellCheckSuggestionModel.artworksCount)
                         }
                     }
                 }

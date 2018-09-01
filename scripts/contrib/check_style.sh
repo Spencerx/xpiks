@@ -6,6 +6,8 @@
 
 SRC_DIR=${1}
 TESTS_DIR=${1}/xpiks-tests
+XPIKS_QT_DIR=${1}/xpiks-qt
+DEPLOYMENT_DIR=${XPIKS_QT_DIR}/deployment
 TAGS_FILE=all.tags
 BAD_TAGS_FILE=bad.tags
 
@@ -37,6 +39,8 @@ find "$SRC_DIR" -path "$TESTS_DIR" -prune -o -type f \( -name '*.cpp' -and ! -na
 
 find "$SRC_DIR" -path "$TESTS_DIR" -prune -o -type f -name '*.h' -exec grep -n '.\{180\}' {} /dev/null \; >> ${LONG_LINES}
 
+find "$XPIKS_QT_DIR" -path "$DEPLOYMENT_DIR" -prune -o -type f \( -name '*.qml' -and ! -name 'TermsAndConditionsDialog.qml' \) -exec grep -n '.\{180\}' {} /dev/null \; >> ${LONG_LINES}
+
 sed -i '/Q_PROPERTY/d' ${LONG_LINES}
 sed -i '/[*]ignorestyle[*]/d' ${LONG_LINES}
 
@@ -62,10 +66,10 @@ while read -r file; do
 	echo "Detected double empty lines in file $file"
 	DBL_LINES_OK=0
     fi
-done < <(find "$SRC_DIR" -type f \( -name '*.cpp' -and ! -name 'moc_*.cpp' -and ! -name 'qrc_*.cpp' -o  -name '*.h' \))
+done < <(find "$SRC_DIR" -path "$DEPLOYMENT_DIR" -prune -o -type f \( -name '*.cpp' -and ! -name 'moc_*.cpp' -and ! -name 'qrc_*.cpp' -o  -name '*.h' -o -name '*.qml' \))
 
 if [ "$DBL_LINES_OK" -eq 0 ]; then
-    echo "Double lines test failed"
+    echo "Double lines check failed"
     exit 3
 fi
 

@@ -198,7 +198,6 @@ Item {
                     }
                 }
 
-
                 Item {
                     Layout.fillWidth: true
                 }

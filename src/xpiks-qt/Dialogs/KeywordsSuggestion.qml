@@ -568,7 +568,9 @@ Item {
                     anchors.right: parent.right
 
                     /*StyledText {
-                        text: i18.n + (keywordsSuggestor.selectedArtworksCount !== 1 ? qsTr("%1 selected items").arg(keywordsSuggestor.selectedArtworksCount) : qsTr("1 selected item"))
+                        text: i18.n + (keywordsSuggestor.selectedArtworksCount !== 1 ?
+                                           qsTr("%1 selected items").arg(keywordsSuggestor.selectedArtworksCount) :
+                                           qsTr("1 selected item"))
                     }*/
 
                     Item {

@@ -1708,7 +1708,10 @@ ApplicationWindow {
                 enabled: artItemsModel.modifiedArtworksCount > 0
 
                 function getOriginalText() {
-                    return artItemsModel.modifiedArtworksCount > 1 ? qsTr("%1 modified items").arg(artItemsModel.modifiedArtworksCount) : (artItemsModel.modifiedArtworksCount === 1 ? qsTr("1 modified item") : qsTr("No modified items"))
+                    return artItemsModel.modifiedArtworksCount > 1 ?
+                                qsTr("%1 modified items").arg(artItemsModel.modifiedArtworksCount) :
+                                (artItemsModel.modifiedArtworksCount === 1 ? qsTr("1 modified item") :
+                                                                             qsTr("No modified items"))
                 }
 
                 MouseArea {

@@ -326,7 +326,9 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: childrenRect.width
                 property bool isHovered: selectAllMA.containsMouse || selectAllCheckbox.hovered || selectionCombobox.hovered
-                color: (enabled && (isHovered || selectionCombobox.isOpened)) ? (selectionCombobox.isOpened ? uiColors.inactiveControlColor : uiColors.defaultControlColor) : "transparent"
+                color: (enabled && (isHovered || selectionCombobox.isOpened)) ?
+                           (selectionCombobox.isOpened ? uiColors.inactiveControlColor :
+                                                         uiColors.defaultControlColor) : "transparent"
                 enabled: artworkRepository.artworksSourcesCount > 0
 
                 MouseArea {
@@ -508,7 +510,11 @@ Item {
                     width: 20
                     height: 20
                     anchors.centerIn: parent
-                    lineColor: enabled ? (searchTabMA.pressed ? uiColors.whiteColor : (searchTabMA.containsMouse ? uiColors.labelActiveForeground : uiColors.labelInactiveForeground)) : uiColors.selectedArtworkBackground
+                    lineColor: enabled ? (searchTabMA.pressed ? uiColors.whiteColor :
+                                                                (searchTabMA.containsMouse ?
+                                                                     uiColors.labelActiveForeground :
+                                                                     uiColors.labelInactiveForeground)) :
+                                         uiColors.selectedArtworkBackground
                     thickness: 2
 
                     CustomTooltip {
@@ -1769,7 +1775,9 @@ Item {
                                             StyledLink {
                                                 id: suggestLink
                                                 text: i18.n + qsTr("Suggest keywords")
-                                                property bool canBeShown: ((keywordscount < warningsModel.minKeywordsCount) && !removeDuplicatesText.canBeShown && !fixSpellingText.canBeShown) || (columnLayout.isWideForLinks)
+                                                property bool canBeShown: ((keywordscount < warningsModel.minKeywordsCount) &&
+                                                                           !removeDuplicatesText.canBeShown &&
+                                                                           !fixSpellingText.canBeShown) || (columnLayout.isWideForLinks)
                                                 visible: canBeShown
                                                 enabled: canBeShown
                                                 onClicked: { suggestKeywords(rowWrapper.getIndex()) }
@@ -1824,7 +1832,11 @@ Item {
 
                                                 StyledText {
                                                     id: moreLink
-                                                    color: enabled ? (moreMA.pressed ? uiColors.linkClickedColor : uiColors.artworkActiveColor) : (isActive ? uiColors.labelActiveForeground : uiColors.labelInactiveForeground)
+                                                    color: enabled ? (moreMA.pressed ?
+                                                                          uiColors.linkClickedColor :
+                                                                          uiColors.artworkActiveColor) :
+                                                                     (isActive ? uiColors.labelActiveForeground :
+                                                                                 uiColors.labelInactiveForeground)
                                                     text: i18.n + qsTr("More")
                                                     property bool isActive: true //rowWrapper.isHighlighted
                                                     anchors.verticalCenter: parent.verticalCenter

@@ -31,7 +31,6 @@ Item {
 
     Keys.onEscapePressed: closePopup()
 
-
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();
 

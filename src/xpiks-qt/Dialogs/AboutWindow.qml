@@ -80,7 +80,7 @@ ApplicationWindow {
                     wrapMode: TextEdit.Wrap
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
-                    text: i18.n + qsTr("The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE")
+                    /*ignorestyle*/text: i18.n + qsTr("The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE")
                 }
             }
         }
