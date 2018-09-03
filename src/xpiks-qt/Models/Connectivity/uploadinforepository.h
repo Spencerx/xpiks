@@ -109,6 +109,7 @@ namespace Models {
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
+        AutoComplete::StringsAutoCompleteModel &getStocksCompletionSource() { return m_StocksCompletionSource; }
         std::shared_ptr<UploadInfo> appendItem() { addItem(); return m_UploadInfos.back(); }
         std::vector<std::shared_ptr<UploadInfo> > &accessUploadInfos() { return m_UploadInfos; }
         Microstocks::StocksFtpListModel &accessStocksList() { return m_StocksFtpList; }
