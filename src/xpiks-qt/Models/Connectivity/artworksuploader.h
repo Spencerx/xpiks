@@ -108,7 +108,8 @@ namespace Models {
         Q_INVOKABLE bool needCreateArchives() const;
 
         Q_INVOKABLE QString getFtpName(const QString &stockAddress) const;
-        Q_INVOKABLE QObject *getUploadWatcher();
+        Q_INVOKABLE QObject *getUploadWatcherObject();
+        Q_INVOKABLE QObject *getUploadInfosObject();
 
         Q_INVOKABLE void resetModel();
         Q_INVOKABLE void clearModel();

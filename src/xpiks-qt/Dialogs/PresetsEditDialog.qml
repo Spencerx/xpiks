@@ -128,7 +128,6 @@ Item {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 width: 250
-                //enabled: !csvExportModel.isExporting
 
                 ListView {
                     id: presetNamesListView

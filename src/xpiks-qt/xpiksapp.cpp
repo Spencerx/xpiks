@@ -12,6 +12,7 @@
 #include <apisecretsstorage.h>
 #include <QQmlContext>
 #include <QQuickWindow>
+#include <QQmlEngine>
 #include <QScreen>
 #include <Encryption/aes-qt.h>
 #include <signal.h>
@@ -419,6 +420,18 @@ void XpiksApp::removeDirectory(int index) {
                      this, &XpiksApp::artworksAdded);
 
     m_CommandManager.processCommand(removeDirCommand);
+}
+
+QObject *XpiksApp::getArtworkUploaderObject() {
+    QObject *result = &m_ArtworksUploader;
+    QQmlEngine::setObjectOwnership(result, QQmlEngine::CppOwnership);
+    return result;
+}
+
+QObject *XpiksApp::getCsvExportModelObject() {
+    QObject *result = &m_CsvExportModel;
+    QQmlEngine::setObjectOwnership(result, QQmlEngine::CppOwnership);
+    return result;
 }
 
 int XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {

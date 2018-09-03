@@ -23,6 +23,7 @@ import "../Constants/UIConfig.js" as UIConfig
 Item {
     id: csvExportComponent
     anchors.fill: parent
+    property variant csvExportModel: xpiksApp.getCsvExportModelObject()
     property variant columnsModel: csvExportModel.getColumnsModel()
     property variant propertiesModel: columnsModel.getPropertiesList()
 

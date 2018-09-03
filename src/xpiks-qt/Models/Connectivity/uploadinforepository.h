@@ -76,7 +76,6 @@ namespace Models {
 
     public:
         int getInfosCount() const { return (int)m_UploadInfos.size(); }
-        AutoComplete::StringsAutoCompleteModel *getStocksCompletionSource() { return &m_StocksCompletionSource; }
 
     public:
         void initFromString(const QString &savedString);
@@ -91,11 +90,13 @@ namespace Models {
         Q_INVOKABLE QString getAgenciesWithMissingDetails();
         Q_INVOKABLE void updateProperties(int itemIndex);
         Q_INVOKABLE void setCurrentIndex(int index);
-
         Q_INVOKABLE void initializeAccounts(bool mpIsCorrectOrEmpty);
         Q_INVOKABLE void finalizeAccounts();
-
         Q_INVOKABLE bool isMasterPasswordCorrectOrEmpty() const { return !m_EmptyPasswordsMode; }
+        Q_INVOKABLE QObject *getStocksCompletionObject();
+#ifdef UI_TESTS
+        Q_INVOKABLE void clear();
+#endif
 
     public:
         void setEmptyPasswordsMode(bool mode) { m_EmptyPasswordsMode = mode; }

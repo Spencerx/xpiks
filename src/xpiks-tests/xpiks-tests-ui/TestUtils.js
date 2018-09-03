@@ -15,5 +15,10 @@ function keyboardEnterSomething(testCase) {
     return text
 }
 
-var smallSleepTime = 500;//200;
-var normalSleepTime = 800;//500;
+function clearEdit(editControl) {
+    // assigning .text directly breaks binding
+    editControl.remove(0, editControl.length)
+}
+
+var smallSleepTime = 200;
+var normalSleepTime = 500;

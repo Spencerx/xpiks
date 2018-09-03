@@ -52,7 +52,7 @@ Item {
         }
 
         function cleanup() {
-            keywordsEdit.remove(0, keywordsEdit.length)
+            TestUtils.clearEdit(keywordsEdit)
             presetsModel.cleanup()
             TestsHost.bump()
         }

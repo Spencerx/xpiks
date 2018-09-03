@@ -59,7 +59,7 @@ Item {
 
         function cleanup() {
             combinedArtworks.clearModel()
-            keywordsEdit.remove(0, keywordsEdit.length)
+            TestUtils.clearEdit(keywordsEdit)
             TestsHost.bump()
         }
 

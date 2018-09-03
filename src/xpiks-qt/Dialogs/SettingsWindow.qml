@@ -229,10 +229,6 @@ ApplicationWindow {
                     NumberAnimation { properties: "x,y"; duration: 230 }
                 }
 
-                onCurrentIndexChanged: {
-                    //csvExportModel.setCurrentItem(tabNamesListView.currentIndex)
-                }
-
                 delegate: Rectangle {
                     id: sourceWrapper
                     property variant myData: modelData

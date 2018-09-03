@@ -43,7 +43,7 @@ Item {
         }
 
         function cleanup() {
-            csvExportModel.clearModel()
+            exportDialog.csvExportModel.clearModel()
             TestsHost.bump()
         }
 

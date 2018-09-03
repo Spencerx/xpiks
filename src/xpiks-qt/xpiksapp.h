@@ -123,9 +123,11 @@ public:
     Q_INVOKABLE int addFiles(const QList<QUrl> &urls);
     Q_INVOKABLE int addDirectories(const QList<QUrl> &urls);
     Q_INVOKABLE int dropItems(const QList<QUrl> &urls);
+    Q_INVOKABLE void removeDirectory(int index);
 
 public:
-    Q_INVOKABLE void removeDirectory(int index);
+    Q_INVOKABLE QObject *getArtworkUploaderObject();
+    Q_INVOKABLE QObject *getCsvExportModelObject();
 
 protected:
     int doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags);

@@ -80,8 +80,7 @@ Item {
 
         function cleanup() {
             artworkProxy.clearModel()
-            // assigning .text directly breaks binding
-            keywordsEdit.remove(0, keywordsEdit.length)
+            TestUtils.clearEdit(keywordsEdit)
             TestsHost.bump()
         }
 

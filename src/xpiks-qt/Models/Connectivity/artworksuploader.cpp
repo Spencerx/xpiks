@@ -259,10 +259,15 @@ namespace Models {
         return result;
     }
 
-    QObject *ArtworksUploader::getUploadWatcher() {
-        auto *model = &m_UploadWatcher;
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
+    QObject *ArtworksUploader::getUploadWatcherObject() {
+        QObject *result = &m_UploadWatcher;
+        QQmlEngine::setObjectOwnership(result, QQmlEngine::CppOwnership);
+        return result;
+    }
 
-        return model;
+    QObject *ArtworksUploader::getUploadInfosObject() {
+        QObject *result = &m_UploadInfos;
+        QQmlEngine::setObjectOwnership(result, QQmlEngine::CppOwnership);
+        return result;
     }
 }

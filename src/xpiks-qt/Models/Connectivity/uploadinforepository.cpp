@@ -12,6 +12,7 @@
 #include "uploadinfo.h"
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QQmlEngine>
 #include <Encryption/secretsmanager.h>
 #include <Common/logging.h>
 #include <Helpers/asynccoordinator.h>
@@ -315,6 +316,22 @@ namespace Models {
 
         m_CurrentIndex = 0;
     }
+
+    QObject *UploadInfoRepository::getStocksCompletionObject() {
+        QObject *result = &m_StocksCompletionSource;
+        QQmlEngine::setObjectOwnership(result, QQmlEngine::CppOwnership);
+        return result;
+    }
+
+#ifdef UI_TESTS
+    void UploadInfoRepository::clear() {
+        beginResetModel();
+        {
+            m_UploadInfos.clear();
+        }
+        endResetModel();
+    }
+#endif
 
     void UploadInfoRepository::backupAndDropRealPasswords() {
         for (auto &info: m_UploadInfos) {
