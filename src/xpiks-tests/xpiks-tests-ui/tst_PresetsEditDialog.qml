@@ -87,7 +87,7 @@ Item {
             keyClick(Qt.Key_E)
             keyClick(Qt.Key_A)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             verify(typeof presetEditsDialog.autoCompleteBox !== "undefined")
 
@@ -95,13 +95,13 @@ Item {
             keyClick(Qt.Key_H)
             keyClick(Qt.Key_E)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_Down)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_Return)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             compare(presetsModel.getKeywordsString(0), "weather")
         }
@@ -116,13 +116,13 @@ Item {
             keyClick(Qt.Key_R)
             keyClick(Qt.Key_U)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             verify(typeof presetEditsDialog.autoCompleteBox !== "undefined")
 
             keyClick(Qt.Key_Backspace)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             verify(typeof presetEditsDialog.autoCompleteBox === "undefined")
         }
@@ -142,15 +142,15 @@ Item {
             keyClick(Qt.Key_A)
             keyClick(Qt.Key_C)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             verify(typeof presetEditsDialog.autoCompleteBox !== "undefined")
 
             keyClick(Qt.Key_Down)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_Return, Qt.ControlModifier)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             compare(presetsModel.getKeywordsString(0), "interface")
         }
@@ -170,13 +170,13 @@ Item {
             keyClick(Qt.Key_A)
             keyClick(Qt.Key_C)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_Down)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_Return)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             compare(keywordsEdit.text, "in space")
         }
@@ -204,12 +204,12 @@ Item {
             var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             var link = findChild(presetEditsDialog, "plainTextLink")
             mouseClick(link)
 
-            wait(TestUtils.normalSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             // hack to detect if plain text edit hasn't started
             keyClick(Qt.Key_Comma)
@@ -218,11 +218,11 @@ Item {
             keyClick(Qt.Key_Comma)
             var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_Enter, Qt.ControlModifier)
 
-            wait(TestUtils.normalSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             compare(presetsModel.getKeywordsString(0), testKeyword1 + ", " + testKeyword2)
         }
@@ -234,7 +234,7 @@ Item {
             var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             var repeater = findChild(editableTags, "repeater")
             var keywordWrapper = repeater.itemAt(0)
@@ -242,18 +242,18 @@ Item {
             compare(presetsModel.getKeywordsString(0), testKeyword1)
             mouseDoubleClick(keywordWrapper)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             for (var i = 0; i < testKeyword1.length; i++) {
                 keyClick(Qt.Key_Backspace)
             }
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Enter)
 
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             compare(presetsModel.getKeywordsString(0), testKeyword2)
         }

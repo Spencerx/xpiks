@@ -19,6 +19,3 @@ function clearEdit(editControl) {
     // assigning .text directly breaks binding
     editControl.remove(0, editControl.length)
 }
-
-var smallSleepTime = 200;
-var normalSleepTime = 500;

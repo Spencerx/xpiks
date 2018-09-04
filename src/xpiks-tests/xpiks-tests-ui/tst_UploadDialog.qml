@@ -74,7 +74,7 @@ Item {
                 keyClick(Qt.Key_Backspace)
             }
 
-            wait(TestUtils.normalSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             verify(typeof generalTab.autoCompleteBox !== "undefined")
 
@@ -86,10 +86,10 @@ Item {
             keyClick(Qt.Key_S)
 
             keyClick(Qt.Key_Down)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_Return)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             verify(typeof generalTab.autoCompleteBox === "undefined")
             compare(titleTextInput.text, "Shutterstock")
@@ -108,7 +108,7 @@ Item {
                 keyClick(Qt.Key_Backspace)
             }
 
-            wait(TestUtils.normalSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             verify(typeof generalTab.autoCompleteBox !== "undefined")
 
@@ -120,10 +120,10 @@ Item {
             keyClick(Qt.Key_E)
 
             keyClick(Qt.Key_Down)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_Return)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             verify(typeof generalTab.autoCompleteBox === "undefined")
             compare(titleTextInput.text, "Shutterstock")
@@ -142,7 +142,7 @@ Item {
                 keyClick(Qt.Key_Backspace)
             }
 
-            wait(TestUtils.normalSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             verify(typeof generalTab.autoCompleteBox !== "undefined")
 
@@ -152,7 +152,7 @@ Item {
             keyClick(Qt.Key_T)
 
             keyClick(Qt.Key_Tab)
-            wait(TestUtils.smallSleepTime)
+            wait(TestsHost.smallSleepTime)
 
             verify(typeof generalTab.autoCompleteBox === "undefined")
             verify(ftpAddressInput.activeFocus)

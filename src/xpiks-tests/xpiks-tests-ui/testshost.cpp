@@ -10,6 +10,22 @@ TestsHost::TestsHost(QObject *parent) :
 {
 }
 
+int TestsHost::getSmallSleepTime() const {
+#if defined(TRAVIS_CI) || defined(APPVEYOR)
+    return 500;
+#else
+    return 200;
+#endif
+}
+
+int TestsHost::getNormalSleepTime() const {
+#if defined(TRAVIS_CI) || defined(APPVEYOR)
+    return 800;
+#else
+    return 500;
+#endif
+}
+
 void TestsHost::qmlEngineCallback(QQmlEngine *engine) {
     m_XpiksApp->setupUI(engine->rootContext());
 }
