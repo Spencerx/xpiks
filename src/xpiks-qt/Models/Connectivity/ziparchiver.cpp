@@ -96,8 +96,10 @@ namespace Models {
         QList<QStringList> items;
 #endif
 
+#ifndef CORE_TESTS
         LOG_INFO << "Creating zip archives for" << items.length() << "item(s)";
         m_ArchiveCreator->setFuture(QtConcurrent::mapped(items, Helpers::zipFiles));
+#endif
     }
 
     void ZipArchiver::resetModel() {
