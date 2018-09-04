@@ -28,7 +28,7 @@ Item {
 
     TestCase {
         name: "ZipArchiver"
-        when: windowShown
+        when: windowShown && (loader.status == Loader.Ready)
         property var zipDialog: loader.item
 
         function initTestCase() {
@@ -36,6 +36,18 @@ Item {
 
         function cleanupTestCase() {
             TestsHost.cleanup()
+        }
+
+        function test_zipFakeItems() {
+            compare(zipDialog.zipArchiver.itemsCount, 5)
+
+            var zipButton = findChild(zipDialog, "importButton")
+            mouseClick(zipButton)
+
+            verify(zipDialog.zipArchiver.inProgress)
+            wait(200)
+            verify(!zipDialog.zipArchiver.inProgress)
+            verify(!zipDialog.zipArchiver.isError)
         }
     }
 }

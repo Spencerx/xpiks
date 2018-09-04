@@ -89,12 +89,15 @@ namespace Models {
         setHasErrors(false);
         emit startedProcessing();
 
+#if !defined(CORE_TESTS) && !defined(UI_TESTS)
         QList<QStringList> items = itemsWithSameName.values();
+#else
+        LOG_DEBUG << "Skipping real zipping";
+        QList<QStringList> items;
+#endif
 
         LOG_INFO << "Creating zip archives for" << items.length() << "item(s)";
-#ifndef CORE_TESTS
         m_ArchiveCreator->setFuture(QtConcurrent::mapped(items, Helpers::zipFiles));
-#endif
     }
 
     void ZipArchiver::resetModel() {

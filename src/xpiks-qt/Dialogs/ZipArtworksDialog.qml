@@ -40,6 +40,22 @@ Item {
         onRequestCloseWindow: {
             closePopup();
         }
+
+        onFinishedProcessing: {
+            importButton.text = i18.n + qsTr("Start Zipping")
+
+            if (immediateProcessing) {
+                if (typeof callbackObject !== "undefined") {
+                    callbackObject.afterZipped()
+                }
+
+                closePopup()
+            }
+
+            //if (!zipArchiver.isError) {
+            //    closePopup()
+            //}
+        }
     }
 
     PropertyAnimation { target: zipArtworksComponent; property: "opacity";
@@ -168,6 +184,7 @@ Item {
 
                     StyledButton {
                         id: importButton
+                        objectName: "importButton"
                         isDefault: true
                         width: 130
                         text: i18.n + qsTr("Start Zipping")
@@ -175,25 +192,6 @@ Item {
                         onClicked: {
                             text = i18.n + qsTr("Zipping...")
                             zipArchiver.archiveArtworks()
-                        }
-
-                        Connections {
-                            target: zipArchiver
-                            onFinishedProcessing: {
-                                importButton.text = i18.n + qsTr("Start Zipping")
-
-                                if (immediateProcessing) {
-                                    if (typeof callbackObject !== "undefined") {
-                                        callbackObject.afterZipped()
-                                    }
-
-                                    closePopup()
-                                }
-
-                                //if (!zipArchiver.isError) {
-                                //    closePopup()
-                                //}
-                            }
                         }
                     }
 
