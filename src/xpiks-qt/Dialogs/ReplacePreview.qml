@@ -14,6 +14,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
+import xpiks 1.0
 import "../Constants"
 import "../Common.js" as Common;
 import "../Components"
@@ -24,6 +25,7 @@ Item {
     id: replacePreviewComponent
     anchors.fill: parent
     property variant componentParent
+    property variant replaceModel: dispatcher.getCommandTarget(UICommand.FindAndReplaceInSelected)
     property bool isRestricted: false
 
     signal dialogDestruction();

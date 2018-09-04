@@ -79,40 +79,40 @@ namespace Commands {
                                      QMLExtensions::UICommandID::FixSpellingArtwork,
                                      Models::FilteredArtworksListModel);
 
-        SOURCE_TARGET_COMMAND(ShowDuplicatesForSingleCommand,
-                              QMLExtensions::UICommandID::ShowDuplicatesSingle,
-                              Models::ArtworkProxyModel,
-                              SpellCheck::DuplicatesReviewModel);
+        SOURCE_UI_TARGET_COMMAND(ShowDuplicatesForSingleCommand,
+                                 QMLExtensions::UICommandID::ShowDuplicatesSingle,
+                                 Models::ArtworkProxyModel,
+                                 SpellCheck::DuplicatesReviewModel);
 
-        SOURCE_TARGET_COMMAND(ShowDuplicatesForCombinedCommand,
-                              QMLExtensions::UICommandID::ShowDuplicatesCombined,
-                              Models::CombinedArtworksModel,
-                              SpellCheck::DuplicatesReviewModel);
+        SOURCE_UI_TARGET_COMMAND(ShowDuplicatesForCombinedCommand,
+                                 QMLExtensions::UICommandID::ShowDuplicatesCombined,
+                                 Models::CombinedArtworksModel,
+                                 SpellCheck::DuplicatesReviewModel);
 
-        SOURCE_TARGET_COMMAND(AcceptPresetCompletionForCombinedCommand,
-                              QMLExtensions::UICommandID::AcceptPresetCompletionForCombined,
-                              AutoComplete::ICompletionSource,
-                              Models::CombinedArtworksModel);
+        SOURCE_UI_TARGET_COMMAND(AcceptPresetCompletionForCombinedCommand,
+                                 QMLExtensions::UICommandID::AcceptPresetCompletionForCombined,
+                                 AutoComplete::ICompletionSource,
+                                 Models::CombinedArtworksModel);
 
-        SOURCE_TARGET_COMMAND(AcceptPresetCompletionForSingleCommand,
-                              QMLExtensions::UICommandID::AcceptPresetCompletionForSingle,
-                              AutoComplete::ICompletionSource,
-                              Models::ArtworkProxyModel);
+        SOURCE_UI_TARGET_COMMAND(AcceptPresetCompletionForSingleCommand,
+                                 QMLExtensions::UICommandID::AcceptPresetCompletionForSingle,
+                                 AutoComplete::ICompletionSource,
+                                 Models::ArtworkProxyModel);
 
-        SOURCE_TARGET_COMMAND(InitSuggestionForArtworkCommand,
-                              QMLExtensions::UICommandID::InitSuggestionArtwork,
-                              Models::FilteredArtworksListModel,
-                              Suggestion::KeywordsSuggestor);
+        SOURCE_UI_TARGET_COMMAND(InitSuggestionForArtworkCommand,
+                                 QMLExtensions::UICommandID::InitSuggestionArtwork,
+                                 Models::FilteredArtworksListModel,
+                                 Suggestion::KeywordsSuggestor);
 
-        SOURCE_TARGET_COMMAND(InitSuggestionForCombinedCommand,
-                              QMLExtensions::UICommandID::InitSuggestionCombined,
-                              Models::CombinedArtworksModel,
-                              Suggestion::KeywordsSuggestor);
+        SOURCE_UI_TARGET_COMMAND(InitSuggestionForCombinedCommand,
+                                 QMLExtensions::UICommandID::InitSuggestionCombined,
+                                 Models::CombinedArtworksModel,
+                                 Suggestion::KeywordsSuggestor);
 
-        SOURCE_TARGET_COMMAND(InitSuggestionForSingleCommand,
-                              QMLExtensions::UICommandID::InitSuggestionSingle,
-                              Models::ArtworkProxyModel,
-                              Suggestion::KeywordsSuggestor);
+        SOURCE_UI_TARGET_COMMAND(InitSuggestionForSingleCommand,
+                                 QMLExtensions::UICommandID::InitSuggestionSingle,
+                                 Models::ArtworkProxyModel,
+                                 Suggestion::KeywordsSuggestor);
     }
 }
 

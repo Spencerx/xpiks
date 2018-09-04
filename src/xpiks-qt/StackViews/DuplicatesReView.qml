@@ -25,6 +25,8 @@ Rectangle {
     color: uiColors.defaultDarkColor
     property bool wasLeftSideCollapsed
     property bool isRestricted: false
+    // duplicates target should be the same in combined and single view
+    property var duplicatesModel: dispatcher.getCommandTarget(UICommand.ShowDuplicatesSingle)
 
     Stack.onStatusChanged: {
         if (Stack.status == Stack.Active) {

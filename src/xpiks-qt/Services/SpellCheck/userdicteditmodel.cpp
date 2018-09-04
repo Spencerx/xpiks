@@ -9,6 +9,7 @@
  */
 
 #include "userdicteditmodel.h"
+#include <QQmlEngine>
 #include <Helpers/keywordshelpers.h>
 #include "userdictionary.h"
 
@@ -53,6 +54,12 @@ namespace SpellCheck {
         LOG_DEBUG << "#";
         m_BasicModel.clearModel();
         m_UserDictionary.clear();
+    }
+
+    QObject *UserDictEditModel::getBasicModelObject() {
+        QObject *item = getBasicMetadataModel();
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        return item;
     }
 
     void UserDictEditModel::saveUserDict() {

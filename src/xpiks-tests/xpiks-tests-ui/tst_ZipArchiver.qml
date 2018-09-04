@@ -15,14 +15,21 @@ Item {
         property bool leftSideCollapsed: false
     }
 
-    ZipArtworksDialog {
-        id: zipDialog
+    Loader {
+        id: loader
         anchors.fill: parent
+        asynchronous: true
+        focus: true
+
+        sourceComponent: ZipArtworksDialog {
+            anchors.fill: parent
+        }
     }
 
     TestCase {
         name: "ZipArchiver"
         when: windowShown
+        property var zipDialog: loader.item
 
         function initTestCase() {
         }

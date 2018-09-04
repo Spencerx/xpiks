@@ -12,7 +12,6 @@
 #define SPELLCHECKUSERDICT_H
 
 #include <QObject>
-#include <QQmlEngine>
 #include <Models/Editing/artworkproxybase.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Services/SpellCheck/spellcheckinfo.h>
@@ -43,12 +42,7 @@ namespace SpellCheck {
         Q_INVOKABLE void appendKeyword(const QString &keyword);
         Q_INVOKABLE void clearKeywords();
         Q_INVOKABLE void resetModel();
-        Q_INVOKABLE QObject *getBasicModel() {
-            QObject *item = getBasicMetadataModel();
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-
-            return item;
-        }
+        Q_INVOKABLE QObject *getBasicModelObject();
         Q_INVOKABLE void saveUserDict();
 
     protected:

@@ -11,6 +11,7 @@
 #ifndef SELECTEDARTWORKSCOMMANDS_H
 #define SELECTEDARTWORKSCOMMANDS_H
 
+#include <QObject>
 #include <memory>
 #include <Commands/Base/iuicommandtemplate.h>
 #include <QMLExtensions/uicommandid.h>
@@ -79,45 +80,45 @@ namespace Commands {
                                      QMLExtensions::UICommandID::FixSpellingInSelected,
                                      Artworks::ISelectedArtworksSource);
 
-        SOURCE_TARGET_COMMAND(EditSelectedCommand,
-                              QMLExtensions::UICommandID::EditSelectedArtworks,
-                              Artworks::ISelectedArtworksSource,
-                              Models::CombinedArtworksModel);
+        SOURCE_UI_TARGET_COMMAND(EditSelectedCommand,
+                                 QMLExtensions::UICommandID::EditSelectedArtworks,
+                                 Artworks::ISelectedArtworksSource,
+                                 Models::CombinedArtworksModel);
 
-        SOURCE_TARGET_COMMAND(ShowDuplicatesInSelectedCommand,
-                              QMLExtensions::UICommandID::ReviewDuplicatesInSelected,
-                              Artworks::ISelectedArtworksSource,
-                              SpellCheck::DuplicatesReviewModel);
+        SOURCE_UI_TARGET_COMMAND(ShowDuplicatesInSelectedCommand,
+                                 QMLExtensions::UICommandID::ReviewDuplicatesInSelected,
+                                 Artworks::ISelectedArtworksSource,
+                                 SpellCheck::DuplicatesReviewModel);
 
-        SOURCE_TARGET_COMMAND(WipeMetadataInSelectedCommand,
-                              QMLExtensions::UICommandID::WipeMetadataInSelected,
-                              Artworks::ISelectedArtworksSource,
-                              MetadataIO::MetadataIOCoordinator);
+        SOURCE_UI_TARGET_COMMAND(WipeMetadataInSelectedCommand,
+                                 QMLExtensions::UICommandID::WipeMetadataInSelected,
+                                 Artworks::ISelectedArtworksSource,
+                                 MetadataIO::MetadataIOCoordinator);
 
-        SOURCE_TARGET_COMMAND(ReimportMetadataForSelectedCommand,
-                              QMLExtensions::UICommandID::ReimportFromSelected,
-                              Artworks::ISelectedArtworksSource,
-                              MetadataIO::MetadataIOCoordinator);
+        SOURCE_UI_TARGET_COMMAND(ReimportMetadataForSelectedCommand,
+                                 QMLExtensions::UICommandID::ReimportFromSelected,
+                                 Artworks::ISelectedArtworksSource,
+                                 MetadataIO::MetadataIOCoordinator);
 
-        SOURCE_TARGET_COMMAND(ExportSelectedToCSVCommand,
-                              QMLExtensions::UICommandID::ExportSelectedToCSV,
-                              Artworks::ISelectedArtworksSource,
-                              MetadataIO::CsvExportModel);
+        SOURCE_UI_TARGET_COMMAND(ExportSelectedToCSVCommand,
+                                 QMLExtensions::UICommandID::ExportSelectedToCSV,
+                                 Artworks::ISelectedArtworksSource,
+                                 MetadataIO::CsvExportModel);
 
-        SOURCE_TARGET_COMMAND(FindAndReplaceInSelectedCommand,
-                              QMLExtensions::UICommandID::FindAndReplaceInSelected,
-                              Artworks::ISelectedArtworksSource,
-                              Models::FindAndReplaceModel);
+        SOURCE_UI_TARGET_COMMAND(FindAndReplaceInSelectedCommand,
+                                 QMLExtensions::UICommandID::FindAndReplaceInSelected,
+                                 Artworks::ISelectedArtworksSource,
+                                 Models::FindAndReplaceModel);
 
-        SOURCE_TARGET_COMMAND(UploadSelectedCommand,
-                              QMLExtensions::UICommandID::UploadSelected,
-                              Artworks::ISelectedArtworksSource,
-                              Models::ArtworksUploader);
+        SOURCE_UI_TARGET_COMMAND(UploadSelectedCommand,
+                                 QMLExtensions::UICommandID::UploadSelected,
+                                 Artworks::ISelectedArtworksSource,
+                                 Models::ArtworksUploader);
 
-        SOURCE_TARGET_COMMAND(ZipSelectedCommand,
-                              QMLExtensions::UICommandID::ZipSelected,
-                              Artworks::ISelectedArtworksSource,
-                              Models::ZipArchiver);
+        SOURCE_UI_TARGET_COMMAND(ZipSelectedCommand,
+                                 QMLExtensions::UICommandID::ZipSelected,
+                                 Artworks::ISelectedArtworksSource,
+                                 Models::ZipArchiver);
     }
 }
 

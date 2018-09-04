@@ -10,9 +10,11 @@
 
 #include "uicommanddispatcher.h"
 #include <QJSValue>
+#include <QQmlEngine>
 #include <Common/logging.h>
 #include <Commands/commandmanager.h>
 #include <Commands/Base/templateduicommand.h>
+#include <Commands/UI/sourcetargetcommand.h>
 
 namespace QMLExtensions {
     UICommandDispatcher::UICommandDispatcher(Commands::ICommandManager &commandManager, QObject *parent):
@@ -24,6 +26,25 @@ namespace QMLExtensions {
     void UICommandDispatcher::dispatch(int commandID, QJSValue const &value) {
         LOG_INFO << commandID;
         dispatchCommand(commandID, value.toVariant());
+    }
+
+    QObject *UICommandDispatcher::getCommandTarget(int commandID) {
+        LOG_INFO << commandID;
+        auto it = m_CommandsMap.find(commandID);
+        QObject *result = nullptr;
+        Q_ASSERT(it != m_CommandsMap.end());
+        if (it != m_CommandsMap.end()) {
+            auto targetSource = std::dynamic_pointer_cast<Commands::UI::IUICommandTargetSource>(it->second);
+            if (targetSource != nullptr) {
+                QObject *target = targetSource->getTargetObject();
+                Q_ASSERT(target != nullptr);
+                if (target != nullptr) {
+                    QQmlEngine::setObjectOwnership(target, QQmlEngine::CppOwnership);
+                    result = target;
+                }
+            }
+        }
+        return result;
     }
 
     void UICommandDispatcher::registerCommands(std::initializer_list<std::shared_ptr<Commands::IUICommandTemplate> > commands) {

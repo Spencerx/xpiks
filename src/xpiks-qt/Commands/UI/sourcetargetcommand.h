@@ -11,8 +11,16 @@
 #ifndef SOURCETARGETCOMMAND_H
 #define SOURCETARGETCOMMAND_H
 
+class QObject;
+
 namespace Commands {
     namespace UI {
+        class IUICommandTargetSource {
+        public:
+            virtual ~IUICommandTargetSource(){}
+            virtual QObject *getTargetObject() = 0;
+        };
+
 #define SOURCE_TARGET_COMMAND(ClassName, CommandID, Source, Target) \
         class ClassName: public IUICommandTemplate {\
         public:\
@@ -23,6 +31,24 @@ namespace Commands {
         public:\
             virtual int getCommandID() override { return CommandID; }\
             virtual void execute(QVariant const &value) override;\
+        private:\
+            Source &m_Source;\
+            Target &m_Target;\
+        };
+
+        // same as SOURCE_TARGET_COMMAND but adds IUICommandTargetSource
+        // interface so dispatcher could return command target for view
+#define SOURCE_UI_TARGET_COMMAND(ClassName, CommandID, Source, Target) \
+        class ClassName: public IUICommandTemplate, public IUICommandTargetSource {\
+        public:\
+            ClassName(Source &source, Target &target):\
+                m_Source(source),\
+                m_Target(target)\
+            {}\
+        public:\
+            virtual int getCommandID() override { return CommandID; }\
+            virtual void execute(QVariant const &value) override;\
+            virtual QObject *getTargetObject() override { return (QObject*)&m_Target; }\
         private:\
             Source &m_Source;\
             Target &m_Target;\

@@ -14,6 +14,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
+import xpiks 1.0
 import "../Constants"
 import "../Common.js" as Common;
 import "../Components"
@@ -24,7 +25,7 @@ Item {
     property bool immediateProcessing: false
     property var callbackObject
     anchors.fill: parent
-    property var zipArchiver: helpersWrapper.getZipArchiver();
+    property var zipArchiver: dispatcher.getCommandTarget(UICommand.ZipSelected)
 
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();

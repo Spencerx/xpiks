@@ -188,7 +188,6 @@ void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("i18", &m_LanguagesModel);
     context->setContextProperty("uiColors", &m_ColorsModel);
     context->setContextProperty("acSource", &m_KeywordsAutoCompleteModel);
-    context->setContextProperty("replaceModel", &m_ReplaceModel);
     context->setContextProperty("presetsModel", &m_PresetsModel);
     context->setContextProperty("filteredPresetsModel", &m_FilteredPresetsModel);
     context->setContextProperty("artworkProxy", &m_ArtworkProxyModel);
@@ -197,8 +196,6 @@ void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("quickBuffer", &m_QuickBuffer);
     context->setContextProperty("userDictEditModel", &m_UserDictEditModel);
     context->setContextProperty("switcher", &m_SwitcherModel);
-    context->setContextProperty("duplicatesModel", &m_DuplicatesModel);
-    context->setContextProperty("csvExportModel", &m_CsvExportModel);
     context->setContextProperty("presetsGroups", m_PresetsModel.getGroupsModel());
 
     context->setContextProperty("tabsModel", m_UIManager.getTabsModel());
@@ -420,18 +417,6 @@ void XpiksApp::removeDirectory(int index) {
                      this, &XpiksApp::artworksAdded);
 
     m_CommandManager.processCommand(removeDirCommand);
-}
-
-QObject *XpiksApp::getArtworkUploaderObject() {
-    QObject *result = &m_ArtworksUploader;
-    QQmlEngine::setObjectOwnership(result, QQmlEngine::CppOwnership);
-    return result;
-}
-
-QObject *XpiksApp::getCsvExportModelObject() {
-    QObject *result = &m_CsvExportModel;
-    QQmlEngine::setObjectOwnership(result, QQmlEngine::CppOwnership);
-    return result;
 }
 
 int XpiksApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, Common::AddFilesFlags flags) {
