@@ -100,7 +100,7 @@ Item {
     function editInPlainText(artworkIndex, filteredIndex) {
         var callbackObject = {
             onSuccess: function(text, spaceIsSeparator) {
-                artworksListModel.plainTextEdit(artworkIndex, text, spaceIsSeparator)
+                filteredArtworksListModel.plainTextEdit(artworkIndex, text, spaceIsSeparator)
             },
             onClose: function() {
                 filteredArtworksListModel.focusCurrentItemKeywords(filteredIndex)
@@ -154,7 +154,7 @@ Item {
                     text: name
                     onTriggered: {
                         var presetID = filteredPresetsModel.getOriginalID(index)
-                        artworksListModel.expandPreset(wordRightClickMenu.artworkIndex, wordRightClickMenu.keywordIndex, presetID);
+                        filteredArtworksListModel.expandPreset(wordRightClickMenu.artworkIndex, wordRightClickMenu.keywordIndex, presetID);
                     }
                 }
             }
@@ -188,7 +188,7 @@ Item {
                         delegate: MenuItem {
                             text: name
                             onTriggered: {
-                                artworksListModel.addPreset(presetsMenu.artworkIndex, groupMenu.groupModel.getOriginalID(index));
+                                filteredArtworksListModel.addPreset(presetsMenu.artworkIndex, groupMenu.groupModel.getOriginalID(index));
                             }
                         }
                     }
@@ -203,7 +203,7 @@ Item {
                 delegate: MenuItem {
                     text: name
                     onTriggered: {
-                        artworksListModel.addPreset(presetsMenu.artworkIndex, subMenu.defaultGroupModel.getOriginalID(index));
+                        filteredArtworksListModel.addPreset(presetsMenu.artworkIndex, subMenu.defaultGroupModel.getOriginalID(index));
                     }
                 }
             }
@@ -851,6 +851,7 @@ Item {
 
                 GridView {
                     id: artworksHost
+                    objectName: "artworksHost"
                     // TODO: UX refactoring // filteredArtworksListModel.selectedArtworksCount == 0
                     property bool isEditingAllowed: true
                     anchors.fill: parent
@@ -905,6 +906,9 @@ Item {
 
                     delegate: FocusScope {
                         id: wrappersScope
+                        objectName: "artworkDelegate"
+                        property int delegateIndex: index
+                        property variant delegateModel: model
                         width: applicationWindow.listLayout ? (mainScrollView.areScrollbarsVisible ? (parent.width - 5) : parent.width) : 208
                         height: applicationWindow.listLayout ? (artworksHost.defaultRowHeight + 80*(settingsModel.keywordSizeScale - 1.0)) : artworksHost.defaultRowHeight
 
@@ -914,12 +918,11 @@ Item {
 
                         Rectangle {
                             id: rowWrapper
-                            objectName: "artworkDelegate"
                             property bool isHighlighted: isItemSelected || wrappersScope.GridView.isCurrentItem
                             color: isHighlighted ? uiColors.selectedArtworkBackground : uiColors.artworkBackground
-                            property var artworkModel: filteredArtworksListModel.getArtworkMetadata(index)
-                            property var keywordsModel: filteredArtworksListModel.getBasicModel(index)
-                            property int delegateIndex: index
+                            property int delegateIndex: wrappersScope.delegateIndex
+                            property var artworkModel: filteredArtworksListModel.getArtworkObject(delegateIndex)
+                            property var keywordsModel: filteredArtworksListModel.getBasicModelObject(delegateIndex)
                             property bool isItemSelected: filteredArtworksListModel.s || isselected
                             anchors.fill: parent
 
@@ -1564,15 +1567,15 @@ Item {
                                             state: ""
 
                                             function removeKeyword(index) {
-                                                artworksListModel.removeKeywordAt(rowWrapper.getIndex(), index)
+                                                filteredArtworksListModel.removeKeywordAt(rowWrapper.getIndex(), index)
                                             }
 
                                             function removeLastKeyword() {
-                                                artworksListModel.removeLastKeyword(rowWrapper.getIndex())
+                                                filteredArtworksListModel.removeLastKeyword(rowWrapper.getIndex())
                                             }
 
                                             function appendKeyword(keyword) {
-                                                var added = artworksListModel.appendKeyword(rowWrapper.getIndex(), keyword)
+                                                var added = filteredArtworksListModel.appendKeyword(rowWrapper.getIndex(), keyword)
                                                 if (!added) {
                                                     keywordsWrapper.state = "blinked"
                                                     blinkTimer.start()
@@ -1580,11 +1583,11 @@ Item {
                                             }
 
                                             function pasteKeywords(keywords) {
-                                                artworksListModel.pasteKeywords(rowWrapper.getIndex(), keywords)
+                                                filteredArtworksListModel.pasteKeywords(rowWrapper.getIndex(), keywords)
                                             }
 
                                             function expandLastKeywordAsPreset() {
-                                                artworksListModel.expandLastAsPreset(rowWrapper.getIndex())
+                                                filteredArtworksListModel.expandLastAsPreset(rowWrapper.getIndex())
                                             }
 
                                             EditableTags {
@@ -1599,7 +1602,7 @@ Item {
 
                                                 function acceptCompletion(completionID) {
                                                     // TODO: move to signal
-                                                    var accepted = artworksListModel.acceptCompletionAsPreset(rowWrapper.getIndex(), completionID);
+                                                    var accepted = filteredArtworksListModel.acceptCompletionAsPreset(rowWrapper.getIndex(), completionID);
                                                     if (!accepted) {
                                                         var completion = acSource.getCompletion(completionID)
                                                         flv.editControl.acceptCompletion(completion)
@@ -1622,7 +1625,7 @@ Item {
                                                     onActionDoubleClicked: {
                                                         var callbackObject = {
                                                             onSuccess: function(replacement) {
-                                                                artworksListModel.editKeyword(rowWrapper.getIndex(), kw.delegateIndex, replacement)
+                                                                filteredArtworksListModel.editKeyword(rowWrapper.getIndex(), kw.delegateIndex, replacement)
                                                             },
                                                             onClose: function() {
                                                                 try {

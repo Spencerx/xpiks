@@ -436,7 +436,8 @@ DISTFILES += \
     ../../xpiks-qt/Components/ToolButton.qml \
     ../../xpiks-qt/Components/ZoomAmplifier.qml \
     ../../xpiks-qt/Constants/UIConfig.js \
-    TestUtils.js
+    TestUtils.js \
+    tst_MainGrid.qml
 
 HEADERS += \
     testshost.h \
