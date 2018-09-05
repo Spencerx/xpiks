@@ -1267,6 +1267,7 @@ Item {
 
                                     Item {
                                         id: columnLayout
+                                        objectName: "columnLayout"
                                         anchors.fill: parent
                                         anchors.leftMargin: 0
                                         anchors.rightMargin: 20

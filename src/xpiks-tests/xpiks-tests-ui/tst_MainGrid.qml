@@ -38,6 +38,9 @@ Item {
 
         function initTestCase() {
             artworksHost = findChild(mainGrid, "artworksHost")
+
+            var columnLayout = findChild(mainGrid, "columnLayout")
+            columnLayout.isWideEnough = true
         }
 
         function cleanupTestCase() {
@@ -67,13 +70,22 @@ Item {
             compare(artworkDelegate.delegateModel.keywordsstring, testKeyword)
         }
 
-        function test_editTitle() {
+        function test_editDescription() {
             var artworkDelegate = getDelegate(1)
             var descriptionInput = findChild(artworkDelegate, "descriptionTextInput")
             descriptionInput.forceActiveFocus()
             var testDescription = TestUtils.keyboardEnterSomething(testCase)
             wait(TestsHost.smallSleepTime)
             compare(artworkDelegate.delegateModel.description, testDescription)
+        }
+
+        function test_editTitle() {
+            var artworkDelegate = getDelegate(1)
+            var titleInput = findChild(artworkDelegate, "titleTextInput")
+            titleInput.forceActiveFocus()
+            var testTitle = TestUtils.keyboardEnterSomething(testCase)
+            wait(TestsHost.smallSleepTime)
+            compare(artworkDelegate.delegateModel.title, testTitle)
         }
     }
 }
