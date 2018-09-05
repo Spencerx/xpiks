@@ -71,7 +71,7 @@ Item {
                 }
             }
 
-            filteredArtworksListModel.setSelectedForZipping()
+            dispatcher.dispatch(UICommand.ZipSelected, {})
             Common.launchDialog("Dialogs/ZipArtworksDialog.qml",
                                 uploadArtworksComponent.componentParent,
                                 {
@@ -227,6 +227,7 @@ Item {
 
                     delegate: Rectangle {
                         id: sourceWrapper
+                        objectName: "sourceWrapper"
                         property variant myData: model
                         property int delegateIndex: index
                         property bool isCurrent: ListView.isCurrentItem
@@ -272,6 +273,7 @@ Item {
 
                             StyledCheckbox {
                                 id: itemCheckedCheckbox
+                                objectName: "itemCheckedCheckbox"
                                 isContrast: !sourceWrapper.isCurrent
                                 onClicked: editisselected = checked
                                 Component.onCompleted: itemCheckedCheckbox.checked = isselected
@@ -928,6 +930,7 @@ Item {
 
                     StyledLink {
                         id: failedArtworksStatus
+                        objectName: "failedArtworksStatus"
                         visible: !skipUploadItems && (uploadWatcher.failedImagesCount > 0)
                         enabled: uploadArtworksComponent.uploadEnabled && !skipUploadItems && (uploadWatcher.failedImagesCount > 0)
                         text: i18.n + getOriginalText()
@@ -953,6 +956,7 @@ Item {
 
                     StyledButton {
                         id: uploadButton
+                        objectName: "uploadButton"
                         enabled: uploadArtworksComponent.uploadEnabled && !skipUploadItems
                         text: i18.n + (artworksUploader.inProgress ? qsTr("Stop") : qsTr("Start Upload"))
                         width: 130

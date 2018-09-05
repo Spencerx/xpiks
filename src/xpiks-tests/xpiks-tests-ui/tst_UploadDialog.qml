@@ -28,6 +28,7 @@ Item {
     }
 
     TestCase {
+        id: testCase
         name: "UploadArtworks"
         when: windowShown && (loader.status == Loader.Ready)
         property var uploadDialog: loader.item
@@ -158,6 +159,49 @@ Item {
             verify(ftpAddressInput.activeFocus)
             compare(titleTextInput.text, "shut")
             compare(ftpAddressInput.length, 0)
+        }
+
+        function test_uploadToFakeHost() {
+            mouseClick(addExportPlanButton)
+            // leave title as "Untitled"
+            keyClick(Qt.Key_Tab)
+
+            // ftp address
+            keyClick(Qt.Key_F)
+            keyClick(Qt.Key_T)
+            keyClick(Qt.Key_P)
+            keyClick(Qt.Key_Period)
+            keyClick(Qt.Key_A)
+            keyClick(Qt.Key_B)
+            keyClick(Qt.Key_C)
+            keyClick(Qt.Key_D)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_F)
+            keyClick(Qt.Key_Period)
+            keyClick(Qt.Key_G)
+            keyClick(Qt.Key_H)
+
+            // username and password
+            keyClick(Qt.Key_Tab)
+            TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Tab)
+            TestUtils.keyboardEnterSomething(testCase)
+
+            // select host
+            var host = TestUtils.getDelegateInstanceAt(uploadHostsListView.contentItem,
+                                                       "sourceWrapper",
+                                                       0)
+            var checkbox = findChild(host, "itemCheckedCheckbox")
+            mouseClick(checkbox)
+
+            wait(TestsHost.smallSleepTime)
+
+            var button = findChild(uploadDialog, "uploadButton")
+            mouseClick(button)
+
+            var failedLink = findChild(uploadDialog, "failedArtworksStatus")
+            // 5 items with vectors, no zipping -> 10 items
+            tryCompare(failedLink, "text", "10 failed uploads", 10000)
         }
     }
 }

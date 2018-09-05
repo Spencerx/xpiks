@@ -19,3 +19,15 @@ function clearEdit(editControl) {
     // assigning .text directly breaks binding
     editControl.remove(0, editControl.length)
 }
+
+function getDelegateInstanceAt(contentItem, delegateObjectName, index) {
+    for(var i = 0; i < contentItem.children.length; ++i) {
+        var item = contentItem.children[i];
+        // We have to check for the specific objectName we gave our
+        // delegates above, since we also get some items that are not
+        // our delegates here.
+        if (item.objectName == delegateObjectName && item.delegateIndex == index)
+            return item;
+    }
+    return undefined;
+}

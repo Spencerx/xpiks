@@ -84,18 +84,6 @@ Item {
             TestsHost.bump()
         }
 
-        function getDelegateInstanceAt(contentItem, delegateObjectName, index) {
-            for(var i = 0; i < contentItem.children.length; ++i) {
-                var item = contentItem.children[i];
-                // We have to check for the specific objectName we gave our
-                // delegates above, since we also get some items that are not
-                // our delegates here.
-                if (item.objectName == delegateObjectName && item.delegateIndex == index)
-                    return item;
-            }
-            return undefined;
-        }
-
         function test_editTitleSimple() {
             titleEdit.forceActiveFocus()
             var testTitle = TestUtils.keyboardEnterSomething(testCase)
@@ -153,9 +141,9 @@ Item {
             compare(artworkProxy.description, testDescription)
             compare(artworkProxy.title, testTitle)
 
-            var nextItem = getDelegateInstanceAt(rosterListView.contentItem,
-                                                 "rosterDelegateItem",
-                                                 rosterListView.currentIndex + 1)
+            var nextItem = TestUtils.getDelegateInstanceAt(rosterListView.contentItem,
+                                                           "rosterDelegateItem",
+                                                           rosterListView.currentIndex + 1)
             mouseClick(nextItem)
 
             compare(rosterListView.currentIndex, 1)
@@ -163,9 +151,9 @@ Item {
             verify(artworkProxy.description !== testDescription)
             verify(artworkProxy.title !== testTitle)
 
-            var prevItem = getDelegateInstanceAt(rosterListView.contentItem,
-                                                 "rosterDelegateItem",
-                                                 rosterListView.currentIndex - 1)
+            var prevItem = TestUtils.getDelegateInstanceAt(rosterListView.contentItem,
+                                                           "rosterDelegateItem",
+                                                           rosterListView.currentIndex - 1)
             mouseClick(prevItem)
 
             compare(rosterListView.currentIndex, 0)

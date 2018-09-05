@@ -94,4 +94,5 @@ void XpiksUITestsApp::setupUITests() {
     m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::EditSelectedArtworks, QVariant());
     m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::ExportSelectedToCSV, QVariant());
     m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::ZipSelected, QVariant());
+    m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::UploadSelected, QVariant());
 }
