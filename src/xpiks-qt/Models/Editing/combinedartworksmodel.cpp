@@ -294,6 +294,7 @@ namespace Models {
 
 #ifdef UI_TESTS
     void CombinedArtworksModel::clearModel() {
+        LOG_DEBUG << "#";
         m_CommonKeywordsModel.clearModel();
         enableAllFields();
         emit descriptionChanged();

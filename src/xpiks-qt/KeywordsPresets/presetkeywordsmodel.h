@@ -63,7 +63,7 @@ namespace KeywordsPresets {
     public:
         void setName(int presetIndex, const QString &name);
         ID_t addItem(const QString &presetName, const QStringList &keywords);
-        Q_INVOKABLE void cleanup();
+        Q_INVOKABLE void clearModel();
         Q_INVOKABLE QString getKeywordsString(int presetIndex);
         bool removePresetByID(ID_t id);
 #endif

@@ -84,7 +84,7 @@ namespace Helpers {
     }
 
     void HelpersQmlWrapper::turnTaskbarProgressOn() {
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(UI_TESTS)
         if (!m_WinTaskbarButtonApplicable) { return; }
         LOG_DEBUG << "Turning on taskbar button in Windows";
         QWinTaskbarProgress *progress = m_TaskbarButton->progress();
@@ -95,7 +95,7 @@ namespace Helpers {
     }
 
     void HelpersQmlWrapper::setTaskbarProgress(double value) {
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(UI_TESTS)
         if (!m_WinTaskbarButtonApplicable) { return; }
         LOG_DEBUG << value;
         QWinTaskbarProgress *progress = m_TaskbarButton->progress();
@@ -106,7 +106,7 @@ namespace Helpers {
     }
 
     void HelpersQmlWrapper::turnTaskbarProgressOff() {
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(UI_TESTS)
         if (!m_WinTaskbarButtonApplicable) { return; }
         LOG_DEBUG << "Turning off taskbar button in Windows";
         QWinTaskbarProgress *progress = m_TaskbarButton->progress();
@@ -136,25 +136,6 @@ namespace Helpers {
 
     /*QObject *HelpersQmlWrapper::getLogsModel() {
         Models::LogsModel *model = m_CommandManager->getLogsModel();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
-    }
-
-    QObject *HelpersQmlWrapper::getFtpACList() {
-        auto *uploadInfos = m_CommandManager->getUploadInfoRepository();
-        AutoComplete::StringsAutoCompleteModel *model = uploadInfos->getStocksCompletionSource();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
-    }
-
-    QObject *HelpersQmlWrapper::getArtworkUploader() {
-        auto *model = m_CommandManager->getArtworkUploader();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
-    }
-
-    QObject *HelpersQmlWrapper::getZipArchiver() {
-        auto *model = m_CommandManager->getZipArchiver();
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
         return model;
     }

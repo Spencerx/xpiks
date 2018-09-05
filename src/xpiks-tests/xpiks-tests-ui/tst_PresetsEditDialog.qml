@@ -40,7 +40,7 @@ Item {
         property var editableTags
 
         function initTestCase() {
-            presetsModel.cleanup()
+            presetsModel.clearModel()
             presetNamesListView = findChild(presetEditsDialog, "presetNamesListView")
             keywordsEdit = findChild(presetEditsDialog, "nextTagTextInput")
             addPresetButton = findChild(presetEditsDialog, "addPresetButton")
@@ -48,13 +48,13 @@ Item {
         }
 
         function cleanupTestCase() {
-            TestsHost.cleanup()
+            TestsHost.cleanupTest()
         }
 
         function cleanup() {
             TestUtils.clearEdit(keywordsEdit)
-            presetsModel.cleanup()
-            TestsHost.bump()
+            presetsModel.clearModel()
+            TestsHost.cleanup()
         }
 
         function test_addKeywordBasic() {

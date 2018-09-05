@@ -90,7 +90,7 @@ namespace KeywordsPresets {
         return m_PresetsList.back()->m_ID;
     }
 
-    void PresetKeywordsModel::cleanup() {
+    void PresetKeywordsModel::clearModel() {
         LOG_DEBUG << "#";
         beginResetModel();
         {

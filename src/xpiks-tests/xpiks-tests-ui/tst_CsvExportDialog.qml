@@ -39,12 +39,11 @@ Item {
         }
 
         function cleanupTestCase() {
-            TestsHost.cleanup()
+            TestsHost.cleanupTest()
         }
 
         function cleanup() {
-            exportDialog.csvExportModel.clearModel()
-            TestsHost.bump()
+            TestsHost.cleanup()
         }
 
         function test_addNewRowClickAddsNewRow() {

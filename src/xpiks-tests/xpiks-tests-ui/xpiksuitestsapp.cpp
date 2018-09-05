@@ -51,13 +51,26 @@ void XpiksUITestsApp::waitInitialized() {
     });
 }
 
-void XpiksUITestsApp::cleanup() {
+void XpiksUITestsApp::cleanupTest() {
     LOG_DEBUG << "#";
     const QString exiftoolPath = m_SettingsModel.getExifToolPath();
     {
         cleanupModels();
     }
     m_SettingsModel.setExifToolPath(exiftoolPath);
+}
+
+void XpiksUITestsApp::cleanup() {
+    LOG_DEBUG << "#";
+    m_ArtworksListModel
+            .removeMetadata(Helpers::IndicesRanges(m_ArtworksListModel.getArtworksSize()),
+                            Common::ArtworkEditFlags::Clear | Common::ArtworkEditFlags::EditEverything)
+            ->execute();
+
+    m_ArtworkProxyModel.clearModel();
+    m_CombinedArtworksModel.clearModel();
+    m_CsvExportModel.clearModel();
+    m_UploadInfoRepository.clear();
 }
 
 bool XpiksUITestsApp::setupCommonFiles() {

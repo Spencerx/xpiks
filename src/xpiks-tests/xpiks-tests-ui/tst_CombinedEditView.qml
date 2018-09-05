@@ -54,13 +54,12 @@ Item {
         }
 
         function cleanupTestCase() {
-            TestsHost.cleanup()
+            TestsHost.cleanupTest()
         }
 
         function cleanup() {
-            combinedArtworks.clearModel()
             TestUtils.clearEdit(keywordsEdit)
-            TestsHost.bump()
+            TestsHost.cleanup()
         }
 
         function test_TabTopToBottom() {

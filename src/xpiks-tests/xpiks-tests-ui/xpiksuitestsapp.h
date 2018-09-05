@@ -11,6 +11,7 @@ public:
 public:
     virtual void initialize() override;
     void waitInitialized();
+    void cleanupTest();
     void cleanup();
     bool setupCommonFiles();
     void setupUITests();

@@ -739,7 +739,7 @@ void XpiksApp::cleanupModels() {
     m_UserDictionary.clear();
     m_SessionManager.clearSession();
     m_MetadataIOCoordinator.clear();
-    m_PresetsModel.cleanup();
+    m_PresetsModel.clearModel();
     m_SettingsModel.resetToDefault();
 
     m_CombinedArtworksModel.resetModel();

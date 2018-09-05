@@ -35,6 +35,10 @@ Item {
         }
 
         function cleanupTestCase() {
+            TestsHost.cleanupTest()
+        }
+
+        function cleanup() {
             TestsHost.cleanup()
         }
 

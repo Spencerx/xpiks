@@ -1346,6 +1346,7 @@ Item {
 
                                                 StyledTextEdit {
                                                     id: descriptionTextInput
+                                                    objectName: "descriptionTextInput"
                                                     width: paintedWidth > descriptionFlick.width ? paintedWidth : descriptionFlick.width
                                                     height: descriptionFlick.height
                                                     text: description
@@ -1458,6 +1459,7 @@ Item {
 
                                                 StyledTextEdit {
                                                     id: titleTextInput
+                                                    objectName: "titleTextInput"
                                                     width: paintedWidth > titleFlick.width ? paintedWidth : titleFlick.width
                                                     height: titleFlick.height
                                                     text: title

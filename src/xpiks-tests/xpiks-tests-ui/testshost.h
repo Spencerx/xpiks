@@ -30,8 +30,8 @@ public:
 
 public:
     Q_INVOKABLE void setup();
+    Q_INVOKABLE void cleanupTest();
     Q_INVOKABLE void cleanup();
-    Q_INVOKABLE void bump() { processPendingEvents(); }
 
 public:
     void setApp(XpiksUITestsApp *app);

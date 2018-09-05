@@ -41,13 +41,21 @@ Item {
         }
 
         function cleanupTestCase() {
+            TestsHost.cleanupTest()
+        }
+
+        function cleanup() {
             TestsHost.cleanup()
         }
 
+        function getDelegate(index) {
+            return TestUtils.getDelegateInstanceAt(artworksHost.contentItem,
+                                                   "artworkDelegate",
+                                                   index)
+        }
+
         function test_addKeywordBasic() {
-            var artworkDelegate = TestUtils.getDelegateInstanceAt(artworksHost.contentItem,
-                                                                  "artworkDelegate",
-                                                                  1)
+            var artworkDelegate = getDelegate(1)
             var keywordsEdit = findChild(artworkDelegate, "nextTagTextInput")
 
             keywordsEdit.forceActiveFocus()
@@ -57,6 +65,15 @@ Item {
             wait(TestsHost.smallSleepTime)
 
             compare(artworkDelegate.delegateModel.keywordsstring, testKeyword)
+        }
+
+        function test_editTitle() {
+            var artworkDelegate = getDelegate(1)
+            var descriptionInput = findChild(artworkDelegate, "descriptionTextInput")
+            descriptionInput.forceActiveFocus()
+            var testDescription = TestUtils.keyboardEnterSomething(testCase)
+            wait(TestsHost.smallSleepTime)
+            compare(artworkDelegate.delegateModel.description, testDescription)
         }
     }
 }

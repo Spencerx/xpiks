@@ -47,14 +47,13 @@ Item {
         }
 
         function cleanupTestCase() {
-            TestsHost.cleanup()
+            TestsHost.cleanupTest()
         }
 
         function cleanup() {
-            uploadDialog.uploadInfos.clear()
             TestUtils.clearEdit(titleTextInput)
             TestUtils.clearEdit(ftpAddressInput)
-            TestsHost.bump()
+            TestsHost.cleanup()
         }
 
         function test_addButtonClickAddsHost() {

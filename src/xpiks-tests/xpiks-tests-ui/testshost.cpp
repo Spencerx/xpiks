@@ -14,7 +14,7 @@ int TestsHost::getSmallSleepTime() const {
 #if defined(TRAVIS_CI) || defined(APPVEYOR)
     return 500;
 #else
-    return 200;
+    return 300;
 #endif
 }
 
@@ -22,7 +22,7 @@ int TestsHost::getNormalSleepTime() const {
 #if defined(TRAVIS_CI) || defined(APPVEYOR)
     return 800;
 #else
-    return 500;
+    return 600;
 #endif
 }
 
@@ -38,11 +38,17 @@ void TestsHost::setup() {
     processPendingEvents();
 }
 
-void TestsHost::cleanup() {
+void TestsHost::cleanupTest() {
     LOG_DEBUG << "#";
     m_XpiksApp->cleanup();
     m_IsReady = false;
     emit isReadyChanged();
+    processPendingEvents();
+}
+
+void TestsHost::cleanup() {
+    LOG_DEBUG << "#";
+    m_XpiksApp->cleanup();
     processPendingEvents();
 }
 
