@@ -670,7 +670,7 @@ Item {
                                 }
                             }
 
-                            Common.launchDialog("../Dialogs/PlainTextKeywordsDialog.qml",
+                            Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
                                                 componentParent,
                                                 {
                                                     callbackObject: callbackObject,

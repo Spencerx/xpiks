@@ -27,11 +27,7 @@ DEFINES += FAKE_WARNINGS
 
 STUB_PLUGIN_NAME = UiTestsStubPlugin
 
-DEFINES += PLUGIN_STUB_IMPORT_DIR="$$PWD"
-
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH += "$$PWD/$$STUB_PLUGIN_NAME"
-QML_IMPORT_PATH += "$$PWD/../../xpiks-qt/Dialogs"
+DEFINES += DIALOGS_DIR="$$PWD/../../xpiks-qt"
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

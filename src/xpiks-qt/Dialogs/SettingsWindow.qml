@@ -866,7 +866,7 @@ ApplicationWindow {
                             text: i18.n + qsTr("Manage user dictionary")
                             onClicked: {
                                 userDictEditModel.initializeModel()
-                                Common.launchDialog("../Dialogs/UserDictEditDialog.qml",
+                                Common.launchDialog("Dialogs/UserDictEditDialog.qml",
                                                     settingsWindow,
                                                     {
                                                         componentParent: settingsWindow

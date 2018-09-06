@@ -2,7 +2,6 @@ import QtQuick 2.0
 import QtTest 1.1
 import XpiksTests 1.0
 import "../../xpiks-qt/StackViews"
-import "UiTestsStubPlugin"
 import "TestUtils.js" as TestUtils
 
 Item {
@@ -65,7 +64,7 @@ Item {
                                                    index)
         }
 
-        /*function test_addKeywordBasic() {
+        function test_addKeywordBasic() {
             var artworkDelegate = getDelegate(1)
             var keywordsEdit = findChild(artworkDelegate, "nextTagTextInput")
 
@@ -289,7 +288,7 @@ Item {
 
             tryCompare(keywordWrapper, "hasDuplicate", true, 2000)
             compare(keywordWrapper.hasSpellCheckError, false)
-        }*/
+        }
 
         function test_doubleClickEditsKeyword() {
             var artworkDelegate = getDelegate(0)

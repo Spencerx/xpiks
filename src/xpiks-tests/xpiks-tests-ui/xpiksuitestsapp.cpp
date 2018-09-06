@@ -6,8 +6,9 @@
 #include "fakeinitartworkstemplate.h"
 #include <QMLExtensions/uicommandid.h>
 
-XpiksUITestsApp::XpiksUITestsApp(Common::ISystemEnvironment &environment):
-    XpiksApp(environment)
+XpiksUITestsApp::XpiksUITestsApp(Common::ISystemEnvironment &environment, const QStringList &importPaths):
+    XpiksApp(environment),
+    m_QmlImportPaths(importPaths)
 {
 }
 

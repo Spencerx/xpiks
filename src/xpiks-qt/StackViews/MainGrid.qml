@@ -72,14 +72,14 @@ Item {
 
         artworksListModel.initSuggestion(artworkIndex)
 
-        Common.launchDialog("../Dialogs/KeywordsSuggestion.qml",
+        Common.launchDialog("Dialogs/KeywordsSuggestion.qml",
                             componentParent,
                             {callbackObject: callbackObject});
     }
 
     function fixSpelling(artworkIndex) {
         artworksListModel.suggestCorrections(artworkIndex)
-        Common.launchDialog("../Dialogs/SpellCheckSuggestionsDialog.qml",
+        Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                             componentParent,
                             {})
     }
@@ -112,7 +112,7 @@ Item {
         var basicModel = filteredArtworksListModel.getBasicModel(filteredIndex)
         var keywordsString = filteredArtworksListModel.getKeywordsString(filteredIndex)
 
-        Common.launchDialog("../Dialogs/PlainTextKeywordsDialog.qml",
+        Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
                             componentParent,
                             {
                                 callbackObject: callbackObject,
@@ -1646,7 +1646,7 @@ Item {
                                                             }
                                                         }
 
-                                                        Common.launchDialog("../Dialogs/EditKeywordDialog.qml",
+                                                        Common.launchDialog("Dialogs/EditKeywordDialog.qml",
                                                                             componentParent,
                                                                             {
                                                                                 callbackObject: callbackObject,

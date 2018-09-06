@@ -1,8 +1,36 @@
 #include "testshost.h"
 #include <QQmlEngine>
 #include <QQmlContext>
+#include <QQuickImageProvider>
 #include "xpiksuitestsapp.h"
 #include <Common/logging.h>
+
+class FakeImageProvider: public QQuickImageProvider
+{
+public:
+    FakeImageProvider()
+        : QQuickImageProvider(QQuickImageProvider::Image)
+    {
+    }
+
+public:
+    virtual QImage requestImage(const QString &id, QSize *size, const QSize& requestedSize) override {
+        Q_UNUSED(id);
+        Q_UNUSED(requestedSize);
+
+        const int width = 300;
+        const int height = 300;
+
+        if (size) {
+            *size = QSize(width, height);
+        }
+
+        QImage img(width, height, QImage::Format_RGB888);
+        img.fill(Qt::black);
+
+        return img;
+    }
+};
 
 TestsHost::TestsHost(QObject *parent) :
     QObject(parent),
@@ -27,7 +55,14 @@ int TestsHost::getNormalSleepTime() const {
 }
 
 void TestsHost::qmlEngineCallback(QQmlEngine *engine) {
-    m_XpiksApp->setupUI(engine->rootContext());
+    m_XpiksApp->setupUI(engine->rootContext());    
+
+    engine->addImageProvider("cached", new FakeImageProvider());
+    engine->addImageProvider("global", new FakeImageProvider());
+
+    for (auto &path: m_XpiksApp->getQmlImportPaths()) {
+        engine->addImportPath(path);
+    }
 }
 
 void TestsHost::setup() {

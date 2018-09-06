@@ -20,6 +20,7 @@ static QObject *createTestsHostsQmlObject(QQmlEngine *engine, QJSEngine *scriptE
 
     TestsHost &host = TestsHost::getInstance();
     host.qmlEngineCallback(engine);
+    LOG_INFO << "QML import paths:" << engine->importPathList();
 
     QObject *object = &host;
     QQmlEngine::setObjectOwnership(object, QQmlEngine::CppOwnership);
@@ -76,13 +77,13 @@ void initCrashRecovery(Common::ISystemEnvironment &environment) {
 
 int main(int argc, char **argv) {
     // hack to overcome URI warning when loading Stubs plugin
-#if defined(Q_OS_WIN) || defined(Q_OS_MAC)
+/*#if defined(Q_OS_WIN) || defined(Q_OS_MAC)
     QString importPath = QString::fromLatin1(qgetenv(QML2_IMPORT_PATH_VAR));
     if (!importPath.isEmpty()) { importPath += ";"; }
     importPath += QDir::toNativeSeparators(STRINGIZE(PLUGIN_STUB_IMPORT_DIR));
     qDebug() << "Setting QML2_IMPORT_PATH path to" << importPath;
     qputenv(QML2_IMPORT_PATH_VAR, importPath.toUtf8());
-#endif
+#endif*/
 
     QGuiApplication app(argc, argv);
     Q_UNUSED(app);
@@ -103,7 +104,8 @@ int main(int argc, char **argv) {
     int result = 0;
     {
         QEventLoop eventLoop;
-        XpiksUITestsApp xpiksTests(uiTestsEnvironment);
+        XpiksUITestsApp xpiksTests(uiTestsEnvironment,
+                                   QStringList() << QDir::toNativeSeparators(STRINGIZE(DIALOGS_DIR)));
 
         xpiksTests.startLogging();
         xpiksTests.initialize();

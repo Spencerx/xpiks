@@ -6,7 +6,7 @@
 class XpiksUITestsApp: public XpiksApp
 {
 public:
-    XpiksUITestsApp(Common::ISystemEnvironment &environment);
+    XpiksUITestsApp(Common::ISystemEnvironment &environment, QStringList const &importPaths = QStringList());
 
 public:
     virtual void initialize() override;
@@ -17,7 +17,11 @@ public:
     void setupUITests();
 
 public:
+    QStringList const &getQmlImportPaths() const { return m_QmlImportPaths; }
     Models::ArtworkProxyModel &getArtworkProxyModel() { return m_ArtworkProxyModel; }
+
+private:
+    QStringList m_QmlImportPaths;
 };
 
 #endif // XPIKSUITESTSAPP_H
