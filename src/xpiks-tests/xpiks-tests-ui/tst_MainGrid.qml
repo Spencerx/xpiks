@@ -324,5 +324,36 @@ Item {
 
             compare(artworkDelegate.delegateModel.keywordsstring, testKeyword1[0] + testKeyword2)
         }
+
+        function test_editInPlainText() {
+            var artworkDelegate = getDelegate(0)
+            var keywordsEdit = findChild(artworkDelegate, "nextTagTextInput")
+            TestUtils.clearEdit(keywordsEdit)
+            keywordsEdit.forceActiveFocus()
+
+            var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            wait(TestsHost.normalSleepTime)
+
+            mainGrid.editInPlainText(0)
+
+            wait(TestsHost.normalSleepTime)
+
+            // hack to detect if plain text edit hasn't started
+            keyClick(Qt.Key_Comma)
+            keyClick(Qt.Key_Backspace)
+
+            keyClick(Qt.Key_Comma)
+            var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
+
+            wait(TestsHost.smallSleepTime)
+
+            keyClick(Qt.Key_Enter, Qt.ControlModifier)
+
+            wait(TestsHost.smallSleepTime)
+
+            compare(artworkDelegate.delegateModel.keywordsstring, testKeyword1 + ", " + testKeyword2)
+        }
     }
 }

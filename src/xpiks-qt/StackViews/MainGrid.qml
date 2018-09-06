@@ -98,19 +98,19 @@ Item {
         filterClearTimer.start()
     }
 
-    function editInPlainText(artworkIndex, filteredIndex) {
+    function editInPlainText(proxyIndex) {
         var callbackObject = {
             onSuccess: function(text, spaceIsSeparator) {
-                filteredArtworksListModel.plainTextEdit(artworkIndex, text, spaceIsSeparator)
+                filteredArtworksListModel.plainTextEdit(proxyIndex, text, spaceIsSeparator)
             },
             onClose: function() {
-                filteredArtworksListModel.focusCurrentItemKeywords(filteredIndex)
+                filteredArtworksListModel.focusCurrentItemKeywords(proxyIndex)
                 //flv.activateEdit()
             }
         }
 
-        var basicModel = filteredArtworksListModel.getBasicModel(filteredIndex)
-        var keywordsString = filteredArtworksListModel.getKeywordsString(filteredIndex)
+        var basicModel = filteredArtworksListModel.getBasicModelObject(proxyIndex)
+        var keywordsString = filteredArtworksListModel.getKeywordsString(proxyIndex)
 
         Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
                             componentParent,
@@ -269,7 +269,7 @@ Item {
         MenuItem {
             text: i18.n + qsTr("Edit in plain text")
             onTriggered: {
-                editInPlainText(keywordsMoreMenu.artworkIndex, keywordsMoreMenu.filteredIndex)
+                editInPlainText(keywordsMoreMenu.filteredIndex)
             }
         }
 
