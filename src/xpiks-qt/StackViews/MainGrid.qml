@@ -26,6 +26,7 @@ import "../Constants/UIConfig.js" as UIConfig
 Item {
     id: mainGridComponent
     property int myLeftMargin: applicationWindow.leftSideCollapsed ? 0 : 2
+    property variant componentParent
 
     Action {
         id: searchAction
@@ -72,14 +73,14 @@ Item {
         artworksListModel.initSuggestion(artworkIndex)
 
         Common.launchDialog("../Dialogs/KeywordsSuggestion.qml",
-                            applicationWindow,
+                            componentParent,
                             {callbackObject: callbackObject});
     }
 
     function fixSpelling(artworkIndex) {
         artworksListModel.suggestCorrections(artworkIndex)
         Common.launchDialog("../Dialogs/SpellCheckSuggestionsDialog.qml",
-                            applicationWindow,
+                            componentParent,
                             {})
     }
 
@@ -112,7 +113,7 @@ Item {
         var keywordsString = filteredArtworksListModel.getKeywordsString(filteredIndex)
 
         Common.launchDialog("../Dialogs/PlainTextKeywordsDialog.qml",
-                            applicationWindow,
+                            componentParent,
                             {
                                 callbackObject: callbackObject,
                                 keywordsText: keywordsString,
@@ -714,6 +715,7 @@ Item {
 
         Item {
             id: workflowHost
+            objectName: "workflowHost"
             anchors.fill: parent
             property var autoCompleteBox
 
@@ -1570,15 +1572,15 @@ Item {
                                             state: ""
 
                                             function removeKeyword(index) {
-                                                filteredArtworksListModel.removeKeywordAt(rowWrapper.getIndex(), index)
+                                                filteredArtworksListModel.removeKeywordAt(rowWrapper.delegateIndex, index)
                                             }
 
                                             function removeLastKeyword() {
-                                                filteredArtworksListModel.removeLastKeyword(rowWrapper.getIndex())
+                                                filteredArtworksListModel.removeLastKeyword(rowWrapper.delegateIndex)
                                             }
 
                                             function appendKeyword(keyword) {
-                                                var added = filteredArtworksListModel.appendKeyword(rowWrapper.getIndex(), keyword)
+                                                var added = filteredArtworksListModel.appendKeyword(rowWrapper.delegateIndex, keyword)
                                                 if (!added) {
                                                     keywordsWrapper.state = "blinked"
                                                     blinkTimer.start()
@@ -1586,15 +1588,16 @@ Item {
                                             }
 
                                             function pasteKeywords(keywords) {
-                                                filteredArtworksListModel.pasteKeywords(rowWrapper.getIndex(), keywords)
+                                                filteredArtworksListModel.pasteKeywords(rowWrapper.delegateIndex, keywords)
                                             }
 
                                             function expandLastKeywordAsPreset() {
-                                                filteredArtworksListModel.expandLastAsPreset(rowWrapper.getIndex())
+                                                filteredArtworksListModel.expandLastAsPreset(rowWrapper.delegateIndex)
                                             }
 
                                             EditableTags {
                                                 id: flv
+                                                objectName: "editableTags"
                                                 model: rowWrapper.keywordsModel
                                                 anchors.fill: parent
                                                 property int keywordHeight: uiManager.keywordHeight
@@ -1605,12 +1608,16 @@ Item {
 
                                                 function acceptCompletion(completionID) {
                                                     // TODO: move to signal
-                                                    var accepted = filteredArtworksListModel.acceptCompletionAsPreset(rowWrapper.getIndex(), completionID);
-                                                    if (!accepted) {
+                                                    if (acSource.isPreset(completionID)) {
+                                                        dispatcher.dispatch(UICommand.AcceptPresetCompletionForArtwork,
+                                                                            {
+                                                                                "index": rowWrapper.delegateIndex,
+                                                                                "completion": completionID
+                                                                            })
+                                                        flv.editControl.acceptCompletion('')
+                                                    } else {
                                                         var completion = acSource.getCompletion(completionID)
                                                         flv.editControl.acceptCompletion(completion)
-                                                    } else {
-                                                        flv.editControl.acceptCompletion('')
                                                     }
                                                 }
 
@@ -1628,7 +1635,7 @@ Item {
                                                     onActionDoubleClicked: {
                                                         var callbackObject = {
                                                             onSuccess: function(replacement) {
-                                                                filteredArtworksListModel.editKeyword(rowWrapper.getIndex(), kw.delegateIndex, replacement)
+                                                                filteredArtworksListModel.editKeyword(rowWrapper.delegateIndex, kw.delegateIndex, replacement)
                                                             },
                                                             onClose: function() {
                                                                 try {
@@ -1640,12 +1647,12 @@ Item {
                                                         }
 
                                                         Common.launchDialog("../Dialogs/EditKeywordDialog.qml",
-                                                                            applicationWindow,
+                                                                            componentParent,
                                                                             {
                                                                                 callbackObject: callbackObject,
                                                                                 previousKeyword: keyword,
                                                                                 keywordIndex: kw.delegateIndex,
-                                                                                keywordsModel: filteredArtworksListModel.getBasicModel(rowWrapper.delegateIndex)
+                                                                                keywordsModel: filteredArtworksListModel.getBasicModelObject(rowWrapper.delegateIndex)
                                                                             })
                                                     }
 
@@ -1690,8 +1697,11 @@ Item {
                                                 onCopyRequest: clipboard.setText(keywordsstring)
 
                                                 onCompletionRequested: {
-                                                    filteredArtworksListModel.generateCompletions(prefix,
-                                                                                              rowWrapper.delegateIndex)
+                                                    dispatcher.dispatch(UICommand.GenerateCompletionsForArtwork,
+                                                                        {
+                                                                            "prefix": prefix,
+                                                                            "index": rowWrapper.delegateIndex
+                                                                        })
                                                 }
 
                                                 onExpandLastAsPreset: {

@@ -31,6 +31,7 @@ namespace SpellCheck {
 
 namespace AutoComplete {
     class ICompletionSource;
+    class AutoCompleteService;
 }
 
 namespace Suggestion {
@@ -98,6 +99,16 @@ namespace Commands {
                                  QMLExtensions::UICommandID::AcceptPresetCompletionForSingle,
                                  AutoComplete::ICompletionSource,
                                  Models::ArtworkProxyModel);
+
+        SOURCE_UI_TARGET_COMMAND(AcceptPresetCompletionForArtworkCommand,
+                                 QMLExtensions::UICommandID::AcceptPresetCompletionForArtwork,
+                                 AutoComplete::ICompletionSource,
+                                 Models::FilteredArtworksListModel);
+
+        SOURCE_TARGET_COMMAND(GenerateCompletionsForArtworkCommand,
+                              QMLExtensions::UICommandID::GenerateCompletionsForArtwork,
+                              Models::FilteredArtworksListModel,
+                              AutoComplete::AutoCompleteService);
 
         SOURCE_UI_TARGET_COMMAND(InitSuggestionForArtworkCommand,
                                  QMLExtensions::UICommandID::InitSuggestionArtwork,

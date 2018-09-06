@@ -288,7 +288,7 @@ Item {
 
             wait(TestsHost.smallSleepTime)
 
-            for (var i = 0; i < testKeyword1.length; i++) {
+            for (var i = 0; i < testKeyword1.length - 1; i++) {
                 keyClick(Qt.Key_Backspace)
             }
 
@@ -299,7 +299,7 @@ Item {
 
             wait(TestsHost.smallSleepTime)
 
-            compare(combinedArtworks.getKeywordsString(), testKeyword2)
+            compare(combinedArtworks.getKeywordsString(), testKeyword1[0] + testKeyword2)
         }
 
         function test_editInPlainText() {

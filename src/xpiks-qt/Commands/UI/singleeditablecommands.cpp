@@ -16,6 +16,7 @@
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include <Services/SpellCheck/duplicatesreviewmodel.h>
 #include <Services/SpellCheck/spellsuggestionstarget.h>
+#include <Services/AutoComplete/autocompleteservice.h>
 #include <Suggestion/keywordssuggestor.h>
 
 namespace Commands {
@@ -87,6 +88,49 @@ namespace Commands {
 
             bool accepted = m_Target.acceptCompletionAsPreset(m_Source, completionID);
             LOG_INFO << "completion" << completionID << "accepted:" << accepted;
+        }
+
+        void AcceptPresetCompletionForArtworkCommand::execute(QVariant const &value) {
+            LOG_DEBUG << value;
+            int artworkIndex = 0;
+            int completionID = 0;
+
+            if (value.isValid()) {
+                auto map = value.toMap();
+                auto completionValue = map.value("completion", QVariant(0));
+                if (completionValue.type() == QVariant::Int) {
+                    completionID = completionValue.toInt();
+                }
+                auto indexValue = map.value("index", QVariant(0));
+                if (indexValue.type() == QVariant::Int) {
+                    artworkIndex = indexValue.toInt();
+                }
+            }
+
+            m_Target.acceptCompletionAsPreset(artworkIndex, m_Source, completionID);
+        }
+
+        void GenerateCompletionsForArtworkCommand::execute(QVariant const &value) {
+            LOG_DEBUG << value;
+            int artworkIndex = 0;
+            QString prefix;
+
+            if (value.isValid()) {
+                auto map = value.toMap();
+                auto prefixValue = map.value("prefix", QVariant(""));
+                if (prefixValue.type() == QVariant::String) {
+                    prefix = prefixValue.toString();
+                }
+                auto indexValue = map.value("index", QVariant(0));
+                if (indexValue.type() == QVariant::Int) {
+                    artworkIndex = indexValue.toInt();
+                }
+            }
+
+            std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+            if (m_Source.tryGetArtwork(artworkIndex, artwork)) {
+                m_Target.generateCompletions(prefix, artwork->getBasicModel());
+            }
         }
 
         void InitSuggestionForArtworkCommand::execute(QVariant const &value) {

@@ -47,9 +47,11 @@ namespace QMLExtensions {
             ShowDuplicatesCombined,
             AcceptPresetCompletionForCombined,
             AcceptPresetCompletionForSingle,
+            AcceptPresetCompletionForArtwork,
             InitSuggestionArtwork,
             InitSuggestionCombined,
-            InitSuggestionSingle
+            InitSuggestionSingle,
+            GenerateCompletionsForArtwork
         };
         Q_ENUMS(CommandID)
     };

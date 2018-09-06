@@ -1588,6 +1588,7 @@ ApplicationWindow {
             property bool areActionsAllowed: depth <= 1
 
             initialItem: MainGrid {
+                componentParent: applicationWindow
             }
 
             delegate: StackViewDelegate {

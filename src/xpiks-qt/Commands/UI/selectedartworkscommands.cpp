@@ -45,12 +45,12 @@ namespace Commands {
             bool overwrite = false;
 
             if (value.isValid()) {
-                auto hash = value.toHash();
-                auto overwriteValue = hash.value("overwrite", QVariant(false));
+                auto map = value.toMap();
+                auto overwriteValue = map.value("overwrite", QVariant(false));
                 if (overwriteValue.type() == QVariant::Bool) {
                     overwrite = overwriteValue.toBool();
                 }
-                auto backupValue = hash.value("backup", QVariant(false));
+                auto backupValue = map.value("backup", QVariant(false));
                 if (backupValue.type() == QVariant::Bool) {
                     useBackups = backupValue.toBool();
                 }
