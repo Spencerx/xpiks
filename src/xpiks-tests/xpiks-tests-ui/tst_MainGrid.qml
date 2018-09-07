@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtTest 1.1
 import XpiksTests 1.0
+import xpiks 1.0
 import "../../xpiks-qt/StackViews"
 import "TestUtils.js" as TestUtils
 
@@ -354,6 +355,77 @@ Item {
             wait(TestsHost.smallSleepTime)
 
             compare(artworkDelegate.delegateModel.keywordsstring, testKeyword1 + ", " + testKeyword2)
+        }
+
+        function test_tabToNextItem() {
+            var delegate1 = getDelegate(0)
+
+            var descriptionInput1 = findChild(delegate1, "descriptionTextInput")
+            descriptionInput1.forceActiveFocus()
+
+            // tab to title
+            keyClick(Qt.Key_Tab)
+            // tab to keywords
+            keyClick(Qt.Key_Tab)
+            // tab to next delegate
+            keyClick(Qt.Key_Tab)
+
+            var delegate2 = getDelegate(1)
+
+            var descriptionInput2 = findChild(delegate2, "descriptionTextInput")
+            verify(descriptionInput2.activeFocus)
+        }
+
+        function test_tabToPreviousItem() {
+            var delegate2 = getDelegate(1)
+
+            var keywordsInput2 = findChild(delegate2, "nextTagTextInput")
+            keywordsInput2.forceActiveFocus()
+
+            // tab to title
+            keyClick(Qt.Key_Backtab)
+            // tab to description
+            keyClick(Qt.Key_Backtab)
+            // tab to prev delegate
+            keyClick(Qt.Key_Backtab)
+
+            var delegate1 = getDelegate(0)
+
+            var keywordsInput1 = findChild(delegate1, "nextTagTextInput")
+            verify(keywordsInput1.activeFocus)
+        }
+
+        function test_fixSpelling() {
+            var artworkDelegate = getDelegate(0)
+            var keywordsEdit = findChild(artworkDelegate, "nextTagTextInput")
+            TestUtils.clearEdit(keywordsEdit)
+            keywordsEdit.forceActiveFocus()
+
+            keyClick(Qt.Key_T)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_P)
+
+            keyClick(Qt.Key_Comma)
+            wait(TestsHost.smallSleepTime)
+
+            var fixSpellingLink = findChild(artworkDelegate, "fixSpellingLink")
+            tryCompare(fixSpellingLink, "canBeShown", true, 3000)
+            wait(TestsHost.normalSleepTime)
+
+            mouseClick(fixSpellingLink)
+            wait(TestsHost.normalSleepTime)
+
+            var spellSuggestor = dispatcher.getCommandTarget(UICommand.FixSpellingArtwork)
+            spellSuggestor.selectSomething()
+            spellSuggestor.submitCorrections()
+
+            // hack to detect if the dialog wasn't shown
+            keyClick(Qt.Key_Backspace)
+
+            // close the dialog
+            keyClick(Qt.Key_Escape)
+
+            compare(artworkDelegate.delegateModel.keywordsstring, "pet")
         }
     }
 }

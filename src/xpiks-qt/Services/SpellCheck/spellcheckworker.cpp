@@ -139,6 +139,7 @@ namespace SpellCheck {
 
         if (!neededSuggestions) {
             const size_t size = queryItems.size();
+            Q_ASSERT(size > 0);
             for (size_t i = 0; i < size; ++i) {
                 auto &queryItem = queryItems.at(i);
                 bool isOk = true;

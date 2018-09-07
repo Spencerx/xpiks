@@ -77,8 +77,8 @@ Item {
                             {callbackObject: callbackObject});
     }
 
-    function fixSpelling(artworkIndex) {
-        artworksListModel.suggestCorrections(artworkIndex)
+    function fixSpelling(proxyIndex) {
+        dispatcher.dispatch(UICommand.FixSpellingArtwork, proxyIndex)
         Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                             componentParent,
                             {})
@@ -233,7 +233,7 @@ Item {
             text: i18.n + qsTr("Fix spelling")
             enabled: keywordsMoreMenu.hasSpellingErrors
             onTriggered: {
-                fixSpelling(keywordsMoreMenu.artworkIndex)
+                fixSpelling(keywordsMoreMenu.filteredIndex)
             }
         }
 
@@ -1754,12 +1754,13 @@ Item {
 
                                             StyledLink {
                                                 id: fixSpellingText
+                                                objectName: "fixSpellingLink"
                                                 text: i18.n + qsTr("Fix spelling")
                                                 property bool canBeShown: rowWrapper.keywordsModel ? rowWrapper.keywordsModel.hasAnySpellingError : false
                                                 enabled: canBeShown
                                                 visible: canBeShown
                                                 isActive: true //rowWrapper.isHighlighted
-                                                onClicked: { fixSpelling(rowWrapper.getIndex()) }
+                                                onClicked: { fixSpelling(rowWrapper.delegateIndex) }
                                             }
 
                                             StyledText {

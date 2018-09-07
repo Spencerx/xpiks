@@ -309,7 +309,7 @@ namespace Artworks {
     bool BasicMetadataModel::isEmpty() {
         bool isEmpty = BasicKeywordsModel::isEmpty();
 
-        if (!isEmpty) {
+        if (isEmpty) {
             QReadLocker readDescriptionLock(&m_DescriptionLock);
             Q_UNUSED(readDescriptionLock);
             isEmpty = m_Description.trimmed().isEmpty();

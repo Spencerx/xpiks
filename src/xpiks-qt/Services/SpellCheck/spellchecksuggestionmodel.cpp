@@ -177,6 +177,15 @@ namespace SpellCheck {
         }
     }
 
+#if defined(UI_TESTS)
+    void SpellCheckSuggestionModel::selectSomething() {
+        LOG_DEBUG << "#";
+        for (auto &suggestion: m_SuggestionsList) {
+            suggestion->setReplacementIndex(0);
+        }
+    }
+#endif
+
     void SpellCheckSuggestionModel::setupModel(const std::shared_ptr<ISpellSuggestionsTarget> &target, Common::SpellCheckFlags flags) {
         LOG_DEBUG << "#";
         m_SpellSuggestionsTarget = target;

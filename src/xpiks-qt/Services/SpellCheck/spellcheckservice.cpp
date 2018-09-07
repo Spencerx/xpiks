@@ -110,10 +110,14 @@ namespace SpellCheck {
         };
 
         for (auto &item: items) {
-            spellCheckItems.push_back(
-                        std::shared_ptr<SpellCheckItem>(
-                            new SpellCheckItem(item, flags, m_AnalysisFlagsProvider.getFlags()),
-                            deleter));
+            if (item->getBasicModel().isEmpty()) { continue; }
+            std::shared_ptr<SpellCheckItem> spellCheckItem(
+                        new SpellCheckItem(item, flags, m_AnalysisFlagsProvider.getFlags()),
+                        deleter);
+            Q_ASSERT(!spellCheckItem->getQueries().empty());
+            if (!spellCheckItem->getQueries().empty()) {
+                spellCheckItems.push_back(spellCheckItem);
+            }
         }
 
         auto batchID = m_SpellCheckWorker->submitItems(spellCheckItems);
@@ -124,6 +128,7 @@ namespace SpellCheck {
     void SpellCheckService::submitItem(const std::shared_ptr<Artworks::IBasicModelSource> &item, Common::SpellCheckFlags flags) {
         if (m_SpellCheckWorker == NULL) { return; }
         if (m_IsStopped) { return; }
+        if (item->getBasicModel().isEmpty()) { return; }
 
         Q_ASSERT(item != nullptr);
 
@@ -134,6 +139,7 @@ namespace SpellCheck {
             spi->disconnect();
             spi->deleteLater();
         });
+        Q_ASSERT(!spellCheckItem->getQueries().empty());
         m_SpellCheckWorker->submitItem(spellCheckItem);
     }
 

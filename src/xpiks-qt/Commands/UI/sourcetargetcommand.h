@@ -55,7 +55,7 @@ namespace Commands {
         };
 
 #define FIX_ARTWORK_SPELLING_COMMAND(ClassName, CommandID, Source)\
-    class ClassName: public IUICommandTemplate {\
+    class ClassName: public IUICommandTemplate, public IUICommandTargetSource {\
     public:\
         ClassName(Source &source,\
                   Services::IArtworksUpdater &artworksUpdater,\
@@ -69,6 +69,7 @@ namespace Commands {
     public:\
         virtual int getCommandID() override { return CommandID; }\
         virtual void execute(const QVariant &value) override;\
+        virtual QObject *getTargetObject() override { return (QObject*)&m_SpellSuggestionsModel; }\
     private:\
         Source &m_Source;\
         Services::IArtworksUpdater &m_ArtworksUpdater;\

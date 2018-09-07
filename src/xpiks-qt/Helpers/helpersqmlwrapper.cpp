@@ -156,12 +156,6 @@ namespace Helpers {
         auto *model = m_CommandManager->getUploadInfoRepository();
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
         return model;
-    }
-
-    QObject *HelpersQmlWrapper::getSpellCheckSuggestionsModel() {
-        auto *model = m_CommandManager->getSpellSuggestionsModel();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
     }*/
 
     void HelpersQmlWrapper::revealFile(const QString &path) {
