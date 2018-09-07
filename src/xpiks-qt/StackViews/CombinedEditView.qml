@@ -92,7 +92,7 @@ Rectangle {
     }
 
     function fixSpelling() {
-        combinedArtworks.suggestCorrections()
+        dispatcher.dispatch(UICommand.FixSpellingCombined, {})
         Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                             componentParent,
                             {})
@@ -1089,6 +1089,7 @@ Rectangle {
 
                         StyledLink {
                             id: fixSpellingLink
+                            objectName: "fixSpellingLink"
                             text: i18.n + qsTr("Fix spelling")
                             property bool canBeShown: {
                                 return keywordsWrapper.keywordsModel ?

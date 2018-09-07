@@ -140,7 +140,7 @@ Rectangle {
     }
 
     function fixSpelling() {
-        artworkProxy.suggestCorrections()
+        dispatcher.dispatch(UICommand.FixSpellingSingle, {})
         Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                             componentParent,
                             {})
@@ -1178,6 +1178,7 @@ Rectangle {
 
                             StyledLink {
                                 id: fixSpellingLink
+                                objectName: "fixSpellingLink"
                                 text: i18.n + qsTr("Fix spelling")
                                 property bool canBeShown: {
                                     return artworkEditComponent.keywordsModel ?

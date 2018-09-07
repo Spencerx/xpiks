@@ -396,5 +396,35 @@ Item {
 
             compare(artworkProxy.getKeywordsString(), testKeyword1 + ", " + testKeyword2)
         }
+
+        function test_fixSpelling() {
+            keywordsEdit.forceActiveFocus()
+
+            keyClick(Qt.Key_T)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_P)
+
+            keyClick(Qt.Key_Comma)
+            wait(TestsHost.smallSleepTime)
+
+            var fixSpellingLink = findChild(artworkEditView, "fixSpellingLink")
+            tryCompare(fixSpellingLink, "canBeShown", true, 3000)
+            wait(TestsHost.normalSleepTime)
+
+            mouseClick(fixSpellingLink)
+            wait(TestsHost.normalSleepTime)
+
+            var spellSuggestor = dispatcher.getCommandTarget(UICommand.FixSpellingArtwork)
+            spellSuggestor.selectSomething()
+            spellSuggestor.submitCorrections()
+
+            // hack to detect if the dialog wasn't shown
+            keyClick(Qt.Key_Backspace)
+
+            // close the dialog
+            keyClick(Qt.Key_Escape)
+
+            compare(artworkProxy.getKeywordsString(), "pet")
+        }
     }
 }

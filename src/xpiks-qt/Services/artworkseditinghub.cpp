@@ -44,9 +44,12 @@ namespace Services {
 
     void ArtworksEditingHub::inspectItem(const std::shared_ptr<Artworks::IBasicModelSource> &item) {
         LOG_DEBUG << "#";
-        if (isSpellCheckAvailable()) {
+        const bool spellCheckAvailable = isSpellCheckAvailable();
+        if (spellCheckAvailable) {
             m_SpellCheckService.submitItem(item, Common::SpellCheckFlags::All);
-        } else {
+        }
+
+        if (!spellCheckAvailable || item->getBasicModel().isEmpty()) {
             auto artwork = std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(item);
             if (artwork != nullptr) {
                 m_WarningsService.submitItem(artwork);
@@ -56,24 +59,31 @@ namespace Services {
 
     void ArtworksEditingHub::inspectItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items) {
         LOG_INFO << items.size() << "items";
-        if (isSpellCheckAvailable()) {
+        const bool spellCheckAvailable = isSpellCheckAvailable();
+        if (spellCheckAvailable) {
             m_SpellCheckService.submitItems(items, Common::SpellCheckFlags::All);
-        } else {
-            if (!items.empty() &&
-                    (std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(items.front()) != nullptr)) {
-                using ArtworkPtr = std::shared_ptr<Artworks::ArtworkMetadata>;
-                using SourcePtr = std::shared_ptr<Artworks::IBasicModelSource>;
-                m_WarningsService.submitItems(
-                            Helpers::map<SourcePtr, ArtworkPtr>(items,
-                                                                [](const SourcePtr &src) {
-                    return std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(src);
-                }));
-            }
+        }
+
+        if (!items.empty() &&
+                (std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(items.front()) != nullptr)) {
+            using ArtworkPtr = std::shared_ptr<Artworks::ArtworkMetadata>;
+            using SourcePtr = std::shared_ptr<Artworks::IBasicModelSource>;
+            m_WarningsService.submitItems(
+                        Helpers::filterMap<SourcePtr, ArtworkPtr>(
+                            items,
+                            [&spellCheckAvailable](const SourcePtr &src) {
+                return (!spellCheckAvailable) || (src->getBasicModel().isEmpty());
+            },
+            [](const SourcePtr &src) {
+                return std::dynamic_pointer_cast<Artworks::ArtworkMetadata>(src);
+            }));
         }
     }
 
     void ArtworksEditingHub::inspectItems(const Artworks::ArtworksSnapshot &snapshot) {
-        if (isSpellCheckAvailable()) {
+        const bool spellCheckAvailable = isSpellCheckAvailable();
+
+        if (spellCheckAvailable) {
             using ArtworkPtr = std::shared_ptr<Artworks::ArtworkMetadata>;
             using SourcePtr = std::shared_ptr<Artworks::IBasicModelSource>;
             m_SpellCheckService.submitItems(
@@ -82,7 +92,9 @@ namespace Services {
                 return std::dynamic_pointer_cast<Artworks::IBasicModelSource>(src);
             }),
                         Common::SpellCheckFlags::All);
-        } else {
+        }
+
+        {
             m_WarningsService.submitItems(snapshot);
         }
     }

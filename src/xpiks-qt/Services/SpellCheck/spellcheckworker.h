@@ -80,7 +80,7 @@ namespace SpellCheck {
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
-        int getSuggestionsCount() const { return m_Suggestions.size(); }
+        int getSuggestionsCount() const { return (int)m_Suggestions.size(); }
         void clearSuggestions();
 #endif
 
