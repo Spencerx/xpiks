@@ -33,8 +33,7 @@ public:
 };
 
 TestsHost::TestsHost(QObject *parent) :
-    QObject(parent),
-    m_IsReady(false)
+    QObject(parent)
 {
 }
 
@@ -68,16 +67,12 @@ void TestsHost::qmlEngineCallback(QQmlEngine *engine) {
 void TestsHost::setup() {
     LOG_DEBUG << "#";
     m_XpiksApp->setupUITests();
-    m_IsReady = true;
-    emit isReadyChanged();
     processPendingEvents();
 }
 
 void TestsHost::cleanupTest() {
     LOG_DEBUG << "#";
-    m_XpiksApp->cleanup();
-    m_IsReady = false;
-    emit isReadyChanged();
+    m_XpiksApp->cleanupTest();
     processPendingEvents();
 }
 

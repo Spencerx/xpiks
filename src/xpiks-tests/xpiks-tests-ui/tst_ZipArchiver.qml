@@ -49,7 +49,7 @@ Item {
             mouseClick(zipButton)
 
             verify(zipDialog.zipArchiver.inProgress)
-            wait(200)
+            wait(TestsHost.normalSleepTime)
             verify(!zipDialog.zipArchiver.inProgress)
             verify(!zipDialog.zipArchiver.isError)
         }

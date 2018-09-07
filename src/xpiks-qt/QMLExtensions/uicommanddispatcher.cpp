@@ -43,6 +43,8 @@ namespace QMLExtensions {
                     result = target;
                 }
             }
+        } else {
+            LOG_WARNING << "Command" << commandID << "not found";
         }
         return result;
     }
