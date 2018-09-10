@@ -67,7 +67,7 @@ Item {
                                                    index)
         }
 
-       /* function test_addKeywordBasic() {
+        function test_addKeywordBasic() {
             var artworkDelegate = getDelegate(1)
             var keywordsEdit = findChild(artworkDelegate, "nextTagTextInput")
 
@@ -435,7 +435,7 @@ Item {
             keyClick(Qt.Key_Escape)
 
             compare(artworkDelegate.delegateModel.keywordsstring, "pet")
-        }*/
+        }
 
         function test_filterText() {
             verify(artworksHost.count > 1)
@@ -454,7 +454,7 @@ Item {
             var searchButton = findChild(mainGrid, "searchButton")
             mouseClick(searchButton)
 
-            wait(TestsHost.smallSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             compare(artworksHost.count, 1)
         }

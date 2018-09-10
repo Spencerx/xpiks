@@ -414,7 +414,7 @@ Item {
             // wait for finding suggestions
             wait(TestsHost.normalSleepTime)
 
-            var fixSpellingLink = findChild(artworkDelegate, "fixSpellingLink")
+            var fixSpellingLink = findChild(artworkEditView, "fixSpellingLink")
             tryCompare(fixSpellingLink, "canBeShown", true, 1000)
 
             mouseClick(fixSpellingLink)
