@@ -58,7 +58,6 @@ Item {
 
         function cleanup() {
             TestsHost.cleanup()
-            filteredArtworksListModel.searchTerm = "x:image"
         }
 
         function getDelegate(index) {
@@ -438,6 +437,7 @@ Item {
         }
 
         function test_filterText() {
+            var originalFilterText = filteredArtworksListModel.searchTerm
             verify(artworksHost.count > 1)
 
             var artworkDelegate = getDelegate(0)
@@ -457,6 +457,9 @@ Item {
             wait(TestsHost.normalSleepTime)
 
             compare(artworksHost.count, 1)
+
+            filteredArtworksListModel.searchTerm = originalFilterText
+            wait(TestsHost.normalSleepTime)
         }
     }
 }
