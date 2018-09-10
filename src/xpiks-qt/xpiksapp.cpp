@@ -686,7 +686,10 @@ void XpiksApp::registerUICommands() {
                     m_FilteredArtworksListModel, m_AutoCompleteService),
 
                     std::make_shared<Commands::UI::AcceptPresetCompletionForArtworkCommand>(
-                    m_KeywordsAutoCompleteModel.getCompletionsSource(), m_FilteredArtworksListModel)
+                    m_KeywordsAutoCompleteModel.getCompletionsSource(), m_FilteredArtworksListModel),
+
+                    std::make_shared<Commands::UI::SelectFilteredArtworksCommand>(
+                    m_FilteredArtworksListModel)
                 });
 }
 

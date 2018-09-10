@@ -12,6 +12,7 @@
 #include <Models/settingsmodel.h>
 #include <Encryption/secretsmanager.h>
 #include <Models/Artworks/artworkslistmodel.h>
+#include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Services/AutoComplete/autocompleteservice.h>
 
 namespace Commands {
@@ -21,6 +22,16 @@ namespace Commands {
             if (value.isValid()) {
                 if (value.type() == QVariant::String) {
                     result = value.toString();
+                }
+            }
+            return result;
+        }
+
+        int convertToInt(QVariant const &value, int defaultValue = 0) {
+            int result = defaultValue;
+            if (value.isValid()) {
+                if (value.type() == QVariant::Int) {
+                    result = value.toInt();
                 }
             }
             return result;
@@ -40,6 +51,25 @@ namespace Commands {
             QString prefix = convertToString(value);
             LOG_DEBUG << prefix;
             m_AutoCompleteService.generateCompletions(prefix);
+        }
+
+        void SelectFilteredArtworksCommand::execute(const QVariant &value) {
+            LOG_DEBUG << value;
+            int selectionIndex = convertToInt(value, -1);
+
+            // selected index of combobox in the MainGrid.qml
+            Models::FilteredArtworksListModel::SelectionType selectionType;
+            switch (selectionIndex) {
+                case 0: selectionType = Models::FilteredArtworksListModel::SelectAll;
+                case 1: selectionType = Models::FilteredArtworksListModel::SelectNone;
+                case 2: selectionType = Models::FilteredArtworksListModel::SelectModified;
+                case 3: selectionType = Models::FilteredArtworksListModel::SelectImages;
+                case 4: selectionType = Models::FilteredArtworksListModel::SelectVectors;
+                case 5: selectionType = Models::FilteredArtworksListModel::SelectVideos;
+                default: selectionType = Models::FilteredArtworksListModel::DontSelect;
+            }
+
+            m_FilteredArtworksList.selectArtworksEx(selectionType);
         }
     }
 }

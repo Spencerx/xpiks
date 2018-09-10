@@ -194,46 +194,41 @@ namespace Models {
         return index;
     }
 
-    void FilteredArtworksListModel::selectArtworksEx(int comboboxSelectionIndex) {
+    void FilteredArtworksListModel::selectArtworksEx(SelectionType selectionType) {
+        LOG_DEBUG << selectionType;
         const bool isSelected = true;
         const bool unselectFirst = true;
 
-        switch(comboboxSelectionIndex) {
-        case 0: {
-            // select All
+        switch(selectionType) {
+        case SelectAll: {
             this->selectFilteredArtworks();
             break;
         }
-        case 1: {
-            // select None
+        case SelectNone: {
             this->unselectFilteredArtworks();
             break;
         }
-        case 2: {
-            // select Modified
+        case SelectModified: {
             this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
                 return artwork->isModified();
             }, isSelected, unselectFirst);
             break;
         }
-        case 3: {
-            // select Images
+        case SelectImages: {
             this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
                 auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
                 return (image != nullptr) ? !image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
             break;
         }
-        case 4: {
-            // select Vectors
+        case SelectVectors: {
             this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
                 auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
                 return (image != nullptr) ? image->hasVectorAttached() : false;
             }, isSelected, unselectFirst);
             break;
         }
-        case 5: {
-            // select Videos
+        case SelectVideos: {
             this->setFilteredItemsSelectedEx([](ArtworkItem const &artwork) {
                 return std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork) != nullptr;
             }, isSelected, unselectFirst);

@@ -53,10 +53,12 @@ Item {
 
         function cleanupTestCase() {
             TestsHost.cleanupTest()
+            filteredArtworksListModel.searchTerm = ''
         }
 
         function cleanup() {
             TestsHost.cleanup()
+            filteredArtworksListModel.searchTerm = "x:image"
         }
 
         function getDelegate(index) {
@@ -65,7 +67,7 @@ Item {
                                                    index)
         }
 
-        function test_addKeywordBasic() {
+       /* function test_addKeywordBasic() {
             var artworkDelegate = getDelegate(1)
             var keywordsEdit = findChild(artworkDelegate, "nextTagTextInput")
 
@@ -433,6 +435,28 @@ Item {
             keyClick(Qt.Key_Escape)
 
             compare(artworkDelegate.delegateModel.keywordsstring, "pet")
+        }*/
+
+        function test_filterText() {
+            verify(artworksHost.count > 1)
+
+            var artworkDelegate = getDelegate(0)
+            var keywordsEdit = findChild(artworkDelegate, "nextTagTextInput")
+            TestUtils.clearEdit(keywordsEdit)
+            keywordsEdit.forceActiveFocus()
+
+            var keyword = TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            var filterTextInput = findChild(mainGrid, "filterTextInput")
+            filterTextInput.text = filterTextInput.text + ' ' + keyword
+
+            var searchButton = findChild(mainGrid, "searchButton")
+            mouseClick(searchButton)
+
+            wait(TestsHost.smallSleepTime)
+
+            compare(artworksHost.count, 1)
         }
     }
 }

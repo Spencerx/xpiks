@@ -33,3 +33,7 @@ void Mocks::FilesCollectionMock::setFromFullDirectory() {
         file.m_IsPartOfFullDirectory = true;
     }
 }
+
+void Mocks::FilesCollectionMock::add(const Filesystem::ArtworkFile &file) {
+    m_Files.push_back(file);
+}

@@ -55,6 +55,17 @@ namespace Models {
         using ArtworkItem = std::shared_ptr<Artworks::ArtworkMetadata>;
 
     public:
+        enum SelectionType {
+            DontSelect,
+            SelectAll,
+            SelectNone,
+            SelectModified,
+            SelectImages,
+            SelectVectors,
+            SelectVideos
+        };
+
+    public:
         FilteredArtworksListModel(ArtworksListModel &artworksListModel,
                                   Commands::ICommandManager &commandManager,
                                   KeywordsPresets::IPresetsManager &presetsManager,
@@ -101,7 +112,7 @@ namespace Models {
         Q_INVOKABLE bool areSelectedArtworksSaved();
         Q_INVOKABLE int getModifiedSelectedCount(bool overwriteAll=false);
         Q_INVOKABLE int findSelectedItemIndex() const;
-        Q_INVOKABLE void selectArtworksEx(int comboboxSelectionIndex);
+        void selectArtworksEx(SelectionType selectionType);
 
     public:
         // ui actions

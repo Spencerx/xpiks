@@ -375,7 +375,7 @@ Item {
                     dropDownWidth: 120
                     showColorSign: false
                     showHeader: false
-                    globalParent: globalHost
+                    globalParent: componentParent
                     arrowBackground: "transparent"
                     arrowDisabledBackground: "transparent"
                     dockLeft: true
@@ -394,7 +394,7 @@ Item {
                         i18.n + qsTr("Videos", "select")]
 
                     onComboItemSelected: {
-                        filteredArtworksListModel.selectArtworksEx(index)
+                        dispatcher.dispatch(UICommand.SelectFilteredArtworks, index)
                     }
                 }
             }
@@ -645,6 +645,7 @@ Item {
 
             StyledTextInput {
                 id: filterText
+                objectName: "filterTextInput"
                 width: parent.width - 50
                 height: UIConfig.textInputHeight
                 clip: true
@@ -694,6 +695,7 @@ Item {
 
         StyledBlackButton {
             id: searchButton
+            objectName: "searchButton"
             anchors.left: filterRect.right
             anchors.leftMargin: 20
             anchors.verticalCenter: parent.verticalCenter

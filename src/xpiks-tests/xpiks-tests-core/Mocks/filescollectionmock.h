@@ -25,6 +25,7 @@ namespace Mocks {
 
     public:
         void setFromFullDirectory();
+        void add(Filesystem::ArtworkFile const &file);
 
         // IFilesCollection interface
     public:

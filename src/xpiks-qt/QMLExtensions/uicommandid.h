@@ -27,6 +27,7 @@ namespace QMLExtensions {
             SetMasterPassword,
             RemoveUnavailableFiles,
             GenerateCompletions,
+            SelectFilteredArtworks,
             // -------------------
             EditSelectedArtworks,
             FixSpellingInSelected,

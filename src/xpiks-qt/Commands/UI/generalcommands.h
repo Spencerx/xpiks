@@ -18,6 +18,7 @@
 namespace Models {
     class SettingsModel;
     class ArtworksListModel;
+    class FilteredArtworksListModel;
 }
 
 namespace Encryption {
@@ -64,6 +65,22 @@ namespace Commands {
 
         private:
             AutoComplete::AutoCompleteService &m_AutoCompleteService;
+        };
+
+        class SelectFilteredArtworksCommand: public IUICommandTemplate {
+        public:
+            SelectFilteredArtworksCommand(Models::FilteredArtworksListModel &filteredArtworksList):
+                m_FilteredArtworksList(filteredArtworksList)
+            {
+            }
+
+            // IUICommandTemplate interface
+        public:
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::SelectFilteredArtworks; }
+            virtual void execute(const QVariant &value) override;
+
+        private:
+            Models::FilteredArtworksListModel &m_FilteredArtworksList;
         };
     }
 }

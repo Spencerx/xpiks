@@ -2,16 +2,17 @@
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artworksrepositorymock.h"
+#include "Mocks/coretestsenvironment.h"
+#include "Mocks/filescollectionmock.h"
+#include <UndoRedo/undoredomanager.h>
+#include <KeywordsPresets/presetkeywordsmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Models/Artworks/artworksrepository.h>
-#include <UndoRedo/undoredomanager.h>
 #include <Models/Connectivity/ziparchiver.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
 #include <Models/Session/recentdirectoriesmodel.h>
 #include <Models/settingsmodel.h>
-#include "Mocks/coretestsenvironment.h"
 
-#define DECLARE_MODELS_AND_GENERATE(count)\
+#define DECLARE_MODELS \
     Mocks::CoreTestsEnvironment environment;\
     UndoRedo::UndoRedoManager undoRedoManager;\
     Mocks::CommandManagerMock commandManager(undoRedoManager);\
@@ -24,7 +25,10 @@
     settingsModel.setSearchUsingAnd(false);\
     KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
     Models::FilteredArtworksListModel filteredItemsModel(\
-    artworksListModel, commandManager, keywordsPresets, settingsModel);\
+    artworksListModel, commandManager, keywordsPresets, settingsModel);
+
+#define DECLARE_MODELS_AND_GENERATE(count)\
+    DECLARE_MODELS\
     artworksListModel.generateAndAddArtworks(count);
 
 void FilteredModelTests::invertSelectionForEmptyTest(){
@@ -457,4 +461,16 @@ void FilteredModelTests::clearEmptyKeywordsMarksModifiedTest() {
 
     filteredItemsModel.clearKeywords(0);
     QVERIFY(!artwork->isModified());
+}
+
+void FilteredModelTests::selectArtworksTest() {
+    DECLARE_MODELS;
+
+    Mocks::FilesCollectionMock files;
+    files.add({"image.jpg", Filesystem::ArtworkFileType::Image});
+    files.add({"vector.jpg", Filesystem::ArtworkFileType::Image});
+    files.add({"vector.eps", Filesystem::ArtworkFileType::Vector});
+    files.add({"video.mp4", Filesystem::ArtworkFileType::Video});
+
+    artworksListModel.addFiles(files, Common::AddFilesFlags::None);
 }

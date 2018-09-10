@@ -32,6 +32,7 @@ private slots:
     void filterDescriptionAndKeywordsTest();
     void filterTitleAndKeywordsTest();
     void clearEmptyKeywordsMarksModifiedTest();
+    void selectArtworksTest();
 };
 
 #endif // FILTEREDMODELTESTS_H
