@@ -265,7 +265,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Helpers/helpersqmlwrapper.cpp \
     ../../xpiks-qt/Services/SpellCheck/metadataduplicates.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.cpp \
-    ../../xpiks-qt/Services/artworkseditinghub.cpp
+    ../../xpiks-qt/Services/artworkseditinghub.cpp \
+    ../../xpiks-qt/Helpers/uihelpers.cpp
 
 RESOURCES +=
 
@@ -603,7 +604,8 @@ HEADERS += \
     ../../xpiks-qt/Services/SpellCheck/ispellsuggestionstarget.h \
     ../../xpiks-qt/Services/SpellCheck/metadataduplicates.h \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.h \
-    ../../xpiks-qt/Services/artworkseditinghub.h
+    ../../xpiks-qt/Services/artworkseditinghub.h \
+    ../../xpiks-qt/Helpers/uihelpers.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

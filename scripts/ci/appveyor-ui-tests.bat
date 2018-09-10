@@ -8,10 +8,6 @@ set mode=%1
 
 if "%mode%" == "build" (
     echo "Building UI tests..."
-    pushd src\xpiks-tests\ui-tests-stubs
-    qmake "CONFIG+=%configuration% appveyor" ui-tests-stubs.pro
-    nmake.exe || goto :error
-    popd
 
     pushd src\xpiks-tests\xpiks-tests-ui
     qmake "CONFIG+=%configuration% appveyor" xpiks-tests-ui.pro

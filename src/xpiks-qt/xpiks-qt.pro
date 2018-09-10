@@ -215,7 +215,8 @@ SOURCES += main.cpp \
     Commands/Files/removeselectedfilescommand.cpp \
     Services/SpellCheck/metadataduplicates.cpp \
     Services/SpellCheck/spellsuggestionstarget.cpp \
-    Services/SpellCheck/spellcheckinfo.cpp
+    Services/SpellCheck/spellcheckinfo.cpp \
+    Helpers/uihelpers.cpp
 
 RESOURCES += qml.qrc
 
@@ -530,7 +531,8 @@ HEADERS += \
     Services/SpellCheck/ispellcheckservice.h \
     Artworks/ibasicmodelsource.h \
     Services/SpellCheck/spellcheckinfo.h \
-    Artworks/basicmodelsource.h
+    Artworks/basicmodelsource.h \
+    Helpers/uihelpers.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

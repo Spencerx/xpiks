@@ -18,19 +18,10 @@
 #include <Services/SpellCheck/spellsuggestionstarget.h>
 #include <Services/AutoComplete/autocompleteservice.h>
 #include <Suggestion/keywordssuggestor.h>
+#include <Helpers/uihelpers.h>
 
 namespace Commands {
     namespace UI {
-        int convertToInt(QVariant const &value, int defaultValue = 0) {
-            int result = defaultValue;
-            if (value.isValid()) {
-                if (value.type() == QVariant::Int) {
-                    result = value.toInt();
-                }
-            }
-            return result;
-        }
-
         void FixSpellingInBasicModelCommand::execute(const QVariant &) {
             LOG_DEBUG << m_CommandID;
             auto &basicMetadataModel = dynamic_cast<Artworks::BasicMetadataModel&>(m_BasicModelSource.getBasicModel());
@@ -51,7 +42,7 @@ namespace Commands {
 
         void FixSpellingForArtworkCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
-            int index = convertToInt(value, -1);
+            int index = Helpers::convertToInt(value, -1);
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;
             if (m_Source.tryGetArtwork(index, artwork)) {
                 Artworks::ArtworksSnapshot snapshot({artwork});
@@ -76,7 +67,7 @@ namespace Commands {
 
         void AcceptPresetCompletionForCombinedCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
-            int completionID = convertToInt(value, 0);
+            int completionID = Helpers::convertToInt(value, 0);
 
             bool accepted = m_Target.acceptCompletionAsPreset(m_Source, completionID);
             LOG_INFO << "completion" << completionID << "accepted:" << accepted;
@@ -84,7 +75,7 @@ namespace Commands {
 
         void AcceptPresetCompletionForSingleCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
-            int completionID = convertToInt(value, 0);
+            int completionID = Helpers::convertToInt(value, 0);
 
             bool accepted = m_Target.acceptCompletionAsPreset(m_Source, completionID);
             LOG_INFO << "completion" << completionID << "accepted:" << accepted;
@@ -135,7 +126,7 @@ namespace Commands {
 
         void InitSuggestionForArtworkCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
-            int index = convertToInt(value, -1);
+            int index = Helpers::convertToInt(value, -1);
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;
             if (m_Source.tryGetArtwork(index, artwork)) {
                 m_Target.setExistingKeywords(artwork->getKeywords().toSet());

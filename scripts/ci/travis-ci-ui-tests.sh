@@ -4,11 +4,6 @@ echo "--------------------"
 echo "Building UI tests..."
 echo "--------------------"
 
-pushd src/xpiks-tests/ui-tests-stubs
-qmake "CONFIG+=debug travis-ci" ui-tests-stubs.pro
-make
-popd
-
 pushd src/xpiks-tests/xpiks-tests-ui
 
 qmake "CONFIG+=debug travis-ci" xpiks-tests-ui.pro

@@ -26,19 +26,10 @@
 #include <Models/Editing/findandreplacemodel.h>
 #include <Models/Connectivity/artworksuploader.h>
 #include <Models/Connectivity/ziparchiver.h>
+#include <Helpers/uihelpers.h>
 
 namespace Commands {
     namespace UI {
-        bool convertToBool(QVariant const &value, bool defaultValue = false) {
-            bool result = defaultValue;
-            if (value.isValid()) {
-                if (value.type() == QVariant::Bool) {
-                    result = value.toBool();
-                }
-            }
-            return result;
-        }
-
         void SaveSelectedCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             bool useBackups = false;
@@ -83,7 +74,7 @@ namespace Commands {
 
         void WipeMetadataInSelectedCommand::execute(QVariant const &value) {
             LOG_DEBUG << value.toString();
-            bool useBackups = convertToBool(value, false);
+            bool useBackups = Helpers::convertToBool(value, false);
             m_Target.wipeAllMetadataExifTool(m_Source.getSelectedArtworks(), useBackups);
         }
 

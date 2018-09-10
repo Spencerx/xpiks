@@ -14,29 +14,10 @@
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Services/AutoComplete/autocompleteservice.h>
+#include <Helpers/uihelpers.h>
 
 namespace Commands {
     namespace UI {
-        QString convertToString(QVariant const &value, QString const &defaultValue = QString("")) {
-            QString result = defaultValue;
-            if (value.isValid()) {
-                if (value.type() == QVariant::String) {
-                    result = value.toString();
-                }
-            }
-            return result;
-        }
-
-        int convertToInt(QVariant const &value, int defaultValue = 0) {
-            int result = defaultValue;
-            if (value.isValid()) {
-                if (value.type() == QVariant::Int) {
-                    result = value.toInt();
-                }
-            }
-            return result;
-        }
-
         void SetMasterPasswordCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.onMasterPasswordSet(m_Source);
@@ -48,14 +29,14 @@ namespace Commands {
         }
 
         void GenerateCompletionsCommand::execute(const QVariant &value) {
-            QString prefix = convertToString(value);
+            QString prefix = Helpers::convertToString(value);
             LOG_DEBUG << prefix;
             m_AutoCompleteService.generateCompletions(prefix);
         }
 
         void SelectFilteredArtworksCommand::execute(const QVariant &value) {
             LOG_DEBUG << value;
-            int selectionIndex = convertToInt(value, -1);
+            int selectionIndex = Helpers::convertToInt(value, -1);
 
             // selected index of combobox in the MainGrid.qml
             Models::FilteredArtworksListModel::SelectionType selectionType;

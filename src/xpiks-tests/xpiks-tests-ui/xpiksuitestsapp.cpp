@@ -104,7 +104,7 @@ void XpiksUITestsApp::setupUITests() {
 
     m_FilteredArtworksListModel.unselectFilteredArtworks();
     // select vectors
-    m_FilteredArtworksListModel.selectArtworksEx(4);
+    m_FilteredArtworksListModel.selectArtworksEx(Models::FilteredArtworksListModel::SelectVectors);
     m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::EditSelectedArtworks, QVariant());
     m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::ExportSelectedToCSV, QVariant());
     m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::ZipSelected, QVariant());
