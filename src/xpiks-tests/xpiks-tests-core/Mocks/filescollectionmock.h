@@ -19,6 +19,7 @@ namespace Mocks {
     class FilesCollectionMock: public Filesystem::IFilesCollection
     {
     public:
+        FilesCollectionMock() {}
         FilesCollectionMock(QStringList const &images);
         FilesCollectionMock(QStringList const &images, QStringList const &vectors);
         FilesCollectionMock(int imagesCount, int vectorsCount = 0, int dirsCount = 1);

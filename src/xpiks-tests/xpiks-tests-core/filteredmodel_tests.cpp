@@ -463,14 +463,84 @@ void FilteredModelTests::clearEmptyKeywordsMarksModifiedTest() {
     QVERIFY(!artwork->isModified());
 }
 
-void FilteredModelTests::selectArtworksTest() {
-    DECLARE_MODELS;
-
-    Mocks::FilesCollectionMock files;
-    files.add({"image.jpg", Filesystem::ArtworkFileType::Image});
-    files.add({"vector.jpg", Filesystem::ArtworkFileType::Image});
-    files.add({"vector.eps", Filesystem::ArtworkFileType::Vector});
-    files.add({"video.mp4", Filesystem::ArtworkFileType::Video});
-
+#define ADD_DIFFERENT_FILES \
+    auto files = std::make_shared<Mocks::FilesCollectionMock>();\
+    files->add({"image.jpg", Filesystem::ArtworkFileType::Image});\
+    files->add({"vector.jpg", Filesystem::ArtworkFileType::Image});\
+    files->add({"vector.eps", Filesystem::ArtworkFileType::Vector});\
+    files->add({"video.mp4", Filesystem::ArtworkFileType::Video});\
     artworksListModel.addFiles(files, Common::AddFilesFlags::None);
+
+#define CHECK_ALL_SELECTED(value)\
+    artworksListModel.foreachArtwork([](int index, std::shared_ptr<Mocks::ArtworkMetadataMock> const &artwork) {\
+        QVERIFY2(artwork->isSelected() == value, QString("Artwork selection is different at %1").arg(index).toStdString().data());\
+    });
+
+#define CHECK_ONLY_SELECTED(i)\
+    artworksListModel.foreachArtwork([=](int index, std::shared_ptr<Mocks::ArtworkMetadataMock> const &artwork) {\
+        QVERIFY2(artwork->isSelected() == (index == i), QString("Artwork selection is different at %1").arg(index).toStdString().data());\
+    });
+
+void FilteredModelTests::selectExVectorsTest() {
+    DECLARE_MODELS;
+    ADD_DIFFERENT_FILES;
+
+    CHECK_ALL_SELECTED(false);
+
+    filteredItemsModel.selectArtworksEx(Models::FilteredArtworksListModel::SelectVectors);
+
+    CHECK_ONLY_SELECTED(1);
+}
+
+void FilteredModelTests::selectExModifiedTest() {
+    DECLARE_MODELS;
+    ADD_DIFFERENT_FILES;
+
+    CHECK_ALL_SELECTED(false);
+
+    artworksListModel.getMockArtwork(2)->setTitle("other title 123214");
+
+    filteredItemsModel.selectArtworksEx(Models::FilteredArtworksListModel::SelectModified);
+
+    CHECK_ONLY_SELECTED(2);
+}
+
+void FilteredModelTests::selectExAllTest() {
+    DECLARE_MODELS;
+    ADD_DIFFERENT_FILES;
+
+    CHECK_ALL_SELECTED(false);
+
+    filteredItemsModel.selectArtworksEx(Models::FilteredArtworksListModel::SelectAll);
+
+    CHECK_ALL_SELECTED(true);
+}
+
+void FilteredModelTests::selectExNoneTest() {
+    DECLARE_MODELS;
+    ADD_DIFFERENT_FILES;
+
+    CHECK_ALL_SELECTED(false);
+
+    artworksListModel.getMockArtwork(0)->setIsSelected(true);
+    artworksListModel.getMockArtwork(2)->setIsSelected(true);
+
+    filteredItemsModel.selectArtworksEx(Models::FilteredArtworksListModel::SelectNone);
+
+    CHECK_ALL_SELECTED(false);
+}
+
+void FilteredModelTests::selectExImagesTest() {
+    DECLARE_MODELS;
+    ADD_DIFFERENT_FILES;
+
+    CHECK_ALL_SELECTED(false);
+
+    filteredItemsModel.selectArtworksEx(Models::FilteredArtworksListModel::SelectImages);
+
+    QVERIFY2(artworksListModel.getMockArtwork(0)->isSelected(), "Image is not selected");
+    QVERIFY2(!artworksListModel.getMockArtwork(1)->isSelected(), "Vector is selected");
+
+    QEXPECT_FAIL("", "for now all of the items are images", Continue);
+    QVERIFY2(!artworksListModel.getMockArtwork(2)->isSelected(), "Video is selected");
 }
