@@ -407,9 +407,15 @@ Item {
             keyClick(Qt.Key_Comma)
             wait(TestsHost.smallSleepTime)
 
-            var fixSpellingLink = findChild(artworkEditView, "fixSpellingLink")
-            tryCompare(fixSpellingLink, "canBeShown", true, 3000)
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+
+            tryCompare(keywordWrapper, "hasSpellCheckError", true, 2000)
+            // wait for finding suggestions
             wait(TestsHost.normalSleepTime)
+
+            var fixSpellingLink = findChild(artworkDelegate, "fixSpellingLink")
+            tryCompare(fixSpellingLink, "canBeShown", true, 1000)
 
             mouseClick(fixSpellingLink)
             wait(TestsHost.normalSleepTime)
