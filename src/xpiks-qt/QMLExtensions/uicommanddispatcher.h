@@ -13,7 +13,9 @@
 
 #include <unordered_map>
 #include <QObject>
+#include <QMutex>
 #include "iuicommanddispatcher.h"
+#include "uiaction.h"
 
 namespace Commands {
     class ICommandManager;
@@ -42,8 +44,20 @@ namespace QMLExtensions {
         virtual void registerCommand(std::shared_ptr<Commands::IUICommandTemplate> const &command) override;
         virtual void dispatchCommand(int commandID, QVariant const &value) override;
 
+    signals:
+        void actionsAvailable();
+        void dispatched(int commandID, QVariant const &value);
+
+    private slots:
+        void onActionsAvailable();
+
+    private:
+        void processAction(UIAction const &action);
+
     private:
         std::unordered_map<int, std::shared_ptr<Commands::IUICommandTemplate>> m_CommandsMap;
+        QMutex m_Mutex;
+        std::vector<UIAction> m_ActionsQueue;
         Commands::ICommandManager &m_CommandManager;
     };
 }

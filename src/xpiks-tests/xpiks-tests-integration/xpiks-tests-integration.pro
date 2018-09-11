@@ -605,7 +605,8 @@ HEADERS += \
     ../../xpiks-qt/Services/SpellCheck/metadataduplicates.h \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.h \
     ../../xpiks-qt/Services/artworkseditinghub.h \
-    ../../xpiks-qt/Helpers/uihelpers.h
+    ../../xpiks-qt/Helpers/uihelpers.h \
+    ../../xpiks-qt/QMLExtensions/uiaction.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

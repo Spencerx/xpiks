@@ -532,7 +532,8 @@ HEADERS += \
     Artworks/ibasicmodelsource.h \
     Services/SpellCheck/spellcheckinfo.h \
     Artworks/basicmodelsource.h \
-    Helpers/uihelpers.h
+    Helpers/uihelpers.h \
+    QMLExtensions/uiaction.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

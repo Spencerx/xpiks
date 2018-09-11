@@ -447,6 +447,7 @@ Item {
             }
 
             ToolButton {
+                objectName: "removeToolButton"
                 enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && removeAction.enabled
                 normalIcon: uiColors.t + helpersWrapper.getAssetForTheme("Remove_icon_normal.svg", settingsModel.selectedThemeIndex)
                 disabledIcon: uiColors.t + helpersWrapper.getAssetForTheme("Remove_icon_disabled.svg", settingsModel.selectedThemeIndex)
@@ -775,6 +776,7 @@ Item {
 
                     StyledText {
                         text: i18.n + qsTr("Undo")
+                        objectName: "undoLink"
                         color: undoMA.pressed ? uiColors.linkClickedColor : uiColors.artworkActiveColor
 
                         MouseArea {
@@ -1109,6 +1111,7 @@ Item {
 
                                     StyledCheckbox {
                                         id: itemCheckedCheckbox
+                                        objectName: "itemCheckedCheckbox"
                                         //checked: isselected
                                         focus: false
                                         anchors.left: parent.left
@@ -1160,6 +1163,7 @@ Item {
 
                                         Item {
                                             id: imageHost
+                                            objectName: "imageHost"
                                             anchors.top: parent.top
                                             anchors.topMargin: descriptionText.height + 24
                                             anchors.horizontalCenter: parent.horizontalCenter

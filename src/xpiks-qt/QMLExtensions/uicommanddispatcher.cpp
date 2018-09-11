@@ -21,10 +21,12 @@ namespace QMLExtensions {
         QObject(parent),
         m_CommandManager(commandManager)
     {
+        QObject::connect(this, &UICommandDispatcher::actionsAvailable,
+                         this, &UICommandDispatcher::onActionsAvailable,
+                         Qt::QueuedConnection);
     }
 
     void UICommandDispatcher::dispatch(int commandID, QJSValue const &value) {
-        LOG_INFO << commandID;
         dispatchCommand(commandID, value.toVariant());
     }
 
@@ -64,11 +66,39 @@ namespace QMLExtensions {
     }
 
     void UICommandDispatcher::dispatchCommand(int commandID, QVariant const &value) {
-        LOG_INFO << commandID << value.toString();
-        auto it = m_CommandsMap.find(commandID);
+        LOG_INFO << commandID;
+        {
+            QMutexLocker locker(&m_Mutex);
+            Q_UNUSED(locker);
+            m_ActionsQueue.push_back({commandID, value});
+        }
+
+        emit actionsAvailable();
+    }
+
+    void UICommandDispatcher::onActionsAvailable() {
+        LOG_DEBUG << "#";
+        decltype(m_ActionsQueue) actions;
+        {
+            QMutexLocker locker(&m_Mutex);
+            Q_UNUSED(locker);
+            m_ActionsQueue.swap(actions);
+        }
+
+        for (auto &action: actions) {
+            processAction(action);
+        }
+    }
+
+    void UICommandDispatcher::processAction(UIAction const &action) {
+        LOG_INFO << action.m_CommandID << action.m_Value.toString();
+
+        auto it = m_CommandsMap.find(action.m_CommandID);
         if (it != m_CommandsMap.end()) {
             m_CommandManager.processCommand(
-                        std::make_shared<Commands::TemplatedUICommand>(value, it->second));
+                        std::make_shared<Commands::TemplatedUICommand>(action.m_Value, it->second));
         }
+
+        emit dispatched(action.m_CommandID, action.m_Value);
     }
 }

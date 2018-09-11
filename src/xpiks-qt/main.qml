@@ -266,8 +266,7 @@ ApplicationWindow {
         onTriggered: {
             if (filteredArtworksListModel.selectedArtworksCount === 0) {
                 mustSelectDialog.open()
-            }
-            else {
+            } else {
                 var launched = false
                 var index = filteredArtworksListModel.findSelectedItemIndex()
 
@@ -1051,7 +1050,7 @@ ApplicationWindow {
     }
 
     function doRemoveSelectedArtworks() {
-        filteredArtworksListModel.removeSelectedArtworks()
+        dispatcher.dispatch(UICommand.RemoveSelected, {})
     }
 
     function tryUploadArtworks() {

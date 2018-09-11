@@ -20,6 +20,14 @@ Item {
         function collapseLeftPane() { }
     }
 
+    QtObject {
+        id: removeAction
+        property bool enabled: true
+        function trigger() {
+            dispatcher.dispatch(UICommand.RemoveSelected, {})
+        }
+    }
+
     Loader {
         id: loader
         anchors.fill: parent
@@ -461,5 +469,28 @@ Item {
             filteredArtworksListModel.searchTerm = originalFilterText
             wait(TestsHost.normalSleepTime)
         }
+
+        function test_undoRemove() {
+            var artworkDelegate = getDelegate(0)
+            var checkbox = findChild(artworkDelegate, "itemCheckedCheckbox")
+            mouseClick(checkbox)
+
+            var removeToolButton = findChild(mainGrid, "removeToolButton")
+            mouseClick(removeToolButton)
+            wait(TestsHost.smallSleepTime)
+
+            verify(artworksHost.count, 4)
+
+            var undoLink = findChild(mainGrid, "undoLink")
+            mouseClick(undoLink)
+            wait(TestsHost.smallSleepTime)
+
+            compare(artworksHost.count, 5)
+        }
+
+        /*function test_doubleClickArtwork() {
+            var imageHost = findChild(mainGrid, "imageHost")
+            mouseDoubleClick(imageHost)
+        }*/
     }
 }
