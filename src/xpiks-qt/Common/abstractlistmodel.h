@@ -8,8 +8,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef ABSTRACTLISTMODEL
-#define ABSTRACTLISTMODEL
+#ifndef ABSTRACTLISTMODEL_H
+#define ABSTRACTLISTMODEL_H
 
 #include <QAbstractListModel>
 
@@ -79,5 +79,5 @@ namespace Common {
         }
     };
 }
-#endif // ABSTRACTLISTMODEL
 
+#endif // ABSTRACTLISTMODEL_H

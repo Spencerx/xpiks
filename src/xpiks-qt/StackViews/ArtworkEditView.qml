@@ -23,6 +23,7 @@ import "../Constants/UIConfig.js" as UIConfig
 
 Rectangle {
     id: artworkEditComponent
+    objectName: "ArtworkEditView"
     color: uiColors.defaultDarkerColor
 
     property variant componentParent
@@ -84,17 +85,7 @@ Rectangle {
     }
 
     function openDuplicatesView() {
-        artworkProxy.setupDuplicatesModel()
-
-        var wasCollapsed = applicationWindow.leftSideCollapsed
-        mainStackView.push({
-                               item: "qrc:/StackViews/DuplicatesReView.qml",
-                               properties: {
-                                   componentParent: componentParent,
-                                   wasLeftSideCollapsed: wasCollapsed
-                               },
-                               destroyOnPop: true
-                           })
+        dispatcher.dispatch(UICommand.ShowDuplicatesSingle, {})
     }
 
     function openSuggestionView() {
@@ -279,9 +270,7 @@ Rectangle {
         MenuItem {
             text: i18.n + qsTr("Show duplicates")
             enabled: artworkEditComponent.keywordsModel ? artworkEditComponent.keywordsModel.hasDuplicates : false
-            onTriggered: {
-                openDuplicatesView()
-            }
+            onTriggered: openDuplicatesView()
         }
 
         MenuSeparator { }

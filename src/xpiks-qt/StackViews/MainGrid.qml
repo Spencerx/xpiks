@@ -1222,10 +1222,7 @@ Item {
                                                 acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                                                 function dblClickHandler() {
-                                                    var index = rowWrapper.delegateIndex
-                                                    var originalIndex = rowWrapper.getIndex()
-                                                    var metadata = filteredArtworksListModel.getArtworkMetadata(index)
-                                                    startOneItemEditing(metadata, index, originalIndex)
+                                                    dispatcher.dispatch(UICommand.EditArtwork, rowWrapper.delegateIndex)
                                                 }
 
                                                 Timer {

@@ -187,16 +187,12 @@ ApplicationWindow {
         applicationWindow.leftSideCollapsed = !leftSideCollapsed
     }
 
-    function startOneItemEditing(metadata, index, originalIndex, showInfoFirst) {
-        var keywordsModel = filteredArtworksListModel.getBasicModel(index)
-        artworkProxy.setSourceArtwork(metadata)
+    function startOneItemEditing(index, showInfoFirst) {
         var wasCollapsed = applicationWindow.leftSideCollapsed
         applicationWindow.collapseLeftPane()
         mainStackView.push({
                                item: "qrc:/StackViews/ArtworkEditView.qml",
                                properties: {
-                                   artworkIndex: index,
-                                   keywordsModel: keywordsModel,
                                    componentParent: applicationWindow,
                                    wasLeftSideCollapsed: wasCollapsed,
                                    showInfo: showInfoFirst
@@ -271,9 +267,7 @@ ApplicationWindow {
                 var index = filteredArtworksListModel.findSelectedItemIndex()
 
                 if (index !== -1) {
-                    var originalIndex = filteredArtworksListModel.getOriginalIndex(index)
-                    var metadata = filteredArtworksListModel.getArtworkMetadata(index)
-                    startOneItemEditing(metadata, index, originalIndex)
+                    startOneItemEditing(index)
                     launched = true
                 }
 
@@ -951,29 +945,19 @@ ApplicationWindow {
 
         MenuItem {
             text: i18.n + qsTr("Edit")
-            onTriggered: {
-                var originalIndex = filteredArtworksListModel.getOriginalIndex(artworkContextMenu.index)
-                var metadata = filteredArtworksListModel.getArtworkMetadata(artworkContextMenu.index)
-                startOneItemEditing(metadata, artworkContextMenu.index, originalIndex)
-            }
+            onTriggered: startOneItemEditing(artworkContextMenu.index)
         }
 
         MenuItem {
             text: i18.n + qsTr("Show info")
-            onTriggered: {
-                var originalIndex = filteredArtworksListModel.getOriginalIndex(artworkContextMenu.index)
-                var metadata = filteredArtworksListModel.getArtworkMetadata(artworkContextMenu.index)
-                startOneItemEditing(metadata, artworkContextMenu.index, originalIndex, true)
-            }
+            onTriggered: startOneItemEditing(artworkContextMenu.index, true)
         }
 
         MenuItem {
             text: i18.n + qsTr("Detach vector")
             enabled: artworkContextMenu.hasVectorAttached
             visible: artworkContextMenu.hasVectorAttached
-            onTriggered: {
-                filteredArtworksListModel.detachVectorFromArtwork(artworkContextMenu.index)
-            }
+            onTriggered: filteredArtworksListModel.detachVectorFromArtwork(artworkContextMenu.index)
         }
 
         MenuItem {
@@ -1297,6 +1281,32 @@ ApplicationWindow {
                     (!switcher.isDonateCampaign1Stage2On)) {
                 console.debug("Donate campaing is over. Switching off donate timer")
                 donateTimer.stop()
+            }
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.ShowDuplicatesSingle, UICommand.ShowDuplicatesCombined]
+        onDispatched: {
+            var wasCollapsed = applicationWindow.leftSideCollapsed
+            mainStackView.push({
+                                   item: "qrc:/StackViews/DuplicatesReView.qml",
+                                   properties: {
+                                       componentParent: applicationWindow,
+                                       wasLeftSideCollapsed: wasCollapsed
+                                   },
+                                   destroyOnPop: true
+                               })
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.EditArtwork]
+        onDispatched: {
+            if (mainStackView.currentItem.objectName != "ArtworkEditView") {
+                startOneItemEditing(value, false)
             }
         }
     }

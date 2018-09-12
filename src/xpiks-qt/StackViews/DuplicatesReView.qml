@@ -325,13 +325,7 @@ Rectangle {
                         anchors.verticalCenterOffset: -5
                         anchors.centerIn: parent
                         enabled: !isRestricted && duplicatesListView.count > 0
-
-                        onClicked: {
-                            var index = imageWrapper.delegateIndex
-                            var derivedIndex = filteredArtworksListModel.getDerivedIndex(originalIndex)
-                            var metadata = filteredArtworksListModel.getArtworkMetadata(derivedIndex)
-                            startOneItemEditing(metadata, derivedIndex, originalIndex)
-                        }
+                        onClicked: dispatcher.dispatch(UICommand.EditArtwork, imageWrapper.delegateIndex)
                     }
                 }
             }
