@@ -73,7 +73,7 @@ void QuickBufferTests::copyProxyModelToQuickBufferTest() {
     QStringList keywordsForQB;
     keywordsForQB << "brand" << "new" << "keywords";
 
-    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(0));
+    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(0), 0);
     proxyModel.setTitle(titleForQB);
     proxyModel.setDescription(descriptionForQB);
     proxyModel.setKeywords(keywordsForQB);
@@ -143,7 +143,7 @@ void QuickBufferTests::copyHalfEmptyProxyModelToQuickBufferTest() {
     const QString descriptionForQB = "desc for quick buffer";
     QStringList keywordsForQB;
 
-    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(0));
+    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(0), 0);
     proxyModel.setTitle(titleForQB);
     proxyModel.setDescription(descriptionForQB);
     proxyModel.setKeywords(keywordsForQB);
@@ -255,7 +255,7 @@ void QuickBufferTests::applyQuickBufferToProxyModelTest() {
     quickBuffer.setDescription(descriptionForQB);
     quickBuffer.setKeywords(keywordsForQB);
 
-    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(1));
+    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(1), 1);
 
     bool success = quickBuffer.copyToCurrentEditable();
     QVERIFY(success);
@@ -335,7 +335,7 @@ void QuickBufferTests::applyHalfEmptyQuickBufferToProxyModelTest() {
     quickBuffer.setDescription(descriptionForQB);
     quickBuffer.setKeywords(keywordsForQB);
 
-    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(1));
+    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(1), 1);
     proxyModel.setTitle(titleForModel);
 
     bool success = quickBuffer.copyToCurrentEditable();

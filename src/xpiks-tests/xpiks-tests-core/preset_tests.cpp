@@ -137,7 +137,7 @@ void PresetTests::appendToProxyModelTest() {
 
     Mocks::ArtworksUpdaterMock updater;
     Models::ArtworkProxyModel proxyModel(commandManager, presetKeywordsModel, updater);
-    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(0));
+    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(0), 0);
     artworksListModel.setUpdatesBlocked(false);
 
     QStringList keywords;
@@ -160,7 +160,7 @@ void PresetTests::expandLastKeywordInProxyModelTest() {
 
     Mocks::ArtworksUpdaterMock updater;
     Models::ArtworkProxyModel proxyModel(commandManager, presetKeywordsModel, updater);
-    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(0));
+    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(0), 0);
     artworksListModel.setUpdatesBlocked(false);
 
     QStringList keywords;

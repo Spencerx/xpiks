@@ -139,6 +139,12 @@ Rectangle {
                             });
     }
 
+    function clearKeywords() {
+        filteredArtworksListModel.clearKeywords(artworkProxy.proxyIndex)
+        artworkProxy.updateKeywords()
+        updateChangesText()
+    }
+
     Menu {
         id: wordRightClickMenu
         property string word
@@ -393,15 +399,10 @@ Rectangle {
 
     MessageDialog {
         id: clearKeywordsDialog
-
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("Clear all keywords?")
         standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: {
-            filteredArtworksListModel.clearKeywords(artworkProxy.proxyIndex)
-            artworkProxy.updateKeywords()
-            updateChangesText()
-        }
+        onYes: clearKeywords()
     }
 
     // Keys.onEscapePressed: closePopup()

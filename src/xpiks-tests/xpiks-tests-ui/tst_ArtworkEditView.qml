@@ -438,5 +438,21 @@ Item {
 
             compare(artworkEditView.artworkProxy.getKeywordsString(), "pet")
         }
+
+        function test_clearKeywords() {
+            compare(artworkEditView.artworkProxy.keywordsCount, 0)
+
+            keywordsEdit.forceActiveFocus()
+            TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+            TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            compare(artworkEditView.artworkProxy.keywordsCount, 2)
+
+            artworkEditView.clearKeywords()
+            compare(artworkEditView.artworkProxy.keywordsCount, 0)
+            compare(artworkEditView.artworkProxy.getKeywordsString(), "")
+        }
     }
 }

@@ -319,7 +319,7 @@ void ArtworksListModelTests::proxyModelExitEmitsModifiedTest() {
     Services::ArtworksUpdateHub updateHub(artworksListModel);
     Models::ArtworkProxyModel proxyModel(commandManager, presetKeywordsModel, updateHub);
 
-    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(0));
+    proxyModel.setSourceArtwork(artworksListModel.getMockArtwork(0), 0);
     proxyModel.setDescription("other description");
 
     MODIFIED_TEST_START;

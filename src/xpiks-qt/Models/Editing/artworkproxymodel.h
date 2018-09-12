@@ -147,7 +147,7 @@ namespace Models {
         Q_INVOKABLE bool hasTitleWordSpellError(const QString &word);
         Q_INVOKABLE bool hasDescriptionWordSpellError(const QString &word);
         // --
-        void setSourceArtwork(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork, int proxyIndex=-1);
+        void setSourceArtwork(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork, int proxyIndex);
         // --
         Q_INVOKABLE void resetModel();
         Q_INVOKABLE QObject *getBasicModelObject();

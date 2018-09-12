@@ -95,7 +95,7 @@ void XpiksUITestsApp::setupUITests() {
 
     std::shared_ptr<Artworks::ArtworkMetadata> artwork;
     m_ArtworksListModel.tryGetArtwork(0, artwork);
-    m_ArtworkProxyModel.setSourceArtwork(artwork);
+    m_ArtworkProxyModel.setSourceArtwork(artwork, 0);
 
     KeywordsPresets::ID_t id;
     bool added = false;
