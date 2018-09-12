@@ -41,6 +41,7 @@
 #include <Helpers/clipboardhelper.h>
 #include <QMLExtensions/folderelement.h>
 #include <QMLExtensions/triangleelement.h>
+#include <QMLExtensions/uicommandlistener.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_Environment(environment),
@@ -190,7 +191,6 @@ void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("acSource", &m_KeywordsAutoCompleteModel);
     context->setContextProperty("presetsModel", &m_PresetsModel);
     context->setContextProperty("filteredPresetsModel", &m_FilteredPresetsModel);
-    context->setContextProperty("artworkProxy", &m_ArtworkProxyModel);
     context->setContextProperty("translationManager", &m_TranslationManager);
     context->setContextProperty("uiManager", &m_UIManager);
     context->setContextProperty("quickBuffer", &m_QuickBuffer);
@@ -227,6 +227,7 @@ void XpiksApp::registerQtMetaTypes() {
     qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
     qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
     qmlRegisterType<QMLExtensions::FolderElement>("xpiks", 1, 0, "FolderElement");
+    qmlRegisterType<QMLExtensions::UICommandListener>("xpiks", 1, 0, "UICommandListener");
 #endif
 }
 
@@ -689,7 +690,10 @@ void XpiksApp::registerUICommands() {
                     m_KeywordsAutoCompleteModel.getCompletionsSource(), m_FilteredArtworksListModel),
 
                     std::make_shared<Commands::UI::SelectFilteredArtworksCommand>(
-                    m_FilteredArtworksListModel)
+                    m_FilteredArtworksListModel),
+
+                    std::make_shared<Commands::UI::EditArtworkCommand>(
+                    m_FilteredArtworksListModel, m_ArtworkProxyModel)
                 });
 }
 

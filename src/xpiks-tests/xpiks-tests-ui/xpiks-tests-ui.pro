@@ -142,7 +142,8 @@ appveyor {
     fakeinitartworkstemplate.cpp \
     ../../xpiks-qt/Helpers/metadatahighlighter.cpp \
     ../../xpiks-qt/QMLExtensions/folderelement.cpp \
-    ../../xpiks-qt/Helpers/uihelpers.cpp
+    ../../xpiks-qt/Helpers/uihelpers.cpp \
+    ../../xpiks-qt/QMLExtensions/uicommandlistener.cpp
 }
 
 include(../../xpiks-common/xpiks-common.pri)
@@ -728,7 +729,8 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/folderelement.h \
     ../../xpiks-qt/QMLExtensions/uicommandid.h \
     ../../xpiks-qt/Helpers/uihelpers.h \
-    ../../xpiks-qt/QMLExtensions/uiaction.h
+    ../../xpiks-qt/QMLExtensions/uiaction.h \
+    ../../xpiks-qt/QMLExtensions/uicommandlistener.h
 
 RESOURCES += \
     xpiks-tests-ui.qrc

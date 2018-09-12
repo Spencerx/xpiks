@@ -25,6 +25,11 @@ Item {
         property bool leftSideCollapsed: false
     }
 
+    QtObject {
+        id: mainStackView
+        function push(obj) { }
+    }
+
     Loader {
         id: loader
         anchors.fill: parent
@@ -33,7 +38,6 @@ Item {
 
         sourceComponent: ArtworkEditView {
             anchors.fill: parent
-            artworkIndex: 0
             componentParent: root
         }
     }
@@ -57,8 +61,6 @@ Item {
         property var artworkEditView: loader.item
 
         function initTestCase() {
-            artworkEditView.keywordsModel = artworkProxy.getBasicModelObject()
-
             titleEdit = findChild(artworkEditView, "titleTextInput")
             descriptionEdit = findChild(artworkEditView, "descriptionTextInput")
             keywordsEdit = findChild(artworkEditView, "nextTagTextInput")
@@ -85,24 +87,24 @@ Item {
         function test_editTitleSimple() {
             titleEdit.forceActiveFocus()
             var testTitle = TestUtils.keyboardEnterSomething(testCase)
-            compare(artworkProxy.title, testTitle)
+            compare(artworkEditView.artworkProxy.title, testTitle)
         }
 
         function test_editDescriptionSimple() {
             descriptionEdit.forceActiveFocus()
             var testDescription = TestUtils.keyboardEnterSomething(testCase)
-            compare(artworkProxy.description, testDescription)
+            compare(artworkEditView.artworkProxy.description, testDescription)
         }
 
         function test_addKeywordsSmoke() {
-            compare(artworkProxy.keywordsCount, 0)
+            compare(artworkEditView.artworkProxy.keywordsCount, 0)
 
             keywordsEdit.forceActiveFocus()
             var testKeyword = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
-            compare(artworkProxy.keywordsCount, 1)
-            compare(artworkProxy.getKeywordsString(), testKeyword)
+            compare(artworkEditView.artworkProxy.keywordsCount, 1)
+            compare(artworkEditView.artworkProxy.getKeywordsString(), testKeyword)
         }
 
         function test_switchCurrentArtworkButtons() {
@@ -112,21 +114,23 @@ Item {
             var testDescription = TestUtils.keyboardEnterSomething(testCase)
 
             compare(rosterListView.currentIndex, 0)
-            compare(artworkProxy.description, testDescription)
-            compare(artworkProxy.title, testTitle)
+            compare(artworkEditView.artworkProxy.description, testDescription)
+            compare(artworkEditView.artworkProxy.title, testTitle)
 
             mouseClick(nextArtworkButton)
+            wait(TestsHost.smallSleepTime)
 
             compare(rosterListView.currentIndex, 1)
-            console.log(artworkProxy.description)
-            verify(artworkProxy.description !== testDescription)
-            verify(artworkProxy.title !== testTitle)
+            console.log(artworkEditView.artworkProxy.description)
+            verify(artworkEditView.artworkProxy.description !== testDescription)
+            verify(artworkEditView.artworkProxy.title !== testTitle)
 
             mouseClick(prevArtworkButton)
+            wait(TestsHost.smallSleepTime)
 
             compare(rosterListView.currentIndex, 0)
-            compare(artworkProxy.description, testDescription)
-            compare(artworkProxy.title, testTitle)
+            compare(artworkEditView.artworkProxy.description, testDescription)
+            compare(artworkEditView.artworkProxy.title, testTitle)
         }
 
         function test_switchCurrentArtworkMouseClick() {
@@ -136,27 +140,29 @@ Item {
             var testDescription = TestUtils.keyboardEnterSomething(testCase)
 
             compare(rosterListView.currentIndex, 0)
-            compare(artworkProxy.description, testDescription)
-            compare(artworkProxy.title, testTitle)
+            compare(artworkEditView.artworkProxy.description, testDescription)
+            compare(artworkEditView.artworkProxy.title, testTitle)
 
             var nextItem = TestUtils.getDelegateInstanceAt(rosterListView.contentItem,
                                                            "rosterDelegateItem",
                                                            rosterListView.currentIndex + 1)
             mouseClick(nextItem)
+            wait(TestsHost.smallSleepTime)
 
             compare(rosterListView.currentIndex, 1)
-            console.log(artworkProxy.description)
-            verify(artworkProxy.description !== testDescription)
-            verify(artworkProxy.title !== testTitle)
+            console.log(artworkEditView.artworkProxy.description)
+            verify(artworkEditView.artworkProxy.description !== testDescription)
+            verify(artworkEditView.artworkProxy.title !== testTitle)
 
             var prevItem = TestUtils.getDelegateInstanceAt(rosterListView.contentItem,
                                                            "rosterDelegateItem",
                                                            rosterListView.currentIndex - 1)
             mouseClick(prevItem)
+            wait(TestsHost.smallSleepTime)
 
             compare(rosterListView.currentIndex, 0)
-            compare(artworkProxy.description, testDescription)
-            compare(artworkProxy.title, testTitle)
+            compare(artworkEditView.artworkProxy.description, testDescription)
+            compare(artworkEditView.artworkProxy.title, testTitle)
         }
 
         function test_copyFromMoreLink() {
@@ -201,8 +207,8 @@ Item {
             keyClick(Qt.Key_Return)
             wait(TestsHost.smallSleepTime)
 
-            compare(artworkProxy.keywordsCount, 1)
-            compare(artworkProxy.getKeywordsString(), "weather")
+            compare(artworkEditView.artworkProxy.keywordsCount, 1)
+            compare(artworkEditView.artworkProxy.getKeywordsString(), "weather")
         }
 
         function test_autoCompleteCancelWhenShortText() {
@@ -249,8 +255,8 @@ Item {
             keyClick(Qt.Key_Return, Qt.ControlModifier)
             wait(TestsHost.smallSleepTime)
 
-            compare(artworkProxy.keywordsCount, 3)
-            compare(artworkProxy.getKeywordsString(), "some, other, keywords")
+            compare(artworkEditView.artworkProxy.keywordsCount, 3)
+            compare(artworkEditView.artworkProxy.getKeywordsString(), "some, other, keywords")
         }
 
         function test_autoCompleteIntoNonEmptyEdit() {
@@ -351,7 +357,7 @@ Item {
             var repeater = findChild(editableTags, "repeater")
             var keywordWrapper = repeater.itemAt(0)
 
-            compare(artworkProxy.getKeywordsString(), testKeyword1)
+            compare(artworkEditView.artworkProxy.getKeywordsString(), testKeyword1)
             mouseDoubleClick(keywordWrapper)
 
             wait(TestsHost.smallSleepTime)
@@ -367,7 +373,7 @@ Item {
 
             wait(TestsHost.smallSleepTime)
 
-            compare(artworkProxy.getKeywordsString(), testKeyword1[0] + testKeyword2)
+            compare(artworkEditView.artworkProxy.getKeywordsString(), testKeyword1[0] + testKeyword2)
         }
 
         function test_editInPlainText() {
@@ -394,7 +400,7 @@ Item {
 
             wait(TestsHost.smallSleepTime)
 
-            compare(artworkProxy.getKeywordsString(), testKeyword1 + ", " + testKeyword2)
+            compare(artworkEditView.artworkProxy.getKeywordsString(), testKeyword1 + ", " + testKeyword2)
         }
 
         function test_fixSpelling() {
@@ -430,7 +436,7 @@ Item {
             // close the dialog
             keyClick(Qt.Key_Escape)
 
-            compare(artworkProxy.getKeywordsString(), "pet")
+            compare(artworkEditView.artworkProxy.getKeywordsString(), "pet")
         }
     }
 }

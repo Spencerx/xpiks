@@ -93,7 +93,9 @@ bool XpiksUITestsApp::setupCommonFiles() {
 void XpiksUITestsApp::setupUITests() {
     LOG_DEBUG << "#";
 
-    m_ArtworkProxyModel.setSourceArtwork(m_ArtworksListModel.getArtworkObject(0));
+    std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+    m_ArtworksListModel.tryGetArtwork(0, artwork);
+    m_ArtworkProxyModel.setSourceArtwork(artwork);
 
     KeywordsPresets::ID_t id;
     bool added = false;

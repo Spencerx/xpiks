@@ -28,8 +28,8 @@ Rectangle {
     property variant componentParent
     property var autoCompleteBox
 
-    property int artworkIndex: -1
-    property var keywordsModel
+    property var artworkProxy: dispatcher.getCommandTarget(UICommand.EditArtwork)
+    property var keywordsModel: artworkProxy.getBasicModelObject()
     property bool wasLeftSideCollapsed
     property bool listViewEnabled: true
     property bool canShowChangesSaved: false
@@ -44,7 +44,7 @@ Rectangle {
 
     function reloadItemEditing(itemIndex) {
         console.debug("reloadItemEditing # " + itemIndex)
-        if (itemIndex === artworkIndex) { return }
+        if (itemIndex === artworkProxy.artworkIndex) { return }
         if ((itemIndex < 0) || (itemIndex >= rosterListView.count)) { return }
 
         canShowChangesSaved = false
@@ -52,24 +52,7 @@ Rectangle {
         closeAutoComplete()
         flv.submitCurrentKeyword()
 
-        var artwork = filteredArtworksListModel.getArtworkObject(itemIndex)
-        artworkProxy.setSourceArtwork(artwork)
-
-        artworkEditComponent.artworkIndex = itemIndex
-        artworkEditComponent.keywordsModel = artworkProxy.getBasicModelObject()
-
-        if (listViewEnabled) {
-            rosterListView.currentIndex = itemIndex
-            rosterListView.positionViewAtIndex(itemIndex, ListView.Contain)
-        }
-
-        titleTextInput.forceActiveFocus()
-        titleTextInput.cursorPosition = titleTextInput.text.length
-
-        uiManager.initTitleHighlighting(artworkProxy.getBasicModelObject(), titleTextInput.textDocument)
-        uiManager.initDescriptionHighlighting(artworkProxy.getBasicModelObject(), descriptionTextInput.textDocument)
-
-        savedTimer.start()
+        dispatcher.dispatch(UICommand.EditArtwork, itemIndex)
     }
 
     function closePopup() {
@@ -91,16 +74,6 @@ Rectangle {
     function closeAutoComplete() {
         if (typeof artworkEditComponent.autoCompleteBox !== "undefined") {
             artworkEditComponent.autoCompleteBox.closePopup()
-        }
-    }
-
-    Timer {
-        id: savedTimer
-        interval: 1000
-        running: true
-        repeat: false
-        onTriggered: {
-            canShowChangesSaved = true
         }
     }
 
@@ -341,6 +314,38 @@ Rectangle {
         }
     }
 
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.EditArtwork]
+        onDispatched: {
+            console.log("# [EditArtwork] dispatched")
+            artworkEditComponent.keywordsModel = artworkProxy.getBasicModelObject()
+
+            if (listViewEnabled) {
+                rosterListView.currentIndex = value
+                rosterListView.positionViewAtIndex(value, ListView.Contain)
+            }
+
+            titleTextInput.forceActiveFocus()
+            titleTextInput.cursorPosition = titleTextInput.text.length
+
+            uiManager.initTitleHighlighting(artworkProxy.getBasicModelObject(), titleTextInput.textDocument)
+            uiManager.initDescriptionHighlighting(artworkProxy.getBasicModelObject(), descriptionTextInput.textDocument)
+
+            savedTimer.start()
+        }
+    }
+
+    Timer {
+        id: savedTimer
+        interval: 1000
+        running: true
+        repeat: false
+        onTriggered: {
+            canShowChangesSaved = true
+        }
+    }
+
     Keys.onPressed: {
         var withMeta = (event.modifiers & Qt.ControlModifier) ||
                 (event.modifiers & Qt.MetaModifier);
@@ -393,7 +398,7 @@ Rectangle {
         text: i18.n + qsTr("Clear all keywords?")
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
-            filteredArtworksListModel.clearKeywords(artworkEditComponent.artworkIndex)
+            filteredArtworksListModel.clearKeywords(artworkProxy.artworkIndex)
             artworkProxy.updateKeywords()
             updateChangesText()
         }
@@ -1430,8 +1435,8 @@ Rectangle {
 
             Component.onCompleted: {
                 if (listViewEnabled) {
-                    rosterListView.currentIndex = artworkEditComponent.artworkIndex
-                    rosterListView.positionViewAtIndex(artworkEditComponent.artworkIndex, ListView.Contain)
+                    rosterListView.currentIndex = artworkProxy.artworkIndex
+                    rosterListView.positionViewAtIndex(artworkProxy.artworkIndex, ListView.Contain)
                     // TODO: fix bug with ListView.Center
                 }
             }

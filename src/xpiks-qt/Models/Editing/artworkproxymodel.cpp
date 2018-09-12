@@ -53,6 +53,14 @@ namespace Models {
     const QString &ArtworkProxyModel::getFilePath() const { return m_ArtworkMetadata->getFilepath(); }
     QString ArtworkProxyModel::getBasename() const { return m_ArtworkMetadata->getBaseFilename(); }
 
+    int ArtworkProxyModel::getArtworkIndex() const {
+        int index = -1;
+        if (m_ArtworkMetadata != nullptr) {
+            index = m_ArtworkMetadata->getLastKnownIndex();
+        }
+        return index;
+    }
+
     void ArtworkProxyModel::setDescription(const QString &description)  {
         Q_ASSERT(getIsValid());
         LOG_INFO << description;
@@ -193,8 +201,7 @@ namespace Models {
         return getHasDescriptionWordSpellError(word);
     }
 
-    void ArtworkProxyModel::setSourceArtwork(QObject *artworkMetadata) {
-        Artworks::ArtworkMetadata *artwork = qobject_cast<Artworks::ArtworkMetadata*>(artworkMetadata);
+    void ArtworkProxyModel::setSourceArtwork(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork) {
         Q_ASSERT(artwork != nullptr);
         LOG_INFO << artwork->getLastKnownIndex();
 
@@ -203,9 +210,9 @@ namespace Models {
         releaseCurrentArtwork();
 
         artwork->setIsLockedForEditing(true);
-        m_ArtworkMetadata = artwork->getptr();
+        m_ArtworkMetadata = artwork;
 
-        connectArtworkSignals(artwork);
+        connectArtworkSignals(artwork.get());
         updateModelProperties();
     }
 
@@ -368,6 +375,7 @@ namespace Models {
         emit titleSpellingChanged();
         emit descriptionSpellingChanged();
         emit keywordsSpellingChanged();
+        emit artworkChanged();
 
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         m_PropertiesMap.updateProperties(m_ArtworkMetadata);

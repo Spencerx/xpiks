@@ -124,6 +124,11 @@ namespace Commands {
                                  QMLExtensions::UICommandID::InitSuggestionSingle,
                                  Models::ArtworkProxyModel,
                                  Suggestion::KeywordsSuggestor);
+
+        SOURCE_UI_TARGET_COMMAND(EditArtworkCommand,
+                                 QMLExtensions::UICommandID::EditArtwork,
+                                 Models::FilteredArtworksListModel,
+                                 Models::ArtworkProxyModel);
     }
 }
 

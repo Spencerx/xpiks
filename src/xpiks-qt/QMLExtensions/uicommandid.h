@@ -23,15 +23,13 @@ namespace QMLExtensions {
 
         // enum values must start with capital letter
         enum CommandID {
-            // ----------------------------------
-            // ------- Part 1. QML to C++ -------
-            // ----------------------------------
+            // ------ General ------
             SaveSession,
             SetMasterPassword,
             RemoveUnavailableFiles,
             GenerateCompletions,
             SelectFilteredArtworks,
-            // -------------------
+            // ------ Selected -------
             EditSelectedArtworks,
             FixSpellingInSelected,
             ReviewDuplicatesInSelected,
@@ -43,7 +41,7 @@ namespace QMLExtensions {
             FindAndReplaceInSelected,
             UploadSelected,
             ZipSelected,
-            // ------------------
+            // ------- Single -------
             FixSpellingCombined,
             FixSpellingSingle,
             FixSpellingArtwork,
@@ -56,10 +54,7 @@ namespace QMLExtensions {
             InitSuggestionCombined,
             InitSuggestionSingle,
             GenerateCompletionsForArtwork,
-            // ----------------------------------
-            // ------- Part 2. C++ to QML -------
-            // ----------------------------------
-            OpenSingleItemEditingView
+            EditArtwork
         };
         Q_ENUMS(CommandID)
     };

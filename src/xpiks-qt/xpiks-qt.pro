@@ -216,7 +216,8 @@ SOURCES += main.cpp \
     Services/SpellCheck/metadataduplicates.cpp \
     Services/SpellCheck/spellsuggestionstarget.cpp \
     Services/SpellCheck/spellcheckinfo.cpp \
-    Helpers/uihelpers.cpp
+    Helpers/uihelpers.cpp \
+    QMLExtensions/uicommandlistener.cpp
 
 RESOURCES += qml.qrc
 
@@ -533,7 +534,8 @@ HEADERS += \
     Services/SpellCheck/spellcheckinfo.h \
     Artworks/basicmodelsource.h \
     Helpers/uihelpers.h \
-    QMLExtensions/uiaction.h
+    QMLExtensions/uiaction.h \
+    QMLExtensions/uicommandlistener.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

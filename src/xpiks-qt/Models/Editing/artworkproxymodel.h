@@ -74,6 +74,7 @@ namespace Models {
         Q_PROPERTY(QString dateTaken READ getDateTaken NOTIFY imagePathChanged)
         Q_PROPERTY(bool isVideo READ getIsVideo NOTIFY imagePathChanged)
         Q_PROPERTY(bool isValid READ getIsValid NOTIFY isValidChanged)
+        Q_PROPERTY(int artworkIndex READ getArtworkIndex NOTIFY artworkChanged)
 
         using Common::MessagesSource<BasicSpellCheckMessageType>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
@@ -92,6 +93,7 @@ namespace Models {
         QString getThumbPath() const;
         const QString &getFilePath() const;
         QString getBasename() const;
+        int getArtworkIndex() const;
 
     public:
         virtual void setDescription(const QString &description) override;
@@ -114,6 +116,7 @@ namespace Models {
         void titleSpellingChanged();
         void descriptionSpellingChanged();
         void keywordsSpellingChanged();
+        void artworkChanged();
 
     protected:
         virtual void signalDescriptionChanged() override { emit descriptionChanged(); }
@@ -142,7 +145,7 @@ namespace Models {
         Q_INVOKABLE bool hasTitleWordSpellError(const QString &word);
         Q_INVOKABLE bool hasDescriptionWordSpellError(const QString &word);
         // --
-        Q_INVOKABLE void setSourceArtwork(QObject *artworkMetadata);
+        void setSourceArtwork(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork);
         // --
         Q_INVOKABLE void resetModel();
         Q_INVOKABLE QObject *getBasicModelObject();

@@ -143,5 +143,13 @@ namespace Commands {
             m_Target.setExistingKeywords(m_Source.getKeywords().toSet());
         }
 
+        void EditArtworkCommand::execute(const QVariant &value) {
+            LOG_DEBUG << value;
+            int proxyIndex = Helpers::convertToInt(value, -1);
+            std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+            if (m_Source.tryGetArtwork(proxyIndex, artwork)) {
+                m_Target.setSourceArtwork(artwork);
+            }
+        }
     }
 }
