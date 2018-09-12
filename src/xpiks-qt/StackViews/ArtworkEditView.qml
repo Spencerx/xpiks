@@ -44,7 +44,7 @@ Rectangle {
 
     function reloadItemEditing(itemIndex) {
         console.debug("reloadItemEditing # " + itemIndex)
-        if (itemIndex === artworkProxy.artworkIndex) { return }
+        if (itemIndex === artworkProxy.proxyIndex) { return }
         if ((itemIndex < 0) || (itemIndex >= rosterListView.count)) { return }
 
         canShowChangesSaved = false
@@ -398,7 +398,7 @@ Rectangle {
         text: i18.n + qsTr("Clear all keywords?")
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
-            filteredArtworksListModel.clearKeywords(artworkProxy.artworkIndex)
+            filteredArtworksListModel.clearKeywords(artworkProxy.proxyIndex)
             artworkProxy.updateKeywords()
             updateChangesText()
         }
@@ -1435,8 +1435,8 @@ Rectangle {
 
             Component.onCompleted: {
                 if (listViewEnabled) {
-                    rosterListView.currentIndex = artworkProxy.artworkIndex
-                    rosterListView.positionViewAtIndex(artworkProxy.artworkIndex, ListView.Contain)
+                    rosterListView.currentIndex = artworkProxy.proxyIndex
+                    rosterListView.positionViewAtIndex(artworkProxy.proxyIndex, ListView.Contain)
                     // TODO: fix bug with ListView.Center
                 }
             }

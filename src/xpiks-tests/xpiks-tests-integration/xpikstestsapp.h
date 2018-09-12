@@ -43,6 +43,7 @@ public:
     SpellCheck::UserDictionary &getUserDictionary() { return m_UserDictionary; }
     Models::ArtworksUploader &getArtworksUploader() { return m_ArtworksUploader; }
     Models::ArtworksListModel &getArtworksListModel() { return m_ArtworksListModel; }
+    Models::ArtworksRepository &getArtworksRepository() { return m_ArtworksRepository; }
     Models::FilteredArtworksListModel &getFilteredArtworksModel() { return m_FilteredArtworksListModel; }
     Models::CombinedArtworksModel &getCombinedArtworksModel() { return m_CombinedArtworksModel; }
     SpellCheck::SpellCheckSuggestionModel &getSpellSuggestionsModel() { return m_SpellSuggestionModel; }
@@ -64,6 +65,7 @@ public:
     Models::QuickBuffer &getQuickBuffer() { return m_QuickBuffer; }
     SpellCheck::UserDictEditModel &getUserDictEditModel() { return m_UserDictEditModel; }
     Models::ZipArchiver &getZipArchiver() { return m_ZipArchiver; }
+    Models::ArtworkProxyModel &getArtworkProxyModel() { return m_ArtworkProxyModel; }
 
 public:
     std::shared_ptr<Artworks::ArtworkMetadata> getArtwork(int index);

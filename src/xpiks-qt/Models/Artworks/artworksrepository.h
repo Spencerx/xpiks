@@ -99,10 +99,15 @@ namespace Models {
         std::vector<RepoDir> &accessRepos() { return m_DirectoriesList; }
 
     protected:
-        void insertIntoUnavailable(const QString &value) { m_UnavailableFiles.insert(value); }
         const QSet<QString> &getFilesSet() const { return m_FilesSet; }
         void setFullDirectory(int index) { m_DirectoriesList[index].setAddedAsDirectoryFlag(true); }
         void unsetFullDirectory(int index) { m_DirectoriesList[index].setAddedAsDirectoryFlag(false); }
+#endif
+
+#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
+    public:
+        void insertIntoUnavailable(const QString &value) { m_UnavailableFiles.insert(value); }
+        void notifyUnavailableFiles() { emit filesUnavailable(); }
 #endif
 
     public slots:

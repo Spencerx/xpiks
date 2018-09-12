@@ -44,12 +44,12 @@ namespace Models {
     class SettingsModel;
 #define PERCENT_EPSILON 0.0001
 
-    using UnavaibleFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;
+    using UnavailableFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;
 
     class ArtworksUploader:
             public QObject,
             public Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>,
-            public Common::MessagesTarget<UnavaibleFilesMessage>
+            public Common::MessagesTarget<UnavailableFilesMessage>
     {
         Q_OBJECT
         Q_PROPERTY(int percent READ getUIPercent NOTIFY percentChanged)
@@ -99,7 +99,7 @@ namespace Models {
 
     public:
         void setArtworks(Artworks::ArtworksSnapshot &snapshot);
-        virtual void handleMessage(UnavaibleFilesMessage const &message);
+        virtual void handleMessage(UnavailableFilesMessage const &message);
 
     public:
         Q_INVOKABLE void uploadArtworks();

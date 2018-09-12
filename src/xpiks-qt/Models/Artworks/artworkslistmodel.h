@@ -200,7 +200,6 @@ namespace Models {
         void artworksChanged(bool needToMoveCurrentItem);
         void artworksReimported(int importID, int artworksCount);
         void selectedArtworksRemoved(int count);
-        void fileWithIndexUnavailable(size_t index);
         void unavailableArtworksFound();
         void unavailableVectorsFound();
         void artworkSelectedChanged(bool value);

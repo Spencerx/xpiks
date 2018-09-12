@@ -21,6 +21,7 @@
 #include <memory>
 #include <vector>
 #include <Common/flags.h>
+#include <Common/types.h>
 #include <Common/messages.h>
 #include "artworkproxybase.h"
 #include <Models/Editing/icurrenteditable.h>
@@ -50,13 +51,15 @@ namespace Services {
 
 namespace Models {
     using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
+    using UnavailableFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;
 
     class ArtworkProxyModel:
             public QObject,
             public ArtworkProxyBase,
             public Common::MessagesSource<BasicSpellCheckMessageType>,
             public Common::MessagesSource<std::shared_ptr<ICurrentEditable>>,
-            public Common::MessagesSource<std::shared_ptr<Artworks::VideoArtwork>>
+            public Common::MessagesSource<std::shared_ptr<Artworks::VideoArtwork>>,
+            public Common::MessagesTarget<UnavailableFilesMessage>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
@@ -74,7 +77,7 @@ namespace Models {
         Q_PROPERTY(QString dateTaken READ getDateTaken NOTIFY imagePathChanged)
         Q_PROPERTY(bool isVideo READ getIsVideo NOTIFY imagePathChanged)
         Q_PROPERTY(bool isValid READ getIsValid NOTIFY isValidChanged)
-        Q_PROPERTY(int artworkIndex READ getArtworkIndex NOTIFY artworkChanged)
+        Q_PROPERTY(int proxyIndex READ getProxyIndex NOTIFY artworkChanged)
 
         using Common::MessagesSource<BasicSpellCheckMessageType>::sendMessage;
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
@@ -93,7 +96,7 @@ namespace Models {
         QString getThumbPath() const;
         const QString &getFilePath() const;
         QString getBasename() const;
-        int getArtworkIndex() const;
+        int getProxyIndex() const { return m_ProxyIndex; }
 
     public:
         virtual void setDescription(const QString &description) override;
@@ -129,7 +132,6 @@ namespace Models {
         void afterSpellingErrorsFixedHandler();
         void onDescriptionSpellingChanged();
         void onTitleSpellingChanged();
-        void itemUnavailableHandler(size_t index);
 
     public:
         Q_INVOKABLE void updateKeywords() { signalKeywordsCountChanged(); }
@@ -145,7 +147,7 @@ namespace Models {
         Q_INVOKABLE bool hasTitleWordSpellError(const QString &word);
         Q_INVOKABLE bool hasDescriptionWordSpellError(const QString &word);
         // --
-        void setSourceArtwork(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork);
+        void setSourceArtwork(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork, int proxyIndex=-1);
         // --
         Q_INVOKABLE void resetModel();
         Q_INVOKABLE QObject *getBasicModelObject();
@@ -163,6 +165,7 @@ namespace Models {
 
     public:
         bool acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID);
+        virtual void handleMessage(UnavailableFilesMessage const &) override;
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override;
@@ -180,6 +183,7 @@ namespace Models {
     private:
         ArtworkPropertiesMap m_PropertiesMap;
         std::shared_ptr<Artworks::ArtworkMetadata> m_ArtworkMetadata;
+        int m_ProxyIndex;
         Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         Services::IArtworksUpdater &m_ArtworksUpdater;

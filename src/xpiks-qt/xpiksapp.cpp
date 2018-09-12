@@ -563,9 +563,6 @@ void XpiksApp::connectEntitiesSignalsSlots() {
     QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataWritingFinished,
                      &m_ArtworksListModel, &Models::ArtworksListModel::modifiedArtworksCountChanged);
 
-    QObject::connect(&m_ArtworksListModel, &Models::ArtworksListModel::fileWithIndexUnavailable,
-                     &m_ArtworkProxyModel, &Models::ArtworkProxyModel::itemUnavailableHandler);
-
     QObject::connect(&m_ArtworkProxyModel, &Models::ArtworkProxyModel::warningsCouldHaveChanged,
                      &m_WarningsModel, &Warnings::WarningsModel::onWarningsCouldHaveChanged);
 
@@ -732,7 +729,7 @@ void XpiksApp::setupMessaging() {
 
     Common::connectSource<Common::NamedType<int, Common::MessageType::UnavailableFiles>>(
                 m_ArtworksListModel,
-    { m_CombinedArtworksModel, m_ArtworksUploader, m_ZipArchiver, m_UndoRedoManager });
+    { m_CombinedArtworksModel, m_ArtworksUploader, m_ZipArchiver, m_UndoRedoManager, m_ArtworkProxyModel });
 }
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)

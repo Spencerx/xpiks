@@ -32,6 +32,7 @@ namespace Models {
         QObject(parent),
         ArtworkProxyBase(),
         m_ArtworkMetadata(nullptr),
+        m_ProxyIndex(-1),
         m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_ArtworksUpdater(artworksUpdater)
@@ -52,14 +53,6 @@ namespace Models {
     QString ArtworkProxyModel::getThumbPath() const { return m_ArtworkMetadata->getThumbnailPath(); }
     const QString &ArtworkProxyModel::getFilePath() const { return m_ArtworkMetadata->getFilepath(); }
     QString ArtworkProxyModel::getBasename() const { return m_ArtworkMetadata->getBaseFilename(); }
-
-    int ArtworkProxyModel::getArtworkIndex() const {
-        int index = -1;
-        if (m_ArtworkMetadata != nullptr) {
-            index = m_ArtworkMetadata->getLastKnownIndex();
-        }
-        return index;
-    }
 
     void ArtworkProxyModel::setDescription(const QString &description)  {
         Q_ASSERT(getIsValid());
@@ -144,17 +137,6 @@ namespace Models {
         emit titleChanged();
     }
 
-    void ArtworkProxyModel::itemUnavailableHandler(size_t index) {
-        LOG_DEBUG << "#";
-
-        if (m_ArtworkMetadata != nullptr) {
-            if (index == m_ArtworkMetadata->getLastKnownIndex()) {
-                LOG_INFO << "Item is not available anymore" << index;
-                emit itemBecomeUnavailable();
-            }
-        }
-    }
-
     void ArtworkProxyModel::editKeyword(int index, const QString &replacement) {
         doEditKeyword(index, replacement);
     }
@@ -201,7 +183,7 @@ namespace Models {
         return getHasDescriptionWordSpellError(word);
     }
 
-    void ArtworkProxyModel::setSourceArtwork(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork) {
+    void ArtworkProxyModel::setSourceArtwork(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork, int proxyIndex) {
         Q_ASSERT(artwork != nullptr);
         LOG_INFO << artwork->getLastKnownIndex();
 
@@ -211,6 +193,7 @@ namespace Models {
 
         artwork->setIsLockedForEditing(true);
         m_ArtworkMetadata = artwork;
+        m_ProxyIndex = proxyIndex;
 
         connectArtworkSignals(artwork.get());
         updateModelProperties();
@@ -316,6 +299,17 @@ namespace Models {
         return accepted;
     }
 
+    void ArtworkProxyModel::handleMessage(const UnavailableFilesMessage &) {
+        LOG_DEBUG << "#";
+
+        if (m_ArtworkMetadata != nullptr) {
+            if (m_ArtworkMetadata->isUnavailable()) {
+                LOG_INFO << "Item is not available anymore";
+                emit itemBecomeUnavailable();
+            }
+        }
+    }
+
     Artworks::BasicMetadataModel *ArtworkProxyModel::getBasicMetadataModel() {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         return &m_ArtworkMetadata->getBasicMetadataModel();
@@ -415,6 +409,7 @@ namespace Models {
             basicModel.disconnect(this);
             this->disconnect(&basicModel);
             this->disconnect(m_ArtworkMetadata.get());
+            m_ProxyIndex = -1;
         }
     }
 
