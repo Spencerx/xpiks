@@ -98,13 +98,6 @@ namespace Models {
         return row;
     }
 
-    int FilteredArtworksListModel::getDerivedIndex(int originalIndex) const {
-        QModelIndex index = mapFromSource(m_ArtworksListModel.index(originalIndex, 0));
-        int row = index.row();
-
-        return row;
-    }
-
     QObject *FilteredArtworksListModel::getArtworkObject(int proxyIndex) {
         int originalIndex = getOriginalIndex(proxyIndex);
         QObject *item = m_ArtworksListModel.getArtworkObject(originalIndex);

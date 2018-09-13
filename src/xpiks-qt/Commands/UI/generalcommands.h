@@ -36,52 +36,17 @@ namespace Commands {
                               Encryption::SecretsManager,
                               Models::SettingsModel);
 
-        class RemoveUnavailableFilesCommand: public IUICommandTemplate {
-        public:
-            RemoveUnavailableFilesCommand(Models::ArtworksListModel &artworksListModel):
-                m_ArtworksListModel(artworksListModel)
-            {}
+        SOURCE_COMMAND(RemoveUnavailableFilesCommand,
+                       QMLExtensions::UICommandID::RemoveUnavailableFiles,
+                       Models::ArtworksListModel);
 
-            // IUICommandTemplate interface
-        public:
-            virtual int getCommandID() override { return QMLExtensions::UICommandID::RemoveUnavailableFiles; }
-            virtual void execute(QVariant const &value) override;
+        SOURCE_COMMAND(GenerateCompletionsCommand,
+                       QMLExtensions::UICommandID::GenerateCompletions,
+                       AutoComplete::AutoCompleteService);
 
-        private:
-            Models::ArtworksListModel &m_ArtworksListModel;
-        };
-
-        class GenerateCompletionsCommand: public IUICommandTemplate {
-        public:
-            GenerateCompletionsCommand(AutoComplete::AutoCompleteService &autoCompleteService):
-                m_AutoCompleteService(autoCompleteService)
-            {
-            }
-
-            // IUICommandTemplate interface
-        public:
-            virtual int getCommandID() override { return QMLExtensions::UICommandID::GenerateCompletions; }
-            virtual void execute(const QVariant &value) override;
-
-        private:
-            AutoComplete::AutoCompleteService &m_AutoCompleteService;
-        };
-
-        class SelectFilteredArtworksCommand: public IUICommandTemplate {
-        public:
-            SelectFilteredArtworksCommand(Models::FilteredArtworksListModel &filteredArtworksList):
-                m_FilteredArtworksList(filteredArtworksList)
-            {
-            }
-
-            // IUICommandTemplate interface
-        public:
-            virtual int getCommandID() override { return QMLExtensions::UICommandID::SelectFilteredArtworks; }
-            virtual void execute(const QVariant &value) override;
-
-        private:
-            Models::FilteredArtworksListModel &m_FilteredArtworksList;
-        };
+        SOURCE_COMMAND(SelectFilteredArtworksCommand,
+                       QMLExtensions::UICommandID::SelectFilteredArtworks,
+                       Models::FilteredArtworksListModel);
     }
 }
 

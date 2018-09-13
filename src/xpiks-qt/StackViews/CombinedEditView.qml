@@ -26,6 +26,7 @@ Rectangle {
     color: uiColors.selectedArtworkBackground
 
     property variant componentParent
+    property variant combinedArtworks: dispatcher.getCommandTarget(UICommand.EditSelectedArtworks)
     property var autoCompleteBox
 
     property bool wasLeftSideCollapsed
@@ -64,17 +65,7 @@ Rectangle {
     }
 
     function openDuplicatesView() {
-        combinedArtworks.setupDuplicatesModel()
-
-        var wasCollapsed = applicationWindow.leftSideCollapsed
-        mainStackView.push({
-                               item: "qrc:/StackViews/DuplicatesReView.qml",
-                               properties: {
-                                   componentParent: componentParent,
-                                   wasLeftSideCollapsed: wasCollapsed
-                               },
-                               destroyOnPop: true
-                           })
+        dispatcher.dispatch(UICommand.ShowDuplicatesCombined, {})
     }
 
     function openSuggestionView() {
@@ -84,18 +75,11 @@ Rectangle {
             }
         }
 
-        combinedArtworks.initSuggestion()
-
-        Common.launchDialog("Dialogs/KeywordsSuggestion.qml",
-                            componentParent,
-                            {callbackObject: callbackObject});
+        dispatcher.dispatch(UICommand.InitSuggestionCombined, callbackObject)
     }
 
     function fixSpelling() {
         dispatcher.dispatch(UICommand.FixSpellingCombined, {})
-        Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
-                            componentParent,
-                            {})
     }
 
     function editInPlainText() {
@@ -303,7 +287,7 @@ Rectangle {
             text: i18.n + qsTr("Preview")
             onTriggered: {
                 Common.launchDialog("Dialogs/SimplePreview.qml",
-                                    applicationWindow,
+                                    componentParent,
                                     {
                                         thumbpath: contextMenu.thumbPath
                                     })

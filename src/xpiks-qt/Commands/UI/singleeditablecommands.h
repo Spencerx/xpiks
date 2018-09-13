@@ -90,6 +90,11 @@ namespace Commands {
                                  Models::CombinedArtworksModel,
                                  SpellCheck::DuplicatesReviewModel);
 
+        SOURCE_UI_TARGET_COMMAND(ShowDuplicatesForArtworkCommand,
+                                 QMLExtensions::UICommandID::ShowDuplicatesArtwork,
+                                 Models::FilteredArtworksListModel,
+                                 SpellCheck::DuplicatesReviewModel);
+
         SOURCE_UI_TARGET_COMMAND(AcceptPresetCompletionForCombinedCommand,
                                  QMLExtensions::UICommandID::AcceptPresetCompletionForCombined,
                                  AutoComplete::ICompletionSource,

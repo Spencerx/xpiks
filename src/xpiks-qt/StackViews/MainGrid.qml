@@ -48,40 +48,22 @@ Item {
         }
     }
 
-    function fixDuplicatesAction(artworkIndex) {
-        artworksListModel.setupDuplicatesModel(artworkIndex)
-
-        var wasCollapsed = applicationWindow.leftSideCollapsed
-        applicationWindow.collapseLeftPane()
-        mainStackView.push({
-                               item: "qrc:/StackViews/DuplicatesReView.qml",
-                               properties: {
-                                   componentParent: applicationWindow,
-                                   wasLeftSideCollapsed: wasCollapsed
-                               },
-                               destroyOnPop: true
-                           })
+    function fixDuplicatesAction(proxyIndex) {
+        dispatcher.dispatch(UICommand.ShowDuplicatesArtwork, proxyIndex)
     }
 
-    function suggestKeywords(artworkIndex) {
+    function suggestKeywords(proxyIndex) {
         var callbackObject = {
             promoteKeywords: function(keywords) {
-                artworksListModel.addSuggestedKeywords(artworkIndex, keywords)
+                filteredArtworksListModel.addSuggestedKeywords(proxyIndex, keywords)
             }
         }
 
-        artworksListModel.initSuggestion(artworkIndex)
-
-        Common.launchDialog("Dialogs/KeywordsSuggestion.qml",
-                            componentParent,
-                            {callbackObject: callbackObject});
+        dispatcher.dispatch(UICommand.InitSuggestionArtwork, proxyIndex)
     }
 
     function fixSpelling(proxyIndex) {
         dispatcher.dispatch(UICommand.FixSpellingArtwork, proxyIndex)
-        Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
-                            componentParent,
-                            {})
     }
 
     function closeAutoComplete() {
@@ -124,7 +106,7 @@ Item {
     Menu {
         id: wordRightClickMenu
         property string word
-        property int artworkIndex
+        property int proxyIndex
         property int keywordIndex
         property bool showAddToDict: true
         property bool showExpandPreset: false
@@ -155,7 +137,7 @@ Item {
                     text: name
                     onTriggered: {
                         var presetID = filteredPresetsModel.getOriginalID(index)
-                        filteredArtworksListModel.expandPreset(wordRightClickMenu.artworkIndex, wordRightClickMenu.keywordIndex, presetID);
+                        filteredArtworksListModel.expandPreset(wordRightClickMenu.proxyIndex, wordRightClickMenu.keywordIndex, presetID);
                     }
                 }
             }
@@ -164,7 +146,7 @@ Item {
 
     Menu {
         id: presetsMenu
-        property int artworkIndex
+        property int proxyIndex
 
         Menu {
             id: subMenu
@@ -189,7 +171,7 @@ Item {
                         delegate: MenuItem {
                             text: name
                             onTriggered: {
-                                filteredArtworksListModel.addPreset(presetsMenu.artworkIndex, groupMenu.groupModel.getOriginalID(index));
+                                filteredArtworksListModel.addPreset(presetsMenu.proxyIndex, groupMenu.groupModel.getOriginalID(index));
                             }
                         }
                     }
@@ -204,7 +186,7 @@ Item {
                 delegate: MenuItem {
                     text: name
                     onTriggered: {
-                        filteredArtworksListModel.addPreset(presetsMenu.artworkIndex, subMenu.defaultGroupModel.getOriginalID(index));
+                        filteredArtworksListModel.addPreset(presetsMenu.proxyIndex, subMenu.defaultGroupModel.getOriginalID(index));
                     }
                 }
             }
@@ -213,8 +195,7 @@ Item {
 
     Menu {
         id: keywordsMoreMenu
-        property int artworkIndex
-        property int filteredIndex
+        property int proxyIndex
         property int keywordsCount: 0
         property var editableTags
         property bool hasDuplicates: false
@@ -223,7 +204,7 @@ Item {
         MenuItem {
             text: i18.n + qsTr("Suggest keywords")
             onTriggered: {
-               suggestKeywords(keywordsMoreMenu.artworkIndex)
+               suggestKeywords(keywordsMoreMenu.proxyIndex)
             }
         }
 
@@ -233,7 +214,7 @@ Item {
             text: i18.n + qsTr("Fix spelling")
             enabled: keywordsMoreMenu.hasSpellingErrors
             onTriggered: {
-                fixSpelling(keywordsMoreMenu.filteredIndex)
+                fixSpelling(keywordsMoreMenu.proxyIndex)
             }
         }
 
@@ -241,7 +222,7 @@ Item {
             text: i18.n + qsTr("Show duplicates")
             enabled: keywordsMoreMenu.hasDuplicates
             onTriggered: {
-                fixDuplicatesAction(keywordsMoreMenu.artworkIndex)
+                fixDuplicatesAction(keywordsMoreMenu.proxyIndex)
             }
         }
 
@@ -251,7 +232,7 @@ Item {
             text: i18.n + qsTr("Copy")
             enabled: keywordsMoreMenu.keywordsCount > 0
             onTriggered: {
-                var keywordsString = filteredArtworksListModel.getKeywordsString(keywordsMoreMenu.filteredIndex)
+                var keywordsString = filteredArtworksListModel.getKeywordsString(keywordsMoreMenu.proxyIndex)
                 clipboard.setText(keywordsString)
             }
         }
@@ -269,7 +250,7 @@ Item {
         MenuItem {
             text: i18.n + qsTr("Edit in plain text")
             onTriggered: {
-                editInPlainText(keywordsMoreMenu.filteredIndex)
+                editInPlainText(keywordsMoreMenu.proxyIndex)
             }
         }
 
@@ -277,7 +258,7 @@ Item {
             text: i18.n + qsTr("Clear")
             enabled: keywordsMoreMenu.keywordsCount > 0
             onTriggered: {
-                filteredArtworksListModel.clearKeywords(keywordsMoreMenu.filteredIndex)
+                filteredArtworksListModel.clearKeywords(keywordsMoreMenu.proxyIndex)
             }
         }
     }
@@ -938,10 +919,6 @@ Item {
                                 artworkContextMenu.index = rowWrapper.delegateIndex
                                 artworkContextMenu.hasVectorAttached = hasvectorattached
                                 artworkContextMenu.popup()
-                            }
-
-                            function getIndex() {
-                                return filteredArtworksListModel.getOriginalIndex(index)
                             }
 
                             function focusDescription() {
@@ -1665,7 +1642,7 @@ Item {
                                                         wordRightClickMenu.word = keyword
                                                         filteredPresetsModel.searchTerm = keyword
                                                         wordRightClickMenu.showExpandPreset = (filteredPresetsModel.getItemsCount() !== 0 )
-                                                        wordRightClickMenu.artworkIndex = rowWrapper.getIndex()
+                                                        wordRightClickMenu.proxyIndex = rowWrapper.delegateIndex
                                                         wordRightClickMenu.keywordIndex = kw.delegateIndex
                                                         wordRightClickMenu.popupIfNeeded()
                                                     }
@@ -1718,7 +1695,7 @@ Item {
 
                                                 onRightClickedInside: {
                                                     filteredPresetsModel.searchTerm = ''
-                                                    presetsMenu.artworkIndex = rowWrapper.getIndex()
+                                                    presetsMenu.proxyIndex = rowWrapper.delegateIndex
                                                     presetsMenu.popup()
                                                 }
                                             }
@@ -1781,7 +1758,7 @@ Item {
                                                 enabled: canBeShown
                                                 visible: canBeShown
                                                 isActive: true //rowWrapper.isHighlighted
-                                                onClicked: { fixDuplicatesAction(rowWrapper.getIndex()) }
+                                                onClicked: { fixDuplicatesAction(rowWrapper.delegateIndex) }
                                             }
 
                                             StyledText {
@@ -1800,7 +1777,7 @@ Item {
                                                                            !fixSpellingText.canBeShown) || (columnLayout.isWideForLinks)
                                                 visible: canBeShown
                                                 enabled: canBeShown
-                                                onClicked: { suggestKeywords(rowWrapper.getIndex()) }
+                                                onClicked: { suggestKeywords(rowWrapper.delegateIndex) }
                                             }
 
                                             StyledText {
@@ -1887,8 +1864,7 @@ Item {
 
                                                         keywordsMoreMenu.editableTags = flv
                                                         keywordsMoreMenu.keywordsCount = keywordscount
-                                                        keywordsMoreMenu.artworkIndex = rowWrapper.getIndex()
-                                                        keywordsMoreMenu.filteredIndex = rowWrapper.delegateIndex
+                                                        keywordsMoreMenu.proxyIndex = rowWrapper.delegateIndex
                                                         keywordsMoreMenu.hasSpellingErrors = rowWrapper.keywordsModel ? rowWrapper.keywordsModel.hasAnySpellingErrors() : false
                                                         keywordsMoreMenu.hasDuplicates = rowWrapper.keywordsModel ? rowWrapper.keywordsModel.hasDuplicates : false
                                                         keywordsMoreMenu.popup()

@@ -65,6 +65,15 @@ namespace Commands {
             m_Target.setupModel(m_Source.getBasicModel());
         }
 
+        void ShowDuplicatesForArtworkCommand::execute(QVariant const &value) {
+            LOG_DEBUG << value;
+            int proxyIndex = Helpers::convertToInt(value, -1);
+            std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+            if (m_Source.tryGetArtwork(proxyIndex, artwork)) {
+                m_Target.setupModel(artwork->getBasicModel());
+            }
+        }
+
         void AcceptPresetCompletionForCombinedCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             int completionID = Helpers::convertToInt(value, 0);

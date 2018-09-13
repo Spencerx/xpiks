@@ -47,6 +47,7 @@ namespace QMLExtensions {
             FixSpellingArtwork,
             ShowDuplicatesSingle,
             ShowDuplicatesCombined,
+            ShowDuplicatesArtwork,
             AcceptPresetCompletionForCombined,
             AcceptPresetCompletionForSingle,
             AcceptPresetCompletionForArtwork,
@@ -54,7 +55,8 @@ namespace QMLExtensions {
             InitSuggestionCombined,
             InitSuggestionSingle,
             GenerateCompletionsForArtwork,
-            EditArtwork
+            EditArtwork,
+            CopyArtworkToQuickBuffer
         };
         Q_ENUMS(CommandID)
     };

@@ -14,8 +14,8 @@
 #include <unordered_map>
 #include <QObject>
 #include <QMutex>
-#include "iuicommanddispatcher.h"
 #include "uiaction.h"
+#include <Commands/Base/iuicommandtemplate.h>
 
 namespace Commands {
     class ICommandManager;
@@ -24,9 +24,7 @@ namespace Commands {
 class QJSValue;
 
 namespace QMLExtensions {
-    class UICommandDispatcher:
-            public QObject,
-            public IUICommandDispatcher
+    class UICommandDispatcher: public QObject
     {
         Q_OBJECT
     public:
@@ -39,14 +37,15 @@ namespace QMLExtensions {
     public:
         void registerCommands(std::initializer_list<std::shared_ptr<Commands::IUICommandTemplate>> commands);
 
-        // IUICommandDispatcher interface
     public:
-        virtual void registerCommand(std::shared_ptr<Commands::IUICommandTemplate> const &command) override;
-        virtual void dispatchCommand(int commandID, QVariant const &value) override;
+        void registerCommand(std::shared_ptr<Commands::IUICommandTemplate> const &command);
+#if defined(UI_TESTS) || defined(INTEGRATION_TESTS)
+        void dispatchCommand(int commandID);
+#endif
 
     signals:
         void actionsAvailable();
-        void dispatched(int commandID, QVariant const &value);
+        void dispatched(int commandID, QJSValue const &value);
 
     private slots:
         void onActionsAvailable();

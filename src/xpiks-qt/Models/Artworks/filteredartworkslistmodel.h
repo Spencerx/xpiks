@@ -94,11 +94,10 @@ namespace Models {
 
     public:
         void acceptCompletionAsPreset(int proxyIndex, AutoComplete::ICompletionSource &completionsSource, int completionID);
+        int getOriginalIndex(int proxyIndex) const;
 
     public:
         // indexing
-        Q_INVOKABLE int getOriginalIndex(int proxyIndex) const;
-        Q_INVOKABLE int getDerivedIndex(int originalIndex) const;
         Q_INVOKABLE QObject *getArtworkObject(int proxyIndex);
         Q_INVOKABLE QObject *getBasicModelObject(int proxyIndex);
 
@@ -152,13 +151,7 @@ namespace Models {
     public:
         // other
         Q_INVOKABLE void registerCurrentItem(int proxyIndex) const;
-
-    public:
-        //Q_INVOKABLE void removeArtworksDirectory(int index);
-
         Q_INVOKABLE void copyToQuickBuffer(int proxyIndex) const;
-        //Q_INVOKABLE void fillFromQuickBuffer(int index) const;
-        //Q_INVOKABLE void generateCompletions(const QString &prefix, int index);
 
     public slots:
         void itemSelectedChanged(bool value);

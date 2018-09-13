@@ -96,18 +96,11 @@ Rectangle {
             }
         }
 
-        artworkProxy.initSuggestion()
-
-        Common.launchDialog("Dialogs/KeywordsSuggestion.qml",
-                            componentParent,
-                            {callbackObject: callbackObject});
+        dispatcher.dispatch(UICommand.InitSuggestionSingle, callbackObject)
     }
 
     function fixSpelling() {
         dispatcher.dispatch(UICommand.FixSpellingSingle, {})
-        Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
-                            componentParent,
-                            {})
         updateChangesText()
     }
 
@@ -278,6 +271,7 @@ Rectangle {
         MenuItem {
             text: i18.n + qsTr("Copy")
             enabled: artworkProxy.keywordsCount > 0
+            objectName: "copyMenuItem"
             onTriggered: {
                 clipboard.setText(artworkProxy.getKeywordsString())
             }

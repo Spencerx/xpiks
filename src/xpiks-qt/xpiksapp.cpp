@@ -172,7 +172,6 @@ void XpiksApp::initialize() {
 void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("artworksListModel", &m_ArtworksListModel);
     context->setContextProperty("artworkRepository", &m_FilteredArtworksRepository);
-    context->setContextProperty("combinedArtworks", &m_CombinedArtworksModel);
     context->setContextProperty("secretsManager", &m_SecretsManager);
     context->setContextProperty("undoRedoManager", &m_UndoRedoManager);
     context->setContextProperty("keywordsSuggestor", &m_KeywordsSuggestor);
@@ -655,6 +654,9 @@ void XpiksApp::registerUICommands() {
 
                     std::make_shared<Commands::UI::ShowDuplicatesForCombinedCommand>(
                     m_CombinedArtworksModel, m_DuplicatesModel),
+
+                    std::make_shared<Commands::UI::ShowDuplicatesForArtworkCommand>(
+                    m_FilteredArtworksListModel, m_DuplicatesModel),
 
                     std::make_shared<Commands::UI::AcceptPresetCompletionForCombinedCommand>(
                     m_KeywordsAutoCompleteModel.getCompletionsSource(), m_CombinedArtworksModel),

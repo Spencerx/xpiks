@@ -11,12 +11,12 @@
 #ifndef UIACTION_H
 #define UIACTION_H
 
-#include <QVariant>
+#include <QJSValue>
 
 namespace QMLExtensions {
     struct UIAction {
         int m_CommandID;
-        QVariant m_Value;
+        QJSValue m_Value;
     };
 }
 

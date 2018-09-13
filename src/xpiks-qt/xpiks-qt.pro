@@ -499,7 +499,6 @@ HEADERS += \
     Commands/Editing/deletekeywordstemplate.h \
     Commands/Base/simplecommand.h \
     Models/Editing/currenteditablemodel.h \
-    QMLExtensions/iuicommanddispatcher.h \
     Models/Editing/quickbuffer.h \
     Commands/Editing/findandreplacetemplate.h \
     Services/SpellCheck/spellcheckservice.h \

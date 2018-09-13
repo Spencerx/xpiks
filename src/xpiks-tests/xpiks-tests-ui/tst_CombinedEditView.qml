@@ -3,6 +3,7 @@ import QtTest 1.1
 import xpiks 1.0
 import XpiksTests 1.0
 import "../../xpiks-qt/StackViews"
+import "../../xpiks-qt/Common.js" as Common
 import "TestUtils.js" as TestUtils
 
 Item {
@@ -30,6 +31,23 @@ Item {
             componentParent: root
             anchors.fill: parent
             wasLeftSideCollapsed: false
+        }
+    }
+
+    Loader {
+        asynchronous: true
+        focus: false
+
+        sourceComponent: Item {
+            UICommandListener {
+                commandDispatcher: dispatcher
+                commandIDs: [ UICommand.FixSpellingCombined ]
+                onDispatched: {
+                    Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
+                                        root,
+                                        {})
+                }
+            }
         }
     }
 
@@ -62,9 +80,9 @@ Item {
         }
 
         function test_TabTopToBottom() {
-            combinedArtworks.changeTitle = true
-            combinedArtworks.changeDescription = true
-            combinedArtworks.changeKeywords = true
+            combinedView.combinedArtworks.changeTitle = true
+            combinedView.combinedArtworks.changeDescription = true
+            combinedView.combinedArtworks.changeKeywords = true
 
             titleInput.forceActiveFocus()
             wait(1000)
@@ -76,9 +94,9 @@ Item {
         }
 
         function test_TabOverTitle() {
-            combinedArtworks.changeTitle = true
-            combinedArtworks.changeDescription = false
-            combinedArtworks.changeKeywords = true
+            combinedView.combinedArtworks.changeTitle = true
+            combinedView.combinedArtworks.changeDescription = false
+            combinedView.combinedArtworks.changeKeywords = true
 
             titleInput.forceActiveFocus()
             keyClick(Qt.Key_Tab)
@@ -87,9 +105,9 @@ Item {
         }
 
         function test_TabFromKeywords() {
-            combinedArtworks.changeTitle = true
-            combinedArtworks.changeDescription = false
-            combinedArtworks.changeKeywords = true
+            combinedView.combinedArtworks.changeTitle = true
+            combinedView.combinedArtworks.changeDescription = false
+            combinedView.combinedArtworks.changeKeywords = true
 
             editableTags.activateEdit()
             keyClick(Qt.Key_Backtab)
@@ -98,14 +116,14 @@ Item {
         }
 
         function test_addKeywordByTyping() {
-            compare(combinedArtworks.keywordsCount, 0)
+            compare(combinedView.combinedArtworks.keywordsCount, 0)
 
             keywordsEdit.forceActiveFocus()
             var testKeyword = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
 
-            compare(combinedArtworks.keywordsCount, 1)
-            compare(combinedArtworks.getKeywordsString(), testKeyword)
+            compare(combinedView.combinedArtworks.keywordsCount, 1)
+            compare(combinedView.combinedArtworks.getKeywordsString(), testKeyword)
         }
 
         function test_autoCompleteKeywordBasic() {
@@ -133,8 +151,8 @@ Item {
             keyClick(Qt.Key_Return)
             wait(TestsHost.normalSleepTime)
 
-            compare(combinedArtworks.keywordsCount, 1)
-            compare(combinedArtworks.getKeywordsString(), "weather")
+            compare(combinedView.combinedArtworks.keywordsCount, 1)
+            compare(combinedView.combinedArtworks.getKeywordsString(), "weather")
         }
 
         function test_autoCompleteCancelWhenShortText() {
@@ -182,8 +200,8 @@ Item {
             wait(TestsHost.normalSleepTime)
             verify(typeof combinedView.autoCompleteBox === "undefined")
 
-            compare(combinedArtworks.keywordsCount, 3)
-            compare(combinedArtworks.getKeywordsString(), "some, other, keywords")
+            compare(combinedView.combinedArtworks.keywordsCount, 3)
+            compare(combinedView.combinedArtworks.getKeywordsString(), "some, other, keywords")
         }
 
         function test_autoCompleteIntoNonEmptyEdit() {
@@ -282,7 +300,7 @@ Item {
             var repeater = findChild(editableTags, "repeater")
             var keywordWrapper = repeater.itemAt(0)
 
-            compare(combinedArtworks.getKeywordsString(), testKeyword1)
+            compare(combinedView.combinedArtworks.getKeywordsString(), testKeyword1)
             mouseDoubleClick(keywordWrapper)
 
             wait(TestsHost.smallSleepTime)
@@ -298,7 +316,7 @@ Item {
 
             wait(TestsHost.smallSleepTime)
 
-            compare(combinedArtworks.getKeywordsString(), testKeyword1[0] + testKeyword2)
+            compare(combinedView.combinedArtworks.getKeywordsString(), testKeyword1[0] + testKeyword2)
         }
 
         function test_editInPlainText() {
@@ -325,7 +343,7 @@ Item {
 
             wait(TestsHost.smallSleepTime)
 
-            compare(combinedArtworks.getKeywordsString(), testKeyword1 + ", " + testKeyword2)
+            compare(combinedView.combinedArtworks.getKeywordsString(), testKeyword1 + ", " + testKeyword2)
         }
 
         function test_copyToQuickBuffer() {
@@ -344,9 +362,9 @@ Item {
             var qbButton = findChild(combinedView, "copyToQuickBufferButton")
             mouseClick(qbButton)
 
-            compare(quickBuffer.title, combinedArtworks.title)
-            compare(quickBuffer.description, combinedArtworks.description)
-            compare(quickBuffer.keywordsCount, combinedArtworks.keywordsCount)
+            compare(quickBuffer.title, combinedView.combinedArtworks.title)
+            compare(quickBuffer.description, combinedView.combinedArtworks.description)
+            compare(quickBuffer.keywordsCount, combinedView.combinedArtworks.keywordsCount)
         }
 
         function test_fixSpelling() {
@@ -382,7 +400,7 @@ Item {
             // close the dialog
             keyClick(Qt.Key_Escape)
 
-            compare(combinedArtworks.getKeywordsString(), "pet")
+            compare(combinedView.combinedArtworks.getKeywordsString(), "pet")
         }
     }
 }

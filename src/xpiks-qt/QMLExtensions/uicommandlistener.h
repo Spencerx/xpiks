@@ -13,6 +13,7 @@
 
 #include <QObject>
 #include <QSet>
+#include <QJSValue>
 
 namespace QMLExtensions {
     class UICommandDispatcher;
@@ -44,10 +45,10 @@ namespace QMLExtensions {
         void commandIDsChanged();
         void commandDispatcherChanged();
         void enabledChanged();
-        void dispatched(int commandID, QVariant const &value);
+        void dispatched(int commandID, QJSValue const &value);
 
     public slots:
-        void onDispatcherCommand(int commandID, QVariant const &value);
+        void onDispatcherCommand(int commandID, const QJSValue &value);
 
     private:
         QSet<int> m_CommandIDs;

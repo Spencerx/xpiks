@@ -273,7 +273,7 @@ ApplicationWindow {
 
                 if (!launched) {
                     // also as fallback in case of errors in findSelectedIndex
-                    filteredArtworksListModel.combineSelectedArtworks();
+                    dispatcher.dispatch(UICommand.EditSelectedArtworks)
                     mainStackView.push({
                                            item: "qrc:/StackViews/CombinedEditView.qml",
                                            properties: {
@@ -1308,6 +1308,31 @@ ApplicationWindow {
             if (mainStackView.currentItem.objectName != "ArtworkEditView") {
                 startOneItemEditing(value, false)
             }
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.InitSuggestionArtwork,
+            UICommand.InitSuggestionCombined,
+            UICommand.InitSuggestionSingle]
+        onDispatched: {
+            Common.launchDialog("Dialogs/KeywordsSuggestion.qml",
+                                applicationWindow,
+                                {callbackObject: value});
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.FixSpellingArtwork,
+            UICommand.FixSpellingCombined,
+            UICommand.FixSpellingInSelected,
+            UICommand.FixSpellingSingle]
+        onDispatched: {
+            Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
+                                applicationWindow,
+                                {})
         }
     }
 

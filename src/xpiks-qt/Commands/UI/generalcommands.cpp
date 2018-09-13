@@ -25,13 +25,13 @@ namespace Commands {
 
         void RemoveUnavailableFilesCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
-            m_ArtworksListModel.purgeUnavailableFiles();
+            m_Source.purgeUnavailableFiles();
         }
 
         void GenerateCompletionsCommand::execute(const QVariant &value) {
             QString prefix = Helpers::convertToString(value);
             LOG_DEBUG << prefix;
-            m_AutoCompleteService.generateCompletions(prefix);
+            m_Source.generateCompletions(prefix);
         }
 
         void SelectFilteredArtworksCommand::execute(const QVariant &value) {
@@ -50,7 +50,7 @@ namespace Commands {
                 default: selectionType = Models::FilteredArtworksListModel::DontSelect;
             }
 
-            m_FilteredArtworksList.selectArtworksEx(selectionType);
+            m_Source.selectArtworksEx(selectionType);
         }
     }
 }

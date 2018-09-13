@@ -27,7 +27,14 @@ namespace QMLExtensions {
     }
 
     void UICommandDispatcher::dispatch(int commandID, QJSValue const &value) {
-        dispatchCommand(commandID, value.toVariant());
+        LOG_INFO << commandID;
+        {
+            QMutexLocker locker(&m_Mutex);
+            Q_UNUSED(locker);
+            m_ActionsQueue.push_back({commandID, value});
+        }
+
+        emit actionsAvailable();
     }
 
     QObject *UICommandDispatcher::getCommandTarget(int commandID) {
@@ -65,16 +72,18 @@ namespace QMLExtensions {
         m_CommandsMap[commandID] = command;
     }
 
-    void UICommandDispatcher::dispatchCommand(int commandID, QVariant const &value) {
+#if defined(UI_TESTS) || defined(INTEGRATION_TESTS)
+    void UICommandDispatcher::dispatchCommand(int commandID) {
         LOG_INFO << commandID;
         {
             QMutexLocker locker(&m_Mutex);
             Q_UNUSED(locker);
-            m_ActionsQueue.push_back({commandID, value});
+            m_ActionsQueue.push_back({commandID});
         }
 
         emit actionsAvailable();
     }
+#endif
 
     void UICommandDispatcher::onActionsAvailable() {
         LOG_DEBUG << "#";
@@ -96,7 +105,8 @@ namespace QMLExtensions {
         auto it = m_CommandsMap.find(action.m_CommandID);
         if (it != m_CommandsMap.end()) {
             m_CommandManager.processCommand(
-                        std::make_shared<Commands::TemplatedUICommand>(action.m_Value, it->second));
+                        std::make_shared<Commands::TemplatedUICommand>(action.m_Value.toVariant(),
+                                                                       it->second));
         }
 
         emit dispatched(action.m_CommandID, action.m_Value);

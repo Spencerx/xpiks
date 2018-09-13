@@ -3,6 +3,7 @@ import QtTest 1.1
 import XpiksTests 1.0
 import xpiks 1.0
 import "../../xpiks-qt/StackViews"
+import "../../xpiks-qt/Common.js" as Common
 import "TestUtils.js" as TestUtils
 
 Item {
@@ -36,6 +37,23 @@ Item {
 
         sourceComponent: MainGrid {
             componentParent: root
+        }
+    }
+
+    Loader {
+        asynchronous: true
+        focus: false
+
+        sourceComponent: Item {
+            UICommandListener {
+                commandDispatcher: dispatcher
+                commandIDs: [ UICommand.FixSpellingArtwork ]
+                onDispatched: {
+                    Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
+                                        root,
+                                        {})
+                }
+            }
         }
     }
 

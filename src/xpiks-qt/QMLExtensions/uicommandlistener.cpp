@@ -56,7 +56,7 @@ namespace QMLExtensions {
         }
     }
 
-    void UICommandListener::onDispatcherCommand(int commandID, const QVariant &value) {
+    void UICommandListener::onDispatcherCommand(int commandID, const QJSValue &value) {
         if (!m_IsEnabled) { return; }
 
         if (m_CommandIDs.empty() || m_CommandIDs.contains(commandID)) {
