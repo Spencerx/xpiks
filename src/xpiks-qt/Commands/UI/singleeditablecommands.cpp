@@ -70,7 +70,7 @@ namespace Commands {
             int proxyIndex = Helpers::convertToInt(value, -1);
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;
             if (m_Source.tryGetArtwork(proxyIndex, artwork)) {
-                m_Target.setupModel(artwork->getBasicModel());
+                m_Target.setupModel(artwork->getBasicMetadataModel());
             }
         }
 
