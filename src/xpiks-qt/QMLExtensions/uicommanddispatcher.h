@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <QObject>
 #include <QMutex>
+#include <memory>
 #include "uiaction.h"
 #include <Commands/Base/iuicommandtemplate.h>
 
