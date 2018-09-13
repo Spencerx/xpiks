@@ -58,6 +58,13 @@ namespace QMLExtensions {
         return result;
     }
 
+#if defined(INTEGRATION_TESTS)
+    void UICommandDispatcher::dispatchCommand(int commandID, const QVariant &value) {
+        LOG_DEBUG << "#";
+        processAction(commandID, value);
+    }
+#endif
+
     void UICommandDispatcher::registerCommands(std::initializer_list<std::shared_ptr<Commands::IUICommandTemplate> > commands) {
         for (auto &command: commands) {
             registerCommand(command);
@@ -72,19 +79,6 @@ namespace QMLExtensions {
         m_CommandsMap[commandID] = command;
     }
 
-#if defined(UI_TESTS) || defined(INTEGRATION_TESTS)
-    void UICommandDispatcher::dispatchCommand(int commandID) {
-        LOG_INFO << commandID;
-        {
-            QMutexLocker locker(&m_Mutex);
-            Q_UNUSED(locker);
-            m_ActionsQueue.push_back({commandID});
-        }
-
-        emit actionsAvailable();
-    }
-#endif
-
     void UICommandDispatcher::onActionsAvailable() {
         LOG_DEBUG << "#";
         decltype(m_ActionsQueue) actions;
@@ -95,20 +89,18 @@ namespace QMLExtensions {
         }
 
         for (auto &action: actions) {
-            processAction(action);
+            processAction(action.m_CommandID, action.m_Value.toVariant());
+            emit dispatched(action.m_CommandID, action.m_Value);
         }
     }
 
-    void UICommandDispatcher::processAction(UIAction const &action) {
-        LOG_INFO << action.m_CommandID << action.m_Value.toString();
+    void UICommandDispatcher::processAction(int commandID, QVariant const &value) {
+        LOG_INFO << commandID << value.toString();
 
-        auto it = m_CommandsMap.find(action.m_CommandID);
+        auto it = m_CommandsMap.find(commandID);
         if (it != m_CommandsMap.end()) {
             m_CommandManager.processCommand(
-                        std::make_shared<Commands::TemplatedUICommand>(action.m_Value.toVariant(),
-                                                                       it->second));
+                        std::make_shared<Commands::TemplatedUICommand>(value, it->second));
         }
-
-        emit dispatched(action.m_CommandID, action.m_Value);
     }
 }

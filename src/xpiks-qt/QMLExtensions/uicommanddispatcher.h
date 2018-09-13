@@ -35,14 +35,14 @@ namespace QMLExtensions {
         Q_INVOKABLE void dispatch(int commandID, QJSValue const &value);
         Q_INVOKABLE QObject *getCommandTarget(int commandID);
 
+#if defined(INTEGRATION_TESTS)
     public:
-        void registerCommands(std::initializer_list<std::shared_ptr<Commands::IUICommandTemplate>> commands);
+        void dispatchCommand(int commandID, const QVariant &value);
+#endif
 
     public:
+        void registerCommands(std::initializer_list<std::shared_ptr<Commands::IUICommandTemplate>> commands);
         void registerCommand(std::shared_ptr<Commands::IUICommandTemplate> const &command);
-#if defined(UI_TESTS) || defined(INTEGRATION_TESTS)
-        void dispatchCommand(int commandID);
-#endif
 
     signals:
         void actionsAvailable();
@@ -52,7 +52,7 @@ namespace QMLExtensions {
         void onActionsAvailable();
 
     private:
-        void processAction(UIAction const &action);
+        void processAction(int commandID, const QVariant &value);
 
     private:
         std::unordered_map<int, std::shared_ptr<Commands::IUICommandTemplate>> m_CommandsMap;

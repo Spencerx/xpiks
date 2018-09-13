@@ -21,7 +21,7 @@ public:
     bool checkExportSucceeded();
 
 public:
-    void dispatch(QMLExtensions::UICommandID::CommandID id);
+    void dispatch(QMLExtensions::UICommandID::CommandID id, QVariant const &value = QVariant());
     bool addFilesForTest(QList<QUrl> const &urls);
     bool addDirectoriesForTest(QList<QUrl> const &urls);
     bool dropItemsForTest(QList<QUrl> const &urls);
