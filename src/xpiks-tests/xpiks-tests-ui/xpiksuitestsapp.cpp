@@ -107,8 +107,8 @@ void XpiksUITestsApp::setupUITests() {
     m_FilteredArtworksListModel.unselectFilteredArtworks();
     // select vectors
     m_FilteredArtworksListModel.selectArtworksEx(Models::FilteredArtworksListModel::SelectVectors);
-    m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::EditSelectedArtworks);
-    m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::ExportSelectedToCSV);
-    m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::ZipSelected);
-    m_UICommandDispatcher.dispatchCommand(QMLExtensions::UICommandID::UploadSelected);
+    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::EditSelectedArtworks, QJSValue());
+    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::ExportSelectedToCSV, QJSValue());
+    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::ZipSelected, QJSValue());
+    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::UploadSelected, QJSValue());
 }
