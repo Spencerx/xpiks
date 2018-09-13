@@ -71,8 +71,8 @@ bool XpiksTestsApp::checkExportSucceeded() {
     return success;
 }
 
-void XpiksTestsApp::dispatch(QMLExtensions::UICommandID::CommandID id, QVariant const &value) {
-    m_UICommandDispatcher.dispatchCommand(id, value);
+void XpiksTestsApp::dispatch(QMLExtensions::UICommandID::CommandID id) {
+    m_UICommandDispatcher.dispatchCommand(id);
     QCoreApplication::processEvents(QEventLoop::AllEvents);
 }
 
