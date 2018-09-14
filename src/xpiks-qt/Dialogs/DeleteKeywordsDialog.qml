@@ -26,7 +26,7 @@ Item {
     anchors.fill: parent
 
     property variant componentParent
-    property var deleteKeywordsModel: helpersWrapper.getDeleteKeywordsModel()
+    property var deleteKeywordsModel: dispatcher.getCommandTarget(UICommand.DeleteKeywordsFromSelected)
 
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();
@@ -45,17 +45,14 @@ Item {
     Connections {
         target: xpiksApp
         onGlobalBeforeDestruction: {
-            console.debug("UI:DeleteKeywordsDialog # global
-CloseRequested")
+            console.debug("UI:DeleteKeywordsDialog # global CloseRequested")
             closePopup()
         }
     }
 
     Connections {
         target: deleteKeywordsModel
-        onRequestCloseWindow: {
-            closePopup();
-        }
+        onRequestCloseWindow: closePopup()
     }
 
     PropertyAnimation { target: deleteKeywordsComponent; property: "opacity";
@@ -102,6 +99,7 @@ CloseRequested")
                 delegate: MenuItem {
                     text: name
                     onTriggered: {
+                        // TODO: fix this non-existing artworkIndex
                         deleteKeywordsModel.addPreset(presetsMenu.artworkIndex);
                     }
                 }
@@ -378,7 +376,7 @@ CloseRequested")
                             anchors.rightMargin: 20
                             Layout.fillWidth: true
                             color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                            property var keywordsModel: deleteKeywordsModel.getKeywordsToDeleteModel()
+                            property var keywordsModel: deleteKeywordsModel.getKeywordsToDeleteObject()
 
                             function removeKeyword(index) {
                                 deleteKeywordsModel.removeKeywordToDeleteAt(index)
@@ -398,7 +396,7 @@ CloseRequested")
 
                             EditableTags {
                                 id: flv
-                                objectName: "keywordsInput"
+                                objectName: "deleteEditableTags"
                                 anchors.fill: parent
                                 model: keywordsToDeleteWrapper.keywordsModel
                                 property int keywordHeight: uiManager.keywordHeight
@@ -511,7 +509,7 @@ CloseRequested")
                             anchors.rightMargin: 20
                             Layout.fillWidth: true
                             color: uiColors.inputInactiveBackground
-                            property var keywordsModel: deleteKeywordsModel.getCommonKeywordsModel()
+                            property var keywordsModel: deleteKeywordsModel.getCommonKeywordsObject()
 
                             function removeKeyword(index) {
                                 var keyword = deleteKeywordsModel.removeCommonKeywordAt(index)
@@ -617,7 +615,7 @@ CloseRequested")
                                 closePopup()
                             }
 
-                            tooltip: "Exit with no changes"
+                            tooltip: qsTr("Exit without changes", "tooltip")
                         }
                     }
                 }

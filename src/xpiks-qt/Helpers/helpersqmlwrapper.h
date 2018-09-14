@@ -53,7 +53,6 @@ namespace Helpers {
     public:
         /*Q_INVOKABLE QObject *getLogsModel();
         Q_INVOKABLE QObject *getSpellCheckerService();
-        Q_INVOKABLE QObject *getDeleteKeywordsModel();
         Q_INVOKABLE QObject *getUploadInfos();
          */
 

@@ -436,7 +436,8 @@ DISTFILES += \
     ../../xpiks-qt/Components/ZoomAmplifier.qml \
     ../../xpiks-qt/Constants/UIConfig.js \
     TestUtils.js \
-    tst_MainGrid.qml
+    tst_MainGrid.qml \
+    tst_DeleteKeywordsDialog.qml
 
 HEADERS += \
     testshost.h \

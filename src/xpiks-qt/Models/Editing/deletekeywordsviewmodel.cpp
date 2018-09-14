@@ -10,6 +10,7 @@
 
 #include "deletekeywordsviewmodel.h"
 #include <QTime>
+#include <QQmlEngine>
 #include <Common/defines.h>
 #include <Helpers/indiceshelper.h>
 #include <Artworks/artworkelement.h>
@@ -48,6 +49,13 @@ namespace Models {
         return anyRemoved;
     }
 
+#if defined(UI_TESTS) || defined(INTEGRATION_TESTS)
+    void DeleteKeywordsViewModel::clearModel() {
+        m_CommonKeywordsModel.clearKeywords();
+        m_KeywordsToDeleteModel.clearKeywords();
+    }
+#endif
+
     bool DeleteKeywordsViewModel::doRemoveSelectedArtworks() {
         bool anyRemoved = ArtworksViewModel::doRemoveSelectedArtworks();
 
@@ -69,6 +77,18 @@ namespace Models {
         m_KeywordsToDeleteModel.clearKeywords();
 
         setCaseSensitive(false);
+    }
+
+    QObject *DeleteKeywordsViewModel::getCommonKeywordsObject() {
+        QObject *item = &m_CommonKeywordsModel;
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        return item;
+    }
+
+    QObject *DeleteKeywordsViewModel::getKeywordsToDeleteObject() {
+        QObject *item = &m_KeywordsToDeleteModel;
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        return item;
     }
 
     void DeleteKeywordsViewModel::removeKeywordToDeleteAt(int keywordIndex) {

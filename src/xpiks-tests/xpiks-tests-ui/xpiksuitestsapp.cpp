@@ -72,6 +72,7 @@ void XpiksUITestsApp::cleanup() {
     m_CombinedArtworksModel.clearModel();
     m_CsvExportModel.clearModel();
     m_UploadInfoRepository.clear();
+    m_DeleteKeywordsModel.clearModel();
 }
 
 bool XpiksUITestsApp::setupCommonFiles() {
@@ -111,4 +112,5 @@ void XpiksUITestsApp::setupUITests() {
     m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::ExportSelectedToCSV, QJSValue());
     m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::ZipSelected, QJSValue());
     m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::UploadSelected, QJSValue());
+    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::DeleteKeywordsFromSelected, QJSValue());
 }

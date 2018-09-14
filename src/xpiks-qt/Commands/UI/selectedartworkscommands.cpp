@@ -24,6 +24,7 @@
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/findandreplacemodel.h>
+#include <Models/Editing/deletekeywordsviewmodel.h>
 #include <Models/Connectivity/artworksuploader.h>
 #include <Models/Connectivity/ziparchiver.h>
 #include <Helpers/uihelpers.h>
@@ -105,6 +106,11 @@ namespace Commands {
         }
 
         void ZipSelectedCommand::execute(QVariant const &) {
+            LOG_DEBUG << "#";
+            m_Target.setArtworks(m_Source.getSelectedArtworks());
+        }
+
+        void DeleteKeywordsFromSelectedCommand::execute(const QVariant &) {
             LOG_DEBUG << "#";
             m_Target.setArtworks(m_Source.getSelectedArtworks());
         }

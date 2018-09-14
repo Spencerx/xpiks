@@ -692,7 +692,10 @@ void XpiksApp::registerUICommands() {
                     m_FilteredArtworksListModel),
 
                     std::make_shared<Commands::UI::EditArtworkCommand>(
-                    m_FilteredArtworksListModel, m_ArtworkProxyModel)
+                    m_FilteredArtworksListModel, m_ArtworkProxyModel),
+
+                    std::make_shared<Commands::UI::DeleteKeywordsFromSelectedCommand>(
+                    m_FilteredArtworksListModel, m_DeleteKeywordsModel)
                 });
 }
 
@@ -731,7 +734,8 @@ void XpiksApp::setupMessaging() {
 
     Common::connectSource<Common::NamedType<int, Common::MessageType::UnavailableFiles>>(
                 m_ArtworksListModel,
-    { m_CombinedArtworksModel, m_ArtworksUploader, m_ZipArchiver, m_UndoRedoManager, m_ArtworkProxyModel });
+    { m_CombinedArtworksModel, m_ArtworksUploader, m_ZipArchiver, m_UndoRedoManager,
+      m_ArtworkProxyModel, m_DeleteKeywordsModel });
 }
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
@@ -753,6 +757,7 @@ void XpiksApp::cleanupModels() {
     m_MetadataIOCoordinator.clear();
     m_PresetsModel.clearModel();
     m_SettingsModel.resetToDefault();
+    m_DeleteKeywordsModel.resetModel();
 
     m_FilteredArtworksListModel.setSearchTerm("");
     m_CombinedArtworksModel.resetModel();

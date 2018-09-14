@@ -41,6 +41,7 @@ namespace Models {
     class ArtworksUploader;
     class CombinedArtworksModel;
     class ZipArchiver;
+    class DeleteKeywordsViewModel;
 }
 
 namespace Services {
@@ -119,6 +120,11 @@ namespace Commands {
                                  QMLExtensions::UICommandID::ZipSelected,
                                  Artworks::ISelectedArtworksSource,
                                  Models::ZipArchiver);
+
+        SOURCE_UI_TARGET_COMMAND(DeleteKeywordsFromSelectedCommand,
+                                 QMLExtensions::UICommandID::DeleteKeywordsFromSelected,
+                                 Artworks::ISelectedArtworksSource,
+                                 Models::DeleteKeywordsViewModel);
     }
 }
 

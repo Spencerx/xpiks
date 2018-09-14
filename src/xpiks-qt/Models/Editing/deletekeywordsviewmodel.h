@@ -11,7 +11,6 @@
 #ifndef DELETEKEYWORDSVIEWMODEL_H
 #define DELETEKEYWORDSVIEWMODEL_H
 
-#include <QQmlEngine>
 #include <QHash>
 #include <Common/types.h>
 #include <Artworks/basickeywordsmodel.h>
@@ -69,23 +68,20 @@ namespace Models {
         bool containsCommonKeyword(const QString &keyword) { return m_CommonKeywordsModel.containsKeyword(keyword); }
 #endif
 
+#if defined(UI_TESTS) || defined(INTEGRATION_TESTS)
+    public:
+        void clearModel();
+#endif
+
     protected:
         virtual bool doRemoveSelectedArtworks() override;
         virtual void doResetModel() override;
 
     public:
-        Q_INVOKABLE QObject *getCommonKeywordsModel() {
-            QObject *item = &m_CommonKeywordsModel;
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-            return item;
-        }
+        Q_INVOKABLE QObject *getCommonKeywordsObject();
+        Q_INVOKABLE QObject *getKeywordsToDeleteObject();
 
-        Q_INVOKABLE QObject *getKeywordsToDeleteModel() {
-            QObject *item = &m_KeywordsToDeleteModel;
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-            return item;
-        }
-
+    public:
         Q_INVOKABLE void removeKeywordToDeleteAt(int keywordIndex);
         Q_INVOKABLE void removeLastKeywordToDelete();
         Q_INVOKABLE void clearKeywordsToDelete();

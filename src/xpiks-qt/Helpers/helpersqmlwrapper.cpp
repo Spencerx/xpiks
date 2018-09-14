@@ -146,12 +146,6 @@ namespace Helpers {
         return service;
     }
 
-    QObject *HelpersQmlWrapper::getDeleteKeywordsModel() {
-        auto *model = m_CommandManager->getDeleteKeywordsModel();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
-    }
-
     QObject *HelpersQmlWrapper::getUploadInfos() {
         auto *model = m_CommandManager->getUploadInfoRepository();
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);

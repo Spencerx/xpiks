@@ -41,6 +41,7 @@ namespace QMLExtensions {
             FindAndReplaceInSelected,
             UploadSelected,
             ZipSelected,
+            DeleteKeywordsFromSelected,
             // ------- Single -------
             FixSpellingCombined,
             FixSpellingSingle,
