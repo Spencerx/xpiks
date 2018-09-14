@@ -88,19 +88,43 @@ Item {
 
         Menu {
             id: subMenu
+            property var defaultGroupModel: presetsGroups.getDefaultGroupModel()
             title: i18.n + qsTr("Insert preset")
 
             Instantiator {
-                model: presetsModel
-                onObjectAdded:{
-                    subMenu.insertItem( index, object )
-                }
+                model: presetsGroups
+                onObjectAdded: subMenu.insertItem( index, object )
                 onObjectRemoved: subMenu.removeItem( object )
+                delegate: Menu {
+                    id: groupMenu
+                    property int delegateIndex: index
+                    property var groupModel: presetsGroups.getGroupModel(index)
+                    title: gname
+
+                    Instantiator {
+                        model: groupMenu.groupModel
+                        onObjectAdded: groupMenu.insertItem( index, object )
+                        onObjectRemoved: groupMenu.removeItem( object )
+
+                        delegate: MenuItem {
+                            text: name
+                            onTriggered: {
+                                deleteKeywordsModel.addPreset(groupMenu.groupModel.getOriginalID(index))
+                            }
+                        }
+                    }
+                }
+            }
+
+            Instantiator {
+                model: subMenu.defaultGroupModel
+                onObjectAdded: subMenu.insertItem( index, object )
+                onObjectRemoved: subMenu.removeItem( object )
+
                 delegate: MenuItem {
                     text: name
                     onTriggered: {
-                        // TODO: fix this non-existing artworkIndex
-                        deleteKeywordsModel.addPreset(presetsMenu.artworkIndex);
+                        deleteKeywordsModel.addPreset(subMenu.defaultGroupModel.getOriginalID(index))
                     }
                 }
             }
@@ -520,7 +544,7 @@ Item {
 
                             EditableTags {
                                 id: flvCommon
-                                objectName: "keywordsInput"
+                                objectName: "commonEditableTags"
                                 anchors.fill: parent
                                 model: commonKeywordsWrapper.keywordsModel
                                 property int keywordHeight: uiManager.keywordHeight

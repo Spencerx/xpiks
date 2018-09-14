@@ -40,10 +40,12 @@ Item {
         when: windowShown && (loader.status == Loader.Ready)
         property var deleteKeywordsDialog: loader.item
         property var deleteEditableTags
+        property var commonEditableTags
         property var keywordsInput
 
         function initTestCase() {
             deleteEditableTags = findChild(deleteKeywordsDialog, "deleteEditableTags")
+            commonEditableTags = findChild(deleteKeywordsDialog, "commonEditableTags")
             keywordsInput = findChild(deleteEditableTags, "nextTagTextInput")
         }
 
@@ -64,12 +66,23 @@ Item {
             compare(deleteKeywordsDialog.deleteKeywordsModel.keywordsToDeleteCount, 1)
         }
 
-        /*function test_pasteKeywords() {
+        function test_pasteKeywords() {
             compare(deleteKeywordsDialog.deleteKeywordsModel.keywordsToDeleteCount, 0)
             clipboard.setText("some, basic, keywords")
             keywordsInput.forceActiveFocus();
-            keyClick(Qt.Key_Paste)
+            keyClick(Qt.Key_V, Qt.ControlModifier)
             compare(deleteKeywordsDialog.deleteKeywordsModel.keywordsToDeleteCount, 3)
-        }*/
+        }
+
+        function test_removeFromCommonAddsToDelete() {
+            compare(deleteKeywordsDialog.deleteKeywordsModel.keywordsToDeleteCount, 0)
+            var commonKeyword = "common"
+            deleteKeywordsDialog.deleteKeywordsModel.appendCommonKeyword(commonKeyword)
+            var repeater = findChild(commonEditableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+            keywordWrapper.removeClicked()
+            compare(deleteKeywordsDialog.deleteKeywordsModel.keywordsToDeleteCount, 1)
+            verify(deleteKeywordsDialog.deleteKeywordsModel.getKeywordsToDeleteObject().hasKeyword(commonKeyword))
+        }
     }
 }

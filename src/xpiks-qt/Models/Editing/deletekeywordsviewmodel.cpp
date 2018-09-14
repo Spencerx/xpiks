@@ -54,6 +54,11 @@ namespace Models {
         m_CommonKeywordsModel.clearKeywords();
         m_KeywordsToDeleteModel.clearKeywords();
     }
+
+    void DeleteKeywordsViewModel::appendCommonKeyword(const QString &keyword) {
+        m_CommonKeywordsModel.appendKeyword(keyword);
+        emit commonKeywordsCountChanged();
+    }
 #endif
 
     bool DeleteKeywordsViewModel::doRemoveSelectedArtworks() {

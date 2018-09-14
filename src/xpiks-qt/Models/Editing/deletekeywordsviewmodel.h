@@ -71,6 +71,7 @@ namespace Models {
 #if defined(UI_TESTS) || defined(INTEGRATION_TESTS)
     public:
         void clearModel();
+        Q_INVOKABLE void appendCommonKeyword(const QString &keyword);
 #endif
 
     protected:
