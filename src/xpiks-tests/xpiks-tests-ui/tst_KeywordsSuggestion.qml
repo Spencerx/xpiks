@@ -89,5 +89,24 @@ Item {
             compare(suggestKeywordsDialog.keywordsSuggestor.getSuggestedKeywords().sort(),
                     ["graphic", "line", "vector"])
         }
+
+        function test_removeCommonAppendsToOther() {
+            setupSearch()
+            mouseClick(searchButton)
+            tryCompare(suggestionsRepeater, "count", 3, 3000)
+
+            mouseClick(suggestionsRepeater.itemAt(0))
+
+            var suggestedKeywordsCount = suggestKeywordsDialog.keywordsSuggestor.suggestedKeywordsCount
+            var otherKeywordsCount = suggestKeywordsDialog.keywordsSuggestor.otherKeywordsCount
+
+            var suggestedEditableTags = findChild(suggestKeywordsDialog, "suggestedEditableTags")
+            var repeater = findChild(suggestedEditableTags, "repeater")
+            var keyword0 = repeater.itemAt(0)
+            mouseClick(keyword0, keyword0.width - keyword0.height/2, keyword0.height/2)
+
+            compare(suggestKeywordsDialog.keywordsSuggestor.suggestedKeywordsCount, suggestedKeywordsCount - 1)
+            compare(suggestKeywordsDialog.keywordsSuggestor.otherKeywordsCount, otherKeywordsCount + 1)
+        }
     }
 }

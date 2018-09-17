@@ -425,6 +425,7 @@ Item {
 
                         EditableTags {
                             id: suggestedFlv
+                            objectName: "suggestedEditableTags"
                             anchors.fill: parent
                             model: keywordsSuggestor.getSuggestedKeywordsModel()
                             property int keywordHeight: uiManager.keywordHeight
