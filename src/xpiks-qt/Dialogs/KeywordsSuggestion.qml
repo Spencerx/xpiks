@@ -26,6 +26,7 @@ Item {
     objectName: "keywordsSuggestionComponent"
     anchors.fill: parent
     property var callbackObject
+    property var keywordsSuggestor: dispatcher.getCommandTarget(UICommand.InitSuggestionArtwork)
     property bool initialized: false
 
     signal dialogDestruction();
@@ -178,6 +179,7 @@ Item {
 
                         StyledTextInput {
                             id: queryText
+                            objectName: "queryTextInput"
                             anchors.left: parent.left
                             anchors.right: parent.right
                             anchors.leftMargin: 5
@@ -211,6 +213,7 @@ Item {
 
                     StyledButton {
                         anchors.right: parent.right
+                        objectName: "searchButton"
                         text: i18.n + qsTr("Search")
                         width: 100
                         activeFocusOnPress: true
@@ -248,6 +251,7 @@ Item {
 
                             Repeater {
                                 id: suggestionsRepeater
+                                objectName: "suggestionsRepeater"
                                 model: keywordsSuggestor
 
                                 delegate: Item {
@@ -354,6 +358,7 @@ Item {
 
                     ComboBoxPopup {
                         id: sourceComboBox
+                        objectName: "engineComboBox"
                         model: keywordsSuggestor.engineNames
                         anchors.right: parent.right
                         width: 200

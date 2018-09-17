@@ -11,6 +11,7 @@
 #include <QHash>
 #include <QString>
 #include <QMultiMap>
+#include <QQmlEngine>
 #include "keywordssuggestor.h"
 #include "suggestionartwork.h"
 #include <Common/defines.h>
@@ -397,6 +398,18 @@ namespace Suggestion {
         emit suggestedKeywordsCountChanged();
         emit otherKeywordsCountChanged();
         emit selectedArtworksCountChanged();
+    }
+
+    QObject *KeywordsSuggestor::getSuggestedKeywordsModel() {
+        QObject *item = &m_SuggestedKeywords;
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        return item;
+    }
+
+    QObject *KeywordsSuggestor::getAllOtherKeywordsModel() {
+        QObject *item = &m_AllOtherKeywords;
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        return item;
     }
 
     int KeywordsSuggestor::rowCount(const QModelIndex &parent) const {

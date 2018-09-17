@@ -33,7 +33,7 @@
 #define LOG_CORE_TESTS if (1) {} else qDebug()
 #endif
 
-#if defined(INTEGRATION_TESTS) || defined(VERBOSE_LOGGING)
+#if defined(VERBOSE_LOGGING)
 #define LOG_VERBOSE qDebug()
 #else
 #define LOG_VERBOSE if (1) {} else qDebug()

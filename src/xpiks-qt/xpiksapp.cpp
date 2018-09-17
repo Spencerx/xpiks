@@ -174,7 +174,6 @@ void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("artworkRepository", &m_FilteredArtworksRepository);
     context->setContextProperty("secretsManager", &m_SecretsManager);
     context->setContextProperty("undoRedoManager", &m_UndoRedoManager);
-    context->setContextProperty("keywordsSuggestor", &m_KeywordsSuggestor);
     context->setContextProperty("settingsModel", &m_SettingsModel);
     context->setContextProperty("filteredArtworksListModel", &m_FilteredArtworksListModel);
     context->setContextProperty("helpersWrapper", &m_HelpersQmlWrapper);

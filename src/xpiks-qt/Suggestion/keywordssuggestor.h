@@ -12,7 +12,6 @@
 #define KEYWORDSSUGGESTOR_H
 
 #include <QAbstractListModel>
-#include <QQmlEngine>
 #include <QObject>
 #include <QList>
 #include <QHash>
@@ -142,18 +141,8 @@ namespace Suggestion {
         Q_INVOKABLE QString getSuggestedKeywordsString() { return m_SuggestedKeywords.getKeywordsString(); }
         Q_INVOKABLE void clearSuggested();
         Q_INVOKABLE void resetSelection();
-
-        Q_INVOKABLE QObject *getSuggestedKeywordsModel() {
-            QObject *item = &m_SuggestedKeywords;
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-            return item;
-        }
-
-        Q_INVOKABLE QObject *getAllOtherKeywordsModel() {
-            QObject *item = &m_AllOtherKeywords;
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-            return item;
-        }
+        Q_INVOKABLE QObject *getSuggestedKeywordsModel();
+        Q_INVOKABLE QObject *getAllOtherKeywordsModel();
 
     public:
         enum KeywordsSuggestor_Roles {

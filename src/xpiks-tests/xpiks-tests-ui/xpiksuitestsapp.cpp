@@ -6,6 +6,24 @@
 #include "fakeinitartworkstemplate.h"
 #include <QMLExtensions/uicommandid.h>
 
+std::shared_ptr<Artworks::ArtworkMetadata> createArtwork(Common::ID_t id,
+                                                         const QString &title,
+                                                         const QString &description,
+                                                         const QStringList &keywords) {
+    auto artwork = std::make_shared<Artworks::ImageArtwork>(
+                       QString("/some/random/filepath/to/image_%1.jpg").arg(id.get()),
+                       id,
+                       0);
+
+    MetadataIO::OriginalMetadata om;
+    om.m_FilePath = artwork->getFilepath();
+    om.m_Title = title;
+    om.m_Description = description;
+    om.m_Keywords = keywords;
+    artwork->initFromOrigin(om);
+    return artwork;
+}
+
 XpiksUITestsApp::XpiksUITestsApp(Common::ISystemEnvironment &environment, const QStringList &importPaths):
     XpiksApp(environment),
     m_QmlImportPaths(importPaths)
@@ -73,6 +91,7 @@ void XpiksUITestsApp::cleanup() {
     m_CsvExportModel.clearModel();
     m_UploadInfoRepository.clear();
     m_DeleteKeywordsModel.clearModel();
+    m_KeywordsSuggestor.clear();
 }
 
 bool XpiksUITestsApp::setupCommonFiles() {
@@ -88,6 +107,18 @@ bool XpiksUITestsApp::setupCommonFiles() {
                                                                        initTemplate);
     m_CommandManager.processCommand(addFilesCommand);
     bool success = addFilesCommand->getAddedCount() == imagesCount;
+
+    m_MetadataIOService.writeArtworks(
+                Artworks::ArtworksSnapshot(
+    {
+                        createArtwork(Common::ID_t(0), "Unexpected title", "Unexpected description",
+                        QStringList() << "graphic" << "vector" << "illustration"),
+                        createArtwork(Common::ID_t(1), "Random title", "Random description",
+                        QStringList() << "graphic" << "person" << "line" << "vector"),
+                        createArtwork(Common::ID_t(2), "Expected title", "Expected description",
+                        QStringList() << "art" << "people" << "line" << "vector")
+                    }));
+
     return success;
 }
 

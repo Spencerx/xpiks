@@ -173,7 +173,7 @@ namespace MetadataIO {
         if (!m_DbCacheIndex) { return; }
         CachedArtwork::CachedArtworkType searchType = queryFlagToCachedType(query);
 
-        m_DbCacheIndex->foreachRow([&](const QByteArray &rawKey, QByteArray &rawValue) {
+        m_DbCacheIndex->foreachRow([&](const QByteArray &, QByteArray &rawValue) {
             CachedArtwork value;
             QDataStream ds(&rawValue, QIODevice::ReadOnly);
             ds >> value;
@@ -207,9 +207,7 @@ namespace MetadataIO {
             }
 
             if (hasMatch) {
-                if (QFileInfo(QString::fromUtf8(rawKey)).exists()) {
-                    results.push_back(value);
-                }
+                results.push_back(value);
             }
 
             const bool canContinue = results.size() < query.getPageSize();

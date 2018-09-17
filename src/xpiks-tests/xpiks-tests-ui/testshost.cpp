@@ -2,6 +2,7 @@
 #include <QQmlEngine>
 #include <QQmlContext>
 #include <QQuickImageProvider>
+#include <QPainter>
 #include "xpiksuitestsapp.h"
 #include <Common/logging.h>
 
@@ -27,6 +28,14 @@ public:
 
         QImage img(width, height, QImage::Format_RGB888);
         img.fill(Qt::black);
+
+        QPainter p;
+        if (p.begin(&img)) {
+            p.setPen(QPen(Qt::white));
+            p.setFont(QFont("Times", 24, QFont::Bold));
+            p.drawText(img.rect(), Qt::AlignCenter, id);
+            p.end();
+        }
 
         return img;
     }

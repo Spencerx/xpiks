@@ -19,6 +19,7 @@ DEFINES += HUNSPELL_STATIC
 DEFINES += TELEMETRY_ENABLED
 DEFINES += WITH_STDOUT_LOGS
 DEFINES += WITH_LOGS
+DEFINES += VERBOSE_LOGGING
 
 DEFINES += UI_TESTS
 
@@ -437,7 +438,8 @@ DISTFILES += \
     ../../xpiks-qt/Constants/UIConfig.js \
     TestUtils.js \
     tst_MainGrid.qml \
-    tst_DeleteKeywordsDialog.qml
+    tst_DeleteKeywordsDialog.qml \
+    tst_KeywordsSuggestion.qml
 
 HEADERS += \
     testshost.h \
