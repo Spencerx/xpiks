@@ -110,5 +110,45 @@ Item {
             compare(suggestKeywordsDialog.keywordsSuggestor.suggestedKeywordsCount, suggestedKeywordsCount - 1)
             compare(suggestKeywordsDialog.keywordsSuggestor.otherKeywordsCount, otherKeywordsCount + 1)
         }
+
+        function test_clearSuggestedAppendsToOther() {
+            setupSearch()
+            mouseClick(searchButton)
+            tryCompare(suggestionsRepeater, "count", 3, 3000)
+
+            mouseClick(suggestionsRepeater.itemAt(0))
+            wait(TestsHost.smallSleepTime)
+
+            var suggestedKeywordsCount = suggestKeywordsDialog.keywordsSuggestor.suggestedKeywordsCount
+            suggestKeywordsDialog.keywordsSuggestor.clearSuggested()
+            wait(TestsHost.smallSleepTime)
+
+            compare(suggestKeywordsDialog.keywordsSuggestor.suggestedKeywordsCount, 0)
+            compare(suggestKeywordsDialog.keywordsSuggestor.otherKeywordsCount, suggestedKeywordsCount)
+        }
+
+        function test_removeOtherAppendsToSuggested() {
+            setupSearch()
+            mouseClick(searchButton)
+            tryCompare(suggestionsRepeater, "count", 3, 3000)
+
+            mouseClick(suggestionsRepeater.itemAt(0))
+            wait(TestsHost.smallSleepTime)
+
+            suggestKeywordsDialog.keywordsSuggestor.clearSuggested()
+            wait(TestsHost.smallSleepTime)
+
+            var suggestedKeywordsCount = suggestKeywordsDialog.keywordsSuggestor.suggestedKeywordsCount
+            var otherKeywordsCount = suggestKeywordsDialog.keywordsSuggestor.otherKeywordsCount
+
+            var otherEditableTags = findChild(suggestKeywordsDialog, "otherEditableTags")
+            var repeater = findChild(otherEditableTags, "repeater")
+            var keyword0 = repeater.itemAt(0)
+            mouseClick(keyword0, keyword0.width - keyword0.height/2, keyword0.height/2)
+            wait(TestsHost.smallSleepTime)
+
+            compare(suggestKeywordsDialog.keywordsSuggestor.suggestedKeywordsCount, suggestedKeywordsCount + 1)
+            compare(suggestKeywordsDialog.keywordsSuggestor.otherKeywordsCount, otherKeywordsCount - 1)
+        }
     }
 }

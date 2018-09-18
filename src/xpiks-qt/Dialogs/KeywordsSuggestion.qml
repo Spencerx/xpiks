@@ -520,6 +520,7 @@ Item {
 
                         EditableTags {
                             id: otherFlv
+                            objectName: "otherEditableTags"
                             anchors.fill: parent
                             model: keywordsSuggestor.getAllOtherKeywordsModel()
                             property int keywordHeight: uiManager.keywordHeight
