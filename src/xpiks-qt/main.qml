@@ -201,25 +201,16 @@ ApplicationWindow {
                            })
     }
 
-    function launchImportDialog(importID, imagesCount, vectorsCount, reimport) {
-        var latestDir = recentDirectories.getLatestItem()
-        chooseArtworksDialog.folder = latestDir
-        chooseDirectoryDialog.folder = latestDir
-
-        if (imagesCount > 0) {
-            if (!metadataIOCoordinator.hasImportFinished(importID)) {
-                Common.launchDialog("Dialogs/ImportMetadata.qml", applicationWindow,
-                                    {
-                                        importID: importID,
-                                        backupsEnabled: !reimport,
-                                        reimport: reimport
-                                    })
-            } else {
-                console.debug("UI::main # Import seems to be finished already")
-            }
-        } else if (vectorsCount > 0) {
-            vectorsAttachedDialog.vectorsAttached = vectorsCount
-            vectorsAttachedDialog.open()
+    function launchImportDialog(importID, reimport) {
+        if (!metadataIOCoordinator.hasImportFinished(importID)) {
+            Common.launchDialog("Dialogs/ImportMetadata.qml", applicationWindow,
+                                {
+                                    importID: importID,
+                                    backupsEnabled: !reimport,
+                                    reimport: reimport
+                                })
+        } else {
+            console.debug("UI::main # Import seems to be finished already")
         }
     }
 
@@ -1050,9 +1041,7 @@ ApplicationWindow {
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("You will lose all unsaved changes after reimport. Proceed?")
         standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: {
-            filteredArtworksListModel.reimportMetadataForSelected()
-        }
+        onYes: dispatcher.dispatch(UICommand.ReimportFromSelected)
     }
 
     MessageDialog {
@@ -1200,23 +1189,28 @@ ApplicationWindow {
             console.debug("UI:onUnavailableVectorsFound")
             unavailableVectorsDialog.open()
         }
-
-        onArtworksReimported: {
-            launchImportDialog(importID, artworksCount, 0, true)
-        }
     }
 
     Connections {
         target: xpiksApp
-
         onArtworksAdded: {
             if ((imagesCount === 0) && (vectorsCount === 0)) {
                 noNewFilesDialog.open();
                 return;
+            } else if ((imagesCount === 0) && (vectorsCount > 0)) {
+                vectorsAttachedDialog.vectorsAttached = vectorsCount
+                vectorsAttachedDialog.open()
             }
 
-            launchImportDialog(importID, imagesCount, vectorsCount, false)
+            var latestDir = recentDirectories.getLatestItem()
+            chooseArtworksDialog.folder = latestDir
+            chooseDirectoryDialog.folder = latestDir
         }
+    }
+
+    Connections {
+        target: metadataIOCoordinator
+        onImportStarted: launchImportDialog(importID, reimport)
     }
 
     Connections {

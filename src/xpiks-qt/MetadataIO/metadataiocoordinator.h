@@ -67,37 +67,14 @@ namespace MetadataIO {
         bool getIsInProgress() const { return m_IsInProgress; }
 
     public:
-        void setExiftoolNotFound(bool value) {
-            if (value != m_ExiftoolNotFound) {
-                LOG_INFO << value;
-                m_ExiftoolNotFound = value;
-                emit exiftoolNotFoundChanged();
-            }
-        }
-
-        void setProcessingItemsCount(int value) {
-            if (value != m_ProcessingItemsCount) {
-                m_ProcessingItemsCount = value;
-                emit processingItemsCountChanged(value);
-            }
-        }
-
-        void setHasErrors(bool value) {
-            if (value != m_HasErrors) {
-                m_HasErrors = value;
-                emit hasErrorsChanged(value);
-            }
-        }
-
-        void setIsInProgress(bool value) {
-            if (value != m_IsInProgress) {
-                m_IsInProgress = value;
-                emit isInProgressChanged();
-            }
-        }
+        void setExiftoolNotFound(bool value);
+        void setProcessingItemsCount(int value);
+        void setHasErrors(bool value);
+        void setIsInProgress(bool value);
 
     public:
         int readMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToRead, quint32 storageReadBatchID);
+        void reimportMetadataExiftool(Artworks::ArtworksSnapshot const &artworksToRead);
         void writeMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWrite, bool useBackups);
         void wipeAllMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWipe, bool useBackups);
 
@@ -112,6 +89,10 @@ namespace MetadataIO {
         Q_INVOKABLE void continueReading(bool ignoreBackups);
         Q_INVOKABLE void continueWithoutReading(bool ignoreBackups, bool reimport = false);
         Q_INVOKABLE bool hasImportFinished(int importID);
+
+    signals:
+        void importStarted(int importID, bool reimport);
+        void importFinished(int importID);
 
     private slots:
         void writingWorkersFinished(int status);

@@ -58,6 +58,35 @@ namespace MetadataIO {
                          this, &MetadataIOCoordinator::onReadingFinished);
     }
 
+    void MetadataIOCoordinator::setExiftoolNotFound(bool value) {
+        if (value != m_ExiftoolNotFound) {
+            LOG_INFO << value;
+            m_ExiftoolNotFound = value;
+            emit exiftoolNotFoundChanged();
+        }
+    }
+
+    void MetadataIOCoordinator::setProcessingItemsCount(int value) {
+        if (value != m_ProcessingItemsCount) {
+            m_ProcessingItemsCount = value;
+            emit processingItemsCountChanged(value);
+        }
+    }
+
+    void MetadataIOCoordinator::setHasErrors(bool value) {
+        if (value != m_HasErrors) {
+            m_HasErrors = value;
+            emit hasErrorsChanged(value);
+        }
+    }
+
+    void MetadataIOCoordinator::setIsInProgress(bool value) {
+        if (value != m_IsInProgress) {
+            m_IsInProgress = value;
+            emit isInProgressChanged();
+        }
+    }
+
     bool MetadataIOCoordinator::shouldUseAutoImport() const {
         bool autoImport = false;
 
@@ -75,8 +104,18 @@ namespace MetadataIO {
         libxpks::io::ReadingOrchestrator readingOrchestrator(m_ReadingHub,
                                                              m_SettingsModel);
         readingOrchestrator.startReading();
-
+        emit importStarted(importID, false);
         return importID;
+    }
+
+    void MetadataIOCoordinator::reimportMetadataExiftool(const Artworks::ArtworksSnapshot &artworksToRead) {
+        int importID = getNextImportID();
+        initializeImport(artworksToRead, importID, INVALID_BATCH_ID);
+
+        libxpks::io::ReadingOrchestrator readingOrchestrator(m_ReadingHub,
+                                                             m_SettingsModel);
+        readingOrchestrator.startReading();
+        emit importStarted(importID, true);
     }
 
     void MetadataIOCoordinator::writeMetadataExifTool(Artworks::ArtworksSnapshot const &artworksToWrite, bool useBackups) {
@@ -160,6 +199,7 @@ namespace MetadataIO {
         m_PreviousImportIDs.insert(importID);
         emit metadataReadingFinished();
         setIsInProgress(false);
+        emit importFinished(importID);
     }
 
     void MetadataIOCoordinator::onRecommendedExiftoolFound(const QString &path) {

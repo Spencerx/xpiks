@@ -198,7 +198,6 @@ namespace Models {
     signals:
         void modifiedArtworksCountChanged();
         void artworksChanged(bool needToMoveCurrentItem);
-        void artworksReimported(int importID, int artworksCount);
         void selectedArtworksRemoved(int count);
         void unavailableArtworksFound();
         void unavailableVectorsFound();

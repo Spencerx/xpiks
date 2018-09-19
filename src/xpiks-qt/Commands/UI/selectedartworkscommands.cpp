@@ -86,7 +86,7 @@ namespace Commands {
                 artwork->prepareForReimport();
             }
 
-            m_Target.readMetadataExifTool(snapshot, INVALID_BATCH_ID);
+            m_Target.reimportMetadataExiftool(snapshot);
         }
 
         void ExportSelectedToCSVCommand::execute(QVariant const &) {

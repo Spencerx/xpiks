@@ -44,15 +44,20 @@ Item {
 
     Connections {
         target: metadataIOCoordinator
-        onMetadataReadingFinished: {
+
+        onImportFinished: {
             console.log("UI::ImportMetadata # Import finished handler")
 
-            warningsModel.update()
+            if (importID == metadataImportComponent.importID) {
+                warningsModel.update()
 
-            if (metadataIOCoordinator.hasErrors) {
-                errorsNotification.open()
+                if (metadataIOCoordinator.hasErrors) {
+                    errorsNotification.open()
+                } else {
+                    closePopup()
+                }
             } else {
-                closePopup()
+                console.warn("Import ID " + importID + " doesn't match to " + metadataImportComponent.importID)
             }
         }
     }
