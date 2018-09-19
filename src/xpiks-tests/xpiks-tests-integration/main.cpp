@@ -83,6 +83,9 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
 }
 
 void initCrashRecovery(Common::ISystemEnvironment &environment) {
+#ifdef TRAVIS_CI
+    return;
+#endif
     auto &chillout = Debug::Chillout::getInstance();
 
 #ifdef APPVEYOR
