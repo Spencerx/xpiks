@@ -361,6 +361,7 @@ Item {
 
             var qbButton = findChild(combinedView, "copyToQuickBufferButton")
             mouseClick(qbButton)
+            wait(TestsHost.smallSleepTime)
 
             compare(quickBuffer.title, combinedView.combinedArtworks.title)
             compare(quickBuffer.description, combinedView.combinedArtworks.description)
