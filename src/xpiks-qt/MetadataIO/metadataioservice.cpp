@@ -47,9 +47,6 @@ namespace MetadataIO {
         QObject::connect(m_MetadataIOWorker, &MetadataIOWorker::stopped,
                          this, &MetadataIOService::workerFinished);
 
-        QObject::connect(m_MetadataIOWorker, &MetadataIOWorker::readyToImportFromStorage,
-                         this, &MetadataIOService::onReadyToImportFromStorage);
-
         thread->start();
 
         m_IsStopped = false;
@@ -151,12 +148,6 @@ namespace MetadataIO {
     void MetadataIOService::onCacheSyncRequest() {
         LOG_DEBUG << "#";
         justChanged();
-}
-
-    void MetadataIOService::onReadyToImportFromStorage() {
-        LOG_DEBUG << "#";
-        if (m_IsStopped) { return; }
-        m_MetadataIOWorker->importArtworksFromStorage();
     }
 
     void MetadataIOService::doOnTimer() {

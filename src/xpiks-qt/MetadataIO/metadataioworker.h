@@ -58,12 +58,12 @@ namespace MetadataIO {
         void processReadWriteItem(std::shared_ptr<MetadataReadWriteTask> &item);
         void processSearchItem(std::shared_ptr<MetadataSearchTask> &item);
 
-    public:
-        void importArtworksFromStorage();
-
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
         virtual void onWorkerStopped() override;
+
+    private slots:
+        void onReadyImportFromStorage();
 
     public slots:
         void process() { doWork(); }

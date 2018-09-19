@@ -24,6 +24,9 @@ namespace MetadataIO {
         m_MetadataCache(dbManager),
         m_ProcessedItemsCount(0)
     {
+        QObject::connect(this, &MetadataIOWorker::readyToImportFromStorage,
+                         this, &MetadataIOWorker::onReadyImportFromStorage,
+                         Qt::QueuedConnection);
     }
 
     bool MetadataIOWorker::initWorker() {
@@ -102,7 +105,7 @@ namespace MetadataIO {
         localLibraryQuery->notifyResultsReady();
     }
 
-    void MetadataIOWorker::importArtworksFromStorage() {
+    void MetadataIOWorker::onReadyImportFromStorage() {
         LOG_DEBUG << "#";
         std::vector<std::shared_ptr<StorageReadRequest> > readRequests;
         // popAll() returns queue in reversed order for performance reasons
