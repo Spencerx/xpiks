@@ -35,7 +35,6 @@ ApplicationWindow {
     property bool showUpdateLink: false
     property bool needToCenter: true
     property bool listLayout: true
-    property var spellCheckService: helpersWrapper.getSpellCheckerService()
     property bool leftSideCollapsed: false
     property bool actionsEnabled: mainStackView.areActionsAllowed && (openedDialogsCount == 0)
 
@@ -54,10 +53,10 @@ ApplicationWindow {
     function closeHandler(close) {
         console.info("closeHandler")
 
-        if (artItemsModel.hasModifiedArtworks()) {
+        if (artworksListModel.modifiedArtworksCount > 0) {
             console.debug("Modified artworks present")
             close.accepted = false
-            configExitDialog.open()
+            confirmExitDialog.open()
         } else {
             console.debug("No modified artworks found. Exiting...")
             shutdownEverything()
@@ -492,12 +491,7 @@ ApplicationWindow {
 
                     delegate: MenuItem {
                         text: display
-                        onTriggered: {
-                            var filesAdded = artItemsModel.addRecentDirectory(display)
-                            if (filesAdded === 0) {
-                                noNewFilesDialog.open()
-                            }
-                        }
+                        onTriggered: xpiksApp.addDirectories([display])
                     }
                 }
             }
@@ -509,13 +503,7 @@ ApplicationWindow {
 
                 MenuItem {
                     text: i18.n + qsTr("Open all")
-
-                    onTriggered: {
-                        var filesAdded = artItemsModel.addAllRecentFiles()
-                        if (filesAdded === 0) {
-                            noNewFilesDialog.open()
-                        }
-                    }
+                    onTriggered: xpiksApp.addFiles(recentFiles.getAllRecentFiles())
                 }
 
                 MenuSeparator {
@@ -529,12 +517,7 @@ ApplicationWindow {
 
                     delegate: MenuItem {
                         text: display
-                        onTriggered: {
-                            var filesAdded = artItemsModel.addRecentFile(display)
-                            if (filesAdded === 0) {
-                                noNewFilesDialog.open()
-                            }
-                        }
+                        onTriggered: xpiksApp.addFiles([display])
                     }
                 }
             }
@@ -781,7 +764,7 @@ ApplicationWindow {
             MenuItem {
                 text: "Update all items"
                 onTriggered: {
-                    artItemsModel.updateAllItems()
+                    filteredArtworksListModel.updateFilter()
                 }
             }
 
@@ -978,7 +961,7 @@ ApplicationWindow {
     }
 
     MessageDialog {
-        id: configExitDialog
+        id: confirmExitDialog
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("You have some artworks modified. Really exit?")
         standardButtons: StandardButton.Yes | StandardButton.No
@@ -1178,7 +1161,7 @@ ApplicationWindow {
     }
 
     Connections {
-        target: artItemsModel
+        target: artworksListModel
 
         onUnavailableArtworksFound: {
             console.debug("UI:onUnavailableArtworksFound")
@@ -1193,6 +1176,7 @@ ApplicationWindow {
 
     Connections {
         target: xpiksApp
+
         onArtworksAdded: {
             if ((imagesCount === 0) && (vectorsCount === 0)) {
                 noNewFilesDialog.open();
@@ -1205,6 +1189,11 @@ ApplicationWindow {
             var latestDir = recentDirectories.getLatestItem()
             chooseArtworksDialog.folder = latestDir
             chooseDirectoryDialog.folder = latestDir
+        }
+
+        onUpgradeInitiated: {
+            console.debug("UI:onUpgradeInitiated handler")
+            closeHandler({accepted: false});
         }
     }
 
@@ -1229,15 +1218,6 @@ ApplicationWindow {
                 console.debug("Opened dialogs found. Postponing upgrade flow...");
                 upgradeTimer.start()
             }
-        }
-    }
-
-    Connections {
-        target: xpiksApp
-
-        onUpgradeInitiated: {
-            console.debug("UI:onUpgradeInitiated handler")
-            closeHandler({accepted: false});
         }
     }
 
@@ -1704,8 +1684,8 @@ ApplicationWindow {
                 text: i18.n + qsTr("No items available")
                 color: uiColors.labelInactiveForeground
                 verticalAlignment: Text.AlignVCenter
-                visible: artItemsModel.modifiedArtworksCount == 0
-                enabled: artItemsModel.modifiedArtworksCount == 0
+                visible: artworksListModel.modifiedArtworksCount == 0
+                enabled: artworksListModel.modifiedArtworksCount == 0
 
                 function updateText() {
                     var itemsCount = filteredArtworksListModel.getItemsCount()
@@ -1733,13 +1713,13 @@ ApplicationWindow {
                 text: i18.n + getOriginalText()
                 verticalAlignment: Text.AlignVCenter
                 color: uiColors.artworkModifiedColor
-                visible: artItemsModel.modifiedArtworksCount > 0
-                enabled: artItemsModel.modifiedArtworksCount > 0
+                visible: artworksListModel.modifiedArtworksCount > 0
+                enabled: artworksListModel.modifiedArtworksCount > 0
 
                 function getOriginalText() {
-                    return artItemsModel.modifiedArtworksCount > 1 ?
-                                qsTr("%1 modified items").arg(artItemsModel.modifiedArtworksCount) :
-                                (artItemsModel.modifiedArtworksCount === 1 ? qsTr("1 modified item") :
+                    return artworksListModel.modifiedArtworksCount > 1 ?
+                                qsTr("%1 modified items").arg(artworksListModel.modifiedArtworksCount) :
+                                (artworksListModel.modifiedArtworksCount === 1 ? qsTr("1 modified item") :
                                                                              qsTr("No modified items"))
                 }
 
@@ -1747,9 +1727,9 @@ ApplicationWindow {
                     id: selectModifiedMA
                     anchors.fill: parent
                     enabled: mainStackView.areActionsAllowed
-                    cursorShape: artItemsModel.modifiedArtworksCount > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    cursorShape: artworksListModel.modifiedArtworksCount > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
                     onClicked: {
-                        if (artItemsModel.modifiedArtworksCount > 0) {
+                        if (artworksListModel.modifiedArtworksCount > 0) {
                             filteredArtworksListModel.searchTerm = "x:modified"
                         }
                     }

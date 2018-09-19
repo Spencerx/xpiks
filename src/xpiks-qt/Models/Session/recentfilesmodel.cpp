@@ -39,6 +39,17 @@ namespace Models {
         }
     }
 
+    QList<QUrl> RecentFilesModel::getAllRecentFiles() {
+        QList<QUrl> items;
+        items.reserve(getRecentItemsCount());
+
+        for (auto &item: getRecentItems()) {
+            items.push_back(item);
+        }
+
+        return items;
+    }
+
     void RecentFilesModel::sync() {
         QString recentFiles = serializeItems();
         m_State.setValue(Constants::recentFiles, recentFiles);

@@ -67,17 +67,6 @@ namespace Models {
         emit recentItemsCountChanged();
     }
 
-    QStringList RecentItemsModel::getAllRecentFiles() {
-        QStringList items;
-        items.reserve(m_RecentItems.size());
-
-        for (auto &item: m_RecentItems) {
-            items.push_back(item);
-        }
-
-        return items;
-    }
-
     bool RecentItemsModel::doPushItem(const QString &itemPath) {
         bool added = false;
 

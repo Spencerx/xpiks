@@ -35,6 +35,9 @@ namespace Models {
     public:
         void add(const Artworks::ArtworksSnapshot &snapshot);
 
+    public:
+        Q_INVOKABLE QList<QUrl> getAllRecentFiles();
+
     protected:
         virtual void sync() override;
 

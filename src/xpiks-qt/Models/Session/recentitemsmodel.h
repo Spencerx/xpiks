@@ -40,7 +40,6 @@ namespace Models {
     public:
         void deserializeItems(const QString &serialized);
         void pushItem(const QString &directoryPath);
-        QStringList getAllRecentFiles();
 
 #ifdef CORE_TESTS
     public:
@@ -65,6 +64,9 @@ namespace Models {
 
     signals:
         void recentItemsCountChanged();
+
+    protected:
+        const QQueue<QString> &getRecentItems() const { return m_RecentItems; }
 
     private:
         QSet<QString> m_ItemsSet;

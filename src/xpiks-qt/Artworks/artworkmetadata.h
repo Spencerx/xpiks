@@ -274,7 +274,7 @@ namespace Artworks {
         Common::ID_t m_ID;
         qint64 m_DirectoryID;
         volatile Common::flag_t m_MetadataFlags;
-        volatile size_t m_LastKnownIndex; // optimistic guess on current index of this item in artitemsmodel
+        volatile size_t m_LastKnownIndex; // optimistic guess on current index of this item in parent collection
         volatile Common::WarningFlags m_WarningsFlags;
     };
 }
