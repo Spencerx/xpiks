@@ -70,6 +70,7 @@ namespace MetadataIO {
     private slots:
         void workerFinished();
         void onCacheSyncRequest();
+        void onReadyToImportFromStorage();
 
         // DelayedActionEntity implementation
     protected:
