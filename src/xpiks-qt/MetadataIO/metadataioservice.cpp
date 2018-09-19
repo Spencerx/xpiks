@@ -156,6 +156,9 @@ namespace MetadataIO {
     void MetadataIOService::onReadyToImportFromStorage() {
         LOG_DEBUG << "#";
         if (m_IsStopped) { return; }
+        // DO NOT remove this method to simplify worker call
+        // service object exists in main thread and worker signal/slot
+        // will be scheduled in worker thread instead of main
         m_MetadataIOWorker->importArtworksFromStorage();
     }
 
