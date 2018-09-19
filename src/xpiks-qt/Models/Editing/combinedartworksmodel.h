@@ -182,12 +182,12 @@ namespace Models {
         Q_INVOKABLE void expandPreset(int keywordIndex, unsigned int presetID);
         Q_INVOKABLE void expandLastKeywordAsPreset();
         Q_INVOKABLE void addPreset(unsigned int presetID);
-        Q_INVOKABLE void copyToQuickBuffer();
 #ifdef UI_TESTS
         Q_INVOKABLE void clearModel();
 #endif
 
     public:
+        void copyToQuickBuffer();
         bool acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID);
 
     private:

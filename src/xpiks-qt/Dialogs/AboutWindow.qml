@@ -62,7 +62,7 @@ ApplicationWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: i18.n + qsTr("<u>Xpiks webpage</u>")
                 onClicked: {
-                    Qt.openUrlExternally("http://xpiksapp.com/")
+                    Qt.openUrlExternally("https://xpiksapp.com/")
                 }
             }
 

@@ -25,28 +25,8 @@ import "../Constants/UIConfig.js" as UIConfig
 
 Item {
     id: mainGridComponent
-    property int myLeftMargin: applicationWindow.leftSideCollapsed ? 0 : 2
+    property int myLeftMargin: appHost.leftSideCollapsed ? 0 : 2
     property variant componentParent
-
-    Action {
-        id: searchAction
-        shortcut: StandardKey.Find
-        onTriggered: filterText.forceActiveFocus()
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
-    }
-
-    Action {
-        id: selectAllAction
-        shortcut: StandardKey.SelectAll
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
-        onTriggered: {
-            if (selectAllCheckbox.checked) {
-                filteredArtworksListModel.selectFilteredArtworks();
-            } else {
-                filteredArtworksListModel.unselectFilteredArtworks();
-            }
-        }
-    }
 
     function fixDuplicatesAction(proxyIndex) {
         dispatcher.dispatch(UICommand.ShowDuplicatesArtwork, proxyIndex)
@@ -101,6 +81,69 @@ Item {
                                 keywordsText: keywordsString,
                                 keywordsModel: basicModel
                             });
+    }
+
+    Action {
+        id: searchAction
+        shortcut: StandardKey.Find
+        onTriggered: filterText.forceActiveFocus()
+        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+    }
+
+    Action {
+        id: selectAllAction
+        shortcut: StandardKey.SelectAll
+        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        onTriggered: {
+            if (selectAllCheckbox.checked) {
+                filteredArtworksListModel.selectFilteredArtworks();
+            } else {
+                filteredArtworksListModel.unselectFilteredArtworks();
+            }
+        }
+    }
+
+    Menu {
+        id: artworkContextMenu
+        property string filename
+        property int index
+        property bool hasVectorAttached
+
+        MenuItem {
+            text: i18.n + qsTr("Edit")
+            onTriggered: dispatcher.dispatch(UICommand.EditArtwork, artworkContextMenu.index)
+        }
+
+        MenuItem {
+            text: i18.n + qsTr("Show info")
+            // TODO: fix this (show info instead of editing)
+            onTriggered: dispatcher.dispatch(UICommand.EditArtwork, artworkContextMenu.index)
+        }
+
+        MenuItem {
+            text: i18.n + qsTr("Detach vector")
+            enabled: artworkContextMenu.hasVectorAttached
+            visible: artworkContextMenu.hasVectorAttached
+            onTriggered: filteredArtworksListModel.detachVectorFromArtwork(artworkContextMenu.index)
+        }
+
+        MenuItem {
+            text: i18.n + qsTr("Copy to Quick Buffer")
+            onTriggered: {
+                dispatcher.dispatch(UICommand.CopyArtworkToQuickBuffer, artworkContextMenu.index)
+                uiManager.activateQuickBufferTab()
+            }
+        }
+
+        MenuItem {
+            text: i18.n + qsTr("Fill from Quick Buffer")
+            onTriggered: filteredArtworksListModel.fillFromQuickBuffer(artworkContextMenu.index)
+        }
+
+        MenuItem {
+            text: i18.n + qsTr("Show in folder")
+            onTriggered: helpersWrapper.revealArtworkFile(artworkContextMenu.filename);
+        }
     }
 
     Menu {
@@ -384,7 +427,7 @@ Item {
                 text: i18.n + qsTr("%1 selected").arg(filteredArtworksListModel.selectedArtworksCount)
                 color: filteredArtworksListModel.selectedArtworksCount > 0 ? uiColors.artworkActiveColor : uiColors.selectedArtworkBackground
                 verticalAlignment: Text.AlignVCenter
-                enabled: mainStackView.areActionsAllowed
+                enabled: appHost.areActionsAllowed
             }
 
             ToolButton {
@@ -981,7 +1024,7 @@ Item {
                                 }
 
                                 onCompletionsAvailable: {
-                                    if (!applicationWindow.actionsEnabled) { return }
+                                    if (!appHost.actionsEnabled) { return }
 
                                     acSource.initializeCompletions()
 

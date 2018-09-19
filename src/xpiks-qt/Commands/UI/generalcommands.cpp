@@ -14,6 +14,7 @@
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Services/AutoComplete/autocompleteservice.h>
+#include <Services/Warnings/warningsmodel.h>
 #include <Helpers/uihelpers.h>
 
 namespace Commands {
@@ -51,6 +52,11 @@ namespace Commands {
             }
 
             m_Source.selectArtworksEx(selectionType);
+        }
+
+        void CheckWarningsCommand::execute(const QVariant &) {
+            LOG_DEBUG << "#";
+            m_Source.update();
         }
     }
 }

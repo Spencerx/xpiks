@@ -282,16 +282,6 @@ namespace Models {
         }
     }
 
-    void CombinedArtworksModel::copyToQuickBuffer() {
-        LOG_DEBUG << "#";
-        sendMessage(
-                    QuickBufferMessage(
-                        m_CommonKeywordsModel.getTitle(),
-                        m_CommonKeywordsModel.getDescription(),
-                        m_CommonKeywordsModel.getKeywords(),
-                        false));
-    }
-
 #ifdef UI_TESTS
     void CombinedArtworksModel::clearModel() {
         LOG_DEBUG << "#";
@@ -302,6 +292,16 @@ namespace Models {
         emit keywordsCountChanged();
     }
 #endif
+
+    void CombinedArtworksModel::copyToQuickBuffer() {
+        LOG_DEBUG << "#";
+        sendMessage(
+                    QuickBufferMessage(
+                        m_CommonKeywordsModel.getTitle(),
+                        m_CommonKeywordsModel.getDescription(),
+                        m_CommonKeywordsModel.getKeywords(),
+                        false));
+    }
 
     bool CombinedArtworksModel::acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID) {
         LOG_DEBUG << completionID;

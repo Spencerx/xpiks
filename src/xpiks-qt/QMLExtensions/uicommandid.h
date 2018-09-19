@@ -29,10 +29,11 @@ namespace QMLExtensions {
             RemoveUnavailableFiles,
             GenerateCompletions,
             SelectFilteredArtworks,
+            CheckWarnings,
             // ------ Selected -------
             EditSelectedArtworks,
             FixSpellingInSelected,
-            ReviewDuplicatesInSelected,
+            ShowDuplicatesInSelected,
             SaveSelected,
             WipeMetadataInSelected,
             RemoveSelected,
@@ -57,7 +58,8 @@ namespace QMLExtensions {
             InitSuggestionSingle,
             GenerateCompletionsForArtwork,
             EditArtwork,
-            CopyArtworkToQuickBuffer
+            CopyArtworkToQuickBuffer,
+            CopyCombinedToQuickBuffer
         };
         Q_ENUMS(CommandID)
     };

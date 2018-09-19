@@ -87,7 +87,7 @@ namespace Commands {
                                  Models::CombinedArtworksModel);
 
         SOURCE_UI_TARGET_COMMAND(ShowDuplicatesInSelectedCommand,
-                                 QMLExtensions::UICommandID::ReviewDuplicatesInSelected,
+                                 QMLExtensions::UICommandID::ShowDuplicatesInSelected,
                                  Artworks::ISelectedArtworksSource,
                                  SpellCheck::DuplicatesReviewModel);
 

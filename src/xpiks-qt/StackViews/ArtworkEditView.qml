@@ -226,10 +226,7 @@ Rectangle {
 
         MenuItem {
             text: i18.n + qsTr("Copy to Quick Buffer")
-            onTriggered: {
-                filteredArtworksListModel.copyToQuickBuffer(itemPreviewMenu.index)
-                uiManager.activateQuickBufferTab()
-            }
+            onTriggered: dispatcher.dispatch(UICommand.CopyArtworkToQuickBuffer, itemPreviewMenu.index)
         }
     }
 
@@ -451,7 +448,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: 2
-        color: applicationWindow.leftSideCollapsed ? bottomPane.color : artworkEditComponent.color
+        color: appHost.leftSideCollapsed ? bottomPane.color : artworkEditComponent.color
     }
 
     SplitView {

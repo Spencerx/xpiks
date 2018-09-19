@@ -51,7 +51,7 @@ ColumnLayout {
         dropDownWidth: width
         glowEnabled: true
         glowTopMargin: 2
-        globalParent: globalHost
+        globalParent: appHost
         lastActionText: i18.n + qsTr("Add dictionary...")
         comboboxBackgroundColor: uiColors.popupBackgroundColor
 

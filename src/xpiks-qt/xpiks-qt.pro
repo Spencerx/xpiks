@@ -667,7 +667,8 @@ DISTFILES += \
     Dialogs/WipeMetadata.qml \
     Dialogs/SimplePreview.qml \
     ../xpiks-common/xpiks-common.pri \
-    Components/DraggableKeywordWrapper.qml
+    Components/DraggableKeywordWrapper.qml \
+    AppHost.qml
 
 lupdate_only {
 SOURCES += *.qml \

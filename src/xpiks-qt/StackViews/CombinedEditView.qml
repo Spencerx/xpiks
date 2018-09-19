@@ -389,7 +389,7 @@ Rectangle {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: applicationWindow.leftSideCollapsed ? 0 : 2
+        width: appHost.leftSideCollapsed ? 0 : 2
         color: uiColors.defaultDarkerColor
     }
 

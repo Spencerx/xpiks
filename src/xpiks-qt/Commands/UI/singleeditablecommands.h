@@ -20,6 +20,7 @@ namespace Models {
     class ArtworkProxyModel;
     class FilteredArtworksListModel;
     class ArtworksListModel;
+    class QuickBuffer;
 }
 
 namespace SpellCheck {
@@ -134,6 +135,14 @@ namespace Commands {
                                  QMLExtensions::UICommandID::EditArtwork,
                                  Models::FilteredArtworksListModel,
                                  Models::ArtworkProxyModel);
+
+        SOURCE_COMMAND(CopyArtworkToQuickBufferCommand,
+                       QMLExtensions::UICommandID::CopyArtworkToQuickBuffer,
+                       Models::FilteredArtworksListModel);
+
+        SOURCE_COMMAND(CopyCombinedToQuickBufferCommand,
+                       QMLExtensions::UICommandID::CopyCombinedToQuickBuffer,
+                       Models::CombinedArtworksModel);
     }
 }
 

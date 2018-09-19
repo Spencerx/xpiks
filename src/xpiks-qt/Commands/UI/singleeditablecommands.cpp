@@ -160,5 +160,16 @@ namespace Commands {
                 m_Target.setSourceArtwork(artwork, proxyIndex);
             }
         }
+
+        void CopyArtworkToQuickBufferCommand::execute(const QVariant &value) {
+            LOG_DEBUG << value;
+            int proxyIndex = Helpers::convertToInt(value, -1);
+            m_Source.copyToQuickBuffer(proxyIndex);
+        }
+
+        void CopyCombinedToQuickBufferCommand::execute(const QVariant &) {
+            LOG_DEBUG << "#";
+            m_Source.copyToQuickBuffer();
+        }
     }
 }

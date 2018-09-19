@@ -29,6 +29,10 @@ namespace AutoComplete {
     class AutoCompleteService;
 }
 
+namespace Warnings {
+    class WarningsModel;
+}
+
 namespace Commands {
     namespace UI {
         SOURCE_TARGET_COMMAND(SetMasterPasswordCommand,
@@ -47,6 +51,10 @@ namespace Commands {
         SOURCE_COMMAND(SelectFilteredArtworksCommand,
                        QMLExtensions::UICommandID::SelectFilteredArtworks,
                        Models::FilteredArtworksListModel);
+
+        SOURCE_COMMAND(CheckWarningsCommand,
+                       QMLExtensions::UICommandID::CheckWarnings,
+                       Warnings::WarningsModel);
     }
 }
 

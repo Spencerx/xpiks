@@ -694,7 +694,16 @@ void XpiksApp::registerUICommands() {
                     m_FilteredArtworksListModel, m_ArtworkProxyModel),
 
                     std::make_shared<Commands::UI::DeleteKeywordsFromSelectedCommand>(
-                    m_FilteredArtworksListModel, m_DeleteKeywordsModel)
+                    m_FilteredArtworksListModel, m_DeleteKeywordsModel),
+
+                    std::make_shared<Commands::UI::CheckWarningsCommand>(
+                    m_WarningsModel),
+
+                    std::make_shared<Commands::UI::CopyArtworkToQuickBufferCommand>(
+                    m_FilteredArtworksListModel),
+
+                    std::make_shared<Commands::UI::CopyCombinedToQuickBufferCommand>(
+                    m_CombinedArtworksModel)
                 });
 }
 

@@ -33,7 +33,7 @@ ColumnLayout {
         enabled: {
             var result = (!quickBuffer.isEmpty) && uiManager.hasCurrentEditable;
             if (result) {
-                if (mainStackView.areActionsAllowed) {
+                if (appHost.areActionsAllowed) {
                     result = (filteredArtworksListModel.selectedArtworksCount <= 1);
                 }
             }

@@ -58,7 +58,7 @@ namespace Models {
 
     public:
         bool getDonateCampaign1LinkClicked() const;
-        QString getDonateCampaign1Link() const { return QString("http://xpiksapp.com/donatecampaign/"); }
+        QString getDonateCampaign1Link() const { return QString("https://xpiksapp.com/donatecampaign/"); }
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
