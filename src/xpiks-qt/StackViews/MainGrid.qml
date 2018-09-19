@@ -513,9 +513,9 @@ Item {
             LayoutButton {
                 enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
                 anchors.verticalCenter: parent.verticalCenter
-                isListLayout: applicationWindow.listLayout
+                isListLayout: appHost.listLayout
                 onLayoutChanged: {
-                    applicationWindow.listLayout = !applicationWindow.listLayout
+                    appHost.listLayout = !appHost.listLayout
                     closeAutoComplete()
                 }
             }
@@ -890,8 +890,8 @@ Item {
                     boundsBehavior: Flickable.StopAtBounds
                     property int cellSpacing: 4
                     property double defaultRowHeight: 205
-                    cellHeight: applicationWindow.listLayout ? (defaultRowHeight + 80*(settingsModel.keywordSizeScale - 1.0) + cellSpacing) : (defaultRowHeight + cellSpacing)
-                    cellWidth: applicationWindow.listLayout ? artworksHost.width : (208 + cellSpacing)
+                    cellHeight: appHost.listLayout ? (defaultRowHeight + 80*(settingsModel.keywordSizeScale - 1.0) + cellSpacing) : (defaultRowHeight + cellSpacing)
+                    cellWidth: appHost.listLayout ? artworksHost.width : (208 + cellSpacing)
                     highlightFollowsCurrentItem: false
                     currentIndex: -1
                     focus: true
@@ -939,8 +939,8 @@ Item {
                         objectName: "artworkDelegate"
                         property int delegateIndex: index
                         property variant delegateModel: model
-                        width: applicationWindow.listLayout ? (mainScrollView.areScrollbarsVisible ? (parent.width - 5) : parent.width) : 208
-                        height: applicationWindow.listLayout ? (artworksHost.defaultRowHeight + 80*(settingsModel.keywordSizeScale - 1.0)) : artworksHost.defaultRowHeight
+                        width: appHost.listLayout ? (mainScrollView.areScrollbarsVisible ? (parent.width - 5) : parent.width) : 208
+                        height: appHost.listLayout ? (artworksHost.defaultRowHeight + 80*(settingsModel.keywordSizeScale - 1.0)) : artworksHost.defaultRowHeight
 
                         function updateCurrentIndex() {
                             GridView.view.currentIndex = rowWrapper.delegateIndex
@@ -1099,14 +1099,14 @@ Item {
 
                                 Item {
                                     id: checkboxSpacer
-                                    width: applicationWindow.listLayout ? 15 : 8
+                                    width: appHost.listLayout ? 15 : 8
                                     anchors.left: isModifiedRectangle.right
                                     anchors.top: parent.top
                                     anchors.bottom: parent.bottom
 
                                     MouseArea {
                                         anchors.fill: parent
-                                        enabled: applicationWindow.listLayout
+                                        enabled: appHost.listLayout
                                         onClicked: {
                                             rowWrapper.switchChecked()
                                             rowWrapper.focusIfNeeded()
@@ -1163,7 +1163,7 @@ Item {
 
                                 Item {
                                     id: imageColumnWrapper
-                                    width: applicationWindow.listLayout ? 180 : 160
+                                    width: appHost.listLayout ? 180 : 160
                                     anchors.left: checkboxRectangle.right
                                     anchors.top: parent.top
                                     anchors.bottom: parent.bottom
@@ -1178,8 +1178,8 @@ Item {
 
                                     Item {
                                         anchors.fill: parent
-                                        anchors.leftMargin: applicationWindow.listLayout ? 10 : 0
-                                        anchors.rightMargin: applicationWindow.listLayout ? 15 : 0
+                                        anchors.leftMargin: appHost.listLayout ? 10 : 0
+                                        anchors.rightMargin: appHost.listLayout ? 15 : 0
 
                                         Item {
                                             id: imageHost
@@ -1283,12 +1283,12 @@ Item {
 
                                 Item {
                                     id: columnRectangle
-                                    visible: applicationWindow.listLayout
-                                    anchors.top: applicationWindow.listLayout ? parent.top : undefined
-                                    anchors.bottom: applicationWindow.listLayout ? parent.bottom : undefined
-                                    anchors.left: applicationWindow.listLayout ? imageColumnWrapper.right : undefined
-                                    anchors.leftMargin: applicationWindow.listLayout ? 5 : 0
-                                    anchors.right: applicationWindow.listLayout ? parent.right : undefined
+                                    visible: appHost.listLayout
+                                    anchors.top: appHost.listLayout ? parent.top : undefined
+                                    anchors.bottom: appHost.listLayout ? parent.bottom : undefined
+                                    anchors.left: appHost.listLayout ? imageColumnWrapper.right : undefined
+                                    anchors.leftMargin: appHost.listLayout ? 5 : 0
+                                    anchors.right: appHost.listLayout ? parent.right : undefined
 
                                     Item {
                                         id: columnLayout

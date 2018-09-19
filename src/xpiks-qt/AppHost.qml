@@ -29,6 +29,7 @@ Rectangle {
     property var componentParent
     property alias areActionsAllowed: mainStackView.areActionsAllowed
     property bool leftSideCollapsed: false
+    property bool listLayout: true
 
     function collapseLeftPane() {
         leftDockingGroup.state = "collapsed"

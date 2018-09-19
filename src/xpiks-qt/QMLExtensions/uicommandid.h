@@ -30,6 +30,7 @@ namespace QMLExtensions {
             GenerateCompletions,
             SelectFilteredArtworks,
             CheckWarnings,
+            InitUploadHosts,
             // ------ Selected -------
             EditSelectedArtworks,
             FixSpellingInSelected,

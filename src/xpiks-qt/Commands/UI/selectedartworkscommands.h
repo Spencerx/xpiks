@@ -52,6 +52,10 @@ namespace SpellCheck {
     class ISpellCheckService;
 }
 
+namespace Warnings {
+    class WarningsModel;
+}
+
 namespace Commands {
     class ICommand;
 
@@ -111,11 +115,6 @@ namespace Commands {
                                  Artworks::ISelectedArtworksSource,
                                  Models::FindAndReplaceModel);
 
-        SOURCE_UI_TARGET_COMMAND(UploadSelectedCommand,
-                                 QMLExtensions::UICommandID::UploadSelected,
-                                 Artworks::ISelectedArtworksSource,
-                                 Models::ArtworksUploader);
-
         SOURCE_UI_TARGET_COMMAND(ZipSelectedCommand,
                                  QMLExtensions::UICommandID::ZipSelected,
                                  Artworks::ISelectedArtworksSource,
@@ -125,6 +124,25 @@ namespace Commands {
                                  QMLExtensions::UICommandID::DeleteKeywordsFromSelected,
                                  Artworks::ISelectedArtworksSource,
                                  Models::DeleteKeywordsViewModel);
+
+        class UploadSelectedCommand: public IUICommandTemplate, public IUICommandTargetSource {
+        public:
+            UploadSelectedCommand(Artworks::ISelectedArtworksSource &source,
+                                  Models::ArtworksUploader &uploader,
+                                  Warnings::WarningsModel &warningsModel):
+                m_Source(source),
+                m_Uploader(uploader),
+                m_WarningsModel(warningsModel)
+            { }
+        public:
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::UploadSelected; }
+            virtual void execute(QVariant const &value) override;
+            virtual QObject *getTargetObject() override { return (QObject*)&m_Uploader; }
+        private:
+            Artworks::ISelectedArtworksSource &m_Source;
+            Models::ArtworksUploader &m_Uploader;
+            Warnings::WarningsModel &m_WarningsModel;
+        };
     }
 }
 

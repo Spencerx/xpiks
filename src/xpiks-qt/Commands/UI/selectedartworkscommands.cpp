@@ -17,6 +17,7 @@
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include <Services/SpellCheck/duplicatesreviewmodel.h>
 #include <Services/SpellCheck/spellsuggestionstarget.h>
+#include <Services/Warnings/warningsmodel.h>
 #include <MetadataIO/metadataiocoordinator.h>
 #include <MetadataIO/metadataioservice.h>
 #include <MetadataIO/csvexportmodel.h>
@@ -99,12 +100,6 @@ namespace Commands {
             m_Target.findReplaceCandidates(m_Source.getSelectedArtworks());
         }
 
-        void UploadSelectedCommand::execute(QVariant const &) {
-            LOG_DEBUG << "#";
-            auto selectedArtworks = m_Source.getSelectedArtworks();
-            m_Target.setArtworks(selectedArtworks);
-        }
-
         void ZipSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setArtworks(m_Source.getSelectedArtworks());
@@ -113,6 +108,17 @@ namespace Commands {
         void DeleteKeywordsFromSelectedCommand::execute(const QVariant &) {
             LOG_DEBUG << "#";
             m_Target.setArtworks(m_Source.getSelectedArtworks());
+        }
+
+        void UploadSelectedCommand::execute(QVariant const &value) {
+            LOG_DEBUG << value;
+            m_Uploader.clearModel();
+            bool skipUploadItems = Helpers::convertToBool(value, false);
+            if (!skipUploadItems) {
+                auto selectedArtworks = m_Source.getSelectedArtworks();
+                m_Uploader.setArtworks(selectedArtworks);
+                m_WarningsModel.setShowSelected();
+            }
         }
     }
 }

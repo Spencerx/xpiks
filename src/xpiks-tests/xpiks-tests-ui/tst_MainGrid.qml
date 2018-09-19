@@ -14,10 +14,10 @@ Item {
     Component.onCompleted: TestsHost.setup()
 
     QtObject {
-        id: applicationWindow
+        id: appHost
         property bool leftSideCollapsed: false
         property bool listLayout: true
-        property bool actionsEnabled: true
+        property bool areActionsAllowed: true
         function collapseLeftPane() { }
     }
 

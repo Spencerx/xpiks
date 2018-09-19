@@ -34,7 +34,6 @@ ApplicationWindow {
     property int openedDialogsCount: 0
     property bool showUpdateLink: false
     property bool needToCenter: true
-    property bool listLayout: true
     property bool actionsEnabled: appHost.areActionsAllowed && (openedDialogsCount == 0)
 
     onVisibleChanged: {
@@ -144,22 +143,8 @@ ApplicationWindow {
     }
 
     function doOpenUploadDialog(masterPasswordCorrectOrEmpty, skipUploadItems) {
-        var artworkUploader = helpersWrapper.getArtworkUploader()
-        artworkUploader.clearModel()
-
-        if (!skipUploadItems) {
-            filteredArtworksListModel.setSelectedForUpload()
-            warningsModel.setShowSelected()
-        }
-
-        var uploadInfos = helpersWrapper.getUploadInfos();
-        uploadInfos.initializeAccounts(masterPasswordCorrectOrEmpty)
-        Common.launchDialog("Dialogs/UploadArtworks.qml",
-                            applicationWindow,
-                            {
-                                componentParent: applicationWindow,
-                                skipUploadItems: skipUploadItems
-                            })
+        dispatcher.dispatch(UICommand.InitUploadHosts, masterPasswordCorrectOrEmpty)
+        dispatcher.dispatch(UICommand.UploadSelected, skipUploadItems)
     }
 
     function launchImportDialog(importID, reimport) {
@@ -1188,6 +1173,19 @@ ApplicationWindow {
         commandIDs: [UICommand.ZipSelected]
         onDispatched: {
             Common.launchDialog("Dialogs/ZipArtworksDialog.qml", applicationWindow, {})
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.UploadSelected]
+        onDispatched: {
+            Common.launchDialog("Dialogs/UploadArtworks.qml",
+                                applicationWindow,
+                                {
+                                    componentParent: applicationWindow,
+                                    skipUploadItems: value
+                                })
         }
     }
 

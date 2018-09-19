@@ -13,6 +13,7 @@
 #include <Encryption/secretsmanager.h>
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
+#include <Models/Connectivity/uploadinforepository.h>
 #include <Services/AutoComplete/autocompleteservice.h>
 #include <Services/Warnings/warningsmodel.h>
 #include <Helpers/uihelpers.h>
@@ -57,6 +58,12 @@ namespace Commands {
         void CheckWarningsCommand::execute(const QVariant &) {
             LOG_DEBUG << "#";
             m_Source.update();
+        }
+
+        void InitUploadCommand::execute(const QVariant &value) {
+            LOG_DEBUG << value;
+            bool masterPasswordCorrectOrEmpty = Helpers::convertToBool(value, false);
+            m_Source.initializeAccounts(masterPasswordCorrectOrEmpty);
         }
     }
 }

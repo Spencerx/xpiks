@@ -22,7 +22,7 @@ Item {
     }
 
     QtObject {
-        id: applicationWindow
+        id: appHost
         property bool leftSideCollapsed: false
     }
 

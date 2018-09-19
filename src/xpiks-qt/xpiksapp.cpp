@@ -646,7 +646,7 @@ void XpiksApp::registerUICommands() {
                     QMLExtensions::UICommandID::SaveSession, saveSessionCommand),
 
                     std::make_shared<Commands::UI::UploadSelectedCommand>(
-                    m_FilteredArtworksListModel, m_ArtworksUploader),
+                    m_FilteredArtworksListModel, m_ArtworksUploader, m_WarningsModel),
 
                     std::make_shared<Commands::UI::ShowDuplicatesForSingleCommand>(
                     m_ArtworkProxyModel, m_DuplicatesModel),
