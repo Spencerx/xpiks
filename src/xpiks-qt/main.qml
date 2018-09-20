@@ -48,36 +48,6 @@ ApplicationWindow {
         }
     }
 
-    function closeHandler(close) {
-        console.info("closeHandler")
-
-        if (artworksListModel.modifiedArtworksCount > 0) {
-            console.debug("Modified artworks present")
-            close.accepted = false
-            confirmExitDialog.open()
-        } else {
-            console.debug("No modified artworks found. Exiting...")
-            shutdownEverything()
-            close.accepted = false
-        }
-    }
-
-    function shutdownEverything() {
-        applicationWindow.visibility = "Minimized"
-        xpiksApp.shutdown();
-        saveAppGeometry()
-        closingTimer.start()
-    }
-
-    function saveAppGeometry() {
-        console.debug("Saving application geometry")
-        uiManager.setAppWidth(applicationWindow.width)
-        uiManager.setAppHeight(applicationWindow.height)
-        uiManager.setAppPosX(applicationWindow.x)
-        uiManager.setAppPosY(applicationWindow.y)
-        uiManager.sync()
-    }
-
     onClosing: closeHandler(close)
 
     Timer {
@@ -116,6 +86,36 @@ ApplicationWindow {
                 helpersWrapper.reportOpen()
             }
         }
+    }
+
+    function closeHandler(close) {
+        console.info("closeHandler")
+
+        if (artworksListModel.modifiedArtworksCount > 0) {
+            console.debug("Modified artworks present")
+            close.accepted = false
+            confirmExitDialog.open()
+        } else {
+            console.debug("No modified artworks found. Exiting...")
+            shutdownEverything()
+            close.accepted = false
+        }
+    }
+
+    function shutdownEverything() {
+        applicationWindow.visibility = "Minimized"
+        xpiksApp.shutdown();
+        saveAppGeometry()
+        closingTimer.start()
+    }
+
+    function saveAppGeometry() {
+        console.debug("Saving application geometry")
+        uiManager.setAppWidth(applicationWindow.width)
+        uiManager.setAppHeight(applicationWindow.height)
+        uiManager.setAppPosX(applicationWindow.x)
+        uiManager.setAppPosY(applicationWindow.y)
+        uiManager.sync()
     }
 
     function onDialogClosed() {
@@ -157,6 +157,14 @@ ApplicationWindow {
                                 })
         } else {
             console.debug("UI::main # Import seems to be finished already")
+        }
+    }
+
+    function tryUploadArtworks() {
+        if (filteredArtworksListModel.areSelectedArtworksSaved()) {
+            openUploadDialog(false)
+        } else {
+            mustSaveWarning.open()
         }
     }
 
@@ -827,13 +835,6 @@ ApplicationWindow {
     }
 
     MessageDialog {
-        id: corruptedInstallationDialog
-        title: i18.n + qsTr("Warning")
-        text: i18.n + qsTr("Xpiks installation is corrupted.\nPlease reinstall Xpiks and try again.")
-        onAccepted: shutdownEverything()
-    }
-
-    MessageDialog {
         id: confirmExitDialog
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("You have some artworks modified. Really exit?")
@@ -873,29 +874,12 @@ ApplicationWindow {
         onYes: dispatcher.dispatch(UICommand.RemoveSelected, {})
     }
 
-    function tryUploadArtworks() {
-        if (filteredArtworksListModel.areSelectedArtworksSaved()) {
-            openUploadDialog(false)
-        } else {
-            mustSaveWarning.open()
-        }
-    }
-
     MessageDialog {
         id: reimportConfirmationDialog
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("You will lose all unsaved changes after reimport. Proceed?")
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: dispatcher.dispatch(UICommand.ReimportFromSelected, {})
-    }
-
-    MessageDialog {
-        id: confirmRemoveDirectoryDialog
-        property int directoryIndex
-        title: i18.n + qsTr("Confirmation")
-        text: i18.n + qsTr("Are you sure you want to remove this directory?")
-        standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: xpiksApp.removeDirectory(directoryIndex)
     }
 
     FileDialog {
