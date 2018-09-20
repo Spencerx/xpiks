@@ -1024,7 +1024,7 @@ Item {
                                 }
 
                                 onCompletionsAvailable: {
-                                    if (!appHost.actionsEnabled) { return }
+                                    if (!appHost.areActionsEnabled) { return }
 
                                     acSource.initializeCompletions()
 
