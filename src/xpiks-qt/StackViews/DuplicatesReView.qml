@@ -25,6 +25,8 @@ Rectangle {
     color: uiColors.defaultDarkColor
     property bool wasLeftSideCollapsed
     property bool isRestricted: false
+    // duplicates target should be the same in combined and single view
+    property var duplicatesModel: dispatcher.getCommandTarget(UICommand.ShowDuplicatesSingle)
 
     Stack.onStatusChanged: {
         if (Stack.status == Stack.Active) {
@@ -323,13 +325,7 @@ Rectangle {
                         anchors.verticalCenterOffset: -5
                         anchors.centerIn: parent
                         enabled: !isRestricted && duplicatesListView.count > 0
-
-                        onClicked: {
-                            var index = imageWrapper.delegateIndex
-                            var derivedIndex = filteredArtItemsModel.getDerivedIndex(originalIndex)
-                            var metadata = filteredArtItemsModel.getArtworkMetadata(derivedIndex)
-                            startOneItemEditing(metadata, derivedIndex, originalIndex)
-                        }
+                        onClicked: dispatcher.dispatch(UICommand.EditArtwork, imageWrapper.delegateIndex)
                     }
                 }
             }

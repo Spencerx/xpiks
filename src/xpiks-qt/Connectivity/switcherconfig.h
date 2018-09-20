@@ -15,7 +15,7 @@
 #include <QJsonObject>
 #include <QHash>
 #include <QReadWriteLock>
-#include "../Models/abstractconfigupdatermodel.h"
+#include <Models/Connectivity/abstractconfigupdatermodel.h>
 #include "../Common/isystemenvironment.h"
 
 namespace Connectivity {
@@ -29,7 +29,8 @@ namespace Connectivity {
         };
 
     public:
-        SwitcherConfig(Common::ISystemEnvironment &environment, QObject *parent=nullptr);
+        SwitcherConfig(Common::ISystemEnvironment &environment,
+                       QObject *parent=nullptr);
 
     public:
         bool isSwitchOn(int switchKey, int minThreshold);
@@ -60,7 +61,8 @@ namespace Connectivity {
             MetadataAutoImport,
             GettySuggestionEnabled,
             UpdateEnabled,
-            KeywordsDragDropEnabled
+            KeywordsDragDropEnabled,
+            TelemetryEnabled
         };
 
     private:

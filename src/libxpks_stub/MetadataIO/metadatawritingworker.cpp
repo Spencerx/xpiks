@@ -17,10 +17,11 @@
 #include <QDir>
 #include <QTemporaryFile>
 #include <QTextStream>
-#include <Models/artworkmetadata.h>
+#include <memory>
+#include <Artworks/artworkmetadata.h>
 #include <Models/settingsmodel.h>
 #include <Common/defines.h>
-#include <MetadataIO/artworkssnapshot.h>
+#include <Artworks/artworkssnapshot.h>
 #include <Helpers/asynccoordinator.h>
 
 #ifdef Q_OS_WIN
@@ -49,15 +50,15 @@ namespace libxpks {
             }
         }
 
-        void metadataToJsonObject(Models::ArtworkMetadata *metadata, QJsonObject &jsonObject) {
-            QString title = metadata->getTitle().simplified();
-            QString description = metadata->getDescription().simplified();
+        void metadataToJsonObject(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork, QJsonObject &jsonObject) {
+            QString title = artwork->getTitle().simplified();
+            QString description = artwork->getDescription().simplified();
 
             if (title.isEmpty()) {
                 title = description;
             }
 
-            jsonObject.insert(SOURCEFILE, QJsonValue(metadata->getFilepath()));
+            jsonObject.insert(SOURCEFILE, QJsonValue(artwork->getFilepath()));
 
             QJsonValue titleValue(title);
             jsonObject.insert(XMP_TITLE, titleValue);
@@ -68,14 +69,14 @@ namespace libxpks {
             jsonObject.insert(EXIF_IMAGEDESCRIPTION, descriptionValue);
             jsonObject.insert(IPTC_CAPTIONABSTRACT, descriptionValue);
 
-            QStringList keywords = metadata->getKeywords();
+            QStringList keywords = artwork->getKeywords();
             QJsonArray keywordsArray;
             keywordsToJsonArray(keywords, keywordsArray);
             jsonObject.insert(IPTC_KEYWORDS, keywordsArray);
             jsonObject.insert(XMP_SUBJECT, keywordsArray);
         }
 
-        void artworksToJsonArray(const MetadataIO::ArtworksSnapshot &itemsToWrite, QJsonArray &array) {
+        void artworksToJsonArray(const Artworks::ArtworksSnapshot &itemsToWrite, QJsonArray &array) {
             size_t size = itemsToWrite.size();
             for (size_t i = 0; i < size; ++i) {
                 QJsonObject artworkObject;
@@ -84,19 +85,17 @@ namespace libxpks {
             }
         }
 
-        ExiftoolImageWritingWorker::ExiftoolImageWritingWorker(const MetadataIO::ArtworksSnapshot &artworksToWrite,
-                                                               Helpers::AsyncCoordinator *asyncCoordinator,
-                                                               Models::SettingsModel *settingsModel,
+        ExiftoolImageWritingWorker::ExiftoolImageWritingWorker(Artworks::ArtworksSnapshot const &artworksToWrite,
+                                                               Helpers::AsyncCoordinator &asyncCoordinator,
+                                                               Models::SettingsModel &settingsModel,
                                                                bool useBackups):
             m_ExiftoolProcess(nullptr),
-            m_ItemsToWriteSnapshot(artworksToWrite),
             m_AsyncCoordinator(asyncCoordinator),
             m_SettingsModel(settingsModel),
             m_UseBackups(useBackups),
             m_WriteSuccess(false)
         {
-            Q_ASSERT(asyncCoordinator != nullptr);
-            Q_ASSERT(settingsModel != nullptr);
+            m_ItemsToWriteSnapshot.copyFrom(artworksToWrite);
             Q_ASSERT(!m_ItemsToWriteSnapshot.empty());
         }
 
@@ -149,7 +148,7 @@ namespace libxpks {
 #endif
                     argumentsFile.close();
 
-                    QString exiftoolPath = m_SettingsModel->getExifToolPath();
+                    QString exiftoolPath = m_SettingsModel.getExifToolPath();
                     QStringList arguments;
 #ifdef Q_OS_WIN
                     arguments << "-charset" << "FileName=UTF8";
@@ -221,8 +220,8 @@ namespace libxpks {
 
             size_t size = m_ItemsToWriteSnapshot.size();
             for (size_t i = 0; i < size; ++i) {
-                Models::ArtworkMetadata *metadata = m_ItemsToWriteSnapshot.get(i);
-                arguments << metadata->getFilepath();
+                auto &artwork = m_ItemsToWriteSnapshot.get(i);
+                arguments << artwork->getFilepath();
             }
 
             return arguments;
@@ -230,8 +229,7 @@ namespace libxpks {
 
         void ExiftoolImageWritingWorker::setArtworksSaved() {
             auto &items = m_ItemsToWriteSnapshot.getRawData();
-            for (auto &item: items) {
-                Models::ArtworkMetadata *artwork = item->getArtworkMetadata();
+            for (auto &artwork: items) {
                 artwork->resetModified();
             }
         }

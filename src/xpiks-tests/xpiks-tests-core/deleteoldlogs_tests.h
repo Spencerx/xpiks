@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QtTest/QtTest>
-#include "../../xpiks-qt/Maintenance/logscleanupjobitem.h"
+#include <Services/Maintenance/logscleanupjobitem.h>
 
 class DeleteOldLogsTest: public QObject
 {

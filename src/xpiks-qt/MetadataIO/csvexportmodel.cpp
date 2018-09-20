@@ -13,7 +13,11 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QTimerEvent>
+#include <QThread>
+#include <Helpers/asynccoordinator.h>
+#include <Artworks/iselectedartworkssource.h>
 #include "csvexportworker.h"
+#include "csvexportplansmodel.h"
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 
@@ -226,7 +230,6 @@ namespace MetadataIO {
     /*------------------------------------------------------*/
 
     CsvExportModel::CsvExportModel(Common::ISystemEnvironment &environment):
-        Common::BaseEntity(),
         Common::DelayedActionEntity(3000, MAX_SAVE_PAUSE_RESTARTS),
         m_ExportPlansModel(environment),
         m_SaveTimerId(-1),
@@ -248,20 +251,15 @@ namespace MetadataIO {
         }
     }
 
-    void CsvExportModel::setCommandManager(Commands::CommandManager *commandManager) {
-        Common::BaseEntity::setCommandManager(commandManager);
-
-        m_ExportPlansModel.setCommandManager(commandManager);
-    }
-
-    void CsvExportModel::setupModel(MetadataIO::ArtworksSnapshot::Container &rawSnapshot) {
-        m_ArtworksToExport.set(rawSnapshot);
-        emit artworksCountChanged();
-    }
-
-    void CsvExportModel::initializeExportPlans(Helpers::AsyncCoordinator *initCoordinator) {
+    void CsvExportModel::initializeExportPlans(Helpers::AsyncCoordinator &initCoordinator,
+                                               Connectivity::IRequestsService &requestsService) {
         LOG_DEBUG << "#";
-        m_ExportPlansModel.initializeConfigs(initCoordinator);
+        m_ExportPlansModel.initializeConfigs(initCoordinator, requestsService);
+    }
+
+    void CsvExportModel::setArtworksToExport(Artworks::ArtworksSnapshot &&snapshot) {
+        m_ArtworksToExport = std::move(snapshot);
+        emit artworksCountChanged();
     }
 
     int CsvExportModel::rowCount(const QModelIndex &parent) const {
@@ -382,11 +380,6 @@ namespace MetadataIO {
         setIsExporting(true);
     }
 
-    void CsvExportModel::clearModel() {
-        LOG_DEBUG << "#";
-        m_ArtworksToExport.clear();
-    }
-
     void CsvExportModel::removePlanAt(int row) {
         LOG_INFO << row;
 
@@ -411,7 +404,7 @@ namespace MetadataIO {
         beginInsertRows(QModelIndex(), size, size);
         {
             QString name = QObject::tr("Untitled");
-            m_ExportPlans.emplace_back(new CsvExportPlan(name));
+            m_ExportPlans.emplace_back(std::make_shared<CsvExportPlan>(name));
         }
         endInsertRows();
 
@@ -464,6 +457,24 @@ namespace MetadataIO {
 
         return count;
     }
+
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+    void CsvExportModel::clearModel() {
+        LOG_DEBUG << "#";
+        m_ExportPlans.erase(
+                    std::remove_if(m_ExportPlans.begin(), m_ExportPlans.end(),
+                                   [](const std::shared_ptr<CsvExportPlan> &plan) { return !plan->m_IsSystemPlan; }),
+                    m_ExportPlans.end());
+
+        for (auto &p: m_ExportPlans) { p->m_IsSelected = false; }
+    }
+
+    void CsvExportModel::resetModel() {
+        LOG_DEBUG << "#";
+        clearModel();
+        m_ArtworksToExport.clear();
+    }
+#endif
 
     void CsvExportModel::onWorkerFinished() {
         LOG_DEBUG << "#";

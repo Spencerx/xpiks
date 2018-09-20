@@ -14,11 +14,12 @@
 #include "flags.h"
 
 namespace Common {
+    template<class T>
     class IFlagsProvider {
     public:
         virtual ~IFlagsProvider() {}
 
-        virtual Common::flag_t getFlags() const = 0;
+        virtual T getFlags() const = 0;
     };
 }
 

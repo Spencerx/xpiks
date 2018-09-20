@@ -15,7 +15,7 @@
 
 namespace Helpers {
     MetadataHighlighter::MetadataHighlighter(const QString &textToHighlight,
-                                             Common::IFlagsProvider *flagsProvider,
+                                             Common::IFlagsProvider<Common::SearchFlags> *flagsProvider,
                                              QMLExtensions::ColorsModel *colorsModel,
                                              QTextDocument *document):
         QSyntaxHighlighter(document),
@@ -33,7 +33,7 @@ namespace Helpers {
 
         int pos = 0;
         const int size = m_TextToHighlight.size();
-        Common::flag_t flags = m_FlagsProvider->getFlags();
+        auto flags = m_FlagsProvider->getFlags();
         Qt::CaseSensitivity caseSensitivity = Common::HasFlag(flags, Common::SearchFlags::CaseSensitive) ?
                     Qt::CaseSensitive : Qt::CaseInsensitive;
         const bool wholeWords = Common::HasFlag(flags, Common::SearchFlags::WholeWords);

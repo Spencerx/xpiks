@@ -6,8 +6,8 @@
 class SpellCheckCombinedModelTest : public IntegrationTestBase
 {
 public:
-    SpellCheckCombinedModelTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    SpellCheckCombinedModelTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

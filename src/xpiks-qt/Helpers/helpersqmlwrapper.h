@@ -13,8 +13,7 @@
 
 #include <QObject>
 #include <QString>
-#include "../Common/baseentity.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/isystemenvironment.h>
 
 namespace Commands {
     class CommandManager;
@@ -30,60 +29,35 @@ namespace QMLExtensions {
 }
 
 namespace Helpers {
-    class HelpersQmlWrapper : public QObject, public Common::BaseEntity
+    class HelpersQmlWrapper : public QObject
     {
         Q_OBJECT
-        Q_PROPERTY(bool pluginsAvailable READ getPluginsAvailable CONSTANT)
-        Q_PROPERTY(bool isUpdateDownloaded READ getIsUpdateDownloaded NOTIFY updateDownloadedChanged)
     public:
-        HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel *colorsModel);
+        HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel &colorsModel);
 
     public:
         Q_INVOKABLE bool isKeywordValid(const QString &keyword) const;
         Q_INVOKABLE QString sanitizeKeyword(const QString &keyword) const;
-        Q_INVOKABLE void beforeDestruction();
         Q_INVOKABLE void revealLogFile();
         Q_INVOKABLE void reportOpen();
         Q_INVOKABLE void setProgressIndicator(QQuickWindow *window);
         Q_INVOKABLE void turnTaskbarProgressOn();
         Q_INVOKABLE void setTaskbarProgress(double value);
         Q_INVOKABLE void turnTaskbarProgressOff();
-        Q_INVOKABLE void removeUnavailableFiles();
         Q_INVOKABLE void revealArtworkFile(const QString &path);
         Q_INVOKABLE bool isVector(const QString &path) const;
         Q_INVOKABLE bool isVideo(const QString &path) const;
         Q_INVOKABLE QString toImagePath(const QString &path) const;
-        Q_INVOKABLE void setUpgradeConsent();
-        Q_INVOKABLE void upgradeNow();
         Q_INVOKABLE QString getAssetForTheme(const QString &assetName, int themeIndex) const;
 
     public:
-        void requestCloseApplication() { emit globalCloseRequested(); }
-
-    public:
-        Q_INVOKABLE QObject *getLogsModel();
-        Q_INVOKABLE QObject *getFtpACList();
-        Q_INVOKABLE QObject *getArtworkUploader();
-        Q_INVOKABLE QObject *getZipArchiver();
-        Q_INVOKABLE QObject *getSpellCheckerService();
-        Q_INVOKABLE QObject *getDeleteKeywordsModel();
-        Q_INVOKABLE QObject *getUploadInfos();
-        Q_INVOKABLE QObject *getSpellCheckSuggestionsModel();
-
-    public:
-        bool getPluginsAvailable() const;
-        bool getIsUpdateDownloaded() const { return m_IsUpdateDownloaded; }
-        bool getUpgradeConsent() const { return m_HaveUpgradeConsent; }
+        /*Q_INVOKABLE QObject *getLogsModel();
+         */
 
    private:
         void revealFile(const QString &path);
 
-    public slots:
-        void onUpdateDownloaded(QString pathToUpdate);
-
     signals:
-        void globalCloseRequested();
-        void globalBeforeDestruction();
         void updateAvailable(QString updateLink);
         void updateDownloaded();
         void updateDownloadedChanged(bool value);
@@ -95,10 +69,7 @@ namespace Helpers {
         bool m_WinTaskbarButtonApplicable;
 #endif
         Common::ISystemEnvironment &m_Environment;
-        bool m_IsUpdateDownloaded;
-        bool m_HaveUpgradeConsent;
-        QString m_PathToUpdate;
-        QMLExtensions::ColorsModel *m_ColorsModel;
+        QMLExtensions::ColorsModel &m_ColorsModel;
     };
 }
 

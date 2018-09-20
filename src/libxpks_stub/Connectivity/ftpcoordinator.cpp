@@ -8,18 +8,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "ftpcoordinator.h"
+#include <ftpcoordinator.h>
 #include <QStringList>
 #include <QSharedData>
 #include <QThread>
-#include <Models/artworkmetadata.h>
-#include <Models/uploadinfo.h>
+#include <Artworks/artworkmetadata.h>
+#include <Models/Connectivity/uploadinfo.h>
 #include <Helpers/filehelpers.h>
 #include <Encryption/secretsmanager.h>
 #include <Commands/commandmanager.h>
 #include <Models/settingsmodel.h>
 #include "curlftpuploader.h"
-#include "uploadcontext.h"
+#include <uploadcontext.h>
 #include "ftpuploaderworker.h"
 #include <Common/defines.h>
 #include "conectivityhelpers.h"
@@ -28,9 +28,13 @@
 
 namespace libxpks {
     namespace net {
-        FtpCoordinator::FtpCoordinator(int maxParallelUploads, QObject *parent) :
+        FtpCoordinator::FtpCoordinator(Encryption::SecretsManager &secretsManager,
+                                       Models::SettingsModel &settings,
+                                       QObject *parent) :
             QObject(parent),
-            m_UploadSemaphore(maxParallelUploads),
+            m_UploadSemaphore(settings.getMaxParallelUploads()),
+            m_SecretsManager(secretsManager),
+            m_Settings(settings),
             m_OverallProgress(0.0),
             m_FinishedWorkersCount(0),
             m_AllWorkersCount(0),
@@ -38,7 +42,7 @@ namespace libxpks {
         {
         }
 
-        void FtpCoordinator::uploadArtworks(const MetadataIO::ArtworksSnapshot &artworksToUpload,
+        void FtpCoordinator::uploadArtworks(const Artworks::ArtworksSnapshot &artworksToUpload,
                                             std::vector<std::shared_ptr<Models::UploadInfo> > &uploadInfos) {
             LOG_INFO << "Trying to upload" << artworksToUpload.size() <<
                         "file(s) to" << uploadInfos.size() << "host(s)";
@@ -48,12 +52,10 @@ namespace libxpks {
                 return;
             }
 
-            Encryption::SecretsManager *secretsManager = m_CommandManager->getSecretsManager();
-            Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
             std::vector<std::shared_ptr<UploadBatch> > batches = std::move(generateUploadBatches(artworksToUpload,
                                                                                                  uploadInfos,
-                                                                                                 secretsManager,
-                                                                                                 settingsModel));
+                                                                                                 m_SecretsManager,
+                                                                                                 m_Settings));
 
             Q_ASSERT(batches.size() == uploadInfos.size());
 

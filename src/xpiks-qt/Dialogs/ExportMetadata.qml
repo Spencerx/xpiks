@@ -157,7 +157,7 @@ Item {
 
                     StyledText {
                         anchors.right: parent.right
-                        text: i18.n + qsTr("%1 modified artwork(s) selected").arg(filteredArtItemsModel.getModifiedSelectedCount(overwriteAll))
+                        text: i18.n + qsTr("%1 modified artwork(s) selected").arg(filteredArtworksListModel.getModifiedSelectedCount(overwriteAll))
                         color: uiColors.inputForegroundColor
                     }
                 }
@@ -194,7 +194,7 @@ Item {
                             spinner.height = spinner.width
                             dialogWindow.height += spinner.height + column.spacing
                             spinner.running = true
-                            filteredArtItemsModel.saveSelectedArtworks(overwriteAll, useBackupsCheckbox.checked)
+                            filteredArtworksListModel.saveSelectedArtworks(overwriteAll, useBackupsCheckbox.checked)
                         }
 
                         Connections {

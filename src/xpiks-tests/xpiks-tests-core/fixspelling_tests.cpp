@@ -1,24 +1,28 @@
 #include "fixspelling_tests.h"
 #include <QSignalSpy>
-#include "../../xpiks-qt/SpellCheck/spellchecksuggestionmodel.h"
-#include "../../xpiks-qt/Common/basicmetadatamodel.h"
-#include "../../xpiks-qt/Common/flags.h"
 #include "Mocks/commandmanagermock.h"
-#include "../../xpiks-qt/SpellCheck/spellsuggestionsitem.h"
-#include "../../xpiks-qt/SpellCheck/spellcheckiteminfo.h"
 #include "Mocks/spellcheckservicemock.h"
 #include "Mocks/coretestsenvironment.h"
+#include "Mocks/flagsprovidermock.h"
+#include "Mocks/artworksupdatermock.h"
+#include <Common/flags.h>
+#include <UndoRedo/undoredomanager.h>
+#include <Artworks/basicmetadatamodel.h>
+#include <Artworks/basicmodelsource.h>
+#include <Services/SpellCheck/spellsuggestionsitem.h>
+#include <Services/SpellCheck/spellchecksuggestionmodel.h>
+#include <Services//SpellCheck/spellcheckinfo.h>
+#include <Services/SpellCheck/spellsuggestionstarget.h>
 
 #define INIT_FIX_SPELLING_TEST \
     Mocks::CoreTestsEnvironment environment; \
-    Mocks::CommandManagerMock commandManager; \
-    Mocks::SpellCheckServiceMock spellCheckService(environment); \
-    commandManager.InjectDependency(&spellCheckService); \
-    SpellCheck::SpellCheckSuggestionModel suggestionModel; \
-    commandManager.InjectDependency(&suggestionModel); \
-    Common::BasicMetadataModel basicModel(m_FakeHold); \
-    SpellCheck::SpellCheckItemInfo spellCheckInfo; \
-    basicModel.setSpellCheckInfo(&spellCheckInfo);
+    UndoRedo::UndoRedoManager undoRedoManager;\
+    Mocks::CommandManagerMock commandManager(undoRedoManager); \
+    Mocks::FlagsProviderMock<Common::WordAnalysisFlags> flagsProvider(Common::WordAnalysisFlags::All);\
+    Mocks::SpellCheckServiceMock spellCheckService(environment, flagsProvider); \
+    SpellCheck::SpellCheckSuggestionModel suggestionModel(spellCheckService); \
+    SpellCheck::SpellCheckInfo spellCheckInfo; \
+    Artworks::BasicMetadataModel basicModel(spellCheckInfo);
 
 void FixSpellingTests::fixKeywordsSmokeTest() {
     INIT_FIX_SPELLING_TEST;
@@ -27,7 +31,10 @@ void FixSpellingTests::fixKeywordsSmokeTest() {
 
     basicModel.initialize("title", "description", "keyword1, keyword2");
     basicModel.getRawKeywords()[0].m_IsCorrect = false;
-    suggestionModel.setupModel(&basicModel, 0, Common::SuggestionFlags::All);
+    suggestionModel.setupModel(
+                std::make_shared<SpellCheck::BasicModelSuggestionTarget>(
+                    basicModel, spellCheckService),
+                Common::SpellCheckFlags::All);
 
     SpellCheck::SpellSuggestionsItem *suggestionItem = suggestionModel.getItem(0);
     QString itemToReplace = "item1";
@@ -48,7 +55,10 @@ void FixSpellingTests::noReplacementsSelectedTest() {
     basicModel.initialize("title", "description", "keyword1, keyword2");
     basicModel.getRawKeywords()[0].m_IsCorrect = false;
 
-    suggestionModel.setupModel(&basicModel, 0, Common::SuggestionFlags::All);
+    suggestionModel.setupModel(
+                std::make_shared<SpellCheck::BasicModelSuggestionTarget>(
+                    basicModel, spellCheckService),
+                Common::SpellCheckFlags::All);
 
     suggestionModel.submitCorrections();
 
@@ -59,13 +69,14 @@ void FixSpellingTests::noReplacementsSelectedTest() {
 void FixSpellingTests::fixAndRemoveDuplicatesTest() {
     INIT_FIX_SPELLING_TEST;
 
-    QSignalSpy spellCheckSpy(&basicModel, SIGNAL(keywordsSpellingChanged()));
-
     basicModel.initialize("title", "description", "keyword1, keyword2");
     basicModel.getRawKeywords()[0].m_IsCorrect = false;
     basicModel.getRawKeywords()[1].m_IsCorrect = false;
 
-    suggestionModel.setupModel(&basicModel, 0, Common::SuggestionFlags::All);
+    suggestionModel.setupModel(
+                std::make_shared<SpellCheck::BasicModelSuggestionTarget>(
+                    basicModel, spellCheckService),
+                Common::SpellCheckFlags::All);
 
     QCOMPARE(basicModel.getKeywordsCount(), 2);
 
@@ -74,6 +85,8 @@ void FixSpellingTests::fixAndRemoveDuplicatesTest() {
 
     SpellCheck::SpellSuggestionsItem *otherSuggestionItem = suggestionModel.getItem(1);
     otherSuggestionItem->setReplacementIndex(0);
+
+    QSignalSpy spellCheckSpy(&basicModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged);
 
     suggestionModel.submitCorrections();
 
@@ -91,7 +104,10 @@ void FixSpellingTests::fixAndRemoveDuplicatesCombinedTest() {
     basicModel.getRawKeywords()[0].m_IsCorrect = false;
     basicModel.getRawKeywords()[2].m_IsCorrect = false;
 
-    suggestionModel.setupModel(&basicModel, 0, Common::SuggestionFlags::Keywords);
+    suggestionModel.setupModel(
+                std::make_shared<SpellCheck::BasicModelSuggestionTarget>(
+                    basicModel, spellCheckService),
+                Common::SpellCheckFlags::Keywords);
 
     QCOMPARE(basicModel.getKeywordsCount(), 3);
     qDebug() << basicModel.getKeywords();
@@ -121,7 +137,10 @@ void FixSpellingTests::multiReplaceWithCorrectAllTest() {
     spellCheckInfo.setDescriptionErrors(QSet<QString>() << "wordtoreplace");
     spellCheckInfo.setTitleErrors(QSet<QString>() << "wordtoreplace");
 
-    suggestionModel.setupModel(&basicModel, 0, Common::SuggestionFlags::All);
+    suggestionModel.setupModel(
+                std::make_shared<SpellCheck::BasicModelSuggestionTarget>(
+                    basicModel, spellCheckService),
+                Common::SpellCheckFlags::All);
 
     QCOMPARE(suggestionModel.rowCount(), 3);
     for (int i = 0; i < suggestionModel.rowCount(); ++i) {
@@ -151,8 +170,10 @@ void FixSpellingTests::replaceWithCorrectDescriptionTest() {
     basicModel.getRawKeywords()[2].m_IsCorrect = false;
     spellCheckInfo.setDescriptionErrors(QSet<QString>() << "wordtoreplace");
     spellCheckInfo.setTitleErrors(QSet<QString>() << "wordtoreplace");
-
-    suggestionModel.setupModel(&basicModel, 0, Common::SuggestionFlags::Description);
+    suggestionModel.setupModel(
+                std::make_shared<SpellCheck::BasicModelSuggestionTarget>(
+                    basicModel, spellCheckService),
+                Common::SpellCheckFlags::Description);
 
     QCOMPARE(suggestionModel.rowCount(), 1);
     SpellCheck::SpellSuggestionsItem *suggestionItem = suggestionModel.getItem(0);
@@ -178,7 +199,10 @@ void FixSpellingTests::replaceWithCorrectTitleTest() {
     spellCheckInfo.setDescriptionErrors(QSet<QString>() << "wordtoreplace");
     spellCheckInfo.setTitleErrors(QSet<QString>() << "wordtoreplace");
 
-    suggestionModel.setupModel(&basicModel, 0, Common::SuggestionFlags::Title);
+    suggestionModel.setupModel(
+                std::make_shared<SpellCheck::BasicModelSuggestionTarget>(
+                    basicModel, spellCheckService),
+                Common::SpellCheckFlags::Title);
 
     QCOMPARE(suggestionModel.rowCount(), 1);
     SpellCheck::SpellSuggestionsItem *suggestionItem = suggestionModel.getItem(0);
@@ -204,7 +228,10 @@ void FixSpellingTests::replaceWithCorrectKeywordsTest() {
     spellCheckInfo.setDescriptionErrors(QSet<QString>() << "wordtoreplace");
     spellCheckInfo.setTitleErrors(QSet<QString>() << "wordtoreplace");
 
-    suggestionModel.setupModel(&basicModel, 0, Common::SuggestionFlags::Keywords);
+    suggestionModel.setupModel(
+                std::make_shared<SpellCheck::BasicModelSuggestionTarget>(
+                    basicModel, spellCheckService),
+                Common::SpellCheckFlags::Keywords);
 
     QCOMPARE(suggestionModel.rowCount(), 3);
     for (int i = 0; i < suggestionModel.rowCount(); ++i) {

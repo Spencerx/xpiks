@@ -12,14 +12,21 @@
 #define IMICROSTOCKSERVICE_H
 
 #include <memory>
-#include "../Connectivity/iconnectivityresponse.h"
-#include "searchquery.h"
+#include "microstockenums.h"
+
+namespace Connectivity {
+    class IConnectivityResponse;
+}
 
 namespace Microstocks {
+    class SearchQuery;
+
     class IMicrostockService {
     public:
         virtual ~IMicrostockService() {}
-        virtual void search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) = 0;
+
+        virtual void search(SearchQuery const &query,
+                            std::shared_ptr<Connectivity::IConnectivityResponse> const &response) = 0;
     };
 }
 

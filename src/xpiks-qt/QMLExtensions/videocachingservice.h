@@ -15,16 +15,12 @@
 #include <QVector>
 #include <memory>
 #include <vector>
-#include "../Common/baseentity.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/isystemenvironment.h>
+#include <Common/messages.h>
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
-    class ArtworkMetadataLocker;
     class VideoArtwork;
-}
-
-namespace MetadataIO {
     class ArtworksSnapshot;
 }
 
@@ -32,27 +28,50 @@ namespace Storage {
     class IDatabaseManager;
 }
 
+namespace Models {
+    class SwitcherModel;
+}
+
+namespace Services {
+    class ArtworksUpdateHub;
+}
+
+namespace MetadataIO {
+    class MetadataIOService;
+}
+
 namespace QMLExtensions {
     class VideoCachingWorker;
+    class ImageCachingService;
 
-    class VideoCachingService : public QObject, public Common::BaseEntity
+    class VideoCachingService :
+            public QObject,
+            public Common::MessagesTarget<std::shared_ptr<Artworks::VideoArtwork>>
     {
         Q_OBJECT
     public:
-        explicit VideoCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent = 0);
+        explicit VideoCachingService(Common::ISystemEnvironment &environment,
+                                     Models::SwitcherModel &switcherModel,
+                                     QObject *parent = 0);
 
     public:
-        void startService();
+        void startService(ImageCachingService &imageCachingService,
+                          Services::ArtworksUpdateHub &updateHub,
+                          MetadataIO::MetadataIOService &metadataIOService,
+                          Storage::IDatabaseManager &dbManager);
         void stopService();
 
     public:
-        void generateThumbnails(const MetadataIO::ArtworksSnapshot &snapshot);
-        void generateThumbnail(Models::VideoArtwork *videoArtwork);
+        virtual void handleMessage(std::shared_ptr<Artworks::VideoArtwork> const &message) override { generateThumbnail(message); }
+
+    public:
+        void generateThumbnails(const Artworks::ArtworksSnapshot &snapshot);
+        void generateThumbnail(const std::shared_ptr<Artworks::VideoArtwork> &videoArtwork);
         void waitWorkerIdle();
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Storage::IDatabaseManager *m_DatabaseManager;
+        Models::SwitcherModel &m_SwitcherModel;
         VideoCachingWorker *m_CachingWorker;
         volatile bool m_IsCancelled;
     };

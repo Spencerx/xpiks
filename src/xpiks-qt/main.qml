@@ -34,47 +34,18 @@ ApplicationWindow {
     property int openedDialogsCount: 0
     property bool showUpdateLink: false
     property bool needToCenter: true
-    property bool listLayout: true
-    property var spellCheckService: helpersWrapper.getSpellCheckerService()
-    property bool leftSideCollapsed: false
-    property bool actionsEnabled: mainStackView.areActionsAllowed && (openedDialogsCount == 0)
+    property bool actionsEnabled: appHost.areActionsAllowed && (openedDialogsCount == 0)
 
     onVisibleChanged: {
         if (needToCenter) {
             needToCenter = false
-            applicationWindow.x = uiManager.getAppPosX((Screen.width - applicationWindow.width) / 2)
-            applicationWindow.y = uiManager.getAppPosY((Screen.height - applicationWindow.height) / 2)
+            applicationWindow.x = uiManager.getAppPosX(
+                        (Screen.width - applicationWindow.width) / 2, // default
+                        (Screen.desktopAvailableWidth - applicationWindow.width)) // max
+            applicationWindow.y = uiManager.getAppPosY(
+                        (Screen.height - applicationWindow.height) / 2, // default
+                        (Screen.desktopAvailableHeight - applicationWindow.height)) // max
         }
-    }
-
-    function closeHandler(close) {
-        console.info("closeHandler")
-
-        if (artItemsModel.hasModifiedArtworks()) {
-            console.debug("Modified artworks present")
-            close.accepted = false
-            configExitDialog.open()
-        } else {
-            console.debug("No modified artworks found. Exiting...")
-            shutdownEverything()
-            close.accepted = false
-        }
-    }
-
-    function shutdownEverything() {
-        applicationWindow.visibility = "Minimized"
-        helpersWrapper.beforeDestruction();
-        saveAppGeometry()
-        closingTimer.start()
-    }
-
-    function saveAppGeometry() {
-        console.debug("Saving application geometry")
-        uiManager.setAppWidth(applicationWindow.width)
-        uiManager.setAppHeight(applicationWindow.height)
-        uiManager.setAppPosX(applicationWindow.x)
-        uiManager.setAppPosY(applicationWindow.y)
-        uiManager.sync()
     }
 
     onClosing: closeHandler(close)
@@ -110,20 +81,41 @@ ApplicationWindow {
             }
 
             if (settingsModel.needToShowTermsAndConditions()) {
-                var licenseText = settingsModel.termsAndConditionsText;
-                if (licenseText.length > 0) {
-                    Common.launchDialog("Dialogs/TermsAndConditionsDialog.qml",
-                                        applicationWindow,
-                                        {
-                                            termsText: licenseText
-                                        })
-                } else {
-                    licenseMissingDialog.open()
-                }
+                Common.launchDialog("Dialogs/TermsAndConditionsDialog.qml", applicationWindow, {})
             } else {
                 helpersWrapper.reportOpen()
             }
         }
+    }
+
+    function closeHandler(close) {
+        console.info("closeHandler")
+
+        if (artworksListModel.modifiedArtworksCount > 0) {
+            console.debug("Modified artworks present")
+            close.accepted = false
+            confirmExitDialog.open()
+        } else {
+            console.debug("No modified artworks found. Exiting...")
+            shutdownEverything()
+            close.accepted = false
+        }
+    }
+
+    function shutdownEverything() {
+        applicationWindow.visibility = "Minimized"
+        xpiksApp.shutdown();
+        saveAppGeometry()
+        closingTimer.start()
+    }
+
+    function saveAppGeometry() {
+        console.debug("Saving application geometry")
+        uiManager.setAppWidth(applicationWindow.width)
+        uiManager.setAppHeight(applicationWindow.height)
+        uiManager.setAppPosX(applicationWindow.x)
+        uiManager.setAppPosY(applicationWindow.y)
+        uiManager.sync()
     }
 
     function onDialogClosed() {
@@ -151,84 +143,28 @@ ApplicationWindow {
     }
 
     function doOpenUploadDialog(masterPasswordCorrectOrEmpty, skipUploadItems) {
-        var artworkUploader = helpersWrapper.getArtworkUploader()
-        artworkUploader.clearModel()
+        dispatcher.dispatch(UICommand.InitUploadHosts, masterPasswordCorrectOrEmpty)
+        dispatcher.dispatch(UICommand.UploadSelected, skipUploadItems)
+    }
 
-        if (!skipUploadItems) {
-            filteredArtItemsModel.setSelectedForUpload()
-            warningsModel.setShowSelected()
+    function launchImportDialog(importID, reimport) {
+        if (!metadataIOCoordinator.hasImportFinished(importID)) {
+            Common.launchDialog("Dialogs/ImportMetadata.qml", applicationWindow,
+                                {
+                                    importID: importID,
+                                    backupsEnabled: !reimport,
+                                    reimport: reimport
+                                })
+        } else {
+            console.debug("UI::main # Import seems to be finished already")
         }
-
-        var uploadInfos = helpersWrapper.getUploadInfos();
-        uploadInfos.initializeAccounts(masterPasswordCorrectOrEmpty)
-        Common.launchDialog("Dialogs/UploadArtworks.qml",
-                            applicationWindow,
-                            {
-                                componentParent: applicationWindow,
-                                skipUploadItems: skipUploadItems
-                            })
     }
 
-    function openFindAndReplaceDialog() {
-        Common.launchDialog("Dialogs/FindAndReplace.qml", applicationWindow, { componentParent: applicationWindow })
-    }
-
-    function openDeleteKeywordsDialog() {
-        Common.launchDialog("Dialogs/DeleteKeywordsDialog.qml", applicationWindow, { componentParent: applicationWindow })
-    }
-
-    function collapseLeftPane() {
-        leftDockingGroup.state = "collapsed"
-        applicationWindow.leftSideCollapsed = true
-    }
-
-    function expandLeftPane() {
-        leftDockingGroup.state = ""
-        applicationWindow.leftSideCollapsed = false
-    }
-
-    function toggleLeftPane() {
-        leftDockingGroup.state = (leftDockingGroup.state == "collapsed") ? "" : "collapsed"
-        applicationWindow.leftSideCollapsed = !leftSideCollapsed
-    }
-
-    function startOneItemEditing(metadata, index, originalIndex, showInfoFirst) {
-        var keywordsModel = filteredArtItemsModel.getBasicModel(index)
-        artworkProxy.setSourceArtwork(metadata)
-        var wasCollapsed = applicationWindow.leftSideCollapsed
-        applicationWindow.collapseLeftPane()
-        mainStackView.push({
-                               item: "qrc:/StackViews/ArtworkEditView.qml",
-                               properties: {
-                                   artworkIndex: index,
-                                   keywordsModel: keywordsModel,
-                                   componentParent: applicationWindow,
-                                   wasLeftSideCollapsed: wasCollapsed,
-                                   showInfo: showInfoFirst
-                               },
-                               destroyOnPop: true
-                           })
-    }
-
-    function launchImportDialog(importID, imagesCount, vectorsCount, reimport) {
-        var latestDir = recentDirectories.getLatestItem()
-        chooseArtworksDialog.folder = latestDir
-        chooseDirectoryDialog.folder = latestDir
-
-        if (imagesCount > 0) {
-            if (!metadataIOCoordinator.hasImportFinished(importID)) {
-                Common.launchDialog("Dialogs/ImportMetadata.qml", applicationWindow,
-                                    {
-                                        importID: importID,
-                                        backupsEnabled: !reimport,
-                                        reimport: reimport
-                                    })
-            } else {
-                console.debug("UI::main # Import seems to be finished already")
-            }
-        } else if (vectorsCount > 0) {
-            vectorsAttachedDialog.vectorsAttached = vectorsCount
-            vectorsAttachedDialog.open()
+    function tryUploadArtworks() {
+        if (filteredArtworksListModel.areSelectedArtworksSaved()) {
+            openUploadDialog(false)
+        } else {
+            mustSaveWarning.open()
         }
     }
 
@@ -251,11 +187,8 @@ ApplicationWindow {
     Action {
         id: upgradeAction
         text: i18.n + qsTr("&Upgrade Now!")
-        enabled: helpersWrapper.isUpdateDownloaded && (applicationWindow.openedDialogsCount == 0)
-        onTriggered: {
-            helpersWrapper.setUpgradeConsent()
-            closeHandler({accepted: false})
-        }
+        enabled: xpiksApp.isUpdateDownloaded && (applicationWindow.openedDialogsCount == 0)
+        onTriggered: xpiksApp.upgradeNow()
     }
 
     Action {
@@ -270,30 +203,20 @@ ApplicationWindow {
         shortcut: "Ctrl+E"
         enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
-            if (filteredArtItemsModel.selectedArtworksCount === 0) {
+            if (filteredArtworksListModel.selectedArtworksCount === 0) {
                 mustSelectDialog.open()
-            }
-            else {
+            } else {
                 var launched = false
-                var index = filteredArtItemsModel.findSelectedItemIndex()
+                var index = filteredArtworksListModel.findSelectedItemIndex()
 
                 if (index !== -1) {
-                    var originalIndex = filteredArtItemsModel.getOriginalIndex(index)
-                    var metadata = filteredArtItemsModel.getArtworkMetadata(index)
-                    startOneItemEditing(metadata, index, originalIndex)
+                    dispatcher.dispatch(UICommand.EditArtwork, index)
                     launched = true
                 }
 
                 if (!launched) {
                     // also as fallback in case of errors in findSelectedIndex
-                    filteredArtItemsModel.combineSelectedArtworks();
-                    mainStackView.push({
-                                           item: "qrc:/StackViews/CombinedEditView.qml",
-                                           properties: {
-                                               componentParent: applicationWindow
-                                           },
-                                           destroyOnPop: true
-                                       })
+                    dispatcher.dispatch(UICommand.EditSelectedArtworks, {})
                 }
             }
         }
@@ -304,12 +227,12 @@ ApplicationWindow {
         shortcut: StandardKey.Save
         enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
-            if (filteredArtItemsModel.selectedArtworksCount == 0) {
+            if (filteredArtworksListModel.selectedArtworksCount == 0) {
                 mustSelectDialog.open()
             } else {
-                var modifiedSelectedCount = filteredArtItemsModel.getModifiedSelectedCount();
+                var modifiedSelectedCount = filteredArtworksListModel.getModifiedSelectedCount();
 
-                if (filteredArtItemsModel.selectedArtworksCount > 0 && modifiedSelectedCount > 0) {
+                if (filteredArtworksListModel.selectedArtworksCount > 0 && modifiedSelectedCount > 0) {
                     Common.launchDialog("Dialogs/ExportMetadata.qml", applicationWindow, {})
                 } else {
                     if (modifiedSelectedCount === 0) {
@@ -332,16 +255,16 @@ ApplicationWindow {
         shortcut: "Ctrl+Del"
         enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
-            if (filteredArtItemsModel.selectedArtworksCount === 0) {
+            if (filteredArtworksListModel.selectedArtworksCount === 0) {
                 mustSelectDialog.open()
             } else {
-                var itemsCount = filteredArtItemsModel.selectedArtworksCount
+                var itemsCount = filteredArtworksListModel.selectedArtworksCount
                 if (itemsCount > 0) {
                     if (mustUseConfirmation()) {
                         confirmRemoveSelectedDialog.itemsCount = itemsCount
                         confirmRemoveSelectedDialog.open()
                     } else {
-                        doRemoveSelectedArtworks()
+                        dispatcher.dispatch(UICommand.RemoveSelected, {})
                     }
                 }
             }
@@ -353,11 +276,11 @@ ApplicationWindow {
         shortcut: "Shift+Ctrl+U"
         enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
-            if (filteredArtItemsModel.selectedArtworksCount === 0) {
-                filteredArtItemsModel.selectFilteredArtworks();
+            if (filteredArtworksListModel.selectedArtworksCount === 0) {
+                filteredArtworksListModel.selectFilteredArtworks();
             }
 
-            if (filteredArtItemsModel.selectedArtworksCount > 0) {
+            if (filteredArtworksListModel.selectedArtworksCount > 0) {
                 tryUploadArtworks();
             }
         }
@@ -367,7 +290,7 @@ ApplicationWindow {
         id: addFilesAction
         shortcut: StandardKey.Open
         onTriggered: chooseArtworksDialog.open()
-        enabled: (applicationWindow.openedDialogsCount == 0)
+        enabled: applicationWindow.openedDialogsCount == 0
     }
 
     Action {
@@ -375,54 +298,35 @@ ApplicationWindow {
         shortcut: "Shift+Ctrl+L"
         enabled: applicationWindow.openedDialogsCount == 0
         onTriggered: {
-            var logsModel = helpersWrapper.getLogsModel()
-            var allText = logsModel.getAllLogsText()
-            Common.launchDialog("Dialogs/LogsDialog.qml",
-                                applicationWindow,
-                                {
-                                    logText: allText
-                                });
+            dispatcher.dispatch(UICommand.UpdateLogs, false)
+            Common.launchDialog("Dialogs/LogsDialog.qml", applicationWindow, {})
         }
     }
 
     Action {
         id: fixSpellingInSelectedAction
         text: i18.n + qsTr("&Fix spelling")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Fix spelling in selected triggered")
-            filteredArtItemsModel.suggestCorrectionsForSelected()
-            Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
-                                applicationWindow,
-                                {})
+            dispatcher.dispatch(UICommand.FixSpellingInSelected, {})
         }
     }
 
     Action {
         id: fixDuplicatesInSelectedAction
         text: i18.n + qsTr("&Show duplicates")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Fix duplicates in selected triggered")
-            filteredArtItemsModel.reviewDuplicatesInSelected()
-
-            var wasCollapsed = applicationWindow.leftSideCollapsed
-            applicationWindow.collapseLeftPane()
-            mainStackView.push({
-                                   item: "qrc:/StackViews/DuplicatesReView.qml",
-                                   properties: {
-                                       componentParent: applicationWindow,
-                                       wasLeftSideCollapsed: wasCollapsed
-                                   },
-                                   destroyOnPop: true
-                               })
+            dispatcher.dispatch(UICommand.ShowDuplicatesInSelected, true)
         }
     }
 
     Action {
         id: removeMetadataAction
         text: i18.n + qsTr("&Remove metadata")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Remove metadata from selected triggered")
             removeMetadataDialog.open()
@@ -432,56 +336,47 @@ ApplicationWindow {
     Action {
         id: deleteKeywordsAction
         text: i18.n + qsTr("&Delete keywords")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Delete keywords from selected triggered")
-            filteredArtItemsModel.deleteKeywordsFromSelected()
-            openDeleteKeywordsDialog()
+            dispatcher.dispatch(UICommand.DeleteKeywordsFromSelected, {})
         }
     }
 
     Action {
         id: detachVectorsAction
         text: i18.n + qsTr("&Detach vectors")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Detach vectors from selected triggered")
-            filteredArtItemsModel.detachVectorFromSelected()
+            filteredArtworksListModel.detachVectorFromSelected()
         }
     }
 
     Action {
         id: createArchivesAction
         text: i18.n + qsTr("&Create archives")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Zip archives triggered")
-
-            filteredArtItemsModel.setSelectedForZipping()
-            Common.launchDialog("Dialogs/ZipArtworksDialog.qml",
-                                applicationWindow,
-                                {});
+            dispatcher.dispatch(UICommand.ZipSelected)
         }
     }
 
     Action {
         id: exportToCsvAction
         text: i18.n + qsTr("&Export to CSV")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("CSV export triggered")
-
-            filteredArtItemsModel.setSelectedForCsvExport()
-            Common.launchDialog("Dialogs/CsvExportDialog.qml",
-                                applicationWindow,
-                                {});
+            dispatcher.dispatch(UICommand.ExportSelectedToCSV)
         }
     }
 
     Action {
         id: reimportMetadataAction
         text: i18.n + qsTr("&Reimport metadata")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Reimport metadata triggered")
             reimportConfirmationDialog.open()
@@ -491,7 +386,7 @@ ApplicationWindow {
     Action {
         id: overwriteMetadataAction
         text: i18.n + qsTr("&Overwrite metadata")
-        enabled: (filteredArtItemsModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Overwrite metadata triggered")
             Common.launchDialog("Dialogs/ExportMetadata.qml", applicationWindow, {overwriteAll: true})
@@ -514,12 +409,7 @@ ApplicationWindow {
 
                     delegate: MenuItem {
                         text: display
-                        onTriggered: {
-                            var filesAdded = artItemsModel.addRecentDirectory(display)
-                            if (filesAdded === 0) {
-                                noNewFilesDialog.open()
-                            }
-                        }
+                        onTriggered: xpiksApp.addDirectories([display])
                     }
                 }
             }
@@ -531,13 +421,7 @@ ApplicationWindow {
 
                 MenuItem {
                     text: i18.n + qsTr("Open all")
-
-                    onTriggered: {
-                        var filesAdded = artItemsModel.addAllRecentFiles()
-                        if (filesAdded === 0) {
-                            noNewFilesDialog.open()
-                        }
-                    }
+                    onTriggered: xpiksApp.addFiles(recentFiles.getAllRecentFiles())
                 }
 
                 MenuSeparator {
@@ -551,12 +435,7 @@ ApplicationWindow {
 
                     delegate: MenuItem {
                         text: display
-                        onTriggered: {
-                            var filesAdded = artItemsModel.addRecentFile(display)
-                            if (filesAdded === 0) {
-                                noNewFilesDialog.open()
-                            }
-                        }
+                        onTriggered: xpiksApp.addFiles([display])
                     }
                 }
             }
@@ -570,7 +449,8 @@ ApplicationWindow {
                     checkable: true
 
                     onCheckedChanged: {
-                        settingsModel.updateSaveSession(checked);
+                        settingsModel.saveSession = checked
+                        // TODO: save session command if checked
                     }
 
                     Component.onCompleted: {
@@ -581,7 +461,7 @@ ApplicationWindow {
 
             MenuItem {
                 action: upgradeAction
-                visible: helpersWrapper.isUpdateDownloaded
+                visible: xpiksApp.isUpdateDownloaded
             }
 
             MenuItem { action: openSettingsAction }
@@ -618,8 +498,8 @@ ApplicationWindow {
                 enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
                 onTriggered: {
                     console.info("Invert selection triggered")
-                    if (filteredArtItemsModel.getItemsCount() > 0) {
-                        filteredArtItemsModel.invertSelectionArtworks()
+                    if (filteredArtworksListModel.getItemsCount() > 0) {
+                        filteredArtworksListModel.invertSelectionArtworks()
                     }
                 }
             }
@@ -630,8 +510,8 @@ ApplicationWindow {
                 checkable: true
                 onToggled: {
                     console.info("Sort by filename")
-                    if (filteredArtItemsModel.getItemsCount() > 0) {
-                        filteredArtItemsModel.toggleSorted();
+                    if (filteredArtworksListModel.getItemsCount() > 0) {
+                        filteredArtworksListModel.toggleSorted();
                     }
                 }
             }
@@ -692,8 +572,8 @@ ApplicationWindow {
             Menu {
                 title: i18.n + qsTr("&Plugins")
                 id: pluginsMenu
-                enabled: helpersWrapper.pluginsAvailable
-                visible: helpersWrapper.pluginsAvailable
+                enabled: xpiksApp.pluginsAvailable
+                visible: xpiksApp.pluginsAvailable
 
                 Instantiator {
                     model: pluginsWithActions
@@ -760,9 +640,9 @@ ApplicationWindow {
                     text: i18.n + qsTr("&Wipe all metadata from files")
                     onTriggered: {
                         console.info("Wipe metadata triggered")
-                        if (filteredArtItemsModel.selectedArtworksCount == 0) {
+                        if (filteredArtworksListModel.selectedArtworksCount == 0) {
                             mustSelectDialog.open()
-                        } else if (filteredArtItemsModel.selectedArtworksCount > 0) {
+                        } else if (filteredArtworksListModel.selectedArtworksCount > 0) {
                             Common.launchDialog("Dialogs/WipeMetadata.qml", applicationWindow, {})
                         }
                     }
@@ -780,17 +660,17 @@ ApplicationWindow {
 
             MenuItem {
                 text: i18.n + qsTr("&User's guide")
-                onTriggered: Qt.openUrlExternally("http://xpiksapp.com/tutorials/")
+                onTriggered: Qt.openUrlExternally("https://xpiksapp.com/tutorials/")
             }
 
             MenuItem {
                 text: i18.n + qsTr("&FAQ")
-                onTriggered: Qt.openUrlExternally("http://xpiksapp.com/faq/")
+                onTriggered: Qt.openUrlExternally("https://xpiksapp.com/faq/")
             }
 
             MenuItem {
                 text: i18.n + qsTr("&Support")
-                onTriggered: Qt.openUrlExternally("http://xpiksapp.com/support/")
+                onTriggered: Qt.openUrlExternally("https://xpiksapp.com/support/")
             }
         }
 
@@ -802,7 +682,7 @@ ApplicationWindow {
             MenuItem {
                 text: "Update all items"
                 onTriggered: {
-                    artItemsModel.updateAllItems()
+                    filteredArtworksListModel.updateFilter()
                 }
             }
 
@@ -825,7 +705,7 @@ ApplicationWindow {
                 text: "Update window"
                 onTriggered: {
                     Common.launchDialog("Dialogs/UpdateWindow.qml",
-                                        applicationWindow, {updateUrl: "http://xpiksapp.com/downloads/"},
+                                        applicationWindow, {updateUrl: "https://xpiksapp.com/downloads/"},
                                         function(wnd) {wnd.show();});
                 }
             }
@@ -854,14 +734,7 @@ ApplicationWindow {
             MenuItem {
                 text: "Terms and Conditions"
                 onTriggered: {
-                    var licenseText = settingsModel.termsAndConditionsText;
-                    if (licenseText.length > 0) {
-                        Common.launchDialog("Dialogs/TermsAndConditionsDialog.qml",
-                                            applicationWindow,
-                                            {
-                                                termsText: licenseText
-                                            })
-                    }
+                    Common.launchDialog("Dialogs/TermsAndConditionsDialog.qml", applicationWindow, {})
                 }
             }
 
@@ -948,70 +821,16 @@ ApplicationWindow {
                                         });
                 }
             }
-        }
-    }
 
-    Menu {
-        id: artworkContextMenu
-        property string filename
-        property int index
-        property bool hasVectorAttached
-
-        MenuItem {
-            text: i18.n + qsTr("Edit")
-            onTriggered: {
-                var originalIndex = filteredArtItemsModel.getOriginalIndex(artworkContextMenu.index)
-                var metadata = filteredArtItemsModel.getArtworkMetadata(artworkContextMenu.index)
-                startOneItemEditing(metadata, artworkContextMenu.index, originalIndex)
+            MenuItem {
+                text: "Crash"
+                onTriggered: xpiksApp.debugCrash()
             }
-        }
-
-        MenuItem {
-            text: i18.n + qsTr("Show info")
-            onTriggered: {
-                var originalIndex = filteredArtItemsModel.getOriginalIndex(artworkContextMenu.index)
-                var metadata = filteredArtItemsModel.getArtworkMetadata(artworkContextMenu.index)
-                startOneItemEditing(metadata, artworkContextMenu.index, originalIndex, true)
-            }
-        }
-
-        MenuItem {
-            text: i18.n + qsTr("Detach vector")
-            enabled: artworkContextMenu.hasVectorAttached
-            visible: artworkContextMenu.hasVectorAttached
-            onTriggered: {
-                filteredArtItemsModel.detachVectorFromArtwork(artworkContextMenu.index)
-            }
-        }
-
-        MenuItem {
-            text: i18.n + qsTr("Copy to Quick Buffer")
-            onTriggered: {
-                filteredArtItemsModel.copyToQuickBuffer(artworkContextMenu.index)
-                uiManager.activateQuickBufferTab()
-            }
-        }
-
-        MenuItem {
-            text: i18.n + qsTr("Fill from Quick Buffer")
-            onTriggered: filteredArtItemsModel.fillFromQuickBuffer(artworkContextMenu.index)
-        }
-
-        MenuItem {
-            text: i18.n + qsTr("Show in folder")
-            onTriggered: helpersWrapper.revealArtworkFile(artworkContextMenu.filename);
         }
     }
 
     MessageDialog {
-        id: licenseMissingDialog
-        title: i18.n + qsTr("Warning")
-        text: i18.n + qsTr("Xpiks installation is corrupted.\nPlease reinstall Xpiks and try again.")
-        onAccepted: shutdownEverything()
-    }
-
-    MessageDialog {
-        id: configExitDialog
+        id: confirmExitDialog
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("You have some artworks modified. Really exit?")
         standardButtons: StandardButton.Yes | StandardButton.No
@@ -1023,9 +842,7 @@ ApplicationWindow {
         title: i18.n + qsTr("Warning")
         text: i18.n + qsTr("Some files are not available anymore.\nThey will be removed from the workflow.")
         standardButtons: StandardButton.Ok
-        onAccepted: {
-            helpersWrapper.removeUnavailableFiles()
-        }
+        onAccepted: xpiksApp.removeUnavailableFiles()
     }
 
     MessageDialog {
@@ -1037,13 +854,10 @@ ApplicationWindow {
 
     MessageDialog {
         id: removeMetadataDialog
-
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("Remove metadata from selected artworks?")
         standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: {
-            filteredArtItemsModel.removeMetadataInSelected()
-        }
+        onYes: filteredArtworksListModel.removeMetadataInSelected()
     }
 
     MessageDialog {
@@ -1052,21 +866,7 @@ ApplicationWindow {
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("Are you sure you want to remove %1 item(s)?").arg(itemsCount)
         standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: {
-            doRemoveSelectedArtworks()
-        }
-    }
-
-    function doRemoveSelectedArtworks() {
-        filteredArtItemsModel.removeSelectedArtworks()
-    }
-
-    function tryUploadArtworks() {
-        if (filteredArtItemsModel.areSelectedArtworksSaved()) {
-            openUploadDialog(false)
-        } else {
-            mustSaveWarning.open()
-        }
+        onYes: dispatcher.dispatch(UICommand.RemoveSelected, {})
     }
 
     MessageDialog {
@@ -1074,20 +874,7 @@ ApplicationWindow {
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("You will lose all unsaved changes after reimport. Proceed?")
         standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: {
-            filteredArtItemsModel.reimportMetadataForSelected()
-        }
-    }
-
-    MessageDialog {
-        id: confirmRemoveDirectoryDialog
-        property int directoryIndex
-        title: i18.n + qsTr("Confirmation")
-        text: i18.n + qsTr("Are you sure you want to remove this directory?")
-        standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: {
-            filteredArtItemsModel.removeArtworksDirectory(directoryIndex)
-        }
+        onYes: dispatcher.dispatch(UICommand.ReimportFromSelected, {})
     }
 
     FileDialog {
@@ -1103,7 +890,7 @@ ApplicationWindow {
 
         onAccepted: {
             console.debug("You chose: " + chooseArtworksDialog.fileUrls)
-            var filesAdded = artItemsModel.addLocalArtworks(chooseArtworksDialog.fileUrls)
+            var filesAdded = xpiksApp.addFiles(chooseArtworksDialog.fileUrls)
             if (filesAdded > 0) {
                 console.debug("" + filesAdded + ' files via Open File(s)')
             } else {
@@ -1126,7 +913,7 @@ ApplicationWindow {
 
         onAccepted: {
             console.debug("You chose: " + chooseDirectoryDialog.fileUrls)
-            var filesAdded = artItemsModel.addLocalDirectories(chooseDirectoryDialog.fileUrls)
+            var filesAdded = xpiksApp.addDirectories(chooseDirectoryDialog.fileUrls)
             console.debug("" + filesAdded + ' files via Open Directory')
             if (filesAdded === 0) {
                 noNewFilesDialog.open()
@@ -1213,7 +1000,7 @@ ApplicationWindow {
     }
 
     Connections {
-        target: artItemsModel
+        target: artworksListModel
 
         onUnavailableArtworksFound: {
             console.debug("UI:onUnavailableArtworksFound")
@@ -1224,19 +1011,34 @@ ApplicationWindow {
             console.debug("UI:onUnavailableVectorsFound")
             unavailableVectorsDialog.open()
         }
+    }
+
+    Connections {
+        target: xpiksApp
 
         onArtworksAdded: {
             if ((imagesCount === 0) && (vectorsCount === 0)) {
                 noNewFilesDialog.open();
                 return;
+            } else if ((imagesCount === 0) && (vectorsCount > 0)) {
+                vectorsAttachedDialog.vectorsAttached = vectorsCount
+                vectorsAttachedDialog.open()
             }
 
-            launchImportDialog(importID, imagesCount, vectorsCount, false)
+            var latestDir = recentDirectories.getLatestItem()
+            chooseArtworksDialog.folder = latestDir
+            chooseDirectoryDialog.folder = latestDir
         }
 
-        onArtworksReimported: {
-            launchImportDialog(importID, artworksCount, 0, true)
+        onUpgradeInitiated: {
+            console.debug("UI:onUpgradeInitiated handler")
+            closeHandler({accepted: false});
         }
+    }
+
+    Connections {
+        target: metadataIOCoordinator
+        onImportStarted: launchImportDialog(importID, reimport)
     }
 
     Connections {
@@ -1255,11 +1057,6 @@ ApplicationWindow {
                 console.debug("Opened dialogs found. Postponing upgrade flow...");
                 upgradeTimer.start()
             }
-        }
-
-        onUpgradeInitiated: {
-            console.debug("UI:onUpgradeInitiated handler")
-            closeHandler({accepted: false});
         }
     }
 
@@ -1285,7 +1082,7 @@ ApplicationWindow {
         triggeredOnStart: false
         onTriggered: {
             if ((applicationWindow.openedDialogsCount == 0) &&
-                    (mainStackView.areActionsAllowed) &&
+                    (applicationWindow.actionsEnabled) &&
                     (artworkRepository.artworksSourcesCount > 0) &&
                     (switcher.isDonationCampaign1Active) &&
                     (switcher.isDonateCampaign1Stage2On)) {
@@ -1301,319 +1098,80 @@ ApplicationWindow {
         }
     }
 
-    Rectangle {
-        id: globalHost
-        color: uiColors.defaultDarkColor
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.InitSuggestionArtwork,
+            UICommand.InitSuggestionCombined,
+            UICommand.InitSuggestionSingle]
+        onDispatched: {
+            Common.launchDialog("Dialogs/KeywordsSuggestion.qml",
+                                applicationWindow,
+                                {callbackObject: value});
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.FixSpellingArtwork,
+            UICommand.FixSpellingCombined,
+            UICommand.FixSpellingInSelected,
+            UICommand.FixSpellingSingle]
+        onDispatched: {
+            Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
+                                applicationWindow,
+                                {})
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.FindAndReplaceInSelected]
+        onDispatched: {
+            Common.launchDialog("Dialogs/FindAndReplace.qml", applicationWindow, { componentParent: applicationWindow })
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.DeleteKeywordsFromSelected]
+        onDispatched: {
+            Common.launchDialog("Dialogs/DeleteKeywordsDialog.qml", applicationWindow, { componentParent: applicationWindow })
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.ExportSelectedToCSV]
+        onDispatched: {
+            Common.launchDialog("Dialogs/CsvExportDialog.qml", applicationWindow, {})
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.ZipSelected]
+        onDispatched: {
+            Common.launchDialog("Dialogs/ZipArtworksDialog.qml", applicationWindow, {})
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.UploadSelected]
+        onDispatched: {
+            Common.launchDialog("Dialogs/UploadArtworks.qml",
+                                applicationWindow,
+                                {
+                                    componentParent: applicationWindow,
+                                    skipUploadItems: value
+                                })
+        }
+    }
+
+    AppHost {
+        id: appHost
+        componentParent: applicationWindow
         anchors.fill: parent
-
-        DropArea {
-            enabled: applicationWindow.actionsEnabled
-            anchors.fill: parent
-            onDropped: {
-                if (drop.hasUrls) {
-                    var filesCount = artItemsModel.dropFiles(drop.urls)
-                    console.debug(filesCount + ' files added via drag&drop')
-                }
-            }
-        }
-
-        Item {
-            id: leftDockingGroup
-            width: 250
-            anchors.left: parent.left
-            anchors.leftMargin: leftCollapser.width
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-
-            states: [
-                State {
-                    name: "collapsed"
-
-                    PropertyChanges {
-                        target: leftDockingGroup
-                        anchors.leftMargin: -leftDockingGroup.width + leftCollapser.width
-                    }
-                }
-            ]
-
-            Behavior on anchors.leftMargin {
-                NumberAnimation {
-                    duration: 100
-                    easing.type: Easing.InQuad
-                }
-            }
-
-            Row {
-                id: tabsHolder
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                property int currentIndex: 0
-                property bool moreTabsAvailable: tabsModel.tabsCount > 3
-                property real expanderWidth: tabsHolder.moreTabsAvailable ? plusTab.width : 0
-                height: 55
-                spacing: 0
-
-                Repeater {
-                    id: tabsRepeater
-                    model: activeTabs
-
-                    delegate: CustomTab {
-                        id: customTab
-                        tabIndex: index
-                        width: (tabsHolder.width - tabsHolder.expanderWidth) / tabsRepeater.count
-                        isSelected: tabsHolder.currentIndex == tabIndex
-                        hovered: (!isSelected) && tabMA.containsMouse
-
-                        function activateThisTab() {
-                            var tabIndex = customTab.tabIndex;
-                            tabsHolder.currentIndex = tabIndex
-                        }
-
-                        Loader {
-                            property bool isHighlighted: customTab.isSelected || customTab.hovered
-                            property color parentBackground: customTab.color
-                            anchors.centerIn: parent
-                            source: tabicon
-                        }
-
-                        Connections {
-                            target: activeTabs
-                            onTabActivateRequested: {
-                                console.log("On tab opened " + originalTabIndex)
-                                if (activeTabs.getIndex(customTab.tabIndex) === originalTabIndex) {
-                                    customTab.activateThisTab()
-                                }
-                            }
-                        }
-
-                        StyledText {
-                            enabled: debugTabs
-                            visible: debugTabs
-                            anchors.top: parent.top
-                            anchors.right: parent.right
-                            text: cachetag
-                            isActive: false
-                        }
-
-                        MouseArea {
-                            id: tabMA
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: {
-                                customTab.activateThisTab()
-                                activeTabs.openTab(tabIndex)
-                            }
-                        }
-                    }
-                }
-
-                CustomTab {
-                    id: plusTab
-                    enabled: false
-                    visible: false
-                    tabIndex: tabsRepeater.count
-                    isSelected: tabsHolder.currentIndex == tabIndex
-                    hovered: (!isSelected) && plusMA.containsMouse
-                    width: 20
-                    property bool isHighlighted: isSelected || hovered
-
-                    Connections {
-                        target: tabsModel
-                        onTabsCountChanged: {
-                            if (tabsModel.tabsCount <= 3) {
-                                if (plusTab.isSelected) {
-                                    activeTabs.reactivateMostRecentTab()
-                                }
-                            }
-
-                            plusTab.enabled = tabsModel.tabsCount > 3
-                            plusTab.visible = tabsModel.tabsCount > 3
-                        }
-                    }
-
-                    TriangleElement {
-                        anchors.centerIn: parent
-                        anchors.verticalCenterOffset: isFlipped ? height*0.3 : 0
-                        color: (enabled && (plusMA.containsMouse || plusTab.isHighlighted)) ? uiColors.labelActiveForeground : uiColors.labelInactiveForeground
-                        isFlipped: !plusTab.isSelected
-                        width: parent.width * 0.6
-                        height: width * 0.5
-                    }
-
-                    MouseArea {
-                        id: plusMA
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: {
-                            var tabIndex = tabsRepeater.count;
-                            tabsHolder.currentIndex = tabIndex
-                        }
-                    }
-                }
-            }
-
-            Rectangle {
-                color: uiColors.defaultControlColor
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: tabsHolder.bottom
-                anchors.bottom: parent.bottom
-
-                StackLayout {
-                    id: mainTabView
-                    anchors.fill: parent
-                    currentIndex: tabsHolder.currentIndex
-
-                    Repeater {
-                        model: activeTabs
-
-                        delegate: Loader {
-                            id: tabLoader
-                            source: tabcomponent
-                            asynchronous: true
-                            property int myIndex: index
-                            property var tabModel: uiManager.retrieveTabsModel(tabid)
-                            property int selectedArtworksCount: filteredArtItemsModel.selectedArtworksCount
-                            property bool areActionsAllowed: mainStackView.areActionsAllowed
-
-                            Connections {
-                                target: mainTabView
-                                onCurrentIndexChanged: {
-                                    if (tabLoader.myIndex == mainTabView.currentIndex) {
-                                        if (tabLoader.status == Loader.Ready) {
-                                            if (typeof tabLoader.item.initializeTab !== "undefined") {
-                                                tabLoader.item.initializeTab()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Flow {
-                        anchors.fill: parent
-                        anchors.leftMargin: 5
-                        anchors.topMargin: 5
-                        spacing: 5
-
-                        Repeater {
-                            id: inactiveTabsRepeater
-                            model: inactiveTabs
-
-                            delegate: CustomTab {
-                                anchors.top: undefined
-                                anchors.bottom: undefined
-                                id: customInactiveTab
-                                tabIndex: index
-                                width: (tabsHolder.width - plusTab.width) / tabsRepeater.count
-                                height: 45
-                                isSelected: false
-                                hovered: (!isSelected) && inactiveTabMA.containsMouse
-
-                                Loader {
-                                    property bool isHighlighted: customInactiveTab.isSelected || customInactiveTab.hovered
-                                    property color parentBackground: customInactiveTab.color
-                                    anchors.centerIn: parent
-                                    source: tabicon
-                                }
-
-                                StyledText {
-                                    enabled: debugTabs
-                                    visible: debugTabs
-                                    anchors.top: parent.top
-                                    anchors.right: parent.right
-                                    text: cachetag
-                                    isActive: false
-                                }
-
-                                MouseArea {
-                                    id: inactiveTabMA
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    onClicked: {
-                                        inactiveTabs.openTab(tabIndex)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // hack for visual order of components (slider will be created after left panel)
-        // in order not to deal with Z animation/settings
-        Rectangle {
-            id: leftCollapser
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            color: uiColors.leftSliderColor
-            width: 20
-
-            TriangleElement {
-                width: leftCollapseMA.pressed ? 6 : 7
-                height: leftCollapseMA.pressed ? 12 : 14
-                isVertical: true
-                isFlipped: !applicationWindow.leftSideCollapsed
-                anchors.centerIn: parent
-                anchors.horizontalCenterOffset: isFlipped ? -1 : 0
-                color: {
-                    if (leftCollapseMA.pressed) {
-                        return uiColors.whiteColor
-                    } else {
-                        return leftCollapseMA.containsMouse ? uiColors.labelInactiveForeground : uiColors.inputBackgroundColor
-                    }
-                }
-            }
-
-            MouseArea {
-                id: leftCollapseMA
-                hoverEnabled: true
-                anchors.fill: parent
-                onClicked: toggleLeftPane()
-            }
-        }
-
-        StackView {
-            id: mainStackView
-            anchors.left: leftDockingGroup.right
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            focus: true
-            property bool areActionsAllowed: depth <= 1
-
-            initialItem: MainGrid {
-            }
-
-            delegate: StackViewDelegate {
-                function transitionFinished(properties)
-                {
-                    properties.exitItem.opacity = 1
-                }
-
-                pushTransition: StackViewTransition {
-                    PropertyAnimation {
-                        target: enterItem
-                        property: "opacity"
-                        from: 0
-                        to: 1
-                        duration: 100
-                    }
-
-                    PropertyAnimation {
-                        target: exitItem
-                        property: "opacity"
-                        from: 1
-                        to: 0
-                        duration: 100
-                    }
-                }
-            }
-        }
     }
 
     statusBar: StatusBar {
@@ -1629,23 +1187,9 @@ ApplicationWindow {
 
             StyledLink {
                 text: i18.n + qsTr("Check warnings")
-                enabled: mainStackView.areActionsAllowed && (warningsModel.warningsCount > 0)
+                enabled: applicationWindow.actionsEnabled && (warningsModel.warningsCount > 0)
                 normalLinkColor: uiColors.labelActiveForeground
-                onClicked: {
-                    warningsModel.update()
-                    //filteredArtItemsModel.checkForWarnings()
-
-                    var wasCollapsed = applicationWindow.leftSideCollapsed
-                    applicationWindow.collapseLeftPane()
-                    mainStackView.push({
-                                           item: "qrc:/StackViews/WarningsView.qml",
-                                           properties: {
-                                               componentParent: applicationWindow,
-                                               wasLeftSideCollapsed: wasCollapsed
-                                           },
-                                           destroyOnPop: true
-                                       })
-                }
+                onClicked: dispatcher.dispatch(UICommand.CheckWarnings, {})
             }
 
             StyledText {
@@ -1660,9 +1204,7 @@ ApplicationWindow {
                 enabled: applicationWindow.showUpdateLink
                 text: i18.n + qsTr("Update available!")
                 color: isPressed ? uiColors.linkClickedColor : uiColors.greenColor
-                onClicked: {
-                    Qt.openUrlExternally("http://xpiksapp.com/downloads/")
-                }
+                onClicked: Qt.openUrlExternally("https://xpiksapp.com/downloads/")
             }
 
             Item {
@@ -1674,11 +1216,11 @@ ApplicationWindow {
                 text: i18.n + qsTr("No items available")
                 color: uiColors.labelInactiveForeground
                 verticalAlignment: Text.AlignVCenter
-                visible: artItemsModel.modifiedArtworksCount == 0
-                enabled: artItemsModel.modifiedArtworksCount == 0
+                visible: artworksListModel.modifiedArtworksCount == 0
+                enabled: artworksListModel.modifiedArtworksCount == 0
 
                 function updateText() {
-                    var itemsCount = filteredArtItemsModel.getItemsCount()
+                    var itemsCount = filteredArtworksListModel.getItemsCount()
                     if (itemsCount > 0) {
                         text = itemsCount > 1 ? qsTr("%1 items available").arg(itemsCount) : qsTr("1 item available")
                     } else {
@@ -1688,7 +1230,7 @@ ApplicationWindow {
 
                 Component.onCompleted: updateText()
                 Connections {
-                    target: filteredArtItemsModel
+                    target: filteredArtworksListModel
                     onRowsInserted: filteredCountText.updateText()
                     onRowsRemoved: filteredCountText.updateText()
                 }
@@ -1703,21 +1245,24 @@ ApplicationWindow {
                 text: i18.n + getOriginalText()
                 verticalAlignment: Text.AlignVCenter
                 color: uiColors.artworkModifiedColor
-                visible: artItemsModel.modifiedArtworksCount > 0
-                enabled: artItemsModel.modifiedArtworksCount > 0
+                visible: artworksListModel.modifiedArtworksCount > 0
+                enabled: artworksListModel.modifiedArtworksCount > 0
 
                 function getOriginalText() {
-                    return artItemsModel.modifiedArtworksCount > 1 ? qsTr("%1 modified items").arg(artItemsModel.modifiedArtworksCount) : (artItemsModel.modifiedArtworksCount === 1 ? qsTr("1 modified item") : qsTr("No modified items"))
+                    return artworksListModel.modifiedArtworksCount > 1 ?
+                                qsTr("%1 modified items").arg(artworksListModel.modifiedArtworksCount) :
+                                (artworksListModel.modifiedArtworksCount === 1 ? qsTr("1 modified item") :
+                                                                             qsTr("No modified items"))
                 }
 
                 MouseArea {
                     id: selectModifiedMA
                     anchors.fill: parent
-                    enabled: mainStackView.areActionsAllowed
-                    cursorShape: artItemsModel.modifiedArtworksCount > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    enabled: applicationWindow.actionsEnabled
+                    cursorShape: artworksListModel.modifiedArtworksCount > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
                     onClicked: {
-                        if (artItemsModel.modifiedArtworksCount > 0) {
-                            filteredArtItemsModel.searchTerm = "x:modified"
+                        if (artworksListModel.modifiedArtworksCount > 0) {
+                            filteredArtworksListModel.searchTerm = "x:modified"
                         }
                     }
                 }

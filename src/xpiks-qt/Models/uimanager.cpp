@@ -9,11 +9,14 @@
  */
 
 #include "uimanager.h"
-#include "../Common/defines.h"
-#include "../QuickBuffer/currenteditableartwork.h"
-#include "../QuickBuffer/currenteditableproxyartwork.h"
-#include "artworkmetadata.h"
-#include "../Models/settingsmodel.h"
+#include <QQuickTextDocument>
+#include <QScreen>
+#include <QQmlEngine>
+#include <Common/defines.h>
+#include <Artworks/basicmetadatamodel.h>
+#include <Models/settingsmodel.h>
+#include <Models/Artworks/artworkslistmodel.h>
+#include <Helpers/loghighlighter.h>
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 
@@ -24,17 +27,20 @@
 #define DEFAULT_APP_POSITION -1
 
 namespace Models {
-    UIManager::UIManager(Common::ISystemEnvironment &environment, SettingsModel *settingsModel, QObject *parent) :
+    UIManager::UIManager(Common::ISystemEnvironment &environment,
+                         QMLExtensions::ColorsModel &colorsModel,
+                         SettingsModel &settingsModel,
+                         QObject *parent) :
         QObject(parent),
         Common::DelayedActionEntity(500, MAX_SAVE_PAUSE_RESTARTS),
         m_State("uimanager", environment),
+        m_ColorsModel(colorsModel),
         m_SettingsModel(settingsModel),
         m_TabID(42),
-        m_SaveTimerId(-1),
-        m_SaveRestartsCount(0)
+        m_ScreenDPI(96.0)
     {
-        Q_ASSERT(settingsModel != nullptr);
-        QObject::connect(m_SettingsModel, &Models::SettingsModel::keywordSizeScaleChanged, this, &UIManager::keywordHeightChanged);
+        QObject::connect(&m_SettingsModel, &Models::SettingsModel::keywordSizeScaleChanged,
+                         this, &UIManager::keywordHeightChanged);
 
         m_ActiveTabs.setSourceModel(&m_TabsModel);
         m_InactiveTabs.setSourceModel(&m_TabsModel);
@@ -48,22 +54,18 @@ namespace Models {
         QObject::connect(&m_InactiveTabs, &QMLExtensions::InactiveTabsModel::tabOpened, &m_ActiveTabs, &QMLExtensions::ActiveTabsModel::onInactiveTabOpened);
     }
 
+    void UIManager::setScreenDpi(double value) {
+        LOG_INFO << value;
+        if (value != m_ScreenDPI) {
+            m_ScreenDPI = value;
+            emit screenDpiChanged();
+        }
+    }
+
     double UIManager::getKeywordHeight() const {
-        double keywordScale = m_SettingsModel->getKeywordSizeScale();
+        double keywordScale = m_SettingsModel.getKeywordSizeScale();
         double height = 20.0 * keywordScale + (keywordScale - 1.0) * 10.0;
         return height;
-    }
-
-    void UIManager::registerCurrentItem(std::shared_ptr<QuickBuffer::ICurrentEditable> &currentItem) {
-        LOG_DEBUG << "#";
-        m_CurrentEditable = std::move(currentItem);
-        emit currentEditableChanged();
-    }
-
-    void UIManager::clearCurrentItem() {
-        LOG_DEBUG << "#";
-        m_CurrentEditable.reset();
-        emit currentEditableChanged();
     }
 
     QObject *UIManager::retrieveTabsModel(int tabID) {
@@ -114,9 +116,10 @@ namespace Models {
         justChanged();
     }
 
-    int UIManager::getAppPosX(int defaultPosX) {
+    int UIManager::getAppPosX(int defaultPosX, int maxPosX) {
+        Q_ASSERT(defaultPosX < maxPosX);
         int posX = m_State.getInt(Constants::appWindowX, defaultPosX);
-        if (posX == -1) { posX = defaultPosX; }
+        if ((posX < 0) || (posX >= maxPosX)) { posX = defaultPosX; }
         return posX;
     }
 
@@ -126,9 +129,10 @@ namespace Models {
         justChanged();
     }
 
-    int UIManager::getAppPosY(int defaultPosY) {
+    int UIManager::getAppPosY(int defaultPosY, int maxPosY) {
+        Q_ASSERT(defaultPosY < maxPosY);
         int posY = m_State.getInt(Constants::appWindowY, defaultPosY);
-        if (posY == -1) { posY = defaultPosY; }
+        if ((posY < 0) || (posY >= maxPosY)) { posY = defaultPosY; }
         return posY;
     }
 
@@ -136,6 +140,31 @@ namespace Models {
         LOG_DEBUG << y;
         m_State.setValue(Constants::appWindowY, y);
         justChanged();
+    }
+
+    void UIManager::initDescriptionHighlighting(QObject *basicModelObject, QQuickTextDocument *document) {
+        Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(basicModelObject);
+        if (basicModel != nullptr) {
+            SpellCheck::SpellCheckInfo &info = basicModel->getSpellCheckInfo();
+            info.createHighlighterForDescription(document->textDocument(), &m_ColorsModel, basicModel);
+            basicModel->notifyDescriptionSpellingChanged();
+        }
+    }
+
+    void UIManager::initTitleHighlighting(QObject *basicModelObject, QQuickTextDocument *document) {
+        Artworks::BasicMetadataModel *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(basicModelObject);
+        if (basicModel != nullptr) {
+            SpellCheck::SpellCheckInfo &info = basicModel->getSpellCheckInfo();
+            info.createHighlighterForTitle(document->textDocument(), &m_ColorsModel, basicModel);
+            basicModel->notifyDescriptionSpellingChanged();
+        }
+    }
+
+    void UIManager::initLogsHighlighting(QQuickTextDocument *document) {
+        LOG_DEBUG << "#";
+        Helpers::LogHighlighter *highlighter = new Helpers::LogHighlighter(m_ColorsModel,
+                                                                           document->textDocument());
+        Q_UNUSED(highlighter);
     }
 
     void UIManager::activateQuickBufferTab() {
@@ -233,6 +262,38 @@ namespace Models {
         m_State.setValue(Constants::artworkEditRightPaneWidth, DEFAULT_ARTWORK_EDIT_RIGHT_PANE_WIDTH);
 
         justChanged();
+    }
+
+    void UIManager::onScreenDpiChanged(qreal someDpi) {
+        Q_UNUSED(someDpi);
+        QScreen *screen = qobject_cast<QScreen*>(sender());
+        updateDpi(screen);
+    }
+
+    void UIManager::onScreenChanged(QScreen *screen) {
+        updateDpi(screen);
+
+        if (screen != nullptr) {
+            QObject::connect(screen, &QScreen::logicalDotsPerInchChanged,
+                             this, &Models::UIManager::onScreenDpiChanged);
+            QObject::connect(screen, &QScreen::physicalDotsPerInchChanged,
+                             this, &Models::UIManager::onScreenDpiChanged);
+        }
+    }
+
+    void UIManager::updateDpi(QScreen *screen) {
+        if (screen != nullptr) {
+            LOG_INFO << "Device pixel ratio:" << screen->devicePixelRatio();
+            LOG_INFO << "Logical dots per inch:" << screen->logicalDotsPerInch();
+
+            qreal dpi;
+#ifdef Q_OS_WIN
+            dpi = screen->logicalDotsPerInch() * screen->devicePixelRatio();
+#else
+            dpi = screen->physicalDotsPerInch() * screen->devicePixelRatio();
+#endif
+            setScreenDpi(dpi);
+        }
     }
 
     void UIManager::doOnTimer() {

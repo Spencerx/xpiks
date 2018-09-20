@@ -11,26 +11,33 @@
 #ifndef FOTOLIAAPICLIENT_H
 #define FOTOLIAAPICLIENT_H
 
+#include <QString>
+#include <QUrl>
 #include "imicrostockapiclient.h"
-#include "../Encryption/isecretsstorage.h"
+
+namespace Encryption {
+    class ISecretsStorage;
+}
 
 namespace Microstocks {
     class FotoliaAPIClient: public IMicrostockAPIClient
     {
     public:
-        FotoliaAPIClient(Encryption::ISecretsStorage *secretsStorage);
+        FotoliaAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage);
 
         // IMicrostockAPIClient interface
     public:
-        virtual std::shared_ptr<Connectivity::IConnectivityRequest> search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) override;
+        virtual MicrostockType type() const override { return MicrostockType::Fotolia; }
+        virtual std::shared_ptr<Connectivity::IConnectivityRequest> search(const SearchQuery &query,
+                                                                           const std::shared_ptr<Connectivity::IConnectivityResponse> &response) override;
 
     private:
-        QUrl buildSearchQuery(const QString &apiKey, const SearchQuery &query) const;
+        QUrl buildSearchQuery(const SearchQuery &query) const;
         QString resultsTypeToString(const SearchQuery &query) const;
         QString orderingToString(const SearchQuery &query) const;
 
     private:
-        Encryption::ISecretsStorage *m_SecretsStorage;
+        std::shared_ptr<Encryption::ISecretsStorage> m_SecretsStorage;
     };
 }
 

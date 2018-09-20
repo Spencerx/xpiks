@@ -1,18 +1,21 @@
 #ifndef SPELLCHECKSERVICEMOCK_H
 #define SPELLCHECKSERVICEMOCK_H
 
-#include "../../xpiks-qt/SpellCheck/spellcheckerservice.h"
-#include "../../xpiks-qt/Common/isystemenvironment.h"
+#include <Services/SpellCheck/spellcheckservice.h>
+#include <Common/isystemenvironment.h>
 
 namespace Mocks {
     class SpellCheckServiceMock:
-        public SpellCheck::SpellCheckerService
+        public SpellCheck::SpellCheckService
     {
     Q_OBJECT
 
     public:
-        SpellCheckServiceMock(Common::ISystemEnvironment &environment):
-            SpellCheck::SpellCheckerService(environment) {}
+        SpellCheckServiceMock(Common::ISystemEnvironment &environment,
+                              Common::IFlagsProvider<Common::WordAnalysisFlags> &analysisFlagsProvider):
+            SpellCheck::SpellCheckService(environment, analysisFlagsProvider)
+        {
+        }
 
         // SpellCheckerService interface
 

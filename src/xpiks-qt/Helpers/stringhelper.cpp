@@ -70,6 +70,9 @@ namespace Helpers {
                         anyError = true;
                         break;
                     }
+                } else {
+                    anyError = true;
+                    break;
                 }
             } else {
                 url[iDecoded++] = url[i++];

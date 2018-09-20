@@ -59,7 +59,8 @@ namespace KeywordsPresets {
     PresetKeywordsModelConfig::PresetKeywordsModelConfig(Common::ISystemEnvironment &environment):
         m_Environment(environment),
         m_Config(environment.path({LOCAL_PRESETKEYWORDS_LIST_FILE}),
-                 environment.getIsInMemoryOnly())
+                 environment.getIsInMemoryOnly()),
+        m_LocalConfigPath(environment.path({LOCAL_PRESETKEYWORDS_LIST_FILE}))
     { }
 
     void PresetKeywordsModelConfig::initializeConfigs() {
@@ -68,27 +69,27 @@ namespace KeywordsPresets {
         if (XPIKS_MAJOR_VERSION_CHECK(1, 5) ||
                 XPIKS_MAJOR_VERSION_CHECK(1, 4)) {
             if (!m_Environment.getIsInMemoryOnly()) {
-                backupXpiks14xPresets(m_Config.getPath());
+                backupXpiks14xPresets(m_LocalConfigPath);
             }
         } else {
             // remove backup for 1.6
             Q_ASSERT(false);
         }
 
-        m_Config.initialize();
-        processLocalConfig(m_Config.getConfig());
+        QJsonDocument document = m_Config.readConfig();
+        processLocalConfig(document);
     }
 
-    void PresetKeywordsModelConfig::loadFromModel(const std::vector<PresetModel *> &presets,
+    void PresetKeywordsModelConfig::loadFromModel(const std::vector<std::shared_ptr<PresetModel>> &presets,
                                                   const std::vector<GroupModel> &presetGroups) {
         const size_t presetsSize = presets.size();
-        LOG_INTEGR_TESTS_OR_DEBUG << presets.size() << "presets;" << presetGroups.size() << "groups";
+        LOG_VERBOSE_OR_DEBUG << presets.size() << "presets;" << presetGroups.size() << "groups";
 
         m_PresetData.clear();
         m_PresetData.resize(presetsSize);
 
         for (size_t i = 0; i < presetsSize; i++) {
-            auto *item = presets[i];
+            auto &item = presets[i];
             auto &name = item->m_PresetName;
             auto &keywordsModel = item->m_KeywordsModel;
             int groupId = item->m_GroupID;
@@ -138,7 +139,7 @@ namespace KeywordsPresets {
     }
 
     bool PresetKeywordsModelConfig::processLocalConfig(const QJsonDocument &document) {
-        LOG_INTEGR_TESTS_OR_DEBUG << document;
+        LOG_VERBOSE_OR_DEBUG << document;
         bool anyError = false;
 
         do {
@@ -277,10 +278,6 @@ namespace KeywordsPresets {
         QJsonDocument doc;
         doc.setObject(rootObject);
 
-        Helpers::LocalConfigDropper dropper(&m_Config);
-        Q_UNUSED(dropper);
-
-        m_Config.setConfig(doc);
-        m_Config.save();
+        m_Config.writeConfig(doc);
     }
 }

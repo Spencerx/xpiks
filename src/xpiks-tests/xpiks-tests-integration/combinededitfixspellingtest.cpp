@@ -1,106 +1,61 @@
 #include "combinededitfixspellingtest.h"
 #include <QUrl>
-#include <QFileInfo>
 #include <QThread>
-#include <QStringList>
+#include <QList>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "../../xpiks-qt/SpellCheck/spellchecksuggestionmodel.h"
-#include "../../xpiks-qt/SpellCheck/spellsuggestionsitem.h"
-#include "../../xpiks-qt/Models/combinedartworksmodel.h"
-#include "../../xpiks-qt/Common/basickeywordsmodel.h"
+#include "testshelpers.h"
+#include "xpikstestsapp.h"
 
 QString CombinedEditFixSpellingTest::testName() {
     return QLatin1String("CombinedEditFixSpellingTest");
 }
 
 void CombinedEditFixSpellingTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setUseSpellCheck(true);
+    m_TestsApp.getSettingsModel().setUseSpellCheck(true);
 }
 
 int CombinedEditFixSpellingTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
-
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    // wait for after-add spellchecking
-    QThread::sleep(1);
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     QString wrongWord = "abbreviatioe";
 
-    Models::FilteredArtItemsProxyModel *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-    Common::BasicMetadataModel *basicModel = qobject_cast<Common::BasicMetadataModel*>(filteredModel->getBasicModel(0));
+    auto artwork = m_TestsApp.getArtwork(0);
+    auto &basicModel = artwork->getBasicMetadataModel();
 
-    QString nextDescription = basicModel->getDescription() + ' ' + wrongWord;
-    basicModel->setDescription(nextDescription);
+    QString nextDescription = artwork->getDescription() + ' ' + wrongWord;
+    artwork->setDescription(nextDescription);
 
-    QObject::connect(basicModel, &Common::BasicMetadataModel::descriptionSpellingChanged,
-                     &waiter, &SignalWaiter::finished);
+    sleepWaitUntil(5, [&]() { return basicModel.hasDescriptionSpellError(); });
+    VERIFY(basicModel.hasDescriptionSpellError(), "Description spell error not detected");
 
-    xpiks()->submitItemForSpellCheck(basicModel);
+    artwork->setIsSelected(true);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::EditSelectedArtworks);
 
-    VERIFY(waiter.wait(5), "Timeout for waiting for initial spellcheck results");
+    auto *combinedKeywordsModel = m_TestsApp.getCombinedArtworksModel().retrieveBasicMetadataModel();
 
-    // wait for finding suggestions
-    QThread::sleep(1);
-
-    VERIFY(basicModel->hasDescriptionSpellError(), "Description spell error not detected");
-
-    filteredModel->selectFilteredArtworks();
-    filteredModel->combineSelectedArtworks();
-
-    // wait for finding suggestions
-    QThread::sleep(1);
-
-    Models::CombinedArtworksModel *combinedModel = m_CommandManager->getCombinedArtworksModel();
-    combinedModel->suggestCorrections();
-
-    SpellCheck::SpellCheckSuggestionModel *spellSuggestor = m_CommandManager->getSpellSuggestionsModel();
-    int rowCount = spellSuggestor->rowCount();
-    VERIFY(rowCount > 0, "Spell suggestions are not set");
-
-    for (int i = 0; i < rowCount; ++i) {
-        SpellCheck::SpellSuggestionsItem *suggestionsItem = spellSuggestor->getItem(i);
-        VERIFY(suggestionsItem->rowCount() > 0, "No spelling suggestion suggested");
-        suggestionsItem->setReplacementIndex(0);
-    }
-
-    auto *combinedKeywordsModel = combinedModel->retrieveBasicMetadataModel();
+    sleepWaitUntil(5, [&]() { return combinedKeywordsModel->hasDescriptionSpellError(); });
     VERIFY(combinedKeywordsModel->hasDescriptionSpellError(), "Description spell error was not propagated");
 
-    SignalWaiter combinedEditWaiter;
-    QObject::connect(combinedKeywordsModel, &Common::BasicMetadataModel::descriptionSpellingChanged,
-                     &combinedEditWaiter, &SignalWaiter::finished);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::FixSpellingCombined);
 
-    spellSuggestor->submitCorrections();
+    SpellCheck::SpellCheckSuggestionModel &spellSuggestor = m_TestsApp.getSpellSuggestionsModel();
+    int rowCount = spellSuggestor.rowCount();
+    VERIFY(rowCount > 0, "Spell suggestions are set");
 
-    VERIFY(combinedEditWaiter.wait(5), "Timeout for waiting for corrected spellcheck results after replace");
+    VERIFY(m_TestsApp.selectSpellSuggestions(0), "Cannot select spell suggestions");
+    m_TestsApp.getSpellSuggestionsModel().submitCorrections();
 
-    VERIFY(!combinedKeywordsModel->hasDescriptionSpellError(), "Description spell error was not fixed");
+    sleepWaitUntil(5, [&]() { return !combinedKeywordsModel->hasDescriptionSpellError(); });
+    VERIFY(!combinedKeywordsModel->hasDescriptionSpellError(), "Description spell error was not fixed after replace");
 
     QString correctDescription = combinedKeywordsModel->getDescription();
-    combinedModel->saveEdits();
+    m_TestsApp.getCombinedArtworksModel().saveEdits();
 
-    VERIFY(basicModel->getDescription() == correctDescription, "Description was not saved");
+    VERIFY(basicModel.getDescription() == correctDescription, "Description was not saved");
 
     return 0;
 }

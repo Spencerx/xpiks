@@ -13,7 +13,6 @@ public:
     CombinedModelTests(QObject *parent = nullptr);
 
 private slots:
-    void initTestCase();
     void trivialCombineNoItemsTest();
     void trivialCombineOneItemTest();
     void combineSeveralSameItemsTest();
@@ -59,11 +58,6 @@ private slots:
     void caseIsPreservedForOneItemTest();
     void caseIsPreservedForSeveralItemsTest();
     void clearKeywordsFiresKeywordsCountTest();
-
-private:
-    Mocks::CommandManagerMock m_CommandManagerMock;
-    Mocks::CoreTestsEnvironment m_Environment;
-    Models::SettingsModel m_SettingsModel;
 };
 
 #endif // COMBINEDMODELTESTS_H

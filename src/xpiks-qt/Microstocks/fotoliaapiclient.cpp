@@ -12,27 +12,33 @@
 #include <QUrlQuery>
 #include "../Connectivity/simpleapirequest.h"
 #include "../Encryption/aes-qt.h"
-#include "apisecrets.h"
+#include "microstockenums.h"
+#include "searchquery.h"
+#include "../Encryption/isecretsstorage.h"
 
-Microstocks::FotoliaAPIClient::FotoliaAPIClient(Encryption::ISecretsStorage *secretsStorage):
+Microstocks::FotoliaAPIClient::FotoliaAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):
     m_SecretsStorage(secretsStorage)
 {
-    Q_ASSERT(secretsStorage != nullptr);
 }
 
-std::shared_ptr<Connectivity::IConnectivityRequest> Microstocks::FotoliaAPIClient::search(const Microstocks::SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
+std::shared_ptr<Connectivity::IConnectivityRequest> Microstocks::FotoliaAPIClient::search(const Microstocks::SearchQuery &query,
+                                                                                          const std::shared_ptr<Connectivity::IConnectivityResponse> &response) {
     Encryption::SecretPair apiSecret;
     if (!m_SecretsStorage->tryFindPair(FotoliaAPIKey, apiSecret)) { Q_ASSERT(false); }
-    QString decodedAPIKey = Encryption::decodeText(apiSecret.m_Value, apiSecret.m_Key);
 
-    QUrl url = buildSearchQuery(decodedAPIKey, query);
+    QUrl url = buildSearchQuery(query);
     QString resourceUrl = QString::fromLocal8Bit(url.toEncoded());
 
-    std::shared_ptr<Connectivity::IConnectivityRequest> request(new Connectivity::SimpleAPIRequest(resourceUrl, QStringList(), response));
+    QString decodedAPIKey = Encryption::decodeText(apiSecret.m_Value, apiSecret.m_Key);
+    QString authStr = QString("%1:").arg(decodedAPIKey);
+    QString headerData = "Authorization: Basic " + QString::fromLatin1(authStr.toLocal8Bit().toBase64());
+
+    auto request = std::make_shared<Connectivity::SimpleAPIRequest>(
+                       resourceUrl, QStringList() << headerData, response);
     return request;
 }
 
-QUrl Microstocks::FotoliaAPIClient::buildSearchQuery(const QString &apiKey, const Microstocks::SearchQuery &query) const {
+QUrl Microstocks::FotoliaAPIClient::buildSearchQuery(const Microstocks::SearchQuery &query) const {
     QUrlQuery urlQuery;
 
     urlQuery.addQueryItem("search_parameters[language_id]", "2");
@@ -49,8 +55,7 @@ QUrl Microstocks::FotoliaAPIClient::buildSearchQuery(const QString &apiKey, cons
     urlQuery.addQueryItem(resultsTypeToString(query), "1");
 
     QUrl url;
-    url.setUrl(QLatin1String("http://api.fotolia.com/Rest/1/search/getSearchResults"));
-    url.setUserName(apiKey);
+    url.setUrl(QLatin1String("https://api.fotolia.com/Rest/1/search/getSearchResults"));
     //url.setPassword("");
     url.setQuery(urlQuery);
     return url;

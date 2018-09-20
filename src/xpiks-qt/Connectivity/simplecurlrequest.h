@@ -35,7 +35,7 @@ namespace Connectivity {
         void dispose() { emit stopped(); }
         bool sendRequestSync();
         void addRawHeaders(const QStringList &headers);
-        void setProxySettings(Models::ProxySettings *proxySettings);
+        void setProxySettings(const Models::ProxySettings *proxySettings);
 
     public slots:
         void process();
@@ -52,7 +52,7 @@ namespace Connectivity {
         QStringList m_RawHeaders;
         QByteArray m_ResponseData;
         QString m_ErrorString;
-        Models::ProxySettings *m_ProxySettings;
+        const Models::ProxySettings *m_ProxySettings;
         bool m_VerifySSL;
     };
 }

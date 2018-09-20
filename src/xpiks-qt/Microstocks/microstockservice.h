@@ -11,21 +11,26 @@
 #ifndef MICROSTOCKSERVICE_H
 #define MICROSTOCKSERVICE_H
 
+#include <memory>
 #include "imicrostockservice.h"
 #include "imicrostockapiclient.h"
-#include "../Connectivity/requestsservice.h"
+
+namespace Connectivity {
+    class RequestsService;
+}
 
 namespace Microstocks {
     class MicrostockService: public IMicrostockService {
     public:
-        MicrostockService(IMicrostockAPIClient *apiClient, Connectivity::RequestsService &requestsService);
+        MicrostockService(std::shared_ptr<IMicrostockAPIClient> const &apiClient,
+                          Connectivity::RequestsService &requestsService);
 
         // IMicrostockService interface
     public:
         virtual void search(const SearchQuery &query, const std::shared_ptr<Connectivity::IConnectivityResponse> &response) override;
 
     private:
-        IMicrostockAPIClient *m_ApiClient;
+        std::shared_ptr<IMicrostockAPIClient> m_ApiClient;
         Connectivity::RequestsService &m_RequestsService;
     };
 }

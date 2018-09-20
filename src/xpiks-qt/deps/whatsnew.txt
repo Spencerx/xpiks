@@ -1,4 +1,19 @@
-This is Xpiks 1.5.1 bugfix release.
+This is Xpiks 1.5.2 bugfix release.
+
+In this release:
+
+- Autocompletion in Presets window
+- GDPR-related privacy consent question
+- Consolidate filenames for upload
+- Improved stock upload options
+- Fixes for handling of corrupted internal database
+- Fix for stock suggestions sometimes not available
+
+
+
+
+
+Xpiks 1.5.1 release.
 
 In this release:
 
@@ -12,8 +27,6 @@ In this release:
 - Fix for video previews of files larger than 2GB
 - Ability to mouse move full size image in single view
 - Basic drag'n'drop functionality for keywords
-
-
 
 
 

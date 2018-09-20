@@ -25,6 +25,7 @@
 #include <string>
 #include <ctime>
 #include "../Common/defines.h"
+#include "../Encryption/obfuscation.h"
 
 #define MIN_FIRE_SIZE 20
 #define LOGGING_TIMEOUT 5
@@ -55,12 +56,62 @@ namespace Helpers {
         flushStream(m_QueueFlushFrom);
     }
 
+    void Logger::emergencyLog(const char * const message) {
+#ifdef WITH_LOGS
+        if (!m_MemoryOnly) {
+            QFile outFile(m_LogFilepath);
+            if (outFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+                outFile.write(message);
+                outFile.flush();
+            }
+        }
+#endif
+
+#ifdef WITH_STDOUT_LOGS
+        std::cout << message << std::endl;
+        std::cout.flush();
+#else
+        std::cerr << message << std::endl;
+        std::cerr.flush();
+#endif
+    }
+
+    void Logger::emergencyFlush() {
+        flushStream(&m_LogsStorage[0]);
+        flushStream(&m_LogsStorage[1]);
+    }
+
     void Logger::stop() {
         m_Stopped = true;
 
         // will make waiting flush() call unblocked if any
         doLog("Logging stopped.");
+        flushAll();
+    }
 
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+    void Logger::abortFlush() {
+        doLog("Starting abort flush.");
+        flushAll();
+    }
+#endif
+
+    void Logger::doLog(const QString &message) {
+        QMutexLocker locker(&m_LogMutex);
+        m_QueueLogTo->append(message);
+        m_AnyLogsToFlush.wakeOne();
+    }
+
+    QString Logger::prepareLine(const QString &lineToWrite) {
+#ifdef QT_DEBUG
+        return lineToWrite;
+#else
+        return Encryption::rot13plus(lineToWrite);
+#endif
+    }
+
+    void Logger::flushAll()
+    {
         QMutexLocker flushLocker(&m_FlushMutex);
         flushStream(m_QueueFlushFrom);
 
@@ -73,25 +124,6 @@ namespace Helpers {
         }
 
         flushStream(m_QueueFlushFrom);
-    }
-
-#ifdef INTEGRATION_TESTS
-    void Logger::log(QtMsgType type, const QString &message) {
-        // basically this thing is here because Travis CI does not like long logs
-        if (m_MemoryOnly && (type == QtDebugMsg)) { return; }
-        log(message);
-    }
-
-    void Logger::emergencyFlush() {
-        flushStream(&m_LogsStorage[0]);
-        flushStream(&m_LogsStorage[1]);
-    }
-#endif
-
-    void Logger::doLog(const QString &message) {
-        QMutexLocker locker(&m_LogMutex);
-        m_QueueLogTo->append(message);
-        m_AnyLogsToFlush.wakeOne();
     }
 
     void Logger::flushStream(QStringList *logItems) {
@@ -108,7 +140,8 @@ namespace Helpers {
                 int size = logItems->size();
                 for (int i = 0; i < size; ++i) {
                     const QString &line = logItems->at(i);
-                    ts << line;
+                    QString prepared = prepareLine(line);
+                    ts << prepared;
                     endl(ts);
                 }
             }

@@ -17,28 +17,49 @@
 #include <QDir>
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>
-#include "../Common/baseentity.h"
 #include "uiprovider.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/isystemenvironment.h>
 #include "pluginenvironment.h"
 #include "plugindatabasemanager.h"
-#include "../Storage/idatabasemanager.h"
+#include <Storage/idatabasemanager.h>
 #include "sandboxeddependencies.h"
-#include "../Connectivity/requestsservice.h"
-#include "../Microstocks/microstockapiclients.h"
+
+namespace Commands {
+    class ICommandManager;
+}
+
+namespace KeywordsPresets {
+    class IPresetsManager;
+}
+
+namespace Microstocks {
+    class IMicrostockServices;
+}
+
+namespace Models {
+    class ICurrentEditableSource;
+}
+
+namespace Connectivity {
+    class RequestsService;
+}
 
 namespace Plugins {
     class XpiksPluginInterface;
     class PluginWrapper;
 
-    class PluginManager : public QAbstractListModel, public Common::BaseEntity
+    class PluginManager : public QAbstractListModel
     {
         Q_OBJECT
     public:
         PluginManager(Common::ISystemEnvironment &environment,
-                      Storage::DatabaseManager *dbManager,
+                      Commands::ICommandManager &commandManager,
+                      KeywordsPresets::IPresetsManager &presetsManager,
+                      Storage::DatabaseManager &dbManager,
                       Connectivity::RequestsService &requestsService,
-                      Microstocks::MicrostockAPIClients &apiClients);
+                      Microstocks::IMicrostockAPIClients &microstockClients,
+                      Models::ICurrentEditableSource &currentEditableSource,
+                      Models::UIManager &uiManager);
         virtual ~PluginManager();
 
     public:
@@ -61,11 +82,10 @@ namespace Plugins {
         void unloadPlugins();
         bool hasExportedActions(int row) const;
         bool isUsable(int row) const;
-        UIProvider *getUIProvider() { return &m_UIProvider; }
+        UIProvider &getUIProvider() { return m_UIProvider; }
 
     public slots:
         void onCurrentEditableChanged();
-        void onLastActionUndone(int commandID);
         void onPresetsUpdated();
 
     public:
@@ -95,8 +115,11 @@ namespace Plugins {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Storage::DatabaseManager *m_DatabaseManager;
+        Commands::ICommandManager &m_CommandManager;
+        KeywordsPresets::IPresetsManager &m_PresetsManager;
+        Storage::DatabaseManager &m_DatabaseManager;
         MicrostockServicesSafe m_MicrostockServices;
+        Models::ICurrentEditableSource &m_CurrentEditableSource;
         QString m_PluginsDirectoryPath;
         QString m_FailedPluginsDirectory;
         std::vector<std::shared_ptr<PluginWrapper> > m_PluginsList;
@@ -108,9 +131,7 @@ namespace Plugins {
     class PluginsWithActionsModel: public QSortFilterProxyModel {
         Q_OBJECT
     public:
-        PluginsWithActionsModel(QObject *parent = 0):
-            QSortFilterProxyModel(parent)
-        {}
+        PluginsWithActionsModel(PluginManager &pluginManager, QObject *parent = 0);
 
     public:
         Q_INVOKABLE int getOriginalIndex(int index);

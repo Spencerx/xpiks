@@ -11,10 +11,10 @@
 #include "keyvaluelist.h"
 #include <QImageReader>
 #include <utility>
-#include "artworkmetadata.h"
-#include "imageartwork.h"
-#include "videoartwork.h"
-#include "../Helpers/filehelpers.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Artworks/videoartwork.h>
+#include <Helpers/filehelpers.h>
 
 namespace Models {
     QString secondsToString(double seconds) {
@@ -69,10 +69,10 @@ namespace Models {
         return roleNames;
     }
 
-    void ArtworkPropertiesMap::updateProperties(ArtworkMetadata *metadata) {
-        Q_ASSERT(metadata != nullptr);
-        Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork*>(metadata);
-        Models::VideoArtwork *videoArtwork = dynamic_cast<Models::VideoArtwork*>(metadata);
+    void ArtworkPropertiesMap::updateProperties(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork) {
+        Q_ASSERT(artwork != nullptr);
+        auto imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
+        auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
 
         beginResetModel();
         {
@@ -89,7 +89,7 @@ namespace Models {
         endResetModel();
     }
 
-    void ArtworkPropertiesMap::setForTheImage(ImageArtwork *imageArtwork) {
+    void ArtworkPropertiesMap::setForTheImage(std::shared_ptr<Artworks::ImageArtwork> const &imageArtwork) {
         m_ValuesHash[int(ImageProperties::FilePathProperty)] = imageArtwork->getFilepath();
         m_ValuesHash[int(ImageProperties::FileSizeProperty)] = Helpers::describeFileSize(imageArtwork->getFileSize());
         m_ValuesHash[int(ImageProperties::FileAccessProperty)] = imageArtwork->isReadOnly() ? QObject::tr("Read-only") : QObject::tr("Normal");
@@ -107,7 +107,7 @@ namespace Models {
         m_ValuesHash[int(ImageProperties::AttachedVectorProperty)] = imageArtwork->getAttachedVectorPath();
     }
 
-    void ArtworkPropertiesMap::setForTheVideo(VideoArtwork *videoArtwork) {
+    void ArtworkPropertiesMap::setForTheVideo(std::shared_ptr<Artworks::VideoArtwork> const &videoArtwork) {
         m_ValuesHash[int(VideoProperties::FilePathProperty)] = videoArtwork->getFilepath();
         m_ValuesHash[int(VideoProperties::FileSizeProperty)] = Helpers::describeFileSize(videoArtwork->getFileSize());
         m_ValuesHash[int(ImageProperties::FileAccessProperty)] = videoArtwork->isReadOnly() ? QObject::tr("Read-only") : QObject::tr("Normal");

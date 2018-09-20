@@ -12,10 +12,9 @@
 #include "isuggestionsrepository.h"
 
 namespace Suggestion {
-    SuggestionResultsResponse::SuggestionResultsResponse(ISuggestionsRepository *suggestions):
+    SuggestionResultsResponse::SuggestionResultsResponse(ISuggestionsRepository &suggestions):
         m_Suggestions(suggestions)
     {
-        Q_ASSERT(suggestions != nullptr);
     }
 
     void SuggestionResultsResponse::setResult(bool result, const QByteArray &body) {
@@ -30,6 +29,6 @@ namespace Suggestion {
     }
 
     void SuggestionResultsResponse::onResultsAvailable() {
-        m_Suggestions->setSuggestions(m_SuggestedArtworks);
+        m_Suggestions.setSuggestions(m_SuggestedArtworks);
     }
 }

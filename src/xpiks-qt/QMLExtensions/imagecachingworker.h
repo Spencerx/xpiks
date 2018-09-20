@@ -32,18 +32,18 @@ namespace QMLExtensions {
         Q_OBJECT
     public:
         ImageCachingWorker(Common::ISystemEnvironment &environment,
-                           Helpers::AsyncCoordinator *initCoordinator,
-                           Storage::IDatabaseManager *dbManager,
+                           Helpers::AsyncCoordinator &initCoordinator,
+                           Storage::IDatabaseManager &dbManager,
                            QObject *parent=0);
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItemEx(std::shared_ptr<ImageCacheRequest> &item, batch_id_t batchID, Common::flag_t flags) override;
+        virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
         virtual void processOneItem(std::shared_ptr<ImageCacheRequest> &item) override;
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
-        virtual void workerStopped() override;
+        virtual void onWorkerStopped() override;
 
     public slots:
         void process() { doWork(); }
@@ -65,7 +65,7 @@ namespace QMLExtensions {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Helpers::AsyncCoordinator *m_InitCoordinator;
+        Helpers::AsyncCoordinator &m_InitCoordinator;
         volatile int m_ProcessedItemsCount;
         DbImageCacheIndex m_Cache;
         qreal m_Scale;

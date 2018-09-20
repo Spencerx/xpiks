@@ -1,32 +1,32 @@
-sudo: required
-dist: trusty
-
 language: cpp
 
-os:
-  - linux
-
-compiler:
-  - gcc
-
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: XPIKS_BINARY=binary
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: CORE_TESTS=tests QT_FATAL_WARNINGS=1
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: INTEGRATION_TESTS=tests QT_FATAL_WARNINGS=1
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: UI_TESTS=tests
+      
 git:
   depth: 3
 
-env:
-  - XPIKS_BINARY=binary
 
 env:
   global:
     # COVERITY_SCAN_TOKEN
     - secure: "GK9b2y7xTZgBhTtziCaQTBwjVh72KdaoVqaez5kNeKPUQUm7nEt2NsaIPQyMi2oe6hwOXV1cgTag08udDU5sJoPtj3PhqxkuRwY4QqNSvBQObgKr+Jaad66ZioOOsrVh3OuLI+8Zt75MYSyX+NdiyTApUSbcZIdU5BIsq9R70TAWrZiT/QlcdYVt7iB4DTHFvPDY/Eh8Y0JY+0UFSXIRAAEnjk/KuHSoYjPbCQ1HLG/LDqtibIsUWH4+njjT5NvMFcI5nOSgPZuQ3D7pXizMx6uDzbq5fUx4boh3bLBFbFLXTH/+vPpFaqj1dGAQ3X2RL5SyydWAmVfQJ8exSXNcNEbujbiZg6Ob0OqgiK2IM9kPuMh7TOsDdwEZcnZYhkivL4WsoVbnld54mw8kAZLotiC+k52eLlmNDP+PUVK0d4ZCMA8cwVmpuHixSQevp1zxCofT/hE2Wgwez3IKWnmxiZmomYOiexOxYP6FkxHOR/YRLZGmtN+Sn/X88GRiaYt8zi5UXH7o3f2fFIeavcIF70t0hOCYRbALLm+KUuu3+VWLUQ+4FEE12cATbdTOUc+5UR9JJyZQrqOBDvIF3eN2EuYieF9+S6CoDaKaAXhseoYMYflxKF8pg1G7snwYMTRnkLuxHK8dCUXAlKaQnSwU2ZEA2avlxQnjbSDm1F3zASg="
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-5
-      - g++-5
   coverity_scan:
     project:
       name: "Xpiks-qt"
@@ -35,38 +35,22 @@ addons:
     branch_pattern: coverity_scan
     notification_email: kushnirtv@gmail.com
     build_command: make
-      
 cache:
   apt: true
   directories:
-    - vendors
-
-before_install:
-  - sudo add-apt-repository ppa:beineri/opt-qt562-trusty -y
-  - sudo add-apt-repository ppa:kubuntu-ppa/backports -y
-  - sudo add-apt-repository ppa:jonathonf/ffmpeg-3 -y
-  - sudo apt-get update -qq
+    - my-apt-cache
 
 install:
-  - sudo apt-get install -qq qt56base; source /opt/qt56/bin/qt56-env.sh
-  - sudo apt-get install qt56base qt56quickcontrols qt56svg qt56declarative qt56graphicaleffects libcurl4-openssl-dev hunspell-en-us zlib1g-dev libimage-exiftool-perl
-  - sudo apt-get install libavcodec-dev libavdevice-dev libavformat-dev libavfilter-dev libavutil-dev libswscale-dev libdb-dev
-  - sudo apt-get install -y libexiv2-dev expat
-  - sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-5 /usr/bin/g++
-  - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-5 90
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
+  - ./scripts/ci/install-${TRAVIS_OS_NAME}.sh
+  - . ./scripts/ci/env-${TRAVIS_OS_NAME}.sh
 
 before_script:
-  - export COMPILER=g++-5
-  - g++ --version
   - ulimit -c unlimited -S       # enable core dumps
-  - chmod +x vendors/build_vendors_linux.sh
-  - chmod +x src/xpiks-tests/get_code_cov.sh
-  - if [ -z "${UI_TESTS+xxx}" ]; then bash vendors/build_vendors_linux.sh travis-ci; fi
-  - cd src/
-  - ls -la ../libs/*
-  - echo "-------"
-  - cd xpiks-qt/
-  - qmake "CONFIG+= debug travis-ci without-video" xpiks-qt.pro
+  - ${TRAVIS_BUILD_DIR}/scripts/build/build_vendors_linux.sh travis-ci
+  - ls -la libs/*
+  - if [ -n "$XPIKS_BINARY" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-xpiks.sh"; fi
+  - if [ -n "$CORE_TESTS" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-core-tests.sh"; fi
+  - if [ -n "$XPIKS_BINARY" ]; then cd xpiks-qt/; fi
+  - if [ -n "$XPIKS_BINARY" ]; then qmake "CONFIG+= debug travis-ci without-video" xpiks-qt.pro; fi
 
 script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi

@@ -18,18 +18,15 @@
 #include <QQmlContext>
 #include <QQuickWindow>
 #include <QHash>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Plugins {
-    UIProvider::UIProvider(QObject *parent):
+    UIProvider::UIProvider(Models::UIManager &uiManager, QObject *parent):
         QObject(parent),
         m_QmlEngine(NULL),
         m_Root(NULL),
-        m_UiManager(NULL)
+        m_UiManager(uiManager)
     {
-    }
-
-    UIProvider::~UIProvider() {
     }
 
     void UIProvider::closeAllDialogs() {

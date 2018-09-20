@@ -11,7 +11,7 @@
 #include "loggingworker.h"
 #include "logger.h"
 #include <iostream>
-#include "../Common/defines.h"
+#include <QThread>
 
 namespace Helpers {
     LoggingWorker::LoggingWorker(QObject *parent) :

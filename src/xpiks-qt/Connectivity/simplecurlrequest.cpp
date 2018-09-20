@@ -13,28 +13,28 @@
 #include <string>
 #include <cstring>
 #include <cstdlib>
-#include "../Models/proxysettings.h"
-#include "../Common/defines.h"
+#include <Models/Connectivity/proxysettings.h>
+#include <Common/logging.h>
 #include "ftphelpers.h"
 
 struct MemoryStruct {
-    char *memory;
-    size_t size;
+    char *m_Memory;
+    size_t m_Size;
 };
 
 static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
     size_t realsize = size * nmemb;
     MemoryStruct *mem = (MemoryStruct *)userp;
 
-    mem->memory = (char *)realloc(mem->memory, mem->size + realsize + 1);
-    if(mem->memory == NULL) {
+    mem->m_Memory = (char *)realloc(mem->m_Memory, mem->m_Size + realsize + 1);
+    if(mem->m_Memory == NULL) {
         /* out of memory! */
         return 0;
     }
 
-    memcpy(&(mem->memory[mem->size]), contents, realsize);
-    mem->size += realsize;
-    mem->memory[mem->size] = 0;
+    memcpy(&(mem->m_Memory[mem->m_Size]), contents, realsize);
+    mem->m_Size += realsize;
+    mem->m_Memory[mem->m_Size] = 0;
 
     return realsize;
 }
@@ -56,7 +56,7 @@ namespace Connectivity {
         m_RawHeaders.append(headers);
     }
 
-    void SimpleCurlRequest::setProxySettings(Models::ProxySettings *proxySettings) {
+    void SimpleCurlRequest::setProxySettings(const Models::ProxySettings *proxySettings) {
         m_ProxySettings = proxySettings;
     }
 
@@ -71,8 +71,8 @@ namespace Connectivity {
         CURLcode res;
 
         MemoryStruct chunk;
-        chunk.memory = nullptr;
-        chunk.size = 0;
+        chunk.m_Memory = nullptr;
+        chunk.m_Size = 0;
 
         struct curl_slist *curl_headers = NULL;
 
@@ -151,8 +151,8 @@ namespace Connectivity {
              * Do something nice with it!
              */
 
-            LOG_INFO << chunk.size << "bytes received";
-            m_ResponseData = QByteArray(chunk.memory, (uint)chunk.size);
+            LOG_INFO << chunk.m_Size << "bytes received";
+            m_ResponseData = QByteArray(chunk.m_Memory, (uint)chunk.m_Size);
         }
 
         /* cleanup curl stuff */
@@ -163,7 +163,7 @@ namespace Connectivity {
             curl_slist_free_all(curl_headers);
         }
 
-        free(chunk.memory);
+        free(chunk.m_Memory);
 
         return success;
     }

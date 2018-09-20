@@ -146,7 +146,8 @@ Item {
 
             StyledText {
                 id: selectedText
-                text: (showHeader && comboBox.model && (comboBox.selectedIndex >= 0) && (comboBox.selectedIndex < comboBox.model.length)) ? comboBox.model[comboBox.selectedIndex] : ""
+                text: (showHeader && comboBox.model && (comboBox.selectedIndex >= 0) &&
+                       (comboBox.selectedIndex < comboBox.model.length)) ? comboBox.model[comboBox.selectedIndex] : ""
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left

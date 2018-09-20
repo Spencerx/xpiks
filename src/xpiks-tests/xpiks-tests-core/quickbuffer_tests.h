@@ -16,6 +16,8 @@ private slots:
     void copyHalfEmptyProxyModelToQuickBufferTest();
     void copyHalfEmptyCombinedModelToQuickBufferTest();
 
+    void copyKeywordsSuggestorToQuickBufferTest();
+
     void applyQuickBufferToArtworkTest();
     void applyQuickBufferToProxyModelTest();
     void applyQuickBufferToCombinedModelTest();

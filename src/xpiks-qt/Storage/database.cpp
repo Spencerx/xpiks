@@ -16,7 +16,7 @@
 #include <climits>
 #include <algorithm>
 #include "../../vendors/sqlite/sqlite3.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Helpers/stringhelper.h"
 #include "../Helpers/constants.h"
 #include "../Helpers/asynccoordinator.h"
@@ -127,7 +127,7 @@ namespace Storage {
         }
     }
 
-    Database::Database(int id, Helpers::AsyncCoordinator *finalizeCoordinator):
+    Database::Database(int id, Helpers::AsyncCoordinator &finalizeCoordinator):
         m_ID(id),
         m_FinalizeCoordinator(finalizeCoordinator),
         m_Database(nullptr),
@@ -217,7 +217,7 @@ namespace Storage {
 
         int rc = sqlite3_exec(m_Database, createStr.c_str(), nullptr, nullptr, nullptr);
         if (rc == SQLITE_OK) {
-            table.reset(new Database::Table(m_Database, name));
+            table = std::make_shared<Database::Table>(m_Database, name);
 
             if (table->initialize()) {
                 m_Tables.push_back(table);
@@ -372,7 +372,7 @@ namespace Storage {
         int rc = 0;
         bool success = false;
 
-        LOG_INTEGR_TESTS_OR_DEBUG << key;
+        LOG_VERBOSE_OR_DEBUG << key;
 
         do {
             if (!bindSqliteBlob(m_GetStatement, 1, key)) { break; }
@@ -408,7 +408,7 @@ namespace Storage {
         Q_ASSERT(!value.isEmpty());
         if (m_SetStatement == nullptr) { return false; }
 
-        LOG_INTEGR_TESTS_OR_DEBUG << key << "->" << "[" << value.size() << "] bytes";
+        LOG_VERBOSE_OR_DEBUG << key << "->" << "[" << value.size() << "] bytes";
 
         if (key.isEmpty() || value.isEmpty()) { return false; }
 
@@ -428,7 +428,7 @@ namespace Storage {
             success = true;
         } while (false);
 
-        LOG_INTEGRATION_TESTS << key << "set status:" << success;
+        LOG_VERBOSE << key << "set status:" << success;
 
         cleanupSqliteStatement(m_SetStatement);
 
@@ -440,7 +440,7 @@ namespace Storage {
         Q_ASSERT(!key.isEmpty());
         Q_ASSERT(!value.isEmpty());
 
-        LOG_INTEGR_TESTS_OR_DEBUG << key << "->" << "[" << value.size() << "] bytes";
+        LOG_VERBOSE_OR_DEBUG << key << "->" << "[" << value.size() << "] bytes";
 
         if (key.isEmpty() || value.isEmpty()) { return false; }
 
@@ -460,7 +460,7 @@ namespace Storage {
             success = true;
         } while (false);
 
-        LOG_INTEGR_TESTS_OR_DEBUG << key << "added or ignored status:" << success;
+        LOG_VERBOSE_OR_DEBUG << key << "added or ignored status:" << success;
 
         cleanupSqliteStatement(m_AddStatement);
 
@@ -507,7 +507,7 @@ namespace Storage {
             if (success) {
                 addedCount++;
             } else {
-                LOG_INTEGRATION_TESTS << "Already exists" << keyValue.first;
+                LOG_VERBOSE << "Already exists" << keyValue.first;
             }
         }
 
@@ -522,7 +522,7 @@ namespace Storage {
         int rc = 0;
         bool success = false;
 
-        LOG_INTEGR_TESTS_OR_DEBUG << key;
+        LOG_VERBOSE_OR_DEBUG << key;
 
         do {
             if (!bindSqliteBlob(m_DelStatement, 1, key)) { break; }

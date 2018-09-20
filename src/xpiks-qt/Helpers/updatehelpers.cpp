@@ -14,7 +14,8 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <QFileInfo>
-#include "../Common/defines.h"
+#include <QDateTime>
+#include "../Common/logging.h"
 
 #ifdef Q_OS_OSX
 
@@ -61,6 +62,7 @@ void launchWindowsInstaller(Common::ISystemEnvironment &environment, const QStri
 
 namespace Helpers {
     void installUpdate(Common::ISystemEnvironment &environment, const QString &updatePath) {
+        Q_UNUSED(environment);
 #if defined(Q_OS_OSX)
         launchOSXdmg(updatePath);
 #elif defined(Q_OS_WIN)

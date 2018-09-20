@@ -29,13 +29,12 @@
 #include "simplecurlrequest.h"
 #include "simplecurldownloader.h"
 #include "apimanager.h"
-#include "../Common/defines.h"
-#include "../Common/version.h"
-#include "../Common/defines.h"
-#include "../Models/settingsmodel.h"
-#include "../Models/proxysettings.h"
-#include "../Helpers/constants.h"
-#include "../Maintenance/maintenanceservice.h"
+#include <Common/defines.h>
+#include <Common/version.h>
+#include <Models/settingsmodel.h>
+#include <Models/Connectivity/proxysettings.h>
+#include <Helpers/constants.h>
+#include <Services/Maintenance/maintenanceservice.h>
 
 QString fileChecksum(const QString &fileName, QCryptographicHash::Algorithm hashAlgorithm) {
     QString result;
@@ -86,18 +85,14 @@ QString urlFilename(const QString &url) {
 
 namespace Connectivity {
     UpdatesCheckerWorker::UpdatesCheckerWorker(Common::ISystemEnvironment &environment,
-                                               Models::SettingsModel *settingsModel,
-                                               Maintenance::MaintenanceService *maintenanceService,
+                                               Models::SettingsModel &settingsModel,
+                                               Maintenance::MaintenanceService &maintenanceService,
                                                const QString &availableUpdatePath):
         m_Environment(environment),
         m_SettingsModel(settingsModel),
         m_MaintenanceService(maintenanceService),
         m_AvailableUpdatePath(availableUpdatePath)
     {
-        Q_ASSERT(settingsModel != nullptr);
-    }
-
-    UpdatesCheckerWorker::~UpdatesCheckerWorker() {
     }
 
     void UpdatesCheckerWorker::initWorker() {
@@ -114,7 +109,7 @@ namespace Connectivity {
             if (checkAvailableUpdate(updateCheckResult)) {
                 LOG_INFO << "Update is already downloaded:" << m_AvailableUpdatePath;
                 emit updateDownloaded(m_AvailableUpdatePath, updateCheckResult.m_Version);
-            } else if (m_SettingsModel->getAutoDownloadUpdates() && !m_Environment.getIsInMemoryOnly()) {
+            } else if (m_SettingsModel.getAutoDownloadUpdates() && !m_Environment.getIsInMemoryOnly()) {
                 LOG_DEBUG << "Going to download update...";
                 QString pathToUpdate;
                 if (downloadUpdate(updateCheckResult, pathToUpdate)) {
@@ -128,7 +123,7 @@ namespace Connectivity {
                 emit updateAvailable(updateCheckResult.m_UpdateURL);
             }
         } else {
-            m_MaintenanceService->cleanupDownloadedUpdates(m_UpdatesDirectory);
+            m_MaintenanceService.cleanupDownloadedUpdates(m_UpdatesDirectory);
         }
 
         emit stopped();
@@ -142,7 +137,7 @@ namespace Connectivity {
         auto &apiManager = ApiManager::getInstance();
         QString queryString = apiManager.getUpdateAddr();
 
-        Models::ProxySettings *proxySettings = m_SettingsModel->retrieveProxySettings();
+        Models::ProxySettings *proxySettings = m_SettingsModel.retrieveProxySettings();
 
         Connectivity::SimpleCurlRequest request(queryString);
         request.setProxySettings(proxySettings);
@@ -198,7 +193,7 @@ namespace Connectivity {
         QObject::connect(this, &UpdatesCheckerWorker::cancelRequested,
                          &downloader, &Connectivity::SimpleCurlDownloader::cancelRequested);
 
-        Models::ProxySettings *proxySettings = m_SettingsModel->retrieveProxySettings();
+        Models::ProxySettings *proxySettings = m_SettingsModel.retrieveProxySettings();
         downloader.setProxySettings(proxySettings);
 
         if (downloader.downloadFileSync()) {

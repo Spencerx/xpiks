@@ -16,11 +16,11 @@
 #include <QVector>
 
 namespace Models {
-    class ArtworkMetadata;
     class UploadInfo;
 }
 
-namespace MetadataIO {
+namespace Artworks {
+    class ArtworkMetadata;
     class ArtworksSnapshot;
 }
 
@@ -29,7 +29,7 @@ namespace Connectivity {
     public:
         virtual ~IFtpCoordinator() {}
 
-        virtual void uploadArtworks(const MetadataIO::ArtworksSnapshot &artworksToUpload,
+        virtual void uploadArtworks(const Artworks::ArtworksSnapshot &artworksToUpload,
                             std::vector<std::shared_ptr<Models::UploadInfo> > &uploadInfos) = 0;
         virtual void cancelUpload() = 0;
     };

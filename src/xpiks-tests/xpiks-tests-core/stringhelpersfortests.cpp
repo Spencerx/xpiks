@@ -1,37 +1,30 @@
 #include "stringhelpersfortests.h"
 
 QString getRandomString(int length, bool exactSize) {
+    QString chars("abcdefghijklmnopqrstuvwxyz      ABCDEFGHIJKLMNOPQRSTUVWXYZ    0123456789   /!@ #$% ^&*()_+ =|");
+    const int size = length + (exactSize ? 0 : (qrand() % 20));
+    return getRandomString(chars, size);
+}
+
+QString getRandomString(const QString &alphabet, int length) {
     if (length <= 0) { return QString(); }
-    
+
     QString result;
-    result.reserve(length*2);
-    QLatin1String chars("/!@ #$% ^&*()_+ =|");
-    int charsLength = chars.size() - 1;
-    int originalLength = length;
+    result.reserve(length);
+    const int charsLength = alphabet.size() - 1;
 
     while (length--) {
-        result.append('a' + qrand()%26);
-
-        if (qrand() % 3 == 0) {
-            result.append(chars.data()[qrand() % charsLength]);
-        }
-
-        if (qrand() % 11 == 0) {
-            result.append('0' + qrand()%10);
-        }
-
-        if (qrand() % 13 == 0) {
-            result.append('A' + qrand()%26);
-        }
-
-        if (qrand() % 17 == 0) {
-            result.append(' ');
-        }
+        result.append(alphabet[qrand() % charsLength]);
     }
 
-    if (exactSize) {
-        result.truncate(originalLength);
-    }
+    return result;
+}
 
+QString getRandomByteString(int length) {
+    QString result;
+    result.reserve(length);
+    while (length--) {
+        result.append(QChar(ushort(qrand() % 0xffff)));
+    }
     return result;
 }

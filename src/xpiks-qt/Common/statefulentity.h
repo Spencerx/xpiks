@@ -24,6 +24,7 @@ namespace Common {
     {
     public:
         StatefulEntity(const QString &stateName, ISystemEnvironment &environment);
+        virtual ~StatefulEntity();
 
     public:
         void init();
@@ -58,12 +59,15 @@ namespace Common {
             return m_StateMap->containsValue(key);
         }
 
+        inline void remove(const char *key) const {
+            return m_StateMap->deleteValue(key);
+        }
+
     private:
         QString m_StateName;
-        Helpers::LocalConfig m_StateConfig;
+        Helpers::LocalConfig m_Config;
         std::shared_ptr<Helpers::JsonObjectMap> m_StateMap;
         QAtomicInt m_InitCounter;
-        bool m_MemoryOnly = false;
     };
 }
 

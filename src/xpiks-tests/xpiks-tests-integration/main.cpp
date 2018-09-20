@@ -4,83 +4,17 @@
 
 #include <QDebug>
 #include <QTimer>
+#include <QThread>
 #include <QCoreApplication>
 
-#include "../../xpiks-qt/SpellCheck/spellchecksuggestionmodel.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "../../xpiks-qt/QMLExtensions/imagecachingservice.h"
-#include "../../xpiks-qt/QMLExtensions/videocachingservice.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/AutoComplete/autocompleteservice.h"
-#include "../../xpiks-qt/QMLExtensions/artworksupdatehub.h"
-#include "../../xpiks-qt/Models/deletekeywordsviewmodel.h"
-#include "../../xpiks-qt/Connectivity/analyticsuserevent.h"
-#include "../../xpiks-qt/SpellCheck/spellcheckerservice.h"
-#include "../../xpiks-qt/AutoComplete/keywordsautocompletemodel.h"
-#include "../../xpiks-qt/Translation/translationmanager.h"
-#include "../../xpiks-qt/Translation/translationservice.h"
-#include "../../xpiks-qt/Models/recentdirectoriesmodel.h"
-#include "../../xpiks-qt/Models/recentfilesmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataioservice.h"
-#include "../../xpiks-qt/Suggestion/keywordssuggestor.h"
-#include "../../xpiks-qt/Models/combinedartworksmodel.h"
-#include "../../xpiks-qt/Connectivity/telemetryservice.h"
-#include "../../xpiks-qt/Helpers/globalimageprovider.h"
-#include "../../xpiks-qt/Models/uploadinforepository.h"
-#include <ftpcoordinator.h>
-#include "../../xpiks-qt/Models/findandreplacemodel.h"
-#include "../../xpiks-qt/Connectivity/curlinithelper.h"
-#include "../../xpiks-qt/Helpers/helpersqmlwrapper.h"
-#include "../../xpiks-qt/Connectivity/updateservice.h"
-#include "../../xpiks-qt/Encryption/secretsmanager.h"
-#include "../../xpiks-qt/Models/artworksrepository.h"
-#include "../../xpiks-qt/QMLExtensions/colorsmodel.h"
-#include "../../xpiks-qt/Warnings/warningsservice.h"
-#include "../../xpiks-qt/Models/artworkproxymodel.h"
-#include "../../xpiks-qt/UndoRedo/undoredomanager.h"
-#include "../../xpiks-qt/Helpers/clipboardhelper.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/QuickBuffer/quickbuffer.h"
-#include "../../xpiks-qt/Models/artworkuploader.h"
-#include "../../xpiks-qt/Warnings/warningsmodel.h"
-#include "../../xpiks-qt/Plugins/pluginmanager.h"
-#include "../../xpiks-qt/Helpers/loggingworker.h"
-#include "../../xpiks-qt/Models/languagesmodel.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/ziparchiver.h"
-#include "../../xpiks-qt/Models/sessionmanager.h"
-#include "../../xpiks-qt/Helpers/constants.h"
-#include "../../xpiks-qt/Helpers/runguard.h"
-#include "../../xpiks-qt/Models/logsmodel.h"
-#include "../../xpiks-qt/Helpers/logger.h"
-#include "../../xpiks-qt/Common/version.h"
-#include "../../xpiks-qt/Common/defines.h"
-#include "../../xpiks-qt/Storage/databasemanager.h"
-#include "../../xpiks-qt/KeywordsPresets/presetkeywordsmodel.h"
-#include "../../xpiks-qt/Maintenance/maintenanceservice.h"
-#include "../../xpiks-qt/Connectivity/requestsservice.h"
-#include "../../xpiks-qt/SpellCheck/duplicatesreviewmodel.h"
-#include "../../xpiks-qt/MetadataIO/csvexportmodel.h"
-#include "../../xpiks-qt/Models/switchermodel.h"
-#include "../../xpiks-qt/Helpers/filehelpers.h"
-#include "../../xpiks-qt/Models/uimanager.h"
-#include "../../xpiks-qt/Microstocks/microstockapiclients.h"
-#include "../../xpiks-qt/Encryption/isecretsstorage.h"
-#include <apisecretsstorage.h>
+#include <chillout.h>
+
+#include "Connectivity/curlinithelper.h"
+
+#include <Helpers/logger.h>
 #include "integrationtestsenvironment.h"
-
+#include "xpikstestsapp.h"
 #include "exiv2iohelpers.h"
-
-#ifdef Q_OS_WIN
-#include "windowscrashhandler.h"
-#endif
-
-#ifdef Q_OS_LINUX
-#include <signal.h>
-#include <exception>
-#include <cstdlib>
-#endif
 
 #include "testshelpers.h"
 
@@ -129,47 +63,18 @@
 #include "warningscombinedtest.h"
 #include "csvdefaultexporttest.h"
 #include "loadpluginbasictest.h"
+#include "stockftpautocompletetest.h"
+#include "unavailablefilestest.h"
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
     QString logLine = qFormatLogMessage(type, context, msg);
-#else
-    QString msgType;
-    switch (type) {
-        case QtDebugMsg:
-            msgType = "debug";
-            break;
-        case QtWarningMsg:
-            msgType = "warning";
-            break;
-        case QtCriticalMsg:
-            msgType = "critical";
-            break;
-        case QtFatalMsg:
-            msgType = "fatal";
-            break;
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 1))
-        case QtInfoMsg:
-            msgType = "info";
-            break;
-#endif
-    }
-
-    // %{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}
-    QString time = QDateTime::currentDateTimeUtc().toString("hh:mm:ss.zzz");
-    QString logLine = QString("%1 %2 T#%3 %4 - %5")
-                          .arg(time).arg(msgType)
-                          .arg(0).arg(context.function)
-                          .arg(msg);
-#endif
 
     Helpers::Logger &logger = Helpers::Logger::getInstance();
-    logger.log(type, logLine);
+    logger.log(logLine);
 
     if ((type == QtFatalMsg) || (type == QtWarningMsg)) {
-        logger.emergencyFlush();
+        logger.abortFlush();
     }
 
     if (type == QtFatalMsg) {
@@ -177,12 +82,38 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
     }
 }
 
-#if defined(Q_OS_LINUX) && defined(QT_DEBUG)
-void linuxAbortHandler(int signalNumber) {
-    Helpers::Logger &logger = Helpers::Logger::getInstance();
-    logger.emergencyFlush();
-}
+void initCrashRecovery(Common::ISystemEnvironment &environment) {
+#ifdef TRAVIS_CI
+    return;
 #endif
+    auto &chillout = Debug::Chillout::getInstance();
+
+#ifdef APPVEYOR
+    QString crashesDirRoot = QDir::currentPath();
+#else
+    QString crashesDirRoot = environment.path({Constants::CRASHES_DIR});
+#endif
+    QString crashesDirPath = QDir::toNativeSeparators(crashesDirRoot);
+
+#ifdef Q_OS_WIN
+    chillout.init(L"xpiks-tests-integration", crashesDirPath.toStdWString());
+#else
+    chillout.init("xpiks-tests-integration", crashesDirPath.toStdString());
+#endif
+    Helpers::Logger &logger = Helpers::Logger::getInstance();
+
+    chillout.setBacktraceCallback([&logger](const char * const stackTrace) {
+        logger.emergencyLog(stackTrace);
+    });
+
+    chillout.setCrashCallback([&logger, &chillout]() {
+        chillout.backtrace();
+        logger.emergencyFlush();
+#ifdef Q_OS_WIN
+        chillout.createCrashDump(Debug::CrashDumpFull);
+#endif
+    });
+}
 
 void initQSettings() {
     QCoreApplication::setOrganizationName(Constants::ORGANIZATION_NAME);
@@ -191,21 +122,6 @@ void initQSettings() {
 
 int main(int argc, char *argv[]) {
     initQSettings();
-
-#if defined(Q_OS_WIN) && defined(APPVEYOR)
-    WindowsCrashHandler crashHandler;
-    crashHandler.SetProcessExceptionHandlers();
-    crashHandler.SetThreadExceptionHandlers();
-#endif
-
-#if defined(Q_OS_LINUX) && defined(QT_DEBUG)
-    signal(SIGABRT, &linuxAbortHandler);
-    std::set_terminate([](){
-        Helpers::Logger &logger = Helpers::Logger::getInstance();
-        logger.emergencyFlush();
-        std::abort();
-    });
-#endif
 
     std::cout << "Started integration tests" << std::endl;
     std::cout << "Current working directory: " << QDir::currentPath().toStdString() << std::endl;
@@ -219,12 +135,12 @@ int main(int argc, char *argv[]) {
 
     qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
     qInstallMessageHandler(myMessageHandler);
-    qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
 
     // -----------------------------------------------
     QCoreApplication app(argc, argv);
     IntegrationTestsEnvironment environment(app.arguments());
     environment.ensureSystemDirectoriesExist();
+    initCrashRecovery(environment);
     // -----------------------------------------------
     std::cout << "Initialized application" << std::endl;
 
@@ -239,208 +155,73 @@ int main(int argc, char *argv[]) {
     }
 #endif
 
-    Models::LogsModel logsModel;
-    logsModel.startLogging();
+    XpiksTestsApp xpiksTests(environment);
+    xpiksTests.startLogging();
+    xpiksTests.initialize();
+    xpiksTests.start();
 
-    Models::SettingsModel settingsModel(environment);
-    settingsModel.initializeConfigs();
-    settingsModel.retrieveAllValues();
-
-    QMLExtensions::ColorsModel colorsModel;
-
-    Models::ArtworksRepository artworkRepository;
-    Models::ArtItemsModel artItemsModel;
-    Models::CombinedArtworksModel combinedArtworksModel;
-    Models::UploadInfoRepository uploadInfoRepository(environment);
-    KeywordsPresets::PresetKeywordsModel presetsModel(environment);
-    Warnings::WarningsService warningsService(environment);
-    Encryption::SecretsManager secretsManager;
-    UndoRedo::UndoRedoManager undoRedoManager;
-    Models::ZipArchiver zipArchiver;
-    Storage::DatabaseManager databaseManager(environment);
-    std::shared_ptr<Encryption::ISecretsStorage> secretsStorage(new libxpks::microstocks::APISecretsStorage());
-    Microstocks::MicrostockAPIClients apiClients(secretsStorage.get());
-    Connectivity::RequestsService requestsService(settingsModel.getProxySettings());
-    Suggestion::KeywordsSuggestor keywordsSuggestor(apiClients, requestsService, environment);
-    Models::FilteredArtItemsProxyModel filteredArtItemsModel;
-    filteredArtItemsModel.setSourceModel(&artItemsModel);
-    Models::RecentDirectoriesModel recentDirectorieModel(environment);
-    Models::RecentFilesModel recentFileModel(environment);
-    libxpks::net::FtpCoordinator *ftpCoordinator = new libxpks::net::FtpCoordinator(settingsModel.getMaxParallelUploads());
-    Models::ArtworkUploader artworkUploader(environment, ftpCoordinator);
-    SpellCheck::SpellCheckerService spellCheckerService(environment, &settingsModel);
-    SpellCheck::SpellCheckSuggestionModel spellCheckSuggestionModel;
-    MetadataIO::MetadataIOService metadataIOService(&databaseManager);
-    Warnings::WarningsModel warningsModel;
-    warningsModel.setSourceModel(&artItemsModel);
-    Models::LanguagesModel languagesModel;
-    AutoComplete::KeywordsAutoCompleteModel autoCompleteModel;
-    AutoComplete::AutoCompleteService autoCompleteService(&autoCompleteModel, &presetsModel, &settingsModel);
-    QMLExtensions::ImageCachingService imageCachingService(environment, &databaseManager);
-    Models::FindAndReplaceModel findAndReplaceModel(&colorsModel);
-    Models::DeleteKeywordsViewModel deleteKeywordsModel;
-    Translation::TranslationManager translationManager(environment);
-    Translation::TranslationService translationService(translationManager);
-    Models::ArtworkProxyModel artworkProxy;
-    Models::UIManager uiManager(environment, &settingsModel);
-    Models::SessionManager sessionManager(environment);
-    // intentional memory leak to beat spellcheck lock stuff
-    QuickBuffer::QuickBuffer quickBuffer;
-    Maintenance::MaintenanceService maintenanceService(environment);
-
-    QMLExtensions::VideoCachingService videoCachingService(environment, &databaseManager);
-    QMLExtensions::ArtworksUpdateHub artworksUpdateHub;
-    artworksUpdateHub.setStandardRoles(artItemsModel.getArtworkStandardRoles());
-    Models::SwitcherModel switcherModel(environment);
-    Connectivity::UpdateService updateService(environment, &settingsModel, &switcherModel, &maintenanceService);
-
-    MetadataIO::MetadataIOCoordinator metadataIOCoordinator;
-    Connectivity::TelemetryService telemetryService("1234567890", false);
-    Plugins::PluginManager pluginManager(environment, &databaseManager, requestsService, apiClients);
-    SpellCheck::DuplicatesReviewModel duplicatesModel(&colorsModel);
-    MetadataIO::CsvExportModel csvExportModel(environment);    
-
-    auto *uiProvider = pluginManager.getUIProvider();
-    uiProvider->setUIManager(&uiManager);
-
-    Commands::CommandManager commandManager;
-    commandManager.InjectDependency(&artworkRepository);
-    commandManager.InjectDependency(&artItemsModel);
-    commandManager.InjectDependency(&filteredArtItemsModel);
-    commandManager.InjectDependency(&combinedArtworksModel);
-    commandManager.InjectDependency(&artworkUploader);
-    commandManager.InjectDependency(&uploadInfoRepository);
-    commandManager.InjectDependency(&warningsService);
-    commandManager.InjectDependency(&secretsManager);
-    commandManager.InjectDependency(&undoRedoManager);
-    commandManager.InjectDependency(&zipArchiver);
-    commandManager.InjectDependency(&keywordsSuggestor);
-    commandManager.InjectDependency(&settingsModel);
-    commandManager.InjectDependency(&recentDirectorieModel);
-    commandManager.InjectDependency(&recentFileModel);
-    commandManager.InjectDependency(&spellCheckerService);
-    commandManager.InjectDependency(&spellCheckSuggestionModel);
-    commandManager.InjectDependency(&metadataIOService);
-    commandManager.InjectDependency(&telemetryService);
-    commandManager.InjectDependency(&updateService);
-    commandManager.InjectDependency(&logsModel);
-    commandManager.InjectDependency(&metadataIOCoordinator);
-    commandManager.InjectDependency(&pluginManager);
-    commandManager.InjectDependency(&languagesModel);
-    commandManager.InjectDependency(&colorsModel);
-    commandManager.InjectDependency(&autoCompleteService);
-    commandManager.InjectDependency(&autoCompleteModel);
-    commandManager.InjectDependency(&imageCachingService);
-    commandManager.InjectDependency(&findAndReplaceModel);
-    commandManager.InjectDependency(&deleteKeywordsModel);
-    commandManager.InjectDependency(&presetsModel);
-    commandManager.InjectDependency(&translationManager);
-    commandManager.InjectDependency(&translationService);
-    commandManager.InjectDependency(&artworkProxy);
-    commandManager.InjectDependency(&sessionManager);
-    commandManager.InjectDependency(&warningsModel);
-    commandManager.InjectDependency(&quickBuffer);
-    commandManager.InjectDependency(&maintenanceService);
-    commandManager.InjectDependency(&videoCachingService);
-    commandManager.InjectDependency(&switcherModel);
-    commandManager.InjectDependency(&requestsService);
-    commandManager.InjectDependency(&artworksUpdateHub);
-    commandManager.InjectDependency(&databaseManager);
-    commandManager.InjectDependency(&duplicatesModel);
-    commandManager.InjectDependency(&csvExportModel);
-
-    commandManager.ensureDependenciesInjected();
-
-    secretsManager.setMasterPasswordHash(settingsModel.getMasterPasswordHash());
-    recentDirectorieModel.initialize();
-    recentFileModel.initialize();
-
-#if defined(Q_OS_WIN)
-    #if defined(APPVEYOR)
-        settingsModel.setExifToolPath("c:/projects/xpiks-deps/windows-3rd-party-bin/exiftool.exe");
-    #else
-        settingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool.exe"));
-    #endif
-#elif defined(Q_OS_MAC)
-    settingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool/exiftool"));
-#endif
-
-    switcherModel.setRemoteConfigOverride(findFullPathForTests("configs-for-tests/tests_switches.json"));
-    QString csvExportPlansPath;
-    if (!tryFindFullPathForTests("api/v1/csv_export_plans.json", csvExportPlansPath)) {
-        if (!tryFindFullPathForTests("xpiks-api/api/v1/csv_export_plans.json", csvExportPlansPath)) {
-            // fallback to copy-pasted and probably not enough frequently updated just for the sake of tests
-            tryFindFullPathForTests("configs-for-tests/csv_export_plans.json", csvExportPlansPath);
-        }
-    }
-    csvExportModel.setRemoteConfigOverride(csvExportPlansPath);
-
-    commandManager.connectEntitiesSignalsSlots();
-    commandManager.afterConstructionCallback();
-
-    // process signals from construction
-    QCoreApplication::processEvents();
+    xpiksTests.waitInitialized();
 
     int result = 0;
-
-    QVector<IntegrationTestBase*> integrationTests;
+    std::vector<std::shared_ptr<IntegrationTestBase>> integrationTests;
 
     // always the first one
-    integrationTests.append(new MetadataCacheSaveTest(environment, &commandManager));
+    integrationTests.emplace_back(std::make_shared<MetadataCacheSaveTest>(environment, xpiksTests));
     // and all others
-    integrationTests.append(new AddFilesBasicTest(environment, &commandManager));
-    integrationTests.append(new AutoAttachVectorsTest(environment, &commandManager));
-    integrationTests.append(new SaveFileBasicTest(environment, &commandManager));
-    integrationTests.append(new SaveFileLegacyTest(environment, &commandManager));
+    integrationTests.emplace_back(std::make_shared<AddFilesBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AutoAttachVectorsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SaveFileBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SaveFileLegacyTest>(environment, xpiksTests));
 #ifndef TRAVIS_CI
-    integrationTests.append(new SaveVideoBasicTest(environment, &commandManager));
+    integrationTests.emplace_back(std::make_shared<SaveVideoBasicTest>(environment, xpiksTests));
 #endif
-    integrationTests.append(new FailedUploadsTest(environment, &commandManager));
-    integrationTests.append(new SpellCheckMultireplaceTest(environment, &commandManager));
-    integrationTests.append(new SpellCheckCombinedModelTest(environment, &commandManager));
-    integrationTests.append(new ZipArtworksTest(environment, &commandManager));
-    integrationTests.append(new SpellCheckUndoTest(environment, &commandManager));
-    integrationTests.append(new AutoCompleteBasicTest(environment, &commandManager));
-    integrationTests.append(new SpellingProducesWarningsTest(environment, &commandManager));
-    integrationTests.append(new UndoAddWithVectorsTest(environment, &commandManager));
-    integrationTests.append(new ReadLegacySavedTest(environment, &commandManager));
-    integrationTests.append(new ClearMetadataTest(environment, &commandManager));
-    integrationTests.append(new SaveWithEmptyTitleTest(environment, &commandManager));
-    integrationTests.append(new CombinedEditFixSpellingTest(environment, &commandManager));
-    integrationTests.append(new FindAndReplaceModelTest(environment, &commandManager));
-    integrationTests.append(new AddToUserDictionaryTest(environment, &commandManager));
-    integrationTests.append(new AutoDetachVectorTest(environment, &commandManager));
-    integrationTests.append(new RemoveFromUserDictionaryTest(environment, &commandManager));
-    integrationTests.append(new ArtworkUploaderBasicTest(environment, &commandManager));
-    integrationTests.append(new PlainTextEditTest(environment, &commandManager));
-    integrationTests.append(new FixSpellingMarksModifiedTest(environment, &commandManager));
-    integrationTests.append(new PresetsTest(environment, &commandManager));
-    integrationTests.append(new TranslatorBasicTest(environment, &commandManager));
-    integrationTests.append(new UserDictEditTest(environment, &commandManager));
-    integrationTests.append(new WeirdNamesReadTest(environment, &commandManager));
-    integrationTests.append(new RestoreSessionTest(environment, &commandManager));
-    integrationTests.append(new DuplicateSearchTest(environment, &commandManager));
-    integrationTests.append(new AutoCompletePresetsTest(environment, &commandManager));
-    integrationTests.append(new CsvExportTest(environment, &commandManager));
-    integrationTests.append(new UnicodeIoTest(environment, &commandManager));
-    integrationTests.append(new UndoAddDirectoryTest(environment, &commandManager));
-    integrationTests.append(new UndoRestoreSessionTest(environment, &commandManager));
-    integrationTests.append(new MasterPasswordTest(environment, &commandManager));
-    integrationTests.append(new ReimportTest(environment, &commandManager));
-    integrationTests.append(new AutoImportTest(environment, &commandManager));
-    integrationTests.append(new ImportLostMetadataTest(environment, &commandManager));
-    integrationTests.append(new WarningsCombinedTest(environment, &commandManager));
-    integrationTests.append(new CsvDefaultExportTest(environment, &commandManager));
-    integrationTests.append(new LoadPluginBasicTest(environment, &commandManager));
-    // always the last one. insert new tests above
-    integrationTests.append(new LocalLibrarySearchTest(environment, &commandManager));
-
+    integrationTests.emplace_back(std::make_shared<FailedUploadsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SpellCheckMultireplaceTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SpellCheckCombinedModelTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ZipArtworksTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SpellCheckUndoTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AutoCompleteBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SpellingProducesWarningsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UndoAddWithVectorsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ReadLegacySavedTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ClearMetadataTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<SaveWithEmptyTitleTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<CombinedEditFixSpellingTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<FindAndReplaceModelTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AddToUserDictionaryTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AutoDetachVectorTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<RemoveFromUserDictionaryTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ArtworkUploaderBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<PlainTextEditTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<FixSpellingMarksModifiedTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<PresetsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<TranslatorBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UserDictEditTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<WeirdNamesReadTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<RestoreSessionTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<DuplicateSearchTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AutoCompletePresetsTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<CsvExportTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UnicodeIoTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UndoAddDirectoryTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UndoRestoreSessionTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<MasterPasswordTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ReimportTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<AutoImportTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<ImportLostMetadataTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<WarningsCombinedTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<CsvDefaultExportTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<LoadPluginBasicTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<StockFtpAutoCompleteTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<UnavailableFilesTest>(environment, xpiksTests));
+//    // always the last one. insert new tests above
+    integrationTests.emplace_back(std::make_shared<LocalLibrarySearchTest>(environment, xpiksTests));
 
     qInfo("\n");
     int succeededTestsCount = 0, failedTestsCount = 0;
     QStringList failedTests;
 
-    foreach (IntegrationTestBase *test, integrationTests) {
+    for (auto &test: integrationTests) {
         QThread::msleep(500);
 
         qInfo("---------------------------------------------------------");
@@ -463,9 +244,8 @@ int main(int argc, char *argv[]) {
         qInfo("\n");
     }
 
-    qDeleteAll(integrationTests);
-
     qInfo() << "--------------------------";
+    qInfo() << "In memory run:" << environment.getIsInMemoryOnly();
     qInfo() << "Integration Tests Results:" << succeededTestsCount << "succeeded," << failedTestsCount << "failed";
     qInfo() << "Tests return code" << result;
 
@@ -487,7 +267,7 @@ int main(int argc, char *argv[]) {
     qInfo() << "-----> Crash timer started...";
     qInfo() << "--";
 
-    commandManager.beforeDestructionCallback();
+    xpiksTests.stop();
 
     // for the logs to appear
     app.processEvents();
@@ -498,4 +278,3 @@ int main(int argc, char *argv[]) {
 
     return result;
 }
-

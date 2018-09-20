@@ -223,13 +223,7 @@ Rectangle {
                     tooltip: i18.n + qsTr("Edit")
                     iconWidth: 33
                     iconHeight: 33
-                    onClicked: {
-                        var index = imageWrapper.delegateIndex
-                        var originalIndex = warningsModel.getOriginalIndex(index);
-                        var derivedIndex = filteredArtItemsModel.getDerivedIndex(originalIndex)
-                        var metadata = filteredArtItemsModel.getArtworkMetadata(derivedIndex)
-                        startOneItemEditing(metadata, derivedIndex, originalIndex)
-                    }
+                    onClicked: dispatcher.dispatch(UICommand.EditArtwork, imageWrapper.delegateIndex)
                 }
             }
         }

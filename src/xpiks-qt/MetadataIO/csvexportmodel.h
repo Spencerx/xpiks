@@ -15,13 +15,24 @@
 #include <vector>
 #include <memory>
 #include "csvexportproperties.h"
-#include "artworkssnapshot.h"
 #include "csvexportplansmodel.h"
-#include "../Common/baseentity.h"
-#include "../Common/delayedactionentity.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/delayedactionentity.h>
+#include <Common/isystemenvironment.h>
+#include <Artworks/artworkssnapshot.h>
 
 class QTimerEvent;
+
+namespace Helpers {
+    class AsyncCoordinator;
+}
+
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
+namespace Connectivity {
+    class RequestsService;
+}
 
 namespace MetadataIO {
     class CsvExportColumnsModel: public QAbstractListModel
@@ -71,7 +82,6 @@ namespace MetadataIO {
 
     class CsvExportModel:
             public QAbstractListModel,
-            public Common::BaseEntity,
             public Common::DelayedActionEntity
     {
         Q_OBJECT
@@ -84,18 +94,14 @@ namespace MetadataIO {
         const std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() const { return m_ExportPlans; }
         bool getIsExporting() const { return m_IsExporting; }
         int getArtworksCount() const { return (int)m_ArtworksToExport.size(); }
-
-    public:
         void setIsExporting(bool value);
 
     public:
-        virtual void setCommandManager(Commands::CommandManager *commandManager) override;
+        void initializeExportPlans(Helpers::AsyncCoordinator &initCoordinator,
+                                   Connectivity::IRequestsService &requestsService);
+        void setArtworksToExport(Artworks::ArtworksSnapshot &&snapshot);
 
-    public:
-        void setupModel(ArtworksSnapshot::Container &rawSnapshot);
-        void initializeExportPlans(Helpers::AsyncCoordinator *initCoordinator);
-
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         void setRemoteConfigOverride(const QString &localPath) { m_ExportPlansModel.setRemoteOverride(localPath); }
 #endif
@@ -119,7 +125,6 @@ namespace MetadataIO {
 
     public:
         Q_INVOKABLE void startExport();
-        Q_INVOKABLE void clearModel();
         Q_INVOKABLE void removePlanAt(int row);
         Q_INVOKABLE void addNewPlan();
         Q_INVOKABLE QObject *getColumnsModel();
@@ -132,17 +137,11 @@ namespace MetadataIO {
         void saveExportPlans();
         int retrieveSelectedPlansCount();
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         std::vector<std::shared_ptr<CsvExportPlan> > &accessExportPlans() { return m_ExportPlans; }
-        void resetModel() {
-            m_ExportPlans.erase(
-                        std::remove_if(m_ExportPlans.begin(), m_ExportPlans.end(),
-                                       [](const std::shared_ptr<CsvExportPlan> &plan) { return !plan->m_IsSystemPlan; }),
-                        m_ExportPlans.end());
-
-            for (auto &p: m_ExportPlans) { p->m_IsSelected = false; }
-        }
+        Q_INVOKABLE void clearModel();
+        void resetModel();
 #endif
 
     signals:
@@ -168,7 +167,7 @@ namespace MetadataIO {
         CsvExportColumnsModel m_CurrentColumnsModel;
         CsvExportPlansModel m_ExportPlansModel;
         std::vector<std::shared_ptr<CsvExportPlan> > m_ExportPlans;
-        ArtworksSnapshot m_ArtworksToExport;
+        Artworks::ArtworksSnapshot m_ArtworksToExport;
         QString m_ExportDirectory;
         int m_SaveTimerId;
         int m_SaveRestartsCount;

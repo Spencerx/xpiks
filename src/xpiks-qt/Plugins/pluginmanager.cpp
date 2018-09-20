@@ -13,28 +13,37 @@
 #include <QApplication>
 #include <QDir>
 #include <QQmlEngine>
+#include <Common/defines.h>
+#include <Common/logging.h>
 #include "xpiksplugininterface.h"
-#include "../Commands/commandmanager.h"
+#include "../Commands/Base/icommandmanager.h"
 #include "../UndoRedo/undoredomanager.h"
 #include "pluginwrapper.h"
-#include "../Models/artitemsmodel.h"
 #include "../Common/defines.h"
 #include "../Helpers/constants.h"
 #include "../Helpers/filehelpers.h"
+#include <Microstocks/microstockapiclients.h>
+#include <Models/Editing/icurrenteditable.h>
 
 namespace Plugins {
     PluginManager::PluginManager(Common::ISystemEnvironment &environment,
-                                 Storage::DatabaseManager *dbManager,
+                                 Commands::ICommandManager &commandManager,
+                                 KeywordsPresets::IPresetsManager &presetsManager,
+                                 Storage::DatabaseManager &dbManager,
                                  Connectivity::RequestsService &requestsService,
-                                 Microstocks::MicrostockAPIClients &apiClients):
+                                 Microstocks::IMicrostockAPIClients &microstockClients,
+                                 Models::ICurrentEditableSource &currentEditableSource,
+                                 Models::UIManager &uiManager):
         QAbstractListModel(),
         m_Environment(environment),
+        m_CommandManager(commandManager),
+        m_PresetsManager(presetsManager),
         m_DatabaseManager(dbManager),
-        m_MicrostockServices(requestsService, apiClients),
+        m_MicrostockServices(microstockClients, requestsService),
+        m_CurrentEditableSource(currentEditableSource),
+        m_UIProvider(uiManager),
         m_LastPluginID(0)
-    {
-        Q_ASSERT(dbManager != nullptr);
-    }
+    { }
 
     PluginManager::~PluginManager() {
         LOG_DEBUG << "#";
@@ -167,18 +176,7 @@ namespace Plugins {
 
         for (size_t i = 0; i < size; ++i) {
             std::shared_ptr<PluginWrapper> &wrapper = m_PluginsList.at(i);
-            wrapper->notifyPlugin(Plugins::PluginNotificationFlags::CurrentEditableChanged, empty, nullptr);
-        }
-    }
-
-    void PluginManager::onLastActionUndone(int commandID) {
-        LOG_DEBUG << "#";
-        size_t size = m_PluginsList.size();
-        QVariant commandVariant = QVariant::fromValue(commandID);
-
-        for (size_t i = 0; i < size; ++i) {
-            std::shared_ptr<PluginWrapper> &wrapper = m_PluginsList.at(i);
-            wrapper->notifyPlugin(Plugins::PluginNotificationFlags::ActionUndone, commandVariant, nullptr);
+            wrapper->notifyPlugin(Common::PluginNotificationFlags::CurrentEditableChanged, empty, nullptr);
         }
     }
 
@@ -189,7 +187,7 @@ namespace Plugins {
 
         for (size_t i = 0; i < size; ++i) {
             std::shared_ptr<PluginWrapper> &wrapper = m_PluginsList.at(i);
-            wrapper->notifyPlugin(Plugins::PluginNotificationFlags::PresetsUpdated, empty, nullptr);
+            wrapper->notifyPlugin(Common::PluginNotificationFlags::PresetsUpdated, empty, nullptr);
         }
     }
 
@@ -396,23 +394,22 @@ namespace Plugins {
         const int pluginID = getNextPluginID();
         LOG_INFO << "ID:" << pluginID << "name:" << plugin->getPrettyName() << "version:" << plugin->getVersionString() << "filepath:" << filepath;
 
-        std::shared_ptr<PluginWrapper> pluginWrapper(new PluginWrapper(filepath,
-                                                                       plugin,
-                                                                       pluginID,
-                                                                       m_Environment,
-                                                                       &m_UIProvider,
-                                                                       m_DatabaseManager));
+        auto pluginWrapper = std::make_shared<PluginWrapper>(filepath,
+                                                             plugin,
+                                                             pluginID,
+                                                             m_Environment,
+                                                             m_UIProvider,
+                                                             m_DatabaseManager);
         bool initialized = false;
 
         do {
             try {
-                plugin->injectCommandManager(m_CommandManager);
-                plugin->injectUndoRedoManager(m_CommandManager->getUndoRedoManager());
-                plugin->injectUIProvider(pluginWrapper->getUIProvider());
-                plugin->injectArtworksSource(m_CommandManager->getArtItemsModel());
-                plugin->injectPresetsManager(m_CommandManager->getPresetsModel());
+                plugin->injectCommandManager(&m_CommandManager);
+                plugin->injectUIProvider(&pluginWrapper->getUIProvider());
+                plugin->injectPresetsManager(&m_PresetsManager);
                 plugin->injectDatabaseManager(pluginWrapper->getDatabaseManager());
                 plugin->injectMicrostockServices(&m_MicrostockServices);
+                plugin->injectCurrentEditable(&m_CurrentEditableSource);
             }
             catch(...) {
                 LOG_WARNING << "Failed to inject dependencies to plugin with ID:" << pluginID;
@@ -475,6 +472,12 @@ namespace Plugins {
         roles[IsEnabledRole] = "enabled";
         roles[IsRemovedRole] = "removed";
         return roles;
+    }
+
+    PluginsWithActionsModel::PluginsWithActionsModel(PluginManager &pluginManager, QObject *parent):
+        QSortFilterProxyModel(parent)
+    {
+        setSourceModel(&pluginManager);
     }
 
     int PluginsWithActionsModel::getOriginalIndex(int index) {

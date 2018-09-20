@@ -13,7 +13,7 @@
 #include <QFileInfo>
 #include "../Helpers/filehelpers.h"
 #include "../Helpers/constants.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 PluginEnvironment::PluginEnvironment(ISystemEnvironment &systemEnvironment,
                                      const QString &pluginsDir,

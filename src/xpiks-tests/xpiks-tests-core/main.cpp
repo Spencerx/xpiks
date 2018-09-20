@@ -2,6 +2,7 @@
 
 #include <QCoreApplication>
 #include <QtTest/QtTest>
+#include <QtDebug>
 #include "encryption_tests.h"
 #include "indicestoranges_tests.h"
 #include "addcommand_tests.h"
@@ -18,7 +19,7 @@
 #include "artworkfilter_tests.h"
 #include "removefilesfs_tests.h"
 #include "recentitems_tests.h"
-#include "artitemsmodel_tests.h"
+#include "artworkslistmodel_tests.h"
 #include "fixspelling_tests.h"
 #include "deleteoldlogs_tests.h"
 #include "replace_tests.h"
@@ -29,17 +30,21 @@
 #include "jsonmerge_tests.h"
 #include "warningscheck_tests.h"
 #include "dbimagecache_tests.h"
+#include "common_tests.h"
 
 #define QTEST_CLASS(TestObject, vName, result) \
     TestObject vName; \
     result = result + QTest::qExec(&vName, argc, argv); \
 
 int main(int argc, char *argv[]) {
+    qSetMessagePattern("T#%{threadid} %{function} - %{message}");
+
     QCoreApplication app(argc, argv);
     Q_UNUSED(app);
 
     int result = 0;
 
+    QTEST_CLASS(CommonTests, ct, result);
     QTEST_CLASS(EncryptionTests, et, result);
     QTEST_CLASS(IndicesToRangesTests, itrt, result);
     QTEST_CLASS(AddCommandTests, act, result);
@@ -56,7 +61,7 @@ int main(int argc, char *argv[]) {
     QTEST_CLASS(ArtworkFilterTests, aft, result);
     QTEST_CLASS(RemoveFilesFsTests, del,result);
     QTEST_CLASS(RecentItemsTests, rdt, result);
-    QTEST_CLASS(ArtItemsModelTests, aimt, result);
+    QTEST_CLASS(ArtworksListModelTests, aimt, result);
     QTEST_CLASS(FixSpellingTests, fst, result);
     QTEST_CLASS(DeleteOldLogsTest, dolt, result);
     QTEST_CLASS(ReplaceTests, rpl, result);

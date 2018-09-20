@@ -11,11 +11,12 @@
 #include "metadatacache.h"
 #include <QFileInfo>
 #include <functional>
-#include "../Models/artworkmetadata.h"
-#include "../Helpers/constants.h"
-#include "../Common/defines.h"
-#include "../Storage/idatabasemanager.h"
-#include "../Storage/memorytable.h"
+#include <Artworks/artworkmetadata.h>
+#include <Helpers/constants.h>
+#include <Common/logging.h>
+#include <Common/defines.h>
+#include <Storage/idatabasemanager.h>
+#include <Storage/memorytable.h>
 
 namespace MetadataIO {
     CachedArtwork::CachedArtworkType queryFlagToCachedType(const Microstocks::SearchQuery &query) {
@@ -32,19 +33,17 @@ namespace MetadataIO {
         return searchType;
     }
 
-    MetadataCache::MetadataCache(Storage::IDatabaseManager *dbManager):
+    MetadataCache::MetadataCache(Storage::IDatabaseManager &dbManager):
         m_DatabaseManager(dbManager)
     {
-        Q_ASSERT(dbManager != nullptr);
     }
 
     bool MetadataCache::initialize() {
         LOG_DEBUG << "#";
-        Q_ASSERT(m_DatabaseManager != nullptr);
 
         bool success = false;
         do {
-            m_Database = m_DatabaseManager->openDatabase(Constants::METADATA_CACHE_DB_NAME);
+            m_Database = m_DatabaseManager.openDatabase(Constants::METADATA_CACHE_DB_NAME);
             if (!m_Database) {
                 LOG_WARNING << "Failed to open database";
             } else {
@@ -53,7 +52,7 @@ namespace MetadataIO {
 
             if (!m_DbCacheIndex) {
                 LOG_WARNING << "Failed to get table" << Constants::METADATA_CACHE_TABLE;
-                m_DbCacheIndex.reset(new Storage::MemoryTable(Constants::METADATA_CACHE_TABLE));
+                m_DbCacheIndex = std::make_shared<Storage::MemoryTable>(Constants::METADATA_CACHE_TABLE);
             }
 
             success = true;
@@ -120,7 +119,7 @@ namespace MetadataIO {
 
 #endif
 
-    bool MetadataCache::read(Models::ArtworkMetadata *artwork, CachedArtwork &cachedArtwork) {
+    bool MetadataCache::read(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork, CachedArtwork &cachedArtwork) {
         Q_ASSERT(artwork != nullptr);
         if (artwork == nullptr) { return false; }
         if (!m_DbCacheIndex) { return false; }
@@ -152,13 +151,13 @@ namespace MetadataIO {
         return found;
     }
 
-    void MetadataCache::save(Models::ArtworkMetadata *metadata, bool overwrite) {
-        Q_ASSERT(metadata != nullptr);
-        if (metadata == nullptr) { return; }
+    void MetadataCache::save(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork, bool overwrite) {
+        Q_ASSERT(artwork != nullptr);
+        if (artwork == nullptr) { return; }
         if (!m_DbCacheIndex) { return; }
 
-        CachedArtwork value(metadata);
-        const QString &key = metadata->getFilepath();
+        CachedArtwork value(artwork);
+        const QString &key = artwork->getFilepath();
 
         if (overwrite) {
             m_SetWAL.set(key, value);
@@ -170,16 +169,16 @@ namespace MetadataIO {
     void MetadataCache::search(const Microstocks::SearchQuery &query, QVector<CachedArtwork> &results) {
         Q_ASSERT(results.empty());
         QStringList searchTerms = query.getSearchQuery().split(QChar::Space, QString::SkipEmptyParts);
-        LOG_INTEGR_TESTS_OR_DEBUG << searchTerms;
+        LOG_VERBOSE_OR_DEBUG << searchTerms;
         if (!m_DbCacheIndex) { return; }
         CachedArtwork::CachedArtworkType searchType = queryFlagToCachedType(query);
 
-        m_DbCacheIndex->foreachRow([&](const QByteArray &rawKey, QByteArray &rawValue) {
+        m_DbCacheIndex->foreachRow([&](const QByteArray &, QByteArray &rawValue) {
             CachedArtwork value;
             QDataStream ds(&rawValue, QIODevice::ReadOnly);
             ds >> value;
 
-            LOG_INTEGRATION_TESTS << value.m_Filepath << "|" << value.m_Title << "|" << value.m_Description << "|" << value.m_Keywords;
+            LOG_VERBOSE << value.m_Filepath << "|" << value.m_Title << "|" << value.m_Description << "|" << value.m_Keywords;
 
             if (ds.status() != QDataStream::Ok) { /*continue;*/ return true; }
             if ((searchType != CachedArtwork::Unknown) && (value.m_ArtworkType != searchType)) { /*continue;*/ return true; }
@@ -208,9 +207,7 @@ namespace MetadataIO {
             }
 
             if (hasMatch) {
-                if (QFileInfo(QString::fromUtf8(rawKey)).exists()) {
-                    results.push_back(value);
-                }
+                results.push_back(value);
             }
 
             const bool canContinue = results.size() < query.getPageSize();

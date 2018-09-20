@@ -40,16 +40,19 @@ namespace Helpers {
 
         void log(const QString &message);
         void flush();
+        void emergencyLog(const char * const message);
+        void emergencyFlush();
         void stop();
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
-        void log(QtMsgType type, const QString &message);
-        void emergencyFlush();
+        void abortFlush();
 #endif
 
     private:
         void doLog(const QString &message);
+        QString prepareLine(const QString &lineToWrite);
+        void flushAll();
         void flushStream(QStringList *logItems);
 
     private:

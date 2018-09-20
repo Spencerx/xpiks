@@ -13,16 +13,16 @@
 
 #include <QObject>
 #include <QSet>
-#include "../Common/itemprocessingworker.h"
+#include <Common/itemprocessingworker.h>
+#include <Common/readerwriterqueue.h>
 #include "metadataiotask.h"
 #include "metadatacache.h"
-#include "../Common/readerwriterqueue.h"
 
 namespace Helpers {
     class DatabaseManager;
 }
 
-namespace QMLExtensions {
+namespace Services {
     class ArtworksUpdateHub;
 }
 
@@ -33,15 +33,15 @@ namespace Storage {
 namespace MetadataIO {
     struct StorageReadRequest {
         CachedArtwork m_CachedArtwork;
-        Models::ArtworkMetadata *m_Artwork;
+        std::shared_ptr<Artworks::ArtworkMetadata> m_Artwork;
     };
 
     class MetadataIOWorker : public QObject, public Common::ItemProcessingWorker<MetadataIOTaskBase>
     {
         Q_OBJECT
     public:
-        explicit MetadataIOWorker(Storage::IDatabaseManager *dbManager,
-                                  QMLExtensions::ArtworksUpdateHub *artworksUpdateHub,
+        explicit MetadataIOWorker(Storage::IDatabaseManager &dbManager,
+                                  Services::ArtworksUpdateHub &artworksUpdateHub,
                                   QObject *parent = 0);
 
 #ifdef INTEGRATION_TESTS
@@ -51,7 +51,7 @@ namespace MetadataIO {
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItemEx(std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID, Common::flag_t flags) override;
+        virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
         virtual void processOneItem(std::shared_ptr<MetadataIOTaskBase> &item) override;
 
     private:
@@ -63,7 +63,7 @@ namespace MetadataIO {
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
-        virtual void workerStopped() override;
+        virtual void onWorkerStopped() override;
 
     public slots:
         void process() { doWork(); }
@@ -76,7 +76,7 @@ namespace MetadataIO {
 
     private:
         Common::ReaderWriterQueue<StorageReadRequest> m_StorageReadQueue;
-        QMLExtensions::ArtworksUpdateHub *m_ArtworksUpdateHub;
+        Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
         MetadataCache m_MetadataCache;
         volatile int m_ProcessedItemsCount;
     };

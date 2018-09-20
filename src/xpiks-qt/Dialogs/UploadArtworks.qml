@@ -28,11 +28,11 @@ Item {
     property bool emptyPasswords: false
     property bool skipUploadItems: false
     property variant componentParent
-    property bool uploadEnabled: (artworkRepository.artworksSourcesCount > 0) && (filteredArtItemsModel.selectedArtworksCount > 0)
-    property var ftpListAC: helpersWrapper.getFtpACList()
-    property var artworkUploader: helpersWrapper.getArtworkUploader()
-    property var uploadWatcher: artworkUploader.getUploadWatcher()
-    property var uploadInfos: helpersWrapper.getUploadInfos();
+    property bool uploadEnabled: (artworkRepository.artworksSourcesCount > 0) && (filteredArtworksListModel.selectedArtworksCount > 0)
+    property var artworksUploader: dispatcher.getCommandTarget(UICommand.UploadSelected)
+    property var uploadWatcher: artworksUploader.getUploadWatcherObject()
+    property var uploadInfos: artworksUploader.getUploadInfosObject();
+    property var ftpListAC: uploadInfos.getStocksCompletionObject()
 
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();
@@ -42,7 +42,7 @@ Item {
     }
 
     Connections {
-        target: helpersWrapper
+        target: xpiksApp
         onGlobalBeforeDestruction: {
             console.debug("UI:UploadArtworks # globalBeforeDestruction")
             closePopup()
@@ -58,20 +58,20 @@ Item {
     }
 
     function doStartUpload() {
-        artworkUploader.resetProgress()
+        artworksUploader.resetProgress()
         uploadWatcher.resetModel()
-        artworkUploader.uploadArtworks()
+        artworksUploader.uploadArtworks()
     }
 
     function startUpload() {
-        if (artworkUploader.needCreateArchives()) {
+        if (artworksUploader.needCreateArchives()) {
             var callbackObject = {
                 afterZipped: function() {
                     doStartUpload();
                 }
             }
 
-            filteredArtItemsModel.setSelectedForZipping()
+            dispatcher.dispatch(UICommand.ZipSelected, {})
             Common.launchDialog("Dialogs/ZipArtworksDialog.qml",
                                 uploadArtworksComponent.componentParent,
                                 {
@@ -131,7 +131,7 @@ Item {
         onYes: {
             console.log("UI:UploadArtworks # About to cancel upload...")
             uploadButton.enabled = false
-            artworkUploader.cancelOperation()
+            artworksUploader.cancelOperation()
         }
     }
 
@@ -196,10 +196,11 @@ Item {
                 anchors.top: parent.top
                 anchors.bottom: progress.top
                 width: 250
-                enabled: !artworkUploader.inProgress
+                enabled: !artworksUploader.inProgress
 
                 ListView {
                     id: uploadHostsListView
+                    objectName: "uploadHostsListView"
                     model: uploadInfos
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -222,8 +223,11 @@ Item {
                         NumberAnimation { properties: "x,y"; duration: 230 }
                     }
 
+                    onCurrentIndexChanged: { uploadInfos.setCurrentIndex(uploadHostsListView.currentIndex) }
+
                     delegate: Rectangle {
                         id: sourceWrapper
+                        objectName: "sourceWrapper"
                         property variant myData: model
                         property int delegateIndex: index
                         property bool isCurrent: ListView.isCurrentItem
@@ -269,6 +273,7 @@ Item {
 
                             StyledCheckbox {
                                 id: itemCheckedCheckbox
+                                objectName: "itemCheckedCheckbox"
                                 isContrast: !sourceWrapper.isCurrent
                                 onClicked: editisselected = checked
                                 Component.onCompleted: itemCheckedCheckbox.checked = isselected
@@ -287,7 +292,7 @@ Item {
                             StyledText {
                                 id: percentText
                                 text: percent + '%'
-                                visible: artworkUploader.inProgress && isselected
+                                visible: artworksUploader.inProgress && isselected
                                 color: uiColors.artworkActiveColor
                                 font.bold: true
                             }
@@ -337,6 +342,7 @@ Item {
 
                     StyledBlackButton {
                         id: addExportPlanButton
+                        objectName: "addExportPlanButton"
                         text: i18.n + qsTr("Add new", "upload host")
                         width: 210
                         height: 30
@@ -356,7 +362,7 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: progress.top
-                enabled: !artworkUploader.inProgress && (uploadHostsListView.count > 0)
+                enabled: !artworksUploader.inProgress && (uploadHostsListView.count > 0)
 
                 MouseArea {
                     id: rightPanelMA
@@ -420,6 +426,7 @@ Item {
 
                     Rectangle {
                         id: generalTab
+                        objectName: "generalTab"
                         color: uiColors.selectedArtworkBackground
                         anchors.fill: parent
                         property var autoCompleteBox
@@ -451,7 +458,7 @@ Item {
                             var isBelow = true
 
                             var options = {
-                                model: ftpListAC.getCompletionsModel(),
+                                model: ftpListAC.getCompletionsModelObject(),
                                 autoCompleteSource: ftpListAC,
                                 isBelowEdit: isBelow,
                                 "anchors.left": directParent.left,
@@ -467,7 +474,6 @@ Item {
                                 var instance = component.createObject(directParent, options);
 
                                 instance.boxDestruction.connect(generalTab.onAutoCompleteClose)
-                                instance.itemSelected.connect(textField.acceptCompletion)
                                 generalTab.autoCompleteBox = instance
 
                                 ftpListAC.isActive = true
@@ -498,6 +504,7 @@ Item {
 
                                 StyledTextInput {
                                     id: titleText
+                                    objectName: "titleTextInput"
                                     height: parent.height
                                     anchors.left: parent.left
                                     anchors.right: parent.right
@@ -524,14 +531,6 @@ Item {
                                     onActiveFocusChanged: {
                                         if (!activeFocus) {
                                             ftpListAC.cancelCompletion()
-                                        }
-                                    }
-
-                                    function acceptCompletion(completionID) {
-                                        if (uploadHostsListView.currentItem) {
-                                            var completion = ftpListAC.getCompletion(completionID);
-                                            uploadHostsListView.currentItem.myData.edittitle = completion
-                                            uploadHostsListView.currentItem.myData.edithost = artworkUploader.getFtpAddress(completion)
                                         }
                                     }
 
@@ -600,6 +599,7 @@ Item {
 
                                 StyledTextInput {
                                     id: ftpHost
+                                    objectName: "ftpAddressInput"
                                     height: parent.height
                                     anchors.left: parent.left
                                     anchors.leftMargin: 5
@@ -749,11 +749,11 @@ Item {
                                         credentialsStatus.startAnimation()
                                         var disablePassiveMode = uploadHostsListView.currentItem.myData.disablepassivemode
                                         var disableEPSV = uploadHostsListView.currentItem.myData.disableEPSV
-                                        artworkUploader.checkCredentials(ftpHost.text, ftpUsername.text, ftpPassword.text, disablePassiveMode, disableEPSV)
+                                        artworksUploader.checkCredentials(ftpHost.text, ftpUsername.text, ftpPassword.text, disablePassiveMode, disableEPSV)
                                     }
 
                                     Connections {
-                                        target: artworkUploader
+                                        target: artworksUploader
                                         onCredentialsChecked: {
                                             var currHost = ftpHost.text
                                             if (url.indexOf(currHost) > -1) {
@@ -873,7 +873,7 @@ Item {
                     anchors.fill: parent
                     color: uiColors.selectedArtworkBackground
                     opacity: 0.6
-                    visible: (uploadInfos.infosCount === 0) || artworkUploader.inProgress
+                    visible: (uploadInfos.infosCount === 0) || artworksUploader.inProgress
                 }
             }
 
@@ -884,8 +884,8 @@ Item {
                 anchors.bottom: footer.top
                 height: 5
                 isRounded: false
-                color: artworkUploader.isError ? uiColors.destructiveColor : uiColors.artworkActiveColor
-                value: artworkUploader.percent
+                color: artworksUploader.isError ? uiColors.destructiveColor : uiColors.artworkActiveColor
+                value: artworksUploader.percent
             }
 
             Rectangle {
@@ -910,7 +910,7 @@ Item {
                         text: i18.n + getOriginalText()
                         anchors.verticalCenter: parent.verticalCenter
                         enabled: uploadArtworksComponent.uploadEnabled && !skipUploadItems
-                        visible: !skipUploadItems && (!artworkUploader.inProgress) && (uploadWatcher.failedImagesCount === 0)
+                        visible: !skipUploadItems && (!artworksUploader.inProgress) && (uploadWatcher.failedImagesCount === 0)
 
                         function getOriginalText() {
                             return warningsModel.warningsCount == 1 ? qsTr("1 warning") : qsTr("%1 warnings").arg(warningsModel.warningsCount)
@@ -930,6 +930,7 @@ Item {
 
                     StyledLink {
                         id: failedArtworksStatus
+                        objectName: "failedArtworksStatus"
                         visible: !skipUploadItems && (uploadWatcher.failedImagesCount > 0)
                         enabled: uploadArtworksComponent.uploadEnabled && !skipUploadItems && (uploadWatcher.failedImagesCount > 0)
                         text: i18.n + getOriginalText()
@@ -955,12 +956,13 @@ Item {
 
                     StyledButton {
                         id: uploadButton
+                        objectName: "uploadButton"
                         enabled: uploadArtworksComponent.uploadEnabled && !skipUploadItems
-                        text: i18.n + (artworkUploader.inProgress ? qsTr("Stop") : qsTr("Start Upload"))
+                        text: i18.n + (artworksUploader.inProgress ? qsTr("Stop") : qsTr("Start Upload"))
                         width: 130
                         anchors.verticalCenter: parent.verticalCenter
                         onClicked: {
-                            if (!artworkUploader.inProgress) {
+                            if (!artworksUploader.inProgress) {
                                 if (uploadInfos.getSelectedInfosCount() === 0) {
                                     selectHostsMessageBox.open()
                                 } else {
@@ -978,12 +980,12 @@ Item {
                         }
 
                         Connections {
-                            target: artworkUploader
+                            target: artworksUploader
                             onStartedProcessing: {
                                 helpersWrapper.turnTaskbarProgressOn()
                             }
                             onPercentChanged: {
-                                helpersWrapper.setTaskbarProgress(artworkUploader.percent)
+                                helpersWrapper.setTaskbarProgress(artworksUploader.percent)
                             }
                             onFinishedProcessing: {
                                 uploadButton.enabled = true
@@ -998,9 +1000,8 @@ Item {
                     StyledButton {
                         text: i18.n + qsTr("Close")
                         width: 120
-                        enabled: !artworkUploader.inProgress
+                        enabled: !artworksUploader.inProgress
                         onClicked: {
-                            filteredArtItemsModel.updateSelectedArtworks()
                             closePopup()
                         }
                     }

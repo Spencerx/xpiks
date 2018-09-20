@@ -13,21 +13,24 @@
 
 #include <QStringList>
 #include <QString>
+#include <memory>
+#include "../Common/types.h"
 
-namespace Models { class ArtworkMetadata; }
+namespace Artworks { class ArtworkMetadata; }
 
 namespace UndoRedo {
     class ArtworkMetadataBackup
     {
     public:
-        ArtworkMetadataBackup(Models::ArtworkMetadata *metadata);
+        ArtworkMetadataBackup(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
         ArtworkMetadataBackup(const ArtworkMetadataBackup &copy);
         virtual ~ArtworkMetadataBackup() {}
 
     public:
-        void restore(Models::ArtworkMetadata *metadata) const;
+        void restore(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) const;
 
     private:
+        Common::ID_t m_ArtworkID;
         QString m_Description;
         QString m_Title;
         QString m_AttachedVector;

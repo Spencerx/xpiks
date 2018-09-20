@@ -25,6 +25,7 @@ private slots:
     void replaceWholeNoCaseHitTest();
     void replaceWholeNoHitTest();
     void switcherHashTest();
+    void basicUrlDecodeTest();
 };
 
 #endif // STRINGHELPERSTESTS_H

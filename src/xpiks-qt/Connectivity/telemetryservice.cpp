@@ -10,24 +10,39 @@
 
 #include "telemetryservice.h"
 #include <QThread>
+#include <QUuid>
 #include "telemetryworker.h"
-#include "../Common/defines.h"
-#include "../Common/version.h"
+#include <Common/defines.h>
+#include <Common/version.h>
 
 namespace Connectivity {
-    TelemetryService::TelemetryService(const QString &userId, bool telemetryEnabled, QObject *parent) :
+    TelemetryService::TelemetryService(Models::SwitcherModel &switcher,
+                                       Models::SettingsModel &settingsModel,
+                                       QObject *parent) :
         QObject(parent),
         m_TelemetryWorker(nullptr),
-        m_UserAgentId(userId),
-        m_InterfaceLanguage("en_US"),
-        m_TelemetryEnabled(telemetryEnabled),
-        m_RestartRequired(false)
+        m_Switcher(switcher),
+        m_SettingsModel(settingsModel),
+        m_InterfaceLanguage("en_US")
     {
-        LOG_INFO << "Enabled:" << telemetryEnabled;
+    }
+
+    void TelemetryService::initialize() {
+#if !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
+    ensureUserIdExists();
+
+    QString userId = m_SettingsModel.getUserAgentId();
+    userId.remove(QRegExp("[{}-]."));
+
+    m_UserAgentId = userId;
+#else
+    m_UserAgentId = "1234567890";
+    Q_ASSERT(!getIsTelemetryEnabled());
+#endif
     }
 
     void TelemetryService::startReporting() {
-        if (m_TelemetryEnabled) {
+        if (getIsTelemetryEnabled()) {
             doStartReporting();
         } else {
             LOG_WARNING << "Telemetry is disabled";
@@ -41,6 +56,21 @@ namespace Connectivity {
             m_TelemetryWorker->stopWorking(immediately);
         } else {
             LOG_WARNING << "TelemetryWorker is NULL";
+        }
+    }
+
+    void TelemetryService::handleMessage(Common::NamedType<UserAction> const &event) {
+        reportAction(event.get());
+    }
+
+    void TelemetryService::ensureUserIdExists() {
+        QString userID = m_SettingsModel.getUserAgentId();
+        QUuid latest(userID);
+        if (userID.isEmpty()
+                || (latest.isNull())
+                || (latest.version() == QUuid::VerUnknown)) {
+            QUuid uuid = QUuid::createUuid();
+            m_SettingsModel.setUserAgentId(uuid.toString());
         }
     }
 
@@ -64,14 +94,26 @@ namespace Connectivity {
         thread->start(QThread::LowestPriority);
     }
 
+    bool TelemetryService::getIsTelemetryEnabled() {
+#ifndef INTEGRATION_TESTS
+        return m_SettingsModel.getIsTelemetryEnabled() && m_Switcher.getIsTelemetryEnabled();
+#else
+        return false;
+#endif
+    }
+
+    void TelemetryService::doReportAction(UserAction action) {
+        if (m_TelemetryWorker != nullptr) {
+            auto item = std::make_shared<AnalyticsUserEvent>(action);
+            m_TelemetryWorker->submitItem(item);
+        } else {
+            LOG_WARNING << "Worker is null";
+        }
+    }
+
     void TelemetryService::reportAction(UserAction action) {
-        if (m_TelemetryEnabled) {
-            if (m_TelemetryWorker != nullptr) {
-                std::shared_ptr<AnalyticsUserEvent> item(new AnalyticsUserEvent(action));
-                m_TelemetryWorker->submitItem(item);
-            } else {
-                LOG_WARNING << "Worker is null";
-            }
+        if (getIsTelemetryEnabled()) {
+            doReportAction(action);
         } else {
             LOG_DEBUG << "Telemetry disabled";
         }
@@ -80,17 +122,8 @@ namespace Connectivity {
     void TelemetryService::changeReporting(bool value) {
         LOG_INFO << value;
 
-        if (m_TelemetryEnabled != value) {
-            m_TelemetryEnabled = value;
-
-            if (m_TelemetryEnabled) {
-                LOG_DEBUG << "Telemetry enabled";
-                startReporting();
-            } else {
-                LOG_DEBUG << "Telemetry disabled";
-                reportAction(UserAction::TurnOffTelemetry);
-                stopReporting(false);
-            }
+        if (value == false) {
+            doReportAction(UserAction::TurnOffTelemetry);
         }
     }
 
@@ -98,12 +131,6 @@ namespace Connectivity {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
         m_TelemetryWorker = nullptr;
-
-        if (m_RestartRequired) {
-            LOG_INFO << "Restarting worker...";
-            startReporting();
-            m_RestartRequired = false;
-        }
     }
 
     void TelemetryService::setEndpoint(const QString &endpoint) {

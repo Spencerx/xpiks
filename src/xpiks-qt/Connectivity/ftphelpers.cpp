@@ -9,14 +9,14 @@
  */
 
 #include "ftphelpers.h"
-#include "uploadcontext.h"
+#include <uploadcontext.h>
 #include <cstdio>
 #include <cstdlib>
 #include <sstream>
 #include <string>
 #include <curl/curl.h>
-#include "../Models/proxysettings.h"
-#include "../Helpers/stringhelper.h"
+#include <Models/Connectivity/proxysettings.h>
+#include <Helpers/stringhelper.h>
 
 namespace Connectivity {
     /* The MinGW headers are missing a few Win32 function definitions,
@@ -207,7 +207,7 @@ namespace Connectivity {
         return host;
     }
 
-    void fillProxySettings(void *curlHandle, Models::ProxySettings *proxySettings) {
+    void fillProxySettings(void *curlHandle, const Models::ProxySettings *proxySettings) {
         if (proxySettings == nullptr) { return; }
 
         curl_easy_setopt(curlHandle, CURLOPT_PROXY, proxySettings->m_Address.toLocal8Bit().data());

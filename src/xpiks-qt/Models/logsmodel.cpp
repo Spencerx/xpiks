@@ -9,7 +9,6 @@
  */
 
 #include "logsmodel.h"
-#include "../Helpers/loggingworker.h"
 #include <QThread>
 #include <QString>
 #include <QFile>
@@ -17,26 +16,23 @@
 #include <QDateTime>
 #include <QTextStream>
 #include <QStandardPaths>
-#include "../Helpers/stringhelper.h"
-#include "../Helpers/logger.h"
-#include "../Helpers/loghighlighter.h"
-#include "../Common/defines.h"
+#include <Helpers/stringhelper.h>
+#include <Helpers/logger.h>
+#include <Helpers/loggingworker.h>
+#include <Common/defines.h>
+#include <Common/logging.h>
+#include <Encryption/obfuscation.h>
 
 namespace Models {
-
     LogsModel::LogsModel(QObject *parent) :
         QObject(parent),
-        m_LoggingWorker(new Helpers::LoggingWorker()),
-        m_ColorsModel(nullptr)
+        m_LoggingWorker(new Helpers::LoggingWorker())
     {
 #ifdef WITH_LOGS
         m_WithLogs = true;
 #else
         m_WithLogs = false;
 #endif
-    }
-
-    LogsModel::~LogsModel() {
     }
 
     void LogsModel::startLogging() {
@@ -56,10 +52,6 @@ namespace Models {
         m_LoggingWorker->cancel();
     }
 
-    void LogsModel::InjectDependency(QMLExtensions::ColorsModel *colorsModel) {
-        m_ColorsModel = colorsModel;
-    }
-
     QString LogsModel::getAllLogsText(bool moreLogs) {
         QString result;
 #ifdef WITH_LOGS
@@ -72,23 +64,29 @@ namespace Models {
             // advanced users will open logs it notepad
             int numberOfLines = moreLogs ? 1000 : 100;
             QString text = QString::fromUtf8(f.readAll());
-            result = Helpers::getLastNLines(text, numberOfLines);
             f.close();
+            result = Helpers::getLastNLines(text, numberOfLines);
         }
 #else
         Q_UNUSED(moreLogs);
         result = QString::fromLatin1("Logs are not available in this version");
 #endif
-        return result;
 
+#ifndef QT_DEBUG
+        result = Encryption::rot13plus(result);
+#endif
+
+        return result;
     }
 
-    void LogsModel::initLogHighlighting(QQuickTextDocument *document) {
-        Q_ASSERT(m_ColorsModel != nullptr);
+    void LogsModel::clearLogsExtract() {
+        LOG_DEBUG << "#";
+        m_LogsExtract.clear();
+        emit logsExtractChanged();
+    }
 
-        if (m_ColorsModel != nullptr) {
-            Helpers::LogHighlighter *highlighter = new Helpers::LogHighlighter(m_ColorsModel, document->textDocument());
-            Q_UNUSED(highlighter);
-        }
+    void LogsModel::updateLogs(bool moreLogs) {
+        m_LogsExtract = getAllLogsText(moreLogs);
+        emit logsExtractChanged();
     }
 }

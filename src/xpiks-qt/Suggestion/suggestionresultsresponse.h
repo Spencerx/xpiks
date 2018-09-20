@@ -21,7 +21,7 @@ namespace Suggestion {
 
     class SuggestionResultsResponse: public Connectivity::IConnectivityResponse {
     public:
-        SuggestionResultsResponse(ISuggestionsRepository *suggestions);
+        SuggestionResultsResponse(ISuggestionsRepository &suggestions);
 
         // IConnectivityResponse interface
     public:
@@ -36,7 +36,7 @@ namespace Suggestion {
 
     private:
         std::vector<std::shared_ptr<SuggestionArtwork> > m_SuggestedArtworks;
-        ISuggestionsRepository *m_Suggestions;
+        ISuggestionsRepository &m_Suggestions;
     };
 }
 

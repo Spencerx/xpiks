@@ -15,9 +15,8 @@
 #include <vector>
 #include <memory>
 #include "csvexportproperties.h"
-#include "../Models/abstractconfigupdatermodel.h"
-#include "../Helpers/localconfig.h"
-#include "../Common/baseentity.h"
+#include <Models/Connectivity/abstractconfigupdatermodel.h>
+#include <Helpers/localconfig.h>
 #include "../Common/isystemenvironment.h"
 
 namespace Helpers {
@@ -30,13 +29,15 @@ namespace MetadataIO {
     {
         Q_OBJECT
     public:
-        CsvExportPlansModel(Common::ISystemEnvironment &environment, QObject *parent = nullptr);
+        CsvExportPlansModel(Common::ISystemEnvironment &environment,
+                            QObject *parent = nullptr);
 
     public:
         std::vector<std::shared_ptr<CsvExportPlan> > &getExportPlans() { return m_ExportPlans; }
 
     public:
-        void initializeConfigs(Helpers::AsyncCoordinator *initCoordinator);
+        void initializeConfigs(Helpers::AsyncCoordinator &initCoordinator,
+                               Connectivity::IRequestsService &requestsService);
         void sync(const std::vector<std::shared_ptr<CsvExportPlan> > &exportPlans);
 
         // AbstractConfigUpdaterModel interface

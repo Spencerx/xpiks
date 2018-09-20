@@ -13,26 +13,42 @@
 
 #include <QObject>
 #include <QAtomicInt>
-#include "../Common/readerwriterqueue.h"
-#include "artworkssnapshot.h"
+#include <Common/readerwriterqueue.h>
+#include <Artworks/artworkssnapshot.h>
 #include "originalmetadata.h"
-#include "../Helpers/asynccoordinator.h"
-#include "../Common/baseentity.h"
+#include <Helpers/asynccoordinator.h>
+
+namespace Services {
+    class ArtworksUpdateHub;
+    class ArtworksEditingHub;
+}
+
+namespace Helpers {
+    class AsyncCoordinatorUnlocker;
+}
 
 namespace MetadataIO {
-    class MetadataReadingHub: public QObject, public Common::BaseEntity
+    class MetadataIOService;
+
+    class MetadataReadingHub: public QObject
     {
         Q_OBJECT
     public:
-        MetadataReadingHub();
+        MetadataReadingHub(MetadataIOService &metadataIOService,
+                           Services::ArtworksUpdateHub &updateHub,
+                           Services::ArtworksEditingHub &inspectionHub);
 
     public:
-        void initializeImport(const ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID);
+        Artworks::ArtworksSnapshot const &getSnapshot() const { return m_ArtworksToRead; }
+
+    public:
+        void initializeImport(Artworks::ArtworksSnapshot const &artworksToRead, int importID, quint32 storageReadBatchID);
         void finalizeImport();
 
     public:
-        Helpers::AsyncCoordinator *getCoordinator() { return &m_AsyncCoordinator; }
-        const ArtworksSnapshot &getSnapshot() const { return m_ArtworksToRead; }
+        void accountReadIO();
+        void startAcceptingIOResults();
+        std::shared_ptr<Helpers::AsyncCoordinatorUnlocker> getIOFinalizer();
 
     public:
         void proceedImport(bool ignoreBackups);
@@ -52,8 +68,11 @@ namespace MetadataIO {
         void initializeArtworks(bool ignoreBackups, bool isCancelled);
 
     private:
-        ArtworksSnapshot m_ArtworksToRead;
+        Artworks::ArtworksSnapshot m_ArtworksToRead;
         Helpers::AsyncCoordinator m_AsyncCoordinator;
+        MetadataIOService &m_MetadataIOService;
+        Services::ArtworksUpdateHub &m_UpdateHub;
+        Services::ArtworksEditingHub &m_InspectionHub;
         Common::ReaderWriterQueue<OriginalMetadata> m_ImportQueue;
         int m_ImportID;
         quint32 m_StorageReadBatchID;

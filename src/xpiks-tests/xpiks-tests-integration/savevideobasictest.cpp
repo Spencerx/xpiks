@@ -4,13 +4,8 @@
 #include <QStringList>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/filteredartitemsproxymodel.h"
-#include "../../xpiks-qt/Models/videoartwork.h"
+#include "xpikstestsapp.h"
+#include <Artworks/videoartwork.h>
 
 QString SaveVideoBasicTest::testName() {
     return QLatin1String("SaveVideoBasicTest");
@@ -20,25 +15,14 @@ void SaveVideoBasicTest::setup() {
 }
 
 int SaveVideoBasicTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("videos-for-tests/Untitled.mp4");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    Models::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     const Common::ID_t id = artwork->getItemID();
-    Models::VideoArtwork *video = dynamic_cast<Models::VideoArtwork*>(artwork);
+    auto video = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artwork);
 
     VERIFY(video->getImageSize().width() == 640, "Video width was read incorrectly");
     VERIFY(video->getImageSize().height() == 400, "Video height was read incorrectly");
@@ -60,37 +44,25 @@ int SaveVideoBasicTest::doTest() {
 
     artwork->setIsSelected(true);
 
-    bool doOverwrite = true, dontSaveBackups = false;
-
-    QObject::connect(ioCoordinator, SIGNAL(metadataWritingFinished()), &waiter, SIGNAL(finished()));
-    auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-    filteredModel->saveSelectedArtworks(doOverwrite, dontSaveBackups);
+    SignalWaiter waiter;
+    m_TestsApp.connectWaiterForExport(waiter);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SaveSelected);
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");
+    VERIFY(m_TestsApp.checkExportSucceeded(), "Failed to export artworks");
 
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while writing");
+    // --
 
-    artItemsModel->removeSelectedArtworks(QVector<int>() << 0);
+    m_TestsApp.deleteAllArtworks();
+    VERIFY(m_TestsApp.getArtworksCount() == 0, "Failed to remove files");
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == 1, "Failed to add file");
-
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    artwork = artItemsModel->getArtwork(0);
-    const QStringList &actualKeywords = artwork->getKeywords();
-    const QString &actualTitle = artwork->getTitle();
-    const QString &actualDescription = artwork->getDescription();
+    artwork = m_TestsApp.getArtwork(0);
 
     VERIFY(id != artwork->getItemID(), "ID should not match");
-    VERIFY(actualKeywords == keywords, "Read keywords are not the same");
-    VERIFY(actualTitle == title, "Real title is not the same");
-    VERIFY(actualDescription == description, "Real description is not the same");
+    VERIFY(artwork->getKeywords() == keywords, "Read keywords are not the same");
+    VERIFY(artwork->getTitle() == title, "Real title is not the same");
+    VERIFY(artwork->getDescription() == description, "Real description is not the same");
 
     return 0;
 }

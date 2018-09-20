@@ -118,7 +118,7 @@ Item {
                         isDefault: true
                         text: i18.n + qsTr("Upgrade")
                         onClicked: {
-                            helpersWrapper.upgradeNow()
+                            xpiksApp.upgradeNow()
                             closePopup()
                         }
                     }

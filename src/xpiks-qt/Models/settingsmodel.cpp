@@ -10,12 +10,10 @@
 
 #include "settingsmodel.h"
 #include <QQmlEngine>
-#include "../Common/defines.h"
-#include "../Models/artitemsmodel.h"
-#include "../Maintenance/maintenanceservice.h"
-#include "../MetadataIO/metadataiocoordinator.h"
-#include "../Commands/commandmanager.h"
-#include "filteredartitemsproxymodel.h"
+#include <QDateTime>
+#include <Common/defines.h>
+#include <Encryption/secretsmanager.h>
+#include <Common/version.h>
 
 #ifdef Q_OS_MAC
 #  define DEFAULT_EXIFTOOL "/usr/bin/exiftool"
@@ -27,7 +25,7 @@
 
 #define SETTINGS_FILE "settings.json"
 
-#define EXPERIMENTAL_KEY QLatin1String("experimental")
+#define EXPERIMENTAL_KEY "experimental"
 
 #define CURRENT_SETTINGS_VERSION 1
 
@@ -58,6 +56,8 @@
 #define DEFAULT_PROXY_HOST ""
 #define DEFAULT_USE_PROGRESSIVE_SUGGESTION_PREVIEWS false
 #define DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT 10
+
+#define VERBOSE_UPLOAD_STARTDATE "verboseUploadStart"
 
 #ifdef QT_NO_DEBUG
     #define DEFAULT_USE_AUTOIMPORT true
@@ -125,15 +125,15 @@ namespace Models {
         oldSettings.remove(QLatin1String(settingName));
     }
 
-    SettingsModel::SettingsModel(Common::ISystemEnvironment &environment, QObject *parent) :
+    SettingsModel::SettingsModel(Common::ISystemEnvironment &environment,
+                                 QObject *parent) :
         QObject(parent),
-        Common::BaseEntity(),
         Common::DelayedActionEntity(SETTINGS_SAVING_INTERVAL, SETTINGS_DELAY_TIMES),
         m_State("settings", environment),
         m_Config(environment.path({SETTINGS_FILE}),
                  environment.getIsInMemoryOnly()),
-        m_SettingsMap(new Helpers::JsonObjectMap()),
-        m_ExperimentalMap(new Helpers::JsonObjectMap()),
+        m_SettingsMap(std::make_shared<Helpers::JsonObjectMap>()),
+        m_ExperimentalMap(std::make_shared<Helpers::JsonObjectMap>()),
         m_ExifToolPath(DEFAULT_EXIFTOOL),
         m_SelectedLocale(DEFAULT_LOCALE),
         m_KeywordSizeScale(DEFAULT_KEYWORD_SIZE_SCALE),
@@ -154,7 +154,6 @@ namespace Models {
         m_UserStatistics(DEFAULT_COLLECT_USER_STATISTICS),
         m_CheckForUpdates(DEFAULT_CHECK_FOR_UPDATES),
         m_AutoDownloadUpdates(DEFAULT_AUTO_DOWNLOAD_UPDATES),
-        m_DictsPathChanged(false),
         m_UseSpellCheckChanged(false),
         m_DetectDuplicatesChanged(false),
         m_AutoFindVectors(DEFAULT_AUTO_FIND_VECTORS),
@@ -183,32 +182,16 @@ namespace Models {
     void SettingsModel::initializeConfigs() {
         LOG_DEBUG << "#";
 
-        m_Config.initialize();
         m_State.init();
 
-        QJsonDocument &doc = m_Config.getConfig();
-        if (doc.isObject()) {
-            QJsonObject settingsJson = doc.object();
-            m_SettingsMap.reset(new Helpers::JsonObjectMap(settingsJson));
+        m_SettingsMap = m_Config.readMap();
 
-            if (settingsJson.contains(EXPERIMENTAL_KEY)) {
-                QJsonValue experimental = settingsJson[EXPERIMENTAL_KEY];
-                if (experimental.isObject()) {
-                    QJsonObject experimentalJson = experimental.toObject();
-                    m_ExperimentalMap.reset(new Helpers::JsonObjectMap(experimentalJson));
-                }
+        if (m_SettingsMap->containsValue(EXPERIMENTAL_KEY)) {
+            QJsonValue experimental = m_SettingsMap->value(EXPERIMENTAL_KEY);
+            if (experimental.isObject()) {
+                QJsonObject experimentalJson = experimental.toObject();
+                m_ExperimentalMap = std::make_shared<Helpers::JsonObjectMap>(experimentalJson);
             }
-        } else {
-            LOG_WARNING << "JSON document doesn't contain an object";
-        }
-    }
-
-    void SettingsModel::migrateSettings() {
-        const int settingsVersion = getSettingsVersion();
-        LOG_INFO << "Current settings version:" << settingsVersion;
-
-        if (settingsVersion < CURRENT_SETTINGS_VERSION) {
-            moveSettingsFromQSettingsToJson();
         }
     }
 
@@ -222,6 +205,18 @@ namespace Models {
             m_SettingsMap->deleteValue(Constants::legacyUploadHosts);
             sync();
         }
+    }
+
+    Common::WordAnalysisFlags SettingsModel::getFlags() const {
+        Common::WordAnalysisFlags result = Common::WordAnalysisFlags::None;
+        if (getUseSpellCheck()) {
+            Common::SetFlag(result, Common::WordAnalysisFlags::Spelling);
+        }
+
+        if (getDetectDuplicates()) {
+            Common::SetFlag(result, Common::WordAnalysisFlags::Stemming);
+        }
+        return result;
     }
 
     void SettingsModel::moveSetting(QSettings &oldSettings, const QString &oldKey, const char *newKey, int type) {
@@ -250,67 +245,6 @@ namespace Models {
         QVariant qvalue = oldSettings.value(oldKey);
         ProxySettings proxySettings = qvalue.value<ProxySettings>();
         m_SettingsMap->setValue(Constants::proxyHost, serializeProxyForSettings(proxySettings));
-    }
-
-    void SettingsModel::wipeOldSettings(QSettings &oldSettings) {
-        using namespace Constants;
-
-        clearSetting(oldSettings, PATH_TO_EXIFTOOL);
-        clearSetting(oldSettings, SAVE_BACKUPS);
-        clearSetting(oldSettings, KEYWORD_SIZE_SCALE);
-        clearSetting(oldSettings, DISMISS_DURATION);
-        clearSetting(oldSettings, FIT_SMALL_PREVIEW);
-        clearSetting(oldSettings, SEARCH_USING_AND);
-        clearSetting(oldSettings, SEARCH_BY_FILEPATH);
-        clearSetting(oldSettings, DICT_PATH);
-        clearSetting(oldSettings, USER_STATISTICS);
-        clearSetting(oldSettings, CHECK_FOR_UPDATES);
-        clearSetting(oldSettings, NUMBER_OF_LAUNCHES);
-        clearSetting(oldSettings, APP_WINDOW_WIDTH);
-        clearSetting(oldSettings, APP_WINDOW_HEIGHT);
-        clearSetting(oldSettings, APP_WINDOW_X);
-        clearSetting(oldSettings, APP_WINDOW_Y);
-        clearSetting(oldSettings, AUTO_FIND_VECTORS);
-        clearSetting(oldSettings, USE_PROXY);
-        clearSetting(oldSettings, PROXY_HOST);
-        clearSetting(oldSettings, UPLOAD_HOSTS);
-        clearSetting(oldSettings, USE_MASTER_PASSWORD);
-        clearSetting(oldSettings, MASTER_PASSWORD_HASH);
-        clearSetting(oldSettings, ONE_UPLOAD_SECONDS_TIMEMOUT);
-        clearSetting(oldSettings, USE_CONFIRMATION_DIALOGS);
-        clearSetting(oldSettings, RECENT_DIRECTORIES);
-        clearSetting(oldSettings, RECENT_FILES);
-        clearSetting(oldSettings, MAX_PARALLEL_UPLOADS);
-        clearSetting(oldSettings, USE_SPELL_CHECK);
-        clearSetting(oldSettings, USER_AGENT_ID);
-        clearSetting(oldSettings, INSTALLED_VERSION);
-        clearSetting(oldSettings, USER_CONSENT);
-        clearSetting(oldSettings, SELECTED_LOCALE);
-        clearSetting(oldSettings, SELECTED_THEME_INDEX);
-        clearSetting(oldSettings, USE_AUTO_COMPLETE);
-        clearSetting(oldSettings, USE_EXIFTOOL);
-        clearSetting(oldSettings, CACHE_IMAGES_AUTOMATICALLY);
-        clearSetting(oldSettings, SCROLL_SPEED_SENSIVITY);
-        clearSetting(oldSettings, AUTO_DOWNLOAD_UPDATES);
-        clearSetting(oldSettings, AVAILABLE_UPDATE_VERSION);
-        clearSetting(oldSettings, ARTWORK_EDIT_RIGHT_PANE_WIDTH);
-        clearSetting(oldSettings, TRANSLATOR_SELECTED_DICT_INDEX);
-    }
-
-    void SettingsModel::moveSettingsFromQSettingsToJson() {
-        LOG_DEBUG << "#";
-
-        {
-            QMutexLocker locker(&m_SettingsMutex);
-            Q_UNUSED(locker);
-
-            doMoveSettingsFromQSettingsToJson();
-        }
-
-        Encryption::SecretsManager *secretsManager = m_CommandManager->getSecretsManager();
-        Models::UploadInfoRepository *uploadInfoRepository = m_CommandManager->getUploadInfoRepository();
-        secretsManager->setMasterPasswordHash(getMasterPasswordHash());
-        uploadInfoRepository->initFromString(getLegacyUploadHosts());
     }
 
     ProxySettings *SettingsModel::retrieveProxySettings() {
@@ -404,24 +338,6 @@ namespace Models {
         }
     }
 
-    void SettingsModel::updateSaveSession(bool value) {
-        LOG_DEBUG << value;
-
-        if (m_SaveSession == value) {
-            return;
-        }
-
-        m_SaveSession = value;
-        emit saveSessionChanged(value);
-
-        m_SettingsMap->setValue(Constants::saveSession, value);
-        sync();
-
-        if (value) {
-            xpiks()->saveSessionInBackground();
-        }
-    }
-
     void SettingsModel::doReadAllValues() {
         using namespace Constants;
 
@@ -461,67 +377,30 @@ namespace Models {
 
         setAutoCacheImages(m_SettingsMap->boolValue(cacheImagesAutomatically, DEFAULT_AUTO_CACHE_IMAGES));
 
+        consolidateSettings();
         resetChangeStates();
     }
 
-    void SettingsModel::doMoveSettingsFromQSettingsToJson() {
-        LOG_DEBUG << "#";
+    void SettingsModel::consolidateSettings() {
+        do {
+            if (getVerboseUpload()) {
+                const QDateTime dtNow = QDateTime::currentDateTime();
+                const QString verboseUploadStart = m_State.getString(VERBOSE_UPLOAD_STARTDATE);
+                const QDateTime verboseUploadStartDateTime = QDateTime::fromString(verboseUploadStart, Qt::ISODate);
+                if (!verboseUploadStartDateTime.isValid()) {
+                    LOG_WARNING << "Cannot parse verbose upload start datetime:" << verboseUploadStart;
+                    break;
+                }
 
-        using namespace Constants;
+                const qint64 daysPassed = verboseUploadStartDateTime.daysTo(dtNow);
+                LOG_DEBUG << "Verbose upload is ON for" << daysPassed << "day(s)";
 
-        QSettings oldSettings(QSettings::UserScope,
-                              QCoreApplication::instance()->organizationName(),
-                              QCoreApplication::instance()->applicationName());
-
-        moveSetting(oldSettings, PATH_TO_EXIFTOOL, pathToExifTool, QMetaType::QString);
-        moveSetting(oldSettings, SAVE_BACKUPS, saveBackups, QMetaType::Bool);
-        moveSetting(oldSettings, KEYWORD_SIZE_SCALE, keywordSizeScale, QMetaType::Double);
-        moveSetting(oldSettings, DISMISS_DURATION, dismissDuration, QMetaType::Int);
-        moveSetting(oldSettings, FIT_SMALL_PREVIEW, fitSmallPreview, QMetaType::Bool);
-        moveSetting(oldSettings, SEARCH_USING_AND, searchUsingAnd, QMetaType::Bool);
-        moveSetting(oldSettings, SEARCH_BY_FILEPATH, searchByFilepath, QMetaType::Bool);
-        //moveSetting(oldSettings, DICT_PATH, dictPath, QMetaType::QString);
-        moveSetting(oldSettings, USER_STATISTICS, userStatistics, QMetaType::Bool);
-        moveSetting(oldSettings, CHECK_FOR_UPDATES, checkForUpdates, QMetaType::Bool);
-        //moveSetting(oldSettings, NUMBER_OF_LAUNCHES, numberOfLaunches, QMetaType::Int);
-        //moveSetting(oldSettings, APP_WINDOW_WIDTH, appWindowWidth, QMetaType::Int);
-        //moveSetting(oldSettings, APP_WINDOW_HEIGHT, appWindowHeight, QMetaType::Int);
-        //moveSetting(oldSettings, APP_WINDOW_X, appWindowX, QMetaType::Int);
-        //moveSetting(oldSettings, APP_WINDOW_Y, appWindowY, QMetaType::Int);
-        moveSetting(oldSettings, AUTO_FIND_VECTORS, autoFindVectors, QMetaType::Bool);
-        moveSetting(oldSettings, USE_PROXY, useProxy, QMetaType::Bool);
-        moveProxyHostSetting(oldSettings);
-        moveSetting(oldSettings, UPLOAD_HOSTS, legacyUploadHosts, QMetaType::QString);
-        moveSetting(oldSettings, USE_MASTER_PASSWORD, useMasterPassword, QMetaType::Bool);
-        moveSetting(oldSettings, MASTER_PASSWORD_HASH, masterPasswordHash, QMetaType::QString);
-        moveSetting(oldSettings, ONE_UPLOAD_SECONDS_TIMEMOUT, oneUploadSecondsTimeout, QMetaType::Int);
-        moveSetting(oldSettings, USE_CONFIRMATION_DIALOGS, useConfirmationDialogs, QMetaType::Bool);
-        //moveSetting(oldSettings, RECENT_DIRECTORIES, recentDirectories, QMetaType::QString);
-        //moveSetting(oldSettings, RECENT_FILES, recentFiles, QMetaType::QString);
-        moveSetting(oldSettings, MAX_PARALLEL_UPLOADS, maxParallelUploads, QMetaType::Int);
-        moveSetting(oldSettings, USE_SPELL_CHECK, useSpellCheck, QMetaType::Bool);
-        //moveSetting(oldSettings, USER_AGENT_ID, userAgentId, QMetaType::QString);
-        //moveSetting(oldSettings, INSTALLED_VERSION, installedVersion, QMetaType::Int);
-        //moveSetting(oldSettings, USER_CONSENT, userConsent, QMetaType::Bool);
-        moveSetting(oldSettings, SELECTED_LOCALE, selectedLocale, QMetaType::QString);
-        moveSetting(oldSettings, SELECTED_THEME_INDEX, selectedThemeIndex, QMetaType::Int);
-        moveSetting(oldSettings, USE_AUTO_COMPLETE, useKeywordsAutoComplete, QMetaType::Bool);
-        moveSetting(oldSettings, USE_EXIFTOOL, useExifTool, QMetaType::Bool);
-        moveSetting(oldSettings, CACHE_IMAGES_AUTOMATICALLY, cacheImagesAutomatically, QMetaType::Bool);
-        moveSetting(oldSettings, SCROLL_SPEED_SENSIVITY, scrollSpeedSensivity, QMetaType::Double);
-        moveSetting(oldSettings, AUTO_DOWNLOAD_UPDATES, autoDownloadUpdates, QMetaType::Bool);
-        moveSetting(oldSettings, PATH_TO_UPDATE, pathToUpdate, QMetaType::QString);
-        moveSetting(oldSettings, AVAILABLE_UPDATE_VERSION, availableUpdateVersion, QMetaType::Int);
-        moveSetting(oldSettings, ARTWORK_EDIT_RIGHT_PANE_WIDTH, artworkEditRightPaneWidth, QMetaType::Int);
-        //moveSetting(oldSettings, TRANSLATOR_SELECTED_DICT_INDEX, translatorSelectedDictIndex, QMetaType::Int);
-
-        // apply imported settings
-        doReadAllValues();
-
-        m_SettingsMap->setValue(settingsVersion, CURRENT_SETTINGS_VERSION);
-        sync();
-
-        wipeOldSettings(oldSettings);
+                if (daysPassed > 5) {
+                    LOG_INFO << "Resetting stale verbose upload to improve performance";
+                    setVerboseUpload(false);
+                }
+            }
+        } while (false);
     }
 
     void SettingsModel::doResetToDefault() {
@@ -607,25 +486,31 @@ namespace Models {
             m_SettingsMap->setValue(masterPasswordHash, "");
         }
 
+        if (m_VerboseUpload) {
+            if (!m_State.contains(VERBOSE_UPLOAD_STARTDATE)) {
+                const QDateTime dtNow = QDateTime::currentDateTimeUtc();
+                QString dateTimeString = dtNow.toString(Qt::ISODate);
+                m_State.setValue(VERBOSE_UPLOAD_STARTDATE, dateTimeString);
+                m_State.sync();
+            }
+        } else {
+            if (m_State.contains(VERBOSE_UPLOAD_STARTDATE)) {
+                m_State.remove(VERBOSE_UPLOAD_STARTDATE);
+                m_State.sync();
+            }
+        }
+
         sync();
     }
 
     void SettingsModel::afterSaveHandler() {
         LOG_DEBUG << "#";
 
-#if defined(Q_OS_LINUX)
-        if (m_DictsPathChanged) {
-            // TODO: check if need to restart depending on path
-            xpiks()->restartSpellChecking();
-            m_DictsPathChanged = false;
-        }
-#endif
-
         bool requiresSpellCheck = false;
 
         if (m_UseSpellCheckChanged) {
             if (!getUseSpellCheck()) {
-                xpiks()->disableSpellChecking();
+                emit spellCheckDisabled();
             } else {
                 requiresSpellCheck = true;
             }
@@ -633,19 +518,17 @@ namespace Models {
 
         if (m_DetectDuplicatesChanged) {
             if (!getDetectDuplicates()) {
-                xpiks()->disableDuplicatesCheck();
+                emit duplicatesCheckDisabled();
             } else {
                 requiresSpellCheck = true;
             }
         }
 
         if (requiresSpellCheck) {
-            auto *filteredModel = m_CommandManager->getFilteredArtItemsModel();
-            filteredModel->spellCheckAllItems();
         }
 
         if (m_ExiftoolPathChanged) {
-            xpiks()->autoDiscoverExiftool();
+            emit exiftoolSettingChanged(m_ExifToolPath);
         }
 
         resetChangeStates();
@@ -655,7 +538,6 @@ namespace Models {
     }
 
     void SettingsModel::resetChangeStates() {
-        m_DictsPathChanged = false;
         m_UseSpellCheckChanged = false;
         m_ExiftoolPathChanged = false;
         m_DetectDuplicatesChanged = false;
@@ -693,42 +575,6 @@ namespace Models {
                 currDirFile.close();
             }
         }
-        return text;
-    }
-
-    QString SettingsModel::getTermsAndConditionsText() const {
-        QString text;
-        QString path;
-
-#if !defined(Q_OS_LINUX)
-        path = QCoreApplication::applicationDirPath();
-
-#if defined(Q_OS_MAC)
-        path += "/../Resources/";
-#endif
-
-        path += QChar('/') + QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME);
-        path = QDir::cleanPath(path);
-#else
-        // path inside appimage
-        path = QCoreApplication::applicationDirPath() + QChar('/') + Constants::TERMS_AND_CONDITIONS_FILENAME;
-#endif
-        QFile file(QDir::cleanPath(path));
-        if (file.open(QIODevice::ReadOnly)) {
-            text = QString::fromUtf8(file.readAll());
-            file.close();
-        } else {
-            LOG_WARNING << "terms_and_conditions.txt file is not found on path" << path;
-
-            path = QDir::current().absoluteFilePath(QLatin1String(Constants::TERMS_AND_CONDITIONS_FILENAME));
-
-            QFile currDirFile(path);
-            if (currDirFile.open(QIODevice::ReadOnly)) {
-                text = QString::fromUtf8(currDirFile.readAll());
-                currDirFile.close();
-            }
-        }
-
         return text;
     }
 
@@ -771,10 +617,9 @@ namespace Models {
         m_SettingsMap->setValue(Constants::useMasterPassword, value);
     }
 
-    void SettingsModel::setMasterPasswordHash() {
+    void SettingsModel::setMasterPasswordHash(QString const &hash) {
         LOG_DEBUG << "#";
-        Encryption::SecretsManager *secretsManager = m_CommandManager->getSecretsManager();
-        m_SettingsMap->setValue(Constants::masterPasswordHash, secretsManager->getMasterPasswordHash());
+        m_SettingsMap->setValue(Constants::masterPasswordHash, hash);
     }
 
     void SettingsModel::setUserAgentId(const QString &id) {
@@ -783,10 +628,10 @@ namespace Models {
         m_State.sync();
     }
 
-    void SettingsModel::onMasterPasswordSet() {
+    void SettingsModel::onMasterPasswordSet(Encryption::SecretsManager &secretsManager) {
         LOG_INFO << "Master password changed";
 
-        setMasterPasswordHash();
+        setMasterPasswordHash(secretsManager.getMasterPasswordHash());
         setUseMasterPassword(true);
         setMustUseMasterPassword(true);
     }
@@ -1026,14 +871,12 @@ namespace Models {
         }
     }
 
-    void SettingsModel::setVerboseUpload(bool verboseUpload)
-    {
-        if (m_VerboseUpload == verboseUpload)
-            return;
-
-        m_VerboseUpload = verboseUpload;
-        emit verboseUploadChanged(verboseUpload);
-        justChanged();
+    void SettingsModel::setVerboseUpload(bool verboseUpload) {
+        if (m_VerboseUpload != verboseUpload) {
+            m_VerboseUpload = verboseUpload;
+            emit verboseUploadChanged(verboseUpload);
+            justChanged();
+        }
     }
 
     void SettingsModel::setUseProgressiveSuggestionPreviews(bool useProgressiveSuggestionPreviews)
@@ -1075,10 +918,12 @@ namespace Models {
 
     void SettingsModel::onRecommendedExiftoolFound(const QString &path) {
         LOG_INFO << path;
+        if (path.isEmpty()) { return; }
+
         QString existingExiftoolPath = getExifToolPath();
 
         if (existingExiftoolPath != path) {
-            LOG_INFO << "Setting exiftool path to recommended";
+            LOG_DEBUG << "Setting exiftool path to recommended";
             setExifToolPath(path);
         }
     }
@@ -1098,17 +943,13 @@ namespace Models {
     void SettingsModel::sync() {
         LOG_DEBUG << "Syncing settings";
 
-        Helpers::LocalConfigDropper dropper(&m_Config);
-        Q_UNUSED(dropper);
-
         QJsonObject settingsJson = m_SettingsMap->json();
         settingsJson[EXPERIMENTAL_KEY] = m_ExperimentalMap->json();
 
         QJsonDocument doc;
         doc.setObject(settingsJson);
 
-        m_Config.setConfig(doc);
-        m_Config.save();
+        m_Config.writeConfig(doc);
     }
 
     QString SettingsModel::serializeProxyForSettings(ProxySettings &settings) {

@@ -84,7 +84,7 @@ Item {
             anchors.topMargin: 5
             anchors.bottomMargin: 5
             anchors.rightMargin: scrollBar.visible ? 14 : 0
-            anchors.margins: 1
+            anchors.leftMargin: 1
             boundsBehavior: Flickable.StopAtBounds
 
             delegate: Rectangle {

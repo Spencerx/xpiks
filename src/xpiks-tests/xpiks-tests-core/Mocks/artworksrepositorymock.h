@@ -3,12 +3,15 @@
 
 #include <QVector>
 #include <QPair>
-#include "../../xpiks-qt/Models/artworksrepository.h"
+#include <Models/Artworks/artworksrepository.h>
 
 namespace Mocks {
     class ArtworksRepositoryMock : public Models::ArtworksRepository {
     public:
-        ArtworksRepositoryMock() {}
+        ArtworksRepositoryMock(Models::RecentDirectoriesModel &recentDirectories):
+            Models::ArtworksRepository(recentDirectories)
+        {
+        }
 
         void removeFileAndEmitSignal() {
             insertIntoUnavailable(*getFilesSet().begin());

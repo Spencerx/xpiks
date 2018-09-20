@@ -11,6 +11,7 @@
 #include "databasemanager.h"
 #include <QDir>
 #include "../Helpers/constants.h"
+#include "../Common/logging.h"
 
 namespace Storage {
     DatabaseManager::DatabaseManager(Common::ISystemEnvironment &environment):
@@ -95,7 +96,7 @@ namespace Storage {
         bool success = false, triedHard = false;
 
         do {
-            db.reset(new Database(id, &m_FinalizeCoordinator));
+            db = std::make_shared<Database>(id, m_FinalizeCoordinator);
             if (db->open(dbPath)) {
                 success = db->initialize();
             }
@@ -127,7 +128,7 @@ namespace Storage {
         const int id = getNextID();
         LOG_INFO << "Using #" << id << "for temp DB";
 
-        std::shared_ptr<Database> db(new Database(id, &m_FinalizeCoordinator));
+        auto db = std::make_shared<Database>(id, m_FinalizeCoordinator);
         bool success = false;
 
         // empty string means temp db
@@ -137,7 +138,7 @@ namespace Storage {
 
         if (!success) {
             db->close();
-            db.reset(new Database(id, &m_FinalizeCoordinator));
+            db = std::make_shared<Database>(id, m_FinalizeCoordinator);
 
             // in-memory db
             if (db->open(":memory:")) {

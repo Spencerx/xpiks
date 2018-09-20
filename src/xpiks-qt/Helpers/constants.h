@@ -15,7 +15,7 @@ namespace Constants {
     // common for DEBUG and RELEASE
     const char PATH_TO_EXIFTOOL[] = "PATH_TO_EXIF_TOOL";
     const char ORGANIZATION_NAME[] = "Xpiks";
-    const char ORGANIZATION_DOMAIN[] = "ribtoks.github.io";
+    const char ORGANIZATION_DOMAIN[] = "xpiksapp.com";
     const char APPLICATION_NAME[] = "Xpiks";
     const char LOG_FILENAME[] = "xpiks.log";
     const char LOG_PREFIX[] = "xpiks-";
@@ -28,7 +28,6 @@ namespace Constants {
     const char SEARCH_USING_AND[] = "SEARCH_USING_AND";
     const char SEARCH_BY_FILEPATH[] = "SEARCH_BY_FILEPATH";
     const char WHATS_NEW_FILENAME[] = "whatsnew.txt";
-    const char TERMS_AND_CONDITIONS_FILENAME[] = "terms_and_conditions.txt";
     const char DICT_PATH[] = "DICT_PATH";
     const char USER_STATISTICS[] = "USER_STATISTICS";
     const char CHECK_FOR_UPDATES[] = "CHECK_FOR_UPDATES";
@@ -49,6 +48,7 @@ namespace Constants {
     const char PLUGINS_DIR[] = "plugins";
     const char VIDEO_CACHE_DIR[] = "videoscache";
     const char STATES_DIR[] = "states";
+    const char CRASHES_DIR[] = "crashes";
     const char DB_DIR[] = "db";
     const char DB_DIR_FAILOVER[] = "db_failover";
     const char METADATA_DB_NAME[] = "metadata.db";
@@ -156,7 +156,7 @@ namespace Constants {
     const char detectDuplicates[] = "detectDuplicates";
     const char userAgentId[] = "userAgentId";
     const char installedVersion[] = "installedVersion";
-    const char userConsent[] = "userConsent10";
+    const char userConsent[] = "userConsent11";
     const char selectedLocale[] = "selectedLocale";
     const char selectedThemeIndex[] = "selectedThemeIndex";
     const char useKeywordsAutoComplete[] = "useKeywordsAutoComplete";

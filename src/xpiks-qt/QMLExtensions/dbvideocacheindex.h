@@ -21,7 +21,7 @@ namespace QMLExtensions {
     class DbVideoCacheIndex: public DbCacheIndex<CachedVideo>
     {
     public:
-        DbVideoCacheIndex(Storage::IDatabaseManager *dbManager);
+        DbVideoCacheIndex(Storage::IDatabaseManager &dbManager);
 
     public:
         virtual bool initialize() override;

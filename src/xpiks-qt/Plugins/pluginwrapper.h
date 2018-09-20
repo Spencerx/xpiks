@@ -35,8 +35,8 @@ namespace Plugins {
                       XpiksPluginInterface *pluginInterface,
                       int pluginID,
                       Common::ISystemEnvironment &environment,
-                      UIProvider *realUIProvider,
-                      Storage::DatabaseManager *databaseManager);
+                      UIProvider &realUIProvider,
+                      Storage::DatabaseManager &databaseManager);
         virtual ~PluginWrapper();
 
     private:
@@ -65,7 +65,7 @@ namespace Plugins {
 
         bool anyActionsProvided() const { return m_ActionsModel.size() > 0; }
         PluginActionsModel *getActionsModel() { return &m_ActionsModel; }
-        IUIProvider *getUIProvider() { return &m_UIProviderSafe; }
+        IUIProvider &getUIProvider() { return m_UIProviderSafe; }
         Storage::IDatabaseManager *getDatabaseManager() { return &m_PluginDatabaseManager; }
 
     public:
@@ -77,14 +77,14 @@ namespace Plugins {
         void triggerActionSafe(int actionID) const;
         void removePlugin();
 
-        void notifyPlugin(PluginNotificationFlags flag, const QVariant &data, void *pointer);
+        void notifyPlugin(Common::PluginNotificationFlags flag, const QVariant &data, void *pointer);
 
     private:
         XpiksPluginInterface *m_PluginInterface;
         PluginEnvironment m_PluginEnvironment;
         PluginDatabaseManager m_PluginDatabaseManager;
         PluginActionsModel m_ActionsModel;
-        Common::flag_t m_NotificationFlags;
+        Common::PluginNotificationFlags m_NotificationFlags;
         UIProviderSafe m_UIProviderSafe;
         QString m_PluginFilepath;
         int m_PluginID;

@@ -13,8 +13,8 @@
 #include <QTemporaryFile>
 #include <cstdio>
 #include <curl/curl.h>
-#include "../Common/defines.h"
-#include "../Models/proxysettings.h"
+#include <Common/logging.h>
+#include <Models/Connectivity/proxysettings.h>
 #include "ftphelpers.h"
 
 static size_t write_file(void *buffer, size_t size, size_t nmemb, void *param) {

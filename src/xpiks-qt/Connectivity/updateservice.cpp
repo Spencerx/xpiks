@@ -11,16 +11,18 @@
 #include "updateservice.h"
 #include "updatescheckerworker.h"
 #include <QString>
-#include "../Common/defines.h"
+#include <QThread>
+#include "../Common/logging.h"
 #include "../Models/settingsmodel.h"
 #include "../Common/version.h"
 #include "../Models/switchermodel.h"
+#include "../Helpers/updatehelpers.h"
 
 namespace Connectivity {
     UpdateService::UpdateService(Common::ISystemEnvironment &environment,
-                                 Models::SettingsModel *settingsModel,
-                                 Models::SwitcherModel *switcherModel,
-                                 Maintenance::MaintenanceService *maintenanceService):
+                                 Models::SettingsModel &settingsModel,
+                                 Models::SwitcherModel &switcherModel,
+                                 Maintenance::MaintenanceService &maintenanceService):
         m_Environment(environment),
         m_UpdatesCheckerWorker(nullptr),
         m_SettingsModel(settingsModel),
@@ -28,9 +30,6 @@ namespace Connectivity {
         m_MaintenanceService(maintenanceService),
         m_State("updater", environment)
     {
-        Q_ASSERT(settingsModel != nullptr);
-        Q_ASSERT(switcherModel != nullptr);
-        Q_ASSERT(maintenanceService != nullptr);
     }
 
     void UpdateService::initialize() {
@@ -40,8 +39,8 @@ namespace Connectivity {
 
     void UpdateService::startChecking() {
 #ifdef WITH_UPDATES
-        const bool startWorker = m_SettingsModel->getCheckForUpdates() &&
-                m_SwitcherModel->getUpdateEnabled();
+        const bool startWorker = m_SettingsModel.getCheckForUpdates() &&
+                m_SwitcherModel.getUpdateEnabled();
 #else
         const bool startWorker = false;
 #endif
@@ -58,6 +57,15 @@ namespace Connectivity {
     void UpdateService::stopChecking() {
         LOG_DEBUG << "#";
         emit cancelRequested();
+    }
+
+    void UpdateService::tryToUpgradeXpiks() {
+        const int availableVersion = getAvailableUpdateVersion();
+        if (m_HaveUpgradeConsent && (availableVersion > XPIKS_VERSION_INT)) {
+            const QString pathToUpdate = getPathToUpdate();
+            LOG_INFO << "About to install update from" << pathToUpdate;
+            Helpers::installUpdate(m_Environment, pathToUpdate);
+        }
     }
 
     void UpdateService::doStartChecking(const QString &pathToUpdate) {
@@ -110,6 +118,6 @@ namespace Connectivity {
         setAvailableUpdateVersion(version);
         setPathToUpdate(updatePath);
 
-        emit updateDownloaded(updatePath);
+        emit updateDownloaded();
     }
 }

@@ -12,7 +12,7 @@
 #include <QSemaphore>
 #include <QCoreApplication>
 #include "curlftpuploader.h"
-#include <Models/uploadinfo.h>
+#include <Models/Connectivity/uploadinfo.h>
 #include <Common/defines.h>
 #include "uploadbatch.h"
 

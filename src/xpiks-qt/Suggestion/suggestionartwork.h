@@ -8,7 +8,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-
 #ifndef SUGGESTIONARTWORK_H
 #define SUGGESTIONARTWORK_H
 

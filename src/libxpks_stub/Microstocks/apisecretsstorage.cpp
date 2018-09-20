@@ -1,5 +1,5 @@
 #include "apisecretsstorage.h"
-#include <Microstocks/apisecrets.h>
+#include <Microstocks/microstockenums.h>
 
 namespace libxpks {
     namespace microstocks {

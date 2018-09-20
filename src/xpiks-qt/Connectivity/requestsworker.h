@@ -13,7 +13,7 @@
 
 #include <QObject>
 #include "iconnectivityrequest.h"
-#include "../Common/itemprocessingworker.h"
+#include <Common/itemprocessingworker.h>
 
 namespace Models {
     class ProxySettings;
@@ -24,7 +24,7 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        explicit RequestsWorker(Models::ProxySettings *proxySettings, QObject *parent = 0);
+        explicit RequestsWorker(const Models::ProxySettings &proxySettings, QObject *parent = 0);
 
     public:
         void sendRequestSync(std::shared_ptr<IConnectivityRequest> &item);
@@ -38,7 +38,7 @@ namespace Connectivity {
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
-        virtual void workerStopped() override { emit stopped(); }
+        virtual void onWorkerStopped() override { emit stopped(); }
 
     public slots:
         void process() { doWork(); }
@@ -49,7 +49,7 @@ namespace Connectivity {
         void queueIsEmpty();
 
     private:
-        Models::ProxySettings *m_ProxySettings;
+        const Models::ProxySettings &m_ProxySettings;
     };
 }
 

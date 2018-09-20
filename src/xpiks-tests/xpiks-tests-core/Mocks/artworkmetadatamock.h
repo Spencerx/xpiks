@@ -2,19 +2,19 @@
 #define ARTWORKMETADATAMOCK
 
 #include <QString>
-#include "../../xpiks-qt/Models/imageartwork.h"
-#include "../../xpiks-qt/MetadataIO/originalmetadata.h"
+#include <Artworks/imageartwork.h>
+#include <MetadataIO/originalmetadata.h>
 
 namespace Mocks {
-    class ArtworkMetadataMock : public Models::ImageArtwork {
+    class ArtworkMetadataMock : public Artworks::ImageArtwork {
     public:
         ArtworkMetadataMock():
-            Models::ImageArtwork("random.jpg", 0, 0)
+            Artworks::ImageArtwork("random.jpg", 0, 0)
         {
         }
 
         ArtworkMetadataMock(const QString &filepath, qint64 directoryID = 0):
-            Models::ImageArtwork(filepath, 0, directoryID)
+            Artworks::ImageArtwork(filepath, 0, directoryID)
         {
         }
 
@@ -38,13 +38,13 @@ namespace Mocks {
             this->resetModified();
         }
 
-        QString retrieveKeyword(int index) { return getBasicModel()->retrieveKeyword(index); }
-        int rowCount() const { return getBasicModel()->rowCount(); }
+        QString retrieveKeyword(int index) { return getBasicModel().retrieveKeyword(index); }
+        int rowCount() const { return getBasicMetadataModel().rowCount(); }
 
-        bool isTitleEmpty() { return getBasicModel()->isTitleEmpty(); }
-        bool isDescriptionEmpty() { return getBasicModel()->isDescriptionEmpty(); }
+        bool isTitleEmpty() { return getBasicMetadataModel().isTitleEmpty(); }
+        bool isDescriptionEmpty() { return getBasicMetadataModel().isDescriptionEmpty(); }
 
-        bool areKeywordsEmpty() { return getBasicModel()->areKeywordsEmpty(); }
+        bool areKeywordsEmpty() { return getBasicModel().areKeywordsEmpty(); }
 
         void resetAll() { this->clearModel(); this->resetFlags(); }
 

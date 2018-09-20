@@ -50,7 +50,7 @@ namespace MetadataIO {
     class MetadataCache
     {
     public:
-        MetadataCache(Storage::IDatabaseManager *dbManager);
+        MetadataCache(Storage::IDatabaseManager &dbManager);
 
     public:
         bool initialize();
@@ -65,8 +65,8 @@ namespace MetadataIO {
 #endif
 
     public:
-        bool read(Models::ArtworkMetadata *artwork, CachedArtwork &cachedArtwork);
-        void save(Models::ArtworkMetadata *metadata, bool overwrite = true);
+        bool read(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork, CachedArtwork &cachedArtwork);
+        void save(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork, bool overwrite = true);
 
     public:
         void search(const Microstocks::SearchQuery &query, QVector<CachedArtwork> &results);
@@ -76,7 +76,7 @@ namespace MetadataIO {
 
     private:
         QMutex m_ReadMutex;
-        Storage::IDatabaseManager *m_DatabaseManager;
+        Storage::IDatabaseManager &m_DatabaseManager;
         std::shared_ptr<Storage::IDbTable> m_DbCacheIndex;
         std::shared_ptr<Storage::IDatabase> m_Database;
         ArtworkSetWAL m_SetWAL;

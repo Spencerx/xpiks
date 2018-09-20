@@ -13,9 +13,16 @@
 
 #include <type_traits>
 #include <QObject>
+#include <cstdint>
+#include "types.h"
+
+#if defined(Q_OS_WIN32) && defined(Q_PROCESSOR_X86_32) && (_MSC_VER == 1800)
+#define XPIKS_TYPED_ENUMS_WORKAROUND
+#endif
 
 namespace Common {
-    typedef uint32_t flag_t;
+#if !defined(XPIKS_TYPED_ENUMS_WORKAROUND)
+    // visual studio 2013 bug
 
     template<typename FlagType>
     struct enable_bitmask_operators {
@@ -31,13 +38,33 @@ namespace Common {
 
     template<typename FlagType>
     typename std::enable_if<enable_bitmask_operators<FlagType>::enable, FlagType>::type
-    &operator|=(FlagType &a, FlagType b) {
+    operator|(FlagType a, typename std::underlying_type<FlagType>::type b) {
         typedef typename std::underlying_type<FlagType>::type underlying;
-        a = static_cast<FlagType>(static_cast<underlying>(a) | static_cast<underlying>(b));
-        return a;
+        return static_cast<FlagType>(static_cast<underlying>(a) | b);
     }
 
-    enum struct CombinedEditFlags: flag_t {
+    template<typename FlagType>
+    typename std::enable_if<enable_bitmask_operators<FlagType>::enable, typename std::underlying_type<FlagType>::type>::type
+    operator~(FlagType a) {
+        return ~(static_cast<typename std::underlying_type<FlagType>::type>(a));
+    }
+
+    template<typename FlagType>
+    typename std::enable_if<enable_bitmask_operators<FlagType>::enable, FlagType>::type
+    operator&(FlagType a, FlagType b) {
+        typedef typename std::underlying_type<FlagType>::type underlying;
+        return static_cast<FlagType>(static_cast<underlying>(a) & static_cast<underlying>(b));
+    }
+
+    template<typename FlagType>
+    typename std::enable_if<enable_bitmask_operators<FlagType>::enable, FlagType>::type
+    operator&(FlagType a, typename std::underlying_type<FlagType>::type b) {
+        typedef typename std::underlying_type<FlagType>::type underlying;
+        return static_cast<FlagType>(static_cast<underlying>(a) & b);
+    }
+#endif
+
+    enum struct ArtworkEditFlags: flag_t {
         None = 0,
         EditTitle = 1 << 0,
         EditDescription = 1 << 1,
@@ -47,12 +74,11 @@ namespace Common {
         EditEverything = EditTitle | EditDescription | EditKeywords
     };
 
-    enum struct SuggestionFlags: flag_t {
+    enum struct KeywordEditFlags: flag_t {
         None = 0,
-        Title = 1 << 0,
-        Description = 1 << 1,
-        Keywords = 1 << 2,
-        All = Title | Description | Keywords
+        Remove = 1 << 0,
+        RemoveLast = 1 << 1,
+        Replace = 1 << 2
     };
 
     enum struct SpellCheckFlags: flag_t {
@@ -90,17 +116,12 @@ namespace Common {
         AnyTermsEverything = Everything
     };
 
-#ifdef CORE_TESTS
-    template<>
-    struct enable_bitmask_operators<SearchFlags> {
-        static constexpr bool enable = true;
+    enum struct DirectoryFlags: flag_t {
+        None = 0,
+        IsSelected = 1 << 0,
+        IsAddedAsDirectory = 1 << 1,
+        IsRemoved = 1 << 2
     };
-
-    template<>
-    struct enable_bitmask_operators<CombinedEditFlags> {
-        static constexpr bool enable = true;
-    };
-#endif
 
     enum struct WarningFlags: flag_t {
         None = 0,
@@ -127,11 +148,6 @@ namespace Common {
         VideoIsTooShort = 1 << 20
     };
 
-    template<>
-    struct enable_bitmask_operators<WarningFlags> {
-        static constexpr bool enable = true;
-    };
-
     enum struct WarningsCheckFlags: flag_t {
         None = 0,
         Keywords = 1 << 0,
@@ -150,88 +166,164 @@ namespace Common {
         All = Spelling | Stemming
     };
 
-    enum struct DirectoryFlags: flag_t {
+    enum struct PluginNotificationFlags: Common::flag_t {
         None = 0,
-        IsSelected = 1 << 0,
-        IsAddedAsDirectory = 1 << 1,
-        IsRemoved = 1 << 2
+        CurrentEditableChanged = 1 << 0,
+        PresetsUpdated = 1 << 1
     };
 
-    template<typename FlagType>
-    bool HasFlag(flag_t value, FlagType flag) {
-        flag_t intFlag = static_cast<flag_t>(flag);
-        bool result = (value & intFlag) == intFlag;
-        return result;
+    enum struct AddFilesFlags: Common::flag_t {
+        None = 0,
+        FlagAutoFindVectors = 1 << 0,
+        FlagIsFullDirectory = 1 << 1,
+        FlagIsSessionRestore = 1 << 2,
+        FlagAutoImport = 1 << 3,
+        FlagIsRemoveUndo = 1 << 4
+    };
+
+    enum struct AccountFileFlags: Common::flag_t {
+        None = 0,
+        FlagRepositoryCreated = 1 << 0,
+        FlagRepositoryModified = 1 << 1
+    };
+
+    enum struct RemoveFileFlags: Common::flag_t {
+        None = 0,
+        FlagFileRemoved = 1 << 0,
+        FlagRepositoryEmpty = 1 << 1,
+        FlagFullRepository = 1 << 2
+    };
+
+#if !defined(XPIKS_TYPED_ENUMS_WORKAROUND)
+    // visual studio 2013 bug
+
+    template<>
+    struct enable_bitmask_operators<ArtworkEditFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<PluginNotificationFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<SpellCheckFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<KeywordReplaceResult> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<SearchFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<DirectoryFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<WarningFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<WarningsCheckFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<WordAnalysisFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<AddFilesFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<KeywordEditFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<AccountFileFlags> {
+        static constexpr bool enable = true;
+    };
+
+    template<>
+    struct enable_bitmask_operators<RemoveFileFlags> {
+        static constexpr bool enable = true;
+    };
+#else
+#define ENUM_OR(ENUM_TYPE) inline ENUM_TYPE operator | (ENUM_TYPE a, ENUM_TYPE b) { \
+    using T = std::underlying_type_t <ENUM_TYPE>; \
+    return (ENUM_TYPE)(static_cast<T>(a) | static_cast<T>(b)); \
+}
+
+#define ENUM_AND(ENUM_TYPE) inline ENUM_TYPE operator & (ENUM_TYPE a, ENUM_TYPE b) { \
+    using T = std::underlying_type_t <ENUM_TYPE>; \
+    return (ENUM_TYPE)(static_cast<T>(a) & static_cast<T>(b)); \
+    } \
+    inline ENUM_TYPE operator & (ENUM_TYPE a, std::underlying_type_t <ENUM_TYPE> b) { \
+        using T = std::underlying_type_t <ENUM_TYPE>; \
+        return (ENUM_TYPE)(static_cast<T>(a) & b); \
     }
 
-    template<typename FlagType>
-    bool HasFlag(FlagType value, FlagType flag) {
-        flag_t intValue = static_cast<flag_t>(value);
-        flag_t intFlag = static_cast<flag_t>(flag);
-        bool result = (intValue & intFlag) == intFlag;
-        return result;
+#define ENUM_NOT(ENUM_TYPE) inline std::underlying_type_t <ENUM_TYPE> operator ~ (ENUM_TYPE a) { \
+    using T = std::underlying_type_t <ENUM_TYPE>; \
+    return ~(static_cast<T>(a)); \
+}
+
+    ENUM_OR(CombinedEditFlags)
+    ENUM_OR(SearchFlags)
+    ENUM_OR(DirectoryFlags)
+    ENUM_OR(WordAnalysisFlags)
+    ENUM_OR(WarningFlags)
+
+    ENUM_AND(CombinedEditFlags)
+    ENUM_AND(SearchFlags)
+    ENUM_AND(DirectoryFlags)
+    ENUM_AND(WordAnalysisFlags)
+    ENUM_AND(SpellCheckFlags)
+    ENUM_AND(WarningFlags)
+    ENUM_AND(WarningsCheckFlags)
+    ENUM_AND(PluginNotificationFlags)
+
+    ENUM_NOT(DirectoryFlags)
+    ENUM_NOT(SearchFlags)
+    ENUM_NOT(CombinedEditFlags)
+    ENUM_NOT(WarningFlags)
+#endif
+
+    // --------------------------------------------
+
+    template<typename FlagValue, typename FlagType>
+    constexpr bool HasFlag(FlagValue value, FlagType flag) {
+        return (value & flag) == flag;
     }
 
-    template<typename FlagType>
-    void SetFlag(flag_t &value, FlagType flag) {
-        value |= static_cast<flag_t>(flag);
+    template<typename FlagValue, typename FlagType>
+    void SetFlag(FlagValue &value, FlagType flag) {
+        value = value | flag;
     }
 
-    template<typename FlagType>
-    void SetFlag(FlagType &value, FlagType flag) {
-        value = static_cast<FlagType>(static_cast<flag_t>(value) | static_cast<flag_t>(flag));
+    template<typename FlagValue, typename FlagType>
+    void UnsetFlag(FlagValue &value, FlagType flag) {
+        // Xpiks should not have any tricky operations
+        // that might require unsettings some weird flags first
+        //Q_ASSERT(HasFlag(value, flag));
+        value = value & ~(flag);
     }
 
-    template<typename FlagType>
-    void SetFlag(volatile flag_t &value, FlagType flag) {
-        value |= static_cast<flag_t>(flag);
-    }
-
-    template<typename FlagType>
-    void SetFlag(volatile FlagType &value, FlagType flag) {
-        value = static_cast<FlagType>(static_cast<flag_t>(value) | static_cast<flag_t>(flag));
-    }
-
-    template<typename FlagType>
-    void UnsetFlag(flag_t &value, FlagType flag) {
-        value &= ~(static_cast<flag_t>(flag));
-    }
-
-    template<typename FlagType>
-    void UnsetFlag(FlagType &value, FlagType flag) {
-        value = static_cast<FlagType>(static_cast<flag_t>(value) & (~(static_cast<flag_t>(flag))));
-    }
-
-    template<typename FlagType>
-    void UnsetFlag(volatile flag_t &value, FlagType flag) {
-        value &= ~(static_cast<flag_t>(flag));
-    }
-
-    template<typename FlagType>
-    void UnsetFlag(volatile FlagType &value, FlagType flag) {
-        value = static_cast<FlagType>(static_cast<flag_t>(value) & (~(static_cast<flag_t>(flag))));
-    }
-
-    template<typename FlagType>
-    void ApplyFlag(flag_t &value, bool applySwitch, FlagType flag) {
-        if (applySwitch) {
-            SetFlag(value, flag);
-        } else {
-            UnsetFlag(value, flag);
-        }
-    }
-
-    template<typename FlagType>
-    void ApplyFlag(FlagType &value, bool applySwitch, FlagType flag) {
-        if (applySwitch) {
-            SetFlag(value, flag);
-        } else {
-            UnsetFlag(value, flag);
-        }
-    }
-
-    template<typename FlagType>
-    void ApplyFlag(volatile flag_t &value, bool applySwitch, FlagType flag) {
+    template<typename FlagValue, typename FlagType>
+    void ApplyFlag(FlagValue &value, bool applySwitch, FlagType flag) {
         if (applySwitch) {
             SetFlag(value, flag);
         } else {

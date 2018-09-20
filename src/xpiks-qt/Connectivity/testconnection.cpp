@@ -12,9 +12,9 @@
 #include "uploadcontext.h"
 #include "ftphelpers.h"
 #include <curl/curl.h>
-#include "../Common/defines.h"
-#include "../Models/proxysettings.h"
-#include "../Helpers/stringhelper.h"
+#include <Common/defines.h>
+#include <Models/Connectivity/proxysettings.h>
+#include <Helpers/stringhelper.h>
 #include <uploadcontext.h>
 
 namespace Connectivity {

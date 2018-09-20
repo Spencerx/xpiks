@@ -20,12 +20,11 @@
 
 namespace Suggestion {
     LocalLibraryQueryEngine::LocalLibraryQueryEngine(int engineID,
-                                                     MetadataIO::MetadataIOService *metadataIOService):
+                                                     MetadataIO::MetadataIOService &metadataIOService):
         m_EngineID(engineID),
-        m_MetadataIOService(metadataIOService)
+        m_MetadataIOService(metadataIOService),
+        m_IsEnabled(true)
     {
-        Q_ASSERT(metadataIOService != nullptr);
-
         QObject::connect(&m_Query, &LocalLibraryQuery::resultsReady,
                          this, &LocalLibraryQueryEngine::resultsFoundHandler);
     }
@@ -39,7 +38,7 @@ namespace Suggestion {
         LOG_DEBUG << query.getSearchQuery();
         m_Query.setSearchQuery(query);
 
-        m_MetadataIOService->searchArtworks(&m_Query);
+        m_MetadataIOService.searchArtworks(&m_Query);
     }
 
     void LocalLibraryQueryEngine::resultsFoundHandler() {
@@ -48,7 +47,15 @@ namespace Suggestion {
 
         auto &cachedArtworks = m_Query.getResults();
         for (auto &artwork: cachedArtworks) {
-            results.emplace_back(new SuggestionArtwork(artwork.m_Filepath, artwork.m_Title, artwork.m_Description, artwork.m_Keywords, true));
+#if !defined(UI_TESTS) && !defined(CORE_TESTS)
+            if (QFileInfo(artwork.m_Filepath).exists()) {
+#else
+            {
+#endif
+                results.emplace_back(
+                            std::make_shared<SuggestionArtwork>(
+                                artwork.m_Filepath, artwork.m_Title, artwork.m_Description, artwork.m_Keywords, true));
+            }
         }
 
         setSuggestions(results);
