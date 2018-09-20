@@ -303,7 +303,7 @@ ApplicationWindow {
     Action {
         id: fixSpellingInSelectedAction
         text: i18.n + qsTr("&Fix spelling")
-        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && appHost.areActionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Fix spelling in selected triggered")
             dispatcher.dispatch(UICommand.FixSpellingInSelected, {})
@@ -313,7 +313,7 @@ ApplicationWindow {
     Action {
         id: fixDuplicatesInSelectedAction
         text: i18.n + qsTr("&Show duplicates")
-        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && appHost.areActionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Fix duplicates in selected triggered")
             dispatcher.dispatch(UICommand.ShowDuplicatesInSelected, true)
@@ -323,7 +323,7 @@ ApplicationWindow {
     Action {
         id: removeMetadataAction
         text: i18.n + qsTr("&Remove metadata")
-        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && appHost.areActionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Remove metadata from selected triggered")
             removeMetadataDialog.open()
@@ -333,7 +333,7 @@ ApplicationWindow {
     Action {
         id: deleteKeywordsAction
         text: i18.n + qsTr("&Delete keywords")
-        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && appHost.areActionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Delete keywords from selected triggered")
             dispatcher.dispatch(UICommand.DeleteKeywordsFromSelected, {})
@@ -343,7 +343,7 @@ ApplicationWindow {
     Action {
         id: detachVectorsAction
         text: i18.n + qsTr("&Detach vectors")
-        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && appHost.areActionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Detach vectors from selected triggered")
             filteredArtworksListModel.detachVectorFromSelected()
@@ -353,7 +353,7 @@ ApplicationWindow {
     Action {
         id: createArchivesAction
         text: i18.n + qsTr("&Create archives")
-        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && appHost.areActionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Zip archives triggered")
             dispatcher.dispatch(UICommand.ZipSelected)
@@ -363,7 +363,7 @@ ApplicationWindow {
     Action {
         id: exportToCsvAction
         text: i18.n + qsTr("&Export to CSV")
-        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && appHost.areActionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("CSV export triggered")
             dispatcher.dispatch(UICommand.ExportSelectedToCSV)
@@ -373,7 +373,7 @@ ApplicationWindow {
     Action {
         id: reimportMetadataAction
         text: i18.n + qsTr("&Reimport metadata")
-        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && appHost.areActionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Reimport metadata triggered")
             reimportConfirmationDialog.open()
@@ -383,7 +383,7 @@ ApplicationWindow {
     Action {
         id: overwriteMetadataAction
         text: i18.n + qsTr("&Overwrite metadata")
-        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && appHost.areActionsEnabled
+        enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Overwrite metadata triggered")
             Common.launchDialog("Dialogs/ExportMetadata.qml", applicationWindow, {overwriteAll: true})
@@ -492,7 +492,7 @@ ApplicationWindow {
 
             MenuItem {
                 text: i18.n + qsTr("&Invert selection")
-                enabled: (artworkRepository.artworksSourcesCount > 0) && appHost.areActionsEnabled
+                enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
                 onTriggered: {
                     console.info("Invert selection triggered")
                     if (filteredArtworksListModel.getItemsCount() > 0) {
@@ -503,7 +503,7 @@ ApplicationWindow {
 
             MenuItem {
                 text: i18.n + qsTr("&Sort by filename")
-                enabled: (artworkRepository.artworksSourcesCount > 0) && appHost.areActionsEnabled
+                enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
                 checkable: true
                 onToggled: {
                     console.info("Sort by filename")
@@ -1103,7 +1103,7 @@ ApplicationWindow {
         triggeredOnStart: false
         onTriggered: {
             if ((applicationWindow.openedDialogsCount == 0) &&
-                    (appHost.areActionsAllowed) &&
+                    (applicationWindow.actionsEnabled) &&
                     (artworkRepository.artworksSourcesCount > 0) &&
                     (switcher.isDonationCampaign1Active) &&
                     (switcher.isDonateCampaign1Stage2On)) {
@@ -1208,7 +1208,7 @@ ApplicationWindow {
 
             StyledLink {
                 text: i18.n + qsTr("Check warnings")
-                enabled: appHost.areActionsAllowed && (warningsModel.warningsCount > 0)
+                enabled: applicationWindow.actionsEnabled && (warningsModel.warningsCount > 0)
                 normalLinkColor: uiColors.labelActiveForeground
                 onClicked: dispatcher.dispatch(UICommand.CheckWarnings, {})
             }
@@ -1279,7 +1279,7 @@ ApplicationWindow {
                 MouseArea {
                     id: selectModifiedMA
                     anchors.fill: parent
-                    enabled: appHost.areActionsAllowed
+                    enabled: applicationWindow.actionsEnabled
                     cursorShape: artworksListModel.modifiedArtworksCount > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
                     onClicked: {
                         if (artworksListModel.modifiedArtworksCount > 0) {
