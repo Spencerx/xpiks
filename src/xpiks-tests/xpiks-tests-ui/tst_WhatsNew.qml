@@ -10,11 +10,6 @@ Item {
 
     Component.onCompleted: TestsHost.setup()
 
-    QtObject {
-        id: applicationWindow
-        property bool leftSideCollapsed: false
-    }
-
     WhatsNewDialog {
         id: whatsNewDialog
         anchors.fill: parent

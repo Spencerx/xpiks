@@ -11,11 +11,6 @@ Item {
 
     Component.onCompleted: TestsHost.setup()
 
-    QtObject {
-        id: applicationWindow
-        property bool leftSideCollapsed: false
-    }
-
     Loader {
         id: loader
         anchors.fill: parent

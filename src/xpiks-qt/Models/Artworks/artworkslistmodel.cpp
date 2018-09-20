@@ -1132,7 +1132,7 @@ namespace Models {
                                           std::function<void (ArtworkItem const &, size_t)> action) const {
         int itemsProcessed = 0;
         for (auto &r: ranges.getRanges()) {
-            if ((r.first < 0) || (r.second >= m_ArtworkList.size())) { continue; }
+            if ((r.first < 0) || (r.second >= (int)m_ArtworkList.size())) { continue; }
 
             for (int i = r.first; i <= r.second; i++) {
                 auto &artwork = accessArtwork(i);

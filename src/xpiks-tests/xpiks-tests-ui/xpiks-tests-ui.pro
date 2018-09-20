@@ -439,7 +439,11 @@ DISTFILES += \
     TestUtils.js \
     tst_MainGrid.qml \
     tst_DeleteKeywordsDialog.qml \
-    tst_KeywordsSuggestion.qml
+    tst_KeywordsSuggestion.qml \
+    ../../xpiks-qt/CollapserTabs/FilesFoldersTab.qml \
+    ../../xpiks-qt/CollapserTabs/QuickBufferTab.qml \
+    ../../xpiks-qt/CollapserTabs/TranslatorTab.qml \
+    tst_QuickBuffer.qml
 
 HEADERS += \
     testshost.h \

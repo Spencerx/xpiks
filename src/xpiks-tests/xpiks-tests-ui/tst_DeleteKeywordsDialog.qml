@@ -14,7 +14,7 @@ Item {
     Component.onCompleted: TestsHost.setup()
 
     QtObject {
-        id: applicationWindow
+        id: appHost
         property bool leftSideCollapsed: false
     }
 
