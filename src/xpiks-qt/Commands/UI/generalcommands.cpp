@@ -44,13 +44,13 @@ namespace Commands {
             // selected index of combobox in the MainGrid.qml
             Models::FilteredArtworksListModel::SelectionType selectionType;
             switch (selectionIndex) {
-                case 0: selectionType = Models::FilteredArtworksListModel::SelectAll;
-                case 1: selectionType = Models::FilteredArtworksListModel::SelectNone;
-                case 2: selectionType = Models::FilteredArtworksListModel::SelectModified;
-                case 3: selectionType = Models::FilteredArtworksListModel::SelectImages;
-                case 4: selectionType = Models::FilteredArtworksListModel::SelectVectors;
-                case 5: selectionType = Models::FilteredArtworksListModel::SelectVideos;
-                default: selectionType = Models::FilteredArtworksListModel::DontSelect;
+                case 0: selectionType = Models::FilteredArtworksListModel::SelectAll; break;
+                case 1: selectionType = Models::FilteredArtworksListModel::SelectNone; break;
+                case 2: selectionType = Models::FilteredArtworksListModel::SelectModified; break;
+                case 3: selectionType = Models::FilteredArtworksListModel::SelectImages; break;
+                case 4: selectionType = Models::FilteredArtworksListModel::SelectVectors; break;
+                case 5: selectionType = Models::FilteredArtworksListModel::SelectVideos; break;
+                default: selectionType = Models::FilteredArtworksListModel::DontSelect; break;
             }
 
             m_Source.selectArtworksEx(selectionType);
