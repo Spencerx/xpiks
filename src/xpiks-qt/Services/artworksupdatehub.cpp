@@ -58,28 +58,6 @@ namespace Services {
         this->updateArtworkByID(artwork->getItemID(), artwork->getLastKnownIndex(), m_StandardRoles);
     }
 
-    void ArtworksUpdateHub::updateArtworks(Artworks::WeakArtworksSnapshot const &artworks, UpdateMode updateMode) {
-        LOG_INFO << "Update" << artworks.size() << "artwork(s)";
-        decltype(m_UpdateRequests) requests;
-        requests.reserve(artworks.size());
-        QSet<int> rolesToUpdate = m_StandardRoles.toList().toSet();
-        for (auto &artwork: artworks) {
-            auto updateRequest = std::make_shared<ArtworkUpdateRequest>(
-                            artwork->getItemID(),
-                            artwork->getLastKnownIndex(),
-                            rolesToUpdate,
-                            updateMode == FastUpdate);
-            requests.emplace_back(updateRequest);
-        }
-
-        {
-            QMutexLocker locker(&m_Lock);
-            m_UpdateRequests.insert(m_UpdateRequests.end(), requests.begin(), requests.end());
-        }
-
-        emit updateRequested();
-    }
-
     void ArtworksUpdateHub::updateArtworks(Artworks::ArtworksSnapshot const &artworks, UpdateMode updateMode) {
         LOG_INFO << "Update" << artworks.size() << "artwork(s)";
         if (artworks.empty()) { return; }
