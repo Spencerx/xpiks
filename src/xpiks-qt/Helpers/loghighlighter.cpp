@@ -14,7 +14,7 @@
 #include "../QMLExtensions/colorsmodel.h"
 
 namespace Helpers {
-    LogHighlighter::LogHighlighter(QMLExtensions::ColorsModel *colorsModel, QTextDocument *document) :
+    LogHighlighter::LogHighlighter(QMLExtensions::ColorsModel &colorsModel, QTextDocument *document) :
         QSyntaxHighlighter(document),
         m_ColorsModel(colorsModel)
     {
@@ -23,9 +23,9 @@ namespace Helpers {
     void LogHighlighter::highlightBlock(const QString &text) {
         int size = text.size();
 
-        QColor destructiveColor = m_ColorsModel->destructiveColor();
-        QColor artworkModifiedColor = m_ColorsModel->artworkModifiedColor();
-        QColor labelActiveForeground = m_ColorsModel->labelActiveForeground();
+        QColor destructiveColor = m_ColorsModel.destructiveColor();
+        QColor artworkModifiedColor = m_ColorsModel.artworkModifiedColor();
+        QColor labelActiveForeground = m_ColorsModel.labelActiveForeground();
 
         QString word = text.mid(13, 13+8).toLower();
 

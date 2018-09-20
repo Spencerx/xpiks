@@ -10,7 +10,7 @@
 
 #include "uploadwatcher.h"
 #include <QFileInfo>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Connectivity {
     UploadWatcher::UploadWatcher(QObject *parent):

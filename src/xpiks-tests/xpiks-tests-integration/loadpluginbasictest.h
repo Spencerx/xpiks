@@ -6,8 +6,8 @@
 class LoadPluginBasicTest : public IntegrationTestBase
 {
 public:
-    LoadPluginBasicTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    LoadPluginBasicTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

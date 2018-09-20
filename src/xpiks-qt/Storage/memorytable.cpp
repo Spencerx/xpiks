@@ -9,7 +9,7 @@
  */
 
 #include "memorytable.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Storage {
     MemoryTable::MemoryTable(const QString &name):

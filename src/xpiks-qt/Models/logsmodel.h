@@ -12,40 +12,43 @@
 #define LOGSMODEL
 
 #include <QObject>
+#include <QString>
 #include <QQuickTextDocument>
 
 namespace Helpers {
     class LoggingWorker;
 }
 
-namespace QMLExtensions {
-    class ColorsModel;
-}
-
-class QString;
-
 namespace Models {
     class LogsModel : public QObject {
         Q_OBJECT
         Q_PROPERTY(bool withLogs READ getWithLogs CONSTANT)
+        Q_PROPERTY(QString logsExtract READ getLogsExtract NOTIFY logsExtractChanged)
 
     public:
         LogsModel(QObject *parent=NULL);
-        virtual ~LogsModel();
+
+    public:
+        const QString &getLogsExtract() const { return m_LogsExtract; }
+        bool getWithLogs() const { return m_WithLogs; }
 
     public:
         void startLogging();
         void stopLogging();
-        void InjectDependency(QMLExtensions::ColorsModel *colorsModel);
 
     public:
-        Q_INVOKABLE QString getAllLogsText(bool moreLogs=false);
-        Q_INVOKABLE void initLogHighlighting(QQuickTextDocument *document);
-        bool getWithLogs() const { return m_WithLogs; }
+        QString getAllLogsText(bool moreLogs=false);
+        void updateLogs(bool moreLogs=false);
+
+    public:
+        Q_INVOKABLE void clearLogsExtract();
+
+    signals:
+        void logsExtractChanged();
 
     private:
         Helpers::LoggingWorker *m_LoggingWorker;
-        QMLExtensions::ColorsModel *m_ColorsModel;
+        QString m_LogsExtract;
         bool m_WithLogs;
     };
 }

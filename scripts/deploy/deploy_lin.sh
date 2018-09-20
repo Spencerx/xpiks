@@ -1,20 +1,24 @@
 #!/bin/bash
 
 APP_NAME=Xpiks
-VERSION="1.5.1"
+VERSION="1.5.2"
 APPDIR_NAME="Xpiks"
 
 STAGING_DIR="./${APP_NAME}.AppDir"
 
 DEPLOY_TOOL=linuxdeploy
-
-BUILD_DIR="../../build-xpiks-qt-Desktop_Qt_5_9_3_GCC_64bit-Release"
 LIBS_PROFILE=release
 
-XPIKS_QT_DIR=".."
-REPO_ROOT="../../.."
+REPO_ROOT=$(git rev-parse --show-toplevel)
+XPIKS_QT_DIR="${REPO_ROOT}/src/xpiks-qt"
+BUILD_DIR="${REPO_ROOT}/src/build-xpiks-qt-Desktop_Qt_5_6_2_GCC_64bit-Release"
 
-QT_BIN_PATH=/home/ktar/Qt5.9.3/5.9.3/gcc_64/bin
+QT_BIN_PATH=/home/ktar/Qt5.6.2/5.6/gcc_64/bin
+
+if [ ! -d "$QT_BIN_PATH/" ]; then
+    echo "Qt /bin/ not found at $QT_BIN_PATH"
+    exit
+fi
 
 echo "------------------------------"
 echo "Working in $(pwd)"
@@ -32,6 +36,8 @@ $DEPLOY_TOOL -appdir "$STAGING_DIR" -blacklist linuxdeploy.blacklist -exe "${BUI
 # -------------------------------------------------
 # ---------- Manual dependencies section-----------
 # -------------------------------------------------
+
+echo "Copying manual dependencies"
 
 cp -v -r "${XPIKS_QT_DIR}"/deps/* "${STAGING_DIR}/"
 rm -v $STAGING_DIR/translations/*.ts
@@ -52,6 +58,22 @@ Categories=Graphics;Photography;
 EOF
 
 chmod +x "$STAGING_DIR/$APP_NAME.desktop"
+
+# ----------------------------------------
+# --------- Fixing recoverty -------------
+# ----------------------------------------
+echo "Fixing Recoverty RPATH"
+
+patchelf --set-rpath "\$ORIGIN:\$ORIGIN/../lib/" "$STAGING_DIR/recoverty/Recoverty"
+
+cat <<EOF > "$STAGING_DIR/recoverty/qt.conf"
+[Paths]
+Plugins = ../plugins
+Imports = ../qml
+Qml2Imports = ../qml
+EOF
+
+# ----------------------------------------
 
 mkdir $STAGING_DIR/ac_sources
 mv $STAGING_DIR/en_wordlist.tsv $STAGING_DIR/ac_sources/

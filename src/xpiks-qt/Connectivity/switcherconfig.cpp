@@ -12,7 +12,7 @@
 #include <QDir>
 #include <QJsonValue>
 #include "apimanager.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Connectivity {
 
@@ -42,7 +42,8 @@ namespace Connectivity {
         return d;
     }
 
-    SwitcherConfig::SwitcherConfig(Common::ISystemEnvironment &environment, QObject *parent):
+    SwitcherConfig::SwitcherConfig(Common::ISystemEnvironment &environment,
+                                   QObject *parent):
         Models::AbstractConfigUpdaterModel(
             environment.path({LOCAL_SWITCHER_CONFIG}),
             Connectivity::ApiManager::getInstance().getSwitcherAddr(),
@@ -67,7 +68,7 @@ namespace Connectivity {
     }
 
     bool SwitcherConfig::processLocalConfig(const QJsonDocument &document) {
-        LOG_INTEGR_TESTS_OR_DEBUG << document;
+        LOG_VERBOSE_OR_DEBUG << document;
         bool anyError = false;
 
         do {
@@ -88,7 +89,7 @@ namespace Connectivity {
     void SwitcherConfig::processRemoteConfig(const QJsonDocument &remoteDocument, bool overwriteLocal) {
         bool overwrite = false;
 
-        LOG_INTEGR_TESTS_OR_DEBUG << remoteDocument;
+        LOG_VERBOSE_OR_DEBUG << remoteDocument;
 
         if (!overwriteLocal && remoteDocument.isObject()) {
             QJsonObject rootObject = remoteDocument.object();
@@ -245,7 +246,7 @@ namespace Connectivity {
             m_SwitchesHash[KeywordsDragDropEnabled] = keywordsDragDropEnabled;
             m_SwitchesHash[TelemetryEnabled] = telemetryEnabled;
 
-            LOG_INTEGR_TESTS_OR_DEBUG << m_SwitchesHash;
+            LOG_VERBOSE_OR_DEBUG << m_SwitchesHash;
         }
     }
 }

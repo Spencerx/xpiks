@@ -16,41 +16,77 @@
 #include <deque>
 #include <memory>
 #include <vector>
-#include <tuple>
 #include <algorithm>
 #include "../Common/flags.h"
 #include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../Helpers/threadhelpers.h"
 
 namespace Common {
-    template<typename T>
+    template<typename ItemType, typename ResultType=void>
     class ItemProcessingWorker
-    {
-    public:
-        typedef quint32 batch_id_t;
-        typedef std::tuple<std::shared_ptr<T>, Common::flag_t, batch_id_t> ItemType;
+    {        
+    private:
+        enum WorkerFlags {
+            // separators are used to flush pending changes
+            FlagIsSeparator = 1 << 0,
+            // stopper is used to break worker processing loop
+            FlagIsStopper = 1 << 1,
+            // milestones are used in big batches to sleep
+            // in order not to create high CPU pressure
+            FlagIsMilestone = 1 << 2
+        };
 
     public:
-        ItemProcessingWorker(int delayPeriod = 0xffffffff):
+        typedef quint32 batch_id_t;
+
+        class WorkItem {
+        public:
+            WorkItem(const std::shared_ptr<ItemType> &item, Common::flag_t flags, batch_id_t id):
+                m_Item(item),
+                m_Flags(flags),
+                m_ID(id)
+            {}
+            WorkItem(Common::flag_t flags):
+                m_Flags(flags)
+            {}
+            WorkItem(){}
+
+        private:
+            inline bool getIsSeparatorFlag() const { return Common::HasFlag(m_Flags, FlagIsSeparator); }
+            inline bool getIsStopperFlag() const { return Common::HasFlag(m_Flags, FlagIsStopper); }
+            inline bool getIsMilestoneFlag() const { return Common::HasFlag(m_Flags, FlagIsMilestone); }
+
+        public:
+            bool isStopper() const { return (m_Item.get() == nullptr) && getIsStopperFlag(); }
+            bool isSeparator() const { return getIsSeparatorFlag(); }
+            bool isMilestone() const { return getIsMilestoneFlag(); }
+
+        public:
+            std::shared_ptr<ItemType> m_Item;
+            Common::flag_t m_Flags = 0;
+            batch_id_t m_ID = INVALID_BATCH_ID;
+        };
+
+        class WorkResult {
+        public:
+            WorkResult(std::shared_ptr<ResultType> &result, batch_id_t batchID):
+                m_Result(std::move(result)),
+                m_BatchID(batchID)
+            { }
+        public:
+            std::shared_ptr<ResultType> m_Result;
+            batch_id_t m_BatchID;
+        };
+
+    public:
+        ItemProcessingWorker(int batchMaxSize = 0xffffffff):
             m_BatchID(1),
-            m_DelayPeriod(delayPeriod),
-            m_Cancel(false),
-            m_IsRunning(false)
+            m_MilestoneSize(batchMaxSize),
+            m_Cancel(false)
         { }
 
         virtual ~ItemProcessingWorker() { }
-
-    private:
-        enum WorkerFlags {
-            FlagIsSeparator = 1 << 0,
-            FlagIsStopper = 1 << 1,
-            FlagIsWithDelay = 1 << 2
-        };
-
-    protected:
-        inline bool getIsSeparatorFlag(Common::flag_t flags) const { return Common::HasFlag(flags, FlagIsSeparator); }
-        inline bool getIsStopperFlag(Common::flag_t flags) const { return Common::HasFlag(flags, FlagIsStopper); }
-        inline bool getWithDelayFlag(Common::flag_t flags) const { return Common::HasFlag(flags, FlagIsWithDelay); }
 
     public:
         void submitSeparator() {
@@ -62,7 +98,7 @@ namespace Common {
                 Common::SetFlag(flags, FlagIsSeparator);
 
                 bool wasEmpty = m_Queue.empty();
-                m_Queue.emplace_back(std::shared_ptr<T>(), flags, INVALID_BATCH_ID);
+                m_Queue.emplace_back(WorkItem(flags));
 
                 if (wasEmpty) {
                     m_WaitAnyItem.wakeOne();
@@ -71,7 +107,7 @@ namespace Common {
             m_QueueMutex.unlock();
         }
 
-        batch_id_t submitItem(const std::shared_ptr<T> &item) {
+        batch_id_t submitItem(const std::shared_ptr<ItemType> &item) {
             if (m_Cancel) {
                 return INVALID_BATCH_ID;
             }
@@ -93,7 +129,7 @@ namespace Common {
             return batchID;
         }
 
-        batch_id_t submitFirst(const std::shared_ptr<T> &item) {
+        batch_id_t submitFirst(const std::shared_ptr<ItemType> &item) {
             if (m_Cancel) {
                 return INVALID_BATCH_ID;
             }
@@ -115,7 +151,7 @@ namespace Common {
             return batchID;
         }
 
-        batch_id_t submitItems(const std::vector<std::shared_ptr<T> > &items) {
+        batch_id_t submitItems(const std::vector<std::shared_ptr<ItemType> > &items) {
             if (m_Cancel) {
                 return INVALID_BATCH_ID;
             }
@@ -132,7 +168,7 @@ namespace Common {
                     auto &item = items.at(i);
 
                     Common::flag_t flags = commonFlags;
-                    if (i % m_DelayPeriod == 0) { Common::SetFlag(flags, FlagIsWithDelay); }
+                    if (i % m_MilestoneSize == 0) { Common::SetFlag(flags, FlagIsMilestone); }
 
                     m_Queue.emplace_back(item, flags, batchID);
                 }
@@ -163,8 +199,8 @@ namespace Common {
             m_QueueMutex.lock();
             {
                 m_Queue.erase(std::remove_if(m_Queue.begin(), m_Queue.end(),
-                                             [&batchID](const ItemType &item) {
-                    return std::get<2>(item) == batchID;
+                                             [&batchID](const WorkItem &item) {
+                    return item.m_ID == batchID;
                 }),
                               m_Queue.end());
 
@@ -184,18 +220,15 @@ namespace Common {
         }
 
         bool isCancelled() const { return m_Cancel; }
-        bool isRunning() const { return m_IsRunning; }
 
         void doWork() {
             if (initWorker()) {
-                m_IsRunning = true;
                 runWorkerLoop();
-                m_IsRunning = false;
             } else {
                 m_Cancel = true;
             }
 
-            workerStopped();
+            onWorkerStopped();
         }
 
         void stopWorking(bool immediately=true) {
@@ -210,7 +243,7 @@ namespace Common {
                 Common::flag_t flags = 0;
                 Common::SetFlag(flags, FlagIsStopper);
 
-                m_Queue.emplace_back(std::shared_ptr<T>(), flags, INVALID_BATCH_ID);
+                m_Queue.emplace_back(WorkItem(flags));
                 m_WaitAnyItem.wakeOne();
             }
             m_QueueMutex.unlock();
@@ -221,16 +254,17 @@ namespace Common {
         }
 
     protected:
-        virtual bool initWorker() = 0;
-        virtual void processOneItem(std::shared_ptr<T> &item) = 0;
-        virtual void onQueueIsEmpty() = 0;
-        virtual void workerStopped() = 0;
+        virtual bool initWorker() { return true; }
 
-        virtual void processOneItemEx(std::shared_ptr<T> &item, batch_id_t batchID, Common::flag_t flags) {
-            Q_UNUSED(flags);
-            Q_UNUSED(batchID);
-            processOneItem(item);
+        virtual std::shared_ptr<ResultType> processWorkItem(WorkItem &workItem) {
+            processOneItem(workItem.m_Item);
+            return std::shared_ptr<ResultType>();
         }
+
+        virtual void processOneItem(std::shared_ptr<ItemType> &item) { Q_UNUSED(item); }
+        virtual void onQueueIsEmpty() { /* DO NOTHING */ }
+        virtual void onWorkerStopped() { /* DO NOTHING */ }
+        virtual void onResultsAvailable(std::vector<WorkResult> &results) { Q_UNUSED(results); }
 
         void runWorkerLoop() {
             m_IdleEvent.set();
@@ -242,9 +276,7 @@ namespace Common {
                 }
 
                 bool noMoreItems = false;
-                std::shared_ptr<T> item;
-                Common::flag_t flags = 0;
-                batch_id_t batchID = INVALID_BATCH_ID;
+                WorkItem workItem;
 
                 m_QueueMutex.lock();
                 {
@@ -255,22 +287,19 @@ namespace Common {
                         }
                     }
 
-                    auto &nextItem = m_Queue.front();
-                    item = std::get<0>(nextItem);
-                    flags = std::get<1>(nextItem);
-                    batchID = std::get<2>(nextItem);
+                    workItem = m_Queue.front();
                     m_Queue.pop_front();
-
                     noMoreItems = m_Queue.empty();
                 }
                 m_QueueMutex.unlock();
 
-                if ((item.get() == nullptr) && getIsStopperFlag(flags)) { break; }
+                if (workItem.isStopper()) { break; }
 
                 m_IdleEvent.reset();
                 {
                     try {
-                        processOneItemEx(item, batchID, flags);
+                        auto result = processWorkItem(workItem);
+                        saveResult(result, workItem);
                     }
                     catch (...) {
                         LOG_WARNING << "Exception while processing item!";
@@ -278,10 +307,22 @@ namespace Common {
                 }
                 m_IdleEvent.set();
 
-                if (noMoreItems) {
-                    onQueueIsEmpty();
-                }
+                if (noMoreItems) { onQueueIsEmpty(); }
+                if (noMoreItems || workItem.isSeparator()) { reportResults(); }
             }
+        }
+
+        void saveResult(std::shared_ptr<ResultType> &result, WorkItem &workItem) {
+            if (result) {
+                m_Results.emplace_back(result, workItem.m_ID);
+            }
+        }
+
+        void reportResults() {
+            if (m_Results.empty()) { return; }
+            decltype(m_Results) results;
+            results.swap(m_Results);
+            onResultsAvailable(results);
         }
 
     private:
@@ -294,11 +335,11 @@ namespace Common {
         Helpers::ManualResetEvent m_IdleEvent;
         QWaitCondition m_WaitAnyItem;
         QMutex m_QueueMutex;
-        std::deque<ItemType> m_Queue;
+        std::deque<WorkItem> m_Queue;
+        std::vector<WorkResult> m_Results;
         batch_id_t m_BatchID;
-        unsigned int m_DelayPeriod;
+        unsigned int m_MilestoneSize;
         volatile bool m_Cancel;
-        volatile bool m_IsRunning;
     };
 }
 

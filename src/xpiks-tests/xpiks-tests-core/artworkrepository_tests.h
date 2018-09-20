@@ -17,11 +17,11 @@ private slots:
     void newFilesCountTest();
     void noNewDirectoriesCountTest();
     void noNewFilesCountTest();
-    void endAccountingWithNoNewFilesTest();
-    void startAccountingNewFilesEmitsTest();
+    void accountFileEmitsTest();
     void selectFolderTest();
     void oneEmptyDirectoryStaysTest();
     void fewEmptyDirectoriesStayTest();
+    void removeDirectoryWithHighIDNumberTest();
     // selection tests
     void allDirsInitiallySelectedTest();
     void unselectOneSelectsOnlyOneTest();

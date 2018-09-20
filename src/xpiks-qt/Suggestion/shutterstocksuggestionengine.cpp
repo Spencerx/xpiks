@@ -14,7 +14,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QJsonObject>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Suggestion {
     void parseJsonResults(const QJsonArray &jsonArray, std::vector<std::shared_ptr<SuggestionArtwork> > &suggestionArtworks) {
@@ -46,7 +46,9 @@ namespace Suggestion {
                             description = imageResult["description"].toString();
                         }
 
-                        suggestionArtworks.emplace_back(new SuggestionArtwork(url, externalUrl, QString(""), description, keywordsList));
+                        suggestionArtworks.emplace_back(
+                                    std::make_shared<SuggestionArtwork>(
+                                        url, externalUrl, QString(""), description, keywordsList));
                     }
                 }
             }

@@ -14,18 +14,17 @@
 #include "../Storage/memorytable.h"
 
 namespace QMLExtensions {
-    DbVideoCacheIndex::DbVideoCacheIndex(Storage::IDatabaseManager *dbManager):
+    DbVideoCacheIndex::DbVideoCacheIndex(Storage::IDatabaseManager &dbManager):
         DbCacheIndex(dbManager)
     {
     }
 
     bool DbVideoCacheIndex::initialize() {
         LOG_DEBUG << "#";
-        Q_ASSERT(m_DatabaseManager != nullptr);
 
         bool success = false;
         do {
-            m_Database = m_DatabaseManager->openDatabase(Constants::VIDEOCACHE_DB_NAME);
+            m_Database = m_DatabaseManager.openDatabase(Constants::VIDEOCACHE_DB_NAME);
             if (!m_Database) {
                 LOG_WARNING << "Failed to open database";
             } else {
@@ -34,7 +33,7 @@ namespace QMLExtensions {
 
             if (!m_DbCacheIndex) {
                 LOG_WARNING << "Failed to get table" << Constants::VIDEO_CACHE_TABLE;
-                m_DbCacheIndex.reset(new Storage::MemoryTable(Constants::VIDEO_CACHE_TABLE));
+                m_DbCacheIndex = std::make_shared<Storage::MemoryTable>(Constants::VIDEO_CACHE_TABLE);
             }
 
             success = true;

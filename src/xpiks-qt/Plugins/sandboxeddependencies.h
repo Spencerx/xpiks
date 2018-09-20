@@ -21,39 +21,39 @@ namespace Models {
     class UIManager;
 }
 
+namespace Connectivity {
+    class RequestsService;
+}
+
 namespace Plugins {
     class UIProvider;
 
     class UIProviderSafe : public IUIProvider {
     public:
-        UIProviderSafe(int pluginID, UIProvider *realUIProvider);
+        UIProviderSafe(int pluginID, UIProvider &realUIProvider);
 
     public:
         virtual void openDialog(const QUrl &rcPath, const QHash<QString, QObject*> &contextModels = QHash<QString, QObject*>()) const override;
         virtual int addTab(const QString &tabIconUrl, const QString &tabComponentUrl, QObject *tabModel) const override;
         virtual bool removeTab(int tabID) const override;
-        virtual std::shared_ptr<QuickBuffer::ICurrentEditable> getCurrentEditable() const override;
 
     private:
         int m_PluginID;
-        UIProvider *m_RealUIProvider;
+        UIProvider &m_RealUIProvider;
     };
 
     class MicrostockServicesSafe: public Microstocks::IMicrostockServices {
     public:
-        MicrostockServicesSafe(Connectivity::RequestsService &requestsService,
-                               Microstocks::MicrostockAPIClients &apiClients);
+        MicrostockServicesSafe(Microstocks::IMicrostockAPIClients &apiClients,
+                               Connectivity::RequestsService &requestsService);
 
         // IMicrostockServices interface
     public:
-        virtual Microstocks::IMicrostockService *getShutterstockService() override { return &m_ShutterstockService; }
-        virtual Microstocks::IMicrostockService *getFotoliaService() override { return &m_FotoliaService; }
-        virtual Microstocks::IMicrostockService *getGettyService() override { return &m_GettyService; }
+        virtual std::shared_ptr<Microstocks::IMicrostockService> getService(Microstocks::MicrostockType type) override;
 
     private:
-        Microstocks::MicrostockService m_ShutterstockService;
-        Microstocks::MicrostockService m_FotoliaService;
-        Microstocks::MicrostockService m_GettyService;
+        Microstocks::IMicrostockAPIClients &m_ApiClients;
+        Connectivity::RequestsService &m_RequestsService;
     };
 }
 

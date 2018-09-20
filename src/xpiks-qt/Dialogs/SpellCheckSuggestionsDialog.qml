@@ -14,6 +14,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
+import xpiks 1.0
 import "../Constants"
 import "../Common.js" as Common;
 import "../Components"
@@ -25,7 +26,7 @@ Item {
     anchors.fill: parent
     property var callbackObject
     property bool initialized: false
-    property var spellCheckSuggestionModel: helpersWrapper.getSpellCheckSuggestionsModel()
+    property var spellCheckSuggestionModel: dispatcher.getCommandTarget(UICommand.FixSpellingArtwork)
 
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();
@@ -121,7 +122,9 @@ Item {
                         text: i18.n + getOriginalText()
 
                         function getOriginalText() {
-                            return spellCheckSuggestionModel.artworksCount === 1 ? qsTr("1 artwork selected") : qsTr("%1 artworks selected").arg(spellCheckSuggestionModel.artworksCount)
+                            return spellCheckSuggestionModel.artworksCount === 1 ?
+                                        qsTr("1 artwork selected") :
+                                        qsTr("%1 artworks selected").arg(spellCheckSuggestionModel.artworksCount)
                         }
                     }
                 }
@@ -213,7 +216,7 @@ Item {
                                         focus: true
 
                                         Repeater {
-                                            model: spellCheckSuggestionModel.getSuggestionItself(delegateIndex)
+                                            model: spellCheckSuggestionModel.getSuggestionObject(delegateIndex)
 
                                             delegate: SuggestionWrapper {
                                                 property int suggestionIndex: index

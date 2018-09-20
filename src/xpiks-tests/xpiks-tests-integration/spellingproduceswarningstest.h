@@ -6,8 +6,8 @@
 class SpellingProducesWarningsTest : public IntegrationTestBase
 {
 public:
-    SpellingProducesWarningsTest(IntegrationTestsEnvironment &environment, Commands::CommandManager *commandManager):
-        IntegrationTestBase(environment, commandManager)
+    SpellingProducesWarningsTest(IntegrationTestsEnvironment &environment, XpiksTestsApp &testsApp):
+        IntegrationTestBase(environment, testsApp)
     {}
 
     // IntegrationTestBase interface

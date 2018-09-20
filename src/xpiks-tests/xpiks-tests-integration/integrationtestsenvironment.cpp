@@ -2,7 +2,7 @@
 #include <QDateTime>
 #include <QDir>
 #include "../../xpiks-qt/Helpers/filehelpers.h"
-#include "../../xpiks-qt/Common/defines.h"
+#include "../../xpiks-qt/Common/logging.h"
 
 IntegrationTestsEnvironment::IntegrationTestsEnvironment(const QStringList &appArguments):
     Common::SystemEnvironment(appArguments)

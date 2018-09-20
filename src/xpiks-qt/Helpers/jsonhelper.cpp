@@ -9,6 +9,7 @@
  */
 
 #include "jsonhelper.h"
+#include "../Common/logging.h"
 
 namespace Helpers {
     bool mergeJsonArrays(const QJsonArray &arrayFrom, QJsonArray &arrayTo, CompareValuesJson &comparer);
@@ -160,7 +161,7 @@ namespace Helpers {
     }
 
     bool mergeJsonObjects(const QJsonObject &objectMergeFrom, QJsonObject &objectMergeTo, CompareValuesJson &comparer) {
-        LOG_INTEGR_TESTS_OR_DEBUG << "#";
+        LOG_VERBOSE_OR_DEBUG << "#";
 
         QStringList keysMergeFrom = objectMergeFrom.keys();
         int keysSize = keysMergeFrom.size();

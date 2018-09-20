@@ -13,36 +13,25 @@
 #include <QScreen>
 #include "imagecachingworker.h"
 #include "imagecacherequest.h"
-#include "../Models/artworkmetadata.h"
-#include "../Models/imageartwork.h"
-#include "../Helpers/asynccoordinator.h"
-#include "../Commands/commandmanager.h"
-#include "../MetadataIO/artworkssnapshot.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/imageartwork.h>
+#include <Helpers/asynccoordinator.h>
+#include <Artworks/artworkssnapshot.h>
 
 namespace QMLExtensions {
-    ImageCachingService::ImageCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent) :
+    ImageCachingService::ImageCachingService(Common::ISystemEnvironment &environment,
+                                             QObject *parent) :
         QObject(parent),
-        Common::BaseEntity(),
         m_Environment(environment),
-        m_DatabaseManager(dbManager),
         m_CachingWorker(NULL),
         m_IsCancelled(false),
         m_Scale(1.0)
     {
         updateDefaultSize();
-        Q_ASSERT(dbManager != nullptr);
     }
 
-    void ImageCachingService::startService(const std::shared_ptr<Common::ServiceStartParams> &params) {
-        auto coordinatorParams = std::dynamic_pointer_cast<Helpers::AsyncCoordinatorStartParams>(params);
-
-        Helpers::AsyncCoordinator *coordinator = nullptr;
-        if (coordinatorParams) { coordinator = coordinatorParams->m_Coordinator; }
-
-        Helpers::AsyncCoordinatorLocker locker(coordinator);
-        Q_UNUSED(locker);
-
-        m_CachingWorker = new ImageCachingWorker(m_Environment, coordinator, m_DatabaseManager);
+    void ImageCachingService::startService(Helpers::AsyncCoordinator &coordinator, Storage::IDatabaseManager &dbManager) {
+        m_CachingWorker = new ImageCachingWorker(m_Environment, coordinator, dbManager);
 
         QThread *thread = new QThread();
         m_CachingWorker->moveToThread(thread);
@@ -103,7 +92,7 @@ namespace QMLExtensions {
         this->cacheImage(key, QSize(DEFAULT_THUMB_WIDTH * m_Scale, DEFAULT_THUMB_HEIGHT * m_Scale));
     }
 
-    void ImageCachingService::generatePreviews(const MetadataIO::ArtworksSnapshot &snapshot) {
+    void ImageCachingService::generatePreviews(const Artworks::ArtworksSnapshot &snapshot) {
         if (m_IsCancelled) { return; }
 
         Q_ASSERT(m_CachingWorker != NULL);
@@ -116,13 +105,12 @@ namespace QMLExtensions {
 
         updateDefaultSize();
 
-        for (size_t i = 0; i < size; i++) {
-            auto *artwork = snapshot.get(i);
-            Models::ImageArtwork *imageArtwork = dynamic_cast<Models::ImageArtwork*>(artwork);
+        for (auto &artwork: snapshot) {
+            auto imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
             if (imageArtwork != nullptr) {
-                requests.emplace_back(new ImageCacheRequest(artwork->getThumbnailPath(),
-                                                            m_DefaultSize,
-                                                            recache));
+                requests.emplace_back(std::make_shared<ImageCacheRequest>(artwork->getThumbnailPath(),
+                                                                          m_DefaultSize,
+                                                                          recache));
             }
         }
 

@@ -30,3 +30,5 @@ comment:
 ignore:
   - "vendors"
   - "vendors/**/*"
+  - "src/xpiks-tests"
+

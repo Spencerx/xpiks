@@ -14,6 +14,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
+import xpiks 1.0
 import "../Constants"
 import "../Common.js" as Common;
 import "../Components"
@@ -24,7 +25,7 @@ Item {
     property bool immediateProcessing: false
     property var callbackObject
     anchors.fill: parent
-    property var zipArchiver: helpersWrapper.getZipArchiver();
+    property var zipArchiver: dispatcher.getCommandTarget(UICommand.ZipSelected)
 
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();
@@ -38,6 +39,22 @@ Item {
         target: zipArchiver
         onRequestCloseWindow: {
             closePopup();
+        }
+
+        onFinishedProcessing: {
+            importButton.text = i18.n + qsTr("Start Zipping")
+
+            if (immediateProcessing) {
+                if (typeof callbackObject !== "undefined") {
+                    callbackObject.afterZipped()
+                }
+
+                closePopup()
+            }
+
+            //if (!zipArchiver.isError) {
+            //    closePopup()
+            //}
         }
     }
 
@@ -167,6 +184,7 @@ Item {
 
                     StyledButton {
                         id: importButton
+                        objectName: "importButton"
                         isDefault: true
                         width: 130
                         text: i18.n + qsTr("Start Zipping")
@@ -174,25 +192,6 @@ Item {
                         onClicked: {
                             text = i18.n + qsTr("Zipping...")
                             zipArchiver.archiveArtworks()
-                        }
-
-                        Connections {
-                            target: zipArchiver
-                            onFinishedProcessing: {
-                                importButton.text = i18.n + qsTr("Start Zipping")
-
-                                if (immediateProcessing) {
-                                    if (typeof callbackObject !== "undefined") {
-                                        callbackObject.afterZipped()
-                                    }
-
-                                    closePopup()
-                                }
-
-                                //if (!zipArchiver.isError) {
-                                //    closePopup()
-                                //}
-                            }
                         }
                     }
 

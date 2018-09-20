@@ -11,7 +11,7 @@
 #include "pluginactionsmodel.h"
 #include <QHash>
 #include "ipluginaction.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Plugins {
     PluginActionsModel::PluginActionsModel(const std::vector<std::shared_ptr<IPluginAction> > &actions, int pluginID, QObject *parent) :

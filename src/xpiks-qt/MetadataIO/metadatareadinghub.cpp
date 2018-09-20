@@ -10,12 +10,19 @@
 
 #include "metadatareadinghub.h"
 #include "metadataioservice.h"
-#include "../Models/artworkmetadata.h"
-#include "../Commands/commandmanager.h"
-#include "../Common/defines.h"
+#include <Artworks/artworkmetadata.h>
+#include <Common/defines.h>
+#include <MetadataIO/metadataioservice.h>
+#include <Services/artworksupdatehub.h>
+#include <Services/artworkseditinghub.h>
 
 namespace MetadataIO {
-    MetadataReadingHub::MetadataReadingHub():
+    MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService,
+                                           Services::ArtworksUpdateHub &updateHub,
+                                           Services::ArtworksEditingHub &inspectionHub):
+        m_MetadataIOService(metadataIOService),
+        m_UpdateHub(updateHub),
+        m_InspectionHub(inspectionHub),
         m_ImportID(0),
         m_StorageReadBatchID(0),
         m_IgnoreBackupsAtImport(false),
@@ -25,8 +32,9 @@ namespace MetadataIO {
                          this, &MetadataReadingHub::onCanInitialize);
     }
 
-    void MetadataReadingHub::initializeImport(const ArtworksSnapshot &artworksToRead, int importID, quint32 storageReadBatchID) {
-        m_ArtworksToRead = artworksToRead;
+    void MetadataReadingHub::initializeImport(Artworks::ArtworksSnapshot const &artworksToRead, int importID, quint32 storageReadBatchID) {
+        LOG_DEBUG << "#";
+        m_ArtworksToRead.copyFrom(artworksToRead);
         m_ImportQueue.reservePush(artworksToRead.size());
         m_ImportID = importID;
         m_StorageReadBatchID = storageReadBatchID;
@@ -39,8 +47,21 @@ namespace MetadataIO {
     }
 
     void MetadataReadingHub::finalizeImport() {
+        LOG_DEBUG << "#";
         m_ArtworksToRead.clear();
         m_ImportQueue.clear();
+    }
+
+    void MetadataReadingHub::accountReadIO() {
+        m_AsyncCoordinator.aboutToBegin();
+    }
+
+    void MetadataReadingHub::startAcceptingIOResults() {
+        m_AsyncCoordinator.allBegun();
+    }
+
+    std::shared_ptr<Helpers::AsyncCoordinatorUnlocker> MetadataReadingHub::getIOFinalizer() {
+        return std::make_shared<Helpers::AsyncCoordinatorUnlocker>(m_AsyncCoordinator);
     }
 
     void MetadataReadingHub::proceedImport(bool ignoreBackups) {
@@ -75,23 +96,19 @@ namespace MetadataIO {
         const bool isCancelled = m_IsCancelled;
 
         if (ignoreBackups) {
-            MetadataIOService *metadataIOService = m_CommandManager->getMetadataIOService();
-            metadataIOService->cancelBatch(m_StorageReadBatchID);
+            m_MetadataIOService.cancelBatch(m_StorageReadBatchID);
         }
 
         initializeArtworks(ignoreBackups, isCancelled);
 
         emit readingFinished(m_ImportID);
 
-        const auto &itemsToRead = m_ArtworksToRead.getWeakSnapshot();
-
         if (!isCancelled) {
-            xpiks()->addToLibrary(itemsToRead);
+            m_MetadataIOService.addArtworks(m_ArtworksToRead);
         }
 
-        xpiks()->updateArtworks(itemsToRead);
-        xpiks()->submitForSpellCheck(itemsToRead);
-        xpiks()->submitForWarningsCheck(itemsToRead);
+        m_UpdateHub.updateArtworks(m_ArtworksToRead);
+        m_InspectionHub.inspectItems(m_ArtworksToRead);
 
         finalizeImport();
     }
@@ -120,9 +137,7 @@ namespace MetadataIO {
         const bool shouldOverwrite = ignoreBackups;
         MetadataIO::OriginalMetadata emptyOriginalMetadata;
 
-        auto &items = m_ArtworksToRead.getRawData();
-        for (auto &item: items) {
-            Models::ArtworkMetadata *artwork = item->getArtworkMetadata();
+        for (auto &artwork: m_ArtworksToRead) {
             const QString &filepath = artwork->getFilepath();
 
             const size_t index = filepathToIndexMap.value(filepath, size);

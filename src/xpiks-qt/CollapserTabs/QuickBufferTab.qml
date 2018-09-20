@@ -33,8 +33,8 @@ ColumnLayout {
         enabled: {
             var result = (!quickBuffer.isEmpty) && uiManager.hasCurrentEditable;
             if (result) {
-                if (mainStackView.areActionsAllowed) {
-                    result = (filteredArtItemsModel.selectedArtworksCount <= 1);
+                if (appHost.areActionsAllowed) {
+                    result = (filteredArtworksListModel.selectedArtworksCount <= 1);
                 }
             }
 
@@ -110,6 +110,7 @@ ColumnLayout {
 
             StyledTextEdit {
                 id: titleTextInput
+                objectName: "titleTextInput"
                 focus: true
                 width: paintedWidth > titleFlick.width ? paintedWidth : titleFlick.width
                 height: titleFlick.height
@@ -142,7 +143,9 @@ ColumnLayout {
                 }
 
                 Component.onCompleted: {
-                    quickBuffer.initTitleHighlighting(titleTextInput.textDocument)
+                    uiManager.initTitleHighlighting(
+                                quickBuffer.getBasicModelObject(),
+                                titleTextInput.textDocument)
                 }
 
                 onCursorRectangleChanged: titleFlick.ensureVisible(cursorRectangle)
@@ -229,6 +232,7 @@ ColumnLayout {
 
             StyledTextEdit {
                 id: descriptionTextInput
+                objectName: "descriptionTextInput"
                 width: descriptionFlick.width
                 height: paintedHeight > descriptionFlick.height ? paintedHeight : descriptionFlick.height
                 text: quickBuffer.description
@@ -258,7 +262,8 @@ ColumnLayout {
                 textFormat: TextEdit.PlainText
 
                 Component.onCompleted: {
-                    quickBuffer.initDescriptionHighlighting(descriptionTextInput.textDocument)
+                    uiManager.initDescriptionHighlighting(quickBuffer.getBasicModelObject(),
+                                                          descriptionTextInput.textDocument)
                 }
 
                 Keys.onBacktabPressed: {
@@ -331,7 +336,7 @@ ColumnLayout {
         anchors.right: parent.right
         anchors.rightMargin: quickScrollBar.visible ? 10 : 0
         color: uiColors.inputInactiveBackground
-        property var keywordsModel: quickBuffer.getBasicModel()
+        property var keywordsModel: quickBuffer.getBasicModelObject()
         state: ""
 
         function removeKeyword(index) {
@@ -360,6 +365,7 @@ ColumnLayout {
 
         EditableTags {
             id: flv
+            objectName: "editableTags"
             anchors.fill: parent
             model: keywordsWrapper.keywordsModel
             property int keywordHeight: uiManager.keywordHeight
@@ -442,6 +448,7 @@ ColumnLayout {
         }
 
         StyledLink {
+            objectName: "copyLink"
             text: i18.n + qsTr("Copy")
             enabled: quickBuffer.keywordsCount > 0
             onClicked: quickClipboard.setText(quickBuffer.getKeywordsString())
@@ -454,6 +461,7 @@ ColumnLayout {
         }
 
         StyledLink {
+            objectName: "clearLink"
             text: i18.n + qsTr("Clear")
             enabled: quickBuffer.keywordsCount > 0
             onClicked: quickBuffer.clearKeywords()

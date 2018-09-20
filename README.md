@@ -17,6 +17,7 @@ Translations: https://crowdin.com/project/xpiks/
        src="https://scan.coverity.com/projects/8498/badge.svg"/>
 </a>
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=ribtoks-xpiks-qt%3Asonarqube&metric=alert_status)](https://sonarcloud.io/dashboard/index/ribtoks-xpiks-qt%3Asonarqube)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2983c0a48d1943be978fcdc21179e06d)](https://www.codacy.com/app/ribtoks/xpiks)
 
 [![GitHub release](https://img.shields.io/github/release/ribtoks/xpiks.svg)](https://github.com/ribtoks/xpiks/releases)
 [![GitHub Release Date](https://img.shields.io/github/release-date/ribtoks/xpiks.svg)](https://github.com/ribtoks/xpiks/releases)
@@ -26,7 +27,7 @@ Translations: https://crowdin.com/project/xpiks/
 ![license](https://img.shields.io/badge/license-MPL_2.0-blue.svg)
 ![copyright](https://img.shields.io/badge/%C2%A9-Taras_Kushnir-blue.svg)
 ![language](https://img.shields.io/badge/language-c++-blue.svg)
-![c++](https://img.shields.io/badge/std-c++11-blue.svg) 
+![c++](https://img.shields.io/badge/std-c++14-blue.svg) 
 ![Qt](https://img.shields.io/badge/Qt-5-blue.svg)
 
 Xpiks is a free and open source keywording and uploading tool for microstock photographers and illustrators. It was written from scratch with aim to make it more usefull, convenient and quicker than existing tools.

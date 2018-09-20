@@ -9,66 +9,49 @@
  */
 
 #include "restoresessiontest.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/sessionmanager.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/MetadataIO/artworkssnapshot.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/Models/artworksrepository.h"
-#include "../../xpiks-qt/Models/imageartwork.h"
+#include <QUrl>
+#include <QList>
 #include "signalwaiter.h"
 #include "testshelpers.h"
+#include "xpikstestsapp.h"
 
 QString RestoreSessionTest::testName() {
     return QLatin1String("RestoreSessionTest");
 }
 
 void RestoreSessionTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-
-    settingsModel->setUseSpellCheck(false);
-    settingsModel->setSaveSession(true);
-    settingsModel->setAutoFindVectors(true);
+    m_TestsApp.getSettingsModel().setUseSpellCheck(false);
+    m_TestsApp.getSettingsModel().setAutoFindVectors(true);
+    m_TestsApp.getSettingsModel().setSaveSession(true);
 }
 
 int RestoreSessionTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
-    Models::SessionManager *sessionManager = m_CommandManager->getSessionManager();
-    //VERIFY(sessionManager->itemsCount() == 0, "Session is not cleared");
-    Models::ArtworksRepository *artworksRepository = m_CommandManager->getArtworksRepository();
+    Models::SessionManager &sessionManager = m_TestsApp.getSessionManager();
+    //VERIFY(sessionManager.itemsCount() == 0, "Session is not cleared");
 
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/pixmap/img_0007.jpg")
           << setupFilePathForTest("images-for-tests/pixmap/seagull-for-clear.jpg")
           << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg")
-          << setupFilePathForTest("images-for-tests/vector/026.jpg")
-          << setupFilePathForTest("images-for-tests/vector/027.jpg")
-          << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
+          << setupFilePathForTest("images-for-tests/vector/026.jpg", true)
+          << setupFilePathForTest("images-for-tests/vector/027.jpg", true)
+          << setupFilePathForTest("images-for-tests/mixed/0267.jpg", true);
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
+    int addedCount = m_TestsApp.getArtworksCount();
 
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    sleepWaitUntil(10, [&]() {
-        return sessionManager->itemsCount() == files.length();
+    sleepWaitUntil(5, [&]() {
+        return sessionManager.itemsCount() == files.length();
     });
-    VERIFY(sessionManager->itemsCount() == files.length(), "Session does not contain all files");
+    VERIFY(sessionManager.itemsCount() == files.length(), "Session does not contain all files");
 
-    MetadataIO::ArtworksSnapshot oldArtworksSnapshot(artItemsModel->getArtworkList());
-
-    artworksRepository->resetEverything();
-    artItemsModel->fakeDeleteAllItems();
+    auto oldArtworksSnapshot = m_TestsApp.getArtworksListModel().createArtworksSnapshot();
+    m_TestsApp.deleteAllArtworks();
     LOG_DEBUG << "About to restore...";
 
-    int restoredCount = sessionManager->restoreSession(*artworksRepository);
+    SignalWaiter waiter;
+    m_TestsApp.connectWaiterForImport(waiter);
+    int restoredCount = m_TestsApp.restoreSavedSession();
 
     if (this->getIsInMemoryOnly()) {
         VERIFY(restoredCount == 0, "Session restore should not work for memory-only mode");
@@ -76,13 +59,9 @@ int RestoreSessionTest::doTest() {
     }
 
     VERIFY(addedCount == restoredCount, "Failed to properly restore");
-    ioCoordinator->continueReading(true);
+    VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport session");
 
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading session metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    MetadataIO::ArtworksSnapshot newArtworksSnapshot(artItemsModel->getArtworkList());
+    auto newArtworksSnapshot = m_TestsApp.getArtworksListModel().createArtworksSnapshot();
     auto &oldArtworksList = oldArtworksSnapshot.getRawData();
     auto &newArtworksList = newArtworksSnapshot.getRawData();
 
@@ -90,8 +69,8 @@ int RestoreSessionTest::doTest() {
     LOG_INFO << "Comparing" << oldArtworksList.size() << "items";
 
     for (size_t i = 0; i < newArtworksList.size(); i++) {
-        auto oldItem = oldArtworksList.at(i)->getArtworkMetadata();
-        auto newItem = newArtworksList.at(i)->getArtworkMetadata();
+        auto oldItem = oldArtworksList.at(i);
+        auto newItem = newArtworksList.at(i);
 
         VERIFY(oldItem->getItemID() != newItem->getItemID(), "Comparing same IDs");
         VERIFY(oldItem->getFilepath() == newItem->getFilepath(), "Filepaths don't match");
@@ -99,43 +78,42 @@ int RestoreSessionTest::doTest() {
         VERIFY(oldItem->getDescription() == newItem->getDescription(), "Descriptions don't match");
         VERIFY(oldItem->getKeywords() == newItem->getKeywords(), "Keywords don't match");
 
-        Models::ImageArtwork *oldImage = dynamic_cast<Models::ImageArtwork*>(oldItem);
-        Models::ImageArtwork *newImage = dynamic_cast<Models::ImageArtwork*>(newItem);
-        if (oldImage != nullptr && newImage != nullptr) {
-            VERIFY(oldImage->hasVectorAttached() == newImage->hasVectorAttached(), "Vector attachment lost");
-            VERIFY(oldImage->getAttachedVectorPath() == newImage->getAttachedVectorPath(), "Vector filepath lost");
-            VERIFY(oldImage->getImageSize().width() == newImage->getImageSize().width(), "Image widths don't match");
-            VERIFY(oldImage->getImageSize().height() == newImage->getImageSize().height(), "Image heights don't match");
-        }
+        auto oldImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(oldItem);
+        auto newImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(newItem);
+        VERIFY (oldImage != nullptr && newImage != nullptr, "Artworks are not images");
+        VERIFY(oldImage->hasVectorAttached() == newImage->hasVectorAttached(), "Vector attachment lost");
+        VERIFY(oldImage->getAttachedVectorPath() == newImage->getAttachedVectorPath(), "Vector filepath lost");
+        VERIFY(oldImage->getImageSize().width() == newImage->getImageSize().width(), "Image widths don't match");
+        VERIFY(oldImage->getImageSize().height() == newImage->getImageSize().height(), "Image heights don't match");
     }
 
     // -------------------------------------
     // TODO: move below code away (maybe to perf tests)
 
     /*
-    sessionManager->clearSession();
+    sessionManager.clearSession();
 
     QUrl path = getFilePathForTest("images-for-tests/pixmap/img_0007.jpg");
     QString pathString = path.toLocalFile();
-    std::deque<Models::ArtworkMetadata *> metadataVector(10000, new Models::ArtworkMetadata(pathString, 0, 0));
+    std::deque<Artworks::ArtworkMetadata *> metadataVector(10000, new Artworks::ArtworkMetadata(pathString, 0, 0));
     MetadataIO::SessionSnapshot sessionSnapshot(metadataVector);
     auto &snapshot = sessionSnapshot.getSnapshot();
 
-    sessionManager->saveToFile(snapshot);
+    sessionManager.saveToFile(snapshot);
 
-    sessionManager->clearSession();
-    VERIFY(sessionManager->filesCount() == 0, "Session is not cleared");
+    sessionManager.clearSession();
+    VERIFY(sessionManager.filesCount() == 0, "Session is not cleared");
 
     QTime timer;
 
     timer.start();
     {
-        sessionManager->readSessionFromFile();
+        sessionManager.readSessionFromFile();
     }
     int elapsed = timer.elapsed();
 
     VERIFY(elapsed < 1000, "Session parsing is slow");
-    VERIFY(sessionManager->filesCount() == 10000, "Session initialization failed");
+    VERIFY(sessionManager.filesCount() == 10000, "Session initialization failed");
 
     //qDeleteAll(metadataVector);
     */

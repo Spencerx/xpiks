@@ -229,10 +229,6 @@ ApplicationWindow {
                     NumberAnimation { properties: "x,y"; duration: 230 }
                 }
 
-                onCurrentIndexChanged: {
-                    //csvExportModel.setCurrentItem(tabNamesListView.currentIndex)
-                }
-
                 delegate: Rectangle {
                     id: sourceWrapper
                     property variant myData: modelData
@@ -870,7 +866,7 @@ ApplicationWindow {
                             text: i18.n + qsTr("Manage user dictionary")
                             onClicked: {
                                 userDictEditModel.initializeModel()
-                                Common.launchDialog("../Dialogs/UserDictEditDialog.qml",
+                                Common.launchDialog("Dialogs/UserDictEditDialog.qml",
                                                     settingsWindow,
                                                     {
                                                         componentParent: settingsWindow

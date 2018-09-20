@@ -17,33 +17,36 @@
 #include <QReadWriteLock>
 #include <QAtomicInt>
 #include <functional>
-#include "../Common/baseentity.h"
-#include "../Common/abstractlistmodel.h"
-#include "../Common/delayedactionentity.h"
+#include <Common/delayedactionentity.h>
+#include <Common/isystemenvironment.h>
+#include <Common/messages.h>
+#include <Common/types.h>
+#include <Artworks/ibasicmodelsource.h>
 #include "ipresetsmanager.h"
 #include "presetkeywordsmodelconfig.h"
 #include "presetgroupsmodel.h"
-#include "../Common/isystemenvironment.h"
 
 namespace KeywordsPresets {
     struct PresetModel;
     class FilteredPresetKeywordsModel;
+    using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
 
     class PresetKeywordsModel:
             public QAbstractListModel,
-            public Common::BaseEntity,
             public Common::DelayedActionEntity,
-            public IPresetsManager
+            public IPresetsManager,
+            public Common::MessagesSource<BasicSpellCheckMessageType>
     {
         Q_OBJECT
 
     public:
-        PresetKeywordsModel(Common::ISystemEnvironment &environment, QObject *parent=0);
+        PresetKeywordsModel(Common::ISystemEnvironment &environment,
+                            QObject *parent=0);
         virtual ~PresetKeywordsModel();
 
 #ifdef INTEGRATION_TESTS
     public:
-        PresetKeywordsModelConfig *getKeywordsModelConfig() { return &m_PresetsConfig; }
+        PresetKeywordsModelConfig &getKeywordsModelConfig() { return m_PresetsConfig; }
         void reload() { loadModelFromConfig(); }
 #endif
 
@@ -56,11 +59,12 @@ namespace KeywordsPresets {
         bool tryGetNameFromIndex(int index, QString &name);
         bool tryGetGroupFromIndex(int index, int &groupID);
 
-#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
+#if defined(CORE_TESTS) || defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         void setName(int presetIndex, const QString &name);
         ID_t addItem(const QString &presetName, const QStringList &keywords);
-        void cleanup();
+        Q_INVOKABLE void clearModel();
+        Q_INVOKABLE QString getKeywordsString(int presetIndex);
         bool removePresetByID(ID_t id);
 #endif
 
@@ -79,7 +83,7 @@ namespace KeywordsPresets {
 
     public:
         bool tryFindPresetByFullName(const QString &name, bool caseSensitive, ID_t &id);
-        void foreachPreset(const std::function<bool (size_t, PresetModel *)> &action);
+        void foreachPreset(const std::function<bool (size_t, std::shared_ptr<PresetModel> const &)> &action);
 
         // safe and unsafe versions exist because of plugins which
         // can use presets manager in multithreaded way
@@ -100,6 +104,7 @@ namespace KeywordsPresets {
         bool tryFindPresetByFullNameUnsafe(const QString &name, bool caseSensitive, size_t &index);
         bool removeItemUnsafe(size_t index);
         ID_t getPresetID(size_t index);
+        void checkSpelling(std::shared_ptr<PresetModel> const &preset);
 
     private:
         enum PresetKeywords_Roles {
@@ -136,10 +141,9 @@ namespace KeywordsPresets {
         Q_INVOKABLE bool appendKeyword(int index, const QString &keyword);
         Q_INVOKABLE void pasteKeywords(int index, const QStringList &keywords);
         Q_INVOKABLE void plainTextEdit(int index, const QString &rawKeywords, bool spaceIsSeparator);
-        Q_INVOKABLE QObject *getKeywordsModel(int index);
+        Q_INVOKABLE QObject *getKeywordsModelObject(int index);
         Q_INVOKABLE void saveToConfig();
         Q_INVOKABLE void makeTitleValid(int row);
-        Q_INVOKABLE void generateCompletions(int index, const QString &prefix);
 
     private:
         /*Q_INVOKABLE*/ void loadModelFromConfig();
@@ -169,8 +173,7 @@ namespace KeywordsPresets {
         PresetKeywordsModelConfig m_PresetsConfig;
         PresetGroupsModel m_GroupsModel;
         QReadWriteLock m_PresetsLock;
-        std::vector<PresetModel *> m_PresetsList;
-        std::vector<PresetModel *> m_Finalizers;
+        std::vector<std::shared_ptr<PresetModel>> m_PresetsList;
         QAtomicInt m_LastUsedID;
         // timer needs to be here because of the multithreading
         QTimer m_SavingTimer;
@@ -181,12 +184,18 @@ namespace KeywordsPresets {
     {
         Q_OBJECT
     public:
+        FilteredPresetsModelBase(PresetKeywordsModel &presetsModel);
+
+    public:
         Q_INVOKABLE int getOriginalIndex(int index);
         Q_INVOKABLE unsigned int getOriginalID(int index);
         Q_INVOKABLE int getItemsCount() const { return rowCount(); }
         Q_INVOKABLE QString getName(int index);
     protected:
-        PresetKeywordsModel *getPresetsModel() const;
+        PresetKeywordsModel &getPresetsModel() const;
+
+    private:
+        PresetKeywordsModel &m_PresetKeywordsModel;
     };
 
     class FilteredPresetKeywordsModel:
@@ -195,6 +204,8 @@ namespace KeywordsPresets {
         Q_OBJECT
         Q_PROPERTY(QString searchTerm READ getSearchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
 
+    public:
+        FilteredPresetKeywordsModel(PresetKeywordsModel &presetsModel);
     public:
         const QString &getSearchTerm() const { return m_SearchTerm; }
         void setSearchTerm(const QString &value);
@@ -212,7 +223,7 @@ namespace KeywordsPresets {
     {
         Q_OBJECT
     public:
-        PresetKeywordsGroupModel(int groupID);
+        PresetKeywordsGroupModel(int groupID, PresetKeywordsModel &presetsModel);
 
     public:
         int getGroupID() const { return m_GroupID; }

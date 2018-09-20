@@ -16,7 +16,6 @@
 #include <QJsonArray>
 #include <QStringList>
 #include <QSet>
-#include "../Common/defines.h"
 #include "comparevaluesjson.h"
 
 namespace Helpers {

@@ -24,8 +24,8 @@ Item {
     id: failedUploadsComponent
     anchors.fill: parent
 
-    property var artworkUploader: helpersWrapper.getArtworkUploader()
-    property var uploadWatcher: artworkUploader.getUploadWatcher()
+    property var artworksUploader: dispatcher.getCommandTarget(UICommand.UploadSelected)
+    property var uploadWatcher: artworksUploader.getUploadWatcher()
 
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();
@@ -179,7 +179,7 @@ Item {
 
                                 StyledText {
                                     id: hostAddress
-                                    text: artworkUploader.getFtpName(ftpaddress)
+                                    text: artworksUploader.getFtpName(ftpaddress)
                                     color: uiColors.artworkActiveColor
                                     //font.bold: true
                                     font.pixelSize: UIConfig.fontPixelSize + 4

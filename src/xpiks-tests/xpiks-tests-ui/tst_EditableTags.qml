@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtTest 1.1
 import xpiks 1.0
+import XpiksTests 1.0
 import "../../xpiks-qt/Components"
 
 Item {
@@ -8,57 +9,22 @@ Item {
     width: 800
     height: 600
 
-    FakeColors {
-        id: uiColors
+    Component.onCompleted: {
+        console.log(TestsHost.scoreme)
     }
 
-    QtObject {
-        id: settingsModel
-        property int keywordSizeScale: 1
-    }
+    Rectangle {
+        anchors.fill: parent
+        color: uiColors.defaultControlColor
 
-    QtObject {
-        id: helpersWrapper
+        EditableTags {
+            id: editableTags
+            anchors.fill: parent
 
-        function sanitizeKeyword(keyword) {
-            return keyword;
+            delegate: KeywordWrapper {
+                itemHeight: 10
+            }
         }
-
-        function isKeywordValid(keyword) {
-            return keyword.length >= 2 || keyword === "$"
-        }
-    }
-
-    QtObject {
-        id: acSource
-        property bool isActive: false
-        property bool tryExpandPresetFlag: false
-        property bool isCancelled: false
-        property bool isAccepted: false
-        property bool isAnySelected: false
-
-        function moveSelectionUp() {}
-        function cancelCompletion() { isCancelled = true }
-        function moveSelectionDown() {}
-
-        function acceptSelected(tryExpandPreset) {
-            tryExpandPresetFlag = tryExpandPreset
-            isAccepted = true
-        }
-
-        function hasSelectedCompletion() { return isAnySelected }
-
-        function clear() {
-            isActive = false
-            isCancelled = false
-            tryExpandPresetFlag = false
-            isAccepted = false
-            isAnySelected = false
-        }
-    }
-
-    EditableTags {
-        id: editableTags
     }
 
     SignalSpy {
@@ -101,18 +67,59 @@ Item {
         id: clipboard
     }
 
+    QtObject {
+        id: acSource
+        property bool isActive: false
+        property bool tryExpandPresetFlag: false
+        property bool isCancelled: false
+        property bool isAccepted: false
+        property bool isAnySelected: false
+
+        function moveSelectionUp() {}
+        function cancelCompletion() { isCancelled = true }
+        function moveSelectionDown() {}
+
+        function acceptSelected(tryExpandPreset) {
+            tryExpandPresetFlag = tryExpandPreset
+            isAccepted = true
+        }
+
+        function hasSelectedCompletion() { return isAnySelected }
+
+        function clear() {
+            isActive = false
+            isCancelled = false
+            tryExpandPresetFlag = false
+            isAccepted = false
+            isAnySelected = false
+        }
+    }
+
     TestCase {
         name: "EditableTagsTests"
         when: windowShown
         property var input
 
         function initTestCase() {
+            TestsHost.setup()
             input = findChild(editableTags, "nextTagTextInput")
         }
 
-        function test_PressCommaAddsKeyword() {
+        function cleanupTestCase() {
+            TestsHost.cleanup()
+        }
+
+        function cleanup() {
             tagAddedSpy.clear()
+            removeLastSpy.clear()
             acSource.clear()
+            tagsPastedSpy.clear()
+            completionRequestedSpy.clear()
+            copyAllSpy.clear()
+            input.text = ""
+        }
+
+        function test_PressCommaAddsKeyword() {
             compare(tagAddedSpy.count, 0)
 
             input.text = "next_keyword"
@@ -129,7 +136,6 @@ Item {
         }
 
         function test_RaiseTagAdded() {
-            tagAddedSpy.clear()
             editableTags.raiseAddTag("any text")
             compare(tagAddedSpy.count, 1)
         }
@@ -143,8 +149,6 @@ Item {
         }
 
         function test_BackspaceRemovesPrevItem() {
-            removeLastSpy.clear()
-
             input.text = "1"
             // need to set focus
             input.forceActiveFocus()
@@ -159,8 +163,6 @@ Item {
         }
 
         function test_SimplePasteNoComma() {
-            tagAddedSpy.clear()
-            tagsPastedSpy.clear()
             input.text = ""
             clipboard.setText("keyword")
 
@@ -173,8 +175,6 @@ Item {
         }
 
         function test_SimplePasteWithComma() {
-            tagAddedSpy.clear()
-            tagsPastedSpy.clear()
             input.text = ""
             clipboard.setText("keyword1,keyword2")
 
@@ -189,8 +189,6 @@ Item {
         }
 
         function test_PasteOneItemWithComma() {
-            tagAddedSpy.clear()
-            tagsPastedSpy.clear()
             input.text = ""
             clipboard.setText("keyword , ")
 
@@ -203,9 +201,6 @@ Item {
         }
 
         function test_PasteOnlyCommas() {
-            tagAddedSpy.clear()
-            tagsPastedSpy.clear()
-            input.text = ""
             clipboard.setText(" , , ")
 
             input.forceActiveFocus()
@@ -217,9 +212,6 @@ Item {
         }
 
         function test_SimplePasteWithSemicolon() {
-            tagAddedSpy.clear()
-            tagsPastedSpy.clear()
-            input.text = ""
             clipboard.setText(";;keyword1;keyword2;;;")
 
             input.forceActiveFocus()
@@ -233,9 +225,6 @@ Item {
         }
 
         function test_CopyRequestWhenEmpty() {
-            copyAllSpy.clear()
-            input.text = ""
-
             input.forceActiveFocus()
             keyClick(Qt.Key_C, Qt.ControlModifier)
 
@@ -354,11 +343,6 @@ Item {
         }
 
         function test_AcceptNoSelectedWithActiveAC() {
-            tagAddedSpy.clear()
-            completionRequestedSpy.clear()
-            acSource.clear()
-
-            input.text = ""
             input.forceActiveFocus()
 
             keyClick(Qt.Key_A)
@@ -377,10 +361,6 @@ Item {
         }
 
         function test_AutoCompletePreset() {
-            completionRequestedSpy.clear()
-            acSource.clear()
-
-            input.text = ""
             input.forceActiveFocus()
 
             keyClick(Qt.Key_A)
@@ -398,7 +378,6 @@ Item {
         }
 
         function test_MouseClickActivatesEdit() {
-            input.text = ""
             root.forceActiveFocus()
             compare(input.activeFocus, false)
 
@@ -431,7 +410,6 @@ Item {
         }
 
         function test_AcceptCompletionSingle() {
-            tagAddedSpy.clear()
             input.text = "abc"
             input.cursorPosition = input.length
             compare(tagAddedSpy.count, 0)
@@ -445,7 +423,6 @@ Item {
         }
 
         function test_AcceptCompletionMoreThanOne() {
-            tagAddedSpy.clear()
             input.text = "abc def"
             input.cursorPosition = input.length
             compare(tagAddedSpy.count, 0)
@@ -458,7 +435,6 @@ Item {
         }
 
         function test_AcceptCompletionToEmpty() {
-            tagAddedSpy.clear()
             input.text = "abc"
             input.cursorPosition = input.length
             compare(tagAddedSpy.count, 0)
@@ -471,7 +447,6 @@ Item {
         }
 
         function test_AcceptCompletionToEmptyWithMoreThanOne() {
-            tagAddedSpy.clear()
             input.text = "abc def"
             input.cursorPosition = input.length
             compare(tagAddedSpy.count, 0)
@@ -484,7 +459,6 @@ Item {
         }
 
         function test_AcceptCompletionToEmptyWithMoreThanOneInTheMiddle() {
-            tagAddedSpy.clear()
             input.text = "abc def"
             input.cursorPosition = 3
             compare(tagAddedSpy.count, 0)
@@ -497,21 +471,18 @@ Item {
         }
 
         function test_RequestCompletionEmpty() {
-            completionRequestedSpy.clear()
             input.text = ""
             input.requestCompletion()
             compare(completionRequestedSpy.count, 0)
         }
 
         function test_RequestCompletionTooSmall() {
-            completionRequestedSpy.clear()
             input.text = "ab"
             input.requestCompletion()
             compare(completionRequestedSpy.count, 0)
         }
 
         function test_RequestCompletionMinAllowed() {
-            completionRequestedSpy.clear()
             input.text = "abc"
             input.requestCompletion()
             compare(completionRequestedSpy.count, 1)
@@ -519,7 +490,6 @@ Item {
         }
 
         function test_RequestCompletionBigger() {
-            completionRequestedSpy.clear()
             input.text = "abcdef"
             input.requestCompletion()
             compare(completionRequestedSpy.count, 1)
@@ -527,7 +497,6 @@ Item {
         }
 
         function test_CurrentWordStartEnd() {
-            input.text = ""
             compare(input.getCurrentWordStart(), 0)
             compare(input.getCurrentWordEnd(), 0)
 
@@ -551,8 +520,6 @@ Item {
         }
 
         function test_LosesFocusSubmitsKeyword() {
-            tagAddedSpy.clear()
-            acSource.clear()
             compare(tagAddedSpy.count, 0)
 
             input.text = "next_keyword"
@@ -565,10 +532,6 @@ Item {
         }
 
         function test_LosesFocusCancelsCompletion() {
-            completionRequestedSpy.clear()
-            acSource.clear()
-
-            input.text = ""
             input.forceActiveFocus()
 
             input.text = "abc"
@@ -584,10 +547,6 @@ Item {
         }
 
         function test_EscapeCancelsCompletion() {
-            completionRequestedSpy.clear()
-            acSource.clear()
-
-            input.text = ""
             input.forceActiveFocus()
 
             input.text = "abc"
@@ -604,10 +563,6 @@ Item {
         }
 
         function test_KeyLeftCancelsCompletion() {
-            completionRequestedSpy.clear()
-            acSource.clear()
-
-            input.text = ""
             input.forceActiveFocus()
 
             input.text = "abc"
@@ -624,10 +579,6 @@ Item {
         }
 
         function test_KeyRightCancelsCompletion() {
-            completionRequestedSpy.clear()
-            acSource.clear()
-
-            input.text = ""
             input.forceActiveFocus()
 
             input.text = "abc"
@@ -644,10 +595,6 @@ Item {
         }
 
         function test_BackspaceCancelsCompletion() {
-            completionRequestedSpy.clear()
-            acSource.clear()
-
-            input.text = ""
             input.forceActiveFocus()
 
             input.text = "abc"
@@ -664,10 +611,6 @@ Item {
         }
 
         function test_BackspaceDoesNotCancelCompletionIfLong() {
-            completionRequestedSpy.clear()
-            acSource.clear()
-
-            input.text = ""
             input.forceActiveFocus()
 
             input.text = "abcd"

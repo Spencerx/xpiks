@@ -9,47 +9,42 @@
  */
 
 #include "sandboxeddependencies.h"
-#include "../Models/uimanager.h"
+#include <Models/uimanager.h>
 #include "uiprovider.h"
 
 namespace Plugins {
-    UIProviderSafe::UIProviderSafe(int pluginID, UIProvider *realUIProvider):
+    UIProviderSafe::UIProviderSafe(int pluginID, UIProvider &realUIProvider):
         m_PluginID(pluginID),
         m_RealUIProvider(realUIProvider)
     {
-        Q_ASSERT(realUIProvider != nullptr);
     }
 
     void UIProviderSafe::openDialog(const QUrl &rcPath, const QHash<QString, QObject *> &contextModels) const {
-        m_RealUIProvider->openDialog(rcPath, contextModels);
+        m_RealUIProvider.openDialog(rcPath, contextModels);
     }
 
     int UIProviderSafe::addTab(const QString &tabIconUrl, const QString &tabComponentUrl, QObject *tabModel) const {
-        auto *uiManager = m_RealUIProvider->getUIManager();
-        Q_ASSERT(uiManager != nullptr);
-        int result = uiManager->addPluginTab(m_PluginID, tabIconUrl, tabComponentUrl, tabModel);
+        auto &uiManager = m_RealUIProvider.getUIManager();
+        int result = uiManager.addPluginTab(m_PluginID, tabIconUrl, tabComponentUrl, tabModel);
         return result;
     }
 
     bool UIProviderSafe::removeTab(int tabID) const {
-        auto *uiManager = m_RealUIProvider->getUIManager();
-        Q_ASSERT(uiManager != nullptr);
-        bool result = uiManager->removePluginTab(m_PluginID, tabID);
+        auto &uiManager = m_RealUIProvider.getUIManager();
+        bool result = uiManager.removePluginTab(m_PluginID, tabID);
         return result;
     }
 
-    std::shared_ptr<QuickBuffer::ICurrentEditable> UIProviderSafe::getCurrentEditable() const {
-        auto *uiManager = m_RealUIProvider->getUIManager();
-        Q_ASSERT(uiManager != nullptr);
-
-        return uiManager->getCurrentEditable();
+    MicrostockServicesSafe::MicrostockServicesSafe(Microstocks::IMicrostockAPIClients &apiClients,
+                                                   Connectivity::RequestsService &requestsService):
+        m_ApiClients(apiClients),
+        m_RequestsService(requestsService)
+    {
     }
 
-    MicrostockServicesSafe::MicrostockServicesSafe(Connectivity::RequestsService &requestsService,
-                                                   Microstocks::MicrostockAPIClients &apiClients):
-        m_ShutterstockService(&apiClients.getShutterstockClient(), requestsService),
-        m_FotoliaService(&apiClients.getFotoliaClient(), requestsService),
-        m_GettyService(&apiClients.getGettyClient(), requestsService)
-    {
+    std::shared_ptr<Microstocks::IMicrostockService> MicrostockServicesSafe::getService(Microstocks::MicrostockType type) {
+        return std::make_shared<Microstocks::MicrostockService>(
+                    m_ApiClients.getClient(type),
+                    m_RequestsService);
     }
 }

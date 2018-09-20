@@ -12,21 +12,20 @@
 #define PRESETMODEL_H
 
 #include <QString>
-#include "../Common/basickeywordsmodel.h"
-#include "../Common/hold.h"
-#include "../Common/flags.h"
+#include <Artworks/basickeywordsmodel.h>
+#include <Artworks/ibasicmodelsource.h>
+#include <Common/flags.h>
 #include "groupmodel.h"
 
 namespace KeywordsPresets {
     typedef unsigned int ID_t;
 
-    struct PresetModel {
+    struct PresetModel: public Artworks::IBasicModelSource {
         enum PresetModelFlags {
             FlagIsNameDupcate = 1 << 0
         };
 
         PresetModel(ID_t id):
-            m_KeywordsModel(m_Hold),
             m_PresetName(QObject::tr("Untitled")),
             m_ID(id),
             m_GroupID(DEFAULT_GROUP_ID),
@@ -35,7 +34,6 @@ namespace KeywordsPresets {
         }
 
         PresetModel(ID_t id, const QString &name):
-            m_KeywordsModel(m_Hold),
             m_PresetName(name),
             m_ID(id),
             m_GroupID(DEFAULT_GROUP_ID),
@@ -43,7 +41,6 @@ namespace KeywordsPresets {
         {}
 
         PresetModel(ID_t id, const QString &name, const QStringList &keywords, int groupID):
-            m_KeywordsModel(m_Hold),
             m_PresetName(name),
             m_ID(id),
             m_GroupID(groupID),
@@ -52,17 +49,17 @@ namespace KeywordsPresets {
             m_KeywordsModel.setKeywords(keywords);
         }
 
-        void acquire() { m_Hold.acquire(); }
-        bool release() { return m_Hold.release(); }
+        // IBasicModelSource interface
+    public:
+        virtual Artworks::BasicKeywordsModel &getBasicModel() override { return m_KeywordsModel; }
 
         inline bool getIsNameDuplicateFlag() const { return Common::HasFlag(m_Flags, FlagIsNameDupcate); }
         inline void setIsNameDuplicateFlag(bool value) { Common::ApplyFlag(m_Flags, value, FlagIsNameDupcate); }
 
-        Common::BasicKeywordsModel m_KeywordsModel;
+        Artworks::BasicKeywordsModel m_KeywordsModel;
         QString m_PresetName;
         ID_t m_ID;
         int m_GroupID;
-        Common::Hold m_Hold;
         Common::flag_t m_Flags;
     };
 }

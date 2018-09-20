@@ -80,16 +80,16 @@ namespace KeywordsPresets {
         processLocalConfig(document);
     }
 
-    void PresetKeywordsModelConfig::loadFromModel(const std::vector<PresetModel *> &presets,
+    void PresetKeywordsModelConfig::loadFromModel(const std::vector<std::shared_ptr<PresetModel>> &presets,
                                                   const std::vector<GroupModel> &presetGroups) {
         const size_t presetsSize = presets.size();
-        LOG_INTEGR_TESTS_OR_DEBUG << presets.size() << "presets;" << presetGroups.size() << "groups";
+        LOG_VERBOSE_OR_DEBUG << presets.size() << "presets;" << presetGroups.size() << "groups";
 
         m_PresetData.clear();
         m_PresetData.resize(presetsSize);
 
         for (size_t i = 0; i < presetsSize; i++) {
-            auto *item = presets[i];
+            auto &item = presets[i];
             auto &name = item->m_PresetName;
             auto &keywordsModel = item->m_KeywordsModel;
             int groupId = item->m_GroupID;
@@ -139,7 +139,7 @@ namespace KeywordsPresets {
     }
 
     bool PresetKeywordsModelConfig::processLocalConfig(const QJsonDocument &document) {
-        LOG_INTEGR_TESTS_OR_DEBUG << document;
+        LOG_VERBOSE_OR_DEBUG << document;
         bool anyError = false;
 
         do {

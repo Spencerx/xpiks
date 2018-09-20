@@ -2,7 +2,7 @@
 #define BASICKEYWORDSMODELTESTS_H
 
 #include <QtTest/QtTest>
-#include "../../xpiks-qt/Common/hold.h"
+#include <Services/SpellCheck/spellcheckinfo.h>
 
 class BasicKeywordsModelTests: public QObject
 {
@@ -46,7 +46,7 @@ private slots:
     void removeKeywordsCaseSensitiveTest();
 
 private:
-    Common::Hold m_FakeHold;
+    SpellCheck::SpellCheckInfo m_SpellCheckInfo;
 };
 
 #endif // BASICKEYWORDSMODELTESTS_H

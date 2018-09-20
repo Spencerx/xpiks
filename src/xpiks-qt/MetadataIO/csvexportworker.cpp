@@ -12,9 +12,11 @@
 #include <QDir>
 #include <QFile>
 #include <QDateTime>
+#include <QThread>
 #include <QRegularExpression>
 #include "csvexportplansmodel.h"
-#include "../Models/artworkmetadata.h"
+#include <Artworks/artworkmetadata.h>
+#include <Artworks/artworkssnapshot.h>
 
 #define DOUBLE_QUOTE "\""
 
@@ -42,7 +44,8 @@ namespace MetadataIO {
         csvFile.write("\r\n");
     }
 
-    QString retrieveArtworkProperty(Models::ArtworkMetadata *artwork, CsvExportPropertyType property) {
+    QString retrieveArtworkProperty(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
+                                    CsvExportPropertyType property) {
         switch (property) {
         case Empty: return QString();
         case Filename: return artwork->getBaseFilename();
@@ -55,14 +58,13 @@ namespace MetadataIO {
         }
     }
 
-    void writeRows(QFile &csvFile, const std::shared_ptr<CsvExportPlan> &plan, const ArtworksSnapshot::Container &artworks) {
+    void writeRows(QFile &csvFile, const std::shared_ptr<CsvExportPlan> &plan,
+                   const Artworks::ArtworksSnapshot::Container &artworks) {
         auto &properties = plan->m_PropertiesToExport;
         const size_t propertiesSize = properties.size();
         Q_ASSERT(propertiesSize != 0);
 
-        for (auto &locker: artworks) {
-            Models::ArtworkMetadata *artwork = locker->getArtworkMetadata();
-
+        for (auto &artwork: artworks) {
             QString value = retrieveArtworkProperty(artwork, properties[0].m_PropertyType);
             csvFile.write(DOUBLE_QUOTE);
             csvFile.write(value.toUtf8());
@@ -81,7 +83,8 @@ namespace MetadataIO {
         }
     }
 
-    void runExportPlan(const std::shared_ptr<CsvExportPlan> &plan, const QString &filepath, const ArtworksSnapshot::Container &artworks) {
+    void runExportPlan(const std::shared_ptr<CsvExportPlan> &plan, const QString &filepath,
+                       const Artworks::ArtworksSnapshot::Container &artworks) {
         LOG_DEBUG << "Plan" << plan->m_Name << ": exporting" << artworks.size() << "artwork(s) to" << filepath;
         Q_ASSERT(plan->m_IsSelected);
 
@@ -117,18 +120,14 @@ namespace MetadataIO {
     }
 
     CsvExportWorker::CsvExportWorker(const std::vector<std::shared_ptr<CsvExportPlan> > &exportPlans,
-                                     ArtworksSnapshot &selectedArtworks,
-                                     QString exportDirectoryPath,
+                                     Artworks::ArtworksSnapshot &selectedArtworks,
+                                     const QString &exportDirectoryPath,
                                      QObject *parent):
         QObject(parent),
         m_ExportPlans(exportPlans),
         m_ArtworksToExport(selectedArtworks),
         m_ExportDirectoryPath(exportDirectoryPath)
     {
-    }
-
-    CsvExportWorker::~CsvExportWorker() {
-        LOG_DEBUG << "#";
     }
 
     void CsvExportWorker::doWork() {

@@ -21,7 +21,7 @@ namespace QMLExtensions {
     class DbImageCacheIndex: public DbCacheIndex<CachedImage>
     {
     public:
-        DbImageCacheIndex(Storage::IDatabaseManager *dbManager);
+        DbImageCacheIndex(Storage::IDatabaseManager &dbManager);
 
     public:
         virtual bool initialize() override;

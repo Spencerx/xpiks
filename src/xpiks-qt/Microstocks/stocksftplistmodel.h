@@ -17,7 +17,7 @@
 #include <QJsonArray>
 #include <vector>
 #include <memory>
-#include "../Models/abstractconfigupdatermodel.h"
+#include <Models/Connectivity/abstractconfigupdatermodel.h>
 #include "../Common/isystemenvironment.h"
 #include "stockftpoptions.h"
 

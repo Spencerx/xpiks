@@ -57,11 +57,23 @@ namespace Helpers {
     }
 
     void Logger::emergencyLog(const char * const message) {
-        QFile outFile(m_LogFilepath);
-        if (outFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
-            outFile.write(message);
-            outFile.flush();
+#ifdef WITH_LOGS
+        if (!m_MemoryOnly) {
+            QFile outFile(m_LogFilepath);
+            if (outFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+                outFile.write(message);
+                outFile.flush();
+            }
         }
+#endif
+
+#ifdef WITH_STDOUT_LOGS
+        std::cout << message << std::endl;
+        std::cout.flush();
+#else
+        std::cerr << message << std::endl;
+        std::cerr.flush();
+#endif
     }
 
     void Logger::emergencyFlush() {
@@ -77,13 +89,7 @@ namespace Helpers {
         flushAll();
     }
 
-#ifdef INTEGRATION_TESTS
-    void Logger::log(QtMsgType type, const QString &message) {
-        // basically this thing is here because Travis CI does not like long logs
-        if (m_MemoryOnly && (type == QtDebugMsg)) { return; }
-        log(message);
-    }
-
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     void Logger::abortFlush() {
         doLog("Starting abort flush.");
         flushAll();

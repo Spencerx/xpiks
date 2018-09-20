@@ -11,7 +11,7 @@
 #ifndef DELAYEDACTIONENTITY_H
 #define DELAYEDACTIONENTITY_H
 
-#include "defines.h"
+#include "logging.h"
 #include <QtGlobal>
 #include <QTimerEvent>
 
@@ -30,11 +30,11 @@ namespace Common {
             if (m_RestartsCount < m_MaxRestartsCount) {
                 if (m_LastTimerId != -1) {
                     doKillTimer(m_LastTimerId);
-                    LOG_INTEGR_TESTS_OR_DEBUG << "killed timer" << m_LastTimerId;
+                    LOG_VERBOSE_OR_DEBUG << "killed timer" << m_LastTimerId;
                 }
 
                 m_LastTimerId = doStartTimer(m_TimerInterval, Qt::VeryCoarseTimer);
-                LOG_INTEGR_TESTS_OR_DEBUG << "started timer" << m_LastTimerId;
+                LOG_VERBOSE_OR_DEBUG << "started timer" << m_LastTimerId;
                 m_RestartsCount++;
             } else {
                 Q_ASSERT(m_LastTimerId != -1);

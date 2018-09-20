@@ -31,9 +31,6 @@ Item {
         autoCompleteBox = undefined
     }
 
-    Component.onCompleted: {
-    }
-
     Keys.onEscapePressed: closePopup()
 
     signal dialogDestruction();
@@ -131,10 +128,10 @@ Item {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 width: 250
-                //enabled: !csvExportModel.isExporting
 
                 ListView {
                     id: presetNamesListView
+                    objectName: "presetNamesListView"
                     model: presetsModel
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -247,6 +244,7 @@ Item {
 
                     StyledBlackButton {
                         id: addPresetButton
+                        objectName: "addPresetButton"
                         width: 210
                         height: 30
                         anchors.centerIn: parent
@@ -271,10 +269,9 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: footer.top
-                property var keywordsModel: presetsModel.getKeywordsModel(presetNamesListView.currentIndex)
 
                 Connections {
-                    target: rightPanel.keywordsModel
+                    target: acSource
 
                     onCompletionsAvailable: {
                         acSource.initializeCompletions()
@@ -307,7 +304,7 @@ Item {
                         var isBelow = (tmp.y + popupHeight) < directParent.height;
 
                         var options = {
-                            model: acSource.getCompletionsModel(),
+                            model: acSource.getCompletionsModelObject(),
                             autoCompleteSource: acSource,
                             isBelowEdit: isBelow,
                             withPresets: false,
@@ -367,6 +364,7 @@ Item {
 
                         StyledTextInput {
                             id: titleText
+                            objectName: "titleEdit"
                             height: parent.height
                             anchors.left: parent.left
                             anchors.right: parent.right
@@ -519,7 +517,8 @@ Item {
                         Layout.fillHeight: true
                         border.color: uiColors.artworkActiveColor
                         border.width: flv.isFocused ? 1 : 0
-                        color: uiColors.inputBackgroundColor
+                        color: uiColors.inputBackgroundColor                        
+                        property var keywordsModel: presetNamesListView.currentItem ? presetsModel.getKeywordsModelObject(presetNamesListView.currentIndex) : []
                         state: ""
 
                         function removeKeyword(index) {
@@ -544,9 +543,10 @@ Item {
 
                         EditableTags {
                             id: flv
+                            objectName: "editableTags"
                             anchors.fill: parent
                             enabled: presetNamesListView.currentIndex >= 0
-                            model: rightPanel.keywordsModel
+                            model: keywordsWrapper.keywordsModel
                             property int keywordHeight: uiManager.keywordHeight
                             scrollStep: keywordHeight
 
@@ -575,15 +575,13 @@ Item {
                                         }
                                     }
 
-                                    var basicModel = presetsModel.getKeywordsModel(presetNamesListView.currentIndex)
-
                                     Common.launchDialog("Dialogs/EditKeywordDialog.qml",
                                                         componentParent,
                                                         {
                                                             callbackObject: callbackObject,
                                                             previousKeyword: keyword,
                                                             keywordIndex: kw.delegateIndex,
-                                                            keywordsModel: basicModel
+                                                            keywordsModel: keywordsWrapper.keywordsModel
                                                         })
                                 }
                             }
@@ -606,7 +604,7 @@ Item {
                             }
 
                             onCompletionRequested: {
-                                presetsModel.generateCompletions(presetNamesListView.currentIndex, prefix)
+                                dispatcher.dispatch(UICommand.GenerateCompletions, prefix)
                             }
                         }
 
@@ -654,7 +652,7 @@ Item {
                     spacing: 20
 
                     StyledLink {
-                        id: plainTextText
+                        objectName: "plainTextLink"
                         text: i18.n + qsTr("<u>edit in plain text</u>")
                         normalLinkColor: uiColors.labelActiveForeground
                         enabled: presetNamesListView.currentItem ? true : false
@@ -672,14 +670,12 @@ Item {
                                 }
                             }
 
-                            var basicModel = presetsModel.getKeywordsModel(presetNamesListView.currentIndex)
-
-                            Common.launchDialog("../Dialogs/PlainTextKeywordsDialog.qml",
-                                                applicationWindow,
+                            Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
+                                                componentParent,
                                                 {
                                                     callbackObject: callbackObject,
                                                     keywordsText: presetNamesListView.currentItem.myData.keywordsstring,
-                                                    keywordsModel: basicModel
+                                                    keywordsModel: keywordsWrapper.keywordsModel
                                                 });
                         }
                     }

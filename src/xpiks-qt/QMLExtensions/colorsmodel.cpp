@@ -16,8 +16,7 @@
 
 #include <unordered_map>
 
-#include "../Common/defines.h"
-
+#include "../Common/logging.h"
 
 #define DEFAULT_DARK_COLOR "defaultDarkColor"
 #define DEFAULT_DARKER_COLOR "defaultDarkerColor"
@@ -250,8 +249,8 @@ namespace QMLExtensions {
     }
 
     void ColorsModel::initializeBuiltInThemes() {
-        registerTheme(std::shared_ptr<ColorsProvider>(new HashMapColorsProvider(createBlackTheme())));
-        registerTheme(std::shared_ptr<ColorsProvider>(new HashMapColorsProvider(createSlateGrayTheme())));
+        registerTheme(std::make_shared<HashMapColorsProvider>(createBlackTheme()));
+        registerTheme(std::make_shared<HashMapColorsProvider>(createSlateGrayTheme()));
         applyTheme(0);
     }
 

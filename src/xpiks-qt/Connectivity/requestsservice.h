@@ -13,8 +13,8 @@
 
 #include <QObject>
 #include <memory>
-#include "../Common/baseentity.h"
 #include "iconnectivityrequest.h"
+#include "irequestsservice.h"
 
 namespace Helpers {
     class RemoteConfig;
@@ -27,18 +27,18 @@ namespace Models {
 namespace Connectivity {
     class RequestsWorker;
 
-    class RequestsService : public QObject
+    class RequestsService : public QObject, public IRequestsService
     {
         Q_OBJECT
     public:
-        explicit RequestsService(Models::ProxySettings *proxySettings, QObject *parent = 0);
+        explicit RequestsService(const Models::ProxySettings &proxySettings, QObject *parent = 0);
 
     public:
         void startService();
         void stopService();
 
     public:
-        void receiveConfig(Helpers::RemoteConfig *config);
+        virtual void receiveConfig(Helpers::RemoteConfig &config) override;
         void sendRequest(const std::shared_ptr<IConnectivityRequest> &request);
         void sendRequestSync(std::shared_ptr<IConnectivityRequest> &request);
 
@@ -51,7 +51,7 @@ namespace Connectivity {
 
     private:
         RequestsWorker *m_RequestsWorker;
-        Models::ProxySettings *m_ProxySettings;
+        const Models::ProxySettings &m_ProxySettings;
     };
 }
 

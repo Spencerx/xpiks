@@ -23,13 +23,13 @@ namespace Helpers {
     class LogHighlighter: public QSyntaxHighlighter {
         Q_OBJECT
     public:
-        LogHighlighter(QMLExtensions::ColorsModel *colorsModel, QTextDocument* document = 0);
+        LogHighlighter(QMLExtensions::ColorsModel &colorsModel, QTextDocument* document = 0);
 
     protected:
         void highlightBlock(const QString &text);
 
     private:
-        QMLExtensions::ColorsModel *m_ColorsModel;
+        QMLExtensions::ColorsModel &m_ColorsModel;
     };
 }
 #endif // LOGHIGHLIGHTER_H

@@ -11,30 +11,39 @@
 #ifndef MICROSTOCKAPICLIENTS_H
 #define MICROSTOCKAPICLIENTS_H
 
-#include "shutterstockapiclient.h"
-#include "fotoliaapiclient.h"
-#include "gettyapiclient.h"
-#include "../Encryption/isecretsstorage.h"
+#include <map>
+#include <memory>
+#include "imicrostockapiclients.h"
+#include "imicrostockapiclient.h"
+#include "microstockenums.h"
 
 namespace Microstocks {
-    class MicrostockAPIClients
+    class MicrostockAPIClients: public IMicrostockAPIClients
     {
     public:
-        MicrostockAPIClients(Encryption::ISecretsStorage *secretsStorage):
-            m_ShutterstockClient(secretsStorage),
-            m_FotoliaClient(secretsStorage),
-            m_GettyClient(secretsStorage)
-        { }
+        MicrostockAPIClients() {}
 
     public:
-        ShutterstockAPIClient &getShutterstockClient() { return m_ShutterstockClient; }
-        FotoliaAPIClient &getFotoliaClient() { return m_FotoliaClient; }
-        GettyAPIClient &getGettyClient() { return m_GettyClient; }
+        void addClient(std::shared_ptr<IMicrostockAPIClient> const &client) {
+            Q_ASSERT(m_ClientMap.find((int)client->type()) == m_ClientMap.end());
+            m_ClientMap[(int)client->type()] = client;
+        }
+
+        // IMicrostockServices interface
+    public:
+        virtual std::shared_ptr<IMicrostockAPIClient> getClient(MicrostockType type) override {
+            std::shared_ptr<IMicrostockAPIClient> result;
+            auto it = m_ClientMap.find((int)type);
+            if (it != m_ClientMap.end()) {
+                result = it->second;
+            } else {
+                Q_ASSERT(false);
+            }
+            return result;
+        }
 
     private:
-        ShutterstockAPIClient m_ShutterstockClient;
-        FotoliaAPIClient m_FotoliaClient;
-        GettyAPIClient m_GettyClient;
+        std::map<int, std::shared_ptr<IMicrostockAPIClient>> m_ClientMap;
     };
 }
 

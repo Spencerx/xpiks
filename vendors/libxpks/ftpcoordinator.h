@@ -8,7 +8,7 @@
 #include <QAtomicInt>
 #include <QMutex>
 #include <Models/settingsmodel.h>
-#include <MetadataIO/artworkssnapshot.h>
+#include <Artworks/artworkssnapshot.h>
 #include <Encryption/secretsmanager.h>
 
 namespace Models {
@@ -33,7 +33,7 @@ namespace libxpks {
 
         public:
             // IFTPCOORDINATOR
-            virtual void uploadArtworks(const MetadataIO::ArtworksSnapshot &artworksToUpload,
+            virtual void uploadArtworks(const Artworks::ArtworksSnapshot &artworksToUpload,
                                         std::vector<std::shared_ptr<Models::UploadInfo> > &uploadInfos) override;
             virtual void cancelUpload() override;
 

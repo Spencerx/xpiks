@@ -16,10 +16,13 @@
 #include <vector>
 #include <memory>
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
     class ImageArtwork;
     class VideoArtwork;
+}
+
+namespace Models {
 
     class KeyValueList: public QAbstractListModel
     {
@@ -51,11 +54,11 @@ namespace Models {
         ArtworkPropertiesMap(): m_IsImage(false) {}
 
     public:
-        void updateProperties(ArtworkMetadata *metadata);
+        void updateProperties(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork);
 
     private:
-        void setForTheImage(ImageArtwork *imageArtwork);
-        void setForTheVideo(VideoArtwork *videoArtwork);
+        void setForTheImage(std::shared_ptr<Artworks::ImageArtwork> const &imageArtwork);
+        void setForTheVideo(std::shared_ptr<Artworks::VideoArtwork> const &videoArtwork);
 
     private:
         enum class ImageProperties {

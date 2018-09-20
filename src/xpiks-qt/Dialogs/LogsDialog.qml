@@ -14,6 +14,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
+import xpiks 1.0
 import "../Constants"
 import "../Common.js" as Common;
 import "../Components"
@@ -24,12 +25,13 @@ Item {
     id: logsComponent
     property string logText
     anchors.fill: parent
-    property var logsModel: helpersWrapper.getLogsModel()
+    property var logsModel: dispatcher.getCommandTarget(UICommand.UpdateLogs)
 
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();
 
     function closePopup() {
+        logsModel.clearLogsExtract()
         logsComponent.destroy()
     }
 
@@ -153,13 +155,13 @@ Item {
 
                     StyledTextEdit {
                         id: textEdit
-                        text: logsComponent.logText
+                        text: logsModel.logsExtract
                         selectionColor: uiColors.inputBackgroundColor
                         readOnly: true
 
                         Component.onCompleted: {
                             scrollToBottom()
-                            logsModel.initLogHighlighting(textEdit.textDocument)
+                            uiManager.initLogsHighlighting(textEdit.textDocument)
                         }
                     }
                 }
@@ -182,6 +184,7 @@ Item {
                     enabled: logsModel.withLogs
                     width: 130
                     onClicked: {
+                        dispatcher.dispatch(UICommand.UpdateLogs, true)
                         logsComponent.logText = logsModel.getAllLogsText(true)
                         oneHunderdLinesWarning.linesNumber = 1000
                         loadMoreButton.enabled = false
@@ -197,7 +200,6 @@ Item {
                         helpersWrapper.revealLogFile()
                     }
                 }
-
 
                 Item {
                     Layout.fillWidth: true

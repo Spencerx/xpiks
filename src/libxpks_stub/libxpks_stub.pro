@@ -9,7 +9,7 @@ QT += gui qml
 TARGET = xpks
 TEMPLATE = lib
 CONFIG += staticlib
-CONFIG += c++11
+CONFIG += c++14
 
 DEFINES += QT_NO_CAST_TO_ASCII \
            QT_RESTRICTED_CAST_FROM_ASCII \
@@ -34,6 +34,7 @@ CONFIG(debug, debug|release)  {
 }
 
 INCLUDEPATH += ../xpiks-qt
+INCLUDEPATH += ../../vendors/libxpks
 
 LIBS += -lcurl
 
@@ -68,15 +69,11 @@ unix {
 HEADERS += \
     MetadataIO/metadatareadingworker.h \
     MetadataIO/metadatawritingworker.h \
-    MetadataIO/readingorchestrator.h \
-    MetadataIO/writingorchestrator.h \
-    Connectivity/ftpcoordinator.h \
     Connectivity/conectivityhelpers.h \
     Connectivity/curlftpuploader.h \
     Connectivity/ftpuploaderworker.h \
     Connectivity/uploadbatch.h \
-    Connectivity/uploadcontext.h \
-    Microstocks/apisecretsstorage.h
+    ../../vendors/libxpks/ftpcoordinator.h
 
 SOURCES += \
     MetadataIO/metadatareadingworker.cpp \

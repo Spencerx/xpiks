@@ -19,4 +19,3 @@ Text {
     font.pixelSize: 14
     focus: false
 }
-

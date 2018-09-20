@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtTest 1.1
+import XpiksTests 1.0
 import "../../xpiks-qt/Dialogs"
 
 Item {
@@ -7,60 +8,45 @@ Item {
     width: 800
     height: 600
 
-    FakeColors {
-        id: uiColors
-    }
+    Component.onCompleted: TestsHost.setup()
 
-    QtObject {
-        id: uiManager
-        property real keywordHeight: 10
-    }
-
-    QtObject {
-        id: applicationWindow
-        property bool leftSideCollapsed: false
-    }
-
-    QtObject {
-        id: settingsModel
-        property int keywordSizeScale: 1
-    }
-
-    QtObject {
-        id: archiver
-
-        property bool isError: false
-        property bool inProgress: false
-        property int itemsCount: 0
-        property int percent: 50
-
-        function resetModel() {}
-        function archiveArtworks() {}
-
-        signal finishedProcessing()
-        signal requestCloseWindow()
-    }
-
-    QtObject {
-        id: helpersWrapper
-
-        signal globalBeforeDestruction()
-
-        function getZipArchiver() { return archiver }
-    }
-
-    QtObject {
-        id: i18
-        property string n: ""
-    }
-
-    ZipArtworksDialog {
-        id: zipDialog
+    Loader {
+        id: loader
         anchors.fill: parent
+        asynchronous: true
+        focus: true
+
+        sourceComponent: ZipArtworksDialog {
+            anchors.fill: parent
+        }
     }
 
     TestCase {
         name: "ZipArchiver"
-        when: windowShown
+        when: windowShown && (loader.status == Loader.Ready)
+        property var zipDialog: loader.item
+
+        function initTestCase() {
+        }
+
+        function cleanupTestCase() {
+            TestsHost.cleanupTest()
+        }
+
+        function cleanup() {
+            TestsHost.cleanup()
+        }
+
+        function test_zipFakeItems() {
+            compare(zipDialog.zipArchiver.itemsCount, 5)
+
+            var zipButton = findChild(zipDialog, "importButton")
+            mouseClick(zipButton)
+
+            verify(zipDialog.zipArchiver.inProgress)
+            wait(TestsHost.normalSleepTime)
+            verify(!zipDialog.zipArchiver.inProgress)
+            verify(!zipDialog.zipArchiver.isError)
+        }
     }
 }

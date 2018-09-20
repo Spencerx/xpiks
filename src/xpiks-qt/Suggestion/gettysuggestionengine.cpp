@@ -14,7 +14,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QJsonArray>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Suggestion {
     void parseUrl(const QJsonValue &previewObject, QString &url) {
@@ -104,7 +104,9 @@ namespace Suggestion {
                 }
 
                 // TODO: parse external url from istock
-                suggestionArtworks.emplace_back(new SuggestionArtwork(url, title, description, keywords, false));
+                suggestionArtworks.emplace_back(
+                            std::make_shared<SuggestionArtwork>(
+                                url, title, description, keywords, false));
             }
         }
     }

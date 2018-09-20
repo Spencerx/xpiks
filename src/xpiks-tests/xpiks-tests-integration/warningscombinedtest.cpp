@@ -1,44 +1,26 @@
 #include "warningscombinedtest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include <QStringList>
+#include <QList>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/imageartwork.h"
 #include "testshelpers.h"
+#include "xpikstestsapp.h"
 
 QString WarningsCombinedTest::testName() {
     return QLatin1String("WarningsCombinedTest");
 }
 
 void WarningsCombinedTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(false);
+    m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
 int WarningsCombinedTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
     files << setupFilePathForTest("images-for-tests/read-only/Nokota_Horses.jpg");
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
-
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    Models::ArtworkMetadata *artwork = artItemsModel->getArtwork(0);
+    auto artwork = m_TestsApp.getArtwork(0);
     VERIFY(artwork->isInitialized(), "Artwork is not initialized after import");
 
     sleepWaitUntil(3, [artwork]() {

@@ -14,6 +14,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
+import xpiks 1.0
 import "../Constants"
 import "../Common.js" as Common;
 import "../Components"
@@ -23,6 +24,7 @@ import "../Constants/UIConfig.js" as UIConfig
 Item {
     id: csvExportComponent
     anchors.fill: parent
+    property variant csvExportModel: dispatcher.getCommandTarget(UICommand.ExportSelectedToCSV)
     property variant columnsModel: csvExportModel.getColumnsModel()
     property variant propertiesModel: columnsModel.getPropertiesList()
 
@@ -204,6 +206,7 @@ Item {
 
                 ListView {
                     id: exportPlanModelsListView
+                    objectName: "exportPlanModelsListView"
                     model: csvExportModel
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -333,6 +336,7 @@ Item {
 
                     StyledBlackButton {
                         id: addExportPlanButton
+                        objectName: "addExportPlanButton"
                         text: i18.n + qsTr("Add new", "csv export plan")
                         width: 210
                         height: 30
@@ -509,6 +513,7 @@ Item {
 
                         ListView {
                             id: columnsListView
+                            objectName: "columnsListView"
                             model: columnsModel
                             clip: columnsScrollbar.visible
                             anchors.fill: parent
@@ -666,6 +671,7 @@ Item {
 
                                 GlyphButton {
                                     id: addColumnButton
+                                    objectName: "addColumnButton"
                                     text: i18.n + qsTr("Add column")
                                     width: 180
                                     height: 30

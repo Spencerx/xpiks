@@ -23,13 +23,14 @@ import "../Constants/UIConfig.js" as UIConfig
 
 Rectangle {
     id: artworkEditComponent
+    objectName: "ArtworkEditView"
     color: uiColors.defaultDarkerColor
 
     property variant componentParent
     property var autoCompleteBox
 
-    property int artworkIndex: -1
-    property var keywordsModel
+    property var artworkProxy: dispatcher.getCommandTarget(UICommand.EditArtwork)
+    property var keywordsModel: artworkProxy.getBasicModelObject()
     property bool wasLeftSideCollapsed
     property bool listViewEnabled: true
     property bool canShowChangesSaved: false
@@ -43,35 +44,16 @@ Rectangle {
     }
 
     function reloadItemEditing(itemIndex) {
-        if (itemIndex === artworkIndex) { return }
+        console.debug("reloadItemEditing # " + itemIndex)
+        if (itemIndex === artworkProxy.proxyIndex) { return }
         if ((itemIndex < 0) || (itemIndex >= rosterListView.count)) { return }
 
         canShowChangesSaved = false
         changesText.visible = false
         closeAutoComplete()
+        flv.submitCurrentKeyword()
 
-        var originalIndex = filteredArtItemsModel.getOriginalIndex(itemIndex)
-        var metadata = filteredArtItemsModel.getArtworkMetadata(itemIndex)
-        var keywordsModel = filteredArtItemsModel.getBasicModel(itemIndex)
-
-        artworkProxy.setSourceArtwork(metadata)
-        artworkProxy.registerAsCurrentItem()
-
-        artworkEditComponent.artworkIndex = itemIndex
-        artworkEditComponent.keywordsModel = keywordsModel
-
-        if (listViewEnabled) {
-            rosterListView.currentIndex = itemIndex
-            rosterListView.positionViewAtIndex(itemIndex, ListView.Contain)
-        }
-
-        titleTextInput.forceActiveFocus()
-        titleTextInput.cursorPosition = titleTextInput.text.length
-
-        artworkProxy.initTitleHighlighting(titleTextInput.textDocument)
-        artworkProxy.initDescriptionHighlighting(descriptionTextInput.textDocument)
-
-        savedTimer.start()
+        dispatcher.dispatch(UICommand.EditArtwork, itemIndex)
     }
 
     function closePopup() {
@@ -96,16 +78,6 @@ Rectangle {
         }
     }
 
-    Timer {
-        id: savedTimer
-        interval: 1000
-        running: true
-        repeat: false
-        onTriggered: {
-            canShowChangesSaved = true
-        }
-    }
-
     function updateChangesText() {
         if (canShowChangesSaved) {
             changesText.visible = true
@@ -113,17 +85,7 @@ Rectangle {
     }
 
     function openDuplicatesView() {
-        artworkProxy.setupDuplicatesModel()
-
-        var wasCollapsed = applicationWindow.leftSideCollapsed
-        mainStackView.push({
-                               item: "qrc:/StackViews/DuplicatesReView.qml",
-                               properties: {
-                                   componentParent: applicationWindow,
-                                   wasLeftSideCollapsed: wasCollapsed
-                               },
-                               destroyOnPop: true
-                           })
+        dispatcher.dispatch(UICommand.ShowDuplicatesSingle, {})
     }
 
     function openSuggestionView() {
@@ -134,18 +96,36 @@ Rectangle {
             }
         }
 
-        artworkProxy.initSuggestion()
-
-        Common.launchDialog("Dialogs/KeywordsSuggestion.qml",
-                            componentParent,
-                            {callbackObject: callbackObject});
+        dispatcher.dispatch(UICommand.InitSuggestionSingle, callbackObject)
     }
 
     function fixSpelling() {
-        artworkProxy.suggestCorrections()
-        Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
+        dispatcher.dispatch(UICommand.FixSpellingSingle, {})
+        updateChangesText()
+    }
+
+    function editInPlainText() {
+        var callbackObject = {
+            onSuccess: function(text, spaceIsSeparator) {
+                artworkProxy.plainTextEdit(text, spaceIsSeparator)
+            },
+            onClose: function() {
+                flv.activateEdit()
+            }
+        }
+
+        Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
                             componentParent,
-                            {})
+                            {
+                                callbackObject: callbackObject,
+                                keywordsText: artworkProxy.getKeywordsString(),
+                                keywordsModel: artworkProxy.getBasicModelObject()
+                            });
+    }
+
+    function clearKeywords() {
+        filteredArtworksListModel.clearKeywords(artworkProxy.proxyIndex)
+        artworkProxy.updateKeywords()
         updateChangesText()
     }
 
@@ -246,10 +226,7 @@ Rectangle {
 
         MenuItem {
             text: i18.n + qsTr("Copy to Quick Buffer")
-            onTriggered: {
-                filteredArtItemsModel.copyToQuickBuffer(itemPreviewMenu.index)
-                uiManager.activateQuickBufferTab()
-            }
+            onTriggered: dispatcher.dispatch(UICommand.CopyArtworkToQuickBuffer, itemPreviewMenu.index)
         }
     }
 
@@ -283,9 +260,7 @@ Rectangle {
         MenuItem {
             text: i18.n + qsTr("Show duplicates")
             enabled: artworkEditComponent.keywordsModel ? artworkEditComponent.keywordsModel.hasDuplicates : false
-            onTriggered: {
-                openDuplicatesView()
-            }
+            onTriggered: openDuplicatesView()
         }
 
         MenuSeparator { }
@@ -293,6 +268,7 @@ Rectangle {
         MenuItem {
             text: i18.n + qsTr("Copy")
             enabled: artworkProxy.keywordsCount > 0
+            objectName: "copyMenuItem"
             onTriggered: {
                 clipboard.setText(artworkProxy.getKeywordsString())
             }
@@ -311,22 +287,7 @@ Rectangle {
         MenuItem {
             text: i18.n + qsTr("Edit in plain text")
             onTriggered: {
-                var callbackObject = {
-                    onSuccess: function(text, spaceIsSeparator) {
-                        artworkProxy.plainTextEdit(text, spaceIsSeparator)
-                    },
-                    onClose: function() {
-                        flv.activateEdit()
-                    }
-                }
-
-                Common.launchDialog("Dialogs/PlainTextKeywordsDialog.qml",
-                                    applicationWindow,
-                                    {
-                                        callbackObject: callbackObject,
-                                        keywordsText: artworkProxy.getKeywordsString(),
-                                        keywordsModel: artworkProxy.getBasicModel()
-                                    });
+                editInPlainText()
             }
         }
 
@@ -336,6 +297,38 @@ Rectangle {
             onTriggered: {
                 clearKeywordsDialog.open()
             }
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.EditArtwork]
+        onDispatched: {
+            console.log("# [EditArtwork] dispatched")
+            artworkEditComponent.keywordsModel = artworkProxy.getBasicModelObject()
+
+            if (listViewEnabled) {
+                rosterListView.currentIndex = value
+                rosterListView.positionViewAtIndex(value, ListView.Contain)
+            }
+
+            titleTextInput.forceActiveFocus()
+            titleTextInput.cursorPosition = titleTextInput.text.length
+
+            uiManager.initTitleHighlighting(artworkProxy.getBasicModelObject(), titleTextInput.textDocument)
+            uiManager.initDescriptionHighlighting(artworkProxy.getBasicModelObject(), descriptionTextInput.textDocument)
+
+            savedTimer.start()
+        }
+    }
+
+    Timer {
+        id: savedTimer
+        interval: 1000
+        running: true
+        repeat: false
+        onTriggered: {
+            canShowChangesSaved = true
         }
     }
 
@@ -360,7 +353,6 @@ Rectangle {
     Component.onCompleted: {
         focus = true
 
-        artworkProxy.registerAsCurrentItem()
         titleTextInput.forceActiveFocus()
         titleTextInput.cursorPosition = titleTextInput.text.length
 
@@ -387,21 +379,16 @@ Rectangle {
 
     MessageDialog {
         id: clearKeywordsDialog
-
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("Clear all keywords?")
         standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: {
-            filteredArtItemsModel.clearKeywords(artworkEditComponent.artworkIndex)
-            artworkProxy.updateKeywords()
-            updateChangesText()
-        }
+        onYes: clearKeywords()
     }
 
     // Keys.onEscapePressed: closePopup()
 
     Connections {
-        target: artworkProxy
+        target: acSource
 
         onCompletionsAvailable: {
             acSource.initializeCompletions()
@@ -424,7 +411,7 @@ Rectangle {
             var isBelow = (tmp.y + popupHeight) < directParent.height;
 
             var options = {
-                model: acSource.getCompletionsModel(),
+                model: acSource.getCompletionsModelObject(),
                 autoCompleteSource: acSource,
                 editableTags: flv,
                 isBelowEdit: isBelow,
@@ -461,7 +448,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: 2
-        color: applicationWindow.leftSideCollapsed ? bottomPane.color : artworkEditComponent.color
+        color: appHost.leftSideCollapsed ? bottomPane.color : artworkEditComponent.color
     }
 
     SplitView {
@@ -753,6 +740,7 @@ Rectangle {
 
                                 StyledTextEdit {
                                     id: titleTextInput
+                                    objectName: "titleTextInput"
                                     focus: true
                                     width: paintedWidth > titleFlick.width ? paintedWidth : titleFlick.width
                                     height: titleFlick.height
@@ -794,7 +782,9 @@ Rectangle {
                                     }
 
                                     Component.onCompleted: {
-                                        artworkProxy.initTitleHighlighting(titleTextInput.textDocument)
+                                        uiManager.initTitleHighlighting(
+                                                    artworkProxy.getBasicModelObject(),
+                                                    titleTextInput.textDocument)
                                     }
 
                                     onCursorRectangleChanged: titleFlick.ensureVisible(cursorRectangle)
@@ -881,6 +871,7 @@ Rectangle {
 
                                 StyledTextEdit {
                                     id: descriptionTextInput
+                                    objectName: "descriptionTextInput"
                                     width: descriptionFlick.width
                                     height: paintedHeight > descriptionFlick.height ? paintedHeight : descriptionFlick.height
                                     text: artworkProxy.description
@@ -919,7 +910,9 @@ Rectangle {
                                     textFormat: TextEdit.PlainText
 
                                     Component.onCompleted: {
-                                        artworkProxy.initDescriptionHighlighting(descriptionTextInput.textDocument)
+                                        uiManager.initDescriptionHighlighting(
+                                                    artworkProxy.getBasicModelObject(),
+                                                    descriptionTextInput.textDocument)
                                     }
 
                                     Keys.onBacktabPressed: {
@@ -1022,6 +1015,7 @@ Rectangle {
 
                             EditableTags {
                                 id: flv
+                                objectName: "editableTags"
                                 anchors.fill: parent
                                 model: artworkEditComponent.keywordsModel
                                 property int keywordHeight: uiManager.keywordHeight
@@ -1031,12 +1025,12 @@ Rectangle {
                                 onDroppedIndexChanged: dropTimer.start()
 
                                 function acceptCompletion(completionID) {
-                                    var accepted = artworkProxy.acceptCompletionAsPreset(completionID);
-                                    if (!accepted) {
+                                    if (acSource.isPreset(completionID)) {
+                                        dispatcher.dispatch(UICommand.AcceptPresetCompletionForSingle, completionID)
+                                        flv.editControl.acceptCompletion('')
+                                    } else {
                                         var completion = acSource.getCompletion(completionID)
                                         flv.editControl.acceptCompletion(completion)
-                                    } else {
-                                        flv.editControl.acceptCompletion('')
                                     }
                                 }
 
@@ -1069,7 +1063,7 @@ Rectangle {
                                                                 callbackObject: callbackObject,
                                                                 previousKeyword: keyword,
                                                                 keywordIndex: kw.delegateIndex,
-                                                                keywordsModel: artworkProxy.getBasicModel()
+                                                                keywordsModel: artworkProxy.getBasicModelObject()
                                                             })
                                     }
 
@@ -1114,7 +1108,7 @@ Rectangle {
                                 }
 
                                 onCompletionRequested: {
-                                    artworkProxy.generateCompletions(prefix)
+                                    dispatcher.dispatch(UICommand.GenerateCompletions, prefix)
                                 }
 
                                 onExpandLastAsPreset: {
@@ -1170,6 +1164,7 @@ Rectangle {
 
                             StyledLink {
                                 id: fixSpellingLink
+                                objectName: "fixSpellingLink"
                                 text: i18.n + qsTr("Fix spelling")
                                 property bool canBeShown: {
                                     return artworkEditComponent.keywordsModel ?
@@ -1224,6 +1219,7 @@ Rectangle {
 
                             StyledLink {
                                 id: copyLink
+                                objectName: "copyLink"
                                 property bool canBeShown: (artworkProxy.keywordsCount > 0)
                                 text: i18.n + qsTr("Copy")
                                 enabled: canBeShown
@@ -1261,7 +1257,10 @@ Rectangle {
 
                                 StyledText {
                                     id: moreLink
-                                    color: enabled ? (moreMA.pressed ? uiColors.linkClickedColor : uiColors.artworkActiveColor) : (isActive ? uiColors.labelActiveForeground : uiColors.labelInactiveForeground)
+                                    color: enabled ? (moreMA.pressed ? uiColors.linkClickedColor :
+                                                                       uiColors.artworkActiveColor) :
+                                                     (isActive ? uiColors.labelActiveForeground :
+                                                                 uiColors.labelInactiveForeground)
                                     text: i18.n + qsTr("More")
                                     anchors.verticalCenter: parent.verticalCenter
                                     // \u25BE - triangle
@@ -1358,6 +1357,7 @@ Rectangle {
 
         Item {
             id: selectPrevButton
+            objectName: "selectPrevButton"
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -1397,6 +1397,7 @@ Rectangle {
 
         ListView {
             id: rosterListView
+            objectName: "rosterListView"
             enabled: listViewEnabled
             boundsBehavior: Flickable.StopAtBounds
             orientation: ListView.Horizontal
@@ -1404,7 +1405,7 @@ Rectangle {
             anchors.right: selectNextButton.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            model: listViewEnabled ? filteredArtItemsModel : undefined
+            model: listViewEnabled ? filteredArtworksListModel : undefined
             highlightFollowsCurrentItem: false
             highlightMoveDuration: 0
             flickableDirection: Flickable.HorizontalFlick
@@ -1415,14 +1416,15 @@ Rectangle {
 
             Component.onCompleted: {
                 if (listViewEnabled) {
-                    rosterListView.currentIndex = artworkEditComponent.artworkIndex
-                    rosterListView.positionViewAtIndex(artworkEditComponent.artworkIndex, ListView.Contain)
+                    rosterListView.currentIndex = artworkProxy.proxyIndex
+                    rosterListView.positionViewAtIndex(artworkProxy.proxyIndex, ListView.Contain)
                     // TODO: fix bug with ListView.Center
                 }
             }
 
             delegate: Rectangle {
                 id: cellItem
+                objectName: "rosterDelegateItem"
                 property int delegateIndex: index
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
@@ -1519,6 +1521,7 @@ Rectangle {
 
         Item {
             id: selectNextButton
+            objectName: "selectNextButton"
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom

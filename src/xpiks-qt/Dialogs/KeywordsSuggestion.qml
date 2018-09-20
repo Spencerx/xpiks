@@ -26,6 +26,7 @@ Item {
     objectName: "keywordsSuggestionComponent"
     anchors.fill: parent
     property var callbackObject
+    property var keywordsSuggestor: dispatcher.getCommandTarget(UICommand.InitSuggestionArtwork)
     property bool initialized: false
 
     signal dialogDestruction();
@@ -178,6 +179,7 @@ Item {
 
                         StyledTextInput {
                             id: queryText
+                            objectName: "queryTextInput"
                             anchors.left: parent.left
                             anchors.right: parent.right
                             anchors.leftMargin: 5
@@ -211,6 +213,7 @@ Item {
 
                     StyledButton {
                         anchors.right: parent.right
+                        objectName: "searchButton"
                         text: i18.n + qsTr("Search")
                         width: 100
                         activeFocusOnPress: true
@@ -248,6 +251,7 @@ Item {
 
                             Repeater {
                                 id: suggestionsRepeater
+                                objectName: "suggestionsRepeater"
                                 model: keywordsSuggestor
 
                                 delegate: Item {
@@ -354,6 +358,7 @@ Item {
 
                     ComboBoxPopup {
                         id: sourceComboBox
+                        objectName: "engineComboBox"
                         model: keywordsSuggestor.engineNames
                         anchors.right: parent.right
                         width: 200
@@ -420,6 +425,7 @@ Item {
 
                         EditableTags {
                             id: suggestedFlv
+                            objectName: "suggestedEditableTags"
                             anchors.fill: parent
                             model: keywordsSuggestor.getSuggestedKeywordsModel()
                             property int keywordHeight: uiManager.keywordHeight
@@ -514,6 +520,7 @@ Item {
 
                         EditableTags {
                             id: otherFlv
+                            objectName: "otherEditableTags"
                             anchors.fill: parent
                             model: keywordsSuggestor.getAllOtherKeywordsModel()
                             property int keywordHeight: uiManager.keywordHeight
@@ -568,7 +575,9 @@ Item {
                     anchors.right: parent.right
 
                     /*StyledText {
-                        text: i18.n + (keywordsSuggestor.selectedArtworksCount !== 1 ? qsTr("%1 selected items").arg(keywordsSuggestor.selectedArtworksCount) : qsTr("1 selected item"))
+                        text: i18.n + (keywordsSuggestor.selectedArtworksCount !== 1 ?
+                                           qsTr("%1 selected items").arg(keywordsSuggestor.selectedArtworksCount) :
+                                           qsTr("1 selected item"))
                     }*/
 
                     Item {

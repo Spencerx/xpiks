@@ -34,10 +34,9 @@ namespace Connectivity {
         Q_OBJECT
     public:
         UpdatesCheckerWorker(Common::ISystemEnvironment &environment,
-                             Models::SettingsModel *settingsModel,
-                             Maintenance::MaintenanceService *maintenanceService,
+                             Models::SettingsModel &settingsModel,
+                             Maintenance::MaintenanceService &maintenanceService,
                              const QString &availableUpdatePath);
-        virtual ~UpdatesCheckerWorker();
 
     private:
         void initWorker();
@@ -58,8 +57,8 @@ namespace Connectivity {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Models::SettingsModel *m_SettingsModel;
-        Maintenance::MaintenanceService *m_MaintenanceService;
+        Models::SettingsModel &m_SettingsModel;
+        Maintenance::MaintenanceService &m_MaintenanceService;
         QString m_UpdatesDirectory;
         QString m_AvailableUpdatePath;
     };

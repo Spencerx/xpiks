@@ -19,12 +19,11 @@
 #define NO_CACHE_ATTRIBUTE true
 
 namespace Connectivity {
-    RequestsService::RequestsService(Models::ProxySettings *proxySettings, QObject *parent):
+    RequestsService::RequestsService(const Models::ProxySettings &proxySettings, QObject *parent):
         QObject(parent),
         m_RequestsWorker(nullptr),
         m_ProxySettings(proxySettings)
     {
-        Q_ASSERT(proxySettings != nullptr);
     }
 
     void RequestsService::startService() {
@@ -59,17 +58,14 @@ namespace Connectivity {
         m_RequestsWorker->stopWorking();
     }
 
-    void RequestsService::receiveConfig(Helpers::RemoteConfig *config) {
+    void RequestsService::receiveConfig(Helpers::RemoteConfig &config) {
         LOG_DEBUG << "#";
-        Q_ASSERT(config != nullptr);
-        if (config == nullptr) { return; }
-
         if (m_RequestsWorker == nullptr) {
-            LOG_DEBUG << "Skipping" << config->getUrl() << ". Service is stopped";
+            LOG_DEBUG << "Skipping" << config.getUrl() << ". Service is stopped";
             return;
         }
 
-        std::shared_ptr<IConnectivityRequest> item(new ConfigRequest(config, config->getUrl(), NO_CACHE_ATTRIBUTE));
+        auto item = std::make_shared<ConfigRequest>(config, config.getUrl(), NO_CACHE_ATTRIBUTE);
         m_RequestsWorker->submitItem(item);
     }
 

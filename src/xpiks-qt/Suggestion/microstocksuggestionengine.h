@@ -25,8 +25,8 @@ namespace Suggestion {
     public:
         MicrostockSuggestionEngine(int id,
                                    const QString &name,
-                                   Microstocks::IMicrostockAPIClient *client,
-                                   Connectivity::RequestsService *requestsService):
+                                   std::shared_ptr<Microstocks::IMicrostockAPIClient> const &client,
+                                   Connectivity::RequestsService &requestsService):
             m_EngineID(id),
             m_Name(name),
             m_Client(client),
@@ -34,8 +34,9 @@ namespace Suggestion {
             m_IsCancelled(false),
             m_IsEnabled(true)
         {
+#ifndef CORE_TESTS
             Q_ASSERT(client != nullptr);
-            Q_ASSERT(requestsService != nullptr);
+#endif
         }
 
     public:
@@ -50,9 +51,9 @@ namespace Suggestion {
             Q_ASSERT(m_IsEnabled);
             if (!m_IsEnabled) { return; }
             m_IsCancelled = false;
-            std::shared_ptr<ResponseType> response(new ResponseType(this));
+            auto response = std::make_shared<ResponseType>(*this);
             std::shared_ptr<Connectivity::IConnectivityRequest> request = m_Client->search(query, response);
-            m_RequestsService->sendRequest(request);
+            m_RequestsService.sendRequest(request);
         }
 
         virtual void cancelQuery() override {
@@ -76,8 +77,8 @@ namespace Suggestion {
         int m_EngineID;
         QString m_Name;
         std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
-        Microstocks::IMicrostockAPIClient *m_Client;
-        Connectivity::RequestsService *m_RequestsService;
+        std::shared_ptr<Microstocks::IMicrostockAPIClient> m_Client;
+        Connectivity::RequestsService &m_RequestsService;
         volatile bool m_IsCancelled;
         bool m_IsEnabled;
     };

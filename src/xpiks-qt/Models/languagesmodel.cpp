@@ -15,12 +15,12 @@
 #include <QCoreApplication>
 #include <QLibraryInfo>
 #include "../Common/defines.h"
-#include "../Commands/commandmanager.h"
 #include "../Models/settingsmodel.h"
 
 namespace Models {
-    LanguagesModel::LanguagesModel(QObject *parent):
+    LanguagesModel::LanguagesModel(SettingsModel &settingsModel, QObject *parent):
         QAbstractListModel(parent),
+        m_SettingsModel(settingsModel),
         m_CurrentLanguageIndex(-1)
     {
         m_XpiksTranslator = new QTranslator(this);
@@ -37,8 +37,7 @@ namespace Models {
     }
 
     void LanguagesModel::initFirstLanguage() {
-        Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-        QString selectedLocale = settingsModel->getSelectedLocale();
+        QString selectedLocale = m_SettingsModel.getSelectedLocale();
 
         QDir languagesDir(m_TranslationsPath);
         QCoreApplication *app = QCoreApplication::instance();
@@ -57,9 +56,9 @@ namespace Models {
         } else {
             selectedLocale = "en_US";
 
-            if (selectedLocale != settingsModel->getSelectedLocale()) {
-                settingsModel->setSelectedLocale(selectedLocale);
-                settingsModel->saveLocale();
+            if (selectedLocale != m_SettingsModel.getSelectedLocale()) {
+                m_SettingsModel.setSelectedLocale(selectedLocale);
+                m_SettingsModel.saveLocale();
             }
 
             xpiksTranslatorPath = languagesDir.filePath(QLatin1String("xpiks_en_US.qm"));
@@ -82,8 +81,7 @@ namespace Models {
     }
 
     void LanguagesModel::loadLanguages() {
-        Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-        QString selectedLocale = settingsModel->getSelectedLocale();
+        QString selectedLocale = m_SettingsModel.getSelectedLocale();
 
         LOG_DEBUG << "Current locale is" << selectedLocale;
         loadTranslators(QDir(m_TranslationsPath), selectedLocale);
@@ -98,9 +96,8 @@ namespace Models {
 
         QDir languagesDir(m_TranslationsPath);
 
-        Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-        settingsModel->setSelectedLocale(langPair.first);
-        settingsModel->saveLocale();
+        m_SettingsModel.setSelectedLocale(langPair.first);
+        m_SettingsModel.saveLocale();
 
         QCoreApplication *app = QCoreApplication::instance();
         Q_UNUSED(app);

@@ -13,7 +13,7 @@
 #include <QJsonParseError>
 #include <QJsonValue>
 #include <QJsonObject>
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 
 namespace Suggestion {
     void parseJsonResults(const QJsonObject &jsonObject, int count,
@@ -39,7 +39,9 @@ namespace Suggestion {
 
             QStringList keywordsList = keywords.toString().split(',');
 
-            suggestionArtworks.emplace_back(new SuggestionArtwork(url.toString(), externalUrl, title.toString(), QString(""), keywordsList));
+            suggestionArtworks.emplace_back(
+                        std::make_shared<SuggestionArtwork>(
+                            url.toString(), externalUrl, title.toString(), QString(""), keywordsList));
         }
     }
 

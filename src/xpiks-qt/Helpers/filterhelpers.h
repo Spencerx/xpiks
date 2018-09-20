@@ -12,14 +12,17 @@
 #define FILTERHELPERS_H
 
 #include <QString>
-#include "../Common/flags.h"
+#include <Common/flags.h>
+#include <memory>
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
 }
 
 namespace Helpers {
-    bool hasSearchMatch(const QString &searchTerm, Models::ArtworkMetadata *metadata, Common::SearchFlags searchFlags);
+    bool hasSearchMatch(const QString &searchTerm,
+                        std::shared_ptr<Artworks::ArtworkMetadata> const &artwork,
+                        Common::SearchFlags searchFlags);
 }
 
 #endif // FILTERHELPERS_H

@@ -13,20 +13,12 @@
 
 #include <QObject>
 #include <QString>
-#include <QVector>
 #include <QSize>
-#include <vector>
 #include <memory>
-#include "../Common/baseentity.h"
-#include "../Common/iservicebase.h"
-#include "../Common/isystemenvironment.h"
+#include <Common/isystemenvironment.h>
 
-namespace Models {
+namespace Artworks {
     class ArtworkMetadata;
-    class ArtworkMetadataLocker;
-}
-
-namespace MetadataIO {
     class ArtworksSnapshot;
 }
 
@@ -34,19 +26,24 @@ namespace Storage {
     class IDatabaseManager;
 }
 
+namespace Helpers {
+    class AsyncCoordinator;
+}
+
 class QScreen;
 
 namespace QMLExtensions {
     class ImageCachingWorker;
 
-    class ImageCachingService : public QObject, public Common::BaseEntity
+    class ImageCachingService : public QObject
     {
         Q_OBJECT
     public:
-        explicit ImageCachingService(Common::ISystemEnvironment &environment, Storage::IDatabaseManager *dbManager, QObject *parent = 0);
+        explicit ImageCachingService(Common::ISystemEnvironment &environment,
+                                     QObject *parent = 0);
 
     public:
-        void startService(const std::shared_ptr<Common::ServiceStartParams> &params);
+        void startService(Helpers::AsyncCoordinator &coordinator, Storage::IDatabaseManager &dbManager);
         void stopService();
         void upgradeCacheStorage();
 
@@ -57,7 +54,7 @@ namespace QMLExtensions {
         void setScale(qreal scale);
         void cacheImage(const QString &key, const QSize &requestedSize, bool recache=false);
         void cacheImage(const QString &key);
-        void generatePreviews(const MetadataIO::ArtworksSnapshot &snapshot);
+        void generatePreviews(const Artworks::ArtworksSnapshot &snapshot);
         bool tryGetCachedImage(const QString &key, const QSize &requestedSize, QString &cached, bool &needsUpdate);
 
     private:
@@ -69,7 +66,6 @@ namespace QMLExtensions {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        Storage::IDatabaseManager *m_DatabaseManager;
         ImageCachingWorker *m_CachingWorker;
         QSize m_DefaultSize;
         volatile bool m_IsCancelled;

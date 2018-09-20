@@ -28,7 +28,7 @@ namespace KeywordsPresets {
         Q_OBJECT
         Q_PROPERTY(QStringList groupNames READ retrieveGroupNames NOTIFY groupNamesChanged)
     public:
-        PresetGroupsModel(PresetKeywordsModel *presetsModel);
+        PresetGroupsModel(PresetKeywordsModel &presetsModel);
 
     private:
         enum PresetGroups_Roles {
@@ -80,7 +80,7 @@ namespace KeywordsPresets {
         std::vector<GroupModel> m_GroupsList;
         std::vector<std::shared_ptr<PresetKeywordsGroupModel> > m_FilteredGroups;
         std::shared_ptr<PresetKeywordsGroupModel> m_DefaultGroup;
-        PresetKeywordsModel *m_PresetsModel;
+        PresetKeywordsModel &m_PresetsModel;
     };
 }
 

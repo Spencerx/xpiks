@@ -13,7 +13,7 @@
 
 #include <memory>
 #include <QStringList>
-#include "uploadcontext.h"
+#include <uploadcontext.h>
 
 namespace libxpks {
     namespace net {

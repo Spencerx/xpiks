@@ -9,7 +9,7 @@
  */
 
 #include "cachingimageprovider.h"
-#include "../Common/defines.h"
+#include "../Common/logging.h"
 #include "../QMLExtensions/imagecachingservice.h"
 #include "../Helpers/stringhelper.h"
 

@@ -17,21 +17,20 @@
 #include <QCoreApplication>
 #include <QQmlEngine>
 #include "keywordshelpers.h"
-#include "../Commands/commandmanager.h"
-#include "../Models/logsmodel.h"
-#include "../Models/artworkuploader.h"
-#include "../AutoComplete/stringsautocompletemodel.h"
-#include "../Models/ziparchiver.h"
-#include "../SpellCheck/spellcheckerservice.h"
-#include "../Models/deletekeywordsviewmodel.h"
-#include "../Models/uploadinforepository.h"
-#include "../SpellCheck/spellchecksuggestionmodel.h"
+#include <Models/logsmodel.h>
+#include <Models/Connectivity/artworksuploader.h>
+#include <Services/AutoComplete/stringsautocompletemodel.h>
+#include <Models/Connectivity/ziparchiver.h>
+#include <Services/SpellCheck/spellcheckservice.h>
+#include <Models/Editing/deletekeywordsviewmodel.h>
+#include <Models/Connectivity/uploadinforepository.h>
+#include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include "logger.h"
-#include "../Common/defines.h"
-#include "../Helpers/filehelpers.h"
-#include "../Helpers/updatehelpers.h"
-#include "../QMLExtensions/colorsmodel.h"
-#include "../Helpers/filehelpers.h"
+#include <Common/defines.h>
+#include <Helpers/filehelpers.h>
+#include <Helpers/updatehelpers.h>
+#include <QMLExtensions/colorsmodel.h>
+#include <Helpers/filehelpers.h>
 
 #ifdef Q_OS_WIN
 #include <QWinTaskbarButton>
@@ -39,13 +38,11 @@
 #endif
 
 namespace Helpers {
-    HelpersQmlWrapper::HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel *colorsModel):
+    HelpersQmlWrapper::HelpersQmlWrapper(Common::ISystemEnvironment &environment, QMLExtensions::ColorsModel &colorsModel):
         m_Environment(environment),
         m_ColorsModel(colorsModel)
     {
-        Q_ASSERT(colorsModel != nullptr);
-
-#if defined(Q_OS_WIN) && !defined(INTEGRATION_TESTS)
+#if defined(Q_OS_WIN) && !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
         m_WinTaskbarButtonApplicable = QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS7;
         if (m_WinTaskbarButtonApplicable) {
             m_TaskbarButton = new QWinTaskbarButton(this);
@@ -74,7 +71,7 @@ namespace Helpers {
     }
 
     void Helpers::HelpersQmlWrapper::reportOpen() {
-        xpiks()->reportUserAction(Connectivity::UserAction::Open);
+        //xpiks()->reportUserAction(Connectivity::UserAction::Open);
     }
 
     void HelpersQmlWrapper::setProgressIndicator(QQuickWindow *window) {
@@ -87,7 +84,7 @@ namespace Helpers {
     }
 
     void HelpersQmlWrapper::turnTaskbarProgressOn() {
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(UI_TESTS)
         if (!m_WinTaskbarButtonApplicable) { return; }
         LOG_DEBUG << "Turning on taskbar button in Windows";
         QWinTaskbarProgress *progress = m_TaskbarButton->progress();
@@ -98,7 +95,7 @@ namespace Helpers {
     }
 
     void HelpersQmlWrapper::setTaskbarProgress(double value) {
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(UI_TESTS)
         if (!m_WinTaskbarButtonApplicable) { return; }
         LOG_DEBUG << value;
         QWinTaskbarProgress *progress = m_TaskbarButton->progress();
@@ -109,16 +106,12 @@ namespace Helpers {
     }
 
     void HelpersQmlWrapper::turnTaskbarProgressOff() {
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(UI_TESTS)
         if (!m_WinTaskbarButtonApplicable) { return; }
         LOG_DEBUG << "Turning off taskbar button in Windows";
         QWinTaskbarProgress *progress = m_TaskbarButton->progress();
         progress->setVisible(false);
 #endif
-    }
-
-    void HelpersQmlWrapper::removeUnavailableFiles() {
-        xpiks()->removeUnavailableFiles();
     }
 
     bool HelpersQmlWrapper::isVector(const QString &path) const {
@@ -135,60 +128,18 @@ namespace Helpers {
     }
 
     QString HelpersQmlWrapper::getAssetForTheme(const QString &assetName, int themeIndex) const {
-        QString themeName = m_ColorsModel->getThemeName(themeIndex);
+        QString themeName = m_ColorsModel.getThemeName(themeIndex);
         themeName.remove(QChar::Space);
         QString result = QString("qrc:/Graphics/%1/%2").arg(themeName.toLower()).arg(assetName);
         return result;
     }
 
-    QObject *HelpersQmlWrapper::getLogsModel() {
+    /*QObject *HelpersQmlWrapper::getLogsModel() {
         Models::LogsModel *model = m_CommandManager->getLogsModel();
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
         return model;
-    }
+    }*/
 
-    QObject *HelpersQmlWrapper::getFtpACList() {
-        auto *uploadInfos = m_CommandManager->getUploadInfoRepository();
-        AutoComplete::StringsAutoCompleteModel *model = uploadInfos->getStocksCompletionSource();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
-    }
-
-    QObject *HelpersQmlWrapper::getArtworkUploader() {
-        auto *model = m_CommandManager->getArtworkUploader();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
-    }
-
-    QObject *HelpersQmlWrapper::getZipArchiver() {
-        auto *model = m_CommandManager->getZipArchiver();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
-    }
-
-    QObject *HelpersQmlWrapper::getSpellCheckerService() {
-        auto *service = m_CommandManager->getSpellCheckerService();
-        QQmlEngine::setObjectOwnership(service, QQmlEngine::CppOwnership);
-        return service;
-    }
-
-    QObject *HelpersQmlWrapper::getDeleteKeywordsModel() {
-        auto *model = m_CommandManager->getDeleteKeywordsModel();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
-    }
-
-    QObject *HelpersQmlWrapper::getUploadInfos() {
-        auto *model = m_CommandManager->getUploadInfoRepository();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
-    }
-
-    QObject *HelpersQmlWrapper::getSpellCheckSuggestionsModel() {
-        auto *model = m_CommandManager->getSpellSuggestionsModel();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
-    }
     void HelpersQmlWrapper::revealFile(const QString &path) {
 #ifdef Q_OS_MAC
         QStringList args;

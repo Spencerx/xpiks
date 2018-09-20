@@ -22,8 +22,8 @@ namespace Plugins {
                                  XpiksPluginInterface *pluginInterface,
                                  int pluginID,
                                  Common::ISystemEnvironment &environment,
-                                 UIProvider *realUIProvider,
-                                 Storage::DatabaseManager *databaseManager):
+                                 UIProvider &realUIProvider,
+                                 Storage::DatabaseManager &databaseManager):
         m_PluginInterface(pluginInterface),
         m_PluginEnvironment(environment, Constants::PLUGINS_DIR, filepath),
         m_PluginDatabaseManager(m_PluginEnvironment, databaseManager),
@@ -37,8 +37,6 @@ namespace Plugins {
         m_VersionString(pluginInterface->getVersionString()),
         m_Author(pluginInterface->getAuthor())
     {
-        Q_ASSERT(realUIProvider != nullptr);
-        Q_ASSERT(databaseManager != nullptr);
     }
 
     PluginWrapper::~PluginWrapper() {

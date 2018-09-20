@@ -17,7 +17,12 @@ DEFINES += QT_NO_CAST_TO_ASCII \
            QT_RESTRICTED_CAST_FROM_ASCII \
            QT_NO_CAST_FROM_BYTEARRAY
 
-DESTDIR = ../xpiks-qt/deps/recoverty/
+unix {
+    DESTDIR = ../xpiks-qt/deps/recoverty/
+}
+
+ICON = recoverty.icns
+RC_ICONS = recoverty.ico
 
 SOURCES += main.cpp \
     restartmodel.cpp

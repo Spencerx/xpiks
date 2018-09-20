@@ -1,57 +1,34 @@
 #include "undoaddwithvectorstest.h"
 #include <QUrl>
-#include <QFileInfo>
-#include <QStringList>
+#include <QList>
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
-#include "../../xpiks-qt/Commands/commandmanager.h"
-#include "../../xpiks-qt/Models/artitemsmodel.h"
-#include "../../xpiks-qt/MetadataIO/metadataiocoordinator.h"
-#include "../../xpiks-qt/Models/artworkmetadata.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "../../xpiks-qt/Models/imageartwork.h"
-#include "../../xpiks-qt/UndoRedo/undoredomanager.h"
+#include "xpikstestsapp.h"
 
 QString UndoAddWithVectorsTest::testName() {
     return QLatin1String("UndoAddWithVectorsTest");
 }
 
 void UndoAddWithVectorsTest::setup() {
-    Models::SettingsModel *settingsModel = m_CommandManager->getSettingsModel();
-    settingsModel->setAutoFindVectors(true);
-
-    // copy files
-    setupFilePathForTest("images-for-tests/mixed/026.eps");
-    setupFilePathForTest("images-for-tests/mixed/027.eps");
+    m_TestsApp.getSettingsModel().setAutoFindVectors(true);
 }
 
 int UndoAddWithVectorsTest::doTest() {
-    Models::ArtItemsModel *artItemsModel = m_CommandManager->getArtItemsModel();
     QList<QUrl> files;
-    files << setupFilePathForTest("images-for-tests/mixed/026.jpg");
-    files << setupFilePathForTest("images-for-tests/mixed/0267.jpg");
-    files << setupFilePathForTest("images-for-tests/mixed/027.jpg");
+    files << setupFilePathForTest("images-for-tests/mixed/026.jpg", true);
+    files << setupFilePathForTest("images-for-tests/mixed/0267.jpg", true);
+    files << setupFilePathForTest("images-for-tests/mixed/027.jpg", true);
 
-    MetadataIO::MetadataIOCoordinator *ioCoordinator = m_CommandManager->getMetadataIOCoordinator();
-    SignalWaiter waiter;
-    QObject::connect(ioCoordinator, SIGNAL(metadataReadingFinished()), &waiter, SIGNAL(finished()));    
+    VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    int addedCount = artItemsModel->addLocalArtworks(files);
-    VERIFY(addedCount == files.length(), "Failed to add file");
-    ioCoordinator->continueReading(true);
+    auto firstImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(0));
+    Q_ASSERT(firstImage != nullptr);
 
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
+    auto secondImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(1));
+    Q_ASSERT(secondImage != nullptr);
 
-    VERIFY(!ioCoordinator->getHasErrors(), "Errors in IO Coordinator while reading");
-
-    Models::ImageArtwork *firstImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(0));
-    Q_ASSERT(firstImage != NULL);
-
-    Models::ImageArtwork *secondImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(1));
-    Q_ASSERT(secondImage != NULL);
-
-    Models::ImageArtwork *thirdImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(2));
-    Q_ASSERT(thirdImage != NULL);
+    auto thirdImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(2));
+    Q_ASSERT(thirdImage != nullptr);
 
     VERIFY(firstImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");
     QString firstVector = firstImage->getAttachedVectorPath();
@@ -61,28 +38,24 @@ int UndoAddWithVectorsTest::doTest() {
     VERIFY(thirdImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");
     QString thirdVector = thirdImage->getAttachedVectorPath();
 
-    artItemsModel->removeArtworksDirectory(0);
-    VERIFY(artItemsModel->getArtworksCount() == 0, "Items were not removed");
+    // remove directory
+    m_TestsApp.removeDirectory(0);
+    VERIFY(m_TestsApp.getArtworksCount() == 0, "All items were not removed");
 
-    UndoRedo::UndoRedoManager *undoRedoManager = m_CommandManager->getUndoRedoManager();
+    //SignalWaiter waiter;
+    //m_TestsApp.connectWaiterForImport(waiter);
+    VERIFY(m_TestsApp.undoLastAction(), "Failed to Undo last action");
+    //VERIFY(m_TestsApp.continueReading(waiter), "Failed to reimport files");
+    VERIFY(m_TestsApp.getArtworksCount() == files.length(), "Items were not put back");
 
-    bool undoSuccess = undoRedoManager->undoLastAction();
-    VERIFY(undoSuccess, "Failed to Undo last action");
+    firstImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(0));
+    Q_ASSERT(firstImage != nullptr);
 
-    ioCoordinator->continueReading(true);
+    secondImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(1));
+    Q_ASSERT(secondImage != nullptr);
 
-    VERIFY(waiter.wait(20), "Timeout exceeded for reading metadata.");
-
-    VERIFY(artItemsModel->getArtworksCount() == files.length(), "Items were not put back");
-
-    firstImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(0));
-    Q_ASSERT(firstImage != NULL);
-
-    secondImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(1));
-    Q_ASSERT(secondImage != NULL);
-
-    thirdImage = dynamic_cast<Models::ImageArtwork*>(artItemsModel->getArtwork(2));
-    Q_ASSERT(thirdImage != NULL);
+    thirdImage = std::dynamic_pointer_cast<Artworks::ImageArtwork>(m_TestsApp.getArtwork(2));
+    Q_ASSERT(thirdImage != nullptr);
 
     VERIFY(firstImage->hasVectorAttached(), "Vector wasn't attached to an image with vector");
     VERIFY(firstImage->getAttachedVectorPath() == firstVector, "Vector paths do not match for first item!")
@@ -93,5 +66,3 @@ int UndoAddWithVectorsTest::doTest() {
 
     return 0;
 }
-
-

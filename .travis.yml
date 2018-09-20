@@ -6,6 +6,21 @@ matrix:
       dist: trusty
       sudo: required
       env: XPIKS_BINARY=binary
+<<<<<<< HEAD
+=======
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: CORE_TESTS=tests QT_FATAL_WARNINGS=1
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: INTEGRATION_TESTS=tests QT_FATAL_WARNINGS=1
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: UI_TESTS=tests
+>>>>>>> master
       
 git:
   depth: 3
@@ -32,7 +47,7 @@ before_script:
   - ulimit -c unlimited -S       # enable core dumps
 
 script:
-  - if [ -z "${UI_TESTS+xxx}" ]; then "$TRAVIS_BUILD_DIR/scripts/build/build_vendors_linux.sh" travis-ci; fi
+  - ${TRAVIS_BUILD_DIR}/scripts/build/build_vendors_linux.sh travis-ci
   - ls -la libs/*
   - cd src/xpiks-qt/
   - qmake "CONFIG+= debug travis-ci without-video" xpiks-qt.pro

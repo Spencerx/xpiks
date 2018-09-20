@@ -31,7 +31,12 @@ private slots:
     void filterTitleTest();
     void filterDescriptionAndKeywordsTest();
     void filterTitleAndKeywordsTest();
-    void clearEmptyKeywordsTest();
+    void clearEmptyKeywordsMarksModifiedTest();
+    void selectExVectorsTest();
+    void selectExModifiedTest();
+    void selectExAllTest();
+    void selectExNoneTest();
+    void selectExImagesTest();
 };
 
 #endif // FILTEREDMODELTESTS_H
