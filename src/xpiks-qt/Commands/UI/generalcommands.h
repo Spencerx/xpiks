@@ -20,6 +20,7 @@ namespace Models {
     class ArtworksListModel;
     class FilteredArtworksListModel;
     class UploadInfoRepository;
+    class LogsModel;
 }
 
 namespace Encryption {
@@ -57,9 +58,13 @@ namespace Commands {
                        QMLExtensions::UICommandID::CheckWarnings,
                        Warnings::WarningsModel);
 
-        SOURCE_COMMAND(InitUploadCommand,
+        SOURCE_COMMAND(InitUploadHostCommand,
                        QMLExtensions::UICommandID::InitUploadHosts,
                        Models::UploadInfoRepository);
+
+        TARGET_COMMAND(UpdateLogsCommand,
+                       QMLExtensions::UICommandID::UpdateLogs,
+                       Models::LogsModel);
     }
 }
 

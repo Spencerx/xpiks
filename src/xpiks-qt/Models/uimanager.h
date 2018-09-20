@@ -86,6 +86,7 @@ namespace Models {
     public:
         Q_INVOKABLE void initDescriptionHighlighting(QObject *basicModelObject, QQuickTextDocument *document);
         Q_INVOKABLE void initTitleHighlighting(QObject *basicModelObject, QQuickTextDocument *document);
+        Q_INVOKABLE void initLogsHighlighting(QQuickTextDocument *document);
         Q_INVOKABLE void activateQuickBufferTab();
 
     public:

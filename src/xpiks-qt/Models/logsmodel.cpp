@@ -9,7 +9,6 @@
  */
 
 #include "logsmodel.h"
-#include "../Helpers/loggingworker.h"
 #include <QThread>
 #include <QString>
 #include <QFile>
@@ -17,27 +16,23 @@
 #include <QDateTime>
 #include <QTextStream>
 #include <QStandardPaths>
-#include "../Helpers/stringhelper.h"
-#include "../Helpers/logger.h"
-#include "../Helpers/loghighlighter.h"
-#include "../Common/defines.h"
-#include "../Encryption/obfuscation.h"
+#include <Helpers/stringhelper.h>
+#include <Helpers/logger.h>
+#include <Helpers/loggingworker.h>
+#include <Common/defines.h>
+#include <Common/logging.h>
+#include <Encryption/obfuscation.h>
 
 namespace Models {
-
     LogsModel::LogsModel(QObject *parent) :
         QObject(parent),
-        m_LoggingWorker(new Helpers::LoggingWorker()),
-        m_ColorsModel(nullptr)
+        m_LoggingWorker(new Helpers::LoggingWorker())
     {
 #ifdef WITH_LOGS
         m_WithLogs = true;
 #else
         m_WithLogs = false;
 #endif
-    }
-
-    LogsModel::~LogsModel() {
     }
 
     void LogsModel::startLogging() {
@@ -55,10 +50,6 @@ namespace Models {
 
     void LogsModel::stopLogging() {
         m_LoggingWorker->cancel();
-    }
-
-    void LogsModel::InjectDependency(QMLExtensions::ColorsModel *colorsModel) {
-        m_ColorsModel = colorsModel;
     }
 
     QString LogsModel::getAllLogsText(bool moreLogs) {
@@ -86,15 +77,16 @@ namespace Models {
 #endif
 
         return result;
-
     }
 
-    void LogsModel::initLogHighlighting(QQuickTextDocument *document) {
-        Q_ASSERT(m_ColorsModel != nullptr);
+    void LogsModel::clearLogsExtract() {
+        LOG_DEBUG << "#";
+        m_LogsExtract.clear();
+        emit logsExtractChanged();
+    }
 
-        if (m_ColorsModel != nullptr) {
-            Helpers::LogHighlighter *highlighter = new Helpers::LogHighlighter(m_ColorsModel, document->textDocument());
-            Q_UNUSED(highlighter);
-        }
+    void LogsModel::updateLogs(bool moreLogs) {
+        m_LogsExtract = getAllLogsText(moreLogs);
+        emit logsExtractChanged();
     }
 }

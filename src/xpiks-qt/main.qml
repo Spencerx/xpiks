@@ -290,7 +290,7 @@ ApplicationWindow {
         id: addFilesAction
         shortcut: StandardKey.Open
         onTriggered: chooseArtworksDialog.open()
-        enabled: (applicationWindow.openedDialogsCount == 0)
+        enabled: applicationWindow.openedDialogsCount == 0
     }
 
     Action {
@@ -298,13 +298,8 @@ ApplicationWindow {
         shortcut: "Shift+Ctrl+L"
         enabled: applicationWindow.openedDialogsCount == 0
         onTriggered: {
-            var logsModel = helpersWrapper.getLogsModel()
-            var allText = logsModel.getAllLogsText()
-            Common.launchDialog("Dialogs/LogsDialog.qml",
-                                applicationWindow,
-                                {
-                                    logText: allText
-                                });
+            dispatcher.dispatch(UICommand.UpdateLogs, false)
+            Common.launchDialog("Dialogs/LogsDialog.qml", applicationWindow, {})
         }
     }
 

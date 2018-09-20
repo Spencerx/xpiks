@@ -31,6 +31,7 @@ namespace QMLExtensions {
             SelectFilteredArtworks,
             CheckWarnings,
             InitUploadHosts,
+            UpdateLogs,
             // ------ Selected -------
             EditSelectedArtworks,
             FixSpellingInSelected,

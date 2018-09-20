@@ -14,6 +14,7 @@
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Models/Connectivity/uploadinforepository.h>
+#include <Models/logsmodel.h>
 #include <Services/AutoComplete/autocompleteservice.h>
 #include <Services/Warnings/warningsmodel.h>
 #include <Helpers/uihelpers.h>
@@ -60,10 +61,16 @@ namespace Commands {
             m_Source.update();
         }
 
-        void InitUploadCommand::execute(const QVariant &value) {
+        void InitUploadHostCommand::execute(const QVariant &value) {
             LOG_DEBUG << value;
             bool masterPasswordCorrectOrEmpty = Helpers::convertToBool(value, false);
             m_Source.initializeAccounts(masterPasswordCorrectOrEmpty);
+        }
+
+        void UpdateLogsCommand::execute(const QVariant &value) {
+            LOG_DEBUG << "#";
+            bool moreLogs = Helpers::convertToBool(value, false);
+            m_Target.updateLogs(moreLogs);
         }
     }
 }

@@ -16,6 +16,7 @@
 #include <Artworks/basicmetadatamodel.h>
 #include <Models/settingsmodel.h>
 #include <Models/Artworks/artworkslistmodel.h>
+#include <Helpers/loghighlighter.h>
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 
@@ -157,6 +158,13 @@ namespace Models {
             info.createHighlighterForTitle(document->textDocument(), &m_ColorsModel, basicModel);
             basicModel->notifyDescriptionSpellingChanged();
         }
+    }
+
+    void UIManager::initLogsHighlighting(QQuickTextDocument *document) {
+        LOG_DEBUG << "#";
+        Helpers::LogHighlighter *highlighter = new Helpers::LogHighlighter(m_ColorsModel,
+                                                                           document->textDocument());
+        Q_UNUSED(highlighter);
     }
 
     void UIManager::activateQuickBufferTab() {

@@ -34,6 +34,20 @@ namespace Commands {
         Source &m_Source;\
     };
 
+#define TARGET_COMMAND(ClassName, CommandID, Target) \
+    class ClassName: public IUICommandTemplate, public IUICommandTargetSource {\
+    public:\
+        ClassName(Target &target):\
+            m_Target(target)\
+        {}\
+    public:\
+        virtual int getCommandID() override { return CommandID; }\
+        virtual void execute(QVariant const &value) override;\
+        virtual QObject *getTargetObject() override { return (QObject*)&m_Target; }\
+    private:\
+        Target &m_Target;\
+    };
+
 #define SOURCE_TARGET_COMMAND(ClassName, CommandID, Source, Target) \
         class ClassName: public IUICommandTemplate {\
         public:\

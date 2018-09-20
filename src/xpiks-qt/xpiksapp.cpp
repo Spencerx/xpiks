@@ -163,7 +163,6 @@ void XpiksApp::initialize() {
 #endif
 
     m_ColorsModel.initializeBuiltInThemes();
-    m_LogsModel.InjectDependency(&m_ColorsModel);
 
     m_TelemetryService.setInterfaceLanguage(m_LanguagesModel.getCurrentLanguage());
     m_ColorsModel.applyTheme(m_SettingsModel.getSelectedThemeIndex());
@@ -703,7 +702,13 @@ void XpiksApp::registerUICommands() {
                     m_FilteredArtworksListModel),
 
                     std::make_shared<Commands::UI::CopyCombinedToQuickBufferCommand>(
-                    m_CombinedArtworksModel)
+                    m_CombinedArtworksModel),
+
+                    std::make_shared<Commands::UI::InitUploadHostCommand>(
+                    m_UploadInfoRepository),
+
+                    std::make_shared<Commands::UI::UpdateLogsCommand>(
+                    m_LogsModel)
                 });
 }
 

@@ -138,18 +138,6 @@ namespace Helpers {
         Models::LogsModel *model = m_CommandManager->getLogsModel();
         QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
         return model;
-    }
-
-    QObject *HelpersQmlWrapper::getSpellCheckerService() {
-        auto *service = m_CommandManager->getSpellCheckerService();
-        QQmlEngine::setObjectOwnership(service, QQmlEngine::CppOwnership);
-        return service;
-    }
-
-    QObject *HelpersQmlWrapper::getUploadInfos() {
-        auto *model = m_CommandManager->getUploadInfoRepository();
-        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
-        return model;
     }*/
 
     void HelpersQmlWrapper::revealFile(const QString &path) {
