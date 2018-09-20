@@ -32,7 +32,7 @@ before_script:
   - ulimit -c unlimited -S       # enable core dumps
 
 script:
-  - $TRAVIS_BUILD_DIR/scripts/build/build_vendors_linux.sh" travis-ci
+  - $TRAVIS_BUILD_DIR/scripts/build/build_vendors_linux.sh travis-ci
   - ls -la libs/*
   - cd src/xpiks-qt/
   - qmake "CONFIG+= debug travis-ci without-video" xpiks-qt.pro
