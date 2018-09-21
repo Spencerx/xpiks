@@ -360,7 +360,7 @@ namespace Models {
 
         // TODO: consider refactoring this to a command template??
         m_ArtworksUpdater.updateArtwork(m_ArtworkMetadata);
-        submitForInspection();
+        //submitForInspection();
 
         auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(m_ArtworkMetadata);
         if (videoArtwork != nullptr) {
@@ -368,8 +368,8 @@ namespace Models {
                 sendMessage(videoArtwork);
             } else {
                 m_ArtworksUpdater.updateArtworkByID(videoArtwork->getItemID(),
-                                                      videoArtwork->getLastKnownIndex(),
-                                                      QVector<int>() << Models::ArtworksListModel::ArtworkThumbnailRole);
+                                                    videoArtwork->getLastKnownIndex(),
+                                                    QVector<int>() << Models::ArtworksListModel::ArtworkThumbnailRole);
             }
         }
 
@@ -385,7 +385,6 @@ namespace Models {
             basicModel.disconnect(this);
             this->disconnect(&basicModel);
             this->disconnect(m_ArtworkMetadata.get());
-            m_ProxyIndex = -1;
         }
     }
 
@@ -397,6 +396,7 @@ namespace Models {
         }
 
         m_ArtworkMetadata = nullptr;
+        m_ProxyIndex = -1;
         sendMessage(std::shared_ptr<ICurrentEditable>());
         emit isValidChanged();
     }

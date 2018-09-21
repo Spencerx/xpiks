@@ -33,6 +33,7 @@ namespace QMLExtensions {
             InitUploadHosts,
             UpdateLogs,
             InitUserDictionary,
+            AddToUserDictionary,
             // ------ Selected -------
             EditSelectedArtworks,
             FixSpellingInSelected,

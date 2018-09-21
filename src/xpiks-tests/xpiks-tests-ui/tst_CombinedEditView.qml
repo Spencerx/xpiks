@@ -412,5 +412,22 @@ Item {
 
             compare(combinedView.combinedArtworks.getKeywordsString(), "pet")
         }
+
+        function test_addToUserDictionary() {
+            keywordsEdit.forceActiveFocus()
+            var testKeyword = TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            wait(TestsHost.normalSleepTime)
+
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+
+            tryCompare(keywordWrapper, "hasSpellCheckError", true, 2000)
+
+            dispatcher.dispatch(UICommand.AddToUserDictionary, testKeyword)
+
+            tryCompare(keywordWrapper, "hasSpellCheckError", false, 2000)
+        }
     }
 }

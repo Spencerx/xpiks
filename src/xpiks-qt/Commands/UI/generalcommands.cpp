@@ -18,6 +18,7 @@
 #include <Services/AutoComplete/autocompleteservice.h>
 #include <Services/Warnings/warningsmodel.h>
 #include <Services/SpellCheck/userdicteditmodel.h>
+#include <Services/SpellCheck/userdictionary.h>
 #include <Helpers/uihelpers.h>
 
 namespace Commands {
@@ -77,6 +78,12 @@ namespace Commands {
         void InitUserDictionaryCommand::execute(const QVariant &) {
             LOG_DEBUG << "#";
             m_Target.initializeModel();
+        }
+
+        void AddToUserDictionaryCommand::execute(const QVariant &value) {
+            LOG_DEBUG << value;
+            QString word = Helpers::convertToString(value);
+            m_Source.addWord(word);
         }
     }
 }

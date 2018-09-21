@@ -515,6 +515,29 @@ Item {
             compare(artworksHost.count, 5)
         }
 
+        function test_addToUserDictionary() {
+            var artworkDelegate = getDelegate(1)
+            var keywordsEdit = findChild(artworkDelegate, "nextTagTextInput")
+            TestUtils.clearEdit(keywordsEdit)
+            keywordsEdit.forceActiveFocus()
+
+            var editableTags = findChild(artworkDelegate, "editableTags")
+
+            var testKeyword = TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            wait(TestsHost.smallSleepTime)
+
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+
+            tryCompare(keywordWrapper, "hasSpellCheckError", true, 2000)
+
+            dispatcher.dispatch(UICommand.AddToUserDictionary, testKeyword)
+
+            tryCompare(keywordWrapper, "hasSpellCheckError", false, 2000)
+        }
+
         /*function test_doubleClickArtwork() {
             var imageHost = findChild(mainGrid, "imageHost")
             mouseDoubleClick(imageHost)

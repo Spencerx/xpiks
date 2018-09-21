@@ -484,10 +484,29 @@ Item {
             compare(artworkEditView.artworkProxy.getKeywordsString(), "")
         }
 
-        /*function test_closeDialog() {
+        function test_closeDialog() {
             var backButton = findChild(artworkEditView, "backButton")
             mouseClick(backButton)
             verify(!artworkEditView.artworkProxy.hasModel())
-        }*/
+            dispatcher.dispatch(UICommand.EditArtwork, 0)
+            wait(TestsHost.normalSleepTime)
+        }
+
+        function test_addToUserDictionary() {
+            keywordsEdit.forceActiveFocus()
+            var testKeyword = TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            wait(TestsHost.smallSleepTime)
+
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper = repeater.itemAt(0)
+
+            tryCompare(keywordWrapper, "hasSpellCheckError", true, 2000)
+
+            dispatcher.dispatch(UICommand.AddToUserDictionary, testKeyword)
+
+            tryCompare(keywordWrapper, "hasSpellCheckError", false, 2000)
+        }
     }
 }

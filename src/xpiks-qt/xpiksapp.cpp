@@ -713,7 +713,10 @@ void XpiksApp::registerUICommands() {
                     m_LogsModel),
 
                     std::make_shared<Commands::UI::InitUserDictionaryCommand>(
-                    m_UserDictEditModel)
+                    m_UserDictEditModel),
+
+                    std::make_shared<Commands::UI::AddToUserDictionaryCommand>(
+                    m_UserDictionary)
                 });
 }
 

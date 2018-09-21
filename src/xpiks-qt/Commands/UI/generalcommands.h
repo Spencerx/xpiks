@@ -37,6 +37,7 @@ namespace Warnings {
 
 namespace SpellCheck {
     class UserDictEditModel;
+    class UserDictionary;
 }
 
 namespace Commands {
@@ -73,6 +74,10 @@ namespace Commands {
         TARGET_COMMAND(InitUserDictionaryCommand,
                        QMLExtensions::UICommandID::InitUserDictionary,
                        SpellCheck::UserDictEditModel);
+
+        SOURCE_COMMAND(AddToUserDictionaryCommand,
+                       QMLExtensions::UICommandID::AddToUserDictionary,
+                       SpellCheck::UserDictionary);
     }
 }
 
