@@ -41,7 +41,6 @@ Rectangle {
     function closePopup() {
         closeAutoComplete()
         combinedArtworks.resetModel()
-        uiManager.clearCurrentItem()
         mainStackView.pop({immediate: true})
         restoreLeftPane()
     }
