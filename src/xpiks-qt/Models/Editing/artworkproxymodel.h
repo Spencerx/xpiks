@@ -130,8 +130,6 @@ namespace Models {
         void userDictUpdateHandler(const QStringList &keywords, bool overwritten);
         void userDictClearedHandler();
         void afterSpellingErrorsFixedHandler();
-        void onDescriptionSpellingChanged();
-        void onTitleSpellingChanged();
 
     public:
         Q_INVOKABLE void updateKeywords() { signalKeywordsCountChanged(); }
@@ -161,6 +159,7 @@ namespace Models {
         Q_INVOKABLE void addPreset(unsigned int presetID);
 #ifdef UI_TESTS
         Q_INVOKABLE void clearModel();
+        Q_INVOKABLE bool hasModel() { return getIsValid(); }
 #endif
 
     public:

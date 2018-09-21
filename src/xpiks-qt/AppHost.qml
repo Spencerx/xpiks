@@ -84,10 +84,10 @@ Rectangle {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.EditArtwork]
+        commandIDs: [UICommand.EditArtwork, UICommand.EditInfoArtwork]
         onDispatched: {
             if (mainStackView.currentItem.objectName !== "ArtworkEditView") {
-                startOneItemEditing(value, false)
+                startOneItemEditing(value, (commandID === UICommand.EditInfoArtwork))
             }
         }
     }

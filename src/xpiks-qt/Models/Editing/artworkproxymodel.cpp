@@ -40,6 +40,7 @@ namespace Models {
     }
 
     ArtworkProxyModel::~ArtworkProxyModel() {
+        LOG_DEBUG << "#";
         disconnectCurrentArtwork();
         releaseCurrentArtwork();
     }
@@ -115,26 +116,6 @@ namespace Models {
 #endif
         // if squeezing took place after replace
         signalKeywordsCountChanged();
-    }
-
-    void ArtworkProxyModel::onDescriptionSpellingChanged() {
-        LOG_DEBUG << "#";
-#ifdef QT_DEBUG
-        auto *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(sender());
-        Q_ASSERT(basicModel == getBasicMetadataModel());
-#endif
-
-        emit descriptionChanged();
-    }
-
-    void ArtworkProxyModel::onTitleSpellingChanged() {
-        LOG_DEBUG << "#";
-#ifdef QT_DEBUG
-        auto *basicModel = qobject_cast<Artworks::BasicMetadataModel*>(sender());
-        Q_ASSERT(basicModel == getBasicMetadataModel());
-#endif
-
-        emit titleChanged();
     }
 
     void ArtworkProxyModel::editKeyword(int index, const QString &replacement) {
@@ -340,11 +321,6 @@ namespace Models {
 
     void ArtworkProxyModel::connectArtworkSignals(Artworks::ArtworkMetadata *artwork) {
         auto &basicModel = artwork->getBasicMetadataModel();
-
-        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::descriptionSpellingChanged,
-                         this, &ArtworkProxyModel::onDescriptionSpellingChanged);
-        QObject::connect(&basicModel, &Artworks::BasicMetadataModel::titleSpellingChanged,
-                         this, &ArtworkProxyModel::onTitleSpellingChanged);
 
         QObject::connect(&basicModel, &Artworks::BasicMetadataModel::afterSpellingErrorsFixed,
                          this, &ArtworkProxyModel::afterSpellingErrorsFixedHandler);

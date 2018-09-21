@@ -34,6 +34,8 @@ Item {
     QtObject {
         id: mainStackView
         function push(obj) { }
+        function pop(obj) { }
+        property int depth: 0
     }
 
     Loader {
@@ -481,5 +483,11 @@ Item {
             compare(artworkEditView.artworkProxy.keywordsCount, 0)
             compare(artworkEditView.artworkProxy.getKeywordsString(), "")
         }
+
+        /*function test_closeDialog() {
+            var backButton = findChild(artworkEditView, "backButton")
+            mouseClick(backButton)
+            verify(!artworkEditView.artworkProxy.hasModel())
+        }*/
     }
 }

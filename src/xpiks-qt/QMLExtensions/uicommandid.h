@@ -61,6 +61,7 @@ namespace QMLExtensions {
             InitSuggestionSingle,
             GenerateCompletionsForArtwork,
             EditArtwork,
+            EditInfoArtwork,
             CopyArtworkToQuickBuffer,
             CopyCombinedToQuickBuffer
         };

@@ -691,6 +691,9 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::UI::EditArtworkCommand>(
                     m_FilteredArtworksListModel, m_ArtworkProxyModel),
 
+                    std::make_shared<Commands::UI::EditInfoArtworkCommand>(
+                    m_FilteredArtworksListModel, m_ArtworkProxyModel),
+
                     std::make_shared<Commands::UI::DeleteKeywordsFromSelectedCommand>(
                     m_FilteredArtworksListModel, m_DeleteKeywordsModel),
 

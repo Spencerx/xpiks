@@ -116,8 +116,7 @@ Item {
 
         MenuItem {
             text: i18.n + qsTr("Show info")
-            // TODO: fix this (show info instead of editing)
-            onTriggered: dispatcher.dispatch(UICommand.EditArtwork, artworkContextMenu.index)
+            onTriggered: dispatcher.dispatch(UICommand.EditInfoArtwork, artworkContextMenu.index)
         }
 
         MenuItem {

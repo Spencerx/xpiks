@@ -136,6 +136,16 @@ namespace Commands {
                                  Models::FilteredArtworksListModel,
                                  Models::ArtworkProxyModel);
 
+        class EditInfoArtworkCommand: public EditArtworkCommand {
+        public:
+            EditInfoArtworkCommand(Models::FilteredArtworksListModel &source,
+                                   Models::ArtworkProxyModel &target):
+                EditArtworkCommand(source, target)
+            {}
+        public:
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::EditInfoArtwork; }
+        };
+
         SOURCE_COMMAND(CopyArtworkToQuickBufferCommand,
                        QMLExtensions::UICommandID::CopyArtworkToQuickBuffer,
                        Models::FilteredArtworksListModel);

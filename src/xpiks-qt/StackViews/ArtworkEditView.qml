@@ -59,7 +59,6 @@ Rectangle {
     function closePopup() {
         closeAutoComplete()
         artworkProxy.resetModel()
-        uiManager.clearCurrentItem()
         mainStackView.pop({immediate: true})
         restoreLeftPane()
     }
@@ -365,7 +364,6 @@ Rectangle {
         target: xpiksApp
         onGlobalBeforeDestruction: {
             console.debug("UI:EditArtworkHorizontalDialog # globalBeforeDestruction")
-
             artworkProxy.resetModel()
         }
     }
@@ -491,6 +489,7 @@ Rectangle {
                     spacing: 0
 
                     BackGlyphButton {
+                        objectName: "backButton"
                         text: i18.n + qsTr("Back")
                         onClicked: {
                             flv.onBeforeClose()
