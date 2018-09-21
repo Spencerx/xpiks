@@ -41,9 +41,12 @@ namespace SpellCheck {
         Q_INVOKABLE void removeLastKeyword();
         Q_INVOKABLE void appendKeyword(const QString &keyword);
         Q_INVOKABLE void clearKeywords();
-        Q_INVOKABLE void resetModel();
+        Q_INVOKABLE void clearModel();
         Q_INVOKABLE QObject *getBasicModelObject();
         Q_INVOKABLE void saveUserDict();
+#ifdef UI_TESTS
+        Q_INVOKABLE QString getKeywordsString() { return m_BasicModel.getKeywordsString(); }
+#endif
 
     protected:
         virtual Artworks::BasicMetadataModel *getBasicMetadataModel() override { return &m_BasicModel; }

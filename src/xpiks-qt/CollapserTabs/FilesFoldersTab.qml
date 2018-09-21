@@ -30,7 +30,11 @@ Item {
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("Are you sure you want to remove this directory?")
         standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: xpiksApp.removeDirectory(directoryIndex)
+        onYes: removeDirectory(directoryIndex)
+    }
+
+    function removeDirectory(index) {
+        xpiksApp.removeDirectory(index)
     }
 
     ColumnLayout {
@@ -170,7 +174,7 @@ Item {
                                     confirmRemoveDirectoryDialog.directoryIndex = sourceWrapper.getDirectoryIndex()
                                     confirmRemoveDirectoryDialog.open()
                                 } else {
-                                    filteredArtworksListModel.removeArtworksDirectory(sourceWrapper.getDirectoryIndex())
+                                    removeDirectory(sourceWrapper.getDirectoryIndex())
                                 }
                             }
                         }

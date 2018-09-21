@@ -1,8 +1,8 @@
 import QtQuick 2.0
 import QtTest 1.1
 import XpiksTests 1.0
-import "../../xpiks-qt/CollapserTabs"
 import xpiks 1.0
+import "../../xpiks-qt/CollapserTabs"
 import "TestUtils.js" as TestUtils
 
 Item {
@@ -61,6 +61,7 @@ Item {
             TestsHost.cleanup()
             TestUtils.clearEdit(titleEdit)
             TestUtils.clearEdit(descriptionEdit)
+            TestUtils.clearEdit(keywordsEdit)
         }
 
         function test_editTitleSimple() {

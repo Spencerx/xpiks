@@ -50,10 +50,9 @@ namespace SpellCheck {
         doClearKeywords();
     }
 
-    void UserDictEditModel::resetModel() {
+    void UserDictEditModel::clearModel() {
         LOG_DEBUG << "#";
         m_BasicModel.clearModel();
-        m_UserDictionary.clear();
     }
 
     QObject *UserDictEditModel::getBasicModelObject() {

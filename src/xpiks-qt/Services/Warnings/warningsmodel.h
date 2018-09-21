@@ -53,6 +53,7 @@ namespace Warnings {
         void sourceRowsRemoved(QModelIndex,int,int);
         void sourceRowsInserted(QModelIndex,int,int);
         void sourceModelReset();
+        void onArtworksChanged(bool);
 
     private:
         enum WarningsModel_Roles {

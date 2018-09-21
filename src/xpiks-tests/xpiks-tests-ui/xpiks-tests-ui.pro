@@ -443,7 +443,8 @@ DISTFILES += \
     ../../xpiks-qt/CollapserTabs/FilesFoldersTab.qml \
     ../../xpiks-qt/CollapserTabs/QuickBufferTab.qml \
     ../../xpiks-qt/CollapserTabs/TranslatorTab.qml \
-    tst_QuickBuffer.qml
+    tst_QuickBuffer.qml \
+    tst_UserDictEditDialog.qml
 
 HEADERS += \
     testshost.h \

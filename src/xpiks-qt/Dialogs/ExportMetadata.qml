@@ -14,6 +14,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
+import xpiks 1.0
 import "../Constants"
 import "../Common.js" as Common;
 import "../Components"
@@ -194,7 +195,9 @@ Item {
                             spinner.height = spinner.width
                             dialogWindow.height += spinner.height + column.spacing
                             spinner.running = true
-                            filteredArtworksListModel.saveSelectedArtworks(overwriteAll, useBackupsCheckbox.checked)
+
+                            dispatcher.dispatch(UICommand.SaveSelected,
+                                                { overwrite: overwriteAll, backup: useBackupsCheckbox.checked })
                         }
 
                         Connections {

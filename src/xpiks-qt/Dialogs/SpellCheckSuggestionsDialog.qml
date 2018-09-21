@@ -254,6 +254,7 @@ Item {
                     }
 
                     StyledButton {
+                        objectName: "replaceButton"
                         text: i18.n + qsTr("Replace")
                         enabled: spellCheckSuggestionModel.anythingSelected
                         isDefault: true

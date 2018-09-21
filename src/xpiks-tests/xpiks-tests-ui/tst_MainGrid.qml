@@ -10,6 +10,11 @@ Item {
     id: root
     width: 800
     height: 600
+    property int openedDialogsCount: 0
+
+    function onDialogClosed() {
+        openedDialogsCount -= 1
+    }
 
     Component.onCompleted: TestsHost.setup()
 
@@ -364,9 +369,10 @@ Item {
 
             wait(TestsHost.normalSleepTime)
 
+            compare(root.openedDialogsCount, 0)
             mainGrid.editInPlainText(0)
-
             wait(TestsHost.normalSleepTime)
+            compare(root.openedDialogsCount, 1)
 
             // hack to detect if plain text edit hasn't started
             keyClick(Qt.Key_Comma)
@@ -378,6 +384,7 @@ Item {
             wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_Enter, Qt.ControlModifier)
+            compare(root.openedDialogsCount, 0)
 
             wait(TestsHost.smallSleepTime)
 
@@ -446,18 +453,20 @@ Item {
             var fixSpellingLink = findChild(artworkDelegate, "fixSpellingLink")
             tryCompare(fixSpellingLink, "canBeShown", true, 1000)
 
+            compare(root.openedDialogsCount, 0)
             mouseClick(fixSpellingLink)
             wait(TestsHost.normalSleepTime)
+            compare(root.openedDialogsCount, 1)
 
             var spellSuggestor = dispatcher.getCommandTarget(UICommand.FixSpellingArtwork)
             spellSuggestor.selectSomething()
-            spellSuggestor.submitCorrections()
+            wait(TestsHost.smallSleepTime)
 
-            // hack to detect if the dialog wasn't shown
-            keyClick(Qt.Key_Backspace)
-
-            // close the dialog
-            keyClick(Qt.Key_Escape)
+            var replaceButton = findChild(root, "replaceButton")
+            verify(replaceButton.enabled)
+            mouseClick(replaceButton)
+            wait(TestsHost.smallSleepTime)
+            compare(root.openedDialogsCount, 0)
 
             compare(artworkDelegate.delegateModel.keywordsstring, "pet")
         }

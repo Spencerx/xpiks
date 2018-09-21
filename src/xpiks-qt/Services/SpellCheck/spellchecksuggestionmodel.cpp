@@ -183,6 +183,7 @@ namespace SpellCheck {
         for (auto &suggestion: m_SuggestionsList) {
             suggestion->setReplacementIndex(0);
         }
+        emit anythingSelectedChanged();
     }
 #endif
 

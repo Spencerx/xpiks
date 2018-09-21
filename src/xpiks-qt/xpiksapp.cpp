@@ -191,7 +191,6 @@ void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("translationManager", &m_TranslationManager);
     context->setContextProperty("uiManager", &m_UIManager);
     context->setContextProperty("quickBuffer", &m_QuickBuffer);
-    context->setContextProperty("userDictEditModel", &m_UserDictEditModel);
     context->setContextProperty("switcher", &m_SwitcherModel);
     context->setContextProperty("presetsGroups", m_PresetsModel.getGroupsModel());
 
@@ -708,7 +707,10 @@ void XpiksApp::registerUICommands() {
                     m_UploadInfoRepository),
 
                     std::make_shared<Commands::UI::UpdateLogsCommand>(
-                    m_LogsModel)
+                    m_LogsModel),
+
+                    std::make_shared<Commands::UI::InitUserDictionaryCommand>(
+                    m_UserDictEditModel)
                 });
 }
 
@@ -771,6 +773,7 @@ void XpiksApp::cleanupModels() {
     m_PresetsModel.clearModel();
     m_SettingsModel.resetToDefault();
     m_DeleteKeywordsModel.resetModel();
+    m_UserDictEditModel.clearModel();
 
     m_FilteredArtworksListModel.setSearchTerm("");
     m_CombinedArtworksModel.resetModel();

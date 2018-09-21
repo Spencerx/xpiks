@@ -52,7 +52,7 @@ Rectangle {
         mainStackView.push({
                                item: "qrc:/StackViews/ArtworkEditView.qml",
                                properties: {
-                                   componentParent: appHost,
+                                   componentParent: appHost.componentParent,
                                    wasLeftSideCollapsed: wasCollapsed,
                                    showInfo: showInfoFirst
                                },
@@ -74,7 +74,7 @@ Rectangle {
             mainStackView.push({
                                    item: "qrc:/StackViews/DuplicatesReView.qml",
                                    properties: {
-                                       componentParent: appHost,
+                                       componentParent: appHost.componentParent,
                                        wasLeftSideCollapsed: wasCollapsed
                                    },
                                    destroyOnPop: true
@@ -101,7 +101,7 @@ Rectangle {
             mainStackView.push({
                                    item: "qrc:/StackViews/WarningsView.qml",
                                    properties: {
-                                       componentParent: appHost,
+                                       componentParent: appHost.componentParent,
                                        wasLeftSideCollapsed: wasCollapsed
                                    },
                                    destroyOnPop: true
@@ -116,7 +116,7 @@ Rectangle {
             mainStackView.push({
                                    item: "qrc:/StackViews/CombinedEditView.qml",
                                    properties: {
-                                       componentParent: appHost
+                                       componentParent: appHost.componentParent
                                    },
                                    destroyOnPop: true
                                })
@@ -300,7 +300,7 @@ Rectangle {
                         property int myIndex: index
                         property var tabModel: uiManager.retrieveTabsModel(tabid)
                         property int selectedArtworksCount: filteredArtworksListModel.selectedArtworksCount
-                        property bool areActionsAllowed: mainStackView.areActionsAllowed
+                        property bool areActionsAllowed: appHost.areActionsAllowed
 
                         Connections {
                             target: mainTabView

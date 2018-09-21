@@ -865,7 +865,7 @@ ApplicationWindow {
                             width: 200
                             text: i18.n + qsTr("Manage user dictionary")
                             onClicked: {
-                                userDictEditModel.initializeModel()
+                                dispatcher.dispatch(UICommand.InitUserDictionary, {})
                                 Common.launchDialog("Dialogs/UserDictEditDialog.qml",
                                                     settingsWindow,
                                                     {

@@ -13,6 +13,11 @@ Item {
 
     property string path: ''
     property bool isselected: false
+    property int openedDialogsCount: 0
+
+    function onDialogClosed() {
+        openedDialogsCount -= 1
+    }
 
     Component.onCompleted: TestsHost.setup()
 
@@ -376,9 +381,10 @@ Item {
             var keywordWrapper = repeater.itemAt(0)
 
             compare(artworkEditView.artworkProxy.getKeywordsString(), testKeyword1)
+            compare(root.openedDialogsCount, 0)
             mouseDoubleClick(keywordWrapper)
-
             wait(TestsHost.smallSleepTime)
+            compare(root.openedDialogsCount, 1)
 
             for (var i = 0; i < testKeyword1.length - 1; i++) {
                 keyClick(Qt.Key_Backspace)
@@ -388,8 +394,8 @@ Item {
 
             var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Enter)
-
             wait(TestsHost.smallSleepTime)
+            compare(root.openedDialogsCount, 0)
 
             compare(artworkEditView.artworkProxy.getKeywordsString(), testKeyword1[0] + testKeyword2)
         }
@@ -401,9 +407,10 @@ Item {
 
             wait(TestsHost.normalSleepTime)
 
+            compare(root.openedDialogsCount, 0)
             artworkEditView.editInPlainText()
-
             wait(TestsHost.normalSleepTime)
+            compare(root.openedDialogsCount, 1)
 
             // hack to detect if plain text edit hasn't started
             keyClick(Qt.Key_Comma)
@@ -415,8 +422,8 @@ Item {
             wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_Enter, Qt.ControlModifier)
-
             wait(TestsHost.smallSleepTime)
+            compare(root.openedDialogsCount, 0)
 
             compare(artworkEditView.artworkProxy.getKeywordsString(), testKeyword1 + ", " + testKeyword2)
         }
@@ -441,18 +448,20 @@ Item {
             var fixSpellingLink = findChild(artworkEditView, "fixSpellingLink")
             tryCompare(fixSpellingLink, "canBeShown", true, 1000)
 
+            compare(root.openedDialogsCount, 0)
             mouseClick(fixSpellingLink)
             wait(TestsHost.normalSleepTime)
+            compare(root.openedDialogsCount, 1)
 
             var spellSuggestor = dispatcher.getCommandTarget(UICommand.FixSpellingArtwork)
             spellSuggestor.selectSomething()
-            spellSuggestor.submitCorrections()
+            wait(TestsHost.smallSleepTime)
 
-            // hack to detect if the dialog wasn't shown
-            keyClick(Qt.Key_Backspace)
-
-            // close the dialog
-            keyClick(Qt.Key_Escape)
+            var replaceButton = findChild(root, "replaceButton")
+            verify(replaceButton.enabled)
+            mouseClick(replaceButton)
+            wait(TestsHost.smallSleepTime)
+            compare(root.openedDialogsCount, 0)
 
             compare(artworkEditView.artworkProxy.getKeywordsString(), "pet")
         }

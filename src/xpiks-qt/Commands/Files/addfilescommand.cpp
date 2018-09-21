@@ -45,8 +45,5 @@ namespace Commands {
     void AddFilesCommand::undo() {
         LOG_DEBUG << "#";
         m_ArtworksListModel.removeFiles(Helpers::IndicesRanges((int)m_OriginalCount, (int)m_AddedCount));
-
-        // TODO: update warnings
-        //m_AddedArtworksCommand->execute();
     }
 }

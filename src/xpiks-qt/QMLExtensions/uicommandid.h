@@ -32,6 +32,7 @@ namespace QMLExtensions {
             CheckWarnings,
             InitUploadHosts,
             UpdateLogs,
+            InitUserDictionary,
             // ------ Selected -------
             EditSelectedArtworks,
             FixSpellingInSelected,

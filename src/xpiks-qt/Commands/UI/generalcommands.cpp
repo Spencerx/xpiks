@@ -17,6 +17,7 @@
 #include <Models/logsmodel.h>
 #include <Services/AutoComplete/autocompleteservice.h>
 #include <Services/Warnings/warningsmodel.h>
+#include <Services/SpellCheck/userdicteditmodel.h>
 #include <Helpers/uihelpers.h>
 
 namespace Commands {
@@ -71,6 +72,11 @@ namespace Commands {
             LOG_DEBUG << "#";
             bool moreLogs = Helpers::convertToBool(value, false);
             m_Target.updateLogs(moreLogs);
+        }
+
+        void InitUserDictionaryCommand::execute(const QVariant &) {
+            LOG_DEBUG << "#";
+            m_Target.initializeModel();
         }
     }
 }

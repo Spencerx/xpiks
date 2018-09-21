@@ -35,6 +35,10 @@ namespace Warnings {
     class WarningsModel;
 }
 
+namespace SpellCheck {
+    class UserDictEditModel;
+}
+
 namespace Commands {
     namespace UI {
         SOURCE_TARGET_COMMAND(SetMasterPasswordCommand,
@@ -65,6 +69,10 @@ namespace Commands {
         TARGET_COMMAND(UpdateLogsCommand,
                        QMLExtensions::UICommandID::UpdateLogs,
                        Models::LogsModel);
+
+        TARGET_COMMAND(InitUserDictionaryCommand,
+                       QMLExtensions::UICommandID::InitUserDictionary,
+                       SpellCheck::UserDictEditModel);
     }
 }
 

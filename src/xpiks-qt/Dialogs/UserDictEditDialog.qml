@@ -14,6 +14,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
+import xpiks 1.0
 import "../Constants"
 import "../Common.js" as Common;
 import "../Components"
@@ -24,6 +25,7 @@ Item {
     id: userDictComponent
     anchors.fill: parent
     property variant componentParent
+    property var userDictEditModel: dispatcher.getCommandTarget(UICommand.InitUserDictionary)
 
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();
@@ -34,15 +36,6 @@ Item {
 
     Component.onCompleted: {
         flv.activateEdit()
-    }
-
-    MessageDialog {
-        id: clearKeywordsDialog
-
-        title: i18.n + qsTr("Confirmation")
-        text: i18.n + qsTr("Are you sure you want to clear user dictionary? \nThis action cannot be undone.")
-        standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: userDictEditModel.clearModel()
     }
 
     function scrollToBottom() {
@@ -136,7 +129,7 @@ Item {
                     anchors.right: parent.right
                     Layout.fillHeight: true
                     color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                    property var keywordsModel: userDictEditModel.getBasicModel()
+                    property var keywordsModel: userDictEditModel.getBasicModelObject()
 
                     function removeKeyword(index) {
                         userDictEditModel.removeKeywordAt(index)
@@ -152,7 +145,7 @@ Item {
 
                     EditableTags {
                         id: flv
-                        objectName: "keywordsInput"
+                        objectName: "editableTags"
                         anchors.fill: parent
                         model: keywordsWrapper.keywordsModel
                         property int keywordHeight: uiManager.keywordHeight

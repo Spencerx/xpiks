@@ -631,7 +631,7 @@ ApplicationWindow {
                     text: i18.n + qsTr("Manage &user dictionary")
                     onTriggered: {
                         console.info("User dictionary triggered")
-                        userDictEditModel.initializeModel()
+                        dispatcher.dispatch(UICommand.InitUserDictionary, {})
                         Common.launchDialog("Dialogs/UserDictEditDialog.qml", applicationWindow, {})
                     }
                 }

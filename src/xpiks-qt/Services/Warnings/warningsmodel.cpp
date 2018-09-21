@@ -149,6 +149,8 @@ namespace Warnings {
                          this, &WarningsModel::sourceRowsInserted);
         QObject::connect(&artworksListModel, &QAbstractItemModel::modelReset,
                          this, &WarningsModel::sourceModelReset);
+        QObject::connect(&artworksListModel, &Models::ArtworksListModel::artworksChanged,
+                         this, &WarningsModel::onArtworksChanged);
     }
 
     int WarningsModel::getMinKeywordsCount() const { return m_WarningsSettingsModel.getMinKeywordsCount(); }
@@ -214,6 +216,10 @@ namespace Warnings {
 
     void WarningsModel::sourceModelReset() {
         emit warningsCountChanged();
+    }
+
+    void WarningsModel::onArtworksChanged(bool) {
+        update();
     }
 
     bool WarningsModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
