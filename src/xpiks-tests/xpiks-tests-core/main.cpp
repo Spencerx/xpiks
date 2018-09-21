@@ -31,6 +31,7 @@
 #include "warningscheck_tests.h"
 #include "dbimagecache_tests.h"
 #include "common_tests.h"
+#include "artworkproxy_tests.h"
 
 #define QTEST_CLASS(TestObject, vName, result) \
     TestObject vName; \
@@ -72,6 +73,7 @@ int main(int argc, char *argv[]) {
     QTEST_CLASS(JsonMergeTests, jmt, result);
     QTEST_CLASS(WarningsCheckTests, wct, result);
     QTEST_CLASS(DbImageCacheTests, ict, result);
+    QTEST_CLASS(ArtworkProxyTests, apt, result);
 
     QThread::sleep(1);
 

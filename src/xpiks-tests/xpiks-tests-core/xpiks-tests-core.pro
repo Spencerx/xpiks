@@ -211,7 +211,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/switchermodel.cpp \
     ../../xpiks-qt/Connectivity/switcherconfig.cpp \
     common_tests.cpp \
-    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.cpp
+    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.cpp \
+    artworkproxy_tests.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -379,5 +380,6 @@ HEADERS += \
     ../../xpiks-qt/Helpers/hashhelpers.h \
     common_tests.h \
     ../../xpiks-qt/Services/SpellCheck/ispellsuggestionstarget.h \
-    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.h
+    ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.h \
+    artworkproxy_tests.h
 
