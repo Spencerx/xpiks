@@ -207,29 +207,28 @@ namespace SpellCheck {
         if ((row < 0) || (row >= (int)m_DuplicatesList.size())) { return QVariant(); }
 
         auto &item = m_DuplicatesList.at(row);
-
         auto artworkItem = std::dynamic_pointer_cast<ArtworkMetadataDuplicates>(item);
-        if (artworkItem == nullptr) {
-            return QVariant();
-        }
+        const bool isArtwork = artworkItem != nullptr;
 
         switch (role) {
             case HasPathRole: {
-                return true;
+                return item->hasThumbnail();
             }
             case PathRole: {
-                return artworkItem->getArtwork()->getThumbnailPath();
+                return isArtwork ? artworkItem->getArtwork()->getThumbnailPath() : QString("");
             }
             case OriginalIndexRole: {
-                return (int)artworkItem->getArtwork()->getLastKnownIndex();
+                return isArtwork ? (int)artworkItem->getArtwork()->getLastKnownIndex() : -1;
             }
             case HasVectorAttachedRole: {
+                if (!isArtwork) { return false; }
                 auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artworkItem->getArtwork());
                 return (image != nullptr) && image->hasVectorAttached();
             }
             case BaseFilenameRole:
-                return artworkItem->getArtwork()->getBaseFilename();
+                return isArtwork ? artworkItem->getArtwork()->getBaseFilename() : QString("");
             case IsVideoRole: {
+                if (!isArtwork) { return false; }
                 auto videoArtwork = std::dynamic_pointer_cast<Artworks::VideoArtwork>(artworkItem);
                 return (videoArtwork != nullptr);
             }

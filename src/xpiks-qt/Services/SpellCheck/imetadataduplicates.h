@@ -27,6 +27,7 @@ namespace SpellCheck {
         virtual QString getDescriptionDuplicates() = 0;
         virtual QString getTitleDuplicates() = 0;
         virtual QString getKeywordsDuplicates() = 0;
+        virtual bool hasThumbnail() = 0;
     };
 }
 

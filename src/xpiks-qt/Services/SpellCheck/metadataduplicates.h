@@ -30,6 +30,7 @@ namespace SpellCheck {
         virtual QString getDescriptionDuplicates() override;
         virtual QString getTitleDuplicates() override;
         virtual QString getKeywordsDuplicates() override;
+        virtual bool hasThumbnail() override { return false; }
 
     private:
         Artworks::BasicMetadataModel &m_BasicModel;
@@ -41,6 +42,7 @@ namespace SpellCheck {
 
     public:
         std::shared_ptr<Artworks::ArtworkMetadata> const &getArtwork() const { return m_Artwork; }
+        virtual bool hasThumbnail() override { return true; }
 
     private:
         std::shared_ptr<Artworks::ArtworkMetadata> m_Artwork;
