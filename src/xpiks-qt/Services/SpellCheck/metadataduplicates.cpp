@@ -107,7 +107,8 @@ namespace SpellCheck {
     }
 
     ArtworkMetadataDuplicates::ArtworkMetadataDuplicates(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork):
-        BasicModelDuplicates(artwork->getBasicMetadataModel())
+        BasicModelDuplicates(artwork->getBasicMetadataModel()),
+        m_Artwork(artwork)
     {
     }
 }

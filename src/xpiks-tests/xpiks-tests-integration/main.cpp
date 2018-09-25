@@ -130,8 +130,10 @@ int main(int argc, char *argv[]) {
     Connectivity::CurlInitHelper curlInitHelper;
     Q_UNUSED(curlInitHelper);
 
+#ifndef NO_EXIV2
     Exiv2InitHelper exiv2InitHelper;
     Q_UNUSED(exiv2InitHelper);
+#endif
 
     qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
     qInstallMessageHandler(myMessageHandler);
@@ -202,7 +204,9 @@ int main(int argc, char *argv[]) {
     integrationTests.emplace_back(std::make_shared<DuplicateSearchTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<AutoCompletePresetsTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<CsvExportTest>(environment, xpiksTests));
+#ifndef NO_EXIV2
     integrationTests.emplace_back(std::make_shared<UnicodeIoTest>(environment, xpiksTests));
+#endif
     integrationTests.emplace_back(std::make_shared<UndoAddDirectoryTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<UndoRestoreSessionTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<MasterPasswordTest>(environment, xpiksTests));

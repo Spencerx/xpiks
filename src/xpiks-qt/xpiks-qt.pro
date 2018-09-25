@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QMAKE_MAC_SDK = macosx10.11
+macx { QMAKE_MAC_SDK = macosx }
 
 QT += qml quick widgets concurrent svg
 CONFIG += qtquickcompiler
@@ -816,11 +816,17 @@ linux {
 
 travis-ci {
     message("for Travis CI")
-    LIBS -= -lz
-    LIBS += /usr/lib/x86_64-linux-gnu/libz.so
-    LIBS += -ldl
     DEFINES += TRAVIS_CI
     INCLUDEPATH += "../../vendors/quazip"
+
+    linux {
+        LIBS -= -lz
+        LIBS += /usr/lib/x86_64-linux-gnu/libz.so
+    }
+
+    macx {
+        CONFIG += sdk_no_version_check
+    }
 }
 
 without-video {

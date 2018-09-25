@@ -1,12 +1,17 @@
 #!/bin/bash
 BUILD_MODE=${1}
 
+# to clean run build_vendors_osx.sh debug clean
+
+TRAVIS_CI=
+
 case ${BUILD_MODE} in
     release)
         TARGET="release"
         ;;
     debug|travis-ci)
         TARGET="debug"
+        TRAVIS_CI=travis-ci
         ;;
     fullrelease)
         TARGET="release"
@@ -21,8 +26,17 @@ case ${BUILD_MODE} in
         ;;
 esac
 
-QT_BIN_DIR=~/Qt5.6.2/5.6/clang_64/bin
+echo "Build target is: $TARGET"
 
+if [ -n "$TRAVIS_CI" ]; then
+    QT_BIN_DIR=/usr/local/opt/qt/bin
+else
+    QT_BIN_DIR=~/Qt5.9.6/5.9.6/clang_64/bin
+fi
+
+#export LDFLAGS="-L/usr/local/opt/qt/lib"
+#export CPPFLAGS="-I/usr/local/opt/qt/include"
+echo -e "${PRINT_PREFIX} Using ${QT_BIN_DIR} as Qt bin directory path"
 export PATH="${PATH}:${QT_BIN_DIR}"
 
 shift
@@ -40,10 +54,12 @@ ROOT_DIR=$(git rev-parse --show-toplevel)
 cd ${ROOT_DIR}
 
 ### translations
-echo -e "${PRINT_PREFIX} Generating translations..."
-cd ${ROOT_DIR}/src/xpiks-qt/deps/translations/
-make ${MAKE_FLAGS}
-echo -e "${PRINT_PREFIX} Generating translations... - done."
+if [ ${BUILD_MODE} == "release" ] || [ ${BUILD_MODE} == "fullrelease" ]; then
+    echo -e "${PRINT_PREFIX} Generating translations..."
+    cd ${ROOT_DIR}/src/xpiks-qt/deps/translations/
+    make ${MAKE_FLAGS}
+    echo -e "${PRINT_PREFIX} Generating translations... - done."
+fi
 
 if [ ${BUILD_MODE} == "fulldebug" ] || [ ${BUILD_MODE} == "fullrelease" ]
 then
@@ -92,7 +108,7 @@ echo -e "${PRINT_PREFIX} Building cpp-libface..."
 cd ${ROOT_DIR}/vendors/cpp-libface/libface-project
 qmake "CONFIG+=${TARGET}" libface.pro
 make ${MAKE_FLAGS}
-cp -a libface.*dylib ${ROOT_DIR}/libs/${TARGET}
+cp -v -a libface.*dylib ${ROOT_DIR}/libs/${TARGET}
 echo -e "${PRINT_PREFIX} Building cpp-libface... - done."
 
 ### chillout
@@ -100,7 +116,7 @@ echo -e "${PRINT_PREFIX} Building chillout..."
 cd ${ROOT_DIR}/vendors/chillout/src/chillout
 qmake "CONFIG+=${TARGET}" chillout.pro
 make ${MAKE_FLAGS}
-cp libchillout.a ${ROOT_DIR}/libs/${TARGET}
+cp -v libchillout.a ${ROOT_DIR}/libs/${TARGET}
 echo -e "${PRINT_PREFIX} Building chillout... - done."
 
 ### ssdll
@@ -108,7 +124,7 @@ echo -e "${PRINT_PREFIX} Building ssdll..."
 cd ${ROOT_DIR}/vendors/ssdll/src/ssdll/
 qmake "CONFIG+=${TARGET}" ssdll.pro
 make ${MAKE_FLAGS}
-cp -a libssdll.*dylib ${ROOT_DIR}/libs/${TARGET}
+cp -v -a libssdll.*dylib ${ROOT_DIR}/libs/${TARGET}
 echo -e "${PRINT_PREFIX} Building ssdll... - done."
 
 ### quazip
@@ -116,7 +132,7 @@ echo -e "${PRINT_PREFIX} Building quazip..."
 cd ${ROOT_DIR}/vendors/quazip/quazip/
 qmake "CONFIG+=${TARGET}" quazip.pro
 make ${MAKE_FLAGS}
-cp -a libquazip.*dylib ${ROOT_DIR}/libs/${TARGET}
+cp -v -a libquazip.*dylib ${ROOT_DIR}/libs/${TARGET}
 echo -e "${PRINT_PREFIX} Building quazip... - done."
 
 ### hunspell
@@ -129,7 +145,7 @@ echo -e "${PRINT_PREFIX} Building hunspell... - done."
 ### recoverty
 echo -e "${PRINT_PREFIX} Building recoverty..."
 cd ${ROOT_DIR}/src/recoverty/
-qmake "CONFIG+=${TARGET}" recoverty.pro
+qmake "CONFIG+=${TARGET} ${TRAVIS_CI}" recoverty.pro
 make ${MAKE_FLAGS}
 echo -e "${PRINT_PREFIX} Building recoverty... - done."
 

@@ -9,8 +9,13 @@
  */
 
 #include "singleeditablecommands.h"
+#include <Commands/Base/icommandmanager.h>
+#include <Commands/Editing/modifyartworkscommand.h>
+#include <Commands/Editing/editartworkstemplate.h>
+#include <Artworks/artworkssnapshot.h>
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
+#include <Models/Editing/quickbuffer.h>
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
@@ -57,6 +62,8 @@ namespace Commands {
 
         void ShowDuplicatesForSingleCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
+            // do not use artwork here to eliminate infinite loop of
+            // viewing duplicates and clicking "edit"
             m_Target.setupModel(m_Source.getArtwork()->getBasicMetadataModel());
         }
 
@@ -70,7 +77,7 @@ namespace Commands {
             int proxyIndex = Helpers::convertToInt(value, -1);
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;
             if (m_Source.tryGetArtwork(proxyIndex, artwork)) {
-                m_Target.setupModel(artwork->getBasicMetadataModel());
+                m_Target.setupModel(Artworks::ArtworksSnapshot({artwork}));
             }
         }
 
@@ -170,6 +177,32 @@ namespace Commands {
         void CopyCombinedToQuickBufferCommand::execute(const QVariant &) {
             LOG_DEBUG << "#";
             m_Source.copyToQuickBuffer();
+        }
+
+        void FillFromQuickBufferCommand::execute(const QVariant &value) {
+            int proxyIndex = Helpers::convertToInt(value, -1);
+            std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+            if (m_FilteredArtworksList.tryGetArtwork(proxyIndex, artwork)) {
+                Common::ArtworkEditFlags editFlags = Common::ArtworkEditFlags::None;
+
+                QString title = m_QuickBuffer.getTitle();
+                QString description = m_QuickBuffer.getDescription();
+                QStringList keywords = m_QuickBuffer.getKeywords();
+
+                if (!title.isEmpty()) { Common::SetFlag(editFlags, Common::ArtworkEditFlags::EditTitle); }
+                if (!description.isEmpty()) { Common::SetFlag(editFlags, Common::ArtworkEditFlags::EditDescription); }
+                if (!keywords.empty()) { Common::SetFlag(editFlags, Common::ArtworkEditFlags::EditKeywords); }
+
+                m_CommandManager.processCommand(
+                            std::make_shared<ModifyArtworksCommand>(
+                                Artworks::ArtworksSnapshot({artwork}),
+                                std::make_shared<EditArtworksTemplate>(
+                                    title,
+                                    description,
+                                    keywords,
+                                    editFlags)));
+
+            }
         }
     }
 }

@@ -31,7 +31,7 @@ ColumnLayout {
         anchors.right: parent.right
         text: i18.n + qsTr("Apply")
         enabled: {
-            var result = (!quickBuffer.isEmpty) && uiManager.hasCurrentEditable;
+            var result = (!quickBuffer.isEmpty) && currentEditable.isAvailable;
             if (result) {
                 if (appHost.areActionsAllowed) {
                     result = (filteredArtworksListModel.selectedArtworksCount <= 1);

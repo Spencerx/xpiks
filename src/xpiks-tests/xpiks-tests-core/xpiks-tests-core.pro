@@ -4,8 +4,6 @@
 #
 #-------------------------------------------------
 
-QMAKE_MAC_SDK = macosx10.11
-
 QT       += core testlib qml quick concurrent
 
 QT       -= gui
@@ -45,51 +43,38 @@ CONFIG(debug, debug|release)  {
 LIBS += -lhunspell
 LIBS += -lssdll
 
-macx {
-    #INCLUDEPATH += "../quazip"
-    #INCLUDEPATH += "../../libcurl/include"
-}
-
 win32 {
     INCLUDEPATH += "../../../vendors/zlib-1.2.8"
-    #INCLUDEPATH += "../quazip"
-    #INCLUDEPATH += "../libcurl/include"
-    #LIBS -= -lcurl
-    #LIBS += -llibcurl_debug
+}
+
+linux {
+    target.path=/usr/bin/
+    QML_IMPORT_PATH += /usr/lib/x86_64-linux-gnu/qt5/imports/
+    UNAME = $$system(cat /proc/version)
+    
+    # sqlite
+    LIBS += -ldl
 }
 
 travis-ci {
     message("for Travis CI")
     DEFINES += TRAVIS_CI
 
-    # sqlite
-    LIBS += -ldl
+    linux {
+        # gcov
+        QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
+        LIBS += -lgcov
+    }
 
-    # gcov
-    QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
-    LIBS += -lgcov
+    macx {
+        CONFIG += sdk_no_version_check
+        QMAKE_CXXFLAGS += --coverage
+        QMAKE_LFLAGS += --coverage
+    }
 }
 
 appveyor {
     DEFINES += APPVEYOR
-}
-
-linux-g++-64 {
-    target.path=/usr/bin/
-    QML_IMPORT_PATH += /usr/lib/x86_64-linux-gnu/qt5/imports/
-    UNAME = $$system(cat /proc/version)
-
-    #contains(UNAME, Debian): {
-    #    message("on Debian Linux")
-    #    LIBS += -L/lib/x86_64-linux-gnu/
-    #    LIBS -= -lquazip # temporary static link
-    #    LIBS += /usr/lib/x86_64-linux-gnu/libquazip-qt5.a
-    #}
-    #contains(UNAME, SUSE): {
-    #    message("on SUSE Linux")
-    #    LIBS += -L/usr/lib64/
-    #    LIBS += /usr/lib64/libcurl.so.4
-    #}
 }
 
 TEMPLATE = app

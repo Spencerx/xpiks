@@ -212,7 +212,7 @@ namespace SpellCheck {
 
         switch (role) {
             case HasPathRole: {
-                return item->hasThumbnail();
+                return isArtwork;
             }
             case PathRole: {
                 return isArtwork ? artworkItem->getArtwork()->getThumbnailPath() : QString("");

@@ -1,6 +1,13 @@
 TEMPLATE = app
 
-QMAKE_MAC_SDK = macosx10.11
+macx {
+    travis-ci {
+        CONFIG += sdk_no_version_check
+    } else {
+        QMAKE_MAC_SDK = macosx10.13
+    }
+}
+
 #CONFIG -= app_bundle
 
 QT += qml quick svg

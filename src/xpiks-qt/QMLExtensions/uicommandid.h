@@ -64,7 +64,8 @@ namespace QMLExtensions {
             EditArtwork,
             EditInfoArtwork,
             CopyArtworkToQuickBuffer,
-            CopyCombinedToQuickBuffer
+            CopyCombinedToQuickBuffer,
+            FillArtworkFromQuickBuffer
         };
         Q_ENUMS(CommandID)
     };

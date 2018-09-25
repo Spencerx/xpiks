@@ -70,8 +70,6 @@ namespace Models {
         Q_PROPERTY(QString proxyPort READ getProxyPort NOTIFY proxyPortChanged)
         Q_PROPERTY(bool autoCacheImages READ getAutoCacheImages WRITE setAutoCacheImages NOTIFY autoCacheImagesChanged)
         Q_PROPERTY(bool verboseUpload READ getVerboseUpload WRITE setVerboseUpload NOTIFY verboseUploadChanged)
-        Q_PROPERTY(bool useProgressiveSuggestionPreviews READ getUseProgressiveSuggestionPreviews WRITE setUseProgressiveSuggestionPreviews NOTIFY useProgressiveSuggestionPreviewsChanged)
-        Q_PROPERTY(int progressiveSuggestionIncrement READ getProgressiveSuggestionIncrement WRITE setProgressiveSuggestionIncrement NOTIFY progressiveSuggestionIncrementChanged)
         Q_PROPERTY(bool useAutoImport READ getUseAutoImport WRITE setUseAutoImport NOTIFY useAutoImportChanged)
 
         Q_PROPERTY(QString appVersion READ getAppVersion CONSTANT)

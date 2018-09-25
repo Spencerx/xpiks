@@ -83,7 +83,7 @@ Item {
             mouseClick(suggestionsRepeater.itemAt(0))
             mouseClick(suggestionsRepeater.itemAt(1))
             mouseClick(suggestionsRepeater.itemAt(2))
-            wait(TestsHost.smallSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             compare(suggestKeywordsDialog.keywordsSuggestor.suggestedKeywordsCount, 3)
             compare(suggestKeywordsDialog.keywordsSuggestor.getSuggestedKeywords().sort(),

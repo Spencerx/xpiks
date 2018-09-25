@@ -136,7 +136,7 @@ Item {
 
         MenuItem {
             text: i18.n + qsTr("Fill from Quick Buffer")
-            onTriggered: filteredArtworksListModel.fillFromQuickBuffer(artworkContextMenu.index)
+            onTriggered: dispatcher.dispatch(UICommand.FillArtworkFromQuickBuffer, artworkContextMenu.index)
         }
 
         MenuItem {

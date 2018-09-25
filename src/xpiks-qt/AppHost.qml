@@ -64,7 +64,8 @@ Rectangle {
         commandDispatcher: dispatcher
         commandIDs: [UICommand.ShowDuplicatesSingle,
             UICommand.ShowDuplicatesCombined,
-            UICommand.ShowDuplicatesInSelected]
+            UICommand.ShowDuplicatesInSelected,
+            UICommand.ShowDuplicatesArtwork]
         onDispatched: {
             var wasCollapsed = appHost.leftSideCollapsed
             if (value) {

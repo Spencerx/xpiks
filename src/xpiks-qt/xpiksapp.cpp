@@ -193,6 +193,7 @@ void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("quickBuffer", &m_QuickBuffer);
     context->setContextProperty("switcher", &m_SwitcherModel);
     context->setContextProperty("presetsGroups", m_PresetsModel.getGroupsModel());
+    context->setContextProperty("currentEditable", &m_CurrentEditableModel);
 
     context->setContextProperty("tabsModel", m_UIManager.getTabsModel());
     context->setContextProperty("activeTabs", m_UIManager.getActiveTabs());
@@ -716,7 +717,10 @@ void XpiksApp::registerUICommands() {
                     m_UserDictEditModel),
 
                     std::make_shared<Commands::UI::AddToUserDictionaryCommand>(
-                    m_UserDictionary)
+                    m_UserDictionary),
+
+                    std::make_shared<Commands::UI::FillFromQuickBufferCommand>(
+                    m_QuickBuffer, m_FilteredArtworksListModel, m_CommandManager)
                 });
 }
 

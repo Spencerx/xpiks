@@ -2,8 +2,6 @@ TEMPLATE = app
 TARGET = xpiks-tests-integration
 DEFINES += APPNAME=xpiks-tests-integration
 
-QMAKE_MAC_SDK = macosx10.11
-
 QT += qml quick widgets concurrent svg testlib
 QT -= gui
 
@@ -714,17 +712,32 @@ linux {
 travis-ci {
     message("for Travis CI")
     INCLUDEPATH += "../../../vendors/quazip"
-
-    LIBS -= -lz
-    LIBS += /usr/lib/x86_64-linux-gnu/libz.so
-    LIBS += -ldl
-    LIBS += -lexiv2
-
     DEFINES += TRAVIS_CI
 
-    # gcov
-    QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
-    LIBS += -lgcov
+    linux {
+        LIBS -= -lz
+        LIBS += /usr/lib/x86_64-linux-gnu/libz.so
+        LIBS += -lexiv2
+
+        # gcov
+        QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
+        LIBS += -lgcov
+    }
+
+    macx {
+        CONFIG += sdk_no_version_check
+
+        LIBS -= -lxmpsdk
+        LIBS -= -lexiv2
+
+        DEFINES += NO_EXIV2
+        SOURCES -= \
+            unicodeiotest.cpp \
+            exiv2iohelpers.cpp
+
+        QMAKE_CXXFLAGS += --coverage
+        QMAKE_LFLAGS += --coverage
+    }
 }
 
 appveyor {

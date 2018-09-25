@@ -119,7 +119,6 @@ namespace Models {
         void generateAboutToBeRemoved();
         void unlockAllForIO();
         bool isInSelectedDirectory(int artworkIndex);
-        void sendToQuickBuffer(int artworkIndex);
         void setCurrentIndex(size_t index);
         void unsetCurrentIndex();
         void setItemsSaved(const Helpers::IndicesRanges &ranges);

@@ -10,6 +10,7 @@
 
 #ifndef WORDANALYSISRESULT_H
 #define WORDANALYSISRESULT_H
+
 #include <QStringList>
 
 namespace Common {

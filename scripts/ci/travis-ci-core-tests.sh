@@ -11,7 +11,11 @@ make
 
 echo "Building Core tests... Done"
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
+if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
+elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../../libs/debug/
+fi
 
 ./xpiks-tests-core
 exitcode=$?
@@ -25,7 +29,7 @@ if [ $exitcode != 0 ]; then
 fi
 
 "$TRAVIS_BUILD_DIR/scripts/ci/get_code_cov.sh" "$PWD/../../"
-bash <(curl -s https://codecov.io/bash) -X gcov || echo 'Codecov failed to upload';
+bash <(curl -s https://codecov.io/bash) -X gcov -F "${TRAVIS_OS_NAME}" || echo 'Codecov failed to upload';
 
 popd
 

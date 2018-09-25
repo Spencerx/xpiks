@@ -48,6 +48,10 @@ namespace Services {
 }
 
 namespace Commands {
+    class ICommandManager;
+}
+
+namespace Commands {
     namespace UI {
         class FixSpellingInBasicModelCommand: public IUICommandTemplate {
         public:
@@ -153,6 +157,27 @@ namespace Commands {
         SOURCE_COMMAND(CopyCombinedToQuickBufferCommand,
                        QMLExtensions::UICommandID::CopyCombinedToQuickBuffer,
                        Models::CombinedArtworksModel);
+
+        class FillFromQuickBufferCommand: public IUICommandTemplate {
+        public:
+            FillFromQuickBufferCommand(Models::QuickBuffer &quickBuffer,
+                                       Models::FilteredArtworksListModel &filteredArtworksList,
+                                       Commands::ICommandManager &commandManager):
+                m_QuickBuffer(quickBuffer),
+                m_FilteredArtworksList(filteredArtworksList),
+                m_CommandManager(commandManager)
+            { }
+
+            // IUICommandTemplate interface
+        public:
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::FillArtworkFromQuickBuffer; }
+            virtual void execute(const QVariant &value) override;
+
+        private:
+            Models::QuickBuffer &m_QuickBuffer;
+            Models::FilteredArtworksListModel &m_FilteredArtworksList;
+            Commands::ICommandManager &m_CommandManager;
+        };
     }
 }
 

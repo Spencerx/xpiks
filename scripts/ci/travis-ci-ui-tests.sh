@@ -12,7 +12,12 @@ make
 echo "Building UI tests... Done"
 echo "Starting UI tests..."
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
+if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
+elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../../libs/debug/
+fi
+
 ./xpiks-tests-ui > uitests_in_memory.log
 exitcode=$?
 

@@ -2,6 +2,7 @@ TEMPLATE = app
 
 QT += qml quick widgets concurrent svg
 CONFIG += qmltestcase plugin c++14
+CONFIG   -= app_bundle
 TARGET = xpiks-tests-ui
 
 DEFINES += QML_IMPORT_TRACE
@@ -103,14 +104,23 @@ travis-ci {
     message("for Travis CI")
     INCLUDEPATH += "../../../vendors/quazip"
 
-    LIBS -= -lz
-    LIBS += /usr/lib/x86_64-linux-gnu/libz.so
-
     DEFINES += TRAVIS_CI
 
-    # gcov
-    QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
-    LIBS += -lgcov
+    linux {
+        LIBS -= -lz
+        LIBS += /usr/lib/x86_64-linux-gnu/libz.so
+
+        # gcov
+        QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
+        LIBS += -lgcov
+    }
+
+    macx {
+        CONFIG += sdk_no_version_check
+
+        QMAKE_CXXFLAGS += --coverage
+        QMAKE_LFLAGS += --coverage
+    }
 }
 
 appveyor {

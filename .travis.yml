@@ -3,24 +3,49 @@ language: cpp
 matrix:
   include:
     - os: linux
+      compiler: gcc
       dist: trusty
       sudo: required
       env: XPIKS_BINARY=binary
     - os: linux
+      compiler: gcc
       dist: trusty
       sudo: required
       env: CORE_TESTS=tests QT_FATAL_WARNINGS=1
     - os: linux
+      compiler: gcc
       dist: trusty
       sudo: required
       env: INTEGRATION_TESTS=tests QT_FATAL_WARNINGS=1
     - os: linux
+      compiler: gcc
       dist: trusty
       sudo: required
       env: UI_TESTS=tests
+    - os: osx
+      compiler: clang
+      env: XPIKS_BINARY=binary
+      osx_image: xcode9.4
+      if: branch = master
+    - os: osx
+      compiler: clang
+      env: CORE_TESTS=tests QT_FATAL_WARNINGS=1
+      osx_image: xcode9.4
+      if: branch = master
+    - os: osx
+      compiler: clang
+      env: INTEGRATION_TESTS=tests QT_FATAL_WARNINGS=1
+      osx_image: xcode9.4
+      if: branch = master
+    - os: osx
+      compiler: clang
+      env: UI_TESTS=tests
+      osx_image: xcode9.4
+      if: branch = master
       
 git:
   depth: 3
+  quiet: true
 
 cache:
   apt: true
@@ -33,14 +58,11 @@ install:
 
 before_script:
   - ulimit -c unlimited -S       # enable core dumps
-  - if [ -n "$UI_TESTS" ]; then export DISPLAY=:99.0; fi
-  - if [ -n "$UI_TESTS" ]; then sh -e /etc/init.d/xvfb start; fi
-  - if [ -n "$UI_TESTS" ]; then sleep 3; fi # give xvfb some time to start
   - git fetch origin gh-pages
   - git checkout FETCH_HEAD -- api
 
 script:
-  - ${TRAVIS_BUILD_DIR}/scripts/build/build_vendors_linux.sh travis-ci
+  - ${TRAVIS_BUILD_DIR}/scripts/build/build_vendors_${TRAVIS_OS_NAME}.sh travis-ci
   - ls -la libs/*
   - if [ -n "$XPIKS_BINARY" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-xpiks.sh"; fi
   - if [ -n "$CORE_TESTS" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-core-tests.sh"; fi
