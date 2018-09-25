@@ -57,7 +57,7 @@ Item {
         sourceComponent: Item {
             UICommandListener {
                 commandDispatcher: dispatcher
-                commandIDs: [ UICommand.FixSpellingSingle ]
+                commandIDs: [ UICommand.ReviewSpellingSingle ]
                 onDispatched: {
                     Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                                         root,
@@ -455,7 +455,7 @@ Item {
             wait(TestsHost.normalSleepTime)
             compare(root.openedDialogsCount, 1)
 
-            var spellSuggestor = dispatcher.getCommandTarget(UICommand.FixSpellingArtwork)
+            var spellSuggestor = dispatcher.getCommandTarget(UICommand.ReviewSpellingArtwork)
             spellSuggestor.selectSomething()
             wait(TestsHost.smallSleepTime)
 
@@ -488,7 +488,7 @@ Item {
             var backButton = findChild(artworkEditView, "backButton")
             mouseClick(backButton)
             verify(!artworkEditView.artworkProxy.hasModel())
-            dispatcher.dispatch(UICommand.EditArtwork, 0)
+            dispatcher.dispatch(UICommand.SetupArtworkEdit, 0)
             wait(TestsHost.normalSleepTime)
         }
 

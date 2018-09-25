@@ -20,7 +20,7 @@ int SpellCheckCombinedModelTest::doTest() {
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     m_TestsApp.selectAllArtworks();
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::EditSelectedArtworks);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupEditSelectedArtworks);
 
     // wait for after-add spellchecking
     QThread::sleep(1);
@@ -47,7 +47,7 @@ int SpellCheckCombinedModelTest::doTest() {
         return !m_TestsApp.getSpellCheckService().suggestCorrections(wrongWord).empty();
     });
 
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::FixSpellingCombined);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::ReviewSpellingCombined);
 
     SpellCheck::SpellCheckSuggestionModel &spellSuggestor = m_TestsApp.getSpellSuggestionsModel();
     int rowCount = spellSuggestor.rowCount();

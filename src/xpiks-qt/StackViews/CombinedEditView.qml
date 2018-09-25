@@ -26,7 +26,7 @@ Rectangle {
     color: uiColors.selectedArtworkBackground
 
     property variant componentParent
-    property variant combinedArtworks: dispatcher.getCommandTarget(UICommand.EditSelectedArtworks)
+    property variant combinedArtworks: dispatcher.getCommandTarget(UICommand.SetupEditSelectedArtworks)
     property var autoCompleteBox
 
     property bool wasLeftSideCollapsed
@@ -64,7 +64,7 @@ Rectangle {
     }
 
     function openDuplicatesView() {
-        dispatcher.dispatch(UICommand.ShowDuplicatesCombined, {})
+        dispatcher.dispatch(UICommand.ReviewDuplicatesCombined, {})
     }
 
     function openSuggestionView() {
@@ -78,7 +78,7 @@ Rectangle {
     }
 
     function fixSpelling() {
-        dispatcher.dispatch(UICommand.FixSpellingCombined, {})
+        dispatcher.dispatch(UICommand.ReviewSpellingCombined, {})
     }
 
     function editInPlainText() {

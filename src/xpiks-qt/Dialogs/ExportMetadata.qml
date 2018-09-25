@@ -196,7 +196,7 @@ Item {
                             dialogWindow.height += spinner.height + column.spacing
                             spinner.running = true
 
-                            dispatcher.dispatch(UICommand.SaveSelected,
+                            dispatcher.dispatch(UICommand.SetupExportMetadata,
                                                 { overwrite: overwriteAll, backup: useBackupsCheckbox.checked })
                         }
 

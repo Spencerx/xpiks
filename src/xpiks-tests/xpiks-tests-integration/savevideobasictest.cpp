@@ -46,7 +46,7 @@ int SaveVideoBasicTest::doTest() {
 
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForExport(waiter);
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::SaveSelected);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupExportMetadata);
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");
     VERIFY(m_TestsApp.checkExportSucceeded(), "Failed to export artworks");

@@ -223,7 +223,7 @@ Rectangle {
                     tooltip: i18.n + qsTr("Edit")
                     iconWidth: 33
                     iconHeight: 33
-                    onClicked: dispatcher.dispatch(UICommand.EditArtwork, imageWrapper.delegateIndex)
+                    onClicked: dispatcher.dispatch(UICommand.SetupArtworkEdit, imageWrapper.delegateIndex)
                 }
             }
         }

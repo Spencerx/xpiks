@@ -26,7 +26,7 @@ Item {
     anchors.fill: parent
 
     property variant componentParent
-    property var deleteKeywordsModel: dispatcher.getCommandTarget(UICommand.DeleteKeywordsFromSelected)
+    property var deleteKeywordsModel: dispatcher.getCommandTarget(UICommand.SetupDeleteKeywordsInSelected)
 
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();

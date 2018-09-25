@@ -130,7 +130,7 @@ int CsvExportTest::doTest() {
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     m_TestsApp.selectAllArtworks();
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::ExportSelectedToCSV);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupCSVExportForSelected);
 
     const QString directoryPath = QCoreApplication::applicationDirPath() + QDir::separator() + testName();
     Helpers::ensureDirectoryExists(directoryPath);

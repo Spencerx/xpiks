@@ -25,7 +25,7 @@ Item {
     id: failedUploadsComponent
     anchors.fill: parent
 
-    property var artworksUploader: dispatcher.getCommandTarget(UICommand.UploadSelected)
+    property var artworksUploader: dispatcher.getCommandTarget(UICommand.SetupUpload)
     property var uploadWatcher: artworksUploader.getUploadWatcher()
 
     signal dialogDestruction();

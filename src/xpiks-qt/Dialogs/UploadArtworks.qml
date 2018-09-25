@@ -29,7 +29,7 @@ Item {
     property bool skipUploadItems: false
     property variant componentParent
     property bool uploadEnabled: (artworkRepository.artworksSourcesCount > 0) && (filteredArtworksListModel.selectedArtworksCount > 0)
-    property var artworksUploader: dispatcher.getCommandTarget(UICommand.UploadSelected)
+    property var artworksUploader: dispatcher.getCommandTarget(UICommand.SetupUpload)
     property var uploadWatcher: artworksUploader.getUploadWatcherObject()
     property var uploadInfos: artworksUploader.getUploadInfosObject();
     property var ftpListAC: uploadInfos.getStocksCompletionObject()
@@ -71,7 +71,7 @@ Item {
                 }
             }
 
-            dispatcher.dispatch(UICommand.ZipSelected, {})
+            dispatcher.dispatch(UICommand.SetupCreatingArchives, {})
             Common.launchDialog("Dialogs/ZipArtworksDialog.qml",
                                 uploadArtworksComponent.componentParent,
                                 {

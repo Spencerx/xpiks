@@ -36,7 +36,7 @@ int SaveFileBasicTest::doTest() {
     SignalWaiter waiter;
     m_TestsApp.connectWaiterForExport(waiter);
     QVariantMap params{{"overwrite", QVariant(true)}, {"backup", QVariant(false)}};
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::SaveSelected, QVariant::fromValue(params));
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupExportMetadata, QVariant::fromValue(params));
 
     VERIFY(waiter.wait(20), "Timeout exceeded for writing metadata.");
     VERIFY(m_TestsApp.checkExportSucceeded(), "Failed to export artworks");

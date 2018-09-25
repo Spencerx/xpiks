@@ -60,9 +60,9 @@ namespace Commands {
     class ICommand;
 
     namespace UI {
-        class SaveSelectedCommand: public IUICommandTemplate {
+        class SetupExportMetadataCommand: public IUICommandTemplate {
         public:
-            SaveSelectedCommand(Models::FilteredArtworksListModel &filteredArtworksList,
+            SetupExportMetadataCommand(Models::FilteredArtworksListModel &filteredArtworksList,
                                 MetadataIO::MetadataIOCoordinator &metadataIOCoordinator,
                                 MetadataIO::MetadataIOService &metadataIOService):
                 m_FilteredArtworksList(filteredArtworksList),
@@ -72,7 +72,7 @@ namespace Commands {
 
             // IUICommandTemplate interface
         public:
-            virtual int getCommandID() override { return QMLExtensions::UICommandID::SaveSelected; }
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::SetupExportMetadata; }
             virtual void execute(QVariant const &value) override;
 
         private:
@@ -81,32 +81,32 @@ namespace Commands {
             MetadataIO::MetadataIOService &m_MetadataIOService;
         };
 
-        FIX_ARTWORK_SPELLING_COMMAND(FixSpellingInSelectedCommand,
-                                     QMLExtensions::UICommandID::FixSpellingInSelected,
+        FIX_ARTWORK_SPELLING_COMMAND(ReviewSpellingInSelectedCommand,
+                                     QMLExtensions::UICommandID::ReviewSpellingInSelected,
                                      Artworks::ISelectedArtworksSource);
 
-        SOURCE_UI_TARGET_COMMAND(EditSelectedCommand,
-                                 QMLExtensions::UICommandID::EditSelectedArtworks,
+        SOURCE_UI_TARGET_COMMAND(SetupEditSelectedCommand,
+                                 QMLExtensions::UICommandID::SetupEditSelectedArtworks,
                                  Artworks::ISelectedArtworksSource,
                                  Models::CombinedArtworksModel);
 
-        SOURCE_UI_TARGET_COMMAND(ShowDuplicatesInSelectedCommand,
-                                 QMLExtensions::UICommandID::ShowDuplicatesInSelected,
+        SOURCE_UI_TARGET_COMMAND(ReviewDuplicatesInSelectedCommand,
+                                 QMLExtensions::UICommandID::ReviewDuplicatesInSelected,
                                  Artworks::ISelectedArtworksSource,
                                  SpellCheck::DuplicatesReviewModel);
 
-        SOURCE_UI_TARGET_COMMAND(WipeMetadataInSelectedCommand,
-                                 QMLExtensions::UICommandID::WipeMetadataInSelected,
+        SOURCE_UI_TARGET_COMMAND(SetupWipeMetadataCommand,
+                                 QMLExtensions::UICommandID::SetupWipeMetadata,
                                  Artworks::ISelectedArtworksSource,
                                  MetadataIO::MetadataIOCoordinator);
 
-        SOURCE_UI_TARGET_COMMAND(ReimportMetadataForSelectedCommand,
-                                 QMLExtensions::UICommandID::ReimportFromSelected,
+        SOURCE_UI_TARGET_COMMAND(SetupReimportMetadataCommand,
+                                 QMLExtensions::UICommandID::SetupReimportMetadata,
                                  Artworks::ISelectedArtworksSource,
                                  MetadataIO::MetadataIOCoordinator);
 
-        SOURCE_UI_TARGET_COMMAND(ExportSelectedToCSVCommand,
-                                 QMLExtensions::UICommandID::ExportSelectedToCSV,
+        SOURCE_UI_TARGET_COMMAND(SetupCSVExportForSelectedCommand,
+                                 QMLExtensions::UICommandID::SetupCSVExportForSelected,
                                  Artworks::ISelectedArtworksSource,
                                  MetadataIO::CsvExportModel);
 
@@ -115,19 +115,19 @@ namespace Commands {
                                  Artworks::ISelectedArtworksSource,
                                  Models::FindAndReplaceModel);
 
-        SOURCE_UI_TARGET_COMMAND(ZipSelectedCommand,
-                                 QMLExtensions::UICommandID::ZipSelected,
+        SOURCE_UI_TARGET_COMMAND(SetupCreatingArchivesCommand,
+                                 QMLExtensions::UICommandID::SetupCreatingArchives,
                                  Artworks::ISelectedArtworksSource,
                                  Models::ZipArchiver);
 
-        SOURCE_UI_TARGET_COMMAND(DeleteKeywordsFromSelectedCommand,
-                                 QMLExtensions::UICommandID::DeleteKeywordsFromSelected,
+        SOURCE_UI_TARGET_COMMAND(SetupDeleteKeywordsInSelectedCommand,
+                                 QMLExtensions::UICommandID::SetupDeleteKeywordsInSelected,
                                  Artworks::ISelectedArtworksSource,
                                  Models::DeleteKeywordsViewModel);
 
-        class UploadSelectedCommand: public IUICommandTemplate, public IUICommandTargetSource {
+        class SetupUploadCommand: public IUICommandTemplate, public IUICommandTargetSource {
         public:
-            UploadSelectedCommand(Artworks::ISelectedArtworksSource &source,
+            SetupUploadCommand(Artworks::ISelectedArtworksSource &source,
                                   Models::ArtworksUploader &uploader,
                                   Warnings::WarningsModel &warningsModel):
                 m_Source(source),
@@ -135,7 +135,7 @@ namespace Commands {
                 m_WarningsModel(warningsModel)
             { }
         public:
-            virtual int getCommandID() override { return QMLExtensions::UICommandID::UploadSelected; }
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::SetupUpload; }
             virtual void execute(QVariant const &value) override;
             virtual QObject *getTargetObject() override { return (QObject*)&m_Uploader; }
         private:

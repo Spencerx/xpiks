@@ -40,7 +40,7 @@ int FixSpellingMarksModifiedTest::doTest() {
     });
 
     artwork->setIsSelected(true);
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::FixSpellingInSelected);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::ReviewSpellingInSelected);
 
     VERIFY(m_TestsApp.getSpellSuggestionsModel().rowCount() > 0, "Spell suggestions are not set");
     VERIFY(m_TestsApp.selectSpellSuggestions(0), "Failed to select spell suggestions");

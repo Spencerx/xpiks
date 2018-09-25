@@ -141,9 +141,9 @@ void XpiksUITestsApp::setupUITests() {
     m_FilteredArtworksListModel.unselectFilteredArtworks();
     // select vectors
     m_FilteredArtworksListModel.selectArtworksEx(Models::FilteredArtworksListModel::SelectVectors);
-    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::EditSelectedArtworks, QJSValue());
-    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::ExportSelectedToCSV, QJSValue());
-    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::ZipSelected, QJSValue());
-    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::UploadSelected, QJSValue());
-    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::DeleteKeywordsFromSelected, QJSValue());
+    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::SetupEditSelectedArtworks, QJSValue());
+    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::SetupCSVExportForSelected, QJSValue());
+    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::SetupCreatingArchives, QJSValue());
+    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::SetupUpload, QJSValue());
+    m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::SetupDeleteKeywordsInSelected, QJSValue());
 }

@@ -26,7 +26,7 @@ Item {
     anchors.fill: parent
     property var callbackObject
     property bool initialized: false
-    property var spellCheckSuggestionModel: dispatcher.getCommandTarget(UICommand.FixSpellingArtwork)
+    property var spellCheckSuggestionModel: dispatcher.getCommandTarget(UICommand.ReviewSpellingArtwork)
 
     signal dialogDestruction();
     Component.onDestruction: dialogDestruction();

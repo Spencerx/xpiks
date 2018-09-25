@@ -62,10 +62,10 @@ Rectangle {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.ShowDuplicatesSingle,
-            UICommand.ShowDuplicatesCombined,
-            UICommand.ShowDuplicatesInSelected,
-            UICommand.ShowDuplicatesArtwork]
+        commandIDs: [UICommand.ReviewDuplicatesSingle,
+            UICommand.ReviewDuplicatesCombined,
+            UICommand.ReviewDuplicatesInSelected,
+            UICommand.ReviewDuplicatesArtwork]
         onDispatched: {
             var wasCollapsed = appHost.leftSideCollapsed
             if (value) {
@@ -85,10 +85,10 @@ Rectangle {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.EditArtwork, UICommand.EditInfoArtwork]
+        commandIDs: [UICommand.SetupArtworkEdit, UICommand.ReviewArtworkInfo]
         onDispatched: {
             if (mainStackView.currentItem.objectName !== "ArtworkEditView") {
-                startOneItemEditing(value, (commandID === UICommand.EditInfoArtwork))
+                startOneItemEditing(value, (commandID === UICommand.ReviewArtworkInfo))
             }
         }
     }
@@ -112,7 +112,7 @@ Rectangle {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.EditSelectedArtworks]
+        commandIDs: [UICommand.SetupEditSelectedArtworks]
         onDispatched: {
             mainStackView.push({
                                    item: "qrc:/StackViews/CombinedEditView.qml",

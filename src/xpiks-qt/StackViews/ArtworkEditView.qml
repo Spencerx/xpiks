@@ -29,7 +29,7 @@ Rectangle {
     property variant componentParent
     property var autoCompleteBox
 
-    property var artworkProxy: dispatcher.getCommandTarget(UICommand.EditArtwork)
+    property var artworkProxy: dispatcher.getCommandTarget(UICommand.SetupArtworkEdit)
     property var keywordsModel: artworkProxy.getBasicModelObject()
     property bool wasLeftSideCollapsed
     property bool listViewEnabled: true
@@ -53,7 +53,7 @@ Rectangle {
         closeAutoComplete()
         flv.submitCurrentKeyword()
 
-        dispatcher.dispatch(UICommand.EditArtwork, itemIndex)
+        dispatcher.dispatch(UICommand.SetupArtworkEdit, itemIndex)
     }
 
     function closePopup() {
@@ -84,7 +84,7 @@ Rectangle {
     }
 
     function openDuplicatesView() {
-        dispatcher.dispatch(UICommand.ShowDuplicatesSingle, {})
+        dispatcher.dispatch(UICommand.ReviewDuplicatesSingle, {})
     }
 
     function openSuggestionView() {
@@ -99,7 +99,7 @@ Rectangle {
     }
 
     function fixSpelling() {
-        dispatcher.dispatch(UICommand.FixSpellingSingle, {})
+        dispatcher.dispatch(UICommand.ReviewSpellingSingle, {})
         updateChangesText()
     }
 
@@ -301,7 +301,7 @@ Rectangle {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.EditArtwork]
+        commandIDs: [UICommand.SetupArtworkEdit]
         onDispatched: {
             console.log("# [EditArtwork] dispatched")
             artworkEditComponent.keywordsModel = artworkProxy.getBasicModelObject()

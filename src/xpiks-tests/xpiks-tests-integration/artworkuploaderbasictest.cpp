@@ -22,7 +22,7 @@ int ArtworkUploaderBasicTest::doTest() {
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     m_TestsApp.selectAllArtworks();
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::UploadSelected);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupUpload);
 
     VERIFY(m_TestsApp.getArtworksUploader().getItemsCount() == files.size(), "Artworks didn't get to the uploader");
 

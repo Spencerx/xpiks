@@ -46,7 +46,7 @@ int SpellCheckMultireplaceTest::doTest() {
         return !m_TestsApp.getSpellCheckService().suggestCorrections(wrongWord).empty();
     });
 
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::FixSpellingArtwork, QVariant(0));
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::ReviewSpellingArtwork, QVariant(0));
 
     SpellCheck::SpellCheckSuggestionModel &spellSuggestor = m_TestsApp.getSpellSuggestionsModel();
     int rowCount = spellSuggestor.rowCount();

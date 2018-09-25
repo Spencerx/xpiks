@@ -18,6 +18,7 @@
 #include <Models/Editing/quickbuffer.h>
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
+#include <Services/iartworksupdater.h>
 #include <Services/SpellCheck/spellchecksuggestionmodel.h>
 #include <Services/SpellCheck/duplicatesreviewmodel.h>
 #include <Services/SpellCheck/spellsuggestionstarget.h>
@@ -159,7 +160,7 @@ namespace Commands {
             m_Target.setExistingKeywords(m_Source.getKeywords().toSet());
         }
 
-        void EditArtworkCommand::execute(const QVariant &value) {
+        void SetupArtworkEditCommand::execute(const QVariant &value) {
             LOG_DEBUG << value;
             int proxyIndex = Helpers::convertToInt(value, -1);
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;
@@ -179,7 +180,7 @@ namespace Commands {
             m_Source.copyToQuickBuffer();
         }
 
-        void FillFromQuickBufferCommand::execute(const QVariant &value) {
+        void FillArtworkFromQuickBufferCommand::execute(const QVariant &value) {
             int proxyIndex = Helpers::convertToInt(value, -1);
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;
             if (m_FilteredArtworksList.tryGetArtwork(proxyIndex, artwork)) {
@@ -202,6 +203,7 @@ namespace Commands {
                                     keywords,
                                     editFlags)));
 
+                m_Updater.updateArtwork(artwork);
             }
         }
     }

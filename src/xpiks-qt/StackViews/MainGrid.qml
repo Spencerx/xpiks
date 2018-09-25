@@ -29,7 +29,7 @@ Item {
     property variant componentParent
 
     function fixDuplicatesAction(proxyIndex) {
-        dispatcher.dispatch(UICommand.ShowDuplicatesArtwork, proxyIndex)
+        dispatcher.dispatch(UICommand.ReviewDuplicatesArtwork, proxyIndex)
     }
 
     function suggestKeywords(proxyIndex) {
@@ -43,7 +43,7 @@ Item {
     }
 
     function fixSpelling(proxyIndex) {
-        dispatcher.dispatch(UICommand.FixSpellingArtwork, proxyIndex)
+        dispatcher.dispatch(UICommand.ReviewSpellingArtwork, proxyIndex)
     }
 
     function closeAutoComplete() {
@@ -111,12 +111,12 @@ Item {
 
         MenuItem {
             text: i18.n + qsTr("Edit")
-            onTriggered: dispatcher.dispatch(UICommand.EditArtwork, artworkContextMenu.index)
+            onTriggered: dispatcher.dispatch(UICommand.SetupArtworkEdit, artworkContextMenu.index)
         }
 
         MenuItem {
             text: i18.n + qsTr("Show info")
-            onTriggered: dispatcher.dispatch(UICommand.EditInfoArtwork, artworkContextMenu.index)
+            onTriggered: dispatcher.dispatch(UICommand.ReviewArtworkInfo, artworkContextMenu.index)
         }
 
         MenuItem {
@@ -1241,7 +1241,7 @@ Item {
                                                 acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                                                 function dblClickHandler() {
-                                                    dispatcher.dispatch(UICommand.EditArtwork, rowWrapper.delegateIndex)
+                                                    dispatcher.dispatch(UICommand.SetupArtworkEdit, rowWrapper.delegateIndex)
                                                 }
 
                                                 Timer {

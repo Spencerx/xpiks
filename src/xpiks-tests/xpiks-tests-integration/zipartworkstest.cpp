@@ -22,7 +22,7 @@ int ZipArtworksTest::doTest() {
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     m_TestsApp.selectAllArtworks();
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::ZipSelected);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupCreatingArchives);
 
     Models::ZipArchiver &zipArchiver = m_TestsApp.getZipArchiver();
     VERIFY(zipArchiver.getItemsCount() == 2, "ZipArchiver didn't get all the files");

@@ -78,25 +78,25 @@ namespace Commands {
         };
 
         FIX_ARTWORK_SPELLING_COMMAND(FixSpellingInArtworkProxyCommand,
-                                     QMLExtensions::UICommandID::FixSpellingSingle,
+                                     QMLExtensions::UICommandID::ReviewSpellingSingle,
                                      Models::ArtworkProxyModel);
 
         FIX_ARTWORK_SPELLING_COMMAND(FixSpellingForArtworkCommand,
-                                     QMLExtensions::UICommandID::FixSpellingArtwork,
+                                     QMLExtensions::UICommandID::ReviewSpellingArtwork,
                                      Models::FilteredArtworksListModel);
 
         SOURCE_UI_TARGET_COMMAND(ShowDuplicatesForSingleCommand,
-                                 QMLExtensions::UICommandID::ShowDuplicatesSingle,
+                                 QMLExtensions::UICommandID::ReviewDuplicatesSingle,
                                  Models::ArtworkProxyModel,
                                  SpellCheck::DuplicatesReviewModel);
 
         SOURCE_UI_TARGET_COMMAND(ShowDuplicatesForCombinedCommand,
-                                 QMLExtensions::UICommandID::ShowDuplicatesCombined,
+                                 QMLExtensions::UICommandID::ReviewDuplicatesCombined,
                                  Models::CombinedArtworksModel,
                                  SpellCheck::DuplicatesReviewModel);
 
         SOURCE_UI_TARGET_COMMAND(ShowDuplicatesForArtworkCommand,
-                                 QMLExtensions::UICommandID::ShowDuplicatesArtwork,
+                                 QMLExtensions::UICommandID::ReviewDuplicatesArtwork,
                                  Models::FilteredArtworksListModel,
                                  SpellCheck::DuplicatesReviewModel);
 
@@ -135,19 +135,19 @@ namespace Commands {
                                  Models::ArtworkProxyModel,
                                  Suggestion::KeywordsSuggestor);
 
-        SOURCE_UI_TARGET_COMMAND(EditArtworkCommand,
-                                 QMLExtensions::UICommandID::EditArtwork,
+        SOURCE_UI_TARGET_COMMAND(SetupArtworkEditCommand,
+                                 QMLExtensions::UICommandID::SetupArtworkEdit,
                                  Models::FilteredArtworksListModel,
                                  Models::ArtworkProxyModel);
 
-        class EditInfoArtworkCommand: public EditArtworkCommand {
+        class ReviewArtworkInfoCommand: public SetupArtworkEditCommand {
         public:
-            EditInfoArtworkCommand(Models::FilteredArtworksListModel &source,
+            ReviewArtworkInfoCommand(Models::FilteredArtworksListModel &source,
                                    Models::ArtworkProxyModel &target):
-                EditArtworkCommand(source, target)
+                SetupArtworkEditCommand(source, target)
             {}
         public:
-            virtual int getCommandID() override { return QMLExtensions::UICommandID::EditInfoArtwork; }
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::ReviewArtworkInfo; }
         };
 
         SOURCE_COMMAND(CopyArtworkToQuickBufferCommand,
@@ -158,14 +158,16 @@ namespace Commands {
                        QMLExtensions::UICommandID::CopyCombinedToQuickBuffer,
                        Models::CombinedArtworksModel);
 
-        class FillFromQuickBufferCommand: public IUICommandTemplate {
+        class FillArtworkFromQuickBufferCommand: public IUICommandTemplate {
         public:
-            FillFromQuickBufferCommand(Models::QuickBuffer &quickBuffer,
-                                       Models::FilteredArtworksListModel &filteredArtworksList,
-                                       Commands::ICommandManager &commandManager):
+            FillArtworkFromQuickBufferCommand(Models::QuickBuffer &quickBuffer,
+                                              Models::FilteredArtworksListModel &filteredArtworksList,
+                                              Commands::ICommandManager &commandManager,
+                                              Services::IArtworksUpdater &updater):
                 m_QuickBuffer(quickBuffer),
                 m_FilteredArtworksList(filteredArtworksList),
-                m_CommandManager(commandManager)
+                m_CommandManager(commandManager),
+                m_Updater(updater)
             { }
 
             // IUICommandTemplate interface
@@ -177,6 +179,7 @@ namespace Commands {
             Models::QuickBuffer &m_QuickBuffer;
             Models::FilteredArtworksListModel &m_FilteredArtworksList;
             Commands::ICommandManager &m_CommandManager;
+            Services::IArtworksUpdater &m_Updater;
         };
     }
 }

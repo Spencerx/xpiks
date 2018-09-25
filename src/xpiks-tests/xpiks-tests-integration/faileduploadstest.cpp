@@ -23,7 +23,7 @@ int FailedUploadsTest::doTest() {
     const QString filepath = m_TestsApp.getArtwork(0)->getFilepath();
 
     m_TestsApp.selectAllArtworks();
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::UploadSelected);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupUpload);
 
     Models::UploadInfoRepository &uploadRepo = m_TestsApp.getUploadInfoRepository();
 

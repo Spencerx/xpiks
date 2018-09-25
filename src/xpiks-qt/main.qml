@@ -144,7 +144,7 @@ ApplicationWindow {
 
     function doOpenUploadDialog(masterPasswordCorrectOrEmpty, skipUploadItems) {
         dispatcher.dispatch(UICommand.InitUploadHosts, masterPasswordCorrectOrEmpty)
-        dispatcher.dispatch(UICommand.UploadSelected, skipUploadItems)
+        dispatcher.dispatch(UICommand.SetupUpload, skipUploadItems)
     }
 
     function launchImportDialog(importID, reimport) {
@@ -210,13 +210,13 @@ ApplicationWindow {
                 var index = filteredArtworksListModel.findSelectedItemIndex()
 
                 if (index !== -1) {
-                    dispatcher.dispatch(UICommand.EditArtwork, index)
+                    dispatcher.dispatch(UICommand.SetupArtworkEdit, index)
                     launched = true
                 }
 
                 if (!launched) {
                     // also as fallback in case of errors in findSelectedIndex
-                    dispatcher.dispatch(UICommand.EditSelectedArtworks, {})
+                    dispatcher.dispatch(UICommand.SetupEditSelectedArtworks, {})
                 }
             }
         }
@@ -309,7 +309,7 @@ ApplicationWindow {
         enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Fix spelling in selected triggered")
-            dispatcher.dispatch(UICommand.FixSpellingInSelected, {})
+            dispatcher.dispatch(UICommand.ReviewSpellingInSelected, {})
         }
     }
 
@@ -319,7 +319,7 @@ ApplicationWindow {
         enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Fix duplicates in selected triggered")
-            dispatcher.dispatch(UICommand.ShowDuplicatesInSelected, true)
+            dispatcher.dispatch(UICommand.ReviewDuplicatesInSelected, true)
         }
     }
 
@@ -339,7 +339,7 @@ ApplicationWindow {
         enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Delete keywords from selected triggered")
-            dispatcher.dispatch(UICommand.DeleteKeywordsFromSelected, {})
+            dispatcher.dispatch(UICommand.SetupDeleteKeywordsInSelected, {})
         }
     }
 
@@ -359,7 +359,7 @@ ApplicationWindow {
         enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Zip archives triggered")
-            dispatcher.dispatch(UICommand.ZipSelected)
+            dispatcher.dispatch(UICommand.SetupCreatingArchives)
         }
     }
 
@@ -369,7 +369,7 @@ ApplicationWindow {
         enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("CSV export triggered")
-            dispatcher.dispatch(UICommand.ExportSelectedToCSV)
+            dispatcher.dispatch(UICommand.SetupCSVExportForSelected)
         }
     }
 
@@ -874,7 +874,7 @@ ApplicationWindow {
         title: i18.n + qsTr("Confirmation")
         text: i18.n + qsTr("You will lose all unsaved changes after reimport. Proceed?")
         standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: dispatcher.dispatch(UICommand.ReimportFromSelected, {})
+        onYes: dispatcher.dispatch(UICommand.SetupReimportMetadata, {})
     }
 
     FileDialog {
@@ -1112,10 +1112,10 @@ ApplicationWindow {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.FixSpellingArtwork,
-            UICommand.FixSpellingCombined,
-            UICommand.FixSpellingInSelected,
-            UICommand.FixSpellingSingle]
+        commandIDs: [UICommand.ReviewSpellingArtwork,
+            UICommand.ReviewSpellingCombined,
+            UICommand.ReviewSpellingInSelected,
+            UICommand.ReviewSpellingSingle]
         onDispatched: {
             Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                                 applicationWindow,
@@ -1133,7 +1133,7 @@ ApplicationWindow {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.DeleteKeywordsFromSelected]
+        commandIDs: [UICommand.SetupDeleteKeywordsInSelected]
         onDispatched: {
             Common.launchDialog("Dialogs/DeleteKeywordsDialog.qml", applicationWindow, { componentParent: applicationWindow })
         }
@@ -1141,7 +1141,7 @@ ApplicationWindow {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.ExportSelectedToCSV]
+        commandIDs: [UICommand.SetupCSVExportForSelected]
         onDispatched: {
             Common.launchDialog("Dialogs/CsvExportDialog.qml", applicationWindow, {})
         }
@@ -1149,7 +1149,7 @@ ApplicationWindow {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.ZipSelected]
+        commandIDs: [UICommand.SetupCreatingArchives]
         onDispatched: {
             Common.launchDialog("Dialogs/ZipArtworksDialog.qml", applicationWindow, {})
         }
@@ -1157,7 +1157,7 @@ ApplicationWindow {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.UploadSelected]
+        commandIDs: [UICommand.SetupUpload]
         onDispatched: {
             Common.launchDialog("Dialogs/UploadArtworks.qml",
                                 applicationWindow,

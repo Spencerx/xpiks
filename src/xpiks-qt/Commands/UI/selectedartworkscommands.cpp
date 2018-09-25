@@ -32,7 +32,7 @@
 
 namespace Commands {
     namespace UI {
-        void SaveSelectedCommand::execute(QVariant const &value) {
+        void SetupExportMetadataCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             bool useBackups = false;
             bool overwrite = false;
@@ -54,7 +54,7 @@ namespace Commands {
             m_MetadataIOCoordinator.writeMetadataExifTool(snapshot, useBackups);
         }
 
-        void FixSpellingInSelectedCommand::execute(QVariant const &) {
+        void ReviewSpellingInSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             Artworks::ArtworksSnapshot snapshot = std::move(m_Source.getSelectedArtworks());
             m_SpellSuggestionsModel.setupModel(
@@ -63,24 +63,24 @@ namespace Commands {
                         Common::SpellCheckFlags::All);
         }
 
-        void EditSelectedCommand::execute(QVariant const &) {
+        void SetupEditSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.resetModel();
             m_Target.setArtworks(m_Source.getSelectedArtworks());
         }
 
-        void ShowDuplicatesInSelectedCommand::execute(QVariant const &) {
+        void ReviewDuplicatesInSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setupModel(m_Source.getSelectedArtworks());
         }
 
-        void WipeMetadataInSelectedCommand::execute(QVariant const &value) {
+        void SetupWipeMetadataCommand::execute(QVariant const &value) {
             LOG_DEBUG << value.toString();
             bool useBackups = Helpers::convertToBool(value, false);
             m_Target.wipeAllMetadataExifTool(m_Source.getSelectedArtworks(), useBackups);
         }
 
-        void ReimportMetadataForSelectedCommand::execute(QVariant const &) {
+        void SetupReimportMetadataCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             auto snapshot = std::move(m_Source.getSelectedArtworks());
             for (auto &artwork: snapshot) {
@@ -90,7 +90,7 @@ namespace Commands {
             m_Target.reimportMetadataExiftool(snapshot);
         }
 
-        void ExportSelectedToCSVCommand::execute(QVariant const &) {
+        void SetupCSVExportForSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setArtworksToExport(m_Source.getSelectedArtworks());
         }
@@ -100,17 +100,17 @@ namespace Commands {
             m_Target.findReplaceCandidates(m_Source.getSelectedArtworks());
         }
 
-        void ZipSelectedCommand::execute(QVariant const &) {
+        void SetupCreatingArchivesCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setArtworks(m_Source.getSelectedArtworks());
         }
 
-        void DeleteKeywordsFromSelectedCommand::execute(const QVariant &) {
+        void SetupDeleteKeywordsInSelectedCommand::execute(const QVariant &) {
             LOG_DEBUG << "#";
             m_Target.setArtworks(m_Source.getSelectedArtworks());
         }
 
-        void UploadSelectedCommand::execute(QVariant const &value) {
+        void SetupUploadCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             m_Uploader.clearModel();
             bool skipUploadItems = Helpers::convertToBool(value, false);

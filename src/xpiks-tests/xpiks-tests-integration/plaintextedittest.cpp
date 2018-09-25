@@ -28,7 +28,7 @@ int PlainTextEditTest::doTest() {
     VERIFY(waiter.wait(5), "Timeout for waiting for initial spellchecks");
 
     m_TestsApp.selectAllArtworks();
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::EditSelectedArtworks);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupEditSelectedArtworks);
 
     Models::CombinedArtworksModel &combinedModel = m_TestsApp.getCombinedArtworksModel();
     auto *basicModel = combinedModel.retrieveBasicMetadataModel();

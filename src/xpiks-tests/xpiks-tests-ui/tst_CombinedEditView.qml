@@ -46,7 +46,7 @@ Item {
         sourceComponent: Item {
             UICommandListener {
                 commandDispatcher: dispatcher
-                commandIDs: [ UICommand.FixSpellingCombined ]
+                commandIDs: [ UICommand.ReviewSpellingCombined ]
                 onDispatched: {
                     Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                                         root,
@@ -400,7 +400,7 @@ Item {
             wait(TestsHost.normalSleepTime)
             compare(root.openedDialogsCount, 1)
 
-            var spellSuggestor = dispatcher.getCommandTarget(UICommand.FixSpellingArtwork)
+            var spellSuggestor = dispatcher.getCommandTarget(UICommand.ReviewSpellingArtwork)
             spellSuggestor.selectSomething()
             wait(TestsHost.smallSleepTime)
 

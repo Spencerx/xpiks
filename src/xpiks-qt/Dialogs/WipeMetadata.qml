@@ -74,7 +74,7 @@ Item {
             spinner.height = spinner.width
             dialogWindow.height += spinner.height + column.spacing
             spinner.running = true
-            dispatcher.dispatch(UICommand.WipeMetadataInSelected, useBackupsCheckbox.checked)
+            dispatcher.dispatch(UICommand.SetupWipeMetadata, useBackupsCheckbox.checked)
         }
     }
 

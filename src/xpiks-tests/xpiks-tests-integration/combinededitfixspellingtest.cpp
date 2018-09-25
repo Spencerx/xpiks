@@ -33,14 +33,14 @@ int CombinedEditFixSpellingTest::doTest() {
     VERIFY(basicModel.hasDescriptionSpellError(), "Description spell error not detected");
 
     artwork->setIsSelected(true);
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::EditSelectedArtworks);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupEditSelectedArtworks);
 
     auto *combinedKeywordsModel = m_TestsApp.getCombinedArtworksModel().retrieveBasicMetadataModel();
 
     sleepWaitUntil(5, [&]() { return combinedKeywordsModel->hasDescriptionSpellError(); });
     VERIFY(combinedKeywordsModel->hasDescriptionSpellError(), "Description spell error was not propagated");
 
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::FixSpellingCombined);
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::ReviewSpellingCombined);
 
     SpellCheck::SpellCheckSuggestionModel &spellSuggestor = m_TestsApp.getSpellSuggestionsModel();
     int rowCount = spellSuggestor.rowCount();

@@ -21,7 +21,7 @@ int UnavailableFilesTest::doTest() {
     QSignalSpy artworksListSpy(&m_TestsApp.getArtworksListModel(), SIGNAL(unavailableArtworksFound()));
     QSignalSpy proxySpy(&m_TestsApp.getArtworkProxyModel(), SIGNAL(itemBecomeUnavailable()));
 
-    m_TestsApp.dispatch(QMLExtensions::UICommandID::EditArtwork, QVariant::fromValue(0));
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupArtworkEdit, QVariant::fromValue(0));
 
     m_TestsApp.getArtworksRepository().insertIntoUnavailable(m_TestsApp.getArtwork(0)->getFilepath());
     m_TestsApp.getArtworksRepository().notifyUnavailableFiles();
