@@ -56,7 +56,7 @@ namespace UndoRedo {
         Q_INVOKABLE void discardLastAction();
 
     private:
-        std::shared_ptr<Commands::ICommand> popLastItem();
+        std::shared_ptr<Commands::ICommand> popLastItem(bool &emptyNow);
 
     private:
         // stack for future todos

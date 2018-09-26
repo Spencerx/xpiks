@@ -36,7 +36,8 @@ void UndoRedo::UndoRedoManager::recordHistoryItem(const std::shared_ptr<Commands
 bool UndoRedo::UndoRedoManager::undoLastAction() {
     LOG_DEBUG << "#";
 
-    auto item = popLastItem();
+    bool dummy = false;
+    auto item = popLastItem(dummy);
     if (item) {
         item->undo();
     }
@@ -46,10 +47,15 @@ bool UndoRedo::UndoRedoManager::undoLastAction() {
 
 void UndoRedo::UndoRedoManager::discardLastAction() {
     LOG_DEBUG << "#";
-    popLastItem();
+    bool emptyNow = false;
+    popLastItem(emptyNow);
+
+    if (emptyNow) {
+        emit undoStackEmpty();
+    }
 }
 
-std::shared_ptr<Commands::ICommand> UndoRedo::UndoRedoManager::popLastItem() {
+std::shared_ptr<Commands::ICommand> UndoRedo::UndoRedoManager::popLastItem(bool &emptyNow) {
     LOG_DEBUG << "#";
     std::shared_ptr<Commands::ICommand> result;
 
@@ -61,15 +67,12 @@ std::shared_ptr<Commands::ICommand> UndoRedo::UndoRedoManager::popLastItem() {
     if (anyItem) {
         result = std::move(m_HistoryStack.top());
         m_HistoryStack.pop();
-        bool isNowEmpty = m_HistoryStack.empty();
+        emptyNow = m_HistoryStack.empty();
 
         m_Mutex.unlock();
 
         emit canUndoChanged();
         emit undoDescriptionChanged();
-        if (isNowEmpty) {
-            emit undoStackEmpty();
-        }
     } else {
         m_Mutex.unlock();
         LOG_WARNING << "No item for undo";

@@ -218,7 +218,7 @@ int main(int argc, char *argv[]) {
     integrationTests.emplace_back(std::make_shared<LoadPluginBasicTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<StockFtpAutoCompleteTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<UnavailableFilesTest>(environment, xpiksTests));
-//    // always the last one. insert new tests above
+    // always the last one. insert new tests above
     integrationTests.emplace_back(std::make_shared<LocalLibrarySearchTest>(environment, xpiksTests));
 
     qInfo("\n");

@@ -23,6 +23,7 @@ std::shared_ptr<Artworks::ArtworkMetadata> createArtworkMetadata(const QString &
     artwork->appendKeywords(keywords);
     artwork->setTitle(title);
     artwork->setDescription(desc);
+    artwork->resetModified();
     return artwork;
 }
 
@@ -724,9 +725,7 @@ void CombinedModelTests::notSavedAfterAllDisabledTest() {
 
     combinedModel.getActionCommand(true)->execute();
 
-    for (auto &item: snapshot) {
-        QCOMPARE(item->isModified(), false);
-    }
+    for (auto &item: snapshot) { QCOMPARE(item->isModified(), false); }
 }
 
 void CombinedModelTests::notSavedAfterNothingModifiedTest() {
