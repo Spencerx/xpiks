@@ -15,6 +15,7 @@
 #include <Common/types.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Models/Artworks/artworksviewmodel.h>
+#include <Models/iactionmodel.h>
 #include <KeywordsPresets/ipresetsmanager.h>
 #include <Common/messages.h>
 
@@ -31,6 +32,7 @@ namespace Models {
 
     class DeleteKeywordsViewModel:
             public Models::ArtworksViewModel,
+            public Models::IActionModel,
             public Common::MessagesSource<BasicSpellCheckMessageType>
     {
         Q_OBJECT
@@ -39,8 +41,7 @@ namespace Models {
         Q_PROPERTY(bool caseSensitive READ getCaseSensitive WRITE setCaseSensitive NOTIFY caseSensitiveChanged)
 
     public:
-        DeleteKeywordsViewModel(Commands::ICommandManager &commandManager,
-                                KeywordsPresets::IPresetsManager &presetsManager,
+        DeleteKeywordsViewModel(KeywordsPresets::IPresetsManager &presetsManager,
                                 QObject *parent=nullptr);
 
     public:
@@ -63,6 +64,11 @@ namespace Models {
         virtual void setArtworks(Artworks::ArtworksSnapshot const &artworks) override;
         virtual bool removeUnavailableItems() override;
 
+        // IActionModel interface
+    public:
+        virtual std::shared_ptr<Commands::ICommand> getActionCommand(bool yesno) override;
+        virtual void resetModel() override;
+
 #ifdef CORE_TESTS
     public:
         bool containsCommonKeyword(const QString &keyword) { return m_CommonKeywordsModel.containsKeyword(keyword); }
@@ -76,7 +82,6 @@ namespace Models {
 
     protected:
         virtual bool doRemoveSelectedArtworks() override;
-        virtual void doResetModel() override;
 
     public:
         Q_INVOKABLE QObject *getCommonKeywordsObject();
@@ -89,7 +94,6 @@ namespace Models {
         Q_INVOKABLE QString removeCommonKeywordAt(int keywordIndex);
         Q_INVOKABLE void appendKeywordToDelete(const QString &keyword);
         Q_INVOKABLE void pasteKeywordsToDelete(const QStringList &keywords);
-        Q_INVOKABLE void deleteKeywords();
         Q_INVOKABLE bool addPreset(KeywordsPresets::ID_t presetID);
 
     private:
@@ -100,7 +104,6 @@ namespace Models {
     private:
         Artworks::BasicKeywordsModel m_KeywordsToDeleteModel;
         Artworks::BasicKeywordsModel m_CommonKeywordsModel;
-        Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         bool m_CaseSensitive;
     };

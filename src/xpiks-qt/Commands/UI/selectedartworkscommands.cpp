@@ -49,14 +49,14 @@ namespace Commands {
                 }
             }
 
-            Artworks::ArtworksSnapshot snapshot = std::move(m_FilteredArtworksList.getArtworksToSave(overwrite));
+            Artworks::ArtworksSnapshot snapshot = m_FilteredArtworksList.getArtworksToSave(overwrite);
             m_MetadataIOService.writeArtworks(snapshot);
             m_MetadataIOCoordinator.writeMetadataExifTool(snapshot, useBackups);
         }
 
         void ReviewSpellingInSelectedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
-            Artworks::ArtworksSnapshot snapshot = std::move(m_Source.getSelectedArtworks());
+            Artworks::ArtworksSnapshot snapshot = m_Source.getSelectedArtworks();
             m_SpellSuggestionsModel.setupModel(
                         std::make_shared<SpellCheck::ArtworksSuggestionTarget>(
                             snapshot, m_SpellCheckService, m_ArtworksUpdater),
@@ -82,7 +82,7 @@ namespace Commands {
 
         void SetupReimportMetadataCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
-            auto snapshot = std::move(m_Source.getSelectedArtworks());
+            auto snapshot = m_Source.getSelectedArtworks();
             for (auto &artwork: snapshot) {
                 artwork->prepareForReimport();
             }

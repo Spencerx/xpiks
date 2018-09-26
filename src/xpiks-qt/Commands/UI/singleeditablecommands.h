@@ -53,9 +53,9 @@ namespace Commands {
 
 namespace Commands {
     namespace UI {
-        class FixSpellingInBasicModelCommand: public IUICommandTemplate {
+        class ReviewSpellingInBasicModelCommand: public IUICommandTemplate {
         public:
-            FixSpellingInBasicModelCommand(QMLExtensions::UICommandID::CommandID commandID,
+            ReviewSpellingInBasicModelCommand(QMLExtensions::UICommandID::CommandID commandID,
                                            Artworks::IBasicModelSource &basicModelSource,
                                            SpellCheck::ISpellCheckService &spellCheckService,
                                            SpellCheck::SpellCheckSuggestionModel &spellSuggestionsModel):
@@ -77,25 +77,25 @@ namespace Commands {
             SpellCheck::SpellCheckSuggestionModel &m_SpellSuggestionsModel;
         };
 
-        FIX_ARTWORK_SPELLING_COMMAND(FixSpellingInArtworkProxyCommand,
+        FIX_ARTWORK_SPELLING_COMMAND(ReviewSpellingInArtworkProxyCommand,
                                      QMLExtensions::UICommandID::ReviewSpellingSingle,
                                      Models::ArtworkProxyModel);
 
-        FIX_ARTWORK_SPELLING_COMMAND(FixSpellingForArtworkCommand,
+        FIX_ARTWORK_SPELLING_COMMAND(ReviewSpellingInArtworkCommand,
                                      QMLExtensions::UICommandID::ReviewSpellingArtwork,
                                      Models::FilteredArtworksListModel);
 
-        SOURCE_UI_TARGET_COMMAND(ShowDuplicatesForSingleCommand,
+        SOURCE_UI_TARGET_COMMAND(ReviewDuplicatesForSingleCommand,
                                  QMLExtensions::UICommandID::ReviewDuplicatesSingle,
                                  Models::ArtworkProxyModel,
                                  SpellCheck::DuplicatesReviewModel);
 
-        SOURCE_UI_TARGET_COMMAND(ShowDuplicatesForCombinedCommand,
+        SOURCE_UI_TARGET_COMMAND(ReviewDuplicatesForCombinedCommand,
                                  QMLExtensions::UICommandID::ReviewDuplicatesCombined,
                                  Models::CombinedArtworksModel,
                                  SpellCheck::DuplicatesReviewModel);
 
-        SOURCE_UI_TARGET_COMMAND(ShowDuplicatesForArtworkCommand,
+        SOURCE_UI_TARGET_COMMAND(ReviewDuplicatesForArtworkCommand,
                                  QMLExtensions::UICommandID::ReviewDuplicatesArtwork,
                                  Models::FilteredArtworksListModel,
                                  SpellCheck::DuplicatesReviewModel);

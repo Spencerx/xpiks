@@ -59,6 +59,16 @@ namespace Models {
         return selectedCount;
     }
 
+    void ArtworksViewModel::resetModel() {
+        LOG_DEBUG << "#";
+
+        beginResetModel();
+        {
+            m_ArtworksElements.clear();
+        }
+        endResetModel();
+    }
+
     void ArtworksViewModel::setArtworkSelected(int index, bool value) {
         if (index < 0 || index >= (int)m_ArtworksElements.size()) {
             return;
@@ -125,16 +135,6 @@ namespace Models {
         }
 
         return anyItemToRemove;
-    }
-
-    void ArtworksViewModel::doResetModel() {
-        LOG_DEBUG << "#";
-
-        beginResetModel();
-        {
-            m_ArtworksElements.clear();
-        }
-        endResetModel();
     }
 
     Artworks::ArtworksSnapshot ArtworksViewModel::createSnapshot() {

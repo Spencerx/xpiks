@@ -36,6 +36,7 @@ namespace QMLExtensions {
             AddToUserDictionary,
             // ------ Selected -------
             SetupEditSelectedArtworks,
+            EditSelectedArtworks,
             ReviewSpellingInSelected,
             ReviewDuplicatesInSelected,
             SetupExportMetadata,
@@ -47,6 +48,7 @@ namespace QMLExtensions {
             SetupUpload,
             SetupCreatingArchives,
             SetupDeleteKeywordsInSelected,
+            DeleteKeywordsInSelected,
             // ------- Single -------
             ReviewSpellingCombined,
             ReviewSpellingSingle,

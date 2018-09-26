@@ -214,7 +214,7 @@ namespace Models {
             return;
         }
 
-        std::vector<std::shared_ptr<Models::UploadInfo> > selectedInfos = std::move(m_UploadInfos.retrieveSelectedUploadInfos());
+        auto selectedInfos = m_UploadInfos.retrieveSelectedUploadInfos();
 
         m_UploadInfos.resetPercents();
         m_UploadInfos.updatePercentages();

@@ -13,7 +13,9 @@
 #include <Common/defines.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Editing/editartworkstemplate.h>
-#include <Commands/commandmanager.h>
+#include <Commands/Base/compositecommandtemplate.h>
+#include <Commands/Editing/clearactionmodeltemplate.h>
+#include <Commands/Base/templatedcommand.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkelement.h>
 #include <Artworks/basicmodelsource.h>
@@ -25,13 +27,11 @@
 #define MAX_EDITING_PAUSE_RESTARTS 12
 
 namespace Models {
-    CombinedArtworksModel::CombinedArtworksModel(Commands::ICommandManager &commandManager,
-                                                 KeywordsPresets::IPresetsManager &presetsManager,
+    CombinedArtworksModel::CombinedArtworksModel(KeywordsPresets::IPresetsManager &presetsManager,
                                                  QObject *parent):
         ArtworksViewModel(parent),
         ArtworkProxyBase(),
         Common::DelayedActionEntity(1000, MAX_EDITING_PAUSE_RESTARTS),
-        m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_CommonKeywordsModel(m_SpellCheckInfo, this),
         m_EditFlags(Common::ArtworkEditFlags::None),
@@ -199,36 +199,6 @@ namespace Models {
         }
     }
 
-    void CombinedArtworksModel::saveEdits() {
-        LOG_INFO << "edit flags:" << (int)m_EditFlags << "modified flags:" << m_ModifiedFlags;
-        bool needToSave = false;
-
-        if (getChangeTitle() ||
-            getChangeDescription() ||
-            getChangeKeywords()) {
-            needToSave = getArtworksCount() > 1;
-            needToSave = needToSave || (getChangeKeywords() && areKeywordsModified());
-            needToSave = needToSave || isSpellingFixed();
-            needToSave = needToSave || (getChangeTitle() && isTitleModified());
-            needToSave = needToSave || (getChangeDescription() && isDescriptionModified());
-        }
-
-        if (needToSave) {
-            using namespace Commands;
-            auto snapshot = createSnapshot();
-            m_CommandManager.processCommand(
-                        std::make_shared<ModifyArtworksCommand>(
-                            std::move(snapshot),
-                            std::make_shared<EditArtworksTemplate>(
-                                m_CommonKeywordsModel.getTitle(),
-                                m_CommonKeywordsModel.getDescription(),
-                                m_CommonKeywordsModel.getKeywords(),
-                                m_EditFlags)));
-        } else {
-            LOG_DEBUG << "nothing to save";
-        }
-    }
-
     void CombinedArtworksModel::clearKeywords() {
         if (doClearKeywords()) {
             setKeywordsModified(true);
@@ -292,6 +262,64 @@ namespace Models {
         emit keywordsCountChanged();
     }
 #endif
+
+    std::shared_ptr<Commands::ICommand> CombinedArtworksModel::getActionCommand(bool yesno) {
+        LOG_INFO << "edit flags:" << (int)m_EditFlags << "modified flags:" << m_ModifiedFlags;
+        bool needToSave = false;
+
+        if (getChangeTitle() ||
+            getChangeDescription() ||
+            getChangeKeywords()) {
+            needToSave = getArtworksCount() > 1;
+            needToSave = needToSave || (getChangeKeywords() && areKeywordsModified());
+            needToSave = needToSave || isSpellingFixed();
+            needToSave = needToSave || (getChangeTitle() && isTitleModified());
+            needToSave = needToSave || (getChangeDescription() && isDescriptionModified());
+        }
+
+        if (needToSave && yesno) {
+            using namespace Commands;
+            using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
+            using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
+            auto snapshot = createSnapshot();
+            return std::make_shared<ModifyArtworksCommand>(
+                        std::move(snapshot),
+                        std::make_shared<ArtworksTemplateComposite>(
+                            std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                std::make_shared<EditArtworksTemplate>(
+                                m_CommonKeywordsModel.getTitle(),
+                                m_CommonKeywordsModel.getDescription(),
+                                m_CommonKeywordsModel.getKeywords(),
+                                m_EditFlags),
+                                std::make_shared<Commands::ClearActionModelTemplate>(*this)}));
+        } else {
+            LOG_DEBUG << "nothing to save";
+            using TemplatedSnapshotCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
+            return std::make_shared<TemplatedSnapshotCommand>(
+                        Artworks::ArtworksSnapshot(),
+                        std::make_shared<Commands::ClearActionModelTemplate>(*this));
+        }
+    }
+
+    void CombinedArtworksModel::resetModel() {
+        LOG_DEBUG << "#";
+        ArtworksViewModel::resetModel();
+
+        m_SpellCheckInfo.clear();
+
+        // TEMPORARY (enable everything on initial launch) --
+        m_ModifiedFlags = 0;
+        m_EditFlags = Common::ArtworkEditFlags::None;
+        enableAllFields();
+        // TEMPORARY (enable everything on initial launch) --
+
+        initDescription("");
+        initTitle("");
+        initKeywords(QStringList());
+
+        // clear current editable
+        sendMessage(std::shared_ptr<ICurrentEditable>());
+    }
 
     void CombinedArtworksModel::copyToQuickBuffer() {
         LOG_DEBUG << "#";
@@ -505,26 +533,6 @@ namespace Models {
         }
 
         return anyRemoved;
-    }
-
-    void CombinedArtworksModel::doResetModel() {
-        LOG_DEBUG << "#";
-        ArtworksViewModel::doResetModel();
-
-        m_SpellCheckInfo.clear();
-
-        // TEMPORARY (enable everything on initial launch) --
-        m_ModifiedFlags = 0;
-        m_EditFlags = Common::ArtworkEditFlags::None;
-        enableAllFields();
-        // TEMPORARY (enable everything on initial launch) --
-
-        initDescription("");
-        initTitle("");
-        initKeywords(QStringList());
-
-        // clear current editable
-        sendMessage(std::shared_ptr<ICurrentEditable>());
     }
 
     void CombinedArtworksModel::doOnTimer() {

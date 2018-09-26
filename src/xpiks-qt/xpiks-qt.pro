@@ -217,7 +217,9 @@ SOURCES += main.cpp \
     Services/SpellCheck/spellsuggestionstarget.cpp \
     Services/SpellCheck/spellcheckinfo.cpp \
     Helpers/uihelpers.cpp \
-    QMLExtensions/uicommandlistener.cpp
+    QMLExtensions/uicommandlistener.cpp \
+    Commands/Base/actionmodelcommand.cpp \
+    Commands/Editing/clearactionmodeltemplate.cpp
 
 RESOURCES += qml.qrc
 
@@ -534,7 +536,10 @@ HEADERS += \
     Artworks/basicmodelsource.h \
     Helpers/uihelpers.h \
     QMLExtensions/uiaction.h \
-    QMLExtensions/uicommandlistener.h
+    QMLExtensions/uicommandlistener.h \
+    Models/iactionmodel.h \
+    Commands/Base/actionmodelcommand.h \
+    Commands/Editing/clearactionmodeltemplate.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

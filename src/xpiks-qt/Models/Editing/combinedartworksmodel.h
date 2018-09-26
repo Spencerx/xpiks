@@ -28,6 +28,7 @@
 #include <Artworks/basicmetadatamodel.h>
 #include <Artworks/ibasicmodelsource.h>
 #include <Services/SpellCheck/spellcheckinfo.h>
+#include <Models/iactionmodel.h>
 #include <Models/Artworks/artworksviewmodel.h>
 #include <Models/Editing/icurrenteditable.h>
 #include <Models/Editing/quickbuffermessage.h>
@@ -50,6 +51,7 @@ namespace Models {
     class CombinedArtworksModel:
             public ArtworksViewModel,
             public ArtworkProxyBase,
+            public Models::IActionModel,
             public Artworks::IBasicModelSource,
             public Common::DelayedActionEntity,
             public Common::MessagesSource<BasicSpellCheckMessageType>,
@@ -73,8 +75,7 @@ namespace Models {
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
 
     public:
-        CombinedArtworksModel(Commands::ICommandManager &commandManager,
-                              KeywordsPresets::IPresetsManager &presetsManager,
+        CombinedArtworksModel(KeywordsPresets::IPresetsManager &presetsManager,
                               QObject *parent=0);
 
     public:
@@ -168,7 +169,6 @@ namespace Models {
         Q_INVOKABLE bool moveKeyword(int from, int to);
         Q_INVOKABLE bool appendKeyword(const QString &keyword);
         Q_INVOKABLE void pasteKeywords(const QStringList &keywords);
-        Q_INVOKABLE void saveEdits();
         Q_INVOKABLE void clearKeywords();
 
         Q_INVOKABLE QString getKeywordsString() { return m_CommonKeywordsModel.getKeywordsString(); }
@@ -185,6 +185,10 @@ namespace Models {
 #ifdef UI_TESTS
         Q_INVOKABLE void clearModel();
 #endif
+
+    public:
+        virtual std::shared_ptr<Commands::ICommand> getActionCommand(bool yesno) override;
+        virtual void resetModel() override;
 
     public:
         void copyToQuickBuffer();
@@ -222,7 +226,6 @@ namespace Models {
     protected:
         virtual Common::ID_t getSpecialItemID() override;
         virtual bool doRemoveSelectedArtworks() override;
-        virtual void doResetModel() override;
 
         // DelayedActionEntity implementation
     protected:
@@ -236,7 +239,6 @@ namespace Models {
         virtual bool removeUnavailableItems() override;
 
     private:
-        Commands::ICommandManager &m_CommandManager;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;
         SpellCheck::SpellCheckInfo m_SpellCheckInfo;

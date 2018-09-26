@@ -316,7 +316,7 @@ namespace Models {
     ArtworksRemoveResult ArtworksListModel::removeFiles(Helpers::IndicesRanges const &ranges) {
         int selectedCount = 0;
         bool anyToDelete = false;
-        foreachArtwork(ranges, [this, &selectedCount, &anyToDelete](ArtworkItem const &artwork, size_t) {
+        foreachArtwork(ranges, [&selectedCount, &anyToDelete](ArtworkItem const &artwork, size_t) {
             artwork->setRemoved();
             anyToDelete = true;
             if (artwork->isSelected()) {

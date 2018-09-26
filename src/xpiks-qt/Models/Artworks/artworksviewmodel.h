@@ -54,9 +54,11 @@ namespace Models {
         int getSelectedArtworksCount() const;
 
     public:
+        virtual void resetModel();
+
+    public:
         Q_INVOKABLE void setArtworkSelected(int index, bool value);
         Q_INVOKABLE void removeSelectedArtworks() { doRemoveSelectedArtworks(); }
-        Q_INVOKABLE void resetModel() { doResetModel(); }
         Q_INVOKABLE void unselectAllItems();
 
 #ifdef CORE_TESTS
@@ -72,7 +74,6 @@ namespace Models {
         bool isEmpty() const { return m_ArtworksElements.empty(); }
         std::shared_ptr<Artworks::ArtworkMetadata> const &getArtwork(size_t i) const;
         virtual bool doRemoveSelectedArtworks();
-        virtual void doResetModel();
         Artworks::ArtworksSnapshot createSnapshot();
         void processArtworks(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &element)> pred,
                              std::function<void (size_t, std::shared_ptr<Artworks::ArtworkMetadata> const &)> action) const;

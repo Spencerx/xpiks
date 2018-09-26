@@ -35,6 +35,7 @@
 #include <Commands/Base/commanduiwrapper.h>
 #include <Commands/Files/removeselectedfilescommand.h>
 #include <Commands/Files/removedirectorycommand.h>
+#include <Commands/Base/actionmodelcommand.h>
 #include <Microstocks/shutterstockapiclient.h>
 #include <Microstocks/gettyapiclient.h>
 #include <Microstocks/fotoliaapiclient.h>
@@ -62,10 +63,10 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_FilteredArtworksRepository(m_ArtworksRepository),
     m_ArtworksListModel(m_ArtworksRepository),
     m_ArtworksUpdateHub(m_ArtworksListModel),
-    m_CombinedArtworksModel(m_CommandManager, m_PresetsModel),
+    m_CombinedArtworksModel(m_PresetsModel),
     m_QuickBuffer(m_CurrentEditableModel, m_CommandManager),
     m_ReplaceModel(m_ColorsModel, m_CommandManager),
-    m_DeleteKeywordsModel(m_CommandManager, m_PresetsModel),
+    m_DeleteKeywordsModel(m_PresetsModel),
     m_ArtworkProxyModel(m_CommandManager, m_PresetsModel, m_ArtworksUpdateHub),
     m_DuplicatesModel(m_ColorsModel),
     m_MaintenanceService(environment),
@@ -597,6 +598,7 @@ void XpiksApp::registerUICommands() {
     auto saveSessionCommand = std::make_shared<Commands::SaveSessionCommand>(
                 m_MaintenanceService, m_ArtworksListModel, m_SessionManager);
 
+    // dialogs setup
     m_UICommandDispatcher.registerCommands(
     {
                     std::make_shared<Commands::UI::SetupEditSelectedCommand>(
@@ -608,65 +610,27 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::UI::ReviewDuplicatesInSelectedCommand>(
                     m_FilteredArtworksListModel, m_DuplicatesModel),
 
-                    std::make_shared<Commands::UI::SetupExportMetadataCommand>(
-                    m_FilteredArtworksListModel, m_MetadataIOCoordinator, m_MetadataIOService),
-
-                    std::make_shared<Commands::UI::SetupWipeMetadataCommand>(
-                    m_FilteredArtworksListModel, m_MetadataIOCoordinator),
-
-                    std::make_shared<Commands::UI::SetupCreatingArchivesCommand>(
-                    m_FilteredArtworksListModel, m_ZipArchiver),
-
                     std::make_shared<Commands::UI::FindAndReplaceInSelectedCommand>(
                     m_FilteredArtworksListModel, m_ReplaceModel),
 
-                    std::make_shared<Commands::UI::SetupCSVExportForSelectedCommand>(
-                    m_FilteredArtworksListModel, m_CsvExportModel),
-
-                    std::make_shared<Commands::CommandUIWrapper>(
-                    QMLExtensions::UICommandID::RemoveSelected,
-                    std::make_shared<Commands::RemoveSelectedFilesCommand>(
-                    m_FilteredArtworksListModel, m_ArtworksListModel, m_ArtworksRepository, saveSessionCommand)),
-
-                    std::make_shared<Commands::UI::SetupReimportMetadataCommand>(
-                    m_FilteredArtworksListModel, m_MetadataIOCoordinator),
-
-                    std::make_shared<Commands::UI::FixSpellingInBasicModelCommand>(
+                    std::make_shared<Commands::UI::ReviewSpellingInBasicModelCommand>(
                     QMLExtensions::UICommandID::ReviewSpellingCombined,
                     m_CombinedArtworksModel, m_SpellCheckService, m_SpellSuggestionModel),
 
-                    std::make_shared<Commands::UI::FixSpellingInArtworkProxyCommand>(
+                    std::make_shared<Commands::UI::ReviewSpellingInArtworkProxyCommand>(
                     m_ArtworkProxyModel, m_ArtworksUpdateHub, m_SpellCheckService, m_SpellSuggestionModel),
 
-                    std::make_shared<Commands::UI::FixSpellingForArtworkCommand>(
+                    std::make_shared<Commands::UI::ReviewSpellingInArtworkCommand>(
                     m_FilteredArtworksListModel, m_ArtworksUpdateHub, m_SpellCheckService, m_SpellSuggestionModel),
 
-                    std::make_shared<Commands::CommandUIWrapper>(
-                    QMLExtensions::UICommandID::SaveSession, saveSessionCommand),
-
-                    std::make_shared<Commands::UI::SetupUploadCommand>(
-                    m_FilteredArtworksListModel, m_ArtworksUploader, m_WarningsModel),
-
-                    std::make_shared<Commands::UI::ShowDuplicatesForSingleCommand>(
+                    std::make_shared<Commands::UI::ReviewDuplicatesForSingleCommand>(
                     m_ArtworkProxyModel, m_DuplicatesModel),
 
-                    std::make_shared<Commands::UI::ShowDuplicatesForCombinedCommand>(
+                    std::make_shared<Commands::UI::ReviewDuplicatesForCombinedCommand>(
                     m_CombinedArtworksModel, m_DuplicatesModel),
 
-                    std::make_shared<Commands::UI::ShowDuplicatesForArtworkCommand>(
+                    std::make_shared<Commands::UI::ReviewDuplicatesForArtworkCommand>(
                     m_FilteredArtworksListModel, m_DuplicatesModel),
-
-                    std::make_shared<Commands::UI::AcceptPresetCompletionForCombinedCommand>(
-                    m_KeywordsAutoCompleteModel.getCompletionsSource(), m_CombinedArtworksModel),
-
-                    std::make_shared<Commands::UI::AcceptPresetCompletionForSingleCommand>(
-                    m_KeywordsAutoCompleteModel.getCompletionsSource(), m_ArtworkProxyModel),
-
-                    std::make_shared<Commands::UI::SetMasterPasswordCommand>(
-                    m_SecretsManager, m_SettingsModel),
-
-                    std::make_shared<Commands::UI::RemoveUnavailableFilesCommand>(
-                    m_ArtworksListModel),
 
                     std::make_shared<Commands::UI::InitSuggestionForArtworkCommand>(
                     m_FilteredArtworksListModel, m_KeywordsSuggestor),
@@ -677,6 +641,25 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::UI::InitSuggestionForCombinedCommand>(
                     m_CombinedArtworksModel, m_KeywordsSuggestor),
 
+                    std::make_shared<Commands::UI::SetupArtworkEditCommand>(
+                    m_FilteredArtworksListModel, m_ArtworkProxyModel),
+
+                    std::make_shared<Commands::UI::ReviewArtworkInfoCommand>(
+                    m_FilteredArtworksListModel, m_ArtworkProxyModel),
+
+                    std::make_shared<Commands::UI::SetupDeleteKeywordsInSelectedCommand>(
+                    m_FilteredArtworksListModel, m_DeleteKeywordsModel)
+                });
+
+    // editing
+    m_UICommandDispatcher.registerCommands(
+    {
+                    std::make_shared<Commands::UI::AcceptPresetCompletionForCombinedCommand>(
+                    m_KeywordsAutoCompleteModel.getCompletionsSource(), m_CombinedArtworksModel),
+
+                    std::make_shared<Commands::UI::AcceptPresetCompletionForSingleCommand>(
+                    m_KeywordsAutoCompleteModel.getCompletionsSource(), m_ArtworkProxyModel),
+
                     std::make_shared<Commands::UI::GenerateCompletionsCommand>(
                     m_AutoCompleteService),
 
@@ -686,29 +669,69 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::UI::AcceptPresetCompletionForArtworkCommand>(
                     m_KeywordsAutoCompleteModel.getCompletionsSource(), m_FilteredArtworksListModel),
 
-                    std::make_shared<Commands::UI::SelectFilteredArtworksCommand>(
-                    m_FilteredArtworksListModel),
-
-                    std::make_shared<Commands::UI::SetupArtworkEditCommand>(
-                    m_FilteredArtworksListModel, m_ArtworkProxyModel),
-
-                    std::make_shared<Commands::UI::ReviewArtworkInfoCommand>(
-                    m_FilteredArtworksListModel, m_ArtworkProxyModel),
-
-                    std::make_shared<Commands::UI::SetupDeleteKeywordsInSelectedCommand>(
-                    m_FilteredArtworksListModel, m_DeleteKeywordsModel),
-
-                    std::make_shared<Commands::UI::CheckWarningsCommand>(
-                    m_WarningsModel),
-
                     std::make_shared<Commands::UI::CopyArtworkToQuickBufferCommand>(
                     m_FilteredArtworksListModel),
 
                     std::make_shared<Commands::UI::CopyCombinedToQuickBufferCommand>(
                     m_CombinedArtworksModel),
 
+                    std::make_shared<Commands::UI::FillArtworkFromQuickBufferCommand>(
+                    m_QuickBuffer, m_FilteredArtworksListModel, m_CommandManager, m_ArtworksUpdateHub),
+
+                    std::make_shared<Commands::ActionModelCommand>(
+                    m_CombinedArtworksModel, QMLExtensions::UICommandID::EditSelectedArtworks),
+
+                    std::make_shared<Commands::ActionModelCommand>(
+                    m_DeleteKeywordsModel, QMLExtensions::UICommandID::DeleteKeywordsInSelected)
+                });
+
+    // IO
+    m_UICommandDispatcher.registerCommands(
+    {
+                    std::make_shared<Commands::UI::SetupExportMetadataCommand>(
+                    m_FilteredArtworksListModel, m_MetadataIOCoordinator, m_MetadataIOService),
+
+                    std::make_shared<Commands::UI::SetupWipeMetadataCommand>(
+                    m_FilteredArtworksListModel, m_MetadataIOCoordinator),
+
+                    std::make_shared<Commands::UI::SetupCreatingArchivesCommand>(
+                    m_FilteredArtworksListModel, m_ZipArchiver),
+
+                    std::make_shared<Commands::UI::SetupCSVExportForSelectedCommand>(
+                    m_FilteredArtworksListModel, m_CsvExportModel),
+
+                    std::make_shared<Commands::UI::SetupReimportMetadataCommand>(
+                    m_FilteredArtworksListModel, m_MetadataIOCoordinator),
+
+                    std::make_shared<Commands::CommandUIWrapper>(
+                    QMLExtensions::UICommandID::SaveSession, saveSessionCommand),
+
+                    std::make_shared<Commands::UI::SetupUploadCommand>(
+                    m_FilteredArtworksListModel, m_ArtworksUploader, m_WarningsModel),
+
                     std::make_shared<Commands::UI::InitUploadHostCommand>(
-                    m_UploadInfoRepository),
+                    m_UploadInfoRepository)
+                });
+
+    // others
+    m_UICommandDispatcher.registerCommands(
+    {
+                    std::make_shared<Commands::CommandUIWrapper>(
+                    QMLExtensions::UICommandID::RemoveSelected,
+                    std::make_shared<Commands::RemoveSelectedFilesCommand>(
+                    m_FilteredArtworksListModel, m_ArtworksListModel, m_ArtworksRepository, saveSessionCommand)),
+
+                    std::make_shared<Commands::UI::SetMasterPasswordCommand>(
+                    m_SecretsManager, m_SettingsModel),
+
+                    std::make_shared<Commands::UI::RemoveUnavailableFilesCommand>(
+                    m_ArtworksListModel),
+
+                    std::make_shared<Commands::UI::SelectFilteredArtworksCommand>(
+                    m_FilteredArtworksListModel),
+
+                    std::make_shared<Commands::UI::CheckWarningsCommand>(
+                    m_WarningsModel),
 
                     std::make_shared<Commands::UI::UpdateLogsCommand>(
                     m_LogsModel),
@@ -717,10 +740,7 @@ void XpiksApp::registerUICommands() {
                     m_UserDictEditModel),
 
                     std::make_shared<Commands::UI::AddToUserDictionaryCommand>(
-                    m_UserDictionary),
-
-                    std::make_shared<Commands::UI::FillArtworkFromQuickBufferCommand>(
-                    m_QuickBuffer, m_FilteredArtworksListModel, m_CommandManager, m_ArtworksUpdateHub)
+                    m_UserDictionary)
                 });
 }
 

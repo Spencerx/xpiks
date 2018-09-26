@@ -28,7 +28,7 @@
 
 namespace Commands {
     namespace UI {
-        void FixSpellingInBasicModelCommand::execute(const QVariant &) {
+        void ReviewSpellingInBasicModelCommand::execute(const QVariant &) {
             LOG_DEBUG << m_CommandID;
             auto &basicMetadataModel = dynamic_cast<Artworks::BasicMetadataModel&>(m_BasicModelSource.getBasicModel());
             m_SpellSuggestionsModel.setupModel(
@@ -37,7 +37,7 @@ namespace Commands {
                         Common::SpellCheckFlags::All);
         }
 
-        void FixSpellingInArtworkProxyCommand::execute(QVariant const &) {
+        void ReviewSpellingInArtworkProxyCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             Artworks::ArtworksSnapshot snapshot({m_Source.getArtwork()});
             m_SpellSuggestionsModel.setupModel(
@@ -46,7 +46,7 @@ namespace Commands {
                         Common::SpellCheckFlags::All);
         }
 
-        void FixSpellingForArtworkCommand::execute(QVariant const &value) {
+        void ReviewSpellingInArtworkCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             int index = Helpers::convertToInt(value, -1);
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;
@@ -61,19 +61,19 @@ namespace Commands {
             }
         }
 
-        void ShowDuplicatesForSingleCommand::execute(QVariant const &) {
+        void ReviewDuplicatesForSingleCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             // do not use artwork here to eliminate infinite loop of
             // viewing duplicates and clicking "edit"
             m_Target.setupModel(m_Source.getArtwork()->getBasicMetadataModel());
         }
 
-        void ShowDuplicatesForCombinedCommand::execute(QVariant const &) {
+        void ReviewDuplicatesForCombinedCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
             m_Target.setupModel(m_Source.getBasicModel());
         }
 
-        void ShowDuplicatesForArtworkCommand::execute(QVariant const &value) {
+        void ReviewDuplicatesForArtworkCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
             int proxyIndex = Helpers::convertToInt(value, -1);
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;

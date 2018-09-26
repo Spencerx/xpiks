@@ -12,6 +12,9 @@
 #include <QTime>
 #include <QQmlEngine>
 #include <Common/defines.h>
+#include <Commands/Editing/clearactionmodeltemplate.h>
+#include <Commands/Base/templatedcommand.h>
+#include <Commands/Base/compositecommandtemplate.h>
 #include <Helpers/indiceshelper.h>
 #include <Artworks/artworkelement.h>
 #include <Artworks/basicmodelsource.h>
@@ -20,11 +23,9 @@
 #include <Commands/Editing/modifyartworkscommand.h>
 
 namespace Models {
-    DeleteKeywordsViewModel::DeleteKeywordsViewModel(Commands::ICommandManager &commandManager,
-                                                     KeywordsPresets::IPresetsManager &presetsManager,
+    DeleteKeywordsViewModel::DeleteKeywordsViewModel(KeywordsPresets::IPresetsManager &presetsManager,
                                                      QObject *parent):
         Models::ArtworksViewModel(parent),
-        m_CommandManager(commandManager),
         m_PresetsManager(presetsManager),
         m_CaseSensitive(false)
     {
@@ -47,6 +48,48 @@ namespace Models {
         }
 
         return anyRemoved;
+    }
+
+    std::shared_ptr<Commands::ICommand> DeleteKeywordsViewModel::getActionCommand(bool yesno) {
+        LOG_INFO << "keywords to delete:" << m_KeywordsToDeleteModel.getKeywordsCount();
+
+        if (m_KeywordsToDeleteModel.getKeywordsCount() > 0 && yesno) {
+            auto keywordsList = m_KeywordsToDeleteModel.getKeywords();
+            if (!m_CaseSensitive) {
+                for (auto &keyword: keywordsList) {
+                    keyword = keyword.toLower();
+                }
+            }
+            auto keywordsSet = keywordsList.toSet();
+            auto snapshot = createSnapshot();
+
+            using namespace Commands;
+            using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
+            using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
+
+            return std::make_shared<ModifyArtworksCommand>(
+                        std::move(snapshot),
+                        std::make_shared<ArtworksTemplateComposite>(
+                            std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                std::make_shared<DeleteKeywordsTemplate>(
+                                keywordsSet, m_CaseSensitive),
+                                std::make_shared<Commands::ClearActionModelTemplate>(*this)}));
+        } else {
+            using TemplatedSnapshotCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
+            return std::make_shared<TemplatedSnapshotCommand>(
+                        Artworks::ArtworksSnapshot(),
+                        std::make_shared<Commands::ClearActionModelTemplate>(*this));
+        }
+    }
+
+    void DeleteKeywordsViewModel::resetModel() {
+        LOG_DEBUG << "#";
+        ArtworksViewModel::resetModel();
+
+        m_CommonKeywordsModel.clearKeywords();
+        m_KeywordsToDeleteModel.clearKeywords();
+
+        setCaseSensitive(false);
     }
 
 #if defined(UI_TESTS) || defined(INTEGRATION_TESTS)
@@ -73,15 +116,6 @@ namespace Models {
         }
 
         return anyRemoved;
-    }
-
-    void DeleteKeywordsViewModel::doResetModel() {
-        ArtworksViewModel::doResetModel();
-
-        m_CommonKeywordsModel.clearKeywords();
-        m_KeywordsToDeleteModel.clearKeywords();
-
-        setCaseSensitive(false);
     }
 
     QObject *DeleteKeywordsViewModel::getCommonKeywordsObject() {
@@ -142,28 +176,6 @@ namespace Models {
             emit keywordsToDeleteCountChanged();
             submitForSpellCheck();
         }
-    }
-
-    void DeleteKeywordsViewModel::deleteKeywords() {
-        LOG_INFO << "keywords to delete:" << m_KeywordsToDeleteModel.getKeywordsCount();
-
-        if (m_KeywordsToDeleteModel.getKeywordsCount() == 0) { return; }
-
-        auto keywordsList = m_KeywordsToDeleteModel.getKeywords();
-        if (!m_CaseSensitive) {
-            for (auto &keyword: keywordsList) {
-                keyword = keyword.toLower();
-            }
-        }
-        auto keywordsSet = keywordsList.toSet();
-        auto snapshot = createSnapshot();
-
-        using namespace Commands;
-        m_CommandManager.processCommand(
-                    std::make_shared<ModifyArtworksCommand>(
-                        std::move(snapshot),
-                        std::make_shared<DeleteKeywordsTemplate>(
-                            keywordsSet, m_CaseSensitive)));
     }
 
     bool DeleteKeywordsViewModel::addPreset(KeywordsPresets::ID_t presetID) {

@@ -56,8 +56,11 @@ namespace UndoRedo {
         Q_INVOKABLE void discardLastAction();
 
     private:
+        std::shared_ptr<Commands::ICommand> popLastItem();
+
+    private:
         // stack for future todos
-        std::stack<std::shared_ptr<Commands::ICommand> > m_HistoryStack;
+        std::stack<std::shared_ptr<Commands::ICommand>> m_HistoryStack;
         QMutex m_Mutex;
     };
 }
