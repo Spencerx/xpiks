@@ -14,10 +14,8 @@
 
 #define DECLARE_MODELS \
     Mocks::CoreTestsEnvironment environment;\
-    UndoRedo::UndoRedoManager undoRedoManager;\
-    Mocks::CommandManagerMock commandManager(undoRedoManager);\
     KeywordsPresets::PresetKeywordsModel presetsManager(environment);\
-    Models::CombinedArtworksModel combinedModel(commandManager, presetsManager);
+    Models::CombinedArtworksModel combinedModel(presetsManager);
 
 std::shared_ptr<Artworks::ArtworkMetadata> createArtworkMetadata(const QString &desc, const QString &title, const QStringList &keywords, int index=0) {
     auto artwork = std::make_shared<Mocks::ArtworkMetadataMock>("/random/file/path.jpg");
@@ -334,7 +332,7 @@ void CombinedModelTests::editSeveralWithSameKeywordsTest() {
     combinedModel.setArtworks(snapshot);
     combinedModel.pasteKeywords(QStringList() << "outdoors" << "tilt" << "pet");
     combinedModel.setChangeKeywords(true);
-    combinedModel.saveEdits();
+    combinedModel.getActionCommand(true)->execute();
 
     LOG_DEBUG << "Checking" << snapshot.size() << "items";
 
@@ -724,9 +722,11 @@ void CombinedModelTests::notSavedAfterAllDisabledTest() {
     combinedModel.setChangeTitle(false);
     combinedModel.setChangeKeywords(false);
 
-    combinedModel.saveEdits();
+    combinedModel.getActionCommand(true)->execute();
 
-    QCOMPARE(commandManager.anyCommandProcessed(), false);
+    for (auto &item: snapshot) {
+        QCOMPARE(item->isModified(), false);
+    }
 }
 
 void CombinedModelTests::notSavedAfterNothingModifiedTest() {
@@ -740,9 +740,11 @@ void CombinedModelTests::notSavedAfterNothingModifiedTest() {
     combinedModel.resetModel();
     combinedModel.setArtworks(snapshot);
 
-    combinedModel.saveEdits();
+    combinedModel.getActionCommand(true)->execute();
 
-    QCOMPARE(commandManager.anyCommandProcessed(), false);
+    for (auto &item: snapshot) {
+        QCOMPARE(item->isModified(), false);
+    }
 }
 
 void CombinedModelTests::notSavedAfterModifiedDisabledTest() {
@@ -758,13 +760,13 @@ void CombinedModelTests::notSavedAfterModifiedDisabledTest() {
 
     combinedModel.setDescription("Brand new description");
     combinedModel.setChangeDescription(false);
-    combinedModel.saveEdits();
-    QCOMPARE(commandManager.anyCommandProcessed(), false);
+    combinedModel.getActionCommand(true)->execute();
+    for (auto &item: snapshot) { QCOMPARE(item->isModified(), false); }
 
     combinedModel.setTitle("Brand new title");
     combinedModel.setChangeTitle(false);
-    combinedModel.saveEdits();
-    QCOMPARE(commandManager.anyCommandProcessed(), false);
+    combinedModel.getActionCommand(true)->execute();
+    for (auto &item: snapshot) { QCOMPARE(item->isModified(), false); }
 }
 
 void CombinedModelTests::savedAfterModifiedDescriptionTest() {
@@ -779,8 +781,8 @@ void CombinedModelTests::savedAfterModifiedDescriptionTest() {
     combinedModel.setArtworks(snapshot);
 
     combinedModel.setDescription("Brand new description");
-    combinedModel.saveEdits();
-    QCOMPARE(commandManager.anyCommandProcessed(), true);
+    combinedModel.getActionCommand(true)->execute();
+    for (auto &item: snapshot) { QCOMPARE(item->isModified(), true); }
 }
 
 void CombinedModelTests::savedAfterModifiedTitleTest() {
@@ -795,8 +797,8 @@ void CombinedModelTests::savedAfterModifiedTitleTest() {
     combinedModel.setArtworks(snapshot);
 
     combinedModel.setTitle("Brand new title");
-    combinedModel.saveEdits();
-    QCOMPARE(commandManager.anyCommandProcessed(), true);
+    combinedModel.getActionCommand(true)->execute();
+    for (auto &item: snapshot) { QCOMPARE(item->isModified(), true); }
 }
 
 void CombinedModelTests::savedAfterKeywordsModifiedTest() {
@@ -811,8 +813,8 @@ void CombinedModelTests::savedAfterKeywordsModifiedTest() {
     combinedModel.setArtworks(snapshot);
 
     combinedModel.appendKeyword("Brand new keyword");
-    combinedModel.saveEdits();
-    QCOMPARE(commandManager.anyCommandProcessed(), true);
+    combinedModel.getActionCommand(true)->execute();
+    for (auto &item: snapshot) { QCOMPARE(item->isModified(), true); }
 }
 
 void CombinedModelTests::savedIfMoreThanOneButNotModifiedTest() {
@@ -828,9 +830,9 @@ void CombinedModelTests::savedIfMoreThanOneButNotModifiedTest() {
     combinedModel.resetModel();
     combinedModel.setArtworks(snapshot);
 
-    combinedModel.saveEdits();
+    combinedModel.getActionCommand(true)->execute();
 
-    QCOMPARE(commandManager.anyCommandProcessed(), true);
+    for (auto &item: snapshot) { QCOMPARE(item->isModified(), true); }
 }
 
 void CombinedModelTests::caseIsPreservedForOneItemTest() {

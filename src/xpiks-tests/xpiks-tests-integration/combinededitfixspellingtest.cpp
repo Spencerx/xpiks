@@ -53,7 +53,7 @@ int CombinedEditFixSpellingTest::doTest() {
     VERIFY(!combinedKeywordsModel->hasDescriptionSpellError(), "Description spell error was not fixed after replace");
 
     QString correctDescription = combinedKeywordsModel->getDescription();
-    m_TestsApp.getCombinedArtworksModel().saveEdits();
+    m_TestsApp.getCombinedArtworksModel().getActionCommand(true)->execute();
 
     VERIFY(basicModel.getDescription() == correctDescription, "Description was not saved");
 

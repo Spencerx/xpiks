@@ -17,10 +17,8 @@
     recentDirectories.initialize();\
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories); \
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository); \
-    UndoRedo::UndoRedoManager undoRedoManager;\
-    Mocks::CommandManagerMock commandManager(undoRedoManager); \
     KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
-    Models::DeleteKeywordsViewModel deleteKeywordsModel(commandManager, keywordsPresets); \
+    Models::DeleteKeywordsViewModel deleteKeywordsModel(keywordsPresets); \
     artworksListModel.generateAndAddArtworks(count);
 
 void DeleteKeywordsTests::smokeTest() {
@@ -36,7 +34,7 @@ void DeleteKeywordsTests::smokeTest() {
 
     deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
     deleteKeywordsModel.appendKeywordToDelete(keywordToDelete);
-    deleteKeywordsModel.deleteKeywords();
+    deleteKeywordsModel.getActionCommand(true)->execute();
 
     artworksListModel.foreachArtwork([&](int, std::shared_ptr<Mocks::ArtworkMetadataMock> const &artwork) {
         QCOMPARE(artwork->rowCount(), keywords.length() - 1);
@@ -61,7 +59,7 @@ void DeleteKeywordsTests::keywordsCombinedTest() {
     QVERIFY(deleteKeywordsModel.containsCommonKeyword(keywordToDelete));
 
     deleteKeywordsModel.appendKeywordToDelete(keywordToDelete);
-    deleteKeywordsModel.deleteKeywords();
+    deleteKeywordsModel.getActionCommand(true)->execute();
 
     artworksListModel.foreachArtwork([&](int, std::shared_ptr<Mocks::ArtworkMetadataMock> const &artwork) {
         auto &keywordsModel = artwork->getBasicModel();
@@ -83,7 +81,7 @@ void DeleteKeywordsTests::doesNotDeleteOtherCaseTest() {
     deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
     deleteKeywordsModel.appendKeywordToDelete(keywordToDelete.toUpper());
     deleteKeywordsModel.setCaseSensitive(true);
-    deleteKeywordsModel.deleteKeywords();
+    deleteKeywordsModel.getActionCommand(true)->execute();
 
     artworksListModel.foreachArtwork([&](int, std::shared_ptr<Mocks::ArtworkMetadataMock> const &artwork) {
         auto &keywordsModel = artwork->getBasicModel();
@@ -104,7 +102,7 @@ void DeleteKeywordsTests::doesNotDeleteNoKeywordsTest() {
     });
 
     deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
-    deleteKeywordsModel.deleteKeywords();
+    deleteKeywordsModel.getActionCommand(true)->execute();
 
     artworksListModel.foreachArtwork([&](int, std::shared_ptr<Mocks::ArtworkMetadataMock> const &artwork) {
         auto &keywordsModel = artwork->getBasicModel();
@@ -127,7 +125,7 @@ void DeleteKeywordsTests::deleteCaseInsensitiveTest() {
     deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
     deleteKeywordsModel.appendKeywordToDelete(keywordToDelete);
     deleteKeywordsModel.setCaseSensitive(false);
-    deleteKeywordsModel.deleteKeywords();
+    deleteKeywordsModel.getActionCommand(true)->execute();
 
     artworksListModel.foreachArtwork([&](int, std::shared_ptr<Mocks::ArtworkMetadataMock> const &artwork) {
         auto &keywordsModel = artwork->getBasicModel();

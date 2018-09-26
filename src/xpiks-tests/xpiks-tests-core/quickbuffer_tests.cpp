@@ -88,7 +88,7 @@ void QuickBufferTests::copyProxyModelToQuickBufferTest() {
 void QuickBufferTests::copyCombinedModelToQuickBufferTest() {
     DECLARE_MODELS_AND_GENERATE(1);
     QVERIFY(quickBuffer.getIsEmpty());
-    Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets);
+    Models::CombinedArtworksModel combinedModel(keywordsPresets);
     Common::connectSource<Models::QuickBufferMessage>(combinedModel, {quickBuffer});
 
     const QString titleForQB = "title for quick buffer";
@@ -158,7 +158,7 @@ void QuickBufferTests::copyHalfEmptyProxyModelToQuickBufferTest() {
 void QuickBufferTests::copyHalfEmptyCombinedModelToQuickBufferTest() {
     DECLARE_MODELS_AND_GENERATE(1);
     QVERIFY(quickBuffer.getIsEmpty());
-    Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets);
+    Models::CombinedArtworksModel combinedModel(keywordsPresets);
     Common::connectTarget<Models::QuickBufferMessage>(quickBuffer, {combinedModel});
 
     QStringList prevKeywordsForQB;
@@ -282,7 +282,7 @@ void QuickBufferTests::applyQuickBufferToCombinedModelTest() {
     quickBuffer.setDescription(descriptionForQB);
     quickBuffer.pasteKeywords(keywordsForQB);
 
-    Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets);
+    Models::CombinedArtworksModel combinedModel(keywordsPresets);
     Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(currentEditableModel, { combinedModel });
     combinedModel.setArtworks(artworksListModel.createArtworksSnapshot());
 
@@ -353,7 +353,7 @@ void QuickBufferTests::applyHalfEmptyQuickBufferToProxyModelTest() {
 
 void QuickBufferTests::applyHalfEmptyQuickBufferToCombinedModelTest() {
     DECLARE_MODELS_AND_GENERATE(2);
-    Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets);
+    Models::CombinedArtworksModel combinedModel(keywordsPresets);
     Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(currentEditableModel, { combinedModel });
 
     const QString titleForQB = "title for quick buffer";

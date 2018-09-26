@@ -40,7 +40,6 @@ Rectangle {
 
     function closePopup() {
         closeAutoComplete()
-        combinedArtworks.resetModel()
         mainStackView.pop({immediate: true})
         restoreLeftPane()
     }
@@ -413,6 +412,7 @@ Rectangle {
                 text: i18.n + qsTr("Cancel")
                 onClicked: {
                     flv.onBeforeClose()
+                    dispatcher.dispatch(UICommand.EditSelectedArtworks, false)
                     closePopup()
                 }
             }
@@ -423,7 +423,7 @@ Rectangle {
                 isDefault: true
                 onClicked: {
                     flv.onBeforeClose()
-                    combinedArtworks.saveEdits()
+                    dispatcher.dispatch(UICommand.EditSelectedArtworks, true)
                     closePopup()
                 }
             }

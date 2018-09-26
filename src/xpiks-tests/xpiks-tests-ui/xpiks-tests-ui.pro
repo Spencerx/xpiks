@@ -154,7 +154,9 @@ appveyor {
     ../../xpiks-qt/Helpers/metadatahighlighter.cpp \
     ../../xpiks-qt/QMLExtensions/folderelement.cpp \
     ../../xpiks-qt/Helpers/uihelpers.cpp \
-    ../../xpiks-qt/QMLExtensions/uicommandlistener.cpp
+    ../../xpiks-qt/QMLExtensions/uicommandlistener.cpp \
+    ../../xpiks-qt/Commands/Base/actionmodelcommand.cpp \
+    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp
 }
 
 include(../../xpiks-common/xpiks-common.pri)
@@ -748,7 +750,9 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/uicommandid.h \
     ../../xpiks-qt/Helpers/uihelpers.h \
     ../../xpiks-qt/QMLExtensions/uiaction.h \
-    ../../xpiks-qt/QMLExtensions/uicommandlistener.h
+    ../../xpiks-qt/QMLExtensions/uicommandlistener.h \
+    ../../xpiks-qt/Commands/Base/actionmodelcommand.h \
+    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.h
 
 RESOURCES += \
     xpiks-tests-ui.qrc

@@ -34,7 +34,7 @@
     settingsModel.initializeConfigs();\
     Models::FilteredArtworksListModel filteredArtworksModel(\
     artworksListModel, commandManager, keywordsPresets, settingsModel);\
-    Models::CombinedArtworksModel combinedModel(commandManager, keywordsPresets); \
+    Models::CombinedArtworksModel combinedModel(keywordsPresets); \
     Models::ZipArchiver zipArchiver; \
     artworksListModel.generateAndAddArtworks(10);\
     Common::connectSource<Common::NamedType<int, Common::MessageType::UnavailableFiles>>(artworksListModel,\

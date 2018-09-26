@@ -266,7 +266,9 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.cpp \
     ../../xpiks-qt/Services/artworkseditinghub.cpp \
     ../../xpiks-qt/Helpers/uihelpers.cpp \
-    unavailablefilestest.cpp
+    unavailablefilestest.cpp \
+    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp \
+    ../../xpiks-qt/Commands/Base/actionmodelcommand.cpp
 
 RESOURCES +=
 
@@ -607,7 +609,9 @@ HEADERS += \
     ../../xpiks-qt/Services/artworkseditinghub.h \
     ../../xpiks-qt/Helpers/uihelpers.h \
     ../../xpiks-qt/QMLExtensions/uiaction.h \
-    unavailablefilestest.h
+    unavailablefilestest.h \
+    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.h \
+    ../../xpiks-qt/Commands/Base/actionmodelcommand.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

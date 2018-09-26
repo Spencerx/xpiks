@@ -34,7 +34,6 @@ Item {
     Keys.onEscapePressed: closePopup()
 
     function closePopup() {
-        deleteKeywordsModel.resetModel()
         deleteKeywordsComponent.destroy()
     }
 
@@ -627,7 +626,7 @@ Item {
                             width: 100
                             onClicked: {
                                 flv.onBeforeClose()
-                                deleteKeywordsModel.deleteKeywords()
+                                dispatcher.dispatch(UICommand.DeleteKeywordsInSelected, true)
                                 closePopup()
                             }
                         }
@@ -636,6 +635,7 @@ Item {
                             text: i18.n + qsTr("Cancel")
                             width: 100
                             onClicked: {
+                                dispatcher.dispatch(UICommand.DeleteKeywordsInSelected, false)
                                 closePopup()
                             }
 
