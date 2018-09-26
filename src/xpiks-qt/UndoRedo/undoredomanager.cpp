@@ -74,4 +74,6 @@ std::shared_ptr<Commands::ICommand> UndoRedo::UndoRedoManager::popLastItem() {
         m_Mutex.unlock();
         LOG_WARNING << "No item for undo";
     }
+
+    return result;
 }
