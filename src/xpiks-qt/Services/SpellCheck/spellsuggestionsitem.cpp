@@ -236,8 +236,8 @@ namespace SpellCheck {
         Q_ASSERT(!m_SpellSuggestions.empty());
     }
 
-    std::vector<std::shared_ptr<KeywordSpellSuggestions> > CombinedSpellSuggestions::getKeywordsDuplicateSuggestions() const {
-        std::vector<std::shared_ptr<KeywordSpellSuggestions> > keywordsSuggestions;
+    std::vector<std::shared_ptr<KeywordSpellSuggestions>> CombinedSpellSuggestions::getKeywordsDuplicateSuggestions() const {
+        std::vector<std::shared_ptr<KeywordSpellSuggestions>> keywordsSuggestions;
 
         for (auto &item: m_SpellSuggestions) {
             std::shared_ptr<KeywordSpellSuggestions> keywordsItem = std::dynamic_pointer_cast<KeywordSpellSuggestions>(item);

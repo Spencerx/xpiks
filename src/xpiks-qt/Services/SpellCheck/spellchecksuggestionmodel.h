@@ -29,10 +29,6 @@ namespace Artworks {
     class BasicMetadataModel;
 }
 
-namespace Services {
-    class IArtworksUpdater;
-}
-
 namespace SpellCheck {
     class SpellSuggestionsItem;
     class SpellCheckService;
@@ -49,8 +45,7 @@ namespace SpellCheck {
         Q_PROPERTY(bool anythingSelected READ getAnythingSelected NOTIFY anythingSelectedChanged)
 
     public:
-        SpellCheckSuggestionModel(Services::IArtworksUpdater &artworksUpdater,
-                                  SpellCheckService &spellCheckerService);
+        SpellCheckSuggestionModel(SpellCheckService &spellCheckerService);
 
     public:
         enum KeywordSpellSuggestions_Roles {
@@ -69,13 +64,10 @@ namespace SpellCheck {
         virtual void resetModel() override;
 
     public:
-        void submitCorrections() const;
-
-    public:
         Q_INVOKABLE QObject *getSuggestionObject(int index) const;
         Q_INVOKABLE void resetAllSuggestions();
         Q_INVOKABLE void updateSelection() { emit anythingSelectedChanged(); }
-#if defined(UI_TESTS)
+#if defined(UI_TESTS) || defined(CORE_TESTS)
         Q_INVOKABLE void selectSomething();
 #endif
 
@@ -91,6 +83,7 @@ namespace SpellCheck {
 #endif
 
     private:
+        void submitCorrections() const;
         bool processFailedReplacements(const SuggestionsVector &failedReplacements) const;
         SuggestionsVector setupSuggestions(const SuggestionsVector &items);
         void setupRequests(const SuggestionsVector &requests);
@@ -106,7 +99,6 @@ namespace SpellCheck {
         std::vector<std::shared_ptr<SpellSuggestionsItem> > m_SuggestionsList;
         std::shared_ptr<ISpellSuggestionsTarget> m_SpellSuggestionsTarget;
         SpellCheckService &m_SpellCheckService;
-        Services::IArtworksUpdater &m_ArtworksUpdater;
     };
 }
 

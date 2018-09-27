@@ -54,6 +54,7 @@ namespace SpellCheck {
             if (vector.size() > 1) {
                 result.emplace_back(std::make_shared<CombinedSpellSuggestions>(i.key(), vector));
             } else {
+                Q_ASSERT(vector.size() == 1);
                 result.emplace_back(vector.front());
             }
         }
@@ -62,16 +63,16 @@ namespace SpellCheck {
     }
 
     QHash<ISpellCheckable *, KeywordsSuggestionsVector> combineFailedReplacements(SuggestionsVector const &failedReplacements) {
-        QHash<ISpellCheckable *, KeywordsSuggestionsVector > candidatesToRemove;
+        QHash<ISpellCheckable *, KeywordsSuggestionsVector> candidatesToRemove;
         size_t size = failedReplacements.size();
         candidatesToRemove.reserve((int)size);
 
         for (size_t i = 0; i < size; ++i) {
-            auto &item = failedReplacements.at(i);
-            std::shared_ptr<KeywordSpellSuggestions> keywordsItem = std::dynamic_pointer_cast<KeywordSpellSuggestions>(item);
+            auto &failedReplacement = failedReplacements.at(i);
+            std::shared_ptr<KeywordSpellSuggestions> keywordsItem = std::dynamic_pointer_cast<KeywordSpellSuggestions>(failedReplacement);
 
             if (keywordsItem) {
-                auto *item = keywordsItem->getSpellCheckable();
+                ISpellCheckable *item = keywordsItem->getSpellCheckable();
 
                 if (keywordsItem->isPotentialDuplicate()) {
                     if (!candidatesToRemove.contains(item)) {
@@ -81,12 +82,12 @@ namespace SpellCheck {
                     candidatesToRemove[item].emplace_back(keywordsItem);
                 }
             } else {
-                std::shared_ptr<CombinedSpellSuggestions> combinedItem = std::dynamic_pointer_cast<CombinedSpellSuggestions>(item);
+                std::shared_ptr<CombinedSpellSuggestions> combinedItem = std::dynamic_pointer_cast<CombinedSpellSuggestions>(failedReplacement);
                 if (combinedItem) {
                     auto keywordsItems = combinedItem->getKeywordsDuplicateSuggestions();
 
                     for (auto &keywordsCombinedItem: keywordsItems) {
-                        auto *item = keywordsCombinedItem->getSpellCheckable();
+                        ISpellCheckable *item = keywordsCombinedItem->getSpellCheckable();
 
                         if (!candidatesToRemove.contains(item)) {
                             candidatesToRemove.insert(item, KeywordsSuggestionsVector());
@@ -103,11 +104,9 @@ namespace SpellCheck {
         return candidatesToRemove;
     }
 
-    SpellCheckSuggestionModel::SpellCheckSuggestionModel(Services::IArtworksUpdater &artworksUpdater,
-                                                         SpellCheckService &spellCheckerService):
+    SpellCheckSuggestionModel::SpellCheckSuggestionModel(SpellCheckService &spellCheckerService):
         QAbstractListModel(),
-        m_SpellCheckService(spellCheckerService),
-        m_ArtworksUpdater(artworksUpdater)
+        m_SpellCheckService(spellCheckerService)
     {
     }
 
@@ -151,6 +150,40 @@ namespace SpellCheck {
         emit artworksCountChanged();
     }
 
+    QObject *SpellCheckSuggestionModel::getSuggestionObject(int index) const {
+        SpellSuggestionsItem *item = NULL;
+
+        if (0 <= index && index < (int)m_SuggestionsList.size()) {
+            item = m_SuggestionsList.at(index).get();
+            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        }
+
+        return item;
+    }
+
+    void SpellCheckSuggestionModel::resetAllSuggestions() {
+        LOG_DEBUG << "#";
+        for (auto &item: m_SuggestionsList) {
+            item->setReplacementIndex(-1);
+        }
+    }
+
+#if defined(UI_TESTS) || defined(CORE_TESTS)
+    void SpellCheckSuggestionModel::selectSomething() {
+        LOG_DEBUG << "#";
+        for (auto &suggestion: m_SuggestionsList) {
+            suggestion->setReplacementIndex(0);
+        }
+        emit anythingSelectedChanged();
+    }
+#endif
+
+    void SpellCheckSuggestionModel::setupModel(const std::shared_ptr<ISpellSuggestionsTarget> &target, Common::SpellCheckFlags flags) {
+        LOG_DEBUG << "#";
+        m_SpellSuggestionsTarget = target;
+        setupRequests(target->generateSuggestionItems(flags));
+    }
+
     void SpellCheckSuggestionModel::submitCorrections() const {
         LOG_DEBUG << "#";
         bool anyChanged = false;
@@ -178,40 +211,6 @@ namespace SpellCheck {
         }
     }
 
-    QObject *SpellCheckSuggestionModel::getSuggestionObject(int index) const {
-        SpellSuggestionsItem *item = NULL;
-
-        if (0 <= index && index < (int)m_SuggestionsList.size()) {
-            item = m_SuggestionsList.at(index).get();
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-        }
-
-        return item;
-    }
-
-    void SpellCheckSuggestionModel::resetAllSuggestions() {
-        LOG_DEBUG << "#";
-        for (auto &item: m_SuggestionsList) {
-            item->setReplacementIndex(-1);
-        }
-    }
-
-#if defined(UI_TESTS)
-    void SpellCheckSuggestionModel::selectSomething() {
-        LOG_DEBUG << "#";
-        for (auto &suggestion: m_SuggestionsList) {
-            suggestion->setReplacementIndex(0);
-        }
-        emit anythingSelectedChanged();
-    }
-#endif
-
-    void SpellCheckSuggestionModel::setupModel(const std::shared_ptr<ISpellSuggestionsTarget> &target, Common::SpellCheckFlags flags) {
-        LOG_DEBUG << "#";
-        m_SpellSuggestionsTarget = target;
-        setupRequests(target->generateSuggestionItems(flags));
-    }
-
     bool SpellCheckSuggestionModel::processFailedReplacements(const SuggestionsVector &failedReplacements) const {
         LOG_INFO << failedReplacements.size() << "failed items";
 
@@ -222,7 +221,7 @@ namespace SpellCheck {
 
         bool anyReplaced = false;
         for (; it != itEnd; ++it) {
-            auto *item = it.key();
+            ISpellCheckable *item = it.key();
 
             if (item->processFailedKeywordReplacements(it.value())) {
                 anyReplaced = true;

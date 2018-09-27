@@ -21,8 +21,7 @@
     Mocks::CommandManagerMock commandManager(undoRedoManager); \
     Mocks::FlagsProviderMock<Common::WordAnalysisFlags> flagsProvider(Common::WordAnalysisFlags::All);\
     Mocks::SpellCheckServiceMock spellCheckService(environment, flagsProvider); \
-    Mocks::ArtworksUpdaterMock updater;\
-    SpellCheck::SpellCheckSuggestionModel suggestionModel(updater, spellCheckService); \
+    SpellCheck::SpellCheckSuggestionModel suggestionModel(spellCheckService); \
     SpellCheck::SpellCheckInfo spellCheckInfo; \
     Artworks::BasicMetadataModel basicModel(spellCheckInfo);
 
@@ -43,7 +42,7 @@ void FixSpellingTests::fixKeywordsSmokeTest() {
     suggestionItem->setSuggestions(QStringList() << itemToReplace << "item2");
     suggestionItem->setReplacementIndex(0);
 
-    suggestionModel.submitCorrections();
+    suggestionModel.getActionCommand(true)->execute();
 
     QCOMPARE(basicModel.getKeywords()[0], itemToReplace);
     QCOMPARE(spellCheckSpy.count(), 1);
@@ -62,7 +61,7 @@ void FixSpellingTests::noReplacementsSelectedTest() {
                     basicModel, spellCheckService),
                 Common::SpellCheckFlags::All);
 
-    suggestionModel.submitCorrections();
+    suggestionModel.getActionCommand(true)->execute();
 
     QCOMPARE(basicModel.getKeywords()[0], QString("keyword1"));
     QVERIFY(spellCheckSpy.isEmpty());
@@ -90,7 +89,7 @@ void FixSpellingTests::fixAndRemoveDuplicatesTest() {
 
     QSignalSpy spellCheckSpy(&basicModel, &Artworks::BasicMetadataModel::keywordsSpellingChanged);
 
-    suggestionModel.submitCorrections();
+    suggestionModel.getActionCommand(true)->execute();
 
     QCOMPARE(basicModel.getKeywords()[0], QString("item1"));
     QCOMPARE(basicModel.getKeywordsCount(), 1);
@@ -122,7 +121,7 @@ void FixSpellingTests::fixAndRemoveDuplicatesCombinedTest() {
         }
     }
 
-    suggestionModel.submitCorrections();
+    suggestionModel.getActionCommand(true)->execute();
 
     QCOMPARE(basicModel.getKeywordsCount(), 2);
     QCOMPARE(spellCheckSpy.count(), 1);
@@ -153,7 +152,7 @@ void FixSpellingTests::multiReplaceWithCorrectAllTest() {
         }
     }
 
-    suggestionModel.submitCorrections();
+    suggestionModel.getActionCommand(true)->execute();
 
     QCOMPARE(basicModel.getKeywords()[0], QString("item1"));
     QCOMPARE(basicModel.getKeywords()[2], QString("word plus item1"));
@@ -181,7 +180,7 @@ void FixSpellingTests::replaceWithCorrectDescriptionTest() {
     SpellCheck::SpellSuggestionsItem *suggestionItem = suggestionModel.getItem(0);
     suggestionItem->setReplacementIndex(0);
 
-    suggestionModel.submitCorrections();
+    suggestionModel.getActionCommand(true)->execute();
 
     QCOMPARE(basicModel.getKeywords()[0], QString("wordtoreplace"));
     QCOMPARE(basicModel.getKeywords()[2], QString("word plus wordtoreplace"));
@@ -210,7 +209,7 @@ void FixSpellingTests::replaceWithCorrectTitleTest() {
     SpellCheck::SpellSuggestionsItem *suggestionItem = suggestionModel.getItem(0);
     suggestionItem->setReplacementIndex(0);
 
-    suggestionModel.submitCorrections();
+    suggestionModel.getActionCommand(true)->execute();
 
     QCOMPARE(basicModel.getKeywords()[0], QString("wordtoreplace"));
     QCOMPARE(basicModel.getKeywords()[2], QString("word plus wordtoreplace"));
@@ -244,7 +243,7 @@ void FixSpellingTests::replaceWithCorrectKeywordsTest() {
         }
     }
 
-    suggestionModel.submitCorrections();
+    suggestionModel.getActionCommand(true)->execute();
 
     QCOMPARE(basicModel.getKeywords()[0], QString("item1"));
     QCOMPARE(basicModel.getKeywords()[2], QString("word plus item1"));

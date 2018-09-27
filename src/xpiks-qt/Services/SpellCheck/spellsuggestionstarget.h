@@ -48,7 +48,7 @@ namespace SpellCheck {
 
         // ISpellSuggestionsTarget interface
     public:
-        virtual std::vector<std::shared_ptr<SpellSuggestionsItem> > generateSuggestionItems(Common::SpellCheckFlags flags) override;
+        virtual std::vector<std::shared_ptr<SpellSuggestionsItem>> generateSuggestionItems(Common::SpellCheckFlags flags) override;
         virtual void afterReplaceCallback() override;
         virtual size_t size() const override;
 

@@ -35,6 +35,7 @@ private slots:
     void combinedModelUndoEmitsModifiedTest();
     void deleteKeywordsEmitsModifiedTest();
     void deleteKeywordsUndoEmitsModifiedTest();
+    void fixSpellingEmitsModifiedTest();
 };
 
 #endif // ARTITEMSMODELTESTS_H

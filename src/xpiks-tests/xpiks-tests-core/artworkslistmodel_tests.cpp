@@ -5,6 +5,8 @@
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/artworksupdatermock.h"
+#include "Mocks/spellcheckservicemock.h"
+#include "Mocks/flagsprovidermock.h"
 #include <Models/Artworks/artworksrepository.h>
 #include <Models/Session/recentdirectoriesmodel.h>
 #include <Models/Editing/quickbuffer.h>
@@ -13,6 +15,8 @@
 #include <Models/Editing/artworkproxymodel.h>
 #include <Models/Editing/deletekeywordsviewmodel.h>
 #include <Services/artworksupdatehub.h>
+#include <Services/SpellCheck/spellchecksuggestionmodel.h>
+#include <Services/SpellCheck/spellsuggestionstarget.h>
 #include <UndoRedo/undoredomanager.h>
 #include <KeywordsPresets/presetkeywordsmodel.h>
 
@@ -416,6 +420,36 @@ void ArtworksListModelTests::deleteKeywordsUndoEmitsModifiedTest() {
     MODIFIED_TEST_START;
 
     command->undo();
+
+    MODIFIED_TEST_END_WAIT(1000);
+}
+
+void ArtworksListModelTests::fixSpellingEmitsModifiedTest() {
+    DECLARE_MODELS_AND_GENERATE(2, false);
+
+    Services::ArtworksUpdateHub updater(artworksListModel);
+    Mocks::FlagsProviderMock<Common::WordAnalysisFlags> flagsProvider(Common::WordAnalysisFlags::All);
+    Mocks::SpellCheckServiceMock spellCheckService(environment, flagsProvider);
+    SpellCheck::SpellCheckSuggestionModel suggestionModel(spellCheckService);
+
+    artworksListModel.foreachArtwork([](int, const std::shared_ptr<Mocks::ArtworkMetadataMock> &artwork) {
+        for (auto &keyword: artwork->getBasicMetadataModel().getRawKeywords()) {
+            keyword.m_IsCorrect = false;
+        }
+    });
+
+    suggestionModel.setupModel(
+                std::make_shared<SpellCheck::ArtworksSuggestionTarget>(
+                    artworksListModel.createArtworksSnapshot(),
+                    spellCheckService,
+                    updater),
+                Common::SpellCheckFlags::All);
+
+    suggestionModel.selectSomething();
+
+    MODIFIED_TEST_START;
+
+    suggestionModel.getActionCommand(true)->execute();
 
     MODIFIED_TEST_END_WAIT(1000);
 }
