@@ -438,9 +438,10 @@ void ArtworksListModelTests::fixSpellingEmitsModifiedTest() {
         }
     });
 
+    auto snapshot = artworksListModel.createArtworksSnapshot();
     suggestionModel.setupModel(
                 std::make_shared<SpellCheck::ArtworksSuggestionTarget>(
-                    artworksListModel.createArtworksSnapshot(),
+                    snapshot,
                     spellCheckService,
                     updater),
                 Common::SpellCheckFlags::All);

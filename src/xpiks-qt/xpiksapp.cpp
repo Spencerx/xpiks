@@ -104,7 +104,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_CsvExportModel(environment),
     m_MetadataReadingHub(m_MetadataIOService, m_ArtworksUpdateHub, m_EditingHub),
     m_MetadataIOCoordinator(m_MetadataReadingHub, m_SettingsModel, m_SwitcherModel, m_VideoCachingService),
-    m_SpellSuggestionModel(m_ArtworksUpdateHub, m_SpellCheckService),
+    m_SpellSuggestionModel(m_SpellCheckService),
     // dependent
     m_FilteredArtworksListModel(m_ArtworksListModel, m_CommandManager, m_PresetsModel, m_SettingsModel),
     m_KeywordsSuggestor(m_SwitcherModel, m_SettingsModel, environment),
