@@ -12,6 +12,7 @@
 #include <Models/settingsmodel.h>
 #include <UndoRedo/undoredomanager.h>
 #include <KeywordsPresets/presetkeywordsmodel.h>
+#include <Services/artworksupdatehub.h>
 
 #define DECLARE_MODELS \
     Mocks::CoreTestsEnvironment environment;\
@@ -881,23 +882,4 @@ void CombinedModelTests::clearKeywordsFiresKeywordsCountTest() {
     keywordsCountChangedSpy.clear();
     combinedModel.clearKeywords();
     QCOMPARE(keywordsCountChangedSpy.count(), 1);
-}
-
-void CombinedModelTests::artworksAreModifiedAfterEditingTest() {
-    DECLARE_MODELS;
-
-    Artworks::ArtworksSnapshot snapshot;
-    snapshot.append(createArtworkMetadata("Description1", "title1", QStringList() << "Keyword1" << "keyworD2", 0));
-    snapshot.append(createArtworkMetadata("Description2", "title2", QStringList() << "keyworD1" << "Keyword2", 1));
-
-    combinedModel.resetModel();
-    combinedModel.setArtworks(snapshot);
-
-    combinedModel.setDescription("Brand new description");
-    combinedModel.setTitle("Brand new title");
-    combinedModel.appendKeyword("brand new keyword");
-
-    combinedModel.getActionCommand(true)->execute();
-
-    for (auto &artwork: snapshot) { QVERIFY(updater.isUpdated(artwork->getItemID())); }
 }

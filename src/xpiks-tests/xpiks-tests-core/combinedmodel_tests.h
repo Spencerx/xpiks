@@ -58,7 +58,6 @@ private slots:
     void caseIsPreservedForOneItemTest();
     void caseIsPreservedForSeveralItemsTest();
     void clearKeywordsFiresKeywordsCountTest();
-    void artworksAreModifiedAfterEditingTest();
 };
 
 #endif // COMBINEDMODELTESTS_H

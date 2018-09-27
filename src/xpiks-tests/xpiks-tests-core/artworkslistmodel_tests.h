@@ -31,6 +31,10 @@ private slots:
     void fillFromQuickBufferEmitsModifiedTest();
     void addPresetEmitsModifiedTest();
     void proxyModelExitEmitsModifiedTest();
+    void combinedEditEmitsModifiedTest();
+    void combinedModelUndoEmitsModifiedTest();
+    void deleteKeywordsEmitsModifiedTest();
+    void deleteKeywordsUndoEmitsModifiedTest();
 };
 
 #endif // ARTITEMSMODELTESTS_H

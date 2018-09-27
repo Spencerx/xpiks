@@ -8,8 +8,10 @@
 #include <Models/Artworks/artworksrepository.h>
 #include <Models/Session/recentdirectoriesmodel.h>
 #include <Models/Editing/quickbuffer.h>
+#include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/currenteditablemodel.h>
 #include <Models/Editing/artworkproxymodel.h>
+#include <Models/Editing/deletekeywordsviewmodel.h>
 #include <Services/artworksupdatehub.h>
 #include <UndoRedo/undoredomanager.h>
 #include <KeywordsPresets/presetkeywordsmodel.h>
@@ -27,6 +29,11 @@
     QSignalSpy artItemsModifiedSpy(&artworksListModel, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)));
 
 #define MODIFIED_TEST_END\
+    QVERIFY(artItemsModifiedSpy.count() > 0);\
+    QVERIFY(artItemsModifiedSpy.takeFirst().at(2).value<QVector<int> >().contains(Models::ArtworksListModel::IsModifiedRole));
+
+#define MODIFIED_TEST_END_WAIT(millis)\
+    QVERIFY(artItemsModifiedSpy.wait(millis));\
     QVERIFY(artItemsModifiedSpy.count() > 0);\
     QVERIFY(artItemsModifiedSpy.takeFirst().at(2).value<QVector<int> >().contains(Models::ArtworksListModel::IsModifiedRole));
 
@@ -329,4 +336,87 @@ void ArtworksListModelTests::proxyModelExitEmitsModifiedTest() {
     QCoreApplication::processEvents();
 
     MODIFIED_TEST_END;
+}
+
+void ArtworksListModelTests::combinedEditEmitsModifiedTest() {
+    DECLARE_MODELS_AND_GENERATE(5, false);
+
+    Services::ArtworksUpdateHub updater(artworksListModel);
+    KeywordsPresets::PresetKeywordsModel presetsManager(environment);
+    Models::CombinedArtworksModel combinedModel(updater, presetsManager);
+
+    combinedModel.resetModel();
+    combinedModel.setArtworks(artworksListModel.createArtworksSnapshot());
+    combinedModel.setDescription("Brand new description");
+    combinedModel.setTitle("Brand new title");
+    combinedModel.appendKeyword("brand new keyword");
+
+    MODIFIED_TEST_START;
+
+    auto command = combinedModel.getActionCommand(true);
+    command->execute();
+
+    MODIFIED_TEST_END_WAIT(1000);
+}
+
+void ArtworksListModelTests::combinedModelUndoEmitsModifiedTest() {
+    DECLARE_MODELS_AND_GENERATE(5, false);
+
+    Services::ArtworksUpdateHub updater(artworksListModel);
+    KeywordsPresets::PresetKeywordsModel presetsManager(environment);
+    Models::CombinedArtworksModel combinedModel(updater, presetsManager);
+
+    combinedModel.resetModel();
+    combinedModel.setArtworks(artworksListModel.createArtworksSnapshot());
+    combinedModel.setDescription("Brand new description");
+    combinedModel.setTitle("Brand new title");
+    combinedModel.appendKeyword("brand new keyword");
+
+    auto command = combinedModel.getActionCommand(true);
+    command->execute();
+
+    MODIFIED_TEST_START;
+
+    command->undo();
+
+    MODIFIED_TEST_END_WAIT(1000);
+}
+
+void ArtworksListModelTests::deleteKeywordsEmitsModifiedTest() {
+    DECLARE_MODELS_AND_GENERATE(5, false);
+
+    Services::ArtworksUpdateHub updater(artworksListModel);
+    KeywordsPresets::PresetKeywordsModel presetsManager(environment);
+    Models::DeleteKeywordsViewModel deleteKeywordsModel(updater, presetsManager);
+
+    deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
+    deleteKeywordsModel.appendKeywordToDelete("keyword1");
+
+    MODIFIED_TEST_START;
+
+    auto command = deleteKeywordsModel.getActionCommand(true);
+    command->execute();
+
+    MODIFIED_TEST_END_WAIT(1000);
+}
+
+
+void ArtworksListModelTests::deleteKeywordsUndoEmitsModifiedTest() {
+    DECLARE_MODELS_AND_GENERATE(5, false);
+
+    Services::ArtworksUpdateHub updater(artworksListModel);
+    KeywordsPresets::PresetKeywordsModel presetsManager(environment);
+    Models::DeleteKeywordsViewModel deleteKeywordsModel(updater, presetsManager);
+\
+    deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
+    deleteKeywordsModel.appendKeywordToDelete("keyword1");
+
+    auto command = deleteKeywordsModel.getActionCommand(true);
+    command->execute();
+
+    MODIFIED_TEST_START;
+
+    command->undo();
+
+    MODIFIED_TEST_END_WAIT(1000);
 }
