@@ -22,6 +22,10 @@ namespace Artworks {
     class ArtworksSnapshot;
 }
 
+namespace Services {
+    class IArtworksUpdater;
+}
+
 namespace Commands {
     class ArtworksUpdateTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
     {
@@ -37,6 +41,20 @@ namespace Commands {
     private:
         Models::ArtworksListModel &m_ArtworksListModel;
         QVector<int> m_Roles;
+    };
+
+    class ArtworksSnapshotUpdateTemplate: public ICommandTemplate<Artworks::ArtworksSnapshot>
+    {
+    public:
+        ArtworksSnapshotUpdateTemplate(Services::IArtworksUpdater &updater);
+
+        // IArtworksCommandTemplate interface
+    public:
+        virtual void execute(const Artworks::ArtworksSnapshot &snapshot) override;
+        virtual void undo(const Artworks::ArtworksSnapshot &snapshot) override { execute(snapshot); }
+
+    private:
+        Services::IArtworksUpdater &m_Updater;
     };
 }
 

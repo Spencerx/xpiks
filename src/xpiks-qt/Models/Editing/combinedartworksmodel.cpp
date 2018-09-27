@@ -16,6 +16,7 @@
 #include <Commands/Base/compositecommandtemplate.h>
 #include <Commands/Editing/clearactionmodeltemplate.h>
 #include <Commands/Base/templatedcommand.h>
+#include <Commands/artworksupdatetemplate.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkelement.h>
 #include <Artworks/basicmodelsource.h>
@@ -27,12 +28,14 @@
 #define MAX_EDITING_PAUSE_RESTARTS 12
 
 namespace Models {
-    CombinedArtworksModel::CombinedArtworksModel(KeywordsPresets::IPresetsManager &presetsManager,
+    CombinedArtworksModel::CombinedArtworksModel(Services::IArtworksUpdater &artworksUpdater,
+                                                 KeywordsPresets::IPresetsManager &presetsManager,
                                                  QObject *parent):
         ArtworksViewModel(parent),
         ArtworkProxyBase(),
         Common::DelayedActionEntity(1000, MAX_EDITING_PAUSE_RESTARTS),
         m_PresetsManager(presetsManager),
+        m_ArtworksUpdater(artworksUpdater),
         m_CommonKeywordsModel(m_SpellCheckInfo, this),
         m_EditFlags(Common::ArtworkEditFlags::None),
         m_ModifiedFlags(0)
@@ -291,7 +294,8 @@ namespace Models {
                                 m_CommonKeywordsModel.getDescription(),
                                 m_CommonKeywordsModel.getKeywords(),
                                 m_EditFlags),
-                                std::make_shared<Commands::ClearActionModelTemplate>(*this)}));
+                                std::make_shared<Commands::ClearActionModelTemplate>(*this),
+                                std::make_shared<Commands::ArtworksSnapshotUpdateTemplate>(m_ArtworksUpdater)}));
         } else {
             LOG_DEBUG << "nothing to save";
             using TemplatedSnapshotCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;

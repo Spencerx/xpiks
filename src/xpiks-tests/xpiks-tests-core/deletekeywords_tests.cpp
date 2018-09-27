@@ -4,6 +4,7 @@
 #include "Mocks/artworkmetadatamock.h"
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/artworksrepositorymock.h"
+#include "Mocks/artworksupdatermock.h"
 #include <Models/Editing/deletekeywordsviewmodel.h>
 #include <Models/Artworks/artworksrepository.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
@@ -18,7 +19,8 @@
     Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories); \
     Mocks::ArtworksListModelMock artworksListModel(artworksRepository); \
     KeywordsPresets::PresetKeywordsModel keywordsPresets(environment);\
-    Models::DeleteKeywordsViewModel deleteKeywordsModel(keywordsPresets); \
+    Mocks::ArtworksUpdaterMock updater;\
+    Models::DeleteKeywordsViewModel deleteKeywordsModel(updater, keywordsPresets); \
     artworksListModel.generateAndAddArtworks(count);
 
 void DeleteKeywordsTests::smokeTest() {

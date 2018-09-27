@@ -6,6 +6,7 @@
 #include <Models/Editing/combinedartworksmodel.h>
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/commandmanagermock.h"
+#include "Mocks/artworksupdatermock.h"
 #include <Artworks/artworkelement.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Models/settingsmodel.h>
@@ -14,8 +15,9 @@
 
 #define DECLARE_MODELS \
     Mocks::CoreTestsEnvironment environment;\
+    Mocks::ArtworksUpdaterMock updater;\
     KeywordsPresets::PresetKeywordsModel presetsManager(environment);\
-    Models::CombinedArtworksModel combinedModel(presetsManager);
+    Models::CombinedArtworksModel combinedModel(updater, presetsManager);
 
 std::shared_ptr<Artworks::ArtworkMetadata> createArtworkMetadata(const QString &desc, const QString &title, const QStringList &keywords, int index=0) {
     auto artwork = std::make_shared<Mocks::ArtworkMetadataMock>("/random/file/path.jpg");

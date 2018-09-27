@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is a part of Xpiks - cross platform application for
  * keywording and uploading images for microstocks
  * Copyright (C) 2014-2018 Taras Kushnir <kushnirTV@gmail.com>
@@ -142,6 +142,21 @@ namespace Commands {
             Artworks::ISelectedArtworksSource &m_Source;
             Models::ArtworksUploader &m_Uploader;
             Warnings::WarningsModel &m_WarningsModel;
+        };
+
+        class UpdateSelectedArtworksCommand: public IUICommandTemplate {
+        public:
+            UpdateSelectedArtworksCommand(Models::ArtworksListModel &source):
+                m_Source(source)
+            { }
+        public:
+            virtual int getCommandID() override { return QMLExtensions::UICommandID::UpdateSelected; }
+            virtual void execute(QVariant const &value) override;
+            virtual void undo(const QVariant &) override;
+        private:
+            void update();
+        private:
+            Models::ArtworksListModel &m_Source;
         };
     }
 }

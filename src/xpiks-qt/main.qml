@@ -201,7 +201,7 @@ ApplicationWindow {
     Action {
         id: editAction
         shortcut: "Ctrl+E"
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
             if (filteredArtworksListModel.selectedArtworksCount === 0) {
                 mustSelectDialog.open()
@@ -225,7 +225,7 @@ ApplicationWindow {
     Action {
         id: saveAction
         shortcut: StandardKey.Save
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
             if (filteredArtworksListModel.selectedArtworksCount == 0) {
                 mustSelectDialog.open()
@@ -247,13 +247,13 @@ ApplicationWindow {
         id: searchAndReplaceAction
         shortcut: "Shift+Ctrl+F"
         onTriggered: openFindAndReplaceDialog()
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
     }
 
     Action {
         id: removeAction
         shortcut: "Ctrl+Del"
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
             if (filteredArtworksListModel.selectedArtworksCount === 0) {
                 mustSelectDialog.open()
@@ -274,7 +274,7 @@ ApplicationWindow {
     Action {
         id: uploadAction
         shortcut: "Shift+Ctrl+U"
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
             if (filteredArtworksListModel.selectedArtworksCount === 0) {
                 filteredArtworksListModel.selectFilteredArtworks();
@@ -495,7 +495,7 @@ ApplicationWindow {
 
             MenuItem {
                 text: i18.n + qsTr("&Invert selection")
-                enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
+                enabled: (artworksRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
                 onTriggered: {
                     console.info("Invert selection triggered")
                     if (filteredArtworksListModel.getItemsCount() > 0) {
@@ -506,7 +506,7 @@ ApplicationWindow {
 
             MenuItem {
                 text: i18.n + qsTr("&Sort by filename")
-                enabled: (artworkRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
+                enabled: (artworksRepository.artworksSourcesCount > 0) && applicationWindow.actionsEnabled
                 checkable: true
                 onToggled: {
                     console.info("Sort by filename")
@@ -1083,7 +1083,7 @@ ApplicationWindow {
         onTriggered: {
             if ((applicationWindow.openedDialogsCount == 0) &&
                     (applicationWindow.actionsEnabled) &&
-                    (artworkRepository.artworksSourcesCount > 0) &&
+                    (artworksRepository.artworksSourcesCount > 0) &&
                     (switcher.isDonationCampaign1Active) &&
                     (switcher.isDonateCampaign1Stage2On)) {
                 donateTimer.stop()

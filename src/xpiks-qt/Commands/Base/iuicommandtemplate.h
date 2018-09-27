@@ -12,6 +12,7 @@
 #define IUICOMMANDTEMPLATE_H
 
 #include <QVariant>
+#include <vector>
 
 namespace Commands {
     class IUICommandTemplate {

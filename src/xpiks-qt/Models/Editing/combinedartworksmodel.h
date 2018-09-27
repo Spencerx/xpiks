@@ -45,6 +45,10 @@ namespace AutoComplete {
     class ICompletionSource;
 }
 
+namespace Services {
+    class IArtworksUpdater;
+}
+
 namespace Models {
     using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
 
@@ -75,7 +79,8 @@ namespace Models {
         using Common::MessagesSource<std::shared_ptr<ICurrentEditable>>::sendMessage;
 
     public:
-        CombinedArtworksModel(KeywordsPresets::IPresetsManager &presetsManager,
+        CombinedArtworksModel(Services::IArtworksUpdater &artworksUpdater,
+                              KeywordsPresets::IPresetsManager &presetsManager,
                               QObject *parent=0);
 
     public:
@@ -240,6 +245,7 @@ namespace Models {
 
     private:
         KeywordsPresets::IPresetsManager &m_PresetsManager;
+        Services::IArtworksUpdater &m_ArtworksUpdater;
         Artworks::BasicMetadataModel m_CommonKeywordsModel;
         SpellCheck::SpellCheckInfo m_SpellCheckInfo;
         Common::ArtworkEditFlags m_EditFlags;

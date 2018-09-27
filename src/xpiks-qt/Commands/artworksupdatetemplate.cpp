@@ -13,6 +13,7 @@
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/artworkssnapshot.h>
 #include <Models/Artworks/artworkslistmodel.h>
+#include <Services/iartworksupdater.h>
 
 namespace Commands {
     ArtworksUpdateTemplate::ArtworksUpdateTemplate(Models::ArtworksListModel &artworksListModel,
@@ -26,6 +27,7 @@ namespace Commands {
     }
 
     void ArtworksUpdateTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "#";
         auto indices = Helpers::map<Artworks::ArtworksSnapshot::ItemType, int>(
                     snapshot.getRawData(),
                     [](const Artworks::ArtworksSnapshot::ItemType &artwork) {
@@ -33,5 +35,15 @@ namespace Commands {
         });
 
         m_ArtworksListModel.updateItems(Helpers::IndicesRanges(indices), m_Roles);
+    }
+
+    ArtworksSnapshotUpdateTemplate::ArtworksSnapshotUpdateTemplate(Services::IArtworksUpdater &updater):
+        m_Updater(updater)
+    {
+    }
+
+    void ArtworksSnapshotUpdateTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
+        LOG_DEBUG << "#";
+        m_Updater.updateArtworks(snapshot);
     }
 }

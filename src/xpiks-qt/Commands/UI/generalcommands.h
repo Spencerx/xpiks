@@ -21,6 +21,7 @@ namespace Models {
     class FilteredArtworksListModel;
     class UploadInfoRepository;
     class LogsModel;
+    class UIManager;
 }
 
 namespace Encryption {
@@ -78,6 +79,10 @@ namespace Commands {
         SOURCE_COMMAND(AddToUserDictionaryCommand,
                        QMLExtensions::UICommandID::AddToUserDictionary,
                        SpellCheck::UserDictionary);
+
+        SOURCE_COMMAND(ActivateQuickBufferCommand,
+                       QMLExtensions::UICommandID::ActivateQuickBuffer,
+                       Models::UIManager);
     }
 }
 

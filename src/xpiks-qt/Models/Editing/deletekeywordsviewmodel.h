@@ -27,6 +27,10 @@ namespace KeywordsPresets {
     class IPresetsManager;
 }
 
+namespace Services {
+    class IArtworksUpdater;
+}
+
 namespace Models {
     using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
 
@@ -41,7 +45,8 @@ namespace Models {
         Q_PROPERTY(bool caseSensitive READ getCaseSensitive WRITE setCaseSensitive NOTIFY caseSensitiveChanged)
 
     public:
-        DeleteKeywordsViewModel(KeywordsPresets::IPresetsManager &presetsManager,
+        DeleteKeywordsViewModel(Services::IArtworksUpdater &artworksUpdater,
+                                KeywordsPresets::IPresetsManager &presetsManager,
                                 QObject *parent=nullptr);
 
     public:
@@ -105,6 +110,7 @@ namespace Models {
         Artworks::BasicKeywordsModel m_KeywordsToDeleteModel;
         Artworks::BasicKeywordsModel m_CommonKeywordsModel;
         KeywordsPresets::IPresetsManager &m_PresetsManager;
+        Services::IArtworksUpdater &m_ArtworksUpdater;
         bool m_CaseSensitive;
     };
 }

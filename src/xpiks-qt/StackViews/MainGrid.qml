@@ -87,13 +87,13 @@ Item {
         id: searchAction
         shortcut: StandardKey.Find
         onTriggered: filterText.forceActiveFocus()
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
     }
 
     Action {
         id: selectAllAction
         shortcut: StandardKey.SelectAll
-        enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
             if (selectAllCheckbox.checked) {
                 filteredArtworksListModel.selectFilteredArtworks();
@@ -130,7 +130,6 @@ Item {
             text: i18.n + qsTr("Copy to Quick Buffer")
             onTriggered: {
                 dispatcher.dispatch(UICommand.CopyArtworkToQuickBuffer, artworkContextMenu.index)
-                uiManager.activateQuickBufferTab()
             }
         }
 
@@ -353,7 +352,7 @@ Item {
                 color: (enabled && (isHovered || selectionCombobox.isOpened)) ?
                            (selectionCombobox.isOpened ? uiColors.inactiveControlColor :
                                                          uiColors.defaultControlColor) : "transparent"
-                enabled: artworkRepository.artworksSourcesCount > 0
+                enabled: artworksRepository.artworksSourcesCount > 0
 
                 MouseArea {
                     id: selectAllMA
@@ -495,7 +494,7 @@ Item {
                 enabled: applicationWindow.openedDialogsCount == 0
                 visible: {
                     if (switcher.isDonationCampaign1Active) {
-                        if ((artworkRepository.artworksSourcesCount > 0) ||
+                        if ((artworksRepository.artworksSourcesCount > 0) ||
                                 (switcher.isDonateCampaign1LinkClicked)) {
                             return true
                         }
@@ -510,7 +509,7 @@ Item {
             }
 
             LayoutButton {
-                enabled: (artworkRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+                enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
                 anchors.verticalCenter: parent.verticalCenter
                 isListLayout: appHost.listLayout
                 onLayoutChanged: {
@@ -524,7 +523,7 @@ Item {
                 anchors.bottom: parent.bottom
                 anchors.top: parent.top
                 width: 55
-                enabled: artworkRepository.artworksSourcesCount > 0
+                enabled: artworksRepository.artworksSourcesCount > 0
                 color: filterWrapper.isOpened ? uiColors.defaultControlColor : uiColors.defaultDarkColor
 
                 ZoomAmplifier {
@@ -675,7 +674,7 @@ Item {
                 clip: true
                 anchors.left: zoomIcon.right
                 anchors.leftMargin: 10
-                enabled: artworkRepository.artworksSourcesCount > 0
+                enabled: artworksRepository.artworksSourcesCount > 0
                 selectionColor: uiColors.inputInactiveForeground
                 selectedTextColor: uiColors.whiteColor
                 color: uiColors.inputInactiveForeground
@@ -726,7 +725,7 @@ Item {
             anchors.verticalCenterOffset: 2
             width: 100
             text: i18.n + qsTr("Search")
-            enabled: artworkRepository.artworksSourcesCount > 0
+            enabled: artworksRepository.artworksSourcesCount > 0
             onClicked: filteredArtworksListModel.searchTerm = filterText.text
         }
     }
@@ -1934,7 +1933,7 @@ Item {
                     }
 
                     Connections {
-                        target: artworkRepository
+                        target: artworksRepository
                         onDirectoriesFiltered: {
                             artworksHost.forceUpdateArtworks(true)
                             artworksHost.positionViewAtBeginning()
@@ -1965,7 +1964,7 @@ Item {
                 id: commonCenterItem
                 visible: {
                     if (artworksHost.count == 0) {
-                        if (artworkRepository.artworksSourcesCount > 0) {
+                        if (artworksRepository.artworksSourcesCount > 0) {
                             return true
                         }
 

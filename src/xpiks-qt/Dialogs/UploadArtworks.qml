@@ -28,7 +28,7 @@ Item {
     property bool emptyPasswords: false
     property bool skipUploadItems: false
     property variant componentParent
-    property bool uploadEnabled: (artworkRepository.artworksSourcesCount > 0) && (filteredArtworksListModel.selectedArtworksCount > 0)
+    property bool uploadEnabled: (artworksRepository.artworksSourcesCount > 0) && (filteredArtworksListModel.selectedArtworksCount > 0)
     property var artworksUploader: dispatcher.getCommandTarget(UICommand.SetupUpload)
     property var uploadWatcher: artworksUploader.getUploadWatcherObject()
     property var uploadInfos: artworksUploader.getUploadInfosObject();

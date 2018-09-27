@@ -1235,7 +1235,6 @@ Rectangle {
                 enabled: (combinedArtworks.title.length > 0) || (combinedArtworks.description.length > 0) || (combinedArtworks.keywordsCount > 0)
                 onClicked: {
                     dispatcher.dispatch(UICommand.CopyCombinedToQuickBuffer, {})
-                    uiManager.activateQuickBufferTab()
                 }
             }
 

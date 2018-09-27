@@ -12,6 +12,8 @@
 #include <Commands/Base/icommandmanager.h>
 #include <Commands/Editing/modifyartworkscommand.h>
 #include <Commands/Editing/editartworkstemplate.h>
+#include <Commands/artworksupdatetemplate.h>
+#include <Commands/Base/compositecommandtemplate.h>
 #include <Artworks/artworkssnapshot.h>
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
@@ -194,16 +196,21 @@ namespace Commands {
                 if (!description.isEmpty()) { Common::SetFlag(editFlags, Common::ArtworkEditFlags::EditDescription); }
                 if (!keywords.empty()) { Common::SetFlag(editFlags, Common::ArtworkEditFlags::EditKeywords); }
 
+                using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
+                using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
+
                 m_CommandManager.processCommand(
                             std::make_shared<ModifyArtworksCommand>(
                                 Artworks::ArtworksSnapshot({artwork}),
-                                std::make_shared<EditArtworksTemplate>(
-                                    title,
-                                    description,
-                                    keywords,
-                                    editFlags)));
-
-                m_Updater.updateArtwork(artwork);
+                                std::make_shared<ArtworksTemplateComposite>(
+                                    std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                        std::make_shared<EditArtworksTemplate>(
+                                        title,
+                                        description,
+                                        keywords,
+                                        editFlags),
+                                        std::make_shared<Commands::ArtworksSnapshotUpdateTemplate>(
+                                        m_Updater)})));
             }
         }
     }

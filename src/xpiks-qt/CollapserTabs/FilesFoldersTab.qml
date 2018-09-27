@@ -77,7 +77,7 @@ Item {
 
             ListView {
                 id: sourcesListView
-                model: artworkRepository
+                model: artworksRepository
                 boundsBehavior: Flickable.StopAtBounds
                 anchors.fill: parent
 
@@ -99,7 +99,7 @@ Item {
                     property int delegateIndex: index
 
                     function getDirectoryIndex() {
-                        return artworkRepository.getOriginalIndex(index)
+                        return artworksRepository.getOriginalIndex(index)
                     }
 
                     color: isselected ? uiColors.inactiveControlColor : "transparent"
@@ -113,7 +113,7 @@ Item {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            artworkRepository.selectDirectory(sourceWrapper.delegateIndex)
+                            artworksRepository.selectDirectory(sourceWrapper.delegateIndex)
                         }
                     }
 

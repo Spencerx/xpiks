@@ -15,6 +15,7 @@
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Models/Connectivity/uploadinforepository.h>
 #include <Models/logsmodel.h>
+#include <Models/uimanager.h>
 #include <Services/AutoComplete/autocompleteservice.h>
 #include <Services/Warnings/warningsmodel.h>
 #include <Services/SpellCheck/userdicteditmodel.h>
@@ -84,6 +85,11 @@ namespace Commands {
             LOG_DEBUG << value;
             QString word = Helpers::convertToString(value);
             m_Source.addWord(word);
+        }
+
+        void ActivateQuickBufferCommand::execute(const QVariant &) {
+            LOG_DEBUG << "#";
+            m_Source.activateQuickBufferTab();
         }
     }
 }

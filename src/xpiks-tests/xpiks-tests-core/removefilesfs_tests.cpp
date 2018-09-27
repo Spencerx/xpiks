@@ -7,6 +7,7 @@
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/coretestsenvironment.h"
+#include "Mocks/artworksupdatermock.h"
 #include <Artworks/artworkelement.h>
 #include <Artworks/artworkssnapshot.h>
 #include <UndoRedo/undoredomanager.h>
@@ -34,7 +35,8 @@
     settingsModel.initializeConfigs();\
     Models::FilteredArtworksListModel filteredArtworksModel(\
     artworksListModel, commandManager, keywordsPresets, settingsModel);\
-    Models::CombinedArtworksModel combinedModel(keywordsPresets); \
+    Mocks::ArtworksUpdaterMock updater;\
+    Models::CombinedArtworksModel combinedModel(updater, keywordsPresets); \
     Models::ZipArchiver zipArchiver; \
     artworksListModel.generateAndAddArtworks(10);\
     Common::connectSource<Common::NamedType<int, Common::MessageType::UnavailableFiles>>(artworksListModel,\

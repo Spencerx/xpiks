@@ -120,5 +120,20 @@ namespace Commands {
                 m_WarningsModel.setShowSelected();
             }
         }
+
+        void UpdateSelectedArtworksCommand::execute(const QVariant &) {
+            LOG_DEBUG << "#";
+            update();
+        }
+
+        void UpdateSelectedArtworksCommand::undo(const QVariant &) {
+            LOG_DEBUG << "#";
+            update();
+        }
+
+        void UpdateSelectedArtworksCommand::update() {
+            m_Source.updateSelection(Models::ArtworksListModel::SelectionType::Selected,
+                                     m_Source.getStandardUpdateRoles());
+        }
     }
 }

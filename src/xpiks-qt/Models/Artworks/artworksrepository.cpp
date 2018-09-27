@@ -154,6 +154,7 @@ namespace Models {
             beginInsertRows(QModelIndex(), m_DirectoriesList.size() - 1, m_DirectoriesList.size() - 1);
             // ...
             endInsertRows();
+            emit artworksSourcesChanged();
         }
 
         return flags;

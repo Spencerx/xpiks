@@ -168,6 +168,7 @@ namespace Models {
     }
 
     void UIManager::activateQuickBufferTab() {
+        LOG_DEBUG << "#";
         if (m_TabsModel.activateSystemTab(QUICKBUFFER_TAB_ID)) {
             m_ActiveTabs.reactivateMostRecentTab();
         }

@@ -21,12 +21,15 @@
 #include <Commands/Editing/deletekeywordstemplate.h>
 #include <Commands/Base/icommandmanager.h>
 #include <Commands/Editing/modifyartworkscommand.h>
+#include <Commands/artworksupdatetemplate.h>
 
 namespace Models {
-    DeleteKeywordsViewModel::DeleteKeywordsViewModel(KeywordsPresets::IPresetsManager &presetsManager,
+    DeleteKeywordsViewModel::DeleteKeywordsViewModel(Services::IArtworksUpdater &artworksUpdater,
+                                                     KeywordsPresets::IPresetsManager &presetsManager,
                                                      QObject *parent):
         Models::ArtworksViewModel(parent),
         m_PresetsManager(presetsManager),
+        m_ArtworksUpdater(artworksUpdater),
         m_CaseSensitive(false)
     {
     }
@@ -73,7 +76,8 @@ namespace Models {
                             std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
                                 std::make_shared<DeleteKeywordsTemplate>(
                                 keywordsSet, m_CaseSensitive),
-                                std::make_shared<Commands::ClearActionModelTemplate>(*this)}));
+                                std::make_shared<Commands::ClearActionModelTemplate>(*this),
+                                std::make_shared<Commands::ArtworksSnapshotUpdateTemplate>(m_ArtworksUpdater)}));
         } else {
             using TemplatedSnapshotCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
             return std::make_shared<TemplatedSnapshotCommand>(

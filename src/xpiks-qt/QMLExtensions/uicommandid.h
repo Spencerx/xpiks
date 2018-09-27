@@ -34,6 +34,7 @@ namespace QMLExtensions {
             UpdateLogs,
             InitUserDictionary,
             AddToUserDictionary,
+            ActivateQuickBuffer,
             // ------ Selected -------
             SetupEditSelectedArtworks,
             EditSelectedArtworks,
@@ -49,6 +50,7 @@ namespace QMLExtensions {
             SetupCreatingArchives,
             SetupDeleteKeywordsInSelected,
             DeleteKeywordsInSelected,
+            UpdateSelected,
             // ------- Single -------
             ReviewSpellingCombined,
             ReviewSpellingSingle,

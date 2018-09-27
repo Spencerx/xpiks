@@ -45,6 +45,7 @@
 #include <QMLExtensions/uicommandlistener.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
+    // general
     m_Environment(environment),
     m_SecretsManager(),
     m_SettingsModel(environment),
@@ -53,22 +54,26 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_CommandManager(m_UndoRedoManager),
     m_SwitcherModel(environment),
     m_UICommandDispatcher(m_CommandManager),
+    // models
     m_PresetsModel(environment),
     m_FilteredPresetsModel(m_PresetsModel),
     m_KeywordsAutoCompleteModel(),
     m_CurrentEditableModel(),
+    // artworks
     m_RecentDirectorieModel(environment),
     m_RecentFileModel(environment),
     m_ArtworksRepository(m_RecentDirectorieModel),
     m_FilteredArtworksRepository(m_ArtworksRepository),
     m_ArtworksListModel(m_ArtworksRepository),
     m_ArtworksUpdateHub(m_ArtworksListModel),
-    m_CombinedArtworksModel(m_PresetsModel),
+    // editing
+    m_CombinedArtworksModel(m_ArtworksUpdateHub, m_PresetsModel),
     m_QuickBuffer(m_CurrentEditableModel, m_CommandManager),
     m_ReplaceModel(m_ColorsModel, m_CommandManager),
-    m_DeleteKeywordsModel(m_PresetsModel),
+    m_DeleteKeywordsModel(m_ArtworksUpdateHub, m_PresetsModel),
     m_ArtworkProxyModel(m_CommandManager, m_PresetsModel, m_ArtworksUpdateHub),
     m_DuplicatesModel(m_ColorsModel),
+    // services
     m_MaintenanceService(environment),
     m_AutoCompleteService(m_SettingsModel, m_KeywordsAutoCompleteModel),
     m_RequestsService(m_SettingsModel.getProxySettings()),
@@ -82,12 +87,14 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_UpdateService(environment, m_SettingsModel, m_SwitcherModel, m_MaintenanceService),
     m_TelemetryService(m_SwitcherModel, m_SettingsModel),
     m_EditingHub(m_SpellCheckService, m_WarningsService, m_MetadataIOService, m_SettingsModel),
+    // connectivity
     m_UploadInfoRepository(environment, m_SecretsManager),
     m_ZipArchiver(),
     m_SecretsStorage(new libxpks::microstocks::APISecretsStorage()),
     m_ApiClients(),
     m_FtpCoordinator(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel)),
     m_ArtworksUploader(environment, m_UploadInfoRepository, m_SettingsModel),
+    // other
     m_LanguagesModel(m_SettingsModel),
     m_UIManager(environment, m_ColorsModel, m_SettingsModel),
     m_UserDictionary(environment),
@@ -171,7 +178,7 @@ void XpiksApp::initialize() {
 
 void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("artworksListModel", &m_ArtworksListModel);
-    context->setContextProperty("artworkRepository", &m_FilteredArtworksRepository);
+    context->setContextProperty("artworksRepository", &m_FilteredArtworksRepository);
     context->setContextProperty("secretsManager", &m_SecretsManager);
     context->setContextProperty("undoRedoManager", &m_UndoRedoManager);
     context->setContextProperty("settingsModel", &m_SettingsModel);
@@ -740,7 +747,13 @@ void XpiksApp::registerUICommands() {
                     m_UserDictEditModel),
 
                     std::make_shared<Commands::UI::AddToUserDictionaryCommand>(
-                    m_UserDictionary)
+                    m_UserDictionary),
+
+                    std::make_shared<Commands::UI::UpdateSelectedArtworksCommand>(
+                    m_ArtworksListModel),
+
+                    std::make_shared<Commands::UI::ActivateQuickBufferCommand>(
+                    m_UIManager)
                 });
 }
 

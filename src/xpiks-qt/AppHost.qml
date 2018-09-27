@@ -413,7 +413,7 @@ Rectangle {
         property bool areActionsAllowed: depth <= 1
 
         initialItem: MainGrid {
-            componentParent: applicationWindow
+            componentParent: appHost.componentParent
         }
 
         delegate: StackViewDelegate {
