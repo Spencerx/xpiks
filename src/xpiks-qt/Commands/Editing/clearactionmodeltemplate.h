@@ -12,6 +12,7 @@
 #define CLEARACTIONMODELTEMPLATE_H
 
 #include <Commands/Base/icommandtemplate.h>
+#include <Commands/Base/icommand.h>
 
 namespace Models {
     class IActionModel;
@@ -30,6 +31,18 @@ namespace Commands {
         // IArtworksCommandTemplate interface
     public:
         virtual void execute(const Artworks::ArtworksSnapshot &) override;
+
+    private:
+        Models::IActionModel &m_Model;
+    };
+
+    class ClearActionModelCommand: public ICommand {
+    public:
+        ClearActionModelCommand(Models::IActionModel &model);
+
+        // ICommand interface
+    public:
+        virtual void execute() override;
 
     private:
         Models::IActionModel &m_Model;

@@ -35,6 +35,7 @@ namespace QMLExtensions {
             InitUserDictionary,
             AddToUserDictionary,
             ActivateQuickBuffer,
+            FixSpelling,
             // ------ Selected -------
             SetupEditSelectedArtworks,
             EditSelectedArtworks,

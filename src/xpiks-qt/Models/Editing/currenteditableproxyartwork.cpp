@@ -10,7 +10,7 @@
 
 #include "currenteditableproxyartwork.h"
 #include <Models/Editing/artworkproxybase.h>
-#include <Commands/Base/simplecommand.h>
+#include <Commands/Base/callbackcommand.h>
 #include <Commands/Base/emptycommand.h>
 
 namespace Models {
@@ -53,7 +53,7 @@ namespace Models {
 
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::appendPreset(KeywordsPresets::ID_t presetID,
                                                                                   KeywordsPresets::IPresetsManager &presetsManager) {
-        return std::make_shared<Commands::SimpleCommand>([this, presetID, &presetsManager]() {
+        return std::make_shared<Commands::CallbackCommand>([this, presetID, &presetsManager]() {
             this->m_ArtworkProxy.doAppendPreset(presetID, presetsManager);
         });
     }
@@ -61,14 +61,14 @@ namespace Models {
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::expandPreset(int keywordIndex,
                                                                                   KeywordsPresets::ID_t presetID,
                                                                                   KeywordsPresets::IPresetsManager &presetsManager) {
-        return std::make_shared<Commands::SimpleCommand>([this, keywordIndex, presetID, &presetsManager]() {
+        return std::make_shared<Commands::CallbackCommand>([this, keywordIndex, presetID, &presetsManager]() {
             this->m_ArtworkProxy.doExpandPreset(keywordIndex, presetID, presetsManager);
         });
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::removePreset(KeywordsPresets::ID_t presetID,
                                                                                   KeywordsPresets::IPresetsManager &presetsManager) {
-        return std::make_shared<Commands::SimpleCommand>([this, presetID, &presetsManager]() {
+        return std::make_shared<Commands::CallbackCommand>([this, presetID, &presetsManager]() {
             this->m_ArtworkProxy.doRemovePreset(presetID, presetsManager);
         });
     }
@@ -81,7 +81,7 @@ namespace Models {
                                                                                 const QString &description,
                                                                                 const QStringList &keywords) {
 
-        return std::make_shared<Commands::SimpleCommand>([this, title, description, keywords](){
+        return std::make_shared<Commands::CallbackCommand>([this, title, description, keywords](){
             if (!title.isEmpty()) {
                 this->m_ArtworkProxy.setTitle(title);
             }

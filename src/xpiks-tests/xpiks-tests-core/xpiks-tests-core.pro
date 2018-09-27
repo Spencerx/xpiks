@@ -198,7 +198,8 @@ SOURCES += main.cpp \
     common_tests.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.cpp \
     artworkproxy_tests.cpp \
-    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp
+    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp \
+    ../../xpiks-qt/Commands/Base/compositecommand.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -368,5 +369,6 @@ HEADERS += \
     ../../xpiks-qt/Services/SpellCheck/ispellsuggestionstarget.h \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.h \
     artworkproxy_tests.h \
-    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.h
+    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.h \
+    ../../xpiks-qt/Commands/Base/compositecommand.h
 

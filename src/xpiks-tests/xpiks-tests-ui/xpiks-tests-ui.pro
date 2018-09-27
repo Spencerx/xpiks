@@ -156,7 +156,8 @@ appveyor {
     ../../xpiks-qt/Helpers/uihelpers.cpp \
     ../../xpiks-qt/QMLExtensions/uicommandlistener.cpp \
     ../../xpiks-qt/Commands/Base/actionmodelcommand.cpp \
-    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp
+    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp \
+    ../../xpiks-qt/Commands/Base/compositecommand.cpp
 }
 
 include(../../xpiks-common/xpiks-common.pri)
@@ -481,7 +482,7 @@ HEADERS += \
     ../../xpiks-qt/Commands/Base/icommandmanager.h \
     ../../xpiks-qt/Commands/Base/icommandtemplate.h \
     ../../xpiks-qt/Commands/Base/iuicommandtemplate.h \
-    ../../xpiks-qt/Commands/Base/simplecommand.h \
+    ../../xpiks-qt/Commands/Base/callbackcommand.h \
     ../../xpiks-qt/Commands/Base/templatedcommand.h \
     ../../xpiks-qt/Commands/Base/templateduicommand.h \
     ../../xpiks-qt/Commands/commandmanager.h \
@@ -752,7 +753,8 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/uiaction.h \
     ../../xpiks-qt/QMLExtensions/uicommandlistener.h \
     ../../xpiks-qt/Commands/Base/actionmodelcommand.h \
-    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.h
+    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.h \
+    ../../xpiks-qt/Commands/Base/compositecommand.h
 
 RESOURCES += \
     xpiks-tests-ui.qrc

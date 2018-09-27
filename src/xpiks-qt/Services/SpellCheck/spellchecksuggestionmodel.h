@@ -19,6 +19,7 @@
 #include <functional>
 #include <Common/flags.h>
 #include <Artworks/artworkssnapshot.h>
+#include <Models/iactionmodel.h>
 
 namespace Models {
     class ArtworksListModel;
@@ -41,14 +42,15 @@ namespace SpellCheck {
     typedef std::vector<std::shared_ptr<SpellSuggestionsItem> > SuggestionsVector;
     typedef std::vector<std::shared_ptr<KeywordSpellSuggestions> > KeywordsSuggestionsVector;
 
-    class SpellCheckSuggestionModel: public QAbstractListModel
+    class SpellCheckSuggestionModel: public QAbstractListModel, public Models::IActionModel
     {
         Q_OBJECT
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)
         Q_PROPERTY(bool anythingSelected READ getAnythingSelected NOTIFY anythingSelectedChanged)
 
     public:
-        SpellCheckSuggestionModel(SpellCheckService &spellCheckerService);
+        SpellCheckSuggestionModel(Services::IArtworksUpdater &artworksUpdater,
+                                  SpellCheckService &spellCheckerService);
 
     public:
         enum KeywordSpellSuggestions_Roles {
@@ -61,10 +63,16 @@ namespace SpellCheck {
         int getArtworksCount() const;
         bool getAnythingSelected() const;
 
+        // IActionModel interface
+    public:
+        virtual std::shared_ptr<Commands::ICommand> getActionCommand(bool yesno) override;
+        virtual void resetModel() override;
+
+    public:
+        void submitCorrections() const;
+
     public:
         Q_INVOKABLE QObject *getSuggestionObject(int index) const;
-        Q_INVOKABLE void clearModel();
-        Q_INVOKABLE void submitCorrections() const;
         Q_INVOKABLE void resetAllSuggestions();
         Q_INVOKABLE void updateSelection() { emit anythingSelectedChanged(); }
 #if defined(UI_TESTS)
@@ -98,6 +106,7 @@ namespace SpellCheck {
         std::vector<std::shared_ptr<SpellSuggestionsItem> > m_SuggestionsList;
         std::shared_ptr<ISpellSuggestionsTarget> m_SpellSuggestionsTarget;
         SpellCheckService &m_SpellCheckService;
+        Services::IArtworksUpdater &m_ArtworksUpdater;
     };
 }
 

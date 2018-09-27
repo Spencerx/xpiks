@@ -400,14 +400,13 @@ void ArtworksListModelTests::deleteKeywordsEmitsModifiedTest() {
     MODIFIED_TEST_END_WAIT(1000);
 }
 
-
 void ArtworksListModelTests::deleteKeywordsUndoEmitsModifiedTest() {
     DECLARE_MODELS_AND_GENERATE(5, false);
 
     Services::ArtworksUpdateHub updater(artworksListModel);
     KeywordsPresets::PresetKeywordsModel presetsManager(environment);
     Models::DeleteKeywordsViewModel deleteKeywordsModel(updater, presetsManager);
-\
+
     deleteKeywordsModel.setArtworks(artworksListModel.createArtworksSnapshot());
     deleteKeywordsModel.appendKeywordToDelete("keyword1");
 

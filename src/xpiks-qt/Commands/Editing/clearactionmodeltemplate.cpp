@@ -22,4 +22,14 @@ namespace Commands {
         LOG_DEBUG << "#";
         m_Model.resetModel();
     }
+
+    ClearActionModelCommand::ClearActionModelCommand(Models::IActionModel &model):
+        m_Model(model)
+    {
+    }
+
+    void ClearActionModelCommand::execute() {
+        LOG_DEBUG << "#";
+        m_Model.resetModel();
+    }
 }

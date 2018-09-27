@@ -36,7 +36,6 @@ Item {
     Keys.onEscapePressed: closePopup()
 
     function closePopup() {
-        spellCheckSuggestionModel.clearModel()
         spellCheckSuggestionsDialog.destroy();
     }
 
@@ -260,7 +259,7 @@ Item {
                         isDefault: true
                         width: 100
                         onClicked: {
-                            spellCheckSuggestionModel.submitCorrections()
+                            dispatcher.dispatch(UICommand.FixSpelling, true)
                             closePopup()
                         }
                     }
@@ -268,7 +267,10 @@ Item {
                     StyledButton {
                         text: i18.n + qsTr("Cancel")
                         width: 80
-                        onClicked: closePopup()
+                        onClicked: {
+                            dispatcher.dispatch(UICommand.FixSpelling, false)
+                            closePopup()
+                        }
                     }
                 }
             }

@@ -5,6 +5,7 @@
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/flagsprovidermock.h"
 #include "Mocks/artworksupdatermock.h"
+#include "Mocks/artworksupdatermock.h"
 #include <Common/flags.h>
 #include <UndoRedo/undoredomanager.h>
 #include <Artworks/basicmetadatamodel.h>
@@ -20,7 +21,8 @@
     Mocks::CommandManagerMock commandManager(undoRedoManager); \
     Mocks::FlagsProviderMock<Common::WordAnalysisFlags> flagsProvider(Common::WordAnalysisFlags::All);\
     Mocks::SpellCheckServiceMock spellCheckService(environment, flagsProvider); \
-    SpellCheck::SpellCheckSuggestionModel suggestionModel(spellCheckService); \
+    Mocks::ArtworksUpdaterMock updater;\
+    SpellCheck::SpellCheckSuggestionModel suggestionModel(updater, spellCheckService); \
     SpellCheck::SpellCheckInfo spellCheckInfo; \
     Artworks::BasicMetadataModel basicModel(spellCheckInfo);
 

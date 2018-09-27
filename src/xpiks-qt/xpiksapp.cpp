@@ -104,7 +104,8 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_CsvExportModel(environment),
     m_MetadataReadingHub(m_MetadataIOService, m_ArtworksUpdateHub, m_EditingHub),
     m_MetadataIOCoordinator(m_MetadataReadingHub, m_SettingsModel, m_SwitcherModel, m_VideoCachingService),
-    m_SpellSuggestionModel(m_SpellCheckService),
+    m_SpellSuggestionModel(m_ArtworksUpdateHub, m_SpellCheckService),
+    // dependent
     m_FilteredArtworksListModel(m_ArtworksListModel, m_CommandManager, m_PresetsModel, m_SettingsModel),
     m_KeywordsSuggestor(m_SwitcherModel, m_SettingsModel, environment),
     m_PluginManager(environment, m_CommandManager, m_PresetsModel, m_DatabaseManager,
@@ -689,7 +690,10 @@ void XpiksApp::registerUICommands() {
                     m_CombinedArtworksModel, QMLExtensions::UICommandID::EditSelectedArtworks),
 
                     std::make_shared<Commands::ActionModelCommand>(
-                    m_DeleteKeywordsModel, QMLExtensions::UICommandID::DeleteKeywordsInSelected)
+                    m_DeleteKeywordsModel, QMLExtensions::UICommandID::DeleteKeywordsInSelected),
+
+                    std::make_shared<Commands::ActionModelCommand>(
+                    m_SpellSuggestionModel, QMLExtensions::UICommandID::FixSpelling)
                 });
 
     // IO
@@ -809,7 +813,7 @@ void XpiksApp::cleanupModels() {
     m_CsvExportModel.resetModel();
     m_ZipArchiver.resetModel();
     m_ArtworksUploader.resetModel();
-    m_SpellSuggestionModel.clearModel();
+    m_SpellSuggestionModel.resetModel();
     m_UserDictionary.clear();
     m_SessionManager.clearSession();
     m_MetadataIOCoordinator.clear();

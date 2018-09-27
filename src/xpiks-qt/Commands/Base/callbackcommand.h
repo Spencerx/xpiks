@@ -15,12 +15,12 @@
 #include <functional>
 
 namespace Commands {
-    class SimpleCommand: public ICommand
+    class CallbackCommand: public ICommand
     {
         using SimpleCallback = std::function<void()>;
 
     public:
-        SimpleCommand(const SimpleCallback &callback):
+        CallbackCommand(const SimpleCallback &callback):
             m_Callback(callback)
         { }
 

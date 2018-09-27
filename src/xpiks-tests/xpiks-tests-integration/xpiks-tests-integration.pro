@@ -268,7 +268,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Helpers/uihelpers.cpp \
     unavailablefilestest.cpp \
     ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp \
-    ../../xpiks-qt/Commands/Base/actionmodelcommand.cpp
+    ../../xpiks-qt/Commands/Base/actionmodelcommand.cpp \
+    ../../xpiks-qt/Commands/Base/compositecommand.cpp
 
 RESOURCES +=
 
@@ -351,7 +352,7 @@ HEADERS += \
     ../../xpiks-qt/Commands/Base/icommandmanager.h \
     ../../xpiks-qt/Commands/Base/icommandtemplate.h \
     ../../xpiks-qt/Commands/Base/iuicommandtemplate.h \
-    ../../xpiks-qt/Commands/Base/simplecommand.h \
+    ../../xpiks-qt/Commands/Base/callbackcommand.h \
     ../../xpiks-qt/Commands/Base/templatedcommand.h \
     ../../xpiks-qt/Commands/Base/templateduicommand.h \
     ../../xpiks-qt/Commands/commandmanager.h \
@@ -611,7 +612,8 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/uiaction.h \
     unavailablefilestest.h \
     ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.h \
-    ../../xpiks-qt/Commands/Base/actionmodelcommand.h
+    ../../xpiks-qt/Commands/Base/actionmodelcommand.h \
+    ../../xpiks-qt/Commands/Base/compositecommand.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

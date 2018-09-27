@@ -219,7 +219,8 @@ SOURCES += main.cpp \
     Helpers/uihelpers.cpp \
     QMLExtensions/uicommandlistener.cpp \
     Commands/Base/actionmodelcommand.cpp \
-    Commands/Editing/clearactionmodeltemplate.cpp
+    Commands/Editing/clearactionmodeltemplate.cpp \
+    Commands/Base/compositecommand.cpp
 
 RESOURCES += qml.qrc
 
@@ -499,7 +500,6 @@ HEADERS += \
     Models/Editing/currenteditableproxyartwork.h \
     Models/Editing/icurrenteditable.h \
     Commands/Editing/deletekeywordstemplate.h \
-    Commands/Base/simplecommand.h \
     Models/Editing/currenteditablemodel.h \
     Models/Editing/quickbuffer.h \
     Commands/Editing/findandreplacetemplate.h \
@@ -539,7 +539,9 @@ HEADERS += \
     QMLExtensions/uicommandlistener.h \
     Models/iactionmodel.h \
     Commands/Base/actionmodelcommand.h \
-    Commands/Editing/clearactionmodeltemplate.h
+    Commands/Editing/clearactionmodeltemplate.h \
+    Commands/Base/compositecommand.h \
+    Commands/Base/callbackcommand.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

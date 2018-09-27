@@ -21,12 +21,12 @@ namespace Commands {
     class CompositeCommandTemplate: public ICommandTemplate<T>
     {
     public:
-        CompositeCommandTemplate(std::initializer_list<std::shared_ptr<ICommandTemplate<T>> > list):
+        CompositeCommandTemplate(std::initializer_list<std::shared_ptr<ICommandTemplate<T>>> list):
             m_Templates(list)
         {
         }
 
-        CompositeCommandTemplate(std::vector<std::shared_ptr<ICommandTemplate<T>> > &templates):
+        CompositeCommandTemplate(std::vector<std::shared_ptr<ICommandTemplate<T>>> &templates):
             m_Templates(std::move(templates))
         {
         }

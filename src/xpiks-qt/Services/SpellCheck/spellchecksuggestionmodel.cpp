@@ -12,11 +12,15 @@
 #include <QQmlEngine>
 #include <QHash>
 #include <QString>
+#include <functional>
 #include "spellsuggestionsitem.h"
 #include "ispellsuggestionstarget.h"
 #include "spellcheckservice.h"
 #include <Common/flags.h>
 #include <Common/logging.h>
+#include <Commands/Base/callbackcommand.h>
+#include <Commands/Base/compositecommand.h>
+#include <Commands/Editing/clearactionmodeltemplate.h>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/basickeywordsmodel.h>
 #include <Services/iartworksupdater.h>
@@ -99,9 +103,11 @@ namespace SpellCheck {
         return candidatesToRemove;
     }
 
-    SpellCheckSuggestionModel::SpellCheckSuggestionModel(SpellCheckService &spellCheckerService):
+    SpellCheckSuggestionModel::SpellCheckSuggestionModel(Services::IArtworksUpdater &artworksUpdater,
+                                                         SpellCheckService &spellCheckerService):
         QAbstractListModel(),
-        m_SpellCheckService(spellCheckerService)
+        m_SpellCheckService(spellCheckerService),
+        m_ArtworksUpdater(artworksUpdater)
     {
     }
 
@@ -122,18 +128,20 @@ namespace SpellCheck {
         return anySelected;
     }
 
-    QObject *SpellCheckSuggestionModel::getSuggestionObject(int index) const {
-        SpellSuggestionsItem *item = NULL;
-
-        if (0 <= index && index < (int)m_SuggestionsList.size()) {
-            item = m_SuggestionsList.at(index).get();
-            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+    std::shared_ptr<Commands::ICommand> SpellCheckSuggestionModel::getActionCommand(bool yesno) {
+        if (yesno) {
+            return std::make_shared<Commands::CompositeCommand>(
+                        std::initializer_list<std::shared_ptr<Commands::ICommand>>{
+                            std::make_shared<Commands::CallbackCommand>(
+                            std::bind(&SpellCheckSuggestionModel::submitCorrections, this)),
+                            std::make_shared<Commands::ClearActionModelCommand>(*this)});
+        } else {
+            return std::make_shared<Commands::ClearActionModelCommand>(*this);
         }
-
-        return item;
     }
 
-    void SpellCheckSuggestionModel::clearModel() {
+    void SpellCheckSuggestionModel::resetModel() {
+        LOG_DEBUG << "#";
         beginResetModel();
         {
             m_SuggestionsList.clear();
@@ -168,6 +176,17 @@ namespace SpellCheck {
         if (anyChanged) {
             m_SpellSuggestionsTarget->afterReplaceCallback();
         }
+    }
+
+    QObject *SpellCheckSuggestionModel::getSuggestionObject(int index) const {
+        SpellSuggestionsItem *item = NULL;
+
+        if (0 <= index && index < (int)m_SuggestionsList.size()) {
+            item = m_SuggestionsList.at(index).get();
+            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        }
+
+        return item;
     }
 
     void SpellCheckSuggestionModel::resetAllSuggestions() {
