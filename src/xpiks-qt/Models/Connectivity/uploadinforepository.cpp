@@ -179,7 +179,7 @@ namespace Models {
                          this, &UploadInfoRepository::onBackupRequired);
 
         QObject::connect(&m_StocksFtpList, &Microstocks::StocksFtpListModel::stocksListUpdated,
-                         this, &UploadInfoRepository::stocksListUpdated);
+                         this, &UploadInfoRepository::onStocksListUpdated);
 
         QObject::connect(&m_StocksCompletionSource, &AutoComplete::StringsAutoCompleteModel::completionAccepted,
                          this, &UploadInfoRepository::onCompletionSelected);
@@ -573,11 +573,29 @@ namespace Models {
         saveUploadInfos();
     }
 
-    void UploadInfoRepository::stocksListUpdated() {
+    void UploadInfoRepository::onStocksListUpdated() {
         LOG_DEBUG << "#";
 
         QStringList stocks = m_StocksFtpList.getStockNamesList();
         m_StocksCompletionSource.setStrings(stocks);
+
+        for (auto &item: m_UploadInfos) {
+            auto ftpOptions = m_StocksFtpList.findFtpOptions(item->getTitle());
+            if (ftpOptions != nullptr) {
+                if (ftpOptions->m_FtpAddress.contains(item->getHost()) ||
+                        item->getHost().contains(ftpOptions->m_FtpAddress)) {
+                    LOG_INFO << "Found match. Updating" << item->getTitle() << "data...";
+                    item->setImagesDir(ftpOptions->m_ImagesDir);
+                    item->setVectorsDir(ftpOptions->m_VectorsDir);
+                    item->setVideosDir(ftpOptions->m_VideosDir);
+                    item->setZipBeforeUpload(ftpOptions->m_ZipVector);
+                } else {
+                    LOG_WARNING << "Match found, but address is different:" << item->getHost();
+                }
+            }
+        }
+
+        justChanged();
     }
 
     bool UploadInfoRepository::saveUploadInfos() {

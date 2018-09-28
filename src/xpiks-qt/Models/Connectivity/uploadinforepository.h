@@ -139,7 +139,7 @@ namespace Models {
 
     private slots:
         void onBackupRequired();
-        void stocksListUpdated();
+        void onStocksListUpdated();
 
     protected:
         bool saveUploadInfos();
