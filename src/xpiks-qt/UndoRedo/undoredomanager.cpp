@@ -61,8 +61,7 @@ std::shared_ptr<Commands::ICommand> UndoRedo::UndoRedoManager::popLastItem(bool 
 
     m_Mutex.lock();
 
-    bool anyItem = false;
-    anyItem = !m_HistoryStack.empty();
+    bool anyItem = !m_HistoryStack.empty();
 
     if (anyItem) {
         result = std::move(m_HistoryStack.top());
