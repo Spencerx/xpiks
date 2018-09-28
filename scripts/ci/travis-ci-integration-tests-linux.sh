@@ -17,13 +17,7 @@ echo "Building Integration tests... Done"
 
 set -x
 
-#sysctl -w kern.corefile=core.%P
-
-if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
-elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../../libs/debug/
-fi
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
 
 ./xpiks-tests-integration > tests.log
 exitcode=$?
@@ -31,12 +25,10 @@ exitcode=$?
 if [ $exitcode != 0 ]; then
     cat tests.log | grep -v " debug "
 
-    if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    for i in $(find ./ -maxdepth 1 -name 'core*' -print); do
         gdb $(pwd)/xpiks-tests-integration core* -ex "thread apply all bt" -ex "set pagination 0" -batch
-    elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-        lldb -c /cores/core.xpiks* --batch -o 'thread backtrace all' -o 'quit'
-    fi
-
+    done
+    
     exit $exitcode
 fi
 
@@ -47,12 +39,10 @@ if [ $exitcode != 0 ]; then
     # travis doesn't like long logs
     cat tests_in_memory.log | grep -v " debug "
 
-    if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    for i in $(find ./ -maxdepth 1 -name 'core*' -print); do
         gdb $(pwd)/xpiks-tests-integration core* -ex "thread apply all bt" -ex "set pagination 0" -batch
-    elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-        lldb -c /cores/core.xpiks* --batch -o 'thread backtrace all' -o 'quit'
-    fi
-
+    done
+    
     exit $exitcode
 fi
 
