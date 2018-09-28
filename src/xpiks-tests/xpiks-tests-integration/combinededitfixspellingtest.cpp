@@ -47,7 +47,7 @@ int CombinedEditFixSpellingTest::doTest() {
     VERIFY(rowCount > 0, "Spell suggestions are set");
 
     VERIFY(m_TestsApp.selectSpellSuggestions(0), "Cannot select spell suggestions");
-    m_TestsApp.getSpellSuggestionsModel().submitCorrections();
+    m_TestsApp.getSpellSuggestionsModel().getActionCommand(true)->execute();
 
     sleepWaitUntil(5, [&]() { return !combinedKeywordsModel->hasDescriptionSpellError(); });
     VERIFY(!combinedKeywordsModel->hasDescriptionSpellError(), "Description spell error was not fixed after replace");

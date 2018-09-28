@@ -58,7 +58,7 @@ int SpellCheckMultireplaceTest::doTest() {
         suggestionsItem->setReplacementIndex(0);
     }
 
-    spellSuggestor.submitCorrections();
+    spellSuggestor.getActionCommand(true)->execute();
 
     VERIFY(waiter.wait(5), "Timeout for waiting for corrected spellcheck results");
 

@@ -239,9 +239,12 @@ namespace SpellCheck {
     std::vector<std::shared_ptr<KeywordSpellSuggestions>> CombinedSpellSuggestions::getKeywordsDuplicateSuggestions() const {
         std::vector<std::shared_ptr<KeywordSpellSuggestions>> keywordsSuggestions;
 
+        QStringList suggestions = QStringList() << this->getReplacement();
         for (auto &item: m_SpellSuggestions) {
             std::shared_ptr<KeywordSpellSuggestions> keywordsItem = std::dynamic_pointer_cast<KeywordSpellSuggestions>(item);
             if (keywordsItem && keywordsItem->isPotentialDuplicate()) {
+                keywordsItem->setSuggestions(suggestions);
+                keywordsItem->setReplacementIndex(0);
                 keywordsSuggestions.push_back(keywordsItem);
             }
         }

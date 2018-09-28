@@ -45,7 +45,7 @@ int FixSpellingMarksModifiedTest::doTest() {
     VERIFY(m_TestsApp.getSpellSuggestionsModel().rowCount() > 0, "Spell suggestions are not set");
     VERIFY(m_TestsApp.selectSpellSuggestions(0), "Failed to select spell suggestions");
 
-    m_TestsApp.getSpellSuggestionsModel().submitCorrections();
+    m_TestsApp.getSpellSuggestionsModel().getActionCommand(true)->execute();
 
     VERIFY(waiter.wait(5), "Timeout for waiting for corrected spellcheck results");
 

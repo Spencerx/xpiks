@@ -12,6 +12,7 @@ private slots:
     void noReplacementsSelectedTest();
     void fixAndRemoveDuplicatesTest();
     void fixAndRemoveDuplicatesCombinedTest();
+    void fixAndRemoveDuplicatesCombindInArtworksTest();
     void multiReplaceWithCorrectAllTest();
     void replaceWithCorrectDescriptionTest();
     void replaceWithCorrectTitleTest();

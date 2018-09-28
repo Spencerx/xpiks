@@ -5,8 +5,10 @@
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/flagsprovidermock.h"
 #include "Mocks/artworksupdatermock.h"
-#include "Mocks/artworksupdatermock.h"
+#include "Mocks/artworkslistmodelmock.h"
+#include "Mocks/artworksrepositorymock.h"
 #include <Common/flags.h>
+#include <Models/Session/recentdirectoriesmodel.h>
 #include <UndoRedo/undoredomanager.h>
 #include <Artworks/basicmetadatamodel.h>
 #include <Artworks/basicmodelsource.h>
@@ -125,6 +127,43 @@ void FixSpellingTests::fixAndRemoveDuplicatesCombinedTest() {
 
     QCOMPARE(basicModel.getKeywordsCount(), 2);
     QCOMPARE(spellCheckSpy.count(), 1);
+}
+
+void FixSpellingTests::fixAndRemoveDuplicatesCombindInArtworksTest() {
+    INIT_FIX_SPELLING_TEST;
+
+    Models::RecentDirectoriesModel recentDirectories(environment);
+    recentDirectories.initialize();
+    Mocks::ArtworksRepositoryMock artworksRepository(recentDirectories);
+    Mocks::ArtworksListModelMock artworksListModel(artworksRepository);
+    artworksListModel.generateAndAddArtworks(2, false);
+    Mocks::ArtworksUpdaterMock updater;
+
+    artworksListModel.foreachArtwork([](int, const std::shared_ptr<Mocks::ArtworkMetadataMock> &artwork) {
+        for (auto &keyword: artwork->getBasicMetadataModel().getRawKeywords()) {
+            keyword.m_IsCorrect = false;
+        }
+        QCOMPARE(artwork->getKeywords().size(), 3);
+    });
+
+    auto snapshot = artworksListModel.createArtworksSnapshot();
+    suggestionModel.setupModel(
+                std::make_shared<SpellCheck::ArtworksSuggestionTarget>(
+                    snapshot,
+                    spellCheckService,
+                    updater),
+                Common::SpellCheckFlags::All);
+
+    QCOMPARE(suggestionModel.rowCount(), 3);
+    for (int i = 0; i < suggestionModel.rowCount(); ++i) {
+        suggestionModel.getItem(i)->setReplacementIndex(0);
+    }
+
+    suggestionModel.getActionCommand(true)->execute();
+
+    artworksListModel.foreachArtwork([](int, const std::shared_ptr<Mocks::ArtworkMetadataMock> &artwork) {
+        QCOMPARE(artwork->getKeywords().size(), 1);
+    });
 }
 
 void FixSpellingTests::multiReplaceWithCorrectAllTest() {
