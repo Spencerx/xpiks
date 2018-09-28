@@ -21,9 +21,12 @@ fi
 exitcode=$?
 
 if [ $exitcode != 0 ]; then
-    for i in $(find ./ -maxdepth 1 -name 'core*' -print); do
-        gdb $(pwd)/xpiks-tests-core core* -ex "thread apply all bt" -ex "set pagination 0" -batch
-    done
+
+    if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+        gdb $(pwd)/xpiks-tests-integration core* -ex "thread apply all bt" -ex "set pagination 0" -batch
+    elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+        lldb -c /cores/core.xpiks* --batch -o 'thread backtrace all' -o 'quit'
+    fi
 
     exit $exitcode
 fi

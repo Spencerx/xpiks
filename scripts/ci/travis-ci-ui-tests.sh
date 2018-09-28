@@ -18,15 +18,17 @@ elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
     export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../../libs/debug/
 fi
 
-./xpiks-tests-ui > uitests_in_memory.log
+./xpiks-tests-ui > uitests.log
 exitcode=$?
 
 if [ $exitcode != 0 ]; then
-    cat uitests_in_memory.log
-    
-    for i in $(find ./ -maxdepth 1 -name 'core*' -print); do
-        gdb $(pwd)/xpiks-tests-ui core* -ex "thread apply all bt" -ex "set pagination 0" -batch
-    done
+    cat uitests.log
+
+    if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+        gdb $(pwd)/xpiks-tests-integration core* -ex "thread apply all bt" -ex "set pagination 0" -batch
+    elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+        lldb -c /cores/core.xpiks* --batch -o 'thread backtrace all' -o 'quit'
+    fi
 
     exit $exitcode
 fi
