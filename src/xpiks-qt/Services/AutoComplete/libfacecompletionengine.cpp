@@ -13,7 +13,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <string>
-#include <src/libfaceapi.hpp>
+#include <include/libfaceapi.hpp>
 #include <include/types.hpp>
 #include <Common/logging.h>
 #include <Common/defines.h>
