@@ -66,7 +66,7 @@ Rectangle {
         dispatcher.dispatch(UICommand.ReviewDuplicatesCombined, {})
     }
 
-    function openSuggestionView() {
+    function suggestKeywords() {
         var callbackObject = {
             promoteKeywords: function(keywords) {
                 combinedArtworks.pasteKeywords(keywords)
@@ -213,7 +213,7 @@ Rectangle {
         MenuItem {
             text: i18.n + qsTr("Suggest keywords")
             onTriggered: {
-                openSuggestionView()
+                suggestKeywords()
             }
         }
 
@@ -1118,7 +1118,7 @@ Rectangle {
                             visible: canBeShown
                             enabled: canBeShown
                             onClicked: {
-                                openSuggestionView()
+                                suggestKeywords()
                             }
                         }
 

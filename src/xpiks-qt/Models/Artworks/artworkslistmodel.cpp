@@ -805,6 +805,7 @@ namespace Models {
                                   std::make_shared<ArtworksUpdateTemplate>(
                                   *this, getStandardUpdateRoles())}));
         } else {
+            LOG_WARNING << "Artwork at" << artworkIndex << "not found";
             command = std::make_shared<Commands::EmptyCommand>();
         }
         return command;

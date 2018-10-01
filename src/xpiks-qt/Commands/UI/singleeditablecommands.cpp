@@ -145,9 +145,17 @@ namespace Commands {
 
         void InitSuggestionForArtworkCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
-            int index = Helpers::convertToInt(value, -1);
+            int proxyIndex = -1;
+            if (value.isValid()) {
+                auto map = value.toMap();
+                auto indexValue = map.value("index", QVariant(0));
+                if (indexValue.type() == QVariant::Int) {
+                    proxyIndex = indexValue.toInt();
+                }
+            }
+
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;
-            if (m_Source.tryGetArtwork(index, artwork)) {
+            if (m_Source.tryGetArtwork(proxyIndex, artwork)) {
                 m_Target.setExistingKeywords(artwork->getKeywords().toSet());
             }
         }

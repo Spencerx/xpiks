@@ -8,8 +8,8 @@ import "TestUtils.js" as TestUtils
 
 Item {
     id: root
-    width: 800
-    height: 600
+    width: 1200
+    height: 800
     property int openedDialogsCount: 0
 
     function onDialogClosed() {
@@ -46,6 +46,7 @@ Item {
     }
 
     Loader {
+        id: listenersLoader
         asynchronous: true
         focus: false
 
@@ -59,13 +60,23 @@ Item {
                                         {})
                 }
             }
+
+            UICommandListener {
+                commandDispatcher: dispatcher
+                commandIDs: [ UICommand.InitSuggestionArtwork ]
+                onDispatched: {
+                    Common.launchDialog("Dialogs/KeywordsSuggestion.qml",
+                                        root,
+                                        {callbackObject: value.callbackObject});
+                }
+            }
         }
     }
 
     TestCase {
         id: testCase
         name: "MainGrid"
-        when: windowShown && (loader.status == Loader.Ready)
+        when: windowShown && (loader.status == Loader.Ready) && (listenersLoader.status == Loader.Ready)
         property var mainGrid: loader.item
         property var artworksHost
         property var workflowHost
@@ -92,9 +103,11 @@ Item {
         }
 
         function getDelegate(index) {
-            return TestUtils.getDelegateInstanceAt(artworksHost.contentItem,
-                                                   "artworkDelegate",
-                                                   index)
+            var artworkDelegate = TestUtils.getDelegateInstanceAt(artworksHost.contentItem,
+                                                                  "artworkDelegate",
+                                                                  index)
+            artworksHost.positionViewAtIndex(index, GridView.Visible)
+            return artworkDelegate
         }
 
         function test_addKeywordBasic() {
@@ -536,6 +549,58 @@ Item {
             dispatcher.dispatch(UICommand.AddToUserDictionary, testKeyword)
 
             tryCompare(keywordWrapper, "hasSpellCheckError", false, 2000)
+        }
+
+        function test_SuggestLocalKeywords() {
+            var artworkDelegate = getDelegate(2)
+            mainGrid.suggestKeywords(2)
+
+            wait(TestsHost.normalSleepTime)
+
+            var suggestKeywordsDialog = findChild(root, "keywordsSuggestionComponent")
+            var searchInput = findChild(suggestKeywordsDialog, "queryTextInput")
+
+            // setupSearch() from tst_KeywordsSuggestion.qml
+            searchInput.forceActiveFocus()
+            keyClick(Qt.Key_V)
+            keyClick(Qt.Key_E)
+            keyClick(Qt.Key_C)
+            keyClick(Qt.Key_T)
+            keyClick(Qt.Key_O)
+            keyClick(Qt.Key_R)
+
+            suggestKeywordsDialog.keywordsSuggestor.selectedSourceIndex = 3
+            // --
+
+            var searchButton = findChild(suggestKeywordsDialog, "searchButton")
+            var suggestionsRepeater = findChild(suggestKeywordsDialog, "suggestionsRepeater")
+
+            mouseClick(searchButton)
+            wait(TestsHost.smallSleepTime)
+            tryCompare(suggestionsRepeater, "count", 3, 3000)
+
+            mouseClick(suggestionsRepeater.itemAt(0))
+            mouseClick(suggestionsRepeater.itemAt(1))
+            mouseClick(suggestionsRepeater.itemAt(2))
+            wait(TestsHost.normalSleepTime)
+
+            tryCompare(suggestKeywordsDialog.keywordsSuggestor, "suggestedKeywordsCount", 3, 2000)
+            compare(suggestKeywordsDialog.keywordsSuggestor.getSuggestedKeywords().sort(),
+                    ["graphic", "line", "vector"])
+
+            var addSuggestedButton = findChild(suggestKeywordsDialog, "addSuggestedButton")
+            mouseClick(addSuggestedButton)
+
+            var closeButton = findChild(suggestKeywordsDialog, "closeButton")
+            mouseClick(closeButton)
+
+            wait(TestsHost.normalSleepTime)
+
+            var keywordsString = artworkDelegate.delegateModel.keywordsstring
+            verify(keywordsString.indexOf("graphic", 0) !== -1)
+            verify(keywordsString.indexOf("line", 0) !== -1)
+            verify(keywordsString.indexOf("vector", 0) !== -1)
+            verify(keywordsString.indexOf("xpiks", 0) === -1)
         }
 
         /*function test_doubleClickArtwork() {

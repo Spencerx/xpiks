@@ -39,7 +39,10 @@ Item {
             }
         }
 
-        dispatcher.dispatch(UICommand.InitSuggestionArtwork, proxyIndex)
+        dispatcher.dispatch(UICommand.InitSuggestionArtwork, {
+                                "callbackObject": callbackObject,
+                                "index": proxyIndex
+                            })
     }
 
     function fixSpelling(proxyIndex) {

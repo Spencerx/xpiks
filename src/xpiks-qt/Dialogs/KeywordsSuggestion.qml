@@ -599,6 +599,7 @@ Item {
 
                     StyledButton {
                         width: 100
+                        objectName: "closeButton"
                         text: i18.n + qsTr("Close")
                         onClicked: closePopup()
                     }
@@ -610,6 +611,7 @@ Item {
                     StyledButton {
                         id: addKeywordsButton
                         isDefault: true
+                        objectName: "addSuggestedButton"
                         text: i18.n + qsTr("Add suggested")
                         enabled: !keywordsSuggestor.isInProgress && (keywordsSuggestor.suggestedKeywordsCount > 0)
                         width: 150

@@ -1104,9 +1104,14 @@ ApplicationWindow {
             UICommand.InitSuggestionCombined,
             UICommand.InitSuggestionSingle]
         onDispatched: {
+            var callback = value
+            if (commandID == UICommand.InitSuggestionArtwork) {
+                callback = value.callbackObject
+            }
+
             Common.launchDialog("Dialogs/KeywordsSuggestion.qml",
                                 applicationWindow,
-                                {callbackObject: value});
+                                {callbackObject: callback});
         }
     }
 
