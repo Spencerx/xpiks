@@ -27,16 +27,15 @@ namespace Models {
         virtual ~ICurrentEditable() { }
 
         virtual Common::ID_t getItemID() = 0;
-
         virtual QString getTitle() = 0;
         virtual QString getDescription() = 0;
         virtual QStringList getKeywords() = 0;
-
-        virtual void setTitle(const QString &title) = 0;
-        virtual void setDescription(const QString &description) = 0;
-        virtual void setKeywords(const QStringList &keywords) = 0;
-
         virtual bool hasKeywords(const QStringList &keywordsList) = 0;
+
+        virtual std::shared_ptr<Commands::ICommand> setTitle(const QString &title) = 0;
+        virtual std::shared_ptr<Commands::ICommand> setDescription(const QString &description) = 0;
+        virtual std::shared_ptr<Commands::ICommand> setKeywords(const QStringList &keywords) = 0;
+        virtual std::shared_ptr<Commands::ICommand> appendKeywords(const QStringList &keywords) = 0;
 
         virtual std::shared_ptr<Commands::ICommand> appendPreset(KeywordsPresets::ID_t presetID,
                                                                  KeywordsPresets::IPresetsManager &presetsManager) = 0;

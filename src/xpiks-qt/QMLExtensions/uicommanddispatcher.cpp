@@ -31,7 +31,7 @@ namespace QMLExtensions {
         {
             QMutexLocker locker(&m_Mutex);
             Q_UNUSED(locker);
-            m_ActionsQueue.push_back({commandID, value});
+            m_ActionsQueue.emplace_back(std::make_shared<UIAction>(commandID, value.toVariant()));
         }
 
         emit actionsAvailable();
@@ -58,10 +58,10 @@ namespace QMLExtensions {
         return result;
     }
 
-#if defined(INTEGRATION_TESTS)
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     void UICommandDispatcher::dispatchCommand(int commandID, const QVariant &value) {
         LOG_DEBUG << "#";
-        processAction(commandID, value);
+        processAction(std::make_shared<UIAction>(commandID, value));
     }
 #endif
 
@@ -79,6 +79,13 @@ namespace QMLExtensions {
         m_CommandsMap[commandID] = command;
     }
 
+    void UICommandDispatcher::registerMiddlware(std::shared_ptr<IUICommandMiddlware> const &middlware) {
+        Q_ASSERT(middlware != nullptr);
+        if (middlware != nullptr) {
+            m_Middlwares.push_back(middlware);
+        }
+    }
+
     void UICommandDispatcher::onActionsAvailable() {
         LOG_DEBUG << "#";
         decltype(m_ActionsQueue) actions;
@@ -89,18 +96,26 @@ namespace QMLExtensions {
         }
 
         for (auto &action: actions) {
-            processAction(action.m_CommandID, action.m_Value.toVariant());
-            emit dispatched(action.m_CommandID, action.m_Value);
+            auto processedAction = processAction(action);
+            emit dispatched(processedAction->m_CommandID, processedAction->m_Value);
         }
     }
 
-    void UICommandDispatcher::processAction(int commandID, QVariant const &value) {
-        LOG_INFO << commandID << value.toString();
+    std::shared_ptr<UIAction> UICommandDispatcher::processAction(const std::shared_ptr<UIAction> &action) {
+        LOG_INFO << action->m_CommandID << action->m_Value.toString();
 
-        auto it = m_CommandsMap.find(commandID);
+        std::shared_ptr<UIAction> actionToProcess = action;
+        for (auto &middlware: m_Middlwares) {
+            actionToProcess = middlware->process(actionToProcess);
+        }
+
+        auto it = m_CommandsMap.find(actionToProcess->m_CommandID);
+        Q_ASSERT(it != m_CommandsMap.end());
         if (it != m_CommandsMap.end()) {
             m_CommandManager.processCommand(
-                        std::make_shared<Commands::TemplatedUICommand>(value, it->second));
+                        std::make_shared<Commands::TemplatedUICommand>(actionToProcess->m_Value, it->second));
         }
+
+        return actionToProcess;
     }
 }

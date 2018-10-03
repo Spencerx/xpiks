@@ -180,9 +180,7 @@ namespace Models {
         std::shared_ptr<Commands::ICommand> removeLastKeyword(int artworkIndex);
         std::shared_ptr<Commands::ICommand> appendKeyword(int artworkIndex, const QString &keyword);
         std::shared_ptr<Commands::ICommand> pasteKeywords(int artworkIndex, const QStringList &keywords);
-        std::shared_ptr<Commands::ICommand> addSuggestedKeywords(int artworkIndex, const QStringList &keywords);
         std::shared_ptr<Commands::ICommand> editKeyword(int artworkIndex, int keywordIndex, const QString &replacement);
-        std::shared_ptr<Commands::ICommand> plainTextEdit(int artworkIndex, const QString &rawKeywords, bool spaceIsSeparator=false);
         std::shared_ptr<Commands::ICommand> expandPreset(int artworkIndex, int keywordIndex,
                                                          unsigned int presetID, KeywordsPresets::IPresetsManager &presetsManager);
         std::shared_ptr<Commands::ICommand> expandLastAsPreset(int artworkIndex,

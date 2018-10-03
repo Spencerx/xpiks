@@ -97,6 +97,8 @@ Item {
         property var artworkEditView: loader.item
 
         function initTestCase() {
+            artworkEditView.artworkProxy.setupModel()
+
             titleEdit = findChild(artworkEditView, "titleTextInput")
             descriptionEdit = findChild(artworkEditView, "descriptionTextInput")
             keywordsEdit = findChild(artworkEditView, "nextTagTextInput")
@@ -499,7 +501,7 @@ Item {
             var backButton = findChild(artworkEditView, "backButton")
             mouseClick(backButton)
             verify(!artworkEditView.artworkProxy.hasModel())
-            dispatcher.dispatch(UICommand.SetupArtworkEdit, 0)
+            dispatcher.dispatch(UICommand.SetupProxyArtworkEdit, 0)
             wait(TestsHost.normalSleepTime)
         }
 

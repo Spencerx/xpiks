@@ -29,7 +29,7 @@ Rectangle {
     property variant componentParent
     property var autoCompleteBox
 
-    property var artworkProxy: dispatcher.getCommandTarget(UICommand.SetupArtworkEdit)
+    property var artworkProxy: dispatcher.getCommandTarget(UICommand.SetupProxyArtworkEdit)
     property var keywordsModel: artworkProxy.getBasicModelObject()
     property bool wasLeftSideCollapsed
     property bool listViewEnabled: true
@@ -53,7 +53,7 @@ Rectangle {
         closeAutoComplete()
         flv.submitCurrentKeyword()
 
-        dispatcher.dispatch(UICommand.SetupArtworkEdit, itemIndex)
+        dispatcher.dispatch(UICommand.SetupProxyArtworkEdit, itemIndex)
     }
 
     function closePopup() {
@@ -106,7 +106,9 @@ Rectangle {
     function editInPlainText() {
         var callbackObject = {
             onSuccess: function(text, spaceIsSeparator) {
-                artworkProxy.plainTextEdit(text, spaceIsSeparator)
+                dispatcher.dispatch(UICommand.PlainTextEdit, {
+                                        text: text,
+                                        spaceIsSeparator: spaceIsSeparator})
             },
             onClose: function() {
                 flv.activateEdit()
@@ -301,7 +303,7 @@ Rectangle {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.SetupArtworkEdit]
+        commandIDs: [UICommand.SetupProxyArtworkEdit]
         onDispatched: {
             console.log("# [EditArtwork] dispatched")
             artworkEditComponent.keywordsModel = artworkProxy.getBasicModelObject()

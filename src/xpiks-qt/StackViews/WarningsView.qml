@@ -27,6 +27,7 @@ Rectangle {
     property bool isRestricted: false
 
     Stack.onStatusChanged: {
+        console.log("WarningsView StackView status changed")
         if (Stack.status == Stack.Active) {
             warningsModel.processPendingUpdates()
         }
@@ -223,7 +224,8 @@ Rectangle {
                     tooltip: i18.n + qsTr("Edit")
                     iconWidth: 33
                     iconHeight: 33
-                    onClicked: dispatcher.dispatch(UICommand.SetupArtworkEdit, imageWrapper.delegateIndex)
+                    onClicked: dispatcher.dispatch(UICommand.SetupArtworkEdit,
+                                                   warningsModel.getOriginalIndex(imageWrapper.delegateIndex))
                 }
             }
         }

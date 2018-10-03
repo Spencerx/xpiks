@@ -98,6 +98,12 @@ namespace Models {
         return row;
     }
 
+    int FilteredArtworksListModel::getProxyIndex(int originalIndex) const {
+        QModelIndex index = mapFromSource(m_ArtworksListModel.index(originalIndex, 0));
+        int row = index.row();
+        return row;
+    }
+
     QObject *FilteredArtworksListModel::getArtworkObject(int proxyIndex) {
         int originalIndex = getOriginalIndex(proxyIndex);
         QObject *item = m_ArtworksListModel.getArtworkObject(originalIndex);
@@ -305,24 +311,10 @@ namespace Models {
         m_CommandManager.processCommand(command);
     }
 
-    void FilteredArtworksListModel::addSuggestedKeywords(int proxyIndex, const QStringList &keywords) {
-        LOG_INFO << "proxyIndex:" << proxyIndex;
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.addSuggestedKeywords(originalIndex, keywords);
-        m_CommandManager.processCommand(command);
-    }
-
     void FilteredArtworksListModel::editKeyword(int proxyIndex, int keywordIndex, const QString &replacement) {
         LOG_INFO << "proxyIndex:" << proxyIndex;
         int originalIndex = getOriginalIndex(proxyIndex);
         auto command = m_ArtworksListModel.editKeyword(originalIndex, keywordIndex, replacement);
-        m_CommandManager.processCommand(command);
-    }
-
-    void FilteredArtworksListModel::plainTextEdit(int proxyIndex, const QString &rawKeywords, bool spaceIsSeparator) {
-        LOG_INFO << "proxyIndex:" << proxyIndex;
-        int originalIndex = getOriginalIndex(proxyIndex);
-        auto command = m_ArtworksListModel.plainTextEdit(originalIndex, rawKeywords, spaceIsSeparator);
         m_CommandManager.processCommand(command);
     }
 

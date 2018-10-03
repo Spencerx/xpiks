@@ -787,30 +787,6 @@ namespace Models {
         return command;
     }
 
-    std::shared_ptr<Commands::ICommand> ArtworksListModel::addSuggestedKeywords(int artworkIndex, const QStringList &keywords) {
-        std::shared_ptr<Commands::ICommand> command;
-        LOG_DEBUG << "artwork index" << artworkIndex;
-        ArtworkItem artwork;
-        if (tryGetArtwork(artworkIndex, artwork) && !keywords.empty()) {
-            setCurrentIndex(artworkIndex);
-            using namespace Commands;
-            command = std::make_shared<ModifyArtworksCommand>(
-                          artwork,
-                          std::make_shared<ArtworksTemplateComposite>(
-                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
-                                  std::make_shared<EditArtworksTemplate>("", "",
-                                  keywords,
-                                  Common::ArtworkEditFlags::AppendKeywords |
-                                  Common::ArtworkEditFlags::EditKeywords),
-                                  std::make_shared<ArtworksUpdateTemplate>(
-                                  *this, getStandardUpdateRoles())}));
-        } else {
-            LOG_WARNING << "Artwork at" << artworkIndex << "not found";
-            command = std::make_shared<Commands::EmptyCommand>();
-        }
-        return command;
-    }
-
     std::shared_ptr<Commands::ICommand> ArtworksListModel::editKeyword(int artworkIndex, int keywordIndex, const QString &replacement) {
         LOG_INFO << "metadata index:" << artworkIndex;
         std::shared_ptr<Commands::ICommand> command;
@@ -829,34 +805,6 @@ namespace Models {
                                   std::make_shared<ArtworksUpdateTemplate>(*this,
                                   QVector<int>() << IsModifiedRole << KeywordsCountRole)
                               }));
-        } else {
-            command = std::make_shared<Commands::EmptyCommand>();
-        }
-        return command;
-    }
-
-    std::shared_ptr<Commands::ICommand> ArtworksListModel::plainTextEdit(int artworkIndex, const QString &rawKeywords, bool spaceIsSeparator) {
-        LOG_DEBUG << "Plain text edit for item" << artworkIndex;
-        std::shared_ptr<Commands::ICommand> command;
-        ArtworkItem artwork;
-        if (tryGetArtwork(artworkIndex, artwork)) {
-            setCurrentIndex(artworkIndex);
-            QVector<QChar> separators;
-            separators << QChar(',');
-            if (spaceIsSeparator) { separators << QChar::Space; }
-            QStringList keywords;
-            Helpers::splitKeywords(rawKeywords.trimmed(), separators, keywords);
-
-            using namespace Commands;
-            command = std::make_shared<ModifyArtworksCommand>(
-                          artwork,
-                          std::make_shared<ArtworksTemplateComposite>(
-                              std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
-                                  std::make_shared<EditArtworksTemplate>("", "",
-                                  keywords,
-                                  Common::ArtworkEditFlags::EditKeywords),
-                                  std::make_shared<ArtworksUpdateTemplate>(
-                                  *this, getStandardUpdateRoles())}));
         } else {
             command = std::make_shared<Commands::EmptyCommand>();
         }

@@ -146,4 +146,8 @@ void XpiksUITestsApp::setupUITests() {
     m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::SetupCreatingArchives, QJSValue());
     m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::SetupUpload, QJSValue());
     m_UICommandDispatcher.dispatch(QMLExtensions::UICommandID::SetupDeleteKeywordsInSelected, QJSValue());
+
+    m_UICommandDispatcher.processAll();
+
+    m_CurrentEditableModel.clearCurrentItem();
 }

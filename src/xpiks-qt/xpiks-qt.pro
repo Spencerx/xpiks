@@ -220,7 +220,9 @@ SOURCES += main.cpp \
     QMLExtensions/uicommandlistener.cpp \
     Commands/Base/actionmodelcommand.cpp \
     Commands/Editing/clearactionmodeltemplate.cpp \
-    Commands/Base/compositecommand.cpp
+    Commands/Base/compositecommand.cpp \
+    Commands/UI/currenteditablecommands.cpp \
+    QMLExtensions/proxyindexmiddlware.cpp
 
 RESOURCES += qml.qrc
 
@@ -541,7 +543,10 @@ HEADERS += \
     Commands/Base/actionmodelcommand.h \
     Commands/Editing/clearactionmodeltemplate.h \
     Commands/Base/compositecommand.h \
-    Commands/Base/callbackcommand.h
+    Commands/Base/callbackcommand.h \
+    Commands/UI/currenteditablecommands.h \
+    QMLExtensions/iuicommandmiddleware.h \
+    QMLExtensions/proxyindexmiddlware.h
 
 DISTFILES += \
     Components/CloseIcon.qml \

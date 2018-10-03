@@ -29,8 +29,8 @@ namespace Models {
     using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
 
-    CurrentEditableArtwork::CurrentEditableArtwork(const std::shared_ptr<Artworks::ArtworkMetadata> &artworkMetadata,
-                                                   const std::shared_ptr<IArtworksCommandTemplate> &updateTemplate):
+    CurrentEditableArtwork::CurrentEditableArtwork(std::shared_ptr<Artworks::ArtworkMetadata> const &artworkMetadata,
+                                                   std::shared_ptr<IArtworksCommandTemplate> const &updateTemplate):
         m_ArtworkMetadata(artworkMetadata),
         m_UpdateTemplate(updateTemplate)
     {
@@ -57,20 +57,69 @@ namespace Models {
         return m_ArtworkMetadata->getKeywords();
     }
 
-    void CurrentEditableArtwork::setTitle(const QString &value) {
-        m_ArtworkMetadata->setTitle(value);
-    }
-
-    void CurrentEditableArtwork::setDescription(const QString &value) {
-        m_ArtworkMetadata->setDescription(value);
-    }
-
-    void CurrentEditableArtwork::setKeywords(const QStringList &keywords) {
-        m_ArtworkMetadata->setKeywords(keywords);
-    }
-
     bool CurrentEditableArtwork::hasKeywords(const QStringList &keywordsList) {
         return m_ArtworkMetadata->hasKeywords(keywordsList);
+    }
+
+    std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::setTitle(const QString &value) {
+        Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::EditTitle;
+
+        using namespace Commands;
+        auto command = std::make_shared<ModifyArtworksCommand>(
+                    m_ArtworkMetadata,
+                    std::make_shared<ArtworksTemplateComposite>(
+                        std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                            std::make_shared<EditArtworksTemplate>(
+                            value, QString(), QStringList(), flags),
+                            m_UpdateTemplate
+                        }));
+        return command;
+    }
+
+    std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::setDescription(const QString &value) {
+        Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::EditDescription;
+
+        using namespace Commands;
+        auto command = std::make_shared<ModifyArtworksCommand>(
+                    m_ArtworkMetadata,
+                    std::make_shared<ArtworksTemplateComposite>(
+                        std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                            std::make_shared<EditArtworksTemplate>(
+                            QString(), value, QStringList(), flags),
+                            m_UpdateTemplate
+                        }));
+        return command;
+    }
+
+    std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::setKeywords(const QStringList &keywords) {
+        Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::EditKeywords;
+
+        using namespace Commands;
+        auto command = std::make_shared<ModifyArtworksCommand>(
+                    m_ArtworkMetadata,
+                    std::make_shared<ArtworksTemplateComposite>(
+                        std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                            std::make_shared<EditArtworksTemplate>(
+                            QString(), QString(), keywords, flags),
+                            m_UpdateTemplate
+                        }));
+        return command;
+    }
+
+    std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::appendKeywords(const QStringList &keywords) {
+        Common::ArtworkEditFlags flags = Common::ArtworkEditFlags::EditKeywords |
+                                         Common::ArtworkEditFlags::AppendKeywords;
+
+        using namespace Commands;
+        auto command = std::make_shared<ModifyArtworksCommand>(
+                    m_ArtworkMetadata,
+                    std::make_shared<ArtworksTemplateComposite>(
+                        std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                            std::make_shared<EditArtworksTemplate>(
+                            QString(), QString(), keywords, flags),
+                            m_UpdateTemplate
+                        }));
+        return command;
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableArtwork::appendPreset(KeywordsPresets::ID_t presetID,

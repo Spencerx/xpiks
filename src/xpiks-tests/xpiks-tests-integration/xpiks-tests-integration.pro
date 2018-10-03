@@ -269,7 +269,9 @@ SOURCES += main.cpp \
     unavailablefilestest.cpp \
     ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp \
     ../../xpiks-qt/Commands/Base/actionmodelcommand.cpp \
-    ../../xpiks-qt/Commands/Base/compositecommand.cpp
+    ../../xpiks-qt/Commands/Base/compositecommand.cpp \
+    ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp \
+    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp
 
 RESOURCES +=
 
@@ -613,7 +615,10 @@ HEADERS += \
     unavailablefilestest.h \
     ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.h \
     ../../xpiks-qt/Commands/Base/actionmodelcommand.h \
-    ../../xpiks-qt/Commands/Base/compositecommand.h
+    ../../xpiks-qt/Commands/Base/compositecommand.h \
+    ../../xpiks-qt/Commands/UI/currenteditablecommands.h \
+    ../../xpiks-qt/QMLExtensions/iuicommandmiddleware.h \
+    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.h
 
 INCLUDEPATH += ../../../vendors/tiny-aes
 INCLUDEPATH += ../../../vendors/cpp-libface

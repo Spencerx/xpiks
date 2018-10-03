@@ -25,7 +25,6 @@ Item {
     id: keywordsSuggestionComponent
     objectName: "keywordsSuggestionComponent"
     anchors.fill: parent
-    property var callbackObject
     property var keywordsSuggestor: dispatcher.getCommandTarget(UICommand.InitSuggestionArtwork)
     property bool initialized: false
 
@@ -618,7 +617,7 @@ Item {
                         onClicked: {
                             console.log("Add suggested clicked")
                             addKeywordsButton.enabled = false
-                            callbackObject.promoteKeywords(keywordsSuggestor.getSuggestedKeywords())
+                            dispatcher.dispatch(UICommand.AppendSuggestedKeywords, keywordsSuggestor.getSuggestedKeywords())
                             suggestedAddedTimer.start()
                         }
                     }

@@ -26,16 +26,15 @@ namespace Models {
         // ICurrentEditable interface
     public:
         virtual Common::ID_t getItemID() override;
-
         virtual QString getTitle() override;
         virtual QString getDescription() override;
         virtual QStringList getKeywords() override;
-
-        virtual void setTitle(const QString &title) override;
-        virtual void setDescription(const QString &description) override;
-        virtual void setKeywords(const QStringList &keywords) override;
-
         virtual bool hasKeywords(const QStringList &keywordsList) override;
+
+        virtual std::shared_ptr<Commands::ICommand> setTitle(const QString &title) override;
+        virtual std::shared_ptr<Commands::ICommand> setDescription(const QString &description) override;
+        virtual std::shared_ptr<Commands::ICommand> setKeywords(const QStringList &keywords) override;
+        virtual std::shared_ptr<Commands::ICommand> appendKeywords(const QStringList &keywords) override;
 
         virtual std::shared_ptr<Commands::ICommand> appendPreset(KeywordsPresets::ID_t presetID,
                                                                  KeywordsPresets::IPresetsManager &presetsManager) override;

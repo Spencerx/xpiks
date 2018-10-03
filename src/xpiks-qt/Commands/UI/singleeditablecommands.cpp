@@ -18,6 +18,7 @@
 #include <Models/Editing/combinedartworksmodel.h>
 #include <Models/Editing/artworkproxymodel.h>
 #include <Models/Editing/quickbuffer.h>
+#include <Models/Editing/icurrenteditable.h>
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Models/Artworks/filteredartworkslistmodel.h>
 #include <Services/iartworksupdater.h>
@@ -145,17 +146,10 @@ namespace Commands {
 
         void InitSuggestionForArtworkCommand::execute(QVariant const &value) {
             LOG_DEBUG << value;
-            int proxyIndex = -1;
-            if (value.isValid()) {
-                auto map = value.toMap();
-                auto indexValue = map.value("index", QVariant(0));
-                if (indexValue.type() == QVariant::Int) {
-                    proxyIndex = indexValue.toInt();
-                }
-            }
-
+            int proxyIndex = Helpers::convertToInt(value, -1);
             std::shared_ptr<Artworks::ArtworkMetadata> artwork;
-            if (m_Source.tryGetArtwork(proxyIndex, artwork)) {
+            if (m_Source.tryGetArtwork(proxyIndex, artwork)) {                
+                m_Source.registerCurrentItem(proxyIndex);
                 m_Target.setExistingKeywords(artwork->getKeywords().toSet());
             }
         }

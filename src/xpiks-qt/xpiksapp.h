@@ -134,6 +134,7 @@ protected:
     int restoreSession();
     void connectEntitiesSignalsSlots();
     void registerUICommands();
+    void registerUIMiddlewares();
     void setupMessaging();
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)

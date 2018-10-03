@@ -34,7 +34,9 @@ int PlainTextEditTest::doTest() {
     auto *basicModel = combinedModel.retrieveBasicMetadataModel();
     VERIFY(!basicModel->hasKeywordsSpellError(), "Should not have errors initially");
 
-    combinedModel.plainTextEdit("test, keyword, abbreviatoe");
+    QString keywords = "test, keyword, abbreviatoe";
+    QVariantMap params{{"text", QVariant::fromValue(keywords)}, {"spaceIsSeparator", QVariant(false)}};
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::PlainTextEdit, params);
 
     sleepWaitUntil(5, [&]() {
         return (!m_TestsApp.getSpellCheckService().isBusy()) && basicModel->hasKeywordsSpellError();

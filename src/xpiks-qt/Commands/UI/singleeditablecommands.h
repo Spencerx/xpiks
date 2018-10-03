@@ -56,9 +56,9 @@ namespace Commands {
         class ReviewSpellingInBasicModelCommand: public IUICommandTemplate {
         public:
             ReviewSpellingInBasicModelCommand(QMLExtensions::UICommandID::CommandID commandID,
-                                           Artworks::IBasicModelSource &basicModelSource,
-                                           SpellCheck::ISpellCheckService &spellCheckService,
-                                           SpellCheck::SpellCheckSuggestionModel &spellSuggestionsModel):
+                                              Artworks::IBasicModelSource &basicModelSource,
+                                              SpellCheck::ISpellCheckService &spellCheckService,
+                                              SpellCheck::SpellCheckSuggestionModel &spellSuggestionsModel):
                 m_CommandID(commandID),
                 m_BasicModelSource(basicModelSource),
                 m_SpellCheckService(spellCheckService),
@@ -136,7 +136,7 @@ namespace Commands {
                                  Suggestion::KeywordsSuggestor);
 
         SOURCE_UI_TARGET_COMMAND(SetupArtworkEditCommand,
-                                 QMLExtensions::UICommandID::SetupArtworkEdit,
+                                 QMLExtensions::UICommandID::SetupProxyArtworkEdit,
                                  Models::FilteredArtworksListModel,
                                  Models::ArtworkProxyModel);
 

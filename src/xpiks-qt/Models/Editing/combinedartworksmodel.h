@@ -180,7 +180,6 @@ namespace Models {
         Q_INVOKABLE QObject *getBasicModelObject();
 
         Q_INVOKABLE void assignFromSelected();
-        Q_INVOKABLE void plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator=false);
 
         Q_INVOKABLE bool hasTitleWordSpellError(const QString &word);
         Q_INVOKABLE bool hasDescriptionWordSpellError(const QString &word);
@@ -189,6 +188,7 @@ namespace Models {
         Q_INVOKABLE void addPreset(unsigned int presetID);
 #ifdef UI_TESTS
         Q_INVOKABLE void clearModel();
+        Q_INVOKABLE void setupModel() { registerAsCurrentEditable(); }
 #endif
 
     public:

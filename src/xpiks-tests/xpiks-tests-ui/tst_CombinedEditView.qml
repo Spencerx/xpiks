@@ -70,7 +70,8 @@ Item {
     TestCase {
         id: testCase
         name: "CombinedEdit"
-        when: windowShown && (loader.status == Loader.Ready) && (listenersLoader.status == Loader.Ready)
+        when: windowShown && TestsHost.isReady &&
+              (loader.status == Loader.Ready) && (listenersLoader.status == Loader.Ready)
         property var descriptionInput
         property var titleInput
         property var editableTags
@@ -79,6 +80,8 @@ Item {
         property var combinedView: loader.item
 
         function initTestCase() {
+            combinedView.combinedArtworks.setupModel()
+
             titleInput = findChild(combinedView, "titleTextInput")
             descriptionInput = findChild(combinedView, "descriptionTextInput")
             editableTags = findChild(combinedView, "editableTags")

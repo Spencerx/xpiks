@@ -152,10 +152,6 @@ namespace Models {
         return doGetKeywordsString();
     }
 
-    void ArtworkProxyModel::plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {
-        doPlainTextEdit(rawKeywords, spaceIsSeparator);
-    }
-
     bool ArtworkProxyModel::hasTitleWordSpellError(const QString &word) {
         return getHasTitleWordSpellError(word);
     }
@@ -178,6 +174,8 @@ namespace Models {
 
         connectArtworkSignals(artwork.get());
         updateModelProperties();
+
+        sendMessage(std::make_shared<CurrentEditableProxyArtwork>(*this));
     }
 
     void ArtworkProxyModel::resetModel() {
@@ -272,6 +270,10 @@ namespace Models {
         getBasicMetadataModel()->clearModel();
         updateModelProperties();
     }
+
+    void ArtworkProxyModel::setupModel() {
+        sendMessage(std::make_shared<CurrentEditableProxyArtwork>(*this));
+    }
 #endif
 
     bool ArtworkProxyModel::acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID) {
@@ -350,7 +352,6 @@ namespace Models {
         Q_ASSERT(m_ArtworkMetadata != nullptr);
         m_PropertiesMap.updateProperties(m_ArtworkMetadata);
 
-        sendMessage(std::make_shared<CurrentEditableProxyArtwork>(*this));
         emit isValidChanged();
     }
 

@@ -199,18 +199,6 @@ namespace Models {
         return metadataOperator->getKeywordsString();
     }
 
-    void ArtworkProxyBase::doPlainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {
-        LOG_DEBUG << "#";
-
-        QVector<QChar> separators;
-        separators << QChar(',');
-        if (spaceIsSeparator) { separators << QChar::Space; }
-        QStringList keywords;
-        Helpers::splitKeywords(rawKeywords.trimmed(), separators, keywords);
-
-        doSetKeywords(keywords);
-    }
-
     bool ArtworkProxyBase::getHasTitleWordSpellError(const QString &word) {
         auto *keywordsModel = getBasicMetadataModel();
         return keywordsModel->hasTitleWordSpellError(word);

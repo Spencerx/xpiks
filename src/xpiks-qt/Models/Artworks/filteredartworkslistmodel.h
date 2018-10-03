@@ -95,6 +95,7 @@ namespace Models {
     public:
         void acceptCompletionAsPreset(int proxyIndex, AutoComplete::ICompletionSource &completionsSource, int completionID);
         int getOriginalIndex(int proxyIndex) const;
+        int getProxyIndex(int originalIndex) const;
 
     public:
         // indexing
@@ -126,9 +127,7 @@ namespace Models {
         Q_INVOKABLE void removeLastKeyword(int proxyIndex);
         Q_INVOKABLE void appendKeyword(int proxyIndex, const QString &keyword);
         Q_INVOKABLE void pasteKeywords(int proxyIndex, const QStringList &keywords);
-        Q_INVOKABLE void addSuggestedKeywords(int proxyIndex, const QStringList &keywords);
         Q_INVOKABLE void editKeyword(int proxyIndex, int keywordIndex, const QString &replacement);
-        Q_INVOKABLE void plainTextEdit(int proxyIndex, const QString &rawKeywords, bool spaceIsSeparator=false);
         Q_INVOKABLE void expandPreset(int proxyIndex, int keywordIndex, unsigned int presetID);
         Q_INVOKABLE void expandLastAsPreset(int proxyIndex);
         Q_INVOKABLE void addPreset(int proxyIndex, unsigned int presetID);

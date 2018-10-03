@@ -2,12 +2,17 @@
 #define ArtworksListModelMock_H
 
 #include <QVector>
+#include <QVariantMap>
 #include <tuple>
 #include <functional>
 #include <Models/Artworks/artworkslistmodel.h>
 #include <Artworks/artworkmetadata.h>
+#include <Commands/UI/currenteditablecommands.h>
+#include <UndoRedo/undoredomanager.h>
 #include "artworkmetadatamock.h"
 #include "filescollectionmock.h"
+#include "currentartworksourcemock.h"
+#include "commandmanagermock.h"
 
 namespace Mocks {
     class ArtworksListModelMock : public Models::ArtworksListModel

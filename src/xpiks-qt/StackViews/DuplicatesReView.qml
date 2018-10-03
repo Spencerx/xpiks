@@ -96,9 +96,10 @@ Rectangle {
             spacing: 20
 
             delegate: Rectangle {
-                property int delegateIndex: index
-                color: uiColors.defaultControlColor
                 id: imageWrapper
+                property int delegateIndex: index
+                property int artworkIndex: originalIndex
+                color: uiColors.defaultControlColor
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.rightMargin: 10
@@ -325,7 +326,7 @@ Rectangle {
                         anchors.verticalCenterOffset: -5
                         anchors.centerIn: parent
                         enabled: !isRestricted && duplicatesListView.count > 0
-                        onClicked: dispatcher.dispatch(UICommand.SetupArtworkEdit, imageWrapper.delegateIndex)
+                        onClicked: dispatcher.dispatch(UICommand.SetupArtworkEdit, imageWrapper.artworkIndex)
                     }
                 }
             }

@@ -31,6 +31,7 @@
 #include <Commands/artworksupdatetemplate.h>
 #include <Commands/UI/selectedartworkscommands.h>
 #include <Commands/UI/singleeditablecommands.h>
+#include <Commands/UI/currenteditablecommands.h>
 #include <Commands/UI/generalcommands.h>
 #include <Commands/Base/commanduiwrapper.h>
 #include <Commands/Files/removeselectedfilescommand.h>
@@ -43,6 +44,7 @@
 #include <QMLExtensions/folderelement.h>
 #include <QMLExtensions/triangleelement.h>
 #include <QMLExtensions/uicommandlistener.h>
+#include <QMLExtensions/proxyindexmiddlware.h>
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     // general
@@ -163,6 +165,7 @@ void XpiksApp::initialize() {
 
     connectEntitiesSignalsSlots();
     registerUICommands();
+    registerUIMiddlewares();
     registerQtMetaTypes();
     setupMessaging();
 
@@ -693,7 +696,13 @@ void XpiksApp::registerUICommands() {
                     m_DeleteKeywordsModel, QMLExtensions::UICommandID::DeleteKeywordsInSelected),
 
                     std::make_shared<Commands::ActionModelCommand>(
-                    m_SpellSuggestionModel, QMLExtensions::UICommandID::FixSpelling)
+                    m_SpellSuggestionModel, QMLExtensions::UICommandID::FixSpelling),
+
+                    std::make_shared<Commands::UI::PlainTextEditCommand>(
+                    m_CurrentEditableModel, m_CommandManager),
+
+                    std::make_shared<Commands::UI::AppendSuggestedKeywordsCommand>(
+                    m_CurrentEditableModel, m_CommandManager)
                 });
 
     // IO
@@ -761,6 +770,11 @@ void XpiksApp::registerUICommands() {
                 });
 }
 
+void XpiksApp::registerUIMiddlewares() {
+    m_UICommandDispatcher.registerMiddlware(
+                std::make_shared<QMLExtensions::ProxyIndexMiddlware>(m_FilteredArtworksListModel));
+}
+
 void XpiksApp::setupMessaging() {
     LOG_DEBUG << "#";
     Common::connectTarget<Common::NamedType<Connectivity::UserAction>>(
@@ -803,6 +817,8 @@ void XpiksApp::setupMessaging() {
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
 void XpiksApp::cleanupModels() {
     LOG_FOR_DEBUG << "#";
+
+    m_CurrentEditableModel.clearCurrentItem();
 
     m_SpellCheckService.cancelCurrentBatch();
     m_SpellCheckService.clearSuggestions();

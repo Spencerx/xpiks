@@ -83,7 +83,9 @@ Rectangle {
     function editInPlainText() {
         var callbackObject = {
             onSuccess: function(text, spaceIsSeparator) {
-                combinedArtworks.plainTextEdit(text, spaceIsSeparator)
+                dispatcher.dispatch(UICommand.PlainTextEdit, {
+                                        text: text,
+                                        spaceIsSeparator: spaceIsSeparator})
             },
             onClose: function() {
                 flv.activateEdit()

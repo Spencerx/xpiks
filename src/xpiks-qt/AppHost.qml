@@ -46,7 +46,7 @@ Rectangle {
         appHost.leftSideCollapsed = !leftSideCollapsed
     }
 
-    function startOneItemEditing(index, showInfoFirst) {
+    function startOneItemEditing(showInfoFirst) {
         var wasCollapsed = appHost.leftSideCollapsed
         appHost.collapseLeftPane()
         mainStackView.push({
@@ -85,10 +85,10 @@ Rectangle {
 
     UICommandListener {
         commandDispatcher: dispatcher
-        commandIDs: [UICommand.SetupArtworkEdit, UICommand.ReviewArtworkInfo]
+        commandIDs: [UICommand.SetupProxyArtworkEdit, UICommand.ReviewArtworkInfo]
         onDispatched: {
             if (mainStackView.currentItem.objectName !== "ArtworkEditView") {
-                startOneItemEditing(value, (commandID === UICommand.ReviewArtworkInfo))
+                startOneItemEditing((commandID === UICommand.ReviewArtworkInfo))
             }
         }
     }

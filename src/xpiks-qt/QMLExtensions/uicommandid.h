@@ -66,11 +66,14 @@ namespace QMLExtensions {
             InitSuggestionCombined,
             InitSuggestionSingle,
             GenerateCompletionsForArtwork,
+            SetupProxyArtworkEdit,
             SetupArtworkEdit,
             ReviewArtworkInfo,
             CopyArtworkToQuickBuffer,
             CopyCombinedToQuickBuffer,
-            FillArtworkFromQuickBuffer
+            FillArtworkFromQuickBuffer,
+            PlainTextEdit,
+            AppendSuggestedKeywords
         };
         Q_ENUMS(CommandID)
     };

@@ -182,19 +182,20 @@ namespace Warnings {
     }
 
     void WarningsModel::processPendingUpdates() {
-        QAbstractItemModel *sourceItemModel = sourceModel();
+        LOG_DEBUG << m_PendingUpdates.size() << "updates to process";
         QVector<int> roles;
         roles << WarningsRole;
 
-        Helpers::IndicesRanges ranges(m_PendingUpdates);
+        decltype(m_PendingUpdates) pendingUpdates;
+        m_PendingUpdates.swap(pendingUpdates);
+
+        Helpers::IndicesRanges ranges(pendingUpdates);
 
         for (auto &r: ranges.getRanges()) {
-            QModelIndex indexFrom = mapFromSource(sourceItemModel->index(r.first, 0));
-            QModelIndex indexTo = mapFromSource(sourceItemModel->index(r.second, 0));
+            QModelIndex indexFrom = mapFromSource(m_ArtworksListModel.index(r.first, 0));
+            QModelIndex indexTo = mapFromSource(m_ArtworksListModel.index(r.second, 0));
             emit dataChanged(indexFrom, indexTo, roles);
         }
-
-        m_PendingUpdates.clear();
     }
 
     void WarningsModel::onWarningsCouldHaveChanged(size_t originalIndex) {
@@ -203,6 +204,7 @@ namespace Warnings {
     }
 
     void WarningsModel::onWarningsUpdateRequired() {
+        LOG_DEBUG << "#";
         update();
     }
 

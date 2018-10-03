@@ -7,6 +7,9 @@
 #include "Mocks/artworksupdatermock.h"
 #include "Mocks/spellcheckservicemock.h"
 #include "Mocks/flagsprovidermock.h"
+#include "Mocks/currentartworksourcemock.h"
+#include <Commands/UI/currenteditablecommands.h>
+#include <Commands/artworksupdatetemplate.h>
 #include <Models/Artworks/artworksrepository.h>
 #include <Models/Session/recentdirectoriesmodel.h>
 #include <Models/Editing/quickbuffer.h>
@@ -36,6 +39,7 @@
     QVERIFY(artItemsModifiedSpy.count() > 0);\
     QVERIFY(artItemsModifiedSpy.takeFirst().at(2).value<QVector<int> >().contains(Models::ArtworksListModel::IsModifiedRole));
 
+// this test can fail if the signal was emitted before this .wait()
 #define MODIFIED_TEST_END_WAIT(millis)\
     QVERIFY(artItemsModifiedSpy.wait(millis));\
     QVERIFY(artItemsModifiedSpy.count() > 0);\
@@ -156,57 +160,82 @@ void ArtworksListModelTests::setAllSavedResetsModifiedCountTest() {
 void ArtworksListModelTests::plainTextEditToEmptyKeywordsTest() {
     const int count = 1;
     DECLARE_MODELS_AND_GENERATE(count, false);
+    UndoRedo::UndoRedoManager undoManager;
+    Mocks::CommandManagerMock commandManager(undoManager);
     artworksListModel.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
+    Mocks::CurrentArtworkSourceMock artworkSource(artworksListModel.getMockArtwork(0));
 
-    artworksListModel.plainTextEdit(0, "")->execute();
+    QVariantMap params{{"text", QVariant::fromValue(QString())}, {"spaceIsSeparator", QVariant(false)}};
+    Commands::UI::PlainTextEditCommand(artworkSource, commandManager).execute(QVariant::fromValue(params));
+
     QCOMPARE(artworksListModel.getMockArtwork(0)->getKeywords().length(), 0);
 }
 
 void ArtworksListModelTests::plainTextEditToOneKeywordTest() {
     const int count = 1;
     DECLARE_MODELS_AND_GENERATE(count, false);
+    UndoRedo::UndoRedoManager undoManager;
+    Mocks::CommandManagerMock commandManager(undoManager);
     artworksListModel.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
+    Mocks::CurrentArtworkSourceMock artworkSource(artworksListModel.getMockArtwork(0));
 
     QString keywords = "new keyword";
     QStringList result = QStringList() << keywords;
 
-    artworksListModel.plainTextEdit(0, keywords)->execute();
+    QVariantMap params{{"text", QVariant::fromValue(QString(keywords))}, {"spaceIsSeparator", QVariant(false)}};
+    Commands::UI::PlainTextEditCommand(artworkSource, commandManager).execute(QVariant::fromValue(params));
+
     QCOMPARE(artworksListModel.getMockArtwork(0)->getKeywords(), result);
 }
 
 void ArtworksListModelTests::plainTextEditToSeveralKeywordsTest() {
     const int count = 1;
     DECLARE_MODELS_AND_GENERATE(count, false);
+    UndoRedo::UndoRedoManager undoManager;
+    Mocks::CommandManagerMock commandManager(undoManager);
     artworksListModel.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
+    Mocks::CurrentArtworkSourceMock artworkSource(artworksListModel.getMockArtwork(0));
 
     QString keywords = "new keyword, another one, new";
     QStringList result = QStringList() << "new keyword" << "another one" << "new";
 
-    artworksListModel.plainTextEdit(0, keywords)->execute();
+    QVariantMap params{{"text", QVariant::fromValue(QString(keywords))}, {"spaceIsSeparator", QVariant(false)}};
+    Commands::UI::PlainTextEditCommand(artworkSource, commandManager).execute(QVariant::fromValue(params));
+
     QCOMPARE(artworksListModel.getMockArtwork(0)->getKeywords(), result);
 }
 
 void ArtworksListModelTests::plainTextEditToAlmostEmptyTest() {
     const int count = 1;
     DECLARE_MODELS_AND_GENERATE(count, false);
+    UndoRedo::UndoRedoManager undoManager;
+    Mocks::CommandManagerMock commandManager(undoManager);
     artworksListModel.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
+    Mocks::CurrentArtworkSourceMock artworkSource(artworksListModel.getMockArtwork(0));
 
     QString keywords = ",,, , , , , ,,,,   ";
     QStringList result = QStringList();
 
-    artworksListModel.plainTextEdit(0, keywords)->execute();
+    QVariantMap params{{"text", QVariant::fromValue(QString(keywords))}, {"spaceIsSeparator", QVariant(false)}};
+    Commands::UI::PlainTextEditCommand(artworkSource, commandManager).execute(QVariant::fromValue(params));
+
     QCOMPARE(artworksListModel.getMockArtwork(0)->getKeywords(), result);
 }
 
 void ArtworksListModelTests::plainTextEditToMixedTest() {
     const int count = 1;
     DECLARE_MODELS_AND_GENERATE(count, false);
+    UndoRedo::UndoRedoManager undoManager;
+    Mocks::CommandManagerMock commandManager(undoManager);
     artworksListModel.getMockArtwork(0)->appendKeywords(QStringList() << "test" << "keywords" << "here");
+    Mocks::CurrentArtworkSourceMock artworkSource(artworksListModel.getMockArtwork(0));
 
     QString keywords = ",,, , ,word here , , ,,,,   ";
     QStringList result = QStringList() << "word here";
 
-    artworksListModel.plainTextEdit(0, keywords)->execute();
+    QVariantMap params{{"text", QVariant::fromValue(QString(keywords))}, {"spaceIsSeparator", QVariant(false)}};
+    Commands::UI::PlainTextEditCommand(artworkSource, commandManager).execute(QVariant::fromValue(params));
+
     QCOMPARE(artworksListModel.getMockArtwork(0)->getKeywords(), result);
 }
 
@@ -248,10 +277,18 @@ void ArtworksListModelTests::removeLastKeywordEmitsModifiedTest() {
 
 void ArtworksListModelTests::plainTextEditEmitsModifiedTest() {
     DECLARE_MODELS_AND_GENERATE(1, false);
+    UndoRedo::UndoRedoManager undoManager;
+    Mocks::CommandManagerMock commandManager(undoManager);
+    Mocks::CurrentArtworkSourceMock artworkSource(artworksListModel.getMockArtwork(0),
+                                                  std::make_shared<Commands::ArtworksUpdateTemplate>(artworksListModel,
+                                                                                                     artworksListModel.getStandardUpdateRoles()));
+
+    QString keywords = "brand,new,keyword";
+    QVariantMap params{{"text", QVariant::fromValue(QString(keywords))}, {"spaceIsSeparator", QVariant(false)}};
 
     MODIFIED_TEST_START;
 
-    artworksListModel.plainTextEdit(0, "brand,new,keyword")->execute();
+    Commands::UI::PlainTextEditCommand(artworkSource, commandManager).execute(QVariant::fromValue(params));
 
     MODIFIED_TEST_END;
 }
@@ -282,9 +319,17 @@ void ArtworksListModelTests::pasteKeywordsEmitsModifiedTest() {
 void ArtworksListModelTests::addSuggestedEmitsModifiedTest() {
     DECLARE_MODELS_AND_GENERATE(1, false);
 
+    int index = 0;
+    UndoRedo::UndoRedoManager undoRedoManager;
+    Mocks::CommandManagerMock commandManager(undoRedoManager);
+    Mocks::CurrentArtworkSourceMock artworkSource(artworksListModel.getMockArtwork(index),
+                                                  std::make_shared<Commands::ArtworksUpdateTemplate>(artworksListModel,
+                                                                                                     artworksListModel.getStandardUpdateRoles()));
+
     MODIFIED_TEST_START;
 
-    artworksListModel.addSuggestedKeywords(0, QString("suggested,keywords,here").split(','))->execute();
+    Commands::UI::AppendSuggestedKeywordsCommand(artworkSource, commandManager)
+            .execute(QVariant::fromValue(QString("suggested,keywords,here").split(',')));
 
     MODIFIED_TEST_END;
 }

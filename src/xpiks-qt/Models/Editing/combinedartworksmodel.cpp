@@ -116,6 +116,7 @@ namespace Models {
     }
 
     void CombinedArtworksModel::setKeywords(const QStringList &keywords) {
+        LOG_DEBUG << keywords.size() << "keywords";
         ArtworkProxyBase::setKeywords(keywords);
         setKeywordsModified(true);
     }
@@ -223,12 +224,6 @@ namespace Models {
         LOG_DEBUG << "After recombine keywords:" << getKeywordsString();
 
         submitForInspection();
-    }
-
-    void CombinedArtworksModel::plainTextEdit(const QString &rawKeywords, bool spaceIsSeparator) {
-        LOG_DEBUG << "#";
-        doPlainTextEdit(rawKeywords, spaceIsSeparator);
-        setKeywordsModified(true);
     }
 
     bool CombinedArtworksModel::hasTitleWordSpellError(const QString &word) {

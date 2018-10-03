@@ -33,16 +33,7 @@ Item {
     }
 
     function suggestKeywords(proxyIndex) {
-        var callbackObject = {
-            promoteKeywords: function(keywords) {
-                filteredArtworksListModel.addSuggestedKeywords(proxyIndex, keywords)
-            }
-        }
-
-        dispatcher.dispatch(UICommand.InitSuggestionArtwork, {
-                                "callbackObject": callbackObject,
-                                "index": proxyIndex
-                            })
+        dispatcher.dispatch(UICommand.InitSuggestionArtwork, proxyIndex)
     }
 
     function fixSpelling(proxyIndex) {
@@ -66,7 +57,9 @@ Item {
     function editInPlainText(proxyIndex) {
         var callbackObject = {
             onSuccess: function(text, spaceIsSeparator) {
-                filteredArtworksListModel.plainTextEdit(proxyIndex, text, spaceIsSeparator)
+                dispatcher.dispatch(UICommand.PlainTextEdit, {
+                                        text: text,
+                                        spaceIsSeparator: spaceIsSeparator})
             },
             onClose: function() {
                 filteredArtworksListModel.focusCurrentItemKeywords(proxyIndex)
@@ -114,7 +107,7 @@ Item {
 
         MenuItem {
             text: i18.n + qsTr("Edit")
-            onTriggered: dispatcher.dispatch(UICommand.SetupArtworkEdit, artworkContextMenu.index)
+            onTriggered: dispatcher.dispatch(UICommand.SetupProxyArtworkEdit, artworkContextMenu.index)
         }
 
         MenuItem {
@@ -400,7 +393,7 @@ Item {
                     dropDownWidth: 120
                     showColorSign: false
                     showHeader: false
-                    globalParent: componentParent
+                    globalParent: appHost
                     arrowBackground: "transparent"
                     arrowDisabledBackground: "transparent"
                     dockLeft: true
@@ -1243,7 +1236,7 @@ Item {
                                                 acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                                                 function dblClickHandler() {
-                                                    dispatcher.dispatch(UICommand.SetupArtworkEdit, rowWrapper.delegateIndex)
+                                                    dispatcher.dispatch(UICommand.SetupProxyArtworkEdit, rowWrapper.delegateIndex)
                                                 }
 
                                                 Timer {
@@ -1905,6 +1898,8 @@ Item {
                                                     onClicked: {
                                                         // strange bug with clicking on the keywords field
                                                         if (!containsMouse) { return; }
+
+                                                        filteredArtworksListModel.registerCurrentItem(rowWrapper.delegateIndex)
 
                                                         keywordsMoreMenu.editableTags = flv
                                                         keywordsMoreMenu.keywordsCount = keywordscount

@@ -88,8 +88,7 @@ namespace Commands {
         if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::EditKeywords)) {
             if (Common::HasFlag(m_EditFlags, Common::ArtworkEditFlags::AppendKeywords)) {
                 artwork->appendKeywords(m_Keywords);
-            }
-            else {
+            } else {
                 if (Common::HasFlag(m_EditFlags,Common:: ArtworkEditFlags::Clear)) {
                     artwork->clearKeywords();
                 } else {

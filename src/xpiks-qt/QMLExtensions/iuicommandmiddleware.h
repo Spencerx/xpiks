@@ -8,21 +8,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef UIACTION_H
-#define UIACTION_H
+#ifndef IUICOMMANDMIDDLEWARE_H
+#define IUICOMMANDMIDDLEWARE_H
 
-#include <QVariant>
+#include "uiaction.h"
+#include <memory>
 
 namespace QMLExtensions {
-    struct UIAction {
-        UIAction(int commandID, QVariant const &value):
-            m_CommandID(commandID),
-            m_Value(value)
-        {}
-
-        int m_CommandID;
-        QVariant m_Value;
+    class IUICommandMiddlware {
+    public:
+        virtual ~IUICommandMiddlware() {}
+        virtual std::shared_ptr<UIAction> process(std::shared_ptr<UIAction> const &action) = 0;
     };
 }
 
-#endif // UIACTION_H
+#endif // IUICOMMANDMIDDLEWARE_H

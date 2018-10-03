@@ -71,7 +71,6 @@ namespace Models {
         QString doGetKeywordsString();
 
     protected:
-        void doPlainTextEdit(const QString &rawKeywords, bool spaceIsSeparator);
         bool getHasTitleWordSpellError(const QString &word);
         bool getHasDescriptionWordSpellError(const QString &word);
         bool getHasTitleSpellErrors();

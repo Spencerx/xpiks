@@ -210,7 +210,7 @@ ApplicationWindow {
                 var index = filteredArtworksListModel.findSelectedItemIndex()
 
                 if (index !== -1) {
-                    dispatcher.dispatch(UICommand.SetupArtworkEdit, index)
+                    dispatcher.dispatch(UICommand.SetupProxyArtworkEdit, index)
                     launched = true
                 }
 
@@ -359,7 +359,7 @@ ApplicationWindow {
         enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("Zip archives triggered")
-            dispatcher.dispatch(UICommand.SetupCreatingArchives)
+            dispatcher.dispatch(UICommand.SetupCreatingArchives, {})
         }
     }
 
@@ -369,7 +369,7 @@ ApplicationWindow {
         enabled: (filteredArtworksListModel.selectedArtworksCount > 0) && applicationWindow.actionsEnabled
         onTriggered: {
             console.info("CSV export triggered")
-            dispatcher.dispatch(UICommand.SetupCSVExportForSelected)
+            dispatcher.dispatch(UICommand.SetupCSVExportForSelected, {})
         }
     }
 

@@ -35,20 +35,32 @@ namespace Models {
         return m_ArtworkProxy.getKeywords();
     }
 
-    void CurrentEditableProxyArtwork::setTitle(const QString &title) {
-        m_ArtworkProxy.setTitle(title);
-    }
-
-    void CurrentEditableProxyArtwork::setDescription(const QString &description) {
-        m_ArtworkProxy.setDescription(description);
-    }
-
-    void CurrentEditableProxyArtwork::setKeywords(const QStringList &keywords) {
-        m_ArtworkProxy.setKeywords(keywords);
-    }
-
     bool CurrentEditableProxyArtwork::hasKeywords(const QStringList &keywordsList) {
         return m_ArtworkProxy.hasKeywords(keywordsList);
+    }
+
+    std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::setTitle(const QString &title) {
+        return std::make_shared<Commands::CallbackCommand>([this, title]() {
+            this->m_ArtworkProxy.setTitle(title);
+        });
+    }
+
+    std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::setDescription(const QString &description) {
+        return std::make_shared<Commands::CallbackCommand>([this, description]() {
+            this->m_ArtworkProxy.setDescription(description);
+        });
+    }
+
+    std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::setKeywords(const QStringList &keywords) {
+        return std::make_shared<Commands::CallbackCommand>([this, keywords]() {
+            this->m_ArtworkProxy.setKeywords(keywords);
+        });
+    }
+
+    std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::appendKeywords(const QStringList &keywords) {
+        return std::make_shared<Commands::CallbackCommand>([this, keywords]() {
+            this->m_ArtworkProxy.doAppendKeywords(keywords);
+        });
     }
 
     std::shared_ptr<Commands::ICommand> CurrentEditableProxyArtwork::appendPreset(KeywordsPresets::ID_t presetID,
