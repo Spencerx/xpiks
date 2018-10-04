@@ -11,6 +11,7 @@
 #include <Models/Session/sessionmanager.h>
 #include <Artworks/artworkssnapshot.h>
 #include "savesessionjobitem.h"
+#include "Common/logging.h"
 
 namespace Maintenance {
     SaveSessionJobItem::SaveSessionJobItem(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,

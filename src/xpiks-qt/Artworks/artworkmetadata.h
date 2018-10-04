@@ -11,35 +11,52 @@
 #ifndef IMAGEMETADATA_H
 #define IMAGEMETADATA_H
 
-#include <QAbstractListModel>
-#include <QReadWriteLock>
-#include <QStringList>
-#include <QFileInfo>
-#include <QString>
-#include <QVector>
-#include <QSet>
-#include <QMutex>
+#include <cstddef>
+#include <vector>
 #include <memory>
-#include "basicmetadatamodel.h"
-#include "iartworkmetadata.h"
-#include "ibasicmodelsource.h"
-#include <Common/flags.h>
-#include <Common/types.h>
-#include <Common/delayedactionentity.h>
-#include <Services/SpellCheck/spellcheckinfo.h>
-#include <Services/SpellCheck/ispellcheckable.h>
-#include <UndoRedo/artworkmetadatabackup.h>
+
+#include <QMetaType>
+#include <QMutex>
+#include <QObject>
+#include <QReadLocker>
+#include <QReadWriteLock>
+#include <QSet>
+#include <QString>
+#include <QStringList>
+#include <QWriteLocker>
+#include <Qt>
+#include <QtGlobal>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/iartworkmetadata.h"
+#include "Artworks/ibasicmodelsource.h"
+#include "Common/delayedactionentity.h"
+#include "Common/flags.h"
+#include "Common/types.h"
+#include "Services/SpellCheck/ispellcheckable.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
+
+namespace Artworks {
+    class BasicKeywordsModel;
+    struct KeywordItem;
+}
+
+namespace SpellCheck {
+    class KeywordSpellSuggestions;
+}
+
+namespace UndoRedo {
+    class ArtworkMetadataBackup;
+}
 
 namespace MetadataIO {
     struct CachedArtwork;
     struct OriginalMetadata;
 }
 
-class QTextDocument;
 class QTimerEvent;
 
 namespace Artworks {
-    class SettingsModel;
 
     class ArtworkMetadata:
             public QObject,

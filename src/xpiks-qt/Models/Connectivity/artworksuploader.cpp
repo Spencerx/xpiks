@@ -25,7 +25,7 @@
 #include <Connectivity/testconnection.h>
 #include <Connectivity/ftphelpers.h>
 #include <Connectivity/analyticsuserevent.h>
-#include <uploadcontext.h>
+#include <vendors/libxpks/uploadcontext.h>
 
 namespace Models {
     ArtworksUploader::ArtworksUploader(Common::ISystemEnvironment &environment,

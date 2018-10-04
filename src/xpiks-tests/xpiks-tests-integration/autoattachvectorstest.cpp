@@ -4,6 +4,7 @@
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
+#include "Artworks/imageartwork.h"
 
 QString AutoAttachVectorsTest::testName() {
     return QLatin1String("AutoAttachVectorsTest");

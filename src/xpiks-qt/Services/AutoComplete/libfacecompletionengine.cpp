@@ -13,8 +13,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <string>
-#include <include/libfaceapi.hpp>
-#include <include/types.hpp>
+#include <vendors/cpp-libface/include/libfaceapi.hpp>
+#include <vendors/cpp-libface/include/types.hpp>
 #include <Common/logging.h>
 #include <Common/defines.h>
 

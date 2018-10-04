@@ -16,6 +16,8 @@
 #include <Common/defines.h>
 #include <Filesystem/ifilescollection.h>
 #include "artworkslistoperations.h"
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/imageartwork.h"
 
 namespace Models {
     ArtworksRepository::ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent) :

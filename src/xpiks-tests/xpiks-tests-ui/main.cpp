@@ -5,7 +5,7 @@
 #include <QQmlEngine>
 #include <QEventLoop>
 #include <Helpers/logger.h>
-#include <chillout.h>
+#include <vendors/chillout/src/chillout/chillout.h>
 #include "testshost.h"
 #include "xpiksuitestsapp.h"
 #include "uitestsenvironment.h"

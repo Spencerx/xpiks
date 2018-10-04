@@ -11,11 +11,20 @@
 #ifndef IMAGEARTWORK_H
 #define IMAGEARTWORK_H
 
-#include "artworkmetadata.h"
+#include <QDateTime>
+#include <QObject>
 #include <QSize>
 #include <QString>
-#include <QDateTime>
-#include "../Common/flags.h"
+#include <QtGlobal>
+
+#include "Common/flags.h"
+#include "Common/types.h"
+#include "artworkmetadata.h"
+
+namespace MetadataIO {
+    struct CachedArtwork;
+    struct OriginalMetadata;
+}
 
 namespace Artworks {
     class ImageArtwork: public ArtworkMetadata

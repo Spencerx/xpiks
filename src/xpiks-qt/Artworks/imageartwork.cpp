@@ -9,9 +9,13 @@
  */
 
 #include "imageartwork.h"
-#include "../Common/defines.h"
-#include "../MetadataIO/cachedartwork.h"
-#include "../MetadataIO/originalmetadata.h"
+
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Common/logging.h"
+#include "MetadataIO/cachedartwork.h"
+#include "MetadataIO/originalmetadata.h"
 
 namespace Artworks {
     ImageArtwork::ImageArtwork(const QString &filepath, Common::ID_t ID, qint64 directoryID):

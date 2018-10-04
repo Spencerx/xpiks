@@ -9,7 +9,7 @@
  */
 
 #include "translationworker.h"
-#include <lookupdictionary.h>
+#include <vendors/ssdll/src/ssdll/lookupdictionary.h>
 #include <string>
 #include <Common/defines.h>
 #include <Helpers/asynccoordinator.h>

@@ -42,7 +42,7 @@
 
 // -------------------------------------
 
-#include <chillout.h>
+#include <vendors/chillout/src/chillout/chillout.h>
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);

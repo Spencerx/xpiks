@@ -10,6 +10,14 @@
 
 #include "artworkssnapshot.h"
 
+#include <utility>
+
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/imageartwork.h"
+#include "Common/logging.h"
+
 namespace Artworks {
     ArtworkSessionSnapshot::ArtworkSessionSnapshot(std::shared_ptr<ArtworkMetadata> const &artwork) {
         Q_ASSERT(artwork != nullptr);

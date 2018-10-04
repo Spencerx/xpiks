@@ -18,7 +18,7 @@
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QThread>
-#include <hunspell/hunspell.hxx>
+#include <vendors/hunspell-repo/src/hunspell/hunspell.hxx>
 #include "spellcheckitem.h"
 #include <Common/defines.h>
 #include <Common/flags.h>

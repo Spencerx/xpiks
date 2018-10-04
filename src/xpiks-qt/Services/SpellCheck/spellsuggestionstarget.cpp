@@ -17,6 +17,7 @@
 #include <Artworks/artworkssnapshot.h>
 #include <Artworks/basicmodelsource.h>
 #include <Services/iartworksupdater.h>
+#include "Artworks/artworkmetadata.h"
 
 namespace SpellCheck {
     typedef std::vector<std::shared_ptr<SpellSuggestionsItem> > SuggestionsVector;

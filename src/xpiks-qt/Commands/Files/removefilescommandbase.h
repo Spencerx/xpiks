@@ -13,6 +13,7 @@
 
 #include <Commands/Base/icommand.h>
 #include <Models/Artworks/artworkslistoperations.h>
+#include <QObject>
 
 namespace Models {
     class ArtworksRepository;

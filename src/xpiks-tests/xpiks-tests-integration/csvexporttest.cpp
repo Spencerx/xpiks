@@ -7,7 +7,7 @@
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include <Helpers/filehelpers.h>
-#include <csv.h>
+#include <vendors/csv/csv.h>
 #include "xpikstestsapp.h"
 
 QString CsvExportTest::testName() {

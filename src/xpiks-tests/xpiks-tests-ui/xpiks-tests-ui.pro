@@ -9,6 +9,7 @@ DEFINES += QML_IMPORT_TRACE
 DEFINES += QT_DEBUG_PLUGINS
 
 INCLUDEPATH += ../../xpiks-qt/
+INCLUDEPATH += ../../../
 
 BUILDNO = $$system(git log -n 1 --pretty=format:"%H")
 
@@ -30,16 +31,6 @@ DEFINES += FAKE_WARNINGS
 STUB_PLUGIN_NAME = UiTestsStubPlugin
 
 DEFINES += DIALOGS_DIR="$$PWD/../../xpiks-qt"
-
-INCLUDEPATH += ../../../vendors/tiny-aes
-INCLUDEPATH += ../../../vendors/cpp-libface
-INCLUDEPATH += ../../../vendors/ssdll/src/ssdll
-INCLUDEPATH += ../../../vendors/hunspell-repo/src
-INCLUDEPATH += ../../../vendors/libthmbnlr
-INCLUDEPATH += ../../../vendors/libxpks
-INCLUDEPATH += ../../../vendors/chillout/src/chillout
-INCLUDEPATH += ../../../vendors/csv
-INCLUDEPATH += ../../xpiks-qt
 
 CONFIG(debug, debug|release)  {
     LIBS += -L"$$PWD/../../../libs/debug"
@@ -63,7 +54,6 @@ BUILDNO=$$system(git log -n 1 --pretty=format:"%h")
 BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
 
 macx {
-    INCLUDEPATH += "../../../vendors/quazip"
     INCLUDEPATH += "../../../vendors/libcurl/include"
 }
 
@@ -71,7 +61,6 @@ win32 {
     DEFINES += QT_NO_PROCESS_COMBINED_ARGUMENT_START
     QT += winextras
     INCLUDEPATH += "../../../vendors/zlib-1.2.11"
-    INCLUDEPATH += "../../../vendors/quazip"
     INCLUDEPATH += "../../../vendors/libcurl/include"
 
     LIBS -= -lcurl
@@ -95,14 +84,12 @@ win32 {
 
 linux {
     message("for Linux")
-    INCLUDEPATH += "../../../vendors/quazip"
 
     LIBS += -ldl
 }
 
 travis-ci {
     message("for Travis CI")
-    INCLUDEPATH += "../../../vendors/quazip"
 
     DEFINES += TRAVIS_CI
 

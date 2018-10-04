@@ -620,14 +620,7 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/iuicommandmiddleware.h \
     ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.h
 
-INCLUDEPATH += ../../../vendors/tiny-aes
-INCLUDEPATH += ../../../vendors/cpp-libface
-INCLUDEPATH += ../../../vendors/ssdll/src/ssdll
-INCLUDEPATH += ../../../vendors/hunspell-repo/src
-INCLUDEPATH += ../../../vendors/libthmbnlr
-INCLUDEPATH += ../../../vendors/libxpks
-INCLUDEPATH += ../../../vendors/chillout/src/chillout
-INCLUDEPATH += ../../../vendors/csv
+INCLUDEPATH += ../../../
 INCLUDEPATH += ../../xpiks-qt
 
 CONFIG(debug, debug|release)  {
@@ -651,7 +644,6 @@ BUILDNO=$$system(git log -n 1 --pretty=format:"%h")
 BRANCH_NAME=$$system(git rev-parse --abbrev-ref HEAD)
 
 macx {
-    INCLUDEPATH += "../../../vendors/quazip"
     INCLUDEPATH += "../../../vendors/libcurl/include"
     INCLUDEPATH += "../../../vendors/exiv2-0.25/include"
 
@@ -672,7 +664,6 @@ win32 {
     DEFINES += QT_NO_PROCESS_COMBINED_ARGUMENT_START
     QT += winextras
     INCLUDEPATH += "../../../vendors/zlib-1.2.11"
-    INCLUDEPATH += "../../../vendors/quazip"
     INCLUDEPATH += "../../../vendors/libcurl/include"
     INCLUDEPATH += "../../../vendors/exiv2-0.25/include"
 
@@ -706,7 +697,6 @@ win32 {
 
 linux {
     message("for Linux")
-    INCLUDEPATH += "../../../vendors/quazip"
     BUILDNO = $$system($$PWD/buildno.sh)
 
     LIBS += -lexiv2
@@ -722,7 +712,6 @@ linux {
 
 travis-ci {
     message("for Travis CI")
-    INCLUDEPATH += "../../../vendors/quazip"
     DEFINES += TRAVIS_CI
 
     linux {

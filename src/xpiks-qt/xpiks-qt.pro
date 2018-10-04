@@ -693,13 +693,7 @@ SOURCES += *.qml \
 }
 
 INCLUDEPATH += ./
-INCLUDEPATH += ../../vendors/tiny-aes
-INCLUDEPATH += ../../vendors/cpp-libface
-INCLUDEPATH += ../../vendors/ssdll/src/ssdll
-INCLUDEPATH += ../../vendors/hunspell-repo/src
-INCLUDEPATH += ../../vendors/libthmbnlr
-INCLUDEPATH += ../../vendors/libxpks
-INCLUDEPATH += ../../vendors/chillout/src/chillout
+INCLUDEPATH += ../../
 
 CONFIG(debug, debug|release)  {
     LIBS += -L"$$PWD/../../libs/debug"
@@ -740,7 +734,6 @@ macx {
 
     LIBS += -ldl
 
-    INCLUDEPATH += "../../vendors/quazip"
     INCLUDEPATH += "../../vendors/libcurl/include"
 
     LIBS += -lavcodec.57
@@ -777,7 +770,6 @@ win32 {
     DEFINES += ZLIB_WINAPI \
                ZLIB_DLL
     INCLUDEPATH += "../../vendors/zlib-1.2.11"
-    INCLUDEPATH += "../../vendors/quazip"
     INCLUDEPATH += "../../vendors/libcurl/include"
 
     LIBS -= -lcurl
@@ -811,7 +803,6 @@ win32 {
 
 linux {
     message("for Linux")
-    INCLUDEPATH += "../../vendors/quazip"
     BUILDNO = $$system($$PWD/../../scripts/build/buildno.sh)
 
     LIBS += -ldl
@@ -829,7 +820,6 @@ linux {
 travis-ci {
     message("for Travis CI")
     DEFINES += TRAVIS_CI
-    INCLUDEPATH += "../../vendors/quazip"
 
     linux {
         LIBS -= -lz

@@ -11,13 +11,26 @@
 #ifndef VIDEOARTWORK_H
 #define VIDEOARTWORK_H
 
-#include "artworkmetadata.h"
-#include <QString>
-#include <QReadWriteLock>
+#include "Artworks/artworkmetadata.h"
+
+#include <cstdint>
+
 #include <QMutex>
+#include <QObject>
+#include <QReadLocker>
+#include <QReadWriteLock>
 #include <QSize>
-#include "../Common/flags.h"
-#include "../Common/types.h"
+#include <QString>
+#include <QWriteLocker>
+#include <QtGlobal>
+
+#include "Common/flags.h"
+#include "Common/types.h"
+
+namespace MetadataIO {
+    struct CachedArtwork;
+    struct OriginalMetadata;
+}
 
 namespace libthmbnlr {
     struct VideoFileMetadata;

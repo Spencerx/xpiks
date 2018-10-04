@@ -11,22 +11,36 @@
 #ifndef BASICMETADATAMODEL_H
 #define BASICMETADATAMODEL_H
 
-#include "basickeywordsmodel.h"
-#include <QStringList>
+#include <cstddef>
+#include <memory>
+#include <vector>
+
 #include <QHash>
+#include <QMetaType>
+#include <QObject>
 #include <QReadWriteLock>
-#include <Common/flags.h>
-#include "iartworkmetadata.h"
-#include <Services/SpellCheck/ispellcheckable.h>
+#include <QSet>
+#include <QString>
+#include <QStringList>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/iartworkmetadata.h"
+#include "Common/flags.h"
+#include "Services/SpellCheck/ispellcheckable.h"
+
+namespace Common {
+    struct WordAnalysisResult;
+}
 
 namespace SpellCheck {
-    class SpellCheckQueryItem;
     class KeywordSpellSuggestions;
-    class SpellCheckItem;
     class SpellCheckInfo;
+    class SpellCheckQueryItem;
 }
 
 namespace Artworks {
+    struct KeywordItem;
+
     class BasicMetadataModel :
             public BasicKeywordsModel,
             public IArtworkMetadata,

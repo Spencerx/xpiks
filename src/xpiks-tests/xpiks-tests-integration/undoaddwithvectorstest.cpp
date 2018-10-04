@@ -4,6 +4,7 @@
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
+#include "Artworks/imageartwork.h"
 
 QString UndoAddWithVectorsTest::testName() {
     return QLatin1String("UndoAddWithVectorsTest");

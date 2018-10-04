@@ -11,14 +11,19 @@
 #ifndef ARTWORKMETADATASNAPSHOT_H
 #define ARTWORKMETADATASNAPSHOT_H
 
-#include <QString>
+#include <cstddef>
 #include <deque>
-#include <memory>
 #include <initializer_list>
-#include "artworkmetadata.h"
-#include "imageartwork.h"
+#include <memory>
+#include <vector>
+
+#include <QString>
+#include <QStringList>
+#include <QtGlobal>
 
 namespace Artworks {
+    class ArtworkMetadata;
+
     class ArtworkSessionSnapshot
     {
     public:

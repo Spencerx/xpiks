@@ -9,16 +9,20 @@
  */
 
 #include "basicmetadatamodel.h"
-#include <QReadWriteLock>
+
 #include <QReadLocker>
 #include <QWriteLocker>
-#include <Services/SpellCheck/spellcheckitem.h>
-#include <Services/SpellCheck/spellsuggestionsitem.h>
-#include <Services/SpellCheck/spellcheckinfo.h>
-#include <Helpers/keywordshelpers.h>
-#include <Helpers/stringhelper.h>
-#include <Common/defines.h>
-#include <Common/flags.h>
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/keyword.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Common/wordanalysisresult.h"
+#include "Helpers/stringhelper.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
 
 namespace Artworks {
     BasicMetadataModel::BasicMetadataModel(SpellCheck::SpellCheckInfo &spellCheckInfo, QObject *parent):

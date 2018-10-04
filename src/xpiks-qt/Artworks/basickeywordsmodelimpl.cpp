@@ -9,18 +9,19 @@
  */
 
 #include "basickeywordsmodelimpl.h"
-#include <QReadWriteLock>
-#include <QReadLocker>
-#include <QWriteLocker>
-#include <algorithm>
-#include <Services/SpellCheck/spellcheckitem.h>
-#include <Services/SpellCheck/spellsuggestionsitem.h>
-#include <Services/SpellCheck/spellcheckinfo.h>
-#include <Helpers/keywordshelpers.h>
-#include <Helpers/stringhelper.h>
-#include <Helpers/indiceshelper.h>
-#include <Common/logging.h>
-#include <Common/flags.h>
+
+#include <QChar>
+#include <QVector>
+#include <Qt>
+#include <QtDebug>
+
+#include "Artworks/keyword.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/keywordshelpers.h"
+#include "Helpers/stringhelper.h"
+#include "Services/SpellCheck/spellcheckitem.h"
+#include "Services/SpellCheck/spellsuggestionsitem.h"
 
 namespace Artworks {
     BasicKeywordsModelImpl::BasicKeywordsModelImpl()

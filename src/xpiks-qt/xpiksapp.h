@@ -73,7 +73,7 @@
 
 #include <KeywordsPresets/presetkeywordsmodel.h>
 
-#include <ftpcoordinator.h>
+#include <vendors/libxpks/ftpcoordinator.h>
 
 #include <MetadataIO/csvexportmodel.h>
 #include <MetadataIO/metadataiocoordinator.h>

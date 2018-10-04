@@ -4,6 +4,7 @@
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
+#include "Artworks/imageartwork.h"
 
 QString AddFilesBasicTest::testName() {
     return QLatin1String("AddFilesBasicTest");

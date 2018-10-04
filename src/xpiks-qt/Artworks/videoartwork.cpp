@@ -9,11 +9,18 @@
  */
 
 #include "videoartwork.h"
+
 #include <QFileInfo>
-#include "../MetadataIO/cachedartwork.h"
-#include "../Common/defines.h"
-#include "../MetadataIO/originalmetadata.h"
-#include <videofilemetadata.h>
+#include <QMutexLocker>
+#include <QtDebug>
+
+#include <vendors/libthmbnlr/videofilemetadata.h>
+
+#include "Artworks/artworkmetadata.h"
+#include "Common/logging.h"
+#include "Common/types.h"
+#include "MetadataIO/cachedartwork.h"
+#include "MetadataIO/originalmetadata.h"
 
 namespace Artworks {
     VideoArtwork::VideoArtwork(const QString &filepath, Common::ID_t ID, qint64 directoryID):

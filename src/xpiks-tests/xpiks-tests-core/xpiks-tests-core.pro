@@ -16,12 +16,7 @@ CONFIG   += c++14
 
 win32:QT += winextras
 
-INCLUDEPATH += ../../../vendors/tiny-aes
-win32:INCLUDEPATH += ../../xpiks-qt/Encryption
-INCLUDEPATH += ../../../vendors/hunspell-repo/src
-INCLUDEPATH += ../../../vendors/ssdll/src/ssdll
-INCLUDEPATH += ../../../vendors/libthmbnlr
-INCLUDEPATH += ../../../vendors/libxpks
+INCLUDEPATH += ../../../
 INCLUDEPATH += ../../xpiks-qt
 
 DEFINES += HUNSPELL_STATIC

@@ -11,28 +11,40 @@
 #ifndef BASICKEYWORDSMODEL_H
 #define BASICKEYWORDSMODEL_H
 
-#include <Common/abstractlistmodel.h>
+#include <cstddef>
+#include <memory>
+#include <vector>
+
+#include <QHash>
+#include <QMetaType>
+#include <QModelIndex>
+#include <QObject>
+#include <QReadWriteLock>
+#include <QSet>
+#include <QString>
 #include <QStringList>
 #include <QVariant>
-#include <QByteArray>
-#include <QHash>
-#include <QVector>
-#include <QHash>
-#include <QReadWriteLock>
-#include <memory>
-#include <Common/flags.h>
-#include <Common/wordanalysisresult.h>
-#include "keyword.h"
+#include <Qt>
+
+#include "Common/abstractlistmodel.h"
+#include "Common/flags.h"
+#include "Helpers/indicesranges.h"
+
+#ifdef CORE_TESTS
+#include "Artworks/keyword.h"
+#endif
+
+class QByteArray;
+class QModelIndex;
 
 namespace SpellCheck {
     class SpellCheckQueryItem;
     class KeywordSpellSuggestions;
-    class SpellCheckItem;
-    class SpellCheckInfo;
 }
 
 namespace Artworks {
     class BasicKeywordsModelImpl;
+    struct KeywordItem;
 
     class BasicKeywordsModel: public Common::AbstractListModel
     {

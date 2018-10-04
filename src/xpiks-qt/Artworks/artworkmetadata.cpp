@@ -9,18 +9,26 @@
  */
 
 #include "artworkmetadata.h"
-#include <QReadLocker>
-#include <QWriteLocker>
-#include <QStringBuilder>
+
+#include <cstdint>
+
 #include <QDir>
 #include <QFileInfo>
-#include <Helpers/keywordshelpers.h>
-#include <Services/SpellCheck/spellsuggestionsitem.h>
-#include <Services/SpellCheck/spellcheckitem.h>
-#include <Services/SpellCheck/spellcheckinfo.h>
-#include <Common/defines.h>
-#include <MetadataIO/cachedartwork.h>
-#include <MetadataIO/originalmetadata.h>
+#include <QMutexLocker>
+#include <QtDebug>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/keyword.h"
+#include "Common/delayedactionentity.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "MetadataIO/cachedartwork.h"
+#include "MetadataIO/originalmetadata.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
+
+namespace SpellCheck {
+    class KeywordSpellSuggestions;
+}
 
 // twice average English word length
 #define MAX_EDITING_PAUSE_RESTARTS 12

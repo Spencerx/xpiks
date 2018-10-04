@@ -5,6 +5,7 @@
 #include <Commands/Files/addfilescommand.h>
 #include "fakeinitartworkstemplate.h"
 #include <QMLExtensions/uicommandid.h>
+#include "Artworks/imageartwork.h"
 
 std::shared_ptr<Artworks::ArtworkMetadata> createArtwork(Common::ID_t id,
                                                          const QString &title,

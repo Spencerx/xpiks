@@ -11,10 +11,11 @@
 #ifndef METADATAELEMENT_H
 #define METADATAELEMENT_H
 
-#include <QString>
 #include <QSet>
-#include "artworkmetadata.h"
-#include <Common/flags.h>
+#include <QString>
+
+#include "Artworks/artworkmetadata.h"
+#include "Common/flags.h"
 
 namespace Artworks {
     class ArtworkElement

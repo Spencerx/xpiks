@@ -11,6 +11,7 @@
 #include "keywordedittemplate.h"
 #include <Artworks/artworkssnapshot.h>
 #include <Common/logging.h>
+#include "Artworks/artworkmetadata.h"
 
 namespace Commands {
     KeywordEditTemplate::KeywordEditTemplate(Common::KeywordEditFlags editFlags,

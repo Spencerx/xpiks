@@ -7,7 +7,7 @@
 #include <QThread>
 #include <QCoreApplication>
 
-#include <chillout.h>
+#include <vendors/chillout/src/chillout/chillout.h>
 
 #include "Connectivity/curlinithelper.h"
 

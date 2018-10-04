@@ -11,29 +11,25 @@
 #ifndef BASICKEYWORDSMODELIMPL_H
 #define BASICKEYWORDSMODELIMPL_H
 
-#include <QStringList>
-#include <QVariant>
-#include <QByteArray>
-#include <QHash>
-#include <QSet>
-#include <QVector>
-#include <QHash>
-#include <vector>
+#include <cstddef>
 #include <memory>
-#include "keyword.h"
-#include "../Common/flags.h"
-#include "iartworkmetadata.h"
-#include "../Common/wordanalysisresult.h"
+#include <vector>
+
+#include <QSet>
+#include <QString>
+#include <QStringList>
+#include <QVector>
+#include <QtGlobal>
+
+#include "Artworks/keyword.h"
+#include "Common/flags.h"
 
 namespace SpellCheck {
     class SpellCheckQueryItem;
     class KeywordSpellSuggestions;
-    class SpellCheckItem;
-    class SpellCheckInfo;
 }
 
 namespace Artworks {
-    class BasicKeywordsModel;
 
     class BasicKeywordsModelImpl
     {

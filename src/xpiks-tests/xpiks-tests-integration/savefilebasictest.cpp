@@ -3,6 +3,7 @@
 #include <QVariant>
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
+#include "Artworks/imageartwork.h"
 
 QString SaveFileBasicTest::testName() {
     return QLatin1String("SaveFileBasicTest");

@@ -11,7 +11,7 @@
 #ifndef ISELECTEDARTWORKSSOURCE_H
 #define ISELECTEDARTWORKSSOURCE_H
 
-#include "artworkssnapshot.h"
+#include "Artworks/artworkssnapshot.h"
 
 namespace Artworks {
     class ISelectedArtworksSource {

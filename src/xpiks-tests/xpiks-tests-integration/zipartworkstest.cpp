@@ -4,6 +4,7 @@
 #include "signalwaiter.h"
 #include <Helpers/filehelpers.h>
 #include "xpikstestsapp.h"
+#include "Artworks/imageartwork.h"
 
 QString ZipArtworksTest::testName() {
     return QLatin1String("ZipArtworksTest");

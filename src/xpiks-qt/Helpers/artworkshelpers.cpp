@@ -9,6 +9,7 @@
  */
 
 #include "artworkshelpers.h"
+#include <QFileInfo>
 #include <Artworks/artworkmetadata.h>
 #include <Artworks/imageartwork.h>
 #include <Artworks/videoartwork.h>

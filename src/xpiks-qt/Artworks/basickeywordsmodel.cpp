@@ -9,17 +9,21 @@
  */
 
 #include "basickeywordsmodel.h"
-#include <QReadWriteLock>
+
+#include <QByteArray>
 #include <QReadLocker>
+#include <QReadWriteLock>
+#include <QVector>
 #include <QWriteLocker>
-#include <Services/SpellCheck/spellcheckitem.h>
-#include <Services/SpellCheck/spellsuggestionsitem.h>
-#include <Services/SpellCheck/spellcheckinfo.h>
-#include <Helpers/keywordshelpers.h>
-#include <Helpers/stringhelper.h>
-#include <Common/defines.h>
-#include <Helpers/indiceshelper.h>
-#include "basickeywordsmodelimpl.h"
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodelimpl.h"
+#include "Artworks/keyword.h"
+#include "Common/abstractlistmodel.h"
+#include "Common/logging.h"
+
+class QModelIndex;
 
 namespace Artworks {
     BasicKeywordsModel::BasicKeywordsModel(QObject *parent):

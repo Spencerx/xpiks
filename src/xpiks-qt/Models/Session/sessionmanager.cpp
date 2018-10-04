@@ -13,6 +13,7 @@
 #include <Artworks/artworkssnapshot.h>
 #include <Filesystem/filescollection.h>
 #include "sessionmanager.h"
+#include "Common/logging.h"
 
 #define SESSION_FILE "session.json"
 

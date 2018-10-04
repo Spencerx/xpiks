@@ -3,6 +3,7 @@
 #include <QList>
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
+#include "Artworks/imageartwork.h"
 
 QString SaveWithEmptyTitleTest::testName() {
     return QLatin1String("SaveWithEmptyTitleTest");

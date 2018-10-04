@@ -14,6 +14,7 @@
 #include <QAbstractListModel>
 #include <vector>
 #include <Artworks/artworkssnapshot.h>
+#include "Artworks/basicmetadatamodel.h"
 
 namespace QMLExtensions {
     class ColorsModel;

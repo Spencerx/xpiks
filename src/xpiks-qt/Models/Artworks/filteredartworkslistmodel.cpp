@@ -22,6 +22,7 @@
 #include <Helpers/filterhelpers.h>
 #include <Models/Editing/previewartworkelement.h>
 #include <Models/settingsmodel.h>
+#include <Artworks/imageartwork.h>
 
 namespace Models {    
     FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel,

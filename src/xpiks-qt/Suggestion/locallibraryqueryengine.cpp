@@ -10,6 +10,7 @@
 
 #include "locallibraryqueryengine.h"
 #include <QThread>
+#include <QFileInfo>
 #include <vector>
 #include <memory>
 #include "../MetadataIO/metadataioservice.h"

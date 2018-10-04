@@ -7,7 +7,7 @@
 #include "integrationtestbase.h"
 #include "signalwaiter.h"
 #include "testshelpers.h"
-#include <csv.h>
+#include <vendors/csv/csv.h>
 #include "xpikstestsapp.h"
 #include <Helpers/filehelpers.h>
 

@@ -11,7 +11,7 @@
 #ifndef BASICMODELSOURCE_H
 #define BASICMODELSOURCE_H
 
-#include "ibasicmodelsource.h"
+#include "Artworks/ibasicmodelsource.h"
 
 namespace Artworks {
     class BasicKeywordsModel;

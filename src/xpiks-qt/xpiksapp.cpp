@@ -9,7 +9,7 @@
  */
 
 #include "xpiksapp.h"
-#include <apisecretsstorage.h>
+#include <vendors/libxpks/apisecretsstorage.h>
 #include <QQmlContext>
 #include <QQuickWindow>
 #include <QQmlEngine>

@@ -3,6 +3,7 @@
 
 #include <QSet>
 #include <Artworks/artworkssnapshot.h>
+#include "Helpers/indicesranges.h"
 
 namespace Models {
     struct ArtworksAddResult {

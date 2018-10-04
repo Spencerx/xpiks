@@ -11,10 +11,11 @@
 #ifndef IARTWORKMETADATA_H
 #define IARTWORKMETADATA_H
 
-#include <QString>
 #include <QSet>
-#include <Common/flags.h>
-#include "keyword.h"
+#include <QString>
+
+#include "Artworks/keyword.h"
+#include "Common/flags.h"
 
 namespace Artworks {
     class BasicKeywordsModel;

@@ -20,7 +20,7 @@
 #include "../Services/artworksupdatehub.h"
 #include "../MetadataIO/metadataioservice.h"
 #include <Models/Artworks/artworkslistmodel.h>
-#include <thumbnailcreator.h>
+#include <vendors/libthmbnlr/thumbnailcreator.h>
 
 #define VIDEO_WORKER_SLEEP_DELAY 500
 #define VIDEO_INDEX_BACKUP_STEP 50

@@ -11,6 +11,7 @@
 #include "recentfilesmodel.h"
 #include <Helpers/constants.h>
 #include <Artworks/artworkssnapshot.h>
+#include "Artworks/artworkmetadata.h"
 
 #define MAX_RECENT_FILES 10
 

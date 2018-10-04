@@ -14,6 +14,7 @@
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
+#include "Artworks/imageartwork.h"
 
 QString RestoreSessionTest::testName() {
     return QLatin1String("RestoreSessionTest");

@@ -20,7 +20,7 @@
 #include <Common/isystemenvironment.h>
 #include <Common/messages.h>
 #include "uploadinforepository.h"
-#include <ftpcoordinator.h>
+#include <vendors/libxpks/ftpcoordinator.h>
 #include <Artworks/iselectedartworkssource.h>
 
 namespace Helpers {

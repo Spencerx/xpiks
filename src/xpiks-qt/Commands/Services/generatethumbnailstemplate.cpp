@@ -12,6 +12,7 @@
 #include <Artworks/artworkssnapshot.h>
 #include <QMLExtensions/imagecachingservice.h>
 #include <QMLExtensions/videocachingservice.h>
+#include "Common/logging.h"
 
 namespace Commands {
     GenerateThumbnailsTemplate::GenerateThumbnailsTemplate(QMLExtensions::ImageCachingService &imageCachingService,

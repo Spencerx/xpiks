@@ -18,8 +18,8 @@
 #include "../Models/settingsmodel.h"
 #include "../Common/defines.h"
 #include "metadataioservice.h"
-#include <readingorchestrator.h>
-#include <writingorchestrator.h>
+#include <vendors/libxpks/readingorchestrator.h>
+#include <vendors/libxpks/writingorchestrator.h>
 #include "../Models/switchermodel.h"
 #include <Services/artworksupdatehub.h>
 #include "../QMLExtensions/videocachingservice.h"

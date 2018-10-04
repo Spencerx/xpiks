@@ -11,6 +11,7 @@
 #include "expandpresettemplate.h"
 #include <KeywordsPresets/ipresetsmanager.h>
 #include <Artworks/artworkssnapshot.h>
+#include "Artworks/artworkmetadata.h"
 
 namespace Commands {
     ExpandPresetTemplate::ExpandPresetTemplate(KeywordsPresets::IPresetsManager &presetsManager,
