@@ -9,7 +9,8 @@
  */
 
 #include "suggestionresultsresponse.h"
-#include "isuggestionsrepository.h"
+
+#include "Suggestion/isuggestionsrepository.h"
 
 namespace Suggestion {
     SuggestionResultsResponse::SuggestionResultsResponse(ISuggestionsRepository &suggestions):

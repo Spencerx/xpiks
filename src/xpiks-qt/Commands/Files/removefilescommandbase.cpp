@@ -9,8 +9,13 @@
  */
 
 #include "removefilescommandbase.h"
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Models/Artworks/artworksrepository.h>
+
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/artworkslistoperations.h"
+#include "Models/Artworks/artworksrepository.h"
 
 namespace Commands {
     RemoveFilesCommandBase::RemoveFilesCommandBase(Models::ArtworksListModel &artworksList,

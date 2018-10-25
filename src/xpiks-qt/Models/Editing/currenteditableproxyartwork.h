@@ -11,7 +11,22 @@
 #ifndef CURRENTEDITABLEPROXYARTWORK_H
 #define CURRENTEDITABLEPROXYARTWORK_H
 
-#include "icurrenteditable.h"
+#include <memory>
+
+#include <QString>
+#include <QStringList>
+
+#include "Common/types.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "Models/Editing/icurrenteditable.h"
+
+namespace Commands {
+    class ICommand;
+}
+
+namespace KeywordsPresets {
+    class IPresetsManager;
+}
 
 namespace Models {
     class ArtworkProxyBase;

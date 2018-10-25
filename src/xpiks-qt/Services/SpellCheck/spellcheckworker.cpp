@@ -10,24 +10,34 @@
 
 #include "spellcheckworker.h"
 
-#include <QFile>
-#include <QTextStream>
-#include <QTextCodec>
+#include <cstddef>
+#include <string>
+
+#include <QByteArray>
+#include <QCharRef>
 #include <QDir>
-#include <QUrl>
-#include <QCoreApplication>
-#include <QStandardPaths>
+#include <QFileInfo>
+#include <QHash>
+#include <QReadLocker>
+#include <QTextCodec>
 #include <QThread>
+#include <QVector>
+#include <QtDebug>
+#include <QtGlobal>
+
 #include <vendors/hunspell-repo/src/hunspell/hunspell.hxx>
-#include "spellcheckitem.h"
-#include <Common/defines.h>
-#include <Common/flags.h>
-#include <Helpers/stringhelper.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Services/Warnings/warningsservice.h>
-#include <Helpers/cpphelpers.h>
-#include "userdictionary.h"
+
+#include "Artworks/artworkmetadata.h"  // IWYU pragma: keep
+#include "Artworks/artworkssnapshot.h"
+#include "Common/flags.h"
+#include "Common/itemprocessingworker.h"
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+#include "Helpers/cpphelpers.h"
+#include "Helpers/stringhelper.h"
+#include "Services/SpellCheck/spellcheckitem.h"
+#include "Services/SpellCheck/userdictionary.h"
+#include "Services/Warnings/warningsservice.h"
 
 #define EN_HUNSPELL_DIC "en_US.dic"
 #define EN_HUNSPELL_AFF "en_US.aff"

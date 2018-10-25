@@ -11,11 +11,13 @@
 #ifndef KEYWORDEDITTEMPLATE_H
 #define KEYWORDEDITTEMPLATE_H
 
-#include <Commands/Base/icommandtemplate.h>
-#include <QString>
 #include <vector>
-#include <UndoRedo/artworkmetadatabackup.h>
-#include <Common/flags.h>
+
+#include <QString>
+
+#include "Commands/Base/icommandtemplate.h"
+#include "Common/flags.h"
+#include "UndoRedo/artworkmetadatabackup.h"
 
 namespace Artworks {
     class ArtworksSnapshot;

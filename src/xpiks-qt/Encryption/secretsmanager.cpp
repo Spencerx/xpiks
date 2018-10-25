@@ -9,10 +9,17 @@
  */
 
 #include "secretsmanager.h"
-#include "aes-qt.h"
+
+#include <QChar>
+#include <QCharRef>
 #include <QCryptographicHash>
+#include <QMutexLocker>
 #include <QTime>
-#include "../Common/logging.h"
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Encryption/aes-qt.h"
 
 void shuffleString(QString &str) {
     qsrand(QTime::currentTime().msec());

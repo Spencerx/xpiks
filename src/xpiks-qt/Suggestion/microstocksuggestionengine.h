@@ -12,11 +12,12 @@
 #define MICROSTOCKSUGGESTIONENGINE_H
 
 #include <memory>
-#include "../Microstocks/imicrostockapiclient.h"
-#include "../Connectivity/requestsservice.h"
-#include "../Microstocks/searchquery.h"
-#include "suggestionresultsresponse.h"
-#include "isuggestionengine.h"
+
+#include "Connectivity/requestsservice.h"
+#include "Microstocks/imicrostockapiclient.h"
+#include "Microstocks/searchquery.h"
+#include "Suggestion/isuggestionengine.h"
+#include "Suggestion/suggestionresultsresponse.h"
 
 namespace Suggestion {
     template<class ResponseType>

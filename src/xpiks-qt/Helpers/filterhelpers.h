@@ -11,9 +11,11 @@
 #ifndef FILTERHELPERS_H
 #define FILTERHELPERS_H
 
-#include <QString>
-#include <Common/flags.h>
 #include <memory>
+
+#include <QString>
+
+#include "Common/flags.h"
 
 namespace Artworks {
     class ArtworkMetadata;

@@ -11,22 +11,23 @@
 #ifndef SESSIONMANAGER_H
 #define SESSIONMANAGER_H
 
-#include <QJsonObject>
-#include <QMutex>
 #include <memory>
 #include <tuple>
-#include <Helpers/localconfig.h>
-#include <Common/isystemenvironment.h>
-#include <Helpers/jsonobjectmap.h>
+
+#include <QMutex>
+#include <QString>
+#include <QObject>
+
+#include "Helpers/localconfig.h"
+
+class QStringList;
 
 namespace Artworks {
-    class ArtworkSessionSnapshot;
     class SessionSnapshot;
-    class ArtworkMetadata;
 }
 
-namespace Models {
-    class ArtworksRepository;
+namespace Common {
+    class ISystemEnvironment;
 }
 
 namespace Filesystem {

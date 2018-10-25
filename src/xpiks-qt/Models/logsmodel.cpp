@@ -9,19 +9,18 @@
  */
 
 #include "logsmodel.h"
-#include <QThread>
-#include <QString>
+
 #include <QFile>
-#include <QDir>
-#include <QDateTime>
-#include <QTextStream>
-#include <QStandardPaths>
-#include <Helpers/stringhelper.h>
-#include <Helpers/logger.h>
-#include <Helpers/loggingworker.h>
-#include <Common/defines.h>
-#include <Common/logging.h>
-#include <Encryption/obfuscation.h>
+#include <QIODevice>
+#include <QString>
+#include <QThread>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/logger.h"
+#include "Helpers/loggingworker.h"
+#include "Helpers/stringhelper.h"
 
 namespace Models {
     LogsModel::LogsModel(QObject *parent) :

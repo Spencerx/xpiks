@@ -12,8 +12,10 @@
 #define ARTWORKSINSPECTIONHUB_H
 
 #include <memory>
-#include <Common/messages.h>
-#include <Common/types.h>
+#include <vector>
+
+#include "Common/messages.h"
+#include "Common/types.h"
 
 namespace SpellCheck {
     class ISpellCheckService;

@@ -11,10 +11,14 @@
 #ifndef TRIANGLEELEMENT_H
 #define TRIANGLEELEMENT_H
 
-#include <QtQuick/QQuickItem>
-#include <QBrush>
-#include <QSGGeometry>
+#include <QColor>
+#include <QObject>
+#include <QQuickItem>
 #include <QSGFlatColorMaterial>
+#include <QSGGeometry>
+#include <QString>
+
+class QSGNode;
 
 namespace QMLExtensions {
     class TriangleElement : public QQuickItem

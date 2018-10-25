@@ -12,14 +12,18 @@
 #define SWITCHERMODEL_H
 
 #include <QObject>
+#include <QString>
 #include <QTimer>
-#include "../Connectivity/switcherconfig.h"
-#include "../Helpers/localconfig.h"
-#include "../Common/statefulentity.h"
-#include "../Common/isystemenvironment.h"
+
+#include "Common/statefulentity.h"
+#include "Connectivity/switcherconfig.h"
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Connectivity {
-    class RequestsService;
+    class IRequestsService;
 }
 
 namespace Models {

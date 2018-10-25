@@ -12,7 +12,8 @@
 #define PREVIEWSTORAGE_H
 
 #include <QString>
-#include "cachedimage.h"
+
+#include "QMLExtensions/cachedimage.h"
 
 namespace QMLExtensions {
     template<class TKey, class TValue>

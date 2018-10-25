@@ -11,13 +11,17 @@
 #ifndef COMMANDMANAGER_H
 #define COMMANDMANAGER_H
 
-#include <Commands/Base/icommandmanager.h>
+#include <memory>
+
+#include "Commands/Base/icommandmanager.h"
 
 namespace UndoRedo {
     class IUndoRedoManager;
 }
 
 namespace Commands {
+    class ICommand;
+
     class CommandManager : public ICommandManager
     {
     public:

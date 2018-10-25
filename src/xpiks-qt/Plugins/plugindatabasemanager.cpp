@@ -10,6 +10,8 @@
 
 #include "plugindatabasemanager.h"
 
+#include "Storage/databasemanager.h"
+
 namespace Plugins {
     PluginDatabaseManager::PluginDatabaseManager(Common::ISystemEnvironment &environment,
                                                  Storage::DatabaseManager &dbManager):

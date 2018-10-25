@@ -12,13 +12,10 @@
 #define JSONHELPER_H
 
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QStringList>
-#include <QSet>
-#include "comparevaluesjson.h"
 
 namespace Helpers {
+    struct CompareValuesJson;
+
     void mergeJson(const QJsonDocument &mergeFrom, QJsonDocument &mergeTo,
                    bool overwrite, CompareValuesJson &comparer);
 }

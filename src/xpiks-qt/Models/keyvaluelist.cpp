@@ -9,12 +9,20 @@
  */
 
 #include "keyvaluelist.h"
+
+#include <cstdint>
+
+#include <QByteArray>
 #include <QImageReader>
-#include <utility>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include <Artworks/videoartwork.h>
-#include <Helpers/filehelpers.h>
+#include <QLatin1Char>
+#include <QModelIndex>
+#include <QSize>
+#include <QStaticStringData>
+#include <QtGlobal>
+
+#include "Artworks/imageartwork.h"
+#include "Artworks/videoartwork.h"
+#include "Helpers/filehelpers.h"
 
 namespace Models {
     QString secondsToString(double seconds) {

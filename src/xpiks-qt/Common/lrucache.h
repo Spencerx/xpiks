@@ -11,9 +11,9 @@
 #ifndef LRUCACHE_H
 #define LRUCACHE_H
 
-#include <unordered_map>
 #include <algorithm>
 #include <list>
+#include <unordered_map>
 #include <utility>
 
 namespace Common {

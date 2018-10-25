@@ -18,11 +18,12 @@
 #include <QSet>
 #include <QString>
 #include <QStringList>
-#include <QVector>
 #include <QtGlobal>
 
 #include "Artworks/keyword.h"
 #include "Common/flags.h"
+
+template <class T> class QVector;
 
 namespace SpellCheck {
     class SpellCheckQueryItem;

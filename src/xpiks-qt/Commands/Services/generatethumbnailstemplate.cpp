@@ -9,10 +9,13 @@
  */
 
 #include "generatethumbnailstemplate.h"
-#include <Artworks/artworkssnapshot.h>
-#include <QMLExtensions/imagecachingservice.h>
-#include <QMLExtensions/videocachingservice.h>
+
+#include <QtDebug>
+
+#include "Artworks/artworkssnapshot.h"
 #include "Common/logging.h"
+#include "QMLExtensions/imagecachingservice.h"
+#include "QMLExtensions/videocachingservice.h"
 
 namespace Commands {
     GenerateThumbnailsTemplate::GenerateThumbnailsTemplate(QMLExtensions::ImageCachingService &imageCachingService,

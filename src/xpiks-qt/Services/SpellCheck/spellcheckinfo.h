@@ -11,12 +11,12 @@
 #ifndef SPELLCHECKITEMINFO_H
 #define SPELLCHECKITEMINFO_H
 
+#include <QReadWriteLock>
 #include <QSet>
 #include <QString>
-#include <QObject>
 #include <QStringList>
-#include <QTextDocument>
-#include <QReadWriteLock>
+
+class QTextDocument;
 
 namespace Artworks {
     class BasicMetadataModel;
@@ -29,8 +29,6 @@ namespace QMLExtensions {
 class QSyntaxHighlighter;
 
 namespace SpellCheck {
-    class SpellCheckErrorsHighlighter;
-
     class SpellCheckErrorsInfo
     {
     public:

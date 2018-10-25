@@ -11,8 +11,9 @@
 #ifndef IDATABASEMANAGER_H
 #define IDATABASEMANAGER_H
 
-#include <QString>
 #include <memory>
+
+#include <QString>
 
 namespace Storage {
     class IDatabase;

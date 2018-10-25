@@ -9,6 +9,7 @@
  */
 
 #include "curlinithelper.h"
+
 #include <curl/curl.h>
 
 namespace Connectivity {

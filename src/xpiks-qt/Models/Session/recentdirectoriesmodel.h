@@ -11,9 +11,15 @@
 #ifndef RECENTDIRECTORIESMODEL_H
 #define RECENTDIRECTORIESMODEL_H
 
-#include "recentitemsmodel.h"
-#include <Common/statefulentity.h>
-#include <Common/isystemenvironment.h>
+#include <QObject>
+#include <QString>
+
+#include "Common/statefulentity.h"
+#include "Models/Session/recentitemsmodel.h"
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Models {
     class RecentDirectoriesModel : public RecentItemsModel

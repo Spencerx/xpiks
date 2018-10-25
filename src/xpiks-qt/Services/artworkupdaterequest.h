@@ -12,7 +12,8 @@
 #define ARTWORKUPDATEREQUEST_H
 
 #include <QSet>
-#include <Common/types.h>
+
+#include "Common/types.h"
 
 namespace Services {
     class ArtworkUpdateRequest {

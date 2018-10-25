@@ -9,12 +9,17 @@
  */
 
 #include "indiceshelper.h"
-#include <cmath>
-#include <algorithm>
 
-namespace Artworks {
-    class ArtworkMetadata;
-}
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <iterator>
+
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"  // IWYU pragma: keep
+
+template <typename T> class QVector;
 
 namespace Helpers {
     template<class T>

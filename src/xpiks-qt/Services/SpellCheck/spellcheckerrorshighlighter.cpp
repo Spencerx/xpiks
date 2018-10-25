@@ -9,13 +9,16 @@
  */
 
 #include "spellcheckerrorshighlighter.h"
+
+#include <QBrush>
 #include <QColor>
-#include <QSet>
 #include <QString>
-#include "spellcheckinfo.h"
-#include <QMLExtensions/colorsmodel.h>
-#include <Helpers/stringhelper.h>
-#include <Common/defines.h>
+#include <QTextCharFormat>
+#include <QTextFormat>
+
+#include "Helpers/stringhelper.h"
+#include "QMLExtensions/colorsmodel.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
 
 namespace SpellCheck {
     SpellCheckErrorsHighlighter::SpellCheckErrorsHighlighter(QTextDocument *document,

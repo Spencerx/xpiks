@@ -9,17 +9,19 @@
  */
 
 #include "database.h"
-#include <QDir>
-#include <string>
-#include <cstring>
-#include <cmath>
-#include <climits>
+
 #include <algorithm>
-#include "../../vendors/sqlite/sqlite3.h"
-#include "../Common/logging.h"
-#include "../Helpers/stringhelper.h"
-#include "../Helpers/constants.h"
-#include "../Helpers/asynccoordinator.h"
+#include <string>
+
+#include <QPair>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include <vendors/sqlite/sqlite3.h>
+
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+#include "Helpers/stringhelper.h"
 
 #define MEGABYTE (1024*1024)
 #define MAX_BLOB_BYTES (10*MEGABYTE)

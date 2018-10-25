@@ -13,11 +13,15 @@
 
 #include <QObject>
 #include <QString>
-#include "analyticsuserevent.h"
-#include <Models/switchermodel.h>
-#include <Models/settingsmodel.h>
-#include <Common/types.h>
-#include <Common/messages.h>
+
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "Connectivity/analyticsuserevent.h"
+
+namespace Models {
+    class SettingsModel;
+    class SwitcherModel;
+}
 
 namespace Connectivity {
     class TelemetryWorker;
@@ -30,7 +34,7 @@ namespace Connectivity {
     public:
         TelemetryService(Models::SwitcherModel &switcher,
                          Models::SettingsModel &settingsModel,
-                         QObject *parent=NULL);
+                         QObject *parent=nullptr);
 
     public:
         void initialize();

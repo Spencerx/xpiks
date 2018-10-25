@@ -11,10 +11,12 @@
 #ifndef TEMPLATEDUICOMMAND_H
 #define TEMPLATEDUICOMMAND_H
 
-#include <QVariant>
 #include <memory>
-#include "iuicommandtemplate.h"
-#include "icommand.h"
+
+#include <QVariant>
+
+#include "Commands/Base/icommand.h"
+#include "Commands/Base/iuicommandtemplate.h"
 
 namespace Commands {
     class TemplatedUICommand: public ICommand

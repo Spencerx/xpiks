@@ -11,17 +11,26 @@
 #ifndef LOCALLIBRARYQUERYENGINE_H
 #define LOCALLIBRARYQUERYENGINE_H
 
+#include <memory>
+#include <vector>
+
 #include <QObject>
 #include <QString>
-#include "locallibraryquery.h"
-#include "isuggestionengine.h"
-#include "../Microstocks/searchquery.h"
+
+#include "Suggestion/locallibraryquery.h"
+#include "Suggestion/isuggestionengine.h"
+
+namespace Microstocks {
+    class SearchQuery;
+}
 
 namespace MetadataIO {
     class MetadataIOService;
 }
 
 namespace Suggestion {
+    class SuggestionArtwork;
+
     class LocalLibraryQueryEngine:
             public QObject,
             public ISuggestionEngine

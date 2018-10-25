@@ -11,20 +11,29 @@
 #ifndef SPELLCHECKWORKER_H
 #define SPELLCHECKWORKER_H
 
-#include <QString>
-#include <QStringList>
+#include <memory>
+#include <vector>
+
+#include <QObject>
 #include <QReadWriteLock>
 #include <QSet>
-#include "spellcheckitem.h"
-#include <Common/itemprocessingworker.h>
-#include <Common/isystemenvironment.h>
-#include <Common/lrucache.h>
-#include <Models/settingsmodel.h>
-#include <Helpers/asynccoordinator.h>
-#include <Helpers/hashhelpers.h>
+#include <QString>
+#include <QStringList>
+
+#include "Common/itemprocessingworker.h"
+#include "Common/lrucache.h"
+#include "Helpers/hashhelpers.h"  // IWYU pragma: keep
 
 class Hunspell;
 class QTextCodec;
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Helpers {
+    class AsyncCoordinator;
+}
 
 namespace Warnings {
     class WarningsService;
@@ -35,6 +44,8 @@ namespace Artworks {
 }
 
 namespace SpellCheck {
+    class SpellCheckItem;
+    class SpellCheckQueryItem;
     class UserDictionary;
 
     class SpellCheckWorker:
@@ -49,7 +60,7 @@ namespace SpellCheck {
                          UserDictionary &userDictionary,
                          Warnings::WarningsService &warningsService,
                          Helpers::AsyncCoordinator &initCoordinator,
-                         QObject *parent=0);
+                         QObject *parent=nullptr);
         virtual ~SpellCheckWorker();
 
     public:
@@ -58,7 +69,7 @@ namespace SpellCheck {
         int getUserDictionarySize() const;
 
     protected:
-        virtual bool initWorker() override;        
+        virtual bool initWorker() override;
         virtual std::shared_ptr<Artworks::ArtworkMetadata> processWorkItem(WorkItem &workItem) override;
         void processSpellingQuery(std::shared_ptr<SpellCheckItem> &item);
 

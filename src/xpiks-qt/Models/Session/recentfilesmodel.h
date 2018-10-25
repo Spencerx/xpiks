@@ -11,8 +11,14 @@
 #ifndef RECENTFILESMODEL_H
 #define RECENTFILESMODEL_H
 
-#include "recentitemsmodel.h"
-#include <Common/statefulentity.h>
+#include <QList>
+#include <QObject>
+#include <QString>
+
+#include "Common/statefulentity.h"
+#include "Models/Session/recentitemsmodel.h"
+
+class QUrl;
 
 namespace Common {
     class ISystemEnvironment;

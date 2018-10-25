@@ -9,7 +9,10 @@
  */
 
 #include "cachedimage.h"
-#include "../Common/version.h"
+
+#include <QDataStream>
+
+#include "Common/version.h"
 
 namespace QMLExtensions {
     CachedImage::CachedImage():

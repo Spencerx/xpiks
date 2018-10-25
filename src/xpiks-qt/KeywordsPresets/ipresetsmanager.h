@@ -11,10 +11,11 @@
 #ifndef IPRESETSMANAGER_H
 #define IPRESETSMANAGER_H
 
+#include <QPair>
 #include <QString>
 #include <QVector>
-#include <QPair>
-#include "presetmodel.h"
+
+#include "KeywordsPresets/presetmodel.h"
 
 namespace KeywordsPresets {
     class IPresetsManager {

@@ -9,10 +9,15 @@
  */
 
 #include "ziphelper.h"
-#include <QFileInfo>
+
+#include <QString>
+#include <QStringList>
+#include <QtDebug>
+
 #include <vendors/quazip/quazip/JlCompress.h>
-#include "filehelpers.h"
-#include "../Common/logging.h"
+
+#include "Common/logging.h"
+#include "Helpers/filehelpers.h"
 
 namespace Helpers {
     QStringList zipFiles(QStringList filepathes) {

@@ -11,8 +11,13 @@
 #ifndef CACHINGIMAGEPROVIDER_H
 #define CACHINGIMAGEPROVIDER_H
 
+#include <QImage>
+#include <QObject>
+#include <QQmlEngine>
 #include <QQuickImageProvider>
-#include <QHash>
+#include <QString>
+
+class QSize;
 
 namespace QMLExtensions {
     class ImageCachingService;
@@ -23,7 +28,7 @@ namespace QMLExtensions {
     public:
         CachingImageProvider(ImageType type, Flags flags = 0) :
             QQuickImageProvider(type, flags),
-            m_ImageCachingService(NULL)
+            m_ImageCachingService(nullptr)
         {}
 
         virtual ~CachingImageProvider() {}

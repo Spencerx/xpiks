@@ -12,7 +12,11 @@
 #define UPDATESCHECKERWORKER_H
 
 #include <QObject>
-#include "../Common/isystemenvironment.h"
+#include <QString>
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Models {
     class SettingsModel;

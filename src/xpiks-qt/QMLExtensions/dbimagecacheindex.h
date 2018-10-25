@@ -11,11 +11,16 @@
 #ifndef DBIMAGECACHEINDEX_H
 #define DBIMAGECACHEINDEX_H
 
-#include <QString>
 #include <QHash>
-#include "cachedimage.h"
-#include "../Storage/idatabase.h"
-#include "dbcacheindex.h"
+#include <QString>
+#include <QVector>
+
+#include "QMLExtensions/cachedimage.h"
+#include "QMLExtensions/dbcacheindex.h"
+
+namespace Storage {
+    class IDatabaseManager;
+}
 
 namespace QMLExtensions {
     class DbImageCacheIndex: public DbCacheIndex<CachedImage>

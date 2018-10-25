@@ -11,16 +11,28 @@
 #ifndef DELETEKEYWORDSVIEWMODEL_H
 #define DELETEKEYWORDSVIEWMODEL_H
 
-#include <QHash>
-#include <Common/types.h>
-#include <Artworks/basickeywordsmodel.h>
-#include <Models/Artworks/artworksviewmodel.h>
-#include <Models/iactionmodel.h>
-#include <KeywordsPresets/ipresetsmanager.h>
-#include <Common/messages.h>
+#include <memory>
+
+#include <QObject>
+#include <QString>
+#include <QStringList>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "Models/Artworks/artworksviewmodel.h"
+#include "Models/iactionmodel.h"
+
+template <class Key, class T> class QHash;
+
+namespace Artworks {
+    class IBasicModelSource;
+}
 
 namespace Commands {
-    class ICommandManager;
+    class ICommand;
 }
 
 namespace KeywordsPresets {

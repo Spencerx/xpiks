@@ -11,15 +11,20 @@
 #ifndef REQUESTSWORKER_H
 #define REQUESTSWORKER_H
 
+#include <memory>
+
 #include <QObject>
-#include "iconnectivityrequest.h"
-#include <Common/itemprocessingworker.h>
+#include <QString>
+
+#include "Common/itemprocessingworker.h"
 
 namespace Models {
     class ProxySettings;
 }
 
 namespace Connectivity {
+    class IConnectivityRequest;
+
     class RequestsWorker: public QObject, public Common::ItemProcessingWorker<IConnectivityRequest>
     {
         Q_OBJECT

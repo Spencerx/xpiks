@@ -9,12 +9,21 @@
  */
 
 #include "artworkproxybase.h"
-#include <Artworks/iartworkmetadata.h>
-#include <Suggestion/keywordssuggestor.h>
-#include <Models/Editing/quickbuffer.h>
-#include <Helpers/stringhelper.h>
-#include <Services/AutoComplete/completionitem.h>
-#include <Services/AutoComplete/keywordsautocompletemodel.h>
+
+#include <memory>
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/iartworkmetadata.h"
+#include "Common/defines.h"
+#include "Common/logging.h"
+#include "Common/types.h"
+#include "KeywordsPresets/ipresetsmanager.h"
+#include "Services/AutoComplete/completionitem.h"
+#include "Services/AutoComplete/icompletionsource.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
 
 namespace Models {
     ArtworkProxyBase::ArtworkProxyBase()

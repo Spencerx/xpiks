@@ -11,11 +11,18 @@
 #ifndef UPDATESERVICE_H
 #define UPDATESERVICE_H
 
+#include <QMetaType>
 #include <QObject>
-#include "../Common/statefulentity.h"
-#include "../Helpers/constants.h"
-#include "../Common/isystemenvironment.h"
-#include "../Common/logging.h"
+#include <QString>
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Common/statefulentity.h"
+#include "Helpers/constants.h"
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Models {
     class SettingsModel;

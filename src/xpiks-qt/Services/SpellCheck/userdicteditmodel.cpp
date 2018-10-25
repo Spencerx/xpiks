@@ -9,9 +9,14 @@
  */
 
 #include "userdicteditmodel.h"
+
 #include <QQmlEngine>
-#include <Helpers/keywordshelpers.h>
-#include "userdictionary.h"
+#include <QtDebug>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Common/logging.h"
+#include "Models/Editing/artworkproxybase.h"
+#include "Services/SpellCheck/userdictionary.h"
 
 namespace SpellCheck {
     UserDictEditModel::UserDictEditModel(UserDictionary &userDictionary, QObject *parent):

@@ -11,7 +11,7 @@
 #ifndef INITIALIZEDICTIONARIESJOBITEM_H
 #define INITIALIZEDICTIONARIESJOBITEM_H
 
-#include "imaintenanceitem.h"
+#include "Services/Maintenance/imaintenanceitem.h"
 
 namespace Translation {
     class TranslationManager;

@@ -9,15 +9,28 @@
  */
 
 #include "csvexportmodel.h"
+
+#include <utility>
+
+#include <QAbstractItemModel>
+#include <QByteArray>
+#include <QDir>
+#include <QFlags>
+#include <QModelIndex>
 #include <QQmlEngine>
 #include <QStandardPaths>
-#include <QDir>
-#include <QTimerEvent>
 #include <QThread>
-#include <Helpers/asynccoordinator.h>
-#include <Artworks/iselectedartworkssource.h>
-#include "csvexportworker.h"
-#include "csvexportplansmodel.h"
+#include <QUrl>
+#include <QVector>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/delayedactionentity.h"
+#include "Common/logging.h"
+#include "MetadataIO/csvexportplansmodel.h"
+#include "MetadataIO/csvexportproperties.h"
+#include "MetadataIO/csvexportworker.h"
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 

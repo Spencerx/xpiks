@@ -9,9 +9,14 @@
  */
 
 #include "autoimportmetadatacommand.h"
-#include <MetadataIO/metadataiocoordinator.h>
-#include <Models/settingsmodel.h>
-#include <Models/switchermodel.h>
+
+#include <QtDebug>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "MetadataIO/metadataiocoordinator.h"
+#include "Models/settingsmodel.h"
+#include "Models/switchermodel.h"
 
 namespace Commands {
     AutoImportMetadataCommand::AutoImportMetadataCommand(MetadataIO::MetadataIOCoordinator &metadataIOCoordinator,

@@ -11,29 +11,31 @@
 #ifndef UIMANAGER_H
 #define UIMANAGER_H
 
-#include <memory>
-#include <QSet>
 #include <QHash>
 #include <QObject>
 #include <QString>
-#include <QStringList>
-#include "../QMLExtensions/tabsmodel.h"
-#include "../Common/statefulentity.h"
-#include "../Helpers/constants.h"
-#include "../Common/delayedactionentity.h"
-#include "../Common/isystemenvironment.h"
+#include <Qt>
+#include <QtGlobal>
 
-class QScreen;
+#include "Common/delayedactionentity.h"
+#include "Common/statefulentity.h"
+#include "QMLExtensions/tabsmodel.h"
+
 class QQuickTextDocument;
+class QScreen;
+class QTimerEvent;
+template <class T> class QSet;
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace QMLExtensions {
     class ColorsModel;
 }
 
 namespace Models {
-    class ArtworkProxyBase;
     class SettingsModel;
-    class ArtworksListModel;
 
     class UIManager:
             public QObject,

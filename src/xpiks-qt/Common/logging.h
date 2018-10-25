@@ -11,8 +11,10 @@
 #ifndef LOGGING_H
 #define LOGGING_H
 
-#include <QDebug>
-#include "types.h"
+#include <QDebug>  // IWYU pragma: keep
+#include <QtGlobal>
+
+#include "Common/types.h"
 
 #if (QT_VERSION <= QT_VERSION_CHECK(5, 4, 2))
 #define qInfo qDebug

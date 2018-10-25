@@ -9,20 +9,27 @@
  */
 
 #include "spellcheckservice.h"
+
+#include <QCoreApplication>
+#include <QDir>
 #include <QThread>
-#include "spellcheckitem.h"
-#include "userdictionary.h"
-#include <Artworks/artworkmetadata.h>
-#include <Common/logging.h>
-#include <Common/flags.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Helpers/cpphelpers.h>
+#include <QtDebug>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/ibasicmodelsource.h"
+#include "Common/defines.h"
+#include "Common/flags.h"
+#include "Common/iflagsprovider.h"
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+#include "Services/SpellCheck/spellcheckitem.h"
+#include "Services/SpellCheck/spellcheckworker.h"
 
 namespace SpellCheck {
     SpellCheckService::SpellCheckService(Common::ISystemEnvironment &environment,
                                          Common::IFlagsProvider<Common::WordAnalysisFlags> &analysisFlagsProvider):
         m_Environment(environment),
-        m_SpellCheckWorker(NULL),
+        m_SpellCheckWorker(nullptr),
         m_AnalysisFlagsProvider(analysisFlagsProvider),
         m_IsStopped(false)
     {
@@ -35,7 +42,7 @@ namespace SpellCheck {
     void SpellCheckService::startService(Helpers::AsyncCoordinator &initCoordinator,
                                          UserDictionary &userDictionary,
                                          Warnings::WarningsService &warningsService) {
-        if (m_SpellCheckWorker != NULL) {
+        if (m_SpellCheckWorker != nullptr) {
             LOG_WARNING << "Attempt to start running worker";
             return;
         }
@@ -79,10 +86,10 @@ namespace SpellCheck {
 
     void SpellCheckService::stopService() {
         LOG_DEBUG << "#";
-        if (m_SpellCheckWorker != NULL) {
+        if (m_SpellCheckWorker != nullptr) {
             m_SpellCheckWorker->stopWorking();
         } else {
-            LOG_WARNING << "SpellCheckWorker is NULL";
+            LOG_WARNING << "SpellCheckWorker is nullptr";
         }
 
         m_IsStopped = true;
@@ -90,14 +97,14 @@ namespace SpellCheck {
 
 #ifdef INTEGRATION_TESTS
     bool SpellCheckService::isBusy() const {
-        bool isBusy = (m_SpellCheckWorker != NULL) && (m_SpellCheckWorker->hasPendingJobs());
+        bool isBusy = (m_SpellCheckWorker != nullptr) && (m_SpellCheckWorker->hasPendingJobs());
         return isBusy;
     }
 #endif
 
     quint32 SpellCheckService::submitItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items, Common::SpellCheckFlags flags) {
         LOG_INFO << items.size() << "items to check";
-        if (m_SpellCheckWorker == NULL) { return INVALID_BATCH_ID; }
+        if (m_SpellCheckWorker == nullptr) { return INVALID_BATCH_ID; }
         if (m_IsStopped) { return INVALID_BATCH_ID; }
 
         std::vector<std::shared_ptr<SpellCheckItem>> spellCheckItems;
@@ -126,7 +133,7 @@ namespace SpellCheck {
     }
 
     void SpellCheckService::submitItem(const std::shared_ptr<Artworks::IBasicModelSource> &item, Common::SpellCheckFlags flags) {
-        if (m_SpellCheckWorker == NULL) { return; }
+        if (m_SpellCheckWorker == nullptr) { return; }
         if (m_IsStopped) { return; }
         if (item->getBasicModel().isEmpty()) { return; }
 
@@ -144,8 +151,8 @@ namespace SpellCheck {
     }
 
     QStringList SpellCheckService::suggestCorrections(const QString &word) const {
-        if (m_SpellCheckWorker == NULL) {
-            LOG_DEBUG << "Worker is null";
+        if (m_SpellCheckWorker == nullptr) {
+            LOG_DEBUG << "Worker is nullptr";
             return QStringList();
         }
 
@@ -168,7 +175,7 @@ namespace SpellCheck {
 
     void SpellCheckService::cancelCurrentBatch() {
         LOG_DEBUG << "#";
-        if (m_SpellCheckWorker == NULL) { return; }
+        if (m_SpellCheckWorker == nullptr) { return; }
 
         m_SpellCheckWorker->cancelPendingJobs();
     }
@@ -176,7 +183,7 @@ namespace SpellCheck {
     bool SpellCheckService::hasAnyPending() {
         bool hasPending = false;
 
-        if (m_SpellCheckWorker != NULL) {
+        if (m_SpellCheckWorker != nullptr) {
             hasPending = m_SpellCheckWorker->hasPendingJobs();
         }
 
@@ -190,7 +197,7 @@ namespace SpellCheck {
     void SpellCheckService::workerDestroyed(QObject *object) {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
-        m_SpellCheckWorker = NULL;
+        m_SpellCheckWorker = nullptr;
     }
 
     QString SpellCheckService::getDictsRoot() const {

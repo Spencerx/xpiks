@@ -11,82 +11,95 @@
 #ifndef XPIKSAPP_H
 #define XPIKSAPP_H
 
-#include <Commands/commandmanager.h>
+#include <memory>
 
-#include <Common/isystemenvironment.h>
+#include <QList>
+#include <QObject>
+#include <QString>
 
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Models/Editing/artworkproxymodel.h>
-#include <Models/Artworks/artworksrepository.h>
-#include <Models/Editing/combinedartworksmodel.h>
-#include <Models/Editing/deletekeywordsviewmodel.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Models/Editing/findandreplacemodel.h>
-#include <Models/languagesmodel.h>
-#include <Models/logsmodel.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Models/Session/recentfilesmodel.h>
-#include <Models/Session/sessionmanager.h>
-#include <Models/settingsmodel.h>
-#include <Models/switchermodel.h>
-#include <Models/uimanager.h>
-#include <Models/Connectivity/artworksuploader.h>
-#include <Models/Connectivity/ziparchiver.h>
-#include <Models/Editing/currenteditablemodel.h>
-#include <Models/Editing/quickbuffer.h>
-
-#include <Connectivity/requestsservice.h>
-#include <Connectivity/telemetryservice.h>
-#include <Connectivity/updateservice.h>
-
-#include <Services/Warnings/warningsmodel.h>
-#include <Services/Warnings/warningsservice.h>
-#include <Services/Warnings/warningssettingsmodel.h>
-#include <Services/artworksupdatehub.h>
-#include <Services/AutoComplete/autocompleteservice.h>
-#include <Services/AutoComplete/keywordsautocompletemodel.h>
-#include <Services/Translation/translationmanager.h>
-#include <Services/Translation/translationservice.h>
-#include <Services/SpellCheck/duplicatesreviewmodel.h>
-#include <Services/SpellCheck/spellcheckservice.h>
-#include <Services/SpellCheck/spellchecksuggestionmodel.h>
-#include <Services/SpellCheck/userdicteditmodel.h>
-#include <Services/SpellCheck/userdictionary.h>
-#include <Services/Maintenance/maintenanceservice.h>
-#include <Services/artworkseditinghub.h>
-#include <Services/artworksupdatehub.h>
-
-#include <QMLExtensions/colorsmodel.h>
-#include <QMLExtensions/imagecachingservice.h>
-#include <QMLExtensions/videocachingservice.h>
-#include <QMLExtensions/uicommanddispatcher.h>
-
-#include <UndoRedo/undoredomanager.h>
-
-#include <Storage/databasemanager.h>
-
-#include <Encryption/isecretsstorage.h>
-
-#include <Microstocks/microstockapiclients.h>
-
-#include <Suggestion/keywordssuggestor.h>
-
-#include <KeywordsPresets/presetkeywordsmodel.h>
-
-#include <vendors/libxpks/ftpcoordinator.h>
-
-#include <MetadataIO/csvexportmodel.h>
-#include <MetadataIO/metadataiocoordinator.h>
-#include <MetadataIO/metadataioservice.h>
-#include <MetadataIO/metadatareadinghub.h>
-
-#include <Plugins/pluginmanager.h>
-#include <Plugins/uiprovider.h>
-
-#include <Helpers/helpersqmlwrapper.h>
+#include "Commands/commandmanager.h"
+#include "Common/flags.h"
+#include "Connectivity/requestsservice.h"
+#include "Connectivity/telemetryservice.h"
+#include "Connectivity/updateservice.h"
+#include "Encryption/secretsmanager.h"
+#include "Helpers/asynccoordinator.h"
+#include "Helpers/helpersqmlwrapper.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "MetadataIO/csvexportmodel.h"
+#include "MetadataIO/metadataiocoordinator.h"
+#include "MetadataIO/metadataioservice.h"
+#include "MetadataIO/metadatareadinghub.h"
+#include "Microstocks/microstockapiclients.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/artworksrepository.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Connectivity/artworksuploader.h"
+#include "Models/Connectivity/uploadinforepository.h"
+#include "Models/Connectivity/ziparchiver.h"
+#include "Models/Editing/artworkproxymodel.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/Editing/currenteditablemodel.h"
+#include "Models/Editing/deletekeywordsviewmodel.h"
+#include "Models/Editing/findandreplacemodel.h"
+#include "Models/Editing/quickbuffer.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Models/Session/recentfilesmodel.h"
+#include "Models/Session/sessionmanager.h"
+#include "Models/languagesmodel.h"
+#include "Models/logsmodel.h"
+#include "Models/settingsmodel.h"
+#include "Models/switchermodel.h"
+#include "Models/uimanager.h"
+#include "Plugins/pluginmanager.h"
+#include "QMLExtensions/colorsmodel.h"
+#include "QMLExtensions/imagecachingservice.h"
+#include "QMLExtensions/uicommanddispatcher.h"
+#include "QMLExtensions/videocachingservice.h"
+#include "Services/AutoComplete/autocompleteservice.h"
+#include "Services/AutoComplete/keywordsautocompletemodel.h"
+#include "Services/Maintenance/maintenanceservice.h"
+#include "Services/SpellCheck/duplicatesreviewmodel.h"
+#include "Services/SpellCheck/spellcheckservice.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
+#include "Services/SpellCheck/userdicteditmodel.h"
+#include "Services/SpellCheck/userdictionary.h"
+#include "Services/Translation/translationmanager.h"
+#include "Services/Translation/translationservice.h"
+#include "Services/Warnings/warningsmodel.h"
+#include "Services/Warnings/warningsservice.h"
+#include "Services/Warnings/warningssettingsmodel.h"
+#include "Services/artworkseditinghub.h"
+#include "Services/artworksupdatehub.h"
+#include "Storage/databasemanager.h"
+#include "Suggestion/keywordssuggestor.h"
+#include "UndoRedo/undoredomanager.h"
 
 class QQmlContext;
 class QQuickWindow;
+class QUrl;
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Encryption {
+    class ISecretsStorage;
+}
+
+namespace Filesystem {
+    class IFilesCollection;
+}
+
+namespace Plugins {
+    class UIProvider;
+}
+
+namespace libxpks {
+    namespace net {
+        class FtpCoordinator;
+    }
+}
 
 class XpiksApp: public QObject
 {

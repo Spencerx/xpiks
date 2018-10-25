@@ -12,7 +12,8 @@
 #define SIMPLEAPIREQUEST_H
 
 #include <memory>
-#include "iconnectivityrequest.h"
+
+#include "Connectivity/iconnectivityrequest.h"
 
 namespace Connectivity {
     class SimpleAPIRequest: public IConnectivityRequest

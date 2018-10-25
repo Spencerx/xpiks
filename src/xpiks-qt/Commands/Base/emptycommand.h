@@ -11,7 +11,7 @@
 #ifndef EMPTYCOMMAND_H
 #define EMPTYCOMMAND_H
 
-#include "icommand.h"
+#include "Commands/Base/icommand.h"
 
 namespace Commands {
     class EmptyCommand: public ICommand

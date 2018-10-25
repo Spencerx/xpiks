@@ -11,19 +11,31 @@
 #ifndef CSVEXPORTPLANSMODEL_H
 #define CSVEXPORTPLANSMODEL_H
 
-#include <QJsonObject>
-#include <vector>
 #include <memory>
-#include "csvexportproperties.h"
-#include <Models/Connectivity/abstractconfigupdatermodel.h>
-#include <Helpers/localconfig.h>
-#include "../Common/isystemenvironment.h"
+#include <vector>
+
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QObject>
+#include <QString>
+
+#include "Models/Connectivity/abstractconfigupdatermodel.h"
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Connectivity {
+    class IRequestsService;
+}
 
 namespace Helpers {
     class AsyncCoordinator;
 }
 
 namespace MetadataIO {
+    struct CsvExportPlan;
+
     class CsvExportPlansModel:
             public Models::AbstractConfigUpdaterModel
     {

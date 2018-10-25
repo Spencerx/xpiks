@@ -13,8 +13,9 @@
 
 #include <QObject>
 #include <QVector>
-#include "../Microstocks/searchquery.h"
-#include "../MetadataIO/cachedartwork.h"
+
+#include "MetadataIO/cachedartwork.h"
+#include "Microstocks/searchquery.h"
 
 namespace Suggestion {
     class LocalLibraryQuery: public QObject {

@@ -9,12 +9,23 @@
  */
 
 #include "artworkshelpers.h"
+
+#include <cstddef>
+#include <memory>
+
 #include <QFileInfo>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include <Artworks/videoartwork.h>
-#include <Artworks/artworkssnapshot.h>
-#include "filehelpers.h"
+#include <QStringList>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/imageartwork.h"
+#include "Artworks/videoartwork.h"
+#include "Common/logging.h"
+#include "Helpers/filehelpers.h"
+
+class QString;
 
 namespace Helpers {
     void splitImagesVideo(const QVector<Artworks::ArtworkMetadata *> &artworks,
@@ -111,7 +122,7 @@ namespace Helpers {
             auto &artwork = snapshot.get(i);
             auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
 
-            if (image == NULL) { continue; }
+            if (image == nullptr) { continue; }
 
             if (image->hasVectorAttached()) {
                 attachedCount++;

@@ -9,12 +9,23 @@
  */
 
 #include "uicommanddispatcher.h"
+
+#include <utility>
+
 #include <QJSValue>
+#include <QMutexLocker>
 #include <QQmlEngine>
-#include <Common/logging.h>
-#include <Commands/commandmanager.h>
-#include <Commands/Base/templateduicommand.h>
-#include <Commands/UI/sourcetargetcommand.h>
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Commands/Base/icommandmanager.h"
+#include "Commands/Base/iuicommandtemplate.h"
+#include "Commands/Base/templateduicommand.h"
+#include "Commands/UI/sourcetargetcommand.h"
+#include "Common/logging.h"
+#include "QMLExtensions/iuicommandmiddleware.h"
+#include "QMLExtensions/uiaction.h"
 
 namespace QMLExtensions {
     UICommandDispatcher::UICommandDispatcher(Commands::ICommandManager &commandManager, QObject *parent):

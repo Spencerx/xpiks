@@ -12,7 +12,8 @@
 #define COMPLETIONENGINEBASE_H
 
 #include <vector>
-#include "completionquery.h"
+
+#include "Services/AutoComplete/completionquery.h"
 
 namespace AutoComplete {
     class CompletionEngineBase {

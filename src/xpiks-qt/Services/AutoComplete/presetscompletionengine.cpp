@@ -9,8 +9,16 @@
  */
 
 #include "presetscompletionengine.h"
-#include <KeywordsPresets/presetkeywordsmodel.h>
-#include <Helpers/stringhelper.h>
+
+#include <cstddef>
+#include <memory>
+
+#include <QString>
+#include <Qt>
+
+#include "Helpers/stringhelper.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "KeywordsPresets/presetmodel.h"
 
 #define MAX_PRESETS_IN_AC_COUNT 10
 #define PRESET_SIMILARITY_THRESHOLD 80

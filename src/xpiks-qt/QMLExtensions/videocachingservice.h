@@ -11,17 +11,20 @@
 #ifndef VIDEOCACHINGSERVICE_H
 #define VIDEOCACHINGSERVICE_H
 
-#include <QObject>
-#include <QVector>
 #include <memory>
-#include <vector>
-#include <Common/isystemenvironment.h>
-#include <Common/messages.h>
+
+#include <QObject>
+#include <QString>
+
+#include "Common/messages.h"
 
 namespace Artworks {
-    class ArtworkMetadata;
     class VideoArtwork;
     class ArtworksSnapshot;
+}
+
+namespace Common {
+    class ISystemEnvironment;
 }
 
 namespace Storage {

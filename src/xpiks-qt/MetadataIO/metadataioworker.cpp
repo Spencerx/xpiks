@@ -9,8 +9,20 @@
  */
 
 #include "metadataioworker.h"
-#include <Services/artworksupdatehub.h>
-#include <Suggestion/locallibraryquery.h>
+
+#include <vector>
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Common/itemprocessingworker.h"
+#include "Common/logging.h"
+#include "Common/readerwriterqueue.h"
+#include "MetadataIO/metadatacache.h"
+#include "MetadataIO/metadataiotask.h"
+#include "Services/artworksupdatehub.h"
+#include "Suggestion/locallibraryquery.h"
 
 #define METADATA_CACHE_SYNC_INTERVAL 29
 #define STORAGE_IMPORT_INTERVAL 29

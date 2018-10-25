@@ -11,28 +11,30 @@
 #ifndef SINGLEEDITABLECOMMANDS_H
 #define SINGLEEDITABLECOMMANDS_H
 
-#include <Commands/Base/iuicommandtemplate.h>
-#include <QMLExtensions/uicommandid.h>
-#include "sourcetargetcommand.h"
+#include <QVariant>
+
+#include "Commands/Base/iuicommandtemplate.h"
+#include "Commands/UI/sourcetargetcommand.h"
+#include "QMLExtensions/uicommandid.h"
+
+class QObject;
 
 namespace Models {
-    class CombinedArtworksModel;
     class ArtworkProxyModel;
+    class CombinedArtworksModel;
     class FilteredArtworksListModel;
-    class ArtworksListModel;
     class QuickBuffer;
 }
 
 namespace SpellCheck {
-    class SpellCheckSuggestionModel;
     class DuplicatesReviewModel;
     class ISpellCheckService;
-    class ISpellCheckService;
+    class SpellCheckSuggestionModel;
 }
 
 namespace AutoComplete {
-    class ICompletionSource;
     class AutoCompleteService;
+    class ICompletionSource;
 }
 
 namespace Suggestion {

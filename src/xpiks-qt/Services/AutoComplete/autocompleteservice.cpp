@@ -9,14 +9,20 @@
  */
 
 #include "autocompleteservice.h"
+
+#include <type_traits>
+
 #include <QThread>
-#include "autocompleteworker.h"
-#include "completionquery.h"
-#include <Common/flags.h>
-#include <Artworks/basickeywordsmodel.h>
-#include <Helpers/asynccoordinator.h>
-#include <Models/settingsmodel.h>
-#include "keywordsautocompletemodel.h"
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Common/logging.h"
+#include "Models/settingsmodel.h"
+#include "Services/AutoComplete/autocompletemodel.h"
+#include "Services/AutoComplete/autocompleteworker.h"
+#include "Services/AutoComplete/completionquery.h"
+#include "Services/AutoComplete/keywordsautocompletemodel.h"
 
 namespace AutoComplete {
     AutoCompleteService::AutoCompleteService(Models::SettingsModel &settingsModel,
@@ -32,7 +38,7 @@ namespace AutoComplete {
 
     void AutoCompleteService::startService(Helpers::AsyncCoordinator &coordinator,
                                            KeywordsPresets::PresetKeywordsModel &presetsManager) {
-        if (m_AutoCompleteWorker != NULL) {
+        if (m_AutoCompleteWorker != nullptr) {
             LOG_WARNING << "Attempt to start running worker";
             return;
         }
@@ -66,21 +72,21 @@ namespace AutoComplete {
 
     void AutoCompleteService::stopService() {
         LOG_DEBUG << "#";
-        if (m_AutoCompleteWorker != NULL) {
+        if (m_AutoCompleteWorker != nullptr) {
             m_AutoCompleteWorker->stopWorking();
         } else {
-            LOG_WARNING << "AutoComplete Worker was NULL";
+            LOG_WARNING << "AutoComplete Worker was nullptr";
         }
     }
 
     bool AutoCompleteService::isBusy() const {
-        bool isBusy = (m_AutoCompleteWorker != NULL) && m_AutoCompleteWorker->hasPendingJobs();
+        bool isBusy = (m_AutoCompleteWorker != nullptr) && m_AutoCompleteWorker->hasPendingJobs();
         return isBusy;
     }
 
     void AutoCompleteService::generateCompletions(const QString &prefix, Artworks::BasicKeywordsModel &basicModel) {
-        if (m_AutoCompleteWorker == NULL) {
-            LOG_WARNING << "Worker is NULL";
+        if (m_AutoCompleteWorker == nullptr) {
+            LOG_WARNING << "Worker is nullptr";
             return;
         }
 
@@ -94,8 +100,8 @@ namespace AutoComplete {
     }
 
     void AutoCompleteService::generateCompletions(const QString &prefix) {
-        if (m_AutoCompleteWorker == NULL) {
-            LOG_WARNING << "Worker is NULL";
+        if (m_AutoCompleteWorker == nullptr) {
+            LOG_WARNING << "Worker is nullptr";
             return;
         }
 
@@ -137,6 +143,6 @@ namespace AutoComplete {
     void AutoCompleteService::workerDestroyed(QObject *object) {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
-        m_AutoCompleteWorker = NULL;
+        m_AutoCompleteWorker = nullptr;
     }
 }

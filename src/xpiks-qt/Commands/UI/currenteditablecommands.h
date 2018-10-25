@@ -11,9 +11,10 @@
 #ifndef CURRENTEDITABLECOMMANDS_H
 #define CURRENTEDITABLECOMMANDS_H
 
-#include <Commands/Base/iuicommandtemplate.h>
-#include <QMLExtensions/uicommandid.h>
-#include "sourcetargetcommand.h"
+#include <QVariant>
+
+#include "Commands/Base/iuicommandtemplate.h"
+#include "QMLExtensions/uicommandid.h"
 
 namespace Models {
     class ICurrentEditableSource;

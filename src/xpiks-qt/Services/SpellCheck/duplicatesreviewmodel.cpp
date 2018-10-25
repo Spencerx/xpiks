@@ -9,17 +9,30 @@
  */
 
 #include "duplicatesreviewmodel.h"
+
+#include <utility>
+
+#include <QByteArray>
+#include <QList>
+#include <QModelIndex>
 #include <QQuickTextDocument>
-#include <QFileInfo>
-#include "imetadataduplicates.h"
-#include "metadataduplicates.h"
-#include <Services/SpellCheck/duplicateshighlighter.h>
-#include <Helpers/cpphelpers.h>
-#include <Artworks/keyword.h>
-#include <Artworks/videoartwork.h>
-#include <Artworks/imageartwork.h>
-#include <Common/defines.h>
-#include <Common/logging.h>
+#include <QSet>
+#include <QSyntaxHighlighter>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/imageartwork.h"
+#include "Artworks/videoartwork.h"  // IWYU pragma: keep
+#include "Common/logging.h"
+#include "Helpers/indicesranges.h"
+#include "Services/SpellCheck/duplicateshighlighter.h"
+#include "Services/SpellCheck/imetadataduplicates.h"
+#include "Services/SpellCheck/metadataduplicates.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
 
 namespace SpellCheck {
     DuplicatesReviewModel::DuplicatesReviewModel(QMLExtensions::ColorsModel &colorsModel):

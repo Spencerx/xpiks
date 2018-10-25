@@ -9,11 +9,16 @@
  */
 
 #include "switchermodel.h"
-#include <QDir>
-#include <QUuid>
+
 #include <QDateTime>
-#include "../Common/logging.h"
-#include "../Helpers/stringhelper.h"
+#include <QUuid>
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Connectivity/switcherconfig.h"
+#include "Helpers/stringhelper.h"
 
 namespace Models {
 #define DONATE_CAMPAIGN1_CLICKED "sonateCampaign1Clicked"

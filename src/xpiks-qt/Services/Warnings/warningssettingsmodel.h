@@ -12,10 +12,17 @@
 #define WARNINGSSETTINGSMODEL_H
 
 #include <QJsonDocument>
-#include <QJsonArray>
-#include "iwarningssettings.h"
-#include <Models/Connectivity/abstractconfigupdatermodel.h>
-#include <Common/isystemenvironment.h>
+#include <QObject>
+#include <QString>
+
+#include "Models/Connectivity/abstractconfigupdatermodel.h"
+#include "Services/Warnings/iwarningssettings.h"
+
+class QJsonObject;
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Warnings {
     class WarningsSettingsModel:

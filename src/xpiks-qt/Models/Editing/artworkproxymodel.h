@@ -11,21 +11,24 @@
 #ifndef ARTWORKPROXYMODEL_H
 #define ARTWORKPROXYMODEL_H
 
-#include <QObject>
-#include <QAbstractListModel>
-#include <QStringList>
-#include <QString>
-#include <QList>
-#include <QSet>
-#include <QSize>
+#include <cstddef>
 #include <memory>
-#include <vector>
-#include <Common/flags.h>
-#include <Common/types.h>
-#include <Common/messages.h>
-#include "artworkproxybase.h"
-#include <Models/Editing/icurrenteditable.h>
-#include <Models/keyvaluelist.h>
+
+#include <QObject>
+#include <QSize>
+#include <QString>
+#include <QStringList>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/iartworkmetadata.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "Models/Editing/artworkproxybase.h"
+#include "Models/keyvaluelist.h"
+
+namespace Artworks {
+    class IBasicModelSource;
+}
 
 namespace Commands {
     class ICommandManager;
@@ -41,7 +44,6 @@ namespace AutoComplete {
 
 namespace Artworks {
     class ArtworkMetadata;
-    class BasicMetadataModel;
     class VideoArtwork;
 }
 
@@ -50,6 +52,8 @@ namespace Services {
 }
 
 namespace Models {
+    class ICurrentEditable;
+
     using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
     using UnavailableFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;
 

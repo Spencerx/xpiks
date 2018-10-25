@@ -11,9 +11,12 @@
 #ifndef ACTIONMODELCOMMAND_H
 #define ACTIONMODELCOMMAND_H
 
-#include "iuicommandtemplate.h"
-#include "icommandtemplate.h"
 #include <memory>
+
+#include <QString>
+#include <QVariant>
+
+#include "Commands/Base/iuicommandtemplate.h"
 
 namespace Models {
     class IActionModel;

@@ -9,12 +9,17 @@
  */
 
 #include "testconnection.h"
-#include "ftphelpers.h"
+
+#include <cstddef>
+
+#include <QtDebug>
+
 #include <curl/curl.h>
-#include <Common/defines.h>
-#include <Models/Connectivity/proxysettings.h>
-#include <Helpers/stringhelper.h>
+
 #include <vendors/libxpks/uploadcontext.h>
+
+#include "Common/logging.h"
+#include "Connectivity/ftphelpers.h"
 
 namespace Connectivity {
     static size_t throw_away(void *ptr, size_t size, size_t nmemb, void *data) {

@@ -11,27 +11,36 @@
 #ifndef ARTWORKSDIRECTORIES_H
 #define ARTWORKSDIRECTORIES_H
 
-#include <QAbstractListModel>
-#include <QStringList>
-#include <QList>
-#include <QPair>
-#include <QSet>
-#include <QTimer>
-#include <QFileSystemWatcher>
-#include <QSortFilterProxyModel>
+#include <cstddef>
+#include <memory>
 #include <vector>
-#include <tuple>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Common/abstractlistmodel.h>
-#include <Common/flags.h>
-#include <Artworks/artworkssnapshot.h>
+
+#include <QFileSystemWatcher>
+#include <QHash>
+#include <QModelIndex>
+#include <QObject>
+#include <QSet>
+#include <QSortFilterProxyModel>
+#include <QString>
+#include <QStringList>
+#include <QTimer>
+#include <QVariant>
+#include <Qt>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/abstractlistmodel.h"
+#include "Common/flags.h"
+
+class QByteArray;
+class QModelIndex;
 
 namespace Filesystem {
-    struct ArtworkFile;
     class IFilesCollection;
 }
 
 namespace Models {
+    class RecentDirectoriesModel;
     struct ArtworksRemoveResult;
 
     class ArtworksRepository : public Common::AbstractListModel {

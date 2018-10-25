@@ -9,15 +9,21 @@
  */
 
 #include "videocachingservice.h"
-#include <QThread>
-#include <vector>
+
+#include <cstddef>
 #include <memory>
-#include "videocachingworker.h"
-#include <Artworks/videoartwork.h>
-#include <Artworks/artworkssnapshot.h>
-#include <QMLExtensions/videocacherequest.h>
-#include <Models/switchermodel.h>
-#include <Common/logging.h>
+#include <vector>
+
+#include <QThread>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/videoartwork.h"
+#include "Common/logging.h"
+#include "Models/switchermodel.h"
+#include "QMLExtensions/videocacherequest.h"
+#include "QMLExtensions/videocachingworker.h"
 
 namespace QMLExtensions {
     VideoCachingService::VideoCachingService(Common::ISystemEnvironment &environment,
@@ -57,11 +63,11 @@ namespace QMLExtensions {
     void VideoCachingService::stopService() {
         LOG_DEBUG << "#";
 
-        if (m_CachingWorker != NULL) {
+        if (m_CachingWorker != nullptr) {
             m_IsCancelled = true;
             m_CachingWorker->stopWorking();
         } else {
-            LOG_WARNING << "Caching Worker was NULL";
+            LOG_WARNING << "Caching Worker was nullptr";
         }
     }
 

@@ -11,16 +11,30 @@
 #ifndef FILTEREDARTITEMSPROXYMODEL_H
 #define FILTEREDARTITEMSPROXYMODEL_H
 
+#include <functional>
+#include <memory>
+#include <vector>
+
+#include <QObject>
 #include <QSortFilterProxyModel>
 #include <QString>
-#include <QList>
-#include <functional>
-#include <Common/flags.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Artworks/iselectedartworkssource.h>
-#include <Artworks/iselectedindicessource.h>
-#include <Models/Editing/quickbuffermessage.h>
-#include <Common/messages.h>
+#include <QStringList>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/iselectedartworkssource.h"
+#include "Artworks/iselectedindicessource.h"
+#include "Common/flags.h"
+#include "Common/messages.h"
+
+class QModelIndex;
+
+namespace Artworks {
+    class ArtworkMetadata;
+}
+
+namespace AutoComplete {
+    class ICompletionSource;
+}
 
 namespace Commands {
     class ICommandManager;
@@ -30,16 +44,10 @@ namespace KeywordsPresets {
     class IPresetsManager;
 }
 
-namespace AutoComplete {
-    class ICompletionSource;
-}
-
 namespace Models {
-    class ArtworkMetadata;
-    class ArtworkElement;
-    class PreviewArtworkElement;
     class ArtworksListModel;
     class SettingsModel;
+    struct QuickBufferMessage;
 
     class FilteredArtworksListModel:
             public QSortFilterProxyModel,

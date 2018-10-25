@@ -8,20 +8,27 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <QThread>
-#include <Common/defines.h>
-#include <Common/logging.h>
 #include "maintenanceservice.h"
-#include "maintenanceworker.h"
-#include "logscleanupjobitem.h"
-#include "updatescleanupjobitem.h"
-#include "launchexiftooljobitem.h"
-#include "initializedictionariesjobitem.h"
-#include "savesessionjobitem.h"
-#include "xpkscleanupjob.h"
-#include "updatebundlecleanupjobitem.h"
-#include <Helpers/asynccoordinator.h>
-#include <Artworks/artworkssnapshot.h>
+
+#include <QThread>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"  // IWYU pragma: keep
+#include "Common/defines.h"
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+#include "Services/Maintenance/initializedictionariesjobitem.h"
+#include "Services/Maintenance/launchexiftooljobitem.h"
+#include "Services/Maintenance/logscleanupjobitem.h"
+#include "Services/Maintenance/maintenanceworker.h"
+#include "Services/Maintenance/savesessionjobitem.h"
+#include "Services/Maintenance/updatebundlecleanupjobitem.h"
+#include "Services/Maintenance/xpkscleanupjob.h"
+
+#ifdef Q_OS_WIN
+#include "Services/Maintenance/updatescleanupjobitem.h"
+#endif
 
 namespace Maintenance {
     MaintenanceService::MaintenanceService(Common::ISystemEnvironment &environment):
@@ -35,7 +42,7 @@ namespace Maintenance {
     void MaintenanceService::startService() {
         LOG_DEBUG << "#";
 
-        if (m_MaintenanceWorker != NULL) {
+        if (m_MaintenanceWorker != nullptr) {
             LOG_WARNING << "Attempt to start running worker";
             return;
         }
@@ -64,10 +71,10 @@ namespace Maintenance {
 
     void MaintenanceService::stopService() {
         LOG_DEBUG << "#";
-        if (m_MaintenanceWorker != NULL) {
+        if (m_MaintenanceWorker != nullptr) {
             m_MaintenanceWorker->stopWorking();
         } else {
-            LOG_WARNING << "MaintenanceWorker is NULL";
+            LOG_WARNING << "MaintenanceWorker is nullptr";
         }
     }
 
@@ -153,6 +160,6 @@ namespace Maintenance {
     void MaintenanceService::workerDestroyed(QObject *object) {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
-        m_MaintenanceWorker = NULL;
+        m_MaintenanceWorker = nullptr;
     }
 }

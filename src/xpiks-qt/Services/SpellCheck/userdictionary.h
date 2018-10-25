@@ -11,12 +11,15 @@
 #ifndef USERDICTIONARY_H
 #define USERDICTIONARY_H
 
-#include <QObject>
 #include <QMutex>
-#include <QString>
+#include <QObject>
 #include <QSet>
+#include <QString>
 #include <QStringList>
-#include <Common/isystemenvironment.h>
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace SpellCheck {
     class UserDictionary: public QObject {

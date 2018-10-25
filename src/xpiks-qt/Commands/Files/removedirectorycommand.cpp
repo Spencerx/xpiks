@@ -9,10 +9,21 @@
  */
 
 #include "removedirectorycommand.h"
-#include <Common/logging.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Models/Artworks/artworksrepository.h>
-#include <Filesystem/directoriescollection.h>
+
+#include <initializer_list>
+
+#include <QSet>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Commands/Base/icommandtemplate.h"
+#include "Commands/Files/removefilescommandbase.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Filesystem/directoriescollection.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/artworksrepository.h"
 
 namespace Commands {
     RemoveDirectoryCommand::RemoveDirectoryCommand(int originalIndex,

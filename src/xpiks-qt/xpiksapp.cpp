@@ -9,42 +9,130 @@
  */
 
 #include "xpiksapp.h"
-#include <vendors/libxpks/apisecretsstorage.h>
+
+#include <initializer_list>
+#include <signal.h>
+#include <tuple>
+#include <vector>
+
+#include <QCoreApplication>
+#include <QEventLoop>
+#include <QLatin1String>
+#include <QMetaType>
 #include <QQmlContext>
 #include <QQuickWindow>
-#include <QQmlEngine>
 #include <QScreen>
-#include <Encryption/aes-qt.h>
-#include <signal.h>
-#include <Filesystem/filescollection.h>
-#include <Filesystem/directoriescollection.h>
-#include <Filesystem/filesdirectoriescollection.h>
-#include <Commands/Services/savesessioncommand.h>
-#include <Commands/Files/addfilescommand.h>
-#include <Commands/Services/cleanuplegacybackupscommand.h>
-#include <Commands/Editing/readmetadatatemplate.h>
-#include <Commands/Base/templatedcommand.h>
-#include <Commands/Files/addtorecenttemplate.h>
-#include <Commands/Services/autoimportmetadatacommand.h>
-#include <Commands/Base/compositecommandtemplate.h>
-#include <Commands/Services/generatethumbnailstemplate.h>
-#include <Commands/artworksupdatetemplate.h>
-#include <Commands/UI/selectedartworkscommands.h>
-#include <Commands/UI/singleeditablecommands.h>
-#include <Commands/UI/currenteditablecommands.h>
-#include <Commands/UI/generalcommands.h>
-#include <Commands/Base/commanduiwrapper.h>
-#include <Commands/Files/removeselectedfilescommand.h>
-#include <Commands/Files/removedirectorycommand.h>
-#include <Commands/Base/actionmodelcommand.h>
-#include <Microstocks/shutterstockapiclient.h>
-#include <Microstocks/gettyapiclient.h>
-#include <Microstocks/fotoliaapiclient.h>
-#include <Helpers/clipboardhelper.h>
-#include <QMLExtensions/folderelement.h>
-#include <QMLExtensions/triangleelement.h>
-#include <QMLExtensions/uicommandlistener.h>
-#include <QMLExtensions/proxyindexmiddlware.h>
+#include <QVariant>
+#include <QWindow>
+#include <QtDebug>
+#include <QtGlobal>
+#include <QtQml>
+
+#include <vendors/libxpks/apisecretsstorage.h>
+#include <vendors/libxpks/ftpcoordinator.h>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Commands/Base/actionmodelcommand.h"
+#include "Commands/Base/commanduiwrapper.h"
+#include "Commands/Base/compositecommandtemplate.h"
+#include "Commands/Editing/readmetadatatemplate.h"
+#include "Commands/Files/addfilescommand.h"
+#include "Commands/Files/addtorecenttemplate.h"
+#include "Commands/Files/removedirectorycommand.h"
+#include "Commands/Files/removeselectedfilescommand.h"
+#include "Commands/Services/autoimportmetadatacommand.h"
+#include "Commands/Services/cleanuplegacybackupscommand.h"
+#include "Commands/Services/generatethumbnailstemplate.h"
+#include "Commands/Services/savesessioncommand.h"
+#include "Commands/UI/currenteditablecommands.h"
+#include "Commands/UI/generalcommands.h"
+#include "Commands/UI/selectedartworkscommands.h"
+#include "Commands/UI/singleeditablecommands.h"
+#include "Commands/commandmanager.h"
+#include "Common/logging.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "Connectivity/analyticsuserevent.h"
+#include "Connectivity/requestsservice.h"
+#include "Connectivity/telemetryservice.h"
+#include "Connectivity/updateservice.h"
+#include "Encryption/aes-qt.h"
+#include "Filesystem/directoriescollection.h"
+#include "Filesystem/filescollection.h"
+#include "Filesystem/filesdirectoriescollection.h"
+#include "Helpers/clipboardhelper.h"
+#include "Helpers/helpersqmlwrapper.h"
+#include "KeywordsPresets/presetgroupsmodel.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "MetadataIO/csvexportmodel.h"
+#include "MetadataIO/metadataiocoordinator.h"
+#include "MetadataIO/metadataioservice.h"
+#include "Microstocks/fotoliaapiclient.h"
+#include "Microstocks/gettyapiclient.h"
+#include "Microstocks/microstockapiclients.h"
+#include "Microstocks/shutterstockapiclient.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/artworksrepository.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Connectivity/artworksuploader.h"
+#include "Models/Connectivity/uploadinforepository.h"
+#include "Models/Connectivity/ziparchiver.h"
+#include "Models/Editing/artworkproxymodel.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/Editing/currenteditablemodel.h"
+#include "Models/Editing/deletekeywordsviewmodel.h"
+#include "Models/Editing/quickbuffer.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Models/Session/recentfilesmodel.h"
+#include "Models/Session/sessionmanager.h"
+#include "Models/languagesmodel.h"
+#include "Models/logsmodel.h"
+#include "Models/settingsmodel.h"
+#include "Models/switchermodel.h"
+#include "Models/uimanager.h"
+#include "Plugins/pluginmanager.h"
+#include "Plugins/uiprovider.h"
+#include "QMLExtensions/colorsmodel.h"
+#include "QMLExtensions/folderelement.h"
+#include "QMLExtensions/imagecachingservice.h"
+#include "QMLExtensions/proxyindexmiddlware.h"
+#include "QMLExtensions/tabsmodel.h"
+#include "QMLExtensions/triangleelement.h"
+#include "QMLExtensions/uicommanddispatcher.h"
+#include "QMLExtensions/uicommandid.h"
+#include "QMLExtensions/uicommandlistener.h"
+#include "QMLExtensions/videocachingservice.h"
+#include "Services/AutoComplete/autocompleteservice.h"
+#include "Services/AutoComplete/keywordsautocompletemodel.h"
+#include "Services/Maintenance/maintenanceservice.h"
+#include "Services/SpellCheck/duplicatesreviewmodel.h"
+#include "Services/SpellCheck/spellcheckservice.h"
+#include "Services/SpellCheck/userdictionary.h"
+#include "Services/Translation/translationmanager.h"
+#include "Services/Translation/translationservice.h"
+#include "Services/Warnings/warningsmodel.h"
+#include "Services/Warnings/warningsservice.h"
+#include "Services/Warnings/warningssettingsmodel.h"
+#include "Services/artworkseditinghub.h"
+#include "Services/artworksupdatehub.h"
+#include "Storage/databasemanager.h"
+#include "Suggestion/keywordssuggestor.h"
+#include "UndoRedo/undoredomanager.h"
+
+namespace Artworks {
+    class ArtworkMetadata;
+    class IBasicModelSource;
+    class VideoArtwork;
+}
+
+namespace Commands {
+    template <typename T> class ICommandTemplate;
+}
+
+namespace Models {
+    class ICurrentEditable;
+    struct QuickBufferMessage;
+}
 
 XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     // general

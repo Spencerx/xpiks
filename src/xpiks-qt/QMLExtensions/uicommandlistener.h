@@ -11,9 +11,11 @@
 #ifndef COMMANDLISTENER_H
 #define COMMANDLISTENER_H
 
+#include <QList>
 #include <QObject>
 #include <QSet>
-#include <QJSValue>
+#include <QString>
+#include <QVariant>
 
 namespace QMLExtensions {
     class UICommandDispatcher;

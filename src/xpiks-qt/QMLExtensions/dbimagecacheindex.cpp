@@ -9,9 +9,22 @@
  */
 
 #include "dbimagecacheindex.h"
-#include "../Storage/database.h"
-#include "../Helpers/constants.h"
-#include "../Storage/memorytable.h"
+
+#include <memory>
+
+#include <QHash>
+#include <QString>
+#include <QVector>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "QMLExtensions/cachedimage.h"
+#include "QMLExtensions/dbcacheindex.h"
+#include "Storage/idatabase.h"
+#include "Storage/idatabasemanager.h"
+#include "Storage/memorytable.h"
 
 namespace QMLExtensions {
     DbImageCacheIndex::DbImageCacheIndex(Storage::IDatabaseManager &dbManager):

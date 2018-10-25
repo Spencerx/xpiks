@@ -10,6 +10,10 @@
 
 #include "obfuscation.h"
 
+#include <QChar>
+#include <QCharRef>
+#include <QtGlobal>
+
 namespace Encryption {
     QString rot13plus(const QString &line) {
         QString result = line;

@@ -9,9 +9,19 @@
  */
 
 #include "expandpresettemplate.h"
-#include <KeywordsPresets/ipresetsmanager.h>
-#include <Artworks/artworkssnapshot.h>
+
+#include <cstddef>
+#include <memory>
+
+#include <QStringList>
+#include <QtDebug>
+#include <QtGlobal>
+
 #include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "KeywordsPresets/ipresetsmanager.h"
+#include "UndoRedo/artworkmetadatabackup.h"
 
 namespace Commands {
     ExpandPresetTemplate::ExpandPresetTemplate(KeywordsPresets::IPresetsManager &presetsManager,

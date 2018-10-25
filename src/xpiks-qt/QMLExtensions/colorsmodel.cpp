@@ -9,14 +9,15 @@
  */
 
 #include "colorsmodel.h"
-#include <QJsonObject>
-#include <QVector>
-#include <QString>
-#include <QHash>
 
 #include <unordered_map>
+#include <utility>
 
-#include "../Common/logging.h"
+#include <QLatin1String>
+#include <QString>
+#include <QtDebug>
+
+#include "Common/logging.h"
 
 #define DEFAULT_DARK_COLOR "defaultDarkColor"
 #define DEFAULT_DARKER_COLOR "defaultDarkerColor"

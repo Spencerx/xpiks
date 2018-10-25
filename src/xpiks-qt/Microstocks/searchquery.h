@@ -13,7 +13,8 @@
 
 #include <QObject>
 #include <QStringList>
-#include "../Common/flags.h"
+
+#include "Common/flags.h"
 
 namespace Microstocks {
     class SearchQuery {

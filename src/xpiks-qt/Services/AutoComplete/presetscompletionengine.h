@@ -11,7 +11,10 @@
 #ifndef PRESETSCOMPLETIONENGINE_H
 #define PRESETSCOMPLETIONENGINE_H
 
-#include "completionenginebase.h"
+#include <vector>
+
+#include "Services/AutoComplete/completionenginebase.h"
+#include "Services/AutoComplete/completionquery.h"
 
 #define PRESETS_COMPLETE_PREFIX "pr:"
 

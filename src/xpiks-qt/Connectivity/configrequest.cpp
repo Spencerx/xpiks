@@ -9,7 +9,8 @@
  */
 
 #include "configrequest.h"
-#include "../Helpers/remoteconfig.h"
+
+#include "Helpers/remoteconfig.h"
 
 namespace Connectivity {
     void ConfigRequest::setResult(bool success, const QByteArray &body) {

@@ -13,13 +13,15 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QTimer>
 #include <QVector>
-#include <Common/statefulentity.h>
-#include <Common/isystemenvironment.h>
 
-namespace Helpers {
-    class AsyncCoordinator;
+#include "Common/statefulentity.h"
+
+class QUrl;
+namespace Common {
+    class ISystemEnvironment;
 }
 
 namespace Translation {

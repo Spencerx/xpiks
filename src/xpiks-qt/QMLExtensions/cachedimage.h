@@ -11,11 +11,12 @@
 #ifndef CACHEDIMAGE_H
 #define CACHEDIMAGE_H
 
-#include <QString>
-#include <QHash>
-#include <QSize>
 #include <QDateTime>
-#include <QDataStream>
+#include <QSize>
+#include <QString>
+#include <QtGlobal>
+
+class QDataStream;
 
 namespace QMLExtensions {
     struct CachedImage {

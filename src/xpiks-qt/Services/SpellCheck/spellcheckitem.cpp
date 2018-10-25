@@ -9,13 +9,19 @@
  */
 
 #include "spellcheckitem.h"
+
+#include <QChar>
 #include <QStringList>
-#include <Common/flags.h>
-#include <Common/defines.h>
-#include <Helpers/indiceshelper.h>
-#include <Helpers/stringhelper.h>
-#include <Artworks/ibasicmodelsource.h>
-#include <Artworks/basicmetadatamodel.h>
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/ibasicmodelsource.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Common/wordanalysisresult.h"
 
 /*
  * When spellcheck results are propagated back, they are updated in artwork

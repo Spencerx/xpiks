@@ -9,10 +9,18 @@
  */
 
 #include "presetgroupsmodel.h"
+
+#include <QByteArray>
+#include <QModelIndex>
 #include <QQmlEngine>
-#include "../Common/defines.h"
-#include "presetkeywordsmodelconfig.h"
-#include "presetkeywordsmodel.h"
+#include <QReadLocker>
+#include <QWriteLocker>
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "KeywordsPresets/groupmodel.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "KeywordsPresets/presetkeywordsmodelconfig.h"
 
 namespace KeywordsPresets {
     PresetGroupsModel::PresetGroupsModel(PresetKeywordsModel &presetsModel):

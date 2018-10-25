@@ -12,9 +12,12 @@
 #define SPELLCHECKUSERDICT_H
 
 #include <QObject>
-#include <Models/Editing/artworkproxybase.h>
-#include <Artworks/basicmetadatamodel.h>
-#include <Services/SpellCheck/spellcheckinfo.h>
+#include <QString>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/iartworkmetadata.h"
+#include "Models/Editing/artworkproxybase.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
 
 namespace SpellCheck {
     class UserDictionary;

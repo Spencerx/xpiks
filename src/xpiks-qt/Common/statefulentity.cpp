@@ -9,10 +9,16 @@
  */
 
 #include "statefulentity.h"
-#include <QDir>
-#include "../Helpers/constants.h"
-#include "../Helpers/filehelpers.h"
-#include "../Common/logging.h"
+
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "Helpers/jsonobjectmap.h"
+#include "Helpers/localconfig.h"
 
 namespace Common {
     StatefulEntity::StatefulEntity(const QString &stateName, ISystemEnvironment &environment):

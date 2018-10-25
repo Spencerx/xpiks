@@ -11,11 +11,13 @@
 #ifndef CURRENTEDITABLEMODEL_H
 #define CURRENTEDITABLEMODEL_H
 
-#include <QObject>
 #include <memory>
-#include "icurrenteditable.h"
-#include <Common/types.h>
-#include <Common/messages.h>
+
+#include <QObject>
+#include <QString>
+
+#include "Common/messages.h"
+#include "Models/Editing/icurrenteditable.h"
 
 namespace Models {
     class CurrentEditableModel:

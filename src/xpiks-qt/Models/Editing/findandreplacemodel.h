@@ -11,18 +11,40 @@
 #ifndef FINDANDREPLACEMODEL_H
 #define FINDANDREPLACEMODEL_H
 
+#include <memory>
+#include <vector>
+
+#include <QAbstractListModel>
+#include <QHash>
+#include <QModelIndex>
 #include <QObject>
-#include <QQuickTextDocument>
-#include <Models/Editing/previewartworkelement.h>
-#include <Common/flags.h>
-#include <Common/iflagsprovider.h>
-#include <Artworks/artworkssnapshot.h>
+#include <QString>
+#include <QVariant>
+#include <Qt>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/flags.h"
+#include "Common/iflagsprovider.h"
+
+#ifdef INTEGRATION_TESTS
+#include "Models/Editing/previewartworkelement.h"
+#endif
+
+class QByteArray;
+class QModelIndex;
+class QQuickTextDocument;
 
 namespace Commands {
     class ICommandManager;
 }
 
+namespace QMLExtensions {
+    class ColorsModel;
+}
+
 namespace Models {
+    class PreviewArtworkElement;
+
     class FindAndReplaceModel:
         public QAbstractListModel,
         public Common::IFlagsProvider<Common::SearchFlags>

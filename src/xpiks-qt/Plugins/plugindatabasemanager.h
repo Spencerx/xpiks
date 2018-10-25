@@ -11,9 +11,20 @@
 #ifndef PLUGINSDATABASEMANAGER_H
 #define PLUGINSDATABASEMANAGER_H
 
-#include "../Storage/idatabasemanager.h"
-#include "../Storage/databasemanager.h"
-#include "../Common/isystemenvironment.h"
+#include <memory>
+
+#include <QString>
+
+#include "Storage/idatabasemanager.h"
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Storage {
+    class DatabaseManager;
+    class IDatabase;
+}
 
 namespace Plugins {
     class PluginDatabaseManager: public Storage::IDatabaseManager

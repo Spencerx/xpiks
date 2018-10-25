@@ -11,8 +11,8 @@
 #ifndef CLEARACTIONMODELTEMPLATE_H
 #define CLEARACTIONMODELTEMPLATE_H
 
-#include <Commands/Base/icommandtemplate.h>
-#include <Commands/Base/icommand.h>
+#include "Commands/Base/icommand.h"
+#include "Commands/Base/icommandtemplate.h"
 
 namespace Models {
     class IActionModel;

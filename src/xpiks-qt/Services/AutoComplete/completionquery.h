@@ -14,7 +14,8 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
-#include <Common/flags.h>
+
+#include "Common/flags.h"
 
 namespace Artworks {
     class BasicKeywordsModel;

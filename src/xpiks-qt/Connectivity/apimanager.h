@@ -12,7 +12,8 @@
 #define APIMANAGER_H
 
 #include <QString>
-#include "../Common/version.h"
+
+#include "Common/version.h"
 
 #if defined(Q_OS_DARWIN)
 #  define UPDATE_JSON_URL_SUFFIX "update-osx.json"

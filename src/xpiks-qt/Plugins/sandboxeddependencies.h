@@ -11,18 +11,25 @@
 #ifndef SANDBOXEDDEPENDENCIES_H
 #define SANDBOXEDDEPENDENCIES_H
 
-#include "../Plugins/iuiprovider.h"
-#include "../Microstocks/imicrostockservices.h"
-#include "../Microstocks/microstockservice.h"
-#include "../Connectivity/requestsservice.h"
-#include "../Microstocks/microstockapiclients.h"
+#include <memory>
 
-namespace Models {
-    class UIManager;
-}
+#include <QHash>
+#include <QString>
+
+#include "Plugins/iuiprovider.h"
+#include "Microstocks/imicrostockservices.h"
+#include "Microstocks/microstockenums.h"
+
+class QObject;
+class QUrl;
 
 namespace Connectivity {
     class RequestsService;
+}
+
+namespace Microstocks {
+    class IMicrostockAPIClients;
+    class IMicrostockService;
 }
 
 namespace Plugins {

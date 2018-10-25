@@ -10,6 +10,7 @@
 #include <vendors/csv/csv.h>
 #include "xpikstestsapp.h"
 #include <Helpers/filehelpers.h>
+#include "MetadataIO/csvexportproperties.h"
 
 QString CsvDefaultExportTest::testName() {
     return QLatin1String("CsvDefaultExportTest");

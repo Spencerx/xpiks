@@ -13,7 +13,8 @@
 
 #include <memory>
 #include <vector>
-#include <Common/flags.h>
+
+#include "Common/flags.h"
 
 namespace Artworks {
     class ArtworksSnapshot;

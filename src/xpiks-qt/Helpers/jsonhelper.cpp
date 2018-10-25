@@ -9,7 +9,19 @@
  */
 
 #include "jsonhelper.h"
-#include "../Common/logging.h"
+
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QJsonValueRef>
+#include <QSet>
+#include <QString>
+#include <QStringList>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/comparevaluesjson.h"
 
 namespace Helpers {
     bool mergeJsonArrays(const QJsonArray &arrayFrom, QJsonArray &arrayTo, CompareValuesJson &comparer);

@@ -11,7 +11,13 @@
 #ifndef GLOBALIMAGEPROVIDER_H
 #define GLOBALIMAGEPROVIDER_H
 
+#include <QImage>
+#include <QObject>
+#include <QQmlEngine>
 #include <QQuickImageProvider>
+#include <QString>
+
+class QSize;
 
 namespace Helpers {
     class GlobalImageProvider : public QObject, public QQuickImageProvider

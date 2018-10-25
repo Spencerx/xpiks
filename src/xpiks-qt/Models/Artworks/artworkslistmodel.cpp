@@ -9,28 +9,50 @@
  */
 
 #include "artworkslistmodel.h"
-#include <QDir>
-#include <QtQml>
+
 #include <functional>
-#include "artworksrepository.h"
-#include <Artworks/basickeywordsmodel.h>
-#include <Artworks/imageartwork.h>
-#include <Artworks/videoartwork.h>
-#include <Helpers/artworkshelpers.h>
-#include <Helpers/stringhelper.h>
-#include <KeywordsPresets/ipresetsmanager.h>
-#include <Commands/Base/icommandmanager.h>
-#include <Commands/Editing/expandpresettemplate.h>
-#include <Commands/Editing/editartworkstemplate.h>
-#include <Commands/Base/templatedcommand.h>
-#include <Commands/Editing/modifyartworkscommand.h>
-#include <Commands/Base/compositecommandtemplate.h>
-#include <Commands/artworksupdatetemplate.h>
-#include <Commands/Editing/keywordedittemplate.h>
-#include <Commands/Base/emptycommand.h>
-#include <Models/Editing/currenteditableartwork.h>
-#include <Services/AutoComplete/icompletionsource.h>
-#include <Services/artworkupdaterequest.h>
+#include <initializer_list>
+
+#include <QAbstractItemModel>
+#include <QByteArray>
+#include <QCoreApplication>
+#include <QDir>
+#include <QEventLoop>
+#include <QFileInfo>
+#include <QFlags>
+#include <QList>
+#include <QModelIndex>
+#include <QQmlEngine>
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/imageartwork.h"
+#include "Artworks/videoartwork.h"
+#include "Commands/Base/compositecommandtemplate.h"
+#include "Commands/Base/emptycommand.h"
+#include "Commands/Base/icommandtemplate.h"
+#include "Commands/Base/templatedcommand.h"
+#include "Commands/Editing/editartworkstemplate.h"
+#include "Commands/Editing/expandpresettemplate.h"
+#include "Commands/Editing/keywordedittemplate.h"
+#include "Commands/Editing/modifyartworkscommand.h"
+#include "Commands/artworksupdatetemplate.h"
+#include "Common/logging.h"
+#include "Filesystem/ifilescollection.h"
+#include "Helpers/artworkshelpers.h"
+#include "Helpers/indicesranges.h"
+#include "KeywordsPresets/ipresetsmanager.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "Models/Artworks/artworkslistoperations.h"
+#include "Models/Artworks/artworksrepository.h"
+#include "Models/Editing/currenteditableartwork.h"
+#include "Services/AutoComplete/completionitem.h"
+#include "Services/AutoComplete/icompletionsource.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
+#include "Services/artworkupdaterequest.h"
 
 namespace Models {
     void artworkDeleter(Artworks::ArtworkMetadata *artwork) {

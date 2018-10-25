@@ -9,6 +9,7 @@
 #include "Mocks/selectedindicessourcemock.h"
 #include <Commands/Files/removefilescommand.h>
 #include <Models/Artworks/artworksrepository.h>
+#include "Models/Session/recentdirectoriesmodel.h"
 
 #define DECLARE_MODELS \
     Mocks::CoreTestsEnvironment environment;\

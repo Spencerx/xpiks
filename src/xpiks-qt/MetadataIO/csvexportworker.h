@@ -11,16 +11,19 @@
 #ifndef CSVEXPORTWORKER_H
 #define CSVEXPORTWORKER_H
 
-#include <QObject>
-#include <vector>
 #include <memory>
-#include "csvexportproperties.h"
+#include <vector>
+
+#include <QObject>
+#include <QString>
 
 namespace Artworks {
     class ArtworksSnapshot;
 }
 
 namespace MetadataIO {
+    struct CsvExportPlan;
+
     class CsvExportWorker: public QObject
     {
         Q_OBJECT

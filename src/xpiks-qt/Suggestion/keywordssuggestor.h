@@ -11,26 +11,41 @@
 #ifndef KEYWORDSSUGGESTOR_H
 #define KEYWORDSSUGGESTOR_H
 
+#include <memory>
+#include <vector>
+
 #include <QAbstractListModel>
-#include <QObject>
-#include <QList>
 #include <QHash>
+#include <QModelIndex>
+#include <QObject>
 #include <QSet>
+#include <QString>
+#include <QStringList>
 #include <QTimer>
-#include "suggestionartwork.h"
-#include "isuggestionengine.h"
-#include <Common/types.h>
-#include <Common/messages.h>
-#include <Common/statefulentity.h>
-#include <Common/isystemenvironment.h>
-#include <Artworks/basickeywordsmodel.h>
-#include <Connectivity/requestsservice.h>
-#include <Connectivity/analyticsuserevent.h>
-#include <Models/Editing/quickbuffermessage.h>
+#include <QVariant>
+#include <Qt>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Common/messages.h"
+#include "Common/statefulentity.h"
+#include "Common/types.h"
+#include "Connectivity/analyticsuserevent.h"
+
+class QByteArray;
+class QModelIndex;
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Connectivity {
+    class RequestsService;
+}
 
 namespace Models {
-    class SwitcherModel;
     class SettingsModel;
+    class SwitcherModel;
+    struct QuickBufferMessage;
 }
 
 namespace MetadataIO {
@@ -42,6 +57,9 @@ namespace Microstocks {
 }
 
 namespace Suggestion {
+    class ISuggestionEngine;
+    class SuggestionArtwork;
+
     class KeywordsSuggestor:
             public QAbstractListModel,
             public Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>,
@@ -66,7 +84,7 @@ namespace Suggestion {
         KeywordsSuggestor(Models::SwitcherModel &switcherModel,
                           Models::SettingsModel &settingsModel,
                           Common::ISystemEnvironment &environment,
-                          QObject *parent=NULL);
+                          QObject *parent=nullptr);
 
     public:
         void setExistingKeywords(const QSet<QString> &keywords);

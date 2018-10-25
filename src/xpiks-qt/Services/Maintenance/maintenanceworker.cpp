@@ -8,8 +8,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <QThread>
 #include "maintenanceworker.h"
+
+#include <QThread>
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Services/Maintenance/imaintenanceitem.h"
 
 #define MAINTENANCE_SLEEP 1
 

@@ -9,10 +9,20 @@
  */
 
 #include "currenteditablecommands.h"
-#include <Commands/Base/icommandmanager.h>
-#include <Common/logging.h>
-#include <Models/Editing/icurrenteditable.h>
-#include <Helpers/stringhelper.h>
+
+#include <memory>
+
+#include <QChar>
+#include <QMap>
+#include <QString>
+#include <QStringList>
+#include <QVector>
+#include <QtDebug>
+
+#include "Commands/Base/icommandmanager.h"
+#include "Common/logging.h"
+#include "Helpers/stringhelper.h"
+#include "Models/Editing/icurrenteditable.h"
 
 namespace Commands {
     namespace UI {

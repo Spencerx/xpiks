@@ -11,15 +11,18 @@
 #ifndef STATEFULENTITY_H
 #define STATEFULENTITY_H
 
-#include "../Helpers/localconfig.h"
-#include <QString>
-#include <QAtomicInt>
-#include <QJsonObject>
 #include <memory>
-#include "isystemenvironment.h"
-#include "../Helpers/jsonobjectmap.h"
+
+#include <QAtomicInt>
+#include <QJsonValue>
+#include <QString>
+
+#include "Helpers/jsonobjectmap.h"
+#include "Helpers/localconfig.h"
 
 namespace Common {
+    class ISystemEnvironment;
+
     class StatefulEntity
     {
     public:

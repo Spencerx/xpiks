@@ -11,9 +11,10 @@
 #ifndef SYSTEMENVIRONMENT_H
 #define SYSTEMENVIRONMENT_H
 
-#include <QStringList>
 #include <QString>
-#include "isystemenvironment.h"
+#include <QStringList>
+
+#include "Common/isystemenvironment.h"
 
 namespace Common {
     class SystemEnvironment: public ISystemEnvironment

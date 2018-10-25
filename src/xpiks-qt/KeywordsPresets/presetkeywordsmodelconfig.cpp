@@ -9,13 +9,28 @@
  */
 
 #include "presetkeywordsmodelconfig.h"
-#include <QStandardPaths>
-#include <QDir>
+
+#include <cstddef>
+
+#include <QFile>
+#include <QFileInfo>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
-#include "presetkeywordsmodel.h"
-#include "../Common/version.h"
+#include <QJsonValue>
+#include <QJsonValueRef>
+#include <QLatin1String>
+#include <QList>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Common/version.h"
+#include "Helpers/localconfig.h"
+#include "KeywordsPresets/groupmodel.h"
+#include "KeywordsPresets/presetmodel.h"
 
 namespace KeywordsPresets {
 #define OVERWRITE_KEY QLatin1String("overwrite")

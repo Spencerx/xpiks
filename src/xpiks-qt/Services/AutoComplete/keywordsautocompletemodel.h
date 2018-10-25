@@ -11,17 +11,31 @@
 #ifndef KEYWORDSAUTOCOMPLETEMODEL_H
 #define KEYWORDSAUTOCOMPLETEMODEL_H
 
-#include "autocompletemodel.h"
-#include <QAbstractListModel>
-#include <QMutex>
-#include <QSet>
-#include <QAtomicInt>
-#include <vector>
 #include <memory>
-#include "completionquery.h"
-#include "icompletionsource.h"
+#include <vector>
+
+#include <QAbstractListModel>
+#include <QAtomicInt>
+#include <QHash>
+#include <QModelIndex>
+#include <QMutex>
+#include <QObject>
+#include <QString>
+#include <QVariant>
+#include <Qt>
+#include <QtGlobal>
+
+#include "Services/AutoComplete/autocompletemodel.h"
+#include "Services/AutoComplete/icompletionsource.h"
+
+class QAbstractItemModel;
+class QByteArray;
+class QModelIndex;
 
 namespace AutoComplete {
+    class CompletionItem;
+    struct CompletionResult;
+
     class KeywordsCompletionsModel:
             public QAbstractListModel,
             public ICompletionSource

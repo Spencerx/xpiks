@@ -9,30 +9,24 @@
  */
 
 #include "helpersqmlwrapper.h"
-#include <QStringList>
+
+#include <QChar>
+#include <QFileInfo>
 #include <QProcess>
-#include <QDir>
-#include <QQuickWindow>
-#include <QSysInfo>
-#include <QCoreApplication>
-#include <QQmlEngine>
-#include "keywordshelpers.h"
-#include <Models/logsmodel.h>
-#include <Models/Connectivity/artworksuploader.h>
-#include <Services/AutoComplete/stringsautocompletemodel.h>
-#include <Models/Connectivity/ziparchiver.h>
-#include <Services/SpellCheck/spellcheckservice.h>
-#include <Models/Editing/deletekeywordsviewmodel.h>
-#include <Models/Connectivity/uploadinforepository.h>
-#include <Services/SpellCheck/spellchecksuggestionmodel.h>
-#include "logger.h"
-#include <Common/defines.h>
-#include <Helpers/filehelpers.h>
-#include <Helpers/updatehelpers.h>
-#include <QMLExtensions/colorsmodel.h>
-#include <Helpers/filehelpers.h>
+#include <QStringList>
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/filehelpers.h"
+#include "Helpers/keywordshelpers.h"
+#include "Helpers/logger.h"
+#include "QMLExtensions/colorsmodel.h"
 
 #ifdef Q_OS_WIN
+#include <QDir>
+#include <QQuickWindow>
 #include <QWinTaskbarButton>
 #include <QWinTaskbarProgress>
 #endif

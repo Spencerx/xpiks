@@ -11,11 +11,23 @@
 #ifndef ARTWORKPROXYBASE_H
 #define ARTWORKPROXYBASE_H
 
-#include <Artworks/basicmetadatamodel.h>
-#include <Artworks/iartworkmetadata.h>
-#include "currenteditableproxyartwork.h"
-#include <KeywordsPresets/ipresetsmanager.h>
-#include <Common/types.h>
+#include <cstddef>
+
+#include <QSet>
+#include <QString>
+#include <QStringList>
+
+#include "Common/types.h"
+#include "KeywordsPresets/presetmodel.h"
+
+namespace Artworks {
+    class BasicMetadataModel;
+    class IArtworkMetadata;
+}
+
+namespace KeywordsPresets {
+    class IPresetsManager;
+}
 
 namespace AutoComplete {
     class ICompletionSource;

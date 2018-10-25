@@ -11,17 +11,20 @@
 #ifndef UNDOREDOMANAGER_H
 #define UNDOREDOMANAGER_H
 
-#include <QObject>
-#include <stack>
 #include <memory>
+#include <stack>
+#include <vector>
+
 #include <QMutex>
-#include "iundoredomanager.h"
-#include <Common/messages.h>
-#include <Common/types.h>
+#include <QObject>
+#include <QString>
+
+#include "Commands/Base/icommand.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "UndoRedo/iundoredomanager.h"
 
 namespace UndoRedo {
-    class HistoryItem;
-
     class UndoRedoManager:
             public QObject,
             public IUndoRedoManager,
@@ -31,7 +34,7 @@ namespace UndoRedo {
         Q_PROPERTY(bool canUndo READ getCanUndo NOTIFY canUndoChanged)
         Q_PROPERTY(QString undoDescription READ getUndoDescription NOTIFY undoDescriptionChanged)
     public:
-        UndoRedoManager(QObject *parent=0):
+        UndoRedoManager(QObject *parent=nullptr):
             QObject(parent)
         { }
 

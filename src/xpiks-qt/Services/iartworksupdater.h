@@ -11,8 +11,11 @@
 #ifndef IARTWORKSUPDATER_H
 #define IARTWORKSUPDATER_H
 
-#include <Common/types.h>
+#include <memory>
+
 #include <QVector>
+
+#include "Common/types.h"
 
 namespace Artworks {
     class ArtworksSnapshot;

@@ -11,9 +11,12 @@
 #ifndef COMPOSITECOMMAND_H
 #define COMPOSITECOMMAND_H
 
-#include "icommand.h"
+#include <initializer_list>
 #include <memory>
+#include <utility>
 #include <vector>
+
+#include "Commands/Base/icommand.h"
 
 namespace Commands {
     class CompositeCommand: public ICommand

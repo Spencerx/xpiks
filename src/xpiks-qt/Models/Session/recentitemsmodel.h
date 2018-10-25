@@ -12,11 +12,19 @@
 #define RECENTITEMSMODEL_H
 
 #include <QAbstractListModel>
-#include <QQueue>
-#include <QString>
-#include <QSet>
 #include <QHash>
+#include <QModelIndex>
+#include <QObject>
+#include <QQueue>
+#include <QSet>
+#include <QString>
 #include <QUrl>
+#include <QVariant>
+#include <Qt>
+#include <QtGlobal>
+
+class QByteArray;
+class QModelIndex;
 
 namespace Models {
     class RecentItemsModel: public QAbstractListModel

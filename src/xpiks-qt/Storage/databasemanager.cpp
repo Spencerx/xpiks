@@ -9,9 +9,19 @@
  */
 
 #include "databasemanager.h"
+
+#include <QByteArray>
 #include <QDir>
-#include "../Helpers/constants.h"
-#include "../Common/logging.h"
+#include <QFile>
+#include <QMutexLocker>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+#include "Helpers/constants.h"
+#include "Storage/database.h"
 
 namespace Storage {
     DatabaseManager::DatabaseManager(Common::ISystemEnvironment &environment):

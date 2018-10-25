@@ -11,11 +11,11 @@
 #ifndef ORIGINALMETADATA_H
 #define ORIGINALMETADATA_H
 
-#include <QStringList>
-#include <QString>
-#include <QSize>
-#include <QHash>
 #include <QDateTime>
+#include <QHash>
+#include <QSize>
+#include <QString>
+#include <QStringList>
 
 namespace MetadataIO {
     // metadata read directly from file by exiftool/etc.

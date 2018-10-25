@@ -12,14 +12,18 @@
 #define MICROSTOCKSERVICE_H
 
 #include <memory>
-#include "imicrostockservice.h"
-#include "imicrostockapiclient.h"
+
+#include "Microstocks/imicrostockservice.h"
 
 namespace Connectivity {
+    class IConnectivityResponse;
     class RequestsService;
 }
 
 namespace Microstocks {
+    class IMicrostockAPIClient;
+    class SearchQuery;
+
     class MicrostockService: public IMicrostockService {
     public:
         MicrostockService(std::shared_ptr<IMicrostockAPIClient> const &apiClient,

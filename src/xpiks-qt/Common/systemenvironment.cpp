@@ -9,14 +9,23 @@
  */
 
 #include "systemenvironment.h"
+
+#include <QChar>
 #include <QCoreApplication>
-#include <QStandardPaths>
-#include <QDateTime>
 #include <QDir>
-#include "logging.h"
-#include "defines.h"
-#include "../Helpers/filehelpers.h"
-#include "../Helpers/constants.h"
+#include <QStandardPaths>
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/defines.h"
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "Helpers/filehelpers.h"
+
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+#include <QDateTime>
+#endif
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
     #define XPIKS_DATA_LOCATION_TYPE QStandardPaths::AppDataLocation

@@ -9,21 +9,28 @@
  */
 
 #include "imagecachingservice.h"
-#include <QThread>
+
+#include <cstddef>
+#include <memory>
+#include <vector>
+
 #include <QScreen>
-#include "imagecachingworker.h"
-#include "imagecacherequest.h"
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include <Helpers/asynccoordinator.h>
-#include <Artworks/artworkssnapshot.h>
+#include <QThread>
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/imageartwork.h"  // IWYU pragma: keep
+#include "Common/logging.h"
+#include "QMLExtensions/imagecacherequest.h"
+#include "QMLExtensions/imagecachingworker.h"
 
 namespace QMLExtensions {
     ImageCachingService::ImageCachingService(Common::ISystemEnvironment &environment,
                                              QObject *parent) :
         QObject(parent),
         m_Environment(environment),
-        m_CachingWorker(NULL),
+        m_CachingWorker(nullptr),
         m_IsCancelled(false),
         m_Scale(1.0)
     {

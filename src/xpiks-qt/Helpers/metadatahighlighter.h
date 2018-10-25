@@ -13,8 +13,15 @@
 
 #include <QSyntaxHighlighter>
 #include <QString>
-#include <QTextDocument>
-#include "../Common/iflagsprovider.h"
+#include <QTextCharFormat>
+
+#include "Common/flags.h"
+
+class QTextDocument;
+
+namespace Common {
+    template <class T> class IFlagsProvider;
+}
 
 namespace QMLExtensions {
     class ColorsModel;

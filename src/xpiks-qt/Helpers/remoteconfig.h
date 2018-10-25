@@ -11,14 +11,13 @@
 #ifndef REMOTECONFIG_H
 #define REMOTECONFIG_H
 
-#include <QObject>
-#include <QString>
 #include <QByteArray>
 #include <QJsonDocument>
-#include <Connectivity/configrequest.h>
+#include <QObject>
+#include <QString>
 
-namespace Models {
-    class ProxySettings;
+namespace Connectivity {
+    class ConfigRequest;
 }
 
 namespace Helpers {

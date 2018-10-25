@@ -9,6 +9,7 @@
 #include <Helpers/filehelpers.h>
 #include <vendors/csv/csv.h>
 #include "xpikstestsapp.h"
+#include "MetadataIO/csvexportproperties.h"
 
 QString CsvExportTest::testName() {
     return QLatin1String("CsvExportTest");

@@ -11,13 +11,19 @@
 #ifndef TRANSLATIONWORKER_H
 #define TRANSLATIONWORKER_H
 
-#include <QObject>
-#include <QMutex>
 #include <memory>
-#include <Common/itemprocessingworker.h>
-#include "translationquery.h"
-#include <Common/lrucache.h>
-#include <Helpers/hashhelpers.h>
+
+#include <QMutex>
+#include <QObject>
+#include <QString>
+
+#include "Common/itemprocessingworker.h"
+#include "Common/lrucache.h"
+#include "Helpers/hashhelpers.h"  // IWYU pragma: keep
+
+namespace Translation {
+    class TranslationQuery;
+}
 
 class LookupDictionary;
 
@@ -32,7 +38,7 @@ namespace Translation {
     {
         Q_OBJECT
     public:
-        explicit TranslationWorker(Helpers::AsyncCoordinator &initCoordinator, QObject *parent = 0);
+        explicit TranslationWorker(Helpers::AsyncCoordinator &initCoordinator, QObject *parent = nullptr);
         virtual ~TranslationWorker();
 
     public:

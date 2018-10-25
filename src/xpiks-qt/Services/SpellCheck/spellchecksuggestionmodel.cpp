@@ -9,24 +9,28 @@
  */
 
 #include "spellchecksuggestionmodel.h"
-#include <QQmlEngine>
-#include <QHash>
-#include <QString>
+
+#include <cstddef>
 #include <functional>
-#include "spellsuggestionsitem.h"
-#include "ispellsuggestionstarget.h"
-#include "spellcheckservice.h"
-#include <Common/flags.h>
-#include <Common/logging.h>
-#include <Commands/Base/callbackcommand.h>
-#include <Commands/Base/compositecommand.h>
-#include <Commands/Editing/clearactionmodeltemplate.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/basickeywordsmodel.h>
-#include <Services/iartworksupdater.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Helpers/indicesranges.h>
-#include <Helpers/cpphelpers.h>
+#include <initializer_list>
+
+#include <QByteArray>
+#include <QHash>
+#include <QQmlEngine>
+#include <QString>
+#include <QStringList>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Commands/Base/callbackcommand.h"
+#include "Commands/Base/compositecommand.h"
+#include "Commands/Editing/clearactionmodeltemplate.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Services/SpellCheck/ispellcheckable.h"
+#include "Services/SpellCheck/ispellsuggestionstarget.h"
+#include "Services/SpellCheck/spellcheckservice.h"
+#include "Services/SpellCheck/spellsuggestionsitem.h"
 
 namespace SpellCheck {
     std::vector<std::shared_ptr<SpellSuggestionsItem> > combineSuggestionRequests(const SuggestionsVector &items) {

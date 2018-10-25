@@ -9,11 +9,14 @@
  */
 
 #include "pluginenvironment.h"
-#include <QDir>
+
 #include <QFileInfo>
-#include "../Helpers/filehelpers.h"
-#include "../Helpers/constants.h"
-#include "../Common/logging.h"
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "Helpers/filehelpers.h"
 
 PluginEnvironment::PluginEnvironment(ISystemEnvironment &systemEnvironment,
                                      const QString &pluginsDir,

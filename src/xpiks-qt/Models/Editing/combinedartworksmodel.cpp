@@ -9,21 +9,39 @@
  */
 
 #include "combinedartworksmodel.h"
-#include <Helpers/indiceshelper.h>
-#include <Common/defines.h>
-#include <Commands/Editing/modifyartworkscommand.h>
-#include <Commands/Editing/editartworkstemplate.h>
-#include <Commands/Base/compositecommandtemplate.h>
-#include <Commands/Editing/clearactionmodeltemplate.h>
-#include <Commands/Base/templatedcommand.h>
-#include <Commands/artworksupdatetemplate.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkelement.h>
-#include <Artworks/basicmodelsource.h>
-#include <Suggestion/keywordssuggestor.h>
-#include <QMLExtensions/uicommandid.h>
-#include <KeywordsPresets/ipresetsmanager.h>
-#include <Models/Editing/currenteditableproxyartwork.h>
+
+#include <cstddef>
+#include <initializer_list>
+#include <utility>
+#include <vector>
+
+#include <QQmlEngine>
+#include <QSet>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkelement.h"
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/basicmodelsource.h"
+#include "Commands/Base/compositecommandtemplate.h"
+#include "Commands/Base/icommandtemplate.h"
+#include "Commands/Base/templatedcommand.h"
+#include "Commands/Editing/clearactionmodeltemplate.h"
+#include "Commands/Editing/editartworkstemplate.h"
+#include "Commands/Editing/modifyartworkscommand.h"
+#include "Commands/artworksupdatetemplate.h"
+#include "Common/defines.h"
+#include "Common/delayedactionentity.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "Models/Artworks/artworksviewmodel.h"
+#include "Models/Editing/artworkproxybase.h"
+#include "Models/Editing/currenteditableproxyartwork.h"
+#include "Models/Editing/quickbuffermessage.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
 
 #define MAX_EDITING_PAUSE_RESTARTS 12
 

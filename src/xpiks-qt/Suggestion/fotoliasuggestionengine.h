@@ -11,11 +11,28 @@
 #ifndef FOTOLIASUGGESTIONRESULTS_H
 #define FOTOLIASUGGESTIONRESULTS_H
 
+#include <memory>
+#include <vector>
+
+#include <QByteArray>
 #include <QObject>
-#include "suggestionresultsresponse.h"
-#include "microstocksuggestionengine.h"
+#include <QString>
+
+#include "Suggestion/microstocksuggestionengine.h"
+#include "Suggestion/suggestionresultsresponse.h"
+
+namespace Connectivity {
+    class RequestsService;
+}
+
+namespace Microstocks {
+    class IMicrostockAPIClient;
+}
 
 namespace Suggestion {
+    class ISuggestionsRepository;
+    class SuggestionArtwork;
+
     class FotoliaSuggestionResults: public SuggestionResultsResponse
     {
     public:

@@ -9,9 +9,14 @@
  */
 
 #include "artworkmetadatabackup.h"
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include <Common/defines.h>
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/imageartwork.h"
 
 UndoRedo::ArtworkMetadataBackup::ArtworkMetadataBackup(std::shared_ptr<Artworks::ArtworkMetadata> const &artwork):
     m_ArtworkID(artwork->getItemID()),

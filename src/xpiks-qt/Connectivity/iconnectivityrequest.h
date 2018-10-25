@@ -11,10 +11,11 @@
 #ifndef ICONNECTIVITYREQUEST_H
 #define ICONNECTIVITYREQUEST_H
 
-#include <QString>
 #include <QByteArray>
-#include "../Common/flags.h"
-#include "iconnectivityresponse.h"
+#include <QString>
+
+#include "Common/flags.h"
+#include "Connectivity/iconnectivityresponse.h"
 
 namespace Connectivity {
     class IConnectivityRequest {

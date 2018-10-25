@@ -9,13 +9,22 @@
  */
 
 #include "languagesmodel.h"
+
+#include <QByteArray>
+#include <QChar>
+#include <QCharRef>
+#include <QCoreApplication>
+#include <QFileInfo>
+#include <QFileInfoList>
+#include <QLatin1String>
 #include <QLocale>
 #include <QString>
+#include <QStringList>
 #include <QTranslator>
-#include <QCoreApplication>
-#include <QLibraryInfo>
-#include "../Common/defines.h"
-#include "../Models/settingsmodel.h"
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Models/settingsmodel.h"
 
 namespace Models {
     LanguagesModel::LanguagesModel(SettingsModel &settingsModel, QObject *parent):

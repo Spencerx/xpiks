@@ -9,18 +9,23 @@
  */
 
 #include "generalcommands.h"
-#include <Models/settingsmodel.h>
-#include <Encryption/secretsmanager.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Models/Connectivity/uploadinforepository.h>
-#include <Models/logsmodel.h>
-#include <Models/uimanager.h>
-#include <Services/AutoComplete/autocompleteservice.h>
-#include <Services/Warnings/warningsmodel.h>
-#include <Services/SpellCheck/userdicteditmodel.h>
-#include <Services/SpellCheck/userdictionary.h>
-#include <Helpers/uihelpers.h>
+
+#include <QString>
+#include <QVariant>
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Helpers/uihelpers.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Connectivity/uploadinforepository.h"
+#include "Models/logsmodel.h"
+#include "Models/settingsmodel.h"
+#include "Models/uimanager.h"
+#include "Services/AutoComplete/autocompleteservice.h"
+#include "Services/SpellCheck/userdicteditmodel.h"
+#include "Services/SpellCheck/userdictionary.h"
+#include "Services/Warnings/warningsmodel.h"
 
 namespace Commands {
     namespace UI {

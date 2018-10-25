@@ -9,13 +9,20 @@
  */
 
 #include "simplecurldownloader.h"
+
+#include <cstdio>
+#include <string>
+
 #include <QFile>
 #include <QTemporaryFile>
-#include <cstdio>
+#include <QtDebug>
+#include <QtGlobal>
+
 #include <curl/curl.h>
-#include <Common/logging.h>
-#include <Models/Connectivity/proxysettings.h>
-#include "ftphelpers.h"
+#include <curl/curlver.h>
+
+#include "Common/logging.h"
+#include "Connectivity/ftphelpers.h"
 
 static size_t write_file(void *buffer, size_t size, size_t nmemb, void *param) {
     QFile *out = (QFile *)param;

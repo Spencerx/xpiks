@@ -11,10 +11,10 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <QStringList>
-#include <QString>
-#include <QWaitCondition>
 #include <QMutex>
+#include <QString>
+#include <QStringList>
+#include <QWaitCondition>
 
 namespace Helpers {
     class Logger

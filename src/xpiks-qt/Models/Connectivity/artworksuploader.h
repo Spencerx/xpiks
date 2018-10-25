@@ -11,33 +11,39 @@
 #ifndef ARTWORKSUPLOADER_H
 #define ARTWORKSUPLOADER_H
 
-#include <QAbstractListModel>
-#include <QStringList>
-#include <QFutureWatcher>
-#include <Connectivity/testconnection.h>
-#include <Connectivity/uploadwatcher.h>
-#include <Connectivity/analyticsuserevent.h>
-#include <Common/isystemenvironment.h>
-#include <Common/messages.h>
-#include "uploadinforepository.h"
-#include <vendors/libxpks/ftpcoordinator.h>
-#include <Artworks/iselectedartworkssource.h>
+#include <memory>
 
-namespace Helpers {
-    class TestConnectionResult;
+#include <QObject>
+#include <QString>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "Connectivity/analyticsuserevent.h"
+#include "Connectivity/uploadwatcher.h"
+
+template <typename T> class QFutureWatcher;
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Connectivity {
+    struct ContextValidationResult;
+}
+
+namespace Models {
+    class UploadInfoRepository;
+}
+
+namespace libxpks {
+namespace net {
+    class FtpCoordinator;
+}
 }
 
 namespace Connectivity {
     class IFtpCoordinator;
-}
-
-namespace Helpers {
-    class AsyncCoordinator;
-}
-
-namespace Artworks {
-    class ArtworkMetadata;
-    class ArtworksSnapshot;
 }
 
 namespace Models {

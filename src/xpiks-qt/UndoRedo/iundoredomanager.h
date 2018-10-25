@@ -11,8 +11,9 @@
 #ifndef IUNDOREDOMANAGER_H
 #define IUNDOREDOMANAGER_H
 
-#include <Commands/Base/icommand.h>
 #include <memory>
+
+#include "Commands/Base/icommand.h"
 
 namespace UndoRedo {
     class IUndoRedoManager {

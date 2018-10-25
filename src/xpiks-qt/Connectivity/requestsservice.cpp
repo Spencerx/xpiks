@@ -9,16 +9,21 @@
  */
 
 #include "requestsservice.h"
+
 #include <QThread>
-#include "requestsworker.h"
-#include "../Helpers/remoteconfig.h"
-#include "../Commands/commandmanager.h"
-#include "../Models/settingsmodel.h"
-#include "../Common/defines.h"
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Connectivity/configrequest.h"
+#include "Connectivity/requestsworker.h"
+#include "Helpers/remoteconfig.h"
 
 #define NO_CACHE_ATTRIBUTE true
 
 namespace Connectivity {
+    class IConnectivityRequest;
+
     RequestsService::RequestsService(const Models::ProxySettings &proxySettings, QObject *parent):
         QObject(parent),
         m_RequestsWorker(nullptr),

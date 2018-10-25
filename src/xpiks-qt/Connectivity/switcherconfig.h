@@ -11,12 +11,18 @@
 #ifndef SWITCHERCONFIG_H
 #define SWITCHERCONFIG_H
 
+#include <QHash>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QHash>
+#include <QObject>
 #include <QReadWriteLock>
-#include <Models/Connectivity/abstractconfigupdatermodel.h>
-#include "../Common/isystemenvironment.h"
+#include <QString>
+
+#include "Models/Connectivity/abstractconfigupdatermodel.h"
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Connectivity {
     class SwitcherConfig: public Models::AbstractConfigUpdaterModel

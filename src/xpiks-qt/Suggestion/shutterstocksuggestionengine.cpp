@@ -9,12 +9,19 @@
  */
 
 #include "shutterstocksuggestionengine.h"
-#include <QJsonDocument>
-#include <QJsonParseError>
+
 #include <QJsonArray>
-#include <QJsonValue>
+#include <QJsonDocument>
 #include <QJsonObject>
-#include "../Common/logging.h"
+#include <QJsonParseError>
+#include <QJsonValue>
+#include <QJsonValueRef>
+#include <QStringList>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Suggestion/suggestionartwork.h"
 
 namespace Suggestion {
     void parseJsonResults(const QJsonArray &jsonArray, std::vector<std::shared_ptr<SuggestionArtwork> > &suggestionArtworks) {

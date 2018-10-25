@@ -9,12 +9,19 @@
  */
 
 #include "gettysuggestionengine.h"
-#include <QJsonDocument>
-#include <QJsonParseError>
-#include <QJsonObject>
-#include <QJsonValue>
+
 #include <QJsonArray>
-#include "../Common/logging.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonParseError>
+#include <QJsonValue>
+#include <QJsonValueRef>
+#include <QStringList>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Suggestion/suggestionartwork.h"
 
 namespace Suggestion {
     void parseUrl(const QJsonValue &previewObject, QString &url) {

@@ -9,10 +9,18 @@
  */
 
 #include "switcherconfig.h"
-#include <QDir>
+
 #include <QJsonValue>
-#include "apimanager.h"
-#include "../Common/logging.h"
+#include <QJsonValueRef>
+#include <QLatin1String>
+#include <QReadLocker>
+#include <QWriteLocker>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Connectivity/apimanager.h"
 
 namespace Connectivity {
 

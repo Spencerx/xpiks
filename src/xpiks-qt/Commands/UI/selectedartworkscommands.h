@@ -11,45 +11,36 @@
 #ifndef SELECTEDARTWORKSCOMMANDS_H
 #define SELECTEDARTWORKSCOMMANDS_H
 
-#include <QObject>
-#include <memory>
-#include <Commands/Base/iuicommandtemplate.h>
-#include <QMLExtensions/uicommandid.h>
-#include <Models/Artworks/artworkslistoperations.h>
-#include "sourcetargetcommand.h"
+#include <QVariant>
+
+#include "Commands/Base/iuicommandtemplate.h"
+#include "Commands/UI/sourcetargetcommand.h"
+#include "QMLExtensions/uicommandid.h"
+
+class QObject;
 
 namespace Artworks {
     class ISelectedArtworksSource;
-    class ISelectedIndicesSource;
 }
 
 namespace SpellCheck {
-    class SpellCheckSuggestionModel;
     class DuplicatesReviewModel;
 }
 
 namespace MetadataIO {
+    class CsvExportModel;
     class MetadataIOCoordinator;
     class MetadataIOService;
-    class CsvExportModel;
 }
 
 namespace Models {
     class ArtworksListModel;
-    class FilteredArtworksListModel;
-    class FindAndReplaceModel;
     class ArtworksUploader;
     class CombinedArtworksModel;
-    class ZipArchiver;
     class DeleteKeywordsViewModel;
-}
-
-namespace Services {
-    class IArtworksUpdater;
-}
-
-namespace SpellCheck {
-    class ISpellCheckService;
+    class FilteredArtworksListModel;
+    class FindAndReplaceModel;
+    class ZipArchiver;
 }
 
 namespace Warnings {
@@ -57,7 +48,6 @@ namespace Warnings {
 }
 
 namespace Commands {
-    class ICommand;
 
     namespace UI {
         class SetupExportMetadataCommand: public IUICommandTemplate {

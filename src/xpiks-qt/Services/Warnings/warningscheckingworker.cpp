@@ -9,11 +9,14 @@
  */
 
 #include "warningscheckingworker.h"
+
 #include <QThread>
-#include <Common/logging.h>
-#include <Common/flags.h>
+#include <QtDebug>
+
+#include "Common/itemprocessingworker.h"
+#include "Common/logging.h"
+#include "Services/Warnings/iwarningsitem.h"
 #include "warningssettingsmodel.h"
-#include "warningsitem.h"
 
 #define WARNINGS_WORKER_SLEEP_INTERVAL 500
 #define WARNINGS_DELAY_PERIOD 50

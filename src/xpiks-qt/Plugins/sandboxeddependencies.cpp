@@ -9,8 +9,11 @@
  */
 
 #include "sandboxeddependencies.h"
-#include <Models/uimanager.h>
-#include "uiprovider.h"
+
+#include "Microstocks/imicrostockapiclients.h"
+#include "Microstocks/microstockservice.h"
+#include "Models/uimanager.h"
+#include "Plugins/uiprovider.h"
 
 namespace Plugins {
     UIProviderSafe::UIProviderSafe(int pluginID, UIProvider &realUIProvider):

@@ -12,13 +12,15 @@
 #define IMAGECACHINGSERVICE_H
 
 #include <QObject>
-#include <QString>
 #include <QSize>
-#include <memory>
-#include <Common/isystemenvironment.h>
+#include <QString>
+#include <QtGlobal>
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Artworks {
-    class ArtworkMetadata;
     class ArtworksSnapshot;
 }
 

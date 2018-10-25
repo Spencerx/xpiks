@@ -11,8 +11,8 @@
 #ifndef CHANGESLISTENER_H
 #define CHANGESLISTENER_H
 
-#include <vector>
 #include <functional>
+#include <vector>
 
 namespace Common {
     // tag for events with same underlying type

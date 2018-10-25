@@ -11,7 +11,9 @@
 #ifndef SAVESESSIONJOBITEM_H
 #define SAVESESSIONJOBITEM_H
 
-#include "imaintenanceitem.h"
+#include <memory>
+
+#include "Services/Maintenance/imaintenanceitem.h"
 
 namespace Models {
     class SessionManager;

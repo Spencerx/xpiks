@@ -11,22 +11,30 @@
 #ifndef SETTINGSMODEL_H
 #define SETTINGSMODEL_H
 
-#include <QAbstractListModel>
+#include <memory>
+
+#include <QCoreApplication>
+#include <QMutex>
 #include <QObject>
 #include <QString>
-#include <QCoreApplication>
-#include <QDir>
-#include <QJsonObject>
-#include <QSettings>
-#include <QMutex>
-#include <Common/delayedactionentity.h>
-#include <Common/statefulentity.h>
-#include <Common/isystemenvironment.h>
-#include <Common/iflagsprovider.h>
-#include <Helpers/localconfig.h>
-#include <Helpers/constants.h>
-#include <Helpers/jsonobjectmap.h>
-#include <Models/Connectivity/proxysettings.h>
+#include <Qt>
+
+#include "Common/delayedactionentity.h"
+#include "Common/flags.h"
+#include "Common/iflagsprovider.h"
+#include "Common/statefulentity.h"
+#include "Helpers/constants.h"
+#include "Helpers/jsonobjectmap.h"
+#include "Helpers/localconfig.h"
+#include "Models/Connectivity/proxysettings.h"
+
+class QSettings;
+class QTimerEvent;
+class QUrl;
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Encryption {
     class SecretsManager;

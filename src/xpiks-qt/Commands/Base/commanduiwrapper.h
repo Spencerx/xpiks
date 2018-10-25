@@ -11,9 +11,10 @@
 #ifndef COMMANDUIWRAPPER_H
 #define COMMANDUIWRAPPER_H
 
-#include "iuicommandtemplate.h"
-#include "icommand.h"
 #include <memory>
+
+#include "Commands/Base/icommand.h"
+#include "Commands/Base/iuicommandtemplate.h"
 
 namespace Commands {
     class CommandUIWrapper: public IUICommandTemplate {

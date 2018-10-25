@@ -9,9 +9,17 @@
  */
 
 #include "recentfilesmodel.h"
-#include <Helpers/constants.h>
-#include <Artworks/artworkssnapshot.h>
+
+#include <memory>
+
+#include <QQueue>
+#include <QUrl>
+#include <QtGlobal>
+
 #include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/statefulentity.h"
+#include "Helpers/constants.h"
 
 #define MAX_RECENT_FILES 10
 

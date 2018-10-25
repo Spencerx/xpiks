@@ -9,7 +9,10 @@
  */
 
 #include "uicommandlistener.h"
-#include "uicommanddispatcher.h"
+
+#include <QVariant>
+
+#include "QMLExtensions/uicommanddispatcher.h"
 
 namespace QMLExtensions {
     UICommandListener::UICommandListener(QObject *parent):

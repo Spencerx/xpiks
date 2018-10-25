@@ -11,9 +11,20 @@
 #ifndef REMOVEFILESCOMMAND_H
 #define REMOVEFILESCOMMAND_H
 
-#include "removefilescommandbase.h"
+#include <memory>
+
+#include "Commands/Files/removefilescommandbase.h"
+#include "Helpers/indicesranges.h"
+#include "Models/Artworks/artworkslistoperations.h"
+
+namespace Models {
+    class ArtworksListModel;
+    class ArtworksRepository;
+}
 
 namespace Commands {
+    class ICommand;
+
     class RemoveFilesCommand: public RemoveFilesCommandBase
     {
     public:

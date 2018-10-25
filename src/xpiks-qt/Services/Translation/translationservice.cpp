@@ -9,11 +9,19 @@
  */
 
 #include "translationservice.h"
+
+#include <memory>
+
+#include <QChar>
+#include <QStringList>
 #include <QThread>
-#include "translationworker.h"
-#include "translationquery.h"
-#include <Helpers/asynccoordinator.h>
-#include <Common/logging.h>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+#include "Services/Translation/translationquery.h"
+#include "Services/Translation/translationworker.h"
 
 namespace Translation {
     TranslationService::TranslationService(QObject *parent) :
@@ -58,12 +66,12 @@ namespace Translation {
         if (m_TranslationWorker != nullptr) {
             m_TranslationWorker->stopWorking();
         } else {
-            LOG_WARNING << "TranslationWorker was NULL";
+            LOG_WARNING << "TranslationWorker was nullptr";
         }
     }
 
     bool TranslationService::isBusy() const {
-        bool isBusy = (m_TranslationWorker != NULL) && m_TranslationWorker->hasPendingJobs();
+        bool isBusy = (m_TranslationWorker != nullptr) && m_TranslationWorker->hasPendingJobs();
         return isBusy;
     }
 

@@ -9,14 +9,24 @@
  */
 
 #include "stocksftplistmodel.h"
-#include <QStandardPaths>
-#include <QDir>
+
+#include <algorithm>
+
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
-#include "../Common/logging.h"
-#include "../Helpers/localconfig.h"
-#include "../Connectivity/apimanager.h"
+#include <QJsonValue>
+#include <QJsonValueRef>
+#include <QLatin1String>
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Connectivity/apimanager.h"
+#include "Microstocks/stockftpoptions.h"
+#include "Models/Connectivity/abstractconfigupdatermodel.h"
 
 #define OVERWRITE_STOCKS_CONFIG false
 #define LOCAL_STOCKS_LIST_FILE QLatin1String("stocks_ftp.json")

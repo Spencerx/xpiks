@@ -12,6 +12,7 @@
 #define LOGGINGWORKER_H
 
 #include <QObject>
+#include <QString>
 
 namespace Helpers {
     class LoggingWorker : public QObject

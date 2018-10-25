@@ -10,6 +10,8 @@
 
 #include "proxysettings.h"
 
+#include <QDataStream>
+
 namespace Models {
     QDataStream &operator<<(QDataStream &out, const ProxySettings &v) {
         out << v.m_Address << v.m_User << v.m_Password << v.m_Port;

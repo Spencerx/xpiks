@@ -11,10 +11,11 @@
 #ifndef READERWRITERQUEUE_H
 #define READERWRITERQUEUE_H
 
-#include <QMutexLocker>
-#include <QMutex>
-#include <vector>
 #include <memory>
+#include <vector>
+
+#include <QMutex>
+#include <QMutexLocker>
 
 namespace Common {
     // queue optimized for "many writers - 1 reader" case

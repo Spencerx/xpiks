@@ -12,8 +12,17 @@
 #define UPLOADWATCHER_H
 
 #include <QAbstractListModel>
-#include <QVector>
+#include <QHash>
+#include <QObject>
 #include <QPair>
+#include <QString>
+#include <QStringList>
+#include <QVariant>
+#include <QVector>
+#include <Qt>
+
+class QByteArray;
+class QModelIndex;
 
 namespace Connectivity {
     class UploadWatcher:

@@ -11,13 +11,24 @@
 #ifndef KEYWORDSPELLSUGGESTIONS_H
 #define KEYWORDSPELLSUGGESTIONS_H
 
+#include <cstddef>
+#include <memory>
+#include <vector>
+
+#include <QAbstractListModel>
+#include <QHash>
+#include <QMetaType>
+#include <QModelIndex>
+#include <QObject>
 #include <QString>
 #include <QStringList>
-#include <QAbstractListModel>
-#include <QVector>
-#include <vector>
-#include <memory>
-#include <Common/flags.h>
+#include <QVariant>
+#include <Qt>
+
+#include "Common/flags.h"
+
+class QByteArray;
+class QModelIndex;
 
 namespace SpellCheck {
     class ISpellCheckable;

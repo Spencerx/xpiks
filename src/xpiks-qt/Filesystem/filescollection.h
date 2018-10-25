@@ -11,10 +11,15 @@
 #ifndef FILESCOLLECTION_H
 #define FILESCOLLECTION_H
 
-#include "ifilescollection.h"
 #include <initializer_list>
+#include <vector>
+
 #include <QList>
-#include <QUrl>
+#include <QStringList>
+
+#include "Filesystem/ifilescollection.h"
+
+class QUrl;
 
 namespace Filesystem {
     class FilesCollection: public IFilesCollection

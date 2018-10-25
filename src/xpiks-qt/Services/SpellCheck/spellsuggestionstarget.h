@@ -11,8 +11,13 @@
 #ifndef SPELLSUGGESTIONSTARGET_H
 #define SPELLSUGGESTIONSTARGET_H
 
-#include "ispellsuggestionstarget.h"
-#include <Artworks/artworkssnapshot.h>
+#include <cstddef>
+#include <memory>
+#include <vector>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/flags.h"
+#include "Services/SpellCheck/ispellsuggestionstarget.h"
 
 namespace Artworks {
     class BasicMetadataModel;
@@ -24,6 +29,7 @@ namespace Services {
 
 namespace SpellCheck {
     class ISpellCheckService;
+    class SpellSuggestionsItem;
 
     class BasicModelSuggestionTarget: public ISpellSuggestionsTarget {
     public:

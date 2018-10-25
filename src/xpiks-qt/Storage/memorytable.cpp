@@ -9,7 +9,11 @@
  */
 
 #include "memorytable.h"
-#include "../Common/logging.h"
+
+#include <QPair>
+#include <QtDebug>
+
+#include "Common/logging.h"
 
 namespace Storage {
     MemoryTable::MemoryTable(const QString &name):

@@ -11,22 +11,29 @@
 #ifndef PLUGINWRAPPER_H
 #define PLUGINWRAPPER_H
 
-#include <QObject>
 #include <QString>
-#include <cstdint>
-#include "pluginactionsmodel.h"
-#include "sandboxeddependencies.h"
-#include "iuiprovider.h"
-#include "xpiksplugininterface.h"
-#include "../Common/flags.h"
-#include "pluginenvironment.h"
-#include "../Storage/database.h"
-#include "plugindatabasemanager.h"
-#include "../Common/isystemenvironment.h"
-#include "../Common/flags.h"
+#include <QVariant>
+
+#include "Common/flags.h"
+#include "Common/types.h"
+#include "Plugins/pluginactionsmodel.h"
+#include "Plugins/plugindatabasemanager.h"
+#include "Plugins/pluginenvironment.h"
+#include "Plugins/sandboxeddependencies.h"
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Storage {
+    class DatabaseManager;
+    class IDatabaseManager;
+}
 
 namespace Plugins {
+    class IUIProvider;
     class UIProvider;
+    class XpiksPluginInterface;
 
     class PluginWrapper
     {

@@ -9,7 +9,9 @@
  */
 
 #include "recentdirectoriesmodel.h"
-#include <Helpers/constants.h>
+
+#include "Helpers/constants.h"
+#include "Models/Session/recentitemsmodel.h"
 
 #define MAX_RECENT_DIRECTORIES 5
 

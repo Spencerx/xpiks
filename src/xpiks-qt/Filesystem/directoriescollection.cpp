@@ -9,9 +9,15 @@
  */
 
 #include "directoriescollection.h"
+
 #include <QDir>
+#include <QFileInfo>
 #include <QFileInfoList>
-#include "../Common/logging.h"
+#include <QString>
+#include <QUrl>
+#include <QtDebug>
+
+#include "Common/logging.h"
 
 namespace Filesystem {
     DirectoriesCollection::DirectoriesCollection(const QStringList &directories) {

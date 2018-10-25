@@ -12,11 +12,11 @@
 #define ABSTRACTLISTMODEL_H
 
 #include <QAbstractListModel>
-
-#include <QVector>
 #include <QList>
-#include "../Helpers/indicesranges.h"
-#include "../Common/logging.h"
+#include <QVector>
+
+#include "Common/logging.h"
+#include "Helpers/indicesranges.h"
 
 #define RANGES_LENGTH_FOR_RESET 20
 

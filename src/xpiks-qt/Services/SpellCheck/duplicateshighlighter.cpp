@@ -9,14 +9,17 @@
  */
 
 #include "duplicateshighlighter.h"
+
+#include <QBrush>
 #include <QColor>
-#include <QSet>
 #include <QString>
-#include "spellcheckinfo.h"
-#include <QMLExtensions/colorsmodel.h>
-#include <Helpers/stringhelper.h>
-#include <Common/defines.h>
-#include <Artworks/basickeywordsmodel.h>
+#include <QTextCharFormat>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Helpers/stringhelper.h"
+#include "QMLExtensions/colorsmodel.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
 
 namespace SpellCheck {
     DuplicatesHighlighter::DuplicatesHighlighter(QTextDocument *document,

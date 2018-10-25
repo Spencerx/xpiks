@@ -11,13 +11,18 @@
 #ifndef ABSTRACTUPDATERCONFIGMODEL_H
 #define ABSTRACTUPDATERCONFIGMODEL_H
 
-#include <QSet>
 #include <QJsonDocument>
+#include <QObject>
+#include <QString>
+#include <QtGlobal>
+
+#include "Helpers/comparevaluesjson.h"
+#include "Helpers/localconfig.h"
+#include "Helpers/remoteconfig.h"
+
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
 #include <QFileInfo>
-#include <Helpers/comparevaluesjson.h>
-#include <Helpers/remoteconfig.h>
-#include <Helpers/localconfig.h>
-#include <Helpers/jsonhelper.h>
+#endif
 
 namespace Connectivity {
     class IRequestsService;

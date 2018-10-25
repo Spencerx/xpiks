@@ -9,8 +9,16 @@
  */
 
 #include "undoredomanager.h"
-#include "../Common/defines.h"
-#include "../Common/logging.h"
+
+#include <utility>
+
+#include <QMutexLocker>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Common/messages.h"
+#include "Common/types.h"
 
 void UndoRedo::UndoRedoManager::handleMessage(const Common::NamedType<int, Common::MessageType::UnavailableFiles> &) {
     LOG_DEBUG << "#";

@@ -8,10 +8,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <Models/Session/sessionmanager.h>
-#include <Artworks/artworkssnapshot.h>
 #include "savesessionjobitem.h"
+
+#include <utility>
+
+#include <QtDebug>
+
+#include "Artworks/artworkssnapshot.h"  // IWYU pragma: keep
 #include "Common/logging.h"
+#include "Models/Session/sessionmanager.h"
 
 namespace Maintenance {
     SaveSessionJobItem::SaveSessionJobItem(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,

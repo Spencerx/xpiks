@@ -11,9 +11,19 @@
 #ifndef STRINGSAUTOCOMPLETEMODEL_H
 #define STRINGSAUTOCOMPLETEMODEL_H
 
+#include <QHash>
+#include <QObject>
 #include <QSortFilterProxyModel>
+#include <QString>
+#include <QStringList>
 #include <QStringListModel>
-#include "autocompletemodel.h"
+#include <QVariant>
+
+#include "Services/AutoComplete/autocompletemodel.h"
+
+class QAbstractItemModel;
+class QByteArray;
+class QModelIndex;
 
 namespace AutoComplete {
     // designed to use only with QStringListModel

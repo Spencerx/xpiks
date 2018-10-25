@@ -11,7 +11,9 @@
 #ifndef FILENAMESHELPERS
 #define FILENAMESHELPERS
 
+#include <QString>
 #include <QStringList>
+#include <QtGlobal>
 
 namespace Helpers {
     QStringList convertToVectorFilenames(const QStringList &items);

@@ -9,10 +9,12 @@
  */
 
 #include "currenteditablemodel.h"
-#include <Common/logging.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Models/Editing/combinedartworksmodel.h>
-#include <Models/Editing/artworkproxymodel.h>
+
+#include <utility>
+
+#include <QtDebug>
+
+#include "Common/logging.h"
 
 namespace Models {
     CurrentEditableModel::CurrentEditableModel(QObject *parent) :

@@ -11,10 +11,12 @@
 #ifndef INDICESRANGES_H
 #define INDICESRANGES_H
 
+#include <cstddef>
+#include <initializer_list>
 #include <utility>
 #include <vector>
+
 #include <QVector>
-#include <initializer_list>
 
 namespace Helpers {
     class IndicesRanges {

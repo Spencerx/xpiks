@@ -9,8 +9,13 @@
  */
 
 #include "removeselectedfilescommand.h"
-#include <Artworks/iselectedindicessource.h>
-#include <Models/Artworks/artworkslistmodel.h>
+
+#include <QtDebug>
+
+#include "Artworks/iselectedindicessource.h"
+#include "Commands/Files/removefilescommand.h"
+#include "Common/logging.h"
+#include "Helpers/indicesranges.h"
 
 namespace Commands {
     RemoveSelectedFilesCommand::RemoveSelectedFilesCommand(Artworks::ISelectedIndicesSource &indicesSource,

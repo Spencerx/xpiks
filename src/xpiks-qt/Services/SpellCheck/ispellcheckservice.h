@@ -11,8 +11,11 @@
 #ifndef ISPELLCHECKSERVICE_H
 #define ISPELLCHECKSERVICE_H
 
-#include <Common/flags.h>
+#include <memory>
+
 #include <QStringList>
+
+#include "Common/flags.h"
 
 namespace Artworks {
     class IBasicModelSource;

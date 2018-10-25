@@ -9,10 +9,18 @@
  */
 
 #include "userdictionary.h"
+
 #include <QFile>
-#include <Common/logging.h>
-#include <Helpers/constants.h>
-#include <Helpers/stringhelper.h>
+#include <QIODevice>
+#include <QMutexLocker>
+#include <QTextStream>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "Helpers/stringhelper.h"
 
 namespace SpellCheck {
     UserDictionary::UserDictionary(Common::ISystemEnvironment &environment):

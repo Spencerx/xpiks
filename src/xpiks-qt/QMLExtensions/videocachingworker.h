@@ -11,16 +11,23 @@
 #ifndef VIDEOCACHINGWORKER_H
 #define VIDEOCACHINGWORKER_H
 
+#include <cstdint>
+#include <memory>
+#include <vector>
+
 #include <QObject>
 #include <QString>
-#include <QImage>
 #include <QVector>
-#include <vector>
-#include <Common/itemprocessingworker.h>
-#include "videocacherequest.h"
-#include "cachedvideo.h"
-#include "dbvideocacheindex.h"
-#include <Common/isystemenvironment.h>
+#include <QtGlobal>
+
+#include "Common/itemprocessingworker.h"
+#include "QMLExtensions/dbvideocacheindex.h"
+
+class QImage;
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Services {
     class ArtworksUpdateHub;
@@ -36,6 +43,7 @@ namespace Storage {
 
 namespace QMLExtensions {
     class ImageCachingService;
+    class VideoCacheRequest;
 
     class VideoCachingWorker : public QObject, public Common::ItemProcessingWorker<VideoCacheRequest>
     {

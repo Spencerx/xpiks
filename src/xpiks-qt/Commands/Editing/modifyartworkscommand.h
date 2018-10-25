@@ -12,8 +12,9 @@
 #define COMBINEDEDITCOMMAND_H
 
 #include <QObject>
-#include <Commands/Base/templatedcommand.h>
-#include <Artworks/artworkssnapshot.h>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Commands/Base/templatedcommand.h"
 
 namespace Commands {
     class ModifyArtworksCommand: public TemplatedCommand<Artworks::ArtworksSnapshot>

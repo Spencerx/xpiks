@@ -9,10 +9,18 @@
  */
 
 #include "deletekeywordstemplate.h"
-#include <Common/defines.h>
-#include <Common/logging.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkssnapshot.h>
+
+#include <cstddef>
+#include <memory>
+
+#include <QString>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "UndoRedo/artworkmetadatabackup.h"
 
 namespace Commands {
     DeleteKeywordsTemplate::DeleteKeywordsTemplate(const QSet<QString> &keywordsSet, bool caseSensitive):

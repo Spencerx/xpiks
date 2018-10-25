@@ -11,9 +11,9 @@
 #ifndef SUGGESTIONARTWORK_H
 #define SUGGESTIONARTWORK_H
 
-#include <QVector>
-#include <QString>
 #include <QSet>
+#include <QString>
+#include <QVector>
 
 namespace Suggestion {
     class SuggestionArtwork

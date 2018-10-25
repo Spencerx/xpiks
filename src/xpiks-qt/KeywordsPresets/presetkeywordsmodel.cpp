@@ -9,9 +9,23 @@
  */
 
 #include "presetkeywordsmodel.h"
+
+#include <QAbstractItemModel>
+#include <QByteArray>
+#include <QChar>
+#include <QFlags>
+#include <QPair>
 #include <QQmlEngine>
-#include <Helpers/stringhelper.h>
-#include "presetmodel.h"
+#include <QReadLocker>
+#include <QVector>
+#include <QWriteLocker>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Common/logging.h"
+#include "Helpers/stringhelper.h"
+#include "KeywordsPresets/groupmodel.h"
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 #define PRESET_SAVE_TIMEOUT 3000

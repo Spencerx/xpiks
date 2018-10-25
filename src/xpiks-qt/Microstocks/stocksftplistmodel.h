@@ -11,17 +11,26 @@
 #ifndef STOCKSFTPLISTMODEL_H
 #define STOCKSFTPLISTMODEL_H
 
-#include <QHash>
-#include <QList>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <vector>
 #include <memory>
-#include <Models/Connectivity/abstractconfigupdatermodel.h>
-#include "../Common/isystemenvironment.h"
-#include "stockftpoptions.h"
+#include <vector>
+
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QObject>
+#include <QString>
+#include <QStringList>
+
+#include "Models/Connectivity/abstractconfigupdatermodel.h"
+
+class QJsonObject;
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Microstocks {
+    struct StockFtpOptions;
+
     class StocksFtpListModel: public Models::AbstractConfigUpdaterModel
     {
         Q_OBJECT

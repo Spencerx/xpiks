@@ -13,11 +13,19 @@
 
 #include <map>
 #include <memory>
-#include "imicrostockapiclients.h"
-#include "imicrostockapiclient.h"
-#include "microstockenums.h"
+
+#include "Microstocks/imicrostockapiclients.h"
+#include "Microstocks/microstockenums.h"
+#include "Microstocks/imicrostockapiclient.h"
+
+namespace Connectivity {
+    class IConnectivityResponse;
+}
 
 namespace Microstocks {
+//    class IMicrostockAPIClient;
+    class SearchQuery;
+
     class MicrostockAPIClients: public IMicrostockAPIClients
     {
     public:

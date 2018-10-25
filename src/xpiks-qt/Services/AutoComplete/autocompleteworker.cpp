@@ -9,14 +9,22 @@
  */
 
 #include "autocompleteworker.h"
-#include <QDir>
-#include <QStringList>
-#include <Common/defines.h>
+
+#include <cstddef>
+#include <vector>
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+#include "KeywordsPresets/ipresetsmanager.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "Services/AutoComplete/completionquery.h"
+#include "Services/AutoComplete/libfacecompletionengine.h"
+#include "Services/AutoComplete/presetscompletionengine.h"
 #include "keywordsautocompletemodel.h"
-#include <Helpers/asynccoordinator.h>
-#include <KeywordsPresets/ipresetsmanager.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
-#include <Artworks/basickeywordsmodel.h>
 
 namespace AutoComplete {
     AutoCompleteWorker::AutoCompleteWorker(Helpers::AsyncCoordinator &initCoordinator,

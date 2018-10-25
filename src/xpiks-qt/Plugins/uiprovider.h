@@ -11,11 +11,15 @@
 #ifndef UIPROVIDER_H
 #define UIPROVIDER_H
 
-#include <QQuickItem>
-#include <QQmlComponent>
-#include <QQuickWindow>
+#include <QHash>
 #include <QObject>
-#include <QUrl>
+#include <QQmlComponent>
+#include <QString>
+#include <QVector>
+
+class QQmlEngine;
+class QQuickItem;
+class QUrl;
 
 namespace Models {
     class UIManager;

@@ -9,12 +9,17 @@
  */
 
 #include "findandreplacetemplate.h"
-#include <QObject>
-#include <Common/logging.h>
-#include <Common/defines.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Helpers/filterhelpers.h>
+
+#include <cstddef>
+#include <memory>
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "UndoRedo/artworkmetadatabackup.h"
 
 namespace Commands {
     void FindAndReplaceTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {

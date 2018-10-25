@@ -11,30 +11,36 @@
 #ifndef COMBINEDARTWORKSMODEL_H
 #define COMBINEDARTWORKSMODEL_H
 
-#include <QAbstractListModel>
-#include <QQmlEngine>
-#include <QStringList>
-#include <QString>
-#include <QList>
-#include <QSet>
-#include <QQuickTextDocument>
+#include <functional>
 #include <memory>
-#include <vector>
-#include "artworkproxybase.h"
-#include <Common/flags.h>
-#include <Common/delayedactionentity.h>
-#include <Common/messages.h>
-#include <Artworks/artworkelement.h>
-#include <Artworks/basicmetadatamodel.h>
-#include <Artworks/ibasicmodelsource.h>
-#include <Services/SpellCheck/spellcheckinfo.h>
-#include <Models/iactionmodel.h>
-#include <Models/Artworks/artworksviewmodel.h>
-#include <Models/Editing/icurrenteditable.h>
-#include <Models/Editing/quickbuffermessage.h>
+
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <Qt>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/iartworkmetadata.h"
+#include "Artworks/ibasicmodelsource.h"
+#include "Common/delayedactionentity.h"
+#include "Common/flags.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "Models/Artworks/artworksviewmodel.h"
+#include "Models/Editing/artworkproxybase.h"
+#include "Models/iactionmodel.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
+
+class QTimerEvent;
+
+namespace Artworks {
+    class ArtworkElement;
+    class ArtworkMetadata;
+}
 
 namespace Commands {
-    class ICommandManager;
+    class ICommand;
 }
 
 namespace KeywordsPresets {
@@ -50,6 +56,9 @@ namespace Services {
 }
 
 namespace Models {
+    class ICurrentEditable;
+    struct QuickBufferMessage;
+
     using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
 
     class CombinedArtworksModel:

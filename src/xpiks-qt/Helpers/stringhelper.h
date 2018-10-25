@@ -11,16 +11,18 @@
 #ifndef STRINGHELPER
 #define STRINGHELPER
 
+#include <functional>
 #include <string>
 #include <vector>
+
+#include <QByteArray>
+#include <QChar>
 #include <QString>
 #include <QVector>
-#include <stdarg.h>
-#include <functional>
+#include <Qt>
+#include <QtGlobal>
 
-class QString;
 class QStringList;
-class QByteArray;
 
 namespace Helpers {
     QString stringPercentDecode(const QString &from);

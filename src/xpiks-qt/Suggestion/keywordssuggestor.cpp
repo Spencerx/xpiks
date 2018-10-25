@@ -8,24 +8,41 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "keywordssuggestor.h"
+
+#include <cstddef>
+#include <utility>
+
+#include <QByteArray>
 #include <QHash>
-#include <QString>
+#include <QMap>
 #include <QMultiMap>
 #include <QQmlEngine>
-#include "keywordssuggestor.h"
-#include "suggestionartwork.h"
-#include <Common/defines.h>
-#include <Models/switchermodel.h>
-#include <Models/settingsmodel.h>
-#include <Helpers/constants.h>
-#include <Connectivity/analyticsuserevent.h>
+#include <QString>
+#include <QTime>
+#include <QVector>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Common/logging.h"
+#include "Common/statefulentity.h"
+#include "Connectivity/analyticsuserevent.h"
+#include "Helpers/constants.h"
+#include "Microstocks/microstockenums.h"
+#include "Microstocks/searchquery.h"
+#include "Models/Editing/quickbuffermessage.h"
+#include "Models/settingsmodel.h"
+#include "Models/switchermodel.h"
+#include "Suggestion/isuggestionengine.h"
+#include "Suggestion/suggestionartwork.h"
 
 #ifndef CORE_TESTS
-#include "locallibraryqueryengine.h"
-#include "shutterstocksuggestionengine.h"
-#include "fotoliasuggestionengine.h"
-#include "gettysuggestionengine.h"
-#include <Microstocks/imicrostockapiclients.h>
+#include "Microstocks/imicrostockapiclients.h"
+#include "Suggestion/fotoliasuggestionengine.h"
+#include "Suggestion/gettysuggestionengine.h"
+#include "Suggestion/locallibraryqueryengine.h"
+#include "Suggestion/shutterstocksuggestionengine.h"
 #endif
 
 #define LINEAR_TIMER_INTERVAL 1000

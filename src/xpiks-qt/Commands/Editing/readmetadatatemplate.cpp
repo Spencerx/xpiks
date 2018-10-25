@@ -9,8 +9,13 @@
  */
 
 #include "readmetadatatemplate.h"
-#include <MetadataIO/metadataioservice.h>
-#include <MetadataIO/metadataiocoordinator.h>
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "MetadataIO/metadataiocoordinator.h"
+#include "MetadataIO/metadataioservice.h"
 
 namespace Commands {
     ReadMetadataTemplate::ReadMetadataTemplate(MetadataIO::MetadataIOService &metadataIOService,

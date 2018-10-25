@@ -9,8 +9,14 @@
  */
 
 #include "abstractconfigupdatermodel.h"
-#include <Models/settingsmodel.h>
-#include <Connectivity/irequestsservice.h>
+
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Connectivity/irequestsservice.h"
+#include "Helpers/jsonhelper.h"
+#include "Helpers/localconfig.h"
+#include "Helpers/remoteconfig.h"
 
 namespace Models {
     AbstractConfigUpdaterModel::AbstractConfigUpdaterModel(const QString &localPath,

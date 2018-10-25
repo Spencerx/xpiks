@@ -9,14 +9,22 @@
  */
 
 #include "csvexportworker.h"
+
+#include <cstddef>
+
+#include <QDateTime>
 #include <QDir>
 #include <QFile>
-#include <QDateTime>
-#include <QThread>
+#include <QIODevice>
 #include <QRegularExpression>
-#include "csvexportplansmodel.h"
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkssnapshot.h>
+#include <QThread>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "MetadataIO/csvexportproperties.h"
 
 #define DOUBLE_QUOTE "\""
 

@@ -11,10 +11,10 @@
 #ifndef INDICESHELPER_H
 #define INDICESHELPER_H
 
-#include <QVector>
-#include <QPair>
-#include <vector>
 #include <utility>
+#include <vector>
+
+template <typename T> class QVector;
 
 namespace Helpers {
     typedef std::vector<std::pair<int, int> > RangesVector;

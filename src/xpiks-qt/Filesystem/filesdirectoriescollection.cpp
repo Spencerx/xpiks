@@ -9,9 +9,14 @@
  */
 
 #include "filesdirectoriescollection.h"
-#include "filescollection.h"
-#include "directoriescollection.h"
+
 #include <QDir>
+#include <QUrl>
+#include <QtGlobal>
+
+#include "Filesystem/directoriescollection.h"
+#include "Filesystem/filescollection.h"
+#include "Filesystem/ifilescollection.h"
 
 namespace Filesystem {
     FilesDirectoriesCollection::FilesDirectoriesCollection(const QList<QUrl> &urls) {

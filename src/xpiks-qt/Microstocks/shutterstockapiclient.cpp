@@ -9,13 +9,21 @@
  */
 
 #include "shutterstockapiclient.h"
+
+#include <QByteArray>
+#include <QLatin1String>
+#include <QStringList>
 #include <QUrlQuery>
-#include "../Common/logging.h"
-#include "../Encryption/aes-qt.h"
-#include "../Connectivity/simpleapirequest.h"
-#include "../Encryption/isecretsstorage.h"
-#include "microstockenums.h"
-#include "searchquery.h"
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Connectivity/simpleapirequest.h"
+#include "Encryption/aes-qt.h"
+#include "Encryption/isecretsstorage.h"
+#include "Encryption/secretpair.h"
+#include "Microstocks/microstockenums.h"
+#include "Microstocks/searchquery.h"
 
 namespace Microstocks {
     ShutterstockAPIClient::ShutterstockAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):

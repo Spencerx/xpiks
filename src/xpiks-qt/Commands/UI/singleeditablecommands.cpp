@@ -9,25 +9,40 @@
  */
 
 #include "singleeditablecommands.h"
-#include <Commands/Base/icommandmanager.h>
-#include <Commands/Editing/modifyartworkscommand.h>
-#include <Commands/Editing/editartworkstemplate.h>
-#include <Commands/artworksupdatetemplate.h>
-#include <Commands/Base/compositecommandtemplate.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Models/Editing/combinedartworksmodel.h>
-#include <Models/Editing/artworkproxymodel.h>
-#include <Models/Editing/quickbuffer.h>
-#include <Models/Editing/icurrenteditable.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Services/iartworksupdater.h>
-#include <Services/SpellCheck/spellchecksuggestionmodel.h>
-#include <Services/SpellCheck/duplicatesreviewmodel.h>
-#include <Services/SpellCheck/spellsuggestionstarget.h>
-#include <Services/AutoComplete/autocompleteservice.h>
-#include <Suggestion/keywordssuggestor.h>
-#include <Helpers/uihelpers.h>
+
+#include <initializer_list>
+#include <memory>
+#include <vector>
+
+#include <QMap>
+#include <QSet>
+#include <QString>
+#include <QStringList>
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/ibasicmodelsource.h"
+#include "Commands/Base/compositecommandtemplate.h"
+#include "Commands/Base/icommandmanager.h"
+#include "Commands/Base/icommandtemplate.h"
+#include "Commands/Editing/editartworkstemplate.h"
+#include "Commands/Editing/modifyartworkscommand.h"
+#include "Commands/artworksupdatetemplate.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/uihelpers.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Editing/artworkproxymodel.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/Editing/quickbuffer.h"
+#include "Services/AutoComplete/autocompleteservice.h"
+#include "Services/SpellCheck/duplicatesreviewmodel.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
+#include "Services/SpellCheck/spellsuggestionstarget.h"
+#include "Suggestion/keywordssuggestor.h"
 
 namespace Commands {
     namespace UI {

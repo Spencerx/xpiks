@@ -12,11 +12,19 @@
 #define LANGUAGESMODEL_H
 
 #include <QAbstractListModel>
-#include <QVector>
-#include <QString>
-#include <QPair>
 #include <QDir>
+#include <QHash>
+#include <QModelIndex>
+#include <QObject>
+#include <QPair>
+#include <QString>
+#include <QVariant>
+#include <QVector>
+#include <Qt>
+#include <QtGlobal>
 
+class QByteArray;
+class QModelIndex;
 class QTranslator;
 
 namespace Models {

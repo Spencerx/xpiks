@@ -11,15 +11,25 @@
 #ifndef METADATACACHE_H
 #define METADATACACHE_H
 
-#include <QMutex>
-#include <QReadWriteLock>
-#include "../Storage/idatabase.h"
-#include "cachedartwork.h"
-#include "../Microstocks/searchquery.h"
-#include "../Storage/writeaheadlog.h"
+#include <memory>
 
-namespace Models {
+#include <QMutex>
+#include <QByteArray>
+#include <QString>
+#include <QVector>
+#include <QtGlobal>
+
+#include "Storage/idatabase.h"
+#include "Storage/writeaheadlog.h"
+
+template <class T1, class T2> struct QPair;
+
+namespace Artworks {
     class ArtworkMetadata;
+}
+
+namespace Microstocks {
+    class SearchQuery;
 }
 
 namespace Storage {
@@ -27,6 +37,8 @@ namespace Storage {
 }
 
 namespace MetadataIO {
+    struct CachedArtwork;
+
     class ArtworkSetWAL: public Storage::WriteAheadLog<QString, CachedArtwork> {
     protected:
         virtual QByteArray keyToByteArray(const QString &key) const override { return key.toUtf8(); }

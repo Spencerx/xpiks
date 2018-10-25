@@ -11,7 +11,7 @@
 #ifndef UPDATESCLEANUPJOBITEM_H
 #define UPDATESCLEANUPJOBITEM_H
 
-#include "imaintenanceitem.h"
+#include "Services/Maintenance/imaintenanceitem.h"
 
 namespace Maintenance {
     class UpdatesCleanupJobItem: public IMaintenanceItem

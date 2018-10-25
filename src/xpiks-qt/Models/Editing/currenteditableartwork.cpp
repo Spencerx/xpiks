@@ -9,20 +9,25 @@
  */
 
 #include "currenteditableartwork.h"
-#include <Artworks/artworkmetadata.h>
-#include <Common/defines.h>
-#include <Commands/commandmanager.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
-#include <Commands/Editing/expandpresettemplate.h>
-#include <Artworks/artworkelement.h>
-#include <Commands/Editing/deletekeywordstemplate.h>
-#include <Commands/Base/icommand.h>
-#include <Commands/Editing/editartworkstemplate.h>
-#include <Commands/Editing/modifyartworkscommand.h>
-#include <Commands/Base/compositecommandtemplate.h>
-#include <Commands/Base/templatedcommand.h>
-#include <Commands/Editing/deletekeywordstemplate.h>
-#include <Commands/Base/emptycommand.h>
+
+#include <initializer_list>
+#include <vector>
+
+#include <QSet>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Commands/Base/compositecommandtemplate.h"
+#include "Commands/Base/emptycommand.h"
+#include "Commands/Base/icommandtemplate.h"
+#include "Commands/Base/templatedcommand.h"
+#include "Commands/Editing/deletekeywordstemplate.h"
+#include "Commands/Editing/editartworkstemplate.h"
+#include "Commands/Editing/expandpresettemplate.h"
+#include "Commands/Editing/modifyartworkscommand.h"
+#include "Common/flags.h"
+#include "KeywordsPresets/ipresetsmanager.h"
 
 namespace Models {
     using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;

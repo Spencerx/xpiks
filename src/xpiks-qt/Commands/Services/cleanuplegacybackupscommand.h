@@ -12,10 +12,15 @@
 #define CLEANUPLEGACYBACKUPSCOMMAND_H
 
 #include <memory>
+
 #include <QStringList>
-#include <Commands/Base/icommand.h>
-#include <Commands/Base/icommandtemplate.h>
-#include <Filesystem/ifilescollection.h>
+
+#include "Commands/Base/icommand.h"
+#include "Commands/Base/icommandtemplate.h"
+
+namespace Filesystem {
+    class IFilesCollection;
+}
 
 namespace Maintenance {
     class MaintenanceService;

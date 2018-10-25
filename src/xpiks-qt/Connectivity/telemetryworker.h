@@ -11,13 +11,16 @@
 #ifndef TELEMETRYWORKER_H
 #define TELEMETRYWORKER_H
 
-#include <QObject>
-#include "../Common/itemprocessingworker.h"
-#include "analyticsuserevent.h"
+#include <memory>
 
-class QNetworkReply;
+#include <QObject>
+#include <QString>
+
+#include "Common/itemprocessingworker.h"
 
 namespace Connectivity {
+    class AnalyticsUserEvent;
+
     class TelemetryWorker : public QObject, public Common::ItemProcessingWorker<AnalyticsUserEvent>
     {
         Q_OBJECT

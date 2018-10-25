@@ -11,24 +11,47 @@
 #ifndef PRESETKEYWORDSMODEL_H
 #define PRESETKEYWORDSMODEL_H
 
-#include <QAbstractListModel>
-#include <QSortFilterProxyModel>
-#include <QTimer>
-#include <QReadWriteLock>
-#include <QAtomicInt>
+#include <cstddef>
 #include <functional>
-#include <Common/delayedactionentity.h>
-#include <Common/isystemenvironment.h>
-#include <Common/messages.h>
-#include <Common/types.h>
-#include <Artworks/ibasicmodelsource.h>
-#include "ipresetsmanager.h"
-#include "presetkeywordsmodelconfig.h"
-#include "presetgroupsmodel.h"
+#include <memory>
+#include <vector>
+
+#include <QAbstractListModel>
+#include <QAtomicInt>
+#include <QHash>
+#include <QModelIndex>
+#include <QObject>
+#include <QReadWriteLock>
+#include <QSortFilterProxyModel>
+#include <QString>
+#include <QStringList>
+#include <QTimer>
+#include <QVariant>
+#include <Qt>
+
+#include "Common/delayedactionentity.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "KeywordsPresets/ipresetsmanager.h"
+#include "KeywordsPresets/presetgroupsmodel.h"
+#include "KeywordsPresets/presetkeywordsmodelconfig.h"
+#include "KeywordsPresets/presetmodel.h"
+
+class QByteArray;
+class QModelIndex;
+class QTimerEvent;
+template <class T> class QVector;
+template <class T1, class T2> struct QPair;
+
+namespace Artworks {
+    class IBasicModelSource;
+}
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace KeywordsPresets {
-    struct PresetModel;
-    class FilteredPresetKeywordsModel;
     using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
 
     class PresetKeywordsModel:

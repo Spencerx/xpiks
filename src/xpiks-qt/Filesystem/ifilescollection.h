@@ -11,9 +11,11 @@
 #ifndef IFILESCOLLECTION_H
 #define IFILESCOLLECTION_H
 
-#include <QString>
 #include <vector>
-#include <Common/flags.h>
+
+#include <QString>
+
+#include "Common/flags.h"
 
 namespace Filesystem {
     enum struct ArtworkFileType: uint8_t {

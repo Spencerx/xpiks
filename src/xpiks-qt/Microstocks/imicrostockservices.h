@@ -12,7 +12,8 @@
 #define IMICROSTOCKSERVICES_H
 
 #include <memory>
-#include "imicrostockservice.h"
+
+#include "Microstocks/imicrostockservice.h"
 
 namespace Microstocks {
     class IMicrostockServices {

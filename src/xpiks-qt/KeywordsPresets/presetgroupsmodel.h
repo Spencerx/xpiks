@@ -11,12 +11,24 @@
 #ifndef PRESETGROUPSMODEL_H
 #define PRESETGROUPSMODEL_H
 
-#include <QString>
-#include <QAbstractListModel>
-#include <QReadWriteLock>
-#include <vector>
+#include <cstddef>
 #include <memory>
-#include "groupmodel.h"
+#include <vector>
+
+#include <QAbstractListModel>
+#include <QHash>
+#include <QObject>
+#include <QReadWriteLock>
+#include <QString>
+#include <QStringList>
+#include <QVariant>
+#include <Qt>
+#include <QtGlobal>
+
+#include "KeywordsPresets/groupmodel.h"
+
+class QByteArray;
+class QModelIndex;
 
 namespace KeywordsPresets {
     struct PresetGroupData;

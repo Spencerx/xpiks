@@ -9,13 +9,18 @@
  */
 
 #include "spellcheckinfo.h"
+
+#include <QObject>
 #include <QReadLocker>
+#include <QSyntaxHighlighter>
 #include <QWriteLocker>
-#include <QReadWriteLock>
-#include "spellcheckerrorshighlighter.h"
-#include <Artworks/basicmetadatamodel.h>
-#include <Artworks/basickeywordsmodel.h>
-#include <QMLExtensions/colorsmodel.h>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Common/logging.h"
+#include "QMLExtensions/colorsmodel.h"
+#include "Services/SpellCheck/spellcheckerrorshighlighter.h"
 
 namespace SpellCheck {
     bool SpellCheckErrorsInfo::hasWrongSpelling(const QString &word) {

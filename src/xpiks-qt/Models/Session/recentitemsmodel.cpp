@@ -9,9 +9,15 @@
  */
 
 #include "recentitemsmodel.h"
+
+#include <QByteArray>
 #include <QDataStream>
+#include <QIODevice>
+#include <QList>
 #include <QUrl>
-#include <Common/logging.h>
+#include <QtDebug>
+
+#include "Common/logging.h"
 
 namespace Models {
     RecentItemsModel::RecentItemsModel(int items):

@@ -14,7 +14,8 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QObject>
-#include "../Common/defines.h"
+
+#include "Common/defines.h"
 
 namespace Helpers {
     class ClipboardHelper : public QObject

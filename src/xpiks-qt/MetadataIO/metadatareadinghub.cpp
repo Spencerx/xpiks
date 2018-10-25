@@ -9,12 +9,21 @@
  */
 
 #include "metadatareadinghub.h"
-#include "metadataioservice.h"
-#include <Artworks/artworkmetadata.h>
-#include <Common/defines.h>
-#include <MetadataIO/metadataioservice.h>
-#include <Services/artworksupdatehub.h>
-#include <Services/artworkseditinghub.h>
+
+#include <cstddef>
+#include <vector>
+
+#include <QHash>
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Common/logging.h"
+#include "Common/readerwriterqueue.h"
+#include "Helpers/asynccoordinator.h"
+#include "MetadataIO/metadataioservice.h"
+#include "MetadataIO/originalmetadata.h"
+#include "Services/artworkseditinghub.h"
+#include "Services/artworksupdatehub.h"
 
 namespace MetadataIO {
     MetadataReadingHub::MetadataReadingHub(MetadataIOService &metadataIOService,

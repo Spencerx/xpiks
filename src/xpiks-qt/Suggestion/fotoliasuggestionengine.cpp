@@ -9,11 +9,17 @@
  */
 
 #include "fotoliasuggestionengine.h"
+
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QJsonParseError>
 #include <QJsonValue>
-#include <QJsonObject>
-#include "../Common/logging.h"
+#include <QJsonValueRef>
+#include <QStringList>
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Suggestion/suggestionartwork.h"
 
 namespace Suggestion {
     void parseJsonResults(const QJsonObject &jsonObject, int count,

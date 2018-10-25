@@ -9,8 +9,11 @@
  */
 
 #include "clearactionmodeltemplate.h"
-#include <Models/iactionmodel.h>
-#include <Common/logging.h>
+
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Models/iactionmodel.h"
 
 namespace Commands {
     ClearActionModelTemplate::ClearActionModelTemplate(Models::IActionModel &model):

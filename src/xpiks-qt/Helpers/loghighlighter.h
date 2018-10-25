@@ -11,9 +11,11 @@
 #ifndef LOGHIGHLIGHTER_H
 #define LOGHIGHLIGHTER_H
 
-#include <QSyntaxHighlighter>
+#include <QObject>
 #include <QString>
-#include <QTextDocument>
+#include <QSyntaxHighlighter>
+
+class QTextDocument;
 
 namespace QMLExtensions {
     class ColorsModel;

@@ -9,20 +9,24 @@
  */
 
 #include "metadataiocoordinator.h"
-#include <QHash>
-#include <QFileInfo>
-#include <QProcess>
+
+#include <cstddef>
+#include <memory>
+
 #include <QImageReader>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include "../Models/settingsmodel.h"
-#include "../Common/defines.h"
-#include "metadataioservice.h"
+#include <QtDebug>
+
 #include <vendors/libxpks/readingorchestrator.h>
 #include <vendors/libxpks/writingorchestrator.h>
-#include "../Models/switchermodel.h"
-#include <Services/artworksupdatehub.h>
-#include "../QMLExtensions/videocachingservice.h"
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/defines.h"
+#include "Common/logging.h"
+#include "MetadataIO/metadatareadinghub.h"
+#include "Models/settingsmodel.h"
+#include "Models/switchermodel.h"
+#include "QMLExtensions/videocachingservice.h"
 
 namespace MetadataIO {
     void lockForIO(const Artworks::ArtworksSnapshot &snapshot) {

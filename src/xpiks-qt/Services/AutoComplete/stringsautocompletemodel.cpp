@@ -9,8 +9,15 @@
  */
 
 #include "stringsautocompletemodel.h"
-#include <Helpers/stringhelper.h>
-#include <Common/logging.h>
+
+#include <QByteArray>
+#include <QModelIndex>
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/stringhelper.h"
 
 namespace AutoComplete {
     StringFilterProxyModel::StringFilterProxyModel():

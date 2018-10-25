@@ -9,7 +9,8 @@
  */
 
 #include "keywordshelpers.h"
-#include <QRegularExpression>
+
+#include <QChar>
 
 #define ALLOWED_SYMBOLS "@#%&!?"
 

@@ -11,6 +11,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <algorithm>
 #include <cstdint>
 
 namespace Common {

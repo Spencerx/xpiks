@@ -11,14 +11,24 @@
 #ifndef METADATAIOSERVICE_H
 #define METADATAIOSERVICE_H
 
-#include <QObject>
-#include <QVector>
-#include "../Suggestion/locallibraryquery.h"
-#include "../Artworks/artworkssnapshot.h"
-#include "../Common/delayedactionentity.h"
+#include <memory>
 
-namespace Models {
+#include <QObject>
+#include <QString>
+#include <Qt>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/delayedactionentity.h"
+
+class QTimerEvent;
+
+namespace Artworks {
     class ArtworkMetadata;
+}
+
+namespace Suggestion {
+    class LocalLibraryQuery;
 }
 
 namespace Storage {

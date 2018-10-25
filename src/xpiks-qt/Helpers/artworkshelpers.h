@@ -12,8 +12,6 @@
 #define ARTWORKSHELPERS_H
 
 #include <QVector>
-#include <vector>
-#include <memory>
 
 namespace Artworks {
     class ArtworkMetadata;

@@ -9,14 +9,24 @@
  */
 
 #include "ftphelpers.h"
-#include <vendors/libxpks/uploadcontext.h>
+
 #include <cstdio>
-#include <cstdlib>
 #include <sstream>
 #include <string>
+
+#include <QByteArray>
+#include <QChar>
+#include <QLatin1String>
+#include <QtDebug>
+#include <QtGlobal>
+
 #include <curl/curl.h>
-#include <Models/Connectivity/proxysettings.h>
-#include <Helpers/stringhelper.h>
+
+#include <vendors/libxpks/uploadcontext.h>
+
+#include "Common/logging.h"
+#include "Helpers/stringhelper.h"
+#include "Models/Connectivity/proxysettings.h"
 
 namespace Connectivity {
     /* The MinGW headers are missing a few Win32 function definitions,

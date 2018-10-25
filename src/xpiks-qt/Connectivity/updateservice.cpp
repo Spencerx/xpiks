@@ -9,14 +9,19 @@
  */
 
 #include "updateservice.h"
-#include "updatescheckerworker.h"
+
 #include <QString>
 #include <QThread>
-#include "../Common/logging.h"
-#include "../Models/settingsmodel.h"
-#include "../Common/version.h"
-#include "../Models/switchermodel.h"
-#include "../Helpers/updatehelpers.h"
+
+#include "Common/version.h"
+#include "Connectivity/updatescheckerworker.h"
+#include "Helpers/updatehelpers.h"
+#include "Models/settingsmodel.h"
+#include "Models/switchermodel.h"
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Connectivity {
     UpdateService::UpdateService(Common::ISystemEnvironment &environment,

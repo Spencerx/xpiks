@@ -9,12 +9,18 @@
  */
 
 #include "gettyapiclient.h"
+
+#include <QLatin1String>
+#include <QStringList>
 #include <QUrlQuery>
-#include "../Encryption/aes-qt.h"
-#include "../Connectivity/simpleapirequest.h"
-#include "microstockenums.h"
-#include "searchquery.h"
-#include "../Encryption/isecretsstorage.h"
+#include <QtGlobal>
+
+#include "Connectivity/simpleapirequest.h"
+#include "Encryption/aes-qt.h"
+#include "Encryption/isecretsstorage.h"
+#include "Encryption/secretpair.h"
+#include "Microstocks/microstockenums.h"
+#include "Microstocks/searchquery.h"
 
 namespace Microstocks {
     GettyAPIClient::GettyAPIClient(std::shared_ptr<Encryption::ISecretsStorage> const &secretsStorage):

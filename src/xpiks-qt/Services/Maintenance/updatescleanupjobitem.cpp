@@ -8,12 +8,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <QString>
+#include "updatescleanupjobitem.h"
+
 #include <QCoreApplication>
+#include <QDir>
 #include <QDirIterator>
 #include <QFile>
-#include <Common/logging.h>
-#include "updatescleanupjobitem.h"
+#include <QString>
+#include <QStringList>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
 
 namespace Maintenance {
     UpdatesCleanupJobItem::UpdatesCleanupJobItem()

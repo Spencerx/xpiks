@@ -13,11 +13,14 @@
 
 #include <memory>
 #include <vector>
-#include "../Connectivity/iconnectivityresponse.h"
-#include "suggestionartwork.h"
+
+#include <QByteArray>
+
+#include "Connectivity/iconnectivityresponse.h"
 
 namespace Suggestion {
     class ISuggestionsRepository;
+    class SuggestionArtwork;
 
     class SuggestionResultsResponse: public Connectivity::IConnectivityResponse {
     public:

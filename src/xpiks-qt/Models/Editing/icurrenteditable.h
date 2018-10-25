@@ -11,11 +11,13 @@
 #ifndef ICURRENTEDITABLE_H
 #define ICURRENTEDITABLE_H
 
+#include <memory>
+
 #include <QString>
 #include <QStringList>
-#include <memory>
-#include <KeywordsPresets/ipresetsmanager.h>
-#include <Common/types.h>
+
+#include "Common/types.h"
+#include "KeywordsPresets/ipresetsmanager.h"
 
 namespace Commands {
     class ICommand;

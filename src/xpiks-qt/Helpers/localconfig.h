@@ -11,14 +11,14 @@
 #ifndef LOCALCONFIG_H
 #define LOCALCONFIG_H
 
-#include <QString>
-#include <QJsonDocument>
-#include <QFile>
-#include "../Common/defines.h"
-#include "jsonobjectmap.h"
 #include <memory>
 
+#include <QJsonDocument>
+#include <QString>
+
 namespace Helpers {
+    class JsonObjectMap;
+
     class LocalConfig {
     public:
         LocalConfig(const QString &filepath, bool memoryOnly=false);

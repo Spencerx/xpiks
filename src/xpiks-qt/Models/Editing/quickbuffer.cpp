@@ -9,14 +9,20 @@
  */
 
 #include "quickbuffer.h"
+
 #include <QQmlEngine>
-#include <Models/Editing/icurrenteditable.h>
-#include <Models/Editing/currenteditablemodel.h>
-#include <Artworks/basicmodelsource.h>
-#include <Commands/Base/icommandmanager.h>
-#include <Commands/Editing/modifyartworkscommand.h>
-#include <Commands/Base/compositecommandtemplate.h>
-#include <Commands/Editing/editartworkstemplate.h>
+#include <QtDebug>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/basicmodelsource.h"
+#include "Commands/Base/icommandmanager.h"
+#include "Common/delayedactionentity.h"
+#include "Common/logging.h"
+#include "Models/Editing/artworkproxybase.h"
+#include "Models/Editing/currenteditablemodel.h"
+#include "Models/Editing/icurrenteditable.h"
+#include "Models/Editing/quickbuffermessage.h"
 
 #define MAX_EDITING_PAUSE_RESTARTS 10
 #define QUICKBUFFER_EDITING_PAUSE 1000

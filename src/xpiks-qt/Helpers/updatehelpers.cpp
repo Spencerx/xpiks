@@ -9,13 +9,22 @@
  */
 
 #include "updatehelpers.h"
+
+#include <QtGlobal>
+
+#ifdef Q_OS_OSX
 #include <QProcess>
 #include <QStringList>
-#include <QDir>
-#include <QCoreApplication>
-#include <QFileInfo>
+#endif
+
+#ifdef Q_OS_WIN
 #include <QDateTime>
-#include "../Common/logging.h"
+#include <QFileInfo>
+#include <QProcess>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#endif
 
 #ifdef Q_OS_OSX
 

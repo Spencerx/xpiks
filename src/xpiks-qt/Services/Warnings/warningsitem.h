@@ -11,10 +11,13 @@
 #ifndef WARNINGSQUERYITEM
 #define WARNINGSQUERYITEM
 
-#include <Common/flags.h>
-#include <QSet>
 #include <memory>
-#include "iwarningsitem.h"
+
+#include <QString>
+#include <QStringList>
+
+#include "Common/flags.h"
+#include "Services/Warnings/iwarningsitem.h"
 
 namespace Artworks {
     class ArtworkMetadata;

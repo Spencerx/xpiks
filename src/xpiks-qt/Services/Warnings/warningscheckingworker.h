@@ -11,14 +11,16 @@
 #ifndef WARNINGSCHECKINGWORKER_H
 #define WARNINGSCHECKINGWORKER_H
 
+#include <memory>
+
 #include <QObject>
-#include <Common/itemprocessingworker.h>
-#include "iwarningsitem.h"
-#include <Common/flags.h>
+#include <QString>
+
+#include "Common/itemprocessingworker.h"
 
 namespace Warnings {
     class WarningsSettingsModel;
-    class WarningsItem;
+    class IWarningsItem;
 
     class WarningsCheckingWorker:
         public QObject, public Common::ItemProcessingWorker<IWarningsItem>

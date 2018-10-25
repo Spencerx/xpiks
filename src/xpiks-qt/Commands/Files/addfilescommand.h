@@ -11,19 +11,30 @@
 #ifndef ADDFILESCOMMAND_H
 #define ADDFILESCOMMAND_H
 
+#include <cstddef>
 #include <memory>
+
 #include <QObject>
-#include <Commands/Base/icommand.h>
-#include <Commands/Base/icommandtemplate.h>
-#include <Common/flags.h>
-#include <Filesystem/ifilescollection.h>
-#include <Artworks/artworkssnapshot.h>
+#include <QString>
+
+#include "Commands/Base/icommand.h"
+#include "Common/flags.h"
+
+namespace Artworks {
+    class ArtworksSnapshot;
+}
+
+namespace Filesystem {
+    class IFilesCollection;
+}
 
 namespace Models {
     class ArtworksListModel;
 }
 
 namespace Commands {
+    template <typename T> class ICommandTemplate;
+
     class AddFilesCommand:
             public QObject,
             public ICommand

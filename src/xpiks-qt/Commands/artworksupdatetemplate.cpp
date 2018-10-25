@@ -9,11 +9,18 @@
  */
 
 #include "artworksupdatetemplate.h"
-#include <Helpers/cpphelpers.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Services/iartworksupdater.h>
+
+#include <memory>
+
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "Helpers/cpphelpers.h"
+#include "Helpers/indicesranges.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Services/iartworksupdater.h"
 
 namespace Commands {
     ArtworksUpdateTemplate::ArtworksUpdateTemplate(Models::ArtworksListModel &artworksListModel,

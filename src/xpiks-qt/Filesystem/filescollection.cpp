@@ -9,10 +9,18 @@
  */
 
 #include "filescollection.h"
+
 #include <QFileInfo>
-#include "../Helpers/filehelpers.h"
-#include "../Common/logging.h"
-#include "../Helpers/constants.h"
+#include <QLatin1String>
+#include <QString>
+#include <QUrl>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Filesystem/ifilescollection.h"
+#include "Helpers/constants.h"
+#include "Helpers/filehelpers.h"
 
 namespace Filesystem {
     FilesCollection::FilesCollection(QList<QUrl> const &urls, bool fullDirectory) {

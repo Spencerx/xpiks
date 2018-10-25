@@ -11,7 +11,10 @@
 #ifndef PLUGINSENVIRONMENT_H
 #define PLUGINSENVIRONMENT_H
 
-#include "../Common/isystemenvironment.h"
+#include <QString>
+#include <QStringList>
+
+#include "Common/isystemenvironment.h"
 
 class PluginEnvironment: public Common::ISystemEnvironment
 {

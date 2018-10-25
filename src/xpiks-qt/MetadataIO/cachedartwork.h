@@ -11,13 +11,17 @@
 #ifndef CACHEDARTWORK_H
 #define CACHEDARTWORK_H
 
-#include <QDataStream>
-#include <QStringList>
-#include <QString>
-#include <QDateTime>
-#include <QVector>
 #include <memory>
-#include <Common/flags.h>
+
+#include <QDateTime>
+#include <QString>
+#include <QStringList>
+#include <QVector>
+#include <QtGlobal>
+
+#include "Common/types.h"
+
+class QDataStream;
 
 namespace Artworks {
     class ArtworkMetadata;

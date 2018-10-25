@@ -9,8 +9,11 @@
  */
 
 #include "commandmanager.h"
-#include <Commands/Base/icommand.h>
-#include <UndoRedo/iundoredomanager.h>
+
+#include <QtGlobal>
+
+#include "Commands/Base/icommand.h"
+#include "UndoRedo/iundoredomanager.h"
 
 namespace Commands {
     CommandManager::CommandManager(UndoRedo::IUndoRedoManager &undoRedoManager):

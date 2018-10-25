@@ -10,6 +10,9 @@
 
 #include "threadhelpers.h"
 
+#include <QMutexLocker>
+#include <QtGlobal>
+
 namespace Helpers {
     ManualResetEvent::ManualResetEvent():
         m_Flag(false)

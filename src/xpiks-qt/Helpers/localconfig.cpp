@@ -9,9 +9,15 @@
  */
 
 #include "localconfig.h"
-#include <QDir>
-#include <QStandardPaths>
-#include "../Common/logging.h"
+
+#include <QFile>
+#include <QIODevice>
+#include <QJsonObject>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/jsonobjectmap.h"
 
 namespace Helpers {
     LocalConfig::LocalConfig(const QString &filepath, bool memoryOnly):

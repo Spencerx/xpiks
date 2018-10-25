@@ -11,16 +11,18 @@
 #ifndef ITEMPROCESSINGWORKER_H
 #define ITEMPROCESSINGWORKER_H
 
-#include <QWaitCondition>
-#include <QMutex>
+#include <algorithm>
 #include <deque>
 #include <memory>
 #include <vector>
-#include <algorithm>
-#include "../Common/flags.h"
-#include "../Common/defines.h"
-#include "../Common/logging.h"
-#include "../Helpers/threadhelpers.h"
+
+#include <QMutex>
+#include <QWaitCondition>
+
+#include "Common/defines.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/threadhelpers.h"
 
 namespace Common {
     template<typename ItemType, typename ResultType=void>

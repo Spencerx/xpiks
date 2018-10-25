@@ -9,7 +9,12 @@
  */
 
 #include "removefilescommand.h"
-#include <Models/Artworks/artworkslistmodel.h>
+
+#include <QtDebug>
+
+#include "Commands/Base/icommand.h"
+#include "Common/logging.h"
+#include "Models/Artworks/artworkslistmodel.h"
 
 namespace Commands {
     RemoveFilesCommand::RemoveFilesCommand(const Helpers::IndicesRanges &ranges,

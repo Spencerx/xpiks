@@ -13,7 +13,6 @@
 
 #include <QObject>
 #include <QString>
-#include <QQuickTextDocument>
 
 namespace Helpers {
     class LoggingWorker;
@@ -26,7 +25,7 @@ namespace Models {
         Q_PROPERTY(QString logsExtract READ getLogsExtract NOTIFY logsExtractChanged)
 
     public:
-        LogsModel(QObject *parent=NULL);
+        LogsModel(QObject *parent=nullptr);
 
     public:
         const QString &getLogsExtract() const { return m_LogsExtract; }

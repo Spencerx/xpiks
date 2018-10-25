@@ -11,10 +11,14 @@
 #ifndef CONNECTIVITYREQUEST_H
 #define CONNECTIVITYREQUEST_H
 
+#include <QByteArray>
 #include <QObject>
 #include <QString>
-#include <QByteArray>
-#include "iconnectivityrequest.h"
+#include <QStringList>
+
+#include "Common/types.h"
+#include "Connectivity/iconnectivityrequest.h"
+#include "Connectivity/iconnectivityresponse.h"
 
 namespace Helpers {
     class RemoteConfig;

@@ -11,21 +11,18 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include <QByteArray>
-#include <QDataStream>
-#include <QAtomicInt>
-#include <QMutex>
-#include <QHash>
-#include <QString>
-#include <QVector>
-#include <QPair>
 #include <vector>
 #include <memory>
 #include <functional>
-#include "../Common/defines.h"
-#include "../Common/isystemenvironment.h"
-#include "idatabasemanager.h"
-#include "idatabase.h"
+
+#include <QStringList>
+#include <QByteArray>
+#include <QString>
+#include <QVector>
+
+#include "Storage/idatabase.h"
+
+template <class T1, class T2> struct QPair;
 
 struct sqlite3;
 struct sqlite3_stmt;

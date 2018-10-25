@@ -11,14 +11,30 @@
 #ifndef ARTWORKSVIEWMODEL_H
 #define ARTWORKSVIEWMODEL_H
 
-#include <vector>
+#include <cstddef>
 #include <functional>
-#include <Common/abstractlistmodel.h>
-#include <Artworks/artworkelement.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Common/messages.h>
-#include <Common/types.h>
+#include <memory>
+#include <vector>
+
+#include <QHash>
+#include <QModelIndex>
+#include <QObject>
+#include <QString>
+#include <QVariant>
+#include <Qt>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/abstractlistmodel.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+
+class QByteArray;
+class QModelIndex;
+
+namespace Artworks {
+    class ArtworkElement;
+    class ArtworkMetadata;
+}
 
 namespace Models {
     using UnavailableFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;

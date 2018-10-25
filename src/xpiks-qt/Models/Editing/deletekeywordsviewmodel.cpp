@@ -9,19 +9,38 @@
  */
 
 #include "deletekeywordsviewmodel.h"
-#include <QTime>
+
+#include <cstddef>
+#include <initializer_list>
+#include <utility>
+#include <vector>
+
+#include <QHash>
+#include <QMap>
+#include <QMultiMap>
 #include <QQmlEngine>
-#include <Common/defines.h>
-#include <Commands/Editing/clearactionmodeltemplate.h>
-#include <Commands/Base/templatedcommand.h>
-#include <Commands/Base/compositecommandtemplate.h>
-#include <Helpers/indiceshelper.h>
-#include <Artworks/artworkelement.h>
-#include <Artworks/basicmodelsource.h>
-#include <Commands/Editing/deletekeywordstemplate.h>
-#include <Commands/Base/icommandmanager.h>
-#include <Commands/Editing/modifyartworkscommand.h>
-#include <Commands/artworksupdatetemplate.h>
+#include <QSet>
+#include <QTime>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmodelsource.h"
+#include "Commands/Base/compositecommandtemplate.h"
+#include "Commands/Base/icommandtemplate.h"
+#include "Commands/Base/templatedcommand.h"
+#include "Commands/Editing/clearactionmodeltemplate.h"
+#include "Commands/Editing/deletekeywordstemplate.h"
+#include "Commands/Editing/modifyartworkscommand.h"
+#include "Commands/artworksupdatetemplate.h"
+#include "Common/logging.h"
+#include "KeywordsPresets/ipresetsmanager.h"
+#include "Models/Artworks/artworksviewmodel.h"
+
+namespace Artworks {
+    class ArtworkElement;
+}
 
 namespace Models {
     DeleteKeywordsViewModel::DeleteKeywordsViewModel(Services::IArtworksUpdater &artworksUpdater,

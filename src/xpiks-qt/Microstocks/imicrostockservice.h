@@ -12,7 +12,8 @@
 #define IMICROSTOCKSERVICE_H
 
 #include <memory>
-#include "microstockenums.h"
+
+#include "Microstocks/microstockenums.h"
 
 namespace Connectivity {
     class IConnectivityResponse;

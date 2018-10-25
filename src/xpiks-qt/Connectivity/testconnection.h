@@ -11,8 +11,9 @@
 #ifndef TESTCONNECTION_H
 #define TESTCONNECTION_H
 
-#include <QString>
 #include <memory>
+
+#include <QString>
 
 namespace libxpks {
     namespace net {
@@ -21,8 +22,6 @@ namespace libxpks {
 }
 
 namespace Connectivity {
-    class UploadContext;
-
     struct ContextValidationResult {
         ContextValidationResult(): m_Result(false) {}
         ContextValidationResult(const ContextValidationResult &copy):

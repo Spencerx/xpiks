@@ -9,13 +9,20 @@
  */
 
 #include "artworkseditinghub.h"
-#include <Services/Warnings/warningsservice.h>
-#include <Services/SpellCheck/ispellcheckservice.h>
-#include <MetadataIO/metadataioservice.h>
-#include <Models/settingsmodel.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Helpers/cpphelpers.h>
+
+#include <QtDebug>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/ibasicmodelsource.h"
+#include "Artworks/artworkmetadata.h"  // IWYU pragma: keep
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/cpphelpers.h"
+#include "MetadataIO/metadataioservice.h"
+#include "Models/settingsmodel.h"
+#include "Services/SpellCheck/ispellcheckservice.h"
+#include "Services/Warnings/warningsservice.h"
 
 namespace Services {
     ArtworksEditingHub::ArtworksEditingHub(SpellCheck::ISpellCheckService &spellCheckService,

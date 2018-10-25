@@ -12,7 +12,8 @@
 #define IAUTOCOMPLETIONSOURCE_H
 
 #include <memory>
-#include "completionitem.h"
+
+#include "Services/AutoComplete/completionitem.h"
 
 namespace AutoComplete {
     class ICompletionSource {

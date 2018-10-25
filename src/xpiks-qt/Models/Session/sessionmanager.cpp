@@ -8,12 +8,26 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <QDir>
-#include <QJsonArray>
-#include <Artworks/artworkssnapshot.h>
-#include <Filesystem/filescollection.h>
 #include "sessionmanager.h"
+
+#include <initializer_list>
+#include <vector>
+
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QJsonValueRef>
+#include <QMutexLocker>
+#include <QStringList>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/isystemenvironment.h"
 #include "Common/logging.h"
+#include "Filesystem/filescollection.h"
+#include "Helpers/jsonobjectmap.h"
+#include "Helpers/localconfig.h"
 
 #define SESSION_FILE "session.json"
 

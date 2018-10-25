@@ -9,9 +9,17 @@
  */
 
 #include "metadatahighlighter.h"
-#include "../QMLExtensions/colorsmodel.h"
-#include "../Helpers/stringhelper.h"
-#include "../Common/flags.h"
+
+#include <QColor>
+#include <Qt>
+#include <QtGlobal>
+
+#include "Common/flags.h"
+#include "Common/iflagsprovider.h"
+#include "Helpers/stringhelper.h"
+#include "QMLExtensions/colorsmodel.h"
+
+class QTextDocument;
 
 namespace Helpers {
     MetadataHighlighter::MetadataHighlighter(const QString &textToHighlight,

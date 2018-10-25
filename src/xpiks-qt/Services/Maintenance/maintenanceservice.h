@@ -11,13 +11,22 @@
 #ifndef MAINTENANCESERVICE_H
 #define MAINTENANCESERVICE_H
 
+#include <memory>
+
 #include <QObject>
-#include <Common/isystemenvironment.h>
-#include "maintenanceworker.h"
+#include <QString>
+
+#include "Common/itemprocessingworker.h"
+#include "Services/Maintenance/maintenanceworker.h"
+
+class QThread;
 
 namespace Artworks {
-    class ArtworkMetadata;
     class SessionSnapshot;
+}
+
+namespace Common {
+    class ISystemEnvironment;
 }
 
 namespace Translation {
@@ -31,8 +40,6 @@ namespace Models {
 namespace Helpers {
     class AsyncCoordinator;
 }
-
-class QThread;
 
 namespace Maintenance {
     class MaintenanceService: public QObject

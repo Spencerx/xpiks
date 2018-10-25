@@ -13,10 +13,9 @@
 
 #include <QObject>
 #include <QString>
-#include <Common/isystemenvironment.h>
 
-namespace Commands {
-    class CommandManager;
+namespace Common {
+    class ISystemEnvironment;
 }
 
 class QQuickWindow;

@@ -12,8 +12,9 @@
 #define ISUGGESTIONENGINE_H
 
 #include <QString>
-#include "isuggestionsrepository.h"
-#include "../Microstocks/searchquery.h"
+
+#include "Microstocks/searchquery.h"
+#include "Suggestion/isuggestionsrepository.h"
 
 namespace Suggestion {
     class ISuggestionEngine: public ISuggestionsRepository {

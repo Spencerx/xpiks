@@ -9,14 +9,38 @@
  */
 
 #include "uploadinforepository.h"
-#include "uploadinfo.h"
-#include <QJsonObject>
+
+#include <cstddef>
+
+#include <QAbstractItemModel>
+#include <QByteArray>
+#include <QDataStream>
+#include <QFlags>
+#include <QIODevice>
 #include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QLatin1String>
+#include <QList>
 #include <QQmlEngine>
-#include <Encryption/secretsmanager.h>
-#include <Common/logging.h>
-#include <Helpers/asynccoordinator.h>
-#include <Connectivity/ftphelpers.h>
+#include <QStringList>
+#include <QVector>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/delayedactionentity.h"
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Connectivity/ftphelpers.h"
+#include "Encryption/secretsmanager.h"
+#include "Helpers/asynccoordinator.h"
+#include "Helpers/localconfig.h"
+#include "Microstocks/stockftpoptions.h"
+#include "Microstocks/stocksftplistmodel.h"
+#include "Models/Connectivity/uploadinfo.h"
+#include "Services/AutoComplete/autocompletemodel.h"
+#include "Services/AutoComplete/stringsautocompletemodel.h"
 
 #define UPLOAD_INFO_SAVE_TIMEOUT 3000
 #define UPLOAD_INFO_DELAYS_COUNT 10

@@ -9,16 +9,21 @@
  */
 
 #include "telemetryworker.h"
-#include <QString>
-#include <QUrl>
-#include <QUrlQuery>
-#include <QSysInfo>
-#include <QByteArray>
-#include <QTime>
-#include <QRegExp>
-#include <curl/curl.h>
+
 #include <string>
-#include "../Common/version.h"
+
+#include <QLatin1String>
+#include <QString>
+#include <QSysInfo>
+#include <QUrlQuery>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include <curl/curl.h>
+
+#include "Common/logging.h"
+#include "Common/version.h"
+#include "Connectivity/analyticsuserevent.h"
 
 void buildQuery(std::shared_ptr<Connectivity::AnalyticsUserEvent> &userEvent, const QString &userAgent, QUrlQuery &query) {
     query.addQueryItem(QLatin1String("idsite"), QLatin1String("1"));

@@ -11,15 +11,16 @@
 #ifndef COLORSMODEL_H
 #define COLORSMODEL_H
 
-#include <QObject>
-#include <QColor>
-#include <QJsonObject>
-#include <QVector>
-#include <QStringList>
-
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
+
+#include <QColor>
+#include <QList>
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QtGlobal>
 
 namespace QMLExtensions {
     class ColorsProvider {

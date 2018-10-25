@@ -9,10 +9,14 @@
  */
 
 #include "cachedartwork.h"
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include <Artworks/videoartwork.h>
-#include <Common/version.h>
+
+#include <QDataStream>
+#include <QList>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/imageartwork.h"
+#include "Artworks/videoartwork.h"
+#include "Common/version.h"
 
 namespace MetadataIO {
 

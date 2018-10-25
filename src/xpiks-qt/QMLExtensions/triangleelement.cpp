@@ -9,13 +9,11 @@
  */
 
 #include "triangleelement.h"
-#include <QPainter>
-#include <QSGGeometryNode>
-#include <QRect>
-#include <QPointF>
-#include <QDebug>
+
 #include <QColor>
-#include <QBrush>
+#include <QRectF>
+#include <QSGGeometryNode>
+#include <QSGNode>
 
 namespace QMLExtensions {
     TriangleElement::TriangleElement(QQuickItem *parent) :

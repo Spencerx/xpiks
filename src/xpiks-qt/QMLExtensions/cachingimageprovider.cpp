@@ -9,9 +9,16 @@
  */
 
 #include "cachingimageprovider.h"
-#include "../Common/logging.h"
-#include "../QMLExtensions/imagecachingservice.h"
-#include "../Helpers/stringhelper.h"
+
+#include <QChar>
+#include <QSize>
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/stringhelper.h"
+#include "QMLExtensions/imagecachingservice.h"
 
 #define RECACHE true
 

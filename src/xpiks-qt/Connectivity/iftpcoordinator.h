@@ -11,8 +11,9 @@
 #ifndef IFTPCOORDINATOR_H
 #define IFTPCOORDINATOR_H
 
-#include <vector>
 #include <memory>
+#include <vector>
+
 #include <QVector>
 
 namespace Models {

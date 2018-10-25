@@ -11,8 +11,8 @@
 #ifndef SAVESESSIONCOMMAND_H
 #define SAVESESSIONCOMMAND_H
 
-#include <Commands/Base/icommand.h>
-#include <Commands/Base/icommandtemplate.h>
+#include "Commands/Base/icommand.h"
+#include "Commands/Base/icommandtemplate.h"
 
 namespace Models {
     class ArtworksListModel;

@@ -10,22 +10,19 @@
  */
 
 #include "logger.h"
-#include <QStringList>
-#include <QString>
-#include <QMutexLocker>
-#include <QMutex>
-#include <QFile>
-#include <QTextStream>
-#include <QTimer>
-#include <QDir>
-#include <QDateTime>
-#include <QStandardPaths>
-#include <QElapsedTimer>
+
 #include <iostream>
-#include <string>
-#include <ctime>
-#include "../Common/defines.h"
-#include "../Encryption/obfuscation.h"
+
+#include <QByteArray>
+#include <QFile>
+#include <QFlags>
+#include <QIODevice>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QString>
+#include <QStringList>
+#include <QTextStream>
+#include <QtGlobal>
 
 #define MIN_FIRE_SIZE 20
 #define LOGGING_TIMEOUT 5

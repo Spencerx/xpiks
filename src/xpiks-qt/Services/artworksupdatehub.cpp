@@ -9,10 +9,20 @@
  */
 
 #include "artworksupdatehub.h"
-#include "artworkupdaterequest.h"
-#include <Common/defines.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Artworks/artworkssnapshot.h>
+
+#include <QList>
+#include <QMutexLocker>
+#include <QSet>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "Common/types.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Services/artworkupdaterequest.h"
+#include "Services/iartworksupdater.h"
 
 #define MAX_NOT_UPDATED_ARTWORKS_TO_HOLD 50
 #ifndef CORE_TESTS

@@ -9,18 +9,25 @@
  */
 
 #include "translationmanager.h"
+
+#include <QChar>
 #include <QDir>
-#include <QSet>
-#include <QUrl>
-#include <QFile>
-#include <QTextStream>
 #include <QDirIterator>
-#include <Common/defines.h>
-#include "translationquery.h"
-#include "translationservice.h"
-#include <Models/settingsmodel.h>
-#include <Helpers/constants.h>
-#include <Helpers/asynccoordinator.h>
+#include <QFile>
+#include <QFileInfo>
+#include <QIODevice>
+#include <QLatin1String>
+#include <QSet>
+#include <QTextStream>
+#include <QUrl>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Common/statefulentity.h"
+#include "Helpers/constants.h"
+#include "Services/Translation/translationservice.h"
 
 #define DEFAULT_SELECTED_DICT_INDEX -1
 

@@ -9,9 +9,17 @@
  */
 
 #include "cleanuplegacybackupscommand.h"
+
+#include <vector>
+
 #include <QFileInfo>
 #include <QSet>
-#include <Services/Maintenance/maintenanceservice.h>
+#include <QString>
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Filesystem/ifilescollection.h"
+#include "Services/Maintenance/maintenanceservice.h"
 
 namespace Commands {
     CleanupLegacyBackupsCommand::CleanupLegacyBackupsCommand(const std::shared_ptr<Filesystem::IFilesCollection> &files,

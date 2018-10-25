@@ -9,26 +9,32 @@
  */
 
 #include "selectedartworkscommands.h"
-#include <Common/logging.h>
-#include <Commands/Base/icommand.h>
-#include <Artworks/iselectedartworkssource.h>
-#include <Artworks/iselectedindicessource.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Services/SpellCheck/spellchecksuggestionmodel.h>
-#include <Services/SpellCheck/duplicatesreviewmodel.h>
-#include <Services/SpellCheck/spellsuggestionstarget.h>
-#include <Services/Warnings/warningsmodel.h>
-#include <MetadataIO/metadataiocoordinator.h>
-#include <MetadataIO/metadataioservice.h>
-#include <MetadataIO/csvexportmodel.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Models/Editing/combinedartworksmodel.h>
-#include <Models/Editing/findandreplacemodel.h>
-#include <Models/Editing/deletekeywordsviewmodel.h>
-#include <Models/Connectivity/artworksuploader.h>
-#include <Models/Connectivity/ziparchiver.h>
-#include <Helpers/uihelpers.h>
+
+#include <memory>
+
+#include <QMap>
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/iselectedartworkssource.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/uihelpers.h"
+#include "MetadataIO/csvexportmodel.h"
+#include "MetadataIO/metadataiocoordinator.h"
+#include "MetadataIO/metadataioservice.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Connectivity/artworksuploader.h"
+#include "Models/Connectivity/ziparchiver.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/Editing/deletekeywordsviewmodel.h"
+#include "Models/Editing/findandreplacemodel.h"
+#include "Services/SpellCheck/duplicatesreviewmodel.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
+#include "Services/SpellCheck/spellsuggestionstarget.h"
+#include "Services/Warnings/warningsmodel.h"
 
 namespace Commands {
     namespace UI {

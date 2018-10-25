@@ -9,7 +9,10 @@
  */
 
 #include "indicesranges.h"
+
 #include <algorithm>
+
+#include <QtGlobal>
 
 namespace Helpers {
     void indicesToRanges(std::vector<int> const &indices, std::vector<std::pair<int, int> > &ranges) {

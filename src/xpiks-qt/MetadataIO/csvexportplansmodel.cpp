@@ -9,13 +9,24 @@
  */
 
 #include "csvexportplansmodel.h"
-#include <QDir>
-#include <QThread>
+
+#include <algorithm>
+
 #include <QJsonArray>
 #include <QJsonDocument>
-#include "../Common/logging.h"
-#include "../Helpers/asynccoordinator.h"
-#include "../Connectivity/apimanager.h"
+#include <QJsonValue>
+#include <QJsonValueRef>
+#include <QLatin1String>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Connectivity/apimanager.h"
+#include "Helpers/asynccoordinator.h"
+#include "Helpers/localconfig.h"
+#include "MetadataIO/csvexportproperties.h"
+#include "Models/Connectivity/abstractconfigupdatermodel.h"
 
 #define PLAN_NAME_KEY QLatin1String("name")
 #define PLAN_IS_SYSTEM_KEY QLatin1String("issystem")

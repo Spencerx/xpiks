@@ -9,11 +9,21 @@
  */
 
 #include "telemetryservice.h"
+
+#include <memory>
+
+#include <QRegExp>
 #include <QThread>
 #include <QUuid>
-#include "telemetryworker.h"
-#include <Common/defines.h>
-#include <Common/version.h>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Common/types.h"
+#include "Connectivity/analyticsuserevent.h"
+#include "Connectivity/telemetryworker.h"
+#include "Models/settingsmodel.h"
+#include "Models/switchermodel.h"
 
 namespace Connectivity {
     TelemetryService::TelemetryService(Models::SwitcherModel &switcher,

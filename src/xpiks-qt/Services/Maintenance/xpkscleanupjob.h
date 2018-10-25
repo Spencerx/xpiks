@@ -12,7 +12,8 @@
 #define XPKSCLEANUPJOB_H
 
 #include <QString>
-#include "imaintenanceitem.h"
+
+#include "Services/Maintenance/imaintenanceitem.h"
 
 namespace Maintenance {
     class XpksCleanupJob: public IMaintenanceItem

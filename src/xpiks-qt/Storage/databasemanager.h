@@ -11,23 +11,25 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
-#include <QByteArray>
-#include <QReadWriteLock>
-#include <QDataStream>
+#include <memory>
+#include <vector>
+
 #include <QAtomicInt>
 #include <QMutex>
-#include <QHash>
+#include <QObject>
 #include <QString>
-#include <QVector>
-#include <QPair>
-#include <vector>
-#include <memory>
-#include <functional>
-#include "../Helpers/asynccoordinator.h"
-#include "../Common/defines.h"
-#include "../Common/isystemenvironment.h"
-#include "idatabasemanager.h"
-#include "database.h"
+
+#include "Helpers/asynccoordinator.h"
+#include "Storage/idatabasemanager.h"
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Storage {
+    class Database;
+    class IDatabase;
+}
 
 namespace Storage {
     class DatabaseManager: public QObject, public IDatabaseManager {

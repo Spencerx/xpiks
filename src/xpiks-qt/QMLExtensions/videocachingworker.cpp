@@ -9,18 +9,34 @@
  */
 
 #include "videocachingworker.h"
-#include <QDir>
-#include <QImage>
-#include <QThread>
-#include <QCryptographicHash>
+
 #include <vector>
 #include <cstdint>
-#include "../Helpers/constants.h"
-#include "imagecachingservice.h"
-#include "../Services/artworksupdatehub.h"
-#include "../MetadataIO/metadataioservice.h"
-#include <Models/Artworks/artworkslistmodel.h>
+
+#include <QDir>
+#include <QImage>
+#include <QByteArray>
+#include <QChar>
+#include <QDateTime>
+#include <QFileInfo>
+#include <QtDebug>
+#include <QThread>
+#include <QCryptographicHash>
+
 #include <vendors/libthmbnlr/thumbnailcreator.h>
+
+#include "Artworks/videoartwork.h"
+#include "Common/isystemenvironment.h"
+#include "Common/itemprocessingworker.h"
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "MetadataIO/metadataioservice.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "QMLExtensions/cachedvideo.h"
+#include "QMLExtensions/dbvideocacheindex.h"
+#include "QMLExtensions/imagecachingservice.h"
+#include "QMLExtensions/videocacherequest.h"
+#include "Services/artworksupdatehub.h"
 
 #define VIDEO_WORKER_SLEEP_DELAY 500
 #define VIDEO_INDEX_BACKUP_STEP 50

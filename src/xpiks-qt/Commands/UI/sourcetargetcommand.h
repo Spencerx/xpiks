@@ -13,6 +13,11 @@
 
 class QObject;
 
+#include "Commands/Base/iuicommandtemplate.h"
+#include "Services/SpellCheck/ispellcheckservice.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
+#include "Services/iartworksupdater.h"
+
 namespace Commands {
     namespace UI {
         class IUICommandTargetSource {

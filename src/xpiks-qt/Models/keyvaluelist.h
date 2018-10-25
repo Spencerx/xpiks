@@ -11,10 +11,17 @@
 #ifndef KEYVALUELIST_H
 #define KEYVALUELIST_H
 
+#include <memory>
+
 #include <QAbstractListModel>
 #include <QHash>
-#include <vector>
-#include <memory>
+#include <QObject>
+#include <QString>
+#include <QVariant>
+#include <Qt>
+
+class QByteArray;
+class QModelIndex;
 
 namespace Artworks {
     class ArtworkMetadata;

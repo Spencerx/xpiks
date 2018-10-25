@@ -11,7 +11,7 @@
 #ifndef IFLAGSPROVIDER_H
 #define IFLAGSPROVIDER_H
 
-#include "flags.h"
+#include "Common/flags.h"
 
 namespace Common {
     template<class T>

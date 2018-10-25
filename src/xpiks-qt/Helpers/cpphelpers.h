@@ -11,9 +11,9 @@
 #ifndef LINQHELPERS_H
 #define LINQHELPERS_H
 
-#include <vector>
-#include <functional>
 #include <algorithm>
+#include <functional>
+#include <vector>
 
 namespace Helpers {
     template<typename InType, typename OutType>

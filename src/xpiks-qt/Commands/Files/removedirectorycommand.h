@@ -11,19 +11,31 @@
 #ifndef REMOVEDIRECTORYCOMMAND_H
 #define REMOVEDIRECTORYCOMMAND_H
 
+#include <memory>
+
 #include <QObject>
-#include "removefilescommandbase.h"
-#include <Commands/Base/icommandtemplate.h>
+#include <QString>
+
+#include "Commands/Files/removefilescommandbase.h"
+#include "Models/Artworks/artworkslistoperations.h"
+
+#ifdef CORE_TESTS
+#include "Filesystem/ifilescollection.h"
+#endif
+
+namespace Artworks {
+    class ArtworksSnapshot;
+}
 
 namespace Models {
+    class ArtworksListModel;
+    class ArtworksRepository;
     class SettingsModel;
 }
 
-namespace Filesystem {
-    class IFilesCollection;
-}
-
 namespace Commands {
+    template <typename T> class ICommandTemplate;
+
     class RemoveDirectoryCommand:
             public QObject,
             public RemoveFilesCommandBase

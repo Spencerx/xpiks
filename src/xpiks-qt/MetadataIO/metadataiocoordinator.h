@@ -11,14 +11,15 @@
 #ifndef METADATAIOCOORDINATOR_H
 #define METADATAIOCOORDINATOR_H
 
-#include <QObject>
-#include <QVector>
-#include <QAtomicInt>
 #include <set>
-#include "../Common/defines.h"
-#include "../Common/readerwriterqueue.h"
-#include "originalmetadata.h"
-#include "metadatareadinghub.h"
+
+#include <QObject>
+#include <QString>
+#include <QtGlobal>
+
+#include "Helpers/asynccoordinator.h"
+
+template <typename T> class QVector;
 
 namespace Artworks {
     class ArtworkMetadata;
@@ -35,7 +36,7 @@ namespace QMLExtensions {
 }
 
 namespace MetadataIO {
-    class MetadataWritingWorker;
+    class MetadataReadingHub;
 
     class MetadataIOCoordinator : public QObject
     {

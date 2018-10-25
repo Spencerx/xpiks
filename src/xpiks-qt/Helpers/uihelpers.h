@@ -11,8 +11,8 @@
 #ifndef UIHELPERS_H
 #define UIHELPERS_H
 
-#include <QVariant>
 #include <QString>
+#include <QVariant>
 
 namespace Helpers {
     bool convertToBool(QVariant const &value, bool defaultValue = false);

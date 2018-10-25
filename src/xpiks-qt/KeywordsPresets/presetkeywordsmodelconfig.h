@@ -11,17 +11,23 @@
 #ifndef PRESETSKEYWORDSMODELCONFIG_H
 #define PRESETSKEYWORDSMODELCONFIG_H
 
+#include <memory>
 #include <vector>
-#include "../Helpers/localconfig.h"
-#include "presetgroupsmodel.h"
-#include "../Common/defines.h"
-#include "../Common/isystemenvironment.h"
 
-namespace Helpers {
-    class AsyncCoordinator;
+#include <QJsonDocument>
+#include <QString>
+#include <QStringList>
+
+#include "Helpers/localconfig.h"
+
+class QJsonArray;
+
+namespace Common {
+    class ISystemEnvironment;
 }
 
 namespace KeywordsPresets {
+    struct GroupModel;
     struct PresetData {
         QStringList m_Keywords;
         QString m_Name;

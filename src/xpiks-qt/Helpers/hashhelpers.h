@@ -11,8 +11,10 @@
 #ifndef HASHHELPERS_H
 #define HASHHELPERS_H
 
-#include <QString>
 #include <functional>
+
+#include <QHash>
+#include <QString>
 
 namespace std {
     template<> struct hash<QString> {

@@ -9,13 +9,13 @@
  */
 
 #include "folderelement.h"
-#include <QPainter>
-#include <QSGGeometryNode>
-#include <QRect>
-#include <QPointF>
-#include <QDebug>
+
 #include <QColor>
-#include <QBrush>
+#include <QQuickWindow>
+#include <QRectF>
+#include <QSGGeometryNode>
+#include <QSGNode>
+#include <QtGui/qopengl.h>
 
 namespace QMLExtensions {
     FolderElement::FolderElement(QQuickItem *parent):

@@ -9,9 +9,18 @@
  */
 
 #include "keywordedittemplate.h"
-#include <Artworks/artworkssnapshot.h>
-#include <Common/logging.h>
+
+#include <cstddef>
+#include <memory>
+
+#include <QtDebug>
+#include <QtGlobal>
+
 #include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "UndoRedo/artworkmetadatabackup.h"
 
 namespace Commands {
     KeywordEditTemplate::KeywordEditTemplate(Common::KeywordEditFlags editFlags,

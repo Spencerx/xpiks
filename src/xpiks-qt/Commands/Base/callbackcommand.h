@@ -11,8 +11,9 @@
 #ifndef SIMPLECOMMAND_H
 #define SIMPLECOMMAND_H
 
-#include "icommand.h"
 #include <functional>
+
+#include "Commands/Base/icommand.h"
 
 namespace Commands {
     class CallbackCommand: public ICommand

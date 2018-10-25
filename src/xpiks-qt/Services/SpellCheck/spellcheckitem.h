@@ -11,17 +11,24 @@
 #ifndef SPELLCHECKITEM_H
 #define SPELLCHECKITEM_H
 
-#include <vector>
-#include <memory>
-#include <QStringList>
-#include <QObject>
-#include <QHash>
+#include <cstddef>
 #include <functional>
-#include <Common/flags.h>
-#include <Common/wordanalysisresult.h>
+#include <memory>
+#include <vector>
+
+#include <QHash>
+#include <QObject>
+#include <QString>
+#include <QStringList>
+
+#include "Common/flags.h"
 
 namespace Artworks {
     class IBasicModelSource;
+}
+
+namespace Common {
+    struct WordAnalysisResult;
 }
 
 namespace SpellCheck {

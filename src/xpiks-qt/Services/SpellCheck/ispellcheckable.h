@@ -11,10 +11,11 @@
 #ifndef ISPELLCHECKABLE_H
 #define ISPELLCHECKABLE_H
 
-#include <vector>
 #include <memory>
-#include <Artworks/keyword.h>
-#include <Services/SpellCheck/spellsuggestionsitem.h>
+#include <vector>
+
+#include "Artworks/keyword.h"
+#include "Services/SpellCheck/spellsuggestionsitem.h"
 
 namespace SpellCheck {
     class ISpellCheckable {

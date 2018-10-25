@@ -11,10 +11,26 @@
 #ifndef DUPLICATESREVIEWMODEL_H
 #define DUPLICATESREVIEWMODEL_H
 
-#include <QAbstractListModel>
+#include <cstddef>
+#include <memory>
 #include <vector>
-#include <Artworks/artworkssnapshot.h>
-#include "Artworks/basicmetadatamodel.h"
+
+#include <QAbstractListModel>
+#include <QHash>
+#include <QObject>
+#include <QString>
+#include <QVariant>
+#include <QVector>
+#include <Qt>
+
+#include "Artworks/artworkssnapshot.h"
+
+class QByteArray;
+class QModelIndex;
+
+namespace Artworks {
+    class BasicMetadataModel;
+}
 
 namespace QMLExtensions {
     class ColorsModel;

@@ -11,22 +11,25 @@
 #ifndef SPELLCHECKSUGGESTIONMODEL_H
 #define SPELLCHECKSUGGESTIONMODEL_H
 
-#include <QAbstractListModel>
-#include <QList>
-#include <vector>
 #include <memory>
-#include <utility>
-#include <functional>
-#include <Common/flags.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Models/iactionmodel.h>
+#include <vector>
 
-namespace Models {
-    class ArtworksListModel;
-}
+#include <QAbstractListModel>
+#include <QHash>
+#include <QModelIndex>
+#include <QObject>
+#include <QString>
+#include <QVariant>
+#include <Qt>
 
-namespace Artworks {
-    class BasicMetadataModel;
+#include "Common/flags.h"
+#include "Models/iactionmodel.h"
+
+class QByteArray;
+class QModelIndex;
+
+namespace Commands {
+    class ICommand;
 }
 
 namespace SpellCheck {

@@ -13,11 +13,8 @@
 
 #include <QObject>
 #include <QString>
-#include "imaintenanceitem.h"
 
-namespace MetadataIO {
-    class MetadataIOCoordinator;
-}
+#include "Services/Maintenance/imaintenanceitem.h"
 
 namespace Maintenance {
     class LaunchExiftoolJobItem : public QObject, public IMaintenanceItem

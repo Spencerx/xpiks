@@ -9,7 +9,12 @@
  */
 
 #include "savebackupstemplate.h"
-#include <MetadataIO/metadataioservice.h>
+
+#include <QtDebug>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "MetadataIO/metadataioservice.h"
 
 namespace Commands {
     SaveBackupsTemplate::SaveBackupsTemplate(MetadataIO::MetadataIOService &metadataIOService):

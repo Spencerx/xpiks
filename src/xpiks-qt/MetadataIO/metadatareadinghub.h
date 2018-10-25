@@ -11,24 +11,24 @@
 #ifndef METADATAREADINGHUB_H
 #define METADATAREADINGHUB_H
 
+#include <memory>
+
 #include <QObject>
-#include <QAtomicInt>
-#include <Common/readerwriterqueue.h>
-#include <Artworks/artworkssnapshot.h>
-#include "originalmetadata.h"
-#include <Helpers/asynccoordinator.h>
+#include <QString>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/readerwriterqueue.h"
+#include "Helpers/asynccoordinator.h"
 
 namespace Services {
-    class ArtworksUpdateHub;
     class ArtworksEditingHub;
-}
-
-namespace Helpers {
-    class AsyncCoordinatorUnlocker;
+    class ArtworksUpdateHub;
 }
 
 namespace MetadataIO {
     class MetadataIOService;
+    struct OriginalMetadata;
 
     class MetadataReadingHub: public QObject
     {

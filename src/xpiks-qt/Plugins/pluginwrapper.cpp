@@ -9,13 +9,15 @@
  */
 
 #include "pluginwrapper.h"
-#include <QDir>
-#include "xpiksplugininterface.h"
-#include "ipluginaction.h"
-#include "pluginactionsmodel.h"
-#include "uiprovider.h"
-#include "../Common/defines.h"
-#include "../Helpers/constants.h"
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "Plugins/pluginenvironment.h"
+#include "Plugins/xpiksplugininterface.h"
 
 namespace Plugins {
     PluginWrapper::PluginWrapper(const QString &filepath,

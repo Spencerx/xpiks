@@ -11,10 +11,11 @@
 #ifndef COMPOSITECOMMANDTEMPLATE_H
 #define COMPOSITECOMMANDTEMPLATE_H
 
+#include <initializer_list>
 #include <memory>
 #include <vector>
-#include <initializer_list>
-#include "icommandtemplate.h"
+
+#include "Commands/Base/icommandtemplate.h"
 
 namespace Commands {
     template<typename T>

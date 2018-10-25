@@ -11,15 +11,17 @@
 #ifndef ZIPARCHIVER_H
 #define ZIPARCHIVER_H
 
+#include <QAtomicInt>
 #include <QFutureWatcher>
-#include <QPair>
-#include <QVector>
-#include <Artworks/artworkssnapshot.h>
-#include <Common/messages.h>
-#include <Common/types.h>
+#include <QObject>
+#include <QString>
+#include <QStringList>
 
-class QStringList;
-class QString;
+#include "Artworks/artworkssnapshot.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+
+template <class T1, class T2> class QHash;
 
 namespace Models {
     using UnavailableFilesMessage = Common::NamedType<int, Common::MessageType::UnavailableFiles>;

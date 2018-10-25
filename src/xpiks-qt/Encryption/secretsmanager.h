@@ -12,9 +12,9 @@
 #define SECRETSMANAGER_H
 
 #include <QByteArray>
+#include <QMutex>
 #include <QObject>
 #include <QString>
-#include <QMutex>
 
 namespace Encryption {
     class SecretsManager : public QObject {

@@ -9,20 +9,33 @@
  */
 
 #include "findandreplacemodel.h"
+
+#include <utility>
+
+#include <QAbstractItemModel>
 #include <QAbstractListModel>
-#include <Common/logging.h>
-#include <Common/defines.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/videoartwork.h>
-#include <Models/settingsmodel.h>
-#include <Models/Editing/previewartworkelement.h>
-#include <Helpers/filterhelpers.h>
-#include <Helpers/metadatahighlighter.h>
-#include <Helpers/cpphelpers.h>
-#include <Helpers/stringhelper.h>
-#include <Commands/Editing/findandreplacetemplate.h>
-#include <Commands/Editing/modifyartworkscommand.h>
-#include <Commands/Base/icommandmanager.h>
+#include <QByteArray>
+#include <QFlags>
+#include <QQuickTextDocument>
+#include <QStringList>
+#include <QVector>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/videoartwork.h"  // IWYU pragma: keep
+#include "Commands/Base/icommandmanager.h"
+#include "Commands/Editing/findandreplacetemplate.h"
+#include "Commands/Editing/modifyartworkscommand.h"
+#include "Common/defines.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/cpphelpers.h"
+#include "Helpers/filterhelpers.h"
+#include "Helpers/metadatahighlighter.h"
+#include "Helpers/stringhelper.h"
+#include "Models/Editing/previewartworkelement.h"
 
 QString searchFlagsToString(Common::SearchFlags flags) {
     QStringList items;

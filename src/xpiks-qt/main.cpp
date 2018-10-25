@@ -8,41 +8,60 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include <cstdlib>
 #include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
 
-#include <QtQml>
-#include <QScreen>
-#include <QtDebug>
-#include <QDateTime>
-#include <QSettings>
-#include <QTextStream>
-#include <QQmlContext>
 #include <QApplication>
-#include <QQuickWindow>
-#include <QStandardPaths>
+#include <QByteArray>
+#include <QChar>
+#include <QCoreApplication>
+#include <QDateTime>
+#include <QDir>
+#include <QList>
+#include <QMetaType>
+#include <QObject>
 #include <QQmlApplicationEngine>
-#include <QDesktopWidget>
+#include <QQmlEngine>
+#include <QQmlImageProviderBase>
+#include <QQuickWindow>
+#include <QStaticStringData>
+#include <QString>
+#include <QSysInfo>
+#include <QUrl>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include <vendors/chillout/src/chillout/chillout.h>
+
+#include "Common/defines.h"
+#include "Common/flags.h"
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Common/systemenvironment.h"
+#include "Common/version.h"
+#include "Connectivity/curlinithelper.h"
+#include "Helpers/constants.h"
+#include "Helpers/globalimageprovider.h"
+#include "Helpers/logger.h"
+#include "Helpers/runguard.h"
+#include "Models/Connectivity/proxysettings.h"
+#include "Plugins/uiprovider.h"
+#include "QMLExtensions/cachingimageprovider.h"
+#include "QMLExtensions/imagecachingservice.h"
+#include "xpiksapp.h"
+
+class QQmlContext;
 
 #ifdef Q_OS_LINUX
 #include <unistd.h>
 #endif
 
-// -------------------------------------
-
-#include "Common/defines.h"
-#include "Common/version.h"
-#include "Common/systemenvironment.h"
-#include "xpiksapp.h"
-#include "Helpers/globalimageprovider.h"
-#include "Helpers/logger.h"
-#include "Helpers/runguard.h"
-#include "Connectivity/curlinithelper.h"
-#include "QMLExtensions/cachingimageprovider.h"
-#include "QMLExtensions/uicommandid.h"
-
-// -------------------------------------
-
-#include <vendors/chillout/src/chillout/chillout.h>
+#ifndef Q_OS_LINUX
+#include <QProcess>
+#endif
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);

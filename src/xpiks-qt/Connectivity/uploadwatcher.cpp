@@ -9,8 +9,13 @@
  */
 
 #include "uploadwatcher.h"
-#include <QFileInfo>
-#include "../Common/logging.h"
+
+#include <QByteArray>
+#include <QModelIndex>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
 
 namespace Connectivity {
     UploadWatcher::UploadWatcher(QObject *parent):

@@ -9,9 +9,16 @@
  */
 
 #include "microstockservice.h"
+
 #include <QtGlobal>
-#include "searchquery.h"
-#include <Connectivity/requestsservice.h>
+
+#include "Connectivity/requestsservice.h"
+#include "Microstocks/imicrostockapiclient.h"
+#include "Microstocks/searchquery.h"
+
+namespace Connectivity {
+    class IConnectivityRequest;
+}
 
 namespace Microstocks {
     MicrostockService::MicrostockService(std::shared_ptr<IMicrostockAPIClient> const &apiClient,

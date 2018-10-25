@@ -11,9 +11,12 @@
 #ifndef AUTOCOMPLETESERVICE_H
 #define AUTOCOMPLETESERVICE_H
 
+#include <memory>
+
 #include <QObject>
 #include <QString>
-#include <memory>
+
+class QThread;
 
 namespace Artworks {
     class BasicKeywordsModel;

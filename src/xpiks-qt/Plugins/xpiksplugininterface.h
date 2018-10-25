@@ -11,22 +11,24 @@
 #ifndef XPIKSPLUGININTERFACE_H
 #define XPIKSPLUGININTERFACE_H
 
-#include <QString>
-#include <QtPlugin>
-#include <QVector>
 #include <cstdint>
-#include <vector>
 #include <memory>
-#include <Common/flags.h>
-#include <Commands/Base/icommandmanager.h>
-#include <UndoRedo/iundoredomanager.h>
-#include "ipluginaction.h"
-#include "iuiprovider.h"
-#include <Common/isystemenvironment.h>
-#include <KeywordsPresets/ipresetsmanager.h>
-#include <Storage/idatabasemanager.h>
-#include <Microstocks/imicrostockservices.h>
-#include <Models/Editing/icurrenteditable.h>
+#include <vector>
+
+#include <QString>
+#include <QVector>
+#include <QtPlugin>
+
+#include "Commands/Base/icommandmanager.h"
+#include "Common/flags.h"
+#include "Common/isystemenvironment.h"
+#include "KeywordsPresets/ipresetsmanager.h"
+#include "Microstocks/imicrostockservices.h"
+#include "Models/Editing/icurrenteditable.h"
+#include "Plugins/ipluginaction.h"
+#include "Plugins/iuiprovider.h"
+#include "Storage/idatabasemanager.h"
+#include "UndoRedo/iundoredomanager.h"
 
 namespace Plugins {
     class XpiksPluginInterface {

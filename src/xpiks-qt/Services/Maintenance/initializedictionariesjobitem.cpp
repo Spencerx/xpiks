@@ -8,10 +8,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <Common/logging.h>
-#include <Services/Translation/translationmanager.h>
 #include "initializedictionariesjobitem.h"
-#include <Helpers/asynccoordinator.h>
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+#include "Services/Translation/translationmanager.h"
 
 namespace Maintenance {
     InitializeDictionariesJobItem::InitializeDictionariesJobItem(Translation::TranslationManager &translationManager,

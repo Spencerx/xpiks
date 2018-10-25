@@ -11,7 +11,7 @@
 #ifndef PREVIEWMETADATAELEMENT_H
 #define PREVIEWMETADATAELEMENT_H
 
-#include <Artworks/artworkelement.h>
+#include "Artworks/artworkelement.h"
 
 namespace Models {
     class PreviewArtworkElement: public Artworks::ArtworkElement

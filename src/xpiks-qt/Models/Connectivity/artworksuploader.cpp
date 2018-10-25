@@ -9,23 +9,33 @@
  */
 
 #include "artworksuploader.h"
-#include <QtConcurrent>
+
+#include <cmath>
+#include <utility>
+
+#include <QException>
 #include <QFileInfo>
+#include <QFutureWatcher>
 #include <QQmlEngine>
-#include "uploadinforepository.h"
-#include "uploadinfo.h"
-#include <Common/defines.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Models/settingsmodel.h>
-#include <Helpers/ziphelper.h>
-#include <Helpers/filehelpers.h>
-#include <Connectivity/iftpcoordinator.h>
-#include <Connectivity/testconnection.h>
-#include <Connectivity/ftphelpers.h>
-#include <Connectivity/analyticsuserevent.h>
+#include <QtConcurrentRun>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include <vendors/libxpks/ftpcoordinator.h>
 #include <vendors/libxpks/uploadcontext.h>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/imageartwork.h"
+#include "Common/logging.h"
+#include "Connectivity/analyticsuserevent.h"
+#include "Connectivity/iftpcoordinator.h"
+#include "Connectivity/testconnection.h"
+#include "Connectivity/uploadwatcher.h"
+#include "Helpers/filehelpers.h"
+#include "Models/Connectivity/uploadinfo.h"
+#include "Models/Connectivity/uploadinforepository.h"
+#include "Models/settingsmodel.h"
 
 namespace Models {
     ArtworksUploader::ArtworksUploader(Common::ISystemEnvironment &environment,

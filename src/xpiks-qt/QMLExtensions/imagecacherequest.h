@@ -11,8 +11,8 @@
 #ifndef IMAGECACHEREQUEST_H
 #define IMAGECACHEREQUEST_H
 
-#include <QString>
 #include <QSize>
+#include <QString>
 
 namespace QMLExtensions {
 

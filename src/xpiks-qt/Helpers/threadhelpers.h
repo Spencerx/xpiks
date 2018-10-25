@@ -11,9 +11,9 @@
 #ifndef THREADHELPERS_H
 #define THREADHELPERS_H
 
-#include <QWaitCondition>
 #include <QMutex>
 #include <QSemaphore>
+#include <QWaitCondition>
 
 namespace Helpers {
     class ManualResetEvent

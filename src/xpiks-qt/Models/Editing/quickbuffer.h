@@ -11,14 +11,26 @@
 #ifndef QUICKBUFFER_H
 #define QUICKBUFFER_H
 
+#include <memory>
+
 #include <QObject>
-#include <Models/Editing/artworkproxybase.h>
-#include <Artworks/basicmetadatamodel.h>
-#include <Services/SpellCheck/spellcheckinfo.h>
-#include <Suggestion/suggestionartwork.h>
-#include <Common/delayedactionentity.h>
-#include <Common/messages.h>
-#include "quickbuffermessage.h"
+#include <QString>
+#include <QStringList>
+#include <Qt>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/iartworkmetadata.h"
+#include "Common/delayedactionentity.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "Models/Editing/artworkproxybase.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
+
+class QTimerEvent;
+
+namespace Artworks {
+    class IBasicModelSource;
+}
 
 namespace Commands {
     class ICommandManager;
@@ -26,6 +38,8 @@ namespace Commands {
 
 namespace Models {
     class CurrentEditableModel;
+    struct QuickBufferMessage;
+
     using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
 
     class QuickBuffer:

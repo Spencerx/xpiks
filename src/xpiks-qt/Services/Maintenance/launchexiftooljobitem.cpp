@@ -8,13 +8,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <Common/logging.h>
-#include <QDir>
-#include <QCoreApplication>
-#include <QProcess>
-#include <QFileInfo>
-#include <QStandardPaths>
 #include "launchexiftooljobitem.h"
+
+#include <QByteArray>
+#include <QCoreApplication>
+#include <QDir>
+#include <QFileInfo>
+#include <QProcess>
+#include <QStringList>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+
+#if defined(Q_OS_WIN)
+#include <QStandardPaths>
+#endif
 
 #define EXIFTOOL_VERSION_TIMEOUT 3000
 

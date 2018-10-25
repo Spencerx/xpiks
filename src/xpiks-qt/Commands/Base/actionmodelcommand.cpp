@@ -9,10 +9,14 @@
  */
 
 #include "actionmodelcommand.h"
-#include "icommand.h"
-#include <Models/iactionmodel.h>
-#include <Common/logging.h>
-#include <Helpers/uihelpers.h>
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Commands/Base/icommand.h"
+#include "Common/logging.h"
+#include "Helpers/uihelpers.h"
+#include "Models/iactionmodel.h"
 
 namespace Commands {
     ActionModelCommand::ActionModelCommand(Models::IActionModel &model, int commandID):

@@ -11,10 +11,15 @@
 #ifndef EDITARTWORKSTEMPLATE_H
 #define EDITARTWORKSTEMPLATE_H
 
-#include <Commands/Base/icommandtemplate.h>
+#include <memory>
+#include <vector>
+
 #include <QString>
-#include <Common/flags.h>
-#include <UndoRedo/artworkmetadatabackup.h>
+#include <QStringList>
+
+#include "Commands/Base/icommandtemplate.h"
+#include "Common/flags.h"
+#include "UndoRedo/artworkmetadatabackup.h"
 
 namespace Artworks {
     class ArtworkMetadata;

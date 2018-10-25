@@ -11,11 +11,14 @@
 #ifndef AUTOCOMPLETEWORKER_H
 #define AUTOCOMPLETEWORKER_H
 
+#include <memory>
+
 #include <QObject>
-#include <Common/itemprocessingworker.h>
-#include "completionquery.h"
-#include "libfacecompletionengine.h"
-#include "presetscompletionengine.h"
+#include <QString>
+
+#include "Common/itemprocessingworker.h"
+#include "Services/AutoComplete/libfacecompletionengine.h"
+#include "Services/AutoComplete/presetscompletionengine.h"
 
 namespace Helpers {
     class AsyncCoordinator;
@@ -27,6 +30,7 @@ namespace KeywordsPresets {
 }
 
 namespace AutoComplete {
+    class CompletionQuery;
     class KeywordsAutoCompleteModel;
 
     class AutoCompleteWorker :

@@ -9,10 +9,15 @@
  */
 
 #include "aes-qt.h"
-#include <QString>
-#include <QDataStream>
+
+#include <cstdint>
+
+#include <QByteArray>
+#include <QChar>
 #include <QCryptographicHash>
-#include <cstdio>
+#include <QString>
+#include <QtGlobal>
+
 #include <vendors/tiny-aes/aes.h>
 
 #define MAX_ENCRYPTION_LENGTH 2048

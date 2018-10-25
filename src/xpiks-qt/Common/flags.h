@@ -11,10 +11,12 @@
 #ifndef FLAGS
 #define FLAGS
 
-#include <type_traits>
-#include <QObject>
 #include <cstdint>
-#include "types.h"
+#include <type_traits>
+
+#include <QObject>
+
+#include "Common/types.h"
 
 #if defined(Q_OS_WIN32) && defined(Q_PROCESSOR_X86_32) && (_MSC_VER == 1800)
 #define XPIKS_TYPED_ENUMS_WORKAROUND

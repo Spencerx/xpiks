@@ -9,9 +9,15 @@
  */
 
 #include "pluginactionsmodel.h"
+
+#include <QByteArray>
 #include <QHash>
-#include "ipluginaction.h"
-#include "../Common/logging.h"
+#include <QModelIndex>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Plugins/ipluginaction.h"
 
 namespace Plugins {
     PluginActionsModel::PluginActionsModel(const std::vector<std::shared_ptr<IPluginAction> > &actions, int pluginID, QObject *parent) :

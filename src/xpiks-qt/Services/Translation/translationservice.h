@@ -12,7 +12,11 @@
 #define TRANSLATIONSERVICE_H
 
 #include <QObject>
-#include "translationmanager.h"
+#include <QString>
+
+namespace Helpers {
+    class AsyncCoordinator;
+}
 
 namespace Translation {
     class TranslationWorker;
@@ -22,7 +26,7 @@ namespace Translation {
     {
         Q_OBJECT
     public:
-        explicit TranslationService(QObject *parent = 0);
+        explicit TranslationService(QObject *parent = nullptr);
 
         void startService(Helpers::AsyncCoordinator &coordinator);
         void stopService();

@@ -11,18 +11,33 @@
 #ifndef UPLOADINFOREPOSITORY_H
 #define UPLOADINFOREPOSITORY_H
 
-#include <QAbstractListModel>
-#include <QDataStream>
-#include <QByteArray>
-#include <QHash>
-#include <QList>
-#include <vector>
 #include <memory>
-#include <Common/delayedactionentity.h>
-#include <Helpers/localconfig.h>
-#include <Common/isystemenvironment.h>
-#include <Services/AutoComplete/stringsautocompletemodel.h>
-#include <Microstocks/stocksftplistmodel.h>
+#include <vector>
+
+#include <QAbstractListModel>
+#include <QHash>
+#include <QModelIndex>
+#include <QObject>
+#include <QString>
+#include <QVariant>
+#include <Qt>
+
+#include "Common/delayedactionentity.h"
+#include "Helpers/localconfig.h"
+#include "Microstocks/stocksftplistmodel.h"
+#include "Services/AutoComplete/stringsautocompletemodel.h"
+
+class QByteArray;
+class QModelIndex;
+class QTimerEvent;
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Connectivity {
+    class IRequestsService;
+}
 
 namespace Helpers {
     class AsyncCoordinator;

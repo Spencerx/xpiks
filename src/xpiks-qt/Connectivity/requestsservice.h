@@ -11,10 +11,12 @@
 #ifndef REQUESTSSERVICE_H
 #define REQUESTSSERVICE_H
 
-#include <QObject>
 #include <memory>
-#include "iconnectivityrequest.h"
-#include "irequestsservice.h"
+
+#include <QObject>
+#include <QString>
+
+#include "Connectivity/irequestsservice.h"
 
 namespace Helpers {
     class RemoteConfig;
@@ -25,6 +27,7 @@ namespace Models {
 }
 
 namespace Connectivity {
+    class IConnectivityRequest;
     class RequestsWorker;
 
     class RequestsService : public QObject, public IRequestsService

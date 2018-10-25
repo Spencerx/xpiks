@@ -11,13 +11,17 @@
 #ifndef PROXYINDEXMIDDLWARE_H
 #define PROXYINDEXMIDDLWARE_H
 
-#include "iuicommandmiddleware.h"
+#include <memory>
+
+#include "QMLExtensions/iuicommandmiddleware.h"
 
 namespace Models {
     class FilteredArtworksListModel;
 }
 
 namespace QMLExtensions {
+    struct UIAction;
+
     class ProxyIndexMiddlware: public IUICommandMiddlware
     {
     public:

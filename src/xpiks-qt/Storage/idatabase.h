@@ -11,12 +11,13 @@
 #ifndef IDATABASE_H
 #define IDATABASE_H
 
-#include <QString>
 #include <functional>
-#include <QVector>
-#include <QPair>
-#include <QByteArray>
 #include <memory>
+
+#include <QByteArray>
+#include <QPair>
+#include <QString>
+#include <QVector>
 
 namespace Storage {
     class IDbTable {

@@ -9,19 +9,25 @@
  */
 
 #include "stringhelper.h"
-#include <QTextStream>
+
+#include <algorithm>
+#include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
+#include <utility>
+#include <vector>
+
+#include <QByteArray>
+#include <QByteRef>
+#include <QCryptographicHash>
+#include <QRegExp>
+#include <QString>
+#include <QStringList>
 #include <QStringRef>
 #include <QVector>
-#include <QByteArray>
-#include <QCryptographicHash>
-#include <QString>
 #include <QtGlobal>
-#include <vector>
-#include <utility>
-#include <algorithm>
-#include <cmath>
-#include "../Common/defines.h"
-#include "../Helpers/indiceshelper.h"
+
+#include "Helpers/indiceshelper.h"
 
 #if defined(Q_OS_WIN)
 #define NOMINMAX

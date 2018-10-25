@@ -11,11 +11,13 @@
 #ifndef ASYNCCOORDINATOR_H
 #define ASYNCCOORDINATOR_H
 
-#include <QObject>
 #include <QAtomicInt>
+#include <QObject>
+#include <QString>
 #include <QTimer>
-#include <Common/logging.h>
-#include <memory>
+#include <QtDebug>
+
+#include "Common/logging.h"
 
 namespace Helpers {
     class AsyncCoordinator: public QObject

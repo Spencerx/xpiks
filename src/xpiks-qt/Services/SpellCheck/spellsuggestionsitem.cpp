@@ -9,9 +9,19 @@
  */
 
 #include "spellsuggestionsitem.h"
-#include <Common/defines.h>
-#include <Common/logging.h>
-#include "ispellcheckable.h"
+
+#include <utility>
+
+#include <QAbstractItemModel>
+#include <QByteArray>
+#include <QFlags>
+#include <QVector>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Services/SpellCheck/ispellcheckable.h"
 
 namespace SpellCheck {
     SpellSuggestionsItem::SpellSuggestionsItem(const QString &word,

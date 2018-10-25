@@ -11,9 +11,13 @@
 #ifndef REMOVEFILESCOMMANDBASE_H
 #define REMOVEFILESCOMMANDBASE_H
 
-#include <Commands/Base/icommand.h>
-#include <Models/Artworks/artworkslistoperations.h>
+#include <cstddef>
+
 #include <QObject>
+#include <QString>
+
+#include "Commands/Base/icommand.h"
+#include "Models/Artworks/artworkslistoperations.h"
 
 namespace Models {
     class ArtworksRepository;

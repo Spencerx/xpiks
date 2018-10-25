@@ -11,9 +11,9 @@
 #ifndef SimpleCurlRequest_H
 #define SimpleCurlRequest_H
 
+#include <QByteArray>
 #include <QObject>
 #include <QString>
-#include <QByteArray>
 #include <QStringList>
 
 namespace Models {

@@ -9,12 +9,18 @@
  */
 
 #include "filehelpers.h"
-#include <QRegExp>
-#include <QFileInfo>
+
 #include <QDir>
+#include <QFileInfo>
+#include <QLatin1Char>
+#include <QLatin1String>
+#include <QRegExp>
 #include <QVector>
-#include <Common/logging.h>
-#include <Helpers/constants.h>
+#include <Qt>
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Helpers/constants.h"
 
 namespace Helpers {
     QStringList convertToVectorFilenames(const QStringList &item) {

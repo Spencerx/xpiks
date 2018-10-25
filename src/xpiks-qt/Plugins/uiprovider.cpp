@@ -9,16 +9,25 @@
  */
 
 #include "uiprovider.h"
-#include <QQmlComponent>
-#include <QQmlError>
-#include <QQuickItem>
-#include <QQmlEngine>
-#include <QQuickView>
-#include <QQmlProperty>
-#include <QQmlContext>
-#include <QQuickWindow>
+
+#include <cstddef>
+
 #include <QHash>
-#include "../Common/logging.h"
+#include <QHashIterator>
+#include <QMetaObject>
+#include <QQmlComponent>
+#include <QQmlContext>
+#include <QQmlEngine>
+#include <QQmlError>
+#include <QQmlProperty>
+#include <QQuickItem>
+#include <QReturnArgument>
+#include <QUrl>
+#include <QVariant>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
 
 namespace Plugins {
     UIProvider::UIProvider(Models::UIManager &uiManager, QObject *parent):

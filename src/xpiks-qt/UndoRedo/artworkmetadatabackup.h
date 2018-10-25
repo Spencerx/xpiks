@@ -11,12 +11,16 @@
 #ifndef ARTWORKMETADATABACKUP_H
 #define ARTWORKMETADATABACKUP_H
 
-#include <QStringList>
-#include <QString>
 #include <memory>
-#include "../Common/types.h"
 
-namespace Artworks { class ArtworkMetadata; }
+#include <QString>
+#include <QStringList>
+
+#include "Common/types.h"
+
+namespace Artworks {
+    class ArtworkMetadata;
+}
 
 namespace UndoRedo {
     class ArtworkMetadataBackup

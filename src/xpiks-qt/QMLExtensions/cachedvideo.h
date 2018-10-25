@@ -13,9 +13,9 @@
 
 #include <QDateTime>
 #include <QString>
-#include <QHash>
-#include <QByteArray>
-#include <QDataStream>
+#include <QtGlobal>
+
+class QDataStream;
 
 namespace QMLExtensions {
     struct CachedVideo {

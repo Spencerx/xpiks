@@ -9,14 +9,20 @@
  */
 
 #include "uimanager.h"
+
+#include <QQmlEngine>
 #include <QQuickTextDocument>
 #include <QScreen>
-#include <QQmlEngine>
-#include <Common/defines.h>
-#include <Artworks/basicmetadatamodel.h>
-#include <Models/settingsmodel.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Helpers/loghighlighter.h>
+#include <QSet>
+#include <QtDebug>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "Helpers/loghighlighter.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/tabsmodel.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
 

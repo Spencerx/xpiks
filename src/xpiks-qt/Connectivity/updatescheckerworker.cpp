@@ -17,24 +17,33 @@
 #define UPDATE_JSON_UPDATE_URL "update_link"
 #define UPDATE_JSON_CHECKSUM "checksum"
 
-#include <QString>
-#include <QUrl>
+#include <QByteArray>
+#include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
-#include <QThread>
+#include <QFileInfo>
+#include <QIODevice>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonValue>
+#include <QLatin1Char>
+#include <QString>
+#include <QtDebug>
 #include <QtGlobal>
-#include <QCryptographicHash>
-#include "simplecurlrequest.h"
-#include "simplecurldownloader.h"
-#include "apimanager.h"
-#include <Common/defines.h>
-#include <Common/version.h>
-#include <Models/settingsmodel.h>
-#include <Models/Connectivity/proxysettings.h>
-#include <Helpers/constants.h>
-#include <Services/Maintenance/maintenanceservice.h>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Common/version.h"
+#include "Connectivity/apimanager.h"
+#include "Connectivity/simplecurldownloader.h"
+#include "Connectivity/simplecurlrequest.h"
+#include "Helpers/constants.h"
+#include "Models/settingsmodel.h"
+#include "Services/Maintenance/maintenanceservice.h"
+
+namespace Models {
+    class ProxySettings;
+}
 
 QString fileChecksum(const QString &fileName, QCryptographicHash::Algorithm hashAlgorithm) {
     QString result;

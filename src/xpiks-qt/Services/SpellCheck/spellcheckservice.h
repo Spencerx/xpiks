@@ -11,34 +11,36 @@
 #ifndef SPELLCHECKERSERVICE_H
 #define SPELLCHECKERSERVICE_H
 
+#include <memory>
+#include <vector>
+
 #include <QObject>
 #include <QString>
-#include <QVector>
-#include <vector>
-#include <deque>
-#include <functional>
-#include <Common/messages.h>
-#include "spellcheckworker.h"
-#include "ispellcheckservice.h"
-#include <Artworks/basickeywordsmodel.h>
-#include <Common/flags.h>
-#include <Common/isystemenvironment.h>
-#include <Common/types.h>
+#include <QStringList>
+#include <QtGlobal>
+
+#include "Common/flags.h"
+#include "Services/SpellCheck/ispellcheckservice.h"
 
 namespace Artworks {
-    class ArtworkMetadata;
-    class ArtworksSnapshot;
+    class IBasicModelSource;
+}
+
+namespace Common {
+    class ISystemEnvironment;
+    template <class T> class IFlagsProvider;
+}
+
+namespace Helpers {
+    class AsyncCoordinator;
 }
 
 namespace Warnings {
     class WarningsService;
 }
 
-namespace Models {
-    class SettingsModel;
-}
-
 namespace SpellCheck {
+    class SpellCheckWorker;
     class UserDictionary;
 
     class SpellCheckService:

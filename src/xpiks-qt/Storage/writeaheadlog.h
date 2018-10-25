@@ -11,11 +11,12 @@
 #ifndef WRITEAHEADLOG_H
 #define WRITEAHEADLOG_H
 
-#include <QReadWriteLock>
-#include <QHash>
 #include <QDataStream>
-#include "idatabase.h"
-#include "../Common/logging.h"
+#include <QHash>
+#include <QReadWriteLock>
+
+#include "Common/logging.h"
+#include "Storage/idatabase.h"
 
 namespace Storage {
     template<class TKey, class TValue>

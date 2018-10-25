@@ -1,5 +1,7 @@
 #include "jsonmerge_tests.h"
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include "../../xpiks-qt/Helpers/jsonhelper.h"
 #include "../../xpiks-qt/Helpers/comparevaluesjson.h"
 

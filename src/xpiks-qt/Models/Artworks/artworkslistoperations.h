@@ -2,7 +2,8 @@
 #define ARTWORKSLISTOPERATIONS_H
 
 #include <QSet>
-#include <Artworks/artworkssnapshot.h>
+
+#include "Artworks/artworkssnapshot.h"
 #include "Helpers/indicesranges.h"
 
 namespace Models {

@@ -11,17 +11,19 @@
 #ifndef DBCACHEINDEX_H
 #define DBCACHEINDEX_H
 
+#include <memory>
+#include <functional>
+
 #include <QString>
 #include <QHash>
 #include <QReadWriteLock>
 #include <QMutex>
-#include <memory>
-#include <functional>
-#include "previewstorage.h"
-#include "../Storage/idatabase.h"
-#include "../Storage/idatabasemanager.h"
-#include "../Storage/writeaheadlog.h"
-#include "../Common/defines.h"
+
+#include "Common/defines.h"
+#include "QMLExtensions/previewstorage.h"
+#include "Storage/idatabase.h"
+#include "Storage/idatabasemanager.h"
+#include "Storage/writeaheadlog.h"
 
 namespace QMLExtensions {
     template<class TValue>

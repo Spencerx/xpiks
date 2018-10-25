@@ -11,12 +11,20 @@
 #ifndef IMAGECACHINGWORKER_H
 #define IMAGECACHINGWORKER_H
 
-#include "../Common/itemprocessingworker.h"
+#include <memory>
+
+#include <QObject>
 #include <QString>
-#include "imagecacherequest.h"
-#include "cachedimage.h"
-#include "dbimagecacheindex.h"
-#include "../Common/isystemenvironment.h"
+#include <QtGlobal>
+
+#include "Common/itemprocessingworker.h"
+#include "QMLExtensions/dbimagecacheindex.h"
+
+class QSize;
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Helpers {
     class AsyncCoordinator;
@@ -27,6 +35,8 @@ namespace Storage {
 }
 
 namespace QMLExtensions {
+    class ImageCacheRequest;
+
     class ImageCachingWorker : public QObject, public Common::ItemProcessingWorker<ImageCacheRequest>
     {
         Q_OBJECT

@@ -9,8 +9,14 @@
  */
 
 #include "updatebundlecleanupjobitem.h"
+
+#include <QDir>
 #include <QDirIterator>
-#include <Common/logging.h>
+#include <QFile>
+#include <QStringList>
+#include <QtDebug>
+
+#include "Common/logging.h"
 
 namespace Maintenance {
     UpdateBundleCleanupJobItem::UpdateBundleCleanupJobItem(const QString &updatesDirectoryPath):

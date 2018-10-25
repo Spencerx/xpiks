@@ -11,15 +11,26 @@
 #ifndef GETTYAPICLIENT_H
 #define GETTYAPICLIENT_H
 
+#include <memory>
+
 #include <QString>
 #include <QUrl>
-#include "imicrostockapiclient.h"
+
+#include "Microstocks/imicrostockapiclient.h"
+#include "Microstocks/microstockenums.h"
+
+namespace Connectivity {
+    class IConnectivityRequest;
+    class IConnectivityResponse;
+}
 
 namespace Encryption {
     class ISecretsStorage;
 }
 
 namespace Microstocks {
+    class SearchQuery;
+
     class GettyAPIClient: public IMicrostockAPIClient
     {
     public:

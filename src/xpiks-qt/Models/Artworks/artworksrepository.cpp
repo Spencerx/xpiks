@@ -9,15 +9,26 @@
  */
 
 #include "artworksrepository.h"
+
+#include <QByteArray>
 #include <QDir>
-#include <QSet>
 #include <QFileInfo>
-#include <QRegExp>
-#include <Common/defines.h>
-#include <Filesystem/ifilescollection.h>
-#include "artworkslistoperations.h"
+#include <QSet>
+#include <QVector>
+#include <QtDebug>
+
 #include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
 #include "Artworks/imageartwork.h"
+#include "Common/abstractlistmodel.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Filesystem/ifilescollection.h"
+#include "Helpers/indicesranges.h"
+#include "Models/Artworks/artworkslistoperations.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+
+class QModelIndex;
 
 namespace Models {
     ArtworksRepository::ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent) :

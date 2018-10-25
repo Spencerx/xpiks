@@ -11,9 +11,11 @@
 #ifndef SPELLCHECKERRORSHIGHLIGHTER_H
 #define SPELLCHECKERRORSHIGHLIGHTER_H
 
-#include <QtGui>
-#include <QSet>
+#include <QObject>
 #include <QString>
+#include <QSyntaxHighlighter>
+
+class QTextDocument;
 
 namespace QMLExtensions {
     class ColorsModel;

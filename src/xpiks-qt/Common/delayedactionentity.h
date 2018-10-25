@@ -11,9 +11,10 @@
 #ifndef DELAYEDACTIONENTITY_H
 #define DELAYEDACTIONENTITY_H
 
-#include "logging.h"
-#include <QtGlobal>
 #include <QTimerEvent>
+#include <QtGlobal>
+
+#include "Common/logging.h"
 
 namespace Common {
     class DelayedActionEntity {

@@ -11,9 +11,18 @@
 #ifndef PLUGINACTIONSMODEL_H
 #define PLUGINACTIONSMODEL_H
 
-#include <QAbstractListModel>
-#include <vector>
 #include <memory>
+#include <vector>
+
+#include <QAbstractListModel>
+#include <QHash>
+#include <QObject>
+#include <QString>
+#include <QVariant>
+#include <Qt>
+
+class QByteArray;
+class QModelIndex;
 
 namespace Plugins {
     class IPluginAction;

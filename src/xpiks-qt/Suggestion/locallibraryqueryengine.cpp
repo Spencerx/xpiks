@@ -9,13 +9,21 @@
  */
 
 #include "locallibraryqueryengine.h"
-#include <QThread>
-#include <QFileInfo>
-#include <vector>
+
 #include <memory>
-#include "../MetadataIO/metadataioservice.h"
-#include "suggestionartwork.h"
-#include "../Common/defines.h"
+#include <utility>
+#include <vector>
+
+#include <QFileInfo>
+#include <QVector>
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "MetadataIO/cachedartwork.h"
+#include "MetadataIO/metadataioservice.h"
+#include "Microstocks/searchquery.h"
+#include "Suggestion/locallibraryquery.h"
+#include "Suggestion/suggestionartwork.h"
 
 #define MAX_LOCAL_RESULTS 200
 

@@ -9,18 +9,26 @@
  */
 
 #include "warningsitem.h"
-#include <QStringList>
-#include <QString>
-#include <QSet>
+
+#include <QChar>
+#include <QCharRef>
 #include <QFileInfo>
+#include <QSet>
 #include <QSize>
-#include "iwarningssettings.h"
-#include <Helpers/stringhelper.h>
-#include <Common/flags.h>
-#include <Common/defines.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include <Artworks/videoartwork.h>
+#include <QString>
+#include <QStringList>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/imageartwork.h"
+#include "Artworks/videoartwork.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/stringhelper.h"
+#include "Services/Warnings/iwarningssettings.h"
 
 namespace Warnings {
     QSet<QString> toLowerSet(const QStringList &from) {

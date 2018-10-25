@@ -11,8 +11,11 @@
 #ifndef METADATADUPLICATES_H
 #define METADATADUPLICATES_H
 
-#include "imetadataduplicates.h"
 #include <memory>
+
+#include <QString>
+
+#include "Services/SpellCheck/imetadataduplicates.h"
 
 namespace Artworks {
     class ArtworkMetadata;

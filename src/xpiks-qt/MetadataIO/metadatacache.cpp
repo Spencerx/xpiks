@@ -9,14 +9,23 @@
  */
 
 #include "metadatacache.h"
-#include <QFileInfo>
-#include <functional>
-#include <Artworks/artworkmetadata.h>
-#include <Helpers/constants.h>
-#include <Common/logging.h>
-#include <Common/defines.h>
-#include <Storage/idatabasemanager.h>
-#include <Storage/memorytable.h>
+
+#include <QChar>
+#include <QDataStream>
+#include <QIODevice>
+#include <QMutexLocker>
+#include <QStringList>
+#include <Qt>
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "MetadataIO/cachedartwork.h"
+#include "Microstocks/searchquery.h"
+#include "Storage/idatabase.h"
+#include "Storage/idatabasemanager.h"
+#include "Storage/memorytable.h"
 
 namespace MetadataIO {
     CachedArtwork::CachedArtworkType queryFlagToCachedType(const Microstocks::SearchQuery &query) {

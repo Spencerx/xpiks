@@ -11,8 +11,7 @@
 #ifndef GENERATETHUMBNAILSCOMMAND_H
 #define GENERATETHUMBNAILSCOMMAND_H
 
-#include <Commands/Base/icommandtemplate.h>
-#include <memory>
+#include "Commands/Base/icommandtemplate.h"
 
 namespace QMLExtensions {
     class ImageCachingService;

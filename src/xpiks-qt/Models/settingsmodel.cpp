@@ -9,11 +9,36 @@
  */
 
 #include "settingsmodel.h"
-#include <QQmlEngine>
+
+#include <QByteArray>
+#include <QChar>
+#include <QDataStream>
 #include <QDateTime>
-#include <Common/defines.h>
-#include <Encryption/secretsmanager.h>
-#include <Common/version.h>
+#include <QDir>
+#include <QFile>
+#include <QIODevice>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QJsonValueRef>
+#include <QLatin1String>
+#include <QMutexLocker>
+#include <QSettings>
+#include <QUrl>
+#include <QVariant>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/delayedactionentity.h"
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Common/statefulentity.h"
+#include "Common/version.h"
+#include "Encryption/secretsmanager.h"
+#include "Helpers/constants.h"
+#include "Helpers/jsonobjectmap.h"
+#include "Helpers/localconfig.h"
+#include "Models/Connectivity/proxysettings.h"
 
 #ifdef Q_OS_MAC
 #  define DEFAULT_EXIFTOOL "/usr/bin/exiftool"

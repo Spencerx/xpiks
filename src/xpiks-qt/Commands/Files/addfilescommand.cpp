@@ -9,9 +9,16 @@
  */
 
 #include "addfilescommand.h"
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Common/logging.h>
-#include <Helpers/indicesranges.h>
+
+#include <QtDebug>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Commands/Base/icommandtemplate.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/indicesranges.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/artworkslistoperations.h"
 
 namespace Commands {
     AddFilesCommand::AddFilesCommand(std::shared_ptr<Filesystem::IFilesCollection> const &files,

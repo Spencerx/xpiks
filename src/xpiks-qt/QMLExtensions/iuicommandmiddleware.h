@@ -11,8 +11,9 @@
 #ifndef IUICOMMANDMIDDLEWARE_H
 #define IUICOMMANDMIDDLEWARE_H
 
-#include "uiaction.h"
 #include <memory>
+
+#include "QMLExtensions/uiaction.h"
 
 namespace QMLExtensions {
     class IUICommandMiddlware {

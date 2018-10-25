@@ -11,10 +11,16 @@
 #ifndef MAINTENANCEWORKER_H
 #define MAINTENANCEWORKER_H
 
-#include <Common/itemprocessingworker.h>
-#include "imaintenanceitem.h"
+#include <memory>
+
+#include <QObject>
+#include <QString>
+
+#include "Common/itemprocessingworker.h"
 
 namespace Maintenance {
+    class IMaintenanceItem;
+
     class MaintenanceWorker: public QObject, public Common::ItemProcessingWorker<IMaintenanceItem>
     {
         Q_OBJECT

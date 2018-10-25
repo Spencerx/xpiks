@@ -11,13 +11,15 @@
 #ifndef UPLOADINFO
 #define UPLOADINFO
 
-#include <QObject>
+#include <cmath>
+
+#include <QByteArray>
 #include <QHash>
 #include <QMutex>
+#include <QObject>
 #include <QString>
-#include <QByteArray>
-#include <cmath>
-#include <Microstocks/stockftpoptions.h>
+
+#include "Microstocks/stockftpoptions.h"
 
 #define BOOL_TO_STR(condition) ((condition) ? QLatin1String("true") : QLatin1String("false"))
 

@@ -9,8 +9,16 @@
  */
 
 #include "requestsworker.h"
-#include "simplecurlrequest.h"
-#include <Models/Connectivity/proxysettings.h>
+
+#include <QStringList>
+#include <QtDebug>
+
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Common/types.h"
+#include "Connectivity/iconnectivityrequest.h"
+#include "Connectivity/iconnectivityresponse.h"
+#include "Connectivity/simplecurlrequest.h"
 
 namespace Connectivity {
     RequestsWorker::RequestsWorker(const Models::ProxySettings &proxySettings, QObject *parent) :

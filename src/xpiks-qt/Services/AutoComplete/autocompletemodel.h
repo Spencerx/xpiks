@@ -12,8 +12,9 @@
 #define AUTOCOMPLETEMODEL_H
 
 #include <QObject>
-#include <QAbstractListModel>
-#include "completionitem.h"
+#include <QString>
+
+class QAbstractItemModel;
 
 namespace AutoComplete {
     class AutoCompleteModel : public QObject

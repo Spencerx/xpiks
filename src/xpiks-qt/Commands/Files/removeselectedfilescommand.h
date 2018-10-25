@@ -11,13 +11,22 @@
 #ifndef REMOVESELECTEDFILESCOMMAND_H
 #define REMOVESELECTEDFILESCOMMAND_H
 
-#include "removefilescommand.h"
+#include <memory>
+
+#include "Commands/Files/removefilescommand.h"
+
+namespace Models {
+    class ArtworksListModel;
+    class ArtworksRepository;
+}
 
 namespace Artworks {
     class ISelectedIndicesSource;
 }
 
 namespace Commands {
+    class ICommand;
+
     class RemoveSelectedFilesCommand: public RemoveFilesCommand
     {
     public:

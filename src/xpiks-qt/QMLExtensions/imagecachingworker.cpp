@@ -9,22 +9,32 @@
  */
 
 #include "imagecachingworker.h"
+
+#include <QByteArray>
+#include <QChar>
+#include <QCryptographicHash>
+#include <QDataStream>
+#include <QDateTime>
 #include <QDir>
 #include <QFile>
-#include <QImage>
-#include <QThread>
-#include <QString>
 #include <QFileInfo>
-#include <QByteArray>
-#include <QDataStream>
-#include <QReadLocker>
-#include <QWriteLocker>
-#include <QCryptographicHash>
-#include "../Common/defines.h"
-#include "../Helpers/constants.h"
-#include "imagecacherequest.h"
-#include "../Helpers/asynccoordinator.h"
-#include "dbimagecacheindex.h"
+#include <QHash>
+#include <QIODevice>
+#include <QImage>
+#include <QSize>
+#include <QString>
+#include <QThread>
+#include <Qt>
+#include <QtDebug>
+
+#include "Common/isystemenvironment.h"
+#include "Common/itemprocessingworker.h"
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+#include "Helpers/constants.h"
+#include "QMLExtensions/cachedimage.h"
+#include "QMLExtensions/dbimagecacheindex.h"
+#include "QMLExtensions/imagecacherequest.h"
 
 #define IMAGE_CACHING_WORKER_SLEEP_DELAY 500
 #define IMAGES_INDEX_BACKUP_STEP 50

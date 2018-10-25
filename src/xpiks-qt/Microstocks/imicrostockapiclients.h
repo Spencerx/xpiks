@@ -2,7 +2,8 @@
 #define IMICROSTOCKAPICLIENTS_H
 
 #include <memory>
-#include "microstockenums.h"
+
+#include "Microstocks/microstockenums.h"
 
 namespace Microstocks {
     class IMicrostockAPIClient;

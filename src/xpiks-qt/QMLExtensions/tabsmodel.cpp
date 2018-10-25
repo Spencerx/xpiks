@@ -9,8 +9,18 @@
  */
 
 #include "tabsmodel.h"
-#include "../Common/logging.h"
+
 #include <algorithm>
+#include <cstddef>
+
+#include <QAbstractItemModel>
+#include <QByteArray>
+#include <QList>
+#include <QtAlgorithms>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
 
 namespace QMLExtensions {
     bool compareCachePairs(const TabsModel::CachedTab &left, const TabsModel::CachedTab &right) {

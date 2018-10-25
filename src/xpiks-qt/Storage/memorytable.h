@@ -11,8 +11,16 @@
 #ifndef MEMORYTABLE_H
 #define MEMORYTABLE_H
 
-#include "idatabase.h"
+#include <functional>
+
+#include <QByteArray>
 #include <QHash>
+#include <QString>
+#include <QVector>
+
+#include "Storage/idatabase.h"
+
+template <class T1, class T2> struct QPair;
 
 namespace Storage {
     class MemoryTable: public IDbTable

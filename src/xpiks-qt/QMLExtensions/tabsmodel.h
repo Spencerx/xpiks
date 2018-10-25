@@ -11,13 +11,21 @@
 #ifndef TABSMODEL_H
 #define TABSMODEL_H
 
+#include <vector>
+
 #include <QAbstractListModel>
+#include <QHash>
+#include <QModelIndex>
+#include <QObject>
+#include <QSet>
 #include <QSortFilterProxyModel>
 #include <QString>
+#include <QVariant>
 #include <QVector>
-#include <QSet>
-#include <vector>
-#include <utility>
+#include <Qt>
+
+class QByteArray;
+class QModelIndex;
 
 #define FILES_FOLDERS_TAB_ID 3
 #define QUICKBUFFER_TAB_ID 5

@@ -9,17 +9,30 @@
  */
 
 #include "spellsuggestionstarget.h"
-#include "ispellcheckable.h"
-#include "spellsuggestionsitem.h"
-#include "ispellcheckservice.h"
-#include <Common/logging.h>
-#include <Helpers/cpphelpers.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Artworks/basicmodelsource.h>
-#include <Services/iartworksupdater.h>
+
+#include <utility>
+
+#include <QStringList>
+#include <QtDebug>
+
 #include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/basicmodelsource.h"
+#include "Artworks/keyword.h"
+#include "Common/logging.h"
+#include "Helpers/cpphelpers.h"
+#include "Services/SpellCheck/ispellcheckservice.h"
+#include "Services/SpellCheck/spellsuggestionsitem.h"
+#include "Services/iartworksupdater.h"
+
+namespace Artworks {
+    class IBasicModelSource;
+}
 
 namespace SpellCheck {
+    class ISpellCheckable;
+
     typedef std::vector<std::shared_ptr<SpellSuggestionsItem> > SuggestionsVector;
 
     void addMisspelledKeywords(ISpellCheckable *item,

@@ -11,9 +11,10 @@
 #ifndef RUNGUARD_H
 #define RUNGUARD_H
 
-#include <QObject>
 #include <QSharedMemory>
+#include <QString>
 #include <QSystemSemaphore>
+#include <QtGlobal>
 
 namespace Helpers {
     class RunGuard

@@ -11,8 +11,8 @@
 #ifndef METADATAIOTASK_H
 #define METADATAIOTASK_H
 
-#include <Artworks/artworkmetadata.h>
-#include <Suggestion/locallibraryquery.h>
+#include "Artworks/artworkmetadata.h"
+#include "Suggestion/locallibraryquery.h"
 
 namespace MetadataIO {
     class MetadataIOTaskBase

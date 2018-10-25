@@ -9,9 +9,12 @@
  */
 
 #include "loghighlighter.h"
+
 #include <QColor>
+#include <QLatin1Literal>
 #include <QtGlobal>
-#include "../QMLExtensions/colorsmodel.h"
+
+#include "QMLExtensions/colorsmodel.h"
 
 namespace Helpers {
     LogHighlighter::LogHighlighter(QMLExtensions::ColorsModel &colorsModel, QTextDocument *document) :

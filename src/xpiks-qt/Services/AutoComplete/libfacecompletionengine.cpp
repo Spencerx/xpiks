@@ -9,14 +9,26 @@
  */
 
 #include "libfacecompletionengine.h"
+
+#include <cstddef>
+#include <string>
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
-#include <string>
+#include <QSet>
+#include <QString>
+#include <QtDebug>
+#include <QtGlobal>
+
 #include <vendors/cpp-libface/include/libfaceapi.hpp>
 #include <vendors/cpp-libface/include/types.hpp>
-#include <Common/logging.h>
-#include <Common/defines.h>
+
+#include "Common/logging.h"
+
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+#include "Common/defines.h"
+#endif
 
 #define FREQUENCY_TABLE_FILENAME "en_wordlist.tsv"
 #define GENERATE_COMPLETIONS_COUNT 8

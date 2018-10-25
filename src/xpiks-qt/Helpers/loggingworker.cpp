@@ -9,9 +9,10 @@
  */
 
 #include "loggingworker.h"
-#include "logger.h"
-#include <iostream>
+
 #include <QThread>
+
+#include "Helpers/logger.h"
 
 namespace Helpers {
     LoggingWorker::LoggingWorker(QObject *parent) :

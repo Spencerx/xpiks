@@ -9,16 +9,25 @@
  */
 
 #include "warningsservice.h"
-#include <QVector>
-#include <QThread>
-#include <Common/logging.h>
-#include <Common/flags.h>
-#include "warningscheckingworker.h"
-#include "warningsitem.h"
-#include <Artworks/artworkssnapshot.h>
-#include <Artworks/artworkmetadata.h>
 
-namespace Warnings {    
+#include <cstddef>
+#include <vector>
+
+#include <QChar>
+#include <QStringList>
+#include <QThread>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Services/Warnings/warningscheckingworker.h"
+#include "Services/Warnings/warningsitem.h"
+
+namespace Warnings {
+    class IWarningsItem;
+
     QString warningsFlagToString(Common::WarningsCheckFlags flags) {
 #ifdef QT_DEBUG
         QStringList items;
@@ -58,7 +67,7 @@ namespace Warnings {
 
     WarningsService::WarningsService(WarningsSettingsModel &warningsSettingsModel, QObject *parent):
         QObject(parent),
-        m_WarningsWorker(NULL),
+        m_WarningsWorker(nullptr),
         m_WarningsSettingsModel(warningsSettingsModel),
         m_IsStopped(false)
     { }
@@ -100,24 +109,24 @@ namespace Warnings {
     }
 
     void WarningsService::stopService() {
-        if (m_WarningsWorker != NULL) {
+        if (m_WarningsWorker != nullptr) {
             LOG_INFO << "Stopping worker";
             m_WarningsWorker->stopWorking();
         } else {
-            LOG_WARNING << "Warnings Worker was NULL";
+            LOG_WARNING << "Warnings Worker was nullptr";
         }
 
         m_IsStopped = true;
     }
 
     bool WarningsService::isBusy() const {
-        bool isBusy = (m_WarningsWorker != NULL) && (m_WarningsWorker->hasPendingJobs());
+        bool isBusy = (m_WarningsWorker != nullptr) && (m_WarningsWorker->hasPendingJobs());
 
         return isBusy;
     }
 
     void WarningsService::submitItem(std::shared_ptr<Artworks::ArtworkMetadata> const &item) {
-        if (m_WarningsWorker == NULL) { return; }
+        if (m_WarningsWorker == nullptr) { return; }
         if (m_IsStopped) { return; }
 
         LOG_INFO << "Submitting one item";
@@ -128,7 +137,7 @@ namespace Warnings {
 
     void WarningsService::submitItem(std::shared_ptr<Artworks::ArtworkMetadata> const &item,
                                      Common::WarningsCheckFlags flags) {
-        if (m_WarningsWorker == NULL) { return; }
+        if (m_WarningsWorker == nullptr) { return; }
         if (m_IsStopped) { return; }
 
         LOG_INFO << "flags:" << (int)flags << warningsFlagToString(flags);
@@ -138,7 +147,7 @@ namespace Warnings {
     }
 
     void WarningsService::submitItems(const Artworks::ArtworksSnapshot &items) {
-        if (m_WarningsWorker == NULL) { return; }
+        if (m_WarningsWorker == nullptr) { return; }
         if (m_IsStopped) { return; }
 
         const size_t size = items.size();
@@ -158,7 +167,7 @@ namespace Warnings {
     void WarningsService::workerDestoyed(QObject *object) {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
-        m_WarningsWorker = NULL;
+        m_WarningsWorker = nullptr;
     }
 
     void WarningsService::workerStopped() {

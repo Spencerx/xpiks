@@ -11,9 +11,15 @@
 #ifndef EXPANDPRESETTEMPLATE_H
 #define EXPANDPRESETTEMPLATE_H
 
-#include <Commands/Base/icommandtemplate.h>
-#include <KeywordsPresets/ipresetsmanager.h>
-#include <UndoRedo/artworkmetadatabackup.h>
+#include <vector>
+
+#include "Commands/Base/icommandtemplate.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "UndoRedo/artworkmetadatabackup.h"
+
+namespace KeywordsPresets {
+    class IPresetsManager;
+}
 
 namespace Artworks {
     class ArtworksSnapshot;
@@ -53,7 +59,7 @@ namespace Commands {
         virtual void execute(Artworks::ArtworksSnapshot const &snapshot) override;
 
     private:
-        int m_CompletionID;
+        int m_CompletionID;  // this value is unused - it should be removed?
     };
 }
 

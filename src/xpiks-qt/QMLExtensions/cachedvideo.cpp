@@ -9,7 +9,10 @@
  */
 
 #include "cachedvideo.h"
-#include "../Common/version.h"
+
+#include <QDataStream>
+
+#include "Common/version.h"
 
 namespace QMLExtensions {
     CachedVideo::CachedVideo():

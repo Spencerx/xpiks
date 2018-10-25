@@ -9,20 +9,30 @@
  */
 
 #include "artworkproxymodel.h"
-#include <QQmlEngine>
+
+#include <QFileInfo>
 #include <QImageReader>
-#include <QSyntaxHighlighter>
-#include <Commands/Base/icommandmanager.h>
-#include <Common/defines.h>
-#include <Services/Warnings/warningsservice.h>
-#include <Artworks/imageartwork.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Artworks/videoartwork.h>
-#include <Helpers/filehelpers.h>
-#include <QMLExtensions/videocachingservice.h>
-#include <Services/iartworksupdater.h>
-#include <Models/Editing/currenteditableproxyartwork.h>
-#include <Commands/Base/compositecommandtemplate.h>
+#include <QLatin1String>
+#include <QQmlEngine>
+#include <QVector>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/imageartwork.h"
+#include "Artworks/videoartwork.h"
+#include "Common/defines.h"
+#include "Common/logging.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "Helpers/filehelpers.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Editing/artworkproxybase.h"
+#include "Models/Editing/currenteditableproxyartwork.h"
+#include "Models/keyvaluelist.h"
+#include "Services/iartworksupdater.h"
 
 namespace Models {
     ArtworkProxyModel::ArtworkProxyModel(Commands::ICommandManager &commandManager,

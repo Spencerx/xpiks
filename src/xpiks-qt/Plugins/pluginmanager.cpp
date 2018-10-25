@@ -9,21 +9,45 @@
  */
 
 #include "pluginmanager.h"
-#include <QPluginLoader>
-#include <QApplication>
-#include <QDir>
-#include <QQmlEngine>
-#include <Common/defines.h>
+
+#include <cstddef>
+
 #include <Common/logging.h>
-#include "xpiksplugininterface.h"
-#include "../Commands/Base/icommandmanager.h"
-#include "../UndoRedo/undoredomanager.h"
-#include "pluginwrapper.h"
-#include "../Common/defines.h"
-#include "../Helpers/constants.h"
-#include "../Helpers/filehelpers.h"
-#include <Microstocks/microstockapiclients.h>
-#include <Models/Editing/icurrenteditable.h>
+#include <QAbstractItemModel>
+#include <QByteArray>
+#include <QChar>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QPluginLoader>
+#include <QQmlEngine>
+#include <QStringList>
+#include <QUrl>
+#include <QVector>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/flags.h"
+#include "Common/isystemenvironment.h"
+#include "Helpers/constants.h"
+#include "Helpers/filehelpers.h"
+#include "Plugins/pluginactionsmodel.h"
+#include "Plugins/pluginwrapper.h"
+#include "Plugins/sandboxeddependencies.h"
+#include "Plugins/uiprovider.h"
+#include "Plugins/xpiksplugininterface.h"
+
+namespace Microstocks {
+    class IMicrostockAPIClients;
+}
+
+namespace Models {
+    class UIManager;
+}
+
+namespace Storage {
+    class DatabaseManager;
+}
 
 namespace Plugins {
     PluginManager::PluginManager(Common::ISystemEnvironment &environment,

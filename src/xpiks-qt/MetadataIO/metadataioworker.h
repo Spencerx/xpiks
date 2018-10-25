@@ -11,15 +11,18 @@
 #ifndef METADATAIOWORKER_H
 #define METADATAIOWORKER_H
 
-#include <QObject>
-#include <QSet>
-#include <Common/itemprocessingworker.h>
-#include <Common/readerwriterqueue.h>
-#include "metadataiotask.h"
-#include "metadatacache.h"
+#include <memory>
 
-namespace Helpers {
-    class DatabaseManager;
+#include <QObject>
+#include <QString>
+
+#include "Common/itemprocessingworker.h"
+#include "Common/readerwriterqueue.h"
+#include "MetadataIO/cachedartwork.h"
+#include "MetadataIO/metadatacache.h"
+
+namespace Artworks {
+    class ArtworkMetadata;
 }
 
 namespace Services {
@@ -31,6 +34,10 @@ namespace Storage {
 }
 
 namespace MetadataIO {
+    class MetadataIOTaskBase;
+    class MetadataReadWriteTask;
+    class MetadataSearchTask;
+
     struct StorageReadRequest {
         CachedArtwork m_CachedArtwork;
         std::shared_ptr<Artworks::ArtworkMetadata> m_Artwork;

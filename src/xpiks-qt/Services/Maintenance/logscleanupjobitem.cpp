@@ -8,11 +8,21 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <QDirIterator>
-#include <QDateTime>
-#include <Helpers/logger.h>
-#include <Common/logging.h>
 #include "logscleanupjobitem.h"
+
+#include <algorithm>
+
+#include <QDateTime>
+#include <QDir>
+#include <QDirIterator>
+#include <QFile>
+#include <QFileInfo>
+#include <QStringList>
+#include <QtDebug>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Helpers/logger.h"
 
 namespace Maintenance {
     bool operator <(const FileInfoHolder &arg1, const FileInfoHolder &arg2) {

@@ -11,12 +11,18 @@
 #ifndef DIRECTORIESCOLLECTION_H
 #define DIRECTORIESCOLLECTION_H
 
-#include <memory>
 #include <initializer_list>
+#include <memory>
+#include <vector>
+
 #include <QList>
-#include <QUrl>
-#include "ifilescollection.h"
-#include "filescollection.h"
+#include <QStringList>
+
+#include "Filesystem/filescollection.h"
+#include "Filesystem/ifilescollection.h"
+
+class QString;
+class QUrl;
 
 namespace Filesystem {
     class DirectoriesCollection: public IFilesCollection

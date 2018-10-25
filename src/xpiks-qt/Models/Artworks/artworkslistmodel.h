@@ -11,35 +11,55 @@
 #ifndef ARTWORKSLISTMODEL_H
 #define ARTWORKSLISTMODEL_H
 
-#include <QAbstractListModel>
-#include <functional>
+#include <cstddef>
 #include <deque>
+#include <functional>
+#include <memory>
+#include <utility>
 #include <vector>
-#include "artworkslistoperations.h"
-#include <Common/messages.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Models/Editing/icurrenteditable.h>
-#include <Filesystem/ifilescollection.h>
-#include <Helpers/indicesranges.h>
-#include <Commands/Base/icommandtemplate.h>
 
-class QQuickTextDocument;
+#include <QAbstractListModel>
+#include <QHash>
+#include <QObject>
+#include <QSet>
+#include <QString>
+#include <QStringList>
+#include <QVariant>
+#include <QVector>
+#include <Qt>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/flags.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "Helpers/indicesranges.h"
+#include "artworkslistoperations.h"
+
+class QByteArray;
+class QModelIndex;
+
+namespace Artworks {
+    class BasicMetadataModel;
+    class IBasicModelSource;
+}
+
+namespace AutoComplete {
+    class ICompletionSource;
+}
 
 namespace Commands {
     class ICommand;
 }
 
+namespace Filesystem {
+    class IFilesCollection;
+    struct ArtworkFile;
+}
+
 namespace KeywordsPresets {
     class IPresetsManager;
-}
-
-namespace Artworks {
-    class BasicMetadataModel;
-}
-
-namespace AutoComplete {
-    class ICompletionSource;
 }
 
 namespace Services {
@@ -48,7 +68,7 @@ namespace Services {
 
 namespace Models {
     class ArtworksRepository;
-    class ICurrentEidtable;
+    class ICurrentEditable;
 
     using ArtworkSpellCheckMessage = Common::NamedType<std::shared_ptr<Artworks::ArtworkMetadata>, Common::MessageType::EditingPaused>;
     using ArtworksListSpellCheckMessage = Common::NamedType<std::vector<std::shared_ptr<Artworks::IBasicModelSource>>, Common::MessageType::SpellCheck>;

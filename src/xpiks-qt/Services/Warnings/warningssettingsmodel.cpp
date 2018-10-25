@@ -8,10 +8,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 #include "warningssettingsmodel.h"
-#include <Connectivity/apimanager.h>
-#include <QStandardPaths>
-#include <QDir>
-#include <Common/logging.h>
+
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QJsonValueRef>
+#include <QLatin1String>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Connectivity/apimanager.h"
+#include "Models/Connectivity/abstractconfigupdatermodel.h"
 
 #define OVERWRITE_WARNINGS_CONFIG false
 #define LOCAL_WARNINGS_SETTINGS_FILE QLatin1String("warnings_settings.json")

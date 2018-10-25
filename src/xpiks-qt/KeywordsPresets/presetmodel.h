@@ -12,10 +12,11 @@
 #define PRESETMODEL_H
 
 #include <QString>
-#include <Artworks/basickeywordsmodel.h>
-#include <Artworks/ibasicmodelsource.h>
-#include <Common/flags.h>
-#include "groupmodel.h"
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/ibasicmodelsource.h"
+#include "Common/flags.h"
+#include "KeywordsPresets/groupmodel.h"
 
 namespace KeywordsPresets {
     typedef unsigned int ID_t;

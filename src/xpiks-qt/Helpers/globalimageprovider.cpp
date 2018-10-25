@@ -9,7 +9,12 @@
  */
 
 #include "globalimageprovider.h"
-#include "../Helpers/stringhelper.h"
+
+#include <QChar>
+#include <QSize>
+#include <Qt>
+
+#include "Helpers/stringhelper.h"
 
 namespace Helpers {
     QImage GlobalImageProvider::requestImage(const QString &url, QSize *size, const QSize &requestedSize) {

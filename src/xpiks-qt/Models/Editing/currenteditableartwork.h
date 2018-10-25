@@ -11,9 +11,24 @@
 #ifndef CURRENTITEMARTWORK_H
 #define CURRENTITEMARTWORK_H
 
-#include "icurrenteditable.h"
-#include <Commands/Base/icommandtemplate.h>
-#include <Artworks/artworkssnapshot.h>
+#include <cstddef>
+#include <memory>
+
+#include <QString>
+#include <QStringList>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Commands/Base/icommandtemplate.h"
+#include "Common/types.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "Models/Editing/icurrenteditable.h"
+
+namespace Commands {
+    class ICommand;
+}
+namespace KeywordsPresets {
+    class IPresetsManager;
+}
 
 namespace Artworks {
     class ArtworkMetadata;

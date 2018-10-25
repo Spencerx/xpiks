@@ -11,19 +11,17 @@
 #ifndef DELETEKEYWORDSCOMMAND_H
 #define DELETEKEYWORDSCOMMAND_H
 
-#include <QStringList>
-#include <QSet>
-#include <QString>
 #include <vector>
-#include <Commands/Base/icommandtemplate.h>
-#include <UndoRedo/artworkmetadatabackup.h>
+
+#include <QSet>
+
+#include "Commands/Base/icommandtemplate.h"
+#include "UndoRedo/artworkmetadatabackup.h"
+
+class QString;
 
 namespace Artworks {
     class ArtworksSnapshot;
-}
-
-namespace Models {
-    class ArtworkMetadata;
 }
 
 namespace Commands {

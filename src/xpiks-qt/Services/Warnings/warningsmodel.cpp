@@ -9,15 +9,28 @@
  */
 
 #include "warningsmodel.h"
+
+#include <memory>
+#include <utility>
+#include <vector>
+
+#include <QAbstractItemModel>
+#include <QByteArray>
+#include <QModelIndex>
 #include <QObject>
+#include <QSize>
 #include <QStringList>
-#include <Artworks/artworkmetadata.h>
-#include <Common/flags.h>
-#include <Artworks/imageartwork.h>
-#include <Artworks/basickeywordsmodel.h>
-#include <Helpers/indicesranges.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include "warningssettingsmodel.h"
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/imageartwork.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/indicesranges.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Services/Warnings/warningssettingsmodel.h"
 
 namespace Warnings {
     void describeWarningFlags(Common::WarningFlags warningsFlags,

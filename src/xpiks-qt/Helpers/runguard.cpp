@@ -9,6 +9,8 @@
  */
 
 #include "runguard.h"
+
+#include <QByteArray>
 #include <QCryptographicHash>
 
 namespace Helpers {

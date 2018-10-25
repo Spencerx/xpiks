@@ -11,8 +11,10 @@
 #ifndef CSVEXPORTPROPERTIES_H
 #define CSVEXPORTPROPERTIES_H
 
-#include <QString>
 #include <vector>
+
+#include <QLatin1String>
+#include <QString>
 
 namespace MetadataIO {
     enum CsvExportPropertyType {

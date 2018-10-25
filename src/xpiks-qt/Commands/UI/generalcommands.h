@@ -11,17 +11,18 @@
 #ifndef GENERALCOMMANDS_H
 #define GENERALCOMMANDS_H
 
-#include <Commands/Base/iuicommandtemplate.h>
-#include <QMLExtensions/uicommandid.h>
-#include "sourcetargetcommand.h"
+#include "Commands/UI/sourcetargetcommand.h"
+#include "QMLExtensions/uicommandid.h"
+
+class QObject;
 
 namespace Models {
-    class SettingsModel;
     class ArtworksListModel;
     class FilteredArtworksListModel;
-    class UploadInfoRepository;
     class LogsModel;
+    class SettingsModel;
     class UIManager;
+    class UploadInfoRepository;
 }
 
 namespace Encryption {

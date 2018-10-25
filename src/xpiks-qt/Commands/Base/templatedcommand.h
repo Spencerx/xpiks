@@ -11,11 +11,12 @@
 #ifndef TEMPLATEDCOMMAND_H
 #define TEMPLATEDCOMMAND_H
 
-#include "icommand.h"
-#include "icommandtemplate.h"
-#include <Artworks/artworkssnapshot.h>
 #include <memory>
 #include <type_traits>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Commands/Base/icommand.h"
+#include "Commands/Base/icommandtemplate.h"
 
 namespace Artworks {
     class ArtworkMetadata;

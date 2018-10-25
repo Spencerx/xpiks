@@ -11,15 +11,13 @@
 #ifndef FINDANDREPLACECOMMAND_H
 #define FINDANDREPLACECOMMAND_H
 
-#include <QString>
-#include <QVector>
-#include <Common/flags.h>
-#include <Commands/Base/icommandtemplate.h>
-#include <UndoRedo/artworkmetadatabackup.h>
+#include <vector>
 
-namespace Models {
-    class PreviewArtworkElement;
-}
+#include <QString>
+
+#include "Commands/Base/icommandtemplate.h"
+#include "Common/flags.h"
+#include "UndoRedo/artworkmetadatabackup.h"
 
 namespace Artworks {
     class ArtworksSnapshot;

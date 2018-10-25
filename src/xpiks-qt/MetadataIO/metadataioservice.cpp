@@ -9,11 +9,21 @@
  */
 
 #include "metadataioservice.h"
+
+#include <vector>
+
 #include <QThread>
-#include <QTimerEvent>
-#include "metadataioworker.h"
-#include "metadataiotask.h"
-#include <Storage/database.h>
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Common/itemprocessingworker.h"
+#include "Common/logging.h"
+#include "MetadataIO/metadataiotask.h"
+#include "MetadataIO/metadataioworker.h"
+
+namespace Suggestion {
+    class LocalLibraryQuery;
+}
 
 #define SAVER_TIMER_TIMEOUT 2000
 #define SAVER_TIMER_MAX_RESTARTS 5

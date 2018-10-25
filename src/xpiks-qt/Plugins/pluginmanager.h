@@ -11,18 +11,28 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
-#include <vector>
 #include <memory>
-#include <QHash>
-#include <QDir>
+#include <vector>
+
 #include <QAbstractListModel>
+#include <QHash>
+#include <QModelIndex>
+#include <QObject>
 #include <QSortFilterProxyModel>
-#include "uiprovider.h"
-#include <Common/isystemenvironment.h>
-#include "pluginenvironment.h"
-#include "plugindatabasemanager.h"
-#include <Storage/idatabasemanager.h>
-#include "sandboxeddependencies.h"
+#include <QString>
+#include <QVariant>
+#include <Qt>
+
+#include "Plugins/sandboxeddependencies.h"
+#include "Plugins/uiprovider.h"
+
+class QByteArray;
+class QModelIndex;
+class QUrl;
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Commands {
     class ICommandManager;
@@ -33,15 +43,20 @@ namespace KeywordsPresets {
 }
 
 namespace Microstocks {
-    class IMicrostockServices;
+    class IMicrostockAPIClients;
 }
 
 namespace Models {
     class ICurrentEditableSource;
+    class UIManager;
 }
 
 namespace Connectivity {
     class RequestsService;
+}
+
+namespace Storage {
+    class DatabaseManager;
 }
 
 namespace Plugins {

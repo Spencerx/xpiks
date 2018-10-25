@@ -11,10 +11,20 @@
 #ifndef WARNINGSMODEL_H
 #define WARNINGSMODEL_H
 
+#include <cstddef>
+
+#include <QHash>
+#include <QObject>
 #include <QSortFilterProxyModel>
+#include <QString>
 #include <QStringList>
+#include <QVariant>
 #include <QVector>
-#include <Models/Artworks/artworkslistmodel.h>
+
+#include "Models/Artworks/artworkslistmodel.h"
+
+class QByteArray;
+class QModelIndex;
 
 namespace Warnings {
     class WarningsSettingsModel;

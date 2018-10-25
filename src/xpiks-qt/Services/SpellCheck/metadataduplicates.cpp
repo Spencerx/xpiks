@@ -9,10 +9,17 @@
  */
 
 #include "metadataduplicates.h"
-#include <Artworks/artworkmetadata.h>
-#include <Common/defines.h>
-#include <Helpers/stringhelper.h>
-#include <Helpers/indicesranges.h>
+
+#include <vector>
+
+#include <QStringList>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/keyword.h"
+#include "Common/defines.h"
+#include "Helpers/stringhelper.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
 
 namespace SpellCheck {
     BasicModelDuplicates::BasicModelDuplicates(Artworks::BasicMetadataModel &basicModel):

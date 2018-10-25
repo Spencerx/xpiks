@@ -11,7 +11,7 @@
 #ifndef ISECRETSSTORAGE_H
 #define ISECRETSSTORAGE_H
 
-#include "secretpair.h"
+#include "Encryption/secretpair.h"
 
 namespace Encryption {
     class ISecretsStorage {

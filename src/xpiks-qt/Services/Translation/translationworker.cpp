@@ -9,10 +9,20 @@
  */
 
 #include "translationworker.h"
-#include <vendors/ssdll/src/ssdll/lookupdictionary.h>
+
 #include <string>
-#include <Common/defines.h>
-#include <Helpers/asynccoordinator.h>
+
+#include <QByteArray>
+#include <QMutexLocker>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include <vendors/ssdll/src/ssdll/lookupdictionary.h>
+
+#include "Common/logging.h"
+#include "Common/lrucache.h"
+#include "Helpers/asynccoordinator.h"
+#include "Services/Translation/translationquery.h"
 
 namespace Translation {
     TranslationWorker::TranslationWorker(Helpers::AsyncCoordinator &initCoordinator, QObject *parent) :

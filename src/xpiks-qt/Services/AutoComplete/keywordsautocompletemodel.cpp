@@ -9,7 +9,17 @@
  */
 
 #include "keywordsautocompletemodel.h"
-#include <Common/logging.h>
+
+#include <cstddef>
+
+#include <QByteArray>
+#include <QMutexLocker>
+#include <QVector>
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Services/AutoComplete/completionitem.h"
+#include "Services/AutoComplete/completionquery.h"
 
 namespace AutoComplete {
     KeywordsCompletionsModel::KeywordsCompletionsModel() {

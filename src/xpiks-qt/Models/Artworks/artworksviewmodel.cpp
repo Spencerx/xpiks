@@ -9,12 +9,24 @@
  */
 
 #include "artworksviewmodel.h"
+
+#include <QAbstractListModel>
+#include <QByteArray>
 #include <QVector>
-#include <Helpers/indiceshelper.h>
-#include <Common/defines.h>
-#include <Artworks/imageartwork.h>
-#include <Artworks/videoartwork.h>
-#include <Helpers/cpphelpers.h>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkelement.h"
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/imageartwork.h"
+#include "Artworks/videoartwork.h"  // IWYU pragma: keep
+#include "Common/abstractlistmodel.h"
+#include "Common/logging.h"
+#include "Helpers/cpphelpers.h"
+#include "Helpers/indicesranges.h"
+
+class QModelIndex;
 
 namespace Models {
     ArtworksViewModel::ArtworksViewModel(QObject *parent):

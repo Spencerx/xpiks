@@ -9,18 +9,25 @@
  */
 
 #include "ziparchiver.h"
-#include <QtConcurrent>
+
+#include <cstddef>
+#include <memory>
+
 #include <QFileInfo>
-#include <QRegExp>
-#include <QDir>
-#include <Common/defines.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include <Helpers/filehelpers.h>
-#include <Helpers/cpphelpers.h>
+#include <QFutureWatcherBase>
+#include <QHash>
+#include <QList>
+#include <QtConcurrentMap>
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/imageartwork.h"
+#include "Common/logging.h"
+#include "Helpers/cpphelpers.h"
 
 #ifndef CORE_TESTS
-#include <Helpers/ziphelper.h>
+#include "Helpers/ziphelper.h"
 #endif
 
 namespace Models {

@@ -9,9 +9,13 @@
  */
 
 #include "proxyindexmiddlware.h"
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include "uicommandid.h"
-#include <Helpers/uihelpers.h>
+
+#include <QVariant>
+
+#include "Helpers/uihelpers.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "QMLExtensions/uiaction.h"
+#include "QMLExtensions/uicommandid.h"
 
 namespace QMLExtensions {
     ProxyIndexMiddlware::ProxyIndexMiddlware(Models::FilteredArtworksListModel &filteredArtworksList):

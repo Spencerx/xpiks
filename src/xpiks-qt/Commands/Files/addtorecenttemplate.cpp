@@ -9,8 +9,11 @@
  */
 
 #include "addtorecenttemplate.h"
-#include <Models/Session/recentfilesmodel.h>
-#include <Common/logging.h>
+
+#include <QtDebug>
+
+#include "Common/logging.h"
+#include "Models/Session/recentfilesmodel.h"
 
 namespace Commands {
     AddToRecentTemplate::AddToRecentTemplate(Models::RecentFilesModel &recentFilesModel):

@@ -9,20 +9,31 @@
  */
 
 #include "filteredartworkslistmodel.h"
-#include <QDir>
-#include "artworkslistmodel.h"
-#include <Common/flags.h>
-#include <Common/defines.h>
-#include <Commands/commandmanager.h>
-#include <Commands/Editing/modifyartworkscommand.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkelement.h>
-#include <Artworks/videoartwork.h>
-#include <Helpers/indiceshelper.h>
-#include <Helpers/filterhelpers.h>
-#include <Models/Editing/previewartworkelement.h>
-#include <Models/settingsmodel.h>
-#include <Artworks/imageartwork.h>
+
+#include <type_traits>
+
+#include <QFileInfo>
+#include <QModelIndex>
+#include <QVector>
+#include <Qt>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/imageartwork.h"
+#include "Artworks/videoartwork.h"  // IWYU pragma: keep
+#include "Commands/Base/icommandmanager.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Helpers/filterhelpers.h"
+#include "Helpers/indicesranges.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Editing/quickbuffermessage.h"
+#include "Models/settingsmodel.h"
+
+class QModelIndex;
 
 namespace Models {    
     FilteredArtworksListModel::FilteredArtworksListModel(ArtworksListModel &artworksListModel,

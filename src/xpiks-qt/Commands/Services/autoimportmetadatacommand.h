@@ -11,8 +11,8 @@
 #ifndef AUTOIMPORTMETADATACOMMAND_H
 #define AUTOIMPORTMETADATACOMMAND_H
 
-#include <Commands/Base/icommand.h>
-#include <Commands/Base/icommandtemplate.h>
+#include "Commands/Base/icommand.h"
+#include "Commands/Base/icommandtemplate.h"
 
 namespace MetadataIO {
     class MetadataIOCoordinator;

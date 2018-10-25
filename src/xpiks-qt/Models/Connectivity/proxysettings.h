@@ -10,9 +10,10 @@
 #ifndef PROXYSETTINGS_H
 #define PROXYSETTINGS_H
 
-#include <QObject>
+#include <QMetaType>
 #include <QString>
-#include <QDataStream>
+
+class QDataStream;
 
 namespace Models {
     class ProxySettings {

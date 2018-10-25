@@ -12,10 +12,14 @@
 #define DBVIDEOCACHEINDEX_H
 
 #include <QString>
-#include <QHash>
-#include "cachedvideo.h"
-#include "../Storage/idatabasemanager.h"
-#include "dbcacheindex.h"
+#include <QVector>
+
+#include "QMLExtensions/cachedvideo.h"
+#include "QMLExtensions/dbcacheindex.h"
+
+namespace Storage {
+    class IDatabaseManager;
+}
 
 namespace QMLExtensions {
     class DbVideoCacheIndex: public DbCacheIndex<CachedVideo>

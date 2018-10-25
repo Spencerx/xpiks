@@ -9,9 +9,18 @@
  */
 
 #include "editartworkstemplate.h"
-#include <Artworks/artworkmetadata.h>
-#include <Common/logging.h>
-#include <Artworks/artworkssnapshot.h>
+
+#include <cstddef>
+
+#include <QLatin1String>
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "UndoRedo/artworkmetadatabackup.h"
 
 namespace Commands {
     QString combinedFlagsToString(Common::ArtworkEditFlags flags) {

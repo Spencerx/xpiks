@@ -11,16 +11,18 @@
 #ifndef ARTWORKSUPDATEHUB_H
 #define ARTWORKSUPDATEHUB_H
 
-#include <QObject>
+#include <cstddef>
+#include <memory>
+#include <vector>
+
 #include <QMutex>
+#include <QObject>
+#include <QString>
 #include <QTimer>
 #include <QVector>
-#include <QSet>
-#include <vector>
-#include <memory>
-#include "artworksupdatehub.h"
-#include "iartworksupdater.h"
-#include <Common/types.h>
+
+#include "Common/types.h"
+#include "Services/iartworksupdater.h"
 
 namespace Artworks {
     class ArtworkMetadata;

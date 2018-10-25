@@ -9,9 +9,10 @@
  */
 
 #include "currenteditableproxyartwork.h"
-#include <Models/Editing/artworkproxybase.h>
-#include <Commands/Base/callbackcommand.h>
-#include <Commands/Base/emptycommand.h>
+
+#include "Commands/Base/callbackcommand.h"
+#include "Commands/Base/emptycommand.h"
+#include "Models/Editing/artworkproxybase.h"
 
 namespace Models {
     CurrentEditableProxyArtwork::CurrentEditableProxyArtwork(Models::ArtworkProxyBase &artworkProxy):

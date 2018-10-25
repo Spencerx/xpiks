@@ -9,12 +9,22 @@
  */
 
 #include "filterhelpers.h"
+
+#include <QChar>
+#include <QCharRef>
+#include <QLatin1Char>
+#include <QLatin1String>
+#include <QList>
 #include <QString>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include <Artworks/basickeywordsmodel.h>
-#include <Common/flags.h>
-#include <Common/defines.h>
+#include <QStringList>
+#include <Qt>
+#include <QtDebug>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/imageartwork.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
 
 namespace Helpers {
     bool fitsSpecialKeywords(const QString &searchTerm, std::shared_ptr<Artworks::ArtworkMetadata> const &artwork) {
@@ -30,9 +40,9 @@ namespace Helpers {
         } else if (searchTerm == QLatin1String("x:selected")) {
             hasMatch = artwork->isSelected();
         } else if (searchTerm == QLatin1String("x:vector")) {
-            hasMatch = image != NULL && image->hasVectorAttached();
+            hasMatch = image != nullptr && image->hasVectorAttached();
         } else if (searchTerm == QLatin1String("x:image")) {
-            hasMatch = image != NULL && !image->hasVectorAttached();
+            hasMatch = image != nullptr && !image->hasVectorAttached();
         }
 
         return hasMatch;

@@ -11,10 +11,12 @@
 #ifndef WARNINGSSERVICE_H
 #define WARNINGSSERVICE_H
 
+#include <memory>
+
 #include <QObject>
-#include <Common/flags.h>
-#include "warningssettingsmodel.h"
-#include <Common/isystemenvironment.h>
+#include <QString>
+
+#include "Common/flags.h"
 
 namespace Artworks {
     class ArtworkMetadata;
@@ -23,6 +25,7 @@ namespace Artworks {
 
 namespace Warnings {
     class WarningsCheckingWorker;
+    class WarningsSettingsModel;
 
     class WarningsService: public QObject
     {

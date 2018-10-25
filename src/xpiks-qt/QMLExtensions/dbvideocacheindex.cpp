@@ -9,9 +9,19 @@
  */
 
 #include "dbvideocacheindex.h"
-#include "../Storage/database.h"
-#include "../Helpers/constants.h"
-#include "../Storage/memorytable.h"
+
+#include <memory>
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "QMLExtensions/cachedvideo.h"
+#include "QMLExtensions/dbcacheindex.h"
+#include "Storage/idatabase.h"
+#include "Storage/idatabasemanager.h"
+#include "Storage/memorytable.h"
 
 namespace QMLExtensions {
     DbVideoCacheIndex::DbVideoCacheIndex(Storage::IDatabaseManager &dbManager):

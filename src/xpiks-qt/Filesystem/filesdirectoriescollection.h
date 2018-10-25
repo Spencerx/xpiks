@@ -11,14 +11,15 @@
 #ifndef FILESDIRECTORIESCOLLECTION_H
 #define FILESDIRECTORIESCOLLECTION_H
 
-#include "ifilescollection.h"
+#include <vector>
+
 #include <QList>
-#include <QUrl>
+
+#include "Filesystem/ifilescollection.h"
+
+class QUrl;
 
 namespace Filesystem {
-    class FilesCollection;
-    class DirectoriesCollection;
-
     class FilesDirectoriesCollection: public IFilesCollection
     {
     public:

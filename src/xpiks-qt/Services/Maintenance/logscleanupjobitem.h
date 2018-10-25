@@ -11,17 +11,21 @@
 #ifndef LOGSCLEANUPJOBITEM_H
 #define LOGSCLEANUPJOBITEM_H
 
+#include <QDateTime>
 #include <QString>
 #include <QVector>
-#include <QDateTime>
-#include "imaintenanceitem.h"
-#include <Common/defines.h>
-#include <Common/isystemenvironment.h>
+#include <QtGlobal>
+
+#include "Services/Maintenance/imaintenanceitem.h"
 
 #define MAX_LOGS_SIZE_MB 10
 #define MAX_LOGS_SIZE_BYTES (MAX_LOGS_SIZE_MB * 1024 * 1024)
 #define MAX_LOGS_AGE_DAYS 60
 #define MAX_LOGS_NUMBER 100
+
+namespace Common {
+    class ISystemEnvironment;
+}
 
 namespace Maintenance {
     struct FileInfoHolder {

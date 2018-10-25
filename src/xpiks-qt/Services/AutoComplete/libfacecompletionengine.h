@@ -11,7 +11,10 @@
 #ifndef LIBFACECOMPLETIONENGINE_H
 #define LIBFACECOMPLETIONENGINE_H
 
-#include "completionenginebase.h"
+#include <vector>
+
+#include "Services/AutoComplete/completionenginebase.h"
+#include "Services/AutoComplete/completionquery.h"
 
 class Souffleur;
 

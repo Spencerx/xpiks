@@ -12,9 +12,10 @@
 #define VIDEOCACHEREQUEST_H
 
 #include <QString>
-#include "../Artworks/videoartwork.h"
-#include "../Common/flags.h"
-#include "../Common/types.h"
+
+#include "Artworks/videoartwork.h"
+#include "Common/flags.h"
+#include "Common/types.h"
 
 namespace libthmbnlr {
     struct VideoFileMetadata;

@@ -9,9 +9,13 @@
  */
 
 #include "savesessioncommand.h"
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Services/Maintenance/maintenanceservice.h>
-#include <Models/Session/sessionmanager.h>
+
+#include <QtDebug>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Services/Maintenance/maintenanceservice.h"
 
 namespace Commands {
     SaveSessionCommand::SaveSessionCommand(Maintenance::MaintenanceService &maintenanceService,

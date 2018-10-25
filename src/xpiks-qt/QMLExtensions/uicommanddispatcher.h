@@ -11,21 +11,27 @@
 #ifndef UICOMMANDDISPATCHER_H
 #define UICOMMANDDISPATCHER_H
 
-#include <unordered_map>
-#include <QObject>
-#include <QMutex>
+#include <initializer_list>
 #include <memory>
-#include "uiaction.h"
-#include "iuicommandmiddleware.h"
-#include <Commands/Base/iuicommandtemplate.h>
+#include <unordered_map>
+#include <vector>
+
+#include <QMutex>
+#include <QObject>
+#include <QString>
+#include <QVariant>
 
 namespace Commands {
     class ICommandManager;
+    class IUICommandTemplate;
 }
 
 class QJSValue;
 
 namespace QMLExtensions {
+    class IUICommandMiddlware;
+    struct UIAction;
+
     class UICommandDispatcher: public QObject
     {
         Q_OBJECT

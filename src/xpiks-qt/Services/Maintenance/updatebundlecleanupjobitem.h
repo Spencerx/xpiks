@@ -11,8 +11,9 @@
 #ifndef UPDATEBUNDLECLEANUPJOBITEM_H
 #define UPDATEBUNDLECLEANUPJOBITEM_H
 
-#include "imaintenanceitem.h"
 #include <QString>
+
+#include "Services/Maintenance/imaintenanceitem.h"
 
 namespace Maintenance {
     class UpdateBundleCleanupJobItem: public IMaintenanceItem

@@ -9,13 +9,18 @@
  */
 
 #include "simplecurlrequest.h"
-#include <curl/curl.h>
+
 #include <string>
 #include <cstring>
 #include <cstdlib>
-#include <Models/Connectivity/proxysettings.h>
-#include <Common/logging.h>
-#include "ftphelpers.h"
+
+#include <QtDebug>
+#include <QtGlobal>
+
+#include <curl/curl.h>
+
+#include "Common/logging.h"
+#include "Connectivity/ftphelpers.h"
 
 struct MemoryStruct {
     char *m_Memory;

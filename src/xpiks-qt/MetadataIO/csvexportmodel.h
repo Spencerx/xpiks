@@ -11,14 +11,31 @@
 #ifndef CSVEXPORTMODEL_H
 #define CSVEXPORTMODEL_H
 
-#include <QAbstractListModel>
-#include <vector>
 #include <memory>
-#include "csvexportproperties.h"
-#include "csvexportplansmodel.h"
-#include <Common/delayedactionentity.h>
-#include <Common/isystemenvironment.h>
-#include <Artworks/artworkssnapshot.h>
+#include <vector>
+
+#include <QAbstractListModel>
+#include <QHash>
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QVariant>
+#include <Qt>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/delayedactionentity.h"
+#include "MetadataIO/csvexportplansmodel.h"
+
+class QByteArray;
+class QModelIndex;
+class QUrl;
+
+namespace Common {
+    class ISystemEnvironment;
+}
+namespace Connectivity {
+    class IRequestsService;
+}
 
 class QTimerEvent;
 
@@ -26,15 +43,9 @@ namespace Helpers {
     class AsyncCoordinator;
 }
 
-namespace Artworks {
-    class ArtworksSnapshot;
-}
-
-namespace Connectivity {
-    class RequestsService;
-}
-
 namespace MetadataIO {
+    struct CsvExportPlan;
+
     class CsvExportColumnsModel: public QAbstractListModel
     {
         Q_OBJECT

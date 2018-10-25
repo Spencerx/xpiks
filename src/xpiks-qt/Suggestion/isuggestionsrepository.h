@@ -11,9 +11,10 @@
 #ifndef ISUGGESTIONSREPOSITORY_H
 #define ISUGGESTIONSREPOSITORY_H
 
-#include <vector>
 #include <memory>
-#include "suggestionartwork.h"
+#include <vector>
+
+#include "Suggestion/suggestionartwork.h"
 
 namespace Suggestion {
     class ISuggestionsRepository {
