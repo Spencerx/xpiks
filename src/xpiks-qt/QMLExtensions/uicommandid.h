@@ -12,7 +12,7 @@
 #define UICOMMAND_H
 
 #include <QObject>
-#include <QQmlEngine>
+#include <QString>
 
 namespace QMLExtensions {
     class UICommandID : public QObject

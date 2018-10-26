@@ -14,9 +14,9 @@
 #include <memory>
 #include <vector>
 
-#include "Suggestion/suggestionartwork.h"
-
 namespace Suggestion {
+    class SuggestionArtwork;
+
     class ISuggestionsRepository {
     public:
         virtual ~ISuggestionsRepository() {}

@@ -11,8 +11,15 @@
 #ifndef METADATAIOTASK_H
 #define METADATAIOTASK_H
 
-#include "Artworks/artworkmetadata.h"
-#include "Suggestion/locallibraryquery.h"
+#include <memory>
+
+namespace Artworks {
+    class ArtworkMetadata;
+}
+
+namespace Suggestion {
+    class LocalLibraryQuery;
+}
 
 namespace MetadataIO {
     class MetadataIOTaskBase

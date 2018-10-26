@@ -13,19 +13,15 @@
 
 #include <map>
 #include <memory>
+#include <utility>
+
+#include <QtGlobal>
 
 #include "Microstocks/imicrostockapiclients.h"
 #include "Microstocks/microstockenums.h"
 #include "Microstocks/imicrostockapiclient.h"
 
-namespace Connectivity {
-    class IConnectivityResponse;
-}
-
 namespace Microstocks {
-//    class IMicrostockAPIClient;
-    class SearchQuery;
-
     class MicrostockAPIClients: public IMicrostockAPIClients
     {
     public:

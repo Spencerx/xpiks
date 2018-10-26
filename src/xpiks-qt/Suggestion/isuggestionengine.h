@@ -13,8 +13,11 @@
 
 #include <QString>
 
-#include "Microstocks/searchquery.h"
 #include "Suggestion/isuggestionsrepository.h"
+
+namespace Microstocks {
+    class SearchQuery;
+}
 
 namespace Suggestion {
     class ISuggestionEngine: public ISuggestionsRepository {

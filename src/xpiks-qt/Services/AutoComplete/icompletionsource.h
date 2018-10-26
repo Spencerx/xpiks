@@ -13,9 +13,9 @@
 
 #include <memory>
 
-#include "Services/AutoComplete/completionitem.h"
-
 namespace AutoComplete {
+    class CompletionItem;
+
     class ICompletionSource {
     public:
         virtual ~ICompletionSource() { }

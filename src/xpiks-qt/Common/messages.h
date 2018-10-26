@@ -12,6 +12,7 @@
 #define CHANGESLISTENER_H
 
 #include <functional>
+#include <initializer_list>
 #include <vector>
 
 namespace Common {

@@ -13,6 +13,10 @@
 
 #include <memory>
 
+#include <QString>
+#include <QVariant>
+#include <QtGlobal>
+
 #include "Commands/Base/icommand.h"
 #include "Commands/Base/iuicommandtemplate.h"
 

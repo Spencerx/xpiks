@@ -11,8 +11,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include <algorithm>
 #include <cstdint>
+#include <utility>
 
 namespace Common {
     typedef uint32_t flag_t;

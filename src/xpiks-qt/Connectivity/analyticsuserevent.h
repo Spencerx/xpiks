@@ -12,7 +12,9 @@
 #define ANALYTICSUSEREVENT
 
 #include <QDateTime>
+#include <QLatin1String>
 #include <QString>
+#include <QTime>
 
 namespace Connectivity {
     enum struct UserAction {

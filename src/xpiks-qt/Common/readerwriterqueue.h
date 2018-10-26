@@ -11,9 +11,11 @@
 #ifndef READERWRITERQUEUE_H
 #define READERWRITERQUEUE_H
 
+#include <cstddef>
 #include <memory>
 #include <vector>
 
+#include <QtGlobal>
 #include <QMutex>
 #include <QMutexLocker>
 

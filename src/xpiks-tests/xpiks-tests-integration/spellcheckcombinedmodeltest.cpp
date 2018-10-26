@@ -4,6 +4,7 @@
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
+#include "Services/SpellCheck/spellsuggestionsitem.h"
 
 QString SpellCheckCombinedModelTest::testName() {
     return QLatin1String("SpellCheckCombinedModelTest");

@@ -11,7 +11,7 @@
 #ifndef WORDANALYSISRESULT_H
 #define WORDANALYSISRESULT_H
 
-#include <QStringList>
+#include <QString>
 
 namespace Common {
     struct WordAnalysisResult {

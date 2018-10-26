@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QObject>
+#include <QString>
 
 #include "Common/defines.h"
 

@@ -11,6 +11,7 @@
 #ifndef APIMANAGER_H
 #define APIMANAGER_H
 
+#include <QLatin1String>
 #include <QString>
 
 #include "Common/version.h"

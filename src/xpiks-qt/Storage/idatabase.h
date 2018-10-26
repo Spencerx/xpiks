@@ -15,9 +15,11 @@
 #include <memory>
 
 #include <QByteArray>
-#include <QPair>
 #include <QString>
-#include <QVector>
+#include <QStringList>
+
+template <class T1, class T2> struct QPair;
+template <typename T> class QVector;
 
 namespace Storage {
     class IDbTable {

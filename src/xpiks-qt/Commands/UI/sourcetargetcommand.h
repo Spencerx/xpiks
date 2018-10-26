@@ -13,10 +13,10 @@
 
 class QObject;
 
-#include "Commands/Base/iuicommandtemplate.h"
-#include "Services/SpellCheck/ispellcheckservice.h"
-#include "Services/SpellCheck/spellchecksuggestionmodel.h"
-#include "Services/iartworksupdater.h"
+#include "Commands/Base/iuicommandtemplate.h"  // IWYU pragma: keep
+#include "Services/SpellCheck/ispellcheckservice.h"  // IWYU pragma: keep
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"  // IWYU pragma: keep
+#include "Services/iartworksupdater.h"  // IWYU pragma: keep
 
 namespace Commands {
     namespace UI {

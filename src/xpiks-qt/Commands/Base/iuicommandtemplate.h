@@ -11,8 +11,7 @@
 #ifndef IUICOMMANDTEMPLATE_H
 #define IUICOMMANDTEMPLATE_H
 
-#include <vector>
-
+#include <QString>
 #include <QVariant>
 
 namespace Commands {

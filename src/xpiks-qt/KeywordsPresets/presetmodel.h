@@ -11,11 +11,14 @@
 #ifndef PRESETMODEL_H
 #define PRESETMODEL_H
 
+#include <QObject>
 #include <QString>
+#include <QStringList>
 
 #include "Artworks/basickeywordsmodel.h"
 #include "Artworks/ibasicmodelsource.h"
 #include "Common/flags.h"
+#include "Common/types.h"
 #include "KeywordsPresets/groupmodel.h"
 
 namespace KeywordsPresets {

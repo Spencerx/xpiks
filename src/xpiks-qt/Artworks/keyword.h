@@ -11,6 +11,8 @@
 #ifndef KEYWORD_H
 #define KEYWORD_H
 
+#include <cstddef>
+
 #include <QString>
 
 namespace Artworks {

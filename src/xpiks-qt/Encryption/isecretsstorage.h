@@ -11,9 +11,9 @@
 #ifndef ISECRETSSTORAGE_H
 #define ISECRETSSTORAGE_H
 
-#include "Encryption/secretpair.h"
-
 namespace Encryption {
+    struct SecretPair;
+
     class ISecretsStorage {
     public:
         virtual ~ISecretsStorage() { }

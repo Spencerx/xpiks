@@ -18,7 +18,7 @@
 #include <QtDebug>
 #include <QtGlobal>
 
-#include "Common/defines.h"
+#include "Common/defines.h"  // IWYU pragma: keep
 #include "Common/logging.h"
 #include "Helpers/constants.h"
 #include "Helpers/filehelpers.h"

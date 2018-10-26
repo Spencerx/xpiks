@@ -11,6 +11,7 @@
 #ifndef IARTWORKSUPDATER_H
 #define IARTWORKSUPDATER_H
 
+#include <cstddef>
 #include <memory>
 
 #include <QVector>

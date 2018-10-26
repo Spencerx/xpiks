@@ -11,13 +11,22 @@
 #ifndef ISPELLCHECKABLE_H
 #define ISPELLCHECKABLE_H
 
+#include <cstddef>
 #include <memory>
 #include <vector>
 
-#include "Artworks/keyword.h"
-#include "Services/SpellCheck/spellsuggestionsitem.h"
+#include <QString>
+#include <QStringList>
+
+#include "Common/flags.h"
+
+namespace Artworks {
+    struct KeywordItem;
+}
 
 namespace SpellCheck {
+    class KeywordSpellSuggestions;
+
     class ISpellCheckable {
     public:
         virtual ~ISpellCheckable() {}

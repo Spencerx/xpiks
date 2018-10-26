@@ -11,7 +11,7 @@
 #ifndef IPLUGINACTION
 #define IPLUGINACTION
 
-#include <QString>
+class QString;
 
 namespace Plugins {
     class IPluginAction {

@@ -11,7 +11,7 @@
 #ifndef IWARNINGSSETTINGS_H
 #define IWARNINGSSETTINGS_H
 
-#include <QString>
+class QString;
 
 namespace Warnings {
     class IWarningsSettings {

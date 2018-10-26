@@ -11,15 +11,13 @@
 #ifndef IMETADATADUPLICATES_H
 #define IMETADATADUPLICATES_H
 
-#include <QStringList>
+#include <QString>
 
 namespace Artworks {
     class BasicMetadataModel;
 }
 
 namespace SpellCheck {
-    class SpellCheckInfo;
-
     class IMetadataDuplicates {
     public:
         virtual ~IMetadataDuplicates() { }

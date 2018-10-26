@@ -13,6 +13,7 @@
 
 #include <memory>
 
+#include <QString>
 #include <QVariant>
 
 #include "Commands/Base/icommand.h"

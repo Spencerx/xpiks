@@ -13,7 +13,9 @@
 
 #include <memory>
 
-#include "Commands/Base/icommand.h"
+namespace Commands {
+    class ICommand;
+}
 
 namespace UndoRedo {
     class IUndoRedoManager {

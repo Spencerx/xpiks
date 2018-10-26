@@ -13,8 +13,6 @@
 #include <cstddef>
 #include <vector>
 
-#include <QChar>
-#include <QStringList>
 #include <QThread>
 #include <QtDebug>
 #include <QtGlobal>

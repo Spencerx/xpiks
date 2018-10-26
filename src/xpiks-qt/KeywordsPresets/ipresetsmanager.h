@@ -11,9 +11,11 @@
 #ifndef IPRESETSMANAGER_H
 #define IPRESETSMANAGER_H
 
-#include <QPair>
 #include <QString>
-#include <QVector>
+#include <QStringList>
+
+template <class T1, class T2> struct QPair;
+template <class T> class QVector;
 
 #include "KeywordsPresets/presetmodel.h"
 

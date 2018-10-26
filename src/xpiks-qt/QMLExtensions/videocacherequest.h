@@ -11,6 +11,9 @@
 #ifndef VIDEOCACHEREQUEST_H
 #define VIDEOCACHEREQUEST_H
 
+#include <cstddef>
+#include <memory>
+
 #include <QString>
 
 #include "Artworks/videoartwork.h"

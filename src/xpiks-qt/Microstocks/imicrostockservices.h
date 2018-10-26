@@ -13,9 +13,11 @@
 
 #include <memory>
 
-#include "Microstocks/imicrostockservice.h"
+#include "Microstocks/microstockenums.h"
 
 namespace Microstocks {
+    class IMicrostockService;
+
     class IMicrostockServices {
     public:
         virtual ~IMicrostockServices() {}

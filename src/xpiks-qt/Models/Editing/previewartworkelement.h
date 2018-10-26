@@ -11,7 +11,15 @@
 #ifndef PREVIEWMETADATAELEMENT_H
 #define PREVIEWMETADATAELEMENT_H
 
+#include <memory>
+
 #include "Artworks/artworkelement.h"
+#include "Common/flags.h"
+#include "Common/types.h"
+
+namespace Artworks {
+    class ArtworkMetadata;
+}
 
 namespace Models {
     class PreviewArtworkElement: public Artworks::ArtworkElement

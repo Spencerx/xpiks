@@ -14,6 +14,7 @@
 #include <QString>
 
 #include "Common/flags.h"
+#include "Common/types.h"
 
 namespace AutoComplete {
     class CompletionItem {

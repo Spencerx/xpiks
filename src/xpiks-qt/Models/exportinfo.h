@@ -11,9 +11,6 @@
 #ifndef EXPORTINFO_H
 #define EXPORTINFO_H
 
-#include <QSize>
-#include <QString>
-
 namespace Models {
     class ExportInfo {
     public:

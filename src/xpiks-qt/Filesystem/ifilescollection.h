@@ -15,8 +15,6 @@
 
 #include <QString>
 
-#include "Common/flags.h"
-
 namespace Filesystem {
     enum struct ArtworkFileType: uint8_t {
         Image,

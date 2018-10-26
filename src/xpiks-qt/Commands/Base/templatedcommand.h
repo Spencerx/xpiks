@@ -14,15 +14,13 @@
 #include <memory>
 #include <type_traits>
 
-#include "Artworks/artworkssnapshot.h"
-#include "Commands/Base/icommand.h"
-#include "Commands/Base/icommandtemplate.h"
+#include <QtGlobal>
 
-namespace Artworks {
-    class ArtworkMetadata;
-}
+#include "Commands/Base/icommand.h"
 
 namespace Commands {
+    template <typename T> class ICommandTemplate;
+
     template<typename T>
     class TemplatedCommand: public ICommand {
         static_assert(std::is_move_constructible<T>::value, "T should have move constructor");

@@ -11,11 +11,16 @@
 #ifndef ABSTRACTLISTMODEL_H
 #define ABSTRACTLISTMODEL_H
 
+#include <memory>
+#include <utility>
+#include <vector>
+
 #include <QAbstractListModel>
-#include <QList>
+#include <QModelIndex>
+#include <QObject>
+#include <QString>
 #include <QVector>
 
-#include "Common/logging.h"
 #include "Helpers/indicesranges.h"
 
 #define RANGES_LENGTH_FOR_RESET 20
@@ -24,7 +29,7 @@ namespace Common {
     class AbstractListModel : public QAbstractListModel {
         Q_OBJECT
     public:
-        AbstractListModel(QObject *parent = 0) : QAbstractListModel(parent) {}
+        AbstractListModel(QObject *parent = nullptr) : QAbstractListModel(parent) {}
         virtual ~AbstractListModel() {}
 
     protected:

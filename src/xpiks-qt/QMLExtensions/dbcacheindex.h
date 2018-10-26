@@ -14,16 +14,30 @@
 #include <memory>
 #include <functional>
 
-#include <QString>
+#include <QByteArray>
+#include <QDataStream>
+#include <QDebug>
 #include <QHash>
-#include <QReadWriteLock>
+#include <QIODevice>
 #include <QMutex>
+#include <QMutexLocker>
+#include <QReadLocker>
+#include <QReadWriteLock>
+#include <QString>
+#include <QVector>
+#include <QWriteLocker>
+#include <QtGlobal>
 
-#include "Common/defines.h"
+#include "Common/logging.h"
 #include "QMLExtensions/previewstorage.h"
 #include "Storage/idatabase.h"
-#include "Storage/idatabasemanager.h"
 #include "Storage/writeaheadlog.h"
+
+template <class T1, class T2> struct QPair;
+
+namespace Storage {
+    class IDatabaseManager;
+}
 
 namespace QMLExtensions {
     template<class TValue>

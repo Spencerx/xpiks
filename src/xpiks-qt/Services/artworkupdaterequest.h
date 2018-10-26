@@ -11,6 +11,8 @@
 #ifndef ARTWORKUPDATEREQUEST_H
 #define ARTWORKUPDATEREQUEST_H
 
+#include <cstddef>
+
 #include <QSet>
 
 #include "Common/types.h"

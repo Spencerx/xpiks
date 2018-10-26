@@ -11,8 +11,6 @@
 #ifndef IWARNINGSITEM_H
 #define IWARNINGSITEM_H
 
-#include "Common/flags.h"
-
 namespace Warnings {
     class IWarningsSettings;
 

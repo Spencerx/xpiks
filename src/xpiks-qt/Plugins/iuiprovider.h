@@ -11,9 +11,10 @@
 #define IUIPROVIDER_H
 
 #include <QHash>
-#include <QObject>
 #include <QString>
-#include <QUrl>
+
+class QObject;
+class QUrl;
 
 namespace Plugins {
     class IUIProvider {

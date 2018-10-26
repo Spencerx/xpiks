@@ -13,7 +13,6 @@
 
 #include <iostream>
 
-#include <QByteArray>
 #include <QFile>
 #include <QFlags>
 #include <QIODevice>
@@ -23,6 +22,8 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QtGlobal>
+
+#include "Encryption/obfuscation.h"
 
 #define MIN_FIRE_SIZE 20
 #define LOGGING_TIMEOUT 5

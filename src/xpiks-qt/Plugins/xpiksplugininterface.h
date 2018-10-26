@@ -11,26 +11,45 @@
 #ifndef XPIKSPLUGININTERFACE_H
 #define XPIKSPLUGININTERFACE_H
 
-#include <cstdint>
 #include <memory>
 #include <vector>
 
-#include <QString>
-#include <QVector>
-#include <QtPlugin>
+#include <QObject>
+#include <QVariant>
+#include <QtGlobal>
 
-#include "Commands/Base/icommandmanager.h"
 #include "Common/flags.h"
-#include "Common/isystemenvironment.h"
-#include "KeywordsPresets/ipresetsmanager.h"
-#include "Microstocks/imicrostockservices.h"
-#include "Models/Editing/icurrenteditable.h"
-#include "Plugins/ipluginaction.h"
-#include "Plugins/iuiprovider.h"
-#include "Storage/idatabasemanager.h"
-#include "UndoRedo/iundoredomanager.h"
+
+class QString;
+
+namespace Commands {
+    class ICommandManager;
+}
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace KeywordsPresets {
+    class IPresetsManager;
+}
+
+namespace Microstocks {
+    class IMicrostockServices;
+}
+
+namespace Models {
+    class ICurrentEditableSource;
+}
+
+namespace Storage {
+    class IDatabaseManager;
+}
 
 namespace Plugins {
+    class IPluginAction;
+    class IUIProvider;
+
     class XpiksPluginInterface {
     public:
         virtual ~XpiksPluginInterface() { }

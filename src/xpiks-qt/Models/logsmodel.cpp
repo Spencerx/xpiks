@@ -15,9 +15,9 @@
 #include <QString>
 #include <QThread>
 #include <QtDebug>
-#include <QtGlobal>
 
 #include "Common/logging.h"
+#include "Encryption/obfuscation.h"
 #include "Helpers/logger.h"
 #include "Helpers/loggingworker.h"
 #include "Helpers/stringhelper.h"

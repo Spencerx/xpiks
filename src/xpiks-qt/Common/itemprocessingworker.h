@@ -12,16 +12,21 @@
 #define ITEMPROCESSINGWORKER_H
 
 #include <algorithm>
+#include <cstddef>
 #include <deque>
 #include <memory>
 #include <vector>
 
+#include <QDebug>
 #include <QMutex>
+#include <QMutexLocker>
 #include <QWaitCondition>
+#include <QtGlobal>
 
 #include "Common/defines.h"
 #include "Common/flags.h"
 #include "Common/logging.h"
+#include "Common/types.h"
 #include "Helpers/threadhelpers.h"
 
 namespace Common {

@@ -13,9 +13,16 @@
 
 #include <memory>
 
+#include <QString>
+
+#include "Common/types.h"
 #include "Connectivity/iconnectivityrequest.h"
 
+class QStringList;
+
 namespace Connectivity {
+    class IConnectivityResponse;
+
     class SimpleAPIRequest: public IConnectivityRequest
     {
     public:

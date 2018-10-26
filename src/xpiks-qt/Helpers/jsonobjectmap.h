@@ -13,6 +13,8 @@
 
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QLatin1String>
+#include <QString>
 
 namespace Helpers {
     class JsonObjectMap

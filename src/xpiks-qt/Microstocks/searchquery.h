@@ -11,10 +11,11 @@
 #ifndef SEARCHQUERY_H
 #define SEARCHQUERY_H
 
-#include <QObject>
-#include <QStringList>
+#include <QString>
+#include <QtGlobal>
 
 #include "Common/flags.h"
+#include "Common/types.h"
 
 namespace Microstocks {
     class SearchQuery {

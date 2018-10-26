@@ -11,7 +11,6 @@
 #ifndef LINQHELPERS_H
 #define LINQHELPERS_H
 
-#include <algorithm>
 #include <functional>
 #include <vector>
 

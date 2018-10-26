@@ -11,13 +11,15 @@
 #ifndef ICONNECTIVITYREQUEST_H
 #define ICONNECTIVITYREQUEST_H
 
-#include <QByteArray>
 #include <QString>
 
-#include "Common/flags.h"
-#include "Connectivity/iconnectivityresponse.h"
+#include "Common/types.h"
+
+class QStringList;
 
 namespace Connectivity {
+    class IConnectivityResponse;
+
     class IConnectivityRequest {
     public:
         enum RequestFlags {

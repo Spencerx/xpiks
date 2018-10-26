@@ -13,8 +13,6 @@
 
 #include <memory>
 
-#include "Microstocks/microstockenums.h"
-
 namespace Connectivity {
     class IConnectivityResponse;
 }

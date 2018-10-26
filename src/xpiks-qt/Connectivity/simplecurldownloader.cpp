@@ -19,7 +19,6 @@
 #include <QtGlobal>
 
 #include <curl/curl.h>
-#include <curl/curlver.h>
 
 #include "Common/logging.h"
 #include "Connectivity/ftphelpers.h"

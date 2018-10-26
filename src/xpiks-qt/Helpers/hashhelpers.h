@@ -11,7 +11,8 @@
 #ifndef HASHHELPERS_H
 #define HASHHELPERS_H
 
-#include <functional>
+#include <cstddef>
+#include <system_error>
 
 #include <QHash>
 #include <QString>

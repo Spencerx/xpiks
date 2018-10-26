@@ -11,7 +11,7 @@
 #ifndef COMPAREVALUESJSON_H
 #define COMPAREVALUESJSON_H
 
-#include <QJsonValue>
+class QJsonObject;
 
 namespace Helpers {
     struct CompareValuesJson {

@@ -1,7 +1,11 @@
 #ifndef ARTWORKSLISTOPERATIONS_H
 #define ARTWORKSLISTOPERATIONS_H
 
+#include <cstddef>
+#include <utility>
+
 #include <QSet>
+#include <QtGlobal>
 
 #include "Artworks/artworkssnapshot.h"
 #include "Helpers/indicesranges.h"

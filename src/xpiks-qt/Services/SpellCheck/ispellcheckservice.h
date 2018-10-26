@@ -12,8 +12,9 @@
 #define ISPELLCHECKSERVICE_H
 
 #include <memory>
+#include <vector>
 
-#include <QStringList>
+#include <QtGlobal>
 
 #include "Common/flags.h"
 

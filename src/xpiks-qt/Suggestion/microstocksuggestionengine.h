@@ -12,14 +12,27 @@
 #define MICROSTOCKSUGGESTIONENGINE_H
 
 #include <memory>
+#include <utility>
+#include <vector>
+
+#include <QString>
+#include <QtGlobal>
 
 #include "Connectivity/requestsservice.h"
 #include "Microstocks/imicrostockapiclient.h"
-#include "Microstocks/searchquery.h"
 #include "Suggestion/isuggestionengine.h"
-#include "Suggestion/suggestionresultsresponse.h"
+
+namespace Connectivity {
+    class IConnectivityRequest;
+}
+
+namespace Microstocks {
+    class SearchQuery;
+}
 
 namespace Suggestion {
+    class SuggestionArtwork;
+
     template<class ResponseType>
     class MicrostockSuggestionEngine: public ISuggestionEngine
     {

@@ -11,12 +11,23 @@
 #ifndef COMBINEDEDITCOMMAND_H
 #define COMBINEDEDITCOMMAND_H
 
+#include <cstddef>
+#include <memory>
+#include <utility>
+
 #include <QObject>
+#include <QString>
 
 #include "Artworks/artworkssnapshot.h"
 #include "Commands/Base/templatedcommand.h"
 
+namespace Artworks {
+    class ArtworkMetadata;
+}
+
 namespace Commands {
+    template <typename T> class ICommandTemplate;
+
     class ModifyArtworksCommand: public TemplatedCommand<Artworks::ArtworksSnapshot>
     {
     public:

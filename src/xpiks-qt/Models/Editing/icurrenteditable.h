@@ -17,7 +17,11 @@
 #include <QStringList>
 
 #include "Common/types.h"
-#include "KeywordsPresets/ipresetsmanager.h"
+#include "KeywordsPresets/presetmodel.h"
+
+namespace KeywordsPresets {
+    class IPresetsManager;
+}
 
 namespace Commands {
     class ICommand;

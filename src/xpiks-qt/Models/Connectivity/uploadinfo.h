@@ -13,8 +13,8 @@
 
 #include <cmath>
 
-#include <QByteArray>
 #include <QHash>
+#include <QLatin1String>
 #include <QMutex>
 #include <QObject>
 #include <QString>

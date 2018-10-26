@@ -12,10 +12,10 @@
 #define ORIGINALMETADATA_H
 
 #include <QDateTime>
-#include <QHash>
 #include <QSize>
 #include <QString>
 #include <QStringList>
+#include <QtGlobal>
 
 namespace MetadataIO {
     // metadata read directly from file by exiftool/etc.

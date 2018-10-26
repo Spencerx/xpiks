@@ -14,14 +14,11 @@
 #include <memory>
 #include <vector>
 
-#include <QVector>
-
 namespace Models {
     class UploadInfo;
 }
 
 namespace Artworks {
-    class ArtworkMetadata;
     class ArtworksSnapshot;
 }
 

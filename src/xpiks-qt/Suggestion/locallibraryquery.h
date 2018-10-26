@@ -12,6 +12,7 @@
 #define LOCALLIBRARYQUERY_H
 
 #include <QObject>
+#include <QString>
 #include <QVector>
 
 #include "MetadataIO/cachedartwork.h"

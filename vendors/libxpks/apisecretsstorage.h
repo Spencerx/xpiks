@@ -1,9 +1,11 @@
 #ifndef APISECRETSSTORAGE_H
 #define APISECRETSSTORAGE_H
 
-#include <Encryption/isecretsstorage.h>
 #include <QHash>
 #include <QReadWriteLock>
+
+#include "Encryption/isecretsstorage.h"
+#include "Encryption/secretpair.h"
 
 namespace libxpks {
     namespace microstocks {

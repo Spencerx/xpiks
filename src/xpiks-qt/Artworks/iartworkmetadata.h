@@ -11,15 +11,14 @@
 #ifndef IARTWORKMETADATA_H
 #define IARTWORKMETADATA_H
 
-#include <QSet>
-#include <QString>
+#include <cstddef>
 
-#include "Artworks/keyword.h"
-#include "Common/flags.h"
+#include <QString>
+#include <QStringList>
+
+template <typename T> class QSet;
 
 namespace Artworks {
-    class BasicKeywordsModel;
-
     class IArtworkMetadata {
     public:
         virtual ~IArtworkMetadata() { }

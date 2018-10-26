@@ -11,14 +11,11 @@
 #ifndef ISPELLSUGGESTIONSTARGET_H
 #define ISPELLSUGGESTIONSTARGET_H
 
+#include <cstddef>
 #include <memory>
 #include <vector>
 
 #include "Common/flags.h"
-
-namespace Artworks {
-    class ArtworksSnapshot;
-}
 
 namespace SpellCheck {
     class SpellSuggestionsItem;

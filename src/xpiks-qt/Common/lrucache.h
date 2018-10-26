@@ -11,7 +11,7 @@
 #ifndef LRUCACHE_H
 #define LRUCACHE_H
 
-#include <algorithm>
+#include <cstddef>
 #include <list>
 #include <unordered_map>
 #include <utility>

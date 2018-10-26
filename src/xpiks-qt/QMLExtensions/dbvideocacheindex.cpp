@@ -13,7 +13,6 @@
 #include <memory>
 
 #include <QtDebug>
-#include <QtGlobal>
 
 #include "Common/logging.h"
 #include "Helpers/constants.h"

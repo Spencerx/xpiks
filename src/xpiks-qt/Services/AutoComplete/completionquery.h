@@ -11,15 +11,13 @@
 #ifndef COMPLETIONQUERY_H
 #define COMPLETIONQUERY_H
 
+#include <vector>
+
 #include <QObject>
 #include <QString>
-#include <QStringList>
 
 #include "Common/flags.h"
-
-namespace Artworks {
-    class BasicKeywordsModel;
-}
+#include "Common/types.h"
 
 namespace AutoComplete {
     struct CompletionResult {

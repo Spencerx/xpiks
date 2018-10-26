@@ -13,7 +13,9 @@
 
 #include <memory>
 
-#include "QMLExtensions/uiaction.h"
+namespace QMLExtensions {
+    struct UIAction;
+}
 
 namespace QMLExtensions {
     class IUICommandMiddlware {

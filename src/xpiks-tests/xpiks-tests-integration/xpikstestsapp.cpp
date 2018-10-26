@@ -5,6 +5,7 @@
 #include "signalwaiter.h"
 #include <Commands/Files/removefilescommand.h>
 #include <Commands/Files/removedirectorycommand.h>
+#include "Services/SpellCheck/spellsuggestionsitem.h"
 
 XpiksTestsApp::XpiksTestsApp(Common::ISystemEnvironment &environment):
     XpiksApp(environment)

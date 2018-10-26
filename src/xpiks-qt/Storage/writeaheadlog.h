@@ -11,14 +11,25 @@
 #ifndef WRITEAHEADLOG_H
 #define WRITEAHEADLOG_H
 
+#include <memory>
+
+#include <QByteArray>
 #include <QDataStream>
+#include <QDebug>
 #include <QHash>
+#include <QIODevice>
+#include <QPair>
+#include <QReadLocker>
 #include <QReadWriteLock>
+#include <QVector>
+#include <QWriteLocker>
+#include <QtGlobal>
 
 #include "Common/logging.h"
-#include "Storage/idatabase.h"
 
 namespace Storage {
+    class IDbTable;
+
     template<class TKey, class TValue>
     class WriteAheadLog {
     public:
