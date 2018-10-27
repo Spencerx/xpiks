@@ -460,7 +460,7 @@
     { include: [ "<qglobal.h>", "private", "<QtGlobal>", "public" ] },
     { include: [ "<qglobalstatic.h>", "private", "<QGlobalStatic>", "public" ] },
     { include: [ "<qhash.h>", "private", "<QHash>", "public" ] },
-    { include: [ "<qhashfunctions.h>", "private", "<QHashFunctions>", "public" ] },
+    { include: [ "<qhashfunctions.h>", "private", "<QHash>", "public" ] },
     { include: [ "<qhistorystate.h>", "private", "<QHistoryState>", "public" ] },
     { include: [ "<qidentityproxymodel.h>", "private", "<QIdentityProxyModel>", "public" ] },
     { include: [ "<qiodevice.h>", "private", "<QIODevice>", "public" ] },
@@ -2240,6 +2240,7 @@
     { include: [ "<bits/std_function.h>", "private", "<functional>", "public" ] },
     { include: [ "<bits/stdint-intn.h>", "private", "<cstdint>", "public" ] },
     { include: [ "<bits/stdint-uintn.h>", "private", "<cstdint>", "public" ] },
+    { include: [ "<curl/curlver.h>", "private", "<curl/curl.h>", "public" ] },
     { include: [ "<curl/system.h>", "private", "<curl/curl.h>", "public" ] },
     { include: [ "<ext/alloc_traits.h>", "private", "<vector>", "public" ] },
     { include: [ "\"../Common/logging.h\"", "private", "\"Common/logging.h\"", "public" ] },
@@ -2265,6 +2266,8 @@
     { include: [ "\"Storage/../Common/logging.h\"", "private", "\"Common/logging.h\"", "public" ] },
     { include: [ "\"UndoRedo/../Common/types.h\"", "private", "\"Common/types.h\"", "public" ] },
     { symbol: [ "ntohl", "private", "<arpa/inet.h>", "public" ] },
+    { symbol: [ "std::reference_wrapper", "private", "<functional>", "public" ] },
+    { symbol: [ "size_t", "private", "<cstddef>", "public" ] },
 
 ]
 
