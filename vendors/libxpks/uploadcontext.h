@@ -1,8 +1,10 @@
 #ifndef UPLOADCONTEXT
 #define UPLOADCONTEXT
 
+#include <QDebug>
 #include <QString>
-#include <Common/logging.h>
+
+#include "Common/logging.h"
 
 namespace Models {
     class ProxySettings;

@@ -11,16 +11,13 @@
 #ifndef FTPUPLOADERWORKER_H
 #define FTPUPLOADERWORKER_H
 
-#include <QObject>
-#include <QVector>
-#include <QString>
 #include <memory>
 
-class QSemaphore;
+#include <QObject>
+#include <QString>
+#include <QVector>
 
-namespace Encryption {
-    class SecretsManager;
-}
+class QSemaphore;
 
 namespace Models {
     class UploadInfo;
@@ -37,7 +34,7 @@ namespace libxpks {
             explicit FtpUploaderWorker(QSemaphore *uploadSemaphore,
                                        const std::shared_ptr<UploadBatch> &batch,
                                        const std::shared_ptr<Models::UploadInfo> &uploadInfo,
-                                       QObject *parent = 0);
+                                       QObject *parent = nullptr);
 
             virtual ~FtpUploaderWorker();
 

@@ -1,6 +1,9 @@
 #include "apisecretsstorage.h"
 
-#include "Microstocks/microstockenums.h"
+#include <QReadLocker>
+#include <QString>
+#include <QWriteLocker>
+#include <QtGlobal>
 
 namespace libxpks {
     namespace microstocks {

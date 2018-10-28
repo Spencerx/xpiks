@@ -1,26 +1,30 @@
 #ifndef FTPCOORDINATOR_H
 #define FTPCOORDINATOR_H
 
-#include <QObject>
-#include <QVector>
-#include <QSemaphore>
-#include <Connectivity/iftpcoordinator.h>
+#include <cstddef>
+#include <memory>
+#include <vector>
+
 #include <QAtomicInt>
 #include <QMutex>
-#include <Models/settingsmodel.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Encryption/secretsmanager.h>
+#include <QObject>
+#include <QSemaphore>
+#include <QString>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Connectivity/iftpcoordinator.h"
+
+namespace Encryption {
+    class SecretsManager;
+}
 
 namespace Models {
-    class ArtworkMetadata;
+    class SettingsModel;
     class UploadInfo;
-    class ProxySettings;
 }
 
 namespace libxpks {
     namespace net {
-        class UploadContext;
-
         class FtpCoordinator :
                 public QObject,
                 public Connectivity::IFtpCoordinator

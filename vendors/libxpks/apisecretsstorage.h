@@ -5,7 +5,8 @@
 #include <QReadWriteLock>
 
 #include "Encryption/isecretsstorage.h"
-#include "Encryption/secretpair.h"
+
+#include "Encryption/secretpair.h"  // IWYU pragma: keep
 
 namespace libxpks {
     namespace microstocks {

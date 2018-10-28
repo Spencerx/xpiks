@@ -12,16 +12,17 @@
 #define METADATAWRITINGWORKER_H
 
 #include <QObject>
-#include <QVector>
 #include <QProcess>
-#include <Artworks/artworkssnapshot.h>
+#include <QString>
+#include <QStringList>
+
+#include "Artworks/artworkssnapshot.h"
 
 namespace Helpers {
     class AsyncCoordinator;
 }
 
 namespace Models {
-    class ArtworkMetadata;
     class SettingsModel;
 }
 

@@ -8,26 +8,29 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <ftpcoordinator.h>
-#include <QStringList>
-#include <QSharedData>
-#include <QThread>
-#include <Artworks/artworkmetadata.h>
-#include <Models/Connectivity/uploadinfo.h>
-#include <Helpers/filehelpers.h>
-#include <Encryption/secretsmanager.h>
-#include <Commands/commandmanager.h>
-#include <Models/settingsmodel.h>
-#include "curlftpuploader.h"
-#include <uploadcontext.h>
-#include "ftpuploaderworker.h"
-#include <Common/defines.h>
-#include "conectivityhelpers.h"
+#include "ftpcoordinator.h"
 
-#include <curl/curl.h>
+#include <utility>
+
+#include <QDebug>
+#include <QThread>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "Models/settingsmodel.h"
+
+#include "Connectivity/conectivityhelpers.h"
+#include "Connectivity/ftpuploaderworker.h"
+
+namespace Encryption {
+    class SecretsManager;
+}
 
 namespace libxpks {
     namespace net {
+        class UploadBatch;
+
         FtpCoordinator::FtpCoordinator(Encryption::SecretsManager &secretsManager,
                                        Models::SettingsModel &settings,
                                        QObject *parent) :

@@ -11,20 +11,15 @@
 #ifndef METADATAREADINGWORKER_H
 #define METADATAREADINGWORKER_H
 
-#include <QObject>
-#include <QVector>
-#include <QHash>
-#include <QString>
-#include <QProcess>
-#include <QStringList>
 #include <QByteArray>
-#include <QHash>
-#include <QSize>
-#include <MetadataIO/originalmetadata.h>
-#include <Artworks/artworkssnapshot.h>
+#include <QObject>
+#include <QProcess>
+#include <QString>
+#include <QStringList>
+
+#include "Artworks/artworkssnapshot.h"
 
 namespace Models {
-    class ArtworkMetadata;
     class SettingsModel;
 }
 

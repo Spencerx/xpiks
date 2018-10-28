@@ -1,15 +1,11 @@
 #ifndef WRITINGORCHESTRATOR_H
 #define WRITINGORCHESTRATOR_H
 
-#include <QVector>
-#include <QMutex>
-
 namespace Models {
     class SettingsModel;
 }
 
 namespace Artworks {
-    class ArtworkMetadata;
     class ArtworksSnapshot;
 }
 

@@ -9,19 +9,31 @@
  */
 
 #include "metadatareadingworker.h"
+
+#include <cstddef>
+#include <memory>
+
+#include <QChar>
+#include <QDateTime>
+#include <QDebug>
+#include <QFileInfo>
+#include <QImageReader>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
-#include <QFile>
-#include <QDir>
+#include <QJsonValue>
+#include <QLatin1String>
+#include <QSize>
 #include <QTemporaryFile>
-#include <QImageReader>
-#include <Models/settingsmodel.h>
-#include <Artworks/artworkmetadata.h>
-#include <Helpers/asynccoordinator.h>
-#include <MetadataIO/metadatareadinghub.h>
-#include <Helpers/constants.h>
-#include <Common/defines.h>
+#include <Qt>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "MetadataIO/metadatareadinghub.h"
+#include "MetadataIO/originalmetadata.h"
+#include "Models/settingsmodel.h"
 
 #ifdef Q_OS_WIN
 #define _X86_

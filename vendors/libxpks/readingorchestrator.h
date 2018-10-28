@@ -1,22 +1,16 @@
 #ifndef READINGORCHESTRATOR_H
 #define READINGORCHESTRATOR_H
 
-#include <QObject>
-#include <QVector>
-#include <QMutex>
-#include <QHash>
-
-namespace Models {
-    class SettingsModel;
+namespace Artworks {
+    class ArtworksSnapshot;
 }
 
 namespace MetadataIO {
     class MetadataReadingHub;
 }
 
-namespace Artworks {
-    class ArtworksSnapshot;
-    class ArtworkMetadata;
+namespace Models {
+    class SettingsModel;
 }
 
 namespace libxpks {

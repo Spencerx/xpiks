@@ -9,20 +9,26 @@
  */
 
 #include "metadatawritingworker.h"
-#include <Common/defines.h>
+
+#include <cstddef>
+#include <memory>
+#include <vector>
+
+#include <QByteArray>
+#include <QDebug>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
-#include <QFile>
-#include <QDir>
+#include <QJsonValue>
+#include <QLatin1String>
 #include <QTemporaryFile>
-#include <QTextStream>
-#include <memory>
-#include <Artworks/artworkmetadata.h>
-#include <Models/settingsmodel.h>
-#include <Common/defines.h>
-#include <Artworks/artworkssnapshot.h>
-#include <Helpers/asynccoordinator.h>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+#include "Models/settingsmodel.h"
 
 #ifdef Q_OS_WIN
 #define _X86_

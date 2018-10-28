@@ -9,16 +9,27 @@
  */
 
 #include "curlftpuploader.h"
-#include <QCoreApplication>
-#include <QFileInfo>
-#include <sys/stat.h>
-#include <cstdio>
-#include <cstdlib>
+
 #include <cmath>
+#include <cstdio>
 #include <curl/curl.h>
-#include <Common/defines.h>
-#include <Connectivity/ftphelpers.h>
-#include "uploadbatch.h"
+#include <sys/stat.h>
+
+#include <QByteArray>
+#include <QChar>
+#include <QCoreApplication>
+#include <QDebug>
+#include <QEventLoop>
+#include <QFileInfo>
+#include <QLatin1String>
+#include <QStringList>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Connectivity/ftphelpers.h"
+
+#include "Connectivity/uploadbatch.h"
+#include "uploadcontext.h"
 
 #define MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL 2
 

@@ -12,11 +12,13 @@
 #define UPLOADBATCH_H
 
 #include <memory>
+
 #include <QStringList>
-#include <uploadcontext.h>
 
 namespace libxpks {
     namespace net {
+        class UploadContext;
+
         class UploadBatch {
         public:
             UploadBatch(const std::shared_ptr<UploadContext> &context, const QStringList &filesList):

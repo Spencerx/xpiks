@@ -67,21 +67,25 @@ unix {
 }
 
 HEADERS += \
-    MetadataIO/metadatareadingworker.h \
-    MetadataIO/metadatawritingworker.h \
+    ../../vendors/libxpks/apisecretsstorage.h \
+    ../../vendors/libxpks/ftpcoordinator.h \
+    ../../vendors/libxpks/readingorchestrator.h \
+    ../../vendors/libxpks/uploadcontext.h \
+    ../../vendors/libxpks/writingorchestrator.h \
     Connectivity/conectivityhelpers.h \
     Connectivity/curlftpuploader.h \
     Connectivity/ftpuploaderworker.h \
     Connectivity/uploadbatch.h \
-    ../../vendors/libxpks/ftpcoordinator.h
+    MetadataIO/metadatareadingworker.h \
+    MetadataIO/metadatawritingworker.h
 
 SOURCES += \
-    MetadataIO/metadatareadingworker.cpp \
-    MetadataIO/metadatawritingworker.cpp \
-    MetadataIO/readingorchestrator.cpp \
-    MetadataIO/writingorchestrator.cpp \
     Connectivity/conectivityhelpers.cpp \
     Connectivity/curlftpuploader.cpp \
     Connectivity/ftpcoordinator.cpp \
     Connectivity/ftpuploaderworker.cpp \
+    MetadataIO/metadatareadingworker.cpp \
+    MetadataIO/metadatawritingworker.cpp \
+    MetadataIO/readingorchestrator.cpp \
+    MetadataIO/writingorchestrator.cpp \
     Microstocks/apisecretsstorage.cpp

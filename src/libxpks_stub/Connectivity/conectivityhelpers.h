@@ -11,30 +11,28 @@
 #ifndef CONECTIVITYHELPERS_H
 #define CONECTIVITYHELPERS_H
 
-#include <QStringList>
-#include <QVector>
 #include <memory>
 #include <vector>
-#include <uploadcontext.h>
 
-namespace Models {
-    class ArtworkMetadata;
-    class UploadInfo;
-    class ProxySettings;
-    class SettingsModel;
+class QStringList;
+
+namespace Artworks {
+    class ArtworksSnapshot;
 }
 
 namespace Encryption {
     class SecretsManager;
 }
 
-namespace Artworks {
-    class ArtworksSnapshot;
+namespace Models {
+    class SettingsModel;
+    class UploadInfo;
 }
 
 namespace libxpks {
     namespace net {
         class UploadBatch;
+        class UploadContext;
 
         void extractFilePathes(const Artworks::ArtworksSnapshot &artworksSnapshot,
                                QStringList &filePathes,

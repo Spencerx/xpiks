@@ -9,12 +9,21 @@
  */
 
 #include "ftpuploaderworker.h"
-#include <QSemaphore>
+
+#include <cmath>
+
 #include <QCoreApplication>
-#include "curlftpuploader.h"
-#include <Models/Connectivity/uploadinfo.h>
-#include <Common/defines.h>
-#include "uploadbatch.h"
+#include <QDebug>
+#include <QEventLoop>
+#include <QSemaphore>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+#include "Models/Connectivity/uploadinfo.h"
+
+#include "Connectivity/curlftpuploader.h"
+#include "Connectivity/uploadbatch.h"
+#include "uploadcontext.h"
 
 namespace libxpks {
     namespace net {

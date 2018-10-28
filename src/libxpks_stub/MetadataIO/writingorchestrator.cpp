@@ -8,14 +8,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <writingorchestrator.h>
-#include <QVector>
+#include "writingorchestrator.h"
+
+#include <QDebug>
+#include <QObject>
 #include <QThread>
-#include <Helpers/indiceshelper.h>
-#include <Artworks/artworkmetadata.h>
-#include <Common/defines.h>
-#include "metadatawritingworker.h"
-#include <Helpers/asynccoordinator.h>
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "Helpers/asynccoordinator.h"
+
+#include "MetadataIO/metadatawritingworker.h"
 
 namespace libxpks {
     namespace io {

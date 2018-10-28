@@ -11,12 +11,10 @@
 #ifndef CURLFTPUPLOADER_H
 #define CURLFTPUPLOADER_H
 
+#include <memory>
+
 #include <QObject>
 #include <QString>
-#include <QStringList>
-#include <QVector>
-#include <memory>
-#include <uploadcontext.h>
 
 namespace libxpks {
     namespace net {

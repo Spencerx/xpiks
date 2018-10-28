@@ -9,18 +9,29 @@
  */
 
 #include "conectivityhelpers.h"
+
+#include <cstddef>
 #include <memory>
-#include <QVector>
-#include <Artworks/artworkmetadata.h>
-#include <Models/Connectivity/uploadinfo.h>
-#include <Encryption/secretsmanager.h>
-#include "uploadbatch.h"
-#include <Helpers/filehelpers.h>
-#include <Artworks/imageartwork.h>
-#include <Commands/commandmanager.h>
-#include <Models/settingsmodel.h>
-#include <Models/Connectivity/proxysettings.h>
-#include <Artworks/artworkssnapshot.h>
+
+#include <QDebug>
+#include <QString>
+#include <QStringList>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/imageartwork.h"
+#include "Common/logging.h"
+#include "Encryption/secretsmanager.h"
+#include "Helpers/filehelpers.h"
+#include "Models/Connectivity/uploadinfo.h"
+#include "Models/settingsmodel.h"
+
+#include "Connectivity/uploadbatch.h"
+#include "uploadcontext.h"
+
+namespace Models {
+    class ProxySettings;
+}
 
 #define RETRIES_COUNT 3
 
@@ -42,7 +53,7 @@ namespace libxpks {
 
                 auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
 
-                if (image != NULL && image->hasVectorAttached()) {
+                if (image != nullptr && image->hasVectorAttached()) {
                     filePathes.append(image->getAttachedVectorPath());
 
                     QString zipPath = Helpers::getArchivePath(filepath);
