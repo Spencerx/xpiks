@@ -1,7 +1,9 @@
 #ifndef ARTWORKREPOSITORYTESTS_H
 #define ARTWORKREPOSITORYTESTS_H
 
-#include <QtTest/QTest>
+#include <QObject>
+#include <QtTest>  // IWYU pragma: keep
+// IWYU pragma: no_include <QString>
 
 class ArtworkRepositoryTests : public QObject
 {

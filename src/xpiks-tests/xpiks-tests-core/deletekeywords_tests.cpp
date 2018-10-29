@@ -1,16 +1,20 @@
 #include "deletekeywords_tests.h"
-#include "Mocks/commandmanagermock.h"
-#include "Mocks/artworkslistmodelmock.h"
+
+#include <memory>
+
+#include <QStringList>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Commands/Base/icommand.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "Models/Editing/deletekeywordsviewmodel.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+
 #include "Mocks/artworkmetadatamock.h"
-#include "Mocks/coretestsenvironment.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/artworksupdatermock.h"
-#include <Models/Editing/deletekeywordsviewmodel.h>
-#include <Models/Artworks/artworksrepository.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
-#include <UndoRedo/undoredomanager.h>
+#include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \

@@ -1,6 +1,13 @@
 #include "artworkfilter_tests.h"
+
+#include <memory>
+#include <type_traits>
+
+#include <QStringList>
+
+#include "Helpers/filterhelpers.h"
+
 #include "Mocks/artworkmetadatamock.h"
-#include "../../xpiks-qt/Helpers/filterhelpers.h"
 
 void ArtworkFilterTests::searchImageVectorTest() {
     auto artwork = std::make_shared<Mocks::ArtworkMetadataMock>("/path/to/file.jpg");

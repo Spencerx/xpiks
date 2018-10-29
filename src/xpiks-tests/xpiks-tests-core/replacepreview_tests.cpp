@@ -1,7 +1,8 @@
 #include "replacepreview_tests.h"
-#include "../../xpiks-qt/Helpers/stringhelper.h"
-#include"../../xpiks-qt/Common/defines.h"
-#include "stringhelpersfortests.h"
+
+#include <QLatin1String>
+
+#include "Helpers/stringhelper.h"
 
 void ReplacePreviewTests::smokeTest() {
     QString text = "  keyword  ";

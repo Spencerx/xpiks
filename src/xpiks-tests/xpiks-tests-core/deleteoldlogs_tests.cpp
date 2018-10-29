@@ -1,5 +1,11 @@
 #include "deleteoldlogs_tests.h"
 
+#include <algorithm>
+
+#include <QtGlobal>
+
+#include "Services/Maintenance/logscleanupjobitem.h"
+
 qint64 getFilesSize(const QVector<Maintenance::FileInfoHolder> &files) {
     qint64 sum = 0;
     int size = files.size();

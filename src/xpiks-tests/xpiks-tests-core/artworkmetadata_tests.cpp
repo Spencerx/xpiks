@@ -1,13 +1,27 @@
 #include "artworkmetadata_tests.h"
-#include <QSignalSpy>
-#include <QList>
-#include <QVariant>
-#include <QSemaphore>
-#include "Mocks/artworkmetadatamock.h"
-#include "../../xpiks-qt/MetadataIO/cachedartwork.h"
-#include "../../xpiks-qt/MetadataIO/originalmetadata.h"
+
+#include <cstddef>
+#include <memory>
 #include <thread>
-#include "../../xpiks-qt/Helpers/threadhelpers.h"
+#include <vector>
+
+#include <QDebug>
+#include <QDir>
+#include <QFileInfo>
+#include <QLatin1String>
+#include <QList>
+#include <QSet>
+#include <QSignalSpy>
+#include <QStringList>
+#include <QVariant>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Helpers/threadhelpers.h"
+#include "MetadataIO/cachedartwork.h"
+#include "MetadataIO/originalmetadata.h"
+
+#include "Mocks/artworkmetadatamock.h"
 
 MetadataIO::CachedArtwork CA(const QString &title, const QString &description, const QStringList &keywords) {
     MetadataIO::CachedArtwork result;

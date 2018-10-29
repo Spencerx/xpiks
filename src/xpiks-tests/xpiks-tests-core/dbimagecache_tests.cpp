@@ -1,8 +1,13 @@
 #include "dbimagecache_tests.h"
+
+#include <QDateTime>
+#include <QSize>
+
+#include "QMLExtensions/cachedimage.h"
+#include "QMLExtensions/dbimagecacheindex.h"
+#include "Storage/databasemanager.h"
+
 #include "Mocks/coretestsenvironment.h"
-#include <QMLExtensions/dbimagecacheindex.h>
-#include <Storage/databasemanager.h>
-#include <QMLExtensions/cachedimage.h>
 
 #define DECLARE_AND_INIT\
     Mocks::CoreTestsEnvironment environment;\

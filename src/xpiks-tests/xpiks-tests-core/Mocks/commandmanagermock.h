@@ -1,7 +1,17 @@
 #ifndef COMMANDMANAGERMOCK_H
 #define COMMANDMANAGERMOCK_H
 
-#include <Commands/commandmanager.h>
+#include <memory>
+
+#include "Commands/commandmanager.h"
+
+namespace Commands {
+    class ICommand;
+}
+
+namespace UndoRedo {
+    class IUndoRedoManager;
+}
 
 namespace Mocks {
     class CommandManagerMock : public Commands::CommandManager

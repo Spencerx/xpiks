@@ -1,6 +1,12 @@
 #include "stringhelpers_tests.h"
-#include "../../xpiks-qt/Helpers/stringhelper.h"
+
+#include <QLatin1String>
+#include <QList>
 #include <QStringList>
+#include <Qt>
+#include <QtGlobal>
+
+#include "Helpers/stringhelper.h"
 
 void StringHelpersTests::splitEmptyStringTest() {
     QString text = "";

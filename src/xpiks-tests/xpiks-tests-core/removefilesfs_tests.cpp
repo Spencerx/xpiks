@@ -1,23 +1,25 @@
 #include "removefilesfs_tests.h"
-#include <QStringList>
-#include <QPair>
-#include <QTest>
+
+#include <initializer_list>
+
 #include <QSignalSpy>
-#include "Mocks/commandmanagermock.h"
-#include "Mocks/artworksrepositorymock.h"
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/messages.h"
+#include "Common/types.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Connectivity/ziparchiver.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Models/settingsmodel.h"
+#include "UndoRedo/undoredomanager.h"
+
 #include "Mocks/artworkslistmodelmock.h"
-#include "Mocks/coretestsenvironment.h"
+#include "Mocks/artworksrepositorymock.h"
 #include "Mocks/artworksupdatermock.h"
-#include <Artworks/artworkelement.h>
-#include <Artworks/artworkssnapshot.h>
-#include <UndoRedo/undoredomanager.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
-#include <Models/Artworks/artworksrepository.h>
-#include <Models/Editing/combinedartworksmodel.h>
-#include <Models/Connectivity/ziparchiver.h>
-#include <Models/settingsmodel.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
+#include "Mocks/commandmanagermock.h"
+#include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_BASIC_MODELS\
     Mocks::CoreTestsEnvironment environment; \

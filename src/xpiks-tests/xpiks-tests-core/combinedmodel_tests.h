@@ -1,10 +1,9 @@
 #ifndef COMBINEDMODELTESTS_H
 #define COMBINEDMODELTESTS_H
 
-#include <QtTest/QtTest>
-#include "Mocks/commandmanagermock.h"
-#include "../../xpiks-qt/Models/settingsmodel.h"
-#include "Mocks/coretestsenvironment.h"
+#include <QObject>
+#include <QtTest>  // IWYU pragma: keep
+// IWYU pragma: no_include <QString>
 
 class CombinedModelTests : public QObject {
     Q_OBJECT

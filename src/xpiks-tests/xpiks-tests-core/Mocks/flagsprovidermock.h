@@ -1,7 +1,7 @@
 #ifndef FLAGSPROVIDERMOCK_H
 #define FLAGSPROVIDERMOCK_H
 
-#include <Common/iflagsprovider.h>
+#include "Common/iflagsprovider.h"
 
 namespace Mocks {
     template<typename T>

@@ -1,7 +1,16 @@
 #ifndef MICROSTOCKCLIENTSMOCK_H
 #define MICROSTOCKCLIENTSMOCK_H
 
-#include <Microstocks/imicrostockapiclients.h>
+#include <memory>
+
+#include <QtGlobal>
+
+#include "Microstocks/imicrostockapiclients.h"
+#include "Microstocks/microstockenums.h"
+
+namespace Microstocks {
+    class IMicrostockAPIClient;
+}
 
 namespace Mocks {
     class MicrostockAPIClientsMock : public Microstocks::IMicrostockAPIClients {

@@ -2,7 +2,8 @@
 #define RC6_TESTS
 
 #include <QObject>
-#include <QtTest/QtTest>
+#include <QtTest>  // IWYU pragma: keep
+// IWYU pragma: no_include <QString>
 
 class EncryptionTests : public QObject
 {

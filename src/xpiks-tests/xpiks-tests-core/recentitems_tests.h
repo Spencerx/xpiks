@@ -2,7 +2,8 @@
 #define RECENTITEMSTESTS_H
 
 #include <QObject>
-#include <QtTest/QTest>
+#include <QtTest>  // IWYU pragma: keep
+// IWYU pragma: no_include <QString>
 
 class RecentItemsTests : public QObject
 {

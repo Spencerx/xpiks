@@ -1,13 +1,20 @@
 #include "artworkproxy_tests.h"
-#include <Models/Editing/artworkproxymodel.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Mocks/artworkslistmodelmock.h>
-#include <Mocks/artworksupdatermock.h>
-#include <Mocks/coretestsenvironment.h>
-#include <Mocks/artworksrepositorymock.h>
-#include <UndoRedo/undoredomanager.h>
+
+#include <memory>
+
+#include <QStringList>
+
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "Models/Editing/artworkproxymodel.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "UndoRedo/undoredomanager.h"
+
+#include "Mocks/artworkmetadatamock.h"
+#include "Mocks/artworkslistmodelmock.h"
+#include "Mocks/artworksrepositorymock.h"
+#include "Mocks/artworksupdatermock.h"
 #include "Mocks/commandmanagermock.h"
-#include <KeywordsPresets/presetkeywordsmodel.h>
+#include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \
     Mocks::CoreTestsEnvironment environment; \

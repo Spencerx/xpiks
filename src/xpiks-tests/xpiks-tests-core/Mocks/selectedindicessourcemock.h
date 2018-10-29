@@ -1,9 +1,12 @@
 #ifndef SELECTEDINDICESMOCK_H
 #define SELECTEDINDICESMOCK_H
 
-#include <Artworks/iselectedindicessource.h>
-#include <Helpers/indicesranges.h>
+#include <cstddef>
 #include <initializer_list>
+#include <vector>
+
+#include "Artworks/iselectedindicessource.h"
+#include "Helpers/indicesranges.h"
 
 namespace Mocks {
     class SelectedIndicesSourceMock: public Artworks::ISelectedIndicesSource {

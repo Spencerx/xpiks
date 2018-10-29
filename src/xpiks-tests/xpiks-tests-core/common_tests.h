@@ -1,7 +1,9 @@
 #ifndef COMMON_TESTS_H
 #define COMMON_TESTS_H
 
-#include <QtTest/QtTest>
+#include <QObject>
+#include <QtTest>  // IWYU pragma: keep
+// IWYU pragma: no_include <QString>
 
 class CommonTests: public QObject
 {

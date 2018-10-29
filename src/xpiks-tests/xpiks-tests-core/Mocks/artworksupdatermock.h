@@ -1,11 +1,18 @@
 #ifndef ARTWORKSUPDATERMOCK_H
 #define ARTWORKSUPDATERMOCK_H
 
-#include <Services/iartworksupdater.h>
+#include <cstddef>
+#include <memory>
 #include <vector>
-#include <Common/logging.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/artworkssnapshot.h>
+
+#include <QDebug>
+#include <QVector>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/logging.h"
+#include "Common/types.h"
+#include "Services/iartworksupdater.h"
 
 namespace Mocks {
     class ArtworksUpdaterMock: public Services::IArtworksUpdater {

@@ -1,9 +1,14 @@
 #include "encryption_tests.h"
-#include <QDebug>
+
+#include <string>
+
 #include <QTime>
-#include "../../xpiks-qt/Encryption/aes-qt.h"
+#include <QtGlobal>
+
+#include "Encryption/aes-qt.h"
+#include "Encryption/obfuscation.h"
+
 #include "stringhelpersfortests.h"
-#include "../../xpiks-qt/Encryption/obfuscation.h"
 
 void EncryptionTests::simpleEncodeDecodeTest() {
     QString text = QString::fromUtf8("simple text");

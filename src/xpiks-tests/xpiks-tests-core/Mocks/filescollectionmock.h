@@ -1,8 +1,11 @@
 #ifndef FILESCOLLECTIONMOCK_H
 #define FILESCOLLECTIONMOCK_H
 
+#include <vector>
+
 #include <QStringList>
-#include <Filesystem/ifilescollection.h>
+
+#include "Filesystem/ifilescollection.h"
 
 #ifdef Q_OS_WIN
     #define DIRECTORY_PATH "C:/path/to/some/directory"

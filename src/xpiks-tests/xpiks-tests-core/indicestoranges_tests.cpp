@@ -1,13 +1,15 @@
 #include "indicestoranges_tests.h"
-#include <Helpers/indicesranges.h>
-#include <Helpers/indiceshelper.h>
 
-#include <QDebug>
-#include <QVector>
 #include <cstdarg>
+#include <cstddef>
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <QVector>
+
+#include "Helpers/indiceshelper.h"
+#include "Helpers/indicesranges.h"
 
 using Pair = std::pair<int, int>;
 using Pairs = std::vector<Pair>;

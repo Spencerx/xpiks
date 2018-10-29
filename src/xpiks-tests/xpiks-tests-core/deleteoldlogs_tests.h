@@ -2,8 +2,11 @@
 #define DELETEOLDLOGSTEST_H
 
 #include <QObject>
-#include <QtTest/QtTest>
-#include <Services/Maintenance/logscleanupjobitem.h>
+#include <QVector>
+#include <QtTest>  // IWYU pragma: keep
+// IWYU pragma: no_include <QString>
+
+#include "Services/Maintenance/logscleanupjobitem.h"
 
 class DeleteOldLogsTest: public QObject
 {

@@ -2,8 +2,10 @@
 #define ARTWORKFILTERTESTS_H
 
 #include <QObject>
-#include <QtTest/QtTest>
-#include "../../xpiks-qt/Common/flags.h"
+#include <QtTest>  // IWYU pragma: keep
+// IWYU pragma: no_include <QString>
+
+#include "Common/flags.h"
 
 class ArtworkFilterTests : public QObject
 {

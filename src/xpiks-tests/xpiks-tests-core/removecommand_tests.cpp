@@ -1,14 +1,17 @@
-#include <QStringList>
-#include <QPair>
-#include <QSignalSpy>
 #include "removecommand_tests.h"
-#include "Mocks/commandmanagermock.h"
+
+#include <memory>
+
+#include <QList>
+#include <QSignalSpy>
+#include <QVariant>
+
+#include "Commands/Files/removefilescommand.h"
+#include "Helpers/indicesranges.h"
+
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/coretestsenvironment.h"
-#include "Mocks/selectedindicessourcemock.h"
-#include <Commands/Files/removefilescommand.h>
-#include <Models/Artworks/artworksrepository.h>
 #include "Models/Session/recentdirectoriesmodel.h"
 
 #define DECLARE_MODELS \

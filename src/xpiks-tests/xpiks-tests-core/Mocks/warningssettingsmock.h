@@ -1,7 +1,9 @@
 #ifndef WARNINGSSETTINGSMOCK_H
 #define WARNINGSSETTINGSMOCK_H
 
-#include <Services/Warnings/iwarningssettings.h>
+#include <QString>
+
+#include "Services/Warnings/iwarningssettings.h"
 
 namespace Mocks {
     class WarningsSettingsMock: public Warnings::IWarningsSettings {

@@ -1,8 +1,11 @@
 #ifndef CORETESTSENVIRONMENT_H
 #define CORETESTSENVIRONMENT_H
 
-#include "../../xpiks-qt/Common/isystemenvironment.h"
 #include <QDir>
+#include <QString>
+#include <QStringList>
+
+#include "Common/isystemenvironment.h"
 
 namespace Mocks {
     class CoreTestsEnvironment: public Common::ISystemEnvironment {

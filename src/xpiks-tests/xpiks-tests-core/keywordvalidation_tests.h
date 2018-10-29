@@ -1,7 +1,9 @@
 #ifndef KEYWORDVALIDATIONTESTS_H
 #define KEYWORDVALIDATIONTESTS_H
 
-#include <QtTest/QTest>
+#include <QObject>
+#include <QtTest>  // IWYU pragma: keep
+// IWYU pragma: no_include <QString>
 
 class KeywordValidationTests : public QObject
 {

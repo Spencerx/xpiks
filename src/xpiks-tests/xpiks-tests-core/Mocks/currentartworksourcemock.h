@@ -2,10 +2,15 @@
 #define CURRENTARTWORKSOURCEMOCK_H
 
 #include <memory>
-#include <Models/Editing/icurrenteditable.h>
-#include <Models/Editing/currenteditableartwork.h>
-#include <Commands/Base/icommandtemplate.h>
-#include <Artworks/artworkmetadata.h>
+
+#include "Commands/Base/icommandtemplate.h"
+#include "Models/Editing/currenteditableartwork.h"
+#include "Models/Editing/icurrenteditable.h"
+
+namespace Artworks {
+    class ArtworkMetadata;
+    class ArtworksSnapshot;
+}
 
 namespace Mocks {
 

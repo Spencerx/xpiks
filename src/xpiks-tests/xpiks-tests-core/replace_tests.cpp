@@ -1,21 +1,28 @@
 #include "replace_tests.h"
+
+#include <memory>
+#include <utility>
+
+#include <QList>
 #include <QString>
+#include <QStringList>
 #include <QtAlgorithms>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Commands/Editing/findandreplacetemplate.h"
+#include "Commands/Editing/modifyartworkscommand.h"
+#include "Common/flags.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Models/settingsmodel.h"
+#include "UndoRedo/undoredomanager.h"
+
+#include "Mocks/artworkmetadatamock.h"
 #include "Mocks/artworkslistmodelmock.h"
+#include "Mocks/artworksrepositorymock.h"
 #include "Mocks/commandmanagermock.h"
 #include "Mocks/coretestsenvironment.h"
-#include "Mocks/artworksrepositorymock.h"
-#include <Common/flags.h>
-#include <Commands/Editing/findandreplacetemplate.h>
-#include <Commands/Editing/modifyartworkscommand.h>
-#include <Models/Artworks/artworksrepository.h>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Models/Editing/previewartworkelement.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Models/settingsmodel.h>
-#include <UndoRedo/undoredomanager.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \

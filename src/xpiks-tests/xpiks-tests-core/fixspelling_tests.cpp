@@ -1,21 +1,35 @@
 #include "fixspelling_tests.h"
+
+#include <memory>
+#include <vector>
+
+#include <QDebug>
+#include <QList>
+#include <QSet>
 #include <QSignalSpy>
-#include "Mocks/commandmanagermock.h"
-#include "Mocks/spellcheckservicemock.h"
-#include "Mocks/coretestsenvironment.h"
-#include "Mocks/flagsprovidermock.h"
-#include "Mocks/artworksupdatermock.h"
+#include <QStringList>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/keyword.h"
+#include "Commands/Base/icommand.h"
+#include "Common/flags.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Services//SpellCheck/spellcheckinfo.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
+#include "Services/SpellCheck/spellsuggestionsitem.h"
+#include "Services/SpellCheck/spellsuggestionstarget.h"
+#include "UndoRedo/undoredomanager.h"
+
+#include "Mocks/artworkmetadatamock.h"
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
-#include <Common/flags.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <UndoRedo/undoredomanager.h>
-#include <Artworks/basicmetadatamodel.h>
-#include <Artworks/basicmodelsource.h>
-#include <Services/SpellCheck/spellsuggestionsitem.h>
-#include <Services/SpellCheck/spellchecksuggestionmodel.h>
-#include <Services//SpellCheck/spellcheckinfo.h>
-#include <Services/SpellCheck/spellsuggestionstarget.h>
+#include "Mocks/artworksupdatermock.h"
+#include "Mocks/commandmanagermock.h"
+#include "Mocks/coretestsenvironment.h"
+#include "Mocks/flagsprovidermock.h"
+#include "Mocks/spellcheckservicemock.h"
 
 #define INIT_FIX_SPELLING_TEST \
     Mocks::CoreTestsEnvironment environment; \
@@ -186,7 +200,7 @@ void FixSpellingTests::multiReplaceWithCorrectAllTest() {
     for (int i = 0; i < suggestionModel.rowCount(); ++i) {
         SpellCheck::SpellSuggestionsItem *suggestionItem = suggestionModel.getItem(i);
         SpellCheck::CombinedSpellSuggestions *combinedItem = dynamic_cast<SpellCheck::CombinedSpellSuggestions*>(suggestionItem);
-        if (combinedItem != NULL) {
+        if (combinedItem != nullptr) {
             suggestionItem->setReplacementIndex(0);
         }
     }
@@ -277,7 +291,7 @@ void FixSpellingTests::replaceWithCorrectKeywordsTest() {
     for (int i = 0; i < suggestionModel.rowCount(); ++i) {
         SpellCheck::SpellSuggestionsItem *suggestionItem = suggestionModel.getItem(i);
         SpellCheck::CombinedSpellSuggestions *combinedItem = dynamic_cast<SpellCheck::CombinedSpellSuggestions*>(suggestionItem);
-        if (combinedItem != NULL) {
+        if (combinedItem != nullptr) {
             suggestionItem->setReplacementIndex(0);
         }
     }

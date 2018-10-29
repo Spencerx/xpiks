@@ -1,6 +1,9 @@
 #include "common_tests.h"
-#include <Common/lrucache.h>
-#include <Helpers/hashhelpers.h>
+
+#include <cstddef>
+
+#include "Common/lrucache.h"
+#include "Helpers/hashhelpers.h" // IWYU pragma: keep
 
 void CommonTests::lruCacheAddMoreTest() {
     size_t size = 3;

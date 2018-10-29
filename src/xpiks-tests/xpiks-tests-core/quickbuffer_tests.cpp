@@ -1,26 +1,36 @@
 #include "quickbuffer_tests.h"
-#include <QSignalSpy>
-#include "Mocks/commandmanagermock.h"
-#include "Mocks/artworkslistmodelmock.h"
+
+#include <initializer_list>
+#include <memory>
+#include <vector>
+
+#include <QStringList>
+
+#include "Common/messages.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Editing/artworkproxymodel.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/Editing/currenteditablemodel.h"
+#include "Models/Editing/quickbuffer.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Models/settingsmodel.h"
+#include "Models/switchermodel.h"
+#include "Suggestion/keywordssuggestor.h"
+#include "Suggestion/suggestionartwork.h"
+#include "UndoRedo/undoredomanager.h"
+
 #include "Mocks/artworkmetadatamock.h"
-#include "Mocks/coretestsenvironment.h"
+#include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/artworksupdatermock.h"
-#include "Mocks/microstockclientsmock.h"
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Models/Editing/quickbuffer.h>
-#include <Models/Editing/artworkproxymodel.h>
-#include <Models/Editing/combinedartworksmodel.h>
-#include <Models/settingsmodel.h>
-#include <Models/switchermodel.h>
-#include <Models/Editing/currenteditablemodel.h>
-#include <Models/Connectivity/proxysettings.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
-#include <UndoRedo/undoredomanager.h>
-#include <Connectivity/requestsservice.h>
-#include <Suggestion/keywordssuggestor.h>
-#include <Suggestion/suggestionartwork.h>
+#include "Mocks/commandmanagermock.h"
+#include "Mocks/coretestsenvironment.h"
+
+namespace Models {
+    class ICurrentEditable;
+    struct QuickBufferMessage;
+}
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \

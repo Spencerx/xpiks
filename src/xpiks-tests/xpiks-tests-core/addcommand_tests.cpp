@@ -1,13 +1,21 @@
-#include <QStringList>
-#include <QSignalSpy>
 #include "addcommand_tests.h"
-#include "Mocks/commandmanagermock.h"
+
+#include <memory>
+
+#include <QList>
+#include <QSignalSpy>
+#include <QStringList>
+#include <QVariant>
+
+#include "Common/flags.h"
+#include "Commands/Files/addfilescommand.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+
+#include "Mocks/filescollectionmock.h"
+#include "Mocks/artworkmetadatamock.h"
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/coretestsenvironment.h"
-#include <Commands/Files/addfilescommand.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Mocks/filescollectionmock.h>
 
 #define DECLARE_MODELS \
     Mocks::CoreTestsEnvironment environment;\

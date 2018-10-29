@@ -1,7 +1,9 @@
 #ifndef JSONMERGE_TESTS_H
 #define JSONMERGE_TESTS_H
 
-#include <QtTest/QTest>
+#include <QObject>
+#include <QtTest>  // IWYU pragma: keep
+// IWYU pragma: no_include <QString>
 
 class JsonMergeTests: public QObject
 {

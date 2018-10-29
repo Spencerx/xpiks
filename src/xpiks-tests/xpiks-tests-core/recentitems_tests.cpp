@@ -1,7 +1,9 @@
 #include "recentitems_tests.h"
-#include <Models/Session/recentitemsmodel.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Models/Session/recentfilesmodel.h>
+
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Models/Session/recentfilesmodel.h"
+#include "Models/Session/recentitemsmodel.h"
+
 #include "Mocks/coretestsenvironment.h"
 
 void checkCannotPushMoreThan(Models::RecentItemsModel &recentItems) {

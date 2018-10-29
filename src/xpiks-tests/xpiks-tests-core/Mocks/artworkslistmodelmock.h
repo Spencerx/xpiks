@@ -1,18 +1,31 @@
 #ifndef ArtworksListModelMock_H
 #define ArtworksListModelMock_H
 
-#include <QVector>
-#include <QVariantMap>
-#include <tuple>
+#include <cstddef>
 #include <functional>
-#include <Models/Artworks/artworkslistmodel.h>
-#include <Artworks/artworkmetadata.h>
-#include <Commands/UI/currenteditablecommands.h>
-#include <UndoRedo/undoredomanager.h>
-#include "artworkmetadatamock.h"
-#include "filescollectionmock.h"
-#include "currentartworksourcemock.h"
-#include "commandmanagermock.h"
+#include <memory>
+#include <tuple>
+#include <type_traits>
+#include <vector>
+
+#include <QStringList>
+#include <QVector>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Common/flags.h"
+#include "Filesystem/ifilescollection.h"
+#include "Helpers/indicesranges.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/artworkslistoperations.h"
+
+#include "Mocks/artworkmetadatamock.h"
+#include "Mocks/filescollectionmock.h"
+
+namespace Models {
+    class ArtworksRepository;
+}
 
 namespace Mocks {
     class ArtworksListModelMock : public Models::ArtworksListModel

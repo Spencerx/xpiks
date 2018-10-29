@@ -1,17 +1,28 @@
 #include "preset_tests.h"
+
+#include <memory>
 #include <thread>
+
+#include <QDebug>
+#include <QStringList>
+#include <QtGlobal>
+
+#include "Commands/Base/icommand.h"
+#include "Helpers/threadhelpers.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Editing/artworkproxymodel.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Models/settingsmodel.h"
+#include "UndoRedo/undoredomanager.h"
+
+#include "Mocks/artworkmetadatamock.h"
 #include "Mocks/artworkslistmodelmock.h"
-#include "Mocks/commandmanagermock.h"
-#include "Mocks/coretestsenvironment.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/artworksupdatermock.h"
-#include <Helpers/threadhelpers.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Models/Editing/artworkproxymodel.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Models/settingsmodel.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
-#include <UndoRedo/undoredomanager.h>
+#include "Mocks/commandmanagermock.h"
+#include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_MODELS_AND_GENERATE(count) \
     Mocks::CoreTestsEnvironment environment; \

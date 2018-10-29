@@ -1,8 +1,11 @@
 #ifndef BASICKEYWORDSMODELTESTS_H
 #define BASICKEYWORDSMODELTESTS_H
 
-#include <QtTest/QtTest>
-#include <Services/SpellCheck/spellcheckinfo.h>
+#include <QObject>
+#include <QtTest>  // IWYU pragma: keep
+// IWYU pragma: no_include <QString>
+
+#include "Services/SpellCheck/spellcheckinfo.h"
 
 class BasicKeywordsModelTests: public QObject
 {

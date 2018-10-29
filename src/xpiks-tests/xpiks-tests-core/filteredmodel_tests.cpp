@@ -1,16 +1,29 @@
 #include "filteredmodel_tests.h"
+
+#include <memory>
+#include <string>
+
+#include <QCoreApplication>
+#include <QEventLoop>
+#include <QStringList>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Common/flags.h"
+#include "Filesystem/ifilescollection.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Connectivity/ziparchiver.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Models/settingsmodel.h"
+#include "UndoRedo/undoredomanager.h"
+
+#include "Mocks/artworkmetadatamock.h"
 #include "Mocks/artworkslistmodelmock.h"
-#include "Mocks/commandmanagermock.h"
 #include "Mocks/artworksrepositorymock.h"
+#include "Mocks/commandmanagermock.h"
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/filescollectionmock.h"
-#include <UndoRedo/undoredomanager.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Models/Artworks/artworksrepository.h>
-#include <Models/Connectivity/ziparchiver.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Models/settingsmodel.h>
 
 #define DECLARE_MODELS \
     Mocks::CoreTestsEnvironment environment;\

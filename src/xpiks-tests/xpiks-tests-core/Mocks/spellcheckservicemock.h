@@ -1,8 +1,18 @@
 #ifndef SPELLCHECKSERVICEMOCK_H
 #define SPELLCHECKSERVICEMOCK_H
 
-#include <Services/SpellCheck/spellcheckservice.h>
-#include <Common/isystemenvironment.h>
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QtGlobal>
+
+#include "Common/flags.h"
+#include "Services/SpellCheck/spellcheckservice.h"
+
+namespace Common {
+    class ISystemEnvironment;
+    template <class T> class IFlagsProvider;
+}
 
 namespace Mocks {
     class SpellCheckServiceMock:

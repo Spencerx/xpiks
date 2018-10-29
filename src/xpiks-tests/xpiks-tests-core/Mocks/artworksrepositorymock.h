@@ -1,9 +1,15 @@
 #ifndef ARTWORKSREPOSITORYMOCK_H
 #define ARTWORKSREPOSITORYMOCK_H
 
-#include <QVector>
-#include <QPair>
-#include <Models/Artworks/artworksrepository.h>
+#include <QObject>
+#include <QSet>
+#include <QString>
+
+#include "Models/Artworks/artworksrepository.h"
+
+namespace Models {
+    class RecentDirectoriesModel;
+}
 
 namespace Mocks {
     class ArtworksRepositoryMock : public Models::ArtworksRepository {

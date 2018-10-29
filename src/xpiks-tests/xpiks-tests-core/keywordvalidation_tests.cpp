@@ -1,5 +1,9 @@
 #include "keywordvalidation_tests.h"
-#include "../../xpiks-qt/Helpers/keywordshelpers.h"
+
+#include <QChar>
+#include <QLatin1String>
+
+#include "Helpers/keywordshelpers.h"
 
 void KeywordValidationTests::oneLetterKeywordValidTest() {
     for (int i = 0; i < 26; ++i) {

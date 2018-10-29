@@ -1,15 +1,26 @@
 #include "artworkrepository_tests.h"
+
+#include <cstddef>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include <QList>
 #include <QSignalSpy>
+#include <QStringList>
+#include <QVariant>
+#include <QtGlobal>
+
+#include "Commands/Files/removedirectorycommand.h"
+#include "Common/flags.h"
+#include "Models/Artworks/artworksrepository.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Models/settingsmodel.h"
+#include "UndoRedo/undoredomanager.h"
+
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
 #include "Mocks/commandmanagermock.h"
-#include <Commands/Files/removedirectorycommand.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Models/Artworks/artworksrepository.h>
-#include <Models/Editing/artworkproxymodel.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Models/settingsmodel.h>
-#include <UndoRedo/undoredomanager.h>
 #include "Mocks/coretestsenvironment.h"
 #include "Mocks/filescollectionmock.h"
 

@@ -1,7 +1,14 @@
 #include "basicmetadatamodel_tests.h"
+
+#include <QLatin1String>
+#include <QList>
+#include <QSet>
 #include <QSignalSpy>
-#include <Artworks/basicmetadatamodel.h>
-#include <Common/flags.h>
+#include <QStringList>
+#include <QVariant>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Common/flags.h"
 
 void BasicKeywordsModelTests::constructEmptyTest() {
     Artworks::BasicMetadataModel basicModel(m_SpellCheckInfo);

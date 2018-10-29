@@ -1,8 +1,12 @@
 #include "vectorfilenames_tests.h"
+
+#include <string>
+
 #include <QStringList>
 #include <QString>
-#include <string>
-#include "../../xpiks-qt/Helpers/filehelpers.h"
+#include <QList>
+
+#include "Helpers/filehelpers.h"
 
 void CompareLists(const QStringList &actual, const QStringList &expected) {
     bool anyDifference = false;

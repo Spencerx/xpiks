@@ -2,8 +2,14 @@
 #define ARTWORKMETADATAMOCK
 
 #include <QString>
-#include <Artworks/imageartwork.h>
-#include <MetadataIO/originalmetadata.h>
+#include <QStringList>
+#include <QtGlobal>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/imageartwork.h"
+#include "Common/types.h"
+#include "MetadataIO/originalmetadata.h"
 
 namespace Mocks {
     class ArtworkMetadataMock : public Artworks::ImageArtwork {

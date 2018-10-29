@@ -1,10 +1,18 @@
 #include "warningscheck_tests.h"
-#include <Services/Warnings/warningsitem.h>
+
+#include <memory>
+#include <vector>
+
+#include <QSet>
+#include <QStringList>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Common/flags.h"
+#include "Services/SpellCheck/spellcheckinfo.h"
+#include "Services/Warnings/warningsitem.h"
+
 #include "Mocks/artworkmetadatamock.h"
 #include "Mocks/warningssettingsmock.h"
-#include <Common/flags.h>
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/basicmetadatamodel.h>
 #include "stringhelpersfortests.h"
 
 void WarningsCheckTests::emptyKeywordsTest() {

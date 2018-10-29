@@ -1,18 +1,24 @@
 #include "combinedmodel_tests.h"
-#include <QStringList>
-#include <QVector>
-#include <vector>
+
+#include <memory>
+
+#include <QDebug>
+#include <QList>
 #include <QSignalSpy>
-#include <Models/Editing/combinedartworksmodel.h>
-#include "Mocks/artworkslistmodelmock.h"
-#include "Mocks/commandmanagermock.h"
+#include <QStringList>
+
+#include "Artworks/artworkelement.h"
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Commands/Base/icommand.h"
+#include "Common/logging.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "Models/Editing/combinedartworksmodel.h"
+
+#include "Mocks/artworkmetadatamock.h"
 #include "Mocks/artworksupdatermock.h"
-#include <Artworks/artworkelement.h>
-#include <Artworks/basickeywordsmodel.h>
-#include <Models/settingsmodel.h>
-#include <UndoRedo/undoredomanager.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
-#include <Services/artworksupdatehub.h>
+#include "Mocks/coretestsenvironment.h"
 
 #define DECLARE_MODELS \
     Mocks::CoreTestsEnvironment environment;\

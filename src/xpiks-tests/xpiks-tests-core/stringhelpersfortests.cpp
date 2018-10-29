@@ -1,5 +1,8 @@
 #include "stringhelpersfortests.h"
 
+#include <QChar>
+#include <QtGlobal>
+
 QString getRandomString(int length, bool exactSize) {
     QString chars("abcdefghijklmnopqrstuvwxyz      ABCDEFGHIJKLMNOPQRSTUVWXYZ    0123456789   /!@ #$% ^&*()_+ =|");
     const int size = length + (exactSize ? 0 : (qrand() % 20));

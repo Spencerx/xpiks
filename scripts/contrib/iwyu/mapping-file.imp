@@ -1737,7 +1737,7 @@
     # QtTest
     { include: [ "<QAbstractItemModelTester>", "private", "<QtTest>", "public" ] },
     { include: [ "<QEventSizeOfChecker>", "private", "<QtTest>", "public" ] },
-    { include: [ "<QSignalSpy>", "private", "<QtTest>", "public" ] },
+#    { include: [ "<QSignalSpy>", "private", "<QtTest>", "public" ] },
     { include: [ "<QSpontaneKeyEvent>", "private", "<QtTest>", "public" ] },
     { include: [ "<QTest>", "private", "<QtTest>", "public" ] },
     { include: [ "<QTestAccessibility>", "private", "<QtTest>", "public" ] },
@@ -1768,7 +1768,7 @@
     { include: [ "<qcsvbenchmarklogger_p.h>", "private", "<QtTest>", "public" ] },
     { include: [ "<qplaintestlogger_p.h>", "private", "<QtTest>", "public" ] },
     { include: [ "<qsignaldumper_p.h>", "private", "<QtTest>", "public" ] },
-    { include: [ "<qsignalspy.h>", "private", "<QtTest>", "public" ] },
+    { include: [ "<qsignalspy.h>", "private", "<QSignalSpy>", "public" ] },
     { include: [ "<qteamcitylogger_p.h>", "private", "<QtTest>", "public" ] },
     { include: [ "<qtest.h>", "private", "<QtTest>", "public" ] },
     { include: [ "<qtest_global.h>", "private", "<QtTest>", "public" ] },

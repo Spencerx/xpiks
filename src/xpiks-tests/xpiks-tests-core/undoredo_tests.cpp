@@ -1,25 +1,38 @@
 #include "undoredo_tests.h"
+
+#include <cstddef>
+#include <memory>
+#include <tuple>
+#include <utility>
+
+#include <QDebug>
+#include <QList>
 #include <QStringList>
-#include <QSignalSpy>
-#include "Mocks/coretestsenvironment.h"
-#include "Mocks/commandmanagermock.h"
+#include <QtGlobal>
+
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Commands/Editing/editartworkstemplate.h"
+#include "Commands/Editing/findandreplacetemplate.h"
+#include "Commands/Editing/modifyartworkscommand.h"
+#include "Commands/Files/addfilescommand.h"
+#include "Commands/Files/removedirectorycommand.h"
+#include "Commands/Files/removefilescommand.h"
+#include "Common/flags.h"
+#include "Helpers/indicesranges.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Models/settingsmodel.h"
+#include "UndoRedo/undoredomanager.h"
+
+#include "Mocks/artworkmetadatamock.h"
 #include "Mocks/artworkslistmodelmock.h"
 #include "Mocks/artworksrepositorymock.h"
-#include "Mocks/selectedindicessourcemock.h"
-#include <Commands/Files/addfilescommand.h>
-#include <Commands/Files/removefilescommand.h>
-#include <Commands/Files/removedirectorycommand.h>
-#include <Commands/Editing/modifyartworkscommand.h>
-#include <Commands/Editing/findandreplacetemplate.h>
-#include <Commands/Editing/editartworkstemplate.h>
-#include <UndoRedo/undoredomanager.h>
-#include <Common/flags.h>
-#include <Artworks/artworkelement.h>
-#include <Models/Editing/previewartworkelement.h>
-#include <Models/Artworks/filteredartworkslistmodel.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Models/settingsmodel.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
+#include "Mocks/commandmanagermock.h"
+#include "Mocks/coretestsenvironment.h"
+#include "Mocks/filescollectionmock.h"
 
 #define SETUP_TEST \
     Mocks::CoreTestsEnvironment environment; \

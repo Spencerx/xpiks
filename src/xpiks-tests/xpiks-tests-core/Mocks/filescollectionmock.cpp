@@ -1,5 +1,7 @@
 #include "filescollectionmock.h"
 
+#include <QString>
+
 Mocks::FilesCollectionMock::FilesCollectionMock(QStringList const &images) {
     for (auto &img: images) {
         m_Files.emplace_back(img, Filesystem::ArtworkFileType::Image);

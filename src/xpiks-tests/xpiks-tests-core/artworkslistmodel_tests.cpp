@@ -1,27 +1,52 @@
 #include "artworkslistmodel_tests.h"
+
+#include <initializer_list>
+#include <memory>
+#include <vector>
+
+#include <QCoreApplication>
+#include <QList>
+#include <QMap>
 #include <QSignalSpy>
-#include "Mocks/coretestsenvironment.h"
+#include <QStringList>
+#include <QThread>
+#include <QVariant>
+#include <QVariantMap>
+#include <QVector>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Artworks/keyword.h"
+#include "Commands/Base/icommand.h"
+#include "Commands/UI/currenteditablecommands.h"
+#include "Commands/artworksupdatetemplate.h"
+#include "Common/flags.h"
+#include "Common/messages.h"
+#include "Helpers/indicesranges.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Editing/artworkproxymodel.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/Editing/currenteditablemodel.h"
+#include "Models/Editing/deletekeywordsviewmodel.h"
+#include "Models/Editing/quickbuffer.h"
+#include "Models/Session/recentdirectoriesmodel.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
+#include "Services/SpellCheck/spellsuggestionstarget.h"
+#include "Services/artworksupdatehub.h"
+#include "UndoRedo/undoredomanager.h"
+
+#include "Mocks/artworkmetadatamock.h"
 #include "Mocks/artworkslistmodelmock.h"
-#include "Mocks/commandmanagermock.h"
 #include "Mocks/artworksrepositorymock.h"
-#include "Mocks/artworksupdatermock.h"
-#include "Mocks/spellcheckservicemock.h"
-#include "Mocks/flagsprovidermock.h"
+#include "Mocks/commandmanagermock.h"
+#include "Mocks/coretestsenvironment.h"
 #include "Mocks/currentartworksourcemock.h"
-#include <Commands/UI/currenteditablecommands.h>
-#include <Commands/artworksupdatetemplate.h>
-#include <Models/Artworks/artworksrepository.h>
-#include <Models/Session/recentdirectoriesmodel.h>
-#include <Models/Editing/quickbuffer.h>
-#include <Models/Editing/combinedartworksmodel.h>
-#include <Models/Editing/currenteditablemodel.h>
-#include <Models/Editing/artworkproxymodel.h>
-#include <Models/Editing/deletekeywordsviewmodel.h>
-#include <Services/artworksupdatehub.h>
-#include <Services/SpellCheck/spellchecksuggestionmodel.h>
-#include <Services/SpellCheck/spellsuggestionstarget.h>
-#include <UndoRedo/undoredomanager.h>
-#include <KeywordsPresets/presetkeywordsmodel.h>
+#include "Mocks/flagsprovidermock.h"
+#include "Mocks/spellcheckservicemock.h"
+
+namespace Models {
+    class ICurrentEditable;
+}
 
 #define DECLARE_MODELS_AND_GENERATE(count, withVector) \
     Mocks::CoreTestsEnvironment environment; \
