@@ -62,7 +62,7 @@ before_script:
   - git checkout FETCH_HEAD -- api
 
 script:
-  - ${TRAVIS_BUILD_DIR}/scripts/build/build_vendors_${TRAVIS_OS_NAME}.sh travis-ci
+  - ${TRAVIS_BUILD_DIR}/scripts/build/build_vendors_${TRAVIS_OS_NAME}.sh travis-ci -j$(nproc)
   - ls -la libs/*
   - if [ -n "$XPIKS_BINARY" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-xpiks.sh"; fi
   - if [ -n "$CORE_TESTS" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-core-tests-${TRAVIS_OS_NAME}.sh"; fi

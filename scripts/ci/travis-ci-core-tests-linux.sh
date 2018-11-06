@@ -7,7 +7,7 @@ echo "----------------------"
 pushd src/xpiks-tests/xpiks-tests-core/
 
 qmake "CONFIG+=debug travis-ci" xpiks-tests-core.pro
-make
+make -j$(nproc)
 
 echo "Building Core tests... Done"
 

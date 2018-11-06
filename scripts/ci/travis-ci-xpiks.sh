@@ -7,7 +7,7 @@ echo "-----------------"
 pushd src/xpiks-qt/
 
 qmake "CONFIG += debug travis-ci without-video" xpiks-qt.pro
-make
+make -j$(nproc)
 
 exitcode=$?
 

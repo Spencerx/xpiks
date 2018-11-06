@@ -6,12 +6,12 @@ echo "-----------------------------"
 
 pushd src/xpiks-tests/plugins-for-tests/helloworld/xpiks-helloworld-plugin/
 qmake "CONFIG+=debug travis-ci" xpiks-helloworld-plugin.pro
-make
+make -j$(nproc)
 popd
 
 pushd src/xpiks-tests/xpiks-tests-integration
 qmake "CONFIG+=debug travis-ci without-video" xpiks-tests-integration.pro
-make
+make -j$(nproc)
 
 echo "Building Integration tests... Done"
 
