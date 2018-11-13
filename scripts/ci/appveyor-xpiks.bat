@@ -2,6 +2,7 @@
 
 set errorlevel=1
 set errorlevel=
+set CL=/MP
 
 pushd src\xpiks-qt\
 qmake "CONFIG+=%configuration% appveyor" xpiks-qt.pro

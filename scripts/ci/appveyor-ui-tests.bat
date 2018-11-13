@@ -5,6 +5,7 @@ setlocal enabledelayedexpansion
 set errorlevel=1
 set errorlevel=
 set mode=%1
+set CL=/MP
 
 if "%mode%" == "build" (
     echo "Building UI tests..."

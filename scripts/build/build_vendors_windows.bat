@@ -19,6 +19,7 @@ echo "Build mode is %BUILD_MODE%"
 rem for Windows 10+ only
 rem set PRINT_PREFIX="^<ESC^>[32m [32mGreen[0m"
 set PRINT_PREFIX="-"
+set CL=/MP
 set NMAKE_OPTIONS="clean all /f Makefile"
 
 set XPIKS_DEPS_ROOT="%ROOT_DIR%\..\xpiks-deps"
