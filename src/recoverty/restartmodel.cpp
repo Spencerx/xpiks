@@ -1,9 +1,9 @@
 #include "restartmodel.h"
-#include <QProcess>
+
 #include <QString>
+#include <QtGlobal>
 
 #ifdef Q_OS_LINUX
-#include <QVector>
 #include <unistd.h>
 #include <string>
 #include <vector>

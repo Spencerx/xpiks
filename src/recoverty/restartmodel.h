@@ -2,6 +2,7 @@
 #define RESTARTMODEL_H
 
 #include <QObject>
+#include <QString>
 #include <QStringList>
 
 class RestartModel : public QObject

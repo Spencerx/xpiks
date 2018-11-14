@@ -1,10 +1,21 @@
 #include "testshost.h"
-#include <QQmlEngine>
-#include <QQmlContext>
-#include <QQuickImageProvider>
+
+#include <QDebug>
+#include <QEventLoop>
+#include <QFont>
+#include <QImage>
 #include <QPainter>
+#include <QPen>
+#include <QQmlEngine>
+#include <QQuickImageProvider>
+#include <QSize>
+#include <QStringList>
+#include <Qt>
+#include <QtGlobal>
+
+#include "Common/logging.h"
+
 #include "xpiksuitestsapp.h"
-#include <Common/logging.h>
 
 class FakeImageProvider: public QQuickImageProvider
 {

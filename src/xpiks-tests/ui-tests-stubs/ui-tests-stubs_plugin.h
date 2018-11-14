@@ -1,7 +1,12 @@
 #ifndef UI_TESTS_STUBS_PLUGIN_H
 #define UI_TESTS_STUBS_PLUGIN_H
 
+#include <QObject>
+#include <QQmlExtensionInterface>
 #include <QQmlExtensionPlugin>
+#include <QString>
+
+class QQmlEngine;
 
 class Ui_Tests_StubsPlugin : public QQmlExtensionPlugin
 {

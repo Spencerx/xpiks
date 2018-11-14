@@ -1,7 +1,17 @@
 #ifndef XPIKSUITESTSAPP_H
 #define XPIKSUITESTSAPP_H
 
-#include <xpiksapp.h>
+#include <QStringList>
+
+#include "xpiksapp.h"
+
+namespace Common {
+    class ISystemEnvironment;
+}
+
+namespace Models {
+    class ArtworkProxyModel;
+}
 
 class XpiksUITestsApp: public XpiksApp
 {

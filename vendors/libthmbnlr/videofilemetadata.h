@@ -1,8 +1,8 @@
 #ifndef VIDEOFILEMETADATA_H
 #define VIDEOFILEMETADATA_H
 
-#include <string>
 #include <cstdint>
+#include <string>
 
 namespace libthmbnlr {
     struct VideoFileMetadata {

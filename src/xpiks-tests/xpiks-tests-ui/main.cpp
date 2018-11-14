@@ -1,14 +1,30 @@
-#include <QtQuickTest/quicktest.h>
-#include <QtQml>
-#include <QDir>
+#include <cstdlib>
+
 #include <QDebug>
-#include <QQmlEngine>
+#include <QDir>
 #include <QEventLoop>
-#include <Helpers/logger.h>
+#include <QGuiApplication>
+#include <QQmlEngine>
+#include <QString>
+#include <QStringList>
+#include <QThread>
+#include <QtGlobal>
+#include <QtQml>
+#include <QtQuickTest/quicktest.h>
+
 #include <vendors/chillout/src/chillout/chillout.h>
+
+#include "Common/isystemenvironment.h"
+#include "Common/logging.h"
+#include "Helpers/constants.h"
+#include "Helpers/logger.h"
+
 #include "testshost.h"
-#include "xpiksuitestsapp.h"
 #include "uitestsenvironment.h"
+#include "xpiksuitestsapp.h"
+
+class QJSEngine;
+class QObject;
 
 #define STRINGIZE_(x) #x
 #define STRINGIZE(x) STRINGIZE_(x)

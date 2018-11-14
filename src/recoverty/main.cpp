@@ -1,6 +1,15 @@
+#include <QCoreApplication>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QStaticStringData>
+#include <QString>
+#include <QStringList>
+#include <QUrl>
+#include <QVariant>
+#include <Qt>
+#include <QtGlobal>
+
 #include "restartmodel.h"
 
 int main(int argc, char *argv[]) {

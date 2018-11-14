@@ -1,8 +1,11 @@
 #include "ui-tests-stubs_plugin.h"
-#include <qqml.h>
-#include <QSize>
+
 #include <QImage>
+#include <QQmlEngine>
 #include <QQuickImageProvider>
+#include <QSize>
+#include <Qt>
+#include <QtGlobal>
 
 class FakeImageProvider: public QQuickImageProvider
 {

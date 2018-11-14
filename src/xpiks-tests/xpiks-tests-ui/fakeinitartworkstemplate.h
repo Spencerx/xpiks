@@ -1,7 +1,7 @@
 #ifndef FAKEINITARTWORKSTEMPLATE_H
 #define FAKEINITARTWORKSTEMPLATE_H
 
-#include <Commands/Base/icommandtemplate.h>
+#include "Commands/Base/icommandtemplate.h"
 
 namespace Artworks {
     class ArtworksSnapshot;

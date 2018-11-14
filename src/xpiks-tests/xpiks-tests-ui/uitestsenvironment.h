@@ -1,8 +1,11 @@
 #ifndef UITESTSENVIRONMENT_H
 #define UITESTSENVIRONMENT_H
 
-#include <Common/isystemenvironment.h>
 #include <QDir>
+#include <QString>
+#include <QStringList>
+
+#include "Common/isystemenvironment.h"
 
 class UITestsEnvironment: public Common::ISystemEnvironment
 {

@@ -1,10 +1,10 @@
 #ifndef LIBTHMBNLR_H
 #define LIBTHMBNLR_H
 
-#include "libthmbnlr_global.h"
-#include <string>
-#include <vector>
 #include <cstdint>
+#include <vector>
+
+#include "libthmbnlr_global.h"
 #include "videofilemetadata.h"
 
 namespace libthmbnlr {

@@ -2,7 +2,7 @@
 #define TESTSHOST_H
 
 #include <QObject>
-#include <functional>
+#include <QString>
 
 class QQmlEngine;
 class XpiksUITestsApp;

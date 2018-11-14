@@ -1,12 +1,50 @@
 #include "xpiksuitestsapp.h"
-#include "../xpiks-tests-integration/signalwaiter.h"
-#include "../xpiks-tests-integration/testshelpers.h"
-#include "../xpiks-tests-core/Mocks/filescollectionmock.h"
-#include <Commands/Files/addfilescommand.h>
-#include "fakeinitartworkstemplate.h"
-#include <QMLExtensions/uicommandid.h>
+
+#include <memory>
+
+#include <QCoreApplication>
+#include <QDebug>
+#include <QJSValue>
+#include <QString>
+#include <QThread>
+
+#include "Artworks/artworkssnapshot.h"
 #include "Artworks/imageartwork.h"
+#include "Commands/Base/icommand.h"
+#include "Commands/Files/addfilescommand.h"
+#include "Commands/commandmanager.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Common/types.h"
+#include "Helpers/indicesranges.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "MetadataIO/csvexportmodel.h"
+#include "MetadataIO/metadataioservice.h"
 #include "MetadataIO/originalmetadata.h"
+#include "Microstocks/stocksftplistmodel.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Connectivity/uploadinforepository.h"
+#include "Models/Editing/artworkproxymodel.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/Editing/currenteditablemodel.h"
+#include "Models/Editing/deletekeywordsviewmodel.h"
+#include "Models/Editing/quickbuffer.h"
+#include "Models/settingsmodel.h"
+#include "Models/switchermodel.h"
+#include "QMLExtensions/uicommanddispatcher.h"
+#include "QMLExtensions/uicommandid.h"
+#include "Services/Maintenance/maintenanceservice.h"
+#include "Services/SpellCheck/userdicteditmodel.h"
+#include "Suggestion/keywordssuggestor.h"
+
+#include "../xpiks-tests-core/Mocks/filescollectionmock.h"
+#include "../xpiks-tests-integration/testshelpers.h"
+#include "fakeinitartworkstemplate.h"
+
+namespace Artworks { class ArtworkMetadata; }
+namespace Common { class ISystemEnvironment; }
 
 std::shared_ptr<Artworks::ArtworkMetadata> createArtwork(Common::ID_t id,
                                                          const QString &title,
