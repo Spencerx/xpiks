@@ -1,5 +1,13 @@
 #include "translatorbasictest.h"
+
 #include <QDebug>
+#include <QLatin1String>
+#include <QObject>
+#include <QUrl>
+#include <QtGlobal>
+
+#include "Services/Translation/translationmanager.h"
+
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
 

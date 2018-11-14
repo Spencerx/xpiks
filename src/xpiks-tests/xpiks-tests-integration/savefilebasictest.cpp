@@ -1,9 +1,24 @@
 #include "savefilebasictest.h"
+
+#include <memory>
+
+#include <QLatin1String>
+#include <QList>
+#include <QMap>
+#include <QSize>
+#include <QStringList>
 #include <QUrl>
 #include <QVariant>
+#include <QVariantMap>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/imageartwork.h"
+#include "Common/types.h"
+#include "QMLExtensions/uicommandid.h"
+
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
-#include "Artworks/imageartwork.h"
 
 QString SaveFileBasicTest::testName() {
     return QLatin1String("SaveFileBasicTest");

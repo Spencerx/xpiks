@@ -1,24 +1,28 @@
 #include "exiv2iohelpers.h"
 
-#include <QVector>
-#include <QTextCodec>
-#include <QDateTime>
-#include <QImageReader>
-#include <QStringList>
+#include <list>
+#include <map>
+#include <memory>
 #include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
-#include <Artworks/artworkmetadata.h>
-#include <Artworks/imageartwork.h>
-#include <Common/defines.h>
-#include <Helpers/stringhelper.h>
+#include <QDateTime>
+#include <QDebug>
+#include <QLatin1String>
+#include <QList>
+#include <QStringList>
+#include <QTextCodec>
+#include <Qt>
+#include <QtGlobal>
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
 #endif
-
 #include <exiv2/exiv2.hpp>
-#include <exiv2/xmp.hpp>
+
+#include "Common/logging.h"
 
 #define X_DEFAULT QString::fromLatin1("x-default")
 
@@ -187,7 +191,7 @@ QString getIptcCharset(Exiv2::IptcData &iptcData) {
 
     try {
         const char *charsetPtr = iptcData.detectCharset();
-        if (charsetPtr != NULL) {
+        if (charsetPtr != nullptr) {
             iptcCharset = QString::fromLatin1(charsetPtr).toUpper();
         }
     }
@@ -596,7 +600,7 @@ void readMetadata(const QString &filepath, BasicMetadata &importResult) {
 #else
     Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(filepath.toStdString());
 #endif
-    Q_ASSERT(image.get() != NULL);
+    Q_ASSERT(image.get() != nullptr);
     image->readMetadata();
 
     Exiv2::XmpData &xmpData = image->xmpData();
@@ -617,7 +621,7 @@ void readMetadataEx(const QString &filepath, BasicMetadata &xmpMetadata, BasicMe
 #else
     Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(filepath.toStdString());
 #endif
-    Q_ASSERT(image.get() != NULL);
+    Q_ASSERT(image.get() != nullptr);
     image->readMetadata();
 
     Exiv2::XmpData &xmpData = image->xmpData();

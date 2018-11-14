@@ -1,10 +1,15 @@
 #include "autoattachvectorstest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
-#include "signalwaiter.h"
-#include "xpikstestsapp.h"
+#include <QUrl>
+
 #include "Artworks/imageartwork.h"
+#include "Models/settingsmodel.h"
+
+#include "xpikstestsapp.h"
 
 QString AutoAttachVectorsTest::testName() {
     return QLatin1String("AutoAttachVectorsTest");
@@ -28,7 +33,7 @@ int AutoAttachVectorsTest::doTest() {
     for (int i = 0; i < files.length(); ++i) {
         auto artwork = m_TestsApp.getArtwork(i);
         auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
-        VERIFY(image != NULL && image->hasVectorAttached(), "Vector is not attached!");
+        VERIFY(image != nullptr && image->hasVectorAttached(), "Vector is not attached!");
     }
 
     return 0;

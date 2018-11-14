@@ -1,6 +1,20 @@
 #include "spellcheckundotest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QDebug>
+#include <QLatin1String>
 #include <QList>
+#include <QThread>
+#include <QUrl>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/settingsmodel.h"
+
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"

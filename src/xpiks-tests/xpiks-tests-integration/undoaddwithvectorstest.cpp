@@ -1,10 +1,16 @@
 #include "undoaddwithvectorstest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
-#include "signalwaiter.h"
-#include "xpikstestsapp.h"
+#include <QUrl>
+#include <QtGlobal>
+
 #include "Artworks/imageartwork.h"
+#include "Models/settingsmodel.h"
+
+#include "xpikstestsapp.h"
 
 QString UndoAddWithVectorsTest::testName() {
     return QLatin1String("UndoAddWithVectorsTest");

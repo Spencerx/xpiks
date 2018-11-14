@@ -1,7 +1,19 @@
 #include "addtouserdictionarytest.h"
+
+#include <memory>
+
+#include <QDebug>
+#include <QLatin1String>
 #include <QList>
 #include <QUrl>
-#include "signalwaiter.h"
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Common/logging.h"
+#include "Models/settingsmodel.h"
+#include "Services/SpellCheck/userdictionary.h"
+
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
 

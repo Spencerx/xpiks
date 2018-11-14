@@ -1,10 +1,23 @@
 #include "zipartworkstest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QFileInfo>
+#include <QLatin1String>
 #include <QList>
-#include "signalwaiter.h"
-#include <Helpers/filehelpers.h>
-#include "xpikstestsapp.h"
+#include <QObject>
+#include <QUrl>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
 #include "Artworks/imageartwork.h"
+#include "Helpers/filehelpers.h"
+#include "Models/Connectivity/ziparchiver.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+
+#include "signalwaiter.h"
+#include "xpikstestsapp.h"
 
 QString ZipArtworksTest::testName() {
     return QLatin1String("ZipArtworksTest");

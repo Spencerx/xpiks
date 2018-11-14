@@ -1,9 +1,18 @@
 #include "savewithemptytitletest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
+#include <QSize>
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/imageartwork.h"
+#include "QMLExtensions/uicommandid.h"
+
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
-#include "Artworks/imageartwork.h"
 
 QString SaveWithEmptyTitleTest::testName() {
     return QLatin1String("SaveWithEmptyTitleTest");

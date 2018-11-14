@@ -1,8 +1,16 @@
 #include "undorestoresessiontest.h"
+
+#include <QDebug>
+#include <QLatin1String>
+#include <QList>
+#include <QUrl>
+
+#include "Common/logging.h"
+#include "Models/Session/sessionmanager.h"
+#include "Models/settingsmodel.h"
+
 #include "signalwaiter.h"
 #include "testshelpers.h"
-#include <QUrl>
-#include <QList>
 #include "xpikstestsapp.h"
 
 QString UndoRestoreSessionTest::testName() {

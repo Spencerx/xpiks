@@ -1,7 +1,20 @@
 #include "removefromuserdictionarytest.h"
+
+#include <memory>
+
+#include <QCoreApplication>
+#include <QEventLoop>
+#include <QLatin1String>
 #include <QList>
+#include <QThread>
 #include <QUrl>
-#include "signalwaiter.h"
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Models/settingsmodel.h"
+#include "Services/SpellCheck/userdictionary.h"
+
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
 

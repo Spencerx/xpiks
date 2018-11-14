@@ -1,9 +1,19 @@
 #include "combinededitfixspellingtest.h"
-#include <QUrl>
-#include <QThread>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
-#include "signalwaiter.h"
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Commands/Base/icommand.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
+
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
 

@@ -1,10 +1,26 @@
 #include "spellcheckmultireplacetest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
+#include <QStringList>
+#include <QUrl>
+#include <QVariant>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Commands/Base/icommand.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+#include "Services/SpellCheck/spellcheckservice.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
+#include "Services/SpellCheck/spellsuggestionsitem.h"
+
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
-#include "Services/SpellCheck/spellsuggestionsitem.h"
 
 QString SpellCheckMultireplaceTest::testName() {
     return QLatin1String("SpellCheckMultireplaceTest");

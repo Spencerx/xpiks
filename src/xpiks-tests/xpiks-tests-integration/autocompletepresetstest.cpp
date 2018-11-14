@@ -1,11 +1,21 @@
 #include "autocompletepresetstest.h"
-#include <QUrl>
-#include <QList>
+
 #include <QDebug>
-#include "integrationtestbase.h"
+#include <QLatin1String>
+#include <QObject>
+#include <QStringList>
+#include <QtGlobal>
+
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "KeywordsPresets/presetmodel.h"
+#include "Models/settingsmodel.h"
+#include "Services/AutoComplete/autocompletemodel.h"
+#include "Services/AutoComplete/autocompleteservice.h"
+#include "Services/AutoComplete/keywordsautocompletemodel.h"
+
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
-#include "testshelpers.h"
+
 
 #define FIRST_PRESET "shutterstock"
 #define SECOND_PRESET "canstockphoto"

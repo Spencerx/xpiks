@@ -1,10 +1,27 @@
 #include "spellcheckcombinedmodeltest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
+#include <QObject>
+#include <QStringList>
+#include <QThread>
+#include <QUrl>
+
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Commands/Base/icommand.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+#include "Services/SpellCheck/spellcheckservice.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
+#include "Services/SpellCheck/spellsuggestionsitem.h"
+
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
-#include "Services/SpellCheck/spellsuggestionsitem.h"
 
 QString SpellCheckCombinedModelTest::testName() {
     return QLatin1String("SpellCheckCombinedModelTest");

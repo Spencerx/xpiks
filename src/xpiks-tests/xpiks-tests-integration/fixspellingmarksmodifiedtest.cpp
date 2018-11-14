@@ -1,8 +1,21 @@
 #include "fixspellingmarksmodifiedtest.h"
-#include <QUrl>
-#include <QThread>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
+#include <QObject>
+#include <QStringList>
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Commands/Base/icommand.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+#include "Services/SpellCheck/spellcheckservice.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
+
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"

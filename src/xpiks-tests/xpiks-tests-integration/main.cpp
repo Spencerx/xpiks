@@ -1,70 +1,78 @@
-#include <iostream>
-#include <exception>
 #include <cstdlib>
+#include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
 
-#include <QDebug>
-#include <QTimer>
-#include <QThread>
 #include <QCoreApplication>
+#include <QDateTime>
+#include <QDebug>
+#include <QDir>
+#include <QObject>
+#include <QString>  // IWYU pragma: keep
+#include <QStringList>
+#include <QThread>
+#include <QTimer>
+#include <QtGlobal>
 
 #include <vendors/chillout/src/chillout/chillout.h>
 
+#include "Common/isystemenvironment.h"
 #include "Connectivity/curlinithelper.h"
+#include "Helpers/constants.h"
+#include "Helpers/logger.h"
 
-#include <Helpers/logger.h>
-#include "integrationtestsenvironment.h"
-#include "xpikstestsapp.h"
 #include "exiv2iohelpers.h"
-
-#include "testshelpers.h"
-
+#include "integrationtestsenvironment.h"  // IWYU pragma: keep
 #include "integrationtestbase.h"
+#include "xpikstestsapp.h"
+
 #include "addfilesbasictest.h"
-#include "autoattachvectorstest.h"
-#include "savefilebasictest.h"
-#include "spellcheckmultireplacetest.h"
-#include "spellcheckcombinedmodeltest.h"
-#include "zipartworkstest.h"
-#include "spellcheckundotest.h"
-#include "autocompletebasictest.h"
-#include "spellingproduceswarningstest.h"
-#include "undoaddwithvectorstest.h"
-#include "readlegacysavedtest.h"
-#include "clearmetadatatest.h"
-#include "savewithemptytitletest.h"
-#include "combinededitfixspellingtest.h"
-#include "findandreplacemodeltest.h"
 #include "addtouserdictionarytest.h"
-#include "autodetachvectortest.h"
-#include "removefromuserdictionarytest.h"
 #include "artworkuploaderbasictest.h"
-#include "plaintextedittest.h"
-#include "fixspellingmarksmodifiedtest.h"
-#include "presetstest.h"
-#include "translatorbasictest.h"
-#include "userdictedittest.h"
-#include "weirdnamesreadtest.h"
-#include "restoresessiontest.h"
-#include "savefilelegacytest.h"
-#include "locallibrarysearchtest.h"
-#include "metadatacachesavetest.h"
-#include "savevideobasictest.h"
-#include "duplicatesearchtest.h"
+#include "autoattachvectorstest.h"
+#include "autocompletebasictest.h"
 #include "autocompletepresetstest.h"
-#include "csvexporttest.h"
-#include "unicodeiotest.h"
-#include "faileduploadstest.h"
-#include "undoadddirectorytest.h"
-#include "undorestoresessiontest.h"
-#include "masterpasswordtest.h"
-#include "reimporttest.h"
+#include "autodetachvectortest.h"
 #include "autoimporttest.h"
-#include "importlostmetadatatest.h"
-#include "warningscombinedtest.h"
+#include "clearmetadatatest.h"
+#include "combinededitfixspellingtest.h"
 #include "csvdefaultexporttest.h"
+#include "csvexporttest.h"
+#include "duplicatesearchtest.h"
+#include "faileduploadstest.h"
+#include "findandreplacemodeltest.h"
+#include "fixspellingmarksmodifiedtest.h"
+#include "importlostmetadatatest.h"
 #include "loadpluginbasictest.h"
+#include "locallibrarysearchtest.h"
+#include "masterpasswordtest.h"
+#include "metadatacachesavetest.h"
+#include "plaintextedittest.h"
+#include "presetstest.h"
+#include "readlegacysavedtest.h"
+#include "reimporttest.h"
+#include "removefromuserdictionarytest.h"
+#include "restoresessiontest.h"
+#include "savefilebasictest.h"
+#include "savefilelegacytest.h"
+#include "savevideobasictest.h"
+#include "savewithemptytitletest.h"
+#include "spellcheckcombinedmodeltest.h"
+#include "spellcheckmultireplacetest.h"
+#include "spellcheckundotest.h"
+#include "spellingproduceswarningstest.h"
 #include "stockftpautocompletetest.h"
+#include "translatorbasictest.h"
 #include "unavailablefilestest.h"
+#include "undoadddirectorytest.h"
+#include "undoaddwithvectorstest.h"
+#include "undorestoresessiontest.h"
+#include "unicodeiotest.h"
+#include "userdictedittest.h"
+#include "warningscombinedtest.h"
+#include "weirdnamesreadtest.h"
+#include "zipartworkstest.h"
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     Q_UNUSED(context);

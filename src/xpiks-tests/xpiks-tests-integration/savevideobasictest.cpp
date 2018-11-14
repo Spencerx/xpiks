@@ -1,11 +1,20 @@
 #include "savevideobasictest.h"
-#include <QUrl>
-#include <QFileInfo>
+
+#include <memory>
+
+#include <QLatin1String>
+#include <QList>
+#include <QSize>
 #include <QStringList>
-#include "integrationtestbase.h"
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/videoartwork.h"
+#include "Common/types.h"
+#include "QMLExtensions/uicommandid.h"
+
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
-#include <Artworks/videoartwork.h>
 
 QString SaveVideoBasicTest::testName() {
     return QLatin1String("SaveVideoBasicTest");

@@ -1,6 +1,19 @@
 #include "masterpasswordtest.h"
+
+#include <memory>
+#include <vector>
+
+#include <QDebug>
+#include <QLatin1String>
+#include <QVariant>
+#include <QtGlobal>
+
+#include "Encryption/secretsmanager.h"
+#include "Models/Connectivity/artworksuploader.h"
+#include "Models/Connectivity/uploadinfo.h"
+#include "Models/Connectivity/uploadinforepository.h"
+
 #include "xpikstestsapp.h"
-#include <Models/Connectivity/uploadinfo.h>
 
 QString MasterPasswordTest::testName() {
     return QLatin1String("MasterPasswordTest");

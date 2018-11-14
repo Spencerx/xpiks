@@ -1,7 +1,19 @@
 #include "clearmetadatatest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
+#include <QStringList>
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Helpers/indicesranges.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
 

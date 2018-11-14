@@ -1,5 +1,12 @@
 #include "undoadddirectorytest.h"
+
+#include <QLatin1String>
+#include <QList>
 #include <QUrl>
+
+#include "Helpers/indicesranges.h"
+#include "Models/settingsmodel.h"
+
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
 

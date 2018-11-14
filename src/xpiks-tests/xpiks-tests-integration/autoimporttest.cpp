@@ -1,7 +1,15 @@
 #include "autoimporttest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
+#include <QStringList>
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Models/settingsmodel.h"
+
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
 

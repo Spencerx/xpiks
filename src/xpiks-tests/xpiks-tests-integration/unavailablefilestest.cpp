@@ -1,7 +1,21 @@
 #include "unavailablefilestest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "signalwaiter.h"
+#include <QObject>
+#include <QSignalSpy>
+#include <QUrl>
+#include <QVariant>
+
+#include "Artworks/artworkmetadata.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/artworksrepository.h"
+#include "Models/Editing/artworkproxymodel.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+
 #include "xpikstestsapp.h"
 
 QString UnavailableFilesTest::testName() {

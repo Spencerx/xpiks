@@ -1,8 +1,14 @@
 #include "locallibrarysearchtest.h"
-#include <QUrl>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
-#include "signalwaiter.h"
+#include <QUrl>
+#include <QVariant>
+
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+#include "Suggestion/keywordssuggestor.h"
+
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
 

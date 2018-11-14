@@ -17,10 +17,6 @@ struct BasicMetadata {
     QStringList m_Keywords;
 };
 
-namespace Models {
-    class ArtworkMetadata;
-}
-
 void readMetadata(const QString &filepath, BasicMetadata &importResult);
 void readMetadataEx(const QString &filepath, BasicMetadata &xmpMetadata, BasicMetadata &exifMetadata, BasicMetadata &iptcMetadata);
 

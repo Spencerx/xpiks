@@ -1,11 +1,34 @@
 #include "xpikstestsapp.h"
+
+#include <set>
+
+#include <QCoreApplication>
+#include <QDebug>
+#include <QEventLoop>
+#include <QObject>
+#include <QString>
 #include <QThread>
-#include <QJSValue>
-#include "testshelpers.h"
-#include "signalwaiter.h"
-#include <Commands/Files/removefilescommand.h>
-#include <Commands/Files/removedirectorycommand.h>
+
+#include "Commands/Files/removefilescommand.h"
+#include "Commands/commandmanager.h"
+#include "Common/logging.h"
+#include "MetadataIO/csvexportmodel.h"
+#include "MetadataIO/metadataiocoordinator.h"
+#include "Microstocks/stocksftplistmodel.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Connectivity/uploadinforepository.h"
+#include "Models/settingsmodel.h"
+#include "Models/switchermodel.h"
+#include "QMLExtensions/uicommanddispatcher.h"
+#include "Services/Maintenance/maintenanceservice.h"
+#include "Services/SpellCheck/spellcheckservice.h"
+#include "Services/SpellCheck/spellchecksuggestionmodel.h"
 #include "Services/SpellCheck/spellsuggestionsitem.h"
+#include "UndoRedo/undoredomanager.h"
+
+#include "signalwaiter.h"
+#include "testshelpers.h"
 
 XpiksTestsApp::XpiksTestsApp(Common::ISystemEnvironment &environment):
     XpiksApp(environment)

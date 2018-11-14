@@ -1,14 +1,29 @@
 #include "importlostmetadatatest.h"
-#include <QUrl>
-#include <QList>
+
+#include <memory>
+
 #include <QDebug>
-#include "integrationtestbase.h"
+#include <QLatin1String>
+#include <QList>
+#include <QStringList>
+#include <QUrl>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/imageartwork.h"
+#include "Common/defines.h"
+#include "MetadataIO/cachedartwork.h"
+#include "MetadataIO/metadatacache.h"
+#include "MetadataIO/metadataiocoordinator.h"
+#include "MetadataIO/metadataioservice.h"
+#include "MetadataIO/metadataioworker.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/settingsmodel.h"
+
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
-#include <MetadataIO/metadataioworker.h>
-#include <MetadataIO/metadatacache.h>
-#include <Artworks/imageartwork.h>
 
 QString ImportLostMetadataTest::testName() {
     return QLatin1String("ImportLostMetadataTest");

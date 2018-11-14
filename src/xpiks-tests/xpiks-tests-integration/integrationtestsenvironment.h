@@ -1,7 +1,10 @@
 #ifndef INTEGRATIONTESTSENVIRONMENT_H
 #define INTEGRATIONTESTSENVIRONMENT_H
 
-#include "../../xpiks-qt/Common/systemenvironment.h"
+#include <QString>
+#include <QStringList>
+
+#include "Common/systemenvironment.h"
 
 class IntegrationTestsEnvironment: public Common::SystemEnvironment
 {

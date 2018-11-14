@@ -1,8 +1,16 @@
 #include "findandreplacemodeltest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
-#include "signalwaiter.h"
+#include <QStringList>
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Models/Editing/findandreplacemodel.h"
+#include "QMLExtensions/uicommandid.h"
+
 #include "xpikstestsapp.h"
 
 QString FindAndReplaceModelTest::testName() {

@@ -1,10 +1,11 @@
 #ifndef INTEGRATIONTESTBASE
 #define INTEGRATIONTESTBASE
 
-#include <QString>
-#include <QHash>
+#include <QString>  // IWYU pragma: export
 #include <QUrl>
-#include "integrationtestsenvironment.h"
+#include <QtGlobal>
+
+#include "integrationtestsenvironment.h"  // IWYU pragma: export
 
 class XpiksTestsApp;
 

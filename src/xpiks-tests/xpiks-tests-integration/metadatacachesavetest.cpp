@@ -1,12 +1,27 @@
 #include "metadatacachesavetest.h"
-#include <QUrl>
+
+#include <cstddef>
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
-#include "signalwaiter.h"
-#include "testshelpers.h"
+#include <QStringList>
+#include <QUrl>
+#include <QVector>
+
+#include "Artworks/artworkmetadata.h"
+#include "MetadataIO/cachedartwork.h"
+#include "MetadataIO/metadataioservice.h"
+#include "MetadataIO/metadataioworker.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/settingsmodel.h"
+
+#include "testshelpers.h"  // IWYU pragma: keep
 #include "xpikstestsapp.h"
-#include <MetadataIO/metadataioworker.h>
-#include <MetadataIO/metadatacache.h>
+
+namespace MetadataIO {
+    class MetadataCache;
+}
 
 QString MetadataCacheSaveTest::testName() {
     return QLatin1String("MetadataCacheSaveTest");

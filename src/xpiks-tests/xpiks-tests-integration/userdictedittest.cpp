@@ -1,7 +1,19 @@
 #include "userdictedittest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "signalwaiter.h"
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/Editing/quickbuffer.h"
+#include "Models/settingsmodel.h"
+#include "Services/SpellCheck/userdicteditmodel.h"
+
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
 

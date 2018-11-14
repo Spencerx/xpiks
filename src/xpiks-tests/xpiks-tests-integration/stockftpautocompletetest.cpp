@@ -1,9 +1,12 @@
 #include "stockftpautocompletetest.h"
-#include <QUrl>
-#include <QList>
-#include "signalwaiter.h"
-#include "xpikstestsapp.h"
+
+#include <QLatin1String>
+
+#include "Models/Connectivity/uploadinforepository.h"
+#include "Services/AutoComplete/stringsautocompletemodel.h"
+
 #include "testshelpers.h"
+#include "xpikstestsapp.h"
 
 QString StockFtpAutoCompleteTest::testName() {
     return QLatin1String("StockFtpAutoCompleteTest");

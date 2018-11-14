@@ -1,10 +1,13 @@
 #include "artworkuploaderbasictest.h"
-#include <QUrl>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
-#include "signalwaiter.h"
+#include <QUrl>
+
+#include "Models/Connectivity/artworksuploader.h"
+#include "QMLExtensions/uicommandid.h"
+
 #include "xpikstestsapp.h"
-#include <Models/Connectivity/artworksuploader.h>
 
 QString ArtworkUploaderBasicTest::testName() {
     return QLatin1String("ArtworkUploaderBasicTest");

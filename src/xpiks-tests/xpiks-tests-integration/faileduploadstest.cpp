@@ -1,10 +1,27 @@
 #include "faileduploadstest.h"
+
+#include <memory>
+
+#include <QCoreApplication>
 #include <QDebug>
+#include <QLatin1String>
 #include <QList>
-#include "signalwaiter.h"
+#include <QPair>
+#include <QStringList>
+#include <QUrl>
+#include <QVector>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Connectivity/uploadwatcher.h"
+#include "Models/Connectivity/artworksuploader.h"
+#include "Models/Connectivity/uploadinfo.h"
+#include "Models/Connectivity/uploadinforepository.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
-#include <Models/Connectivity/uploadinfo.h>
 
 QString FailedUploadsTest::testName() {
     return QLatin1String("FailedUploadsTest");

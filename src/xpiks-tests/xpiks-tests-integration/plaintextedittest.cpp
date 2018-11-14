@@ -1,8 +1,18 @@
 #include "plaintextedittest.h"
-#include <QUrl>
-#include <QThread>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
+#include <QMap>
+#include <QUrl>
+#include <QVariant>
+#include <QVariantMap>
+
+#include "Artworks/basicmetadatamodel.h"
+#include "Models/Editing/combinedartworksmodel.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+#include "Services/SpellCheck/spellcheckservice.h"
+
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"

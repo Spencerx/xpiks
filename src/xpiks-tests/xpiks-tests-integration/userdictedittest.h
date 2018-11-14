@@ -3,10 +3,6 @@
 
 #include "integrationtestbase.h"
 
-namespace SpellCheck {
-    class UserDictEditModel;
-}
-
 class UserDictEditTest : public IntegrationTestBase
 {
 public:

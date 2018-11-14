@@ -1,8 +1,11 @@
 #include "integrationtestsenvironment.h"
-#include <QDateTime>
+
+#include <QChar>
+#include <QDebug>
 #include <QDir>
-#include "../../xpiks-qt/Helpers/filehelpers.h"
-#include "../../xpiks-qt/Common/logging.h"
+
+#include "Common/logging.h"
+#include "Helpers/filehelpers.h"
 
 IntegrationTestsEnvironment::IntegrationTestsEnvironment(const QStringList &appArguments):
     Common::SystemEnvironment(appArguments)

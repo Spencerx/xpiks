@@ -1,9 +1,44 @@
 #ifndef XPIKSTESTSAPP_H
 #define XPIKSTESTSAPP_H
 
+#include <memory>
+
 #include <QVariant>
-#include <xpiksapp.h>
-#include <QMLExtensions/uicommandid.h>
+#include <QList>
+
+#include "Helpers/indicesranges.h"
+#include "QMLExtensions/uicommandid.h"
+#include "xpiksapp.h"
+
+class QUrl;
+namespace Artworks { class ArtworkMetadata; }
+namespace AutoComplete { class AutoCompleteService; }
+namespace AutoComplete { class KeywordsAutoCompleteModel; }
+namespace Common { class ISystemEnvironment; }
+namespace Encryption { class SecretsManager; }
+namespace KeywordsPresets { class PresetKeywordsModel; }
+namespace MetadataIO { class CsvExportModel; }
+namespace MetadataIO { class MetadataIOCoordinator; }
+namespace MetadataIO { class MetadataIOService; }
+namespace Models { class ArtworkProxyModel; }
+namespace Models { class ArtworksListModel; }
+namespace Models { class ArtworksRepository; }
+namespace Models { class ArtworksUploader; }
+namespace Models { class CombinedArtworksModel; }
+namespace Models { class FilteredArtworksListModel; }
+namespace Models { class FindAndReplaceModel; }
+namespace Models { class QuickBuffer; }
+namespace Models { class SessionManager; }
+namespace Models { class SettingsModel; }
+namespace Models { class UploadInfoRepository; }
+namespace Models { class ZipArchiver; }
+namespace Plugins { class PluginManager; }
+namespace SpellCheck { class SpellCheckService; }
+namespace SpellCheck { class SpellCheckSuggestionModel; }
+namespace SpellCheck { class UserDictEditModel; }
+namespace SpellCheck { class UserDictionary; }
+namespace Suggestion { class KeywordsSuggestor; }
+namespace Translation { class TranslationManager; }
 
 class SignalWaiter;
 

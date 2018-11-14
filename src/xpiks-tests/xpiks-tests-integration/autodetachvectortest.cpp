@@ -1,12 +1,21 @@
 #include "autodetachvectortest.h"
-#include <QUrl>
-#include <QList>
-#include <QFile>
+
+#include <memory>
+
 #include <QDebug>
-#include "integrationtestbase.h"
+#include <QFile>
+#include <QLatin1String>
+#include <QList>
+#include <QObject>
+#include <QUrl>
+#include <QtGlobal>
+
+#include "Artworks/imageartwork.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/settingsmodel.h"
+
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
-#include "Artworks/imageartwork.h"
 
 QString AutoDetachVectorTest::testName() {
     return QLatin1String("AutoDetachVectorTest");
@@ -27,7 +36,7 @@ int AutoDetachVectorTest::doTest() {
 
     auto metadata = m_TestsApp.getArtwork(0);
     auto image = std::dynamic_pointer_cast<Artworks::ImageArtwork>(metadata);
-    VERIFY(image != NULL && image->hasVectorAttached(), "Vector is not attached!");
+    VERIFY(image != nullptr && image->hasVectorAttached(), "Vector is not attached!");
 
     const QString vectorPath = image->getAttachedVectorPath();
     QFile vectorFile(vectorPath);

@@ -1,5 +1,16 @@
 #include "duplicatesearchtest.h"
-#include "signalwaiter.h"
+
+#include <memory>
+
+#include <QLatin1String>
+#include <QList>
+#include <QStringList>
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Models/Artworks/filteredartworkslistmodel.h"
+#include "Models/settingsmodel.h"
+
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
 

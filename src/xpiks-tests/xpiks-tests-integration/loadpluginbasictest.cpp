@@ -1,6 +1,11 @@
 #include "loadpluginbasictest.h"
-#include <QDebug>
-#include "signalwaiter.h"
+
+#include <QLatin1String>
+#include <QStringList>
+#include <QUrl>
+
+#include "Plugins/pluginmanager.h"
+
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
 

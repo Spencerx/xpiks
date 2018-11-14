@@ -1,9 +1,21 @@
 #include "spellingproduceswarningstest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QDebug>
+#include <QLatin1String>
 #include <QList>
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Models/settingsmodel.h"
+
 #include "signalwaiter.h"
-#include "xpikstestsapp.h"
 #include "testshelpers.h"
+#include "xpikstestsapp.h"
 
 QString SpellingProducesWarningsTest::testName() {
     return QLatin1String("SpellingProducesWarningsTest");

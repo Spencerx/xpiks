@@ -1,15 +1,31 @@
 #include "csvexporttest.h"
-#include <QUrl>
+
+#include <cstddef>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include <QCoreApplication>
+#include <QDebug>
 #include <QDir>
+#include <QFileInfo>
+#include <QLatin1String>
 #include <QList>
-#include <deque>
-#include "integrationtestbase.h"
-#include "signalwaiter.h"
-#include "testshelpers.h"
-#include <Helpers/filehelpers.h>
+#include <QUrl>
+#include <QtGlobal>
+
 #include <vendors/csv/csv.h>
-#include "xpikstestsapp.h"
+
+#include "Artworks/artworkmetadata.h"
+#include "Helpers/filehelpers.h"
+#include "MetadataIO/csvexportmodel.h"
 #include "MetadataIO/csvexportproperties.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/settingsmodel.h"
+#include "QMLExtensions/uicommandid.h"
+
+#include "testshelpers.h"
+#include "xpikstestsapp.h"
 
 QString CsvExportTest::testName() {
     return QLatin1String("CsvExportTest");

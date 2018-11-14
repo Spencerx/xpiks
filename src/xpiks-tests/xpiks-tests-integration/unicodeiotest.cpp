@@ -1,9 +1,22 @@
 #include "unicodeiotest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
+#include <QMap>
+#include <QStaticStringData>
+#include <QStringList>
+#include <QUrl>
+#include <QVariant>
+#include <QVariantMap>
+
+#include "Artworks/artworkmetadata.h"
+#include "QMLExtensions/uicommandid.h"
+
+#include "exiv2iohelpers.h"
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
-#include "exiv2iohelpers.h"
 
 QString UnicodeIoTest::testName() {
     return QLatin1String("UnicodeIoTest");

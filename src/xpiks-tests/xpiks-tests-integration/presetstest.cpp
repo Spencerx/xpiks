@@ -1,6 +1,19 @@
 #include "presetstest.h"
-#include <QDir>
+
+#include <cstddef>
+#include <memory>
+#include <vector>
+
+#include <QLatin1String>
+#include <QList>
+#include <QStringList>
 #include <QThread>
+#include <QVector>
+
+#include "KeywordsPresets/groupmodel.h"
+#include "KeywordsPresets/presetkeywordsmodel.h"
+#include "KeywordsPresets/presetkeywordsmodelconfig.h"
+
 #include "xpikstestsapp.h"
 
 QString PresetsTest::testName() {

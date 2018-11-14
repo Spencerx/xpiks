@@ -1,8 +1,22 @@
 #include "autocompletebasictest.h"
-#include <QUrl>
-#include <QList>
+
+#include <memory>
+
 #include <QDebug>
-#include "integrationtestbase.h"
+#include <QLatin1String>
+#include <QList>
+#include <QObject>
+#include <QStringList>
+#include <QUrl>
+#include <QtGlobal>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/basickeywordsmodel.h"
+#include "Artworks/basicmetadatamodel.h"
+#include "Models/settingsmodel.h"
+#include "Services/AutoComplete/autocompleteservice.h"
+#include "Services/AutoComplete/keywordsautocompletemodel.h"
+
 #include "signalwaiter.h"
 #include "xpikstestsapp.h"
 

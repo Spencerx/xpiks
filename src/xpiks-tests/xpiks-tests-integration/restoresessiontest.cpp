@@ -9,12 +9,30 @@
  */
 
 #include "restoresessiontest.h"
-#include <QUrl>
+
+#include <cstddef>
+#include <memory>
+#include <vector>
+
+#include <QDebug>
+#include <QLatin1String>
 #include <QList>
+#include <QSize>
+#include <QStringList>
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Artworks/artworkssnapshot.h"
+#include "Artworks/imageartwork.h"
+#include "Common/logging.h"
+#include "Common/types.h"
+#include "Models/Artworks/artworkslistmodel.h"
+#include "Models/Session/sessionmanager.h"
+#include "Models/settingsmodel.h"
+
 #include "signalwaiter.h"
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
-#include "Artworks/imageartwork.h"
 
 QString RestoreSessionTest::testName() {
     return QLatin1String("RestoreSessionTest");

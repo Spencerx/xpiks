@@ -1,16 +1,18 @@
 #ifndef SIGNALWAITER
 #define SIGNALWAITER
 
-#include <QObject>
-#include <QEventLoop>
-#include <QTimer>
 #include <QDebug>
+#include <QEventLoop>
+#include <QObject>
 #include <QSignalSpy>
+#include <QString>
+#include <QTimer>
+#include <QtGlobal>
 
 class SignalWaiter: public QObject {
     Q_OBJECT
 public:
-    SignalWaiter(QObject *parent=0):
+    SignalWaiter(QObject *parent=nullptr):
         QObject(parent),
         m_SignalSpy(this, SIGNAL(finished()))
     {

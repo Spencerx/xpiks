@@ -1,10 +1,18 @@
 #include "addfilesbasictest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
-#include "signalwaiter.h"
-#include "xpikstestsapp.h"
+#include <QSize>
+#include <QStringList>
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
 #include "Artworks/imageartwork.h"
+#include "Models/settingsmodel.h"
+
+#include "xpikstestsapp.h"
 
 QString AddFilesBasicTest::testName() {
     return QLatin1String("AddFilesBasicTest");

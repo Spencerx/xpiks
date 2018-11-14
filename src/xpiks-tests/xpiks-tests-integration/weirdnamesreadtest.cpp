@@ -1,7 +1,11 @@
 #include "weirdnamesreadtest.h"
-#include <QUrl>
+
+#include <QLatin1String>
 #include <QList>
-#include "signalwaiter.h"
+#include <QUrl>
+
+#include "Models/settingsmodel.h"
+
 #include "xpikstestsapp.h"
 
 #define FILES_IN_WEIRD_DIRECTORY 4

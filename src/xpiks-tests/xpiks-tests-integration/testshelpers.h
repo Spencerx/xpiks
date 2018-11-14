@@ -2,7 +2,9 @@
 #define TESTSHELPERS_H
 
 #include <functional>
+
 #include <QString>
+#include <QStringList>
 #include <QUrl>
 
 void sleepWaitUntil(int seconds, const std::function<bool ()> &condition);

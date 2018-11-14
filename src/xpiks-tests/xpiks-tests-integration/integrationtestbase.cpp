@@ -1,8 +1,9 @@
 #include "integrationtestbase.h"
-#include <QDebug>
+
 #include <QDir>
-#include "xpikstestsapp.h"
+
 #include "testshelpers.h"
+#include "xpikstestsapp.h"
 
 IntegrationTestBase::IntegrationTestBase(IntegrationTestsEnvironment &environment,
                                          XpiksTestsApp &testsApp):

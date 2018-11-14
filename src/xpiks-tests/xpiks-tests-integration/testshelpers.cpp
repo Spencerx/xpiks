@@ -1,10 +1,17 @@
 #include "testshelpers.h"
-#include <QThread>
+
+#include <QChar>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
+#include <QEventLoop>
+#include <QFile>
 #include <QFileInfo>
-#include <Helpers/filehelpers.h>
+#include <QList>
+#include <QThread>
+#include <QtGlobal>
+
+#include "Helpers/filehelpers.h"
 
 void ensureDirectoryExistsForFile(const QString &filepath) {
     QFileInfo fi(filepath);

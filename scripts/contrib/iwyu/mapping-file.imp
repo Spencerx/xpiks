@@ -2265,9 +2265,10 @@
     { include: [ "\"Plugins/../Common/isystemenvironment.h\"", "private", "\"Common/isystemenvironment.h\"", "public" ] },
     { include: [ "\"Storage/../Common/logging.h\"", "private", "\"Common/logging.h\"", "public" ] },
     { include: [ "\"UndoRedo/../Common/types.h\"", "private", "\"Common/types.h\"", "public" ] },
+    { include: ["@<exiv2/.*>", "private", "<exiv2/exiv2.hpp>", "public"] },
     { symbol: [ "ntohl", "private", "<arpa/inet.h>", "public" ] },
-    { symbol: [ "std::reference_wrapper", "private", "<functional>", "public" ] },
     { symbol: [ "size_t", "private", "<cstddef>", "public" ] },
+    { symbol: [ "std::reference_wrapper", "private", "<functional>", "public" ] },
 
 ]
 

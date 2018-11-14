@@ -1,8 +1,17 @@
 #include "warningscombinedtest.h"
-#include <QUrl>
+
+#include <memory>
+
+#include <QDebug>
+#include <QLatin1String>
 #include <QList>
-#include "integrationtestbase.h"
-#include "signalwaiter.h"
+#include <QUrl>
+
+#include "Artworks/artworkmetadata.h"
+#include "Common/flags.h"
+#include "Common/logging.h"
+#include "Models/settingsmodel.h"
+
 #include "testshelpers.h"
 #include "xpikstestsapp.h"
 
