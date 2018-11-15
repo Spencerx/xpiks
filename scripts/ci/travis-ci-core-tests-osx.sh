@@ -4,10 +4,12 @@ echo "----------------------"
 echo "Building Core tests..."
 echo "----------------------"
 
+PROCN=$(sysctl -n hw.ncpu)
+
 pushd src/xpiks-tests/xpiks-tests-core/
 
 qmake "CONFIG+=debug travis-ci" xpiks-tests-core.pro
-make -j$(nproc)
+make -j$PROCN
 
 echo "Building Core tests... Done"
 

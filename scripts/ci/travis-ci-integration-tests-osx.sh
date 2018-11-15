@@ -4,14 +4,16 @@ echo "-----------------------------"
 echo "Building Integration tests..."
 echo "-----------------------------"
 
+PROCN=$(sysctl -n hw.ncpu)
+
 pushd src/xpiks-tests/plugins-for-tests/helloworld/xpiks-helloworld-plugin/
 qmake "CONFIG+=debug travis-ci" xpiks-helloworld-plugin.pro
-make -j$(nproc)
+make -j$PROCN
 popd
 
 pushd src/xpiks-tests/xpiks-tests-integration
 qmake "CONFIG+=debug travis-ci without-video" xpiks-tests-integration.pro
-make -j$(nproc)
+make -j$PROCN
 
 echo "Building Integration tests... Done"
 

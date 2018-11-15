@@ -23,7 +23,7 @@ case ${BUILD_MODE} in
 esac
 
 shift
-MAKE_FLAGS="${*}" # do we need argument validation?
+MAKE_FLAGS="-j$(nproc) ${*}" # do we need argument validation?
 
 ### output prefix
 GREEN_COLOR='\033[0;32m'

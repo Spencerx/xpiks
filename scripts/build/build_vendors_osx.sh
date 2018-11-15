@@ -40,7 +40,7 @@ echo -e "${PRINT_PREFIX} Using ${QT_BIN_DIR} as Qt bin directory path"
 export PATH="${PATH}:${QT_BIN_DIR}"
 
 shift
-MAKE_FLAGS="${*}" # do we need argument validation?
+MAKE_FLAGS="-j$(sysctl -n hw.ncpu) ${*}" # do we need argument validation?
 
 ### output prefix
 GREEN_COLOR='\033[0;32m'
