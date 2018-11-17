@@ -88,7 +88,7 @@ namespace Helpers {
 
         LOG_DEBUG << i << "same elements skipped";
 
-        int maxIndexOfEqual = i;
+        const int maxIndexOfEqual = i > 0 ? i - 1 : 0;
 
         const int sizeFrom = arrayFrom.size();
         QJsonArray elementsToAdd;
@@ -124,7 +124,7 @@ namespace Helpers {
 
     int findObjectIndex(const QJsonArray &array, int minIndex, const QJsonObject &object, CompareValuesJson &comparer) {
         int index = -1;
-        Q_ASSERT(minIndex <= array.size());
+        Q_ASSERT(minIndex < array.size());
 
         const int size = array.size();
 
