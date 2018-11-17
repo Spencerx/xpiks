@@ -1,12 +1,16 @@
 #include "restartmodel.h"
 
-#include <QString>
-#include <QtGlobal>
-
 #ifdef Q_OS_LINUX
 #include <unistd.h>
 #include <string>
 #include <vector>
+#endif
+
+#include <QString>
+#include <QtGlobal>
+
+#ifndef Q_OS_LINUX
+    #include <QProcess>
 #endif
 
 RestartModel::RestartModel(const QStringList &arguments, QObject *parent) :

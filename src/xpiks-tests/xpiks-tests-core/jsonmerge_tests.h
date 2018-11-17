@@ -10,6 +10,7 @@ class JsonMergeTests: public QObject
     Q_OBJECT
 private slots:
     void mergeArraysOfObjectsTest();
+    void mergeAddArraysOfObjectsTest();
     void mergeArraysOfStringsTest();
     void mergeOverwriteTest();
     void mergeExistingElementsTest();

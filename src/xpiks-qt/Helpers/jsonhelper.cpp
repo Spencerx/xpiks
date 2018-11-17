@@ -124,7 +124,7 @@ namespace Helpers {
 
     int findObjectIndex(const QJsonArray &array, int minIndex, const QJsonObject &object, CompareValuesJson &comparer) {
         int index = -1;
-        Q_ASSERT(minIndex < array.size());
+        Q_ASSERT(minIndex <= array.size());
 
         const int size = array.size();
 

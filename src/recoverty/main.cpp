@@ -1,14 +1,14 @@
 #include <QCoreApplication>
 #include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
 #include <QStaticStringData>
 #include <QString>
 #include <QStringList>
-#include <QUrl>
-#include <QVariant>
 #include <Qt>
 #include <QtGlobal>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QUrl>
+#include <QVariant>
 
 #include "restartmodel.h"
 

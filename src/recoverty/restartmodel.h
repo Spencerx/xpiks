@@ -11,7 +11,7 @@ class RestartModel : public QObject
     Q_PROPERTY(QString arguments READ getArguments CONSTANT)
     Q_PROPERTY(QString appName READ getAppName CONSTANT)
 public:
-    explicit RestartModel(const QStringList &arguments, QObject *parent = 0);
+    explicit RestartModel(const QStringList &arguments, QObject *parent = nullptr);
 
 public:
     Q_INVOKABLE void recover();

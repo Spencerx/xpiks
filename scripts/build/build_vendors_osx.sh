@@ -31,7 +31,7 @@ echo "Build target is: $TARGET"
 if [ -n "$TRAVIS_CI" ]; then
     QT_BIN_DIR=/usr/local/opt/qt/bin
 else
-    QT_BIN_DIR=~/Qt5.9.6/5.9.6/clang_64/bin
+    QT_BIN_DIR=~/Qt5.9.7/5.9.7/clang_64/bin
 fi
 
 #export LDFLAGS="-L/usr/local/opt/qt/lib"

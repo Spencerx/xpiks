@@ -144,6 +144,79 @@ void JsonMergeTests::mergeArraysOfObjectsTest() {
     QCOMPARE(localDoc, mergedDoc);
 }
 
+void JsonMergeTests::mergeAddArraysOfObjectsTest() {
+
+    const char *localJson = R"JSON(
+                             {
+                                 "stocks_ftp": [
+                                     {
+                                         "name": "Bigstockphoto",
+                                         "ftp": "ftp://bigstockphoto"
+                                     },
+                                     {
+                                         "name": "Canstockphoto",
+                                         "ftp": "ftp://ftp.canstockphoto"
+                                     }
+                                 ],
+                                 "version": 0
+                             }
+)JSON";
+
+    const char *remoteJson = R"JSON(
+                             {
+                                 "stocks_ftp": [
+                                     {
+                                         "ftp": "ftp://bigstockphoto.com",
+                                         "name": "Bigstockphoto"
+                                     },
+                                     {
+                                         "ftp": "ftp://ftp.canstockphoto.com",
+                                         "name": "Canstockphoto"
+                                     },
+                                     {
+                                         "ftp": "ftp://ftp.depositphotos.com",
+                                         "name": "Depositphotos"
+                                     }
+                                 ],
+                                 "version": 1
+                             }
+)JSON";
+
+    const char *mergedJson = R"JSON(
+                           {
+                               "stocks_ftp": [
+                                   {
+                                       "ftp": "ftp://bigstockphoto.com",
+                                       "name": "Bigstockphoto"
+                                   },
+                                   {
+                                       "ftp": "ftp://ftp.canstockphoto.com",
+                                       "name": "Canstockphoto"
+                                   },
+                                   {
+                                       "ftp": "ftp://ftp.depositphotos.com",
+                                       "name": "Depositphotos"
+                                   }
+                               ],
+                               "version": 1
+                           }
+)JSON";
+
+    QByteArray localJsonData(localJson);
+    QByteArray remoteJsonData(remoteJson);
+    QByteArray mergedJsonData(mergedJson);
+
+    QJsonParseError error;
+    QJsonDocument localDoc = QJsonDocument::fromJson(localJsonData, &error); QCOMPARE(error.error, QJsonParseError::NoError);
+    QJsonDocument remoteDoc = QJsonDocument::fromJson(remoteJsonData, &error); QCOMPARE(error.error, QJsonParseError::NoError);
+    QJsonDocument mergedDoc = QJsonDocument::fromJson(mergedJsonData, &error); QCOMPARE(error.error, QJsonParseError::NoError);
+
+    NameJsonComparer comparer;
+    Helpers::mergeJson(remoteDoc, localDoc, false, comparer);
+
+    QCOMPARE(localDoc, mergedDoc);
+}
+
 void JsonMergeTests::mergeArraysOfStringsTest() {
     const char *localJson = R"JSON(
                             {
