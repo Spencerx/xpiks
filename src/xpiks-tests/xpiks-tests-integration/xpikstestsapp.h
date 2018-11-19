@@ -50,6 +50,7 @@ public:
 public:
     void waitInitialized();
     void cleanup();
+    virtual void stop() override;
 
 public:
     bool checkImportSucceeded(int importsCount=-1);

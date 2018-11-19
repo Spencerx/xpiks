@@ -56,6 +56,7 @@ namespace Maintenance {
     public:
         bool hasPendingJobs();
         void cleanup();
+        void cancelPendingJobs();
 #endif
 
     public:

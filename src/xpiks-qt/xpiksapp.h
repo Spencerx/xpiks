@@ -124,7 +124,7 @@ public:
     void setupUI(QQmlContext *context);
     void registerQtMetaTypes();
     void start();
-    void stop();
+    virtual void stop();
     void setupWindow(QQuickWindow *window);
 
 public:

@@ -58,6 +58,11 @@ void XpiksTestsApp::cleanup() {
     m_SettingsModel.setExifToolPath(exiftoolPath);
 }
 
+void XpiksTestsApp::stop() {
+    XpiksApp::stop();
+    m_MaintenanceService.cancelPendingJobs();
+}
+
 bool XpiksTestsApp::checkImportSucceeded(int importsCount) {
     bool success = false;
 
