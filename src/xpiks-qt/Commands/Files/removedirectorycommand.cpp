@@ -30,8 +30,9 @@ namespace Commands {
                                                    Models::ArtworksListModel &artworksList,
                                                    Models::ArtworksRepository &artworksRepository,
                                                    Models::SettingsModel &settingsModel,
+                                                   std::shared_ptr<ICommand> const &saveSessionCommand,
                                                    ArtworksCommandTemplate const &addedArtworksTemplate):
-        RemoveFilesCommandBase(artworksList, artworksRepository),
+        RemoveFilesCommandBase(artworksList, artworksRepository, saveSessionCommand),
         m_DirectoryIndex(originalIndex),
         m_SettingsModel(settingsModel),
         m_AddedArtworksTemplate(addedArtworksTemplate),

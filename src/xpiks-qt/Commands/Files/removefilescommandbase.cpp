@@ -13,22 +13,31 @@
 #include <QtDebug>
 
 #include "Common/logging.h"
+#include "Commands/Base/icommand.h"
 #include "Models/Artworks/artworkslistmodel.h"
 #include "Models/Artworks/artworkslistoperations.h"
 #include "Models/Artworks/artworksrepository.h"
 
 namespace Commands {
     RemoveFilesCommandBase::RemoveFilesCommandBase(Models::ArtworksListModel &artworksList,
-                                                   Models::ArtworksRepository &artworksRepository):
+                                                   Models::ArtworksRepository &artworksRepository,
+                                                   std::shared_ptr<ICommand> const &saveSessionCommand):
         m_ArtworksList(artworksList),
         m_ArtworksRepository(artworksRepository),
-        m_RemoveResult()
+        m_RemoveResult(),
+        m_SaveSessionCommand(saveSessionCommand)
     {
     }
 
     void RemoveFilesCommandBase::execute() {
         LOG_DEBUG << "#";
         m_RemoveResult = removeFiles();
+
+        if (m_RemoveResult.m_RemovedCount > 0) {
+            if (m_SaveSessionCommand) {
+                m_SaveSessionCommand->execute();
+            }
+        }
     }
 
     void RemoveFilesCommandBase::undo() {
@@ -40,6 +49,10 @@ namespace Commands {
         restoreFiles();
 
         m_ArtworksRepository.restoreDirectoriesSelection(m_RemoveResult.m_SelectedDirectoryIds);
+
+        if (m_SaveSessionCommand) {
+            m_SaveSessionCommand->execute();
+        }
     }
 
     void RemoveFilesCommandBase::restoreFiles() {

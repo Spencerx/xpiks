@@ -497,20 +497,25 @@ void XpiksApp::removeDirectory(int index) {
     using CompositeTemplate = CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
     using ArtworksTemplate = std::shared_ptr<ICommandTemplate<Artworks::ArtworksSnapshot>>;
 
+    auto saveSessionCommand = std::make_shared<SaveSessionCommand>(m_MaintenanceService,
+                                                                   m_ArtworksListModel,
+                                                                   m_SessionManager);
+
     std::vector<ArtworksTemplate> postAddActions = {
         std::make_shared<ReadMetadataTemplate>(m_MetadataIOService, m_MetadataIOCoordinator),
         std::make_shared<GenerateThumbnailsTemplate>(m_ImageCachingService, m_VideoCachingService),
-        std::make_shared<AutoImportMetadataCommand>(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel),
-        std::make_shared<SaveSessionCommand>(m_MaintenanceService, m_ArtworksListModel, m_SessionManager)
+        std::make_shared<AutoImportMetadataCommand>(m_MetadataIOCoordinator, m_SettingsModel, m_SwitcherModel)
     };
 
     int originalIndex = m_FilteredArtworksRepository.getOriginalIndex(index);
     auto removeDirCommand = std::make_shared<RemoveDirectoryCommand>(
-                originalIndex,
-                m_ArtworksListModel,
-                m_ArtworksRepository,
-                m_SettingsModel,
-                std::make_shared<CompositeTemplate>(postAddActions));
+                                originalIndex,
+                                m_ArtworksListModel,
+                                m_ArtworksRepository,
+                                m_SettingsModel,
+                                saveSessionCommand,
+                                std::make_shared<CompositeTemplate>(postAddActions));
+
     QObject::connect(removeDirCommand.get(), &RemoveDirectoryCommand::artworksAdded,
                      this, &XpiksApp::artworksAdded);
 
@@ -631,7 +636,6 @@ void XpiksApp::connectEntitiesSignalsSlots() {
 
     QObject::connect(&m_UndoRedoManager, &UndoRedo::UndoRedoManager::undoStackEmpty,
                      &m_ArtworksListModel, &Models::ArtworksListModel::onUndoStackEmpty);
-
     QObject::connect(&m_UndoRedoManager, &UndoRedo::UndoRedoManager::undoStackEmpty,
                      &m_ArtworksRepository, &Models::ArtworksRepository::onUndoStackEmpty);
 

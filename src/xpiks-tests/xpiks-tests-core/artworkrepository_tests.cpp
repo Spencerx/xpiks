@@ -441,6 +441,30 @@ void ArtworkRepositoryTests::removeDirectoryWithHighIDNumberTest() {
     QCOMPARE(artworksRepository.rowCount(), 0);
 }
 
+void ArtworkRepositoryTests::directoryNotFullAfterRemovalTest() {
+    DECLARE_BASIC_MODELS;
+    Mocks::ArtworksListModelMock artworksListModel(artworksRepository);
+    UndoRedo::UndoRedoManager undoRedoManager;
+    Mocks::CommandManagerMock commandManager(undoRedoManager);
+    Models::SettingsModel settingsModel(environment);
+    settingsModel.initializeConfigs();
+    Models::FilteredArtworksRepository filteredRepository(artworksRepository);
+
+    int dirsCount = 2;
+
+    artworksListModel.generateAndAddDirectories(dirsCount, 3, false);
+
+    commandManager.processCommand(
+                std::make_shared<Commands::RemoveDirectoryCommand>(
+                    filteredRepository.getOriginalIndex(0),
+                    artworksListModel,
+                    artworksRepository,
+                    settingsModel));
+
+    QCOMPARE(artworksRepository.rowCount(), 2);
+    QCOMPARE(artworksRepository.retrieveFullDirectories().size(), 1);
+}
+
 void ArtworkRepositoryTests::allDirsInitiallySelectedTest() {
     SETUP_SELECTION_TEST(10, 3);
 

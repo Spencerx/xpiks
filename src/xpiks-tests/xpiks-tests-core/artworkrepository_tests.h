@@ -24,6 +24,7 @@ private slots:
     void oneEmptyDirectoryStaysTest();
     void fewEmptyDirectoriesStayTest();
     void removeDirectoryWithHighIDNumberTest();
+    void directoryNotFullAfterRemovalTest();
     // selection tests
     void allDirsInitiallySelectedTest();
     void unselectOneSelectsOnlyOneTest();

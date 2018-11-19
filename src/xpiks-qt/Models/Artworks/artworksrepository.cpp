@@ -371,7 +371,8 @@ namespace Models {
         QStringList directoriesList;
 
         for (auto &dir: m_DirectoriesList) {
-            if (dir.getAddedAsDirectoryFlag()) {
+            if (dir.getAddedAsDirectoryFlag() &&
+                    !dir.getIsRemovedFlag()) {
                 directoriesList.push_back(dir.m_AbsolutePath);
             }
         }

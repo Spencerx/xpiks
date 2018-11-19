@@ -52,6 +52,7 @@
 #include "presetstest.h"
 #include "readlegacysavedtest.h"
 #include "reimporttest.h"
+#include "removedirsavessessiontest.h"
 #include "removefromuserdictionarytest.h"
 #include "restoresessiontest.h"
 #include "savefilebasictest.h"
@@ -226,6 +227,7 @@ int main(int argc, char *argv[]) {
     integrationTests.emplace_back(std::make_shared<LoadPluginBasicTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<StockFtpAutoCompleteTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<UnavailableFilesTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<RemoveDirSavesSessionTest>(environment, xpiksTests));
     // always the last one. insert new tests above
     integrationTests.emplace_back(std::make_shared<LocalLibrarySearchTest>(environment, xpiksTests));
 

@@ -12,6 +12,7 @@
 #define REMOVEFILESCOMMANDBASE_H
 
 #include <cstddef>
+#include <memory>
 
 #include <QObject>
 #include <QString>
@@ -25,11 +26,15 @@ namespace Models {
 }
 
 namespace Commands {
+    class ICommand;
+
     class RemoveFilesCommandBase: public ICommand
     {
     public:
         RemoveFilesCommandBase(Models::ArtworksListModel &artworksList,
-                               Models::ArtworksRepository &artworksRepository);
+                               Models::ArtworksRepository &artworksRepository,
+                               std::shared_ptr<ICommand> const &saveSessionCommand =
+                std::shared_ptr<ICommand>());
 
         // IUndoCommand interface
     public:
@@ -53,6 +58,7 @@ namespace Commands {
         Models::ArtworksListModel &m_ArtworksList;
         Models::ArtworksRepository &m_ArtworksRepository;
         Models::ArtworksRemoveResult m_RemoveResult;
+        std::shared_ptr<ICommand> m_SaveSessionCommand;
     };
 }
 

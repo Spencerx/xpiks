@@ -34,11 +34,6 @@ namespace Commands {
                            std::shared_ptr<ICommand> const &saveSessionCommand =
                 std::shared_ptr<ICommand>());
 
-        // ICommand interface
-    public:
-        virtual void execute() override;
-        virtual void undo() override;
-
         // RemoveFilesCommandBase interface
     protected:
         virtual Models::ArtworksRemoveResult removeFiles() override;
@@ -46,7 +41,6 @@ namespace Commands {
 
     private:
         Helpers::IndicesRanges m_Ranges;
-        std::shared_ptr<ICommand> m_SaveSessionCommand;
     };
 }
 

@@ -271,7 +271,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Commands/Base/actionmodelcommand.cpp \
     ../../xpiks-qt/Commands/Base/compositecommand.cpp \
     ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp \
-    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp
+    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp \
+    removedirsavessessiontest.cpp
 
 RESOURCES +=
 
@@ -618,7 +619,8 @@ HEADERS += \
     ../../xpiks-qt/Commands/Base/compositecommand.h \
     ../../xpiks-qt/Commands/UI/currenteditablecommands.h \
     ../../xpiks-qt/QMLExtensions/iuicommandmiddleware.h \
-    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.h
+    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.h \
+    removedirsavessessiontest.h
 
 INCLUDEPATH += ../../../
 INCLUDEPATH += ../../xpiks-qt

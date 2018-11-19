@@ -34,6 +34,7 @@ namespace Models {
 }
 
 namespace Commands {
+    class ICommand;
     template <typename T> class ICommandTemplate;
 
     class RemoveDirectoryCommand:
@@ -47,6 +48,7 @@ namespace Commands {
                                Models::ArtworksListModel &artworksList,
                                Models::ArtworksRepository &artworksRepository,
                                Models::SettingsModel &settingsModel,
+                               std::shared_ptr<ICommand> const &saveSessionCommand = std::shared_ptr<ICommand>(),
                                ArtworksCommandTemplate const &addedArtworksTemplate = ArtworksCommandTemplate());
 
         // RemoveFilesCommandBase interface

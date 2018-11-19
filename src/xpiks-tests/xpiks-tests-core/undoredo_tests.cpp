@@ -193,7 +193,7 @@ void UndoRedoTests::undoModifyCommandTest() {
         artworksListModel.getMockArtwork(i)->set(originalTitle, originalDescription, originalKeywords);
     }
 
-    Artworks::ArtworksSnapshot snapshot = std::move(artworksListModel.createArtworksSnapshot());
+    Artworks::ArtworksSnapshot snapshot = artworksListModel.createArtworksSnapshot();
 
     artworksListModel.getMockArtwork(0)->setModified();
 

@@ -21,31 +21,9 @@ namespace Commands {
                                            Models::ArtworksListModel &artworksList,
                                            Models::ArtworksRepository &artworksRepository,
                                            std::shared_ptr<ICommand> const &saveSessionCommand):
-        RemoveFilesCommandBase(artworksList, artworksRepository),
-        m_Ranges(ranges),
-        m_SaveSessionCommand(saveSessionCommand)
+        RemoveFilesCommandBase(artworksList, artworksRepository, saveSessionCommand),
+        m_Ranges(ranges)
     {
-    }
-
-    void RemoveFilesCommand::execute() {
-        LOG_DEBUG << "#";
-        RemoveFilesCommandBase::execute();
-
-        if (m_RemoveResult.m_RemovedCount > 0) {
-            if (m_SaveSessionCommand) {
-                m_SaveSessionCommand->execute();
-            }
-        }
-    }
-
-    void RemoveFilesCommand::undo() {
-        LOG_DEBUG << "#";
-
-        RemoveFilesCommandBase::undo();
-
-        if (m_SaveSessionCommand) {
-            m_SaveSessionCommand->execute();
-        }
     }
 
     Models::ArtworksRemoveResult RemoveFilesCommand::removeFiles() {

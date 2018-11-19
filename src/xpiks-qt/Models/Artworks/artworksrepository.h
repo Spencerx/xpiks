@@ -47,7 +47,7 @@ namespace Models {
         Q_OBJECT
     public:
         ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent = 0);
-        virtual ~ArtworksRepository() {}
+        virtual ~ArtworksRepository() override {}
 
     public:
         enum ArtworksRepository_Roles {
@@ -104,7 +104,6 @@ namespace Models {
     public:
         void removeItem(int index) { removeInnerItem(index); }
         int getFilesCountForDirectory(const QString &directory) const { size_t index; tryFindDirectory(directory, index); return m_DirectoriesList[index].m_FilesCount; }
-        int getFilesCountForDirectory(int index) const { return m_DirectoriesList[index].m_FilesCount; }
         std::vector<RepoDir> &accessRepos() { return m_DirectoriesList; }
 
     protected:
@@ -115,6 +114,7 @@ namespace Models {
 
 #if defined(CORE_TESTS) || defined(INTEGRATION_TESTS)
     public:
+        int getFilesCountForDirectory(int index) const { return m_DirectoriesList[index].m_FilesCount; }
         void insertIntoUnavailable(const QString &value) { m_UnavailableFiles.insert(value); }
         void notifyUnavailableFiles() { emit filesUnavailable(); }
 #endif
