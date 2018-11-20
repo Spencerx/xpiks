@@ -35,6 +35,12 @@ void CsvExportTest::setup() {
     m_TestsApp.getSettingsModel().setAutoFindVectors(false);
 }
 
+QStringList toQStringList(std::initializer_list<std::string> list) {
+  QStringList result;
+  for (auto &s: list) { result.append(QString::fromStdString(s)); }
+  return result;
+}
+
 int parsePlan1Csv(const QString &filepath, Models::ArtworksListModel &artworksListModel) {
 #define PLAN1_COLUMNS_COUNT 4
 #define COLUMNIZE1(arr) arr[0], arr[1], arr[2], arr[3]
@@ -56,14 +62,19 @@ int parsePlan1Csv(const QString &filepath, Models::ArtworksListModel &artworksLi
     VERIFY(columns[3] == "Title", "Column name 4 mismatch");
 
     const size_t size = artworksListModel.getArtworksSize();
+    LOG_DEBUG << "Verifying" << size << "artworks";
 
     for (size_t i = 0; i < size; i++) {
         std::shared_ptr<Artworks::ArtworkMetadata> artwork;
-        if (!artworksListModel.tryGetArtwork(i, artwork)) { continue; }
+        if (!artworksListModel.tryGetArtwork(i, artwork)) {
+            LOG_WARNING << "Failed to get artwork" << i;
+            continue;
+        }
 
         success = csvReader.read_row(COLUMNIZE1(columns));
         if (!success) { qWarning() << "Row cannot be read:" << i; }
         VERIFY(success, "Failed to read a row");
+        LOG_VERBOSE << toQStringList({COLUMNIZE1(columns)});
 
         VERIFY(QString::fromStdString(columns[0]) == artwork->getBaseFilename(), "Filename value does not match");
         VERIFY(QString::fromStdString(columns[1]) == artwork->getKeywordsString(), "Keywords value does not match");
@@ -149,7 +160,7 @@ int CsvExportTest::doTest() {
     m_TestsApp.selectAllArtworks();
     m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupCSVExportForSelected);
 
-    const QString directoryPath = QCoreApplication::applicationDirPath() + QDir::separator() + testName();
+    const QString directoryPath = QCoreApplication::applicationDirPath() + "/" + testName();
     Helpers::ensureDirectoryExists(directoryPath);
     MetadataIO::CsvExportModel &csvExportModel = m_TestsApp.getCsvExportModel();
     csvExportModel.setOutputDirectory(QUrl::fromLocalFile(directoryPath));
