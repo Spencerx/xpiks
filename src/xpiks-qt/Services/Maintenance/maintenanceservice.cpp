@@ -35,7 +35,8 @@ namespace Maintenance {
         m_MaintenanceThread(nullptr),
         m_Environment(environment),
         m_MaintenanceWorker(nullptr),
-        m_LastSessionBatchId(INVALID_BATCH_ID)
+        m_LastSessionBatchId(INVALID_BATCH_ID),
+        m_IsStopped(false)
     {
     }
 
@@ -71,6 +72,7 @@ namespace Maintenance {
 
     void MaintenanceService::stopService() {
         LOG_DEBUG << "#";
+        m_IsStopped = true;
         if (m_MaintenanceWorker != nullptr) {
             m_MaintenanceWorker->stopWorking();
         } else {
@@ -110,7 +112,7 @@ namespace Maintenance {
 
     void MaintenanceService::launchExiftool(const QString &settingsExiftoolPath) {
         LOG_INFO << settingsExiftoolPath;
-        if (m_MaintenanceWorker == nullptr) { return; }
+        if (m_IsStopped) { return; }
 
         Q_ASSERT(m_MaintenanceThread != nullptr);
         auto jobItem = std::make_shared<LaunchExiftoolJobItem>(settingsExiftoolPath);
@@ -123,7 +125,7 @@ namespace Maintenance {
     void MaintenanceService::initializeDictionaries(Translation::TranslationManager &translationManager,
                                                     Helpers::AsyncCoordinator &initCoordinator) {
         LOG_DEBUG << "#";
-        if (m_MaintenanceWorker == nullptr) { return; }
+        if (m_IsStopped) { return; }
         Helpers::AsyncCoordinatorLocker locker(initCoordinator);
         Q_UNUSED(locker);
         auto jobItem = std::make_shared<InitializeDictionariesJobItem>(translationManager, initCoordinator);
@@ -133,7 +135,7 @@ namespace Maintenance {
     void MaintenanceService::cleanupLogs() {
 #ifdef WITH_LOGS
         LOG_DEBUG << "#";
-        if (m_MaintenanceWorker == nullptr) { return; }
+        if (m_IsStopped) { return; }
         auto jobItem = std::make_shared<LogsCleanupJobItem>(m_Environment);
         m_MaintenanceWorker->submitItem(jobItem);
 #endif
@@ -142,14 +144,14 @@ namespace Maintenance {
     void MaintenanceService::saveSession(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,
                                          Models::SessionManager &sessionManager) {
         LOG_DEBUG << "#";
-        if (m_MaintenanceWorker == nullptr) { return; }
+        if (m_IsStopped) { return; }
         auto jobItem = std::make_shared<SaveSessionJobItem>(sessionSnapshot, sessionManager);
         m_LastSessionBatchId = m_MaintenanceWorker->submitItem(jobItem);
     }
 
     void MaintenanceService::cleanupOldXpksBackups(const QString &directory) {
         LOG_DEBUG << directory;
-        if (m_MaintenanceWorker == nullptr) { return; }
+        if (m_IsStopped) { return; }
         auto jobItem = std::make_shared<XpksCleanupJob>(directory);
         m_MaintenanceWorker->submitItem(jobItem);
     }
