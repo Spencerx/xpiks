@@ -34,7 +34,7 @@ namespace Maintenance {
         process.start(path, QStringList() << "-ver");
         const bool finishedInTime = process.waitForFinished(EXIFTOOL_VERSION_TIMEOUT);
         if (!finishedInTime) {
-            LOG_WARNING << "Exiftool did not finish in time";
+            LOG_WARNING << "Exiftool" << path << "did not finish in time";
         }
 
         const int exitCode = process.exitCode();
@@ -44,7 +44,7 @@ namespace Maintenance {
                 (exitCode == 0) &&
                 (exitStatus == QProcess::NormalExit);
 
-        LOG_DEBUG << "Exiftool exitcode =" << exitCode << "exitstatus =" << exitStatus;
+        LOG_DEBUG << "Exiftool" << path << "exitcode =" << exitCode << "exitstatus =" << exitStatus;
 
         if (success) {
             version = QString::fromUtf8(process.readAll());
