@@ -50,17 +50,21 @@ void XpiksTestsApp::waitInitialized() {
     });
 }
 
+void XpiksTestsApp::waitFinalized() {
+    sleepWaitUntil(5, [this]() {
+        return !this->m_MaintenanceService.hasPendingJobs();
+    });
+
+    QCoreApplication::processEvents();
+    QThread::sleep(1);
+}
+
 void XpiksTestsApp::cleanup() {
     const QString exiftoolPath = m_SettingsModel.getExifToolPath();
     {
         cleanupModels();
     }
     m_SettingsModel.setExifToolPath(exiftoolPath);
-}
-
-void XpiksTestsApp::stop() {
-    XpiksApp::stop();
-    m_MaintenanceService.cancelPendingJobs();
 }
 
 bool XpiksTestsApp::checkImportSucceeded(int importsCount) {

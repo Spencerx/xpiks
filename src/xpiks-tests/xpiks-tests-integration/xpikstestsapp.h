@@ -49,8 +49,8 @@ public:
 
 public:
     void waitInitialized();
+    void waitFinalized();
     void cleanup();
-    virtual void stop() override;
 
 public:
     bool checkImportSucceeded(int importsCount=-1);

@@ -282,11 +282,7 @@ int main(int argc, char *argv[]) {
     qInfo() << "--";
 
     xpiksTests.stop();
-
-    // for the logs to appear
-    app.processEvents();
-
-    QThread::sleep(1);
+    xpiksTests.waitFinalized();
 
     std::cout << "Integration tests finished" << std::endl;
 

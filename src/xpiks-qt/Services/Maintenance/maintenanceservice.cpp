@@ -92,12 +92,6 @@ namespace Maintenance {
             m_MaintenanceWorker->cancelBatch(m_LastSessionBatchId);
         }
     }
-
-    void MaintenanceService::cancelPendingJobs() {
-        if (m_MaintenanceWorker != nullptr) {
-            m_MaintenanceWorker->cancelPendingJobs();
-        }
-    }
 #endif
 
     void MaintenanceService::cleanupUpdatesArtifacts() {
