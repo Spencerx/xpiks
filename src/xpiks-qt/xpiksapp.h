@@ -108,7 +108,6 @@ class XpiksApp: public QObject
     Q_PROPERTY(bool isUpdateDownloaded READ getIsUpdateDownloaded NOTIFY isUpdateDownloadedChanged)
 public:
     XpiksApp(Common::ISystemEnvironment &environment);
-    virtual ~XpiksApp();
 
 public:
     bool getIsUpdateDownloaded();
@@ -129,6 +128,7 @@ public:
 
 public:
     Q_INVOKABLE void shutdown();
+    Q_INVOKABLE void quit();
     Q_INVOKABLE void upgradeNow();
     Q_INVOKABLE void debugCrash();
 

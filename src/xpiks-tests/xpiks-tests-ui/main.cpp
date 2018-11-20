@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
         xpiksTests.stop();
         QThread::sleep(1);
         eventLoop.processEvents(QEventLoop::AllEvents);
+        xpiksTests.quit();
     }
-
     return result;
 }

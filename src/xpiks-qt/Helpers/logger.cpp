@@ -32,6 +32,14 @@ namespace Helpers {
     void Logger::log(const QString &message) {
         if (!m_Stopped) {
             doLog(message);
+        } else {
+#ifdef WITH_STDOUT_LOGS
+        std::cout << message.toStdString() << std::endl;
+        std::cout.flush();
+#else
+        std::cerr << message.toStdString() << std::endl;
+        std::cerr.flush();
+#endif
         }
     }
 

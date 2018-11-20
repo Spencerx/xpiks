@@ -211,10 +211,6 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_ApiClients.addClient(std::make_shared<Microstocks::FotoliaAPIClient>(m_SecretsStorage));
 }
 
-XpiksApp::~XpiksApp() {
-    m_LogsModel.stopLogging();
-}
-
 bool XpiksApp::getIsUpdateDownloaded() {
     return m_UpdateService.getIsUpdateDownloaded();
 }
@@ -451,6 +447,11 @@ void XpiksApp::shutdown() {
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
     m_UpdateService.tryToUpgradeXpiks();
+}
+
+void XpiksApp::quit() {
+    m_LogsModel.stopLogging();
+    qInstallMessageHandler(nullptr);
 }
 
 void XpiksApp::upgradeNow() {

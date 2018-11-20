@@ -285,6 +285,7 @@ int main(int argc, char *argv[]) {
     xpiksTests.waitFinalized();
 
     std::cout << "Integration tests finished" << std::endl;
+    xpiksTests.quit();
 
     return result;
 }
