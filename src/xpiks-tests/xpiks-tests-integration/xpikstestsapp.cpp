@@ -52,7 +52,7 @@ void XpiksTestsApp::waitInitialized() {
 
 void XpiksTestsApp::waitFinalized() {
     sleepWaitUntil(5, [this]() {
-        return !this->m_MaintenanceService.hasPendingJobs();
+        return !this->m_MaintenanceService.isRunning();
     });
 
     QCoreApplication::processEvents();

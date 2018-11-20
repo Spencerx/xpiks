@@ -55,6 +55,7 @@ namespace Maintenance {
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         bool hasPendingJobs();
+        bool isRunning() const { return m_MaintenanceWorker != nullptr; }
         void cleanup();
 #endif
 
