@@ -371,6 +371,7 @@ Item {
                             anchors.rightMargin: 5
                             text: presetNamesListView.currentItem ? presetNamesListView.currentItem.myData.name : ""
                             anchors.leftMargin: 5
+                            enabled: presetNamesListView.count > 0
 
                             onTextChanged: {
                                 if (presetNamesListView.currentItem) {
@@ -383,13 +384,12 @@ Item {
                             }
 
                             onEditingFinished: {
-                                if (text.length == 0) {
-                                    if (presetNamesListView.currentItem) {
+                                if(presetNamesListView.currentItem) {
+                                    if (text.length == 0) {
                                         presetNamesListView.currentItem.myData.editname = qsTr("Untitled")
                                     }
+                                    presetsModel.makeTitleValid(presetNamesListView.currentIndex)
                                 }
-
-                                presetsModel.makeTitleValid(presetNamesListView.currentIndex)
                             }
 
                             onActiveFocusChanged: {
