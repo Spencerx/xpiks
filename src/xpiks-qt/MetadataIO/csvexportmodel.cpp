@@ -33,11 +33,7 @@
 #include "MetadataIO/csvexportworker.h"
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
-#ifdef INTEGRATION_TESTS
-    #define CSV_EXPORT_TIMEOUT 1000
-#else
-    #define CSV_EXPORT_TIMEOUT 3000
-#endif
+#define CSV_EXPORT_TIMEOUT 3000
 
 namespace MetadataIO {
     CsvExportColumnsModel::CsvExportColumnsModel():

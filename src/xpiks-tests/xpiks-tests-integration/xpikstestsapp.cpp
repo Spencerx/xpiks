@@ -52,7 +52,7 @@ void XpiksTestsApp::waitInitialized() {
 
 void XpiksTestsApp::waitFinalized() {
     sleepWaitUntil(5, [this]() {
-        return !this->m_MaintenanceService.isWorkerDestroyed();
+        return this->m_MaintenanceService.isWorkerDestroyed();
     });
 
     QCoreApplication::processEvents();

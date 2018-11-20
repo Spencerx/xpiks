@@ -28,11 +28,7 @@
 #include "KeywordsPresets/groupmodel.h"
 
 #define MAX_SAVE_PAUSE_RESTARTS 5
-#ifdef INTEGRATION_TESTS
-    #define PRESET_SAVE_TIMEOUT 1000
-#else
-    #define PRESET_SAVE_TIMEOUT 3000
-#endif
+#define PRESET_SAVE_TIMEOUT 3000
 
 namespace KeywordsPresets {
     PresetKeywordsModel::PresetKeywordsModel(Common::ISystemEnvironment &environment,
