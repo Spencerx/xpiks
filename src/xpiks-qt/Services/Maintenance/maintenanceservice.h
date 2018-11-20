@@ -55,7 +55,7 @@ namespace Maintenance {
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
         bool hasPendingJobs();
-        bool isRunning() const { return m_MaintenanceWorker != nullptr; }
+        bool isWorkerDestroyed() const { return m_MaintenanceWorker == nullptr; }
         void cleanup();
 #endif
 
@@ -69,6 +69,9 @@ namespace Maintenance {
         void saveSession(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,
                          Models::SessionManager &sessionManager);
         void cleanupOldXpksBackups(const QString &directory);
+
+    private:
+        bool isRunning();
 
     signals:
         void exiftoolDetected(const QString &path);

@@ -72,12 +72,12 @@ namespace Maintenance {
 
     void MaintenanceService::stopService() {
         LOG_DEBUG << "#";
-        m_IsStopped = true;
-        if (m_MaintenanceWorker != nullptr) {
+        if (isRunning()) {
             m_MaintenanceWorker->stopWorking();
         } else {
             LOG_WARNING << "MaintenanceWorker is nullptr";
         }
+        m_IsStopped = true;
     }
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
@@ -90,15 +90,15 @@ namespace Maintenance {
     }
 
     void MaintenanceService::cleanup() {
-        if (m_MaintenanceWorker != nullptr) {
-            m_MaintenanceWorker->cancelBatch(m_LastSessionBatchId);
-        }
+        if (!isRunning()) { return; }
+        m_MaintenanceWorker->cancelBatch(m_LastSessionBatchId);
     }
 #endif
 
     void MaintenanceService::cleanupUpdatesArtifacts() {
 #ifdef Q_OS_WIN
         LOG_DEBUG << "#";
+        if (!isRunning()) { return; }
         auto jobItem = std::make_shared<UpdatesCleanupJobItem>();
         m_MaintenanceWorker->submitItem(jobItem);
 #endif
@@ -106,14 +106,14 @@ namespace Maintenance {
 
     void MaintenanceService::cleanupDownloadedUpdates(const QString &downloadsPath) {
         LOG_DEBUG << "#";
+        if (!isRunning()) { return; }
         auto jobItem = std::make_shared<UpdateBundleCleanupJobItem>(downloadsPath);
         m_MaintenanceWorker->submitItem(jobItem);
     }
 
     void MaintenanceService::launchExiftool(const QString &settingsExiftoolPath) {
         LOG_INFO << settingsExiftoolPath;
-        if (m_IsStopped) { return; }
-
+        if (!isRunning()) { return; }
         Q_ASSERT(m_MaintenanceThread != nullptr);
         auto jobItem = std::make_shared<LaunchExiftoolJobItem>(settingsExiftoolPath);
         QObject::connect(jobItem.get(), &LaunchExiftoolJobItem::exiftoolDetected,
@@ -125,7 +125,7 @@ namespace Maintenance {
     void MaintenanceService::initializeDictionaries(Translation::TranslationManager &translationManager,
                                                     Helpers::AsyncCoordinator &initCoordinator) {
         LOG_DEBUG << "#";
-        if (m_IsStopped) { return; }
+        if (!isRunning()) { return; }
         Helpers::AsyncCoordinatorLocker locker(initCoordinator);
         Q_UNUSED(locker);
         auto jobItem = std::make_shared<InitializeDictionariesJobItem>(translationManager, initCoordinator);
@@ -135,7 +135,7 @@ namespace Maintenance {
     void MaintenanceService::cleanupLogs() {
 #ifdef WITH_LOGS
         LOG_DEBUG << "#";
-        if (m_IsStopped) { return; }
+        if (!isRunning()) { return; }
         auto jobItem = std::make_shared<LogsCleanupJobItem>(m_Environment);
         m_MaintenanceWorker->submitItem(jobItem);
 #endif
@@ -144,7 +144,7 @@ namespace Maintenance {
     void MaintenanceService::saveSession(std::unique_ptr<Artworks::SessionSnapshot> &sessionSnapshot,
                                          Models::SessionManager &sessionManager) {
         LOG_DEBUG << "#";
-        if (m_IsStopped) { return; }
+        if (!isRunning()) { return; }
         auto jobItem = std::make_shared<SaveSessionJobItem>(sessionSnapshot, sessionManager);
         m_LastSessionBatchId = m_MaintenanceWorker->submitItem(jobItem);
     }
@@ -154,6 +154,10 @@ namespace Maintenance {
         if (m_IsStopped) { return; }
         auto jobItem = std::make_shared<XpksCleanupJob>(directory);
         m_MaintenanceWorker->submitItem(jobItem);
+    }
+
+    bool MaintenanceService::isRunning() {
+        return m_MaintenanceWorker != nullptr && !m_IsStopped;
     }
 
     void MaintenanceService::onExiftoolPathChanged(const QString &path) {
