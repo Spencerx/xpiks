@@ -29,6 +29,7 @@
 std::shared_ptr<Artworks::ArtworkMetadata> createArtworkMetadata(const QString &desc, const QString &title, const QStringList &keywords, int index=0) {
     auto artwork = std::make_shared<Mocks::ArtworkMetadataMock>("/random/file/path.jpg");
     artwork->initAsEmpty();
+    artwork->setCurrentIndex(index);
     artwork->appendKeywords(keywords);
     artwork->setTitle(title);
     artwork->setDescription(desc);
@@ -112,7 +113,7 @@ void CombinedModelTests::combineSeveralWithEmptyFirstTest() {
     Artworks::ArtworksSnapshot snapshot;
     snapshot.append(createArtworkMetadata("Description2", "title2", QStringList(), 1));
     snapshot.append(createArtworkMetadata("Description1", "title1", keywords, 0));
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
 
     combinedModel.setArtworks(snapshot);
 
@@ -133,7 +134,7 @@ void CombinedModelTests::combineSeveralWithEmptyManyTest() {
     snapshot.append(createArtworkMetadata("Description1", "title1", QStringList() << commonKeyword << "keyword2", 0));
     snapshot.append(createArtworkMetadata("Description3", "title3", QStringList() << commonKeyword, 2));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
 
     combinedModel.setArtworks(snapshot);
 
@@ -155,7 +156,7 @@ void CombinedModelTests::combineSeveralWithEmptyTest() {
     snapshot.append(createArtworkMetadata("Description2", "title2", QStringList(), 1));
     snapshot.append(createArtworkMetadata("Description3", "title3", QStringList() << commonKeyword, 2));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
 
     combinedModel.setArtworks(snapshot);
 
@@ -178,7 +179,7 @@ void CombinedModelTests::combineSeveralEmptyTest() {
     snapshot.append(createArtworkMetadata("", "", QStringList(), 1));
     snapshot.append(createArtworkMetadata("", "", QStringList(), 2));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
 
     combinedModel.setArtworks(snapshot);
 
@@ -197,7 +198,7 @@ void CombinedModelTests::combineAllDifferentItemsTest() {
     snapshot.append(createArtworkMetadata("Description2", "title2", QStringList() << "Keyword2", 1));
     snapshot.append(createArtworkMetadata("Description3", "title3", QStringList() << "Keyword3", 2));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
 
     combinedModel.setArtworks(snapshot);
 
@@ -215,7 +216,7 @@ void CombinedModelTests::combineAllManyDifferentItemsTest() {
     snapshot.append(createArtworkMetadata("Description1", "title1", QStringList() << "Keyword1" << "keyword2", 0));
     snapshot.append(createArtworkMetadata("Description2", "title2", QStringList() << "Keyword3" << "keyword4" << "keyword5", 1));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
 
     combinedModel.setArtworks(snapshot);
 
@@ -234,7 +235,7 @@ void CombinedModelTests::combineAllManyLastDifferentItemsTest() {
     snapshot.append(createArtworkMetadata("Description2", "title2", QStringList() << "Keyword1" << "keyword2", 1));
     snapshot.append(createArtworkMetadata("Description3", "title3", QStringList() << "Keyword3" << "keyword4", 1));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
 
     combinedModel.setArtworks(snapshot);
 
@@ -255,7 +256,7 @@ void CombinedModelTests::combineCommonInKeywordsTest() {
     snapshot.append(createArtworkMetadata("Description2", "title2", QStringList() << "Keyword2" << commonKeyword, 1));
     snapshot.append(createArtworkMetadata("Description3", "title3", QStringList() << "Keyword3" << commonKeyword, 2));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
     combinedModel.setArtworks(snapshot);
 
     QCOMPARE(combinedModel.getArtworksCount(), size);
@@ -276,7 +277,7 @@ void CombinedModelTests::combineCommonInManyKeywordsTest() {
     snapshot.append(createArtworkMetadata("Description2", "title2", QStringList() << "Keyword2" << "keyword22" << "keyword23" << commonKeyword, 1));
     snapshot.append(createArtworkMetadata("Description3", "title3", QStringList() << "Keyword3" << commonKeyword, 2));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
     combinedModel.setArtworks(snapshot);
 
     QCOMPARE(combinedModel.getArtworksCount(), size);
@@ -297,7 +298,7 @@ void CombinedModelTests::combineCommonInTitleTest() {
     snapshot.append(createArtworkMetadata("Description2", commonTitle, QStringList() << "Keyword2", 1));
     snapshot.append(createArtworkMetadata("Description3", commonTitle, QStringList() << "Keyword3", 2));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
     combinedModel.setArtworks(snapshot);
 
     QCOMPARE(combinedModel.getArtworksCount(), size);
@@ -317,7 +318,7 @@ void CombinedModelTests::combineCommonInDescriptionTest() {
     snapshot.append(createArtworkMetadata(commonDescription, "title2", QStringList() << "Keyword2", 1));
     snapshot.append(createArtworkMetadata(commonDescription, "title3", QStringList() << "Keyword3", 2));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
     combinedModel.setArtworks(snapshot);
 
     QCOMPARE(combinedModel.getArtworksCount(), size);
@@ -363,7 +364,7 @@ void CombinedModelTests::recombineAfterRemoveDifferentTest() {
     snapshot.append(createArtworkMetadata(commonDescription, "title2", QStringList() << "Keyword2" << commonKeyword, 1));
     snapshot.append(createArtworkMetadata("Different description", "title3", QStringList() << "Keyword3", 2));
 
-    int size = (int)snapshot.size();
+    int size = static_cast<int>(snapshot.size());
 
     combinedModel.setArtworks(snapshot);
 

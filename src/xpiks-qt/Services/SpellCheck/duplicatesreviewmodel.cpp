@@ -193,7 +193,7 @@ namespace SpellCheck {
             if (artworkItem == nullptr) { continue; }
             auto &artwork = artworkItem->getArtwork();
             if (indicesSet.contains(artwork->getLastKnownIndex())) {
-                indicesToUpdate.push_back(artwork->getLastKnownIndex());
+                indicesToUpdate.push_back((int)artwork->getLastKnownIndex());
             }
         }
 

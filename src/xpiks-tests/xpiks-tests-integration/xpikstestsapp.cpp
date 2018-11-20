@@ -218,14 +218,14 @@ void XpiksTestsApp::connectWaiterForExport(SignalWaiter &waiter) {
                      &waiter, &SignalWaiter::finished);
 }
 
-std::shared_ptr<Artworks::ArtworkMetadata> XpiksTestsApp::getArtwork(int index) {
+std::shared_ptr<Artworks::ArtworkMetadata> XpiksTestsApp::getArtwork(size_t index) {
     std::shared_ptr<Artworks::ArtworkMetadata> artwork;
     m_ArtworksListModel.tryGetArtwork(index, artwork);
     return artwork;
 }
 
 int XpiksTestsApp::getArtworksCount() {
-    return (int)m_FilteredArtworksListModel.getItemsCount();
+    return static_cast<int>(m_FilteredArtworksListModel.getItemsCount());
 }
 
 bool XpiksTestsApp::doContinueReading(SignalWaiter &waiter, bool ignoreBackups) {
@@ -233,7 +233,7 @@ bool XpiksTestsApp::doContinueReading(SignalWaiter &waiter, bool ignoreBackups) 
     LOG_DEBUG << "ignore backups:" << ignoreBackups;
 
     do {
-        const int importIDsSize = m_MetadataIOCoordinator.getImportIDs().size();
+        const size_t importIDsSize = m_MetadataIOCoordinator.getImportIDs().size();
         m_MetadataIOCoordinator.continueReading(ignoreBackups);
 
         if (!waiter.wait(20)) {

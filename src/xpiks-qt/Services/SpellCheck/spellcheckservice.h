@@ -11,6 +11,7 @@
 #ifndef SPELLCHECKERSERVICE_H
 #define SPELLCHECKERSERVICE_H
 
+#include <atomic>
 #include <memory>
 #include <vector>
 
@@ -52,7 +53,7 @@ namespace SpellCheck {
     public:
         SpellCheckService(Common::ISystemEnvironment &environment,
                           Common::IFlagsProvider<Common::WordAnalysisFlags> &analysisFlagsProvider);
-        virtual ~SpellCheckService();
+        virtual ~SpellCheckService() override;
 
     public:
         void startService(Helpers::AsyncCoordinator &initCoordinator,
@@ -73,7 +74,7 @@ namespace SpellCheck {
                                 Common::SpellCheckFlags flags) override;
 
     public:
-        virtual QStringList suggestCorrections(const QString &word) const;
+        virtual QStringList suggestCorrections(const QString &word);
         int getUserDictWordsNumber();
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
@@ -96,6 +97,7 @@ namespace SpellCheck {
         void workerDestroyed(QObject *object);
 
     private:
+        bool isRunning();
         QString getDictsRoot() const;
 
     private:
@@ -103,7 +105,7 @@ namespace SpellCheck {
         SpellCheckWorker *m_SpellCheckWorker;
         Common::IFlagsProvider<Common::WordAnalysisFlags> &m_AnalysisFlagsProvider;
         QString m_DictionariesPath;
-        volatile bool m_IsStopped;
+        std::atomic_bool m_IsStopped;
     };
 }
 

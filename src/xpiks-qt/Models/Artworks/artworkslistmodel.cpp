@@ -560,7 +560,7 @@ namespace Models {
     }
 
     void ArtworksListModel::syncArtworksIndices(int startIndex, int count) {
-        if (count == -1) { count = getArtworksSize(); }
+        if (count == -1) { count = (int)getArtworksSize(); }
         foreachArtwork(Helpers::IndicesRanges(startIndex, count),
         [this](ArtworkItem const &, size_t i) { this->accessArtwork(i); });
     }

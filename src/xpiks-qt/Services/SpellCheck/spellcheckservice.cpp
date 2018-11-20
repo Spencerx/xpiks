@@ -86,7 +86,7 @@ namespace SpellCheck {
 
     void SpellCheckService::stopService() {
         LOG_DEBUG << "#";
-        if (m_SpellCheckWorker != nullptr) {
+        if (isRunning()) {
             m_SpellCheckWorker->stopWorking();
         } else {
             LOG_WARNING << "SpellCheckWorker is nullptr";
@@ -104,8 +104,7 @@ namespace SpellCheck {
 
     quint32 SpellCheckService::submitItems(const std::vector<std::shared_ptr<Artworks::IBasicModelSource> > &items, Common::SpellCheckFlags flags) {
         LOG_INFO << items.size() << "items to check";
-        if (m_SpellCheckWorker == nullptr) { return INVALID_BATCH_ID; }
-        if (m_IsStopped) { return INVALID_BATCH_ID; }
+        if (!isRunning()) { return INVALID_BATCH_ID; }
 
         std::vector<std::shared_ptr<SpellCheckItem>> spellCheckItems;
         spellCheckItems.reserve(items.size());
@@ -133,8 +132,7 @@ namespace SpellCheck {
     }
 
     void SpellCheckService::submitItem(const std::shared_ptr<Artworks::IBasicModelSource> &item, Common::SpellCheckFlags flags) {
-        if (m_SpellCheckWorker == nullptr) { return; }
-        if (m_IsStopped) { return; }
+        if (!isRunning()) { return; }
         if (item->getBasicModel().isEmpty()) { return; }
 
         Q_ASSERT(item != nullptr);
@@ -150,9 +148,9 @@ namespace SpellCheck {
         m_SpellCheckWorker->submitItem(spellCheckItem);
     }
 
-    QStringList SpellCheckService::suggestCorrections(const QString &word) const {
-        if (m_SpellCheckWorker == nullptr) {
-            LOG_DEBUG << "Worker is nullptr";
+    QStringList SpellCheckService::suggestCorrections(const QString &word) {
+        if (!isRunning()) {
+            LOG_DEBUG << "Service is not running";
             return QStringList();
         }
 
@@ -198,6 +196,10 @@ namespace SpellCheck {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
         m_SpellCheckWorker = nullptr;
+    }
+
+    bool SpellCheckService::isRunning() {
+        return m_SpellCheckWorker != nullptr && !m_IsStopped;
     }
 
     QString SpellCheckService::getDictsRoot() const {

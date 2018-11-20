@@ -115,7 +115,7 @@ namespace SpellCheck {
     }
 
     int SpellCheckSuggestionModel::getArtworksCount() const {
-         return m_SpellSuggestionsTarget != nullptr ? m_SpellSuggestionsTarget->size() : 0;
+         return m_SpellSuggestionsTarget != nullptr ? (int)m_SpellSuggestionsTarget->size() : 0;
     }
 
     bool SpellCheckSuggestionModel::getAnythingSelected() const {

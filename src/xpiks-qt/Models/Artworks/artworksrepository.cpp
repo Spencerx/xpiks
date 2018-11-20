@@ -164,7 +164,8 @@ namespace Models {
 
         if (Common::HasFlag(flags, Common::AccountFileFlags::FlagRepositoryCreated)) {
             m_RecentDirectories.pushItem(directoryPath);
-            beginInsertRows(QModelIndex(), m_DirectoriesList.size() - 1, m_DirectoriesList.size() - 1);
+            const int lastIndex = (int)m_DirectoriesList.size() - 1;
+            beginInsertRows(QModelIndex(), lastIndex, lastIndex);
             // ...
             endInsertRows();
             emit artworksSourcesChanged();
@@ -234,7 +235,7 @@ namespace Models {
         if (snapshot.empty()) { return; }
 
         QStringList filepaths;
-        filepaths.reserve(snapshot.size());
+        filepaths.reserve((int)snapshot.size());
         for (auto &artwork: snapshot) {
             filepaths.append(artwork->getFilepath());
 
@@ -264,8 +265,8 @@ namespace Models {
         if (snapshot.empty()) { return; }
         QStringList filepaths;
         QStringList removedAttachedVectors;
-        filepaths.reserve(snapshot.size());
-        removedAttachedVectors.reserve(snapshot.size()/2);
+        filepaths.reserve((int)snapshot.size());
+        removedAttachedVectors.reserve((int)snapshot.size()/2);
 
         for (auto &artwork: snapshot) {
             auto flags = removeFile(artwork->getFilepath(), artwork->getDirectoryID());

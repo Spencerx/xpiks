@@ -62,7 +62,7 @@ namespace Commands {
         }
 
     public:
-        int getAddedCount() const { return m_AddedCount; }
+        int getAddedCount() const { return (int)m_AddedCount; }
 
     signals:
         void artworksAdded(int imagesCount, int vectorsCount);

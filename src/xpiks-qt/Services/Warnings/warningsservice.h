@@ -11,6 +11,7 @@
 #ifndef WARNINGSSERVICE_H
 #define WARNINGSSERVICE_H
 
+#include <atomic>
 #include <memory>
 
 #include <QObject>
@@ -58,9 +59,12 @@ namespace Warnings {
         void queueIsEmpty();
 
     private:
+        bool isRunning();
+
+    private:
         WarningsCheckingWorker *m_WarningsWorker;
         WarningsSettingsModel &m_WarningsSettingsModel;
-        bool m_IsStopped;
+        std::atomic_bool m_IsStopped;
     };
 }
 

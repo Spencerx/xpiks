@@ -73,7 +73,6 @@ namespace Translation {
         auto &query = item->getQuery();
         LOG_INFO << "translation request:" << query;
 
-        bool translated = false;
         do {
             if (query.isEmpty()) { break; }
 

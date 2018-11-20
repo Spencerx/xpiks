@@ -56,7 +56,7 @@ namespace Helpers {
     }
 
     IndicesRanges::IndicesRanges(size_t count) {
-        m_Ranges.emplace_back(std::make_pair(0, count - 1));
+        m_Ranges.emplace_back(std::make_pair(0, (int)count - 1));
     }
 
     IndicesRanges::IndicesRanges(IndicesRanges const &other):

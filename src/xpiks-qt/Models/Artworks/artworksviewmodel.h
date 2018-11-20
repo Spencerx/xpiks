@@ -57,7 +57,7 @@ namespace Models {
 
     public:
         ArtworksViewModel(QObject *parent=NULL);
-        virtual ~ArtworksViewModel() { }
+        virtual ~ArtworksViewModel() override { }
 
     public:
         virtual void handleMessage(UnavailableFilesMessage const &message) override;

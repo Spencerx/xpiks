@@ -33,7 +33,8 @@ namespace Connectivity {
         m_TelemetryWorker(nullptr),
         m_Switcher(switcher),
         m_SettingsModel(settingsModel),
-        m_InterfaceLanguage("en_US")
+        m_InterfaceLanguage("en_US"),
+        m_IsStopped(false)
     {
     }
 
@@ -61,16 +62,21 @@ namespace Connectivity {
 
     void TelemetryService::stopReporting(bool immediately) {
         LOG_DEBUG << "#";
-
-        if (m_TelemetryWorker != nullptr) {
+        if (isRunning()) {
             m_TelemetryWorker->stopWorking(immediately);
         } else {
-            LOG_WARNING << "TelemetryWorker is NULL";
+            LOG_WARNING << "Service is not running";
         }
+
+        m_IsStopped = true;
     }
 
     void TelemetryService::handleMessage(Common::NamedType<UserAction> const &event) {
         reportAction(event.get());
+    }
+
+    bool TelemetryService::isRunning() {
+        return m_TelemetryWorker != nullptr && !m_IsStopped;
     }
 
     void TelemetryService::ensureUserIdExists() {
@@ -113,11 +119,11 @@ namespace Connectivity {
     }
 
     void TelemetryService::doReportAction(UserAction action) {
-        if (m_TelemetryWorker != nullptr) {
+        if (isRunning()) {
             auto item = std::make_shared<AnalyticsUserEvent>(action);
             m_TelemetryWorker->submitItem(item);
         } else {
-            LOG_WARNING << "Worker is null";
+            LOG_WARNING << "Service is not running";
         }
     }
 

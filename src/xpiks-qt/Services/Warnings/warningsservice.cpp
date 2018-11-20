@@ -100,15 +100,12 @@ namespace Warnings {
                          this, &WarningsService::queueIsEmpty);
 
         LOG_INFO << "Starting worker";
-
         thread->start(QThread::LowestPriority);
-
-        m_IsStopped = false;
     }
 
     void WarningsService::stopService() {
-        if (m_WarningsWorker != nullptr) {
-            LOG_INFO << "Stopping worker";
+        LOG_INFO << "Stopping worker";
+        if (isRunning()) {
             m_WarningsWorker->stopWorking();
         } else {
             LOG_WARNING << "Warnings Worker was nullptr";
@@ -119,37 +116,28 @@ namespace Warnings {
 
     bool WarningsService::isBusy() const {
         bool isBusy = (m_WarningsWorker != nullptr) && (m_WarningsWorker->hasPendingJobs());
-
         return isBusy;
     }
 
     void WarningsService::submitItem(std::shared_ptr<Artworks::ArtworkMetadata> const &item) {
-        if (m_WarningsWorker == nullptr) { return; }
-        if (m_IsStopped) { return; }
-
+        if (!isRunning()) { return; }
         LOG_INFO << "Submitting one item";
-
         auto wItem = std::make_shared<WarningsItem>(item);
         m_WarningsWorker->submitItem(wItem);
     }
 
     void WarningsService::submitItem(std::shared_ptr<Artworks::ArtworkMetadata> const &item,
                                      Common::WarningsCheckFlags flags) {
-        if (m_WarningsWorker == nullptr) { return; }
-        if (m_IsStopped) { return; }
-
+        if (!isRunning()) { return; }
         LOG_INFO << "flags:" << (int)flags << warningsFlagToString(flags);
-
         auto wItem = std::make_shared<WarningsItem>(item, flags);
         m_WarningsWorker->submitItem(wItem);
     }
 
     void WarningsService::submitItems(const Artworks::ArtworksSnapshot &items) {
-        if (m_WarningsWorker == nullptr) { return; }
-        if (m_IsStopped) { return; }
+        if (!isRunning()) { return; }
 
         const size_t size = items.size();
-
         std::vector<std::shared_ptr<IWarningsItem> > itemsToSubmit;
         itemsToSubmit.reserve(size);
 
@@ -170,5 +158,9 @@ namespace Warnings {
 
     void WarningsService::workerStopped() {
         LOG_DEBUG << "#";
+    }
+
+    bool WarningsService::isRunning() {
+        return m_WarningsWorker != nullptr && !m_IsStopped;
     }
 }

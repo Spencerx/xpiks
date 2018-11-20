@@ -104,7 +104,7 @@ public:
     Models::ArtworkProxyModel &getArtworkProxyModel() { return m_ArtworkProxyModel; }
 
 public:
-    std::shared_ptr<Artworks::ArtworkMetadata> getArtwork(int index);
+    std::shared_ptr<Artworks::ArtworkMetadata> getArtwork(size_t index);
     int getArtworksCount();
 
 private:

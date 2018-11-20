@@ -42,7 +42,7 @@ void RemoveCommandTests::removeArtworksFromEmptyRepository() {
 
     removeCommand->execute();
 
-    int artworksRemovedCount = removeCommand->getRemovedCount();
+    int artworksRemovedCount = (int)removeCommand->getRemovedCount();
 
     QCOMPARE(artworksRemovedCount, 0);
 
@@ -83,7 +83,7 @@ void RemoveCommandTests::removeAllArtworksFromRepository() {
     removeCommand->execute();
     artworksListModel.deleteRemovedItems();
 
-    int artworksRemovedCount = removeCommand->getRemovedCount();
+    int artworksRemovedCount = (int)removeCommand->getRemovedCount();
 
     QCOMPARE(artworksRemovedCount, itemsToAdd);
 

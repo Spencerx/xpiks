@@ -32,7 +32,7 @@ if "%BUILD_MODE%"=="appveyor" (
    rem call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%
    git submodule update --init --recursive
 ) else (
-  set QMAKE_EXE="C:\Qt\Qt5.6.2\5.6\msvc2015_64\bin\qmake.exe"
+  set QMAKE_EXE="C:\Qt\5.9.7\msvc2017_64\bin\qmake.exe"
 )
 
 rem chillout

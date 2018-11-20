@@ -44,7 +44,7 @@ namespace Mocks {
         }
         void setUpdatesBlocked(bool value) { m_BlockUpdates = value; }
 
-        std::shared_ptr<ArtworkMetadataMock> getMockArtwork(int index) const {
+        std::shared_ptr<ArtworkMetadataMock> getMockArtwork(size_t index) const {
             return std::dynamic_pointer_cast<ArtworkMetadataMock>(accessArtwork(index));
         }
         void removeAll() { deleteItems(Helpers::IndicesRanges(getArtworksSize())); }
@@ -62,8 +62,8 @@ namespace Mocks {
         }
 
         void foreachArtwork(std::function<void (int index, std::shared_ptr<ArtworkMetadataMock> const &metadata)> action) {
-            int size = getArtworksSize();
-            for (int i = 0; i < size; ++i) {
+            auto size = getArtworksSize();
+            for (auto i = 0; i < size; ++i) {
                 auto item = std::dynamic_pointer_cast<ArtworkMetadataMock>(accessArtwork(i));
                 action(i, item);
             }

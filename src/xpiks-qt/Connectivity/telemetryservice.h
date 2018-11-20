@@ -11,6 +11,8 @@
 #ifndef TELEMETRYSERVICE_H
 #define TELEMETRYSERVICE_H
 
+#include <atomic>
+
 #include <QObject>
 #include <QString>
 
@@ -45,6 +47,7 @@ namespace Connectivity {
         virtual void handleMessage(Common::NamedType<UserAction> const &event) override;
 
     private:
+        bool isRunning();
         void ensureUserIdExists();
         void doStartReporting();
         bool getIsTelemetryEnabled();
@@ -71,6 +74,7 @@ namespace Connectivity {
         QString m_ReportingEndpoint;
         QString m_UserAgentId;
         QString m_InterfaceLanguage;
+        std::atomic_bool m_IsStopped;
     };
 }
 

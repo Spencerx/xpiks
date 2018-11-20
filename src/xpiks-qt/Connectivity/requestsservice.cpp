@@ -27,8 +27,13 @@ namespace Connectivity {
     RequestsService::RequestsService(const Models::ProxySettings &proxySettings, QObject *parent):
         QObject(parent),
         m_RequestsWorker(nullptr),
-        m_ProxySettings(proxySettings)
+        m_ProxySettings(proxySettings),
+        m_IsStopped(false)
     {
+    }
+
+    bool RequestsService::isRunning() {
+        return m_RequestsWorker != nullptr && !m_IsStopped;
     }
 
     void RequestsService::startService() {
@@ -60,12 +65,16 @@ namespace Connectivity {
     void RequestsService::stopService() {
         LOG_DEBUG << "#";
         Q_ASSERT(m_RequestsWorker != nullptr);
-        m_RequestsWorker->stopWorking();
+        if (isRunning()) {
+            m_RequestsWorker->stopWorking();
+        }
+
+        m_IsStopped = true;
     }
 
     void RequestsService::receiveConfig(Helpers::RemoteConfig &config) {
         LOG_DEBUG << "#";
-        if (m_RequestsWorker == nullptr) {
+        if (!isRunning()) {
             LOG_DEBUG << "Skipping" << config.getUrl() << ". Service is stopped";
             return;
         }
@@ -77,7 +86,7 @@ namespace Connectivity {
     void RequestsService::sendRequest(const std::shared_ptr<IConnectivityRequest> &request) {
         LOG_DEBUG << "#";
 
-        if (m_RequestsWorker == nullptr) {
+        if (!isRunning()) {
             LOG_DEBUG << "Skipping request. Service is stopped";
             return;
         }
@@ -88,7 +97,7 @@ namespace Connectivity {
     void RequestsService::sendRequestSync(std::shared_ptr<IConnectivityRequest> &request) {
         LOG_DEBUG << "#";
 
-        if (m_RequestsWorker == nullptr) {
+        if (!isRunning()) {
             LOG_DEBUG << "Skipping request. Service is stopped";
             return;
         }

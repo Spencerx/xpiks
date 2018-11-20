@@ -23,7 +23,7 @@ namespace Mocks {
             m_UpdatedIDs.push_back(artwork->getItemID());
         }
 
-        virtual void updateArtworkByID(Common::ID_t id, size_t, QVector<int> const &rolesToUpdate = QVector<int>()) override {
+        virtual void updateArtworkByID(Common::ID_t id, size_t, QVector<int> const &) override {
             LOG_DEBUG << "Updated by id";
             m_UpdatedIDs.push_back(id);
         }

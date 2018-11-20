@@ -12,6 +12,7 @@
 #define REQUESTSSERVICE_H
 
 #include <memory>
+#include <atomic>
 
 #include <QObject>
 #include <QString>
@@ -34,7 +35,10 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        explicit RequestsService(const Models::ProxySettings &proxySettings, QObject *parent = 0);
+        explicit RequestsService(const Models::ProxySettings &proxySettings, QObject *parent = nullptr);
+
+    private:
+        bool isRunning();
 
     public:
         void startService();
@@ -55,6 +59,7 @@ namespace Connectivity {
     private:
         RequestsWorker *m_RequestsWorker;
         const Models::ProxySettings &m_ProxySettings;
+        std::atomic_bool m_IsStopped;
     };
 }
 
