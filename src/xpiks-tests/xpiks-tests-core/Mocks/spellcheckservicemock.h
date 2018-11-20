@@ -30,7 +30,7 @@ namespace Mocks {
         // SpellCheckerService interface
 
     public:
-        virtual QStringList suggestCorrections(const QString &word) const {
+        virtual QStringList suggestCorrections(const QString &word) override {
             Q_UNUSED(word);
             return QStringList() << "item1" << "item2" << "item3";
         }
