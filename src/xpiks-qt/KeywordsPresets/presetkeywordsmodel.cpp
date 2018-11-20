@@ -469,14 +469,17 @@ namespace KeywordsPresets {
     }
 
     void PresetKeywordsModel::removeItem(int row) {
-        if (row < 0 || row >= getPresetsCount()){
-            return;
+        LOG_INFO << row;
+        if (row < 0 || row >= getPresetsCount()) { return; }
+
+        {
+            QWriteLocker locker(&m_PresetsLock);
+            Q_UNUSED(locker);
+
+            removeItemUnsafe(row);
         }
 
-        QWriteLocker locker(&m_PresetsLock);
-        Q_UNUSED(locker);
-
-        removeItemUnsafe(row);
+        justChanged();
     }
 
     void PresetKeywordsModel::addItem() {
@@ -637,10 +640,24 @@ namespace KeywordsPresets {
 
     void PresetKeywordsModel::makeTitleValid(int row) {
         LOG_DEBUG << row;
+        if ((row < 0) || (row >= rowCount())) { return; }
 
-        QWriteLocker locker(&m_PresetsLock);
-        Q_UNUSED(locker);
+        bool validated = false;
+        {
+            QWriteLocker locker(&m_PresetsLock);
+            Q_UNUSED(locker);
+            validated = makeTitleValidUnsafe(row);
+        }
 
+        if (validated) {
+            justChanged();
+            QModelIndex index = this->index(row);
+            emit dataChanged(index, index, QVector<int>() << NameRole << IsNameValidRole);
+        }
+    }
+
+    bool PresetKeywordsModel::makeTitleValidUnsafe(int row) {
+        Q_ASSERT((0 <= row) && (row < rowCount()));
         const QString originalName = m_PresetsList[row]->m_PresetName;
         QString currentName = originalName;
         int attemptNumber = 0;
@@ -651,13 +668,15 @@ namespace KeywordsPresets {
             currentName = QString("%1 (%2)").arg(originalName).arg(attemptNumber);
         }
 
+        bool changed = false;
+
         if (currentName != originalName) {
             m_PresetsList[row]->m_PresetName = currentName;
             m_PresetsList[row]->setIsNameDuplicateFlag(false);
-            justChanged();
-            QModelIndex index = this->index(row);
-            emit dataChanged(index, index, QVector<int>() << NameRole << IsNameValidRole);
+            changed = true;
         }
+
+        return changed;
     }
 
     void PresetKeywordsModel::loadModelFromConfig() {

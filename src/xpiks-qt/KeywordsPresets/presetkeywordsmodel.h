@@ -169,6 +169,7 @@ namespace KeywordsPresets {
         Q_INVOKABLE void makeTitleValid(int row);
 
     private:
+        bool makeTitleValidUnsafe(int row);
         /*Q_INVOKABLE*/ void loadModelFromConfig();
 
     public slots:

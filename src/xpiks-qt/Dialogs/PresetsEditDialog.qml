@@ -384,12 +384,12 @@ Item {
                             }
 
                             onEditingFinished: {
-                                if(presetNamesListView.currentItem) {
-                                    if (text.length == 0) {
+                                if (titleText.length == 0) {
+                                    if (presetNamesListView.currentItem) {
                                         presetNamesListView.currentItem.myData.editname = qsTr("Untitled")
                                     }
-                                    presetsModel.makeTitleValid(presetNamesListView.currentIndex)
                                 }
+                                presetsModel.makeTitleValid(presetNamesListView.currentIndex)
                             }
 
                             onActiveFocusChanged: {
