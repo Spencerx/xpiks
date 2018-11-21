@@ -195,7 +195,8 @@ SOURCES += main.cpp \
     artworkproxy_tests.cpp \
     ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp \
     ../../xpiks-qt/Commands/Base/compositecommand.cpp \
-    ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp
+    ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp \
+    ../../xpiks-qt/Helpers/logger.cpp
 
 HEADERS += \
     encryption_tests.h \
