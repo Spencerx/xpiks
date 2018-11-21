@@ -69,18 +69,18 @@ namespace SpellCheck {
         m_WarningsService(warningsService),
         m_Suggestions(SUGGESTIONS_CACHE_SIZE, SUGGESTIONS_CACHE_ELASTICITY),
         m_DictsRoot(dictsRoot),
-        m_Hunspell(NULL),
-        m_Codec(NULL)
+        m_Hunspell(nullptr),
+        m_Codec(nullptr)
     {
         Q_ASSERT(!dictsRoot.isEmpty());
     }
 
     SpellCheckWorker::~SpellCheckWorker() {
-        if (m_Hunspell != NULL) {
+        if (m_Hunspell != nullptr) {
             delete m_Hunspell;
         }
 
-        LOG_INFO << "destroyed";
+        LOG_DEBUG << "destroyed";
     }
 
     QStringList SpellCheckWorker::getUserDictionary() const { return m_UserDictionary.getWords(); }

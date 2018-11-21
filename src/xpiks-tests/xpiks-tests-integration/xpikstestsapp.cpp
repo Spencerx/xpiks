@@ -77,7 +77,7 @@ bool XpiksTestsApp::checkImportSucceeded(int importsCount) {
         }
 
         if (importsCount != -1) {
-            if (m_MetadataIOCoordinator.getImportIDs().size() != importsCount) {
+            if (static_cast<int>(m_MetadataIOCoordinator.getImportIDs().size()) != importsCount) {
                 LOG_WARNING << "Imports count doesn't match" << importsCount;
                 break;
             }

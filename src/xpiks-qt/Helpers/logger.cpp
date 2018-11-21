@@ -25,27 +25,32 @@
 
 #include "Encryption/obfuscation.h"
 
-#define MIN_FIRE_SIZE 20
-#define LOGGING_TIMEOUT 5
+void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+    Q_UNUSED(context);
+    QString logLine = qFormatLogMessage(type, context, msg);
+
+    Helpers::Logger &logger = Helpers::Logger::getInstance();
+    logger.log(logLine);
+
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+    if ((type == QtFatalMsg) ||
+            (type == QtCriticalMsg) ||
+            (type == QtWarningMsg)) {
+        logger.abortFlush();
+    }
+#endif
+
+    if (type == QtFatalMsg) {
+        abort();
+    }
+}
 
 namespace Helpers {
     void Logger::log(const QString &message) {
-        if (!m_Stopped) {
-            doLog(message);
-        } else {
-#ifdef WITH_STDOUT_LOGS
-        std::cout << message.toStdString() << std::endl;
-        std::cout.flush();
-#else
-        std::cerr << message.toStdString() << std::endl;
-        std::cerr.flush();
-#endif
-        }
+        doLog(message);
     }
 
     void Logger::flush() {
-        if (m_Stopped) { return; }
-
         QMutexLocker flushLocker(&m_FlushMutex);
 
         while (m_QueueFlushFrom->isEmpty()) {
@@ -88,8 +93,6 @@ namespace Helpers {
     }
 
     void Logger::stop() {
-        m_Stopped = true;
-
         // will make waiting flush() call unblocked if any
         doLog("Logging stopped.");
         flushAll();
@@ -165,5 +168,22 @@ namespace Helpers {
 #endif
 
         logItems->clear();
+    }
+
+    Logger::Logger() {
+        m_QueueLogTo = &m_LogsStorage[0];
+        m_QueueFlushFrom = &m_LogsStorage[1];
+        m_MemoryOnly = false;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+        qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
+#endif
+
+        qInstallMessageHandler(myMessageHandler);
+    }
+
+    Logger::~Logger() {
+        qInstallMessageHandler(nullptr);
+        flushAll();
     }
 }

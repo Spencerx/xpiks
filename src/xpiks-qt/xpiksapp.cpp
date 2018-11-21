@@ -412,6 +412,9 @@ void XpiksApp::stop() {
     m_TelemetryService.reportAction(Connectivity::UserAction::Close);
     m_TelemetryService.stopReporting();
     m_RequestsService.stopService();
+
+    // logger will still collect logs in 1 queue
+    m_LogsModel.stopLogging();
 }
 
 void XpiksApp::setupWindow(QQuickWindow *window) {
@@ -447,11 +450,6 @@ void XpiksApp::shutdown() {
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
     m_UpdateService.tryToUpgradeXpiks();
-}
-
-void XpiksApp::quit() {
-    m_LogsModel.stopLogging();
-    qInstallMessageHandler(nullptr);
 }
 
 void XpiksApp::upgradeNow() {

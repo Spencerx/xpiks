@@ -137,7 +137,7 @@ namespace AutoComplete {
     }
 
     void AutoCompleteService::workerFinished() {
-        LOG_INFO << "#";
+        LOG_DEBUG << "#";
     }
 
     void AutoCompleteService::workerDestroyed(QObject *object) {

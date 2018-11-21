@@ -55,10 +55,7 @@ ApplicationWindow {
         interval: 1000
         running: false
         repeat: false
-        onTriggered: {
-            xpiksApp.quit()
-            Qt.quit()
-        }
+        onTriggered: Qt.quit()
     }
 
     Timer {

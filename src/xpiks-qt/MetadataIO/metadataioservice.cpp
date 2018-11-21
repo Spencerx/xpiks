@@ -155,7 +155,7 @@ namespace MetadataIO {
     }
 
     void MetadataIOService::workerFinished() {
-        LOG_INFO << "#";
+        LOG_DEBUG << "#";
     }
 
     void MetadataIOService::onCacheSyncRequest() {

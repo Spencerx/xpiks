@@ -61,7 +61,7 @@ namespace SpellCheck {
                          Warnings::WarningsService &warningsService,
                          Helpers::AsyncCoordinator &initCoordinator,
                          QObject *parent=nullptr);
-        virtual ~SpellCheckWorker();
+        virtual ~SpellCheckWorker() override;
 
     public:
         QStringList getUserDictionary() const;

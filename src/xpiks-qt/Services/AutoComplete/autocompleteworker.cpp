@@ -42,11 +42,11 @@ namespace AutoComplete {
     AutoCompleteWorker::~AutoCompleteWorker() {
         m_FaceCompletionEngine.finalize();
         m_PresetsCompletionEngine.finalize();
-        LOG_INFO << "destroyed";
+        LOG_DEBUG << "destroyed";
     }
 
     bool AutoCompleteWorker::initWorker() {
-        LOG_INFO << "#";
+        LOG_DEBUG << "#";
 
         Helpers::AsyncCoordinatorUnlocker unlocker(m_InitCoordinator);
         Q_UNUSED(unlocker);

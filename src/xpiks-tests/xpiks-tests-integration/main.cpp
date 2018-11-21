@@ -75,22 +75,6 @@
 #include "weirdnamesreadtest.h"
 #include "zipartworkstest.h"
 
-void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
-    Q_UNUSED(context);
-    QString logLine = qFormatLogMessage(type, context, msg);
-
-    Helpers::Logger &logger = Helpers::Logger::getInstance();
-    logger.log(logLine);
-
-    if ((type == QtFatalMsg) || (type == QtWarningMsg)) {
-        logger.abortFlush();
-    }
-
-    if (type == QtFatalMsg) {
-        abort();
-    }
-}
-
 void initCrashRecovery(Common::ISystemEnvironment &environment) {
 #ifdef TRAVIS_CI
     return;
@@ -143,9 +127,6 @@ int main(int argc, char *argv[]) {
     Exiv2InitHelper exiv2InitHelper;
     Q_UNUSED(exiv2InitHelper);
 #endif
-
-    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
-    qInstallMessageHandler(myMessageHandler);
 
     // -----------------------------------------------
     QCoreApplication app(argc, argv);
@@ -285,7 +266,6 @@ int main(int argc, char *argv[]) {
     xpiksTests.waitFinalized();
 
     std::cout << "Integration tests finished" << std::endl;
-    xpiksTests.quit();
 
     return result;
 }

@@ -43,24 +43,6 @@ static QObject *createTestsHostsQmlObject(QQmlEngine *engine, QJSEngine *scriptE
     return object;
 }
 
-void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
-    Q_UNUSED(context);
-    QString logLine = qFormatLogMessage(type, context, msg);
-
-    Helpers::Logger &logger = Helpers::Logger::getInstance();
-    logger.log(logLine);
-
-    if ((type == QtFatalMsg) ||
-            (type == QtCriticalMsg) ||
-            (type == QtWarningMsg)) {
-        logger.abortFlush();
-    }
-
-    if ((type == QtFatalMsg) || (type == QtCriticalMsg)) {
-        abort();
-    }
-}
-
 void initCrashRecovery(Common::ISystemEnvironment &environment) {
     auto &chillout = Debug::Chillout::getInstance();
 
@@ -109,9 +91,6 @@ int main(int argc, char **argv) {
 #if defined(APPVEYOR)
     initCrashRecovery(uiTestsEnvironment);
 #endif
-
-    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
-    qInstallMessageHandler(myMessageHandler);
 
 #ifdef WITH_LOGS
     Helpers::Logger &logger = Helpers::Logger::getInstance();

@@ -12,6 +12,7 @@
 #define ITEMPROCESSINGWORKER_H
 
 #include <algorithm>
+#include <atomic>
 #include <cstddef>
 #include <deque>
 #include <memory>
@@ -87,7 +88,7 @@ namespace Common {
         };
 
     public:
-        ItemProcessingWorker(int batchMaxSize = 0xffffffff):
+        ItemProcessingWorker(unsigned int batchMaxSize = 0xffffffff):
             m_BatchID(1),
             m_MilestoneSize(batchMaxSize),
             m_Cancel(false)
@@ -115,9 +116,7 @@ namespace Common {
         }
 
         batch_id_t submitItem(const std::shared_ptr<ItemType> &item) {
-            if (m_Cancel) {
-                return INVALID_BATCH_ID;
-            }
+            if (m_Cancel) { return INVALID_BATCH_ID; }
 
             batch_id_t batchID;
             Common::flag_t flags = 0;
@@ -137,9 +136,7 @@ namespace Common {
         }
 
         batch_id_t submitFirst(const std::shared_ptr<ItemType> &item) {
-            if (m_Cancel) {
-                return INVALID_BATCH_ID;
-            }
+            if (m_Cancel) { return INVALID_BATCH_ID; }
 
             batch_id_t batchID;
             Common::flag_t flags = 0;
@@ -159,9 +156,7 @@ namespace Common {
         }
 
         batch_id_t submitItems(const std::vector<std::shared_ptr<ItemType> > &items) {
-            if (m_Cancel) {
-                return INVALID_BATCH_ID;
-            }
+            if (m_Cancel) { return INVALID_BATCH_ID; }
 
             batch_id_t batchID;
             Common::flag_t commonFlags = 0;
@@ -278,7 +273,7 @@ namespace Common {
 
             for (;;) {
                 if (m_Cancel) {
-                    LOG_INFO << "Cancelled. Exiting...";
+                    LOG_DEBUG << "Cancelled. Exiting...";
                     break;
                 }
 
@@ -346,7 +341,7 @@ namespace Common {
         std::vector<WorkResult> m_Results;
         batch_id_t m_BatchID;
         unsigned int m_MilestoneSize;
-        volatile bool m_Cancel;
+        std::atomic_bool m_Cancel;
     };
 }
 

@@ -63,19 +63,6 @@ class QQmlContext;
 #include <QProcess>
 #endif
 
-void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
-    Q_UNUSED(context);
-    QString logLine = qFormatLogMessage(type, context, msg);
-
-    Helpers::Logger &logger = Helpers::Logger::getInstance();
-    logger.log(logLine);
-
-    if (type == QtFatalMsg) {
-        logger.flush();
-        abort();
-    }
-}
-
 void initQSettings() {
     QCoreApplication::setOrganizationName(Constants::ORGANIZATION_NAME);
     QCoreApplication::setOrganizationDomain(Constants::ORGANIZATION_DOMAIN);
@@ -184,12 +171,6 @@ int main(int argc, char *argv[]) {
     qRegisterMetaTypeStreamOperators<Models::ProxySettings>("ProxySettings");
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
     initQSettings();
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-    qSetMessagePattern("%{time hh:mm:ss.zzz} %{type} T#%{threadid} %{function} - %{message}");
-#endif
-
-    qInstallMessageHandler(myMessageHandler);
 
     // ----------------------------------------------
     QApplication app(argc, argv);

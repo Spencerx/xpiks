@@ -107,7 +107,7 @@ namespace Translation {
     }
 
     void TranslationService::workerFinished() {
-        LOG_INFO << "#";
+        LOG_DEBUG << "#";
     }
 
     void TranslationService::workerDestroyed(QObject *object) {
