@@ -11,6 +11,7 @@
 #ifndef MAINTENANCESERVICE_H
 #define MAINTENANCESERVICE_H
 
+#include <atomic>
 #include <memory>
 
 #include <QObject>
@@ -88,7 +89,7 @@ namespace Maintenance {
         Common::ISystemEnvironment &m_Environment;
         MaintenanceWorker *m_MaintenanceWorker;
         MaintenanceWorker::batch_id_t m_LastSessionBatchId;
-        volatile bool m_IsStopped;
+        std::atomic_bool m_IsStopped;
     };
 }
 

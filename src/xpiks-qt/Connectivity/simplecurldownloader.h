@@ -11,6 +11,8 @@
 #ifndef SIMPLECURLDOWNLOADER_H
 #define SIMPLECURLDOWNLOADER_H
 
+#include <atomic>
+
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -38,7 +40,7 @@ namespace Connectivity {
 
     private:
         void *m_Curl;
-        volatile bool m_Cancel;
+        std::atomic_bool m_Cancel;
     };
 
     class SimpleCurlDownloader : public QObject

@@ -11,6 +11,7 @@
 #ifndef METADATAIOCOORDINATOR_H
 #define METADATAIOCOORDINATOR_H
 
+#include <atomic>
 #include <set>
 
 #include <QObject>
@@ -117,9 +118,9 @@ namespace MetadataIO {
         int m_LastImportID;
         std::set<int> m_PreviousImportIDs;
         volatile int m_ProcessingItemsCount;
-        volatile bool m_IsInProgress;
-        volatile bool m_HasErrors;
-        volatile bool m_ExiftoolNotFound;
+        std::atomic_bool m_IsInProgress;
+        std::atomic_bool m_HasErrors;
+        std::atomic_bool m_ExiftoolNotFound;
     };
 }
 

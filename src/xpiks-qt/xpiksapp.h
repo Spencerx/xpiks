@@ -11,6 +11,7 @@
 #ifndef XPIKSAPP_H
 #define XPIKSAPP_H
 
+#include <atomic>
 #include <memory>
 
 #include <QList>
@@ -247,8 +248,8 @@ protected:
     Helpers::HelpersQmlWrapper m_HelpersQmlWrapper;
 
     Helpers::AsyncCoordinator m_InitCoordinator;
-    volatile bool m_ServicesInitialized = false;
-    volatile bool m_AfterInitCalled = false;
+    std::atomic_bool m_ServicesInitialized;
+    std::atomic_bool m_AfterInitCalled;
 };
 
 #endif // XPIKSAPP_H

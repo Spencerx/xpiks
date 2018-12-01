@@ -11,6 +11,7 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
+#include <atomic>
 #include <memory>
 #include <vector>
 
@@ -74,7 +75,7 @@ namespace Storage {
         QString m_DBDirPath;
         QAtomicInt m_LastDatabaseID;
         std::vector<std::shared_ptr<Database> > m_DatabaseArray;
-        volatile bool m_Initialized;
+        std::atomic_bool m_Initialized;
     };
 }
 

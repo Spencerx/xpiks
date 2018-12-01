@@ -11,6 +11,8 @@
 #ifndef THREADHELPERS_H
 #define THREADHELPERS_H
 
+#include <atomic>
+
 #include <QMutex>
 #include <QSemaphore>
 #include <QWaitCondition>
@@ -29,7 +31,7 @@ namespace Helpers {
     private:
         QWaitCondition m_WaitCondition;
         QMutex m_Mutex;
-        volatile bool m_Flag;
+        std::atomic_bool m_Flag;
     };
 
     class Barrier {
@@ -47,8 +49,8 @@ namespace Helpers {
         QMutex m_Mutex;
         QSemaphore m_Turnstile;
         QSemaphore m_Turnstile2;
-        volatile int m_ThreadsNumber;
-        volatile int m_Count;
+        std::atomic_int m_ThreadsNumber;
+        std::atomic_int m_Count;
     };
 }
 

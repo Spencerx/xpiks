@@ -11,6 +11,8 @@
 #ifndef TRANSLATIONMANAGER_H
 #define TRANSLATIONMANAGER_H
 
+#include <atomic>
+
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -105,8 +107,8 @@ namespace Translation {
         QString m_FullTranslation;
         QString m_ShortenedTranslation;
         int m_SelectedDictionaryIndex;
-        volatile bool m_IsBusy;
-        volatile bool m_HasMore;
+        std::atomic_bool m_IsBusy;
+        std::atomic_bool m_HasMore;
     };
 }
 

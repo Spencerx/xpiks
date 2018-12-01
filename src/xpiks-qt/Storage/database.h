@@ -11,9 +11,10 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include <vector>
-#include <memory>
+#include <atomic>
 #include <functional>
+#include <memory>
+#include <vector>
 
 #include <QStringList>
 #include <QByteArray>
@@ -37,7 +38,7 @@ namespace Storage {
     class Database: public IDatabase {
     public:
         Database(int id, Helpers::AsyncCoordinator &finalizeCoordinator);
-        virtual ~Database();
+        virtual ~Database() override;
 
     private:
         class Transaction {
@@ -102,7 +103,7 @@ namespace Storage {
         sqlite3 *m_Database = nullptr;
         sqlite3_stmt *m_GetTablesStatement = nullptr;
         std::vector<std::shared_ptr<Database::Table> > m_Tables;
-        volatile bool m_IsOpened = false;
+        std::atomic_bool m_IsOpened;
     };
 }
 

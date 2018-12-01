@@ -11,6 +11,8 @@
 #ifndef WORDANALYSISRESULT_H
 #define WORDANALYSISRESULT_H
 
+#include <atomic>
+
 #include <QString>
 
 namespace Common {
@@ -32,15 +34,29 @@ namespace Common {
             m_HasDuplicates(hasDuplicates)
         { }
 
+        WordAnalysisResult(WordAnalysisResult const &other):
+            m_Stem(other.m_Stem)
+        {
+            m_IsCorrect.store(other.m_IsCorrect);
+            m_HasDuplicates.store(other.m_HasDuplicates);
+        }
+
         void reset() {
             m_Stem.clear();
             m_IsCorrect = true;
             m_HasDuplicates = false;
         }
 
+        WordAnalysisResult &operator=(WordAnalysisResult const &other) {
+            m_Stem = other.m_Stem;
+            m_IsCorrect.store(other.m_IsCorrect);
+            m_HasDuplicates.store(other.m_HasDuplicates);
+            return *this;
+        }
+
         QString m_Stem;
-        volatile bool m_IsCorrect;
-        volatile bool m_HasDuplicates;
+        std::atomic_bool m_IsCorrect;
+        std::atomic_bool m_HasDuplicates;
     };
 }
 

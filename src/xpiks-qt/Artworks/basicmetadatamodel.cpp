@@ -372,7 +372,7 @@ namespace Artworks {
         QStringList descriptionWords = getDescriptionWords();
         Common::WordAnalysisResult defaultWordAnalysisResult;
 
-        foreach(const QString &word, descriptionWords) {
+        for (const QString &word: descriptionWords) {
             Common::WordAnalysisResult wordResult = results.value(word, defaultWordAnalysisResult);
             const QString lowerWord = word.toLower();
 

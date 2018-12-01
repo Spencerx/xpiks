@@ -11,6 +11,8 @@
 #ifndef LOGGINGWORKER_H
 #define LOGGINGWORKER_H
 
+#include <atomic>
+
 #include <QObject>
 #include <QString>
 
@@ -30,7 +32,7 @@ namespace Helpers {
         void cancel();
 
     private:
-        volatile bool m_Cancel;
+        std::atomic_bool m_Cancel;
     };
 }
 

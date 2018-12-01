@@ -11,9 +11,10 @@
 #ifndef MICROSTOCKSUGGESTIONENGINE_H
 #define MICROSTOCKSUGGESTIONENGINE_H
 
+#include <atomic>
 #include <memory>
-#include <utility>
 #include <vector>
+#include <utility>
 
 #include <QString>
 #include <QtGlobal>
@@ -93,8 +94,8 @@ namespace Suggestion {
         std::vector<std::shared_ptr<SuggestionArtwork> > m_Suggestions;
         std::shared_ptr<Microstocks::IMicrostockAPIClient> m_Client;
         Connectivity::RequestsService &m_RequestsService;
-        volatile bool m_IsCancelled;
-        bool m_IsEnabled;
+        std::atomic_bool m_IsCancelled;
+        std::atomic_bool m_IsEnabled;
     };
 }
 

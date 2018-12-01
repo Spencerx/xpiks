@@ -11,6 +11,7 @@
 #ifndef VIDEOCACHINGSERVICE_H
 #define VIDEOCACHINGSERVICE_H
 
+#include <atomic>
 #include <memory>
 
 #include <QObject>
@@ -76,7 +77,7 @@ namespace QMLExtensions {
         Common::ISystemEnvironment &m_Environment;
         Models::SwitcherModel &m_SwitcherModel;
         VideoCachingWorker *m_CachingWorker;
-        volatile bool m_IsCancelled;
+        std::atomic_bool m_IsCancelled;
     };
 }
 

@@ -11,6 +11,8 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <atomic>
+
 #include <QMutex>
 #include <QString>
 #include <QStringList>
@@ -70,7 +72,7 @@ namespace Helpers {
         QMutex m_LogMutex;
         QMutex m_FlushMutex;
         QWaitCondition m_AnyLogsToFlush;
-        volatile bool m_MemoryOnly;
+        std::atomic_bool m_MemoryOnly;
     };
 }
 

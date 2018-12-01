@@ -11,6 +11,7 @@
 #ifndef KEYWORDSSUGGESTOR_H
 #define KEYWORDSSUGGESTOR_H
 
+#include <atomic>
 #include <memory>
 #include <vector>
 
@@ -207,7 +208,7 @@ namespace Suggestion {
         int m_SelectedArtworksCount;
         int m_SelectedSourceIndex;
         int m_LocalSearchIndex;
-        volatile bool m_IsInProgress;
+        std::atomic_bool m_IsInProgress;
     };
 }
 

@@ -31,8 +31,8 @@ namespace QMLExtensions {
         QObject(parent),
         m_Environment(environment),
         m_CachingWorker(nullptr),
-        m_IsCancelled(false),
-        m_Scale(1.0)
+        m_Scale(1.0),
+        m_IsCancelled(false)
     {
         updateDefaultSize();
     }

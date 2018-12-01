@@ -11,6 +11,8 @@
 #ifndef IMAGECACHINGSERVICE_H
 #define IMAGECACHINGSERVICE_H
 
+#include <atomic>
+
 #include <QObject>
 #include <QSize>
 #include <QString>
@@ -70,8 +72,8 @@ namespace QMLExtensions {
         Common::ISystemEnvironment &m_Environment;
         ImageCachingWorker *m_CachingWorker;
         QSize m_DefaultSize;
-        volatile bool m_IsCancelled;
         qreal m_Scale;
+        std::atomic_bool m_IsCancelled;
     };
 }
 

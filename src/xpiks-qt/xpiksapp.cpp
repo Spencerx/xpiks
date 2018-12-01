@@ -201,7 +201,10 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_PluginManager(environment, m_CommandManager, m_PresetsModel, m_DatabaseManager,
                     m_RequestsService, m_ApiClients, m_CurrentEditableModel, m_UIManager),
     m_PluginsWithActions(m_PluginManager),
-    m_HelpersQmlWrapper(environment, m_ColorsModel)
+    m_HelpersQmlWrapper(environment, m_ColorsModel),
+    // states
+    m_ServicesInitialized(false),
+    m_AfterInitCalled(false)
 {
     QObject::connect(&m_InitCoordinator, &Helpers::AsyncCoordinator::statusReported,
                      this, &XpiksApp::servicesInitialized);
