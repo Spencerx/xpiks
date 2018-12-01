@@ -55,14 +55,14 @@ namespace libxpks {
                 return;
             }
 
-            std::vector<std::shared_ptr<UploadBatch> > batches = std::move(generateUploadBatches(artworksToUpload,
-                                                                                                 uploadInfos,
-                                                                                                 m_SecretsManager,
-                                                                                                 m_Settings));
+            auto batches = generateUploadBatches(artworksToUpload,
+                                                 uploadInfos,
+                                                 m_SecretsManager,
+                                                 m_Settings);
 
             Q_ASSERT(batches.size() == uploadInfos.size());
 
-            size_t size = batches.size();
+            const size_t size = batches.size();
 
             initUpload(size);
             emit uploadStarted();

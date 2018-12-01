@@ -11,6 +11,7 @@
 #ifndef CURLFTPUPLOADER_H
 #define CURLFTPUPLOADER_H
 
+#include <atomic>
 #include <memory>
 
 #include <QObject>
@@ -41,7 +42,7 @@ namespace libxpks {
         private:
             double m_LastTime;
             void *m_Curl;
-            volatile bool m_Cancel;
+            std::atomic_bool m_Cancel;
         };
 
         class CurlFtpUploader : public QObject
@@ -68,8 +69,8 @@ namespace libxpks {
 
         private:
             std::shared_ptr<UploadBatch> m_BatchToUpload;
-            volatile int m_UploadedCount;
-            volatile bool m_Cancel;
+            std::atomic_int m_UploadedCount;
+            std::atomic_bool m_Cancel;
             double m_LastPercentage;
             int m_TotalCount;
         };

@@ -11,6 +11,8 @@
 #ifndef METADATAREADINGWORKER_H
 #define METADATAREADINGWORKER_H
 
+#include <atomic>
+
 #include <QByteArray>
 #include <QObject>
 #include <QProcess>
@@ -62,7 +64,7 @@ namespace libxpks {
             MetadataIO::MetadataReadingHub &m_ReadingHub;
             QProcess *m_ExiftoolProcess;
             Models::SettingsModel &m_SettingsModel;
-            volatile bool m_ReadSuccess;
+            std::atomic_bool m_ReadSuccess;
         };
     }
 }
