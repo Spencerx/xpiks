@@ -38,7 +38,7 @@ XpiksTestsApp::XpiksTestsApp(Common::ISystemEnvironment &environment):
 void XpiksTestsApp::waitInitialized() {
     LOG_DEBUG << "#";
     sleepWaitUntil(5, [this]() {
-        return m_ServicesInitialized;
+        return m_ServicesInitialized.load();
     });
 
     // now let the main thread to fill maintenance queue
