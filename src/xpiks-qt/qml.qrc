@@ -148,5 +148,6 @@
         <file>Graphics/whatsnew/presetsgroups.png</file>
         <file>Components/DraggableKeywordWrapper.qml</file>
         <file>AppHost.qml</file>
+        <file>Components/BaseDialog.qml</file>
     </qresource>
 </RCC>

@@ -20,34 +20,10 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-Item {
+BaseDialog {
     id: artworkSimplePreview
     anchors.fill: parent
     property string thumbpath
-
-    signal dialogDestruction();
-    Component.onDestruction: dialogDestruction();
-
-    function closePopup() {
-        artworkSimplePreview.destroy()
-    }
-
-    Component.onCompleted: focus = true
-    Keys.onEscapePressed: closePopup()
-
-    // This rectange is the a overlay to partially show the parent through it
-    // and clicking outside of the 'dialog' popup will do 'nothing'
-    Rectangle {
-        anchors.fill: parent
-        id: overlay
-        color: "#000000"
-        opacity: 0.6
-        // add a mouse area so that clicks outside
-        // the dialog window will not do anything
-        MouseArea {
-            anchors.fill: parent
-        }
-    }
 
     FocusScope {
         anchors.fill: parent

@@ -20,8 +20,9 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-Item {
+BaseDialog {
     id: replaceSetupComponent
+    canEscapeClose: false
     property var filteredModel
     property var replaceModel: dispatcher.getCommandTarget(UICommand.FindAndReplaceInSelected)
     anchors.fill: parent
@@ -32,9 +33,6 @@ Item {
     }
 
     Keys.onEscapePressed: closePopup()
-
-    signal dialogDestruction();
-    Component.onDestruction: dialogDestruction();
 
     Connections {
         target: replaceModel

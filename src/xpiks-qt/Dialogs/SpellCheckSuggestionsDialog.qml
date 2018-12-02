@@ -21,41 +21,12 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-Item {
+BaseDialog {
     id: spellCheckSuggestionsDialog
     anchors.fill: parent
     property var callbackObject
     property bool initialized: false
     property var spellCheckSuggestionModel: dispatcher.getCommandTarget(UICommand.ReviewSpellingArtwork)
-
-    signal dialogDestruction();
-    Component.onDestruction: dialogDestruction();
-
-    Component.onCompleted: focus = true
-
-    Keys.onEscapePressed: closePopup()
-
-    function closePopup() {
-        spellCheckSuggestionsDialog.destroy();
-    }
-
-    PropertyAnimation { target: spellCheckSuggestionsDialog; property: "opacity";
-        duration: 400; from: 0; to: 1;
-        easing.type: Easing.InOutQuad ; running: true }
-
-    // This rectange is the a overlay to partially show the parent through it
-    // and clicking outside of the 'dialog' popup will do 'nothing'
-    Rectangle {
-        anchors.fill: parent
-        id: overlay
-        color: "#000000"
-        opacity: 0.6
-        // add a mouse area so that clicks outside
-        // the dialog window will not do anything
-        MouseArea {
-            anchors.fill: parent
-        }
-    }
 
     FocusScope {
         anchors.fill: parent

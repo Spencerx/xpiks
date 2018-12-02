@@ -21,21 +21,12 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-Item {
+BaseDialog {
     id: deleteKeywordsComponent
     anchors.fill: parent
 
     property variant componentParent
     property var deleteKeywordsModel: dispatcher.getCommandTarget(UICommand.SetupDeleteKeywordsInSelected)
-
-    signal dialogDestruction();
-    Component.onDestruction: dialogDestruction();
-
-    Keys.onEscapePressed: closePopup()
-
-    function closePopup() {
-        deleteKeywordsComponent.destroy()
-    }
 
     function mustUseConfirmation() {
         return settingsModel.mustUseConfirmations

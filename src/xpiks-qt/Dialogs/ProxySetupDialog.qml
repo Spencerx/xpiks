@@ -19,18 +19,12 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-Item {
+BaseDialog {
     id: proxySetupComponent
+    canMinimize: false
     property bool firstTime
     property var callbackObject
     anchors.fill: parent
-
-    signal dialogDestruction();
-    Component.onDestruction: dialogDestruction();
-
-    function closePopup() {
-        proxySetupComponent.destroy()
-    }
 
     function saveProxySettings() {
         settingsModel.saveProxySetting(proxyAddress.text,
@@ -44,30 +38,6 @@ Item {
         title: i18.n + qsTr("Warning")
         text: i18.n + qsTr("Please, enter proxy address")
         standardButtons: StandardButton.Ok
-    }
-
-    PropertyAnimation {
-        target: proxySetupComponent
-        property: "opacity"
-        duration: 400
-        from: 0
-        to: 1
-        easing.type: Easing.InOutQuad
-        running: true
-    }
-
-    // This rectange is the a overlay to partially show the parent through it
-    // and clicking outside of the 'dialog' popup will do 'nothing'
-    Rectangle {
-        anchors.fill: parent
-        id: overlay
-        color: "#000000"
-        opacity: 0.6
-        // add a mouse area so that clicks outside
-        // the dialog window will not do anything
-        MouseArea {
-            anchors.fill: parent
-        }
     }
 
     FocusScope {

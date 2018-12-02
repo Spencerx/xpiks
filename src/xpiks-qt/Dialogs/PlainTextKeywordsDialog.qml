@@ -21,15 +21,13 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-Item {
+BaseDialog {
     id: plainTextKeywordsComponent
+    canEscapeClose: false
     property string keywordsText
     property var callbackObject
     property var keywordsModel
     anchors.fill: parent
-
-    signal dialogDestruction();
-    Component.onDestruction: dialogDestruction();
 
     function closePopup() {
         callbackObject.onClose()
@@ -62,24 +60,6 @@ Item {
     function submitKeywords() {
         callbackObject.onSuccess(textEdit.text, spaceAsSeparatorCheckBox.checked)
         closePopup()
-    }
-
-    PropertyAnimation { target: plainTextKeywordsComponent; property: "opacity";
-        duration: 400; from: 0; to: 1;
-        easing.type: Easing.InOutQuad ; running: true }
-
-    // This rectange is the a overlay to partially show the parent through it
-    // and clicking outside of the 'dialog' popup will do 'nothing'
-    Rectangle {
-        anchors.fill: parent
-        id: overlay
-        color: "#000000"
-        opacity: 0.6
-        // add a mouse area so that clicks outside
-        // the dialog window will not do anything
-        MouseArea {
-            anchors.fill: parent
-        }
     }
 
     FocusScope {
