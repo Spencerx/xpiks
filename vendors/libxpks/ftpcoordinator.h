@@ -1,6 +1,7 @@
 #ifndef FTPCOORDINATOR_H
 #define FTPCOORDINATOR_H
 
+#include <atomic>
 #include <cstddef>
 #include <memory>
 #include <vector>
@@ -11,8 +12,8 @@
 #include <QSemaphore>
 #include <QString>
 
-#include "Artworks/artworkssnapshot.h"
-#include "Connectivity/iftpcoordinator.h"
+#include <Artworks/artworkssnapshot.h>
+#include <Connectivity/iftpcoordinator.h>
 
 namespace Encryption {
     class SecretsManager;
@@ -33,7 +34,7 @@ namespace libxpks {
         public:
             explicit FtpCoordinator(Encryption::SecretsManager &secretsManager,
                                     Models::SettingsModel &settings,
-                                    QObject *parent = 0);
+                                    QObject *parent = nullptr);
 
         public:
             // IFTPCOORDINATOR
@@ -64,7 +65,7 @@ namespace libxpks {
             double m_OverallProgress;
             QAtomicInt m_FinishedWorkersCount;
             volatile size_t m_AllWorkersCount;
-            volatile bool m_AnyFailed;
+            std::atomic_bool m_AnyFailed;
         };
     }
 }
