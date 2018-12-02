@@ -20,132 +20,93 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-BaseDialog {
+StaticDialogBase {
     id: artworkSimplePreview
     anchors.fill: parent
     property string thumbpath
 
-    FocusScope {
+    onClickedOutside: closePopup()
+
+    contentsWidth: 700
+    contentsHeight: 500
+
+    contents: Item {
         anchors.fill: parent
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
-
-            property real old_x: 0
-            property real old_y: 0
-
-            onPressed: {
-                var tmp = mapToItem(artworkSimplePreview, mouse.x, mouse.y)
-                old_x = tmp.x
-                old_y = tmp.y
-            }
-
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(
-                            artworkSimplePreview, dialogWindow, mouse,
-                            old_x, old_y)
-                old_x = old_xy[0]
-                old_y = old_xy[1]
-            }
-        }
-
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius / 2
-            anchors.bottomMargin: -glowRadius / 2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
-
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: 700
-            height: 500
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            id: imageWrapper
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: bottomRow.top
+            color: uiColors.defaultDarkColor
+            property int imageMargin: 10
+
+            LoaderIcon {
+                width: 100
+                height: 100
+                anchors.centerIn: parent
+                running: image.status == Image.Loading
+            }
+
+            StyledScrollView {
+                id: scrollview
+                anchors.fill: parent
+                anchors.leftMargin: imageWrapper.imageMargin
+                anchors.topMargin: imageWrapper.imageMargin
+
+                Image {
+                    id: image
+                    source: "image://global/" + artworkSimplePreview.thumbpath
+                    property bool isFullSize: false
+                    width: isFullSize ? sourceSize.width : (imageWrapper.width - 2*imageWrapper.imageMargin)
+                    height: isFullSize ? sourceSize.height : (imageWrapper.height - 2*imageWrapper.imageMargin)
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    asynchronous: true
+                }
+            }
 
             Rectangle {
-                id: imageWrapper
+                anchors.bottom: parent.bottom
                 anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: bottomRow.top
+                width: 50
+                height: 50
                 color: uiColors.defaultDarkColor
-                property int imageMargin: 10
 
-                LoaderIcon {
-                    width: 100
-                    height: 100
-                    anchors.centerIn: parent
-                    running: image.status == Image.Loading
-                }
-
-                StyledScrollView {
-                    id: scrollview
+                ZoomAmplifier {
+                    id: zoomIcon
                     anchors.fill: parent
-                    anchors.leftMargin: imageWrapper.imageMargin
-                    anchors.topMargin: imageWrapper.imageMargin
-
-                    Image {
-                        id: image
-                        source: "image://global/" + artworkSimplePreview.thumbpath
-                        property bool isFullSize: false
-                        width: isFullSize ? sourceSize.width : (imageWrapper.width - 2*imageWrapper.imageMargin)
-                        height: isFullSize ? sourceSize.height : (imageWrapper.height - 2*imageWrapper.imageMargin)
-                        fillMode: Image.PreserveAspectFit
-                        anchors.centerIn: parent
-                        asynchronous: true
-                    }
+                    anchors.margins: 10
+                    scale: zoomMA.pressed ? 0.9 : 1
                 }
 
-                Rectangle {
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    width: 50
-                    height: 50
-                    color: uiColors.defaultDarkColor
-
-                    ZoomAmplifier {
-                        id: zoomIcon
-                        anchors.fill: parent
-                        anchors.margins: 10
-                        scale: zoomMA.pressed ? 0.9 : 1
-                    }
-
-                    MouseArea {
-                        id: zoomMA
-                        anchors.fill: parent
-                        onClicked: {
-                            image.isFullSize = !image.isFullSize
-                            zoomIcon.isPlus = !zoomIcon.isPlus
-                        }
+                MouseArea {
+                    id: zoomMA
+                    anchors.fill: parent
+                    onClicked: {
+                        image.isFullSize = !image.isFullSize
+                        zoomIcon.isPlus = !zoomIcon.isPlus
                     }
                 }
             }
+        }
 
-            Item {
-                id: bottomRow
-                anchors.bottom: parent.bottom
-                height: 50
-                anchors.left: parent.left
+        Item {
+            id: bottomRow
+            anchors.bottom: parent.bottom
+            height: 50
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            StyledButton {
                 anchors.right: parent.right
-
-                StyledButton {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.rightMargin: 20
-                    width: 100
-                    text: i18.n + qsTr("Close")
-                    onClicked: {
-                        closePopup()
-                    }
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: 20
+                width: 100
+                text: i18.n + qsTr("Close")
+                onClicked: {
+                    closePopup()
                 }
             }
         }

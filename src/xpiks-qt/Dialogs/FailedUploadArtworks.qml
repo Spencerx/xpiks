@@ -21,252 +21,210 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-BaseDialog {
+StaticDialogBase {
     id: failedUploadsComponent
     anchors.fill: parent
 
     property var artworksUploader: dispatcher.getCommandTarget(UICommand.SetupUpload)
     property var uploadWatcher: artworksUploader.getUploadWatcher()
 
-    FocusScope {
+    onClickedOutside: {
+        closePopup()
+    }
+
+    contentsWidth: 680
+    contentsHeight: 450
+
+    contents: ColumnLayout {
         anchors.fill: parent
+        anchors.margins: 20
+        spacing: 20
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
-            property real old_x : 0
-            property real old_y : 0
+        RowLayout {
+            anchors.left: parent.left
+            anchors.right: parent.right
 
-            onPressed: {
-                var tmp = mapToItem(failedUploadsComponent, mouse.x, mouse.y);
-                old_x = tmp.x;
-                old_y = tmp.y;
+            StyledText {
+                text: i18.n + qsTr("Failed uploads")
+            }
 
-                var dialogPoint = mapToItem(dialogWindow, mouse.x, mouse.y);
-                if (!Common.isInComponent(dialogPoint, dialogWindow)) {
-                    closePopup()
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledText {
+                text: i18.n + getCaption()
+
+                function getCaption() {
+                    return uploadWatcher.failedImagesCount === 1 ? qsTr("1 item") :
+                                                                   qsTr("%1 items").arg(uploadWatcher.failedImagesCount)
                 }
             }
-
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(failedUploadsComponent, dialogWindow, mouse, old_x, old_y);
-                old_x = old_xy[0]; old_y = old_xy[1];
-            }
         }
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
-
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: 680
-            height: 450
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Layout.fillHeight: true
+            color: uiColors.defaultControlColor
 
-            ColumnLayout {
+            ListView {
+                id: warningsListView
+                model: uploadWatcher
                 anchors.fill: parent
-                anchors.margins: 20
+                boundsBehavior: Flickable.StopAtBounds
                 spacing: 20
+                clip: true
 
-                RowLayout {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    StyledText {
-                        text: i18.n + qsTr("Failed uploads")
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    StyledText {
-                        text: i18.n + getCaption()
-
-                        function getCaption() {
-                            return uploadWatcher.failedImagesCount === 1 ? qsTr("1 item") :
-                                                                           qsTr("%1 items").arg(uploadWatcher.failedImagesCount)
-                        }
-                    }
+                header: Item {
+                    height: 10
                 }
 
-                Rectangle {
+                footer: Item {
+                    height: 10
+                }
+
+                delegate: Rectangle {
+                    property int delegateIndex: index
+                    color: uiColors.defaultDarkColor
+                    id: hostRectangleWrapper
+                    anchors.margins: 10
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    Layout.fillHeight: true
-                    color: uiColors.defaultControlColor
+                    height: childrenRect.height + 20
 
-                    ListView {
-                        id: warningsListView
-                        model: uploadWatcher
-                        anchors.fill: parent
-                        boundsBehavior: Flickable.StopAtBounds
+                    RowLayout {
+                        id: header
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.topMargin: 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        spacing: 5
+
+                        Rectangle {
+                            height: 5
+                            width: height
+                            radius: height/2
+                            color: uiColors.labelInactiveForeground
+                        }
+
+                        StyledText {
+                            id: hostAddress
+                            text: artworksUploader.getFtpName(ftpaddress)
+                            color: uiColors.artworkActiveColor
+                            //font.bold: true
+                            font.pixelSize: UIConfig.fontPixelSize + 4
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        StyledText {
+                            id: hostName
+                            text: '(' + ftpaddress + ')'
+                            isActive: false
+                        }
+                    }
+
+                    Flow {
+                        id: flow
                         spacing: 20
-                        clip: true
+                        anchors.topMargin: 20
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        anchors.top: header.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.right
 
-                        header: Item {
-                            height: 10
-                        }
+                        Repeater {
+                            id: photosGrid
+                            model: failedimages
 
-                        footer: Item {
-                            height: 10
-                        }
-
-                        delegate: Rectangle {
-                            property int delegateIndex: index
-                            color: uiColors.defaultDarkColor
-                            id: hostRectangleWrapper
-                            anchors.margins: 10
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            height: childrenRect.height + 20
-
-                            RowLayout {
-                                id: header
-                                anchors.top: parent.top
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.topMargin: 10
-                                anchors.leftMargin: 10
-                                anchors.rightMargin: 10
-                                spacing: 5
-
-                                Rectangle {
-                                    height: 5
-                                    width: height
-                                    radius: height/2
-                                    color: uiColors.labelInactiveForeground
-                                }
-
-                                StyledText {
-                                    id: hostAddress
-                                    text: artworksUploader.getFtpName(ftpaddress)
-                                    color: uiColors.artworkActiveColor
-                                    //font.bold: true
-                                    font.pixelSize: UIConfig.fontPixelSize + 4
-                                }
+                            delegate: Item {
+                                id: imageItem
+                                width: 100
+                                height: 120
+                                property string delegateData: modelData
 
                                 Item {
-                                    Layout.fillWidth: true
-                                }
+                                    id: imageHost
+                                    height: 100
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    anchors.right: parent.right
 
-                                StyledText {
-                                    id: hostName
-                                    text: '(' + ftpaddress + ')'
-                                    isActive: false
-                                }
-                            }
+                                    Image {
+                                        id: artworkImage
+                                        anchors.fill: parent
+                                        source: "image://cached/" + helpersWrapper.toImagePath(imageItem.delegateData)
+                                        sourceSize.width: 150
+                                        sourceSize.height: 150
+                                        fillMode: settingsModel.fitSmallPreview ? Image.PreserveAspectFit : Image.PreserveAspectCrop
+                                        asynchronous: true
+                                        cache: false
+                                    }
 
-                            Flow {
-                                id: flow
-                                spacing: 20
-                                anchors.topMargin: 20
-                                anchors.leftMargin: 10
-                                anchors.rightMargin: 10
-                                anchors.top: header.bottom
-                                anchors.left: parent.left
-                                anchors.right: parent.right
+                                    Rectangle {
+                                        anchors.left: artworkImage.left
+                                        anchors.bottom: artworkImage.bottom
+                                        width: 20
+                                        height: 20
+                                        color: uiColors.defaultDarkColor
+                                        property bool isVideo: helpersWrapper.isVideo(imageItem.delegateData)
+                                        property bool isVector: helpersWrapper.isVector(imageItem.delegateData)
+                                        visible: isVideo || isVector
+                                        enabled: isVideo || isVector
 
-                                Repeater {
-                                    id: photosGrid
-                                    model: failedimages
-
-                                    delegate: Item {
-                                        id: imageItem
-                                        width: 100
-                                        height: 120
-                                        property string delegateData: modelData
-
-                                        Item {
-                                            id: imageHost
-                                            height: 100
-                                            anchors.left: parent.left
-                                            anchors.top: parent.top
-                                            anchors.right: parent.right
-
-                                            Image {
-                                                id: artworkImage
-                                                anchors.fill: parent
-                                                source: "image://cached/" + helpersWrapper.toImagePath(imageItem.delegateData)
-                                                sourceSize.width: 150
-                                                sourceSize.height: 150
-                                                fillMode: settingsModel.fitSmallPreview ? Image.PreserveAspectFit : Image.PreserveAspectCrop
-                                                asynchronous: true
-                                                cache: false
-                                            }
-
-                                            Rectangle {
-                                                anchors.left: artworkImage.left
-                                                anchors.bottom: artworkImage.bottom
-                                                width: 20
-                                                height: 20
-                                                color: uiColors.defaultDarkColor
-                                                property bool isVideo: helpersWrapper.isVideo(imageItem.delegateData)
-                                                property bool isVector: helpersWrapper.isVector(imageItem.delegateData)
-                                                visible: isVideo || isVector
-                                                enabled: isVideo || isVector
-
-                                                Image {
-                                                    id: typeIcon
-                                                    anchors.fill: parent
-                                                    source: parent.isVector ? "qrc:/Graphics/vector-icon.svg" : (parent.isVideo ? "qrc:/Graphics/video-icon.svg" : "")
-                                                    sourceSize.width: 20
-                                                    sourceSize.height: 20
-                                                    cache: true
-                                                }
-                                            }
-                                        }
-
-                                        StyledText {
-                                            anchors.top: imageHost.bottom
-                                            anchors.topMargin: 5
-                                            text: imageItem.delegateData.split(/[\\/]/).pop()
-                                            width: parent.width
-                                            elide: Text.ElideMiddle
-                                            horizontalAlignment: Text.AlignHCenter
-                                            isActive: false
+                                        Image {
+                                            id: typeIcon
+                                            anchors.fill: parent
+                                            source: parent.isVector ? "qrc:/Graphics/vector-icon.svg" : (parent.isVideo ? "qrc:/Graphics/video-icon.svg" : "")
+                                            sourceSize.width: 20
+                                            sourceSize.height: 20
+                                            cache: true
                                         }
                                     }
                                 }
+
+                                StyledText {
+                                    anchors.top: imageHost.bottom
+                                    anchors.topMargin: 5
+                                    text: imageItem.delegateData.split(/[\\/]/).pop()
+                                    width: parent.width
+                                    elide: Text.ElideMiddle
+                                    horizontalAlignment: Text.AlignHCenter
+                                    isActive: false
+                                }
                             }
                         }
                     }
-
-                    CustomScrollbar {
-                        id: mainScrollBar
-                        anchors.topMargin: 0
-                        anchors.bottomMargin: 0
-                        anchors.rightMargin: -17
-                        flickable: warningsListView
-                    }
                 }
+            }
 
-                RowLayout {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+            CustomScrollbar {
+                id: mainScrollBar
+                anchors.topMargin: 0
+                anchors.bottomMargin: 0
+                anchors.rightMargin: -17
+                flickable: warningsListView
+            }
+        }
 
-                    Item {
-                        Layout.fillWidth: true
-                    }
+        RowLayout {
+            anchors.left: parent.left
+            anchors.right: parent.right
 
-                    StyledButton {
-                        text: i18.n + qsTr("Close")
-                        width: 100
-                        onClicked: closePopup()
-                    }
-                }
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledButton {
+                text: i18.n + qsTr("Close")
+                width: 100
+                onClicked: closePopup()
             }
         }
     }

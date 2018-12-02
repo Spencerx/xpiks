@@ -19,7 +19,7 @@ import "../Common.js" as Common;
 import "../Components"
 import "../StyledControls"
 
-BaseDialog {
+StaticDialogBase {
     id: pluginsComponent
     property string logText
     anchors.fill: parent
@@ -100,182 +100,141 @@ BaseDialog {
         }
     }
 
-    FocusScope {
+    onClickedOutside: closePopup()
+
+    contentsWidth: 500
+    contentsHeight: 400
+
+    contents: Item {
         anchors.fill: parent
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
-
-            property real old_x : 0
-            property real old_y : 0
-
-            onPressed:{
-                var tmp = mapToItem(pluginsComponent, mouse.x, mouse.y);
-                old_x = tmp.x;
-                old_y = tmp.y;
-
-                var dialogPoint = mapToItem(dialogWindow, mouse.x, mouse.y);
-                if (!Common.isInComponent(dialogPoint, dialogWindow)) {
-                    closePopup()
-                }
-            }
-
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(pluginsComponent, dialogWindow, mouse, old_x, old_y);
-                old_x = old_xy[0]; old_y = old_xy[1];
-            }
+        StyledText {
+            id: header
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.topMargin: 20
+            anchors.leftMargin: 20
+            text: i18.n + qsTr("Plugins")
         }
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
-
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: 500
-            height: 400
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            anchors.top: header.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: 10
+            anchors.bottom: footer.top
+            anchors.bottomMargin: 20
+            color: uiColors.defaultControlColor
 
-            StyledText {
-                id: header
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.topMargin: 20
-                anchors.leftMargin: 20
-                text: i18.n + qsTr("Plugins")
-            }
+            StyledScrollView {
+                id: scrollView
+                anchors.fill: parent
+                anchors.margins: 10
 
-            Rectangle {
-                anchors.top: header.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                anchors.topMargin: 10
-                anchors.bottom: footer.top
-                anchors.bottomMargin: 20
-                color: uiColors.defaultControlColor
+                ListView {
+                    id: pluginsListView
+                    model: pluginManager
+                    spacing: 5
 
-                StyledScrollView {
-                    id: scrollView
-                    anchors.fill: parent
-                    anchors.margins: 10
+                    delegate: Rectangle {
+                        id: wrapper
+                        color: uiColors.panelColor
+                        property int delegateIndex: index
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        height: 30
 
-                    ListView {
-                        id: pluginsListView
-                        model: pluginManager
-                        spacing: 5
-
-                        delegate: Rectangle {
-                            id: wrapper
-                            color: uiColors.panelColor                            
-                            property int delegateIndex: index
+                        StyledText {
+                            id: pluginNameText
+                            text: prettyname
+                            anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            isActive: !removed
+                            font.strikeout: removed
+                        }
+
+                        StyledText {
+                            text: i18.n + qsTr("(restart required)")
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: pluginNameText.right
+                            anchors.leftMargin: 10
+                            isActive: false
+                            visible: removed
+                            enabled: removed
+                        }
+
+                        StyledText {
+                            text: version
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.right: deleteIcon.left
+                            anchors.rightMargin: 10
+                            isActive: !removed
+                            font.strikeout: removed
+                        }
+
+                        CloseIcon {
+                            id: deleteIcon
+                            width: 14
+                            height: 14
+                            anchors.verticalCenter: parent.verticalCenter
                             anchors.right: parent.right
-                            height: 30
+                            anchors.rightMargin: 10
+                            isActive: false
+                            enabled: !removed
+                            crossOpacity: 1
 
-                            StyledText {
-                                id: pluginNameText
-                                text: prettyname
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.left: parent.left
-                                anchors.leftMargin: 10
-                                isActive: !removed
-                                font.strikeout: removed
-                            }
-
-                            StyledText {
-                                text: i18.n + qsTr("(restart required)")
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.left: pluginNameText.right
-                                anchors.leftMargin: 10
-                                isActive: false
-                                visible: removed
-                                enabled: removed
-                            }
-
-                            StyledText {
-                                text: version
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.right: deleteIcon.left
-                                anchors.rightMargin: 10
-                                isActive: !removed
-                                font.strikeout: removed
-                            }
-
-                            CloseIcon {
-                                id: deleteIcon
-                                width: 14
-                                height: 14
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.right: parent.right
-                                anchors.rightMargin: 10
-                                isActive: false
-                                enabled: !removed
-                                crossOpacity: 1
-
-                                onItemClicked: {
-                                    confirmRemovePluginDialog.pluginIndex = wrapper.delegateIndex
-                                    confirmRemovePluginDialog.open()
-                                }
+                            onItemClicked: {
+                                confirmRemovePluginDialog.pluginIndex = wrapper.delegateIndex
+                                confirmRemovePluginDialog.open()
                             }
                         }
                     }
                 }
+            }
 
-                Item {
-                    visible: pluginsListView.count == 0
-                    anchors.fill: parent
+            Item {
+                visible: pluginsListView.count == 0
+                anchors.fill: parent
 
-                    StyledText {
-                        text: i18.n + qsTr("No plugins available")
-                        anchors.centerIn: parent
-                        isActive: false
-                    }
+                StyledText {
+                    text: i18.n + qsTr("No plugins available")
+                    anchors.centerIn: parent
+                    isActive: false
+                }
+            }
+        }
+
+        RowLayout {
+            id: footer
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.right: parent.right
+            anchors.rightMargin: 20
+            height: 24
+            spacing: 20
+
+            StyledButton {
+                text: i18.n + qsTr("Add plugin")
+                width: 150
+                onClicked: {
+                    choosePluginDialog.open()
                 }
             }
 
-            RowLayout {
-                id: footer
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 20
-                anchors.left: parent.left
-                anchors.leftMargin: 20
-                anchors.right: parent.right
-                anchors.rightMargin: 20
-                height: 24
-                spacing: 20
+            Item {
+                Layout.fillWidth: true
+            }
 
-                StyledButton {
-                    text: i18.n + qsTr("Add plugin")
-                    width: 150
-                    onClicked: {
-                        choosePluginDialog.open()
-                    }
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
-
-                StyledButton {
-                    text: i18.n + qsTr("Close")
-                    width: 150
-                    onClicked: {
-                        closePopup()
-                    }
+            StyledButton {
+                text: i18.n + qsTr("Close")
+                width: 150
+                onClicked: {
+                    closePopup()
                 }
             }
         }

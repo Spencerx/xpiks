@@ -19,92 +19,49 @@ import "../Common.js" as Common;
 import "../Components"
 import "../StyledControls"
 
-BaseDialog {
+StaticDialogBase {
     id: installUpdateComponent
     anchors.fill: parent
 
     property bool isInProgress: false
 
-    FocusScope {
+    contentsWidth: 300
+    contentsHeight: 100
+
+    contents: ColumnLayout {
         anchors.fill: parent
-        id: focusScope
+        anchors.margins: 20
+        spacing: 20
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true;
-            onDoubleClicked: mouse.accepted = true
-
-            property real old_x : 0
-            property real old_y : 0
-
-            onPressed:{
-                var tmp = mapToItem(installUpdateComponent, mouse.x, mouse.y);
-                old_x = tmp.x;
-                old_y = tmp.y;
-            }
-
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(installUpdateComponent, dialogWindow, mouse, old_x, old_y);
-                old_x = old_xy[0]; old_y = old_xy[1];
-            }
+        StyledText {
+            text: i18.n + qsTr("Updates are ready to install")
+            anchors.left: parent.left
         }
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
+        RowLayout {
+            spacing: 20
+            anchors.left: parent.left
+            anchors.right: parent.right
 
-        // This rectangle is the actual popup
-        Rectangle {
-            id: dialogWindow
-            width: 300
-            height: 100
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
-
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 20
-                spacing: 20
-
-                StyledText {
-                    text: i18.n + qsTr("Updates are ready to install")
-                    anchors.left: parent.left
+            StyledButton {
+                width: 100
+                isDefault: true
+                text: i18.n + qsTr("Upgrade")
+                onClicked: {
+                    xpiksApp.upgradeNow()
+                    closePopup()
                 }
+            }
 
-                RowLayout {
-                    spacing: 20
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+            Item {
+                Layout.fillWidth: true
+            }
 
-                    StyledButton {
-                        width: 100
-                        isDefault: true
-                        text: i18.n + qsTr("Upgrade")
-                        onClicked: {
-                            xpiksApp.upgradeNow()
-                            closePopup()
-                        }
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    StyledButton {
-                        width: 100
-                        text: i18.n + qsTr("Later")
-                        onClicked: {
-                            closePopup()
-                        }
-                    }
+            StyledButton {
+                width: 100
+                text: i18.n + qsTr("Later")
+                onClicked: {
+                    closePopup()
                 }
             }
         }

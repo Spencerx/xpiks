@@ -21,7 +21,7 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-BaseDialog {
+StaticDialogBase {
     id: userDictComponent
     anchors.fill: parent
     property variant componentParent
@@ -40,153 +40,111 @@ BaseDialog {
         }
     }
 
-    FocusScope {
+    contentsWidth: 500
+    contentsHeight: 300
+
+    contents: ColumnLayout {
         anchors.fill: parent
+        anchors.margins: 20
+        spacing: 0
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
-
-            property real old_x : 0
-            property real old_y : 0
-
-            onPressed:{
-                var tmp = mapToItem(userDictComponent, mouse.x, mouse.y);
-                old_x = tmp.x;
-                old_y = tmp.y;
-            }
-
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(userDictComponent, dialogWindow, mouse, old_x, old_y);
-                old_x = old_xy[0]; old_y = old_xy[1];
-            }
+        StyledText {
+            text: i18.n + qsTr("Words added to the user dictionary:")
         }
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
+        Item {
+            height: 5
         }
 
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: 500
-            height: 300
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            id: keywordsWrapper
+            border.color: uiColors.artworkActiveColor
+            border.width: flv.isFocused ? 1 : 0
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Layout.fillHeight: true
+            color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
+            property var keywordsModel: userDictEditModel.getBasicModelObject()
 
-            ColumnLayout {
+            function removeKeyword(index) {
+                userDictEditModel.removeKeywordAt(index)
+            }
+
+            function removeLastKeyword() {
+                userDictEditModel.removeLastKeyword()
+            }
+
+            function appendKeyword(keyword) {
+                userDictEditModel.appendKeyword(keyword)
+            }
+
+            EditableTags {
+                id: flv
+                objectName: "editableTags"
                 anchors.fill: parent
-                anchors.margins: 20
-                spacing: 0
+                model: keywordsWrapper.keywordsModel
+                property int keywordHeight: uiManager.keywordHeight
+                populateAnimationEnabled: false
+                scrollStep: keywordHeight
 
-                StyledText {
-                    text: i18.n + qsTr("Words added to the user dictionary:")
+                delegate: KeywordWrapper {
+                    id: kw
+                    keywordText: keyword
+                    delegateIndex: index
+                    hasSpellCheckError: false
+                    hasDuplicate: hasduplicate
+                    isHighlighted: true
+                    itemHeight: flv.keywordHeight
+                    closeIconDisabledColor: uiColors.closeIconInactiveColor
+                    onRemoveClicked: keywordsWrapper.removeKeyword(delegateIndex)
                 }
 
-                Item {
-                    height: 5
+                onTagAdded: {
+                    keywordsWrapper.appendKeyword(text)
                 }
 
-                Rectangle {
-                    id: keywordsWrapper
-                    border.color: uiColors.artworkActiveColor
-                    border.width: flv.isFocused ? 1 : 0
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    Layout.fillHeight: true
-                    color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                    property var keywordsModel: userDictEditModel.getBasicModelObject()
-
-                    function removeKeyword(index) {
-                        userDictEditModel.removeKeywordAt(index)
-                    }
-
-                    function removeLastKeyword() {
-                        userDictEditModel.removeLastKeyword()
-                    }
-
-                    function appendKeyword(keyword) {
-                        userDictEditModel.appendKeyword(keyword)
-                    }
-
-                    EditableTags {
-                        id: flv
-                        objectName: "editableTags"
-                        anchors.fill: parent
-                        model: keywordsWrapper.keywordsModel
-                        property int keywordHeight: uiManager.keywordHeight
-                        populateAnimationEnabled: false
-                        scrollStep: keywordHeight
-
-                        delegate: KeywordWrapper {
-                            id: kw
-                            keywordText: keyword
-                            delegateIndex: index
-                            hasSpellCheckError: false
-                            hasDuplicate: hasduplicate
-                            isHighlighted: true
-                            itemHeight: flv.keywordHeight
-                            closeIconDisabledColor: uiColors.closeIconInactiveColor
-                            onRemoveClicked: keywordsWrapper.removeKeyword(delegateIndex)
-                        }
-
-                        onTagAdded: {
-                            keywordsWrapper.appendKeyword(text)
-                        }
-
-                        onRemoveLast: {
-                            keywordsWrapper.removeLastKeyword()
-                        }
-                    }
-
-                    CustomScrollbar {
-                        anchors.topMargin: -5
-                        anchors.bottomMargin: -5
-                        anchors.rightMargin: -15
-                        flickable: flv
-                    }
+                onRemoveLast: {
+                    keywordsWrapper.removeLastKeyword()
                 }
+            }
 
-                Item {
-                    height: 20
+            CustomScrollbar {
+                anchors.topMargin: -5
+                anchors.bottomMargin: -5
+                anchors.rightMargin: -15
+                flickable: flv
+            }
+        }
+
+        Item {
+            height: 20
+        }
+
+        RowLayout {
+            id: footer
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 24
+            spacing: 20
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledButton {
+                text: i18.n + qsTr("Save")
+                width: 100
+                onClicked: {
+                    userDictEditModel.saveUserDict()
+                    closePopup()
                 }
+            }
 
-                RowLayout {
-                    id: footer
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: 24
-                    spacing: 20
-
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    StyledButton {
-                        text: i18.n + qsTr("Save")
-                        width: 100
-                        onClicked: {
-                            userDictEditModel.saveUserDict()
-                            closePopup()
-                        }
-                    }
-
-                    StyledButton {
-                        text: i18.n + qsTr("Cancel")
-                        width: 100
-                        onClicked: {
-                            closePopup()
-                        }
-                    }
+            StyledButton {
+                text: i18.n + qsTr("Cancel")
+                width: 100
+                onClicked: {
+                    closePopup()
                 }
             }
         }

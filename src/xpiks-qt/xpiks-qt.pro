@@ -680,7 +680,8 @@ DISTFILES += \
     StyledControls/StyledTextInput.qml \
     uncrustify.cfg \
     xpiks-qt.ico \
-    Components/BaseDialog.qml
+    Components/BaseDialog.qml \
+    Components/StaticDialogBase.qml
 
 lupdate_only {
 SOURCES += *.qml \

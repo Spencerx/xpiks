@@ -19,230 +19,186 @@ import "../Common.js" as Common;
 import "../Components"
 import "../StyledControls"
 
-BaseDialog {
+StaticDialogBase {
     id: warningsComponent
     anchors.fill: parent
 
     property variant componentParent
     property bool isRestricted: false
 
-    FocusScope {
+    onClickedOutside: closePopup()
+
+    contentsWidth: 700
+    contentsHeight: 580
+
+    contents: ColumnLayout {
+        spacing: 10
         anchors.fill: parent
+        anchors.margins: 20
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
-            property real old_x : 0
-            property real old_y : 0
-
-            onPressed:{
-                var tmp = mapToItem(warningsComponent, mouse.x, mouse.y);
-                old_x = tmp.x;
-                old_y = tmp.y;
-
-                var dialogPoint = mapToItem(dialogWindow, mouse.x, mouse.y);
-                if (!Common.isInComponent(dialogPoint, dialogWindow)) {
-                    closePopup()
-                }
-            }
-
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(warningsComponent, dialogWindow, mouse, old_x, old_y);
-                old_x = old_xy[0]; old_y = old_xy[1];
-            }
+        StyledText {
+            text: i18.n + qsTr("Warnings")
         }
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
-
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: 700
-            height: 580
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: uiColors.defaultControlColor
 
-            ColumnLayout {
-                spacing: 10
+            StyledScrollView {
                 anchors.fill: parent
-                anchors.margins: 20
+                anchors.margins: 10
 
-                StyledText {
-                    text: i18.n + qsTr("Warnings")
-                }
+                ListView {
+                    id: warningsListView
+                    model: warningsModel
+                    spacing: 10
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: uiColors.defaultControlColor
+                    delegate: Rectangle {
+                        property int delegateIndex: index
+                        color: uiColors.defaultDarkColor
+                        id: imageWrapper
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
+                        height: columnRectangle.height
+                        radius: 2
 
-                    StyledScrollView {
-                        anchors.fill: parent
-                        anchors.margins: 10
+                        Item {
+                            id: imageItem
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            width: 120
+                            height: parent.height
 
-                        ListView {
-                            id: warningsListView
-                            model: warningsModel
-                            spacing: 10
-
-                            delegate: Rectangle {
-                                property int delegateIndex: index
-                                color: uiColors.defaultDarkColor
-                                id: imageWrapper
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.rightMargin: 10
-                                height: columnRectangle.height
-                                radius: 2
+                            ColumnLayout {
+                                anchors.centerIn: parent
+                                anchors.verticalCenterOffset: 7
+                                spacing: 7
+                                width: 110
 
                                 Item {
-                                    id: imageItem
-                                    anchors.left: parent.left
-                                    anchors.top: parent.top
-                                    width: 120
-                                    height: parent.height
+                                    width: 90
+                                    height: 60
+                                    anchors.horizontalCenter: parent.horizontalCenter
 
-                                    ColumnLayout {
-                                        anchors.centerIn: parent
-                                        anchors.verticalCenterOffset: 7
-                                        spacing: 7
-                                        width: 110
+                                    Image {
+                                        id: artworkImage
+                                        anchors.fill: parent
+                                        source: "image://cached/" + thumbpath
+                                        sourceSize.width: 150
+                                        sourceSize.height: 150
+                                        fillMode: settingsModel.fitSmallPreview ? Image.PreserveAspectFit : Image.PreserveAspectCrop
+                                        asynchronous: true
+                                        cache: false
+                                    }
 
-                                        Item {
-                                            width: 90
-                                            height: 60
-                                            anchors.horizontalCenter: parent.horizontalCenter
+                                    Image {
+                                        id: videoTypeIconSmall
+                                        visible: isvideo
+                                        enabled: isvideo
+                                        source: "qrc:/Graphics/video-icon-s.png"
+                                        fillMode: Image.PreserveAspectFit
+                                        sourceSize.width: 150
+                                        sourceSize.height: 150
+                                        anchors.fill: artworkImage
+                                        cache: true
+                                    }
+                                }
 
-                                            Image {
-                                                id: artworkImage
-                                                anchors.fill: parent
-                                                source: "image://cached/" + thumbpath
-                                                sourceSize.width: 150
-                                                sourceSize.height: 150
-                                                fillMode: settingsModel.fitSmallPreview ? Image.PreserveAspectFit : Image.PreserveAspectCrop
-                                                asynchronous: true
-                                                cache: false
-                                            }                                            
+                                StyledText {
+                                    Layout.fillWidth: true
+                                    elide: Text.ElideMiddle
+                                    horizontalAlignment: Text.AlignHCenter
+                                    text: basefilename
+                                    font.pixelSize: 11
+                                    isActive: false
+                                }
 
-                                            Image {
-                                                id: videoTypeIconSmall
-                                                visible: isvideo
-                                                enabled: isvideo
-                                                source: "qrc:/Graphics/video-icon-s.png"
-                                                fillMode: Image.PreserveAspectFit
-                                                sourceSize.width: 150
-                                                sourceSize.height: 150
-                                                anchors.fill: artworkImage
-                                                cache: true
-                                            }
+                                Item {
+                                    Layout.fillHeight: true
+                                }
+                            }
+                        }
+
+                        Item {
+                            id: columnRectangle
+                            anchors.left: imageItem.right
+                            anchors.top: parent.top
+                            anchors.right: parent.right
+                            height: (childrenRect.height < 80) ? 100 : (childrenRect.height + 20)
+
+                            Column {
+                                id: warningsTextList
+                                spacing: 10
+
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.top: parent.top
+                                anchors.leftMargin: 10
+                                anchors.rightMargin: 10
+                                anchors.topMargin: 10
+
+                                Repeater {
+                                    id: warningsDescriptions
+                                    model: warningsModel.describeWarnings(imageWrapper.delegateIndex)
+
+                                    delegate: RowLayout {
+                                        width: warningsTextList.width
+                                        height: 10
+                                        spacing: 5
+
+                                        Rectangle {
+                                            height: 6
+                                            width: height
+                                            radius: height/2
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            color: uiColors.inactiveControlColor
                                         }
 
                                         StyledText {
                                             Layout.fillWidth: true
-                                            elide: Text.ElideMiddle
-                                            horizontalAlignment: Text.AlignHCenter
-                                            text: basefilename
-                                            font.pixelSize: 11
-                                            isActive: false
-                                        }
-
-                                        Item {
-                                            Layout.fillHeight: true
-                                        }
-                                    }
-                                }
-
-                                Item {
-                                    id: columnRectangle
-                                    anchors.left: imageItem.right
-                                    anchors.top: parent.top
-                                    anchors.right: parent.right
-                                    height: (childrenRect.height < 80) ? 100 : (childrenRect.height + 20)
-
-                                    Column {
-                                        id: warningsTextList
-                                        spacing: 10
-
-                                        anchors.left: parent.left
-                                        anchors.right: parent.right
-                                        anchors.top: parent.top
-                                        anchors.leftMargin: 10
-                                        anchors.rightMargin: 10
-                                        anchors.topMargin: 10
-
-                                        Repeater {
-                                            id: warningsDescriptions
-                                            model: warningsModel.describeWarnings(imageWrapper.delegateIndex)
-
-                                            delegate: RowLayout {
-                                                width: warningsTextList.width
-                                                height: 10
-                                                spacing: 5
-
-                                                Rectangle {
-                                                    height: 6
-                                                    width: height
-                                                    radius: height/2
-                                                    anchors.verticalCenter: parent.verticalCenter
-                                                    color: uiColors.inactiveControlColor
-                                                }
-
-                                                StyledText {
-                                                    Layout.fillWidth: true
-                                                    text: i18.n + modelData
-                                                    color: uiColors.artworkModifiedColor
-                                                    anchors.verticalCenter: parent.verticalCenter
-                                                }
-                                            }
+                                            text: i18.n + modelData
+                                            color: uiColors.artworkModifiedColor
+                                            anchors.verticalCenter: parent.verticalCenter
                                         }
                                     }
                                 }
                             }
                         }
                     }
-
-                    Item {
-                        anchors.fill: parent
-                        visible: warningsListView.count == 0
-
-                        StyledText {
-                            text: i18.n + qsTr("There are no warnings")
-                            anchors.centerIn: parent
-                            isActive: false
-                        }
-                    }
                 }
+            }
 
-                Item {
-                    height: 1
+            Item {
+                anchors.fill: parent
+                visible: warningsListView.count == 0
+
+                StyledText {
+                    text: i18.n + qsTr("There are no warnings")
+                    anchors.centerIn: parent
+                    isActive: false
                 }
+            }
+        }
 
-                RowLayout {
-                    spacing: 20
-                    height: 24
+        Item {
+            height: 1
+        }
 
-                    Item {
-                        Layout.fillWidth: true
-                    }
+        RowLayout {
+            spacing: 20
+            height: 24
 
-                    StyledButton {
-                        text: i18.n + qsTr("Close")
-                        width: 100
-                        onClicked: {
-                            closePopup()
-                        }
-                    }
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledButton {
+                text: i18.n + qsTr("Close")
+                width: 100
+                onClicked: {
+                    closePopup()
                 }
             }
         }

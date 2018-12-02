@@ -18,7 +18,7 @@ import "../Common.js" as Common;
 import "../Components"
 import "../StyledControls"
 
-BaseDialog {
+StaticDialogBase {
     id: addGroupComponent
     canMinimize: false
     canEscapeClose: false
@@ -40,112 +40,71 @@ BaseDialog {
         addGroupComponent.destroy()
     }
 
-    FocusScope {
-        anchors.fill: parent
+    contentsWidth: 240
+    contentsHeight: column.childrenRect.height + 40
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
+    contents: Column {
+        id: column
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        height: childrenRect.height
+        anchors.margins: 20
+        spacing: 20
 
-            property real old_x : 0
-            property real old_y : 0
-
-            onPressed:{
-                var tmp = mapToItem(addGroupComponent, mouse.x, mouse.y);
-                old_x = tmp.x;
-                old_y = tmp.y;
-            }
-
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(addGroupComponent, dialogWindow, mouse, old_x, old_y);
-                old_x = old_xy[0]; old_y = old_xy[1];
-            }
-        }
-
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
-
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: 240
-            height: childrenRect.height + 40
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
+            border.width: groupNameInput.activeFocus ? 1 : 0
+            border.color: addGroupComponent.anyError ? uiColors.artworkModifiedColor : uiColors.artworkActiveColor
+            width: 200
+            height: 30
+            clip: true
 
-            Column {
+            StyledTextInput {
+                id: groupNameInput
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.top: parent.top
-                height: childrenRect.height
-                anchors.margins: 20
-                spacing: 20
+                anchors.leftMargin: 5
+                anchors.rightMargin: 5
+                anchors.verticalCenter: parent.verticalCenter
+                onAccepted: submitGroupName(groupNameInput.text)
 
-                Rectangle {
-                    color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                    border.width: groupNameInput.activeFocus ? 1 : 0
-                    border.color: addGroupComponent.anyError ? uiColors.artworkModifiedColor : uiColors.artworkActiveColor
-                    width: 200
-                    height: 30
-                    clip: true
+                Keys.onBacktabPressed: {
+                    event.accepted = true
+                }
 
-                    StyledTextInput {
-                        id: groupNameInput
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.leftMargin: 5
-                        anchors.rightMargin: 5
-                        anchors.verticalCenter: parent.verticalCenter
-                        onAccepted: submitGroupName(groupNameInput.text)
+                Keys.onTabPressed: {
+                    event.accepted = true
+                }
 
-                        Keys.onBacktabPressed: {
-                            event.accepted = true
-                        }
-
-                        Keys.onTabPressed: {
-                            event.accepted = true
-                        }
-
-                        Keys.onPressed: {
-                            if (event.key === Qt.Key_Comma) {
-                                event.accepted = true
-                            }
-                        }
-
-                        onTextChanged: {
-                            addGroupComponent.anyError = !presetsGroups.canAddGroup(text)
-                        }
+                Keys.onPressed: {
+                    if (event.key === Qt.Key_Comma) {
+                        event.accepted = true
                     }
                 }
 
-                RowLayout {
-                    width: parent.width
-                    height: 20
-                    spacing: 20
-
-                    StyledButton {
-                        text: i18.n + qsTr("Add")
-                        width: 90
-                        enabled: !addGroupComponent.anyError && (groupNameInput.text.trim().length > 2)
-                        onClicked: submitGroupName(groupNameInput.text)
-                    }
-
-                    StyledButton {
-                        text: i18.n + qsTr("Cancel")
-                        width: 90
-                        onClicked: closePopup()
-                    }
+                onTextChanged: {
+                    addGroupComponent.anyError = !presetsGroups.canAddGroup(text)
                 }
+            }
+        }
+
+        RowLayout {
+            width: parent.width
+            height: 20
+            spacing: 20
+
+            StyledButton {
+                text: i18.n + qsTr("Add")
+                width: 90
+                enabled: !addGroupComponent.anyError && (groupNameInput.text.trim().length > 2)
+                onClicked: submitGroupName(groupNameInput.text)
+            }
+
+            StyledButton {
+                text: i18.n + qsTr("Cancel")
+                width: 90
+                onClicked: closePopup()
             }
         }
     }

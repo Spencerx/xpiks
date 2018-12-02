@@ -20,115 +20,87 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-BaseDialog {
+StaticDialogBase {
     id: donateComponent
     canMinimize: false
+    canMove: false
     anchors.fill: parent
 
     z: 10000
 
-    FocusScope {
-        anchors.fill: parent
+    contentsWidth: 400
+    contentsHeight: 400
+    contents: ColumnLayout {
+        anchors.centerIn: parent
+        spacing: 0
+        signal donateLinkClicked()
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
+        Image {
+            source: uiColors.t + helpersWrapper.getAssetForTheme("Icon_donate.svg", settingsModel.selectedThemeIndex)
+            cache: false
+            width: 123
+            height: 115
+            //fillMode: Image.PreserveAspectFit
+            asynchronous: true
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
+        Item {
+            height: 30
         }
 
-        // This rectangle is the actual popup
-        Rectangle {
-            id: dialogWindow
-            width: 400
-            height: 400
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+        StyledText {
+            text: i18.n + qsTr("We hope you enjoy using Xpiks.")
+            anchors.horizontalCenter: parent.horizontalCenter
+            isActive: true
+            font.bold: true
+        }
 
-            ColumnLayout {
-                anchors.centerIn: parent
-                spacing: 0
-                signal donateLinkClicked()
+        Item {
+            height: 20
+        }
 
-                Image {
-                    source: uiColors.t + helpersWrapper.getAssetForTheme("Icon_donate.svg", settingsModel.selectedThemeIndex)
-                    cache: false
-                    width: 123
-                    height: 115
-                    //fillMode: Image.PreserveAspectFit
-                    asynchronous: true
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
+        StyledText {
+            text: i18.n + qsTr("Today Xpiks needs Your help to become even better.")
+            anchors.horizontalCenter: parent.horizontalCenter
+            isActive: true
+            font.italic: true
+            font.pixelSize: UIConfig.fontPixelSize - 2
+        }
 
-                Item {
-                    height: 30
-                }
+        Item {
+            height: 50
+        }
 
-                StyledText {
-                    text: i18.n + qsTr("We hope you enjoy using Xpiks.")
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    isActive: true
-                    font.bold: true
-                }
+        StyledBlackButton {
+            implicitHeight: 30
+            height: 30
+            width: 150
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: i18.n + qsTr("Support Xpiks")
+            defaultForeground: uiColors.goldColor
+            hoverForeground: uiColors.buttonDefaultForeground
+            visible: true
+            onClicked: {
+                Qt.openUrlExternally(switcher.donateCampaign1Link)
+                switcher.setDonateCampaign1LinkClicked()
+            }
+        }
 
-                Item {
-                    height: 20
-                }
+        Item {
+            height: 20
+        }
 
-                StyledText {
-                    text: i18.n + qsTr("Today Xpiks needs Your help to become even better.")
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    isActive: true
-                    font.italic: true
-                    font.pixelSize: UIConfig.fontPixelSize - 2
-                }
+        StyledText {
+            text: i18.n + qsTr("Maybe later")
+            anchors.horizontalCenter: parent.horizontalCenter
+            isActive: dismissMA.pressed
 
-                Item {
-                    height: 50
-                }
-
-                StyledBlackButton {
-                    implicitHeight: 30
-                    height: 30
-                    width: 150
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: i18.n + qsTr("Support Xpiks")
-                    defaultForeground: uiColors.goldColor
-                    hoverForeground: uiColors.buttonDefaultForeground
-                    visible: true
-                    onClicked: {
-                        Qt.openUrlExternally(switcher.donateCampaign1Link)
-                        switcher.setDonateCampaign1LinkClicked()
-                    }
-                }
-
-                Item {
-                    height: 20
-                }
-
-                StyledText {
-                    text: i18.n + qsTr("Maybe later")
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    isActive: dismissMA.pressed
-
-                    MouseArea {
-                        id: dismissMA
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: closePopup()
-                    }
-                }
+            MouseArea {
+                id: dismissMA
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: closePopup()
             }
         }
     }

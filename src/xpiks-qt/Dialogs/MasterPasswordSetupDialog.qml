@@ -18,7 +18,7 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-BaseDialog {
+StaticDialogBase {
     id: masterPasswordComponent
     canMinimize: false
     canEscapeClose: false
@@ -78,201 +78,159 @@ BaseDialog {
         }
     }
 
-    FocusScope {
+    contentsWidth: 360
+    contentsHeight: 220
+
+    contents: ColumnLayout {
         anchors.fill: parent
+        anchors.margins: 20
+        spacing: 10
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
+        RowLayout {
+            id: currentPasswordRow
+            width: parent.width
+            height: 20
+            enabled: !firstTime
+            spacing: 10
 
-            property real old_x : 0
-            property real old_y : 0
-
-            onPressed:{
-                var tmp = mapToItem(masterPasswordComponent, mouse.x, mouse.y);
-                old_x = tmp.x;
-                old_y = tmp.y;
+            StyledText {
+                Layout.fillWidth: true
+                Layout.preferredWidth: 130
+                horizontalAlignment: Text.AlignRight
+                text: i18.n + qsTr("Current Master Password:")
             }
 
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(masterPasswordComponent, dialogWindow, mouse, old_x, old_y);
-                old_x = old_xy[0]; old_y = old_xy[1];
-            }
-        }
+            Rectangle {
+                color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
+                border.width: (currentPassword.activeFocus || emptyMP) ? 1 : 0
+                border.color: (emptyMP || wrongMP) ? uiColors.artworkModifiedColor : uiColors.artworkActiveColor
+                width: 135
+                height: UIConfig.textInputHeight
+                clip: true
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
-
-        // This rectangle is the actual popup
-        Rectangle {
-            id: dialogWindow
-            width: 360
-            height: 220
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
-
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 20
-                spacing: 10
-
-                RowLayout {
-                    id: currentPasswordRow
-                    width: parent.width
-                    height: 20
-                    enabled: !firstTime
-                    spacing: 10
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: 130
-                        horizontalAlignment: Text.AlignRight
-                        text: i18.n + qsTr("Current Master Password:")
-                    }
-
-                    Rectangle {
-                        color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                        border.width: (currentPassword.activeFocus || emptyMP) ? 1 : 0
-                        border.color: (emptyMP || wrongMP) ? uiColors.artworkModifiedColor : uiColors.artworkActiveColor
-                        width: 135
-                        height: UIConfig.textInputHeight
-                        clip: true
-
-                        StyledTextInput {
-                            id: currentPassword
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.leftMargin: 5
-                            anchors.rightMargin: 5
-                            echoMode: TextInput.Password
-                            anchors.verticalCenter: parent.verticalCenter
-
-                            Keys.onBacktabPressed: {
-                                event.accepted = true
-                            }
-
-                            KeyNavigation.tab: newMasterPassword
-                            onAccepted: {
-                                if (repeatMasterPassword.text != newMasterPassword.text) {
-                                    newMasterPassword.forceActiveFocus()
-                                } else {
-                                    trySetupMP()
-                                }
-                            }
-                        }
-                    }
-                }
-
-                RowLayout {
-                    width: parent.width
-                    height: 20
-                    spacing: 10
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: 130
-                        horizontalAlignment: Text.AlignRight
-                        text: i18.n + qsTr("New Master Password:")
-                    }
-
-                    Rectangle {
-                        color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                        border.width: newMasterPassword.activeFocus ? 1 : 0
-                        border.color: uiColors.artworkActiveColor
-                        width: 135
-                        height: UIConfig.textInputHeight
-                        clip: true
-
-                        StyledTextInput {
-                            id: newMasterPassword
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.leftMargin: 5
-                            anchors.rightMargin: 5
-                            echoMode: TextInput.Password
-                            KeyNavigation.backtab: currentPassword
-                            KeyNavigation.tab: repeatMasterPassword
-                            anchors.verticalCenter: parent.verticalCenter
-
-                            onAccepted: {
-                                if (repeatMasterPassword.text != newMasterPassword.text) {
-                                    repeatMasterPassword.forceActiveFocus()
-                                } else {
-                                    trySetupMP()
-                                }
-                            }
-                        }
-                    }
-                }
-
-                RowLayout {
-                    width: parent.width
-                    height: 20
-                    spacing: 10
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: 130
-                        horizontalAlignment: Text.AlignRight
-                        text: i18.n + qsTr("Repeat Master Password:")
-                    }
-
-                    Rectangle {
-                        border.width: enabled ? ((repeatMasterPassword.activeFocus || newMasterPassword.length > 0) ? 1 : 0) : 0
-                        border.color: repeatMasterPassword.text == newMasterPassword.text ? uiColors.artworkActiveColor : uiColors.artworkModifiedColor
-                        color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                        width: 135
-                        height: UIConfig.textInputHeight
-                        clip: true
-
-                        StyledTextInput {
-                            id: repeatMasterPassword
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.leftMargin: 5
-                            anchors.rightMargin: 5
-                            anchors.verticalCenter: parent.verticalCenter
-                            echoMode: TextInput.Password
-                            KeyNavigation.backtab: newMasterPassword
-                            onAccepted: trySetupMP()
-                        }
-                    }
-                }
-
-                RowLayout {
+                StyledTextInput {
+                    id: currentPassword
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: 24
-                    spacing: 20
+                    anchors.leftMargin: 5
+                    anchors.rightMargin: 5
+                    echoMode: TextInput.Password
+                    anchors.verticalCenter: parent.verticalCenter
 
-                    Item {
-                        Layout.fillWidth: true
+                    Keys.onBacktabPressed: {
+                        event.accepted = true
                     }
 
-                    StyledButton {
-                        text: i18.n + qsTr("Ok")
-                        width: 80
-                        onClicked: trySetupMP()
-                    }
-
-                    StyledButton {
-                        text: i18.n + qsTr("Cancel")
-                        width: 80
-                        onClicked: {
-                            callbackObject.onCancel(firstTime)
-                            closePopup()
+                    KeyNavigation.tab: newMasterPassword
+                    onAccepted: {
+                        if (repeatMasterPassword.text != newMasterPassword.text) {
+                            newMasterPassword.forceActiveFocus()
+                        } else {
+                            trySetupMP()
                         }
                     }
+                }
+            }
+        }
+
+        RowLayout {
+            width: parent.width
+            height: 20
+            spacing: 10
+
+            StyledText {
+                Layout.fillWidth: true
+                Layout.preferredWidth: 130
+                horizontalAlignment: Text.AlignRight
+                text: i18.n + qsTr("New Master Password:")
+            }
+
+            Rectangle {
+                color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
+                border.width: newMasterPassword.activeFocus ? 1 : 0
+                border.color: uiColors.artworkActiveColor
+                width: 135
+                height: UIConfig.textInputHeight
+                clip: true
+
+                StyledTextInput {
+                    id: newMasterPassword
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.leftMargin: 5
+                    anchors.rightMargin: 5
+                    echoMode: TextInput.Password
+                    KeyNavigation.backtab: currentPassword
+                    KeyNavigation.tab: repeatMasterPassword
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    onAccepted: {
+                        if (repeatMasterPassword.text != newMasterPassword.text) {
+                            repeatMasterPassword.forceActiveFocus()
+                        } else {
+                            trySetupMP()
+                        }
+                    }
+                }
+            }
+        }
+
+        RowLayout {
+            width: parent.width
+            height: 20
+            spacing: 10
+
+            StyledText {
+                Layout.fillWidth: true
+                Layout.preferredWidth: 130
+                horizontalAlignment: Text.AlignRight
+                text: i18.n + qsTr("Repeat Master Password:")
+            }
+
+            Rectangle {
+                border.width: enabled ? ((repeatMasterPassword.activeFocus || newMasterPassword.length > 0) ? 1 : 0) : 0
+                border.color: repeatMasterPassword.text == newMasterPassword.text ? uiColors.artworkActiveColor : uiColors.artworkModifiedColor
+                color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
+                width: 135
+                height: UIConfig.textInputHeight
+                clip: true
+
+                StyledTextInput {
+                    id: repeatMasterPassword
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.leftMargin: 5
+                    anchors.rightMargin: 5
+                    anchors.verticalCenter: parent.verticalCenter
+                    echoMode: TextInput.Password
+                    KeyNavigation.backtab: newMasterPassword
+                    onAccepted: trySetupMP()
+                }
+            }
+        }
+
+        RowLayout {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 24
+            spacing: 20
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledButton {
+                text: i18.n + qsTr("Ok")
+                width: 80
+                onClicked: trySetupMP()
+            }
+
+            StyledButton {
+                text: i18.n + qsTr("Cancel")
+                width: 80
+                onClicked: {
+                    callbackObject.onCancel(firstTime)
+                    closePopup()
                 }
             }
         }

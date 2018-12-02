@@ -19,94 +19,78 @@ import "../Common.js" as Common;
 import "../Components"
 import "../StyledControls"
 
-BaseDialog {
+StaticDialogBase {
     id: translationPreviewComponent
     anchors.fill: parent
+    canMove: false
 
     z: 10000
 
-    FocusScope {
+    contentsWidth: 600
+    contentsHeight: 700
+
+    contents: Item {
         anchors.fill: parent
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
-
-            property real old_x : 0
-            property real old_y : 0
+        StyledText {
+            id: header
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.topMargin: 20
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            text: i18.n + qsTr("Translation for \"%1\"").arg(translationManager.query)
         }
 
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: 600
-            height: 700
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            id: wrapperRect
+            anchors.top: header.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: 10
+            anchors.bottom: footer.top
+            anchors.bottomMargin: 20
+            color: uiColors.popupDarkInputBackground
 
-            StyledText {
-                id: header
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.topMargin: 20
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                text: i18.n + qsTr("Translation for \"%1\"").arg(translationManager.query)
-            }
+            StyledScrollView {
+                id: scrollView
+                anchors.fill: parent
+                anchors.margins: 10
 
-            Rectangle {
-                id: wrapperRect
-                anchors.top: header.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                anchors.topMargin: 10
-                anchors.bottom: footer.top
-                anchors.bottomMargin: 20
-                color: uiColors.popupDarkInputBackground
-
-                StyledScrollView {
-                    id: scrollView
-                    anchors.fill: parent
-                    anchors.margins: 10
-
-                    StyledTextEdit {
-                        id: textEdit
-                        text: translationManager.fullTranslation
-                        selectionColor: uiColors.inputBackgroundColor
-                        readOnly: true
-                        width: wrapperRect.width - 40
-                        wrapMode: TextEdit.WordWrap
-                    }
+                StyledTextEdit {
+                    id: textEdit
+                    text: translationManager.fullTranslation
+                    selectionColor: uiColors.inputBackgroundColor
+                    readOnly: true
+                    width: wrapperRect.width - 40
+                    wrapMode: TextEdit.WordWrap
                 }
             }
+        }
 
-            RowLayout {
-                id: footer
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 20
-                anchors.left: parent.left
-                anchors.leftMargin: 20
-                anchors.right: parent.right
-                anchors.rightMargin: 20
-                height: 24
-                spacing: 20
+        RowLayout {
+            id: footer
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.right: parent.right
+            anchors.rightMargin: 20
+            height: 24
+            spacing: 20
 
-                Item {
-                    Layout.fillWidth: true
-                }
+            Item {
+                Layout.fillWidth: true
+            }
 
-                StyledButton {
-                    text: i18.n + qsTr("Close")
-                    width: 100
-                    onClicked: {
-                        closePopup()
-                    }
+            StyledButton {
+                text: i18.n + qsTr("Close")
+                width: 100
+                onClicked: {
+                    closePopup()
                 }
             }
         }

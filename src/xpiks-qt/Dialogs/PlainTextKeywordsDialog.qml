@@ -21,7 +21,7 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-BaseDialog {
+StaticDialogBase {
     id: plainTextKeywordsComponent
     canEscapeClose: false
     property string keywordsText
@@ -62,175 +62,137 @@ BaseDialog {
         closePopup()
     }
 
-    FocusScope {
+    contentsWidth: 600
+    contentsHeight: 400
+
+    contents: Item {
         anchors.fill: parent
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
-
-            property real old_x : 0
-            property real old_y : 0
-
-            onPressed:{
-                var tmp = mapToItem(plainTextKeywordsComponent, mouse.x, mouse.y);
-                old_x = tmp.x;
-                old_y = tmp.y;
-            }
-
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(plainTextKeywordsComponent, dialogWindow, mouse, old_x, old_y);
-                old_x = old_xy[0]; old_y = old_xy[1];
-            }
+        StyledText {
+            id: header
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.topMargin: 20
+            anchors.leftMargin: 20
+            text: i18.n + qsTr("Keywords")
         }
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
-
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: 600
-            height: 400
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            anchors.top: header.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: 10
+            anchors.bottom: footer.top
+            anchors.bottomMargin: 20
+            color: uiColors.popupDarkInputBackground
 
-            StyledText {
-                id: header
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.topMargin: 20
-                anchors.leftMargin: 20
-                text: i18.n + qsTr("Keywords")
-            }
+            Flickable {
+                id: flick
+                anchors.fill: parent
+                anchors.margins: 10
+                clip: true
+                contentWidth: textEdit.paintedWidth
+                contentHeight: textEdit.paintedHeight
 
-            Rectangle {
-                anchors.top: header.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                anchors.topMargin: 10
-                anchors.bottom: footer.top
-                anchors.bottomMargin: 20
-                color: uiColors.popupDarkInputBackground
+                function ensureVisible(r) {
+                    if (contentX >= r.x)
+                        contentX = r.x;
+                    else if (contentX+width <= r.x+r.width)
+                        contentX = r.x+r.width-width;
+                    if (contentY >= r.y)
+                        contentY = r.y;
+                    else if (contentY+height <= r.y+r.height)
+                        contentY = r.y+r.height-height;
+                }
 
-                Flickable {
-                    id: flick
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    clip: true
-                    contentWidth: textEdit.paintedWidth
-                    contentHeight: textEdit.paintedHeight
+                StyledTextEdit {
+                    id: textEdit
+                    anchors.top: parent.top
+                    width: flick.width - 10
+                    height: flick.height
+                    focus: true
+                    text: plainTextKeywordsComponent.keywordsText
+                    font.pixelSize: UIConfig.fontPixelSize*settingsModel.keywordSizeScale
+                    selectionColor: uiColors.inputBackgroundColor
+                    wrapMode: TextEdit.Wrap
+                    horizontalAlignment: TextEdit.AlignLeft
+                    verticalAlignment: TextEdit.AlignTop
+                    textFormat: TextEdit.PlainText
 
-                    function ensureVisible(r) {
-                        if (contentX >= r.x)
-                            contentX = r.x;
-                        else if (contentX+width <= r.x+r.width)
-                            contentX = r.x+r.width-width;
-                        if (contentY >= r.y)
-                            contentY = r.y;
-                        else if (contentY+height <= r.y+r.height)
-                            contentY = r.y+r.height-height;
+                    Component.onCompleted: {
+                        scrollToBottom()
+                        textEdit.cursorPosition += plainTextKeywordsComponent.keywordsText.length
                     }
 
-                    StyledTextEdit {
-                        id: textEdit
-                        anchors.top: parent.top
-                        width: flick.width - 10
-                        height: flick.height
-                        focus: true
-                        text: plainTextKeywordsComponent.keywordsText
-                        font.pixelSize: UIConfig.fontPixelSize*settingsModel.keywordSizeScale
-                        selectionColor: uiColors.inputBackgroundColor
-                        wrapMode: TextEdit.Wrap
-                        horizontalAlignment: TextEdit.AlignLeft
-                        verticalAlignment: TextEdit.AlignTop
-                        textFormat: TextEdit.PlainText
-
-                        Component.onCompleted: {
-                            scrollToBottom()
-                            textEdit.cursorPosition += plainTextKeywordsComponent.keywordsText.length
-                        }
-
-                        Keys.onPressed: {
-                            if(event.matches(StandardKey.Paste)) {
-                                var clipboardText = clipboard.getText();
-                                if (Common.safeInsert(textEdit, clipboardText)) {
-                                    event.accepted = true
-                                }
-                            } else if ((event.key === Qt.Key_Return) || (event.key === Qt.Key_Enter)) {
-                                if (event.modifiers === Qt.ControlModifier) {
-                                    submitKeywords()
-                                } else {
-                                    event.accepted = true
-                                }
+                    Keys.onPressed: {
+                        if(event.matches(StandardKey.Paste)) {
+                            var clipboardText = clipboard.getText();
+                            if (Common.safeInsert(textEdit, clipboardText)) {
+                                event.accepted = true
+                            }
+                        } else if ((event.key === Qt.Key_Return) || (event.key === Qt.Key_Enter)) {
+                            if (event.modifiers === Qt.ControlModifier) {
+                                submitKeywords()
+                            } else {
+                                event.accepted = true
                             }
                         }
-
-                        Keys.onBacktabPressed: {
-                            event.accepted = true
-                        }
-
-                        Keys.onTabPressed: {
-                            event.accepted = true
-                        }
-
-                        onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
                     }
-                }
 
-                CustomScrollbar {
-                    anchors.topMargin: -5
-                    anchors.bottomMargin: -5
-                    anchors.rightMargin: -5
-                    flickable: flick
+                    Keys.onBacktabPressed: {
+                        event.accepted = true
+                    }
+
+                    Keys.onTabPressed: {
+                        event.accepted = true
+                    }
+
+                    onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
                 }
             }
 
-            RowLayout {
-                id: footer
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 20
-                anchors.left: parent.left
-                anchors.leftMargin: 20
-                anchors.right: parent.right
-                anchors.rightMargin: 20
-                height: 24
-                spacing: 20
+            CustomScrollbar {
+                anchors.topMargin: -5
+                anchors.bottomMargin: -5
+                anchors.rightMargin: -5
+                flickable: flick
+            }
+        }
 
-                StyledCheckbox {
-                    id: spaceAsSeparatorCheckBox
-                    text: i18.n + qsTr("Treat space as separator")
-                    checked: false
-                }
+        RowLayout {
+            id: footer
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.right: parent.right
+            anchors.rightMargin: 20
+            height: 24
+            spacing: 20
 
-                Item {
-                    Layout.fillWidth: true
-                }
+            StyledCheckbox {
+                id: spaceAsSeparatorCheckBox
+                text: i18.n + qsTr("Treat space as separator")
+                checked: false
+            }
 
-                StyledButton {
-                    id: okButton
-                    text: i18.n + qsTr("Save")
-                    width: 100
-                    onClicked: submitKeywords()
-                }
+            Item {
+                Layout.fillWidth: true
+            }
 
-                StyledButton {
-                    text: i18.n + qsTr("Cancel")
-                    width: 100
-                    onClicked: closePopup()
-                }
+            StyledButton {
+                id: okButton
+                text: i18.n + qsTr("Save")
+                width: 100
+                onClicked: submitKeywords()
+            }
+
+            StyledButton {
+                text: i18.n + qsTr("Cancel")
+                width: 100
+                onClicked: closePopup()
             }
         }
     }

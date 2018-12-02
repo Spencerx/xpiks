@@ -18,7 +18,7 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-BaseDialog {
+StaticDialogBase {
     id: enterPasswordComponent
     canEscapeClose: false
     property bool wrongTry: false
@@ -40,126 +40,85 @@ BaseDialog {
         }
     }
 
-    FocusScope {
-        anchors.fill: parent
+    contentsWidth: 260
+    contentsHeight: column.childrenRect.height + 40
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
+    contents: ColumnLayout {
+        id: column
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: childrenRect.height
+        anchors.margins: 20
+        spacing: 20
 
-            property real old_x : 0
-            property real old_y : 0
-
-            onPressed:{
-                var tmp = mapToItem(enterPasswordComponent, mouse.x, mouse.y);
-                old_x = tmp.x;
-                old_y = tmp.y;
-            }
-
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(enterPasswordComponent, dialogWindow, mouse, old_x, old_y);
-                old_x = old_xy[0]; old_y = old_xy[1];
-            }
+        StyledText {
+            anchors.left: parent.left
+            text: i18.n + qsTr("Enter current Master Password:")
         }
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
-
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: 260
-            height: childrenRect.height + 40
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            width: 220
+            height: UIConfig.textInputHeight
+            anchors.left: parent.left
+            color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
+            border.width: masterPassword.activeFocus ? 1 : 0
+            border.color: wrongTry ? uiColors.destructiveColor : uiColors.artworkActiveColor
+            clip: true
 
-            ColumnLayout {
-                anchors.top: parent.top
+            StyledTextInput {
+                id: masterPassword
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: childrenRect.height
-                anchors.margins: 20
-                spacing: 20
+                anchors.leftMargin: 5
+                anchors.rightMargin: 5
+                echoMode: showPasswordCheckBox.checked ? TextInput.Normal : TextInput.Password
+                anchors.verticalCenter: parent.verticalCenter
 
-                StyledText {
-                    anchors.left: parent.left
-                    text: i18.n + qsTr("Enter current Master Password:")
+                Keys.onBacktabPressed: {
+                    event.accepted = true
                 }
 
-                Rectangle {
-                    width: 220
-                    height: UIConfig.textInputHeight
-                    anchors.left: parent.left
-                    color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
-                    border.width: masterPassword.activeFocus ? 1 : 0
-                    border.color: wrongTry ? uiColors.destructiveColor : uiColors.artworkActiveColor
-                    clip: true
-
-                    StyledTextInput {
-                        id: masterPassword
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.leftMargin: 5
-                        anchors.rightMargin: 5
-                        echoMode: showPasswordCheckBox.checked ? TextInput.Normal : TextInput.Password
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        Keys.onBacktabPressed: {
-                            event.accepted = true
-                        }
-
-                        Keys.onTabPressed: {
-                            event.accepted = true
-                        }
-
-                        onAccepted: {
-                            testPassword()
-                        }
-                    }
+                Keys.onTabPressed: {
+                    event.accepted = true
                 }
 
-                StyledCheckbox {
-                    checked: false
-                    anchors.left: parent.left
-                    id: showPasswordCheckBox
-                    text: i18.n + qsTr("Show password")
+                onAccepted: {
+                    testPassword()
                 }
+            }
+        }
 
-                RowLayout {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: 24
-                    spacing: 0
+        StyledCheckbox {
+            checked: false
+            anchors.left: parent.left
+            id: showPasswordCheckBox
+            text: i18.n + qsTr("Show password")
+        }
 
-                    StyledButton {
-                        text: i18.n + qsTr("Ok")
-                        width: 90
-                        onClicked: testPassword()
-                    }
+        RowLayout {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 24
+            spacing: 0
 
-                    Item {
-                        Layout.fillWidth: true
-                    }
+            StyledButton {
+                text: i18.n + qsTr("Ok")
+                width: 90
+                onClicked: testPassword()
+            }
 
-                    StyledButton {
-                        text: i18.n + qsTr("Cancel")
-                        tooltip: i18.n + qsTr("This will leave password fields blank")
-                        width: 90
-                        onClicked: {
-                            callbackObject.onFail()
-                            closePopup()
-                        }
-                    }
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledButton {
+                text: i18.n + qsTr("Cancel")
+                tooltip: i18.n + qsTr("This will leave password fields blank")
+                width: 90
+                onClicked: {
+                    callbackObject.onFail()
+                    closePopup()
                 }
             }
         }

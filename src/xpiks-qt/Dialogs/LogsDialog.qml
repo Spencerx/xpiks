@@ -21,7 +21,7 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-BaseDialog {
+StaticDialogBase {
     id: logsComponent
     canEscapeClose: false
     property string logText
@@ -44,152 +44,111 @@ BaseDialog {
         }
     }
 
-    FocusScope {
+    onClickedOutside: closePopup()
+
+    contentsWidth: logsComponent.width * 0.75
+    contentsHeight: logsComponent.height - 60
+
+    contents: Item {
         anchors.fill: parent
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
+        RowLayout {
+            id: header
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.topMargin: 20
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
 
-            property real old_x : 0
-            property real old_y : 0
-
-            onPressed:{
-                var tmp = mapToItem(logsComponent, mouse.x, mouse.y);
-                old_x = tmp.x;
-                old_y = tmp.y;
-
-                var dialogPoint = mapToItem(dialogWindow, mouse.x, mouse.y);
-                if (!Common.isInComponent(dialogPoint, dialogWindow)) {
-                    closePopup()
-                }
+            StyledText {
+                text: i18.n + qsTr("Logs")
             }
 
-            onPositionChanged: {
-                var old_xy = Common.movePopupInsideComponent(logsComponent, dialogWindow, mouse, old_x, old_y);
-                old_x = old_xy[0]; old_y = old_xy[1];
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledText {
+                property int linesNumber : 100
+                id: oneHunderdLinesWarning
+                text: i18.n + qsTr("(showing last %1 lines)").arg(linesNumber)
             }
         }
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
-
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: logsComponent.width * 0.75
-            height: logsComponent.height - 60
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            anchors.top: header.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: 10
+            anchors.bottom: footer.top
+            anchors.bottomMargin: 20
+            color: uiColors.popupDarkInputBackground
 
-            RowLayout {
-                id: header
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.topMargin: 20
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
+            StyledScrollView {
+                id: scrollView
+                anchors.fill: parent
+                anchors.margins: 10
 
-                StyledText {
-                    text: i18.n + qsTr("Logs")
-                }
+                StyledTextEdit {
+                    id: textEdit
+                    text: logsModel.logsExtract
+                    selectionColor: uiColors.inputBackgroundColor
+                    readOnly: true
 
-                Item {
-                    Layout.fillWidth: true
-                }
-
-                StyledText {
-                    property int linesNumber : 100
-                    id: oneHunderdLinesWarning
-                    text: i18.n + qsTr("(showing last %1 lines)").arg(linesNumber)
-                }
-            }
-
-            Rectangle {
-                anchors.top: header.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                anchors.topMargin: 10
-                anchors.bottom: footer.top
-                anchors.bottomMargin: 20
-                color: uiColors.popupDarkInputBackground
-
-                StyledScrollView {
-                    id: scrollView
-                    anchors.fill: parent
-                    anchors.margins: 10
-
-                    StyledTextEdit {
-                        id: textEdit
-                        text: logsModel.logsExtract
-                        selectionColor: uiColors.inputBackgroundColor
-                        readOnly: true
-
-                        Component.onCompleted: {
-                            scrollToBottom()
-                            uiManager.initLogsHighlighting(textEdit.textDocument)
-                        }
-                    }
-                }
-            }
-
-            RowLayout {
-                id: footer
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 20
-                anchors.left: parent.left
-                anchors.leftMargin: 20
-                anchors.right: parent.right
-                anchors.rightMargin: 20
-                height: 24
-                spacing: 20
-
-                StyledButton {
-                    id: loadMoreButton
-                    text: i18.n + qsTr("Load more logs")
-                    enabled: logsModel.withLogs
-                    width: 130
-                    onClicked: {
-                        dispatcher.dispatch(UICommand.UpdateLogs, true)
-                        logsComponent.logText = logsModel.getAllLogsText(true)
-                        oneHunderdLinesWarning.linesNumber = 1000
-                        loadMoreButton.enabled = false
+                    Component.onCompleted: {
                         scrollToBottom()
+                        uiManager.initLogsHighlighting(textEdit.textDocument)
                     }
                 }
+            }
+        }
 
-                StyledButton {
-                    id: revealFileButton
-                    text: i18.n + qsTr("Reveal logfile")
-                    width: 130
-                    onClicked: {
-                        helpersWrapper.revealLogFile()
-                    }
+        RowLayout {
+            id: footer
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.right: parent.right
+            anchors.rightMargin: 20
+            height: 24
+            spacing: 20
+
+            StyledButton {
+                id: loadMoreButton
+                text: i18.n + qsTr("Load more logs")
+                enabled: logsModel.withLogs
+                width: 130
+                onClicked: {
+                    dispatcher.dispatch(UICommand.UpdateLogs, true)
+                    logsComponent.logText = logsModel.getAllLogsText(true)
+                    oneHunderdLinesWarning.linesNumber = 1000
+                    loadMoreButton.enabled = false
+                    scrollToBottom()
                 }
+            }
 
-                Item {
-                    Layout.fillWidth: true
+            StyledButton {
+                id: revealFileButton
+                text: i18.n + qsTr("Reveal logfile")
+                width: 130
+                onClicked: {
+                    helpersWrapper.revealLogFile()
                 }
+            }
 
-                StyledButton {
-                    text: i18.n + qsTr("Close")
-                    width: 110
-                    onClicked: {
-                        closePopup()
-                    }
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledButton {
+                text: i18.n + qsTr("Close")
+                width: 110
+                onClicked: {
+                    closePopup()
                 }
             }
         }

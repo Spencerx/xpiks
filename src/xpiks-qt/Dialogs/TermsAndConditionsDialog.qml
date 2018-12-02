@@ -20,66 +20,41 @@ import "../Components"
 import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
-BaseDialog {
+StaticDialogBase {
     id: termsComponent
     canMinimize: false
     canEscapeClose: false
+    canMove: false
     property string termsText
     anchors.fill: parent
     z: 20000
 
-    FocusScope {
+    contentsWidth: 750
+    contentsHeight: 650
+
+    contents: ColumnLayout {
         anchors.fill: parent
+        anchors.margins: 20
+        spacing: 10
 
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel.accepted = true
-            onClicked: mouse.accepted = true
-            onDoubleClicked: mouse.accepted = true
+        StyledText {
+            text: i18.n + qsTr("Terms and conditions:")
         }
 
-        RectangularGlow {
-            anchors.fill: dialogWindow
-            anchors.topMargin: glowRadius/2
-            anchors.bottomMargin: -glowRadius/2
-            glowRadius: 4
-            spread: 0.0
-            color: uiColors.popupGlowColor
-            cornerRadius: glowRadius
-        }
-
-        // This rectangle is the actual popup
         Rectangle {
-            id: dialogWindow
-            width: 750
-            height: 650
-            color: uiColors.popupBackgroundColor
-            anchors.centerIn: parent
-            Component.onCompleted: anchors.centerIn = undefined
+            color: uiColors.popupDarkInputBackground
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Layout.fillHeight: true
 
-            ColumnLayout {
+            StyledScrollView {
                 anchors.fill: parent
-                anchors.margins: 20
-                spacing: 10
+                anchors.margins: 10
 
-                StyledText {
-                    text: i18.n + qsTr("Terms and conditions:")
-                }
-
-                Rectangle {
-                    color: uiColors.popupDarkInputBackground
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    Layout.fillHeight: true
-
-                    StyledScrollView {
-                        anchors.fill: parent
-                        anchors.margins: 10
-
-                        StyledTextEdit {
-                            id: textEdit
-                            width: 650
-                            text: qsTr("The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+                StyledTextEdit {
+                    id: textEdit
+                    width: 650
+                    text: qsTr("The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 By accessing and using Xpiks (heretofore called the 'application' or the 'program'), you accept and agree to be bound by the terms and provision of this agreement. In addition, when using this particular application, you shall be subject to any posted guidelines or rules applicable to such application. If you do not agree to abide by the above, please do not use this application.
 
@@ -93,100 +68,98 @@ https://git.ffmpeg.org/ffmpeg.git.
 Application and its original content, features, and functionality are owned by Taras Kushnir and are protected by international copyright.
 
 This terms and conditions can be amended in future and users will be notified on such occasions.")
-                            wrapMode: TextEdit.Wrap
-                            selectionColor: uiColors.inputBackgroundColor
-                            readOnly: true
-                            textFormat: TextEdit.PlainText
-                        }
-                    }
+                    wrapMode: TextEdit.Wrap
+                    selectionColor: uiColors.inputBackgroundColor
+                    readOnly: true
+                    textFormat: TextEdit.PlainText
                 }
+            }
+        }
 
-                Item {
-                    height: 1
-                }
+        Item {
+            height: 1
+        }
 
-                StyledText {
-                    text: i18.n + qsTr("Health report:")
-                }
+        StyledText {
+            text: i18.n + qsTr("Health report:")
+        }
 
-                Rectangle {
-                    color: uiColors.popupDarkInputBackground
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: 100
+        Rectangle {
+            color: uiColors.popupDarkInputBackground
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 100
 
-                    StyledScrollView {
-                        anchors.fill: parent
-                        anchors.margins: 10
+            StyledScrollView {
+                anchors.fill: parent
+                anchors.margins: 10
 
-                        StyledTextEdit {
-                            width: 650
-                            text: qsTr("In order to monitor quality of the application functioning, it can automatically send anonymous usage statistics data. This data is used to monitor issues with Xpiks and to prioritize future work. Such analytics data is never shared with any third-parties and is saved in a secure manner.
+                StyledTextEdit {
+                    width: 650
+                    text: qsTr("In order to monitor quality of the application functioning, it can automatically send anonymous usage statistics data. This data is used to monitor issues with Xpiks and to prioritize future work. Such analytics data is never shared with any third-parties and is saved in a secure manner.
 
 Please select 'Health report' checkbox if you agree to send anonymous health report.")
-                            wrapMode: TextEdit.Wrap
-                            selectionColor: uiColors.inputBackgroundColor
-                            readOnly: true
-                            textFormat: TextEdit.PlainText
-                        }
+                    wrapMode: TextEdit.Wrap
+                    selectionColor: uiColors.inputBackgroundColor
+                    readOnly: true
+                    textFormat: TextEdit.PlainText
+                }
+            }
+        }
+
+        Item {
+            id: checkboxesRect
+            height: 40
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            StyledCheckbox {
+                id: userStatisticCheckBox
+                anchors.centerIn: parent
+                checked: false
+                text: i18.n + qsTr("Health report")
+            }
+        }
+
+        Item {
+            height: 1
+        }
+
+        RowLayout {
+            height: 24
+            spacing: 50
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StyledButton {
+                id: agreeButton
+                text: i18.n + qsTr("Agree")
+                isDefault: true
+                width: 100
+                onClicked: {
+                    settingsModel.userStatistics = userStatisticCheckBox.checked
+                    settingsModel.userAgreeHandler()
+                    helpersWrapper.reportOpen()
+                    closePopup()
+                }
+            }
+
+            StyledButton {
+                text: i18.n + qsTr("Disagree")
+                width: 100
+                tooltip: i18.n + qsTr("Close Xpiks")
+                onClicked: {
+                    closePopup()
+                    if (!debug) {
+                        Qt.quit()
                     }
                 }
+            }
 
-                Item {
-                    id: checkboxesRect
-                    height: 40
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    StyledCheckbox {
-                        id: userStatisticCheckBox
-                        anchors.centerIn: parent
-                        checked: false
-                        text: i18.n + qsTr("Health report")
-                    }
-                }
-
-                Item {
-                    height: 1
-                }
-
-                RowLayout {
-                    height: 24
-                    spacing: 50
-
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    StyledButton {
-                        id: agreeButton
-                        text: i18.n + qsTr("Agree")
-                        isDefault: true
-                        width: 100
-                        onClicked: {
-                            settingsModel.userStatistics = userStatisticCheckBox.checked
-                            settingsModel.userAgreeHandler()
-                            helpersWrapper.reportOpen()
-                            closePopup()
-                        }
-                    }
-
-                    StyledButton {
-                        text: i18.n + qsTr("Disagree")
-                        width: 100
-                        tooltip: i18.n + qsTr("Close Xpiks")
-                        onClicked: {
-                            closePopup()
-                            if (!debug) {
-                                Qt.quit()
-                            }
-                        }
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                    }
-                }
+            Item {
+                Layout.fillWidth: true
             }
         }
     }

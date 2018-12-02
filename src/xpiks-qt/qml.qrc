@@ -149,5 +149,6 @@
         <file>Components/DraggableKeywordWrapper.qml</file>
         <file>AppHost.qml</file>
         <file>Components/BaseDialog.qml</file>
+        <file>Components/StaticDialogBase.qml</file>
     </qresource>
 </RCC>
