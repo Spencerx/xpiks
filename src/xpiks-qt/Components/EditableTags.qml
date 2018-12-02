@@ -474,10 +474,13 @@ Flickable {
                             completionCancel()
                             event.accepted = true;
                         }
-                    } else if ((event.key === Qt.Key_Left) && (nextTagTextInput.cursorPosition == 0)) {
+                    } else if ((event.key === Qt.Key_Left) &&
+                               (nextTagTextInput.cursorPosition == 0) &&
+                               (event.modifiers === Qt.NoModifier)) {
                         event.accepted = true
                     } else if ((event.key === Qt.Key_Right) &&
-                               (nextTagTextInput.cursorPosition == nextTagTextInput.length)) {
+                               (nextTagTextInput.cursorPosition == nextTagTextInput.length) &&
+                               (event.modifiers === Qt.NoModifier)) {
                         event.accepted = true
                     } else if ((event.key === Qt.Key_Up) || (event.key === Qt.Key_Down)) {
                         event.accepted = true
