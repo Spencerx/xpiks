@@ -37,11 +37,6 @@ StaticDialogBase {
         dispatcher.dispatch(UICommand.FindReplaceCandidates, {})
     }
 
-    function onDialogClosed() {
-        replaceToTextInput.forceActiveFocus()
-        replaceToTextInput.cursorPosition = replaceToTextInput.length
-    }
-
     MessageDialog {
         id: noSearchDestinationMsgDialog
         title: i18.n + qsTr("Warning")
@@ -67,6 +62,9 @@ StaticDialogBase {
         onDispatched: {
             if (value) {
                 closePopup()
+            } else {
+                replaceToTextInput.forceActiveFocus()
+                replaceToTextInput.cursorPosition = replaceToTextInput.length
             }
         }
     }
@@ -179,6 +177,7 @@ StaticDialogBase {
                 StyledCheckbox {
                     id: searchInDescriptionCheckbox
                     text: i18.n + qsTr("Search in description")
+                    objectName: "searchDescriptionCheckbox"
                     Component.onCompleted: searchInDescriptionCheckbox.checked = replaceModel.searchInDescription
                     onClicked: {
                         replaceModel.searchInDescription = searchInDescriptionCheckbox.checked
@@ -232,6 +231,7 @@ StaticDialogBase {
             StyledButton {
                 id: replaceButton
                 text: i18.n + qsTr("Find and replace")
+                objectName: "findButton"
                 enabled: (replaceFromTextInput.length > 0)
                 width: 150
                 onClicked: {
@@ -241,6 +241,7 @@ StaticDialogBase {
 
             StyledButton {
                 text: i18.n + qsTr("Cancel")
+                objectName: "cancelFindButton"
                 width: 100
                 onClicked: {
                     closePopup()

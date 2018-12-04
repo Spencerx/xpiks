@@ -23,6 +23,7 @@ namespace Models {
     class SettingsModel;
     class UIManager;
     class UploadInfoRepository;
+    class FindAndReplaceModel;
 }
 
 namespace Encryption {
@@ -84,6 +85,10 @@ namespace Commands {
         SOURCE_COMMAND(ActivateQuickBufferCommand,
                        QMLExtensions::UICommandID::ActivateQuickBuffer,
                        Models::UIManager);
+
+        SOURCE_COMMAND(SetupFindInArtworksCommand,
+                       QMLExtensions::UICommandID::SetupFindInArtworks,
+                       Models::FindAndReplaceModel);
     }
 }
 

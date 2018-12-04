@@ -75,6 +75,16 @@ Item {
                                         {callbackObject: value.callbackObject});
                 }
             }
+
+            UICommandListener {
+                commandDispatcher: dispatcher
+                commandIDs: [UICommand.SetupFindInArtworks]
+                onDispatched: {
+                    Common.launchDialog("Dialogs/FindAndReplace.qml",
+                                        root,
+                                        { componentParent: root })
+                }
+            }
         }
     }
 
@@ -627,9 +637,8 @@ Item {
 
             wait(TestsHost.normalSleepTime)
 
-            Common.launchDialog("Dialogs/FindAndReplace.qml",
-                                root,
-                                { componentParent: root })
+            dispatcher.dispatch(UICommand.SetupFindInArtworks, {})
+            wait(TestsHost.smallSleepTime)
 
             keyClick(Qt.Key_B)
             keyClick(Qt.Key_O)
@@ -668,6 +677,72 @@ Item {
                     tryCompare(descriptionInput, "text", "bob", 1000)
                 }
             }
+        }
+
+        function test_findAndReplaceChangeSearch() {
+            var startIndex = 1
+            var count = 4
+            var notIndex = 2;
+
+            for (var i = 0; i < count; i++) {
+                var artworkDelegate = getDelegate(i + startIndex)
+                if (i % 2 == 0) {
+                    var descriptionInput = findChild(artworkDelegate, "descriptionTextInput")
+                    descriptionInput.forceActiveFocus()
+                } else {
+                    var keywordsEdit = findChild(artworkDelegate, "nextTagTextInput")
+                    TestUtils.clearEdit(keywordsEdit)
+                    keywordsEdit.forceActiveFocus()
+                }
+
+                keyClick(Qt.Key_B)
+                keyClick(Qt.Key_O)
+                keyClick(Qt.Key_B)
+                keyClick(Qt.Key_Tab)
+            }
+
+            wait(TestsHost.normalSleepTime)
+
+            dispatcher.dispatch(UICommand.SetupFindInArtworks, {})
+            wait(TestsHost.smallSleepTime)
+
+            keyClick(Qt.Key_B)
+            keyClick(Qt.Key_O)
+            keyClick(Qt.Key_B)
+
+            keyClick(Qt.Key_Tab)
+
+            keyClick(Qt.Key_C)
+            keyClick(Qt.Key_A)
+            keyClick(Qt.Key_T)
+
+            keyClick(Qt.Key_Return)
+            wait(TestsHost.smallSleepTime)
+
+            var replacePreviewList = findChild(root, "replacePreviewList")
+            compare(replacePreviewList.count, count)
+
+            var cancelButton = findChild(root, "cancelReplaceButton")
+            mouseClick(cancelButton)
+            wait(TestsHost.normalSleepTime)
+
+            var checkDescriptionCheckbox = findChild(root, "searchDescriptionCheckbox")
+            mouseClick(checkDescriptionCheckbox)
+            compare(checkDescriptionCheckbox.checked, false)
+
+            var findButton = findChild(root, "findButton")
+            mouseClick(findButton)
+            wait(TestsHost.normalSleepTime)
+
+            replacePreviewList = findChild(root, "replacePreviewList")
+            compare(replacePreviewList.count, count/2)
+
+            cancelButton = findChild(root, "cancelReplaceButton")
+            mouseClick(cancelButton)
+            wait(TestsHost.smallSleepTime)
+
+            cancelButton = findChild(root, "cancelFindButton")
+            mouseClick(cancelButton)
         }
 
         /*function test_doubleClickArtwork() {

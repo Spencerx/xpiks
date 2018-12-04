@@ -29,6 +29,7 @@ namespace Commands {
         LOG_DEBUG << "#";
         bool yesno = Helpers::convertToBool(value, false);
         m_Command = m_Model.getActionCommand(yesno);
+        Q_ASSERT(m_Command != nullptr);
         m_Command->execute();
     }
 

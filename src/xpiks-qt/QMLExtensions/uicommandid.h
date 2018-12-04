@@ -36,6 +36,8 @@ namespace QMLExtensions {
             AddToUserDictionary,
             ActivateQuickBuffer,
             FixSpelling,
+            SetupFindInArtworks,
+            FindReplaceCandidates,
             ReplaceInFound,
             // ------ Selected -------
             SetupEditSelectedArtworks,
@@ -47,7 +49,6 @@ namespace QMLExtensions {
             RemoveSelected,
             SetupReimportMetadata,
             SetupCSVExportForSelected,
-            FindReplaceCandidates,
             SetupUpload,
             SetupCreatingArchives,
             SetupDeleteKeywordsInSelected,

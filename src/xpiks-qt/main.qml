@@ -246,7 +246,7 @@ ApplicationWindow {
     Action {
         id: searchAndReplaceAction
         shortcut: "Shift+Ctrl+F"
-        onTriggered: Common.launchDialog("Dialogs/FindAndReplace.qml", applicationWindow, { componentParent: applicationWindow })
+        onTriggered: dispatcher.dispatch(UICommand.SetupFindInArtworks, {})
         enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
     }
 
@@ -1162,6 +1162,14 @@ ApplicationWindow {
                                     componentParent: applicationWindow,
                                     skipUploadItems: value
                                 })
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.SetupFindInArtworks]
+        onDispatched: {
+            Common.launchDialog("Dialogs/FindAndReplace.qml", applicationWindow, { componentParent: applicationWindow })
         }
     }
 

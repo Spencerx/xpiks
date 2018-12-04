@@ -374,6 +374,7 @@ StaticDialogBase {
 
             StyledButton {
                 text: i18.n + qsTr("Close")
+                objectName: "cancelReplaceButton"
                 width: 100
                 onClicked: {
                     dispatcher.dispatch(UICommand.ReplaceInFound, false)

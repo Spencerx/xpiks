@@ -421,9 +421,6 @@ namespace Models {
             m_PreviewElements.clear();
         }
         endResetModel();
-
-        m_ReplaceFrom.clear();
-        m_ReplaceTo.clear();
     }
 
     QString FindAndReplaceModel::filterText(const QString &text) {

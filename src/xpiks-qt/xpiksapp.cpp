@@ -753,7 +753,10 @@ void XpiksApp::registerUICommands() {
                     m_FilteredArtworksListModel, m_ArtworkProxyModel),
 
                     std::make_shared<Commands::UI::SetupDeleteKeywordsInSelectedCommand>(
-                    m_FilteredArtworksListModel, m_DeleteKeywordsModel)
+                    m_FilteredArtworksListModel, m_DeleteKeywordsModel),
+
+                    std::make_shared<Commands::UI::SetupFindInArtworksCommand>(
+                    m_ReplaceModel)
                 });
 
     // editing

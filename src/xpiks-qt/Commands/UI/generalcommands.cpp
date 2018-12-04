@@ -19,6 +19,7 @@
 #include "Models/Artworks/artworkslistmodel.h"
 #include "Models/Artworks/filteredartworkslistmodel.h"
 #include "Models/Connectivity/uploadinforepository.h"
+#include <Models/Editing/findandreplacemodel.h>
 #include "Models/logsmodel.h"
 #include "Models/settingsmodel.h"
 #include "Models/uimanager.h"
@@ -95,6 +96,12 @@ namespace Commands {
         void ActivateQuickBufferCommand::execute(const QVariant &) {
             LOG_DEBUG << "#";
             m_Source.activateQuickBufferTab();
+        }
+
+        void SetupFindInArtworksCommand::execute(const QVariant &) {
+            LOG_DEBUG << "#";
+            m_Source.setReplaceFrom("");
+            m_Source.setReplaceTo("");
         }
     }
 }
