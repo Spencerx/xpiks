@@ -121,7 +121,7 @@ namespace Services {
 
     void ArtworksUpdateHub::onUpdateTimer() {
         LOG_DEBUG << "#";
-        std::vector<std::shared_ptr<ArtworkUpdateRequest> > requests;
+        decltype(m_UpdateRequests) requests;
 
         {
             QMutexLocker locker(&m_Lock);

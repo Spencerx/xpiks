@@ -61,11 +61,12 @@ namespace Models {
 
     void FilteredArtworksListModel::setSearchTerm(const QString &value) {
         LOG_INFO << value;
-        bool anyChangesNeeded = value != m_SearchTerm;
+        const QString searchTerm = value.trimmed();
+        bool anyChangesNeeded = searchTerm != m_SearchTerm;
 
         if (anyChangesNeeded) {
-            m_SearchTerm = value;
-            emit searchTermChanged(value);
+            m_SearchTerm = searchTerm;
+            emit searchTermChanged(searchTerm);
         }
 
         updateSearchFlags();
@@ -86,6 +87,14 @@ namespace Models {
     bool FilteredArtworksListModel::tryGetArtwork(int proxyIndex, std::shared_ptr<Artworks::ArtworkMetadata> &artwork) {
         int originalIndex = getOriginalIndex(proxyIndex);
         return m_ArtworksListModel.tryGetArtwork(originalIndex, artwork);
+    }
+
+    Artworks::ArtworksSnapshot FilteredArtworksListModel::getFilteredArtworks() {
+        auto rawSnapshot = filterItems<std::shared_ptr<Artworks::ArtworkMetadata>>(
+                    [](ArtworkItem const &) { return true; },
+                [] (ArtworkItem const &artwork, int, int) { return artwork; });
+
+        return Artworks::ArtworksSnapshot(rawSnapshot);
     }
 
     Artworks::ArtworksSnapshot FilteredArtworksListModel::getSelectedArtworks() {
@@ -196,7 +205,7 @@ namespace Models {
 
         std::vector<int> items = filterItems<int>(
             [](ArtworkItem const &artwork) { return artwork->isSelected(); },
-            [] (ArtworkItem const &, int, int originalIndex) { return originalIndex; });
+            [] (ArtworkItem const &, int, int proxyIndex) { return proxyIndex; });
 
         if (items.size() == 1) {
             index = items.front();
@@ -527,10 +536,11 @@ namespace Models {
             int originalIndex = getOriginalIndex(proxyIndex);
             ArtworksListModel::ArtworkItem artwork;
             if (m_ArtworksListModel.tryGetArtwork(originalIndex, artwork)) {
-                Q_ASSERT(!artwork->isRemoved());
-
-                if (pred(artwork)) {
-                    filteredArtworks.push_back(mapper(artwork, originalIndex, proxyIndex));
+                if (!artwork->isRemoved() && !artwork->isUnavailable() &&
+                        pred(artwork)) {
+                    filteredArtworks.emplace_back(
+                                std::forward<T>(
+                                    mapper(artwork, originalIndex, proxyIndex)));
                 }
             }
         }
@@ -543,7 +553,7 @@ namespace Models {
     std::vector<int> FilteredArtworksListModel::getSelectedOriginalIndices() const {
         std::vector<int> items = filterItems<int>(
             [](ArtworkItem const &artwork) { return artwork->isSelected(); },
-            [] (ArtworkItem const &, int index, int) { return index; });
+            [] (ArtworkItem const &, int originalIndex, int) { return originalIndex; });
 
         return items;
     }
@@ -561,7 +571,7 @@ namespace Models {
         bool searchByFilepath = m_SettingsModel.getSearchByFilepath();
         // default search is not case sensitive
         m_SearchFlags = searchUsingAnd ? Common::SearchFlags::AllTermsEverything :
-                                    Common::SearchFlags::AnyTermsEverything;
+                                         Common::SearchFlags::AnyTermsEverything;
         Common::ApplyFlag(m_SearchFlags, searchByFilepath, Common::SearchFlags::Filepath);
     }
 
@@ -571,14 +581,15 @@ namespace Models {
         ArtworksListModel::ArtworkItem artwork;
         if (!m_ArtworksListModel.tryGetArtwork(sourceRow, artwork)) { return false; }
         if (artwork->isRemoved()) { return false; }
+        if (artwork->isUnavailable()) { return false; }
 
         bool hasMatch = false;
 
-        if (m_ArtworksListModel.isInSelectedDirectory(sourceRow)) {
-            hasMatch = true;
-
-            if (!m_SearchTerm.trimmed().isEmpty()) {
+        if (m_ArtworksListModel.isInSelectedDirectory(artwork)) {
+            if (!m_SearchTerm.isEmpty()) {
                 hasMatch = Helpers::hasSearchMatch(m_SearchTerm, artwork, m_SearchFlags);
+            } else {
+                hasMatch = true;
             }
         }
 
@@ -604,7 +615,7 @@ namespace Models {
             QString leftFilename = leftFI.fileName();
             QString rightFilename = rightFI.fileName();
 
-            int filenamesResult = QString::compare(leftFilename, rightFilename);
+            const int filenamesResult = QString::compare(leftFilename, rightFilename);
 
             if (filenamesResult == 0) {
                 result = QString::compare(leftFilepath, rightFilepath) < 0;

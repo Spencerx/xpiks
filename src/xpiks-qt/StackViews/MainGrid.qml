@@ -91,7 +91,7 @@ Item {
         shortcut: StandardKey.SelectAll
         enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
         onTriggered: {
-            if (selectAllCheckbox.checked) {
+            if (!selectAllCheckbox.checked) {
                 filteredArtworksListModel.selectFilteredArtworks();
             } else {
                 filteredArtworksListModel.unselectFilteredArtworks();

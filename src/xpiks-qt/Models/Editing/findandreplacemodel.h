@@ -25,6 +25,7 @@
 #include "Artworks/artworkssnapshot.h"
 #include "Common/flags.h"
 #include "Common/iflagsprovider.h"
+#include "Models/iactionmodel.h"
 
 #ifdef INTEGRATION_TESTS
 #include "Models/Editing/previewartworkelement.h"
@@ -42,12 +43,17 @@ namespace QMLExtensions {
     class ColorsModel;
 }
 
+namespace Services {
+    class IArtworksUpdater;
+}
+
 namespace Models {
     class PreviewArtworkElement;
 
     class FindAndReplaceModel:
-        public QAbstractListModel,
-        public Common::IFlagsProvider<Common::SearchFlags>
+            public QAbstractListModel,
+            public Models::IActionModel,
+            public Common::IFlagsProvider<Common::SearchFlags>
     {
         Q_OBJECT
         Q_PROPERTY(QString replaceFrom READ getReplaceFrom WRITE setReplaceFrom NOTIFY replaceFromChanged)
@@ -61,8 +67,8 @@ namespace Models {
 
     public:
         FindAndReplaceModel(QMLExtensions::ColorsModel &colorsModel,
-                            Commands::ICommandManager &commandManager,
-                            QObject *parent=0);
+                            Services::IArtworksUpdater &artworksUpdater,
+                            QObject *parent=nullptr);
 
     public:
         virtual Common::SearchFlags getFlags() const override { return m_Flags; }
@@ -70,75 +76,38 @@ namespace Models {
         const QString &getReplaceTo() const { return m_ReplaceTo; }
         int getArtworksCount() const { return (int)m_PreviewElements.size(); }
 
-        void setReplaceFrom(const QString &value) {
-            if (value != m_ReplaceFrom) {
-                m_ReplaceFrom = value;
-                emit replaceFromChanged(value);
-            }
-        }
-
-        void setReplaceTo(const QString &value) {
-            if (value != m_ReplaceTo) {
-                m_ReplaceTo = value;
-                emit replaceToChanged(value);
-            }
-        }
-
+        void setReplaceFrom(const QString &value);
+        void setReplaceTo(const QString &value);
     public:
         bool getSearchInTitle() const {
             return Common::HasFlag(m_Flags, Common::SearchFlags::Title);
         }
 
-        void setSearchInTitle(bool value) {
-            if (value != getSearchInTitle()) {
-                Common::ApplyFlag(m_Flags, value, Common::SearchFlags::Title);
-                emit searchInTitleChanged(value);
-            }
-        }
+        void setSearchInTitle(bool value);
 
         bool getSearchInDescription() const {
             return Common::HasFlag(m_Flags, Common::SearchFlags::Description);
         }
 
-        void setSearchInDescription(bool value) {
-            if (value != getSearchInDescription()) {
-                Common::ApplyFlag(m_Flags, value, Common::SearchFlags::Description);
-                emit searchInDescriptionChanged(value);
-            }
-        }
+        void setSearchInDescription(bool value);
 
         bool getSearchInKeywords() const {
             return Common::HasFlag(m_Flags, Common::SearchFlags::Keywords);
         }
 
-        void setSearchInKeywords(bool value) {
-            if (value != getSearchInKeywords()) {
-                Common::ApplyFlag(m_Flags, value, Common::SearchFlags::Keywords);
-                emit searchInKeywordsChanged(value);
-            }
-        }
+        void setSearchInKeywords(bool value);
 
         bool getCaseSensitive() const {
             return Common::HasFlag(m_Flags, Common::SearchFlags::CaseSensitive);
         }
 
-        void setCaseSensitive(bool value) {
-            if (value != getCaseSensitive()) {
-                Common::ApplyFlag(m_Flags, value, Common::SearchFlags::CaseSensitive);
-                emit caseSensitiveChanged(value);
-            }
-        }
+        void setCaseSensitive(bool value);
 
         bool getSearchWholeWords() const {
             return Common::HasFlag(m_Flags, Common::SearchFlags::WholeWords);
         }
 
-        void setSearchWholeWords(bool value) {
-            if (value != getSearchWholeWords()) {
-                Common::ApplyFlag(m_Flags, value, Common::SearchFlags::WholeWords);
-                emit searchWholeWordsChanged(value);
-            }
-        }
+        void setSearchWholeWords(bool value);
 
     public:
         enum FindAndReplaceModel_Roles {
@@ -161,12 +130,9 @@ namespace Models {
         Q_INVOKABLE QString getSearchTitle(int index);
         Q_INVOKABLE QString getSearchDescription(int index);
         Q_INVOKABLE QString getSearchKeywords(int index);
-        Q_INVOKABLE void replace();
         Q_INVOKABLE void selectAll() { setAllSelected(true); }
         Q_INVOKABLE void unselectAll() { setAllSelected(false); }
         Q_INVOKABLE bool anySearchDestination() const;
-        Q_INVOKABLE void resetModel();
-        Q_INVOKABLE void clearArtworks();
 
 #ifdef INTEGRATION_TESTS
         void setItemSelected(int index, bool selected) {
@@ -174,6 +140,12 @@ namespace Models {
         }
 #endif
 
+        // IActionModel interface
+    public:
+        virtual std::shared_ptr<Commands::ICommand> getActionCommand(bool yesno) override;
+        virtual void resetModel() override;
+
+        // QAbstractListModel interface
     public:
         virtual int rowCount(const QModelIndex &parent=QModelIndex()) const override;
         virtual QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
@@ -193,7 +165,6 @@ namespace Models {
         void searchWholeWordsChanged(bool value);
         void countChanged(int value);
         void allSelectedChanged();
-        void replaceSucceeded();
 
     private:
         void updatePreviewFlags();
@@ -207,7 +178,7 @@ namespace Models {
         QString m_ReplaceFrom;
         QString m_ReplaceTo;
         QMLExtensions::ColorsModel &m_ColorsModel;
-        Commands::ICommandManager &m_CommandManager;
+        Services::IArtworksUpdater &m_ArtworksUpdater;
         Common::SearchFlags m_Flags;
     };
 }

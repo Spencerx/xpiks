@@ -25,7 +25,9 @@
 #include "Artworks/artworkmetadata.h"
 #include "Artworks/artworkssnapshot.h"
 #include "Artworks/videoartwork.h"  // IWYU pragma: keep
-#include "Commands/Base/icommandmanager.h"
+#include "Commands/artworksupdatetemplate.h"
+#include "Commands/Base/compositecommandtemplate.h"
+#include "Commands/Editing/clearactionmodeltemplate.h"
 #include "Commands/Editing/findandreplacetemplate.h"
 #include "Commands/Editing/modifyartworkscommand.h"
 #include "Common/defines.h"
@@ -36,6 +38,7 @@
 #include "Helpers/metadatahighlighter.h"
 #include "Helpers/stringhelper.h"
 #include "Models/Editing/previewartworkelement.h"
+#include "Services/iartworksupdater.h"
 
 QString searchFlagsToString(Common::SearchFlags flags) {
     QStringList items;
@@ -70,14 +73,63 @@ QString searchFlagsToString(Common::SearchFlags flags) {
 
 namespace Models {
     FindAndReplaceModel::FindAndReplaceModel(QMLExtensions::ColorsModel &colorsModel,
-                                             Commands::ICommandManager &commandManager,
+                                             Services::IArtworksUpdater &artworksUpdater,
                                              QObject *parent):
         QAbstractListModel(parent),
         m_ColorsModel(colorsModel),
-        m_CommandManager(commandManager),
+        m_ArtworksUpdater(artworksUpdater),
         m_Flags(Common::SearchFlags::None)
     {
         initDefaultFlags();
+    }
+
+    void FindAndReplaceModel::setReplaceFrom(const QString &value) {
+        if (value != m_ReplaceFrom) {
+            m_ReplaceFrom = value;
+            emit replaceFromChanged(value);
+        }
+    }
+
+    void FindAndReplaceModel::setReplaceTo(const QString &value) {
+        if (value != m_ReplaceTo) {
+            m_ReplaceTo = value;
+            emit replaceToChanged(value);
+        }
+    }
+
+    void FindAndReplaceModel::setSearchInTitle(bool value) {
+        if (value != getSearchInTitle()) {
+            Common::ApplyFlag(m_Flags, value, Common::SearchFlags::Title);
+            emit searchInTitleChanged(value);
+        }
+    }
+
+    void FindAndReplaceModel::setSearchInDescription(bool value) {
+        if (value != getSearchInDescription()) {
+            Common::ApplyFlag(m_Flags, value, Common::SearchFlags::Description);
+            emit searchInDescriptionChanged(value);
+        }
+    }
+
+    void FindAndReplaceModel::setSearchInKeywords(bool value) {
+        if (value != getSearchInKeywords()) {
+            Common::ApplyFlag(m_Flags, value, Common::SearchFlags::Keywords);
+            emit searchInKeywordsChanged(value);
+        }
+    }
+
+    void FindAndReplaceModel::setCaseSensitive(bool value) {
+        if (value != getCaseSensitive()) {
+            Common::ApplyFlag(m_Flags, value, Common::SearchFlags::CaseSensitive);
+            emit caseSensitiveChanged(value);
+        }
+    }
+
+    void FindAndReplaceModel::setSearchWholeWords(bool value) {
+        if (value != getSearchWholeWords()) {
+            Common::ApplyFlag(m_Flags, value, Common::SearchFlags::WholeWords);
+            emit searchWholeWordsChanged(value);
+        }
     }
 
     int FindAndReplaceModel::rowCount(const QModelIndex &parent) const {
@@ -316,31 +368,6 @@ namespace Models {
         return text;
     }
 
-    void FindAndReplaceModel::replace() {
-        LOG_INFO << "Flags:" << searchFlagsToString(m_Flags);
-        using namespace Commands;
-        // this will clear m_ArtworksSnapshot since it will be
-        // moved inside command but this behavior is desirable
-        // in this place since it's the end of replacement flow
-        using PreviewPtr = std::shared_ptr<PreviewArtworkElement>;
-        using ArtworkPtr = std::shared_ptr<Artworks::ArtworkMetadata>;
-        Artworks::ArtworksSnapshot snapshot(
-                    Helpers::map<PreviewPtr, ArtworkPtr>(
-                        m_PreviewElements,
-                        [](PreviewPtr const &element) {
-                        return element->getArtwork();
-                    }));
-        m_CommandManager.processCommand(
-                    std::make_shared<ModifyArtworksCommand>(
-                        std::move(snapshot),
-                        std::make_shared<FindAndReplaceTemplate>(m_ReplaceFrom,
-                                                                 m_ReplaceTo,
-                                                                 m_Flags)));
-
-        LOG_DEBUG << "Own snapshot is empty now";
-        emit replaceSucceeded();
-    }
-
     bool FindAndReplaceModel::anySearchDestination() const {
         return
                 getSearchInDescription() ||
@@ -348,23 +375,55 @@ namespace Models {
                 getSearchInKeywords();
     }
 
+    std::shared_ptr<Commands::ICommand> FindAndReplaceModel::getActionCommand(bool yesno) {
+        LOG_DEBUG << yesno;
+        if (yesno) {
+            using namespace Commands;
+            using ArtworksTemplate = Commands::ICommandTemplate<Artworks::ArtworksSnapshot>;
+            using ArtworksTemplateComposite = Commands::CompositeCommandTemplate<Artworks::ArtworksSnapshot>;
+            // this will clear m_ArtworksSnapshot since it will be
+            // moved inside command but this behavior is desirable
+            // in this place since it's the end of replacement flow
+            using PreviewPtr = std::shared_ptr<PreviewArtworkElement>;
+            using ArtworkPtr = std::shared_ptr<Artworks::ArtworkMetadata>;
+            Artworks::ArtworksSnapshot snapshot(
+                        Helpers::filterMap<PreviewPtr, ArtworkPtr>(
+                            m_PreviewElements,
+                            [](PreviewPtr const &element) { return element->getIsSelected(); },
+                            [](PreviewPtr const &element) { return element->getArtwork(); }));
+
+            LOG_DEBUG << "Own snapshot is empty now";
+            return std::make_shared<ModifyArtworksCommand>(
+                        std::move(snapshot),
+                        std::make_shared<ArtworksTemplateComposite>(
+                            std::initializer_list<std::shared_ptr<ArtworksTemplate>>{
+                                std::make_shared<FindAndReplaceTemplate>(m_ReplaceFrom,
+                                                                         m_ReplaceTo,
+                                                                         m_Flags),
+                                std::make_shared<Commands::ClearActionModelTemplate>(*this),
+                                std::make_shared<Commands::ArtworksSnapshotUpdateTemplate>(m_ArtworksUpdater)}));
+        } else {
+            LOG_DEBUG << "nothing to save";
+            using TemplatedSnapshotCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
+            return std::make_shared<TemplatedSnapshotCommand>(
+                        Artworks::ArtworksSnapshot(),
+                        std::make_shared<Commands::ClearActionModelTemplate>(*this));
+        }
+    }
+
     void FindAndReplaceModel::resetModel() {
         LOG_DEBUG << "#";
 
         // let the model save last used flags
         // initDefaultFlags();
-        clearArtworks();
-        m_ReplaceFrom.clear();
-        m_ReplaceTo.clear();
-    }
-
-    void FindAndReplaceModel::clearArtworks() {
-        LOG_DEBUG << "#";
         beginResetModel();
         {
             m_PreviewElements.clear();
         }
         endResetModel();
+
+        m_ReplaceFrom.clear();
+        m_ReplaceTo.clear();
     }
 
     QString FindAndReplaceModel::filterText(const QString &text) {

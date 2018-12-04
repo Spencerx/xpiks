@@ -23,21 +23,10 @@ import "../Constants/UIConfig.js" as UIConfig
 StaticDialogBase {
     id: replaceSetupComponent
     canEscapeClose: false
+    property variant componentParent
     property var filteredModel
-    property var replaceModel: dispatcher.getCommandTarget(UICommand.FindAndReplaceInSelected)
+    property var replaceModel: dispatcher.getCommandTarget(UICommand.FindReplaceCandidates)
     anchors.fill: parent
-
-    function closePopup() {
-        replaceModel.resetModel();
-        replaceSetupComponent.destroy()
-    }
-
-    Keys.onEscapePressed: closePopup()
-
-    Connections {
-        target: replaceModel
-        onReplaceSucceeded: closePopup()
-    }
 
     function launchReplacePreview() {
         if (!replaceModel.anySearchDestination()) {
@@ -45,12 +34,7 @@ StaticDialogBase {
             return
         }
 
-        replaceModel.initArtworksList()
-        Common.launchDialog("Dialogs/ReplacePreview.qml",
-                            replaceSetupComponent,
-                            {
-                                componentParent: replaceSetupComponent
-                            })
+        dispatcher.dispatch(UICommand.FindReplaceCandidates, {})
     }
 
     function onDialogClosed() {
@@ -63,6 +47,28 @@ StaticDialogBase {
         title: i18.n + qsTr("Warning")
         text: i18.n + qsTr("Please select where to search for")
         standardButtons: StandardButton.Ok
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.FindReplaceCandidates]
+        onDispatched: {
+            Common.launchDialog("Dialogs/ReplacePreview.qml",
+                                replaceSetupComponent.componentParent,
+                                {
+                                    componentParent: replaceSetupComponent.componentParent
+                                })
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.ReplaceInFound]
+        onDispatched: {
+            if (value) {
+                closePopup()
+            }
+        }
     }
 
     contentsWidth: 480

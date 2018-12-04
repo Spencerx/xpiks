@@ -177,28 +177,30 @@ namespace Models {
         [](ArtworkItem const &artwork, size_t) { artwork->setIsLockedIO(false); });
     }
 
-    bool ArtworksListModel::isInSelectedDirectory(int artworkIndex) {
+    bool ArtworksListModel::isInSelectedDirectory(ArtworkItem const &artwork) {
         bool result = false;
-        ArtworkItem artwork;
-        if (tryGetArtwork(artworkIndex, artwork)) {
+        if (artwork != nullptr) {
             auto dirID = artwork->getDirectoryID();
             result = m_ArtworksRepository.isDirectorySelected(dirID);
         }
         return result;
     }
 
-    void ArtworksListModel::setCurrentIndex(size_t index) {
+    void ArtworksListModel::setCurrentIndex(int index) {
+        Q_ASSERT(index != -1);
         LOG_DEBUG << index;
         if (m_CurrentItemIndex != index) {
             m_CurrentItemIndex = index;
 
             ArtworkItem artwork;
-            if (tryGetArtwork(index, artwork)) {
+            if (index != -1 && tryGetArtwork(index, artwork)) {
                 using namespace Commands;
                 auto editable = std::make_shared<CurrentEditableArtwork>(
                                     artwork,
                                     std::make_shared<ArtworksUpdateTemplate>(*this, getStandardUpdateRoles()));
                 sendMessage(editable);
+            } else {
+                sendMessage(std::shared_ptr<ICurrentEditable>());
             }
         }
     }

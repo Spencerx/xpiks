@@ -78,7 +78,7 @@ namespace Models {
                                   Commands::ICommandManager &commandManager,
                                   KeywordsPresets::IPresetsManager &presetsManager,
                                   Models::SettingsModel &settingsModel,
-                                  QObject *parent=0);
+                                  QObject *parent=nullptr);
 
     public:
         const QString &getSearchTerm() const { return m_SearchTerm; }
@@ -87,11 +87,11 @@ namespace Models {
         int getSelectedArtworksCount() const { return m_SelectedArtworksCount; }
         bool getGlobalSelectionChanged() const { return false; }
 
-        Artworks::ArtworksSnapshot::Container getSearchablePreviewOriginalItems(const QString &searchTerm, Common::SearchFlags flags) const;
         Artworks::ArtworksSnapshot getArtworksToSave(bool overwriteAll=false) const;
         bool tryGetArtwork(int proxyIndex, std::shared_ptr<Artworks::ArtworkMetadata> &artwork);
 
     public:
+        Artworks::ArtworksSnapshot getFilteredArtworks();
         // returns currently selected artworks as a snapshot
         virtual Artworks::ArtworksSnapshot getSelectedArtworks() override;
         virtual std::vector<int> getSelectedIndices() override { return getSelectedOriginalIndices(); }

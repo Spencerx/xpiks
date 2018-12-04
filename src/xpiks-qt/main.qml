@@ -246,7 +246,7 @@ ApplicationWindow {
     Action {
         id: searchAndReplaceAction
         shortcut: "Shift+Ctrl+F"
-        onTriggered: openFindAndReplaceDialog()
+        onTriggered: Common.launchDialog("Dialogs/FindAndReplace.qml", applicationWindow, { componentParent: applicationWindow })
         enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
     }
 
@@ -1125,14 +1125,6 @@ ApplicationWindow {
             Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
                                 applicationWindow,
                                 {})
-        }
-    }
-
-    UICommandListener {
-        commandDispatcher: dispatcher
-        commandIDs: [UICommand.FindAndReplaceInSelected]
-        onDispatched: {
-            Common.launchDialog("Dialogs/FindAndReplace.qml", applicationWindow, { componentParent: applicationWindow })
         }
     }
 

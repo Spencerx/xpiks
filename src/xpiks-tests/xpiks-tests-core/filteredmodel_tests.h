@@ -20,9 +20,11 @@ private slots:
     void selectedCountAddTest();
     void selectedCountSubtractTest();
     void findSelectedIndexTest();
+    void setCurrentIndexTest();
     void clearKeywordsTest();
     void detachVectorFromSelectedTest();
     void setSelectedForZippingTest();
+    void filterDirectoryTest();
     void filterModifiedItemsTest();
     void filterEmptyItemsTest();
     void filterKeywordsUsingAndTest();

@@ -159,7 +159,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     // editing
     m_CombinedArtworksModel(m_ArtworksUpdateHub, m_PresetsModel),
     m_QuickBuffer(m_CurrentEditableModel, m_CommandManager),
-    m_ReplaceModel(m_ColorsModel, m_CommandManager),
+    m_ReplaceModel(m_ColorsModel, m_ArtworksUpdateHub),
     m_DeleteKeywordsModel(m_ArtworksUpdateHub, m_PresetsModel),
     m_ArtworkProxyModel(m_CommandManager, m_PresetsModel, m_ArtworksUpdateHub),
     m_DuplicatesModel(m_ColorsModel),
@@ -715,7 +715,7 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::UI::ReviewDuplicatesInSelectedCommand>(
                     m_FilteredArtworksListModel, m_DuplicatesModel),
 
-                    std::make_shared<Commands::UI::FindAndReplaceInSelectedCommand>(
+                    std::make_shared<Commands::UI::FindReplaceCandidatesCommand>(
                     m_FilteredArtworksListModel, m_ReplaceModel),
 
                     std::make_shared<Commands::UI::ReviewSpellingInBasicModelCommand>(
@@ -791,6 +791,9 @@ void XpiksApp::registerUICommands() {
 
                     std::make_shared<Commands::ActionModelCommand>(
                     m_SpellSuggestionModel, QMLExtensions::UICommandID::FixSpelling),
+
+                    std::make_shared<Commands::ActionModelCommand>(
+                    m_ReplaceModel, QMLExtensions::UICommandID::ReplaceInFound),
 
                     std::make_shared<Commands::UI::PlainTextEditCommand>(
                     m_CurrentEditableModel, m_CommandManager),
@@ -931,6 +934,7 @@ void XpiksApp::cleanupModels() {
     m_SettingsModel.resetToDefault();
     m_DeleteKeywordsModel.resetModel();
     m_UserDictEditModel.clearModel();
+    m_ReplaceModel.resetModel();
 
     m_FilteredArtworksListModel.setSearchTerm("");
     m_CombinedArtworksModel.resetModel();

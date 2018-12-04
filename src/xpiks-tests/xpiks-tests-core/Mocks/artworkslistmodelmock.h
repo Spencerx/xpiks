@@ -74,9 +74,9 @@ namespace Mocks {
         }
 
         int generateAndAddArtworksEx(int count,
-                                      int dirsCount,
-                                      bool withVector,
-                                      Common::AddFilesFlags flags = Common::AddFilesFlags::None) {
+                                     int dirsCount,
+                                     bool withVector,
+                                     Common::AddFilesFlags flags = Common::AddFilesFlags::None) {
             Q_ASSERT(count >= 0);
             Q_ASSERT(dirsCount > 0);
             auto result = addFiles(std::make_shared<Mocks::FilesCollectionMock>(count, withVector ? count : 0, dirsCount), flags);

@@ -91,8 +91,8 @@ namespace Models {
 
     public:
         ArtworksListModel(ArtworksRepository &repository,
-                          QObject *parent=0);
-        virtual ~ArtworksListModel();
+                          QObject *parent=nullptr);
+        virtual ~ArtworksListModel() override;
 
     public:
         using ArtworkItem = std::shared_ptr<Artworks::ArtworkMetadata>;
@@ -125,6 +125,7 @@ namespace Models {
 
     public:
         size_t getArtworksSize() const { return m_ArtworkList.size(); }
+        int getCurrentItemIndex() const { return m_CurrentItemIndex; }
         int getModifiedArtworksCount();
         QVector<int> getStandardUpdateRoles() const;
 
@@ -138,8 +139,8 @@ namespace Models {
         Artworks::ArtworksSnapshot createArtworksSnapshot();
         void generateAboutToBeRemoved();
         void unlockAllForIO();
-        bool isInSelectedDirectory(int artworkIndex);
-        void setCurrentIndex(size_t index);
+        bool isInSelectedDirectory(ArtworkItem const &artwork);
+        void setCurrentIndex(int index);
         void unsetCurrentIndex();
         void setItemsSaved(const Helpers::IndicesRanges &ranges);
         void detachVectorsFromArtworks(const Helpers::IndicesRanges &ranges);
@@ -302,7 +303,7 @@ namespace Models {
     private:
         std::deque<std::shared_ptr<Artworks::ArtworkMetadata>> m_ArtworkList;
         qint64 m_LastID;
-        size_t m_CurrentItemIndex;
+        int m_CurrentItemIndex;
         ArtworksRepository &m_ArtworksRepository;
     };
 }

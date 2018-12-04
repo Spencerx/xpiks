@@ -101,9 +101,9 @@ namespace Commands {
             m_Target.setArtworksToExport(m_Source.getSelectedArtworks());
         }
 
-        void FindAndReplaceInSelectedCommand::execute(QVariant const &) {
+        void FindReplaceCandidatesCommand::execute(QVariant const &) {
             LOG_DEBUG << "#";
-            m_Target.findReplaceCandidates(m_Source.getSelectedArtworks());
+            m_Target.findReplaceCandidates(m_Source.getFilteredArtworks());
         }
 
         void SetupCreatingArchivesCommand::execute(QVariant const &) {

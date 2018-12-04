@@ -132,21 +132,7 @@ appveyor {
     LIBS -= -lswscale.4
 
     LIBS -= -lthmbnlr
-    SOURCES += ../../../vendors/libthmbnlr/thumbnailcreator_stub.cpp \
-    xpiksuitestsapp.cpp \
-    ../../xpiks-qt/QMLExtensions/triangleelement.cpp \
-    ../xpiks-tests-integration/testshelpers.cpp \
-    ../xpiks-tests-core/Mocks/filescollectionmock.cpp \
-    fakeinitartworkstemplate.cpp \
-    ../../xpiks-qt/Helpers/metadatahighlighter.cpp \
-    ../../xpiks-qt/QMLExtensions/folderelement.cpp \
-    ../../xpiks-qt/Helpers/uihelpers.cpp \
-    ../../xpiks-qt/QMLExtensions/uicommandlistener.cpp \
-    ../../xpiks-qt/Commands/Base/actionmodelcommand.cpp \
-    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp \
-    ../../xpiks-qt/Commands/Base/compositecommand.cpp \
-    ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp \
-    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp
+    SOURCES += ../../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
 }
 
 include(../../xpiks-common/xpiks-common.pri)
@@ -343,7 +329,21 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Helpers/helpersqmlwrapper.cpp \
     ../../xpiks-qt/Services/SpellCheck/metadataduplicates.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.cpp \
-    ../../xpiks-qt/Services/artworkseditinghub.cpp
+    ../../xpiks-qt/Services/artworkseditinghub.cpp \
+    xpiksuitestsapp.cpp \
+    ../../xpiks-qt/QMLExtensions/triangleelement.cpp \
+    ../xpiks-tests-integration/testshelpers.cpp \
+    ../xpiks-tests-core/Mocks/filescollectionmock.cpp \
+    fakeinitartworkstemplate.cpp \
+    ../../xpiks-qt/Helpers/metadatahighlighter.cpp \
+    ../../xpiks-qt/QMLExtensions/folderelement.cpp \
+    ../../xpiks-qt/Helpers/uihelpers.cpp \
+    ../../xpiks-qt/QMLExtensions/uicommandlistener.cpp \
+    ../../xpiks-qt/Commands/Base/actionmodelcommand.cpp \
+    ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp \
+    ../../xpiks-qt/Commands/Base/compositecommand.cpp \
+    ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp \
+    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp
 
 DISTFILES += \
     ../../xpiks-qt/Components/EditableTags.qml \

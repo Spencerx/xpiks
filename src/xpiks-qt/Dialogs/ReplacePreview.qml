@@ -23,27 +23,22 @@ import "../Constants/UIConfig.js" as UIConfig
 
 StaticDialogBase {
     id: replacePreviewComponent
-    canEscapeClose: false
     anchors.fill: parent
     property variant componentParent
-    property variant replaceModel: dispatcher.getCommandTarget(UICommand.FindAndReplaceInSelected)
+    property variant replaceModel: dispatcher.getCommandTarget(UICommand.FindReplaceCandidates)
     property bool isRestricted: false
-
-    function closePopup() {
-        replaceModel.clearArtworks()
-        replacePreviewComponent.destroy()
-    }
 
     Keys.onEscapePressed: closePopup()
     Keys.onReturnPressed: replaceModel.replace()
     Keys.onEnterPressed: replaceModel.replace()
 
-    Connections {
-        target: replaceModel
-        onReplaceSucceeded: closePopup()
-    }
-
     onClickedOutside: closePopup()
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.ReplaceInFound]
+        onDispatched: closePopup()
+    }
 
     contentsWidth: 700
     contentsHeight: 580
@@ -84,11 +79,13 @@ StaticDialogBase {
 
                 ListView {
                     id: replacePreviewList
+                    objectName: "replacePreviewList"
                     model: replaceModel
                     spacing: 5
 
                     delegate: Rectangle {
                         id: imageWrapper
+                        objectName: "imageDelegate"
                         property int delegateIndex: index
                         color: isselected ? uiColors.selectedArtworkBackground : uiColors.artworkBackground
                         anchors.left: parent.left
@@ -98,6 +95,7 @@ StaticDialogBase {
 
                         StyledCheckbox {
                             id: applyReplaceCheckBox
+                            objectName: "applyReplaceCheckBox"
                             anchors.leftMargin: 14
                             anchors.left: parent.left
                             width: 20
@@ -366,10 +364,11 @@ StaticDialogBase {
 
             StyledButton {
                 text: i18.n + qsTr("Replace", "button")
+                objectName: "replaceButton"
                 enabled: replaceModel.count > 0
                 width: 100
                 onClicked: {
-                    replaceModel.replace()
+                    dispatcher.dispatch(UICommand.ReplaceInFound, true)
                 }
             }
 
@@ -377,7 +376,7 @@ StaticDialogBase {
                 text: i18.n + qsTr("Close")
                 width: 100
                 onClicked: {
-                    closePopup()
+                    dispatcher.dispatch(UICommand.ReplaceInFound, false)
                 }
             }
         }

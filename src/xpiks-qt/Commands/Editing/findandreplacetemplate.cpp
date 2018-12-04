@@ -23,8 +23,8 @@
 
 namespace Commands {
     void FindAndReplaceTemplate::execute(const Artworks::ArtworksSnapshot &snapshot) {
-        LOG_DEBUG << "#";
         const size_t size = snapshot.size();
+        LOG_INFO << size << "artwork(s)";
         m_ArtworksBackups.reserve(size);
 
         for (size_t i = 0; i < size; ++i) {
@@ -36,9 +36,9 @@ namespace Commands {
     }
 
     void FindAndReplaceTemplate::undo(const Artworks::ArtworksSnapshot &snapshot) {
-        LOG_DEBUG << "#";
-        Q_ASSERT(snapshot.size() >= m_ArtworksBackups.size());
         const size_t size = m_ArtworksBackups.size();
+        LOG_INFO << size << "artwork(s)";
+        Q_ASSERT(snapshot.size() >= m_ArtworksBackups.size());
         for (size_t i = 0; i < size; i++) {
             auto &backup = m_ArtworksBackups.at(i);
             auto &artwork = snapshot.get(i);

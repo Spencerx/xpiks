@@ -27,6 +27,11 @@ Item {
     }
 
     QtObject {
+        id: applicationWindow
+        property int openedDialogsCount: 0
+    }
+
+    QtObject {
         id: removeAction
         property bool enabled: true
         function trigger() {
@@ -91,6 +96,8 @@ Item {
             filteredArtworksListModel.unselectFilteredArtworks()
             // 2nd half of the images
             filteredArtworksListModel.searchTerm = "x:image"
+
+            wait(TestsHost.normalSleepTime)
         }
 
         function cleanupTestCase() {
@@ -106,7 +113,7 @@ Item {
             var artworkDelegate = TestUtils.getDelegateInstanceAt(artworksHost.contentItem,
                                                                   "artworkDelegate",
                                                                   index)
-            artworksHost.positionViewAtIndex(index, GridView.Visible)
+            artworksHost.positionViewAtIndex(index, GridView.Contain)
             return artworkDelegate
         }
 
@@ -551,7 +558,7 @@ Item {
             tryCompare(keywordWrapper, "hasSpellCheckError", false, 2000)
         }
 
-        function test_SuggestLocalKeywords() {
+        function test_suggestLocalKeywords() {
             var artworkDelegate = getDelegate(2)
             mainGrid.suggestKeywords(2)
 
@@ -601,6 +608,66 @@ Item {
             verify(keywordsString.indexOf("line", 0) !== -1)
             verify(keywordsString.indexOf("vector", 0) !== -1)
             verify(keywordsString.indexOf("xpiks", 0) === -1)
+        }
+
+        function test_findAndReplace() {
+            var startIndex = 1
+            var count = 4
+            var notIndex = 2;
+
+            for (var i = 0; i < count; i++) {
+                var artworkDelegate = getDelegate(i + startIndex)
+                var descriptionInput = findChild(artworkDelegate, "descriptionTextInput")
+                descriptionInput.forceActiveFocus()
+                keyClick(Qt.Key_B)
+                keyClick(Qt.Key_O)
+                keyClick(Qt.Key_B)
+                keyClick(Qt.Key_Tab)
+            }
+
+            wait(TestsHost.normalSleepTime)
+
+            Common.launchDialog("Dialogs/FindAndReplace.qml",
+                                root,
+                                { componentParent: root })
+
+            keyClick(Qt.Key_B)
+            keyClick(Qt.Key_O)
+            keyClick(Qt.Key_B)
+
+            keyClick(Qt.Key_Tab)
+
+            keyClick(Qt.Key_C)
+            keyClick(Qt.Key_A)
+            keyClick(Qt.Key_T)
+
+            keyClick(Qt.Key_Return)
+            wait(TestsHost.smallSleepTime)
+
+            var replacePreviewList = findChild(root, "replacePreviewList")
+            compare(replacePreviewList.count, count)
+
+            var replaceDelegate = TestUtils.getDelegateInstanceAt(replacePreviewList.contentItem,
+                                                                  "imageDelegate",
+                                                                  notIndex)
+            replacePreviewList.positionViewAtIndex(notIndex, ListView.Contain)
+            var checkbox = findChild(replaceDelegate, "applyReplaceCheckBox")
+            mouseClick(checkbox)
+            wait(TestsHost.smallSleepTime)
+
+            var replaceButton = findChild(root, "replaceButton")
+            mouseClick(replaceButton)
+            wait(TestsHost.normalSleepTime)
+
+            for (var i = 0; i < count; i++) {
+                var artworkDelegate = getDelegate(i + startIndex)
+                var descriptionInput = findChild(artworkDelegate, "descriptionTextInput")
+                if (i != notIndex) {
+                    tryCompare(descriptionInput, "text", "cat", 1000)
+                } else {
+                    tryCompare(descriptionInput, "text", "bob", 1000)
+                }
+            }
         }
 
         /*function test_doubleClickArtwork() {

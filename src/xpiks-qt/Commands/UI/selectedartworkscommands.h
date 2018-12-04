@@ -100,9 +100,9 @@ namespace Commands {
                                  Artworks::ISelectedArtworksSource,
                                  MetadataIO::CsvExportModel);
 
-        SOURCE_UI_TARGET_COMMAND(FindAndReplaceInSelectedCommand,
-                                 QMLExtensions::UICommandID::FindAndReplaceInSelected,
-                                 Artworks::ISelectedArtworksSource,
+        SOURCE_UI_TARGET_COMMAND(FindReplaceCandidatesCommand,
+                                 QMLExtensions::UICommandID::FindReplaceCandidates,
+                                 Models::FilteredArtworksListModel,
                                  Models::FindAndReplaceModel);
 
         SOURCE_UI_TARGET_COMMAND(SetupCreatingArchivesCommand,

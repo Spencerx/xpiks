@@ -40,9 +40,9 @@
 #include "Helpers/localconfig.h"
 #include "Models/Connectivity/proxysettings.h"
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC)
 #  define DEFAULT_EXIFTOOL "/usr/bin/exiftool"
-#elif APPVEYOR
+#elif defined(APPVEYOR)
 #  define DEFAULT_EXIFTOOL "c:/projects/xpiks-deps/windows-3rd-party-bin/exiftool.exe"
 #else
 #  define DEFAULT_EXIFTOOL "exiftool"

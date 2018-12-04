@@ -193,14 +193,27 @@ void FilteredModelTests::selectedCountSubtractTest() {
 }
 
 void FilteredModelTests::findSelectedIndexTest() {
-    DECLARE_MODELS_AND_GENERATE(10);
+    DECLARE_MODELS;
+    QCOMPARE(filteredItemsModel.findSelectedItemIndex(), -1);
+
+    artworksListModel.generateAndAddArtworks(10);
+
     artworksListModel.getMockArtwork(4)->setIsSelected(true);
-    int index = filteredItemsModel.findSelectedItemIndex();
-    QCOMPARE(index, 4);
+    QCOMPARE(filteredItemsModel.findSelectedItemIndex(), 4);
 
     artworksListModel.getMockArtwork(9)->setIsSelected(true);
-    index = filteredItemsModel.findSelectedItemIndex();
-    QCOMPARE(index, -1);
+    QCOMPARE(filteredItemsModel.findSelectedItemIndex(), -1);
+}
+
+void FilteredModelTests::setCurrentIndexTest() {
+    DECLARE_MODELS_AND_GENERATE(4);
+
+    // unselect first directory
+    artworksRepository.toggleDirectorySelected(1);
+    filteredItemsModel.updateFilter();
+
+    filteredItemsModel.registerCurrentItem(0);
+    QCOMPARE(artworksListModel.getCurrentItemIndex(), 1);
 }
 
 void FilteredModelTests::clearKeywordsTest() {
@@ -254,6 +267,27 @@ void FilteredModelTests::setSelectedForZippingTest() {
 
     auto &snapshot = zipArchiver.getArtworksSnapshot();
     QCOMPARE((int)snapshot.size(), 5);
+}
+
+void FilteredModelTests::filterDirectoryTest() {
+    DECLARE_MODELS_AND_GENERATE(4);
+
+    QCOMPARE(artworksListModel.getMockArtwork(0)->getDirectoryID(),
+             artworksRepository.getDirectoryID(0));
+    QCOMPARE(artworksListModel.getMockArtwork(1)->getDirectoryID(),
+             artworksRepository.getDirectoryID(1));
+
+    // unselect first directory
+    QCOMPARE(filteredItemsModel.rowCount(), 4);
+    artworksRepository.toggleDirectorySelected(1);
+    filteredItemsModel.updateFilter();
+    QCOMPARE(filteredItemsModel.rowCount(), 2);
+
+    QCOMPARE(filteredItemsModel.getOriginalIndex(0), 1);
+
+    std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+    QVERIFY(filteredItemsModel.tryGetArtwork(0, artwork));
+    QCOMPARE(artwork->getLastKnownIndex(), (size_t)1);
 }
 
 void FilteredModelTests::filterModifiedItemsTest() {
