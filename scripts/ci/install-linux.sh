@@ -24,6 +24,11 @@ sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y gcc-5 g++-5 lco
 sudo apt-get install -qq -o dir::cache::archives="$APT_CACHE_DIR" qt56base;
 sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install qt56base qt56quickcontrols qt56svg qt56declarative qt56graphicaleffects libcurl4-openssl-dev hunspell-en-us zlib1g-dev libimage-exiftool-perl
 sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install libavcodec-dev libavdevice-dev libavformat-dev libavfilter-dev libavutil-dev libswscale-dev
+sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y ccache
+
+# Update symlinks
+sudo /usr/sbin/update-ccache-symlinks
+export PATH="/usr/lib/ccache:$PATH"
 
 
 if [ -n "$XPIKS_BINARY" ]; then
