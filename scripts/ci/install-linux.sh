@@ -16,7 +16,7 @@ sudo add-apt-repository ppa:kubuntu-ppa/backports -y
 sudo add-apt-repository ppa:jonathonf/ffmpeg-3 -y
 sudo apt-get update -qq
 
-export APT_CACHE_DIR=`pwd`/my-apt-cache
+export APT_CACHE_DIR="$HOME/.my-apt-cache"
 mkdir -pv $APT_CACHE_DIR
 
 sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y ctags sed

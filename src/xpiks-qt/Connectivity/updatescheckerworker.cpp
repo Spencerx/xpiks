@@ -197,6 +197,9 @@ namespace Connectivity {
         LOG_DEBUG << "#";
         Q_ASSERT(!m_Environment.getIsInMemoryOnly());
         bool success = false;
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+        return success;
+#endif
 
         Connectivity::SimpleCurlDownloader downloader(updateCheckResult.m_UpdateURL);
         QObject::connect(this, &UpdatesCheckerWorker::cancelRequested,

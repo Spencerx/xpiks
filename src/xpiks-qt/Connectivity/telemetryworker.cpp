@@ -85,7 +85,9 @@ namespace Connectivity {
         LOG_DEBUG << "Telemetry request:" << m_ReportingEndpoint << query.toString();
 #endif
 
+#if defined(TELEMETRY_ENABLED) && !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
         sendOneReport(m_ReportingEndpoint, query.toString());
+#endif
     }
 
     bool TelemetryWorker::sendOneReport(const QString &resource, const QString &payload) {

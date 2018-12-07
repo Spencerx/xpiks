@@ -44,6 +44,8 @@ namespace Connectivity {
 
     void UpdateService::startChecking() {
 #ifdef WITH_UPDATES
+        LOG_VERBOSE_OR_DEBUG << "settings check update:" << m_SettingsModel.getCheckForUpdates();
+        LOG_VERBOSE_OR_DEBUG << "switcher updates:" << m_SwitcherModel.getUpdateEnabled();
         const bool startWorker = m_SettingsModel.getCheckForUpdates() &&
                 m_SwitcherModel.getUpdateEnabled();
 #else

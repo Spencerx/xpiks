@@ -50,7 +50,7 @@ git:
 cache:
   apt: true
   directories:
-    - my-apt-cache
+    - $HOME/.my-apt-cache
 
 install:
   - ./scripts/ci/install-${TRAVIS_OS_NAME}.sh

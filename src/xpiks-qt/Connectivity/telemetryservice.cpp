@@ -39,20 +39,17 @@ namespace Connectivity {
     }
 
     void TelemetryService::initialize() {
-#if !defined(INTEGRATION_TESTS) && !defined(UI_TESTS)
-    ensureUserIdExists();
+        ensureUserIdExists();
 
-    QString userId = m_SettingsModel.getUserAgentId();
-    userId.remove(QRegExp("[{}-]."));
+        QString userId = m_SettingsModel.getUserAgentId();
+        userId.remove(QRegExp("[{}-]."));
 
-    m_UserAgentId = userId;
-#else
-    m_UserAgentId = "1234567890";
-    Q_ASSERT(!getIsTelemetryEnabled());
-#endif
+        m_UserAgentId = userId;
     }
 
     void TelemetryService::startReporting() {
+        LOG_VERBOSE_OR_DEBUG << "settings telemetry:" << m_SettingsModel.getCheckForUpdates();
+        LOG_VERBOSE_OR_DEBUG << "switcher telemetry:" << m_Switcher.getUpdateEnabled();
         if (getIsTelemetryEnabled()) {
             doStartReporting();
         } else {
@@ -111,11 +108,7 @@ namespace Connectivity {
     }
 
     bool TelemetryService::getIsTelemetryEnabled() {
-#ifndef INTEGRATION_TESTS
         return m_SettingsModel.getIsTelemetryEnabled() && m_Switcher.getIsTelemetryEnabled();
-#else
-        return false;
-#endif
     }
 
     void TelemetryService::doReportAction(UserAction action) {

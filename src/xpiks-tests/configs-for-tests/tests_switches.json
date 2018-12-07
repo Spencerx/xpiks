@@ -24,5 +24,11 @@
     },
     "iStockSuggestion": {
         "v": false
+    },
+    "updateEnabled": {
+        "v": true
+    },
+    "telemetryEnabled": {
+        "v": true
     }
 }
