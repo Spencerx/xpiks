@@ -30,6 +30,10 @@ if [ $exitcode != 0 ]; then
     done
     
     exit $exitcode
+else
+    # cleanup after ftp upload test
+    ls -la ~ | grep "*.jpg"
+    sudo rm /var/ftp/incoming/*
 fi
 
 ./xpiks-tests-integration --in-memory > tests_in_memory.log

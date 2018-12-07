@@ -43,6 +43,8 @@
 #include "faileduploadstest.h"
 #include "findandreplacemodeltest.h"
 #include "fixspellingmarksmodifiedtest.h"
+#include "ftpcredentialschecktest.h"
+#include "ftpuploadtest.h"
 #include "importlostmetadatatest.h"
 #include "loadpluginbasictest.h"
 #include "locallibrarysearchtest.h"
@@ -165,7 +167,11 @@ int main(int argc, char *argv[]) {
     integrationTests.emplace_back(std::make_shared<SaveFileBasicTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<SaveFileLegacyTest>(environment, xpiksTests));
 #ifndef TRAVIS_CI
+    integrationTests.emplace_back(std::make_shared<ArtworkUploaderBasicTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<SaveVideoBasicTest>(environment, xpiksTests));
+#else
+    integrationTests.emplace_back(std::make_shared<FtpUploadTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<FtpCredentialsCheckTest>(environment, xpiksTests));
 #endif
     integrationTests.emplace_back(std::make_shared<FailedUploadsTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<SpellCheckMultireplaceTest>(environment, xpiksTests));
@@ -183,7 +189,6 @@ int main(int argc, char *argv[]) {
     integrationTests.emplace_back(std::make_shared<AddToUserDictionaryTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<AutoDetachVectorTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<RemoveFromUserDictionaryTest>(environment, xpiksTests));
-    integrationTests.emplace_back(std::make_shared<ArtworkUploaderBasicTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<PlainTextEditTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<FixSpellingMarksModifiedTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<PresetsTest>(environment, xpiksTests));

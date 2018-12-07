@@ -110,7 +110,7 @@ namespace Models {
         Q_INVOKABLE bool isMasterPasswordCorrectOrEmpty() const { return !m_EmptyPasswordsMode; }
         Q_INVOKABLE QObject *getStocksCompletionObject();
 #ifdef UI_TESTS
-        Q_INVOKABLE void clear();
+        Q_INVOKABLE void clear() { clearHosts(); }
 #endif
 
     public:
@@ -128,6 +128,7 @@ namespace Models {
         std::shared_ptr<UploadInfo> appendItem() { addItem(); return m_UploadInfos.back(); }
         std::vector<std::shared_ptr<UploadInfo> > &accessUploadInfos() { return m_UploadInfos; }
         Microstocks::StocksFtpListModel &accessStocksList() { return m_StocksFtpList; }
+        void clearHosts();
 #endif
 
     public:

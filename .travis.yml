@@ -69,3 +69,5 @@ script:
   - if [ -n "$INTEGRATION_TESTS" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-integration-tests-${TRAVIS_OS_NAME}.sh"; fi
   - if [ -n "$UI_TESTS" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-ui-tests-${TRAVIS_OS_NAME}.sh"; fi
 
+after_failure:
+  - cat /tmp/vsftpd.log

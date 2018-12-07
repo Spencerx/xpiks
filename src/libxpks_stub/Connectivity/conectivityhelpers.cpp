@@ -71,9 +71,10 @@ namespace libxpks {
             size_t size = uploadInfos.size();
             contexts.reserve(size);
 
-            Models::ProxySettings const &proxySettings = settingsModel.getProxySettings();
+            auto &proxySettings = settingsModel.getProxySettings();
             int timeoutSeconds = settingsModel.getUploadTimeout();
-            bool useProxy = settingsModel.getUseProxy();
+            const bool useProxy = settingsModel.getUseProxy();
+            const bool verbose = settingsModel.getVerboseUpload();
 
             for (size_t i = 0; i < size; ++i) {
                 std::shared_ptr<UploadContext> context(new UploadContext());
@@ -87,17 +88,13 @@ namespace libxpks {
                 context->m_UseProxy = useProxy;
                 context->m_ProxySettings = &proxySettings;
                 context->m_TimeoutSeconds = timeoutSeconds;
+                context->m_VerboseLogging = verbose;
+                context->m_VectorsFirst = info->getVectorFirst();
                 // TODO: move to configs/options
                 context->m_RetriesCount = RETRIES_COUNT;
-
-                if (context->m_Host.contains("dreamstime")) {
-                    context->m_DirForVectors = "additional";
-                }
-
-                if (context->m_Host.contains("alamy")) {
-                    context->m_DirForImages = "Stock";
-                    context->m_DirForVectors = "Vector";
-                }
+                context->m_DirForImages = info->getImagesDir();
+                context->m_DirForVectors = info->getVectorsDir();
+                context->m_DirForVideos = info->getVideosDir();
 
                 contexts.emplace_back(context);
             }

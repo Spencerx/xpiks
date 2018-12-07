@@ -19,6 +19,7 @@
 #include <QtDebug>
 #include <QtGlobal>
 
+#include "Common/defines.h"
 #include "Common/logging.h"
 
 #if defined(Q_OS_WIN)
@@ -80,6 +81,7 @@ namespace Maintenance {
         const QString exiftoolAppImagePath = QDir::cleanPath(resourcesPath + "/exiftool/exiftool");
         possiblePaths << exiftoolAppImagePath;
         possiblePaths << "/usr/bin/exiftool" << "/usr/local/bin/exiftool";
+        possiblePaths << QDir::cleanPath(QDir::toNativeSeparators(STRINGIZE(DEPS_DIR)) + "/exiftool/exiftool");
 #else
         // BUMP
 #endif

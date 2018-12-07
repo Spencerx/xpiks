@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 if [ "${TRAVIS_OS_NAME}" != "linux" ]; then
     exit 1
 fi
@@ -12,3 +14,13 @@ if [ -n "$UI_TESTS" ]; then
     sleep 3
 fi
 
+if [ -n "$INTEGRATION_TESTS" ]; then
+    sudo mkdir -v --mode 0777 -p /var/ftp/incoming
+    # vsftpd wants root to be read only!
+    sudo chmod -v ugo-w /var/ftp
+    sudo chown -v -R ftp:ftp /var/ftp
+    sudo cp -v "${TRAVIS_BUILD_DIR}/scripts/ci/my_vsftpd.conf" /etc/vsftpd.conf
+    sudo service vsftpd restart
+fi
+
+echo "Done"

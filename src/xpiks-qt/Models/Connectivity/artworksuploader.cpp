@@ -225,6 +225,7 @@ namespace Models {
         }
 
         auto selectedInfos = m_UploadInfos.retrieveSelectedUploadInfos();
+        LOG_DEBUG << "Found" << selectedInfos.size() << "selected upload info(s)";
 
         m_UploadInfos.resetPercents();
         m_UploadInfos.updatePercentages();

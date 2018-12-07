@@ -66,8 +66,8 @@ namespace Models {
         ArtworksUploader(Common::ISystemEnvironment &environment,
                          Models::UploadInfoRepository &uploadInfoRepository,
                          SettingsModel &settingsModel,
-                         QObject *parent=0);
-        virtual ~ArtworksUploader();
+                         QObject *parent=nullptr);
+        virtual ~ArtworksUploader() override;
 
     public:
         // used to test UI of artwork upload

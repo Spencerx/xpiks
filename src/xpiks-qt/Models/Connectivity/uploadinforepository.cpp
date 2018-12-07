@@ -347,16 +347,6 @@ namespace Models {
         return result;
     }
 
-#ifdef UI_TESTS
-    void UploadInfoRepository::clear() {
-        beginResetModel();
-        {
-            m_UploadInfos.clear();
-        }
-        endResetModel();
-    }
-#endif
-
     void UploadInfoRepository::backupAndDropRealPasswords() {
         for (auto &info: m_UploadInfos) {
             info->backupPassword();
@@ -380,6 +370,17 @@ namespace Models {
             info->resetPercent();
         }
     }
+
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+    void UploadInfoRepository::clearHosts() {
+        LOG_DEBUG << "#";
+        beginResetModel();
+        {
+            m_UploadInfos.clear();
+        }
+        endResetModel();
+    }
+#endif
 
     std::vector<std::shared_ptr<UploadInfo> > UploadInfoRepository::retrieveSelectedUploadInfos() const {
         std::vector<std::shared_ptr<UploadInfo> > uploadInfos;

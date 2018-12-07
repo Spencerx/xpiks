@@ -272,7 +272,9 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Commands/Base/compositecommand.cpp \
     ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp \
     ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp \
-    removedirsavessessiontest.cpp
+    removedirsavessessiontest.cpp \
+    ftpuploadtest.cpp \
+    ftpcredentialschecktest.cpp
 
 RESOURCES +=
 
@@ -620,7 +622,9 @@ HEADERS += \
     ../../xpiks-qt/Commands/UI/currenteditablecommands.h \
     ../../xpiks-qt/QMLExtensions/iuicommandmiddleware.h \
     ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.h \
-    removedirsavessessiontest.h
+    removedirsavessessiontest.h \
+    ftpuploadtest.h \
+    ftpcredentialschecktest.h
 
 INCLUDEPATH += ../../../
 INCLUDEPATH += ../../xpiks-qt
