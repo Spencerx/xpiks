@@ -18,11 +18,12 @@ DEFINES += QT_NO_CAST_TO_ASCII \
 
 DEFINES += HUNSPELL_STATIC
 DEFINES += TELEMETRY_ENABLED
+DEFINES += INTEGRATION_TESTS
 DEFINES += WITH_STDOUT_LOGS
 DEFINES += WITH_LOGS
-DEFINES += INTEGRATION_TESTS
 DEFINES += WITH_PLUGINS
 DEFINES += WITH_UPDATES
+DEFINES += WITH_EXIV2
 DEFINES += FAKE_WARNINGS
 DEFINES += VERBOSE_LOGGING
 
@@ -728,6 +729,8 @@ travis-ci {
         # gcov
         QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
         LIBS += -lgcov
+
+        DEFINES += WITH_FTP_SERVER
     }
 
     macx {
@@ -736,7 +739,7 @@ travis-ci {
         LIBS -= -lxmpsdk
         LIBS -= -lexiv2
 
-        DEFINES += NO_EXIV2
+        DEFINES -= WITH_EXIV2
         SOURCES -= \
             unicodeiotest.cpp \
             exiv2iohelpers.cpp
@@ -768,6 +771,9 @@ without-video {
 
     LIBS -= -lthmbnlr
     SOURCES += ../../../vendors/libthmbnlr/thumbnailcreator_stub.cpp
+} else {
+    message("With video")
+    DEFINES += WITH_VIDEO
 }
 
 DEFINES += BUILDNUMBER=$${BUILDNO}

@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
     Connectivity::CurlInitHelper curlInitHelper;
     Q_UNUSED(curlInitHelper);
 
-#ifndef NO_EXIV2
+#if defined(WITH_EXIV2)
     Exiv2InitHelper exiv2InitHelper;
     Q_UNUSED(exiv2InitHelper);
 #endif
@@ -166,13 +166,6 @@ int main(int argc, char *argv[]) {
     integrationTests.emplace_back(std::make_shared<AutoAttachVectorsTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<SaveFileBasicTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<SaveFileLegacyTest>(environment, xpiksTests));
-#ifndef TRAVIS_CI
-    integrationTests.emplace_back(std::make_shared<ArtworkUploaderBasicTest>(environment, xpiksTests));
-    integrationTests.emplace_back(std::make_shared<SaveVideoBasicTest>(environment, xpiksTests));
-#else
-    integrationTests.emplace_back(std::make_shared<FtpUploadTest>(environment, xpiksTests));
-    integrationTests.emplace_back(std::make_shared<FtpCredentialsCheckTest>(environment, xpiksTests));
-#endif
     integrationTests.emplace_back(std::make_shared<FailedUploadsTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<SpellCheckMultireplaceTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<SpellCheckCombinedModelTest>(environment, xpiksTests));
@@ -199,8 +192,17 @@ int main(int argc, char *argv[]) {
     integrationTests.emplace_back(std::make_shared<DuplicateSearchTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<AutoCompletePresetsTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<CsvExportTest>(environment, xpiksTests));
-#ifndef NO_EXIV2
+#if defined(WITH_EXIV2)
     integrationTests.emplace_back(std::make_shared<UnicodeIoTest>(environment, xpiksTests));
+#endif
+#if defined(WITH_FTP_SERVER)
+    integrationTests.emplace_back(std::make_shared<FtpUploadTest>(environment, xpiksTests));
+    integrationTests.emplace_back(std::make_shared<FtpCredentialsCheckTest>(environment, xpiksTests));
+#else
+    integrationTests.emplace_back(std::make_shared<ArtworkUploaderBasicTest>(environment, xpiksTests));
+#endif
+#if defined(WITH_VIDEO)
+    integrationTests.emplace_back(std::make_shared<SaveVideoBasicTest>(environment, xpiksTests));
 #endif
     integrationTests.emplace_back(std::make_shared<UndoAddDirectoryTest>(environment, xpiksTests));
     integrationTests.emplace_back(std::make_shared<UndoRestoreSessionTest>(environment, xpiksTests));
