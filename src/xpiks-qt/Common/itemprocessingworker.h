@@ -194,7 +194,7 @@ namespace Common {
             onQueueIsEmpty();
         }
 
-        void cancelBatch(batch_id_t batchID) {
+        virtual void cancelBatch(batch_id_t batchID) {
             if (batchID == INVALID_BATCH_ID) { return; }
 
             bool isEmpty = false;

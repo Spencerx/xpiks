@@ -12,6 +12,8 @@
 #define METADATAIOWORKER_H
 
 #include <memory>
+#include <mutex>
+#include <unordered_set>
 
 #include <QObject>
 #include <QString>
@@ -39,8 +41,12 @@ namespace MetadataIO {
     class MetadataSearchTask;
 
     struct StorageReadRequest {
+        StorageReadRequest(uint32_t batchID):
+            m_BatchID(batchID)
+        {}
         CachedArtwork m_CachedArtwork;
         std::shared_ptr<Artworks::ArtworkMetadata> m_Artwork;
+        uint32_t m_BatchID;
     };
 
     class MetadataIOWorker : public QObject, public Common::ItemProcessingWorker<MetadataIOTaskBase>
@@ -49,20 +55,23 @@ namespace MetadataIO {
     public:
         explicit MetadataIOWorker(Storage::IDatabaseManager &dbManager,
                                   Services::ArtworksUpdateHub &artworksUpdateHub,
-                                  QObject *parent = 0);
+                                  QObject *parent = nullptr);
 
 #ifdef INTEGRATION_TESTS
     public:
         MetadataCache &getMetadataCache() { return m_MetadataCache; }
 #endif
 
+    public:
+        virtual void cancelBatch(batch_id_t batchID) override;
+
     protected:
         virtual bool initWorker() override;
         virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
-        virtual void processOneItem(std::shared_ptr<MetadataIOTaskBase> &item) override;
+        void processIOItem(std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID);
 
     private:
-        void processReadWriteItem(std::shared_ptr<MetadataReadWriteTask> &item);
+        void processReadWriteItem(std::shared_ptr<MetadataReadWriteTask> &item, batch_id_t batchID);
         void processSearchItem(std::shared_ptr<MetadataSearchTask> &item);
 
     public:
@@ -85,6 +94,8 @@ namespace MetadataIO {
         Common::ReaderWriterQueue<StorageReadRequest> m_StorageReadQueue;
         Services::ArtworksUpdateHub &m_ArtworksUpdateHub;
         MetadataCache m_MetadataCache;
+        std::mutex m_CancelMutex;
+        std::unordered_set<batch_id_t> m_CancelledImports;
         volatile int m_ProcessedItemsCount;
     };
 }

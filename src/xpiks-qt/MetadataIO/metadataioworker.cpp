@@ -38,6 +38,15 @@ namespace MetadataIO {
     {
     }
 
+    void MetadataIOWorker::cancelBatch(batch_id_t batchID) {
+        LOG_DEBUG << batchID;
+        Common::ItemProcessingWorker<MetadataIOTaskBase>::cancelBatch(batchID);
+        {
+            std::lock_guard<std::mutex> lock(m_CancelMutex);
+            m_CancelledImports.insert(batchID);
+        }
+    }
+
     bool MetadataIOWorker::initWorker() {
         LOG_DEBUG << "#";
         bool success = m_MetadataCache.initialize();
@@ -54,17 +63,17 @@ namespace MetadataIO {
             m_MetadataCache.sync();
             emit readyToImportFromStorage();
         } else {
-            processOneItem(workItem.m_Item);
+            processIOItem(workItem.m_Item, workItem.m_ID);
         }
 
         return std::shared_ptr<void>();
     }
 
-    void MetadataIOWorker::processOneItem(std::shared_ptr<MetadataIOTaskBase> &item) {
+    void MetadataIOWorker::processIOItem(std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID) {
         do {
             std::shared_ptr<MetadataReadWriteTask> readWriteItem = std::dynamic_pointer_cast<MetadataReadWriteTask>(item);
             if (readWriteItem) {
-                processReadWriteItem(readWriteItem);
+                processReadWriteItem(readWriteItem, batchID);
                 break;
             }
 
@@ -79,14 +88,14 @@ namespace MetadataIO {
         } while(false);
     }
 
-    void MetadataIOWorker::processReadWriteItem(std::shared_ptr<MetadataReadWriteTask> &item) {
+    void MetadataIOWorker::processReadWriteItem(std::shared_ptr<MetadataReadWriteTask> &item, batch_id_t batchID) {
         auto &artwork = item->getArtworkMetadata();
         Q_ASSERT(artwork != nullptr);
         if (artwork == nullptr) { return; }
 
         const MetadataReadWriteTask::ReadWriteAction action = item->getReadWriteAction();
         if (action == MetadataReadWriteTask::Read) {
-            auto readRequest = std::make_shared<StorageReadRequest>();
+            auto readRequest = std::make_shared<StorageReadRequest>(batchID);
             if (m_MetadataCache.read(artwork, readRequest->m_CachedArtwork)) {
                 readRequest->m_Artwork = artwork;
                 m_StorageReadQueue.push(readRequest);
@@ -116,16 +125,23 @@ namespace MetadataIO {
 
     void MetadataIOWorker::importArtworksFromStorage() {
         LOG_DEBUG << "#";
-        std::vector<std::shared_ptr<StorageReadRequest> > readRequests;
+        std::vector<std::shared_ptr<StorageReadRequest>> readRequests;
         // popAll() returns queue in reversed order for performance reasons
         m_StorageReadQueue.popAll(readRequests);
         LOG_DEBUG << readRequests.size() << "requests to process";
 
-        for (auto &request: readRequests) {
-            bool modified = request->m_Artwork->initFromStorage(request->m_CachedArtwork);
-            Q_UNUSED(modified);
+        std::lock_guard<std::mutex> cancelLock(m_CancelMutex);
+        auto itEnd = m_CancelledImports.end();
 
-            m_ArtworksUpdateHub.updateArtwork(request->m_Artwork);
+        for (auto &request: readRequests) {
+            if (m_CancelledImports.find(request->m_BatchID) == itEnd) {
+                bool modified = request->m_Artwork->initFromStorage(request->m_CachedArtwork);
+                Q_UNUSED(modified);
+
+                m_ArtworksUpdateHub.updateArtwork(request->m_Artwork);
+            } else {
+                LOG_VERBOSE << "Skipping cancelled artwork" << request->m_Artwork->getItemID();
+            }
         }
     }
 

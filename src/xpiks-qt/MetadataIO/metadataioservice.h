@@ -11,6 +11,7 @@
 #ifndef METADATAIOSERVICE_H
 #define METADATAIOSERVICE_H
 
+#include <atomic>
 #include <memory>
 
 #include <QObject>
@@ -92,7 +93,7 @@ namespace MetadataIO {
 
     private:
         MetadataIOWorker *m_MetadataIOWorker;
-        bool m_IsStopped;
+        std::atomic_bool m_IsStopped;
     };
 }
 
