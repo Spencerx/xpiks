@@ -74,7 +74,7 @@ int parsePlan1Csv(const QString &filepath, Models::ArtworksListModel &artworksLi
         success = csvReader.read_row(COLUMNIZE1(columns));
         if (!success) { qWarning() << "Row cannot be read:" << i; }
         VERIFY(success, "Failed to read a row");
-        LOG_INFO << toQStringList({COLUMNIZE1(columns)});
+        LOG_VERBOSE << toQStringList({COLUMNIZE1(columns)});
 
         VERIFY(QString::fromStdString(columns[0]) == artwork->getBaseFilename(), "Filename value does not match");
         VERIFY(QString::fromStdString(columns[1]) == artwork->getKeywordsString(), "Keywords value does not match");
@@ -117,7 +117,6 @@ int parsePlan2Csv(const QString &filepath, Models::ArtworksListModel &artworksLi
         success = csvReader.read_row(COLUMNIZE2(columns));
         if (!success) { qWarning() << "Row cannot be read:" << i; }
         VERIFY(success, "Failed to read a row");
-        LOG_INFO << toQStringList({COLUMNIZE2(columns)});
 
         VERIFY(QString::fromStdString(columns[0]) == artwork->getBaseFilename(), "Filename value does not match");
         VERIFY(QString::fromStdString(columns[1]) == artwork->getDescription(), "Description value does not match");
