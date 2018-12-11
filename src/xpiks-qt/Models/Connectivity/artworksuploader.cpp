@@ -51,12 +51,8 @@ namespace Models {
         m_IsInProgress(false),
         m_HasErrors(false)
     {
-    }
-
-    ArtworksUploader::~ArtworksUploader() {
-        if (m_TestingCredentialWatcher != nullptr) {
-            delete m_TestingCredentialWatcher;
-        }
+        QObject::connect(&m_TestingCredentialWatcher, &QFutureWatcher<Connectivity::ContextValidationResult>::finished,
+                         this, &ArtworksUploader::credentialsTestingFinished);
     }
 
     void ArtworksUploader::setFtpCoordinator(const std::shared_ptr<libxpks::net::FtpCoordinator> &ftpCoordinator) {
@@ -65,8 +61,6 @@ namespace Models {
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadFinished, this, &ArtworksUploader::allFinished);
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::overallProgressChanged, this, &ArtworksUploader::uploaderPercentChanged);
 
-        m_TestingCredentialWatcher = new QFutureWatcher<Connectivity::ContextValidationResult>(this);
-        QObject::connect(m_TestingCredentialWatcher, SIGNAL(finished()), SLOT(credentialsTestingFinished()));
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::transferFailed,
                          &m_UploadWatcher, &Connectivity::UploadWatcher::reportUploadErrorHandler);
 
@@ -111,7 +105,7 @@ namespace Models {
     }
 
     void ArtworksUploader::credentialsTestingFinished() {
-        Connectivity::ContextValidationResult result = m_TestingCredentialWatcher->result();
+        Connectivity::ContextValidationResult result = m_TestingCredentialWatcher.result();
         emit credentialsChecked(result.m_Result, result.m_Host);
     }
 
@@ -157,7 +151,7 @@ namespace Models {
         context->m_ProxySettings = &m_SettingsModel.getProxySettings();
         context->m_VerboseLogging = m_SettingsModel.getVerboseUpload();
 
-        m_TestingCredentialWatcher->setFuture(QtConcurrent::run(Connectivity::isContextValid, context));
+        m_TestingCredentialWatcher.setFuture(QtConcurrent::run(Connectivity::isContextValid, context));
     }
 
     bool ArtworksUploader::needCreateArchives() const {

@@ -14,22 +14,18 @@
 #include <memory>
 
 #include <QObject>
+#include <QFutureWatcher>
 #include <QString>
 
 #include "Artworks/artworkssnapshot.h"
 #include "Common/messages.h"
 #include "Common/types.h"
 #include "Connectivity/analyticsuserevent.h"
+#include "Connectivity/testconnection.h"
 #include "Connectivity/uploadwatcher.h"
-
-template <typename T> class QFutureWatcher;
 
 namespace Common {
     class ISystemEnvironment;
-}
-
-namespace Connectivity {
-    struct ContextValidationResult;
 }
 
 namespace Models {
@@ -67,7 +63,6 @@ namespace Models {
                          Models::UploadInfoRepository &uploadInfoRepository,
                          SettingsModel &settingsModel,
                          QObject *parent=nullptr);
-        virtual ~ArtworksUploader() override;
 
     public:
         // used to test UI of artwork upload
@@ -105,7 +100,7 @@ namespace Models {
 
     public:
         void setArtworks(Artworks::ArtworksSnapshot &snapshot);
-        virtual void handleMessage(UnavailableFilesMessage const &message);
+        virtual void handleMessage(UnavailableFilesMessage const &message) override;
 
     public:
         Q_INVOKABLE void uploadArtworks();
@@ -148,7 +143,7 @@ namespace Models {
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
         Connectivity::UploadWatcher m_UploadWatcher;
         std::shared_ptr<Connectivity::IFtpCoordinator> m_FtpCoordinator;
-        QFutureWatcher<Connectivity::ContextValidationResult> *m_TestingCredentialWatcher;
+        QFutureWatcher<Connectivity::ContextValidationResult> m_TestingCredentialWatcher;
         UploadInfoRepository &m_UploadInfos;
         SettingsModel &m_SettingsModel;
         double m_Percent;

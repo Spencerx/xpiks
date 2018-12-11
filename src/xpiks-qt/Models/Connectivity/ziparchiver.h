@@ -37,7 +37,6 @@ namespace Models {
         Q_OBJECT
     public:
         ZipArchiver();
-        virtual ~ZipArchiver() { delete m_ArchiveCreator; }
 
     public:
         int getPercent() const;
@@ -50,7 +49,7 @@ namespace Models {
         void setHasErrors(bool value);
 
     public:
-        virtual void handleMessage(UnavailableFilesMessage const &message);
+        virtual void handleMessage(UnavailableFilesMessage const &message) override;
 
     signals:
         void inProgressChanged();
@@ -88,7 +87,7 @@ namespace Models {
 
     private:
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
-        QFutureWatcher<QStringList> *m_ArchiveCreator;
+        QFutureWatcher<QStringList> m_ArchiveCreator;
         QAtomicInt m_ProcessedArtworksCount;
         volatile bool m_IsInProgress;
         volatile bool m_HasErrors;

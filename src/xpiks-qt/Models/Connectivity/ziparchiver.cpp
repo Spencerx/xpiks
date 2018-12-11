@@ -14,7 +14,6 @@
 #include <memory>
 
 #include <QFileInfo>
-#include <QFutureWatcherBase>
 #include <QHash>
 #include <QList>
 #include <QtConcurrentMap>
@@ -32,13 +31,13 @@
 
 namespace Models {
     ZipArchiver::ZipArchiver():
+        m_ArchiveCreator(this),
         m_IsInProgress(false),
         m_HasErrors(false)
     {
-        m_ArchiveCreator = new QFutureWatcher<QStringList>(this);
-        QObject::connect(m_ArchiveCreator, &QFutureWatcher<QStringList>::resultReadyAt,
+        QObject::connect(&m_ArchiveCreator, &QFutureWatcher<QStringList>::resultReadyAt,
                          this, &ZipArchiver::archiveCreated);
-        QObject::connect(m_ArchiveCreator, &QFutureWatcher<QStringList>::finished,
+        QObject::connect(&m_ArchiveCreator, &QFutureWatcher<QStringList>::finished,
                          this, &ZipArchiver::allFinished);
     }
 
@@ -105,7 +104,7 @@ namespace Models {
 
 #ifndef CORE_TESTS
         LOG_INFO << "Creating zip archives for" << items.length() << "item(s)";
-        m_ArchiveCreator->setFuture(QtConcurrent::mapped(items, Helpers::zipFiles));
+        m_ArchiveCreator.setFuture(QtConcurrent::mapped(items, Helpers::zipFiles));
 #endif
     }
 
