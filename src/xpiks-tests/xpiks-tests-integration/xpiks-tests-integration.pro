@@ -625,7 +625,8 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.h \
     removedirsavessessiontest.h \
     ftpuploadtest.h \
-    ftpcredentialschecktest.h
+    ftpcredentialschecktest.h \
+    ../../xpiks-qt/QMLExtensions/uicommandid.h
 
 INCLUDEPATH += ../../../
 INCLUDEPATH += ../../xpiks-qt
