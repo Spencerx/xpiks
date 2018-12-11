@@ -26,6 +26,7 @@
 #include "Common/logging.h"
 #include "QMLExtensions/iuicommandmiddleware.h"
 #include "QMLExtensions/uiaction.h"
+#include "QMLExtensions/uicommandid.h"
 
 namespace QMLExtensions {
     UICommandDispatcher::UICommandDispatcher(Commands::ICommandManager &commandManager, QObject *parent):
@@ -49,7 +50,8 @@ namespace QMLExtensions {
     }
 
     QObject *UICommandDispatcher::getCommandTarget(int commandID) {
-        LOG_INFO << commandID;
+        QMLExtensions::UICommandID::CommandID command = static_cast<QMLExtensions::UICommandID::CommandID>(commandID);
+        LOG_INFO << command;
         auto it = m_CommandsMap.find(commandID);
         QObject *result = nullptr;
         Q_ASSERT(it != m_CommandsMap.end());
@@ -58,6 +60,7 @@ namespace QMLExtensions {
             if (targetSource != nullptr) {
                 QObject *target = targetSource->getTargetObject();
                 Q_ASSERT(target != nullptr);
+                LOG_INFO << "Found" << target->objectName() << "from command" << command << commandID;
                 if (target != nullptr) {
                     QQmlEngine::setObjectOwnership(target, QQmlEngine::CppOwnership);
                     result = target;
@@ -87,7 +90,7 @@ namespace QMLExtensions {
         if (!command) { return; }
         const int commandID = command->getCommandID();
         Q_ASSERT(m_CommandsMap.find(commandID) == m_CommandsMap.end());
-        m_CommandsMap[commandID] = command;
+        m_CommandsMap.emplace(commandID, command);
     }
 
     void UICommandDispatcher::registerMiddlware(std::shared_ptr<IUICommandMiddlware> const &middlware) {

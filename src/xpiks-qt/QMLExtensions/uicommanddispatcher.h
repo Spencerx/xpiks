@@ -36,7 +36,7 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        UICommandDispatcher(Commands::ICommandManager &commandManager, QObject *parent=0);
+        UICommandDispatcher(Commands::ICommandManager &commandManager, QObject *parent=nullptr);
 
     public:
         Q_INVOKABLE void dispatch(int commandID, QJSValue const &value);

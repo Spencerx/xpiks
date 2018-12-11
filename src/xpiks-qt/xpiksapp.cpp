@@ -317,9 +317,11 @@ void XpiksApp::setupUI(QQmlContext *context) {
 
 void XpiksApp::registerQtMetaTypes() {
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
+    qRegisterMetaType<QMLExtensions::UICommandID::CommandID>("CommandID");
 
 #ifndef INTEGRATION_TESTS
-    qmlRegisterType<QMLExtensions::UICommandID>("xpiks", 1, 0, "UICommand");
+    qmlRegisterUncreatableType<QMLExtensions::UICommandID>("xpiks", 1, 0, "UICommand",
+                                                           "Cannot create UICommandID in Qml");
     qmlRegisterType<Helpers::ClipboardHelper>("xpiks", 1, 0, "ClipboardHelper");
     qmlRegisterType<QMLExtensions::TriangleElement>("xpiks", 1, 0, "TriangleElement");
     qmlRegisterType<QMLExtensions::FolderElement>("xpiks", 1, 0, "FolderElement");

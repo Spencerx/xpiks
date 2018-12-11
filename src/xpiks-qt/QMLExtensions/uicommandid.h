@@ -19,7 +19,7 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        explicit UICommandID(QObject *parent = 0): QObject(parent) {}
+        explicit UICommandID(QObject *parent = nullptr): QObject(parent) {}
 
         // enum values must start with capital letter
         enum CommandID {
@@ -77,7 +77,7 @@ namespace QMLExtensions {
             PlainTextEdit,
             AppendSuggestedKeywords
         };
-        Q_ENUMS(CommandID)
+        Q_ENUM(CommandID)
     };
 }
 
