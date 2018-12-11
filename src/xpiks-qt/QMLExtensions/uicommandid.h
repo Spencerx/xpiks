@@ -12,14 +12,13 @@
 #define UICOMMAND_H
 
 #include <QObject>
-#include <QString>
 
 namespace QMLExtensions {
-    class UICommandID : public QObject
+    class UICommandID
     {
-        Q_OBJECT
+        Q_GADGET
     public:
-        explicit UICommandID(QObject *parent = nullptr): QObject(parent) {}
+        UICommandID() = delete;
 
         // enum values must start with capital letter
         enum CommandID {
