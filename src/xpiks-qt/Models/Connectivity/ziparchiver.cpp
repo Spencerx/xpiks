@@ -43,7 +43,7 @@ namespace Models {
 
     int ZipArchiver::getPercent() const {
         const int artworksCount = getItemsCount();
-        return artworksCount == 0 ? 0 : (m_ProcessedArtworksCount.loadAcquire() * 100 / artworksCount);
+        return artworksCount == 0 ? 0 : (m_ProcessedArtworksCount.load() * 100 / artworksCount);
     }
 
     void ZipArchiver::setInProgress(bool value) {
@@ -66,7 +66,7 @@ namespace Models {
     }
 
     void ZipArchiver::archiveCreated(int) {
-        m_ProcessedArtworksCount.fetchAndAddOrdered(1);
+        m_ProcessedArtworksCount.fetch_add(1);
         emit percentChanged();
     }
 
@@ -78,7 +78,7 @@ namespace Models {
     void ZipArchiver::archiveArtworks() {
         LOG_DEBUG << getItemsCount() << "item(s) pending";
 
-        m_ProcessedArtworksCount.storeRelease(0);
+        m_ProcessedArtworksCount.store(0);
         emit percentChanged();
 
         QHash<QString, QStringList> itemsWithSameName;
@@ -113,7 +113,7 @@ namespace Models {
         resetArtworks();
         setHasErrors(false);
         setInProgress(false);
-        m_ProcessedArtworksCount.storeRelease(0);
+        m_ProcessedArtworksCount.store(0);
         emit percentChanged();
     }
 

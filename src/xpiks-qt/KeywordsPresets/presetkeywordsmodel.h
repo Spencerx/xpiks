@@ -11,13 +11,13 @@
 #ifndef PRESETKEYWORDSMODEL_H
 #define PRESETKEYWORDSMODEL_H
 
+#include <atomic>
 #include <cstddef>
 #include <functional>
 #include <memory>
 #include <vector>
 
 #include <QAbstractListModel>
-#include <QAtomicInt>
 #include <QHash>
 #include <QModelIndex>
 #include <QObject>
@@ -198,7 +198,7 @@ namespace KeywordsPresets {
         PresetGroupsModel m_GroupsModel;
         QReadWriteLock m_PresetsLock;
         std::vector<std::shared_ptr<PresetModel>> m_PresetsList;
-        QAtomicInt m_LastUsedID;
+        std::atomic_int m_LastUsedID;
         // timer needs to be here because of the multithreading
         QTimer m_SavingTimer;
     };

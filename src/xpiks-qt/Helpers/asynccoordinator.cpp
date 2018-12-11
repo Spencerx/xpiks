@@ -34,11 +34,11 @@ namespace Helpers {
     }
 
     void AsyncCoordinator::aboutToBegin(int operationsToAdd) {
-        m_OpCount.fetchAndAddOrdered(operationsToAdd);
+        m_OpCount.fetch_add(operationsToAdd);
     }
 
     void AsyncCoordinator::justEnded() {
-        if (1 == m_OpCount.fetchAndSubOrdered(1)) {
+        if (1 == m_OpCount.fetch_sub(1)) {
             reportStatus(AllDone);
         }
     }
@@ -52,7 +52,7 @@ namespace Helpers {
     }
 
     void AsyncCoordinator::reportStatus(AsyncCoordinator::CoordinationStatus status) {
-        if (0 == m_StatusReported.fetchAndStoreOrdered(1)) {
+        if (0 == m_StatusReported.exchange(1)) {
             emit statusReported((int)status);
         }
     }

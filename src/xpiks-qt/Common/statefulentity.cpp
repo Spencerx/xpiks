@@ -38,7 +38,7 @@ namespace Common {
     void StatefulEntity::init() {
         LOG_DEBUG << m_StateName;
 
-        if (m_InitCounter.fetchAndAddOrdered(1) == 0) {
+        if (m_InitCounter.fetch_add(1) == 0) {
             m_StateMap = m_Config.readMap();
         } else {
             LOG_WARNING << "Attempt to initialize state" << m_StateName << "twice";
@@ -49,7 +49,7 @@ namespace Common {
     void StatefulEntity::sync() {
         LOG_DEBUG << m_StateName;
 
-        if (m_InitCounter.loadAcquire() > 0) {
+        if (m_InitCounter.load() > 0) {
             m_Config.writeMap(m_StateMap);
         } else {
             LOG_WARNING << "State" << m_StateName << "is not initialized!";

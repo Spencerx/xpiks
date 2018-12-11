@@ -190,7 +190,7 @@ namespace Storage {
     }
 
     int DatabaseManager::getNextID() {
-        int id = m_LastDatabaseID.fetchAndAddOrdered(1);
+        int id = m_LastDatabaseID.fetch_add(1);
         return id;
     }
 }

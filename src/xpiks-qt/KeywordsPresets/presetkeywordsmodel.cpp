@@ -741,7 +741,7 @@ namespace KeywordsPresets {
     }
 
     int PresetKeywordsModel::generateNextID() {
-        int lastID = m_LastUsedID.fetchAndAddOrdered(1);
+        int lastID = m_LastUsedID.fetch_add(1);
         return lastID;
     }
 

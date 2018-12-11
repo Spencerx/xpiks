@@ -248,8 +248,8 @@ protected:
     Helpers::HelpersQmlWrapper m_HelpersQmlWrapper;
 
     Helpers::AsyncCoordinator m_InitCoordinator;
-    std::atomic_bool m_ServicesInitialized;
-    std::atomic_bool m_AfterInitCalled;
+    std::atomic_int m_ServicesInitialized;
+    std::atomic_int m_AfterInitCalled;
 };
 
 #endif // XPIKSAPP_H

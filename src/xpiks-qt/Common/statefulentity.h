@@ -11,9 +11,9 @@
 #ifndef STATEFULENTITY_H
 #define STATEFULENTITY_H
 
+#include <atomic>
 #include <memory>
 
-#include <QAtomicInt>
 #include <QJsonValue>
 #include <QString>
 
@@ -70,7 +70,7 @@ namespace Common {
         QString m_StateName;
         Helpers::LocalConfig m_Config;
         std::shared_ptr<Helpers::JsonObjectMap> m_StateMap;
-        QAtomicInt m_InitCounter;
+        std::atomic_int m_InitCounter;
     };
 }
 

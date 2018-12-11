@@ -203,8 +203,8 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_PluginsWithActions(m_PluginManager),
     m_HelpersQmlWrapper(environment, m_ColorsModel),
     // states
-    m_ServicesInitialized(false),
-    m_AfterInitCalled(false)
+    m_ServicesInitialized(0),
+    m_AfterInitCalled(0)
 {
     QObject::connect(&m_InitCoordinator, &Helpers::AsyncCoordinator::statusReported,
                      this, &XpiksApp::servicesInitialized);
@@ -328,7 +328,7 @@ void XpiksApp::registerQtMetaTypes() {
 }
 
 void XpiksApp::start() {
-    if (m_AfterInitCalled) {
+    if (m_AfterInitCalled.fetch_add(1) != 0) {
         LOG_WARNING << "Attempt to call afterConstructionCallback() second time";
         return;
     }
@@ -341,8 +341,6 @@ void XpiksApp::start() {
     const int waitSeconds = 5;
     Helpers::AsyncCoordinatorStarter deferredStarter(m_InitCoordinator, waitSeconds);
     Q_UNUSED(deferredStarter);
-
-    m_AfterInitCalled = true;
 
     bool dbInitialized = m_DatabaseManager.initialize();
     Q_ASSERT(dbInitialized);
@@ -382,9 +380,7 @@ void XpiksApp::start() {
 
 void XpiksApp::stop() {
     LOG_DEBUG << "Shutting down...";
-    if (!m_AfterInitCalled) {
-        return;
-    }
+    Q_ASSERT(m_AfterInitCalled.load() == 1);
 
 #ifdef WITH_PLUGINS
     m_PluginManager.unloadPlugins();
@@ -952,13 +948,11 @@ void XpiksApp::cleanupModels() {
 
 void XpiksApp::servicesInitialized(int status) {
     LOG_DEBUG << "#";
-    Q_ASSERT(m_ServicesInitialized == false);
+    Q_ASSERT(m_ServicesInitialized.load() == 0);
 
     Helpers::AsyncCoordinator::CoordinationStatus coordStatus = (Helpers::AsyncCoordinator::CoordinationStatus)status;
 
-    if (m_ServicesInitialized == false) {
-        m_ServicesInitialized = true;
-
+    if (m_ServicesInitialized.fetch_add(1) == 0) {
         if (coordStatus == Helpers::AsyncCoordinator::AllDone ||
                 coordStatus == Helpers::AsyncCoordinator::Timeout) {
             afterServicesStarted();

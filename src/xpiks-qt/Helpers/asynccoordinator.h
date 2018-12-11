@@ -11,7 +11,8 @@
 #ifndef ASYNCCOORDINATOR_H
 #define ASYNCCOORDINATOR_H
 
-#include <QAtomicInt>
+#include <atomic>
+
 #include <QObject>
 #include <QString>
 #include <QTimer>
@@ -51,8 +52,8 @@ namespace Helpers {
 
     private:
         QTimer m_Timer;
-        QAtomicInt m_OpCount;
-        QAtomicInt m_StatusReported;
+        std::atomic_int m_OpCount;
+        std::atomic_int m_StatusReported;
     };
 
     class AsyncCoordinatorLocker {

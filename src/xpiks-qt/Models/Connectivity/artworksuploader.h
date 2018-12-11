@@ -33,9 +33,9 @@ namespace Models {
 }
 
 namespace libxpks {
-namespace net {
-    class FtpCoordinator;
-}
+    namespace net {
+        class FtpCoordinator;
+    }
 }
 
 namespace Connectivity {

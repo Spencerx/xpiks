@@ -15,7 +15,6 @@
 #include <memory>
 #include <vector>
 
-#include <QAtomicInt>
 #include <QMutex>
 #include <QObject>
 #include <QString>
@@ -73,8 +72,8 @@ namespace Storage {
         QMutex m_Mutex;
         Helpers::AsyncCoordinator m_FinalizeCoordinator;
         QString m_DBDirPath;
-        QAtomicInt m_LastDatabaseID;
-        std::vector<std::shared_ptr<Database> > m_DatabaseArray;
+        std::atomic_int m_LastDatabaseID;
+        std::vector<std::shared_ptr<Database>> m_DatabaseArray;
         std::atomic_bool m_Initialized;
     };
 }

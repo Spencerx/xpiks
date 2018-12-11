@@ -11,7 +11,8 @@
 #ifndef ZIPARCHIVER_H
 #define ZIPARCHIVER_H
 
-#include <QAtomicInt>
+#include <atomic>
+
 #include <QFutureWatcher>
 #include <QObject>
 #include <QString>
@@ -88,7 +89,7 @@ namespace Models {
     private:
         Artworks::ArtworksSnapshot m_ArtworksSnapshot;
         QFutureWatcher<QStringList> m_ArchiveCreator;
-        QAtomicInt m_ProcessedArtworksCount;
+        std::atomic_int m_ProcessedArtworksCount;
         volatile bool m_IsInProgress;
         volatile bool m_HasErrors;
     };
