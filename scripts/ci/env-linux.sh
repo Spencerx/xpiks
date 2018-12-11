@@ -8,6 +8,10 @@ fi
 
 source /opt/qt56/bin/qt56-env.sh
 
+# ccache
+sudo /usr/sbin/update-ccache-symlinks
+export PATH="/usr/lib/ccache:$PATH"
+
 if [ -n "$UI_TESTS" ]; then
     export DISPLAY=:99.0
     sh -e /etc/init.d/xvfb start

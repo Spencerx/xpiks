@@ -26,11 +26,6 @@ sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install qt56base qt56quick
 sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install libavcodec-dev libavdevice-dev libavformat-dev libavfilter-dev libavutil-dev libswscale-dev
 sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y ccache
 
-# Update symlinks
-sudo /usr/sbin/update-ccache-symlinks
-export PATH="/usr/lib/ccache:$PATH"
-
-
 if [ -n "$XPIKS_BINARY" ]; then
     sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -qq cppcheck
 else

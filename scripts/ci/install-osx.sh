@@ -17,5 +17,3 @@ brew install exempi
 brew install qt5
 brew install ccache
 
-export PATH="/usr/local/opt/ccache/libexec:$PATH"
-

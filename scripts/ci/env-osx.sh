@@ -3,6 +3,7 @@
 echo "Environment setup"
 
 if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-    export PATH="/usr/local/opt/qt/bin:$PATH"
-    echo 'export PATH="/usr/local/opt/qt/bin:$PATH"' >> ~/.bash_profile
+    CCACHE_PATH="/usr/local/opt/ccache/libexec"
+    QT_PATH="/usr/local/opt/qt/bin"
+    export PATH="$CCACHE_PATH:$QT_PATH:$PATH"
 fi
