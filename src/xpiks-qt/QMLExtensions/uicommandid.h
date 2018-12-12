@@ -20,7 +20,12 @@ namespace QMLExtensions {
     public:
         UICommandID() = delete;
 
-        // enum values must start with capital letter
+        // ###################### IMPORTANT ######################
+        // adding enum members here does not invalidate qml cache
+        // qt bug https://bugreports.qt.io/browse/QTBUG-61153
+        // so one needs to manually clear qml cache
+        // on macOS it's in ~/Library/Caches/Xpiks/qmlcache
+        // ###################### IMPORTANT ######################
         enum CommandID {
             // ------ General ------
             SaveSession,
