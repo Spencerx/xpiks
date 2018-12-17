@@ -40,6 +40,7 @@ namespace QMLExtensions {
             AddToUserDictionary,
             ActivateQuickBuffer,
             FixSpelling,
+            CreateArchives,
             SetupFindInArtworks,
             FindReplaceCandidates,
             ReplaceInFound,

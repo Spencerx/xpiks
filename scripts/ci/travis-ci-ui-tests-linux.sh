@@ -4,6 +4,9 @@ echo "--------------------"
 echo "Building UI tests..."
 echo "--------------------"
 
+scripts/docker/vsftpd/cleanup.sh
+scripts/docker/vsftpd/start.sh
+
 pushd src/xpiks-tests/xpiks-tests-ui
 
 qmake "CONFIG+=debug travis-ci" xpiks-tests-ui.pro

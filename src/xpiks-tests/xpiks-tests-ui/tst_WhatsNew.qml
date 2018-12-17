@@ -8,7 +8,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: TestsHost.setup()
+    Component.onCompleted: TestsHost.setup(testCase.name)
 
     WhatsNewDialog {
         id: whatsNewDialog
@@ -16,6 +16,7 @@ Item {
     }
 
     TestCase {
+        id: testCase
         name: "WhatsNew"
         when: windowShown
 
@@ -24,6 +25,10 @@ Item {
 
         function cleanupTestCase() {
             TestsHost.cleanupTest()
+        }
+
+        function cleanup() {
+            TestsHost.cleanup()
         }
     }
 }

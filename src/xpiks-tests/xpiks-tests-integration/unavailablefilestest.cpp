@@ -32,8 +32,9 @@ int UnavailableFilesTest::doTest() {
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
-    QSignalSpy artworksListSpy(&m_TestsApp.getArtworksListModel(), SIGNAL(unavailableArtworksFound()));
-    QSignalSpy proxySpy(&m_TestsApp.getArtworkProxyModel(), SIGNAL(itemBecomeUnavailable()));
+    QSignalSpy artworksListSpy(&m_TestsApp.getArtworksListModel(),
+                               &Models::ArtworksListModel::unavailableArtworksFound);
+    QSignalSpy proxySpy(&m_TestsApp.getArtworkProxyModel(), &Models::ArtworkProxyModel::itemBecomeUnavailable);
 
     m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupArtworkEdit, QVariant::fromValue(0));
 

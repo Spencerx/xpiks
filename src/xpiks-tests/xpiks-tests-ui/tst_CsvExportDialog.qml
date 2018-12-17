@@ -8,7 +8,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: TestsHost.setup()
+    Component.onCompleted: TestsHost.setup(testCase.name)
 
     QtObject {
         id: appHost
@@ -27,8 +27,9 @@ Item {
     }
 
     TestCase {
+        id: testCase
         name: "CsvExport"
-        when: windowShown && (loader.status == Loader.Ready)
+        when: windowShown && (loader.status == Loader.Ready) && TestsHost.isReady
         property var columnsListView
         property var exportPlanModelsListView
         property var exportDialog: loader.item
@@ -50,6 +51,7 @@ Item {
             var initialCount = exportPlanModelsListView.count
             var button = findChild(exportDialog, "addExportPlanButton")
             mouseClick(button)
+            wait(TestsHost.smallSleepTime)
             compare(exportPlanModelsListView.count, initialCount + 1)
         }
     }

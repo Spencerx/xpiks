@@ -9,9 +9,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: {
-        console.log(TestsHost.scoreme)
-    }
+    Component.onCompleted: TestsHost.setup(testCase.name)
 
     Rectangle {
         anchors.fill: parent
@@ -96,17 +94,17 @@ Item {
     }
 
     TestCase {
+        id: testCase
         name: "EditableTagsTests"
         when: windowShown
         property var input
 
         function initTestCase() {
-            TestsHost.setup()
             input = findChild(editableTags, "nextTagTextInput")
         }
 
         function cleanupTestCase() {
-            TestsHost.cleanup()
+            TestsHost.cleanupTest()
         }
 
         function cleanup() {
@@ -117,6 +115,7 @@ Item {
             completionRequestedSpy.clear()
             copyAllSpy.clear()
             input.text = ""
+            TestsHost.cleanup()
         }
 
         function test_PressCommaAddsKeyword() {

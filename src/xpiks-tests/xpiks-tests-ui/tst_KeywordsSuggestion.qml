@@ -11,7 +11,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: TestsHost.setup()
+    Component.onCompleted: TestsHost.setup(testCase.name)
 
     QtObject {
         id: appHost
@@ -36,7 +36,7 @@ Item {
     TestCase {
         id: testCase
         name: "SuggestKeywords"
-        when: windowShown && (loader.status == Loader.Ready)
+        when: windowShown && (loader.status == Loader.Ready) && TestsHost.isReady
         property var suggestKeywordsDialog: loader.item
         property var searchInput
         property var searchButton
@@ -59,12 +59,7 @@ Item {
 
         function setupSearch() {
             searchInput.forceActiveFocus()
-            keyClick(Qt.Key_V)
-            keyClick(Qt.Key_E)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_O)
-            keyClick(Qt.Key_R)
+            TestUtils.keyboardEnterText('vector')
 
             suggestKeywordsDialog.keywordsSuggestor.selectedSourceIndex = 3
         }
@@ -81,13 +76,17 @@ Item {
             tryCompare(suggestionsRepeater, "count", 3, 3000)
 
             mouseClick(suggestionsRepeater.itemAt(0))
+            wait(TestsHost.smallSleepTime)
             mouseClick(suggestionsRepeater.itemAt(1))
+            wait(TestsHost.smallSleepTime)
             mouseClick(suggestionsRepeater.itemAt(2))
+            wait(TestsHost.smallSleepTime)
+
             wait(TestsHost.normalSleepTime)
 
-            compare(suggestKeywordsDialog.keywordsSuggestor.suggestedKeywordsCount, 3)
             compare(suggestKeywordsDialog.keywordsSuggestor.getSuggestedKeywords().sort(),
                     ["graphic", "line", "vector"])
+            compare(suggestKeywordsDialog.keywordsSuggestor.suggestedKeywordsCount, 3)
         }
 
         function test_removeCommonAppendsToOther() {

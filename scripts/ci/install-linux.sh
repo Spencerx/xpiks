@@ -33,7 +33,7 @@ else
 fi
 
 if [ -n "$INTEGRATION_TESTS" ]; then
-    sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y vsftpd
+#    sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y vsftpd
     sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y libexiv2-dev expat
 fi
 

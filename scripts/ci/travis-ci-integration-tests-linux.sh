@@ -4,6 +4,9 @@ echo "-----------------------------"
 echo "Building Integration tests..."
 echo "-----------------------------"
 
+REPO_ROOT=$(git rev-parse --show-toplevel)
+scripts/docker/vsftpd/start.sh
+
 pushd src/xpiks-tests/plugins-for-tests/helloworld/xpiks-helloworld-plugin/
 qmake "CONFIG+=debug travis-ci" xpiks-helloworld-plugin.pro
 make -j$(nproc)
@@ -32,8 +35,7 @@ if [ $exitcode != 0 ]; then
     exit $exitcode
 else
     # cleanup after ftp upload test
-    ls -la ~ | grep "*.jpg"
-    sudo rm /var/ftp/incoming/*
+    "${REPO_ROOT}/scripts/docker/vsftpd/cleanup.sh"
 fi
 
 ./xpiks-tests-integration --in-memory > tests_in_memory.log

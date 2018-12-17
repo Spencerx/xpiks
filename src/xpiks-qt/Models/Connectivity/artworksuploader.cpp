@@ -56,6 +56,7 @@ namespace Models {
     }
 
     void ArtworksUploader::setFtpCoordinator(const std::shared_ptr<libxpks::net::FtpCoordinator> &ftpCoordinator) {
+        LOG_DEBUG << "#";
         auto *coordinator = ftpCoordinator.get();
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadStarted, this, &ArtworksUploader::onUploadStarted);
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::uploadFinished, this, &ArtworksUploader::allFinished);
@@ -64,10 +65,11 @@ namespace Models {
         QObject::connect(coordinator, &libxpks::net::FtpCoordinator::transferFailed,
                          &m_UploadWatcher, &Connectivity::UploadWatcher::reportUploadErrorHandler);
 
-        m_FtpCoordinator = std::dynamic_pointer_cast<Connectivity::IFtpCoordinator>(ftpCoordinator);
+        m_FtpCoordinator = ftpCoordinator;
     }
 
     void ArtworksUploader::setPercent(double value) {
+        LOG_INFO << value;
         if (fabs(m_Percent - value) > PERCENT_EPSILON) {
             m_Percent = value;
             emit percentChanged();
@@ -75,6 +77,7 @@ namespace Models {
     }
 
     void ArtworksUploader::setInProgress(bool value) {
+        LOG_INFO << value;
         if (m_IsInProgress != value) {
             m_IsInProgress = value;
             emit inProgressChanged();
@@ -82,6 +85,7 @@ namespace Models {
     }
 
     void ArtworksUploader::setHasErrors(bool value) {
+        LOG_INFO << value;
         if (m_HasErrors != value) {
             m_HasErrors = value;
             emit hasErrorsChanged();
@@ -90,6 +94,7 @@ namespace Models {
 
     void ArtworksUploader::onUploadStarted() {
         LOG_DEBUG << "#";
+        Q_ASSERT(!getInProgress());
         setHasErrors(false);
         setInProgress(true);
         setPercent(0);

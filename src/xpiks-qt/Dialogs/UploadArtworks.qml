@@ -47,6 +47,28 @@ StaticDialogBase {
         }
     }
 
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.CreateArchives]
+        onDispatched: {
+            if (!value) {
+                doStartUpload()
+            }
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.SetupCreatingArchives]
+        onDispatched: {
+            Common.launchDialog("Dialogs/ZipArtworksDialog.qml",
+                                uploadArtworksComponent.componentParent,
+                                {
+                                    immediateProcessing: true
+                                });
+        }
+    }
+
     function closePopup() {
         secretsManager.purgeMasterPassword()
         warningsModel.resetShowSelected()
@@ -63,19 +85,7 @@ StaticDialogBase {
 
     function startUpload() {
         if (artworksUploader.needCreateArchives()) {
-            var callbackObject = {
-                afterZipped: function() {
-                    doStartUpload();
-                }
-            }
-
             dispatcher.dispatch(UICommand.SetupCreatingArchives, {})
-            Common.launchDialog("Dialogs/ZipArtworksDialog.qml",
-                                uploadArtworksComponent.componentParent,
-                                {
-                                    immediateProcessing: true,
-                                    callbackObject: callbackObject
-                                });
         } else {
             doStartUpload();
         }
@@ -272,7 +282,7 @@ StaticDialogBase {
                 anchors.bottomMargin: 0
                 anchors.rightMargin: 0
                 flickable: uploadHostsListView
-                canShow: !backgroundMA.containsMouse && !rightPanelMA.containsMouse
+                canShow: !rightPanelMA.containsMouse
             }
 
             Item {
@@ -321,9 +331,11 @@ StaticDialogBase {
                 spacing: 0
 
                 Repeater {
+                    objectName: "tabsRepeater"
                     model: [i18.n + qsTr("General"), i18.n + qsTr("Advanced")]
                     delegate: CustomTab {
                         width: tabsHeader.width/2
+                        objectName: 'tabDelegate'
                         property int delegateIndex: index
                         tabIndex: delegateIndex
                         isSelected: tabIndex === optionsTabView.currentIndex
@@ -730,6 +742,7 @@ StaticDialogBase {
                         StyledCheckbox {
                             id: zipBeforeUploadCheckBox
                             text: i18.n + qsTr("Zip vector with preview")
+                            objectName: 'zipBeforeUploadCheckBox'
                             Component.onCompleted: checked = uploadHostsListView.currentItem ? uploadHostsListView.currentItem.myData.zipbeforeupload : false
 
                             onClicked: {

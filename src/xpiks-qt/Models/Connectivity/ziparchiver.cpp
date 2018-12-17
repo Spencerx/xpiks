@@ -23,6 +23,9 @@
 #include "Artworks/artworkssnapshot.h"
 #include "Artworks/imageartwork.h"
 #include "Common/logging.h"
+#include "Commands/Base/callbackcommand.h"
+#include "Commands/Base/compositecommand.h"
+#include "Commands/Editing/clearactionmodeltemplate.h"
 #include "Helpers/cpphelpers.h"
 
 #ifndef CORE_TESTS
@@ -71,41 +74,21 @@ namespace Models {
     }
 
     void ZipArchiver::allFinished() {
+        LOG_DEBUG << "#";
+        emit percentChanged();
         emit finishedProcessing();
         setInProgress(false);
     }
 
-    void ZipArchiver::archiveArtworks() {
-        LOG_DEBUG << getItemsCount() << "item(s) pending";
-
-        m_ProcessedArtworksCount.store(0);
-        emit percentChanged();
-
-        QHash<QString, QStringList> itemsWithSameName;
-        fillFilenamesHash(itemsWithSameName);
-
-        if (itemsWithSameName.empty()) {
-            LOG_INFO << "No items to zip. Exiting...";
-            setInProgress(false);
-            emit finishedProcessing();
-            return;
+    std::shared_ptr<Commands::ICommand> ZipArchiver::getActionCommand(bool yesno) {
+        if (yesno) {
+            return std::make_shared<Commands::CompositeCommand>(
+                        std::initializer_list<std::shared_ptr<Commands::ICommand>>{
+                            std::make_shared<Commands::CallbackCommand>(
+                            std::bind(&ZipArchiver::archiveArtworks, this))});
+        } else {
+            return std::make_shared<Commands::ClearActionModelCommand>(*this);
         }
-
-        setInProgress(true);
-        setHasErrors(false);
-        emit startedProcessing();
-
-#if !defined(CORE_TESTS) && !defined(UI_TESTS)
-        QList<QStringList> items = itemsWithSameName.values();
-#else
-        LOG_DEBUG << "Skipping real zipping";
-        QList<QStringList> items;
-#endif
-
-#ifndef CORE_TESTS
-        LOG_INFO << "Creating zip archives for" << items.length() << "item(s)";
-        m_ArchiveCreator.setFuture(QtConcurrent::mapped(items, Helpers::zipFiles));
-#endif
     }
 
     void ZipArchiver::resetModel() {
@@ -191,5 +174,33 @@ namespace Models {
             }
         }
     }
-}
 
+    void ZipArchiver::archiveArtworks() {
+        LOG_DEBUG << getItemsCount() << "item(s) pending";
+
+        m_ProcessedArtworksCount.store(0);
+        emit percentChanged();
+
+        QHash<QString, QStringList> itemsWithSameName;
+        fillFilenamesHash(itemsWithSameName);
+
+        if (itemsWithSameName.empty()) {
+            LOG_INFO << "No items to zip. Exiting...";
+            setInProgress(false);
+            emit finishedProcessing();
+            return;
+        }
+
+        setInProgress(true);
+        setHasErrors(false);
+        emit startedProcessing();
+
+#if !defined(CORE_TESTS)
+        QList<QStringList> items = itemsWithSameName.values();
+        LOG_INFO << "Creating zip archives for" << items.length() << "item(s)";
+        m_ArchiveCreator.setFuture(QtConcurrent::mapped(items, Helpers::zipFiles));
+#else
+        LOG_DEBUG << "Skipping real zipping";
+#endif
+    }
+}

@@ -261,7 +261,7 @@ StaticDialogBase {
                 anchors.bottomMargin: 0
                 anchors.rightMargin: 0
                 flickable: exportPlanModelsListView
-                canShow: !backgroundMA.containsMouse && !rightPanelMA.containsMouse
+                canShow: !rightPanelMA.containsMouse
             }
 
             Item {
@@ -380,8 +380,8 @@ StaticDialogBase {
 
                         onEditingFinished: {
                             if (text.length == 0) {
-                                if (presetNamesListView.currentItem) {
-                                    presetNamesListView.currentItem.myData.editname = qsTr("Untitled")
+                                if (exportPlanModelsListView.currentItem) {
+                                    exportPlanModelsListView.currentItem.myData.editname = qsTr("Untitled")
                                     csvExportModel.requestSave()
                                 }
                             }

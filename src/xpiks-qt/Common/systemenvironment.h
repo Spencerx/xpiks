@@ -32,7 +32,7 @@ namespace Common {
         virtual bool getIsInMemoryOnly() const override { return m_InMemoryExperiment; }
         virtual bool getIsRecoveryMode() const override { return m_IsRecoveryMode; }
 
-#ifdef INTEGRATION_TESTS
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     protected:
         const QString &getSessionTag() const { return m_SessionTag; }
 #endif

@@ -16,7 +16,7 @@ Item {
         openedDialogsCount -= 1
     }
 
-    Component.onCompleted: TestsHost.setup()
+    Component.onCompleted: TestsHost.setup(testCase.name)
 
     QtObject {
         id: appHost
@@ -91,7 +91,7 @@ Item {
     TestCase {
         id: testCase
         name: "MainGrid"
-        when: windowShown && (loader.status == Loader.Ready) && (listenersLoader.status == Loader.Ready)
+        when: windowShown && (loader.status == Loader.Ready) && TestsHost.isReady && (listenersLoader.status == Loader.Ready)
         property var mainGrid: loader.item
         property var artworksHost
         property var workflowHost
@@ -166,17 +166,13 @@ Item {
             TestUtils.clearEdit(keywordsEdit)
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_W)
-            keyClick(Qt.Key_E)
-            keyClick(Qt.Key_A)
+            TestUtils.keyboardEnterText('wea')
 
             wait(TestsHost.smallSleepTime)
 
             verify(typeof workflowHost.autoCompleteBox !== "undefined")
 
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_H)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('the')
 
             wait(TestsHost.smallSleepTime)
 
@@ -198,9 +194,7 @@ Item {
             TestUtils.clearEdit(keywordsEdit)
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_R)
-            keyClick(Qt.Key_U)
+            TestUtils.keyboardEnterText('tru')
 
             wait(TestsHost.smallSleepTime)
 
@@ -221,14 +215,7 @@ Item {
             TestUtils.clearEdit(keywordsEdit)
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_I)
-            keyClick(Qt.Key_N)
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_E)
-            keyClick(Qt.Key_R)
-            keyClick(Qt.Key_F)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
+            TestUtils.keyboardEnterText('interfac')
 
             wait(TestsHost.smallSleepTime)
 
@@ -252,14 +239,10 @@ Item {
             TestUtils.clearEdit(keywordsEdit)
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_I)
-            keyClick(Qt.Key_N)
+            TestUtils.keyboardEnterText('in')
             keyClick(Qt.Key_Space)
 
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
+            TestUtils.keyboardEnterText('spac')
 
             wait(TestsHost.smallSleepTime)
 
@@ -299,15 +282,10 @@ Item {
 
             var editableTags = findChild(artworkDelegate, "editableTags")
 
-            keyClick(Qt.Key_I)
-            keyClick(Qt.Key_N)
+            TestUtils.keyboardEnterText('in')
             keyClick(Qt.Key_Space)
 
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('space')
             keyClick(Qt.Key_Comma)
 
             wait(TestsHost.smallSleepTime)
@@ -329,18 +307,10 @@ Item {
 
             var descriptionInput = findChild(artworkDelegate, "descriptionTextInput")
             descriptionInput.forceActiveFocus()
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('space')
 
             keywordsEdit.forceActiveFocus()
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('space')
 
             keyClick(Qt.Key_Comma)
 
@@ -465,9 +435,7 @@ Item {
             TestUtils.clearEdit(keywordsEdit)
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_E)
-            keyClick(Qt.Key_P)
+            TestUtils.keyboardEnterText('tep')
 
             keyClick(Qt.Key_Comma)
             wait(TestsHost.smallSleepTime)
@@ -579,12 +547,7 @@ Item {
 
             // setupSearch() from tst_KeywordsSuggestion.qml
             searchInput.forceActiveFocus()
-            keyClick(Qt.Key_V)
-            keyClick(Qt.Key_E)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_O)
-            keyClick(Qt.Key_R)
+            TestUtils.keyboardEnterText('vector')
 
             suggestKeywordsDialog.keywordsSuggestor.selectedSourceIndex = 3
             // --
@@ -640,15 +603,11 @@ Item {
             dispatcher.dispatch(UICommand.SetupFindInArtworks, {})
             wait(TestsHost.smallSleepTime)
 
-            keyClick(Qt.Key_B)
-            keyClick(Qt.Key_O)
-            keyClick(Qt.Key_B)
+            TestUtils.keyboardEnterText('bob')
 
             keyClick(Qt.Key_Tab)
 
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_T)
+            TestUtils.keyboardEnterText('cat')
 
             keyClick(Qt.Key_Return)
             wait(TestsHost.smallSleepTime)
@@ -695,9 +654,7 @@ Item {
                     keywordsEdit.forceActiveFocus()
                 }
 
-                keyClick(Qt.Key_B)
-                keyClick(Qt.Key_O)
-                keyClick(Qt.Key_B)
+                TestUtils.keyboardEnterText('bob')
                 keyClick(Qt.Key_Tab)
             }
 

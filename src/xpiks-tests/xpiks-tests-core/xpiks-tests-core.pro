@@ -196,7 +196,14 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp \
     ../../xpiks-qt/Commands/Base/compositecommand.cpp \
     ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp \
-    ../../xpiks-qt/Helpers/logger.cpp
+    ../../xpiks-qt/Helpers/logger.cpp \
+    uploadinforepository_tests.cpp \
+    ../../xpiks-qt/Encryption/secretsmanager.cpp \
+    ../../xpiks-qt/Models/Connectivity/uploadinforepository.cpp \
+    ../../xpiks-qt/Microstocks/stocksftplistmodel.cpp \
+    ../../xpiks-qt/Services/AutoComplete/autocompletemodel.cpp \
+    ../../xpiks-qt/Services/AutoComplete/stringsautocompletemodel.cpp \
+    ../../xpiks-qt/Connectivity/ftphelpers.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -370,5 +377,14 @@ HEADERS += \
     ../../xpiks-qt/Commands/Base/compositecommand.h \
     Mocks/currentartworksourcemock.h \
     ../../xpiks-qt/Commands/UI/sourcetargetcommand.h \
-    ../../xpiks-qt/Commands/UI/currenteditablecommands.h
+    ../../xpiks-qt/Commands/UI/currenteditablecommands.h \
+    uploadinforepository_tests.h \
+    ../../xpiks-qt/Encryption/secretsmanager.h \
+    Mocks/requestsservicemock.h \
+    ../../xpiks-qt/Models/Connectivity/uploadinforepository.h \
+    ../../xpiks-qt/Services/AutoComplete/autocompletemodel.h \
+    ../../xpiks-qt/Microstocks/stocksftplistmodel.h \
+    ../../xpiks-qt/Services/AutoComplete/stringsautocompletemodel.h \
+    ../../xpiks-qt/Models/Connectivity/uploadinfo.h \
+    ../../xpiks-qt/Connectivity/ftphelpers.h
 

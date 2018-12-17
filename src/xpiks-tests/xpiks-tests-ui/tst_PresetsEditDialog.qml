@@ -10,7 +10,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: TestsHost.setup()
+    Component.onCompleted: TestsHost.setup(testCase.name)
 
     QtObject {
         id: appHost
@@ -32,7 +32,7 @@ Item {
     TestCase {
         id: testCase
         name: "PresetsTests"
-        when: windowShown && (loader.status == Loader.Ready)
+        when: windowShown && (loader.status == Loader.Ready) && TestsHost.isReady
         property var presetEditsDialog: loader.item
         property var presetNamesListView
         property var keywordsEdit
@@ -83,17 +83,13 @@ Item {
 
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_W)
-            keyClick(Qt.Key_E)
-            keyClick(Qt.Key_A)
+            TestUtils.keyboardEnterText('wea')
 
             wait(TestsHost.smallSleepTime)
 
             verify(typeof presetEditsDialog.autoCompleteBox !== "undefined")
 
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_H)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('the')
 
             wait(TestsHost.smallSleepTime)
 
@@ -112,9 +108,7 @@ Item {
 
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_R)
-            keyClick(Qt.Key_U)
+            TestUtils.keyboardEnterText('tru')
 
             wait(TestsHost.smallSleepTime)
 
@@ -133,14 +127,7 @@ Item {
 
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_I)
-            keyClick(Qt.Key_N)
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_E)
-            keyClick(Qt.Key_R)
-            keyClick(Qt.Key_F)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
+            TestUtils.keyboardEnterText('interfac')
 
             wait(TestsHost.smallSleepTime)
 
@@ -161,14 +148,10 @@ Item {
 
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_I)
-            keyClick(Qt.Key_N)
+            TestUtils.keyboardEnterText('in')
             keyClick(Qt.Key_Space)
 
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
+            TestUtils.keyboardEnterText('spac')
 
             wait(TestsHost.smallSleepTime)
 

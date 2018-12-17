@@ -11,24 +11,10 @@
 #ifndef FTPHELPERS_H
 #define FTPHELPERS_H
 
-#include <memory>
-
 #include <QString>
 
-namespace Models {
-    class ProxySettings;
-}
-
-namespace libxpks {
-    namespace net {
-        class UploadContext;
-    }
-}
-
 namespace Connectivity {
-    void fillCurlOptions(void *curlHandle, const std::shared_ptr<libxpks::net::UploadContext> &context, const QString &remoteUrl);
     QString sanitizeHost(const QString &inputHost);
-    void fillProxySettings(void *curlHandle, const Models::ProxySettings *proxySettings);
 }
 
 #endif // FTPHELPERS_H

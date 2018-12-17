@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtTest 1.1
+import xpiks 1.0
 import XpiksTests 1.0
 import "../../xpiks-qt/Dialogs"
 import "TestUtils.js" as TestUtils
@@ -9,7 +10,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: TestsHost.setup()
+    Component.onCompleted: TestsHost.setup(testCase.name, true)
 
     Loader {
         id: loader
@@ -18,6 +19,7 @@ Item {
         focus: true
 
         sourceComponent: UploadArtworks {
+            componentParent: root
             anchors.fill: parent
         }
     }
@@ -25,7 +27,7 @@ Item {
     TestCase {
         id: testCase
         name: "UploadArtworks"
-        when: windowShown && (loader.status == Loader.Ready)
+        when: windowShown && (loader.status == Loader.Ready) && TestsHost.isReady
         property var uploadDialog: loader.item
         property var uploadHostsListView
         property var addExportPlanButton
@@ -73,12 +75,7 @@ Item {
 
             verify(typeof generalTab.autoCompleteBox !== "undefined")
 
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_H)
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_R)
-            keyClick(Qt.Key_S)
+            TestUtils.keyboardEnterText('shttrs')
 
             keyClick(Qt.Key_Down)
             wait(TestsHost.smallSleepTime)
@@ -108,11 +105,7 @@ Item {
             verify(typeof generalTab.autoCompleteBox !== "undefined")
 
             keyClick(Qt.Key_S, Qt.ShiftModifier)
-            keyClick(Qt.Key_H)
-            keyClick(Qt.Key_U)
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('hutte')
 
             keyClick(Qt.Key_Down)
             wait(TestsHost.smallSleepTime)
@@ -141,10 +134,7 @@ Item {
 
             verify(typeof generalTab.autoCompleteBox !== "undefined")
 
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_H)
-            keyClick(Qt.Key_U)
-            keyClick(Qt.Key_T)
+            TestUtils.keyboardEnterText('shut')
 
             keyClick(Qt.Key_Tab)
             wait(TestsHost.smallSleepTime)
@@ -161,19 +151,7 @@ Item {
             keyClick(Qt.Key_Tab)
 
             // ftp address
-            keyClick(Qt.Key_F)
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_Period)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_B)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_D)
-            keyClick(Qt.Key_E)
-            keyClick(Qt.Key_F)
-            keyClick(Qt.Key_Period)
-            keyClick(Qt.Key_G)
-            keyClick(Qt.Key_H)
+            TestUtils.keyboardEnterText('ftp.abcdef.gh')
 
             // username and password
             keyClick(Qt.Key_Tab)
@@ -194,8 +172,67 @@ Item {
             mouseClick(button)
 
             var failedLink = findChild(uploadDialog, "failedArtworksStatus")
-            // 5 items with vectors, no zipping -> 10 items
-            tryCompare(failedLink, "text", "10 failed uploads", 10000)
+            // 2 items with vectors, no zipping -> 4 items
+            tryCompare(failedLink, "text", "4 failed uploads", 10000)
+        }
+
+        function test_zipAndUpload() {
+            if (!TestsHost.ftpServerEnabled) { return; }
+
+            filteredArtworksListModel.selectFilteredArtworks()
+
+            mouseClick(addExportPlanButton)
+
+            // leave title as "Untitled"
+            keyClick(Qt.Key_Tab)
+
+            // ftp address
+            TestUtils.keyboardEnterText('127.0.0.1')
+
+            // username and password
+            keyClick(Qt.Key_Tab)
+            TestUtils.keyboardEnterText('ftpuser')
+            keyClick(Qt.Key_Tab)
+            TestUtils.keyboardEnterText('ftppasswd')
+
+            // select host
+            var host = TestUtils.getDelegateInstanceAt(uploadHostsListView.contentItem,
+                                                       "sourceWrapper",
+                                                       0)
+            var checkbox = findChild(host, "itemCheckedCheckbox")
+            mouseClick(checkbox)
+            wait(TestsHost.smallSleepTime)
+
+            var tabsRepeater = findChild(uploadDialog, 'tabsRepeater')
+            var advancedTab = tabsRepeater.itemAt(1)
+            mouseClick(advancedTab)
+            wait(TestsHost.smallSleepTime)
+
+            var zipCheckbox = findChild(uploadDialog, 'zipBeforeUploadCheckBox')
+            mouseClick(zipCheckbox)
+            wait(TestsHost.smallSleepTime)
+
+            mouseClick(tabsRepeater.itemAt(0))
+
+            verify(!xpiksApp.uploadedFilesExist())
+
+            // do upload now
+            var button = findChild(uploadDialog, "uploadButton")
+            mouseClick(button)
+
+            var artworkUploader = dispatcher.getCommandTarget(UICommand.SetupUpload)
+            var zipArchiver = dispatcher.getCommandTarget(UICommand.SetupCreatingArchives)
+
+            tryCompare(zipArchiver, "inProgress", true, 5000)
+            tryCompare(zipArchiver, "inProgress", false, 5000)
+            compare(zipArchiver.isError, false)
+
+            tryCompare(artworkUploader, "inProgress", true, 5000)
+            tryCompare(artworkUploader, "inProgress", false, 5000)
+            compare(artworkUploader.isError, false)
+
+            wait(TestsHost.normalSleepTime)
+            verify(xpiksApp.uploadedFilesExist())
         }
     }
 }

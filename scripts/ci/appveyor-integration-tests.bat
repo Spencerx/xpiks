@@ -23,6 +23,8 @@ if "%mode%" == "build" (
 set testsexitcode=0
 
 if "%mode%" == "run" (
+    rem scripts\docker\vsftpd\start.bat
+
     pushd src\xpiks-tests\xpiks-tests-integration
     copy ..\..\..\libs\%configuration%\*.dll .
 
@@ -47,6 +49,10 @@ if "%mode%" == "run" (
     type tests.log | findstr /v /i /c:" debug "
     appveyor PushArtifact tests.log
     popd
+)
+
+if "%mode%" == "stop" (
+    rem scripts\docker\vsftpd\stop.bat
 )
 
 goto :EOF

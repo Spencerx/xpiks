@@ -12,6 +12,7 @@
 #include "Commands/Files/removefilescommand.h"
 #include "Commands/commandmanager.h"
 #include "Common/logging.h"
+#include "Helpers/filehelpers.h"
 #include "MetadataIO/csvexportmodel.h"
 #include "MetadataIO/metadataiocoordinator.h"
 #include "Microstocks/stocksftplistmodel.h"
@@ -270,7 +271,9 @@ void XpiksTestsApp::initialize() {
     m_SettingsModel.setExifToolPath(findFullPathForTests("xpiks-qt/deps/exiftool/exiftool"));
 #endif
 
-    m_SwitcherModel.setRemoteConfigOverride(findFullPathForTests("configs-for-tests/tests_switches.json"));
+    m_SwitcherModel.setRemoteConfigOverride(
+                Helpers::readAllFile(
+                    findFullPathForTests("configs-for-tests/tests_switches.json")));
     QString csvExportPlansPath;
     if (!tryFindFullPathForTests("api/v1/csv_export_plans.json", csvExportPlansPath)) {
         if (!tryFindFullPathForTests("xpiks-api/api/v1/csv_export_plans.json", csvExportPlansPath)) {
@@ -278,7 +281,7 @@ void XpiksTestsApp::initialize() {
             tryFindFullPathForTests("configs-for-tests/csv_export_plans.json", csvExportPlansPath);
         }
     }
-    m_CsvExportModel.setRemoteConfigOverride(csvExportPlansPath);
+    m_CsvExportModel.setRemoteConfigOverride(Helpers::readAllFile(csvExportPlansPath));
 
     QString stocksFtpPath;
     if (!tryFindFullPathForTests("api/v1/stocks_ftp.json", stocksFtpPath)) {
@@ -287,5 +290,5 @@ void XpiksTestsApp::initialize() {
             tryFindFullPathForTests("configs-for-tests/stocks_ftp.json", stocksFtpPath);
         }
     }
-    m_UploadInfoRepository.accessStocksList().setRemoteOverride(stocksFtpPath);
+    m_UploadInfoRepository.accessStocksList().setRemoteOverride(Helpers::readAllFile(stocksFtpPath));
 }

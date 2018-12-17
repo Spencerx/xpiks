@@ -46,9 +46,11 @@ namespace Encryption {
 
         const int length = inputData.size();
         int encryptionLength = getAlignedSize(length, 16);
+        Q_ASSERT(encryptionLength % 16 == 0 && encryptionLength >= length);
 
-        QByteArray encodingBuffer(encryptionLength, 0);
+        QByteArray encodingBuffer(encryptionLength, '\0');
         inputData.resize(encryptionLength);
+        for (int i = length; i < encryptionLength; i++) { inputData[i] = 0; }
 
         AES_CBC_encrypt_buffer((uint8_t*)encodingBuffer.data(), (uint8_t*)inputData.data(), encryptionLength, (const uint8_t*)keyData.data(), iv);
 
@@ -65,11 +67,13 @@ namespace Encryption {
         const int length = hexEncodedText.size();
         int encryptionLength = getAlignedSize(length, 16);
 
-        QByteArray encodingBuffer(encryptionLength, 0);
+        QByteArray encodingBuffer(encryptionLength, '\0');
 
         QByteArray encodedText = QByteArray::fromHex(hexEncodedText.toLatin1());
+        const int encodedOriginalSize = encodedText.size();
         Q_ASSERT(encodedText.length() <= encryptionLength);
         encodedText.resize(encryptionLength);
+        for (int i = encodedOriginalSize; i < encryptionLength; i++) { encodedText[i] = 0; }
 
         AES_CBC_decrypt_buffer((uint8_t*)encodingBuffer.data(), (uint8_t*)encodedText.data(), encryptionLength, (const uint8_t*)keyData.data(), iv);
 

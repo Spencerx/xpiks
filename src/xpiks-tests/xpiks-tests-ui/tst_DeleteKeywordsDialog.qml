@@ -11,7 +11,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: TestsHost.setup()
+    Component.onCompleted: TestsHost.setup(testCase.name)
 
     QtObject {
         id: appHost
@@ -37,7 +37,7 @@ Item {
     TestCase {
         id: testCase
         name: "DeleteKeywords"
-        when: windowShown && (loader.status == Loader.Ready)
+        when: windowShown && (loader.status == Loader.Ready) && TestsHost.isReady
         property var deleteKeywordsDialog: loader.item
         property var deleteEditableTags
         property var commonEditableTags

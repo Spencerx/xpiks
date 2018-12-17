@@ -33,9 +33,7 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
     logger.log(logLine);
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
-    if ((type == QtFatalMsg) ||
-            (type == QtCriticalMsg) ||
-            (type == QtWarningMsg)) {
+    if ((type == QtFatalMsg) || (type == QtCriticalMsg)) {
         logger.abortFlush();
     }
 #endif
@@ -95,7 +93,6 @@ namespace Helpers {
     void Logger::stop() {
         // will make waiting flush() call unblocked if any
         doLog("Logging stopped.");
-        flushAll();
     }
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
@@ -170,7 +167,8 @@ namespace Helpers {
         logItems->clear();
     }
 
-    Logger::Logger() {
+    Logger::Logger()
+    {
         m_QueueLogTo = &m_LogsStorage[0];
         m_QueueFlushFrom = &m_LogsStorage[1];
         m_MemoryOnly = false;

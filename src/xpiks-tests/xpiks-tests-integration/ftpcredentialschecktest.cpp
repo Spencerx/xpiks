@@ -19,12 +19,12 @@ void FtpCredentialsCheckTest::setup() {
 }
 
 int FtpCredentialsCheckTest::doTest() {
-    const QString host = "localhost";
+    const QString host = "127.0.0.1";
 
     Models::ArtworksUploader &uploader = m_TestsApp.getArtworksUploader();
-    QSignalSpy spy(&uploader, SIGNAL(credentialsChecked(bool, const QString &)));
+    QSignalSpy spy(&uploader, &Models::ArtworksUploader::credentialsChecked);
 
-    uploader.checkCredentials(host, "anonymous", "anonymous", false, false);
+    uploader.checkCredentials(host, "ftpuser", "ftppasswd", false, false);
 
     VERIFY(spy.wait(5000), "Credentials were not checked");
     VERIFY(spy.count() == 1, "Received several testing results");

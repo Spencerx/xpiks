@@ -1,10 +1,14 @@
 #include "xpiksuitestsapp.h"
 
 #include <memory>
+#include <stdexcept>
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QDir>
+#include <QFileInfo>
 #include <QJSValue>
+#include <QList>
 #include <QString>
 #include <QThread>
 
@@ -14,9 +18,12 @@
 #include "Commands/Files/addfilescommand.h"
 #include "Commands/commandmanager.h"
 #include "Common/flags.h"
+#include "Common/isystemenvironment.h"
 #include "Common/logging.h"
 #include "Common/types.h"
 #include "Helpers/indicesranges.h"
+#include "Helpers/filehelpers.h"
+#include "Filesystem/filescollection.h"
 #include "KeywordsPresets/presetkeywordsmodel.h"
 #include "KeywordsPresets/presetmodel.h"
 #include "MetadataIO/csvexportmodel.h"
@@ -41,6 +48,8 @@
 
 #include "../xpiks-tests-core/Mocks/filescollectionmock.h"
 #include "../xpiks-tests-integration/testshelpers.h"
+#include "../xpiks-tests-integration/integrationtestsenvironment.h"
+
 #include "fakeinitartworkstemplate.h"
 
 namespace Artworks { class ArtworkMetadata; }
@@ -75,7 +84,9 @@ void XpiksUITestsApp::initialize() {
 
     m_SettingsModel.setExifToolPath("");
 
-    m_SwitcherModel.setRemoteConfigOverride(findFullPathForTests("configs-for-tests/tests_switches.json"));
+    m_SwitcherModel.setRemoteConfigOverride(
+                Helpers::readAllFile(
+                    findFullPathForTests("configs-for-tests/tests_switches.json")));
     QString csvExportPlansPath;
     if (!tryFindFullPathForTests("api/v1/csv_export_plans.json", csvExportPlansPath)) {
         if (!tryFindFullPathForTests("xpiks-api/api/v1/csv_export_plans.json", csvExportPlansPath)) {
@@ -83,7 +94,7 @@ void XpiksUITestsApp::initialize() {
             tryFindFullPathForTests("configs-for-tests/csv_export_plans.json", csvExportPlansPath);
         }
     }
-    m_CsvExportModel.setRemoteConfigOverride(csvExportPlansPath);
+    m_CsvExportModel.setRemoteConfigOverride(Helpers::readAllFile(csvExportPlansPath));
 
     QString stocksFtpPath;
     if (!tryFindFullPathForTests("api/v1/stocks_ftp.json", stocksFtpPath)) {
@@ -92,7 +103,7 @@ void XpiksUITestsApp::initialize() {
             tryFindFullPathForTests("configs-for-tests/stocks_ftp.json", stocksFtpPath);
         }
     }
-    m_UploadInfoRepository.accessStocksList().setRemoteOverride(stocksFtpPath);
+    m_UploadInfoRepository.accessStocksList().setRemoteOverride(Helpers::readAllFile(stocksFtpPath));
 }
 
 void XpiksUITestsApp::waitInitialized() {
@@ -138,17 +149,6 @@ void XpiksUITestsApp::cleanup() {
 
 bool XpiksUITestsApp::setupCommonFiles() {
     LOG_DEBUG << "#";
-    int imagesCount = 10, vectorsCount = 5, directoriesCount = 2;
-    auto files = std::make_shared<Mocks::FilesCollectionMock>(imagesCount, vectorsCount, directoriesCount);
-
-    auto initTemplate = std::make_shared<FakeInitArtworksTemplate>();
-
-    auto addFilesCommand = std::make_shared<Commands::AddFilesCommand>(files,
-                                                                       Common::AddFilesFlags::None,
-                                                                       m_ArtworksListModel,
-                                                                       initTemplate);
-    m_CommandManager.processCommand(addFilesCommand);
-    bool success = addFilesCommand->getAddedCount() == imagesCount;
 
     m_MetadataIOService.writeArtworks(
                 Artworks::ArtworksSnapshot(
@@ -161,11 +161,13 @@ bool XpiksUITestsApp::setupCommonFiles() {
                         QStringList() << "art" << "people" << "line" << "vector")
                     }));
 
-    return success;
+    return true;
 }
 
-void XpiksUITestsApp::setupUITests() {
-    LOG_DEBUG << "#";
+void XpiksUITestsApp::setupUITests(bool realFiles) {
+    LOG_INFO << "real files:" << realFiles;
+    if (!realFiles) { addFakeFiles(); }
+    else { addRealFiles(); }
 
     std::shared_ptr<Artworks::ArtworkMetadata> artwork;
     m_ArtworksListModel.tryGetArtwork(0, artwork);
@@ -190,4 +192,64 @@ void XpiksUITestsApp::setupUITests() {
     m_UICommandDispatcher.processAll();
 
     m_CurrentEditableModel.clearCurrentItem();
+}
+
+bool XpiksUITestsApp::uploadedFilesExist() {
+    QStringList files;
+    files
+            << "ftp-for-tests/026.zip"
+            << "ftp-for-tests/027.zip";
+
+    bool anyError = false;
+    for (auto &file: files) {
+        QString fullPath;
+        if (!tryFindFullPathForTests(file, fullPath) ||
+                !QFileInfo(fullPath).exists()) {
+            anyError = true;
+            break;
+        }
+    }
+    return !anyError;
+}
+
+void XpiksUITestsApp::addFakeFiles() {
+    LOG_DEBUG << "#";
+    int imagesCount = 10, vectorsCount = 5, directoriesCount = 2;
+    auto files = std::make_shared<Mocks::FilesCollectionMock>(imagesCount, vectorsCount, directoriesCount);
+    doAddFiles(files, imagesCount);
+}
+
+void XpiksUITestsApp::addRealFiles() {
+    LOG_DEBUG << "#";
+    // read-only mode!
+    QList<QUrl> files;
+    files
+            << setupFilePathForTest("images-for-tests/vector/026.jpg")
+            << setupFilePathForTest("images-for-tests/vector/027.jpg")
+            << setupFilePathForTest("images-for-tests/vector/026.eps")
+            << setupFilePathForTest("images-for-tests/vector/027.eps");
+
+    auto filesCollection = std::make_shared<Filesystem::FilesCollection>(files);
+    doAddFiles(filesCollection, 2);
+}
+
+void XpiksUITestsApp::doAddFiles(const std::shared_ptr<Filesystem::IFilesCollection> &files, int addCount) {
+    auto initTemplate = std::make_shared<FakeInitArtworksTemplate>();
+
+    auto addFilesCommand = std::make_shared<Commands::AddFilesCommand>(files,
+                                                                       Common::AddFilesFlags::None,
+                                                                       m_ArtworksListModel,
+                                                                       initTemplate);
+    m_CommandManager.processCommand(addFilesCommand);
+    bool success = addFilesCommand->getAddedCount() == addCount;
+    if (!success) {
+        throw std::runtime_error("Failed to import all files");
+    }
+}
+
+QUrl XpiksUITestsApp::setupFilePathForTest(const QString &prefix, bool withVector) {
+    return ::setupFilePathForTest(
+                dynamic_cast<IntegrationTestsEnvironment&>(m_Environment).getSessionRoot(),
+                prefix,
+                withVector);
 }

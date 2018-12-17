@@ -599,11 +599,6 @@ int XpiksApp::restoreSession() {
 }
 
 void XpiksApp::connectEntitiesSignalsSlots() {
-    QObject::connect(&m_SecretsManager, &Encryption::SecretsManager::beforeMasterPasswordChange,
-                     &m_UploadInfoRepository, &Models::UploadInfoRepository::onBeforeMasterPasswordChanged);
-    QObject::connect(&m_SecretsManager, &Encryption::SecretsManager::afterMasterPasswordReset,
-                     &m_UploadInfoRepository, &Models::UploadInfoRepository::onAfterMasterPasswordReset);
-
     QObject::connect(&m_ArtworksListModel, &Models::ArtworksListModel::selectedArtworksRemoved,
                      &m_FilteredArtworksListModel, &Models::FilteredArtworksListModel::onSelectedArtworksRemoved);
     QObject::connect(&m_ArtworksListModel, &Models::ArtworksListModel::artworkSelectedChanged,
@@ -828,7 +823,10 @@ void XpiksApp::registerUICommands() {
                     m_FilteredArtworksListModel, m_ArtworksUploader, m_WarningsModel),
 
                     std::make_shared<Commands::UI::InitUploadHostCommand>(
-                    m_UploadInfoRepository)
+                    m_UploadInfoRepository),
+
+                    std::make_shared<Commands::ActionModelCommand>(
+                    m_ZipArchiver, QMLExtensions::UICommandID::CreateArchives)
                 });
 
     // others
@@ -940,11 +938,10 @@ void XpiksApp::cleanupModels() {
 
     m_FilteredArtworksListModel.setSearchTerm("");
     m_CombinedArtworksModel.resetModel();
-#ifndef UI_TESTS
+
     m_ArtworkProxyModel.resetModel();
     m_ArtworksListModel.deleteAllItems();
     m_ArtworksRepository.resetEverything();
-#endif
 }
 #endif
 

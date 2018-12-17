@@ -114,7 +114,7 @@ namespace MetadataIO {
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
-        void setRemoteConfigOverride(const QString &localPath) { m_ExportPlansModel.setRemoteOverride(localPath); }
+        void setRemoteConfigOverride(const QByteArray &data) { m_ExportPlansModel.setRemoteOverride(data); }
 #endif
 
     private:

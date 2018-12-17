@@ -1110,7 +1110,6 @@ ApplicationWindow {
                                     onMustUseMasterPasswordChanged: {
                                         masterPasswordCheckbox.checked = settingsModel.mustUseMasterPassword
                                     }
-
                                 }
 
                                 function onResetRequested() {

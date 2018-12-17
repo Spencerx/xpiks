@@ -21,7 +21,7 @@
 #include <curl/curl.h>
 
 #include "Common/logging.h"
-#include "Connectivity/ftphelpers.h"
+#include "Connectivity/curlhelpers.h"
 
 static size_t write_file(void *buffer, size_t size, size_t nmemb, void *param) {
     QFile *out = (QFile *)param;

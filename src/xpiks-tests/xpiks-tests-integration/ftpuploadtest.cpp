@@ -23,29 +23,33 @@ void FtpUploadTest::setup() {
 
 int FtpUploadTest::doTest() {
     QList<QUrl> files;
-    files << setupFilePathForTest("images-for-tests/vector/026.jpg")
-          << setupFilePathForTest("images-for-tests/vector/027.jpg");
+    files << setupFilePathForTest("images-for-tests/pixmap/img_0007.jpg")
+          << setupFilePathForTest("images-for-tests/pixmap/seagull.jpg");
 
     QStringList pathsToCheck;
-    pathsToCheck << "/var/ftp/incoming/026.jpg"
-                 << "/var/ftp/incoming/027.jpg";
+    pathsToCheck << "ftp-for-tests/img_0007.jpg"
+                 << "ftp-for-tests/seagull.jpg";
 
     VERIFY(m_TestsApp.addFilesForTest(files), "Failed to add files");
 
     Models::UploadInfoRepository &uploadRepo = m_TestsApp.getUploadInfoRepository();
 
     auto remote = uploadRepo.appendItem();
-    remote->setHost("localhost");
-    remote->setUsername("anonymous");
-    remote->setPassword("anonymous");
-    remote->setImagesDir("incoming");
+    remote->setHost("127.0.0.1");
+    remote->setUsername("ftpuser");
+    uploadRepo.setData(uploadRepo.index(0),
+                       QVariant::fromValue(QString("ftppasswd")),
+                       Models::UploadInfoRepository::EditPasswordRole);
+    //remote->setPassword("ftppasswd");
+    //remote->setImagesDir("incoming");
     remote->setIsSelected(true);
 
     m_TestsApp.selectAllArtworks();
     m_TestsApp.dispatch(QMLExtensions::UICommandID::SetupUpload);
 
+    QString fullPath;
     for (auto &s: pathsToCheck) {
-        VERIFY(!QFileInfo(s).exists(), QString("File %1 already exists...").arg(s).toStdString().c_str());
+        VERIFY(!tryFindFullPathForTests(s, fullPath), QString("File %1 already exists...").arg(s).toStdString().c_str());
     }
 
     Models::ArtworksUploader &uploader = m_TestsApp.getArtworksUploader();
@@ -63,7 +67,7 @@ int FtpUploadTest::doTest() {
     VERIFY(uploader.getUIPercent() == 100, "Upload percentage is not 100");
 
     for (auto &path: pathsToCheck) {
-        VERIFY(QFileInfo(path).exists(), QString("File %1 is not found").arg(path).toStdString().c_str());
+        VERIFY(tryFindFullPathForTests(path, fullPath), QString("File %1 is not found").arg(path).toStdString().c_str());
     }
 
     return 0;

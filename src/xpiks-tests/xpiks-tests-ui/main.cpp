@@ -19,8 +19,9 @@
 #include "Helpers/constants.h"
 #include "Helpers/logger.h"
 
+#include "../xpiks-tests-integration/integrationtestsenvironment.h"
+
 #include "testshost.h"
-#include "uitestsenvironment.h"
 #include "xpiksuitestsapp.h"
 
 class QJSEngine;
@@ -86,7 +87,11 @@ int main(int argc, char **argv) {
     QGuiApplication app(argc, argv);
     Q_UNUSED(app);
 
-    UITestsEnvironment uiTestsEnvironment;
+    QStringList arguments = app.arguments();
+    arguments.append("--in-memory");
+    IntegrationTestsEnvironment uiTestsEnvironment(arguments);
+    Q_ASSERT(uiTestsEnvironment.getIsInMemoryOnly());
+    uiTestsEnvironment.ensureSystemDirectoriesExist();
 
 #if defined(APPVEYOR)
     initCrashRecovery(uiTestsEnvironment);

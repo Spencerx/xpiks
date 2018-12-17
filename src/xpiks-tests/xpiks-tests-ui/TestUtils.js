@@ -15,6 +15,12 @@ function keyboardEnterSomething(testCase) {
     return text
 }
 
+function keyboardEnterText(text) {
+    for (var i = 0; i < text.length; i++) {
+        testCase.keyClick(text[i])
+    }
+}
+
 function clearEdit(editControl) {
     // assigning .text directly breaks binding
     editControl.remove(0, editControl.length)

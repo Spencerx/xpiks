@@ -74,6 +74,14 @@ int TestsHost::getNormalSleepTime() const {
 #endif
 }
 
+bool TestsHost::getFtpServerEnabled() const {
+#if defined(WITH_FTP_SERVER)
+    return true;
+#else
+    return false;
+#endif
+}
+
 void TestsHost::qmlEngineCallback(QQmlEngine *engine) {
     m_XpiksApp->setupUI(engine->rootContext());    
 
@@ -85,25 +93,25 @@ void TestsHost::qmlEngineCallback(QQmlEngine *engine) {
     }
 }
 
-void TestsHost::setup() {
-    LOG_DEBUG << "#";
-    m_XpiksApp->setupUITests();
+void TestsHost::setup(const QString &testname, bool realFiles) {
+    LOG_INFO << testname;
+    m_XpiksApp->setupUITests(realFiles);
     m_IsReady = true;
-    emit isReadyChanged();
+    emit isReadyChanged(m_IsReady);
     processPendingEvents();
 }
 
 void TestsHost::cleanupTest() {
     LOG_DEBUG << "#";
     m_XpiksApp->cleanupTest();
+    m_IsReady = false;
+    emit isReadyChanged(m_IsReady);
     processPendingEvents();
 }
 
 void TestsHost::cleanup() {
     LOG_DEBUG << "#";
     m_XpiksApp->cleanup();
-    m_IsReady = false;
-    emit isReadyChanged();
     processPendingEvents();
 }
 

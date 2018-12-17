@@ -60,7 +60,7 @@ namespace QMLExtensions {
             if (targetSource != nullptr) {
                 QObject *target = targetSource->getTargetObject();
                 Q_ASSERT(target != nullptr);
-                LOG_INFO << "Found" << target->objectName() << "from command" << command << commandID;
+                LOG_INFO << "Found target from command" << command << commandID;
                 if (target != nullptr) {
                     QQmlEngine::setObjectOwnership(target, QQmlEngine::CppOwnership);
                     result = target;

@@ -20,7 +20,7 @@
 #include "Helpers/localconfig.h"
 #include "Helpers/remoteconfig.h"
 
-#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS) || defined(CORE_TESTS)
 #include <QFileInfo>
 #endif
 
@@ -44,10 +44,10 @@ namespace Models {
         const Helpers::LocalConfig &getLocalConfig() const { return m_LocalConfig; }
         Helpers::LocalConfig &getLocalConfig() { return m_LocalConfig; }
 
-#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
-        void setRemoteOverride(const QString &localPath) {
-            Q_ASSERT(QFileInfo(localPath).exists());
-            m_RemoteOverrideLocalPath = localPath;
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS) || defined(CORE_TESTS)
+        void setRemoteOverride(const QByteArray &data) {
+            Q_ASSERT(!data.isEmpty());
+            m_RemoteOverrideBuffer = data;
         }
 #endif
 
@@ -68,9 +68,9 @@ namespace Models {
         Helpers::LocalConfig m_LocalConfig;
         bool m_ForceOverwrite;
 
-#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS) || defined(CORE_TESTS)
         bool m_MemoryOnly;
-        QString m_RemoteOverrideLocalPath;
+        QByteArray m_RemoteOverrideBuffer;
 #endif
     };
 }

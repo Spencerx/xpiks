@@ -110,6 +110,9 @@ namespace Encryption {
 
     void SecretsManager::resetMasterPassword() {
         LOG_DEBUG <<  "#";
+#ifndef CORE_TESTS
+        Q_ASSERT(isMasterPasswordSet());
+#endif
         QString keyForEncryption = getKeyForEncryption();
         emit beforeMasterPasswordChange(keyForEncryption, m_DefaultMasterPassword);
         m_EncodedMasterPassword.clear();
@@ -165,7 +168,6 @@ namespace Encryption {
         QCryptographicHash hash(QCryptographicHash::Sha256);
         QString data = m_DefaultMasterPassword + password;
         hash.addData(data.toUtf8());
-
         return hash.result();
     }
 }

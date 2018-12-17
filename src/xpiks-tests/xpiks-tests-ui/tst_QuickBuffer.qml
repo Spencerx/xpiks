@@ -10,7 +10,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: TestsHost.setup()
+    Component.onCompleted: TestsHost.setup(testCase.name)
 
     QtObject {
         id: appHost
@@ -38,7 +38,7 @@ Item {
     TestCase {
         id: testCase
         name: "QuickBuffer"
-        when: windowShown && (loader.status == Loader.Ready)
+        when: windowShown && (loader.status == Loader.Ready) && TestsHost.isReady
         property var quickBufferTab: loader.item
         property var titleEdit
         property var descriptionEdit
@@ -121,15 +121,10 @@ Item {
         function test_spellingIsCheckedForCorrect() {
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_I)
-            keyClick(Qt.Key_N)
+            TestUtils.keyboardEnterText('in')
             keyClick(Qt.Key_Space)
 
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('space')
             keyClick(Qt.Key_Comma)
 
             wait(TestsHost.smallSleepTime)
@@ -144,18 +139,10 @@ Item {
 
         function test_duplicateIsDetectedWithDescription() {
             descriptionEdit.forceActiveFocus()
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('space')
 
             keywordsEdit.forceActiveFocus()
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('space')
 
             keyClick(Qt.Key_Comma)
 

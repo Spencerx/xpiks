@@ -7,6 +7,7 @@
 #include <QList>
 #include <QObject>
 #include <QUrl>
+#include <QSignalSpy>
 #include <QtGlobal>
 
 #include "Artworks/artworkmetadata.h"
@@ -17,6 +18,7 @@
 #include "QMLExtensions/uicommandid.h"
 
 #include "signalwaiter.h"
+#include "testshelpers.h"
 #include "xpikstestsapp.h"
 
 QString ZipArtworksTest::testName() {
@@ -41,14 +43,20 @@ int ZipArtworksTest::doTest() {
     Models::ZipArchiver &zipArchiver = m_TestsApp.getZipArchiver();
     VERIFY(zipArchiver.getItemsCount() == 2, "ZipArchiver didn't get all the files");
 
-    SignalWaiter waiter;
-    QObject::connect(&zipArchiver, &Models::ZipArchiver::finishedProcessing,
-                     &waiter, &SignalWaiter::finished);
+    QSignalSpy progressSpy(&zipArchiver, &Models::ZipArchiver::percentChanged);
+    QSignalSpy finishedSpy(&zipArchiver, &Models::ZipArchiver::finishedProcessing);
 
-    zipArchiver.archiveArtworks();
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::CreateArchives, QVariant::fromValue(true));
 
-    VERIFY(waiter.wait(20), "Timeout while zipping artworks");
+    sleepWaitUntil(3, [&zipArchiver](){ return zipArchiver.getInProgress(); });
+    VERIFY(zipArchiver.getInProgress(), "Archiver is not in progress");
+
+    sleepWaitUntil(20, [&zipArchiver](){ return !zipArchiver.getInProgress(); });
+    VERIFY(!zipArchiver.getInProgress(), "Archiver is still in progress");
+
     VERIFY(!zipArchiver.getHasErrors(), "Errors while zipping");
+    VERIFY(progressSpy.count() > 2, "Intermediate progress was not reported");
+    VERIFY(finishedSpy.count() == 1, "Archivation wasn't finished");
 
     for (int i = 0; i < files.length(); ++i) {
         auto artwork = m_TestsApp.getArtwork(i);

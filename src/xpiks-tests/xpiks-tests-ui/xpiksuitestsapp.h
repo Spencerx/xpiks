@@ -1,7 +1,9 @@
 #ifndef XPIKSUITESTSAPP_H
 #define XPIKSUITESTSAPP_H
 
+#include <QObject>
 #include <QStringList>
+#include <QUrl>
 
 #include "xpiksapp.h"
 
@@ -15,6 +17,7 @@ namespace Models {
 
 class XpiksUITestsApp: public XpiksApp
 {
+    Q_OBJECT
 public:
     XpiksUITestsApp(Common::ISystemEnvironment &environment, QStringList const &importPaths = QStringList());
 
@@ -24,7 +27,16 @@ public:
     void cleanupTest();
     void cleanup();
     bool setupCommonFiles();
-    void setupUITests();
+    void setupUITests(bool realFiles);
+
+public:
+    Q_INVOKABLE bool uploadedFilesExist();
+
+private:
+    void addFakeFiles();
+    void addRealFiles();
+    void doAddFiles(std::shared_ptr<Filesystem::IFilesCollection> const &files, int addCount);
+    QUrl setupFilePathForTest(const QString &prefix, bool withVector=false);
 
 public:
     QStringList const &getQmlImportPaths() const { return m_QmlImportPaths; }

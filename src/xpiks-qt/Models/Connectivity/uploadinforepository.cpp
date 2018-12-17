@@ -199,14 +199,18 @@ namespace Models {
         m_CurrentIndex(0),
         m_EmptyPasswordsMode(false)
     {
-        QObject::connect(this, &UploadInfoRepository::backupRequired,
-                         this, &UploadInfoRepository::onBackupRequired);
+        QObject::connect(this, &UploadInfoRepository::backupRequired, &UploadInfoRepository::onBackupRequired);
 
         QObject::connect(&m_StocksFtpList, &Microstocks::StocksFtpListModel::stocksListUpdated,
                          this, &UploadInfoRepository::onStocksListUpdated);
 
         QObject::connect(&m_StocksCompletionSource, &AutoComplete::StringsAutoCompleteModel::completionAccepted,
                          this, &UploadInfoRepository::onCompletionSelected);
+
+        QObject::connect(&m_SecretsManager, &Encryption::SecretsManager::beforeMasterPasswordChange,
+                         this, &Models::UploadInfoRepository::onBeforeMasterPasswordChanged);
+        QObject::connect(&m_SecretsManager, &Encryption::SecretsManager::afterMasterPasswordReset,
+                         this, &Models::UploadInfoRepository::onAfterMasterPasswordReset);
     }
 
     UploadInfoRepository::~UploadInfoRepository() { m_UploadInfos.clear();  }
@@ -382,8 +386,8 @@ namespace Models {
     }
 #endif
 
-    std::vector<std::shared_ptr<UploadInfo> > UploadInfoRepository::retrieveSelectedUploadInfos() const {
-        std::vector<std::shared_ptr<UploadInfo> > uploadInfos;
+    std::vector<std::shared_ptr<UploadInfo>> UploadInfoRepository::retrieveSelectedUploadInfos() const {
+        std::vector<std::shared_ptr<UploadInfo>> uploadInfos;
         uploadInfos.reserve(m_UploadInfos.size());
 
         for (auto &info: m_UploadInfos) {

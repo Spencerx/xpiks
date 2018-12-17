@@ -1,13 +1,13 @@
 # version format
 version: 1.5.{build}
 
-os: Visual Studio 2015
+image: Visual Studio 2017
 
 platform:
   - x64
 
 environment:
-  QTDIR: C:\Qt\5.9\msvc2015_64
+  QTDIR: C:\Qt\5.9\msvc2017_64
   matrix:
     - XPIKS_BINARY: true
     - CORE_TESTS: true
@@ -37,7 +37,7 @@ skip_commits:
 clone_folder: c:\projects\xpiks
 
 # set clone depth
-clone_depth: 3                      # clone entire repository history if not defined
+clone_depth: 3
 
 # appveyor cannot process cache correctly
 #cache:
@@ -55,6 +55,7 @@ install:
   - if %QTDIR:_64=%==%QTDIR% ( set ARCH=x86 ) else set ARCH=x64
   - cmd: set PATH=%PATH%;%QTDIR%\bin
   - qmake -v
+  - docker version
 
 before_build:
 #  - cmd: 'xcopy /s c:\projects\xpiks-deps\windows-libs\%configuration%-x64 c:\projects\xpiks\libs\%configuration%'
@@ -74,6 +75,10 @@ test_script:
   - if defined CORE_TESTS scripts\ci\appveyor-core-tests.bat run
   - if defined INTEGRATION_TESTS scripts\ci\appveyor-integration-tests.bat run
   - if defined UI_TESTS scripts\ci\appveyor-ui-tests.bat run
+
+after_test:
+  - if defined INTEGRATION_TESTS scripts\ci\appveyor-integration-tests.bat stop
+  - if defined UI_TESTS scripts\ci\appveyor-ui-tests.bat stop
 
 on_failure:
   - ps: Get-EventLog AppVeyor -newest 10 | Format-List

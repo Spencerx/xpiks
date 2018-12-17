@@ -20,7 +20,7 @@
 #include <curl/curl.h>
 
 #include "Common/logging.h"
-#include "Connectivity/ftphelpers.h"
+#include "Connectivity/curlhelpers.h"
 
 struct MemoryStruct {
     char *m_Memory;

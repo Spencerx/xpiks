@@ -17,7 +17,6 @@
 
 #include <QByteArray>
 #include <QChar>
-#include <QCoreApplication>
 #include <QDebug>
 #include <QEventLoop>
 #include <QFileInfo>
@@ -26,6 +25,7 @@
 #include <QtGlobal>
 
 #include "Common/logging.h"
+#include "Connectivity/curlhelpers.h"
 #include "Connectivity/ftphelpers.h"
 
 #include "Connectivity/uploadbatch.h"
@@ -55,8 +55,6 @@ namespace libxpks {
             if ((curtime - progressReporter->getLastTime()) >= MINIMAL_PROGRESS_FUNCTIONALITY_INTERVAL) {
                 progressReporter->setLastTime(curtime);
                 progressReporter->updateProgress((double)ultotal, (double)ulnow);
-
-                QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
             }
 
             int result = progressReporter->cancelRequested() ? 1 : 0;
@@ -157,8 +155,6 @@ namespace libxpks {
             }
 
             for (c = 0; (r != CURLE_OK) && (c < context->m_RetriesCount); c++) {
-                QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-
                 if (r == CURLE_ABORTED_BY_CALLBACK) {
                     LOG_INFO << "Upload aborted by user...";
                     break;

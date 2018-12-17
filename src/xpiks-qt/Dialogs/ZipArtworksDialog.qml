@@ -29,31 +29,30 @@ StaticDialogBase {
     anchors.fill: parent
     property var zipArchiver: dispatcher.getCommandTarget(UICommand.SetupCreatingArchives)
 
-    function closePopup() {
-        zipArtworksComponent.destroy()
-        zipArchiver.resetModel();
-    }
-
     Connections {
         target: zipArchiver
         onRequestCloseWindow: {
-            closePopup();
+            closePopup()
         }
 
         onFinishedProcessing: {
             importButton.text = i18.n + qsTr("Start Zipping")
-
-            if (immediateProcessing) {
-                if (typeof callbackObject !== "undefined") {
-                    callbackObject.afterZipped()
-                }
-
-                closePopup()
-            }
+            dispatcher.dispatch(UICommand.CreateArchives, false)
 
             //if (!zipArchiver.isError) {
             //    closePopup()
             //}
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.CreateArchives]
+        onDispatched: {
+            if (!value) {
+                console.log("Exiting...")
+                closePopup()
+            }
         }
     }
 
@@ -92,7 +91,7 @@ StaticDialogBase {
                 text: i18.n + getOriginalText()
 
                 function getOriginalText() {
-                    return zipArchiver.itemsCount == 1 ? qsTr("1 artwork with vector") : qsTr("%1 artworks with vectors").arg(zipArchiver.itemsCount)
+                    return zipArchiver.itemsCount === 1 ? qsTr("1 artwork with vector") : qsTr("%1 artworks with vectors").arg(zipArchiver.itemsCount)
                 }
 
                 Connections {
@@ -125,14 +124,14 @@ StaticDialogBase {
 
             StyledButton {
                 id: importButton
-                objectName: "importButton"
+                objectName: "zipButton"
                 isDefault: true
                 width: 130
                 text: i18.n + qsTr("Start Zipping")
                 enabled: !zipArchiver.inProgress && (zipArchiver.itemsCount > 0)
                 onClicked: {
                     text = i18.n + qsTr("Zipping...")
-                    zipArchiver.archiveArtworks()
+                    dispatcher.dispatch(UICommand.CreateArchives, true)
                 }
             }
 
@@ -141,7 +140,7 @@ StaticDialogBase {
                 width: 100
                 enabled: !zipArchiver.inProgress
                 onClicked: {
-                    closePopup()
+                    dispatcher.dispatch(UICommand.CreateArchives, false)
                 }
             }
         }
@@ -151,7 +150,7 @@ StaticDialogBase {
         focus = true
         if (immediateProcessing) {
             console.debug("immediate processing for zipper")
-            zipArchiver.archiveArtworks()
+            dispatcher.dispatch(UICommand.CreateArchives, true)
         }
     }
 }

@@ -19,6 +19,38 @@ void EncryptionTests::simpleEncodeDecodeTest() {
     QCOMPARE(decoded, text);
 }
 
+void EncryptionTests::simpleDecodeEncodeTest() {
+    QString key2 = QString::fromUtf8("DefaultMasterPassword");
+    QString text = QString::fromUtf8("simple text");
+    QString key1 = QString::fromUtf8("DefaultMasterPassword");
+    QString encoded1 = Encryption::encodeText(text, key1);
+    QString decoded = Encryption::decodeText(encoded1, key1);
+    QString encoded2 = Encryption::encodeText(decoded, key2);
+    QCOMPARE(encoded2, encoded1);
+}
+
+void EncryptionTests::encodeDecodeEncodeTest() {
+#if defined(TRAVIS_CI) || defined(APPVEYOR)
+    int iterations = 10000;
+#else
+    int iterations = 100;
+#endif
+    for (int i = 0; i < iterations; i++) {
+        QString key2 = QString("DefaultMasterPassword %1").arg(i % 2 == 0 ? i : 1);
+        QString text = getRandomString(qrand() % 100);
+        QString key1 = QString("DefaultMasterPassword %1").arg((i & 1) == 0 ? i : 1);
+        QString encoded1 = Encryption::encodeText(text, key1);
+        QString decoded = Encryption::decodeText(encoded1, key1);
+        QString encoded2 = Encryption::encodeText(decoded, key2);
+
+        if (encoded2 != encoded1) {
+            QFAIL(QString("Text: %1\encoded 1: %2\nencoded 2: %3").arg(text).arg(encoded1).arg(encoded2)
+                  .toStdString().c_str());
+            break;
+        }
+    }
+}
+
 void EncryptionTests::encodedTextNotEqualToRawTest() {
     QString text = "yet another simple text";
     QString key = "some more sophisticated key q4234";

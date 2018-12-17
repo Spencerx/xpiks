@@ -60,8 +60,8 @@ namespace Models {
     public:
         UploadInfoRepository(Common::ISystemEnvironment &environment,
                              Encryption::SecretsManager &secretsManager,
-                             QObject *parent = 0);
-        virtual ~UploadInfoRepository();
+                             QObject *parent = nullptr);
+        virtual ~UploadInfoRepository() override;
 
     public:
         enum UploadInfoRepository_Roles {
@@ -122,17 +122,17 @@ namespace Models {
         void updatePercentages();
         void resetPercents();
 
-#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS) || defined(CORE_TESTS)
     public:
         AutoComplete::StringsAutoCompleteModel &getStocksCompletionSource() { return m_StocksCompletionSource; }
         std::shared_ptr<UploadInfo> appendItem() { addItem(); return m_UploadInfos.back(); }
-        std::vector<std::shared_ptr<UploadInfo> > &accessUploadInfos() { return m_UploadInfos; }
+        std::vector<std::shared_ptr<UploadInfo>> &accessUploadInfos() { return m_UploadInfos; }
         Microstocks::StocksFtpListModel &accessStocksList() { return m_StocksFtpList; }
         void clearHosts();
 #endif
 
     public:
-        std::vector<std::shared_ptr<UploadInfo> > retrieveSelectedUploadInfos() const;
+        std::vector<std::shared_ptr<UploadInfo>> retrieveSelectedUploadInfos() const;
 
     public:
         bool isZippingRequired() const;
@@ -172,7 +172,7 @@ namespace Models {
 
     private:
         Common::ISystemEnvironment &m_Environment;
-        std::vector<std::shared_ptr<UploadInfo> > m_UploadInfos;
+        std::vector<std::shared_ptr<UploadInfo>> m_UploadInfos;
         Helpers::LocalConfig m_LocalConfig;
         AutoComplete::StringsAutoCompleteModel m_StocksCompletionSource;
         Microstocks::StocksFtpListModel m_StocksFtpList;

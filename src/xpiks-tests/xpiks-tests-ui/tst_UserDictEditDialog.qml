@@ -10,7 +10,7 @@ Item {
     width: 800
     height: 600
 
-    Component.onCompleted: TestsHost.setup()
+    Component.onCompleted: TestsHost.setup(testCase.name)
 
     QtObject {
         id: appHost
@@ -31,7 +31,7 @@ Item {
     TestCase {
         id: testCase
         name: "QuickBuffer"
-        when: windowShown && (loader.status == Loader.Ready)
+        when: windowShown && (loader.status == Loader.Ready) && TestsHost.isReady
         property var userDictEditDialog: loader.item
         property var keywordsEdit
         property var editableTags

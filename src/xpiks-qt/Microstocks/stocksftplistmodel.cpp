@@ -73,6 +73,8 @@ namespace Microstocks {
 
     void StocksFtpListModel::processRemoteConfig(const QJsonDocument &remoteDocument, bool overwriteLocal) {
         LOG_DEBUG << "#";
+        LOG_VERBOSE_OR_DEBUG << remoteDocument;
+
         bool overwrite = false;
 
         if (!overwriteLocal && remoteDocument.isObject()) {

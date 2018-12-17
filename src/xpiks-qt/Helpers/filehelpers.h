@@ -11,11 +11,13 @@
 #ifndef FILENAMESHELPERS
 #define FILENAMESHELPERS
 
+#include <QByteArray>
 #include <QString>
 #include <QStringList>
 #include <QtGlobal>
 
 namespace Helpers {
+    QByteArray readAllFile(QString const &path);
     QStringList convertToVectorFilenames(const QStringList &items);
     QStringList convertToVectorFilenames(const QString &path);
     QString getImagePath(const QString &path);

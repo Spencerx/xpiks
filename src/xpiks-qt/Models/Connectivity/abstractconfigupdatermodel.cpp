@@ -59,10 +59,10 @@ namespace Models {
     }
 
     void AbstractConfigUpdaterModel::initRemoteConfig(Connectivity::IRequestsService &requestsService) {
-#if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
-        if (!m_RemoteOverrideLocalPath.isEmpty()) {
-            LOG_DEBUG << "Using remote override" << m_RemoteOverrideLocalPath;
-            QJsonDocument localDocument = Helpers::LocalConfig(m_RemoteOverrideLocalPath).readConfig();
+#if defined(INTEGRATION_TESTS) || defined(UI_TESTS) || defined(CORE_TESTS)
+        if (!m_RemoteOverrideBuffer.isEmpty()) {
+            LOG_DEBUG << "Using remote override";
+            QJsonDocument localDocument = QJsonDocument::fromJson(m_RemoteOverrideBuffer);
             processRemoteConfig(localDocument, m_ForceOverwrite);
         } else
 #endif

@@ -10,6 +10,8 @@ class EncryptionTests : public QObject
     Q_OBJECT
 private slots:
     void simpleEncodeDecodeTest();
+    void simpleDecodeEncodeTest();
+    void encodeDecodeEncodeTest();
     void encodedTextNotEqualToRawTest();
     void encodedNotEqualToDecodedTest();
     void complexEncodeDecodeTest();

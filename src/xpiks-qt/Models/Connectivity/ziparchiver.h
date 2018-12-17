@@ -21,6 +21,7 @@
 #include "Artworks/artworkssnapshot.h"
 #include "Common/messages.h"
 #include "Common/types.h"
+#include "Models/iactionmodel.h"
 
 template <class T1, class T2> class QHash;
 
@@ -29,11 +30,12 @@ namespace Models {
 
     class ZipArchiver:
             public QObject,
-            public Common::MessagesTarget<UnavailableFilesMessage>
+            public Common::MessagesTarget<UnavailableFilesMessage>,
+            public Models::IActionModel
     {
         Q_PROPERTY(int percent READ getPercent NOTIFY percentChanged)
-        Q_PROPERTY(bool inProgress READ getInProgress WRITE setInProgress NOTIFY inProgressChanged)
-        Q_PROPERTY(bool isError READ getHasErrors WRITE setHasErrors NOTIFY hasErrorsChanged)
+        Q_PROPERTY(bool inProgress READ getInProgress NOTIFY inProgressChanged)
+        Q_PROPERTY(bool isError READ getHasErrors NOTIFY hasErrorsChanged)
         Q_PROPERTY(int itemsCount READ getItemsCount NOTIFY itemsCountChanged)
         Q_OBJECT
     public:
@@ -43,7 +45,7 @@ namespace Models {
         int getPercent() const;
         bool getInProgress() const { return m_IsInProgress; }
         bool getHasErrors() const { return m_HasErrors; }
-        int getItemsCount() const { return (int)m_ArtworksSnapshot.size(); }
+        int getItemsCount() const { return static_cast<int>(m_ArtworksSnapshot.size()); }
 
     public:
         void setInProgress(bool value);
@@ -51,6 +53,15 @@ namespace Models {
 
     public:
         virtual void handleMessage(UnavailableFilesMessage const &message) override;
+
+        // IActionModel interface
+    public:
+        virtual std::shared_ptr<Commands::ICommand> getActionCommand(bool yesno) override;
+        virtual void resetModel() override;
+
+    public:
+        void setArtworks(Artworks::ArtworksSnapshot const &snapshot);
+        void resetArtworks();
 
     signals:
         void inProgressChanged();
@@ -65,19 +76,12 @@ namespace Models {
         void archiveCreated(int);
         void allFinished();
 
-    public:
-        Q_INVOKABLE void archiveArtworks();
-        Q_INVOKABLE void resetModel();
-
-    public:
-        void setArtworks(Artworks::ArtworksSnapshot const &snapshot);
-        void resetArtworks();
-
     protected:
         bool removeUnavailableItems();
 
     private:
         void fillFilenamesHash(QHash<QString, QStringList> &hash);
+        void archiveArtworks();
 
 #ifdef CORE_TESTS
     public:

@@ -167,7 +167,7 @@ StaticDialogBase {
                 anchors.bottomMargin: 0
                 anchors.rightMargin: 0
                 flickable: presetNamesListView
-                canShow: !backgroundMA.containsMouse && !rightPanelMA.containsMouse
+                canShow: !rightPanelMA.containsMouse
             }
 
             Item {

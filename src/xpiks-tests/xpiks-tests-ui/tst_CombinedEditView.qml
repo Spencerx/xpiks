@@ -19,7 +19,7 @@ Item {
         openedDialogsCount -= 1
     }
 
-    Component.onCompleted: TestsHost.setup()
+    Component.onCompleted: TestsHost.setup(testCase.name)
 
     QtObject {
         id: appHost
@@ -285,18 +285,10 @@ Item {
 
         function test_duplicateIsDetectedWithDescription() {
             descriptionInput.forceActiveFocus()
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('space')
 
             keywordsEdit.forceActiveFocus()
-            keyClick(Qt.Key_S)
-            keyClick(Qt.Key_P)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_E)
+            TestUtils.keyboardEnterText('space')
 
             keyClick(Qt.Key_Comma)
 
@@ -392,9 +384,7 @@ Item {
         function test_fixSpelling() {
             keywordsEdit.forceActiveFocus()
 
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_E)
-            keyClick(Qt.Key_P)
+            TestUtils.keyboardEnterText('tep')
 
             keyClick(Qt.Key_Comma)
             wait(TestsHost.smallSleepTime)
@@ -454,12 +444,7 @@ Item {
 
             // setupSearch() from tst_KeywordsSuggestion.qml
             searchInput.forceActiveFocus()
-            keyClick(Qt.Key_V)
-            keyClick(Qt.Key_E)
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_T)
-            keyClick(Qt.Key_O)
-            keyClick(Qt.Key_R)
+            TestUtils.keyboardEnterText('vector')
 
             suggestKeywordsDialog.keywordsSuggestor.selectedSourceIndex = 3
             // --

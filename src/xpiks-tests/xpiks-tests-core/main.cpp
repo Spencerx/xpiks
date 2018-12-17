@@ -32,6 +32,7 @@
 #include "replacepreview_tests.h"
 #include "stringhelpers_tests.h"
 #include "undoredo_tests.h"
+#include "uploadinforepository_tests.h"
 #include "vectorfilenames_tests.h"
 #include "warningscheck_tests.h"
 
@@ -76,6 +77,7 @@ int main(int argc, char *argv[]) {
     QTEST_CLASS(WarningsCheckTests, wct, result);
     QTEST_CLASS(DbImageCacheTests, ict, result);
     QTEST_CLASS(ArtworkProxyTests, apt, result);
+    QTEST_CLASS(UploadInfoRepositoryTests, uirt, result);
 
     QThread::sleep(1);
 

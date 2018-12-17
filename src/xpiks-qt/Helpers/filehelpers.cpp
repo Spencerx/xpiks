@@ -23,6 +23,17 @@
 #include "Helpers/constants.h"
 
 namespace Helpers {
+    QByteArray readAllFile(QString const &path) {
+        QByteArray result;
+        QFile file(path);
+
+        if (file.open(QIODevice::ReadOnly)) {
+            result = file.readAll();
+        }
+
+        return result;
+    }
+
     QStringList convertToVectorFilenames(const QStringList &item) {
         QStringList converted;
         converted.reserve(item.length()*2);

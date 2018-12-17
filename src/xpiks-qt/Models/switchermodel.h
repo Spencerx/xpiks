@@ -66,7 +66,7 @@ namespace Models {
 
 #if defined(INTEGRATION_TESTS) || defined(UI_TESTS)
     public:
-        void setRemoteConfigOverride(const QString &localPath) { m_Config.setRemoteOverride(localPath); }
+        void setRemoteConfigOverride(const QByteArray &data) { m_Config.setRemoteOverride(data); }
 #endif
 
     public:

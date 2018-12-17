@@ -22,6 +22,7 @@ DEFINES += TELEMETRY_ENABLED
 DEFINES += WITH_STDOUT_LOGS
 DEFINES += WITH_LOGS
 DEFINES += VERBOSE_LOGGING
+DEFINES += WITH_FTP_SERVER
 
 DEFINES += UI_TESTS
 
@@ -37,6 +38,7 @@ CONFIG(debug, debug|release)  {
 } else {
     LIBS += -L"$$PWD/../../../libs/release"
 }
+
 LIBS += -lhunspell
 LIBS += -lz
 LIBS += -lcurl
@@ -107,12 +109,15 @@ travis-ci {
 
         QMAKE_CXXFLAGS += --coverage
         QMAKE_LFLAGS += --coverage
+
+        DEFINES -= WITH_FTP_SERVER
     }
 }
 
 appveyor {
     message("for Appveyor")
     DEFINES += APPVEYOR
+    DEFINES -= WITH_FTP_SERVER
 }
 
 # without-video {
@@ -343,7 +348,9 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.cpp \
     ../../xpiks-qt/Commands/Base/compositecommand.cpp \
     ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp \
-    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp
+    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp \
+    ../../xpiks-qt/Connectivity/curlhelpers.cpp \
+    ../xpiks-tests-integration/integrationtestsenvironment.cpp
 
 DISTFILES += \
     ../../xpiks-qt/Components/EditableTags.qml \
@@ -355,7 +362,6 @@ DISTFILES += \
     ../../xpiks-qt/Dialogs/CsvExportDialog.qml \
     tst_UploadDialog.qml \
     tst_PresetsEditDialog.qml \
-    tst_ZipArchiver.qml \
     tst_WhatsNew.qml \
     ../../xpiks-qt/Common.js \
     ../../xpiks-qt/StackViews/ArtworkEditView.qml \
@@ -728,7 +734,6 @@ HEADERS += \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionstarget.h \
     ../../xpiks-qt/Services/artworkseditinghub.h \
     xpiksuitestsapp.h \
-    uitestsenvironment.h \
     ../../xpiks-qt/QMLExtensions/triangleelement.h \
     ../../xpiks-qt/Helpers/clipboardhelper.h \
     ../xpiks-tests-integration/signalwaiter.h \
@@ -746,7 +751,9 @@ HEADERS += \
     ../../xpiks-qt/Commands/Base/compositecommand.h \
     ../../xpiks-qt/Commands/UI/currenteditablecommands.h \
     ../../xpiks-qt/QMLExtensions/iuicommandmiddleware.h \
-    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.h
+    ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.h \
+    ../../xpiks-qt/Connectivity/curlhelpers.h \
+    ../xpiks-tests-integration/integrationtestsenvironment.h
 
 RESOURCES += \
     xpiks-tests-ui.qrc

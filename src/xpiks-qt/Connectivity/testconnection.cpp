@@ -19,6 +19,7 @@
 #include <vendors/libxpks/uploadcontext.h>
 
 #include "Common/logging.h"
+#include "Connectivity/curlhelpers.h"
 #include "Connectivity/ftphelpers.h"
 
 namespace Connectivity {

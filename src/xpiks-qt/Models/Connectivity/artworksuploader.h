@@ -55,8 +55,8 @@ namespace Models {
     {
         Q_OBJECT
         Q_PROPERTY(int percent READ getUIPercent NOTIFY percentChanged)
-        Q_PROPERTY(bool inProgress READ getInProgress WRITE setInProgress NOTIFY inProgressChanged)
-        Q_PROPERTY(bool isError READ getHasErrors WRITE setHasErrors NOTIFY hasErrorsChanged)
+        Q_PROPERTY(bool inProgress READ getInProgress NOTIFY inProgressChanged)
+        Q_PROPERTY(bool isError READ getHasErrors NOTIFY hasErrorsChanged)
         Q_PROPERTY(int itemsCount READ getItemsCount NOTIFY itemsCountChanged)
     public:
         ArtworksUploader(Common::ISystemEnvironment &environment,

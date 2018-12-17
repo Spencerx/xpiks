@@ -26,6 +26,7 @@ DEFINES += WITH_UPDATES
 DEFINES += WITH_EXIV2
 DEFINES += FAKE_WARNINGS
 DEFINES += VERBOSE_LOGGING
+DEFINES += WITH_FTP_SERVER
 
 SOURCES += main.cpp \
     ../../../vendors/tiny-aes/aes.cpp \
@@ -275,7 +276,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp \
     removedirsavessessiontest.cpp \
     ftpuploadtest.cpp \
-    ftpcredentialschecktest.cpp
+    ftpcredentialschecktest.cpp \
+    ../../xpiks-qt/Connectivity/curlhelpers.cpp
 
 RESOURCES +=
 
@@ -626,7 +628,8 @@ HEADERS += \
     removedirsavessessiontest.h \
     ftpuploadtest.h \
     ftpcredentialschecktest.h \
-    ../../xpiks-qt/QMLExtensions/uicommandid.h
+    ../../xpiks-qt/QMLExtensions/uicommandid.h \
+    ../../xpiks-qt/Connectivity/curlhelpers.h
 
 INCLUDEPATH += ../../../
 INCLUDEPATH += ../../xpiks-qt
@@ -730,8 +733,6 @@ travis-ci {
         # gcov
         QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
         LIBS += -lgcov
-
-        DEFINES += WITH_FTP_SERVER
     }
 
     macx {
@@ -741,6 +742,8 @@ travis-ci {
         LIBS -= -lexiv2
 
         DEFINES -= WITH_EXIV2
+        DEFINES -= WITH_FTP_SERVER
+
         SOURCES -= \
             unicodeiotest.cpp \
             exiv2iohelpers.cpp
@@ -753,6 +756,7 @@ travis-ci {
 appveyor {
     message("for Appveyor")
     DEFINES += APPVEYOR
+    DEFINES -= WITH_FTP_SERVER
 }
 
 without-video {

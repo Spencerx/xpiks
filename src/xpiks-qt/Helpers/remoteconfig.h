@@ -20,6 +20,12 @@ namespace Connectivity {
     class ConfigRequest;
 }
 
+#if defined(CORE_TESTS)
+namespace Mocks {
+    class RequestsServiceMock;
+}
+#endif
+
 namespace Helpers {
     class RemoteConfig : public QObject {
         Q_OBJECT
@@ -33,6 +39,9 @@ namespace Helpers {
 
     private:
         friend class Connectivity::ConfigRequest;
+#if defined(CORE_TESTS)
+        friend class Mocks::RequestsServiceMock;
+#endif
         void setRemoteResponse(const QByteArray &responseData);
 
     signals:

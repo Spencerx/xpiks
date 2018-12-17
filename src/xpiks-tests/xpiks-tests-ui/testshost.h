@@ -12,6 +12,7 @@ class TestsHost : public QObject
     Q_OBJECT
     Q_PROPERTY(int smallSleepTime READ getSmallSleepTime CONSTANT)
     Q_PROPERTY(int normalSleepTime READ getNormalSleepTime CONSTANT)
+    Q_PROPERTY(bool ftpServerEnabled READ getFtpServerEnabled CONSTANT)
     Q_PROPERTY(bool isReady READ getIsReady NOTIFY isReadyChanged)
 
 public:
@@ -26,15 +27,16 @@ public:
     int getSmallSleepTime() const;
     int getNormalSleepTime() const;
     bool getIsReady() const { return m_IsReady; }
+    bool getFtpServerEnabled() const;
     void qmlEngineCallback(QQmlEngine *engine);
 
 public:
-    Q_INVOKABLE void setup();
+    Q_INVOKABLE void setup(const QString &testname, bool realFiles=false);
     Q_INVOKABLE void cleanupTest();
     Q_INVOKABLE void cleanup();
 
 signals:
-    void isReadyChanged();
+    void isReadyChanged(bool value);
 
 public slots:
 
