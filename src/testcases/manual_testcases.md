@@ -8,17 +8,17 @@
 
 ## Adding keywords
 
-* add keywords with typing keywords
-* add keywords with copy-pasting (copy-paste to many)
-* add keywords with suggestion (local/remote options)
+* ~add keywords with typing keywords~
+* ~add keywords with copy-pasting (copy-paste to many)~
+* ~add keywords with suggestion (local/remote options)~
 * undo adding keywords
 
 ## Editing artworks
 
-* edit one item horizontal/vertical
+* ~edit one item horizontal/vertical~
 * edit several items
-* plain text edit
-* keyword edit
+* ~plain text edit~
+* ~keyword edit~
 * undo editing
 
 ## Saving artworks
@@ -33,15 +33,15 @@
 
 ## Spellchecking
 
-* description, title, keywords
-* replace, multireplace
-* spellchecking in multiple edit and one-item edit dialogs
+* ~description, title, keywords~
+* ~replace, multireplace~
+* ~spellchecking in multiple edit and one-item edit dialogs~
 
 ## Autocomplete
 
 * autocomplete in a normal place, too close to the border/bottom
-* autocomplete in the edit artwork vertical/horizontal, combined edit (in the top/bottom)
-* stocks autocomplete in Upload dialog
+* ~autocomplete in the edit artwork vertical/horizontal, combined edit (in the top/bottom)~
+* ~stocks autocomplete in Upload dialog~
 * selecting item, scrolling, clicking with a mouse
 
 ## Warnings
@@ -52,6 +52,6 @@
 
 ## Upload
 
-* upload images only
+* ~upload images only~
 * upload vectors with previews
 * upload mixed images with zips
