@@ -91,6 +91,7 @@ StaticDialogBase {
 
                 delegate: Rectangle {
                     id: sourceWrapper
+                    objectName: "presetDelegate"
                     property variant myData: model
                     property int delegateIndex: index
                     property bool isCurrent: ListView.isCurrentItem
@@ -362,6 +363,7 @@ StaticDialogBase {
 
                 ComboBoxPopup {
                     id: groupsCombobox
+                    objectName: "groupsCombobox"
                     model: presetsGroups.groupNames
                     hasLastItemAction: true
                     enabled: presetNamesListView.count > 0

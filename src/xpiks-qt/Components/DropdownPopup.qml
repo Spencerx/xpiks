@@ -116,6 +116,7 @@ Item {
 
         ListView {
             id: dropDownItems
+            objectName: "dropDownItems"
             property int itemsCount: count + (hasLastItemAction ? 1 : 0)
             anchors.fill: parent
             anchors.topMargin: 5
@@ -126,7 +127,9 @@ Item {
 
             delegate: Rectangle {
                 id: currentDelegate
+                objectName: "dropDownItem"
                 color: itemMA.containsMouse ? highlightedItemColor : dropDown.color
+                property var delegateIndex: index
                 property var itemText: modelData
                 property bool isCurrentItem: index === dropdownComponent.selectedIndex
                 property bool isLastItem: index === (dropDownItems.count - 1)
@@ -171,6 +174,7 @@ Item {
             }
 
             footer: Rectangle {
+                objectName: "lastItem"
                 visible: hasLastItemAction
                 enabled: hasLastItemAction
                 color: lastItemMA.containsMouse ? highlightedItemColor : dropDown.color

@@ -240,5 +240,48 @@ Item {
 
             compare(presetsModel.getKeywordsString(0), testKeyword2)
         }
+
+        function test_addPresetGroup() {
+            var groupCombobox = findChild(presetEditsDialog, "groupsCombobox")
+            var selectedText = findChild(groupCombobox, "selectedText");
+
+            mouseClick(addPresetButton)
+
+            compare(selectedText.text, "Default")
+
+            var titleEdit = findChild(presetEditsDialog, "titleEdit")
+            titleEdit.forceActiveFocus()
+
+            var size = titleEdit.text.length
+            for (var i = 0; i < size; i++) {
+                keyClick(Qt.Key_Backspace)
+            }
+
+            var testKeyword = TestUtils.keyboardEnterSomething(testCase)
+
+            mouseClick(groupCombobox)
+            wait(TestsHost.smallSleepTime)
+
+            var lastItem = findChild(root, "lastItem")
+            // should call group dialog
+            mouseClick(lastItem)
+            wait(TestsHost.smallSleepTime)
+
+            var groupName = "my group 99"
+            TestUtils.keyboardEnterText(groupName)
+            keyClick(Qt.Key_Return)
+
+            compare(selectedText.text, groupName)
+
+            // now switch back and forth
+
+            mouseClick(addPresetButton)
+            wait(TestsHost.smallSleepTime)
+            compare(selectedText.text, "Default")
+
+            mouseClick(TestUtils.getDelegateInstanceAt(presetNamesListView.contentItem, "presetDelegate", 0))
+            wait(TestsHost.smallSleepTime)
+            compare(selectedText.text, groupName)
+        }
     }
 }
