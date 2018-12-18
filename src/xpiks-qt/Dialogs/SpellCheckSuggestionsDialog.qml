@@ -28,6 +28,12 @@ StaticDialogBase {
     property bool initialized: false
     property var spellCheckSuggestionModel: dispatcher.getCommandTarget(UICommand.ReviewSpellingArtwork)
 
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.FixSpelling]
+        onDispatched: closePopup()
+    }
+
     contentsWidth: 730
     contentsHeight: 610
 
@@ -191,7 +197,6 @@ StaticDialogBase {
                 width: 100
                 onClicked: {
                     dispatcher.dispatch(UICommand.FixSpelling, true)
-                    closePopup()
                 }
             }
 
@@ -200,7 +205,6 @@ StaticDialogBase {
                 width: 80
                 onClicked: {
                     dispatcher.dispatch(UICommand.FixSpelling, false)
-                    closePopup()
                 }
             }
         }

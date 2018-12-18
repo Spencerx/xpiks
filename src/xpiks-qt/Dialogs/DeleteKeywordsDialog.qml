@@ -45,6 +45,12 @@ StaticDialogBase {
         onRequestCloseWindow: closePopup()
     }
 
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.DeleteKeywordsInSelected]
+        onDispatched: closePopup()
+    }
+
     PropertyAnimation { target: deleteKeywordsComponent; property: "opacity";
         duration: 400; from: 0; to: 1;
         easing.type: Easing.InOutQuad ; running: true }
@@ -563,7 +569,6 @@ StaticDialogBase {
                     onClicked: {
                         flv.onBeforeClose()
                         dispatcher.dispatch(UICommand.DeleteKeywordsInSelected, true)
-                        closePopup()
                     }
                 }
 
@@ -572,7 +577,6 @@ StaticDialogBase {
                     width: 100
                     onClicked: {
                         dispatcher.dispatch(UICommand.DeleteKeywordsInSelected, false)
-                        closePopup()
                     }
 
                     tooltip: qsTr("Exit without changes", "tooltip")
