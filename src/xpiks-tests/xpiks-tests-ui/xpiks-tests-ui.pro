@@ -325,6 +325,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/QMLExtensions/videocachingservice.cpp \
     ../../xpiks-qt/QMLExtensions/videocachingworker.cpp \
     ../../xpiks-qt/Commands/Files/removefilescommand.cpp \
+    ../../xpiks-qt/Suggestion/suggestedkeywords.cpp \
     ../../xpiks-qt/Models/uimanager.cpp \
     ../../xpiks-qt/Commands/artworksupdatetemplate.cpp \
     ../../xpiks-qt/QMLExtensions/tabsmodel.cpp \
@@ -752,6 +753,7 @@ HEADERS += \
     ../../xpiks-qt/Commands/UI/currenteditablecommands.h \
     ../../xpiks-qt/QMLExtensions/iuicommandmiddleware.h \
     ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.h \
+    ../../xpiks-qt/Suggestion/suggestedkeywords.h \
     ../../xpiks-qt/Connectivity/curlhelpers.h \
     ../xpiks-tests-integration/integrationtestsenvironment.h
 
