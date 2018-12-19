@@ -83,6 +83,9 @@ namespace MetadataIO {
         virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
         virtual QHash<int, QByteArray> roleNames() const override;
 
+    signals:
+        void updated();
+
     private:
         int getColumnsCount() const;
 
@@ -135,14 +138,14 @@ namespace MetadataIO {
         virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     public:
-        Q_INVOKABLE void startExport();
+        void startExport(const QString &directoryPath);
+
+    public:
         Q_INVOKABLE void removePlanAt(int row);
         Q_INVOKABLE void addNewPlan();
         Q_INVOKABLE QObject *getColumnsModel();
         Q_INVOKABLE void setCurrentItem(int row);
-        Q_INVOKABLE void requestSave();
         Q_INVOKABLE int getSelectedPlansCount() { return retrieveSelectedPlansCount(); }
-        Q_INVOKABLE void setOutputDirectory(const QUrl &url);
 
     private:
         void saveExportPlans();
@@ -165,6 +168,7 @@ namespace MetadataIO {
         void onWorkerFinished();
         void onPlansUpdated();
         void onBackupRequired();
+        void onSchemeUpdated();
 
         // DelayedActionEntity implementation
     protected:
@@ -179,7 +183,6 @@ namespace MetadataIO {
         CsvExportPlansModel m_ExportPlansModel;
         std::vector<std::shared_ptr<CsvExportPlan> > m_ExportPlans;
         Artworks::ArtworksSnapshot m_ArtworksToExport;
-        QString m_ExportDirectory;
         int m_SaveTimerId;
         int m_SaveRestartsCount;
         bool m_IsExporting;

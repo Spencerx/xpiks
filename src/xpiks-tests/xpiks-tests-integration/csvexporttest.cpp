@@ -164,11 +164,12 @@ int CsvExportTest::doTest() {
     const QString directoryPath = QCoreApplication::applicationDirPath() + "/" + testName();
     Helpers::ensureDirectoryExists(directoryPath);
     MetadataIO::CsvExportModel &csvExportModel = m_TestsApp.getCsvExportModel();
-    csvExportModel.setOutputDirectory(QUrl::fromLocalFile(directoryPath));
 
     setupExportPlans(csvExportModel.accessExportPlans());
 
-    csvExportModel.startExport();
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::StartCSVExport,
+                        QVariant::fromValue(
+                            QUrl::fromLocalFile(directoryPath)));
 
     sleepWaitUntil(5, [&csvExportModel]() {
         return csvExportModel.getIsExporting() == false;

@@ -45,13 +45,14 @@ int CsvDefaultExportTest::doTest() {
     Helpers::ensureDirectoryExists(directoryPath);
 
     MetadataIO::CsvExportModel &csvExportModel = m_TestsApp.getCsvExportModel();
-    csvExportModel.setOutputDirectory(QUrl::fromLocalFile(directoryPath));
 
     auto &defaultPlans = csvExportModel.accessExportPlans();
     for (auto &p: defaultPlans) { p->m_IsSelected = true; }
     VERIFY(defaultPlans.size() > 0, "Default export plans are not initialized");
 
-    csvExportModel.startExport();
+    m_TestsApp.dispatch(QMLExtensions::UICommandID::StartCSVExport,
+                        QVariant::fromValue(
+                            QUrl::fromLocalFile(directoryPath)));
 
     sleepWaitUntil(5, [&csvExportModel]() {
         return csvExportModel.getIsExporting() == false;

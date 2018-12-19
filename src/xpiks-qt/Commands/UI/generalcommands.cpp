@@ -13,13 +13,15 @@
 #include <QString>
 #include <QVariant>
 #include <QtDebug>
+#include <QUrl>
 
 #include "Common/logging.h"
 #include "Helpers/uihelpers.h"
+#include "MetadataIO/csvexportmodel.h"
 #include "Models/Artworks/artworkslistmodel.h"
 #include "Models/Artworks/filteredartworkslistmodel.h"
 #include "Models/Connectivity/uploadinforepository.h"
-#include <Models/Editing/findandreplacemodel.h>
+#include "Models/Editing/findandreplacemodel.h"
 #include "Models/logsmodel.h"
 #include "Models/settingsmodel.h"
 #include "Models/uimanager.h"
@@ -102,6 +104,21 @@ namespace Commands {
             LOG_DEBUG << "#";
             m_Source.setReplaceFrom("");
             m_Source.setReplaceTo("");
+        }
+
+        void StartCSVExportCommand::execute(const QVariant &value) {
+            LOG_DEBUG << value;
+
+            QString path;
+            if (value.isValid()) {
+                if (value.type() == QVariant::Url) {
+                    path = value.toUrl().toLocalFile();
+                } else if (value.type() == QVariant::String) {
+                    path = value.toString();
+                }
+            }
+
+            m_Source.startExport(path);
         }
     }
 }

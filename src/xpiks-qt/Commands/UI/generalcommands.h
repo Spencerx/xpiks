@@ -43,6 +43,10 @@ namespace SpellCheck {
     class UserDictionary;
 }
 
+namespace MetadataIO {
+    class CsvExportModel;
+}
+
 namespace Commands {
     namespace UI {
         SOURCE_TARGET_COMMAND(SetMasterPasswordCommand,
@@ -89,6 +93,10 @@ namespace Commands {
         SOURCE_COMMAND(SetupFindInArtworksCommand,
                        QMLExtensions::UICommandID::SetupFindInArtworks,
                        Models::FindAndReplaceModel);
+
+        SOURCE_COMMAND(StartCSVExportCommand,
+                       QMLExtensions::UICommandID::StartCSVExport,
+                       MetadataIO::CsvExportModel);
     }
 }
 

@@ -30,7 +30,6 @@ StaticDialogBase {
     property variant propertiesModel: columnsModel.getPropertiesList()
 
     function closePopup() {
-        csvExportModel.requestSave()
         csvExportComponent.destroy()
     }
 
@@ -59,7 +58,6 @@ StaticDialogBase {
             text: i18.n + qsTr("Remove")
             onTriggered: {
                 columnsModel.removeColumn(dotsClickMenu.columnIndex)
-                csvExportModel.requestSave()
             }
         }
 
@@ -67,7 +65,6 @@ StaticDialogBase {
             text: i18.n + qsTr("Add column above")
             onTriggered: {
                 columnsModel.addColumnAbove(dotsClickMenu.columnIndex)
-                csvExportModel.requestSave()
             }
         }
 
@@ -75,7 +72,6 @@ StaticDialogBase {
             text: i18.n + qsTr("Move up")
             onTriggered: {
                 columnsModel.moveColumnUp(dotsClickMenu.columnIndex)
-                csvExportModel.requestSave()
             }
         }
 
@@ -83,7 +79,6 @@ StaticDialogBase {
             text: i18.n + qsTr("Move down")
             onTriggered: {
                 columnsModel.moveColumnDown(dotsClickMenu.columnIndex)
-                csvExportModel.requestSave()
             }
         }
     }
@@ -99,8 +94,7 @@ StaticDialogBase {
 
         onAccepted: {
             console.log("CsvExportDialog # You chose: " + exportDirDialog.folder)
-            csvExportModel.setOutputDirectory(exportDirDialog.folder)
-            csvExportModel.startExport()
+            dispatcher.dispatch(UICommand.StartCSVExport, exportDirDialog.folder)
         }
 
         onRejected: {
@@ -172,6 +166,7 @@ StaticDialogBase {
 
                 delegate: Rectangle {
                     id: sourceWrapper
+                    objectName: "exportPlanDelegate"
                     property variant myData: model
                     property int delegateIndex: index
                     property bool isCurrent: ListView.isCurrentItem
@@ -210,6 +205,7 @@ StaticDialogBase {
 
                         StyledCheckbox {
                             id: itemCheckedCheckbox
+                            objectName: "itemCheckedCheckbox"
                             isContrast: !sourceWrapper.isCurrent
                             onClicked: editisselected = checked
                             Component.onCompleted: itemCheckedCheckbox.checked = isselected
@@ -374,7 +370,6 @@ StaticDialogBase {
                         onTextChanged: {
                             if (exportPlanModelsListView.currentItem) {
                                 exportPlanModelsListView.currentItem.myData.editname = text
-                                csvExportModel.requestSave()
                             }
                         }
 
@@ -382,7 +377,6 @@ StaticDialogBase {
                             if (text.length == 0) {
                                 if (exportPlanModelsListView.currentItem) {
                                     exportPlanModelsListView.currentItem.myData.editname = qsTr("Untitled")
-                                    csvExportModel.requestSave()
                                 }
                             }
                         }
@@ -518,6 +512,7 @@ StaticDialogBase {
 
                                     StyledTextInput {
                                         id: columnNameText
+                                        objectName: "columnNameText"
                                         height: parent.height
                                         anchors.left: parent.left
                                         anchors.right: parent.right
@@ -527,7 +522,6 @@ StaticDialogBase {
                                         activeFocusOnTab: true
                                         onTextChanged: {
                                             model.editcolumn = text
-                                            csvExportModel.requestSave()
                                         }
 
                                         onEditingFinished: {
@@ -560,6 +554,7 @@ StaticDialogBase {
 
                                 ComboBoxPopup {
                                     id: propertiesCombobox
+                                    objectName: "propertiesCombobox"
                                     model: propertiesModel
                                     width: 170
                                     height: 24
@@ -654,7 +649,6 @@ StaticDialogBase {
 
                                 onClicked: {
                                     columnsModel.addColumn()
-                                    csvExportModel.requestSave()
                                     columnsListView.forceActiveFocus()
                                     columnsListView.positionViewAtEnd()
                                     columnsListView.currentIndex = columnsListView.count - 1

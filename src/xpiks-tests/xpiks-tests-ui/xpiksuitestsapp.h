@@ -18,6 +18,7 @@ namespace Models {
 class XpiksUITestsApp: public XpiksApp
 {
     Q_OBJECT
+    Q_PROPERTY(QString sessionDirectory READ getSessionDirectory CONSTANT)
 public:
     XpiksUITestsApp(Common::ISystemEnvironment &environment, QStringList const &importPaths = QStringList());
 
@@ -28,9 +29,11 @@ public:
     void cleanup();
     bool setupCommonFiles();
     void setupUITests(bool realFiles);
+    QString getSessionDirectory() const;
 
 public:
     Q_INVOKABLE bool uploadedFilesExist();
+    Q_INVOKABLE bool csvExportIsValid(QString const &column0, QString const &column1);
 
 private:
     void addFakeFiles();

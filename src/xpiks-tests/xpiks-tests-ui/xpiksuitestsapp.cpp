@@ -9,8 +9,11 @@
 #include <QFileInfo>
 #include <QJSValue>
 #include <QList>
+#include <QStandardPaths>
 #include <QString>
 #include <QThread>
+
+#include <vendors/csv/csv.h>
 
 #include "Artworks/artworkssnapshot.h"
 #include "Artworks/imageartwork.h"
@@ -194,6 +197,11 @@ void XpiksUITestsApp::setupUITests(bool realFiles) {
     m_CurrentEditableModel.clearCurrentItem();
 }
 
+QString XpiksUITestsApp::getSessionDirectory() const {
+    return dynamic_cast<IntegrationTestsEnvironment&>(m_Environment)
+            .getSessionRoot();
+}
+
 bool XpiksUITestsApp::uploadedFilesExist() {
     QStringList files;
     files
@@ -210,6 +218,76 @@ bool XpiksUITestsApp::uploadedFilesExist() {
         }
     }
     return !anyError;
+}
+
+bool XpiksUITestsApp::csvExportIsValid(QString const &column0, QString const &column1) {
+    QDir downloadsDir(getSessionDirectory());
+    downloadsDir.setNameFilters(QStringList() << "Untitled-*.csv");
+    auto fileList = downloadsDir.entryInfoList();
+    if (fileList.size() > 1) { return false; }
+
+#define PLAN1_COLUMNS_COUNT 2
+#define COLUMNIZE1(arr) arr[0], arr[1]
+
+    io::CSVReader<PLAN1_COLUMNS_COUNT,
+            io::trim_chars<' ', '\t'>,
+            io::double_quote_escape<',', '\"'>,
+            io::ignore_overflow,
+            io::empty_line_comment> csvReader(fileList.first().filePath().toStdString());
+
+    std::string columns[PLAN1_COLUMNS_COUNT];
+
+    bool verified = false;
+
+    do {
+        if (!csvReader.read_row(COLUMNIZE1(columns))) {
+            LOG_WARNING << "Failed to read headers";
+            break;
+        }
+
+        if (columns[0] != column0.toStdString()) {
+            LOG_WARNING << "First column is unexpected";
+            break;
+        }
+
+        if (columns[1] != column1.toStdString()) {
+            LOG_WARNING << "Second column is unexpected";
+            break;
+        }
+
+        bool anyError = false;
+        for (size_t i = 0; i < 2; i++) {
+            std::shared_ptr<Artworks::ArtworkMetadata> artwork;
+            if (!m_ArtworksListModel.tryGetArtwork(i, artwork)) {
+                LOG_WARNING << "Failed to get artwork" << i;
+                continue;
+            }
+
+            if (!csvReader.read_row(COLUMNIZE1(columns))) {
+                LOG_WARNING << "Failed to read row" << (i+1);
+                anyError = true;
+                break;
+            }
+
+            if (QString::fromStdString(columns[0]) != artwork->getBaseFilename()) {
+                LOG_WARNING << "Filename property is wrong";
+                anyError = true;
+                break;
+            }
+
+            if (QString::fromStdString(columns[1]) != artwork->getKeywordsString()) {
+                LOG_WARNING << "Keywords property is wrong";
+                anyError = true;
+                break;
+            }
+        }
+
+        if (anyError) { break; }
+        verified = true;
+    } while (false);
+
+    return verified;
+#undef COLUMNIZE1
 }
 
 void XpiksUITestsApp::addFakeFiles() {

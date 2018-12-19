@@ -7,6 +7,9 @@ echo "--------------------"
 scripts/docker/vsftpd/cleanup.sh
 scripts/docker/vsftpd/start.sh
 
+# for csv export test
+mkdir ~/Downloads
+
 pushd src/xpiks-tests/xpiks-tests-ui
 
 qmake "CONFIG+=debug travis-ci" xpiks-tests-ui.pro

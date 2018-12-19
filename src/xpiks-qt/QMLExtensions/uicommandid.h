@@ -44,6 +44,7 @@ namespace QMLExtensions {
             SetupFindInArtworks,
             FindReplaceCandidates,
             ReplaceInFound,
+            StartCSVExport,
             // ------ Selected -------
             SetupEditSelectedArtworks,
             EditSelectedArtworks,

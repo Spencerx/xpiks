@@ -826,7 +826,10 @@ void XpiksApp::registerUICommands() {
                     m_UploadInfoRepository),
 
                     std::make_shared<Commands::ActionModelCommand>(
-                    m_ZipArchiver, QMLExtensions::UICommandID::CreateArchives)
+                    m_ZipArchiver, QMLExtensions::UICommandID::CreateArchives),
+
+                    std::make_shared<Commands::UI::StartCSVExportCommand>(
+                    m_CsvExportModel)
                 });
 
     // others

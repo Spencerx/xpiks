@@ -63,6 +63,7 @@ namespace MetadataIO {
         endResetModel();
 
         m_CurrentIndex = -1;
+        emit updated();
     }
 
     void CsvExportColumnsModel::addColumn() {
@@ -76,6 +77,8 @@ namespace MetadataIO {
             m_ExportPlan->m_PropertiesToExport.emplace_back(Empty, QObject::tr("Untitled"));
         }
         endInsertRows();
+
+        emit updated();
     }
 
     void CsvExportColumnsModel::addColumnAbove(int row) {
@@ -93,6 +96,8 @@ namespace MetadataIO {
             m_ExportPlan->m_PropertiesToExport.insert(m_ExportPlan->m_PropertiesToExport.begin() + row, property);
         }
         endInsertRows();
+
+        emit updated();
     }
 
     void CsvExportColumnsModel::removeColumn(int row) {
@@ -106,6 +111,8 @@ namespace MetadataIO {
             m_ExportPlan->m_PropertiesToExport.erase(m_ExportPlan->m_PropertiesToExport.begin() + row);
         }
         endRemoveRows();
+
+        emit updated();
     }
 
     void CsvExportColumnsModel::moveColumnUp(int row) {
@@ -122,6 +129,8 @@ namespace MetadataIO {
             curr.swap(prev);
         }
         endMoveRows();
+
+        emit updated();
     }
 
     void CsvExportColumnsModel::moveColumnDown(int row) {
@@ -134,6 +143,8 @@ namespace MetadataIO {
         // Qt has some incomplications with moving rows down
         // let's just simulate that
         moveColumnUp(row + 1);
+
+        emit updated();
     }
 
     QStringList CsvExportColumnsModel::getPropertiesList() {
@@ -211,6 +222,7 @@ namespace MetadataIO {
         }
 
         if (updateRequired) {
+            emit updated();
             emit dataChanged(index, index, QVector<int>() << ColumnNameRole << PropertyTypeRole);
         }
 
@@ -255,7 +267,8 @@ namespace MetadataIO {
 
         QObject::connect(this, &CsvExportModel::backupRequired, this, &CsvExportModel::onBackupRequired);
 
-        m_ExportDirectory = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+        QObject::connect(&m_CurrentColumnsModel, &CsvExportColumnsModel::updated,
+                         this, &CsvExportModel::onSchemeUpdated);
     }
 
     void CsvExportModel::setIsExporting(bool value) {
@@ -344,6 +357,7 @@ namespace MetadataIO {
 
         if (updateRequired) {
             emit dataChanged(index, index, QVector<int>() << roleToUpdate);
+            justChanged();
         }
 
         return true;
@@ -359,8 +373,8 @@ namespace MetadataIO {
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     }
 
-    void CsvExportModel::startExport() {
-        LOG_DEBUG << "#";
+    void CsvExportModel::startExport(QString const &directoryPath) {
+        LOG_INFO << directoryPath;
         Q_ASSERT(!m_IsExporting);
 
         if (retrieveSelectedPlansCount() == 0) {
@@ -368,11 +382,11 @@ namespace MetadataIO {
             return;
         }
 
-        QString exportDirectory = m_ExportDirectory;
+        QString exportDirectory = directoryPath;
 
         if (exportDirectory.isEmpty() || !QDir(exportDirectory).exists()) {
             exportDirectory = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-            LOG_INFO << "Export directory is not valid. Saving to Downloads directory...";
+            LOG_INFO << "Export directory is not valid. Fallback:" << exportDirectory;
         }
 
         CsvExportWorker *exportWorker = new CsvExportWorker(m_ExportPlans, m_ArtworksToExport, exportDirectory);
@@ -441,20 +455,6 @@ namespace MetadataIO {
         m_CurrentColumnsModel.setupModel(row, m_ExportPlans[row]);
     }
 
-    void CsvExportModel::requestSave() {
-        LOG_DEBUG << "#";
-        justChanged();
-    }
-
-    void CsvExportModel::setOutputDirectory(const QUrl &url) {
-        LOG_INFO << url;
-
-        QString localFile = url.toLocalFile();
-        if (localFile != m_ExportDirectory) {
-            m_ExportDirectory = localFile;
-        }
-    }
-
     void CsvExportModel::saveExportPlans() {
         LOG_DEBUG << "#";
         m_ExportPlansModel.sync(m_ExportPlans);
@@ -513,5 +513,10 @@ namespace MetadataIO {
     void CsvExportModel::onBackupRequired() {
         LOG_DEBUG << "#";
         saveExportPlans();
+    }
+
+    void CsvExportModel::onSchemeUpdated() {
+        LOG_DEBUG << "#";
+        justChanged();
     }
 }
