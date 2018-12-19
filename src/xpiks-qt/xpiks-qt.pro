@@ -223,7 +223,8 @@ SOURCES += main.cpp \
     UndoRedo/artworkmetadatabackup.cpp \
     UndoRedo/undoredomanager.cpp \
     xpiksapp.cpp \
-    Connectivity/curlhelpers.cpp
+    Connectivity/curlhelpers.cpp \
+    Suggestion/suggestedkeywords.cpp
 
 RESOURCES += qml.qrc
 
@@ -547,7 +548,8 @@ HEADERS += \
     UndoRedo/iundoredomanager.h \
     UndoRedo/undoredomanager.h \
     xpiksapp.h \
-    Connectivity/curlhelpers.h
+    Connectivity/curlhelpers.h \
+    Suggestion/suggestedkeywords.h
 
 DISTFILES += \
     ../xpiks-common/xpiks-common.pri \

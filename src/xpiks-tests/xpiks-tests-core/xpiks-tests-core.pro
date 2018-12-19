@@ -188,6 +188,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Models/Connectivity/proxysettings.cpp \
     ../../xpiks-qt/Commands/Files/removedirectorycommand.cpp \
     ../../xpiks-qt/Suggestion/keywordssuggestor.cpp \
+    ../../xpiks-qt/Suggestion/suggestedkeywords.cpp \
     ../../xpiks-qt/Models/switchermodel.cpp \
     ../../xpiks-qt/Connectivity/switcherconfig.cpp \
     common_tests.cpp \
@@ -386,5 +387,6 @@ HEADERS += \
     ../../xpiks-qt/Microstocks/stocksftplistmodel.h \
     ../../xpiks-qt/Services/AutoComplete/stringsautocompletemodel.h \
     ../../xpiks-qt/Models/Connectivity/uploadinfo.h \
+    ../../xpiks-qt/Suggestion/suggestedkeywords.h \
     ../../xpiks-qt/Connectivity/ftphelpers.h
 

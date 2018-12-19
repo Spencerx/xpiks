@@ -11,6 +11,7 @@
 #include "keywordshelpers.h"
 
 #include <QChar>
+#include <QString>
 
 #define ALLOWED_SYMBOLS "@#%&!?"
 

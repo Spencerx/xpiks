@@ -274,6 +274,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Commands/Base/compositecommand.cpp \
     ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp \
     ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp \
+    ../../xpiks-qt/Suggestion/suggestedkeywords.cpp \
     removedirsavessessiontest.cpp \
     ftpuploadtest.cpp \
     ftpcredentialschecktest.cpp \
@@ -618,6 +619,7 @@ HEADERS += \
     ../../xpiks-qt/Services/artworkseditinghub.h \
     ../../xpiks-qt/Helpers/uihelpers.h \
     ../../xpiks-qt/QMLExtensions/uiaction.h \
+    ../../xpiks-qt/Suggestion/suggestedkeywords.h \
     unavailablefilestest.h \
     ../../xpiks-qt/Commands/Editing/clearactionmodeltemplate.h \
     ../../xpiks-qt/Commands/Base/actionmodelcommand.h \

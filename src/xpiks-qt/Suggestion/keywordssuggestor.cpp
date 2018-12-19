@@ -11,12 +11,9 @@
 #include "keywordssuggestor.h"
 
 #include <cstddef>
-#include <utility>
 
 #include <QByteArray>
 #include <QHash>
-#include <QMap>
-#include <QMultiMap>
 #include <QQmlEngine>
 #include <QString>
 #include <QTime>
@@ -49,6 +46,7 @@
 #define DEFAULT_SEARCH_TYPE_INDEX 0
 
 namespace Suggestion {
+
     KeywordsSuggestor::KeywordsSuggestor(Models::SwitcherModel &switcherModel,
                                          Models::SettingsModel &settingsModel,
                                          Common::ISystemEnvironment &environment,
@@ -57,8 +55,8 @@ namespace Suggestion {
         m_State("ksuggest", environment),
         m_SwitcherModel(switcherModel),
         m_SettingsModel(settingsModel),
-        m_SuggestedKeywords(this),
-        m_AllOtherKeywords(this),
+        m_SuggestedKeywordsModel(this),
+        m_OtherKeywordsModel(this),
         m_SelectedArtworksCount(0),
         m_SelectedSourceIndex(0),
         m_LocalSearchIndex(-1),
@@ -76,7 +74,7 @@ namespace Suggestion {
 
     void KeywordsSuggestor::setExistingKeywords(const QSet<QString> &keywords) {
         LOG_DEBUG << "#";
-        m_ExistingKeywords.clear(); m_ExistingKeywords.unite(keywords);
+        m_SuggestedKeywords.setExistingKeywords(keywords);
     }
 
     void KeywordsSuggestor::initSuggestionEngines(Microstocks::IMicrostockAPIClients &microstockClients,
@@ -127,9 +125,9 @@ namespace Suggestion {
         LOG_INFO << suggestedArtworks.size() << "item(s)";
 
         m_SelectedArtworksCount = 0;
-        m_KeywordsHash.clear();
-        m_SuggestedKeywords.clearKeywords();
-        m_AllOtherKeywords.clearKeywords();
+        m_SuggestedKeywords.reset();
+        m_SuggestedKeywordsModel.clearKeywords();
+        m_OtherKeywordsModel.clearKeywords();
 
 #if !defined(INTEGRATION_TESTS) && !defined(CORE_TESTS)
         const bool sequentialLoading =
@@ -170,10 +168,9 @@ namespace Suggestion {
         LOG_DEBUG << "#";
 
         m_SelectedArtworksCount = 0;
-        m_KeywordsHash.clear();
-        m_SuggestedKeywords.clearKeywords();
-        m_AllOtherKeywords.clearKeywords();
-        m_ExistingKeywords.clear();
+        m_SuggestedKeywords.reset();
+        m_SuggestedKeywordsModel.clearKeywords();
+        m_OtherKeywordsModel.clearKeywords();
         m_LoadedPreviewsNumber = 0;
 
         beginResetModel();
@@ -291,11 +288,21 @@ namespace Suggestion {
         return result;
     }
 
+    void KeywordsSuggestor::appendKeywordToSuggested(const QString &keyword) {
+        m_SuggestedKeywordsModel.appendKeyword(keyword);
+        emit suggestedKeywordsCountChanged();
+    }
+
+    void KeywordsSuggestor::appendKeywordToOther(const QString &keyword) {
+        m_OtherKeywordsModel.appendKeyword(keyword);
+        emit otherKeywordsCountChanged();
+    }
+
     QString KeywordsSuggestor::removeSuggestedKeywordAt(int keywordIndex) {
         LOG_INFO << "Index:" << keywordIndex;
 
         QString keyword;
-        if (m_SuggestedKeywords.removeKeywordAt(keywordIndex, keyword)) {
+        if (m_SuggestedKeywordsModel.removeKeywordAt(keywordIndex, keyword)) {
             emit suggestedKeywordsCountChanged();
             LOG_INFO << "Removed:" << keyword;
         }
@@ -307,7 +314,7 @@ namespace Suggestion {
         LOG_INFO << "Index:" << keywordIndex;
 
         QString keyword;
-        if (m_AllOtherKeywords.removeKeywordAt(keywordIndex, keyword)) {
+        if (m_OtherKeywordsModel.removeKeywordAt(keywordIndex, keyword)) {
             emit otherKeywordsCountChanged();
             LOG_INFO << "Removed:" << keyword;
         }
@@ -315,6 +322,7 @@ namespace Suggestion {
     }
 
     void KeywordsSuggestor::setArtworkSelected(int index, bool newState) {
+        LOG_INFO << index << newState;
         if (index < 0 || (size_t)index >= m_Suggestions.size()) {
             return;
         }
@@ -322,8 +330,13 @@ namespace Suggestion {
         auto &suggestionArtwork = m_Suggestions.at(index);
         suggestionArtwork->setIsSelected(newState);
 
+        if (newState) {
+            m_SuggestedKeywords.addKeywords(suggestionArtwork->getKeywordsSet());
+        } else {
+            m_SuggestedKeywords.removeKeywords(suggestionArtwork->getKeywordsSet());
+        }
+
         int sign = newState ? +1 : -1;
-        accountKeywords(suggestionArtwork->getKeywordsSet(), sign);
         m_SelectedArtworksCount += sign;
         emit selectedArtworksCountChanged();
 
@@ -389,7 +402,7 @@ namespace Suggestion {
     void KeywordsSuggestor::clearSuggested() {
         LOG_DEBUG << "#";
 
-        while (!m_SuggestedKeywords.isEmpty()) {
+        while (!m_SuggestedKeywordsModel.isEmpty()) {
             QString keyword = removeSuggestedKeywordAt(0);
             appendKeywordToOther(keyword);
         }
@@ -398,10 +411,9 @@ namespace Suggestion {
     void KeywordsSuggestor::resetSelection() {
         LOG_DEBUG << "#";
         m_SelectedArtworksCount = 0;
-        m_KeywordsHash.clear();
-        m_SuggestedKeywords.clearKeywords();
-        m_AllOtherKeywords.clearKeywords();
-        m_ExistingKeywords.clear();
+        m_SuggestedKeywords.reset();
+        m_SuggestedKeywordsModel.clearKeywords();
+        m_OtherKeywordsModel.clearKeywords();
 
         beginResetModel();
         {
@@ -418,13 +430,13 @@ namespace Suggestion {
     }
 
     QObject *KeywordsSuggestor::getSuggestedKeywordsModel() {
-        QObject *item = &m_SuggestedKeywords;
+        QObject *item = &m_SuggestedKeywordsModel;
         QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
         return item;
     }
 
     QObject *KeywordsSuggestor::getAllOtherKeywordsModel() {
-        QObject *item = &m_AllOtherKeywords;
+        QObject *item = &m_OtherKeywordsModel;
         QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
         return item;
     }
@@ -469,16 +481,6 @@ namespace Suggestion {
         return roles;
     }
 
-    void KeywordsSuggestor::accountKeywords(const QSet<QString> &keywords, int sign) {
-        foreach(const QString &keyword, keywords) {
-            if (m_KeywordsHash.contains(keyword)) {
-                m_KeywordsHash[keyword] += sign;
-            } else {
-                m_KeywordsHash.insert(keyword, 1);
-            }
-        }
-    }
-
     QSet<QString> KeywordsSuggestor::getSelectedArtworksKeywords() const {
         QSet<QString> allKeywords;
         size_t size = m_Suggestions.size();
@@ -496,87 +498,13 @@ namespace Suggestion {
     }
 
     void KeywordsSuggestor::updateSuggestedKeywords() {
-        QStringList suggestedKeywords, otherKeywords;
-        QMultiMap<int, QString> selectedKeywords;
-        int lowerThreshold, upperThreshold;
-        calculateBounds(lowerThreshold, upperThreshold);
+        m_SuggestedKeywords.updateSuggestion(m_SelectedArtworksCount);
 
-        QHash<QString, int>::const_iterator hashIt = m_KeywordsHash.constBegin();
-        QHash<QString, int>::const_iterator hashItEnd = m_KeywordsHash.constEnd();
-
-        for (; hashIt != hashItEnd; ++hashIt) {
-            selectedKeywords.insert(hashIt.value(), hashIt.key());
-        }
-
-        QMultiMap<int, QString>::const_iterator it = selectedKeywords.constEnd();
-        QMultiMap<int, QString>::const_iterator itBegin = selectedKeywords.constBegin();
-
-        int maxSuggested = 35 + (qrand() % 10);
-        int maxUpperBound = 40 + (qrand() % 5);
-        int maxOthers = 35 + (qrand() % 10);
-
-        suggestedKeywords.reserve(maxSuggested);
-        otherKeywords.reserve(maxOthers);
-
-        bool canAddToSuggested, canAddToOthers;
-        const bool isOnlyOneArtwork = (m_SelectedArtworksCount == 1);
-
-        while (it != itBegin) {
-            --it;
-
-            int frequency = it.key();
-            const QString &frequentKeyword = it.value();
-
-            if (frequency == 0) { continue; }
-            if (m_ExistingKeywords.contains(frequentKeyword.toLower())) {
-                LOG_DEBUG << "Skipping existing keyword" << frequentKeyword;
-                continue;
-            }
-
-            int suggestedCount = suggestedKeywords.length();
-
-            canAddToSuggested = (frequency >= upperThreshold) && (suggestedCount <= maxUpperBound);
-            canAddToOthers = frequency >= lowerThreshold;
-
-            if (isOnlyOneArtwork || canAddToSuggested ||
-                    (canAddToOthers && (suggestedCount <= maxSuggested))) {
-                suggestedKeywords.append(frequentKeyword);
-            } else if (canAddToOthers || (otherKeywords.length() <= maxOthers)) {
-                otherKeywords.append(frequentKeyword);
-
-                if (otherKeywords.length() > maxOthers) {
-                    break;
-                }
-            }
-        }
-
-        m_SuggestedKeywords.setKeywords(suggestedKeywords);
-        m_AllOtherKeywords.setKeywords(otherKeywords);
+        m_SuggestedKeywordsModel.setKeywords(m_SuggestedKeywords.getSuggestedKeywords());
+        m_OtherKeywordsModel.setKeywords(m_SuggestedKeywords.getOtherKeywords());
 
         emit suggestedKeywordsCountChanged();
         emit otherKeywordsCountChanged();
-    }
-
-    void KeywordsSuggestor::calculateBounds(int &lowerBound, int &upperBound) const {
-        if (m_SelectedArtworksCount <= 2) {
-            lowerBound = 1;
-            upperBound = qMax(m_SelectedArtworksCount, 1);
-        } else if (m_SelectedArtworksCount <= 4) {
-            lowerBound = 2;
-            upperBound = 3;
-        } else if (m_SelectedArtworksCount <= 5) {
-            lowerBound = 2;
-            upperBound = 3;
-        } else if (m_SelectedArtworksCount <= 9) {
-            upperBound = m_SelectedArtworksCount / 2;
-            lowerBound = upperBound - 1;
-        } else if (m_SelectedArtworksCount <= 15) {
-            upperBound = m_SelectedArtworksCount / 2 - 1;
-            lowerBound = upperBound - 2;
-        } else {
-            upperBound = m_SelectedArtworksCount / 2;
-            lowerBound = upperBound - 2;
-        }
     }
 
     std::shared_ptr<ISuggestionEngine> KeywordsSuggestor::getSelectedEngine() {

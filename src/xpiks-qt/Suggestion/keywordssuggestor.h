@@ -31,6 +31,7 @@
 #include "Common/statefulentity.h"
 #include "Common/types.h"
 #include "Connectivity/analyticsuserevent.h"
+#include "Suggestion/suggestedkeywords.h"
 
 class QByteArray;
 class QModelIndex;
@@ -109,8 +110,8 @@ namespace Suggestion {
         }
 
     public:
-        int getSuggestedKeywordsCount() { return m_SuggestedKeywords.rowCount(); }
-        int getOtherKeywordsCount() { return m_AllOtherKeywords.rowCount(); }
+        int getSuggestedKeywordsCount() { return m_SuggestedKeywordsModel.rowCount(); }
+        int getOtherKeywordsCount() { return m_OtherKeywordsModel.rowCount(); }
         bool getIsInProgress() const { return m_IsInProgress; }
         int getSelectedArtworksCount() const { return m_SelectedArtworksCount; }
         const QString &getLastErrorString() const { return m_LastErrorString; }
@@ -146,8 +147,8 @@ namespace Suggestion {
         bool isLocalSuggestionActive() const;
 
     public:
-        Q_INVOKABLE void appendKeywordToSuggested(const QString &keyword) { m_SuggestedKeywords.appendKeyword(keyword); emit suggestedKeywordsCountChanged(); }
-        Q_INVOKABLE void appendKeywordToOther(const QString &keyword) { m_AllOtherKeywords.appendKeyword(keyword); emit otherKeywordsCountChanged(); }
+        Q_INVOKABLE void appendKeywordToSuggested(const QString &keyword);
+        Q_INVOKABLE void appendKeywordToOther(const QString &keyword);
         Q_INVOKABLE QString removeSuggestedKeywordAt(int keywordIndex);
         Q_INVOKABLE QString removeOtherKeywordAt(int keywordIndex);
         Q_INVOKABLE void setArtworkSelected(int index, bool newState);
@@ -155,9 +156,9 @@ namespace Suggestion {
         Q_INVOKABLE void searchArtworks(const QString &searchTerm, int resultsType);
         Q_INVOKABLE void cancelSearch();
         Q_INVOKABLE void close() { clear(); }
-        Q_INVOKABLE QStringList getSuggestedKeywords() { return m_SuggestedKeywords.getKeywords(); }
+        Q_INVOKABLE QStringList getSuggestedKeywords() { return m_SuggestedKeywordsModel.getKeywords(); }
         /*Q_INVOKABLE*/ QStringList getEngineNames() const;
-        Q_INVOKABLE QString getSuggestedKeywordsString() { return m_SuggestedKeywords.getKeywordsString(); }
+        Q_INVOKABLE QString getSuggestedKeywordsString() { return m_SuggestedKeywordsModel.getKeywordsString(); }
         Q_INVOKABLE void clearSuggested();
         Q_INVOKABLE void resetSelection();
         Q_INVOKABLE QObject *getSuggestedKeywordsModel();
@@ -177,10 +178,8 @@ namespace Suggestion {
         virtual QHash<int, QByteArray> roleNames() const override;
 
     private:
-        void accountKeywords(const QSet<QString> &keywords, int sign);
         QSet<QString> getSelectedArtworksKeywords() const;
         void updateSuggestedKeywords();
-        void calculateBounds(int &lowerBound, int &upperBound) const;
         std::shared_ptr<ISuggestionEngine> getSelectedEngine();
 
 #ifdef CORE_TESTS
@@ -197,11 +196,10 @@ namespace Suggestion {
         Models::SettingsModel &m_SettingsModel;
         std::vector<std::shared_ptr<ISuggestionEngine>> m_QueryEngines;
         std::vector<std::shared_ptr<SuggestionArtwork>> m_Suggestions;
+        SuggestedKeywords m_SuggestedKeywords;
         QString m_LastErrorString;
-        QHash<QString, int> m_KeywordsHash;
-        QSet<QString> m_ExistingKeywords;
-        Artworks::BasicKeywordsModel m_SuggestedKeywords;
-        Artworks::BasicKeywordsModel m_AllOtherKeywords;
+        Artworks::BasicKeywordsModel m_SuggestedKeywordsModel;
+        Artworks::BasicKeywordsModel m_OtherKeywordsModel;
         // hack to load previews gradually
         QTimer m_LinearTimer;
         volatile int m_LoadedPreviewsNumber;

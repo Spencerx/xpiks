@@ -11,7 +11,7 @@
 #ifndef KEYWORDVALIDATOR
 #define KEYWORDVALIDATOR
 
-#include <QString>
+class QString;
 
 namespace Helpers {
     bool isValidKeyword(const QString &keyword);
