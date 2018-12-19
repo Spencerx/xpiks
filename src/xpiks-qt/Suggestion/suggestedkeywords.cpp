@@ -57,6 +57,8 @@ namespace Suggestion {
     void SuggestedKeywords::reset() {
         m_ExistingKeywords.clear();
         m_KeywordsHash.clear();
+        m_SuggestedKeywords.clear();
+        m_OtherKeywords.clear();
     }
 
     void SuggestedKeywords::updateSuggestion(int artworksCount) {
