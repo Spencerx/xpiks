@@ -212,23 +212,26 @@ Item {
             mouseClick(zipCheckbox)
             wait(TestsHost.smallSleepTime)
 
+            // switch to first tab
             mouseClick(tabsRepeater.itemAt(0))
+            wait(TestsHost.smallSleepTime)
 
             verify(!xpiksApp.uploadedFilesExist())
+
+            var artworkUploader = dispatcher.getCommandTarget(UICommand.SetupUpload)
+            var zipArchiver = dispatcher.getCommandTarget(UICommand.SetupCreatingArchives)
+
+            compare(zipArchiver.percent, 0)
+            compare(artworkUploader.percent, 0)
 
             // do upload now
             var button = findChild(uploadDialog, "uploadButton")
             mouseClick(button)
 
-            var artworkUploader = dispatcher.getCommandTarget(UICommand.SetupUpload)
-            var zipArchiver = dispatcher.getCommandTarget(UICommand.SetupCreatingArchives)
-
-            tryCompare(zipArchiver, "inProgress", true, 5000)
-            tryCompare(zipArchiver, "inProgress", false, 5000)
+            tryCompare(zipArchiver, "percent", 100, 5000)
             compare(zipArchiver.isError, false)
 
-            tryCompare(artworkUploader, "inProgress", true, 5000)
-            tryCompare(artworkUploader, "inProgress", false, 5000)
+            tryCompare(artworkUploader, "percent", 100, 5000)
             compare(artworkUploader.isError, false)
 
             wait(TestsHost.normalSleepTime)
