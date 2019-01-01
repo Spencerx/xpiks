@@ -36,6 +36,8 @@ namespace Suggestion {
             upperBound = selectedCount / 2;
             lowerBound = upperBound - 2;
         }
+
+        LOG_INFO << "Bounds: [" << lowerBound << "," << upperBound << "]";
     }
 
     SuggestedKeywords::SuggestedKeywords()
@@ -62,6 +64,13 @@ namespace Suggestion {
     }
 
     void SuggestedKeywords::updateSuggestion(int artworksCount) {
+        m_SuggestedKeywords.clear();
+        m_OtherKeywords.clear();
+        doUpdateSuggestion(artworksCount);
+    }
+
+    void SuggestedKeywords::doUpdateSuggestion(int artworksCount) {
+        LOG_INFO << artworksCount;
         std::multimap<int, QString, std::greater<int>> selectedKeywords;
         int lowerThreshold, upperThreshold;
         calculateBounds(artworksCount, lowerThreshold, upperThreshold);
@@ -113,6 +122,7 @@ namespace Suggestion {
     }
 
     void SuggestedKeywords::accountKeywords(const QSet<QString> &keywords, int sign) {
+        LOG_INFO << keywords.size() << "keywords +" << sign;
         for (const QString &keyword: keywords) {
             if (m_KeywordsHash.contains(keyword)) {
                 m_KeywordsHash[keyword] += sign;

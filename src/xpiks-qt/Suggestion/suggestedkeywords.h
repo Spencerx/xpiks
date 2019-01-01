@@ -23,17 +23,18 @@ namespace Suggestion {
         SuggestedKeywords();
 
     public:
+        QStringList const &getSuggestedKeywords() const { return m_SuggestedKeywords; }
+        QStringList const &getOtherKeywords() const { return m_OtherKeywords; }
+
+    public:
         void addKeywords(QSet<QString> const &keywords);
         void removeKeywords(QSet<QString> const &keywords);
         void setExistingKeywords(QSet<QString> const &existingKeywords);
         void reset();
         void updateSuggestion(int artworksCount);
 
-    public:
-        QStringList const &getSuggestedKeywords() const { return m_SuggestedKeywords; }
-        QStringList const &getOtherKeywords() const { return m_OtherKeywords; }
-
     private:
+        void doUpdateSuggestion(int artworksCount);
         void accountKeywords(QSet<QString> const &keywords, int sign);
 
     private:

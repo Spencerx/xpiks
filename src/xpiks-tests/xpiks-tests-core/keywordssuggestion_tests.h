@@ -12,6 +12,9 @@ private slots:
     void suggestSingleKeywordsSetTest();
     void suggestKeywordsSimpleTest();
     void repeatableSuggestionTest();
+    void multipleUpdateSuggestionTest();
+    void excludesExistingKeywordsForOneTest();
+    void excludesExistingKeywordsTest();
 };
 
 #endif // KEYWORDSSUGGESTION_TESTS_H
