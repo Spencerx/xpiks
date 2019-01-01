@@ -124,7 +124,7 @@ namespace Suggestion {
     void KeywordsSuggestor::setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks) {
         LOG_INFO << suggestedArtworks.size() << "item(s)";
 
-        m_SelectedArtworksCount = 0;
+        setSelectedArtworksCount(0);
         m_SuggestedKeywords.reset();
         m_SuggestedKeywordsModel.clearKeywords();
         m_OtherKeywordsModel.clearKeywords();
@@ -167,7 +167,7 @@ namespace Suggestion {
     void KeywordsSuggestor::clear() {
         LOG_DEBUG << "#";
 
-        m_SelectedArtworksCount = 0;
+        setSelectedArtworksCount(0);
         m_SuggestedKeywords.reset();
         m_SuggestedKeywordsModel.clearKeywords();
         m_OtherKeywordsModel.clearKeywords();
@@ -210,6 +210,13 @@ namespace Suggestion {
         }
     }
 
+    void KeywordsSuggestor::setSelectedArtworksCount(int value) {
+        if (m_SelectedArtworksCount != value) {
+            m_SelectedArtworksCount = value;
+            emit selectedArtworksCountChanged();
+        }
+    }
+
     bool KeywordsSuggestor::getIsLocalSearch() const {
         bool result = m_SelectedSourceIndex == m_LocalSearchIndex;
         Q_ASSERT(result == isLocalSuggestionActive());
@@ -217,6 +224,7 @@ namespace Suggestion {
     }
 
     void KeywordsSuggestor::resultsAvailableHandler() {
+        LOG_INFO << "#";
         auto engine = getSelectedEngine();
         unsetInProgress();
         if (engine) {
@@ -337,8 +345,7 @@ namespace Suggestion {
         }
 
         int sign = newState ? +1 : -1;
-        m_SelectedArtworksCount += sign;
-        emit selectedArtworksCountChanged();
+        setSelectedArtworksCount(m_SelectedArtworksCount + sign);
 
         QModelIndex qIndex = this->index(index);
         emit dataChanged(qIndex, qIndex, QVector<int>() << IsSelectedRole);
@@ -378,6 +385,8 @@ namespace Suggestion {
                     sendMessage(Connectivity::UserAction::SuggestionLocal);
                 }
 #endif
+            } else {
+                LOG_WARNING << "Selected engine is not found";
             }
         }
     }
@@ -410,7 +419,7 @@ namespace Suggestion {
 
     void KeywordsSuggestor::resetSelection() {
         LOG_DEBUG << "#";
-        m_SelectedArtworksCount = 0;
+        setSelectedArtworksCount(0);
         m_SuggestedKeywords.reset();
         m_SuggestedKeywordsModel.clearKeywords();
         m_OtherKeywordsModel.clearKeywords();
