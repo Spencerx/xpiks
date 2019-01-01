@@ -148,6 +148,7 @@ void XpiksUITestsApp::cleanup() {
     m_KeywordsSuggestor.clear();
     m_QuickBuffer.resetModel();
     m_UserDictEditModel.clearModel();
+    m_ArtworksUploader.clearModel();
 }
 
 bool XpiksUITestsApp::setupCommonFiles() {
