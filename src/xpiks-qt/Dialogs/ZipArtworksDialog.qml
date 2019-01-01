@@ -37,7 +37,10 @@ StaticDialogBase {
 
         onFinishedProcessing: {
             importButton.text = i18.n + qsTr("Start Zipping")
-            dispatcher.dispatch(UICommand.CreateArchives, false)
+
+            if (zipArtworksComponent.immediateProcessing) {
+                closePopup()
+            }
 
             //if (!zipArchiver.isError) {
             //    closePopup()
@@ -58,7 +61,7 @@ StaticDialogBase {
 
     onClickedOutside: {
         if (!zipArchiver.inProgress) {
-            closePopup()
+            dispatcher.dispatch(UICommand.CreateArchives, false)
         }
     }
 
