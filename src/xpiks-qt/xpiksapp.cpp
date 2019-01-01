@@ -938,6 +938,7 @@ void XpiksApp::cleanupModels() {
     m_UserDictEditModel.clearModel();
     m_ReplaceModel.resetModel();
     m_UploadInfoRepository.clearHosts();
+    m_KeywordsSuggestor.clear();
 
     m_FilteredArtworksListModel.setSearchTerm("");
     m_CombinedArtworksModel.resetModel();
