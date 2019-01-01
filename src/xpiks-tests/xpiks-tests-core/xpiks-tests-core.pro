@@ -204,7 +204,8 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Microstocks/stocksftplistmodel.cpp \
     ../../xpiks-qt/Services/AutoComplete/autocompletemodel.cpp \
     ../../xpiks-qt/Services/AutoComplete/stringsautocompletemodel.cpp \
-    ../../xpiks-qt/Connectivity/ftphelpers.cpp
+    ../../xpiks-qt/Connectivity/ftphelpers.cpp \
+    keywordssuggestion_tests.cpp
 
 HEADERS += \
     encryption_tests.h \
@@ -388,5 +389,6 @@ HEADERS += \
     ../../xpiks-qt/Services/AutoComplete/stringsautocompletemodel.h \
     ../../xpiks-qt/Models/Connectivity/uploadinfo.h \
     ../../xpiks-qt/Suggestion/suggestedkeywords.h \
-    ../../xpiks-qt/Connectivity/ftphelpers.h
+    ../../xpiks-qt/Connectivity/ftphelpers.h \
+    keywordssuggestion_tests.h
 

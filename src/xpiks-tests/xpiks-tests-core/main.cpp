@@ -22,6 +22,7 @@
 #include "fixspelling_tests.h"
 #include "indicestoranges_tests.h"
 #include "jsonmerge_tests.h"
+#include "keywordssuggestion_tests.h"
 #include "keywordvalidation_tests.h"
 #include "preset_tests.h"
 #include "quickbuffer_tests.h"
@@ -78,6 +79,7 @@ int main(int argc, char *argv[]) {
     QTEST_CLASS(DbImageCacheTests, ict, result);
     QTEST_CLASS(ArtworkProxyTests, apt, result);
     QTEST_CLASS(UploadInfoRepositoryTests, uirt, result);
+    QTEST_CLASS(KeywordsSuggestionTests, kst, result);
 
     QThread::sleep(1);
 
