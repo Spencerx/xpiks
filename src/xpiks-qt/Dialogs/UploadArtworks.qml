@@ -47,14 +47,9 @@ StaticDialogBase {
         }
     }
 
-    UICommandListener {
-        commandDispatcher: dispatcher
-        commandIDs: [UICommand.CreateArchives]
-        onDispatched: {
-            if (!value) {
-                doStartUpload()
-            }
-        }
+    Connections {
+        target: dispatcher.getCommandTarget(UICommand.SetupCreatingArchives)
+        onFinishedProcessing: doStartUpload()
     }
 
     UICommandListener {
