@@ -109,6 +109,8 @@ namespace Suggestion {
             }
         }
 
+        void setSelectedArtworksCount(int value);
+
     public:
         int getSuggestedKeywordsCount() { return m_SuggestedKeywordsModel.rowCount(); }
         int getOtherKeywordsCount() { return m_OtherKeywordsModel.rowCount(); }
