@@ -489,7 +489,7 @@ Item {
             tryCompare(keywordWrapper, "hasSpellCheckError", false, 2000)
         }
 
-        function test_SuggestLocalKeywords() {
+        function test_suggestLocalKeywords() {
             artworkEditView.suggestKeywords()
 
             wait(TestsHost.normalSleepTime)
@@ -533,6 +533,43 @@ Item {
             verify(keywordsString.indexOf("line", 0) !== -1)
             verify(keywordsString.indexOf("vector", 0) !== -1)
             verify(keywordsString.indexOf("xpiks", 0) === -1)
+        }
+
+        function test_keywordDragDrop() {
+            compare(artworkEditView.artworkProxy.keywordsCount, 0)
+
+            keywordsEdit.forceActiveFocus()
+            var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
+            keyClick(Qt.Key_Comma)
+
+            wait(TestsHost.smallSleepTime)
+
+            compare(artworkEditView.artworkProxy.getKeywordsString(), testKeyword1 + ", " + testKeyword2)
+
+            var repeater = findChild(editableTags, "repeater")
+            var keywordWrapper1 = repeater.itemAt(0)
+            var keywordWrapper2 = repeater.itemAt(1)
+
+            var kw1lt = keywordWrapper1.mapToItem(repeater, 0, 0)
+            var kw2lt = keywordWrapper2.mapToItem(repeater, 0, 0)
+
+            var x = keywordWrapper2.width/2,
+                    y = keywordWrapper2.height/2,
+                    dx = -(kw2lt.x - kw1lt.x),
+                    dy = -(kw2lt.y - kw1lt.y);
+
+            mouseDrag(keywordWrapper2,
+                      x, y, dx, dy,
+                      Qt.LeftButton,
+                      Qt.NoModifier,
+                      TestsHost.normalSleepTime)
+
+            wait(TestsHost.normalSleepTime)
+
+            compare(artworkEditView.artworkProxy.getKeywordsString(), testKeyword2 + ", " + testKeyword1)
         }
     }
 }

@@ -30,5 +30,8 @@
     },
     "telemetryEnabled": {
         "v": true
+    },
+    "keywordsDragDropEnabled": {
+        "v": true
     }
 }
