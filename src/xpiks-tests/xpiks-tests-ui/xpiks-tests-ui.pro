@@ -31,7 +31,7 @@ DEFINES += FAKE_WARNINGS
 
 STUB_PLUGIN_NAME = UiTestsStubPlugin
 
-DEFINES += DIALOGS_DIR="$$PWD/../../xpiks-qt"
+DEFINES += XPIKS_QT_DIR="$$PWD/../../xpiks-qt"
 
 CONFIG(debug, debug|release)  {
     LIBS += -L"$$PWD/../../../libs/debug"
@@ -364,17 +364,12 @@ DISTFILES += \
     tst_UploadDialog.qml \
     tst_PresetsEditDialog.qml \
     tst_WhatsNew.qml \
+    ../../xpiks-qt/AppHost.qml \
     ../../xpiks-qt/Common.js \
     ../../xpiks-qt/StackViews/ArtworkEditView.qml \
-    ../../xpiks-qt/StackViews/ArtworkEditView.qmlc \
-    ../../xpiks-qt/StackViews/CombinedEditView.qmlc \
     ../../xpiks-qt/StackViews/DuplicatesReView.qml \
     ../../xpiks-qt/StackViews/MainGrid.qml \
     ../../xpiks-qt/StackViews/WarningsView.qml \
-    ../../xpiks-qt/Dialogs/CsvExportDialog.qmlc \
-    ../../xpiks-qt/Dialogs/PresetsEditDialog.qmlc \
-    ../../xpiks-qt/Dialogs/UploadArtworks.qmlc \
-    ../../xpiks-qt/Dialogs/WhatsNewDialog.qmlc \
     ../../xpiks-qt/Dialogs/AboutWindow.qml \
     ../../xpiks-qt/Dialogs/AddPresetGroupDialog.qml \
     ../../xpiks-qt/Dialogs/DeleteKeywordsDialog.qml \
@@ -407,19 +402,6 @@ DISTFILES += \
     ../../xpiks-qt/Dialogs/WhatsNewMinorDialog.qml \
     ../../xpiks-qt/Dialogs/WipeMetadata.qml \
     ../../xpiks-qt/Dialogs/ZipArtworksDialog.qml \
-    ../../xpiks-qt/Components/BackGlyphButton.qmlc \
-    ../../xpiks-qt/Components/CheckedComponent.qmlc \
-    ../../xpiks-qt/Components/CloseIcon.qmlc \
-    ../../xpiks-qt/Components/ComboBoxPopup.qmlc \
-    ../../xpiks-qt/Components/CustomScrollbar.qmlc \
-    ../../xpiks-qt/Components/CustomTab.qmlc \
-    ../../xpiks-qt/Components/DotsButton.qmlc \
-    ../../xpiks-qt/Components/EditableTags.qmlc \
-    ../../xpiks-qt/Components/GlyphButton.qmlc \
-    ../../xpiks-qt/Components/KeywordWrapper.qmlc \
-    ../../xpiks-qt/Components/LoaderIcon.qmlc \
-    ../../xpiks-qt/Components/PresentationSlide.qmlc \
-    ../../xpiks-qt/Components/SelectedIcon.qmlc \
     ../../xpiks-qt/Components/AddIcon.qml \
     ../../xpiks-qt/Components/BackGlyphButton.qml \
     ../../xpiks-qt/Components/CheckedComponent.qml \
@@ -452,8 +434,12 @@ DISTFILES += \
     ../../xpiks-qt/CollapserTabs/FilesFoldersTab.qml \
     ../../xpiks-qt/CollapserTabs/QuickBufferTab.qml \
     ../../xpiks-qt/CollapserTabs/TranslatorTab.qml \
+    ../../xpiks-qt/CollapserTabs/FilesFoldersIcon.qml \
+    ../../xpiks-qt/CollapserTabs/QuickBufferIcon.qml \
+    ../../xpiks-qt/CollapserTabs/TranslatorIcon.qml \
     tst_QuickBuffer.qml \
-    tst_UserDictEditDialog.qml
+    tst_UserDictEditDialog.qml \
+    tst_AppHost.qml
 
 HEADERS += \
     testshost.h \

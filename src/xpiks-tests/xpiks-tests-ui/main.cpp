@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
     {
         QEventLoop eventLoop;
         XpiksUITestsApp xpiksTests(uiTestsEnvironment,
-                                   QStringList() << QDir::toNativeSeparators(STRINGIZE(DIALOGS_DIR)));
+                                   QStringList() << QDir::toNativeSeparators(STRINGIZE(XPIKS_QT_DIR)));
 
         xpiksTests.startLogging();
         xpiksTests.initialize();

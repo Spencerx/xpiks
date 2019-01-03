@@ -22,6 +22,7 @@ import "../StyledControls"
 import "../Constants/UIConfig.js" as UIConfig
 
 Rectangle {
+    objectName: "DuplicatesReView"
     color: uiColors.defaultDarkColor
     property bool wasLeftSideCollapsed
     property bool isRestricted: false

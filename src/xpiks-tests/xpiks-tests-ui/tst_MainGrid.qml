@@ -701,10 +701,5 @@ Item {
             cancelButton = findChild(root, "cancelFindButton")
             mouseClick(cancelButton)
         }
-
-        /*function test_doubleClickArtwork() {
-            var imageHost = findChild(mainGrid, "imageHost")
-            mouseDoubleClick(imageHost)
-        }*/
     }
 }

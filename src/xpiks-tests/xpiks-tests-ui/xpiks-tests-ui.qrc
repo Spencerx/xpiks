@@ -2,5 +2,31 @@
     <qresource prefix="/">
         <file alias="Graphics/vector-icon.svg">../../xpiks-qt/Graphics/vector-icon.svg</file>
         <file alias="Graphics/video-icon.svg">../../xpiks-qt/Graphics/video-icon.svg</file>
+        <file alias="Graphics/black/Edit_icon_clicked.svg">../../xpiks-qt/Graphics/black/Edit_icon_clicked.svg</file>
+        <file alias="Graphics/black/Edit_icon_disabled.svg">../../xpiks-qt/Graphics/black/Edit_icon_disabled.svg</file>
+        <file alias="Graphics/black/Edit_icon_hovered.svg">../../xpiks-qt/Graphics/black/Edit_icon_hovered.svg</file>
+        <file alias="Graphics/black/Edit_icon_normal.svg">../../xpiks-qt/Graphics/black/Edit_icon_normal.svg</file>
+        <file alias="Graphics/black/Remove_icon_clicked.svg">../../xpiks-qt/Graphics/black/Remove_icon_clicked.svg</file>
+        <file alias="Graphics/black/Remove_icon_disabled.svg">../../xpiks-qt/Graphics/black/Remove_icon_disabled.svg</file>
+        <file alias="Graphics/black/Remove_icon_hovered.svg">../../xpiks-qt/Graphics/black/Remove_icon_hovered.svg</file>
+        <file alias="Graphics/black/Remove_icon_normal.svg">../../xpiks-qt/Graphics/black/Remove_icon_normal.svg</file>
+        <file alias="Graphics/black/Save_icon_clicked.svg">../../xpiks-qt/Graphics/black/Save_icon_clicked.svg</file>
+        <file alias="Graphics/black/Save_icon_disabled.svg">../../xpiks-qt/Graphics/black/Save_icon_disabled.svg</file>
+        <file alias="Graphics/black/Save_icon_hovered.svg">../../xpiks-qt/Graphics/black/Save_icon_hovered.svg</file>
+        <file alias="Graphics/black/Save_icon_normal.svg">../../xpiks-qt/Graphics/black/Save_icon_normal.svg</file>
+        <file alias="Graphics/black/Upload_icon_clicked.svg">../../xpiks-qt/Graphics/black/Upload_icon_clicked.svg</file>
+        <file alias="Graphics/black/Upload_icon_disabled.svg">../../xpiks-qt/Graphics/black/Upload_icon_disabled.svg</file>
+        <file alias="Graphics/black/Upload_icon_hovered.svg">../../xpiks-qt/Graphics/black/Upload_icon_hovered.svg</file>
+        <file alias="Graphics/black/Upload_icon_normal.svg">../../xpiks-qt/Graphics/black/Upload_icon_normal.svg</file>
+        <file alias="Graphics/black/More_icon_clicked.svg">../../xpiks-qt/Graphics/black/More_icon_clicked.svg</file>
+        <file alias="Graphics/black/More_icon_disabled.svg">../../xpiks-qt/Graphics/black/More_icon_disabled.svg</file>
+        <file alias="Graphics/black/More_icon_hovered.svg">../../xpiks-qt/Graphics/black/More_icon_hovered.svg</file>
+        <file alias="Graphics/black/More_icon_normal.svg">../../xpiks-qt/Graphics/black/More_icon_normal.svg</file>
+        <file alias="Graphics/black/Clipboard_icon_normal.svg">../../xpiks-qt/Graphics/black/Clipboard_icon_normal.svg</file>
+        <file alias="Graphics/black/Clipboard_icon_selected.svg">../../xpiks-qt/Graphics/black/Clipboard_icon_selected.svg</file>
+        <file alias="Graphics/black/Folders_icon_normal.svg">../../xpiks-qt/Graphics/black/Folders_icon_normal.svg</file>
+        <file alias="Graphics/black/Folders_icon_selected.svg">../../xpiks-qt/Graphics/black/Folders_icon_selected.svg</file>
+        <file alias="Graphics/black/Translator_icon_normal.svg">../../xpiks-qt/Graphics/black/Translator_icon_normal.svg</file>
+        <file alias="Graphics/black/Translator_icon_selected.svg">../../xpiks-qt/Graphics/black/Translator_icon_selected.svg</file>
     </qresource>
 </RCC>

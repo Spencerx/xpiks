@@ -25,6 +25,7 @@ import "../Constants/UIConfig.js" as UIConfig
 
 Item {
     id: mainGridComponent
+    objectName: "MainGrid"
     property int myLeftMargin: appHost.leftSideCollapsed ? 0 : 2
     property variant componentParent
 
@@ -1790,6 +1791,7 @@ Item {
 
                                             StyledLink {
                                                 id: removeDuplicatesText
+                                                objectName: "removeDuplicatesText"
                                                 text: i18.n + qsTr("Show duplicates")
                                                 property bool canBeShown: rowWrapper.keywordsModel ? rowWrapper.keywordsModel.hasDuplicates : false
                                                 enabled: canBeShown

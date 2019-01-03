@@ -49,13 +49,15 @@ Rectangle {
     function startOneItemEditing(showInfoFirst) {
         var wasCollapsed = appHost.leftSideCollapsed
         appHost.collapseLeftPane()
+        var component = Qt.createComponent("StackViews/ArtworkEditView.qml")
+        var instance = component.createObject(appHost,
+                                              {
+                                                  componentParent: appHost.componentParent,
+                                                  wasLeftSideCollapsed: wasCollapsed,
+                                                  showInfo: showInfoFirst
+                                              })
         mainStackView.push({
-                               item: "qrc:/StackViews/ArtworkEditView.qml",
-                               properties: {
-                                   componentParent: appHost.componentParent,
-                                   wasLeftSideCollapsed: wasCollapsed,
-                                   showInfo: showInfoFirst
-                               },
+                               item: instance,
                                destroyOnPop: true
                            })
     }
@@ -72,12 +74,15 @@ Rectangle {
                 appHost.collapseLeftPane()
             }
 
+            var component = Qt.createComponent("StackViews/DuplicatesReView.qml")
+            var instance = component.createObject(appHost,
+                                                  {
+                                                      componentParent: appHost.componentParent,
+                                                      wasLeftSideCollapsed: wasCollapsed
+                                                  })
+
             mainStackView.push({
-                                   item: "qrc:/StackViews/DuplicatesReView.qml",
-                                   properties: {
-                                       componentParent: appHost.componentParent,
-                                       wasLeftSideCollapsed: wasCollapsed
-                                   },
+                                   item: instance,
                                    destroyOnPop: true
                                })
         }
@@ -99,12 +104,15 @@ Rectangle {
         onDispatched: {
             var wasCollapsed = appHost.leftSideCollapsed
             appHost.collapseLeftPane()
+
+            var component = Qt.createComponent("StackViews/WarningsView.qml")
+            var instance = component.createObject(appHost,
+                                                  {
+                                                      componentParent: appHost.componentParent,
+                                                      wasLeftSideCollapsed: wasCollapsed
+                                                  })
             mainStackView.push({
-                                   item: "qrc:/StackViews/WarningsView.qml",
-                                   properties: {
-                                       componentParent: appHost.componentParent,
-                                       wasLeftSideCollapsed: wasCollapsed
-                                   },
+                                   item: instance,
                                    destroyOnPop: true
                                })
         }
@@ -129,6 +137,85 @@ Rectangle {
         commandIDs: [UICommand.CopyArtworkToQuickBuffer, UICommand.CopyCombinedToQuickBuffer]
         onDispatched: {
             uiManager.activateQuickBufferTab()
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.InitSuggestionArtwork,
+            UICommand.InitSuggestionCombined,
+            UICommand.InitSuggestionSingle]
+        onDispatched: {
+            var callback = value
+            if (commandID == UICommand.InitSuggestionArtwork) {
+                callback = value.callbackObject
+            }
+
+            Common.launchDialog("Dialogs/KeywordsSuggestion.qml",
+                                appHost.componentParent,
+                                {callbackObject: callback});
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.ReviewSpellingArtwork,
+            UICommand.ReviewSpellingCombined,
+            UICommand.ReviewSpellingInSelected,
+            UICommand.ReviewSpellingSingle]
+        onDispatched: {
+            Common.launchDialog("Dialogs/SpellCheckSuggestionsDialog.qml",
+                                appHost.componentParent,
+                                {})
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.SetupDeleteKeywordsInSelected]
+        onDispatched: {
+            Common.launchDialog("Dialogs/DeleteKeywordsDialog.qml",
+                                appHost.componentParent,
+                                { componentParent: appHost.componentParent })
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.SetupCSVExportForSelected]
+        onDispatched: {
+            Common.launchDialog("Dialogs/CsvExportDialog.qml", appHost.componentParent, {})
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.SetupCreatingArchives]
+        onDispatched: {
+            Common.launchDialog("Dialogs/ZipArtworksDialog.qml", appHost.componentParent, {})
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.SetupUpload]
+        onDispatched: {
+            Common.launchDialog("Dialogs/UploadArtworks.qml",
+                                appHost.componentParent,
+                                {
+                                    componentParent: appHost.componentParent,
+                                    skipUploadItems: value
+                                })
+        }
+    }
+
+    UICommandListener {
+        commandDispatcher: dispatcher
+        commandIDs: [UICommand.SetupFindInArtworks]
+        onDispatched: {
+            Common.launchDialog("Dialogs/FindAndReplace.qml",
+                                appHost.componentParent,
+                                { componentParent: appHost.componentParent })
         }
     }
 
@@ -405,6 +492,7 @@ Rectangle {
 
     StackView {
         id: mainStackView
+        objectName: "mainStackView"
         anchors.left: leftDockingGroup.right
         anchors.right: parent.right
         anchors.top: parent.top
