@@ -51,7 +51,7 @@ namespace QMLExtensions {
             ReviewSpellingInSelected,
             ReviewDuplicatesInSelected,
             SetupExportMetadata,
-            SetupWipeMetadata,
+            WipeMetadata,
             RemoveSelected,
             SetupReimportMetadata,
             SetupCSVExportForSelected,

@@ -80,7 +80,7 @@ namespace Commands {
             m_Target.setupModel(m_Source.getSelectedArtworks());
         }
 
-        void SetupWipeMetadataCommand::execute(QVariant const &value) {
+        void WipeMetadataCommand::execute(QVariant const &value) {
             LOG_DEBUG << value.toString();
             bool useBackups = Helpers::convertToBool(value, false);
             m_Target.wipeAllMetadataExifTool(m_Source.getSelectedArtworks(), useBackups);

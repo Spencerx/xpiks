@@ -804,7 +804,7 @@ void XpiksApp::registerUICommands() {
                     std::make_shared<Commands::UI::SetupExportMetadataCommand>(
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator, m_MetadataIOService),
 
-                    std::make_shared<Commands::UI::SetupWipeMetadataCommand>(
+                    std::make_shared<Commands::UI::WipeMetadataCommand>(
                     m_FilteredArtworksListModel, m_MetadataIOCoordinator),
 
                     std::make_shared<Commands::UI::SetupCreatingArchivesCommand>(

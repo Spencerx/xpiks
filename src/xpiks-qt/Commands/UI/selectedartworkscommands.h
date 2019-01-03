@@ -85,8 +85,8 @@ namespace Commands {
                                  Artworks::ISelectedArtworksSource,
                                  SpellCheck::DuplicatesReviewModel);
 
-        SOURCE_UI_TARGET_COMMAND(SetupWipeMetadataCommand,
-                                 QMLExtensions::UICommandID::SetupWipeMetadata,
+        SOURCE_UI_TARGET_COMMAND(WipeMetadataCommand,
+                                 QMLExtensions::UICommandID::WipeMetadata,
                                  Artworks::ISelectedArtworksSource,
                                  MetadataIO::MetadataIOCoordinator);
 

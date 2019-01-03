@@ -60,7 +60,7 @@ BaseDialog {
             spinner.height = spinner.width
             dialogWindow.height += spinner.height + column.spacing
             spinner.running = true
-            dispatcher.dispatch(UICommand.SetupWipeMetadata, useBackupsCheckbox.checked)
+            dispatcher.dispatch(UICommand.WipeMetadata, useBackupsCheckbox.checked)
         }
     }
 
