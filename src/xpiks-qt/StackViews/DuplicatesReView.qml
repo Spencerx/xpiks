@@ -93,11 +93,13 @@ Rectangle {
 
         ListView {
             id: duplicatesListView
+            objectName: "duplicatesListView"
             model: duplicatesModel
             spacing: 20
 
             delegate: Rectangle {
                 id: imageWrapper
+                objectName: "duplicatesDelegate"
                 property int delegateIndex: index
                 property int artworkIndex: originalIndex
                 color: uiColors.defaultControlColor
@@ -207,6 +209,7 @@ Rectangle {
 
                             StyledTextEdit {
                                 id: titleText
+                                objectName: "titleText"
                                 anchors.top: parent.top
                                 anchors.topMargin: 5
                                 anchors.right: parent.right
@@ -245,6 +248,7 @@ Rectangle {
 
                             StyledTextEdit {
                                 id: descriptionText
+                                objectName: "descriptionText"
                                 wrapMode: TextEdit.Wrap
                                 anchors.top: parent.top
                                 anchors.topMargin: 5

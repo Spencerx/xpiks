@@ -1,8 +1,10 @@
 TEMPLATE = app
 
 QT += qml quick widgets concurrent svg
+
 CONFIG += qmltestcase plugin c++14
-CONFIG   -= app_bundle
+CONFIG -= app_bundle
+
 TARGET = xpiks-tests-ui
 
 DEFINES += QML_IMPORT_TRACE

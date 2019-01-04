@@ -1,6 +1,6 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import XpiksTests 1.0
-import QtQuick 2.0
+import QtQuick 2.2
 import QtTest 1.1
 import "../../xpiks-qt/Dialogs"
 import "TestUtils.js" as TestUtils

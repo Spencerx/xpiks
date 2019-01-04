@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import QtTest 1.1
 import xpiks 1.0
 import XpiksTests 1.0
@@ -20,6 +20,11 @@ Item {
     }
 
     Component.onCompleted: TestsHost.setup(testCase.name)
+
+    QtObject {
+        id: applicationWindow
+        property int openedDialogsCount: 0
+    }
 
     Loader {
         id: loader
@@ -108,12 +113,22 @@ Item {
 
             var duplicatesLink = findChild(artworkDelegate, "removeDuplicatesText")
             tryCompare(filteredArtworksListModel.getBasicModelObject(1), "hasDuplicates", true, 5000)
+            wait(TestsHost.smallSleepTime)
             verify(duplicatesLink.enabled)
 
             mouseClick(duplicatesLink)
             wait(TestsHost.smallSleepTime)
 
             compare(mainStackView.currentItem.objectName, "DuplicatesReView")
+
+            var duplicatesListView = findChild(mainStackView.currentItem, "duplicatesListView")
+            var duplicatesItem = TestUtils.getDelegateInstanceAt(duplicatesListView.contentItem,
+                                                                 "duplicatesDelegate",
+                                                                 0)
+            verify(duplicatesItem)
+
+            var titleText = findChild(duplicatesItem, "titleText")
+            compare(titleText.text, testKeyword)
         }
     }
 }
