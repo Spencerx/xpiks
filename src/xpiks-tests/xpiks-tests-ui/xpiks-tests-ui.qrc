@@ -30,8 +30,5 @@
         <file alias="Graphics/black/Translator_icon_selected.svg">../../xpiks-qt/Graphics/black/Translator_icon_selected.svg</file>
         <file alias="Graphics/black/Icon_donate.svg">../../xpiks-qt/Graphics/black/Icon_donate.svg</file>
         <file alias="Graphics/Icon_heart.svg">../../xpiks-qt/Graphics/Icon_heart.svg</file>
-        <file alias="CollapserTabs/FilesFoldersIcon.qml">../../xpiks-qt/CollapserTabs/FilesFoldersIcon.qml</file>
-        <file alias="CollapserTabs/QuickBufferIcon.qml">../../xpiks-qt/CollapserTabs/QuickBufferIcon.qml</file>
-        <file alias="CollapserTabs/TranslatorIcon.qml">../../xpiks-qt/CollapserTabs/TranslatorIcon.qml</file>
     </qresource>
 </RCC>

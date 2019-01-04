@@ -33,6 +33,7 @@ class QObject;
 #define QML2_IMPORT_PATH_VAR "QML2_IMPORT_PATH"
 
 static QObject *createTestsHostsQmlObject(QQmlEngine *engine, QJSEngine *scriptEngine) {
+    LOG_DEBUG << "#";
     Q_UNUSED(scriptEngine);
 
     TestsHost &host = TestsHost::getInstance();

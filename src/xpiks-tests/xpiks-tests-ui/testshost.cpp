@@ -83,6 +83,7 @@ bool TestsHost::getFtpServerEnabled() const {
 }
 
 void TestsHost::qmlEngineCallback(QQmlEngine *engine) {
+    LOG_DEBUG << "#";
     m_XpiksApp->setupUI(engine->rootContext());    
 
     engine->addImageProvider("cached", new FakeImageProvider());

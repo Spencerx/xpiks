@@ -11,8 +11,6 @@ Item {
     width: 800
     height: 600
 
-    property string path: ''
-    property bool isselected: false
     property int openedDialogsCount: 0
 
     function onDialogClosed() {

@@ -309,9 +309,9 @@ void XpiksApp::setupUI(QQmlContext *context) {
     context->setContextProperty("debug", isDebug);
     context->setContextProperty("debugTabs", isDebug);
 
-    m_UIManager.addSystemTab(FILES_FOLDERS_TAB_ID, "qrc:/CollapserTabs/FilesFoldersIcon.qml", "qrc:/CollapserTabs/FilesFoldersTab.qml");
-    m_UIManager.addSystemTab(QUICKBUFFER_TAB_ID, "qrc:/CollapserTabs/QuickBufferIcon.qml", "qrc:/CollapserTabs/QuickBufferTab.qml");
-    m_UIManager.addSystemTab(TRANSLATOR_TAB_ID, "qrc:/CollapserTabs/TranslatorIcon.qml", "qrc:/CollapserTabs/TranslatorTab.qml");
+    m_UIManager.addSystemTab(FILES_FOLDERS_TAB_ID, "CollapserTabs/FilesFoldersIcon.qml", "CollapserTabs/FilesFoldersTab.qml");
+    m_UIManager.addSystemTab(QUICKBUFFER_TAB_ID, "CollapserTabs/QuickBufferIcon.qml", "CollapserTabs/QuickBufferTab.qml");
+    m_UIManager.addSystemTab(TRANSLATOR_TAB_ID, "CollapserTabs/TranslatorIcon.qml", "CollapserTabs/TranslatorTab.qml");
     m_UIManager.initializeSystemTabs();
 }
 

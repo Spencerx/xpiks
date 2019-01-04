@@ -405,48 +405,52 @@ Rectangle {
                     }
                 }
 
-                Flow {
+                Item {
                     anchors.fill: parent
                     anchors.leftMargin: 5
                     anchors.topMargin: 5
-                    spacing: 5
 
-                    Repeater {
-                        id: inactiveTabsRepeater
-                        model: inactiveTabs
+                    Flow {
+                        anchors.fill: parent
+                        spacing: 5
 
-                        delegate: CustomTab {
-                            anchors.top: undefined
-                            anchors.bottom: undefined
-                            id: customInactiveTab
-                            tabIndex: index
-                            width: (tabsHolder.width - plusTab.width) / tabsRepeater.count
-                            height: 45
-                            isSelected: false
-                            hovered: (!isSelected) && inactiveTabMA.containsMouse
+                        Repeater {
+                            id: inactiveTabsRepeater
+                            model: inactiveTabs
 
-                            Loader {
-                                property bool isHighlighted: customInactiveTab.isSelected || customInactiveTab.hovered
-                                property color parentBackground: customInactiveTab.color
-                                anchors.centerIn: parent
-                                source: tabicon
-                            }
+                            delegate: CustomTab {
+                                anchors.top: undefined
+                                anchors.bottom: undefined
+                                id: customInactiveTab
+                                tabIndex: index
+                                width: (tabsHolder.width - plusTab.width) / tabsRepeater.count
+                                height: 45
+                                isSelected: false
+                                hovered: (!isSelected) && inactiveTabMA.containsMouse
 
-                            StyledText {
-                                enabled: debugTabs
-                                visible: debugTabs
-                                anchors.top: parent.top
-                                anchors.right: parent.right
-                                text: cachetag
-                                isActive: false
-                            }
+                                Loader {
+                                    property bool isHighlighted: customInactiveTab.isSelected || customInactiveTab.hovered
+                                    property color parentBackground: customInactiveTab.color
+                                    anchors.centerIn: parent
+                                    source: tabicon
+                                }
 
-                            MouseArea {
-                                id: inactiveTabMA
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                onClicked: {
-                                    inactiveTabs.openTab(tabIndex)
+                                StyledText {
+                                    enabled: debugTabs
+                                    visible: debugTabs
+                                    anchors.top: parent.top
+                                    anchors.right: parent.right
+                                    //text: cachetag
+                                    isActive: false
+                                }
+
+                                MouseArea {
+                                    id: inactiveTabMA
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onClicked: {
+                                        inactiveTabs.openTab(tabIndex)
+                                    }
                                 }
                             }
                         }
@@ -502,6 +506,10 @@ Rectangle {
 
         initialItem: MainGrid {
             componentParent: appHost.componentParent
+        }
+
+        Component.onCompleted: {
+            console.log("StackView initialized")
         }
 
         delegate: StackViewDelegate {
