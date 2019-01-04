@@ -432,6 +432,7 @@ Item {
                 hoveredIcon: uiColors.t + helpersWrapper.getAssetForTheme("Edit_icon_hovered.svg", settingsModel.selectedThemeIndex)
                 clickedIcon: uiColors.t + helpersWrapper.getAssetForTheme("Edit_icon_clicked.svg", settingsModel.selectedThemeIndex)
                 tooltip: i18.n + qsTr("Edit")
+                objectName: "editToolButton"
                 onClicked: editAction.trigger()
             }
 

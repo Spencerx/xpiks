@@ -122,11 +122,13 @@ Rectangle {
         commandDispatcher: dispatcher
         commandIDs: [UICommand.SetupEditSelectedArtworks]
         onDispatched: {
+            var component = Qt.createComponent("StackViews/CombinedEditView.qml")
+            var instance = component.createObject(appHost,
+                                                  {
+                                                      componentParent: appHost.componentParent
+                                                  })
             mainStackView.push({
-                                   item: "qrc:/StackViews/CombinedEditView.qml",
-                                   properties: {
-                                       componentParent: appHost.componentParent
-                                   },
+                                   item: instance,
                                    destroyOnPop: true
                                })
         }
@@ -216,6 +218,30 @@ Rectangle {
             Common.launchDialog("Dialogs/FindAndReplace.qml",
                                 appHost.componentParent,
                                 { componentParent: appHost.componentParent })
+        }
+    }
+
+    Action {
+        id: editAction
+        shortcut: "Ctrl+E"
+        enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
+        onTriggered: {
+            if (filteredArtworksListModel.selectedArtworksCount === 0) {
+                mustSelectDialog.open()
+            } else {
+                var launched = false
+                var index = filteredArtworksListModel.findSelectedItemIndex()
+
+                if (index !== -1) {
+                    dispatcher.dispatch(UICommand.SetupProxyArtworkEdit, index)
+                    launched = true
+                }
+
+                if (!launched) {
+                    // also as fallback in case of errors in findSelectedIndex
+                    dispatcher.dispatch(UICommand.SetupEditSelectedArtworks, {})
+                }
+            }
         }
     }
 

@@ -23,6 +23,7 @@ import "../Constants/UIConfig.js" as UIConfig
 
 Rectangle {
     id: combinedEditComponent
+    objectName: "CombinedEditView"
     color: uiColors.selectedArtworkBackground
 
     property variant componentParent

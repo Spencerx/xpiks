@@ -24,6 +24,21 @@ Item {
         property int openedDialogsCount: 0
     }
 
+    QtObject {
+        id: saveAction
+        property bool enabled: true
+    }
+
+    QtObject {
+        id: uploadAction
+        property bool enabled: true
+    }
+
+    QtObject {
+        id: addFilesAction
+        property bool enabled: true
+    }
+
     Loader {
         id: loader
         anchors.fill: parent
@@ -81,6 +96,15 @@ Item {
             return artworkDelegate
         }
 
+        function selectDelegate(index) {
+            var artworkDelegate = getDelegate(index)
+            verify(artworkDelegate)
+
+            var imageHost = findChild(artworkDelegate, "imageHost")
+            verify(imageHost)
+            mouseClick(imageHost)
+        }
+
         function test_doubleClickArtwork() {
             var artworkDelegate = getDelegate(3)
             verify(artworkDelegate)
@@ -127,6 +151,32 @@ Item {
 
             var titleText = findChild(duplicatesItem, "titleText")
             compare(titleText.text, testKeyword)
+        }
+
+        function test_selectEditSingleItem() {
+            selectDelegate(0)
+            wait(TestsHost.smallSleepTime)
+
+            var editToolButton = findChild(mainGrid, "editToolButton")
+            verify(editToolButton)
+            mouseClick(editToolButton)
+            wait(TestsHost.normalSleepTime)
+
+            compare(mainStackView.currentItem.objectName, "ArtworkEditView")
+        }
+
+        function test_selectEditMultipleItems() {
+            selectDelegate(0)
+            wait(TestsHost.smallSleepTime)
+            selectDelegate(1)
+            wait(TestsHost.smallSleepTime)
+
+            var editToolButton = findChild(mainGrid, "editToolButton")
+            verify(editToolButton)
+            mouseClick(editToolButton)
+            wait(TestsHost.normalSleepTime)
+
+            compare(mainStackView.currentItem.objectName, "CombinedEditView")
         }
     }
 }
