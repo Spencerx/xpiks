@@ -16,10 +16,12 @@ echo "Starting UI tests..."
 
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../../libs/debug/
 
-./xpiks-tests-ui > uitests.log
+./xpiks-tests-ui > uitests.log &
 pid=$!
+echo "Waiting for the tests to finish..."
 wait $pid
 exitcode=$?
+echo "Tests finished with exitcode $exitcode"
 
 if [ $exitcode != 0 ]; then
     cat uitests.log
