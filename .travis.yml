@@ -27,7 +27,7 @@ matrix:
       env: RUN_TEST=ui-tests
     - os: osx
       compiler: clang
-      env: RUN_TEST=xpiks
+      env: RUN_TEST=ui-tests
       osx_image: xcode9.4
       if: branch = master
     - os: osx
@@ -42,7 +42,7 @@ matrix:
       if: branch = master
     - os: osx
       compiler: clang
-      env: RUN_TEST=ui-tests
+      env: RUN_TEST=xpiks
       osx_image: xcode9.4
       if: branch = master
       
