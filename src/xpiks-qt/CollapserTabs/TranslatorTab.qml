@@ -42,8 +42,7 @@ ColumnLayout {
     ComboBoxPopup {
         id: dictionariesComboBox
         model: translationManager.dictionaries
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         height: 28
         itemHeight: 28
         showColorSign: true
@@ -71,8 +70,7 @@ ColumnLayout {
     }
 
     Rectangle {
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         height: 30
         color: uiColors.popupDarkInputBackground
 
@@ -128,8 +126,7 @@ ColumnLayout {
     }
 
     Rectangle {
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         Layout.fillHeight: true
         color: uiColors.popupDarkInputBackground
 
@@ -201,8 +198,7 @@ ColumnLayout {
     }
 
     Item {
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         height: childrenRect.height
 
         StyledLink {

@@ -229,7 +229,7 @@ StaticDialogBase {
                         StyledText {
                             id: infoTitle
                             Layout.fillWidth: true
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             height: 31
                             text: title
                             elide: Text.ElideMiddle
@@ -247,7 +247,7 @@ StaticDialogBase {
                         CloseIcon {
                             width: 14
                             height: 14
-                            anchors.verticalCenterOffset: 1
+                            // anchors.verticalCenterOffset: 1
                             isActive: false
                             disabledColor: uiColors.labelInactiveForeground
 
@@ -446,8 +446,7 @@ StaticDialogBase {
                             id: titleWrapper
                             border.width: titleText.activeFocus ? 1 : 0
                             border.color: uiColors.artworkActiveColor
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
                             height: 30
 

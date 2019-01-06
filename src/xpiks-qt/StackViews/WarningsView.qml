@@ -196,7 +196,7 @@ Rectangle {
                                     height: 6
                                     width: height
                                     radius: height/2
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    Layout.alignment: Qt.AlignVCenter
                                     color: uiColors.inactiveControlColor
                                 }
 
@@ -204,7 +204,7 @@ Rectangle {
                                     Layout.fillWidth: true
                                     text: i18.n + modelData
                                     color: uiColors.artworkModifiedColor
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    Layout.alignment: Qt.AlignVCenter
                                 }
                             }
                         }

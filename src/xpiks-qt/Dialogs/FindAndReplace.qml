@@ -80,8 +80,7 @@ StaticDialogBase {
         spacing: 20
 
         Item {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             height: childrenRect.height
 
             ColumnLayout {
@@ -219,8 +218,7 @@ StaticDialogBase {
 
         RowLayout {
             id: submitRow
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             height: 24
             spacing: 20
 

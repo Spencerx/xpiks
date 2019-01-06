@@ -27,8 +27,7 @@ ColumnLayout {
     spacing: 0
 
     StyledBlackButton {
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         text: i18.n + qsTr("Apply")
         enabled: {
             var result = (!quickBuffer.isEmpty) && currentEditable.isAvailable;
@@ -51,8 +50,7 @@ ColumnLayout {
 
     Item {
         height: childrenRect.height
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
 
         StyledText {
             id: titleText
@@ -82,8 +80,7 @@ ColumnLayout {
 
     Rectangle {
         id: anotherRect
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         height: 25
         color: uiColors.inputInactiveBackground
         border.color: uiColors.artworkActiveColor
@@ -170,8 +167,7 @@ ColumnLayout {
 
     Item {
         height: childrenRect.height
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
 
         StyledText {
             id: descriptionText
@@ -201,8 +197,7 @@ ColumnLayout {
 
     Rectangle {
         id: rect
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         height: 70
         color: uiColors.inputInactiveBackground
         border.color: uiColors.artworkActiveColor
@@ -297,8 +292,7 @@ ColumnLayout {
 
     Item {
         height: childrenRect.height
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
 
         StyledText {
             anchors.left: parent.left
@@ -332,8 +326,7 @@ ColumnLayout {
         border.color: uiColors.artworkActiveColor
         border.width: flv.isFocused ? 1 : 0
         Layout.fillHeight: true
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         anchors.rightMargin: quickScrollBar.visible ? 10 : 0
         color: uiColors.inputInactiveBackground
         property var keywordsModel: quickBuffer.getBasicModelObject()
@@ -439,8 +432,7 @@ ColumnLayout {
     }
 
     RowLayout {
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         spacing: 5
 
         Item {

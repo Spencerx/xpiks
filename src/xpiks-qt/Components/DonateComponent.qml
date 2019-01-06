@@ -29,7 +29,7 @@ ColumnLayout {
         height: 115
         //fillMode: Image.PreserveAspectFit
         asynchronous: true
-        anchors.horizontalCenter: parent.horizontalCenter
+        Layout.alignment: Qt.AlignHCenter
     }
 
     Item {
@@ -38,7 +38,7 @@ ColumnLayout {
 
     StyledText {
         text: i18.n + qsTr("Help us to make Xpiks even better.")
-        anchors.horizontalCenter: parent.horizontalCenter
+        Layout.alignment: Qt.AlignHCenter
         isActive: true
     }
 
@@ -48,7 +48,7 @@ ColumnLayout {
 
     StyledLink {
         text: i18.n + qsTr("Support Xpiks")
-        anchors.horizontalCenter: parent.horizontalCenter
+        Layout.alignment: Qt.AlignHCenter
         color: isPressed ? uiColors.linkClickedColor : uiColors.goldColor
         font.bold: true
         onClicked: {

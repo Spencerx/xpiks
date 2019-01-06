@@ -26,13 +26,13 @@ sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install qt56base qt56quick
 sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install libavcodec-dev libavdevice-dev libavformat-dev libavfilter-dev libavutil-dev libswscale-dev
 sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y ccache
 
-if [ -n "$XPIKS_BINARY" ]; then
+if [ "$RUN_TEST" = "xpiks" ]; then
     sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -qq cppcheck
 else
     sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y gdb
 fi
 
-if [ -n "$INTEGRATION_TESTS" ]; then
+if [ "$RUN_TEST" = "integration-tests" ]; then
 #    sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y vsftpd
     sudo apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y libexiv2-dev expat
 fi

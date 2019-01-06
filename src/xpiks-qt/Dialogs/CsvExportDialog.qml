@@ -214,7 +214,7 @@ StaticDialogBase {
                         StyledText {
                             id: infoTitle
                             Layout.fillWidth: true
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             height: 31
                             text: name
                             elide: Text.ElideMiddle
@@ -224,7 +224,8 @@ StaticDialogBase {
                         CloseIcon {
                             width: 14
                             height: 14
-                            anchors.verticalCenterOffset: 1
+                            Layout.alignment: Qt.AlignVCenter
+                            // anchors.verticalCenterOffset: 1
                             isActive: false
                             enabled: !issystem
                             visible: !issystem
@@ -339,8 +340,8 @@ StaticDialogBase {
                 StyledText {
                     text: i18.n + qsTr("Title:")
                     isActive: false
-                    anchors.left: parent.left
-                    anchors.leftMargin: 33
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.leftMargin: 33
                 }
 
                 Item {
@@ -354,8 +355,8 @@ StaticDialogBase {
                     width: 370
                     color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
                     height: 24
-                    anchors.left: parent.left
-                    anchors.leftMargin: 33
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.leftMargin: 33
                     enabled: parent.enabled && !rightPanel.isSystemPlan
 
                     StyledTextInput {
@@ -412,8 +413,7 @@ StaticDialogBase {
                 }
 
                 Item {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    Layout.fillWidth: true
                     height: childrenRect.height
 
                     StyledText {
@@ -437,8 +437,7 @@ StaticDialogBase {
 
                 Item {
                     id: columnsHost
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
                     clip: false
 
@@ -508,7 +507,7 @@ StaticDialogBase {
                                     width: 180
                                     color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
                                     height: 24
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    Layout.alignment: Qt.AlignVCenter
 
                                     StyledTextInput {
                                         id: columnNameText
@@ -709,7 +708,7 @@ StaticDialogBase {
                     text: i18.n + qsTr("Start Export")
                     width: 110
                     isDefault: true
-                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.alignment: Qt.AlignVCenter
                     enabled: !csvExportModel.isExporting && (exportPlanModelsListView.count > 0)
                     onClicked: {
                         if (csvExportModel.getSelectedPlansCount() === 0) {
@@ -722,7 +721,7 @@ StaticDialogBase {
 
                 StyledButton {
                     text: i18.n + qsTr("Close")
-                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.alignment: Qt.AlignVCenter
                     width: 110
                     enabled: !csvExportModel.isExporting
                     onClicked: {

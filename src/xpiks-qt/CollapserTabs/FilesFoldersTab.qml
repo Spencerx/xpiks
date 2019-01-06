@@ -43,10 +43,9 @@ Item {
 
         StyledBlackButton {
             height: 30
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 10
-            anchors.rightMargin: 10
+            Layout.fillWidth: true
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
             text: i18.n + qsTr("Add directory")
             onClicked: chooseDirectoryDialog.open()
             enabled: (applicationWindow.openedDialogsCount == 0)
@@ -58,10 +57,9 @@ Item {
 
         StyledBlackButton {
             height: 30
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 10
-            anchors.rightMargin: 10
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
+            Layout.fillWidth: true
             text: i18.n + qsTr("Add files", "button")
             action: addFilesAction
         }
@@ -72,8 +70,7 @@ Item {
 
         Item {
             Layout.fillHeight: true
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
 
             ListView {
                 id: sourcesListView
@@ -145,8 +142,7 @@ Item {
                         StyledText {
                             id: directoryPath
                             Layout.fillWidth: true
-                            anchors.verticalCenter: parent.verticalCenter
-                            height: parent.height
+                            Layout.alignment: Qt.AlignVCenter
                             color: uiColors.itemsSourceForeground
                             text: path + " (" + usedimagescount + ")"
                             elide: Text.ElideMiddle
@@ -164,7 +160,7 @@ Item {
                         CloseIcon {
                             width: 14
                             height: 14
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             isActive: false
                             crossOpacity: 1
                             thickness: 2

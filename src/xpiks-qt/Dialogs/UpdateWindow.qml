@@ -53,12 +53,12 @@ ApplicationWindow {
             anchors.centerIn: parent
 
             StyledText {
-                anchors.horizontalCenter: parent.horizontalCenter
+                Layout.alignment: Qt.AlignHCenter
                 text: i18.n + qsTr("Xpiks update is available!")
             }
 
             StyledText {
-                anchors.horizontalCenter: parent.horizontalCenter
+                Layout.alignment: Qt.AlignHCenter
                 text: i18.n + qsTr("<u>Download Xpiks update</u>")
                 color: downloadMA.pressed ? uiColors.linkClickedColor : uiColors.artworkActiveColor
 

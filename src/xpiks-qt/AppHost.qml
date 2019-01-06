@@ -432,12 +432,13 @@ Rectangle {
                 }
 
                 Item {
-                    anchors.fill: parent
-                    anchors.leftMargin: 5
-                    anchors.topMargin: 5
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
 
                     Flow {
                         anchors.fill: parent
+                        anchors.leftMargin: 5
+                        anchors.topMargin: 5
                         spacing: 5
 
                         Repeater {

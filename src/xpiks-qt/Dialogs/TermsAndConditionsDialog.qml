@@ -43,8 +43,7 @@ StaticDialogBase {
 
         Rectangle {
             color: uiColors.popupDarkInputBackground
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             Layout.fillHeight: true
 
             StyledScrollView {

@@ -60,7 +60,7 @@ StaticDialogBase {
         Rectangle {
             width: 220
             height: UIConfig.textInputHeight
-            anchors.left: parent.left
+            Layout.alignment: Qt.AlignLeft
             color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
             border.width: masterPassword.activeFocus ? 1 : 0
             border.color: wrongTry ? uiColors.destructiveColor : uiColors.artworkActiveColor
@@ -91,14 +91,13 @@ StaticDialogBase {
 
         StyledCheckbox {
             checked: false
-            anchors.left: parent.left
+            Layout.alignment: Qt.AlignLeft
             id: showPasswordCheckBox
             text: i18.n + qsTr("Show password")
         }
 
         RowLayout {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             height: 24
             spacing: 0
 

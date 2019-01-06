@@ -88,7 +88,7 @@ StaticDialogBase {
 
         RowLayout {
             id: currentPasswordRow
-            width: parent.width
+            Layout.fillWidth: true
             height: 20
             enabled: !firstTime
             spacing: 10
@@ -134,7 +134,7 @@ StaticDialogBase {
         }
 
         RowLayout {
-            width: parent.width
+            Layout.fillWidth: true
             height: 20
             spacing: 10
 
@@ -176,7 +176,7 @@ StaticDialogBase {
         }
 
         RowLayout {
-            width: parent.width
+            Layout.fillWidth: true
             height: 20
             spacing: 10
 
@@ -210,8 +210,7 @@ StaticDialogBase {
         }
 
         RowLayout {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             height: 24
             spacing: 20
 

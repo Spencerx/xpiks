@@ -128,7 +128,7 @@ StaticDialogBase {
                         StyledText {
                             id: infoTitle
                             Layout.fillWidth: true
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             height: 31
                             text: name
                             elide: Text.ElideMiddle
@@ -594,7 +594,7 @@ StaticDialogBase {
                     normalLinkColor: uiColors.labelActiveForeground
                     enabled: presetNamesListView.currentItem ? true : false
                     visible: presetNamesListView.count > 0
-                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.alignment: Qt.AlignVCenter
                     onClicked: {
                         if (!presetNamesListView.currentItem) { return; }
 
@@ -623,7 +623,7 @@ StaticDialogBase {
 
                 StyledButton {
                     text: i18.n + qsTr("Close")
-                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.alignment: Qt.AlignVCenter
                     width: 100
                     onClicked: {
                         closePopup();

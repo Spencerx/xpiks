@@ -12,7 +12,7 @@ source /opt/qt56/bin/qt56-env.sh
 sudo /usr/sbin/update-ccache-symlinks
 export PATH="/usr/lib/ccache:$PATH"
 
-if [ -n "$UI_TESTS" ]; then
+if [ "$RUN_TEST" = "ui-tests" ]; then
     export DISPLAY=:99.0
     sh -e /etc/init.d/xvfb start
     sleep 3

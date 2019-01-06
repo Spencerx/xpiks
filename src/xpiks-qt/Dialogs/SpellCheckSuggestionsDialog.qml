@@ -43,8 +43,7 @@ StaticDialogBase {
         anchors.margins: 20
 
         RowLayout {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
 
             StyledText {
                 text: i18.n + qsTr("Suggestions")
