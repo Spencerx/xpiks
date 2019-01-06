@@ -41,8 +41,7 @@ StaticDialogBase {
         spacing: 20
 
         RowLayout {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
 
             StyledText {
                 text: i18.n + qsTr("Failed uploads")
@@ -63,8 +62,7 @@ StaticDialogBase {
         }
 
         Rectangle {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             Layout.fillHeight: true
             color: uiColors.defaultControlColor
 
@@ -214,8 +212,7 @@ StaticDialogBase {
         }
 
         RowLayout {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
 
             Item {
                 Layout.fillWidth: true

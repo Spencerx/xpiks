@@ -662,8 +662,7 @@ Rectangle {
                     }
 
                     RowLayout {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
+                        Layout.fillWidth: true
                         spacing: 3
 
                         StyledText {
@@ -689,8 +688,7 @@ Rectangle {
 
                     Rectangle {
                         id: rect
-                        anchors.left: parent.left
-                        anchors.right: parent.right
+                        Layout.fillWidth: true
                         height: 60
                         color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
                         border.color: uiColors.artworkActiveColor

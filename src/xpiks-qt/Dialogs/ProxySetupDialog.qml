@@ -55,7 +55,7 @@ StaticDialogBase {
 
         RowLayout {
             id: proxyAddressRow
-            width: parent.width
+            Layout.fillWidth: true
             spacing: 10
 
             StyledText {
@@ -84,9 +84,10 @@ StaticDialogBase {
                 }
             }
         }
+
         RowLayout {
             id: proxyUserRow
-            width: parent.width
+            Layout.fillWidth: true
             height: 20
             spacing: 10
 
@@ -120,7 +121,7 @@ StaticDialogBase {
 
         RowLayout {
             id: proxyPasswordRow
-            width: parent.width
+            Layout.fillWidth: true
             height: 20
             spacing: 10
 
@@ -155,7 +156,7 @@ StaticDialogBase {
 
         RowLayout {
             id: proxyPortRow
-            width: parent.width
+            Layout.fillWidth: true
             height: 20
             spacing: 10
 
@@ -191,8 +192,7 @@ StaticDialogBase {
         }
 
         RowLayout {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             height: 24
             spacing: 20
 

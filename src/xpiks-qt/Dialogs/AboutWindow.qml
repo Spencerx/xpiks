@@ -59,7 +59,7 @@ ApplicationWindow {
 
             StyledLink {
                 focus: true
-                anchors.horizontalCenter: parent.horizontalCenter
+                Layout.alignment: Qt.AlignVCenter
                 text: i18.n + qsTr("<u>Xpiks webpage</u>")
                 onClicked: {
                     Qt.openUrlExternally("https://xpiksapp.com/")
@@ -73,7 +73,7 @@ ApplicationWindow {
             Item {
                 height: Qt.platform.os === "linux" ? 100 : 80
                 width: 220
-                anchors.margins: 10
+                Layout.margins: 10
 
                 StyledText {
                     color: uiColors.inputForegroundColor

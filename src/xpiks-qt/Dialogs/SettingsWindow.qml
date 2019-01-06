@@ -265,7 +265,7 @@ ApplicationWindow {
                         StyledText {
                             id: infoTitle
                             Layout.fillWidth: true
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             height: 31
                             text: sourceWrapper.myData
                             elide: Text.ElideMiddle
@@ -325,8 +325,7 @@ ApplicationWindow {
                         anchors.margins: 20
 
                         Flow {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             spacing: 10
                             property real itemHeight: 40
                             property real itemWidth: 250
@@ -527,8 +526,7 @@ ApplicationWindow {
                         spacing: 30
 
                         RowLayout {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             z: 10000
                             spacing: 20
 
@@ -564,8 +562,7 @@ ApplicationWindow {
                         }
 
                         RowLayout {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             spacing: 20
 
                             StyledCheckbox {
@@ -588,8 +585,7 @@ ApplicationWindow {
                         }
 
                         Item {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             height: row.height
 
                             RowLayout {
@@ -675,8 +671,7 @@ ApplicationWindow {
                         }
 
                         Item {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             height: childrenRect.height
 
                             RowLayout {
@@ -715,7 +710,7 @@ ApplicationWindow {
                         }
 
                         RowLayout {
-                            width: parent.width
+                            Layout.fillWidth: true
                             spacing: 10
 
                             StyledText {
@@ -798,8 +793,7 @@ ApplicationWindow {
                         }
 
                         RowLayout {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             spacing: 20
 
                             Rectangle {
@@ -900,7 +894,7 @@ ApplicationWindow {
                         anchors.bottomMargin: 10
 
                         RowLayout {
-                            width: parent.width
+                            Layout.fillWidth: true
                             spacing: 10
 
                             StyledText {
@@ -954,7 +948,7 @@ ApplicationWindow {
                         }
 
                         RowLayout {
-                            width: parent.width
+                            Layout.fillWidth: true
                             spacing: 10
 
                             StyledText {
@@ -1004,7 +998,7 @@ ApplicationWindow {
                         }
 
                         RowLayout {
-                            width: parent.width
+                            Layout.fillWidth: true
                             spacing: 10
 
                             StyledCheckbox {
@@ -1154,10 +1148,9 @@ ApplicationWindow {
 
                         Rectangle {
                             height: 1
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.leftMargin: 10
-                            anchors.rightMargin: 10
+                            Layout.fillWidth: true
+                            Layout.leftMargin: 10
+                            Layout.rightMargin: 10
                             color: uiColors.panelSelectedColor
                         }
 
@@ -1166,8 +1159,7 @@ ApplicationWindow {
                         }
 
                         Flow {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             spacing: 10
                             property real itemHeight: 40
                             property real itemWidth: 250

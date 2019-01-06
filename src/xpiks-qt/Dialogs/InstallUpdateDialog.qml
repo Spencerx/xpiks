@@ -40,8 +40,7 @@ StaticDialogBase {
 
         RowLayout {
             spacing: 20
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
 
             StyledButton {
                 width: 100

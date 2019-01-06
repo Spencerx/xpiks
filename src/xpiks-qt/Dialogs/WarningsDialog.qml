@@ -80,7 +80,7 @@ StaticDialogBase {
                                 Item {
                                     width: 90
                                     height: 60
-                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    Layout.alignment: Qt.AlignHCenter
 
                                     Image {
                                         id: artworkImage
@@ -152,7 +152,7 @@ StaticDialogBase {
                                             height: 6
                                             width: height
                                             radius: height/2
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            Layout.alignment: Qt.AlignVCenter
                                             color: uiColors.inactiveControlColor
                                         }
 
@@ -160,7 +160,7 @@ StaticDialogBase {
                                             Layout.fillWidth: true
                                             text: i18.n + modelData
                                             color: uiColors.artworkModifiedColor
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            Layout.alignment: Qt.AlignVCenter
                                         }
                                     }
                                 }

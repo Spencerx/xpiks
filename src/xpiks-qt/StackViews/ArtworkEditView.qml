@@ -684,8 +684,7 @@ Rectangle {
 
                         Item {
                             height: childrenRect.height
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
 
                             StyledText {
                                 id: titleText
@@ -713,8 +712,7 @@ Rectangle {
 
                         Rectangle {
                             id: anotherRect
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             height: 25
                             color: uiColors.inputBackgroundColor
                             border.color: uiColors.artworkActiveColor
@@ -812,8 +810,7 @@ Rectangle {
 
                         Item {
                             height: childrenRect.height
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
 
                             StyledText {
                                 id: descriptionText
@@ -841,8 +838,7 @@ Rectangle {
 
                         Rectangle {
                             id: rect
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             height: 70
                             color: uiColors.inputBackgroundColor
                             border.color: uiColors.artworkActiveColor
@@ -947,8 +943,7 @@ Rectangle {
 
                         Item {
                             height: childrenRect.height
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
 
                             StyledText {
                                 anchors.left: parent.left
@@ -980,8 +975,7 @@ Rectangle {
                             border.color: uiColors.artworkActiveColor
                             border.width: flv.isFocused ? 1 : 0
                             Layout.fillHeight: true
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             color: uiColors.inputBackgroundColor
                             state: ""
 
@@ -1159,8 +1153,7 @@ Rectangle {
                         }
 
                         Flow {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             spacing: 5
 
                             StyledLink {

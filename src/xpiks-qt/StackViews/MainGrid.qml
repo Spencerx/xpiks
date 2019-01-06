@@ -343,7 +343,7 @@ Item {
             Rectangle {
                 id: checkBoxWrapper
                 height: 35
-                anchors.verticalCenter: parent.verticalCenter
+                Layout.alignment: Qt.AlignVCenter
                 width: childrenRect.width
                 property bool isHovered: selectAllMA.containsMouse || selectAllCheckbox.hovered || selectionCombobox.hovered
                 color: (enabled && (isHovered || selectionCombobox.isOpened)) ?
@@ -508,7 +508,7 @@ Item {
 
             LayoutButton {
                 enabled: (artworksRepository.artworksSourcesCount > 0) && (applicationWindow.openedDialogsCount == 0)
-                anchors.verticalCenter: parent.verticalCenter
+                Layout.alignment: Qt.AlignVCenter
                 isListLayout: appHost.listLayout
                 onLayoutChanged: {
                     appHost.listLayout = !appHost.listLayout
@@ -518,8 +518,7 @@ Item {
 
             Rectangle {
                 id: filterTab
-                anchors.bottom: parent.bottom
-                anchors.top: parent.top
+                Layout.fillHeight: true
                 width: 55
                 enabled: artworksRepository.artworksSourcesCount > 0
                 color: filterWrapper.isOpened ? uiColors.defaultControlColor : uiColors.defaultDarkColor

@@ -138,8 +138,7 @@ StaticDialogBase {
         spacing: 0
 
         RowLayout {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
 
             StyledText {
                 text: i18.n + qsTr("Delete keywords")
@@ -173,8 +172,7 @@ StaticDialogBase {
 
         RowLayout {
             spacing: 5
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             height: 40
 
             Item {
@@ -203,8 +201,7 @@ StaticDialogBase {
 
         Item {
             height: 130
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
 
             Rectangle {
                 anchors.fill: parent
@@ -298,8 +295,7 @@ StaticDialogBase {
         }
 
         Item {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             height: 120
 
             ColumnLayout {
@@ -442,8 +438,7 @@ StaticDialogBase {
         }
 
         Item {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             height: 175
 
             ColumnLayout {
@@ -542,8 +537,7 @@ StaticDialogBase {
         }
 
         Item {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             height: 24
 
             RowLayout {

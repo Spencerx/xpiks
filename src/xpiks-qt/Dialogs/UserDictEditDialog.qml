@@ -60,8 +60,7 @@ StaticDialogBase {
             id: keywordsWrapper
             border.color: uiColors.artworkActiveColor
             border.width: flv.isFocused ? 1 : 0
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             Layout.fillHeight: true
             color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
             property var keywordsModel: userDictEditModel.getBasicModelObject()
@@ -122,8 +121,7 @@ StaticDialogBase {
 
         RowLayout {
             id: footer
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             height: 24
             spacing: 20
 
