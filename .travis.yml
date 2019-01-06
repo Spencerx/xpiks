@@ -5,46 +5,10 @@ services:
 
 matrix:
   include:
-    - os: linux
-      compiler: gcc
-      dist: trusty
-      sudo: required
-      env: RUN_TEST=xpiks
-    - os: linux
-      compiler: gcc
-      dist: trusty
-      sudo: required
-      env: RUN_TEST=core-tests QT_FATAL_WARNINGS=1
-    - os: linux
-      compiler: gcc
-      dist: trusty
-      sudo: required
-      env: RUN_TEST=integration-tests QT_FATAL_WARNINGS=1
-    - os: linux
-      compiler: gcc
-      dist: trusty
-      sudo: required
-      env: RUN_TEST=ui-tests
-    - os: osx
-      compiler: clang
-      env: RUN_TEST=xpiks
-      osx_image: xcode9.4
-      if: branch = master
-    - os: osx
-      compiler: clang
-      env: RUN_TEST=core-tests QT_FATAL_WARNINGS=1
-      osx_image: xcode9.4
-      if: branch = master
-    - os: osx
-      compiler: clang
-      env: RUN_TEST=integration-tests QT_FATAL_WARNINGS=1
-      osx_image: xcode9.4
-      if: branch = master
     - os: osx
       compiler: clang
       env: RUN_TEST=ui-tests
       osx_image: xcode9.4
-      if: branch = master
       
 git:
   depth: 3

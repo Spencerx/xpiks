@@ -94,8 +94,12 @@ int main(int argc, char **argv) {
     Q_ASSERT(uiTestsEnvironment.getIsInMemoryOnly());
     uiTestsEnvironment.ensureSystemDirectoriesExist();
 
-#if defined(APPVEYOR)
-    initCrashRecovery(uiTestsEnvironment);
+#if defined(APPVEYOR) || defined(TRAVIS_CI)
+    #if defined(Q_OS_WIN) || defined(Q_OS_MAC)
+    {
+        initCrashRecovery(uiTestsEnvironment);
+    }
+    #endif
 #endif
 
 #ifdef WITH_LOGS
