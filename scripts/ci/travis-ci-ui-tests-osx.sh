@@ -18,7 +18,7 @@ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../../libs/debug/
 
 ./xpiks-tests-ui > uitests.log &
 pid=$!
-echo "Waiting for the tests to finish..."
+echo "Waiting for the tests (PID=$pid) to finish..."
 wait $pid
 exitcode=$?
 echo "Tests finished with exitcode $exitcode"

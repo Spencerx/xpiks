@@ -27,6 +27,7 @@ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../../libs/debug/
 pid=$!
 wait $pid
 exitcode=$?
+echo "Tests finished with exitcode $exitcode"
 
 if [ $exitcode != 0 ]; then
     cat tests.log | grep -v " debug "
@@ -39,6 +40,7 @@ fi
 pid=$!
 wait $pid
 exitcode=$?
+echo "Tests (in-memory) finished with exitcode $exitcode"
 
 if [ $exitcode != 0 ]; then
     # travis doesn't like long logs

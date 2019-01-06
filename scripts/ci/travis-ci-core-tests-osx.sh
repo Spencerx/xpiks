@@ -19,6 +19,7 @@ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../../libs/debug/
 pid=$!
 wait $pid
 exitcode=$?
+echo "Tests finished with exitcode $exitcode"
 
 if [ $exitcode != 0 ]; then
     lldb -c /cores/core.$pid --batch -o 'thread backtrace all' -o 'quit'
