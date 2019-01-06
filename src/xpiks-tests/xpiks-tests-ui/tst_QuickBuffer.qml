@@ -87,7 +87,7 @@ Item {
             compare(quickBuffer.getKeywordsString(), testKeyword)
         }
 
-        function test_copyFromMoreLink() {
+        function test_copyFromLink() {
             var copyLink = findChild(quickBufferTab, "copyLink")
             compare(copyLink.enabled, false)
 

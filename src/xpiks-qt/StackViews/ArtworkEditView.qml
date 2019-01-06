@@ -233,7 +233,6 @@ Rectangle {
 
     Menu {
         id: keywordsMoreMenu
-        objectName: "keywordsMoreMenuObject"
 
         MenuItem {
             text: i18.n + qsTr("Suggest keywords")

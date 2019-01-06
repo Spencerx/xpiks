@@ -92,7 +92,6 @@ Item {
         property var nextArtworkButton
         property var prevArtworkButton
         property var rosterListView
-        property var copyLink
         property var editableTags
         property var artworkEditView: loader.item
 
@@ -107,8 +106,6 @@ Item {
             prevArtworkButton = findChild(artworkEditView, "selectPrevButton")
 
             rosterListView = findChild(artworkEditView, "rosterListView")
-
-            copyLink = findChild(artworkEditView, "copyLink")
 
             editableTags = findChild(artworkEditView, "editableTags")
         }
@@ -203,14 +200,16 @@ Item {
             compare(artworkEditView.artworkProxy.title, testTitle)
         }
 
-        function test_copyFromMoreLink() {
+        function test_copyFromLink() {
+            var copyLink = findChild(artworkEditView, "copyLink")
             compare(copyLink.enabled, false)
 
             keywordsEdit.forceActiveFocus()
             var testKeyword1 = TestUtils.keyboardEnterSomething(testCase)
             keyClick(Qt.Key_Comma)
             var testKeyword2 = TestUtils.keyboardEnterSomething(testCase)
-            // do not press comma - test adding keyword on losing focus
+            keyClick(Qt.Key_Comma)
+            wait(TestsHost.normalSleepTime)
 
             compare(copyLink.enabled, true)
             copyLink.forceActiveFocus()
