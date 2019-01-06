@@ -9,40 +9,40 @@ matrix:
       compiler: gcc
       dist: trusty
       sudo: required
-      env: XPIKS_BINARY=binary
+      env: RUN_TEST=xpiks
     - os: linux
       compiler: gcc
       dist: trusty
       sudo: required
-      env: CORE_TESTS=tests QT_FATAL_WARNINGS=1
+      env: RUN_TEST=core-tests QT_FATAL_WARNINGS=1
     - os: linux
       compiler: gcc
       dist: trusty
       sudo: required
-      env: INTEGRATION_TESTS=tests QT_FATAL_WARNINGS=1
+      env: RUN_TEST=integration-tests QT_FATAL_WARNINGS=1
     - os: linux
       compiler: gcc
       dist: trusty
       sudo: required
-      env: UI_TESTS=tests
+      env: RUN_TEST=ui-tests
     - os: osx
       compiler: clang
-      env: XPIKS_BINARY=binary
+      env: RUN_TEST=xpiks
       osx_image: xcode9.4
       if: branch = master
     - os: osx
       compiler: clang
-      env: CORE_TESTS=tests QT_FATAL_WARNINGS=1
+      env: RUN_TEST=core-tests QT_FATAL_WARNINGS=1
       osx_image: xcode9.4
       if: branch = master
     - os: osx
       compiler: clang
-      env: INTEGRATION_TESTS=tests QT_FATAL_WARNINGS=1
+      env: RUN_TEST=integration-tests QT_FATAL_WARNINGS=1
       osx_image: xcode9.4
       if: branch = master
     - os: osx
       compiler: clang
-      env: UI_TESTS=tests
+      env: RUN_TEST=ui-tests
       osx_image: xcode9.4
       if: branch = master
       
@@ -69,10 +69,7 @@ before_script:
 script:
   - ${TRAVIS_BUILD_DIR}/scripts/build/build_vendors_${TRAVIS_OS_NAME}.sh travis-ci
   - ls -la libs/*
-  - if [ -n "$XPIKS_BINARY" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-xpiks-${TRAVIS_OS_NAME}.sh"; fi
-  - if [ -n "$CORE_TESTS" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-core-tests-${TRAVIS_OS_NAME}.sh"; fi
-  - if [ -n "$INTEGRATION_TESTS" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-integration-tests-${TRAVIS_OS_NAME}.sh"; fi
-  - if [ -n "$UI_TESTS" ]; then "$TRAVIS_BUILD_DIR/scripts/ci/travis-ci-ui-tests-${TRAVIS_OS_NAME}.sh"; fi
+  - ${TRAVIS_BUILD_DIR}/scripts/ci/travis-ci-${RUN_TEST}-${TRAVIS_OS_NAME}.sh"; fi
 
 after_failure:
   - cat /tmp/vsftpd.log

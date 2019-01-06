@@ -29,7 +29,7 @@ if [ $exitcode != 0 ]; then
     exit $exitcode
 fi
 
-cat uitests_in_memory.log
+cat uitests.log
 
 "$TRAVIS_BUILD_DIR/scripts/ci/get_code_cov.sh" "$PWD/../../"
 bash <(curl -s https://codecov.io/bash) -X gcov || echo 'Codecov failed to upload';
