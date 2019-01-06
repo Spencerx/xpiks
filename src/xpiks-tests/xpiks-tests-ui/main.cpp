@@ -133,6 +133,8 @@ int main(int argc, char **argv) {
         LOG_DEBUG << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
         LOG_DEBUG << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
 
+        LOG_INFO << "UI tests result is:" << result;
+
         xpiksTests.stop();
         QThread::sleep(1);
         eventLoop.processEvents(QEventLoop::AllEvents);
