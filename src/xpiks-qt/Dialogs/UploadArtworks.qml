@@ -578,8 +578,7 @@ StaticDialogBase {
                         Rectangle {
                             border.width: ftpUsername.activeFocus ? 1 : 0
                             border.color: uiColors.artworkActiveColor
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
                             height: 30
 
@@ -613,8 +612,7 @@ StaticDialogBase {
                         Rectangle {
                             border.width: ftpPassword.activeFocus ? 1 : 0
                             border.color: uiColors.artworkActiveColor
-                            anchors.left: parent.left
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
                             height: 30
                             color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
 
