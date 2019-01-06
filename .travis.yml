@@ -32,8 +32,7 @@ before_script:
 
 script:
   - ${TRAVIS_BUILD_DIR}/scripts/build/build_vendors_${TRAVIS_OS_NAME}.sh travis-ci
-  - ls -la libs/*
-  - ${TRAVIS_BUILD_DIR}/scripts/ci/travis-ci-${RUN_TEST}-${TRAVIS_OS_NAME}.sh"; fi
+  - ${TRAVIS_BUILD_DIR}/scripts/ci/travis-ci-${RUN_TEST}-${TRAVIS_OS_NAME}.sh
 
 after_failure:
   - cat /tmp/vsftpd.log
