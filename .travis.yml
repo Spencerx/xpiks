@@ -71,4 +71,4 @@ script:
   - ${TRAVIS_BUILD_DIR}/scripts/ci/travis-ci-${RUN_TEST}-${TRAVIS_OS_NAME}.sh
 
 after_failure:
-  - cat /tmp/vsftpd.log
+  - echo "After failure handler"
