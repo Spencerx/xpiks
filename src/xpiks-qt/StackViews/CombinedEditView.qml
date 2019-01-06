@@ -516,8 +516,7 @@ Rectangle {
 
                     Rectangle {
                         id: anotherRect
-                        anchors.left: parent.left
-                        anchors.right: parent.right
+                        Layout.fillWidth: true
                         height: 25
                         color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
                         border.color: uiColors.artworkActiveColor
@@ -874,8 +873,7 @@ Rectangle {
                         id: keywordsWrapper
                         border.color: uiColors.artworkActiveColor
                         border.width: flv.isFocused ? 1 : 0
-                        anchors.left: parent.left
-                        anchors.right: parent.right
+                        Layout.fillWidth: true
                         Layout.fillHeight: true
                         color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
                         property var keywordsModel: combinedArtworks.getBasicModelObject()
@@ -1053,10 +1051,9 @@ Rectangle {
                     Item { height: 3 }
 
                     RowLayout {
-                        anchors.left: parent.left
-                        anchors.leftMargin: 3
-                        anchors.right: parent.right
-                        anchors.rightMargin: 3
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 3
+                        Layout.rightMargin: 3
                         height: 15
                         spacing: 5
 

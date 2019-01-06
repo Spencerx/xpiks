@@ -129,7 +129,7 @@ StaticDialogBase {
                                     id: imageContainer
                                     width: 100
                                     height: 100
-                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    Layout.alignment: Qt.AlignHCenter
 
                                     Image {
                                         id: artworkImage
@@ -142,16 +142,25 @@ StaticDialogBase {
                                         cache: false
                                     }
 
-                                    Image {
-                                        id: videoTypeIconSmall
-                                        visible: isvideo
-                                        enabled: isvideo
-                                        source: "qrc:/Graphics/video-icon-s.png"
-                                        fillMode: Image.PreserveAspectFit
-                                        sourceSize.width: 150
-                                        sourceSize.height: 150
-                                        anchors.fill: artworkImage
-                                        cache: true
+                                    Rectangle {
+                                        anchors.right: artworkImage.right
+                                        anchors.bottom: artworkImage.bottom
+                                        width: 20
+                                        height: 20
+                                        color: uiColors.defaultDarkColor
+                                        property bool isVideo: isvideo
+                                        property bool isVector: hasvectorattached
+                                        visible: isVideo || isVector
+                                        enabled: isVideo || isVector
+
+                                        Image {
+                                            id: typeIcon
+                                            anchors.fill: parent
+                                            source: parent.isVector ? "qrc:/Graphics/vector-icon.svg" : (parent.isVideo ? "qrc:/Graphics/video-icon.svg" : "")
+                                            sourceSize.width: 20
+                                            sourceSize.height: 20
+                                            cache: true
+                                        }
                                     }
 
                                     MouseArea {

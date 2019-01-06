@@ -293,8 +293,7 @@ StaticDialogBase {
                     border.width: titleText.activeFocus ? 1 : 0
                     property bool isValid: presetNamesListView.currentItem ? presetNamesListView.currentItem.myData.isnamevalid : false
                     border.color: isValid ? uiColors.artworkActiveColor : uiColors.artworkModifiedColor
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    Layout.fillWidth: true
                     color: enabled ? uiColors.inputBackgroundColor : uiColors.inputInactiveBackground
                     height: 30
 
@@ -449,8 +448,7 @@ StaticDialogBase {
 
                 Rectangle {
                     id: keywordsWrapper
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
                     border.color: uiColors.artworkActiveColor
                     border.width: flv.isFocused ? 1 : 0

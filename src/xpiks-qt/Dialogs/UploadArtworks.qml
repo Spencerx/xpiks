@@ -857,7 +857,7 @@ StaticDialogBase {
                 StyledLink {
                     color: isPressed ? uiColors.linkClickedColor : (warningsModel.warningsCount > 0 ? uiColors.artworkModifiedColor : uiColors.labelInactiveForeground)
                     text: i18.n + getOriginalText()
-                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.alignment: Qt.AlignVCenter
                     enabled: uploadArtworksComponent.uploadEnabled && !skipUploadItems
                     visible: !skipUploadItems && (!artworksUploader.inProgress) && (uploadWatcher.failedImagesCount === 0)
 
@@ -884,7 +884,7 @@ StaticDialogBase {
                     enabled: uploadArtworksComponent.uploadEnabled && !skipUploadItems && (uploadWatcher.failedImagesCount > 0)
                     text: i18.n + getOriginalText()
                     color: isPressed ? uiColors.linkClickedColor : uiColors.artworkModifiedColor
-                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.alignment: Qt.AlignVCenter
 
                     function getOriginalText() {
                         return uploadWatcher.failedImagesCount === 1 ?
@@ -909,7 +909,7 @@ StaticDialogBase {
                     enabled: uploadArtworksComponent.uploadEnabled && !skipUploadItems
                     text: i18.n + (artworksUploader.inProgress ? qsTr("Stop") : qsTr("Start Upload"))
                     width: 130
-                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.alignment: Qt.AlignVCenter
                     onClicked: {
                         if (!artworksUploader.inProgress) {
                             if (uploadInfos.getSelectedInfosCount() === 0) {
