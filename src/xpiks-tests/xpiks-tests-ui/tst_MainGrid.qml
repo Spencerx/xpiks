@@ -559,10 +559,15 @@ Item {
             mouseClick(searchButton)
             wait(TestsHost.smallSleepTime)
             tryCompare(suggestionsRepeater, "count", 3, 3000)
+            wait(TestsHost.normalSleepTime)
 
             mouseClick(suggestionsRepeater.itemAt(0))
+            wait(TestsHost.smallSleepTime)
             mouseClick(suggestionsRepeater.itemAt(1))
+            wait(TestsHost.smallSleepTime)
             mouseClick(suggestionsRepeater.itemAt(2))
+            wait(TestsHost.smallSleepTime)
+
             wait(TestsHost.normalSleepTime)
 
             tryCompare(suggestKeywordsDialog.keywordsSuggestor, "suggestedKeywordsCount", 3, 2000)
