@@ -8,8 +8,8 @@ import "TestUtils.js" as TestUtils
 
 Item {
     id: root
-    width: 800
-    height: 600
+    width: 1200
+    height: 800
 
     property int openedDialogsCount: 0
 

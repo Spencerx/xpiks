@@ -597,12 +597,13 @@ Item {
                 keyClick(Qt.Key_O)
                 keyClick(Qt.Key_B)
                 keyClick(Qt.Key_Tab)
+                wait(TestsHost.smallSleepTime)
             }
 
             wait(TestsHost.normalSleepTime)
 
             dispatcher.dispatch(UICommand.SetupFindInArtworks, {})
-            wait(TestsHost.smallSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             TestUtils.keyboardEnterText('bob')
 
@@ -621,6 +622,7 @@ Item {
                                                                   notIndex)
             replacePreviewList.positionViewAtIndex(notIndex, ListView.Contain)
             var checkbox = findChild(replaceDelegate, "applyReplaceCheckBox")
+            verify(checkbox)
             mouseClick(checkbox)
             wait(TestsHost.smallSleepTime)
 
