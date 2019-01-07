@@ -129,11 +129,13 @@ Item {
             verify(artworkDelegate)
 
             var keywordsEdit = findChild(artworkDelegate, "nextTagTextInput")
-
+            verify(keywordsEdit)
             keywordsEdit.forceActiveFocus()
-            var testKeyword = TestUtils.keyboardEnterSomething(testCase)
+            var testKeyword = 'duplicate'
+            TestUtils.keyboardEnterText(testKeyword)
             keyClick(Qt.Key_Backtab)
 
+            // enter title as well
             TestUtils.keyboardEnterText(testKeyword)
 
             wait(TestsHost.normalSleepTime)

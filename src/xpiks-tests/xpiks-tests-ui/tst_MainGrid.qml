@@ -602,17 +602,16 @@ Item {
                 var artworkDelegate = getDelegate(i + startIndex)
                 var descriptionInput = findChild(artworkDelegate, "descriptionTextInput")
                 descriptionInput.forceActiveFocus()
-                keyClick(Qt.Key_B)
-                keyClick(Qt.Key_O)
-                keyClick(Qt.Key_B)
+                TestUtils.keyboardEnterText('bob')
                 keyClick(Qt.Key_Tab)
                 wait(TestsHost.smallSleepTime)
             }
 
             wait(TestsHost.normalSleepTime)
 
+            compare(root.openedDialogsCount, 0)
             dispatcher.dispatch(UICommand.SetupFindInArtworks, {})
-            wait(TestsHost.normalSleepTime)
+            tryCompare(root, "openedDialogsCount", 1, 3000)
 
             TestUtils.keyboardEnterText('bob')
 
@@ -621,7 +620,8 @@ Item {
             TestUtils.keyboardEnterText('cat')
 
             keyClick(Qt.Key_Return)
-            wait(TestsHost.normalSleepTime)
+
+            tryCompare(root, "openedDialogsCount", 2, 3000)
 
             var replacePreviewList = findChild(root, "replacePreviewList")
             compare(replacePreviewList.count, count)
@@ -638,6 +638,7 @@ Item {
             var replaceButton = findChild(root, "replaceButton")
             mouseClick(replaceButton)
             wait(TestsHost.normalSleepTime)
+            compare(root.openedDialogsCount, 0)
 
             for (var i = 0; i < count; i++) {
                 var artworkDelegate = getDelegate(i + startIndex)
@@ -675,18 +676,14 @@ Item {
             dispatcher.dispatch(UICommand.SetupFindInArtworks, {})
             tryCompare(root, "openedDialogsCount", 1, 3000)
 
-            keyClick(Qt.Key_B)
-            keyClick(Qt.Key_O)
-            keyClick(Qt.Key_B)
+            TestUtils.keyboardEnterText('bob')
 
             keyClick(Qt.Key_Tab)
 
-            keyClick(Qt.Key_C)
-            keyClick(Qt.Key_A)
-            keyClick(Qt.Key_T)
+            TestUtils.keyboardEnterText('cat')
 
             keyClick(Qt.Key_Return)
-            wait(TestsHost.normalSleepTime)
+            tryCompare(root, "openedDialogsCount", 2, 3000)
 
             var replacePreviewList = findChild(root, "replacePreviewList")
             compare(replacePreviewList.count, count)
