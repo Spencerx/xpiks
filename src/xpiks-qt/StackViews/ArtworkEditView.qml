@@ -36,9 +36,6 @@ Rectangle {
     property bool canShowChangesSaved: false
     property bool showInfo: false
 
-    signal dialogDestruction();
-    Component.onDestruction: dialogDestruction();
-
     function onAutoCompleteClose() {
         autoCompleteBox = undefined
     }

@@ -13,7 +13,8 @@ Item {
     property int openedDialogsCount: 0
 
     function onDialogClosed() {
-        openedDialogsCount -= 1
+        console.log("root # onDialogClosed")
+        root.openedDialogsCount -= 1
     }
 
     Component.onCompleted: TestsHost.setup(testCase.name)

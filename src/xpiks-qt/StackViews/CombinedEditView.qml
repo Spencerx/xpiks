@@ -32,9 +32,6 @@ Rectangle {
 
     property bool wasLeftSideCollapsed
 
-    signal dialogDestruction();
-    Component.onDestruction: dialogDestruction();
-
     function onAutoCompleteClose() {
         autoCompleteBox = undefined
     }

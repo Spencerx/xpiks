@@ -24,6 +24,9 @@ BaseDialog {
 
     signal clickedOutside()
 
+    signal dialogDestruction()
+    Component.onDestruction: dialogDestruction()
+
     FocusScope {
         anchors.fill: parent
 
