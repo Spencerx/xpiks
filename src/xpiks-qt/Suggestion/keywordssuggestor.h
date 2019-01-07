@@ -137,7 +137,7 @@ namespace Suggestion {
     private slots:
         void resultsAvailableHandler();
         void errorsReceivedHandler(const QString &error);
-        void onLinearTimer();
+        void onProgressiveLoadTimer();
         void onSwitchesUpdated();
 
     public slots:
@@ -203,7 +203,7 @@ namespace Suggestion {
         Artworks::BasicKeywordsModel m_SuggestedKeywordsModel;
         Artworks::BasicKeywordsModel m_OtherKeywordsModel;
         // hack to load previews gradually
-        QTimer m_LinearTimer;
+        QTimer m_ProgressiveLoadTimer;
         volatile int m_LoadedPreviewsNumber;
         int m_SelectedArtworksCount;
         int m_SelectedSourceIndex;

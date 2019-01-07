@@ -65,8 +65,8 @@ namespace Suggestion {
         setLastErrorString(tr("No results found"));
         qsrand(QTime::currentTime().msec());
 
-        m_LinearTimer.setSingleShot(true);
-        QObject::connect(&m_LinearTimer, &QTimer::timeout, this, &KeywordsSuggestor::onLinearTimer);
+        m_ProgressiveLoadTimer.setSingleShot(true);
+        QObject::connect(&m_ProgressiveLoadTimer, &QTimer::timeout, this, &KeywordsSuggestor::onProgressiveLoadTimer);
 
         QObject::connect(&m_SwitcherModel, &Models::SwitcherModel::switchesUpdated,
                          this, &KeywordsSuggestor::onSwitchesUpdated);
@@ -116,7 +116,7 @@ namespace Suggestion {
         QObject::connect(localEngine.get(), &LocalLibraryQueryEngine::resultsAvailable,
                          this, &KeywordsSuggestor::resultsAvailableHandler);
         m_QueryEngines.emplace_back(localEngine);
-        m_LocalSearchIndex = (int)m_QueryEngines.size() - 1;
+        m_LocalSearchIndex = static_cast<int>(m_QueryEngines.size()) - 1;
 #endif
         m_State.init();
     }
@@ -144,7 +144,7 @@ namespace Suggestion {
             m_LoadedPreviewsNumber = increment;
             LOG_DEBUG << "Progressive increment is" << increment;
         } else {
-            m_LoadedPreviewsNumber = (int)suggestedArtworks.size();
+            m_LoadedPreviewsNumber = static_cast<int>(suggestedArtworks.size());
         }
 
         beginResetModel();
@@ -154,7 +154,8 @@ namespace Suggestion {
         endResetModel();
 
         if (sequentialLoading) {
-            m_LinearTimer.start(LINEAR_TIMER_INTERVAL);
+            emit dataChanged(this->index(0), this->index(m_LoadedPreviewsNumber), QVector<int>() << UrlRole);
+            m_ProgressiveLoadTimer.start(LINEAR_TIMER_INTERVAL);
         }
 
         unsetInProgress();
@@ -238,23 +239,28 @@ namespace Suggestion {
         setLastErrorString(error);
     }
 
-    void KeywordsSuggestor::onLinearTimer() {
+    void KeywordsSuggestor::onProgressiveLoadTimer() {
+        LOG_DEBUG << "#";
         const int size = rowCount();
         if (m_LoadedPreviewsNumber >= size) { return; }
 
         const int increment = m_SettingsModel.getProgressiveSuggestionIncrement();
 
-        QModelIndex firstIndex = this->index(m_LoadedPreviewsNumber);
         int nextIndex = m_LoadedPreviewsNumber + increment;
         if (nextIndex > size/2) {
             nextIndex = size - 1;
         }
 
-        QModelIndex lastIndex = this->index(nextIndex);
-        m_LoadedPreviewsNumber = nextIndex;
+        if (nextIndex > m_LoadedPreviewsNumber) {
+            LOG_DEBUG << "Loading from" << m_LoadedPreviewsNumber << "to" << nextIndex;
 
-        emit dataChanged(firstIndex, lastIndex, QVector<int>() << UrlRole);
-        m_LinearTimer.start(LINEAR_TIMER_INTERVAL);
+            QModelIndex firstIndex = this->index(m_LoadedPreviewsNumber);
+            QModelIndex lastIndex = this->index(nextIndex);
+            m_LoadedPreviewsNumber = nextIndex;
+
+            emit dataChanged(firstIndex, lastIndex, QVector<int>() << UrlRole);
+            m_ProgressiveLoadTimer.start(LINEAR_TIMER_INTERVAL);
+        }
     }
 
     void KeywordsSuggestor::onSwitchesUpdated() {
@@ -378,6 +384,7 @@ namespace Suggestion {
             if (engine) {
                 Microstocks::SearchQuery query(searchTerm, resultsType, engine->getMaxResultsPerPage());
                 engine->submitQuery(query);
+                m_ProgressiveLoadTimer.stop();
 #ifndef CORE_TESTS
                 if (std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine) == nullptr) {
                     sendMessage(Connectivity::UserAction::SuggestionRemote);
@@ -397,6 +404,7 @@ namespace Suggestion {
         if (engine) {
             engine->cancelQuery();
         }
+        m_ProgressiveLoadTimer.stop();
     }
 
     QStringList KeywordsSuggestor::getEngineNames() const {
@@ -452,7 +460,7 @@ namespace Suggestion {
 
     int KeywordsSuggestor::rowCount(const QModelIndex &parent) const {
         Q_UNUSED(parent);
-        return (int)m_Suggestions.size();
+        return static_cast<int>(m_Suggestions.size());
     }
 
     QVariant KeywordsSuggestor::data(const QModelIndex &index, int role) const {
