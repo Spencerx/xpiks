@@ -118,6 +118,11 @@ ApplicationWindow {
         uiManager.sync()
     }
 
+    function onDialogCreated(name) {
+        openedDialogsCount += 1
+        console.info("Opened dialog " + name + ". Opened dialogs count is " + openedDialogsCount);
+    }
+
     function onDialogClosed() {
         openedDialogsCount -= 1
         console.debug("Dialog closed. Opened dialogs count is " + openedDialogsCount)

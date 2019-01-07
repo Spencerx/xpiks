@@ -12,9 +12,13 @@ Item {
     height: 800
     property int openedDialogsCount: 0
 
+    function onDialogCreated(name) {
+        console.log("tst_MainGrid # dialogCreated " + name)
+        openedDialogsCount += 1
+    }
+
     function onDialogClosed() {
-        console.log("root # onDialogClosed")
-        root.openedDialogsCount -= 1
+        openedDialogsCount -= 1
     }
 
     Component.onCompleted: TestsHost.setup(testCase.name)

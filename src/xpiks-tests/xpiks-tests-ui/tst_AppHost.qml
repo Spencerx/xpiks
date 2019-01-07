@@ -13,6 +13,11 @@ Item {
 
     property int openedDialogsCount: 0
 
+    function onDialogCreated(name) {
+        console.log("tst_AppHost # dialogCreated " + name)
+        openedDialogsCount += 1
+    }
+
     function onDialogClosed() {
         openedDialogsCount -= 1
     }

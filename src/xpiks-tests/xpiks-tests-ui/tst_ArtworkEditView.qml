@@ -15,6 +15,11 @@ Item {
     property bool isselected: false
     property int openedDialogsCount: 0
 
+    function onDialogCreated(name) {
+        console.log("tst_ArtworkEditView # dialogCreated " + name)
+        openedDialogsCount += 1
+    }
+
     function onDialogClosed() {
         openedDialogsCount -= 1
     }

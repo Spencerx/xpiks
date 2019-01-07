@@ -51,9 +51,8 @@ function launchDialog(componentName, directParent, options, functor) {
         var instance = component.createObject(directParent, options);        
 
         if (typeof instance.dialogDestruction !== "undefined") {
-            if (typeof directParent.openedDialogsCount !== "undefined") {
-                directParent.openedDialogsCount += 1
-                console.info("Opened dialog " + componentName + ". Opened dialogs count is " + directParent.openedDialogsCount);
+            if (typeof directParent.onDialogCreated !== "undefined") {
+                directParent.onDialogCreated(componentName)
             }
 
             if (typeof directParent.onDialogClosed !== "undefined") {
