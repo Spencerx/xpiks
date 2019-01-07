@@ -39,7 +39,8 @@ namespace QMLExtensions {
     }
 
     void UICommandDispatcher::dispatch(int commandID, QJSValue const &value) {
-        LOG_INFO << commandID;
+        QMLExtensions::UICommandID::CommandID command = static_cast<QMLExtensions::UICommandID::CommandID>(commandID);
+        LOG_INFO << command;
         {
             QMutexLocker locker(&m_Mutex);
             Q_UNUSED(locker);
@@ -116,7 +117,8 @@ namespace QMLExtensions {
     }
 
     std::shared_ptr<UIAction> UICommandDispatcher::processAction(const std::shared_ptr<UIAction> &action) {
-        LOG_INFO << action->m_CommandID << action->m_Value.toString();
+        QMLExtensions::UICommandID::CommandID commandID = static_cast<QMLExtensions::UICommandID::CommandID>(action->m_CommandID);
+        LOG_INFO << commandID << action->m_Value.toString();
 
         std::shared_ptr<UIAction> actionToProcess = action;
         for (auto &middlware: m_Middlwares) {

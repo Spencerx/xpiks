@@ -139,7 +139,7 @@ Item {
             verify(duplicatesLink.enabled)
 
             mouseClick(duplicatesLink)
-            wait(TestsHost.smallSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             compare(mainStackView.currentItem.objectName, "DuplicatesReView")
 
