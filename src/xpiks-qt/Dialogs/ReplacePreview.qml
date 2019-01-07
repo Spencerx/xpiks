@@ -29,9 +29,6 @@ StaticDialogBase {
     property bool isRestricted: false
 
     Keys.onEscapePressed: closePopup()
-    Keys.onReturnPressed: replaceModel.replace()
-    Keys.onEnterPressed: replaceModel.replace()
-
     onClickedOutside: closePopup()
 
     UICommandListener {

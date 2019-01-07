@@ -16,7 +16,7 @@ echo "Starting UI tests..."
 
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../../libs/debug/
 
-./xpiks-tests-ui > uitests.log &
+./xpiks-tests-ui -maxwarnings 20000 -nocrashhandler > uitests.log &
 pid=$!
 echo "Waiting for the tests (PID=$pid) to finish..."
 wait $pid

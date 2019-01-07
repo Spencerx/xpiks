@@ -20,7 +20,7 @@ echo "Starting UI tests..."
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../libs/debug/
 
-./xpiks-tests-ui > uitests.log
+./xpiks-tests-ui -maxwarnings 20000 -nocrashhandler > uitests.log
 exitcode=$?
 
 if [ $exitcode != 0 ]; then

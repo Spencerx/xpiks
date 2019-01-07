@@ -307,7 +307,7 @@ namespace Suggestion {
     }
 
     QString KeywordsSuggestor::removeSuggestedKeywordAt(int keywordIndex) {
-        LOG_INFO << "Index:" << keywordIndex;
+        LOG_INFO << "index:" << keywordIndex;
 
         QString keyword;
         if (m_SuggestedKeywordsModel.removeKeywordAt(keywordIndex, keyword)) {
@@ -319,7 +319,7 @@ namespace Suggestion {
     }
 
     QString KeywordsSuggestor::removeOtherKeywordAt(int keywordIndex) {
-        LOG_INFO << "Index:" << keywordIndex;
+        LOG_INFO << "index:" << keywordIndex;
 
         QString keyword;
         if (m_OtherKeywordsModel.removeKeywordAt(keywordIndex, keyword)) {

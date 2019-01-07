@@ -680,11 +680,14 @@ Item {
             compare(replacePreviewList.count, count)
 
             var cancelButton = findChild(root, "cancelReplaceButton")
+            verify(cancelButton)
             mouseClick(cancelButton)
             wait(TestsHost.normalSleepTime)
 
             var checkDescriptionCheckbox = findChild(root, "searchDescriptionCheckbox")
+            verify(checkDescriptionCheckbox)
             mouseClick(checkDescriptionCheckbox)
+            wait(TestsHost.smallSleepTime)
             compare(checkDescriptionCheckbox.checked, false)
 
             var findButton = findChild(root, "findButton")
