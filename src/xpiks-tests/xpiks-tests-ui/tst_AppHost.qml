@@ -138,10 +138,13 @@ Item {
 
             wait(TestsHost.normalSleepTime)
 
-            var duplicatesLink = findChild(artworkDelegate, "removeDuplicatesText")
             tryCompare(filteredArtworksListModel.getBasicModelObject(1), "hasDuplicates", true, 5000)
-            wait(TestsHost.smallSleepTime)
+            wait(TestsHost.normalSleepTime)
+
+            var duplicatesLink = findChild(artworkDelegate, "removeDuplicatesText")
             verify(duplicatesLink.enabled)
+            // wait for the spelling link to appear
+            wait(TestsHost.normalSleepTime)
 
             mouseClick(duplicatesLink)
             wait(TestsHost.normalSleepTime)

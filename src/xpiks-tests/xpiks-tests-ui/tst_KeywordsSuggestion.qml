@@ -73,7 +73,11 @@ Item {
         function test_combineSearchResults() {
             setupSearch()
             mouseClick(searchButton)
+            wait(TestsHost.normalSleepTime)
+
             tryCompare(suggestionsRepeater, "count", 3, 3000)
+            // wait for the items to get their positions
+            wait(TestsHost.normalSleepTime)
 
             mouseClick(suggestionsRepeater.itemAt(0))
             wait(TestsHost.smallSleepTime)

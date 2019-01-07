@@ -621,7 +621,7 @@ Item {
             TestUtils.keyboardEnterText('cat')
 
             keyClick(Qt.Key_Return)
-            wait(TestsHost.smallSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             var replacePreviewList = findChild(root, "replacePreviewList")
             compare(replacePreviewList.count, count)
@@ -668,12 +668,12 @@ Item {
 
                 TestUtils.keyboardEnterText('bob')
                 keyClick(Qt.Key_Tab)
+                wait(TestsHost.smallSleepTime)
             }
 
-            wait(TestsHost.normalSleepTime)
-
+            compare(root.openedDialogsCount, 0)
             dispatcher.dispatch(UICommand.SetupFindInArtworks, {})
-            wait(TestsHost.smallSleepTime)
+            tryCompare(root, "openedDialogsCount", 1, 3000)
 
             keyClick(Qt.Key_B)
             keyClick(Qt.Key_O)
@@ -686,7 +686,7 @@ Item {
             keyClick(Qt.Key_T)
 
             keyClick(Qt.Key_Return)
-            wait(TestsHost.smallSleepTime)
+            wait(TestsHost.normalSleepTime)
 
             var replacePreviewList = findChild(root, "replacePreviewList")
             compare(replacePreviewList.count, count)
@@ -698,6 +698,7 @@ Item {
 
             var checkDescriptionCheckbox = findChild(root, "searchDescriptionCheckbox")
             verify(checkDescriptionCheckbox)
+            compare(checkDescriptionCheckbox.checked, true)
             mouseClick(checkDescriptionCheckbox)
             wait(TestsHost.smallSleepTime)
             compare(checkDescriptionCheckbox.checked, false)

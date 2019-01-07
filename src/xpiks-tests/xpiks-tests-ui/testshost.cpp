@@ -60,7 +60,7 @@ TestsHost::TestsHost(QObject *parent) :
 
 int TestsHost::getSmallSleepTime() const {
 #if defined(TRAVIS_CI) || defined(APPVEYOR)
-    return 500;
+    return 600;
 #else
     return 300;
 #endif
@@ -68,7 +68,7 @@ int TestsHost::getSmallSleepTime() const {
 
 int TestsHost::getNormalSleepTime() const {
 #if defined(TRAVIS_CI) || defined(APPVEYOR)
-    return 800;
+    return 900;
 #else
     return 600;
 #endif
