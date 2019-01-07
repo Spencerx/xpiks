@@ -28,6 +28,9 @@ BaseDialog {
     property bool isInProgress: false
     property bool overwriteAll: false
 
+    signal dialogDestruction()
+    Component.onDestruction: dialogDestruction()
+
     function closePopup() {
         metadataExportComponent.isInProgress = false
         metadataExportComponent.destroy()

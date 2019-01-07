@@ -28,6 +28,9 @@ BaseDialog {
     property bool backupsEnabled: true
     property bool reimport: false
 
+    signal dialogDestruction()
+    Component.onDestruction: dialogDestruction()
+
     Keys.onEscapePressed: {
         if (!metadataIOCoordinator.isInProgress) {
             closePopup()

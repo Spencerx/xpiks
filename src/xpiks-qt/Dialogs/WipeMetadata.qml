@@ -26,6 +26,9 @@ BaseDialog {
     anchors.fill: parent
     property bool isInProgress: false
 
+    signal dialogDestruction()
+    Component.onDestruction: dialogDestruction()
+
     Connections {
         target: metadataIOCoordinator
         onMetadataWritingFinished: {

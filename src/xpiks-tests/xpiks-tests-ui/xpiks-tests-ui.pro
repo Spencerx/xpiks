@@ -441,7 +441,9 @@ DISTFILES += \
     ../../xpiks-qt/CollapserTabs/TranslatorIcon.qml \
     tst_QuickBuffer.qml \
     tst_UserDictEditDialog.qml \
-    tst_AppHost.qml
+    tst_AppHost.qml \
+    ../../xpiks-qt/Components/BaseDialog.qml \
+    ../../xpiks-qt/Components/StaticDialogBase.qml
 
 HEADERS += \
     testshost.h \

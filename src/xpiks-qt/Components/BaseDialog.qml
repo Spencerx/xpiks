@@ -15,9 +15,6 @@ Item {
     property bool canMinimize: true
     property bool canEscapeClose: true
 
-    signal dialogDestruction();
-    Component.onDestruction: dialogDestruction();
-
     Component.onCompleted: focus = true
 
     Keys.onEscapePressed: {
