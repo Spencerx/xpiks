@@ -79,12 +79,12 @@ Item {
             // wait for the items to get their positions
             wait(TestsHost.normalSleepTime)
 
-            mouseClick(suggestionsRepeater.itemAt(0))
-            wait(TestsHost.smallSleepTime)
-            mouseClick(suggestionsRepeater.itemAt(1))
-            wait(TestsHost.smallSleepTime)
-            mouseClick(suggestionsRepeater.itemAt(2))
-            wait(TestsHost.smallSleepTime)
+            for (var i = 0; i < 3; i++) {
+                var item = suggestionsRepeater.itemAt(i)
+                waitForRendering(item)
+                wait(TestsHost.smallSleepTime)
+                mouseClick(item)
+            }
 
             wait(TestsHost.normalSleepTime)
 

@@ -137,16 +137,13 @@ Item {
 
             // enter title as well
             TestUtils.keyboardEnterText(testKeyword)
-
-            wait(TestsHost.normalSleepTime)
+            keyClick(Qt.Key_Tab)
 
             tryCompare(filteredArtworksListModel.getBasicModelObject(1), "hasDuplicates", true, 5000)
-            wait(TestsHost.normalSleepTime)
+            wait(3*TestsHost.normalSleepTime)
 
             var duplicatesLink = findChild(artworkDelegate, "removeDuplicatesText")
             verify(duplicatesLink.enabled)
-            // wait for the spelling link to appear
-            wait(TestsHost.normalSleepTime)
 
             mouseClick(duplicatesLink)
             wait(TestsHost.normalSleepTime)

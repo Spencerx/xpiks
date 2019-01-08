@@ -565,12 +565,12 @@ Item {
             tryCompare(suggestionsRepeater, "count", 3, 3000)
             wait(TestsHost.normalSleepTime)
 
-            mouseClick(suggestionsRepeater.itemAt(0))
-            wait(TestsHost.smallSleepTime)
-            mouseClick(suggestionsRepeater.itemAt(1))
-            wait(TestsHost.smallSleepTime)
-            mouseClick(suggestionsRepeater.itemAt(2))
-            wait(TestsHost.smallSleepTime)
+            for (var i = 0; i < 3; i++) {
+                var item = suggestionsRepeater.itemAt(i)
+                waitForRendering(item)
+                wait(TestsHost.smallSleepTime)
+                mouseClick(item)
+            }
 
             wait(TestsHost.normalSleepTime)
 
@@ -625,6 +625,7 @@ Item {
 
             var replacePreviewList = findChild(root, "replacePreviewList")
             compare(replacePreviewList.count, count)
+            waitForRendering(replacePreviewList)
 
             var replaceDelegate = TestUtils.getDelegateInstanceAt(replacePreviewList.contentItem,
                                                                   "imageDelegate",
@@ -686,6 +687,7 @@ Item {
             tryCompare(root, "openedDialogsCount", 2, 3000)
 
             var replacePreviewList = findChild(root, "replacePreviewList")
+            waitForRendering(replacePreviewList)
             compare(replacePreviewList.count, count)
 
             var cancelButton = findChild(root, "cancelReplaceButton")
