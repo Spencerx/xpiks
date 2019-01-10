@@ -139,8 +139,8 @@ namespace SpellCheck {
     }
 
     QSyntaxHighlighter *SpellCheckInfo::createHighlighterForDescription(QTextDocument *document,
-                                                                            QMLExtensions::ColorsModel *colorsModel,
-                                                                            Artworks::BasicMetadataModel *basicModel) {
+                                                                        QMLExtensions::ColorsModel *colorsModel,
+                                                                        Artworks::BasicMetadataModel *basicModel) {
         // is freed by the document
 #ifndef CORE_TESTS
         SpellCheckErrorsHighlighter *highlighter = new SpellCheckErrorsHighlighter(document, colorsModel, &m_DescriptionErrors);
@@ -162,8 +162,8 @@ namespace SpellCheck {
     }
 
     QSyntaxHighlighter *SpellCheckInfo::createHighlighterForTitle(QTextDocument *document,
-                                                                      QMLExtensions::ColorsModel *colorsModel,
-                                                                      Artworks::BasicMetadataModel *basicModel) {
+                                                                  QMLExtensions::ColorsModel *colorsModel,
+                                                                  Artworks::BasicMetadataModel *basicModel) {
 #ifndef CORE_TESTS
         // is freed by the document
         SpellCheckErrorsHighlighter *highlighter = new SpellCheckErrorsHighlighter(document, colorsModel, &m_TitleErrors);

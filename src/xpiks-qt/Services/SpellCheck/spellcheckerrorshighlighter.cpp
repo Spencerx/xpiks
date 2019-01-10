@@ -10,12 +10,15 @@
 
 #include "spellcheckerrorshighlighter.h"
 
+#include <QAbstractTextDocumentLayout>
 #include <QBrush>
 #include <QColor>
 #include <QString>
 #include <QTextCharFormat>
+#include <QTextDocument>
 #include <QTextFormat>
 
+#include "Common/logging.h"
 #include "Helpers/stringhelper.h"
 #include "QMLExtensions/colorsmodel.h"
 #include "Services/SpellCheck/spellcheckinfo.h"
@@ -61,5 +64,8 @@ namespace SpellCheck {
                 this->setFormat(start, length, duplicatesFormat);
             }
         });
+
+        // TODO: remove this when bug https://bugreports.qt.io/browse/QTBUG-65248 will be fixed
+        emit document()->documentLayout()->updateBlock(currentBlock());
     }
 }

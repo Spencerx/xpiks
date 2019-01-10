@@ -43,8 +43,18 @@ win32|linux {
         POST_TARGETDEPS += create_ac_sources
     }
 
+    DICTS_DIR = dict
+
+    exists($$OUT_PWD/$$EXE_DIR/$$DICTS_DIR/) {
+        message("dirs dir exists")
+    } else {
+        create_dict.commands += $(MKDIR) \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$DICTS_DIR)\"
+        QMAKE_EXTRA_TARGETS += create_dict
+        POST_TARGETDEPS += create_dict
+    }
+
     copywhatsnew.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/whatsnew.txt)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
-    copydicts.commands = $(COPY_DIR) \"$$shell_path($$DEPS_DIR/dict)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/)\"
+    copydicts.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/$$DICTS_DIR/)\"en_US* \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$DICTS_DIR/)\"
     copyfreqtables.commands = $(COPY_FILE) \"$$shell_path($$DEPS_DIR/$$AC_SOURCES_DIR/en_wordlist.tsv)\" \"$$shell_path($$OUT_PWD/$$EXE_DIR/$$AC_SOURCES_DIR/)\"
 
     QMAKE_EXTRA_TARGETS += copywhatsnew copydicts copytranslations copyfreqtables
