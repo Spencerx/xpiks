@@ -194,7 +194,7 @@ Rectangle {
 
                                 Rectangle {
                                     height: 6
-                                    width: height
+                                    width: 6
                                     radius: height/2
                                     Layout.alignment: Qt.AlignVCenter
                                     color: uiColors.inactiveControlColor

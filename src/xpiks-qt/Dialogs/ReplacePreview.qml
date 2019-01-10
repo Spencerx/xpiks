@@ -23,6 +23,7 @@ import "../Constants/UIConfig.js" as UIConfig
 
 StaticDialogBase {
     id: replacePreviewComponent
+    objectName: "replacePreviewDialog"
     anchors.fill: parent
     property variant componentParent
     property variant replaceModel: dispatcher.getCommandTarget(UICommand.FindReplaceCandidates)

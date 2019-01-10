@@ -154,7 +154,6 @@ namespace Models {
                 directoryID = item.m_ID;
             }
 
-            // watchFilePath(filepath);
             m_FilesSet.insert(filepath);
             auto &item = m_DirectoriesList[index];
             item.setIsRemovedFlag(false);
@@ -237,6 +236,7 @@ namespace Models {
         QStringList filepaths;
         filepaths.reserve((int)snapshot.size());
         for (auto &artwork: snapshot) {
+            if (!QFileInfo(artwork->getFilepath()).exists()) { continue; }
             filepaths.append(artwork->getFilepath());
 
             auto imageArtwork = std::dynamic_pointer_cast<Artworks::ImageArtwork>(artwork);
@@ -245,7 +245,9 @@ namespace Models {
             }
         }
 
-        m_FilesWatcher.addPaths(filepaths);
+        if (!filepaths.empty()) {
+            m_FilesWatcher.addPaths(filepaths);
+        }
 
         emit dataChanged(this->index(0), this->index(rowCount() - 1));
         emit refreshRequired();
@@ -321,14 +323,6 @@ namespace Models {
         auto first = this->index(0);
         auto last = this->index(rowCount() - 1);
         emit dataChanged(first, last, QVector<int>() << IsSelectedRole);
-    }
-
-    void ArtworksRepository::watchFilePath(const QString &filepath) {
-#ifndef CORE_TESTS
-        m_FilesWatcher.addPath(filepath);
-#else
-        Q_UNUSED(filepath);
-#endif
     }
 
     bool ArtworksRepository::tryGetDirectoryPath(qint64 directoryID, QString &absolutePath) const {

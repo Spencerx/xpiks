@@ -140,15 +140,11 @@ Item {
             keyClick(Qt.Key_Tab)
 
             tryCompare(filteredArtworksListModel.getBasicModelObject(1), "hasDuplicates", true, 5000)
-            wait(3*TestsHost.normalSleepTime)
-
-            var duplicatesLink = findChild(artworkDelegate, "removeDuplicatesText")
-            verify(duplicatesLink.enabled)
-
-            mouseClick(duplicatesLink)
             wait(TestsHost.normalSleepTime)
 
-            compare(mainStackView.currentItem.objectName, "DuplicatesReView")
+            mainGrid.fixDuplicatesAction(1)
+
+            tryVerify(function() { return mainStackView.currentItem.objectName == "DuplicatesReView" })
 
             var duplicatesListView = findChild(mainStackView.currentItem, "duplicatesListView")
             var duplicatesItem = TestUtils.getDelegateInstanceAt(duplicatesListView.contentItem,

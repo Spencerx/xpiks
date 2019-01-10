@@ -22,6 +22,7 @@ import "../Constants/UIConfig.js" as UIConfig
 
 StaticDialogBase {
     id: replaceSetupComponent
+    objectName: "findSetupDialog"
     canEscapeClose: false
     property variant componentParent
     property var filteredModel

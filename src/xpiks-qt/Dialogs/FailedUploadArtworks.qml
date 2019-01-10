@@ -103,7 +103,7 @@ StaticDialogBase {
 
                         Rectangle {
                             height: 5
-                            width: height
+                            width: 5
                             radius: height/2
                             color: uiColors.labelInactiveForeground
                         }

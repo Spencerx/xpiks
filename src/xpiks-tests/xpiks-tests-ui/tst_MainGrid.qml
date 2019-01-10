@@ -8,8 +8,8 @@ import "TestUtils.js" as TestUtils
 
 Item {
     id: root
-    width: 1200
-    height: 800
+    width: 800
+    height: 600
     property int openedDialogsCount: 0
 
     function onDialogCreated(name) {
@@ -453,13 +453,13 @@ Item {
             // wait for finding suggestions
             wait(TestsHost.normalSleepTime)
 
-            var fixSpellingLink = findChild(artworkDelegate, "fixSpellingLink")
-            tryCompare(fixSpellingLink, "canBeShown", true, 1000)
-
             compare(root.openedDialogsCount, 0)
-            mouseClick(fixSpellingLink)
-            wait(TestsHost.normalSleepTime)
-            compare(root.openedDialogsCount, 1)
+            mainGrid.fixSpelling(0)
+            tryCompare(root, "openedDialogsCount", 1)
+
+            tryVerify(function() {
+                return findChild(root, "replaceButton")
+            })
 
             var spellSuggestor = dispatcher.getCommandTarget(UICommand.ReviewSpellingArtwork)
             spellSuggestor.selectSomething()
@@ -468,8 +468,7 @@ Item {
             var replaceButton = findChild(root, "replaceButton")
             verify(replaceButton.enabled)
             mouseClick(replaceButton)
-            wait(TestsHost.smallSleepTime)
-            compare(root.openedDialogsCount, 0)
+            tryCompare(root, "openedDialogsCount", 0)
 
             compare(artworkDelegate.delegateModel.keywordsstring, "pet")
         }
@@ -543,7 +542,11 @@ Item {
 
         function test_suggestLocalKeywords() {
             var artworkDelegate = getDelegate(2)
-            mainGrid.suggestKeywords(2)
+
+            tryVerify(function() { return findChild(artworkDelegate, "suggestKeywordsLink") })
+            var suggestionLink = findChild(artworkDelegate, "suggestKeywordsLink")
+            tryCompare(suggestionLink, "canBeShown", true, 3000)
+            mouseClick(suggestionLink)
 
             wait(TestsHost.normalSleepTime)
 
@@ -561,17 +564,14 @@ Item {
             var suggestionsRepeater = findChild(suggestKeywordsDialog, "suggestionsRepeater")
 
             mouseClick(searchButton)
-            wait(TestsHost.smallSleepTime)
-            tryCompare(suggestionsRepeater, "count", 3, 3000)
             wait(TestsHost.normalSleepTime)
+            tryCompare(suggestionsRepeater, "count", 3, 3000)
+            var suggestionsFlow = findChild(suggestKeywordsDialog, "suggestionsFlow")
+            suggestionsFlow.forceLayout()
 
-            for (var i = 0; i < 3; i++) {
-                var item = suggestionsRepeater.itemAt(i)
-                waitForRendering(item)
-                wait(TestsHost.smallSleepTime)
-                mouseClick(item)
-            }
-
+            mouseClick(suggestionsRepeater.itemAt(0))
+            mouseClick(suggestionsRepeater.itemAt(1))
+            mouseClick(suggestionsRepeater.itemAt(2))
             wait(TestsHost.normalSleepTime)
 
             tryCompare(suggestKeywordsDialog.keywordsSuggestor, "suggestedKeywordsCount", 3, 2000)
@@ -607,39 +607,54 @@ Item {
                 wait(TestsHost.smallSleepTime)
             }
 
-            wait(TestsHost.normalSleepTime)
-
             compare(root.openedDialogsCount, 0)
             dispatcher.dispatch(UICommand.SetupFindInArtworks, {})
             tryCompare(root, "openedDialogsCount", 1, 3000)
+            var findSetupDialog = findChild(root, "findSetupDialog")
+            verify(findSetupDialog)
+            waitForRendering(findSetupDialog)
+            wait(TestsHost.smallSleepTime)
 
             TestUtils.keyboardEnterText('bob')
-
             keyClick(Qt.Key_Tab)
-
             TestUtils.keyboardEnterText('cat')
-
             keyClick(Qt.Key_Return)
+            wait(TestsHost.smallSleepTime)
+
+            var replaceModel = dispatcher.getCommandTarget(UICommand.FindReplaceCandidates)
+            compare(replaceModel.replaceFrom, "bob")
+            compare(replaceModel.replaceTo, "cat")
 
             tryCompare(root, "openedDialogsCount", 2, 3000)
+            var replacePreviewDialog = findChild(root, "replacePreviewDialog")
+            verify(replacePreviewDialog)
+            waitForRendering(replacePreviewDialog)
 
-            var replacePreviewList = findChild(root, "replacePreviewList")
+            var replacePreviewList = findChild(replacePreviewDialog, "replacePreviewList")
             compare(replacePreviewList.count, count)
             waitForRendering(replacePreviewList)
+
+            replacePreviewList.positionViewAtIndex(notIndex, ListView.Contain)
+            tryVerify(function() {
+                return TestUtils.getDelegateInstanceAt(replacePreviewList.contentItem,
+                                                       "imageDelegate",
+                                                       notIndex) })
 
             var replaceDelegate = TestUtils.getDelegateInstanceAt(replacePreviewList.contentItem,
                                                                   "imageDelegate",
                                                                   notIndex)
+            verify(replaceDelegate)
+            waitForRendering(replaceDelegate)
             replacePreviewList.positionViewAtIndex(notIndex, ListView.Contain)
             var checkbox = findChild(replaceDelegate, "applyReplaceCheckBox")
-            verify(checkbox)
+            compare(checkbox.checked, true)
             mouseClick(checkbox)
             wait(TestsHost.smallSleepTime)
 
             var replaceButton = findChild(root, "replaceButton")
             mouseClick(replaceButton)
-            wait(TestsHost.normalSleepTime)
-            compare(root.openedDialogsCount, 0)
+            tryCompare(root, "openedDialogsCount", 0, 3000)
+            wait(TestsHost.smallSleepTime)
 
             for (var i = 0; i < count; i++) {
                 var artworkDelegate = getDelegate(i + startIndex)
@@ -685,6 +700,7 @@ Item {
 
             keyClick(Qt.Key_Return)
             tryCompare(root, "openedDialogsCount", 2, 3000)
+            wait(TestsHost.normalSleepTime)
 
             var replacePreviewList = findChild(root, "replacePreviewList")
             waitForRendering(replacePreviewList)
@@ -704,6 +720,7 @@ Item {
 
             var findButton = findChild(root, "findButton")
             mouseClick(findButton)
+            tryCompare(root, "openedDialogsCount", 2, 3000)
             wait(TestsHost.normalSleepTime)
 
             replacePreviewList = findChild(root, "replacePreviewList")

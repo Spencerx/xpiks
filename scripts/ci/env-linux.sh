@@ -6,7 +6,7 @@ if [ "${TRAVIS_OS_NAME}" != "linux" ]; then
     exit 1
 fi
 
-source /opt/qt56/bin/qt56-env.sh
+source /opt/qt59/bin/qt59-env.sh
 
 # ccache
 sudo /usr/sbin/update-ccache-symlinks

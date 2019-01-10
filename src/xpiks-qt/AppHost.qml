@@ -69,6 +69,7 @@ Rectangle {
             UICommand.ReviewDuplicatesInSelected,
             UICommand.ReviewDuplicatesArtwork]
         onDispatched: {
+            console.log("appHost # onDuplicatesReview")
             var wasCollapsed = appHost.leftSideCollapsed
             if (value) {
                 appHost.collapseLeftPane()

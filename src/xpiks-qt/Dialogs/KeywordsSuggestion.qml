@@ -177,7 +177,7 @@ StaticDialogBase {
                     clip: true
                     id: suggestionsWrapper
                     anchors.fill: parent
-                    contentHeight: flow.childrenRect.height + 40
+                    contentHeight: flow.childrenRect.height + 20
                     contentWidth: parent.width
                     enabled: !keywordsSuggestor.isInProgress
                     flickableDirection: Flickable.VerticalFlick
@@ -185,11 +185,11 @@ StaticDialogBase {
 
                     Flow {
                         id: flow
+                        objectName: "suggestionsFlow"
                         spacing: 10
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        anchors.right: parent.right
+                        anchors.fill: parent
                         anchors.margins: 10
+                        clip: true
 
                         Repeater {
                             id: suggestionsRepeater
@@ -201,7 +201,7 @@ StaticDialogBase {
                                 property int delegateIndex: index
                                 property string realUrl: externalurl
                                 height: 140
-                                width: height
+                                width: 140
 
                                 Image {
                                     anchors.fill: parent
@@ -237,6 +237,7 @@ StaticDialogBase {
                                             contextMenu.delegateIndex = imageWrapper.delegateIndex
                                             contextMenu.popup()
                                         } else {
+                                            console.log('KeywordsSuggestion # selectSuggestion ' + delegateIndex)
                                             keywordsSuggestor.setArtworkSelected(delegateIndex, !isselected)
                                         }
                                     }

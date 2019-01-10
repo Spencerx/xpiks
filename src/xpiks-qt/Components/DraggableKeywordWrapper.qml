@@ -156,7 +156,7 @@ Rectangle {
 
     Item {
         height: uiManager.keywordHeight
-        width: height
+        width: uiManager.keywordHeight
         anchors.left: tagTextRect.right
         anchors.leftMargin: 2
         anchors.verticalCenter: parent.verticalCenter

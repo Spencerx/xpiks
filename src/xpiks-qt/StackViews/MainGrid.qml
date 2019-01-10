@@ -1811,6 +1811,7 @@ Item {
                                             StyledLink {
                                                 id: suggestLink
                                                 text: i18.n + qsTr("Suggest keywords")
+                                                objectName: "suggestKeywordsLink"
                                                 property bool canBeShown: ((keywordscount < warningsModel.minKeywordsCount) &&
                                                                            !removeDuplicatesText.canBeShown &&
                                                                            !fixSpellingText.canBeShown) || (columnLayout.isWideForLinks)

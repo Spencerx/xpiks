@@ -75,7 +75,7 @@ Rectangle {
 
         Item {
             height: uiManager.keywordHeight
-            width: height
+            width: uiManager.keywordHeight
 
             CloseIcon {
                 id: closeIcon

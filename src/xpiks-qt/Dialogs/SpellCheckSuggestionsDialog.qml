@@ -23,6 +23,7 @@ import "../Constants/UIConfig.js" as UIConfig
 
 StaticDialogBase {
     id: spellCheckSuggestionsDialog
+    objectName: "spellCheckSuggestionsDialog"
     anchors.fill: parent
     property var callbackObject
     property bool initialized: false

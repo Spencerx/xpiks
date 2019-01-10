@@ -140,7 +140,6 @@ namespace Models {
         void updateSelectedState();
 
     private:
-        void watchFilePath(const QString &filepath);
         qint64 generateNextID() { qint64 id = m_LastID; m_LastID++; return id; }
 
     public:

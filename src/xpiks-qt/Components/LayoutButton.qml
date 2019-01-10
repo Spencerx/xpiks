@@ -35,7 +35,7 @@ Item {
     }
 
     Column {
-        width: height
+        width: parent.height
         height: parent.height
         anchors.left: parent.left
         anchors.top: parent.top
@@ -71,7 +71,7 @@ Item {
     Grid {
         columns: 3
         rows: 3
-        width: height
+        width: parent.height
         height: parent.height
         visible: isListLayout
         columnSpacing: 4

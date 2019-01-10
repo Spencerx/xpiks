@@ -132,7 +132,7 @@ Item {
 
                         Rectangle {
                             width: 4
-                            height: width
+                            height: 4
                             radius: width / 2
                             color: uiColors.artworkActiveColor
                             enabled: isselected

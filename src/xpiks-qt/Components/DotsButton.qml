@@ -25,7 +25,7 @@ Item {
 
     Rectangle {
         width: root.dimension
-        height: width
+        height: root.dimension
         anchors.centerIn: parent
         radius: parent.width/2
         color: root.highlighColor
