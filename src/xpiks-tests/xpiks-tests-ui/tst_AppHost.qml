@@ -116,12 +116,9 @@ Item {
 
             var imageHost = findChild(artworkDelegate, "imageHost")
             verify(imageHost)
-            mouseClick(imageHost)
-            mouseClick(imageHost)
+            mouseDoubleClickSequence(imageHost)
 
-            wait(TestsHost.smallSleepTime)
-
-            compare(mainStackView.currentItem.objectName, "ArtworkEditView")
+            tryVerify(function() { return mainStackView.currentItem.objectName == "ArtworkEditView" })
         }
 
         function test_reviewDuplicates() {
