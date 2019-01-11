@@ -19,7 +19,7 @@ CONFIG(release, debug|release)  {
 VERSION = 1.5.2.2
 QMAKE_TARGET_PRODUCT = Xpiks
 QMAKE_TARGET_DESCRIPTION = "Cross-Platform Image Keywording Software"
-QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2014-2018 Taras Kushnir"
+QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2014-2019 Taras Kushnir"
 
 SOURCES += main.cpp \
     ../../vendors/sqlite/sqlite3.c \
