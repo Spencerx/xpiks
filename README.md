@@ -1,4 +1,4 @@
-Xpiks
+Xpiks (Community Edition)
 =====
 
 Cross-Platform Image Keywording Software
