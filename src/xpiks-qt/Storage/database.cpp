@@ -143,7 +143,7 @@ namespace Storage {
         Q_ASSERT(m_IsOpened == false);
 
         if (m_IsOpened) {
-            close();
+            doClose();
         }
     }
 
