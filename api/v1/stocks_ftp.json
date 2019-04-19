@@ -64,7 +64,8 @@
         },
         {
             "name": "Adobe Stock",
-            "ftp": "ftp.contributor.adobestock.com"
+            "ftp": "ftp.contributor.adobestock.com",
+            "zip_vector": true
         }
     ]
 }
