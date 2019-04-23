@@ -348,13 +348,18 @@ Rectangle {
     Keys.onEscapePressed: closePopup()
 
     Component.onCompleted: {
-        focus = true
-
-        titleTextInput.forceActiveFocus()
-        titleTextInput.cursorPosition = titleTextInput.text.length
-
         if (showInfo) {
             editTabView.setCurrentIndex(1)
+        }
+    }
+
+    Stack.onStatusChanged: {
+        console.log("ArtworkEditView StackView status changed: " + Stack.status)
+        if (Stack.status == Stack.Active) {
+            focus = true
+
+            titleTextInput.forceActiveFocus()
+            titleTextInput.cursorPosition = titleTextInput.text.length
         }
     }
 

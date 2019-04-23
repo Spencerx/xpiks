@@ -305,11 +305,14 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: {
-        focus = true
+    Stack.onStatusChanged: {
+        console.log("CombinedEditView StackView status changed: " + Stack.status)
+        if (Stack.status == Stack.Active) {
+            focus = true
 
-        titleTextInput.forceActiveFocus()
-        titleTextInput.cursorPosition = titleTextInput.text.length
+            titleTextInput.forceActiveFocus()
+            titleTextInput.cursorPosition = titleTextInput.text.length
+        }
     }
 
     Connections {
