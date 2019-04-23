@@ -14,6 +14,7 @@
 
 #include <QByteArray>
 #include <QImageReader>
+#include <QFileInfo>
 #include <QLatin1Char>
 #include <QModelIndex>
 #include <QSize>
@@ -47,6 +48,15 @@ namespace Models {
     QString bitrateToString(double bitrate) {
         QString result = QString::number(bitrate, 'f', 2) + " Mbps";
         return result;
+    }
+
+    qint64 getFileSize(const std::shared_ptr<Artworks::ArtworkMetadata> &artwork) {
+        Q_ASSERT(artwork != nullptr);
+        qint64 filesize = artwork->getFileSize();
+        if (filesize <= 0) {
+            filesize = QFileInfo(artwork->getFilepath()).size();
+        }
+        return filesize;
     }
 
     KeyValueList::KeyValueList():
@@ -99,17 +109,21 @@ namespace Models {
 
     void ArtworkPropertiesMap::setForTheImage(std::shared_ptr<Artworks::ImageArtwork> const &imageArtwork) {
         m_ValuesHash[int(ImageProperties::FilePathProperty)] = imageArtwork->getFilepath();
-        m_ValuesHash[int(ImageProperties::FileSizeProperty)] = Helpers::describeFileSize(imageArtwork->getFileSize());
+        m_ValuesHash[int(ImageProperties::FileSizeProperty)] = Helpers::describeFileSize(getFileSize(imageArtwork));
         m_ValuesHash[int(ImageProperties::FileAccessProperty)] = imageArtwork->isReadOnly() ? QObject::tr("Read-only") : QObject::tr("Normal");
 
-        QSize size;
-        if (imageArtwork->isInitialized()) {
-            size = imageArtwork->getImageSize();
-        } else {
-            QImageReader reader(imageArtwork->getFilepath());
-            size = reader.size();
+        {
+            QSize size;
+            if (imageArtwork->isInitialized()) {
+                size = imageArtwork->getImageSize();
+            }
+            if (!size.isValid())
+            {
+                QImageReader reader(imageArtwork->getFilepath());
+                size = reader.size();
+            }
+            m_ValuesHash[int(ImageProperties::ImageSizeProperty)] = QString("W %1 x H %2").arg(size.width()).arg(size.height());
         }
-        m_ValuesHash[int(ImageProperties::ImageSizeProperty)] = QString("W %1 x H %2").arg(size.width()).arg(size.height());
 
         m_ValuesHash[int(ImageProperties::DateTakenProperty)] = imageArtwork->getDateTaken();
         m_ValuesHash[int(ImageProperties::AttachedVectorProperty)] = imageArtwork->getAttachedVectorPath();
@@ -117,17 +131,20 @@ namespace Models {
 
     void ArtworkPropertiesMap::setForTheVideo(std::shared_ptr<Artworks::VideoArtwork> const &videoArtwork) {
         m_ValuesHash[int(VideoProperties::FilePathProperty)] = videoArtwork->getFilepath();
-        m_ValuesHash[int(VideoProperties::FileSizeProperty)] = Helpers::describeFileSize(videoArtwork->getFileSize());
-        m_ValuesHash[int(ImageProperties::FileAccessProperty)] = videoArtwork->isReadOnly() ? QObject::tr("Read-only") : QObject::tr("Normal");
+        m_ValuesHash[int(VideoProperties::FileSizeProperty)] = Helpers::describeFileSize(getFileSize(videoArtwork));
+        m_ValuesHash[int(VideoProperties::FileAccessProperty)] = videoArtwork->isReadOnly() ? QObject::tr("Read-only") : QObject::tr("Normal");
 
-        QSize size;
-        if (videoArtwork->isInitialized()) {
-            size = videoArtwork->getImageSize();
-        } else {
-            QImageReader reader(videoArtwork->getFilepath());
-            size = reader.size();
+        {
+            QSize size;
+            if (videoArtwork->isInitialized()) {
+                size = videoArtwork->getImageSize();
+            }
+            if (!size.isValid()) {
+                QImageReader reader(videoArtwork->getThumbnailPath());
+                size = reader.size();
+            }
+            m_ValuesHash[int(VideoProperties::FrameSizeProperty)] = QString("W %1 x H %2").arg(size.width()).arg(size.height());
         }
-        m_ValuesHash[int(VideoProperties::FrameSizeProperty)] = QString("W %1 x H %2").arg(size.width()).arg(size.height());
 
         m_ValuesHash[int(VideoProperties::VideoDurationProperty)] = secondsToString(videoArtwork->getDuration());
         m_ValuesHash[int(VideoProperties::FrameRateProperty)] = QString::number(videoArtwork->getFrameRate());
