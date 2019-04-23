@@ -15,21 +15,24 @@ matrix:
       dist: trusty
       sudo: required
       env: RUN_TEST=core-tests QT_FATAL_WARNINGS=1
+      if: branch != nightly
     - os: linux
       compiler: gcc
       dist: trusty
       sudo: required
       env: RUN_TEST=integration-tests QT_FATAL_WARNINGS=1
+      if: branch != nightly
     - os: linux
       compiler: gcc
       dist: trusty
       sudo: required
       env: RUN_TEST=ui-tests
+      if: branch != nightly
     - os: osx
       compiler: clang
       env: RUN_TEST=xpiks
       osx_image: xcode9.4
-      if: branch = master
+      if: branch = master OR branch = nightly
     - os: osx
       compiler: clang
       env: RUN_TEST=core-tests QT_FATAL_WARNINGS=1
@@ -45,7 +48,7 @@ matrix:
       env: RUN_TEST=ui-tests
       osx_image: xcode9.4
       if: branch = master
-      
+
 git:
   depth: 3
   quiet: true
@@ -70,5 +73,21 @@ script:
   - ${TRAVIS_BUILD_DIR}/scripts/build/build_vendors_${TRAVIS_OS_NAME}.sh travis-ci
   - ${TRAVIS_BUILD_DIR}/scripts/ci/travis-ci-${RUN_TEST}-${TRAVIS_OS_NAME}.sh
 
-after_failure:
-  - echo "After failure handler"
+before_deploy:
+  - ${TRAVIS_BUILD_DIR}/scripts/ci/travis-ci-deploy-${TRAVIS_OS_NAME}.sh
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "2yjtxU5NrbYDcQ8132qo9hkuP6p3ZrcjH6s6YZ+PZRWZi3g+6hFJMWzYfpKODAGNsj8V0fKc3421wePVzr5vZtBMQU6ZAuyR65Jpah9QvtTYlL4NygZfPIzNZkNdiAeK7v/+NXeNxcsU9IZbydPQYXg+DkOTcSPjFMVaOAx4PbXZ9ertz6O+RMwWV06IRfnB/s0DHHJ90l7U/bRcrLiT5v/uugv3YwURlxrs+HfpiaNETH53pUoPzjMk6nOz5L1SJ+L2ZxksnGsho7TfHHuPFFjXMjfpGPbiDJq+udIHryequHpnMrmxhYWtMKWvKYwSJDu4G/7ZtTQ2agky8PB6n6yeQLQUv29DUhnQzBIJUMecvSerwLS9ap1UnXvwsPwlMFp+DQL81L+ybAQIA6PYjTLYp1+mNrYT7AT90LyMhSO9cRdPkWvpecXFRVIbrRu3EjaQF22YOOgYdGo08SOHJK/6YE3BFvWm9H8ZGuOUSWPY19bYJvgF8t6KhopU6sISPqWJ2kF5xxVeGtlPuAMaJHQfaBv3gWm5FDrZCtACXzpZMvOxtJYhCCQ6YuAtr/yxafshOeESZYvrv3NDePM/yCueWx55Q7D96FGICQ2qR+VxGw+pm5OGQH+OoGrjpHbfLYIhBe3LoMFf0fGLvhcS7angPA6Y7RB8/exG/A40e4A="
+  file_glob: true
+  file: Xpiks-Nightly.dmg
+  draft: false
+  skip_cleanup: true
+  prerelease: true
+  name: Nightly
+  tag_name: nightly-latest
+  overwrite: true
+  on:
+    branch: nightly
+    condition: $RUN_TEST = xpiks

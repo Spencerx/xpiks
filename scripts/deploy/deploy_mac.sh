@@ -1,31 +1,45 @@
 #!/bin/bash
 
+# Can set variables 
+# $BUILD_MODE (debug/release), 
+# $BUILD_DIR - path to build directory with executable
+# $DEPLOY_TOOL - path to macdeployqt
+# $VERSION - default (1.5.2)
+# $APP_NAME - default (Xpiks)
+
 dir_resolve()
 {
     cd "$1" 2>/dev/null || return $?  # cd to desired directory; if fail, quell any error messages but return exit status
     echo "`pwd -P`" # output full, link-resolved path
 }
 
+BUILD_MODE="${BUILD_MODE:-release}"
+
 XPIKS_ROOT=$(git rev-parse --show-toplevel)
 
 XPIKS_DEPS_DIR="${XPIKS_ROOT}/src/xpiks-qt/deps"
 XPIKS_QT_DIR="${XPIKS_ROOT}/src/xpiks-qt"
-BUILD_DIR="${XPIKS_ROOT}/src/build-xpiks-qt-Desktop_Qt_5_6_2_clang_64bit-Release"
+
+DEFAULT_BUILD_DIR="${XPIKS_ROOT}/src/build-xpiks-qt-Desktop_Qt_5_6_2_clang_64bit-Release"
+BUILD_DIR="${BUILD_DIR:-$DEFAULT_BUILD_DIR}"
 
 QT_BIN_DIR=~/Qt5.6.2/5.6/clang_64/bin
-DEPLOY_TOOL="$QT_BIN_DIR/macdeployqt"
+DEFAULT_DEPLOY_TOOL="$QT_BIN_DIR/macdeployqt"
+DEPLOY_TOOL="${DEPLOY_TOOL:-$DEFAULT_DEPLOY_TOOL}"
 
-LIBS_PATH="${XPIKS_ROOT}/libs/release"
+LIBS_PATH="${XPIKS_ROOT}/libs/${BUILD_MODE}"
 
-APP_NAME=Xpiks
-VERSION="1.5.2"
+DEFAULT_VERSION="1.5.2"
+DEFAULT_APP_NAME="Xpiks"
 VOL_NAME="Xpiks"
+APP_NAME="${APP_NAME:-$DEFAULT_APP_NAME}"
+VERSION="${VERSION:-$DEFAULT_VERSION}"
 
 # ----------------------------------------
 
 if [ ! -f "${XPIKS_DEPS_DIR}/exiftool/exiftool" ]; then
     echo "Exiftool not found! Please put latest production release into the ../deps/ dir"
-    exit
+    exit 1
 fi
 
 DMG_BACKGROUND_IMG="dmg-background.jpg"
@@ -38,12 +52,12 @@ STAGING_DIR="./osx-release-staging"
 
 if [ ! -d "$BUILD_DIR" ]; then
     echo "Build directory not found: $BUILD_DIR"
-    exit
+    exit 1
 fi
 
 if [ -d "/Volumes/${VOL_NAME}" ]; then
     echo "Please unmount existing Volume ${VOL_NAME} first!"
-    exit
+    exit 1
 fi
 
 rm -v -rf "${STAGING_DIR}" "${DMG_TMP}" "${DMG_FINAL}"
@@ -84,6 +98,11 @@ pushd "$FRAMEWORKS_DIR"
 
 for lib in "${LIBS_TO_DEPLOY[@]}"
 do
+    if [ ! -f "$LIBS_PATH/$lib" ]; then
+        echo "Critical: $lib not found in $LIBS_PATH"
+        exit 1
+    fi
+
     echo "Processing $lib..."
     cp -v "$LIBS_PATH/$lib" .
 
@@ -98,6 +117,11 @@ done
 
 for lib in "${FFMPEG_LIBS[@]}"
 do
+    if [ ! -f "$LIBS_PATH/$lib" ]; then
+        echo "Dependent $lib not found in $LIBS_PATH"
+        continue
+    fi
+    
     echo "Copying $lib..."
     cp -v "$LIBS_PATH/$lib" .
     
@@ -150,7 +174,7 @@ SIZE=`echo "${SIZE} + 32.0" | bc | awk '{print int($1+0.5)}'`
 
 if [ $? -ne 0 ]; then
    echo "Error: Cannot compute size of staging dir"
-   exit
+   exit 1
 fi
 
 echo "Size is estimated to: $SIZE"
@@ -176,32 +200,34 @@ popd
 mkdir /Volumes/"${VOL_NAME}"/.background
 cp "${DMG_BACKGROUND_PATH}" /Volumes/"${VOL_NAME}"/.background/
 
-# tell the Finder to resize the window, set the background,
-#  change the icon size, place the icons in the right position, etc.
-echo '
-   tell application "Finder"
-     tell disk "'${VOL_NAME}'"
-           open
-           set current view of container window to icon view
-           set toolbar visible of container window to false
-           set statusbar visible of container window to false
-           set the bounds of container window to {480, 300, 980, 570}
-           set statusbar visible of container window to false
-           set position of every item to {600, 400}
-           set viewOptions to the icon view options of container window
-           set arrangement of viewOptions to not arranged
-           set icon size of viewOptions to 128
-           set background picture of viewOptions to file ".background:'${DMG_BACKGROUND_IMG}'"
-           set position of item "'${APP_NAME}'.app" of container window to {110, 135}
-           set position of item "Applications" of container window to {395, 130}
-           set name of item "Applications" to " "
-           close
-           open
-           update without registering applications
-           delay 2
-     end tell
-   end tell
-' | osascript
+if [ "$BUILD_MODE" == "release" ]; then
+    # tell the Finder to resize the window, set the background,
+    #  change the icon size, place the icons in the right position, etc.
+    echo '
+       tell application "Finder"
+         tell disk "'${VOL_NAME}'"
+               open
+               set current view of container window to icon view
+               set toolbar visible of container window to false
+               set statusbar visible of container window to false
+               set the bounds of container window to {480, 300, 980, 570}
+               set statusbar visible of container window to false
+               set position of every item to {600, 400}
+               set viewOptions to the icon view options of container window
+               set arrangement of viewOptions to not arranged
+               set icon size of viewOptions to 128
+               set background picture of viewOptions to file ".background:'${DMG_BACKGROUND_IMG}'"
+               set position of item "'${APP_NAME}'.app" of container window to {110, 135}
+               set position of item "Applications" of container window to {395, 130}
+               set name of item "Applications" to " "
+               close
+               open
+               update without registering applications
+               delay 2
+         end tell
+       end tell
+    ' | osascript
+fi
 
 sync
 
@@ -215,6 +241,8 @@ hdiutil convert "${DMG_TMP}" -format UDZO -imagekey zlib-level=9 -o "${DMG_FINAL
 shasum "${DMG_FINAL}"
 
 # clean up
-# rm -rf "${DMG_TMP}"
+if [ "$BUILD_MODE" == "debug" ]; then
+    rm -rvf "${DMG_TMP}"
+fi
 
 echo 'Done.'
