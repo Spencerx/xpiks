@@ -28,6 +28,7 @@ private slots:
     void replaceWholeNoHitTest();
     void switcherHashTest();
     void basicUrlDecodeTest();
+    void csvQuotesTest();
 };
 
 #endif // STRINGHELPERSTESTS_H

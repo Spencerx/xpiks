@@ -24,9 +24,22 @@
 #include "Artworks/artworkmetadata.h"
 #include "Artworks/artworkssnapshot.h"
 #include "Common/logging.h"
+#include "Helpers/stringhelper.h"
 #include "MetadataIO/csvexportproperties.h"
 
 #define DOUBLE_QUOTE "\""
+#define CSV_SEPARATOR ","
+
+void writeCsvValue(QFile &csvFile, const QString &value) {
+    Q_ASSERT(value == value.trimmed());
+    const bool needsQuotes = Helpers::needsCsvQuotes(value);
+
+    if (needsQuotes) { csvFile.write(DOUBLE_QUOTE); }
+    {
+        csvFile.write(value.toUtf8());
+    }
+    if (needsQuotes) { csvFile.write(DOUBLE_QUOTE); }
+}
 
 namespace MetadataIO {
     void writeColumnNames(QFile &csvFile, const std::shared_ptr<CsvExportPlan> &plan) {
@@ -36,16 +49,13 @@ namespace MetadataIO {
         Q_ASSERT(size != 0);
 
         QString columnName = properties[0].m_ColumnName;
-        csvFile.write(DOUBLE_QUOTE);
-        csvFile.write(columnName.toUtf8());
-        csvFile.write(DOUBLE_QUOTE);
+        writeCsvValue(csvFile, columnName);
 
         for (size_t i = 1; i < size; ++i) {
             columnName = properties[i].m_ColumnName;
 
-            csvFile.write(", " DOUBLE_QUOTE);
-            csvFile.write(columnName.toUtf8());
-            csvFile.write(DOUBLE_QUOTE);
+            csvFile.write(CSV_SEPARATOR);
+            writeCsvValue(csvFile, columnName);
         }
 
         // rfc 4180 - eol should be dos-style
@@ -74,16 +84,12 @@ namespace MetadataIO {
 
         for (auto &artwork: artworks) {
             QString value = retrieveArtworkProperty(artwork, properties[0].m_PropertyType);
-            csvFile.write(DOUBLE_QUOTE);
-            csvFile.write(value.toUtf8());
-            csvFile.write(DOUBLE_QUOTE);
+            writeCsvValue(csvFile, value);
 
             for (size_t i = 1; i < propertiesSize; ++i) {
                 value = retrieveArtworkProperty(artwork, properties[i].m_PropertyType);
-
-                csvFile.write("," DOUBLE_QUOTE);
-                csvFile.write(value.toUtf8());
-                csvFile.write(DOUBLE_QUOTE);
+                csvFile.write(CSV_SEPARATOR);
+                writeCsvValue(csvFile, value);
             }
 
             // rfc 4180 - eol should be dos-style

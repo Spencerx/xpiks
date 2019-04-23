@@ -163,3 +163,21 @@ void StringHelpersTests::basicUrlDecodeTest() {
              QString("file:///path/to/my/file%2"));
     QCOMPARE(Helpers::stringPercentDecode("a%2p"), QString("a%2p"));
 }
+
+void StringHelpersTests::csvQuotesTest() {
+    QVERIFY(!Helpers::needsCsvQuotes(""));
+    QVERIFY(!Helpers::needsCsvQuotes("a"));
+    QVERIFY(!Helpers::needsCsvQuotes("1"));
+    QVERIFY(!Helpers::needsCsvQuotes("Z"));
+    QVERIFY(!Helpers::needsCsvQuotes("_"));
+    QVERIFY(!Helpers::needsCsvQuotes(" abcd  "));
+    QVERIFY(!Helpers::needsCsvQuotes("abcd"));
+    QVERIFY(!Helpers::needsCsvQuotes("1234"));
+    QVERIFY(!Helpers::needsCsvQuotes("ABCD"));
+    QVERIFY(!Helpers::needsCsvQuotes("abcdABCD1234_"));
+
+    QVERIFY(Helpers::needsCsvQuotes("a a"));
+    QVERIFY(Helpers::needsCsvQuotes("a,a"));
+    QVERIFY(Helpers::needsCsvQuotes("1,A"));
+    QVERIFY(Helpers::needsCsvQuotes("a b c"));
+}

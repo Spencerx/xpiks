@@ -45,6 +45,7 @@ namespace Helpers {
     bool isPunctuation(const QChar &);
     std::string string_format(const std::string fmt, ...);
     QString getUnitedHitsString(const QString &text, const std::vector<int> &hits, int radius);
+    bool needsCsvQuotes(const QString &s);
 
     quint32 switcherHash(const QString &text);
     bool areSemanticDuplicates(const QString &s1, const QString &s2);

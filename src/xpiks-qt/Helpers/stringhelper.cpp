@@ -460,4 +460,27 @@ namespace Helpers {
         const auto distance = Helpers::levensteinDistance(s1.toLower(), s2.toLower());
         return distance <= SYNONYMS_DISTANCE;
     }
+
+    bool needsCsvQuotes(const QString &s) {
+        bool needsQuotes = false;
+
+        const int size = s.size();
+        int left = 0, right = size - 1;
+        while (left < size && s[left].isSpace()) { left++; }
+        while (right >= 0 && s[right].isSpace()) { right--; }
+
+        for (int i = left; i <= right; i++) {
+            QChar c = s[i];
+            if (!c.isDigit() &&
+                    !c.isNumber() &&
+                    !c.isLetter() &&
+                    c != '_') {
+                needsQuotes = true;
+                break;
+            }
+        }
+
+        return needsQuotes;
+    }
+
 }
