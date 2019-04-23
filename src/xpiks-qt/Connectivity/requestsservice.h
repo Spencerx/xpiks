@@ -24,7 +24,7 @@ namespace Helpers {
 }
 
 namespace Models {
-    class ProxySettings;
+    class SettingsModel;
 }
 
 namespace Connectivity {
@@ -35,7 +35,7 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        explicit RequestsService(const Models::ProxySettings &proxySettings, QObject *parent = nullptr);
+        explicit RequestsService(Models::SettingsModel &settingsModel, QObject *parent = nullptr);
 
     private:
         bool isRunning();
@@ -58,7 +58,7 @@ namespace Connectivity {
 
     private:
         RequestsWorker *m_RequestsWorker;
-        const Models::ProxySettings &m_ProxySettings;
+        Models::SettingsModel &m_SettingsModel;
         std::atomic_bool m_IsStopped;
     };
 }

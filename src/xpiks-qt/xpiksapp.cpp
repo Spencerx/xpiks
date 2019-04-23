@@ -166,7 +166,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     // services
     m_MaintenanceService(environment),
     m_AutoCompleteService(m_SettingsModel, m_KeywordsAutoCompleteModel),
-    m_RequestsService(m_SettingsModel.getProxySettings()),
+    m_RequestsService(m_SettingsModel),
     m_WarningsSettingsModel(environment),
     m_WarningsService(m_WarningsSettingsModel),
     m_SpellCheckService(environment, m_SettingsModel),

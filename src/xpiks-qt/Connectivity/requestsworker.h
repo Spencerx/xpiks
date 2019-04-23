@@ -19,7 +19,7 @@
 #include "Common/itemprocessingworker.h"
 
 namespace Models {
-    class ProxySettings;
+    class SettingsModel;
 }
 
 namespace Connectivity {
@@ -29,7 +29,7 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        explicit RequestsWorker(const Models::ProxySettings &proxySettings, QObject *parent = 0);
+        explicit RequestsWorker(Models::SettingsModel &settingsModel, QObject *parent = 0);
 
     public:
         void sendRequestSync(std::shared_ptr<IConnectivityRequest> &item);
@@ -54,7 +54,7 @@ namespace Connectivity {
         void queueIsEmpty();
 
     private:
-        const Models::ProxySettings &m_ProxySettings;
+        Models::SettingsModel &m_SettingsModel;
     };
 }
 

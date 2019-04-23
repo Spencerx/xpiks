@@ -24,10 +24,10 @@
 namespace Connectivity {
     class IConnectivityRequest;
 
-    RequestsService::RequestsService(const Models::ProxySettings &proxySettings, QObject *parent):
+    RequestsService::RequestsService(Models::SettingsModel &settingsModel, QObject *parent):
         QObject(parent),
         m_RequestsWorker(nullptr),
-        m_ProxySettings(proxySettings),
+        m_SettingsModel(settingsModel),
         m_IsStopped(false)
     {
     }
@@ -40,7 +40,7 @@ namespace Connectivity {
         Q_ASSERT(m_RequestsWorker == nullptr);
         LOG_DEBUG << "#";
 
-        m_RequestsWorker = new RequestsWorker(m_ProxySettings);
+        m_RequestsWorker = new RequestsWorker(m_SettingsModel);
 
         QThread *thread = new QThread();
         m_RequestsWorker->moveToThread(thread);

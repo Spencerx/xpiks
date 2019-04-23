@@ -19,11 +19,13 @@
 #include "Connectivity/iconnectivityrequest.h"
 #include "Connectivity/iconnectivityresponse.h"
 #include "Connectivity/simplecurlrequest.h"
+#include "Models/settingsmodel.h"
+#include "Models/Connectivity/proxysettings.h"
 
 namespace Connectivity {
-    RequestsWorker::RequestsWorker(const Models::ProxySettings &proxySettings, QObject *parent) :
+    RequestsWorker::RequestsWorker(Models::SettingsModel &settingsModel, QObject *parent) :
         QObject(parent),
-        m_ProxySettings(proxySettings)
+        m_SettingsModel(settingsModel)
     {
     }
 
@@ -42,7 +44,8 @@ namespace Connectivity {
         LOG_INFO << "Request:" << url;
 
         SimpleCurlRequest request(url);
-        request.setProxySettings(&m_ProxySettings);
+        Models::ProxySettings *proxySettings = m_SettingsModel.retrieveProxySettings();
+        request.setProxySettings(proxySettings);
         request.addRawHeaders(item->getRawHeaders());
 
         Common::flag_t flags = item->getFlags();
