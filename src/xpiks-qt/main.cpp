@@ -31,6 +31,7 @@
 #include <QString>
 #include <QSysInfo>
 #include <QUrl>
+#include <QTime>
 #include <QtDebug>
 #include <QtGlobal>
 
@@ -171,6 +172,8 @@ int main(int argc, char *argv[]) {
     qRegisterMetaTypeStreamOperators<Models::ProxySettings>("ProxySettings");
     qRegisterMetaType<Common::SpellCheckFlags>("Common::SpellCheckFlags");
     initQSettings();
+
+    qsrand(QTime::currentTime().msec());
 
     // ----------------------------------------------
     QApplication app(argc, argv);

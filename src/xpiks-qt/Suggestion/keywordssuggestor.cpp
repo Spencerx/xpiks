@@ -16,7 +16,6 @@
 #include <QHash>
 #include <QQmlEngine>
 #include <QString>
-#include <QTime>
 #include <QVector>
 #include <QtDebug>
 #include <QtGlobal>
@@ -63,7 +62,6 @@ namespace Suggestion {
         m_IsInProgress(false)
     {
         setLastErrorString(tr("No results found"));
-        qsrand(QTime::currentTime().msec());
 
         m_ProgressiveLoadTimer.setSingleShot(true);
         QObject::connect(&m_ProgressiveLoadTimer, &QTimer::timeout, this, &KeywordsSuggestor::onProgressiveLoadTimer);

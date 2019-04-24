@@ -14,7 +14,6 @@
 #include <QCharRef>
 #include <QCryptographicHash>
 #include <QMutexLocker>
-#include <QTime>
 #include <QtDebug>
 #include <QtGlobal>
 
@@ -22,8 +21,6 @@
 #include "Encryption/aes-qt.h"
 
 void shuffleString(QString &str) {
-    qsrand(QTime::currentTime().msec());
-
     int length = str.length();
     for (int i = 0; i < length; ++i) {
         int nextIndex = i + (qrand() % (length - i));

@@ -20,7 +20,6 @@
 #include <QMultiMap>
 #include <QQmlEngine>
 #include <QSet>
-#include <QTime>
 #include <QtDebug>
 #include <QtGlobal>
 
@@ -237,7 +236,6 @@ namespace Models {
         QStringList commonKeywords;
         commonKeywords.reserve(50);
 
-        qsrand(QTime::currentTime().msec());
         int maxSize = 40 + qrand()%10;
 
         while (it != itBegin) {
