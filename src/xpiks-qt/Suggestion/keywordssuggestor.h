@@ -12,6 +12,7 @@
 #define KEYWORDSSUGGESTOR_H
 
 #include <atomic>
+#include <deque>
 #include <memory>
 #include <vector>
 
@@ -61,6 +62,9 @@ namespace Microstocks {
 namespace Suggestion {
     class ISuggestionEngine;
     class SuggestionArtwork;
+
+    using SuggestionList = std::vector<std::shared_ptr<SuggestionArtwork>>;
+    using SuggestionBatches = std::deque<SuggestionList>;
 
     class KeywordsSuggestor:
             public QAbstractListModel,
@@ -197,14 +201,14 @@ namespace Suggestion {
         Models::SwitcherModel &m_SwitcherModel;
         Models::SettingsModel &m_SettingsModel;
         std::vector<std::shared_ptr<ISuggestionEngine>> m_QueryEngines;
-        std::vector<std::shared_ptr<SuggestionArtwork>> m_Suggestions;
+        SuggestionList m_Suggestions;
+        SuggestionBatches m_PendingSuggestions;
         SuggestedKeywords m_SuggestedKeywords;
         QString m_LastErrorString;
         Artworks::BasicKeywordsModel m_SuggestedKeywordsModel;
         Artworks::BasicKeywordsModel m_OtherKeywordsModel;
         // hack to load previews gradually
         QTimer m_ProgressiveLoadTimer;
-        volatile int m_LoadedPreviewsNumber;
         int m_SelectedArtworksCount;
         int m_SelectedSourceIndex;
         int m_LocalSearchIndex;

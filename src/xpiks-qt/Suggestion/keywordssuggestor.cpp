@@ -10,7 +10,9 @@
 
 #include "keywordssuggestor.h"
 
+#include <algorithm>
 #include <cstddef>
+#include <functional>
 
 #include <QByteArray>
 #include <QHash>
@@ -45,6 +47,25 @@
 #define DEFAULT_SEARCH_TYPE_INDEX 0
 
 namespace Suggestion {
+    SuggestionBatches splitSuggestions(SuggestionList const &suggestions, size_t batchSize) {
+        SuggestionBatches batches;
+
+        const size_t size = suggestions.size();
+        const size_t half = (size / batchSize) / 2;
+        const size_t halfSize = half * batchSize;
+
+        for (size_t i = 0; i < halfSize; i += batchSize) {
+            auto last = std::min(size, i + batchSize);
+            batches.emplace_back(suggestions.begin() + i, suggestions.begin() + last);
+        }
+
+        // last batch should be just second half of the data
+        batches.emplace_back(suggestions.begin() + halfSize, suggestions.begin() + size);
+        Q_ASSERT(suggestions.size() == std::accumulate(batches.begin(), batches.end(), 0,
+                                                       [](size_t r, const SuggestionList &l) { return r + l.size(); }));
+
+        return batches;
+    }
 
     KeywordsSuggestor::KeywordsSuggestor(Models::SwitcherModel &switcherModel,
                                          Models::SettingsModel &settingsModel,
@@ -119,13 +140,14 @@ namespace Suggestion {
         m_State.init();
     }
 
-    void KeywordsSuggestor::setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestedArtworks) {
+    void KeywordsSuggestor::setSuggestedArtworks(std::vector<std::shared_ptr<SuggestionArtwork>> &suggestedArtworks) {
         LOG_INFO << suggestedArtworks.size() << "item(s)";
 
         setSelectedArtworksCount(0);
         m_SuggestedKeywords.reset();
         m_SuggestedKeywordsModel.clearKeywords();
         m_OtherKeywordsModel.clearKeywords();
+        m_PendingSuggestions.clear();
 
 #if !defined(INTEGRATION_TESTS) && !defined(CORE_TESTS)
         const bool sequentialLoading =
@@ -139,20 +161,21 @@ namespace Suggestion {
 
         if (sequentialLoading) {
             const int increment = m_SettingsModel.getProgressiveSuggestionIncrement();
-            m_LoadedPreviewsNumber = increment;
+            m_PendingSuggestions = splitSuggestions(suggestedArtworks, static_cast<size_t>(increment));
             LOG_DEBUG << "Progressive increment is" << increment;
         } else {
-            m_LoadedPreviewsNumber = static_cast<int>(suggestedArtworks.size());
+            m_PendingSuggestions.emplace_back(std::move(suggestedArtworks));
         }
 
         beginResetModel();
         {
-            m_Suggestions = std::move(suggestedArtworks);
+            m_Suggestions.clear();
+            m_Suggestions = m_PendingSuggestions.at(0);
+            m_PendingSuggestions.pop_front();
         }
         endResetModel();
 
-        if (sequentialLoading) {
-            emit dataChanged(this->index(0), this->index(m_LoadedPreviewsNumber), QVector<int>() << UrlRole);
+        if (m_PendingSuggestions.size() > 0) {
             m_ProgressiveLoadTimer.start(LINEAR_TIMER_INTERVAL);
         }
 
@@ -170,7 +193,7 @@ namespace Suggestion {
         m_SuggestedKeywords.reset();
         m_SuggestedKeywordsModel.clearKeywords();
         m_OtherKeywordsModel.clearKeywords();
-        m_LoadedPreviewsNumber = 0;
+        m_PendingSuggestions.clear();
 
         beginResetModel();
         {
@@ -239,26 +262,24 @@ namespace Suggestion {
 
     void KeywordsSuggestor::onProgressiveLoadTimer() {
         LOG_DEBUG << "#";
-        const int size = rowCount();
-        if (m_LoadedPreviewsNumber >= size) { return; }
-
-        const int increment = m_SettingsModel.getProgressiveSuggestionIncrement();
-
-        int nextIndex = m_LoadedPreviewsNumber + increment;
-        if (nextIndex > size/2) {
-            nextIndex = size - 1;
+        if (m_PendingSuggestions.empty()) {
+            LOG_DEBUG << "Pending suggestions are empty";
+            return;
         }
 
-        if (nextIndex > m_LoadedPreviewsNumber) {
-            LOG_DEBUG << "Loading from" << m_LoadedPreviewsNumber << "to" << nextIndex;
+        auto batch = m_PendingSuggestions.at(0);
+        LOG_DEBUG << "Loading from" << m_Suggestions.size() << "to" << (m_Suggestions.size() + batch.size());
 
-            QModelIndex firstIndex = this->index(m_LoadedPreviewsNumber);
-            QModelIndex lastIndex = this->index(nextIndex);
-            m_LoadedPreviewsNumber = nextIndex;
-
-            emit dataChanged(firstIndex, lastIndex, QVector<int>() << UrlRole);
-            m_ProgressiveLoadTimer.start(LINEAR_TIMER_INTERVAL);
+        beginInsertRows(QModelIndex(),
+                        static_cast<int>(m_Suggestions.size()),
+                        static_cast<int>(m_Suggestions.size() + batch.size() - 1));
+        {
+            m_Suggestions.insert(m_Suggestions.end(), batch.begin(), batch.end());
         }
+        endInsertRows();
+
+        m_PendingSuggestions.pop_front();
+        m_ProgressiveLoadTimer.start(LINEAR_TIMER_INTERVAL);
     }
 
     void KeywordsSuggestor::onSwitchesUpdated() {
@@ -468,17 +489,8 @@ namespace Suggestion {
         auto &suggestionArtwork = m_Suggestions.at(row);
 
         switch (role) {
-        case UrlRole: {
-#ifdef QT_DEBUG
-            if (row <= m_LoadedPreviewsNumber) {
-                return suggestionArtwork->getUrl();
-            } else {
-                return QString("");
-            }
-#else
+        case UrlRole:
             return suggestionArtwork->getUrl();
-#endif
-        }
         case IsSelectedRole:
             return suggestionArtwork->getIsSelected();
         case ExternalUrlRole:
