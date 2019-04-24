@@ -334,12 +334,14 @@ Rectangle {
                 (event.modifiers & Qt.MetaModifier);
         var withAlt = (event.modifiers & Qt.AltModifier);
 
-        if ((event.key === Qt.Key_Left) && (withMeta && withAlt)) {
+        if (((event.key === Qt.Key_Left) && (withMeta && withAlt)) ||
+                event.matches(StandardKey.MoveToPreviousPage)) {
             reloadItemEditing(rosterListView.currentIndex - 1)
             event.accepted = true;
         }
 
-        if ((event.key === Qt.Key_Right) && (withMeta && withAlt)) {
+        if (((event.key === Qt.Key_Right) && (withMeta && withAlt)) ||
+                event.matches(StandardKey.MoveToNextPage)) {
             reloadItemEditing(rosterListView.currentIndex + 1)
             event.accepted = true;
         }
