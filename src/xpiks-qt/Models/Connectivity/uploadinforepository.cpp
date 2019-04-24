@@ -345,6 +345,39 @@ namespace Models {
         m_CurrentIndex = 0;
     }
 
+    void UploadInfoRepository::validateCurrentItem() {
+        const int index = m_CurrentIndex;
+        LOG_DEBUG << index;
+        if ((index < 0) || (index >= (int)m_UploadInfos.size())) {
+            return;
+        }
+        auto &current = m_UploadInfos.at(index);
+        auto &title = current->getTitle();
+        auto ftpOptions = m_StocksFtpList.findFtpOptions(title);
+        if (ftpOptions != nullptr) {
+            if (current->getHost().isEmpty() &&
+                current->getImagesDir().isEmpty() &&
+                current->getVectorsDir().isEmpty() &&
+                current->getVideosDir().isEmpty()) {
+                LOG_INFO << "Found match. Updating" << title << "data...";
+
+                current->setHost(ftpOptions->m_FtpAddress);
+
+                current->setImagesDir(ftpOptions->m_ImagesDir);
+                current->setVectorsDir(ftpOptions->m_VectorsDir);
+                current->setVideosDir(ftpOptions->m_VideosDir);
+                current->setZipBeforeUpload(ftpOptions->m_ZipVector);
+
+                QModelIndex currIndex = this->index(index);
+                emit dataChanged(currIndex, currIndex);
+
+                justChanged();
+            }
+        } else {
+            LOG_WARNING << "Failed to find" << title;
+        }
+    }
+
     QObject *UploadInfoRepository::getStocksCompletionObject() {
         QObject *result = &m_StocksCompletionSource;
         QQmlEngine::setObjectOwnership(result, QQmlEngine::CppOwnership);
@@ -584,7 +617,7 @@ namespace Models {
         QString title = m_StocksCompletionSource.getCompletion(completionID);
         LOG_INFO << "Completion selected for" << title;
         auto ftpOptions = m_StocksFtpList.findFtpOptions(title);
-        if (ftpOptions) {
+        if (ftpOptions != nullptr) {
             if ((0 <= m_CurrentIndex) && (m_CurrentIndex < (int)m_UploadInfos.size())) {
                 auto &current = m_UploadInfos.at(m_CurrentIndex);
                 current->setFtpOptions(*ftpOptions);

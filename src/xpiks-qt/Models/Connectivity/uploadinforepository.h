@@ -108,6 +108,7 @@ namespace Models {
         Q_INVOKABLE void initializeAccounts(bool mpIsCorrectOrEmpty);
         Q_INVOKABLE void finalizeAccounts();
         Q_INVOKABLE bool isMasterPasswordCorrectOrEmpty() const { return !m_EmptyPasswordsMode; }
+        Q_INVOKABLE void validateCurrentItem();
         Q_INVOKABLE QObject *getStocksCompletionObject();
 #ifdef UI_TESTS
         Q_INVOKABLE void clear() { clearHosts(); }

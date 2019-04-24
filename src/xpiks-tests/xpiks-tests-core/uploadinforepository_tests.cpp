@@ -426,3 +426,41 @@ void UploadInfoRepositoryTests::masterPasswordResetTest() {
                  QString("qwerty %1").arg(i));
     }
 }
+
+void UploadInfoRepositoryTests::validateNonAutocompletedHostTest() {
+    Mocks::CoreTestsEnvironment environment;
+    Encryption::SecretsManager secretsManager;
+    Models::UploadInfoRepository uploadInfos(environment, secretsManager);
+    const char *stocksJson = R"JSON(
+    {
+        "overwrite": false,
+        "stocks_ftp": [
+            {
+                "name": "Alamy",
+                "ftp": "ftp://upload.alamy.com",
+                "images_dir": "Stock",
+                "vectors_dir": "Vector"
+            }
+        ]
+    }
+)JSON";
+
+    QByteArray jsonData(stocksJson);
+    uploadInfos.accessStocksList().setRemoteOverride(jsonData);
+
+    Helpers::AsyncCoordinator coordinator;
+    Mocks::RequestsServiceMock requestsService;
+    uploadInfos.initializeStocksList(coordinator, requestsService);
+
+    auto item1 = uploadInfos.appendItem();
+    uploadInfos.setCurrentIndex(0);
+    item1->setTitle("alamy");
+
+    QCOMPARE(item1->getImagesDir(), QString());
+    QCOMPARE(item1->getVectorsDir(), QString());
+
+    uploadInfos.validateCurrentItem();
+
+    QCOMPARE(item1->getImagesDir(), QString("Stock"));
+    QCOMPARE(item1->getVectorsDir(), QString("Vector"));
+}

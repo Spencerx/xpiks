@@ -26,6 +26,7 @@ private slots:
     void masterPasswordChangeTest();
     void defaultMasterPasswordResetTest();
     void masterPasswordResetTest();
+    void validateNonAutocompletedHostTest();
 };
 
 #endif // UPLOADINFOREPOSITORY_TESTS_H

@@ -88,6 +88,35 @@ Item {
             compare(ftpAddressInput.text, "ftp.shutterstock.com")
         }
 
+        function test_stockAutoCompleteSkip() {
+            mouseClick(addExportPlanButton)
+
+            var initialText = "Untitled"
+            compare(titleTextInput.text, initialText)
+            verify(titleTextInput.activeFocus)
+            verify(typeof generalTab.autoCompleteBox === "undefined")
+
+            for (var i = 0; i < initialText.length; i++) {
+                keyClick(Qt.Key_Backspace)
+            }
+
+            wait(TestsHost.normalSleepTime)
+
+            verify(typeof generalTab.autoCompleteBox !== "undefined")
+
+            TestUtils.keyboardEnterText('alamy')
+
+            keyClick(Qt.Key_Down)
+            wait(TestsHost.smallSleepTime)
+
+            keyClick(Qt.Key_Tab)
+            wait(TestsHost.smallSleepTime)
+
+            verify(typeof generalTab.autoCompleteBox === "undefined")
+            compare(titleTextInput.text, "alamy")
+            compare(ftpAddressInput.text, "ftp://upload.alamy.com")
+        }
+
         function test_stockAutoCompleteFull() {
             mouseClick(addExportPlanButton)
 

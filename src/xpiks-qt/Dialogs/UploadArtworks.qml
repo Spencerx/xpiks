@@ -474,6 +474,7 @@ StaticDialogBase {
                                     if (text.length == 0) {
                                         uploadHostsListView.currentItem.myData.edittitle = qsTr("Untitled")
                                     }
+                                    uploadInfos.validateCurrentItem()
                                 }
 
                                 onActiveFocusChanged: {
