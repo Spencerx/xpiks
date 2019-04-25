@@ -38,7 +38,8 @@ namespace Microstocks {
         StocksFtpListModel(Common::ISystemEnvironment &environment);
 
     public:
-        std::shared_ptr<StockFtpOptions> findFtpOptions(const QString &title) const;
+        std::shared_ptr<StockFtpOptions> findFtpOptionsByTitle(const QString &title) const;
+        std::shared_ptr<StockFtpOptions> findFtpOptionsByID(int id) const;
         QStringList getStockNamesList() const;
 
         // AbstractConfigUpdaterModel interface

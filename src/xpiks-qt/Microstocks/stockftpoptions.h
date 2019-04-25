@@ -14,7 +14,10 @@
 #include <QString>
 
 namespace Microstocks {
+#define DEFAULT_STOCK_ID 0
+
     struct StockFtpOptions {
+        int m_ID = DEFAULT_STOCK_ID;
         QString m_Title;
         QString m_FtpAddress;
         QString m_ImagesDir;

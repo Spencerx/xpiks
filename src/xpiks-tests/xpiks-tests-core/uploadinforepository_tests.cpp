@@ -22,6 +22,7 @@ void UploadInfoRepositoryTests::parseJsonTest() {
                 "ftp": "ftp.shutterstock.com"
             },
             {
+                "id": 12345,
                 "name": "Depositphotos",
                 "ftp": "ftp.depositphotos.com",
                 "zip_vector": true
@@ -38,6 +39,7 @@ void UploadInfoRepositoryTests::parseJsonTest() {
                 "videos_dir": "stock/video"
             },
             {
+                "id": 9876,
                 "name": "Alamy",
                 "ftp": "ftp://upload.alamy.com",
                 "images_dir": "Stock",
@@ -60,12 +62,14 @@ void UploadInfoRepositoryTests::parseJsonTest() {
 
     auto &stocks = uploadInfos.accessStocksList();
     QCOMPARE(stocks.getStockNamesList().size(), 6);
-    QCOMPARE(stocks.findFtpOptions("Crestock")->m_FtpAddress, QString("ftp.crestock.com"));
-    QCOMPARE(stocks.findFtpOptions("ColourBox")->m_VectorsDir, QString("stock/vector"));
-    QCOMPARE(stocks.findFtpOptions("Depositphotos")->m_ZipVector, true);
-    QCOMPARE(stocks.findFtpOptions("Shutterstock")->m_ZipVector, false);
-    QCOMPARE(stocks.findFtpOptions("Alamy")->m_ImagesDir, QString("Stock"));
-    QVERIFY(stocks.findFtpOptions("BigStock")->m_ImagesDir.isEmpty());
+    QCOMPARE(stocks.findFtpOptionsByTitle("Crestock")->m_FtpAddress, QString("ftp.crestock.com"));
+    QCOMPARE(stocks.findFtpOptionsByTitle("ColourBox")->m_VectorsDir, QString("stock/vector"));
+    QCOMPARE(stocks.findFtpOptionsByTitle("Depositphotos")->m_ZipVector, true);
+    QCOMPARE(stocks.findFtpOptionsByTitle("Shutterstock")->m_ZipVector, false);
+    QCOMPARE(stocks.findFtpOptionsByTitle("Alamy")->m_ImagesDir, QString("Stock"));
+    QVERIFY(stocks.findFtpOptionsByTitle("BigStock")->m_ImagesDir.isEmpty());
+    QCOMPARE(stocks.findFtpOptionsByTitle("Depositphotos")->m_ID, 12345);
+    QCOMPARE(stocks.findFtpOptionsByID(9876)->m_Title, QString("Alamy"));
 }
 
 void UploadInfoRepositoryTests::jsonUpdatesImagesDirTest() {
@@ -90,9 +94,10 @@ void UploadInfoRepositoryTests::jsonUpdatesImagesDirTest() {
     }
 )JSON";
 
+    const QString oldHost = "upload.alamy.com";
     auto item1 = uploadInfos.appendItem();
     item1->setTitle("Alamy");
-    item1->setHost("upload.alamy.com");
+    item1->setHost(oldHost);
     item1->setImagesDir("random dir here");
     item1->setVectorsDir("another random");
 
@@ -105,6 +110,110 @@ void UploadInfoRepositoryTests::jsonUpdatesImagesDirTest() {
 
     QCOMPARE(item1->getImagesDir(), QString("Stock"));
     QCOMPARE(item1->getVectorsDir(), QString("Vector"));
+    QCOMPARE(item1->getHost(), oldHost);
+}
+
+void UploadInfoRepositoryTests::updateFtpHostByIDTest() {
+    Mocks::CoreTestsEnvironment environment;
+    Encryption::SecretsManager secretsManager;
+    Models::UploadInfoRepository uploadInfos(environment, secretsManager);
+    const char *stocksJson = R"JSON(
+    {
+        "overwrite": false,
+        "stocks_ftp": [
+            {
+                "name": "Alamy",
+                "id": 1234,
+                "ftp": "ftp://upload.alamy.com",
+                "images_dir": "Stock",
+                "vectors_dir": "Vector"
+            }
+        ]
+    }
+)JSON";
+
+    auto item1 = uploadInfos.appendItem();
+    item1->setTitle("Alamy");
+    item1->setID(1234);
+    item1->setHost("upload.alaaaaamy.com");
+    item1->setImagesDir("random dir here");
+    item1->setVectorsDir("another random");
+
+    QByteArray jsonData(stocksJson);
+    uploadInfos.accessStocksList().setRemoteOverride(jsonData);
+
+    Helpers::AsyncCoordinator coordinator;
+    Mocks::RequestsServiceMock requestsService;
+    uploadInfos.initializeStocksList(coordinator, requestsService);
+
+    QCOMPARE(item1->getImagesDir(), QString("Stock"));
+    QCOMPARE(item1->getVectorsDir(), QString("Vector"));
+    QCOMPARE(item1->getHost(), QString("ftp://upload.alamy.com"));
+}
+
+void UploadInfoRepositoryTests::idWasUpdatedForFullMatchTest() {
+    Mocks::CoreTestsEnvironment environment;
+    Encryption::SecretsManager secretsManager;
+    Models::UploadInfoRepository uploadInfos(environment, secretsManager);
+    const char *stocksJson = R"JSON(
+    {
+        "overwrite": false,
+        "stocks_ftp": [
+            {
+                "name": "Alamy",
+                "id": 1234,
+                "ftp": "ftp://upload.alamy.com"
+            }
+        ]
+    }
+)JSON";
+
+    auto item1 = uploadInfos.appendItem();
+    item1->setTitle("Alamy");
+    item1->setID(0);
+    item1->setHost("ftp://upload.alamy.com");
+
+    QByteArray jsonData(stocksJson);
+    uploadInfos.accessStocksList().setRemoteOverride(jsonData);
+
+    Helpers::AsyncCoordinator coordinator;
+    Mocks::RequestsServiceMock requestsService;
+    uploadInfos.initializeStocksList(coordinator, requestsService);
+
+    QCOMPARE(item1->getID(), 1234);
+}
+
+void UploadInfoRepositoryTests::idNotUpdatedForSomeMatchTest() {
+    Mocks::CoreTestsEnvironment environment;
+    Encryption::SecretsManager secretsManager;
+    Models::UploadInfoRepository uploadInfos(environment, secretsManager);
+    const char *stocksJson = R"JSON(
+    {
+        "overwrite": false,
+        "stocks_ftp": [
+            {
+                "name": "Alamy",
+                "id": 1234,
+                "ftp": "ftp://upload.alamy.com"
+            }
+        ]
+    }
+)JSON";
+
+    auto item1 = uploadInfos.appendItem();
+    // title does not match in case
+    item1->setTitle("alamy");
+    item1->setID(0);
+    item1->setHost("ftp://upload.alamy.com");
+
+    QByteArray jsonData(stocksJson);
+    uploadInfos.accessStocksList().setRemoteOverride(jsonData);
+
+    Helpers::AsyncCoordinator coordinator;
+    Mocks::RequestsServiceMock requestsService;
+    uploadInfos.initializeStocksList(coordinator, requestsService);
+
+    QCOMPARE(item1->getID(), 0);
 }
 
 void UploadInfoRepositoryTests::zipRequiredTest() {

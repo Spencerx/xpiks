@@ -32,6 +32,7 @@
 #define LOCAL_STOCKS_LIST_FILE QLatin1String("stocks_ftp.json")
 
 #define OVERWRITE_KEY QLatin1String("overwrite")
+#define FTP_ID_KEY QLatin1String("id")
 #define FTP_ARRAY_KEY QLatin1String("stocks_ftp")
 #define FTP_NAME_KEY QLatin1String("name")
 #define FTP_ADDRESS_KEY QLatin1String("ftp")
@@ -49,12 +50,27 @@ namespace Microstocks {
             environment.getIsInMemoryOnly())
     { }
 
-    std::shared_ptr<StockFtpOptions> StocksFtpListModel::findFtpOptions(const QString &title) const {
+    std::shared_ptr<StockFtpOptions> StocksFtpListModel::findFtpOptionsByTitle(const QString &title) const {
         auto it = std::find_if(m_StocksList.begin(), m_StocksList.end(),
                                [&](std::shared_ptr<StockFtpOptions> const &current) {
                 return QString::compare(title, current->m_Title, Qt::CaseInsensitive) == 0; });
 
         std::shared_ptr<StockFtpOptions> result;
+        if (it != m_StocksList.end()) {
+            result = *it;
+        }
+
+        return result;
+    }
+
+    std::shared_ptr<StockFtpOptions> StocksFtpListModel::findFtpOptionsByID(int id) const {
+        std::shared_ptr<StockFtpOptions> result;
+        if (id == DEFAULT_STOCK_ID) { return result; }
+
+        auto it = std::find_if(m_StocksList.begin(), m_StocksList.end(),
+                               [id](std::shared_ptr<StockFtpOptions> const &current) {
+                                   return current->m_ID == id; });
+
         if (it != m_StocksList.end()) {
             result = *it;
         }
@@ -158,6 +174,11 @@ namespace Microstocks {
             if (!nameValue.isString()) { continue; }
             ftpOptions->m_Title = nameValue.toString();
 
+            QJsonValue idValue = ftpItem[FTP_ID_KEY];
+            if (idValue.isDouble()) {
+                ftpOptions->m_ID = idValue.toInt(DEFAULT_STOCK_ID);
+            }
+
             QJsonValue imagesDirValue = ftpItem[FTP_IMAGES_DIR_KEY];
             if (imagesDirValue.isString()) {
                 ftpOptions->m_ImagesDir = imagesDirValue.toString();
@@ -191,8 +212,18 @@ namespace Microstocks {
     int StocksFtpListModel::operator ()(const QJsonObject &val1, const QJsonObject &val2) {
         bool areEqual = false;
 
-        if (val1.contains(FTP_NAME_KEY) &&
-                val2.contains(FTP_NAME_KEY)) {
+        if (val1.contains(FTP_ID_KEY) &&
+            val2.contains(FTP_ID_KEY)) {
+            QJsonValue idValue1 = val1[FTP_ID_KEY];
+            QJsonValue idValue2 = val2[FTP_ID_KEY];
+
+            if (idValue1.isDouble() && idValue2.isDouble()) {
+                const int id1 = idValue1.toInt(DEFAULT_STOCK_ID);
+                const int id2 = idValue2.toInt(DEFAULT_STOCK_ID);
+                areEqual = (id1 == id2) && (id1 != DEFAULT_STOCK_ID);
+            }
+        } else if (val1.contains(FTP_NAME_KEY) &&
+                   val2.contains(FTP_NAME_KEY)) {
             QJsonValue nameValue1 = val1[FTP_NAME_KEY];
             QJsonValue nameValue2 = val2[FTP_NAME_KEY];
 

@@ -45,6 +45,7 @@
 #define UPLOAD_INFO_SAVE_TIMEOUT 3000
 #define UPLOAD_INFO_DELAYS_COUNT 10
 
+#define FTP_STOCK_ID QLatin1String("id")
 #define FTP_DESTINATIONS QLatin1String("destinations")
 #define FTP_HOST_KEY QLatin1String("host")
 #define FTP_USERNAME_KEY QLatin1String("user")
@@ -71,6 +72,7 @@ namespace Models {
         for (auto &uploadInfo: uploadInfos) {
             QJsonObject object;
 
+            object.insert(FTP_STOCK_ID, uploadInfo->getID());
             object.insert(FTP_TITLE_KEY, uploadInfo->getTitle());
             object.insert(FTP_HOST_KEY, uploadInfo->getHost());
             object.insert(FTP_USERNAME_KEY, uploadInfo->getUsername());
@@ -159,6 +161,11 @@ namespace Models {
             QJsonValue videosDirValue = element.value(FTP_VIDEO_DIR);
             if (videosDirValue.isString()) {
                 destination->setVideosDir(videosDirValue.toString());
+            }
+
+            QJsonValue idValue = element.value(FTP_STOCK_ID);
+            if (idValue.isDouble()) {
+                destination->setID(idValue.toInt(DEFAULT_STOCK_ID));
             }
 
             uploadInfo.swap(destination);
@@ -353,7 +360,7 @@ namespace Models {
         }
         auto &current = m_UploadInfos.at(index);
         auto &title = current->getTitle();
-        auto ftpOptions = m_StocksFtpList.findFtpOptions(title);
+        auto ftpOptions = m_StocksFtpList.findFtpOptionsByTitle(title);
         if (ftpOptions != nullptr) {
             if (current->getHost().isEmpty() &&
                 current->getImagesDir().isEmpty() &&
@@ -616,7 +623,7 @@ namespace Models {
     void UploadInfoRepository::onCompletionSelected(int completionID) {
         QString title = m_StocksCompletionSource.getCompletion(completionID);
         LOG_INFO << "Completion selected for" << title;
-        auto ftpOptions = m_StocksFtpList.findFtpOptions(title);
+        auto ftpOptions = m_StocksFtpList.findFtpOptionsByTitle(title);
         if (ftpOptions != nullptr) {
             if ((0 <= m_CurrentIndex) && (m_CurrentIndex < (int)m_UploadInfos.size())) {
                 auto &current = m_UploadInfos.at(m_CurrentIndex);
@@ -642,17 +649,36 @@ namespace Models {
         m_StocksCompletionSource.setStrings(stocks);
 
         for (auto &item: m_UploadInfos) {
-            auto ftpOptions = m_StocksFtpList.findFtpOptions(item->getTitle());
+            auto ftpOptions = m_StocksFtpList.findFtpOptionsByID(item->getID());
+            const bool exactMatch = (ftpOptions != nullptr) && (ftpOptions->m_Title == item->getTitle());
+
+            if (!exactMatch) {
+                ftpOptions = m_StocksFtpList.findFtpOptionsByTitle(item->getTitle());
+            }
+
             if (ftpOptions != nullptr) {
-                if (ftpOptions->m_FtpAddress.contains(item->getHost()) ||
-                        item->getHost().contains(ftpOptions->m_FtpAddress)) {
-                    LOG_INFO << "Found match. Updating" << item->getTitle() << "data...";
+                LOG_DEBUG << "Found match for" << item->getTitle() << ". Exact match:" << exactMatch;
+
+                if (exactMatch) {
+                    LOG_INFO << "Updating ftp host for" << item->getTitle() << "to" << ftpOptions->m_FtpAddress;
+                    item->setHost(ftpOptions->m_FtpAddress);
+                } else if ((item->getID() == DEFAULT_STOCK_ID) && (ftpOptions->m_ID != DEFAULT_STOCK_ID) &&
+                           (item->getTitle() == ftpOptions->m_Title) &&
+                           (item->getHost() == ftpOptions->m_FtpAddress)) {
+                    LOG_INFO << "Soft-updating ID to" << ftpOptions->m_ID << "for" << item->getHost();
+                    item->setID(ftpOptions->m_ID);
+                }
+
+                if (exactMatch ||
+                    ftpOptions->m_FtpAddress.contains(item->getHost()) ||
+                    item->getHost().contains(ftpOptions->m_FtpAddress)) {
+                    LOG_INFO << "Updating upload properties for" << item->getTitle();
                     item->setImagesDir(ftpOptions->m_ImagesDir);
                     item->setVectorsDir(ftpOptions->m_VectorsDir);
                     item->setVideosDir(ftpOptions->m_VideosDir);
                     item->setZipBeforeUpload(ftpOptions->m_ZipVector);
                 } else {
-                    LOG_WARNING << "Match found, but address is different:" << item->getHost();
+                    LOG_WARNING << "Match found, but cannot update:" << item->getHost();
                 }
             }
         }

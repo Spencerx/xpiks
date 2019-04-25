@@ -41,7 +41,8 @@ namespace Models {
             DisableEPSVField = 9,
             ImagesDirField = 10,
             VectorsDirField = 11,
-            VideosDirField = 12
+            VideosDirField = 12,
+            IDField = 13
         };
 
     public:
@@ -74,12 +75,16 @@ namespace Models {
             m_DisableFtpPassiveMode = items.value(DisableFtpPassiveModeField, "false") == QLatin1String("true");
             m_IsSelected = items.value(IsSelectedField, "false") == QLatin1String("true");
             m_DisableEPSV = items.value(DisableFtpPassiveModeField, "false") == QLatin1String("true");
+            bool ok = false;
+            int id = items.value(IDField, "0").toInt(&ok);
+            m_ID = ok ? id : 0;
         }
 
     signals:
         void progressChanged(double percent);
 
     public:
+        int getID() const { return m_ID; }
         const QString &getTitle() const { return m_Title; }
         const QString &getHost() const { return m_Host; }
         const QString &getUsername() const { return m_Username; }
@@ -100,6 +105,7 @@ namespace Models {
         const QString &getVideosDir() const { return m_VideosDir; }
 
     public:
+        void setID(int value) { m_ID = value; }
         bool setTitle(const QString &value) { bool result = m_Title != value; m_Title = value; return result; }
         bool setHost(const QString &value) { bool result = m_Host != value; m_Host = value; return result; }
         bool setUsername(const QString &value) { bool result = m_Username != value; m_Username = value; return result; }
@@ -160,6 +166,7 @@ namespace Models {
             return result;
         }
         void setFtpOptions(const Microstocks::StockFtpOptions &ftpOptions) {
+            m_ID = ftpOptions.m_ID;
             m_Title = ftpOptions.m_Title;
             m_Host = ftpOptions.m_FtpAddress;
             m_ImagesDir = ftpOptions.m_ImagesDir;
@@ -170,6 +177,7 @@ namespace Models {
 
     private:
         QMutex m_Mutex;
+        int m_ID = 0;
         QString m_Title;
         QString m_Host;
         QString m_Username;

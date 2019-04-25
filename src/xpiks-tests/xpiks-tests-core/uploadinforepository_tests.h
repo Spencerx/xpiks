@@ -11,6 +11,9 @@ class UploadInfoRepositoryTests: public QObject
 private slots:
     void parseJsonTest();
     void jsonUpdatesImagesDirTest();
+    void updateFtpHostByIDTest();
+    void idWasUpdatedForFullMatchTest();
+    void idNotUpdatedForSomeMatchTest();
     void zipRequiredTest();
     void selectedInfosCountTest();
     void removeItemTest();
