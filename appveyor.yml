@@ -92,6 +92,6 @@ for:
     auth_token:
       secure: "dp1veinWJ1brdbfB7dbrNG8KNvEsrTrJBvhRBKbZhqNHLg6C/hck+VEhYbCWpgcg"
     artifact: Xpiks-v%APPVEYOR_BUILD_VERSION%.zip
-    draft: false
+    draft: true
     prerelease: true
     force_update: true
