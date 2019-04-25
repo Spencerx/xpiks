@@ -2,38 +2,46 @@
     "overwrite": false,
     "stocks_ftp": [
         {
+            "id": 1,
             "name": "Shutterstock",
             "ftp": "ftp.shutterstock.com"
         },
         {
+            "id": 2,
             "name": "Fotolia",
             "ftp": "ftp://submit.fotolia.com",
             "zip_vector": true
         },
         {
+            "id": 3,
             "name": "Depositphotos",
             "ftp": "ftp.depositphotos.com",
             "zip_vector": true
         },
         {
+            "id": 4,
             "name": "123rf",
             "ftp": "ftp.123rf.com"
         },
         {
+            "id": 5,
             "name": "BigStock",
             "ftp": "ftp.bigstockphoto.com"
         },
         {
+            "id": 6,
             "name": "Dreamstime",
             "ftp": "ftp://upload.dreamstime.com",
             "vectors_dir": "additional"
         },
         {
+            "id": 7,
             "name": "CanStock",
             "ftp": "ftp.canstockphoto.com",
             "zip_vector": true
         },
         {
+            "id": 8,
             "name": "ColourBox",
             "ftp": "ftp.skyfish.com",
             "images_dir": "stock/images",
@@ -41,28 +49,34 @@
             "videos_dir": "stock/video"
         },
         {
+            "id": 9,
             "name": "Alamy",
             "ftp": "ftp://upload.alamy.com",
             "images_dir": "Stock",
             "vectors_dir": "Vector"
         },
         {
+            "id": 10,
             "name": "iClipart",
             "ftp": "ftp.iclipart.com"
         },
         {
+            "id": 11,
             "name": "Yaymicro",
             "ftp": "ftp.yaymicro.com"
         },
         {
+            "id": 12,
             "name": "Mostphotos",
             "ftp": "ftp.mostphotos.com"
         },
         {
+            "id": 13,
             "name": "Crestock",
             "ftp": "ftp.crestock.com"
         },
         {
+            "id": 14,
             "name": "Adobe Stock",
             "ftp": "ftp.contributor.adobestock.com",
             "zip_vector": true
