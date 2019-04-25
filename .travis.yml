@@ -82,11 +82,10 @@ deploy:
     secure: 2EMqL5NA8LR3fmggUbdxE3hwi2Ko8gDGoBjjVlpGxkOiaO3JumdPuy38sl2vs800x1cnGll54B9+ydXDTbBbMex8Y2j1V6h79ngCoCP1KfOpEwBhKmZchQlzGldvDrXEf5azX1HW7Q6jvRUlgiHH2XB/aSk79x4tY/QWqvHuZAAb0P8GBwTshDzqRL6LAYecakAp6aLHiZu1foVf7KkYQ96giKQ/BnDG2OwjMr5JxVjMCUnsf6yECcdWdD/3oJ1usSJLnWJSLDkNwwuw0Z12jltgOeoRRxcB/k0E/XBMLTw/rxYt8hxKrIWSeEAvrVhfkhjPoAW9S9/kz8SPf5hbNiVBkNjSglDXP9X9sJe0kT8v6aT5QHgYsb0MKPsF0kZs5dGSXMDfOMTakIHzDAKRFgjI9/a49saXM7eaMrzIynmaIwV1XU++lN1Kz+GptFr3+reYeJg1mRKaPj/duTfL9kVats0yH9O1oeCrDSkedIasoSGWrONP5ifRJ9mWbXHtik4gNYeoF17lmKju36G08yXLP36vd81b7NyGNebFu1s/4s2Mix/gG1vOObVAZQSGzgZWL/XUlHZEA9qRge8/B8w1wdqcuV1lZy/3mtzCa/QZDTlNCnP5PvCs4qMRLz9bYlaRWuOdZVDoWZon9gLaiLrQYcVmieIDfEODuNZxAWo=
   file_glob: true
   file: Xpiks-Nightly.dmg
-  draft: false
+  draft: true
   skip_cleanup: true
   prerelease: true
   name: Nightly
-  tag_name: nightly-latest
   overwrite: true
   on:
     branch: nightly
