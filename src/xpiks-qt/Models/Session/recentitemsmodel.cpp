@@ -58,6 +58,8 @@ namespace Models {
         for (auto it = items.rbegin(); it != items.rend(); it++) {
             m_LRUcache.put(*it, 0);
         }
+        rebuild();
+        emit recentItemsCountChanged();
     }
 
     void RecentItemsModel::pushItem(const QString &item) {
@@ -91,12 +93,5 @@ namespace Models {
         if (row < 0 || row >= m_RecentItems.size()) return QVariant();
         if (role == Qt::DisplayRole) { return m_RecentItems.at(index.row()); }
         return QVariant();
-    }
-
-    void RecentItemsModel::onRecentItemsUpdated(const QString &serialized) {
-        LOG_DEBUG << "#";
-        deserializeItems(serialized);
-        rebuild();
-        emit recentItemsCountChanged();
     }
 }

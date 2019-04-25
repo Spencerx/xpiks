@@ -72,9 +72,6 @@ namespace Models {
         virtual QHash<int, QByteArray> roleNames() const override { return QAbstractListModel::roleNames(); }
         const QStringList &getRecentItems() const { return m_RecentItems; }
 
-    public slots:
-        void onRecentItemsUpdated(const QString &serialized);
-
     signals:
         void recentItemsCountChanged();
 

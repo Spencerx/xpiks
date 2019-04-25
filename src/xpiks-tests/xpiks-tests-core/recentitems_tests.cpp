@@ -94,6 +94,7 @@ void RecentItemsTests::serializeDeserializeTest() {
     RecentItemsTestModel recentTo(3);
 
     recentTo.deserializeItems(serialized);
+
     QCOMPARE(recentFrom.rowCount(), recentTo.rowCount());
     QCOMPARE(recentFrom.getLatestUsedItem(), recentTo.getLatestUsedItem());
 }
