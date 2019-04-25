@@ -22,6 +22,8 @@
 
 #include "Common/logging.h"
 
+#define TABS_CACHE_ELASTICITY 20
+
 namespace QMLExtensions {
     bool compareCachePairs(const TabsModel::CachedTab &left, const TabsModel::CachedTab &right) {
         return left.m_CacheTag > right.m_CacheTag;
@@ -224,7 +226,7 @@ namespace QMLExtensions {
                     std::upper_bound(m_LRUcache.begin(), m_LRUcache.end(), cachedTab, compareCachePairs),
                     cachedTab);
 
-        if (m_LRUcache.size() > 10*(size_t)m_TabsList.size()) {
+        if (m_LRUcache.size() > (size_t)m_TabsList.size() + TABS_CACHE_ELASTICITY) {
             rebuildCache();
         }
     }

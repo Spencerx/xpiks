@@ -29,6 +29,11 @@ namespace Models {
         deserializeItems(recentDirectories);
     }
 
+    QUrl RecentDirectoriesModel::getLatestItem() const {
+        auto &items = getRecentItems();
+        return items.empty() ? QUrl() : QUrl::fromLocalFile(items.at(0));
+    }
+
     void RecentDirectoriesModel::sync() {
         QString recentDirectories = serializeItems();
         m_State.setValue(Constants::recentDirectories, recentDirectories);

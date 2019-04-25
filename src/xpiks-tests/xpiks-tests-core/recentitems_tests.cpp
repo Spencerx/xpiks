@@ -59,3 +59,41 @@ void RecentItemsTests::lastPushedIsMostRecentDirectoryTest() {
 
     checkLastPushedIsMostRecent(recentDirectories);
 }
+
+class RecentItemsTestModel: public Models::RecentItemsModel
+{
+public:
+    using Models::RecentItemsModel::RecentItemsModel;
+    virtual void initialize() override {}
+    virtual void sync() override {}
+};
+
+void RecentItemsTests::leastUsedIsRemovedTest() {
+    RecentItemsTestModel recentItems(3);
+
+    recentItems.pushItem("d1");
+    recentItems.pushItem("d2");
+    recentItems.pushItem("d3");
+
+    // also "recently use" d1
+    recentItems.pushItem("d1");
+    recentItems.pushItem("d4");
+
+    QVERIFY(recentItems.contains("d1"));
+}
+
+void RecentItemsTests::serializeDeserializeTest() {
+    RecentItemsTestModel recentFrom(3);
+
+    recentFrom.pushItem("d1");
+    recentFrom.pushItem("d2");
+    recentFrom.pushItem("d3");
+
+    QString serialized = recentFrom.serializeItems();
+
+    RecentItemsTestModel recentTo(3);
+
+    recentTo.deserializeItems(serialized);
+    QCOMPARE(recentFrom.rowCount(), recentTo.rowCount());
+    QCOMPARE(recentFrom.getLatestUsedItem(), recentTo.getLatestUsedItem());
+}

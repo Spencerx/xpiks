@@ -23,6 +23,9 @@
 #include <Qt>
 #include <QtGlobal>
 
+#include "Common/lrucache.h"
+#include "Helpers/hashhelpers.h"  // IWYU pragma: keep
+
 class QByteArray;
 class QModelIndex;
 
@@ -31,8 +34,9 @@ namespace Models {
     {
         Q_OBJECT
         Q_PROPERTY(int count READ getRecentItemsCount NOTIFY recentItemsCountChanged)
+
     public:
-        RecentItemsModel(int items);
+        RecentItemsModel(size_t count);
 
     public:
         int getMaxRecentItems() const { return m_MaxRecentItems; }
@@ -40,32 +44,33 @@ namespace Models {
 
     public:
         QString serializeItems();
-        Q_INVOKABLE QUrl getLatestItem() const;
 
     public:
         virtual void initialize() = 0;
 
     public:
         void deserializeItems(const QString &serialized);
-        void pushItem(const QString &directoryPath);
+        void pushItem(const QString &item);
+
+    private:
+        void rebuild();
 
 #ifdef CORE_TESTS
     public:
-        QString getLatestUsedItem() const { return m_LatestUsedItem; }
+        QString getLatestUsedItem() const { return m_LRUcache.data().begin()->first; }
+        bool contains(const QString &s) const { return m_RecentItems.contains(s); }
 #endif
-
-    private:
-        bool doPushItem(const QString &itemPath);
 
     protected:
         virtual void sync() = 0;
 
     public:
-        int rowCount(const QModelIndex &parent = QModelIndex()) const override { Q_UNUSED(parent); return m_RecentItems.length(); }
+        int rowCount(const QModelIndex &parent = QModelIndex()) const override;
         QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     protected:
         virtual QHash<int, QByteArray> roleNames() const override { return QAbstractListModel::roleNames(); }
+        const QStringList &getRecentItems() const { return m_RecentItems; }
 
     public slots:
         void onRecentItemsUpdated(const QString &serialized);
@@ -73,14 +78,10 @@ namespace Models {
     signals:
         void recentItemsCountChanged();
 
-    protected:
-        const QQueue<QString> &getRecentItems() const { return m_RecentItems; }
-
     private:
-        QSet<QString> m_ItemsSet;
-        QQueue<QString> m_RecentItems;
-        int m_MaxRecentItems;
-        QString m_LatestUsedItem;
+        Common::LRUCache<QString, int> m_LRUcache;
+        QStringList m_RecentItems;
+        size_t m_MaxRecentItems;
     };
 }
 

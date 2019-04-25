@@ -36,6 +36,7 @@ namespace Common {
 
     public:
         size_t size() const { return m_Data.size(); }
+        const std::list<KeyValuePair> &data() const { return m_Data; }
 
         TValue const &get(TKey const &key, TValue const &defaultValue = TValue()) {
             auto it = m_KeysMap.find(key);

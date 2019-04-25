@@ -97,7 +97,7 @@ namespace Models {
         virtual std::vector<int> getSelectedIndices() override { return getSelectedOriginalIndices(); }
 
 #ifdef CORE_TESTS
-        int retrieveNumberOfSelectedItems() { return getSelectedOriginalIndices().size(); }
+        int retrieveNumberOfSelectedItems() { return (int)getSelectedOriginalIndices().size(); }
 #endif
 
     public:

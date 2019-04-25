@@ -13,6 +13,8 @@ private slots:
     void pushMoreThanXDirectoriesTest();
     void lastPushedIsMostRecentFileTest();
     void lastPushedIsMostRecentDirectoryTest();
+    void leastUsedIsRemovedTest();
+    void serializeDeserializeTest();
 };
 
 #endif // RECENTITEMSTESTS_H

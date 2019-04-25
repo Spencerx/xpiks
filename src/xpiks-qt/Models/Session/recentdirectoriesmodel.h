@@ -31,6 +31,9 @@ namespace Models {
     public:
         virtual void initialize() override;
 
+    public:
+        Q_INVOKABLE QUrl getLatestItem() const;
+
     protected:
         virtual void sync() override;
 

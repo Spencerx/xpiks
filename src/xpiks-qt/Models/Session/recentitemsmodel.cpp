@@ -20,21 +20,25 @@
 #include "Common/logging.h"
 
 namespace Models {
-    RecentItemsModel::RecentItemsModel(int items):
+    RecentItemsModel::RecentItemsModel(size_t count):
         QAbstractListModel(),
-        m_MaxRecentItems(items)
+        m_LRUcache(count, 0 /*elasticity*/),
+        m_MaxRecentItems(count)
     {
     }
 
     QString RecentItemsModel::serializeItems() {
+        // historical reasons to have QQueue here
+        // now only thing left is to be backward compatible
+        QQueue<QString> items;
+        for (auto &kv: m_LRUcache.data()) {
+            items.enqueue(kv.first);
+        }
+        Q_ASSERT(m_LRUcache.size() <= m_MaxRecentItems);
         QByteArray raw;
         QDataStream ds(&raw, QIODevice::WriteOnly);
-        ds << m_RecentItems;
+        ds << items;
         return QString::fromLatin1(raw.toBase64());
-    }
-
-    QUrl RecentItemsModel::getLatestItem() const {
-        return QUrl::fromLocalFile(m_LatestUsedItem);
     }
 
     void RecentItemsModel::deserializeItems(const QString &serialized) {
@@ -44,75 +48,55 @@ namespace Models {
         originalData.append(serialized.toLatin1());
         QByteArray serializedBA = QByteArray::fromBase64(originalData);
 
+        // historical reasons to have QQueue there
+        // now only thing left is to be backward compatible
         QQueue<QString> items;
         QDataStream ds(&serializedBA, QIODevice::ReadOnly);
         ds >> items;
 
-        QQueue<QString> deserialized;
-        QSet<QString> toBeAdded;
-
-        foreach (const QString &item, items) {
-            if (!toBeAdded.contains(item)) {
-                toBeAdded.insert(item);
-                deserialized.push_back(item);
-            }
+        Q_ASSERT(m_LRUcache.size() == 0);
+        for (auto it = items.rbegin(); it != items.rend(); it++) {
+            m_LRUcache.put(*it, 0);
         }
-
-        m_ItemsSet = toBeAdded;
-        m_RecentItems = deserialized;
     }
 
-    void RecentItemsModel::pushItem(const QString &itemPath) {
-        if (doPushItem(itemPath)) {
-            LOG_DEBUG << "Added new recent item";
-            sync();
-        }
-
-        m_LatestUsedItem = itemPath;
-
+    void RecentItemsModel::pushItem(const QString &item) {
+        LOG_INFO << item;
+        m_LRUcache.put(item, 0);
+        rebuild();
+        sync();
         emit recentItemsCountChanged();
     }
 
-    bool RecentItemsModel::doPushItem(const QString &itemPath) {
-        bool added = false;
-
-        if (!m_ItemsSet.contains(itemPath)) {
-            m_ItemsSet.insert(itemPath);
-
-            int length = m_RecentItems.length();
-            beginInsertRows(QModelIndex(), length, length);
-            m_RecentItems.push_back(itemPath);
-            endInsertRows();
-
-            if (m_RecentItems.length() > m_MaxRecentItems) {
-                QString itemToRemove = m_RecentItems.first();
-                beginRemoveRows(QModelIndex(), 0, 0);
-                m_RecentItems.pop_front();
-                endRemoveRows();
-                m_ItemsSet.remove(itemToRemove);
-            }
-
-            added = true;
+    void RecentItemsModel::rebuild() {
+        QStringList next;
+        for (const auto &kv: m_LRUcache.data()) {
+            next.append(kv.first);
         }
+        beginResetModel();
+        {
+            m_RecentItems.swap(next);
+        }
+        endResetModel();
+        Q_ASSERT(m_RecentItems.size() <= static_cast<int>(m_MaxRecentItems));
+    }
 
-        return added;
+    int RecentItemsModel::rowCount(const QModelIndex &parent) const {
+         Q_UNUSED(parent);
+         return m_RecentItems.size();
     }
 
     QVariant RecentItemsModel::data(const QModelIndex &index, int role) const {
         int row = index.row();
-        if (row < 0 || row >= m_RecentItems.length()) return QVariant();
+        if (row < 0 || row >= m_RecentItems.size()) return QVariant();
         if (role == Qt::DisplayRole) { return m_RecentItems.at(index.row()); }
         return QVariant();
     }
 
     void RecentItemsModel::onRecentItemsUpdated(const QString &serialized) {
         LOG_DEBUG << "#";
-        beginResetModel();
-        {
-            deserializeItems(serialized);
-        }
-        endResetModel();
-
+        deserializeItems(serialized);
+        rebuild();
         emit recentItemsCountChanged();
     }
 }
