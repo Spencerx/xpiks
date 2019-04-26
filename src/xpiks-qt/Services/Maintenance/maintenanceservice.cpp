@@ -56,7 +56,8 @@ namespace Maintenance {
         QObject::connect(thread, &QThread::started, m_MaintenanceWorker, &MaintenanceWorker::process);
         QObject::connect(m_MaintenanceWorker, &MaintenanceWorker::stopped, thread, &QThread::quit);
 
-        QObject::connect(m_MaintenanceWorker, &MaintenanceWorker::stopped, m_MaintenanceWorker, &MaintenanceWorker::deleteLater);
+        QObject::connect(m_MaintenanceWorker, &MaintenanceWorker::stopped,
+                         m_MaintenanceWorker, &MaintenanceWorker::deleteLater);
         QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 
         QObject::connect(m_MaintenanceWorker, &MaintenanceWorker::stopped,
@@ -111,11 +112,11 @@ namespace Maintenance {
         m_MaintenanceWorker->submitItem(jobItem);
     }
 
-    void MaintenanceService::launchExiftool(const QString &settingsExiftoolPath) {
-        LOG_INFO << settingsExiftoolPath;
+    void MaintenanceService::launchExiftool(const QString &exiftoolPath) {
+        LOG_INFO << exiftoolPath;
         if (!isRunning()) { return; }
         Q_ASSERT(m_MaintenanceThread != nullptr);
-        auto jobItem = std::make_shared<LaunchExiftoolJobItem>(settingsExiftoolPath);
+        auto jobItem = std::make_shared<LaunchExiftoolJobItem>(exiftoolPath);
         QObject::connect(jobItem.get(), &LaunchExiftoolJobItem::exiftoolDetected,
                          this, &MaintenanceService::exiftoolDetected);
         jobItem->moveToThread(m_MaintenanceThread);

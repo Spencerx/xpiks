@@ -98,8 +98,10 @@ namespace Maintenance {
 
             if (tryGetExiftoolVersion(path, exiftoolVersion)) {
                 LOG_INFO << "Exiftool version:" << exiftoolVersion;
-                exiftoolPath = path;
-                break;
+                if (!exiftoolVersion.trimmed().isEmpty()) {
+                    exiftoolPath = path;
+                    break;
+                }
             }
         }
 
