@@ -351,6 +351,8 @@ void XpiksApp::start() {
     }
 
     m_MaintenanceService.startService();
+    m_MaintenanceService.launchExiftool(m_SettingsModel.getExifToolPath());
+
     m_ImageCachingService.startService(m_InitCoordinator, m_DatabaseManager);
     m_MetadataIOService.startService(m_DatabaseManager, m_ArtworksUpdateHub);
     m_VideoCachingService.startService(m_ImageCachingService, m_ArtworksUpdateHub,
@@ -572,7 +574,6 @@ void XpiksApp::afterServicesStarted() {
 
 void XpiksApp::executeMaintenanceJobs() {
     // integration test just don't have old ones
-    m_MaintenanceService.launchExiftool(m_SettingsModel.getExifToolPath());
     m_MaintenanceService.cleanupLogs();
     m_MaintenanceService.cleanupUpdatesArtifacts();
 }
@@ -649,9 +650,6 @@ void XpiksApp::connectEntitiesSignalsSlots() {
 
     QObject::connect(&m_WarningsService, &Warnings::WarningsService::queueIsEmpty,
                      &m_WarningsModel, &Warnings::WarningsModel::onWarningsUpdateRequired);
-
-    QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::recommendedExiftoolFound,
-                     &m_SettingsModel, &Models::SettingsModel::onRecommendedExiftoolFound);
 
     QObject::connect(&m_MetadataIOCoordinator, &MetadataIO::MetadataIOCoordinator::metadataReadingFinished,
                      &m_ArtworksListModel, &Models::ArtworksListModel::modifiedArtworksCountChanged);

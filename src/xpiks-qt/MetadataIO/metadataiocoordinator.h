@@ -60,7 +60,6 @@ namespace MetadataIO {
         void hasErrorsChanged(bool value);
         void exiftoolNotFoundChanged();
         void isInProgressChanged();
-        void recommendedExiftoolFound(const QString &path);
 
     public:
         bool getExiftoolNotFound() const { return m_ExiftoolNotFound; }
