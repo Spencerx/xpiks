@@ -68,7 +68,7 @@ namespace AutoComplete {
         return success;
     }
 
-    void AutoCompleteWorker::processOneItem(std::shared_ptr<CompletionQuery> &item) {
+    void AutoCompleteWorker::processOneItem(const std::shared_ptr<CompletionQuery> &item) {
         if (!item->getNeedsUpdate()) {
             generateCompletions(item);
         } else {
@@ -76,7 +76,7 @@ namespace AutoComplete {
         }
     }
 
-    void AutoCompleteWorker::generateCompletions(std::shared_ptr<CompletionQuery> &item) {
+    void AutoCompleteWorker::generateCompletions(const std::shared_ptr<CompletionQuery> &item) {
         const QString &prefix = item->getPrefix();
         LOG_VERBOSE_OR_DEBUG << prefix;
 
@@ -119,7 +119,7 @@ namespace AutoComplete {
         }
     }
 
-    void AutoCompleteWorker::updateCompletions(std::shared_ptr<CompletionQuery> &item) {
+    void AutoCompleteWorker::updateCompletions(const std::shared_ptr<CompletionQuery> &item) {
         LOG_VERBOSE_OR_DEBUG << item->getPrefix();
 
         bool anyChanges = false;

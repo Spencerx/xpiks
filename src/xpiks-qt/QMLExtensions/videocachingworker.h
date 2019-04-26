@@ -59,10 +59,10 @@ namespace QMLExtensions {
     protected:
         virtual bool initWorker() override;
         virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
-        virtual void processOneItem(std::shared_ptr<VideoCacheRequest> &item) override;
+        virtual void processOneItem(const std::shared_ptr<VideoCacheRequest> &item) override;
 
     private:
-        bool createThumbnail(std::shared_ptr<VideoCacheRequest> &item, std::vector<uint8_t> &buffer, int &width, int &height);
+        bool createThumbnail(const std::shared_ptr<VideoCacheRequest> &item, std::vector<uint8_t> &buffer, int &width, int &height);
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
@@ -82,10 +82,10 @@ namespace QMLExtensions {
     private:
         bool saveThumbnail(QImage &image, const QString &originalPath, bool isQuickThumbnail, QString &thumbnailPath);
         void cacheImage(const QString &thumbnailPath);
-        void applyThumbnail(std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath, bool recacheArtwork);
+        void applyThumbnail(const std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath, bool recacheArtwork);
         void saveIndex();
-        bool checkLockedIO(std::shared_ptr<VideoCacheRequest> &item);
-        bool checkProcessed(std::shared_ptr<VideoCacheRequest> &item);
+        bool checkLockedIO(const std::shared_ptr<VideoCacheRequest> &item);
+        bool checkProcessed(const std::shared_ptr<VideoCacheRequest> &item);
 
     private:
         Common::ISystemEnvironment &m_Environment;

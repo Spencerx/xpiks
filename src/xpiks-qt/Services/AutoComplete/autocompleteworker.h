@@ -47,11 +47,11 @@ namespace AutoComplete {
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItem(std::shared_ptr<CompletionQuery> &item) override;
+        virtual void processOneItem(const std::shared_ptr<CompletionQuery> &item) override;
 
     private:
-        void generateCompletions(std::shared_ptr<CompletionQuery> &item);
-        void updateCompletions(std::shared_ptr<CompletionQuery> &item);
+        void generateCompletions(const std::shared_ptr<CompletionQuery> &item);
+        void updateCompletions(const std::shared_ptr<CompletionQuery> &item);
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }

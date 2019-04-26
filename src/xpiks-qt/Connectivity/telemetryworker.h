@@ -29,7 +29,7 @@ namespace Connectivity {
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItem(std::shared_ptr<AnalyticsUserEvent> &item) override;
+        virtual void processOneItem(const std::shared_ptr<AnalyticsUserEvent> &item) override;
 
     private:
         bool sendOneReport(const QString &resource, const QString &payload);

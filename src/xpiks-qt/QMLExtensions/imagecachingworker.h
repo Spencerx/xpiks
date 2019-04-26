@@ -49,7 +49,7 @@ namespace QMLExtensions {
     protected:
         virtual bool initWorker() override;
         virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
-        virtual void processOneItem(std::shared_ptr<ImageCacheRequest> &item) override;
+        virtual void processOneItem(const std::shared_ptr<ImageCacheRequest> &item) override;
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
@@ -71,7 +71,7 @@ namespace QMLExtensions {
 
     private:
         void saveIndex();
-        bool isProcessed(std::shared_ptr<ImageCacheRequest> &item);
+        bool isProcessed(const std::shared_ptr<ImageCacheRequest> &item);
 
     private:
         Common::ISystemEnvironment &m_Environment;

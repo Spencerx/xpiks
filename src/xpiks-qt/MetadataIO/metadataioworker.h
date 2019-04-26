@@ -68,11 +68,11 @@ namespace MetadataIO {
     protected:
         virtual bool initWorker() override;
         virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
-        void processIOItem(std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID);
+        void processIOItem(const std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID);
 
     private:
-        void processReadWriteItem(std::shared_ptr<MetadataReadWriteTask> &item, batch_id_t batchID);
-        void processSearchItem(std::shared_ptr<MetadataSearchTask> &item);
+        void processReadWriteItem(const std::shared_ptr<MetadataReadWriteTask> &item, batch_id_t batchID);
+        void processSearchItem(const std::shared_ptr<MetadataSearchTask> &item);
 
     public:
         void importArtworksFromStorage();

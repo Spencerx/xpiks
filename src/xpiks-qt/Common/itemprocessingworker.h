@@ -78,8 +78,8 @@ namespace Common {
 
         class WorkResult {
         public:
-            WorkResult(std::shared_ptr<ResultType> &result, batch_id_t batchID):
-                m_Result(std::move(result)),
+            WorkResult(const std::shared_ptr<ResultType> &result, batch_id_t batchID):
+                m_Result(result),
                 m_BatchID(batchID)
             { }
         public:
@@ -263,7 +263,7 @@ namespace Common {
             return std::shared_ptr<ResultType>();
         }
 
-        virtual void processOneItem(std::shared_ptr<ItemType> &item) { Q_UNUSED(item); }
+        virtual void processOneItem(const std::shared_ptr<ItemType> &item) { Q_UNUSED(item); }
         virtual void onQueueIsEmpty() { /* DO NOTHING */ }
         virtual void onWorkerStopped() { /* DO NOTHING */ }
         virtual void onResultsAvailable(std::vector<WorkResult> &results) { Q_UNUSED(results); }
@@ -314,7 +314,7 @@ namespace Common {
             }
         }
 
-        void saveResult(std::shared_ptr<ResultType> &result, WorkItem &workItem) {
+        void saveResult(const std::shared_ptr<ResultType> &result, WorkItem &workItem) {
             if (result) {
                 m_Results.emplace_back(result, workItem.m_ID);
             }

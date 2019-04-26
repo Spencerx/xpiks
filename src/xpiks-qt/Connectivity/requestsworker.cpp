@@ -39,7 +39,7 @@ namespace Connectivity {
         return true;
     }
 
-    void RequestsWorker::sendRequest(std::shared_ptr<IConnectivityRequest> &item) {
+    void RequestsWorker::sendRequest(const std::shared_ptr<IConnectivityRequest> &item) {
         auto url = item->getResourceURL();
         LOG_INFO << "Request:" << url;
 

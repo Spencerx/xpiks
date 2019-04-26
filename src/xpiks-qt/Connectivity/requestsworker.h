@@ -36,10 +36,10 @@ namespace Connectivity {
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItem(std::shared_ptr<IConnectivityRequest> &item) override { sendRequest(item); }
+        virtual void processOneItem(const std::shared_ptr<IConnectivityRequest> &item) override { sendRequest(item); }
 
     private:
-        void sendRequest(std::shared_ptr<IConnectivityRequest> &item);
+        void sendRequest(const std::shared_ptr<IConnectivityRequest> &item);
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }

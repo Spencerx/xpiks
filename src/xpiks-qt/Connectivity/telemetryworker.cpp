@@ -25,7 +25,7 @@
 #include "Common/version.h"
 #include "Connectivity/analyticsuserevent.h"
 
-void buildQuery(std::shared_ptr<Connectivity::AnalyticsUserEvent> &userEvent, const QString &userAgent, QUrlQuery &query) {
+void buildQuery(const std::shared_ptr<Connectivity::AnalyticsUserEvent> &userEvent, const QString &userAgent, QUrlQuery &query) {
     query.addQueryItem(QLatin1String("idsite"), QLatin1String("1"));
     query.addQueryItem(QLatin1String("rec"), QLatin1String("1"));
     query.addQueryItem(QLatin1String("url"), QString("/client/%1").arg(userEvent->getActionString()));
@@ -51,7 +51,7 @@ namespace Connectivity {
         return true;
     }
 
-    void TelemetryWorker::processOneItem(std::shared_ptr<AnalyticsUserEvent> &item) {
+    void TelemetryWorker::processOneItem(const std::shared_ptr<AnalyticsUserEvent> &item) {
         LOG_INFO << "Reporting action:" << item->getActionString();
 
         QUrlQuery query;

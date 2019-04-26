@@ -69,7 +69,7 @@ namespace MetadataIO {
         return std::shared_ptr<void>();
     }
 
-    void MetadataIOWorker::processIOItem(std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID) {
+    void MetadataIOWorker::processIOItem(const std::shared_ptr<MetadataIOTaskBase> &item, batch_id_t batchID) {
         do {
             std::shared_ptr<MetadataReadWriteTask> readWriteItem = std::dynamic_pointer_cast<MetadataReadWriteTask>(item);
             if (readWriteItem) {
@@ -88,7 +88,7 @@ namespace MetadataIO {
         } while(false);
     }
 
-    void MetadataIOWorker::processReadWriteItem(std::shared_ptr<MetadataReadWriteTask> &item, batch_id_t batchID) {
+    void MetadataIOWorker::processReadWriteItem(const std::shared_ptr<MetadataReadWriteTask> &item, batch_id_t batchID) {
         auto &artwork = item->getArtworkMetadata();
         Q_ASSERT(artwork != nullptr);
         if (artwork == nullptr) { return; }
@@ -117,7 +117,7 @@ namespace MetadataIO {
         }
     }
 
-    void MetadataIOWorker::processSearchItem(std::shared_ptr<MetadataSearchTask> &item) {
+    void MetadataIOWorker::processSearchItem(const std::shared_ptr<MetadataSearchTask> &item) {
         auto *localLibraryQuery = item->getQuery();
         m_MetadataCache.search(localLibraryQuery->getSearchQuery(), localLibraryQuery->getResults());
         localLibraryQuery->notifyResultsReady();

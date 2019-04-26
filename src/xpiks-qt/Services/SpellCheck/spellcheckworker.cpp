@@ -139,7 +139,7 @@ namespace SpellCheck {
         return result;
     }
 
-    void SpellCheckWorker::processSpellingQuery(std::shared_ptr<SpellCheckItem> &item) {
+    void SpellCheckWorker::processSpellingQuery(const std::shared_ptr<SpellCheckItem> &item) {
         const bool neededSuggestions = item->needsSuggestions();
         auto &queryItems = item->getQueries();
         const auto wordAnalysisFlags = item->getWordAnalysisFlags();

@@ -24,7 +24,7 @@ namespace Maintenance {
         return true;
     }
 
-    void MaintenanceWorker::processOneItem(std::shared_ptr<IMaintenanceItem> &item) {
+    void MaintenanceWorker::processOneItem(const std::shared_ptr<IMaintenanceItem> &item) {
         item->processJob();
 
         // make this thread more non-intrusive

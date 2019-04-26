@@ -29,7 +29,7 @@ namespace Maintenance {
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItem(std::shared_ptr<IMaintenanceItem> &item) override;
+        virtual void processOneItem(const std::shared_ptr<IMaintenanceItem> &item) override;
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }
         virtual void onWorkerStopped() override { emit stopped(); }
 

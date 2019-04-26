@@ -68,7 +68,7 @@ namespace Translation {
         return true;
     }
 
-    void TranslationWorker::processOneItem(std::shared_ptr<TranslationQuery> &item) {
+    void TranslationWorker::processOneItem(const std::shared_ptr<TranslationQuery> &item) {
         std::string translationData;
         auto &query = item->getQuery();
         LOG_INFO << "translation request:" << query;

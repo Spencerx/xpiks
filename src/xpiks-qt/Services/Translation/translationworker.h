@@ -49,7 +49,7 @@ namespace Translation {
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItem(std::shared_ptr<TranslationQuery> &item) override;
+        virtual void processOneItem(const std::shared_ptr<TranslationQuery> &item) override;
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }

@@ -98,7 +98,7 @@ namespace QMLExtensions {
         return std::shared_ptr<void>();
     }
 
-    void VideoCachingWorker::processOneItem(std::shared_ptr<VideoCacheRequest> &item) {
+    void VideoCachingWorker::processOneItem(const std::shared_ptr<VideoCacheRequest> &item) {
         LOG_DEBUG << "Processing #" << item->getArtworkID();
         if (checkLockedIO(item)) { return; }
         if (checkProcessed(item)) { return; }
@@ -144,7 +144,7 @@ namespace QMLExtensions {
         }
     }
 
-    bool VideoCachingWorker::createThumbnail(std::shared_ptr<VideoCacheRequest> &item, std::vector<uint8_t> &buffer, int &width, int &height) {
+    bool VideoCachingWorker::createThumbnail(const std::shared_ptr<VideoCacheRequest> &item, std::vector<uint8_t> &buffer, int &width, int &height) {
         bool thumbnailCreated = false;
 
         const QString &originalPath = item->getFilepath();
@@ -229,7 +229,7 @@ namespace QMLExtensions {
         m_ImageCachingService.cacheImage(thumbnailPath);
     }
 
-    void VideoCachingWorker::applyThumbnail(std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath, bool recacheArtwork) {
+    void VideoCachingWorker::applyThumbnail(const std::shared_ptr<VideoCacheRequest> &item, const QString &thumbnailPath, bool recacheArtwork) {
         LOG_INFO << "#" << item->getArtworkID() << thumbnailPath;
         item->setThumbnailPath(thumbnailPath);
 
@@ -246,7 +246,7 @@ namespace QMLExtensions {
         m_Cache.sync();
     }
 
-    bool VideoCachingWorker::checkLockedIO(std::shared_ptr<VideoCacheRequest> &item) {
+    bool VideoCachingWorker::checkLockedIO(const std::shared_ptr<VideoCacheRequest> &item) {
         bool isLocked = false;
 
         auto &video = item->getArtwork();
@@ -260,7 +260,7 @@ namespace QMLExtensions {
         return isLocked;
     }
 
-    bool VideoCachingWorker::checkProcessed(std::shared_ptr<VideoCacheRequest> &item) {
+    bool VideoCachingWorker::checkProcessed(const std::shared_ptr<VideoCacheRequest> &item) {
         if (item->getNeedRecache()) { return false; }
         if (item->isRepeated()) { return false; }
 

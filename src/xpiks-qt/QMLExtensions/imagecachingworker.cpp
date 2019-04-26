@@ -91,7 +91,7 @@ namespace QMLExtensions {
         return std::shared_ptr<void>();
     }
 
-    void ImageCachingWorker::processOneItem(std::shared_ptr<ImageCacheRequest> &item) {
+    void ImageCachingWorker::processOneItem(const std::shared_ptr<ImageCacheRequest> &item) {
         if (isProcessed(item)) {
             LOG_FOR_DEBUG << item->getFilepath() << "is processed";
             return;
@@ -206,7 +206,7 @@ namespace QMLExtensions {
         m_Cache.sync();
     }
 
-    bool ImageCachingWorker::isProcessed(std::shared_ptr<ImageCacheRequest> &item) {
+    bool ImageCachingWorker::isProcessed(const std::shared_ptr<ImageCacheRequest> &item) {
         if (item->getNeedRecache()) { return false; }
 
         const QString &originalPath = item->getFilepath();

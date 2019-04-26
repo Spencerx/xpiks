@@ -71,7 +71,7 @@ namespace SpellCheck {
     protected:
         virtual bool initWorker() override;
         virtual std::shared_ptr<Artworks::ArtworkMetadata> processWorkItem(WorkItem &workItem) override;
-        void processSpellingQuery(std::shared_ptr<SpellCheckItem> &item);
+        void processSpellingQuery(const std::shared_ptr<SpellCheckItem> &item);
 
     protected:
         virtual void onQueueIsEmpty() override {
