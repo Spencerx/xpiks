@@ -38,12 +38,12 @@ namespace Models {
     }
 
     void RecentFilesModel::add(const Artworks::ArtworksSnapshot &snapshot) {
-        int maxFiles = getMaxRecentItems();
-        const int length = (int)snapshot.size();
-        int first = qMax(0, length - maxFiles);
+        const size_t maxFiles = getMaxRecentItems();
+        const size_t size = snapshot.size();
+        size_t i = (size > maxFiles) ? (size - maxFiles) : 0;
 
-        for (; first < length; ++first) {
-            auto &artwork = snapshot.get(first);
+        for (; i < size; ++i) {
+            auto &artwork = snapshot.get(i);
             pushItem(artwork->getFilepath());
         }
     }

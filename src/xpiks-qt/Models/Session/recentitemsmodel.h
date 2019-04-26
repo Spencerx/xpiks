@@ -39,7 +39,6 @@ namespace Models {
         RecentItemsModel(size_t count);
 
     public:
-        int getMaxRecentItems() const { return m_MaxRecentItems; }
         int getRecentItemsCount() const { return m_RecentItems.size(); }
 
     public:
@@ -71,6 +70,7 @@ namespace Models {
     protected:
         virtual QHash<int, QByteArray> roleNames() const override { return QAbstractListModel::roleNames(); }
         const QStringList &getRecentItems() const { return m_RecentItems; }
+        size_t getMaxRecentItems() const { return m_MaxRecentItems; }
 
     signals:
         void recentItemsCountChanged();
