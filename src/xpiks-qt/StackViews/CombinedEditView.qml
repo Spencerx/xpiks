@@ -938,6 +938,9 @@ Rectangle {
                                 dragParent: flv
                                 wasDropped: flv.droppedIndex == delegateIndex
                                 onActionDoubleClicked: {
+                                    // https://github.com/ribtoks/xpiks/issues/626
+                                    if (kw.isDropTarget) { return; }
+
                                     var callbackObject = {
                                         onSuccess: function(replacement) {
                                             combinedArtworks.editKeyword(kw.delegateIndex, replacement)
