@@ -6,14 +6,22 @@
 
 #include "Mocks/coretestsenvironment.h"
 
-void checkCannotPushMoreThan(Models::RecentItemsModel &recentItems) {
-    int maxRecent = recentItems.getMaxRecentItems();
+class RecentItemsTestModel: public Models::RecentItemsModel
+{
+public:
+    using Models::RecentItemsModel::RecentItemsModel;
+    virtual void initialize() override {}
+    virtual void sync() override {}
+};
 
-    for (int i = 0; i < maxRecent*2; ++i) {
+void checkCannotPushMoreThan(Models::RecentItemsModel &recentItems) {
+    const size_t maxRecent = recentItems.getMaxRecentItems();
+
+    for (size_t i = 0; i < maxRecent*2; ++i) {
         recentItems.pushItem("/directory/path/" + QString::number(i));
     }
 
-    QCOMPARE(recentItems.rowCount(), maxRecent);
+    QCOMPARE(recentItems.rowCount(), static_cast<int>(maxRecent));
 }
 
 void RecentItemsTests::pushMoreThanXFilesTest() {
@@ -59,14 +67,6 @@ void RecentItemsTests::lastPushedIsMostRecentDirectoryTest() {
 
     checkLastPushedIsMostRecent(recentDirectories);
 }
-
-class RecentItemsTestModel: public Models::RecentItemsModel
-{
-public:
-    using Models::RecentItemsModel::RecentItemsModel;
-    virtual void initialize() override {}
-    virtual void sync() override {}
-};
 
 void RecentItemsTests::leastUsedIsRemovedTest() {
     RecentItemsTestModel recentItems(3);
