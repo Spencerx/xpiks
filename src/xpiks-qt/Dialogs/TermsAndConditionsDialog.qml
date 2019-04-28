@@ -22,7 +22,6 @@ import "../Constants/UIConfig.js" as UIConfig
 
 StaticDialogBase {
     id: termsComponent
-    canMinimize: false
     canEscapeClose: false
     canMove: false
     property string termsText

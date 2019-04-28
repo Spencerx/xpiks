@@ -20,7 +20,6 @@ import "../StyledControls"
 
 StaticDialogBase {
     id: editKeywordComponent
-    canMinimize: false
     canEscapeClose: false
     property var callbackObject
     property string previousKeyword: ''

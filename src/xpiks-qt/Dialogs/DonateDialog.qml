@@ -22,7 +22,6 @@ import "../Constants/UIConfig.js" as UIConfig
 
 StaticDialogBase {
     id: donateComponent
-    canMinimize: false
     canMove: false
     anchors.fill: parent
 

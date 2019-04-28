@@ -20,7 +20,6 @@ import "../Constants/UIConfig.js" as UIConfig
 
 StaticDialogBase {
     id: masterPasswordComponent
-    canMinimize: false
     canEscapeClose: false
     property bool firstTime
     property bool emptyMP: false

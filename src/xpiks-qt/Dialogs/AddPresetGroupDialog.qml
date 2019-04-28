@@ -20,7 +20,6 @@ import "../StyledControls"
 
 StaticDialogBase {
     id: addGroupComponent
-    canMinimize: false
     canEscapeClose: false
     property var callbackObject
     property bool anyError: false

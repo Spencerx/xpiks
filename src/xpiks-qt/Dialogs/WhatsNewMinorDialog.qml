@@ -22,7 +22,6 @@ import "../StyledControls"
 StaticDialogBase {
     id: whatsNewMinorComponent
     property string whatsNewText
-    canMinimize: false
     canEscapeClose: false
     canMove: false
     anchors.fill: parent

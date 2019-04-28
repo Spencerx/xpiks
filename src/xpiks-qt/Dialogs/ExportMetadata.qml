@@ -22,7 +22,6 @@ import "../StyledControls"
 
 BaseDialog {
     id: metadataExportComponent
-    canMinimize: false
     canEscapeClose: false
     anchors.fill: parent
     property bool isInProgress: false

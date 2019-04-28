@@ -12,7 +12,6 @@ import QtQuick 2.0
 
 Item {
     id: root
-    property bool canMinimize: true
     property bool canEscapeClose: true
 
     Component.onCompleted: focus = true
@@ -42,36 +41,6 @@ Item {
         // the dialog window will not do anything
         MouseArea {
             anchors.fill: parent
-        }
-    }
-
-    states: [
-        State {
-            name: "minimized"
-            PropertyChanges {
-                target: root
-                opacity: 0.2
-            }
-        }
-    ]
-
-    Keys.onPressed: {
-        if (event.isAutoRepeat) { return }
-        if (root.canMinimize &&
-                (event.key === Qt.Key_M) &&
-                (event.modifiers === Qt.ControlModifier)) {
-            keywordsSuggestionComponent.state = "minimized"
-            event.accepted = true
-        }
-    }
-
-    Keys.onReleased: {
-        if (event.isAutoRepeat) { return }
-        if (root.canMinimize &&
-                (event.key === Qt.Key_M) &&
-                (event.modifiers === Qt.ControlModifier)) {
-            keywordsSuggestionComponent.state = ""
-            event.accepted = true
         }
     }
 }

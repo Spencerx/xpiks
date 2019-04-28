@@ -22,7 +22,6 @@ import "../StyledControls"
 
 StaticDialogBase {
     id: zipArtworksComponent
-    canMinimize: false
     canEscapeClose: false
     property bool immediateProcessing: false
     property var callbackObject

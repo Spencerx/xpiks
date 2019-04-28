@@ -21,7 +21,6 @@ import "../Constants/UIConfig.js" as UIConfig
 
 StaticDialogBase {
     id: proxySetupComponent
-    canMinimize: false
     property bool firstTime
     property var callbackObject
     anchors.fill: parent
