@@ -79,6 +79,7 @@ namespace Models {
         Q_PROPERTY(bool autoCacheImages READ getAutoCacheImages WRITE setAutoCacheImages NOTIFY autoCacheImagesChanged)
         Q_PROPERTY(bool verboseUpload READ getVerboseUpload WRITE setVerboseUpload NOTIFY verboseUploadChanged)
         Q_PROPERTY(bool useAutoImport READ getUseAutoImport WRITE setUseAutoImport NOTIFY useAutoImportChanged)
+        Q_PROPERTY(bool useSimplifiedUI READ getUseSimplifiedUI WRITE setUseSimplifiedUI NOTIFY useSimplifiedUIChanged)
 
         Q_PROPERTY(QString appVersion READ getAppVersion CONSTANT)
 
@@ -86,8 +87,7 @@ namespace Models {
 
     public:
         explicit SettingsModel(Common::ISystemEnvironment &environment,
-                               QObject *parent = 0);
-        virtual ~SettingsModel() { }
+                               QObject *parent = nullptr);
 
     public:
         void saveLocale();
@@ -185,6 +185,7 @@ namespace Models {
         int getProgressiveSuggestionIncrement() const { return m_ProgressiveSuggestionIncrement; }
         int getUseDirectExiftoolExport() const { return m_UseDirectExiftoolExport; }
         bool getUseAutoImport() const { return m_UseAutoImport; }
+        bool getUseSimplifiedUI() const { return true;/*m_UseSimplifiedUI;*/ }
 
     signals:
         void settingsReset();
@@ -223,6 +224,7 @@ namespace Models {
         void useProgressiveSuggestionPreviewsChanged(bool progressiveSuggestionPreviews);
         void progressiveSuggestionIncrementChanged(int progressiveSuggestionIncrement);
         void useAutoImportChanged(bool value);
+        void useSimplifiedUIChanged(bool value);
 
     signals:
         void spellCheckDisabled();
@@ -261,6 +263,7 @@ namespace Models {
         void setProgressiveSuggestionIncrement(int progressiveSuggestionIncrement);
         void setUseDirectExiftoolExport(bool value);
         void setUseAutoImport(bool value);
+        void setUseSimplifiedUI(bool value);
 
     public slots:
         void onRecommendedExiftoolFound(const QString &path);
@@ -329,6 +332,7 @@ namespace Models {
         bool m_UseDirectExiftoolExport;
         bool m_UseAutoImport;
         bool m_ExiftoolPathChanged;
+        bool m_UseSimplifiedUI;
     };
 }
 

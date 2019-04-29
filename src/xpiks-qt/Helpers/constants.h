@@ -176,6 +176,7 @@ namespace Constants {
     const char useDirectExiftoolExport[] = "useDirectExiftoolExport";
     const char suggestorSearchTypeIndex[] = "suggestorSearchTypeIndex";
     const char useAutoImport[] = "useAutoImport";
+    const char useSimplifiedUI[] = "useSimplifiedUI";
 }
 
 #endif // CONSTANTS

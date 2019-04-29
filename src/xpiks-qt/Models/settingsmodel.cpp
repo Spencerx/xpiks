@@ -81,6 +81,7 @@
 #define DEFAULT_PROXY_HOST ""
 #define DEFAULT_USE_PROGRESSIVE_SUGGESTION_PREVIEWS false
 #define DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT 10
+#define DEFAULT_USE_SIMPLIFIED_UI false
 
 #define VERBOSE_UPLOAD_STARTDATE "verboseUploadStart"
 
@@ -192,7 +193,8 @@ namespace Models {
         m_ProgressiveSuggestionIncrement(DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT),
         m_UseDirectExiftoolExport(DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT),
         m_UseAutoImport(DEFAULT_USE_AUTOIMPORT),
-        m_ExiftoolPathChanged(false)
+        m_ExiftoolPathChanged(false),
+        m_UseSimplifiedUI(DEFAULT_USE_SIMPLIFIED_UI)
     {
     }
 
@@ -397,6 +399,7 @@ namespace Models {
         setProgressiveSuggestionIncrement(m_ExperimentalMap->intValue(progressiveSuggestionIncrement, DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT));
         setUseDirectExiftoolExport(m_ExperimentalMap->boolValue(useDirectExiftoolExport, DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT));
         setUseAutoImport(m_ExperimentalMap->boolValue(useAutoImport, DEFAULT_USE_AUTOIMPORT));
+        setUseSimplifiedUI(m_ExperimentalMap->boolValue(useSimplifiedUI, DEFAULT_USE_SIMPLIFIED_UI));
 
         deserializeProxyFromSettings(m_SettingsMap->stringValue(proxyHost, DEFAULT_PROXY_HOST));
 
@@ -464,6 +467,7 @@ namespace Models {
         setProgressiveSuggestionIncrement(DEFAULT_PROGRESSIVE_SUGGESTION_INCREMENT);
         setUseDirectExiftoolExport(DEFAULT_USE_DIRECT_EXIFTOOL_EXPORT);
         setUseAutoImport(DEFAULT_USE_AUTOIMPORT);
+        setUseSimplifiedUI(DEFAULT_USE_SIMPLIFIED_UI);
 
         justChanged();
 
@@ -506,6 +510,7 @@ namespace Models {
         m_ExperimentalMap->setValue(progressiveSuggestionIncrement, m_ProgressiveSuggestionIncrement);
         m_ExperimentalMap->setValue(useDirectExiftoolExport, m_UseDirectExiftoolExport);
         m_ExperimentalMap->setValue(useAutoImport, m_UseAutoImport);
+        m_ExperimentalMap->setValue(useSimplifiedUI, m_UseSimplifiedUI);
 
         if (!m_MustUseMasterPassword) {
             m_SettingsMap->setValue(masterPasswordHash, "");
@@ -938,6 +943,15 @@ namespace Models {
 
         m_UseAutoImport = value;
         emit useAutoImportChanged(value);
+        justChanged();
+    }
+
+    void SettingsModel::setUseSimplifiedUI(bool value) {
+        if (m_UseSimplifiedUI == value)
+            return;
+
+        m_UseSimplifiedUI = value;
+        emit useSimplifiedUIChanged(value);
         justChanged();
     }
 
