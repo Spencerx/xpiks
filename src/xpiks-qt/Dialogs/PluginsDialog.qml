@@ -184,7 +184,6 @@ StaticDialogBase {
                             anchors.rightMargin: 10
                             isActive: false
                             enabled: !removed
-                            crossOpacity: 1
 
                             onItemClicked: {
                                 confirmRemovePluginDialog.pluginIndex = wrapper.delegateIndex

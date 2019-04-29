@@ -58,6 +58,7 @@ Item {
                 maximumY: (groove.height - handle.height);
                 axis: Drag.YAxis;
             }
+            hoverEnabled: true
             anchors { fill: parent; }
             onClicked: { flickable.contentY = (mouse.y / groove.height * (flickable.contentHeight - flickable.height)); }
         }
@@ -75,8 +76,7 @@ Item {
                 id: backHandle
                 anchors.fill: parent
                 radius: 5
-                color: scrollbar.handleColor
-                opacity: clicker.pressed ? 1 : (clicker.containsMouse ? 0.9 : 0.8)
+                color: clicker.pressed ? scrollbar.handleColor : Qt.darker(scrollbar.handleColor, clicker.containsMouse ? 1.1 : 1.2)
             }
         }
     }

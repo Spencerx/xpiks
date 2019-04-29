@@ -23,7 +23,6 @@ Item {
     Item {
         id: wrapperRect
         anchors.fill: parent
-        opacity: closeIconMouseArea.containsMouse ? 1 : 0.9
 
         property color pressColor: {
             if (closeIconMouseArea.containsMouse) {

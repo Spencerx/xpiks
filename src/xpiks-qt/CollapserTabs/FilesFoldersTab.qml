@@ -162,7 +162,6 @@ Item {
                             height: 14
                             Layout.alignment: Qt.AlignVCenter
                             isActive: false
-                            crossOpacity: 1
                             thickness: 2
 
                             onItemClicked: {

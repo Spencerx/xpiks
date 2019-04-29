@@ -560,7 +560,6 @@ DISTFILES += \
     CollapserTabs/QuickBufferTab.qml \
     CollapserTabs/TranslatorIcon.qml \
     CollapserTabs/TranslatorTab.qml \
-    Components/AddIcon.qml \
     Components/BackGlyphButton.qml \
     Components/CheckedComponent.qml \
     Components/CloseIcon.qml \
