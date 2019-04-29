@@ -91,7 +91,7 @@ namespace Models {
         explicit ArtworkProxyModel(Commands::ICommandManager &commandManager,
                                    KeywordsPresets::IPresetsManager &presetsManager,
                                    Services::IArtworksUpdater &artworksUpdater,
-                                   QObject *parent = 0);
+                                   QObject *parent = nullptr);
         virtual ~ArtworkProxyModel();
 
     public:

@@ -42,7 +42,7 @@ namespace Services {
         Q_OBJECT
     public:
         explicit ArtworksUpdateHub(Models::ArtworksListModel &artworksListModel,
-                                   QObject *parent = 0);
+                                   QObject *parent = nullptr);
 
     public:
         virtual void updateArtworkByID(Common::ID_t artworkID, size_t lastKnownIndex, const QVector<int> &rolesToUpdate = QVector<int>()) override;

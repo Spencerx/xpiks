@@ -47,7 +47,7 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        explicit SimpleCurlDownloader(const QString &resource, QObject *parent = 0);
+        explicit SimpleCurlDownloader(const QString &resource, QObject *parent = nullptr);
         virtual ~SimpleCurlDownloader();
 
     public:

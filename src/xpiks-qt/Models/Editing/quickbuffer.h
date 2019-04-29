@@ -61,7 +61,7 @@ namespace Models {
     public:
         explicit QuickBuffer(CurrentEditableModel &currentEditableModel,
                              Commands::ICommandManager &commandManager,
-                             QObject *parent = 0);
+                             QObject *parent = nullptr);
 
     signals:
         void descriptionChanged();

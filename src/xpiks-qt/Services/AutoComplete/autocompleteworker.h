@@ -42,7 +42,7 @@ namespace AutoComplete {
         explicit AutoCompleteWorker(Helpers::AsyncCoordinator &initCoordinator,
                                     KeywordsAutoCompleteModel &autoCompleteModel,
                                     KeywordsPresets::PresetKeywordsModel &presetsManager,
-                                    QObject *parent = 0);
+                                    QObject *parent = nullptr);
         virtual ~AutoCompleteWorker();
 
     protected:

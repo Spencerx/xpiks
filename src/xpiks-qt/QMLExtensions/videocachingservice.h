@@ -56,7 +56,7 @@ namespace QMLExtensions {
     public:
         explicit VideoCachingService(Common::ISystemEnvironment &environment,
                                      Models::SwitcherModel &switcherModel,
-                                     QObject *parent = 0);
+                                     QObject *parent = nullptr);
 
     public:
         void startService(ImageCachingService &imageCachingService,

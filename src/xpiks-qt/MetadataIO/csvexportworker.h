@@ -31,7 +31,7 @@ namespace MetadataIO {
         CsvExportWorker(const std::vector<std::shared_ptr<CsvExportPlan> > &exportPlans,
                         Artworks::ArtworksSnapshot &selectedArtworks,
                         const QString &exportDirectoryPath,
-                        QObject *parent = 0);
+                        QObject *parent = nullptr);
 
     public:
         void dismiss() { emit stopped(); }

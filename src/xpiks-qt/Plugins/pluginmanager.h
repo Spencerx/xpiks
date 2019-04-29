@@ -146,7 +146,7 @@ namespace Plugins {
     class PluginsWithActionsModel: public QSortFilterProxyModel {
         Q_OBJECT
     public:
-        PluginsWithActionsModel(PluginManager &pluginManager, QObject *parent = 0);
+        PluginsWithActionsModel(PluginManager &pluginManager, QObject *parent = nullptr);
 
     public:
         Q_INVOKABLE int getOriginalIndex(int index);

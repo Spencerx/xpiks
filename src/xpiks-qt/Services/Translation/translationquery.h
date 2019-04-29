@@ -19,7 +19,7 @@ namespace Translation {
     {
         Q_OBJECT
     public:
-        explicit TranslationQuery(const QString &query, QObject *parent = 0);
+        explicit TranslationQuery(const QString &query, QObject *parent = nullptr);
 
     public:
         const QString &getQuery() const { return m_Query; }

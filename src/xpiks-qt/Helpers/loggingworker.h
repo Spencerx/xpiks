@@ -21,7 +21,7 @@ namespace Helpers {
     {
         Q_OBJECT
     public:
-        explicit LoggingWorker(QObject *parent = 0);
+        explicit LoggingWorker(QObject *parent = nullptr);
         virtual ~LoggingWorker() {}
 
     signals:

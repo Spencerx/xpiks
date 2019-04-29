@@ -46,7 +46,7 @@ namespace Models {
     class ArtworksRepository : public Common::AbstractListModel {
         Q_OBJECT
     public:
-        ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent = 0);
+        ArtworksRepository(RecentDirectoriesModel &recentDirectories, QObject *parent = nullptr);
         virtual ~ArtworksRepository() override {}
 
     public:

@@ -54,7 +54,7 @@ namespace QMLExtensions {
                                     ImageCachingService &imageCachingService,
                                     Services::ArtworksUpdateHub &updateHub,
                                     MetadataIO::MetadataIOService &metadataIOService,
-                                    QObject *parent = 0);
+                                    QObject *parent = nullptr);
 
     protected:
         virtual bool initWorker() override;

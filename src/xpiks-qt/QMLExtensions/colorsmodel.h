@@ -142,7 +142,7 @@ namespace QMLExtensions {
         QColor m_popupGlowColor;
 
     public:
-        explicit ColorsModel(QObject *parent = 0);
+        explicit ColorsModel(QObject *parent = nullptr);
         void initializeBuiltInThemes();
 
         const std::shared_ptr<ColorsProvider> &getFallbackTheme();

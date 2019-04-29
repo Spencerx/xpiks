@@ -23,7 +23,7 @@ namespace AutoComplete {
         Q_PROPERTY(int selectedIndex READ getSelectedIndex WRITE setSelectedIndex NOTIFY selectedIndexChanged)
         Q_PROPERTY(bool isActive READ getIsActive WRITE setIsActive NOTIFY isActiveChanged)
     public:
-        explicit AutoCompleteModel(QObject *parent = 0);
+        explicit AutoCompleteModel(QObject *parent = nullptr);
 
     public:
         int getSelectedIndex() const { return m_SelectedIndex; }

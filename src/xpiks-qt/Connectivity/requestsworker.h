@@ -29,7 +29,7 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        explicit RequestsWorker(Models::SettingsModel &settingsModel, QObject *parent = 0);
+        explicit RequestsWorker(Models::SettingsModel &settingsModel, QObject *parent = nullptr);
 
     public:
         void sendRequestSync(std::shared_ptr<IConnectivityRequest> &item);

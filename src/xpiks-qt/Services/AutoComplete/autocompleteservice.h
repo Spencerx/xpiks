@@ -46,7 +46,7 @@ namespace AutoComplete {
     public:
         AutoCompleteService(Models::SettingsModel &settingsModel,
                             KeywordsAutoCompleteModel &autoCompleteModel,
-                            QObject *parent = 0);
+                            QObject *parent = nullptr);
 
     public:
         void startService(Helpers::AsyncCoordinator &coordinator,

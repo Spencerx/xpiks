@@ -48,7 +48,7 @@ namespace Translation {
     public:
         explicit TranslationManager(Common::ISystemEnvironment &environment,
                                     TranslationService &translationService,
-                                    QObject *parent = 0);
+                                    QObject *parent = nullptr);
 
     public:
         bool getHasMore() const { return m_HasMore; }

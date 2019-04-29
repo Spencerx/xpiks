@@ -44,7 +44,7 @@ namespace QMLExtensions {
         Q_OBJECT
     public:
         explicit ImageCachingService(Common::ISystemEnvironment &environment,
-                                     QObject *parent = 0);
+                                     QObject *parent = nullptr);
 
     public:
         void startService(Helpers::AsyncCoordinator &coordinator, Storage::IDatabaseManager &dbManager);

@@ -29,7 +29,7 @@ namespace Models {
         Q_PROPERTY(bool isAvailable READ getIsAvailable NOTIFY currentEditableChanged)
 
     public:
-        explicit CurrentEditableModel(QObject *parent = 0);
+        explicit CurrentEditableModel(QObject *parent = nullptr);
 
     public:
         bool getIsAvailable() const { return m_CurrentEditable.operator bool(); }

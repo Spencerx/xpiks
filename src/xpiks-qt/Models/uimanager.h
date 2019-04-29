@@ -51,7 +51,7 @@ namespace Models {
         explicit UIManager(Common::ISystemEnvironment &environment,
                            QMLExtensions::ColorsModel &colorsModel,
                            SettingsModel &settingsModel,
-                           QObject *parent = 0);
+                           QObject *parent = nullptr);
 
     private:
         int generateNextTabID() { int id = m_TabID++; return id; }

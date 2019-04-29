@@ -23,7 +23,7 @@ namespace Helpers {
     {
         Q_OBJECT
     public:
-        explicit ClipboardHelper(QObject *parent = 0) : QObject(parent) {
+        explicit ClipboardHelper(QObject *parent = nullptr) : QObject(parent) {
             m_Clipboard = QApplication::clipboard();
         }
 

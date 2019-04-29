@@ -37,7 +37,7 @@ namespace QMLExtensions {
         Q_OBJECT
         Q_PROPERTY(int tabsCount READ getTabsCount NOTIFY tabsCountChanged)
     public:
-        explicit TabsModel(QObject *parent = 0);
+        explicit TabsModel(QObject *parent = nullptr);
 
     private:
         enum TabsModel_Roles {
@@ -111,7 +111,7 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        explicit DependentTabsModel(QObject *parent = 0);
+        explicit DependentTabsModel(QObject *parent = nullptr);
 
     public:
         Q_INVOKABLE void openTab(int index);
@@ -130,7 +130,7 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        explicit ActiveTabsModel(QObject *parent = 0);
+        explicit ActiveTabsModel(QObject *parent = nullptr);
 
     public:
         Q_INVOKABLE void reactivateMostRecentTab();
@@ -154,7 +154,7 @@ namespace QMLExtensions {
     {
         Q_OBJECT
     public:
-        explicit InactiveTabsModel(QObject *parent = 0);
+        explicit InactiveTabsModel(QObject *parent = nullptr);
 
     signals:
         void tabOpened(int index);
