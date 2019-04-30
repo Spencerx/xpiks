@@ -33,7 +33,7 @@ namespace Warnings {
         Q_OBJECT
 
     public:
-        explicit WarningsService(WarningsSettingsModel &warningsSettingsModel, QObject *parent=0);
+        explicit WarningsService(WarningsSettingsModel &warningsSettingsModel, QObject *parent=nullptr);
 
     public:
         void initWarningsSettings();

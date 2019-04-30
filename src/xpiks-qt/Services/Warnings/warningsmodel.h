@@ -37,7 +37,7 @@ namespace Warnings {
     public:
         WarningsModel(Models::ArtworksListModel &artworksListModel,
                       WarningsSettingsModel &warningsSettings,
-                      QObject *parent=0);
+                      QObject *parent=nullptr);
 
     public:
         int getWarningsCount() const { return rowCount(); }

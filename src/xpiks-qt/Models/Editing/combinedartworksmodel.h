@@ -90,7 +90,7 @@ namespace Models {
     public:
         CombinedArtworksModel(Services::IArtworksUpdater &artworksUpdater,
                               KeywordsPresets::IPresetsManager &presetsManager,
-                              QObject *parent=0);
+                              QObject *parent=nullptr);
 
     public:
         virtual void setArtworks(Artworks::ArtworksSnapshot const &artworks) override;

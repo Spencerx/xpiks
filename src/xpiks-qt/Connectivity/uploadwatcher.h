@@ -32,7 +32,7 @@ namespace Connectivity {
     Q_PROPERTY(int failedImagesCount READ getFailedImagesCount NOTIFY failedImagesCountChanged)
 
     public:
-        UploadWatcher(QObject *parent=0);
+        UploadWatcher(QObject *parent=nullptr);
 
     public:
         int getFailedImagesCount() const { return m_FailedImagesCount; }

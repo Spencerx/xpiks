@@ -30,7 +30,7 @@ namespace Helpers {
     class RemoteConfig : public QObject {
         Q_OBJECT
     public:
-        RemoteConfig(const QString &configUrl, QObject *parent=0);
+        RemoteConfig(const QString &configUrl, QObject *parent=nullptr);
         virtual ~RemoteConfig();
 
     public:

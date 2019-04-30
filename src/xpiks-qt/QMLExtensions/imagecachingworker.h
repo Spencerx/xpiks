@@ -44,7 +44,7 @@ namespace QMLExtensions {
         ImageCachingWorker(Common::ISystemEnvironment &environment,
                            Helpers::AsyncCoordinator &initCoordinator,
                            Storage::IDatabaseManager &dbManager,
-                           QObject *parent=0);
+                           QObject *parent=nullptr);
 
     protected:
         virtual bool initWorker() override;

@@ -28,7 +28,7 @@ namespace Warnings {
     Q_OBJECT
 
     public:
-        WarningsCheckingWorker(WarningsSettingsModel &warningsSettingsModel, QObject *parent=0);
+        WarningsCheckingWorker(WarningsSettingsModel &warningsSettingsModel, QObject *parent=nullptr);
 
     protected:
         virtual bool initWorker() override;

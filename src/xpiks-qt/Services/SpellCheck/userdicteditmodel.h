@@ -28,7 +28,7 @@ namespace SpellCheck {
         Q_PROPERTY(int keywordsCount READ getKeywordsCount NOTIFY keywordsCountChanged)
 
     public:
-        UserDictEditModel(UserDictionary &userDictionary, QObject *parent=0);
+        UserDictEditModel(UserDictionary &userDictionary, QObject *parent=nullptr);
 
     signals:
         void keywordsCountChanged();

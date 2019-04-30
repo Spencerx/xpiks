@@ -31,7 +31,7 @@ namespace Plugins {
     {
         Q_OBJECT
     public:
-        PluginActionsModel(const std::vector<std::shared_ptr<IPluginAction> > &actions, int pluginID, QObject *parent=0);
+        PluginActionsModel(const std::vector<std::shared_ptr<IPluginAction> > &actions, int pluginID, QObject *parent=nullptr);
 
     public:
         enum PluginActionsModel_Roles {

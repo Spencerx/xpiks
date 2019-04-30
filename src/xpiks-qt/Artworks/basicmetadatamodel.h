@@ -50,7 +50,7 @@ namespace Artworks {
         Q_PROPERTY(bool hasTitleSpellErrors READ hasTitleSpellError NOTIFY titleSpellingChanged)
         Q_PROPERTY(bool hasDescriptionSpellErrors READ hasDescriptionSpellError NOTIFY descriptionSpellingChanged)
     public:
-        BasicMetadataModel(SpellCheck::SpellCheckInfo &spellCheckInfo, QObject *parent=0);
+        BasicMetadataModel(SpellCheck::SpellCheckInfo &spellCheckInfo, QObject *parent=nullptr);
 
     public:
         Q_INVOKABLE bool hasAnySpellingErrors() { return hasSpellErrors(); }

@@ -35,7 +35,7 @@ namespace Models {
         Q_OBJECT
         Q_PROPERTY(QString n READ getEmptyString() NOTIFY languageChanged)
     public:
-        LanguagesModel(Models::SettingsModel &settingsModel, QObject *parent=0);
+        LanguagesModel(Models::SettingsModel &settingsModel, QObject *parent=nullptr);
 
     public:
         enum LanguagesModel_Roles {

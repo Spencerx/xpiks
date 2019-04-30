@@ -30,7 +30,7 @@ namespace Plugins {
     {
         Q_OBJECT
     public:
-        UIProvider(Models::UIManager &uiManager, QObject *parent=0);
+        UIProvider(Models::UIManager &uiManager, QObject *parent=nullptr);
 
     public:
         Models::UIManager &getUIManager() const { return m_UiManager; }

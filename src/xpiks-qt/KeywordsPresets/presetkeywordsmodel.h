@@ -64,7 +64,7 @@ namespace KeywordsPresets {
 
     public:
         PresetKeywordsModel(Common::ISystemEnvironment &environment,
-                            QObject *parent=0);
+                            QObject *parent=nullptr);
         virtual ~PresetKeywordsModel();
 
 #ifdef INTEGRATION_TESTS

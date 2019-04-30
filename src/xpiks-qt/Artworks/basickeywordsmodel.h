@@ -54,7 +54,7 @@ namespace Artworks {
         Q_PROPERTY(bool hasAnySpellingError READ hasSpellErrors NOTIFY spellingInfoUpdated)
 
     public:
-        BasicKeywordsModel(QObject *parent=0);
+        BasicKeywordsModel(QObject *parent=nullptr);
 
     public:
         enum BasicKeywordsModel_Roles {
