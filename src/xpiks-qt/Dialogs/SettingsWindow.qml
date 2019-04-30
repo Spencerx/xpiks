@@ -1220,30 +1220,6 @@ ApplicationWindow {
                                     anchors.left: parent.left
                                     anchors.leftMargin: 10
                                     anchors.verticalCenter: parent.verticalCenter
-                                    id: checkForUpdatesCheckbox
-                                    text: i18.n + qsTr("Check for updates")
-                                    onCheckedChanged: {
-                                        settingsModel.checkForUpdates = checked
-                                    }
-                                    function onResetRequested() {
-                                        checked = settingsModel.checkForUpdates
-                                    }
-
-                                    Component.onCompleted: {
-                                        checked = settingsModel.checkForUpdates
-                                        secTab.resetRequested.connect(checkForUpdatesCheckbox.onResetRequested)
-                                    }
-                                }
-                            }
-
-                            Item {
-                                width: parent.itemWidth
-                                height: parent.itemHeight
-
-                                StyledCheckbox {
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 10
-                                    anchors.verticalCenter: parent.verticalCenter
                                     id: saveBackupsCheckbox
                                     text: i18.n + qsTr("Save backups for artworks")
                                     onCheckedChanged: {
