@@ -72,6 +72,8 @@ BaseDialog {
             spread: 0.0
             color: uiColors.popupGlowColor
             cornerRadius: glowRadius
+            visible: !settingsModel.useSimplifiedUI
+            enabled: !settingsModel.useSimplifiedUI
         }
 
         // This rectangle is the actual popup

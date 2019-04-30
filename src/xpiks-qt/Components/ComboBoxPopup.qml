@@ -109,8 +109,8 @@ Item {
         property bool shouldBeBelow: comboBox.popup ? comboBox.popup.isBelow : false
         anchors.topMargin: shouldBeBelow ? glowRadius/2 : -glowRadius
         anchors.bottomMargin: shouldBeBelow ? -glowRadius : glowRadius/2
-        visible: glowEnabled && comboBox.isOpened
-        enabled: glowEnabled
+        visible: glowEnabled && comboBox.isOpened && !settingsModel.useSimplifiedUI
+        enabled: glowEnabled && !settingsModel.useSimplifiedUI
         height: header.height
         glowRadius: 4
         spread: 0.0

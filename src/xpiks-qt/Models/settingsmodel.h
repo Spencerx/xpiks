@@ -185,7 +185,7 @@ namespace Models {
         int getProgressiveSuggestionIncrement() const { return m_ProgressiveSuggestionIncrement; }
         int getUseDirectExiftoolExport() const { return m_UseDirectExiftoolExport; }
         bool getUseAutoImport() const { return m_UseAutoImport; }
-        bool getUseSimplifiedUI() const { return true;/*m_UseSimplifiedUI;*/ }
+        bool getUseSimplifiedUI() const { return m_UseSimplifiedUI; }
 
     signals:
         void settingsReset();

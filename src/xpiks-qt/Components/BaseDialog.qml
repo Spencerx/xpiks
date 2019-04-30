@@ -26,17 +26,23 @@ Item {
         root.destroy()
     }
 
-    PropertyAnimation { target: root; property: "opacity";
-        duration: 400; from: 0; to: 1;
-        easing.type: Easing.InOutQuad ; running: true }
+    PropertyAnimation {
+        target: root
+        property: "opacity"
+        duration: 400
+        from: 0
+        to: 1
+        easing.type: Easing.InOutQuad
+        running: !settingsModel.useSimplifiedUI
+    }
 
     // This rectange is the a overlay to partially show the parent through it
     // and clicking outside of the 'dialog' popup will do 'nothing'
     Rectangle {
         anchors.fill: parent
         id: overlay
-        color: "#000000"
-        opacity: 0.6
+        color: settingsModel.useSimplifiedUI ? uiColors.defaultDarkerColor : "#000000"
+        opacity: settingsModel.useSimplifiedUI ? 1 : 0.6
         // add a mouse area so that clicks outside
         // the dialog window will not do anything
         MouseArea {

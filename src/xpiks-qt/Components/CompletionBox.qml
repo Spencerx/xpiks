@@ -54,7 +54,8 @@ Item {
         anchors.bottom: dropDown.bottom
         anchors.topMargin: isBelowEdit ? glowRadius : -glowRadius/2
         anchors.bottomMargin: isBelowEdit ? -glowRadius : glowRadius
-        visible: dropDown.visible
+        visible: dropDown.visible && !settingsModel.useSimplifiedUI
+        enabled: !settingsModel.useSimplifiedUI
         height: dropDown.height
         glowRadius: 4
         spread: 0.0

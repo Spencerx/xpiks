@@ -90,7 +90,8 @@ Item {
         property double headerShift: glowCoversHeader ? headerHeight : 0
         anchors.topMargin: isBelow ? (glowRadius/2 + glowTopMargin - headerShift) : -glowRadius
         anchors.bottomMargin: isBelow ? -glowRadius : (glowRadius/2 + glowTopMargin - headerShift)
-        visible: dropDown.visible
+        visible: dropDown.visible && !settingsModel.useSimplifiedUI
+        enabled: !settingsModel.useSimplifiedUI
         height: dropDown.height
         glowRadius: 4
         spread: 0.0
