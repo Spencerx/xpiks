@@ -28,8 +28,17 @@ CheckBox {
         indicator: Rectangle {
             implicitHeight: indicatorHeight
             implicitWidth: indicatorWidth
-            color: (control.checked || control.hovered) ? uiColors.artworkActiveColor : (isContrast ? uiColors.defaultDarkColor : control.defaultBoxColor)
-            opacity: control.hovered ? 0.6 : 1
+            color: {
+                if (control.checked || control.hovered) {
+                    if (control.hovered) {
+                        return Qt.darker(uiColors.artworkActiveColor, 1.3)
+                    } else {
+                        return uiColors.artworkActiveColor
+                    }
+                } else {
+                    return (isContrast ? uiColors.defaultDarkColor : control.defaultBoxColor)
+                }
+            }
 
             Rectangle {
                 visible: control.checked

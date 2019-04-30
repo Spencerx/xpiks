@@ -30,8 +30,9 @@ ScrollView {
             Rectangle {
                 anchors.fill: parent
                 radius: 5
-                color: control.handleColor
-                opacity: styleData.pressed ? 1 : (styleData.hovered ? 0.9 : 0.8)
+                color: styleData.pressed ?
+                           control.handleColor :
+                           Qt.darker(control.handleColor, (styleData.hovered ? 1.2 : 1.4))
             }
         }
 

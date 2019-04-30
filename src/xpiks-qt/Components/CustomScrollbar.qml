@@ -76,7 +76,9 @@ Item {
                 id: backHandle
                 anchors.fill: parent
                 radius: 5
-                color: clicker.pressed ? scrollbar.handleColor : Qt.darker(scrollbar.handleColor, clicker.containsMouse ? 1.1 : 1.2)
+                color: clicker.pressed ?
+                           scrollbar.handleColor :
+                           Qt.darker(scrollbar.handleColor, clicker.containsMouse ? 1.2 : 1.4)
             }
         }
     }

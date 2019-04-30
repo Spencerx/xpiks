@@ -16,7 +16,6 @@ Item {
     property bool isActive: false
     property bool isPlus: false
     property int thickness: 3
-    property alias crossOpacity: wrapperRect.opacity
     property color disabledColor: uiColors.closeIconDisabledColor
     signal itemClicked();
 

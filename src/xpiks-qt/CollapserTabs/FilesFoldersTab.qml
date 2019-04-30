@@ -116,9 +116,8 @@ Item {
 
                     Rectangle {
                         anchors.fill: parent
-                        color: uiColors.panelColor
+                        color: isselected ? Qt.darker(uiColors.inactiveControlColor, 1.1) : uiColors.panelColor
                         visible: itemSelectionMA.containsMouse
-                        opacity: isselected ? 0.3 : 1
                     }
 
                     RowLayout {

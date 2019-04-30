@@ -1429,13 +1429,12 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 width: bottomPane.height
-                color: ListView.isCurrentItem ? uiColors.panelSelectedColor : "transparent"
+                color: ListView.isCurrentItem ? uiColors.panelSelectedColor : uiColors.panelColor
 
                 Rectangle {
                     anchors.fill: parent
                     visible: imageMA.containsMouse
-                    color: uiColors.panelSelectedColor
-                    opacity: 0.6
+                    color: Qt.lighter(uiColors.panelColor, 1.7)
                 }
 
                 Rectangle {
