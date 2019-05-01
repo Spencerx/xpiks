@@ -29,5 +29,8 @@
     },
     "keywordsDragDropEnabled": {
         "v": true
+    },
+    "telemetryEnabled": {
+        "v": true
     }
 }
