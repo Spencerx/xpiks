@@ -24,14 +24,15 @@ namespace Models {
 
 namespace Connectivity {
     class AnalyticsUserEvent;
+    class TelemetryConfig;
 
     class TelemetryWorker : public QObject, public Common::ItemProcessingWorker<AnalyticsUserEvent>
     {
         Q_OBJECT
     public:
         TelemetryWorker(const QString &userAgent,
-                        const QString &reportingEndpoint,
                         const QString &interfaceLanguage,
+                        TelemetryConfig &config,
                         Models::SettingsModel &settingsModel);
 
     protected:
@@ -49,6 +50,9 @@ namespace Connectivity {
         void process() { doWork(); }
         void cancel() { stopWorking(); }
 
+    private slots:
+        void onConfigUpdated();
+
     signals:
         void stopped();
         void queueIsEmpty();
@@ -58,6 +62,7 @@ namespace Connectivity {
         QString m_UserAgentId;
         QString m_ReportingEndpoint;
         QString m_InterfaceLanguage;
+        TelemetryConfig &m_Config;
         Models::SettingsModel &m_SettingsModel;
     };
 }

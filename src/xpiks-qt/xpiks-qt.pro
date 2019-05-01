@@ -68,6 +68,7 @@ SOURCES += main.cpp \
     Connectivity/simplecurldownloader.cpp \
     Connectivity/simplecurlrequest.cpp \
     Connectivity/switcherconfig.cpp \
+    Connectivity/telemetryconfig.cpp \
     Connectivity/telemetryservice.cpp \
     Connectivity/telemetryworker.cpp \
     Connectivity/testconnection.cpp \
@@ -332,6 +333,7 @@ HEADERS += \
     Connectivity/simplecurldownloader.h \
     Connectivity/simplecurlrequest.h \
     Connectivity/switcherconfig.h \
+    Connectivity/telemetryconfig.h \
     Connectivity/telemetryservice.h \
     Connectivity/telemetryworker.h \
     Connectivity/testconnection.h \

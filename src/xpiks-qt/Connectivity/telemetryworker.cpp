@@ -25,6 +25,7 @@
 #include "Common/version.h"
 #include "Connectivity/analyticsuserevent.h"
 #include "Connectivity/curlhelpers.h"
+#include "Connectivity/telemetryconfig.h"
 #include "Models/settingsmodel.h"
 
 void buildQuery(const std::shared_ptr<Connectivity::AnalyticsUserEvent> &userEvent, const QString &userAgent, QUrlQuery &query) {
@@ -43,17 +44,21 @@ void buildQuery(const std::shared_ptr<Connectivity::AnalyticsUserEvent> &userEve
 
 namespace Connectivity {
     TelemetryWorker::TelemetryWorker(const QString &userAgent,
-                                     const QString &reportingEndpoint,
                                      const QString &interfaceLanguage,
+                                     TelemetryConfig &config,
                                      Models::SettingsModel &settingsModel):
         m_UserAgentId(userAgent),
-        m_ReportingEndpoint(reportingEndpoint),
         m_InterfaceLanguage(interfaceLanguage),
+        m_Config(config),
         m_SettingsModel(settingsModel)
     {
+        QObject::connect(&m_Config, &TelemetryConfig::configUpdated,
+                         this, &TelemetryWorker::onConfigUpdated);
     }
 
     bool TelemetryWorker::initWorker() {
+        LOG_DEBUG << "#";
+        m_ReportingEndpoint = m_Config.getEndpoint();
         return true;
     }
 
@@ -153,5 +158,14 @@ namespace Connectivity {
         curl_easy_cleanup(curl_handle);
 
         return success;
+    }
+
+    void TelemetryWorker::onConfigUpdated() {
+        LOG_DEBUG << "#";
+        QString endpoint = m_Config.getEndpoint();
+        if (!endpoint.isEmpty()) {
+            m_ReportingEndpoint = endpoint;
+            LOG_FOR_DEBUG << "Updated endpoint:" << m_ReportingEndpoint;
+        }
     }
 }

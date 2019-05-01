@@ -175,7 +175,7 @@ XpiksApp::XpiksApp(Common::ISystemEnvironment &environment):
     m_TranslationService(),
     m_VideoCachingService(environment, m_SwitcherModel),
     m_UpdateService(environment, m_SettingsModel, m_SwitcherModel, m_MaintenanceService),
-    m_TelemetryService(m_SwitcherModel, m_SettingsModel),
+    m_TelemetryService(environment, m_SwitcherModel, m_SettingsModel),
     m_EditingHub(m_SpellCheckService, m_WarningsService, m_MetadataIOService, m_SettingsModel),
     // connectivity
     m_UploadInfoRepository(environment, m_SecretsManager),
@@ -239,7 +239,6 @@ void XpiksApp::initialize() {
     m_SettingsModel.initializeConfigs();
     m_SettingsModel.retrieveAllValues();
 
-    m_TelemetryService.initialize();
     m_UIManager.initialize();
 
     m_FtpCoordinator.reset(new libxpks::net::FtpCoordinator(m_SecretsManager, m_SettingsModel));
@@ -365,12 +364,7 @@ void XpiksApp::start() {
 
     QCoreApplication::processEvents();
 
-    const QString reportingEndpoint =
-        QLatin1String(
-    /*ignorestyle*/        "cc39a47f60e1ed812e2403b33678dd1c529f1cc43f66494998ec478a4d13496269a3dfa01f882941766dba246c76b12b2a0308e20afd84371c41cf513260f8eb8b71f8c472cafb1abf712c071938ec0791bbf769ab9625c3b64827f511fa3fbb");
-    QString endpoint = Encryption::decodeText(reportingEndpoint, "reporting");
-    m_TelemetryService.setEndpoint(endpoint);
-
+    m_TelemetryService.initialize(m_RequestsService);
     m_TelemetryService.startReporting();
     m_UploadInfoRepository.initializeStocksList(m_InitCoordinator, m_RequestsService);
     m_WarningsSettingsModel.initializeConfigs(m_RequestsService);

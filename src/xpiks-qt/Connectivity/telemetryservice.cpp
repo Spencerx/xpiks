@@ -21,16 +21,19 @@
 #include "Common/logging.h"
 #include "Common/types.h"
 #include "Connectivity/analyticsuserevent.h"
+#include "Connectivity/irequestsservice.h"
 #include "Connectivity/telemetryworker.h"
 #include "Models/settingsmodel.h"
 #include "Models/switchermodel.h"
 
 namespace Connectivity {
-    TelemetryService::TelemetryService(Models::SwitcherModel &switcher,
+    TelemetryService::TelemetryService(Common::ISystemEnvironment &environment,
+                                       Models::SwitcherModel &switcher,
                                        Models::SettingsModel &settingsModel,
                                        QObject *parent) :
         QObject(parent),
         m_TelemetryWorker(nullptr),
+        m_Config(environment),
         m_Switcher(switcher),
         m_SettingsModel(settingsModel),
         m_InterfaceLanguage("en_US"),
@@ -38,23 +41,21 @@ namespace Connectivity {
     {
     }
 
-    void TelemetryService::initialize() {
+    void TelemetryService::initialize(IRequestsService &requestsService) {
         ensureUserIdExists();
 
         QString userId = m_SettingsModel.getUserAgentId();
         userId.remove(QRegExp("[{}-]."));
 
         m_UserAgentId = userId;
+
+        m_Config.initializeConfigs(requestsService);
     }
 
     void TelemetryService::startReporting() {
         LOG_VERBOSE_OR_DEBUG << "settings telemetry:" << m_SettingsModel.getCheckForUpdates();
         LOG_VERBOSE_OR_DEBUG << "switcher telemetry:" << m_Switcher.getUpdateEnabled();
-        if (getIsTelemetryEnabled()) {
-            doStartReporting();
-        } else {
-            LOG_WARNING << "Telemetry is disabled";
-        }
+        doStartReporting();
     }
 
     void TelemetryService::stopReporting(bool immediately) {
@@ -92,8 +93,8 @@ namespace Connectivity {
         LOG_DEBUG << "#";
 
         m_TelemetryWorker = new TelemetryWorker(m_UserAgentId,
-                                                m_ReportingEndpoint,
                                                 m_InterfaceLanguage,
+                                                m_Config,
                                                 m_SettingsModel);
 
         QThread *thread = new QThread();
@@ -108,6 +109,7 @@ namespace Connectivity {
         QObject::connect(this, &TelemetryService::cancelAllQueries, m_TelemetryWorker, &TelemetryWorker::cancelAllQueries);
 
         thread->start(QThread::LowestPriority);
+        LOG_DEBUG << "Started telemetry worker";
     }
 
     bool TelemetryService::getIsTelemetryEnabled() {
@@ -143,9 +145,5 @@ namespace Connectivity {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
         m_TelemetryWorker = nullptr;
-    }
-
-    void TelemetryService::setEndpoint(const QString &endpoint) {
-        m_ReportingEndpoint = endpoint;
     }
 }

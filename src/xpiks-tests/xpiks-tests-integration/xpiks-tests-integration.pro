@@ -117,6 +117,7 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Connectivity/simplecurlrequest.cpp \
     ../../xpiks-qt/Connectivity/switcherconfig.cpp \
     ../../xpiks-qt/Connectivity/telemetryservice.cpp \
+    ../../xpiks-qt/Connectivity/telemetryconfig.cpp \
     ../../xpiks-qt/Connectivity/telemetryworker.cpp \
     ../../xpiks-qt/Encryption/aes-qt.cpp \
     ../../xpiks-qt/Encryption/obfuscation.cpp \
@@ -411,6 +412,7 @@ HEADERS += \
     ../../xpiks-qt/Connectivity/simplecurlrequest.h \
     ../../xpiks-qt/Connectivity/switcherconfig.h \
     ../../xpiks-qt/Connectivity/telemetryservice.h \
+    ../../xpiks-qt/Connectivity/telemetryconfig.h \
     ../../xpiks-qt/Connectivity/telemetryworker.h \
     ../../xpiks-qt/Encryption/aes-qt.h \
     ../../xpiks-qt/Encryption/isecretsstorage.h \

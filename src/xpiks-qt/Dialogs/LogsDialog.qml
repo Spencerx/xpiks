@@ -124,7 +124,6 @@ StaticDialogBase {
                 width: 130
                 onClicked: {
                     dispatcher.dispatch(UICommand.UpdateLogs, true)
-                    logsComponent.logText = logsModel.getAllLogsText(true)
                     oneHunderdLinesWarning.linesNumber = 1000
                     loadMoreButton.enabled = false
                     scrollToBottom()

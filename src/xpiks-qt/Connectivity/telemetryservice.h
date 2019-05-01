@@ -19,14 +19,20 @@
 #include "Common/messages.h"
 #include "Common/types.h"
 #include "Connectivity/analyticsuserevent.h"
+#include "Connectivity/telemetryconfig.h"
 
 namespace Models {
     class SettingsModel;
     class SwitcherModel;
 }
 
+namespace Common {
+    class ISystemEnvironment;
+}
+
 namespace Connectivity {
     class TelemetryWorker;
+    class IRequestsService;
 
     class TelemetryService:
             public QObject,
@@ -34,12 +40,13 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        TelemetryService(Models::SwitcherModel &switcher,
+        TelemetryService(Common::ISystemEnvironment &environment,
+                         Models::SwitcherModel &switcher,
                          Models::SettingsModel &settingsModel,
                          QObject *parent=nullptr);
 
     public:
-        void initialize();
+        void initialize(IRequestsService &requestsService);
         void startReporting();
         void stopReporting(bool immediately=true);
 
@@ -55,7 +62,6 @@ namespace Connectivity {
 
     public:
         void reportAction(UserAction action);
-        void setEndpoint(const QString &endpoint);
         void setInterfaceLanguage(const QString &language) { m_InterfaceLanguage = language; }
 
     public slots:
@@ -69,9 +75,9 @@ namespace Connectivity {
 
     private:
         TelemetryWorker *m_TelemetryWorker;
+        TelemetryConfig m_Config;
         Models::SwitcherModel &m_Switcher;
         Models::SettingsModel &m_SettingsModel;
-        QString m_ReportingEndpoint;
         QString m_UserAgentId;
         QString m_InterfaceLanguage;
         std::atomic_bool m_IsStopped;

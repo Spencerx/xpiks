@@ -54,6 +54,10 @@ namespace Connectivity {
             return m_BaseUrl + "warnings_settings.json";
         }
 
+        QString getTelemetryConfigAddr() const {
+            return m_BaseUrl + "telemetry.json";
+        }
+
         QString getSwitcherAddr() {
             QString filename = QString("switches_%1.json").arg(XPIKS_API_VERSION_STRING);
             return m_BaseUrl + filename;
