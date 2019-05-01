@@ -94,29 +94,6 @@ namespace Connectivity {
         return anyError;
     }
 
-    void SwitcherConfig::processRemoteConfig(const QJsonDocument &remoteDocument, bool overwriteLocal) {
-        bool overwrite = false;
-
-        LOG_VERBOSE_OR_DEBUG << remoteDocument;
-
-        if (!overwriteLocal && remoteDocument.isObject()) {
-            QJsonObject rootObject = remoteDocument.object();
-            if (rootObject.contains(OVERWRITE_KEY)) {
-                QJsonValue overwriteValue = rootObject[OVERWRITE_KEY];
-                if (overwriteValue.isBool()) {
-                    overwrite = overwriteValue.toBool();
-                    LOG_DEBUG << "Overwrite flag present in the config:" << overwrite;
-                } else {
-                    LOG_WARNING << "Overwrite flag is not boolean";
-                }
-            }
-        } else {
-            overwrite = overwriteLocal;
-        }
-
-        Models::AbstractConfigUpdaterModel::processRemoteConfig(remoteDocument, overwrite);
-    }
-
     void SwitcherConfig::processMergedConfig(const QJsonDocument &document) {
         LOG_DEBUG << "#";
 
