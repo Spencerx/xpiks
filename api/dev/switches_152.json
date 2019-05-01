@@ -32,5 +32,8 @@
     "keywordsDragDropEnabled": {
         "v": true,
         "t": 80
+    },
+    "telemetryEnabled": {
+        "v": true
     }
 }
