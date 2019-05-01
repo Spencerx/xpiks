@@ -31,7 +31,6 @@ namespace Helpers {
         Q_OBJECT
     public:
         RemoteConfig(const QString &configUrl, QObject *parent=nullptr);
-        virtual ~RemoteConfig();
 
     public:
         const QJsonDocument& getConfig() const { return m_Config; }

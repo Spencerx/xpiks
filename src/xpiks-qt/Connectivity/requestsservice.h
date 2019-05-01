@@ -47,7 +47,7 @@ namespace Connectivity {
     public:
         virtual void receiveConfig(Helpers::RemoteConfig &config) override;
         void sendRequest(const std::shared_ptr<IConnectivityRequest> &request);
-        void sendRequestSync(std::shared_ptr<IConnectivityRequest> &request);
+        void sendRequestSync(const std::shared_ptr<IConnectivityRequest> &request);
 
     signals:
         void cancelServing();

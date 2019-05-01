@@ -94,7 +94,7 @@ namespace Connectivity {
         m_RequestsWorker->submitItem(request);
     }
 
-    void RequestsService::sendRequestSync(std::shared_ptr<IConnectivityRequest> &request) {
+    void RequestsService::sendRequestSync(const std::shared_ptr<IConnectivityRequest> &request) {
         LOG_DEBUG << "#";
 
         if (!isRunning()) {

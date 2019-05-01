@@ -49,6 +49,7 @@ namespace Connectivity {
         QObject(parent),
         m_RemoteResource(resource),
         m_ProxySettings(nullptr),
+        m_HttpError(0),
         m_VerifySSL(verifySSL)
     {
     }
@@ -125,6 +126,9 @@ namespace Connectivity {
              field, so we provide one */
         curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
 
+        /* consider HTTP error as failed request */
+        curl_easy_setopt(curl_handle, CURLOPT_FAILONERROR, 1L);
+
         if (!m_RawHeaders.empty()) {
             foreach (const QString &header, m_RawHeaders) {
                 std::string headerString = header.toStdString();
@@ -148,6 +152,13 @@ namespace Connectivity {
         if (!success) {
             m_ErrorString = QString::fromLatin1(curl_easy_strerror(res));
             LOG_WARNING << "curl_easy_perform() failed" << m_ErrorString;
+
+            long response_code;
+            curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &response_code);
+            if (response_code == 200 && res != CURLE_ABORTED_BY_CALLBACK) {
+                LOG_VERBOSE_OR_DEBUG << "Http code:" << m_HttpError;
+                m_HttpError = response_code;
+            }
         } else {
             /*
              * Now, our chunk.memory points to a memory block that is chunk.size

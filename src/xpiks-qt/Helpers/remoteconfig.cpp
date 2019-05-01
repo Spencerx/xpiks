@@ -22,9 +22,6 @@ namespace Helpers {
     {
     }
 
-    RemoteConfig::~RemoteConfig() {
-    }
-
     void RemoteConfig::setRemoteResponse(const QByteArray &responseData) {
         QJsonParseError error;
         LOG_VERBOSE_OR_DEBUG << responseData;

@@ -32,14 +32,11 @@ namespace Connectivity {
         explicit RequestsWorker(Models::SettingsModel &settingsModel, QObject *parent = nullptr);
 
     public:
-        void sendRequestSync(std::shared_ptr<IConnectivityRequest> &item);
+        void sendRequestSync(const std::shared_ptr<IConnectivityRequest> &item);
 
     protected:
         virtual bool initWorker() override;
-        virtual void processOneItem(const std::shared_ptr<IConnectivityRequest> &item) override { sendRequest(item); }
-
-    private:
-        void sendRequest(const std::shared_ptr<IConnectivityRequest> &item);
+        virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
 
     protected:
         virtual void onQueueIsEmpty() override { emit queueIsEmpty(); }

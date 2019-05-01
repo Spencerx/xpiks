@@ -14,11 +14,10 @@
 #include <memory>
 
 #include <QString>
+#include <QStringList>
 
 #include "Common/types.h"
 #include "Connectivity/iconnectivityrequest.h"
-
-class QStringList;
 
 namespace Connectivity {
     class IConnectivityResponse;
@@ -39,6 +38,7 @@ namespace Connectivity {
         virtual QStringList getRawHeaders() override { return m_Headers; }
         virtual Common::flag_t getFlags() override { return m_Flags; }
         virtual IConnectivityResponse *getResponse() override { return m_Response.get(); }
+        virtual void setFlag(RequestFlags flag) override { m_Flags |= flag; }
 
     private:
         QString m_URL;

@@ -24,7 +24,8 @@ namespace Connectivity {
     public:
         enum RequestFlags {
             None = 1 << 0,
-            NoCache = 1 << 1
+            NoCache = 1 << 1,
+            Retry = 1 << 2
         };
     public:
         virtual ~IConnectivityRequest() {}
@@ -34,6 +35,7 @@ namespace Connectivity {
         virtual QStringList getRawHeaders() = 0;
         virtual Common::flag_t getFlags() = 0;
         virtual IConnectivityResponse *getResponse() = 0;
+        virtual void setFlag(RequestFlags flag) = 0;
     };
 }
 

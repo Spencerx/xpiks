@@ -48,6 +48,7 @@ namespace Connectivity {
         virtual QStringList getRawHeaders() override { return QStringList(); }
         virtual Common::flag_t getFlags() override { return m_Flags; }
         virtual IConnectivityResponse *getResponse() override { return this; }
+        virtual void setFlag(RequestFlags flag) override { m_Flags |= flag; }
 
         // IConnectivityResponse interface
     public:

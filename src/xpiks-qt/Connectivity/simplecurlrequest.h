@@ -53,6 +53,7 @@ namespace Connectivity {
         QByteArray m_ResponseData;
         QString m_ErrorString;
         const Models::ProxySettings *m_ProxySettings;
+        int m_HttpError;
         bool m_VerifySSL;
     };
 }
