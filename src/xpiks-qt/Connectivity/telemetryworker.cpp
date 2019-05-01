@@ -24,6 +24,8 @@
 #include "Common/logging.h"
 #include "Common/version.h"
 #include "Connectivity/analyticsuserevent.h"
+#include "Connectivity/curlhelpers.h"
+#include "Models/settingsmodel.h"
 
 void buildQuery(const std::shared_ptr<Connectivity::AnalyticsUserEvent> &userEvent, const QString &userAgent, QUrlQuery &query) {
     query.addQueryItem(QLatin1String("idsite"), QLatin1String("1"));
@@ -40,10 +42,14 @@ void buildQuery(const std::shared_ptr<Connectivity::AnalyticsUserEvent> &userEve
 }
 
 namespace Connectivity {
-    TelemetryWorker::TelemetryWorker(const QString &userAgent, const QString &reportingEndpoint, const QString &interfaceLanguage):
+    TelemetryWorker::TelemetryWorker(const QString &userAgent,
+                                     const QString &reportingEndpoint,
+                                     const QString &interfaceLanguage,
+                                     Models::SettingsModel &settingsModel):
         m_UserAgentId(userAgent),
         m_ReportingEndpoint(reportingEndpoint),
-        m_InterfaceLanguage(interfaceLanguage)
+        m_InterfaceLanguage(interfaceLanguage),
+        m_SettingsModel(settingsModel)
     {
     }
 
@@ -130,13 +136,16 @@ namespace Connectivity {
 
         curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, (long)postString.size());
 
+        Models::ProxySettings *proxySettings = m_SettingsModel.retrieveProxySettings();
+        fillProxySettings(curl_handle, proxySettings);
+
         /* get it! */
         res = curl_easy_perform(curl_handle);
 
         const bool success = (CURLE_OK == res);
 
         /* check for errors */
-        if(!success) {
+        if (!success) {
             LOG_WARNING << "curl_easy_perform() failed" << curl_easy_strerror(res);
         }
 

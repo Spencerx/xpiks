@@ -18,6 +18,10 @@
 
 #include "Common/itemprocessingworker.h"
 
+namespace Models {
+    class SettingsModel;
+}
+
 namespace Connectivity {
     class AnalyticsUserEvent;
 
@@ -25,7 +29,10 @@ namespace Connectivity {
     {
         Q_OBJECT
     public:
-        TelemetryWorker(const QString &userAgent, const QString &reportingEndpoint, const QString &interfaceLanguage);
+        TelemetryWorker(const QString &userAgent,
+                        const QString &reportingEndpoint,
+                        const QString &interfaceLanguage,
+                        Models::SettingsModel &settingsModel);
 
     protected:
         virtual bool initWorker() override;
@@ -51,6 +58,7 @@ namespace Connectivity {
         QString m_UserAgentId;
         QString m_ReportingEndpoint;
         QString m_InterfaceLanguage;
+        Models::SettingsModel &m_SettingsModel;
     };
 }
 

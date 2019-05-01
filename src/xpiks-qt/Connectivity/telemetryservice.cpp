@@ -91,7 +91,10 @@ namespace Connectivity {
         Q_ASSERT(m_TelemetryWorker == nullptr);
         LOG_DEBUG << "#";
 
-        m_TelemetryWorker = new TelemetryWorker(m_UserAgentId, m_ReportingEndpoint, m_InterfaceLanguage);
+        m_TelemetryWorker = new TelemetryWorker(m_UserAgentId,
+                                                m_ReportingEndpoint,
+                                                m_InterfaceLanguage,
+                                                m_SettingsModel);
 
         QThread *thread = new QThread();
         m_TelemetryWorker->moveToThread(thread);
