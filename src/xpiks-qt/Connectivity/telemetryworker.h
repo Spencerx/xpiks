@@ -37,6 +37,7 @@ namespace Connectivity {
 
     protected:
         virtual bool initWorker() override;
+        virtual std::shared_ptr<void> processWorkItem(WorkItem &workItem) override;
         virtual void processOneItem(const std::shared_ptr<AnalyticsUserEvent> &item) override;
 
     private:

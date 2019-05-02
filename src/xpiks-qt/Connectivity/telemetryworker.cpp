@@ -17,6 +17,7 @@
 #include <QSysInfo>
 #include <QUrlQuery>
 #include <QtDebug>
+#include <QThread>
 #include <QtGlobal>
 
 #include <curl/curl.h>
@@ -27,6 +28,9 @@
 #include "Connectivity/curlhelpers.h"
 #include "Connectivity/telemetryconfig.h"
 #include "Models/settingsmodel.h"
+
+#define TELEMETRY_EVENTS_BATCH_SIZE 10
+#define TELEMETRY_SLEEP_MILLIS 500
 
 void buildQuery(const std::shared_ptr<Connectivity::AnalyticsUserEvent> &userEvent, const QString &userAgent, QUrlQuery &query) {
     query.addQueryItem(QLatin1String("idsite"), QLatin1String("1"));
@@ -47,6 +51,7 @@ namespace Connectivity {
                                      const QString &interfaceLanguage,
                                      TelemetryConfig &config,
                                      Models::SettingsModel &settingsModel):
+        ItemProcessingWorker(TELEMETRY_EVENTS_BATCH_SIZE),
         m_UserAgentId(userAgent),
         m_InterfaceLanguage(interfaceLanguage),
         m_Config(config),
@@ -60,6 +65,17 @@ namespace Connectivity {
         LOG_DEBUG << "#";
         m_ReportingEndpoint = m_Config.getEndpoint();
         return true;
+    }
+
+    std::shared_ptr<void> TelemetryWorker::processWorkItem(WorkItem &workItem) {
+        processOneItem(workItem.m_Item);
+
+        if (workItem.isMilestone()) {
+            // force context switch for more imporant tasks
+            QThread::msleep(TELEMETRY_SLEEP_MILLIS);
+        }
+
+        return std::shared_ptr<void>();
     }
 
     void TelemetryWorker::processOneItem(const std::shared_ptr<AnalyticsUserEvent> &item) {
