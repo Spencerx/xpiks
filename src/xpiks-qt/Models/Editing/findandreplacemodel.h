@@ -25,6 +25,8 @@
 #include "Artworks/artworkssnapshot.h"
 #include "Common/flags.h"
 #include "Common/iflagsprovider.h"
+#include "Common/messages.h"
+#include "Connectivity/analyticsuserevent.h"
 #include "Models/iactionmodel.h"
 
 #ifdef INTEGRATION_TESTS
@@ -53,7 +55,8 @@ namespace Models {
     class FindAndReplaceModel:
             public QAbstractListModel,
             public Models::IActionModel,
-            public Common::IFlagsProvider<Common::SearchFlags>
+            public Common::IFlagsProvider<Common::SearchFlags>,
+            public Common::MessagesSource<Common::NamedType<Connectivity::EventType>>
     {
         Q_OBJECT
         Q_PROPERTY(QString replaceFrom READ getReplaceFrom WRITE setReplaceFrom NOTIFY replaceFromChanged)

@@ -30,6 +30,7 @@
 #include "Commands/Editing/clearactionmodeltemplate.h"
 #include "Commands/Editing/findandreplacetemplate.h"
 #include "Commands/Editing/modifyartworkscommand.h"
+#include "Commands/Services/sendmessagecommand.h"
 #include "Common/defines.h"
 #include "Common/flags.h"
 #include "Common/logging.h"
@@ -268,6 +269,7 @@ namespace Models {
 
         m_PreviewElements.swap(previewElements);
         LOG_INFO << "Found" << m_PreviewElements.size() << "item(s)";
+        sendMessage(Connectivity::EventType::FindReplaceCandidates);
     }
 
 #if !defined(CORE_TESTS) && !defined(INTEGRATION_TESTS)
@@ -401,7 +403,9 @@ namespace Models {
                                                                          m_ReplaceTo,
                                                                          m_Flags),
                                 std::make_shared<Commands::ClearActionModelTemplate>(*this),
-                                std::make_shared<Commands::ArtworksSnapshotUpdateTemplate>(m_ArtworksUpdater)}));
+                                std::make_shared<Commands::ArtworksSnapshotUpdateTemplate>(m_ArtworksUpdater),
+                                std::make_shared<Commands::SendMessageCommand<Connectivity::EventType>>(
+                                *this, Connectivity::EventType::FindAndReplace)}));
         } else {
             LOG_DEBUG << "nothing to save";
             using TemplatedSnapshotCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;

@@ -406,7 +406,7 @@ void XpiksApp::stop() {
     m_DatabaseManager.prepareToFinalize();
 
     // we have a second for important? stuff
-    m_TelemetryService.reportAction(Connectivity::UserAction::Close);
+    m_TelemetryService.reportAction(Connectivity::EventType::Close);
     m_TelemetryService.stopReporting();
     m_RequestsService.stopService();
 
@@ -465,6 +465,7 @@ int XpiksApp::addFiles(const QList<QUrl> &urls) {
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
     auto files = std::make_shared<Filesystem::FilesCollection>(urls);
     int added = doAddFiles(files, flags);
+    m_TelemetryService.reportAction(Connectivity::EventType::AddFiles);
     return added;
 }
 
@@ -475,6 +476,7 @@ int XpiksApp::addDirectories(const QList<QUrl> &urls) {
     Common::SetFlag(flags, Common::AddFilesFlags::FlagIsFullDirectory);
     auto directories = std::make_shared<Filesystem::DirectoriesCollection>(urls);
     int added = doAddFiles(directories, flags);
+    m_TelemetryService.reportAction(Connectivity::EventType::AddDirectories);
     return added;
 }
 
@@ -484,6 +486,7 @@ int XpiksApp::dropItems(const QList<QUrl> &urls) {
     Common::ApplyFlag(flags, m_SettingsModel.getAutoFindVectors(), Common::AddFilesFlags::FlagAutoFindVectors);
     auto files = std::make_shared<Filesystem::FilesDirectoriesCollection>(urls);
     int added = doAddFiles(files, flags);
+    m_TelemetryService.reportAction(Connectivity::EventType::DropFilesDirectories);
     return added;
 }
 
@@ -868,9 +871,10 @@ void XpiksApp::registerUIMiddlewares() {
 
 void XpiksApp::setupMessaging() {
     LOG_DEBUG << "#";
-    Common::connectTarget<Common::NamedType<Connectivity::UserAction>>(
+    Common::connectTarget<Common::NamedType<Connectivity::EventType>>(
                 m_TelemetryService,
-    { m_ArtworksUploader, m_KeywordsSuggestor });
+    { m_ArtworksUploader, m_KeywordsSuggestor, m_SpellSuggestionModel, m_ReplaceModel,
+                m_WarningsModel, m_DeleteKeywordsModel});
 
     Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(
                 m_CurrentEditableModel,

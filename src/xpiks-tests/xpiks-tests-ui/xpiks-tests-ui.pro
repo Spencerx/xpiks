@@ -747,7 +747,8 @@ HEADERS += \
     ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.h \
     ../../xpiks-qt/Suggestion/suggestedkeywords.h \
     ../../xpiks-qt/Connectivity/curlhelpers.h \
-    ../xpiks-tests-integration/integrationtestsenvironment.h
+    ../xpiks-tests-integration/integrationtestsenvironment.h \
+    ../../xpiks-qt/Commands/Services/sendmessagecommand.h
 
 RESOURCES += \
     xpiks-tests-ui.qrc

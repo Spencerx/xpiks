@@ -17,7 +17,7 @@
 #include <QTime>
 
 namespace Connectivity {
-    enum struct UserAction {
+    enum struct EventType {
         Open,
         Close,
         Upload,
@@ -28,12 +28,20 @@ namespace Connectivity {
         WarningsCheck,
         TurnOffTelemetry,
         FindAndReplace,
-        DeleteKeywords
+        DeleteKeywords,
+        SuggestionCancel,
+        SetupFindAndReplace,
+        FindReplaceCandidates,
+        SetupDeleteKeywords,
+        CheckUploadCredentials,
+        AddFiles,
+        AddDirectories,
+        DropFilesDirectories
     };
 
     class AnalyticsUserEvent {
     public:
-        AnalyticsUserEvent(UserAction action) :
+        AnalyticsUserEvent(EventType action) :
             m_Action(action)
         {
             m_DateTime = QDateTime::currentDateTimeUtc();
@@ -41,18 +49,26 @@ namespace Connectivity {
 
         QString getActionString() const {
             switch (m_Action) {
-            case UserAction::Open: return QLatin1String("Open");
-            case UserAction::Close: return QLatin1String("Close");
-            case UserAction::Upload: return QLatin1String("Upload");
-            case UserAction::SpellCheck: return QLatin1String("SpellCheck");
-            case UserAction::SpellSuggestions: return QLatin1String("SpellSuggestions");
-            case UserAction::SuggestionRemote: return QLatin1String("SuggestionRemote");
-            case UserAction::SuggestionLocal: return QLatin1String("SuggestionLocal");
-            case UserAction::WarningsCheck: return QLatin1String("WarningsCheck");
-            case UserAction::TurnOffTelemetry: return QLatin1String("TurnOffTelemetry");
-            case UserAction::FindAndReplace: return QLatin1String("UserActionFindAndReplace");
-            case UserAction::DeleteKeywords: return QLatin1String("UserActionDeleteKeywords");
-            default: return QLatin1String("Unknown");
+                case EventType::Open: return QLatin1String("Open");
+                case EventType::Close: return QLatin1String("Close");
+                case EventType::Upload: return QLatin1String("Upload");
+                case EventType::SpellCheck: return QLatin1String("SpellCheck");
+                case EventType::SpellSuggestions: return QLatin1String("SpellSuggestions");
+                case EventType::SuggestionRemote: return QLatin1String("SuggestionRemote");
+                case EventType::SuggestionLocal: return QLatin1String("SuggestionLocal");
+                case EventType::WarningsCheck: return QLatin1String("WarningsCheck");
+                case EventType::TurnOffTelemetry: return QLatin1String("TurnOffTelemetry");
+                case EventType::FindAndReplace: return QLatin1String("UserActionFindAndReplace");
+                case EventType::DeleteKeywords: return QLatin1String("UserActionDeleteKeywords");
+                case EventType::SuggestionCancel: return QLatin1String("SuggestionCancel");
+                case EventType::SetupFindAndReplace: return QLatin1String("SetupFindAndReplace");
+                case EventType::FindReplaceCandidates: return QLatin1String("FindReplaceCandidates");
+                case EventType::SetupDeleteKeywords: return QLatin1String("SetupDeleteKeywords");
+                case EventType::CheckUploadCredentials: return QLatin1String("CheckUploadCredentials");
+                case EventType::AddFiles: return QLatin1String("AddFiles");
+                case EventType::AddDirectories: return QLatin1String("AddDirectories");
+                case EventType::DropFilesDirectories: return QLatin1String("DropFilesDirectories");
+                default: return QLatin1String("Unknown");
             }
         }
 
@@ -69,7 +85,7 @@ namespace Connectivity {
         }
 
     private:
-        UserAction m_Action;
+        EventType m_Action;
         QDateTime m_DateTime;
     };
 

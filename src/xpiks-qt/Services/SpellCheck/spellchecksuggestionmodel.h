@@ -23,6 +23,8 @@
 #include <Qt>
 
 #include "Common/flags.h"
+#include "Common/messages.h"
+#include "Connectivity/analyticsuserevent.h"
 #include "Models/iactionmodel.h"
 
 class QByteArray;
@@ -41,7 +43,10 @@ namespace SpellCheck {
     typedef std::vector<std::shared_ptr<SpellSuggestionsItem> > SuggestionsVector;
     typedef std::vector<std::shared_ptr<KeywordSpellSuggestions> > KeywordsSuggestionsVector;
 
-    class SpellCheckSuggestionModel: public QAbstractListModel, public Models::IActionModel
+    class SpellCheckSuggestionModel:
+            public QAbstractListModel,
+            public Models::IActionModel,
+            public Common::MessagesSource<Common::NamedType<Connectivity::EventType>>
     {
         Q_OBJECT
         Q_PROPERTY(int artworksCount READ getArtworksCount NOTIFY artworksCountChanged)

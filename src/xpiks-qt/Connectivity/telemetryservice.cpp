@@ -69,7 +69,7 @@ namespace Connectivity {
         m_IsStopped = true;
     }
 
-    void TelemetryService::handleMessage(Common::NamedType<UserAction> const &event) {
+    void TelemetryService::handleMessage(Common::NamedType<EventType> const &event) {
         reportAction(event.get());
     }
 
@@ -116,7 +116,7 @@ namespace Connectivity {
         return m_SettingsModel.getIsTelemetryEnabled() && m_Switcher.getIsTelemetryEnabled();
     }
 
-    void TelemetryService::doReportAction(UserAction action) {
+    void TelemetryService::doReportAction(EventType action) {
         if (isRunning()) {
             auto item = std::make_shared<AnalyticsUserEvent>(action);
             m_TelemetryWorker->submitItem(item);
@@ -125,7 +125,7 @@ namespace Connectivity {
         }
     }
 
-    void TelemetryService::reportAction(UserAction action) {
+    void TelemetryService::reportAction(EventType action) {
         if (getIsTelemetryEnabled()) {
             doReportAction(action);
         } else {
@@ -137,7 +137,7 @@ namespace Connectivity {
         LOG_INFO << value;
 
         if (value == false) {
-            doReportAction(UserAction::TurnOffTelemetry);
+            doReportAction(EventType::TurnOffTelemetry);
         }
     }
 

@@ -50,7 +50,7 @@ namespace Models {
 
     class ArtworksUploader:
             public QObject,
-            public Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>,
+            public Common::MessagesSource<Common::NamedType<Connectivity::EventType>>,
             public Common::MessagesTarget<UnavailableFilesMessage>
     {
         Q_OBJECT

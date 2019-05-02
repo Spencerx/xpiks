@@ -390,5 +390,6 @@ HEADERS += \
     ../../xpiks-qt/Models/Connectivity/uploadinfo.h \
     ../../xpiks-qt/Suggestion/suggestedkeywords.h \
     ../../xpiks-qt/Connectivity/ftphelpers.h \
-    keywordssuggestion_tests.h
+    keywordssuggestion_tests.h \
+    ../../xpiks-qt/Commands/Services/sendmessagecommand.h
 

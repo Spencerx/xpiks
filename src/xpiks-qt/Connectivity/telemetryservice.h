@@ -36,7 +36,7 @@ namespace Connectivity {
 
     class TelemetryService:
             public QObject,
-            public Common::MessagesTarget<Common::NamedType<UserAction>>
+            public Common::MessagesTarget<Common::NamedType<EventType>>
     {
         Q_OBJECT
     public:
@@ -51,17 +51,17 @@ namespace Connectivity {
         void stopReporting(bool immediately=true);
 
     public:
-        virtual void handleMessage(Common::NamedType<UserAction> const &event) override;
+        virtual void handleMessage(Common::NamedType<EventType> const &event) override;
 
     private:
         bool isRunning();
         void ensureUserIdExists();
         void doStartReporting();
         bool getIsTelemetryEnabled();
-        void doReportAction(UserAction action);
+        void doReportAction(EventType action);
 
     public:
-        void reportAction(UserAction action);
+        void reportAction(EventType action);
         void setInterfaceLanguage(const QString &language) { m_InterfaceLanguage = language; }
 
     public slots:

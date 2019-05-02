@@ -157,6 +157,7 @@ namespace Models {
         context->m_VerboseLogging = m_SettingsModel.getVerboseUpload();
 
         m_TestingCredentialWatcher.setFuture(QtConcurrent::run(Connectivity::isContextValid, context));
+        sendMessage(Connectivity::EventType::CheckUploadCredentials);
     }
 
     bool ArtworksUploader::needCreateArchives() const {
@@ -230,7 +231,7 @@ namespace Models {
         m_UploadInfos.updatePercentages();
 
         m_FtpCoordinator->uploadArtworks(snapshot, selectedInfos);
-        sendMessage(Connectivity::UserAction::Upload);
+        sendMessage(Connectivity::EventType::Upload);
     }
 
     bool ArtworksUploader::removeUnavailableItems() {

@@ -33,6 +33,7 @@
 #include "Commands/Editing/deletekeywordstemplate.h"
 #include "Commands/Editing/modifyartworkscommand.h"
 #include "Commands/artworksupdatetemplate.h"
+#include "Commands/Services/sendmessagecommand.h"
 #include "Common/logging.h"
 #include "KeywordsPresets/ipresetsmanager.h"
 #include "Models/Artworks/artworksviewmodel.h"
@@ -56,6 +57,7 @@ namespace Models {
         LOG_DEBUG << "#";
         ArtworksViewModel::setArtworks(artworks);
         recombineKeywords();
+        sendMessage(Connectivity::EventType::SetupDeleteKeywords);
     }
 
     bool DeleteKeywordsViewModel::removeUnavailableItems() {
@@ -95,7 +97,9 @@ namespace Models {
                                 std::make_shared<DeleteKeywordsTemplate>(
                                 keywordsSet, m_CaseSensitive),
                                 std::make_shared<Commands::ClearActionModelTemplate>(*this),
-                                std::make_shared<Commands::ArtworksSnapshotUpdateTemplate>(m_ArtworksUpdater)}));
+                                std::make_shared<Commands::ArtworksSnapshotUpdateTemplate>(m_ArtworksUpdater),
+                                std::make_shared<Commands::SendMessageCommand<Connectivity::EventType>>(
+                                *this, Connectivity::EventType::DeleteKeywords)}));
         } else {
             using TemplatedSnapshotCommand = Commands::TemplatedCommand<Artworks::ArtworksSnapshot>;
             return std::make_shared<TemplatedSnapshotCommand>(

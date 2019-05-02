@@ -406,9 +406,9 @@ namespace Suggestion {
                 m_ProgressiveLoadTimer.stop();
 #ifndef CORE_TESTS
                 if (std::dynamic_pointer_cast<LocalLibraryQueryEngine>(engine) == nullptr) {
-                    sendMessage(Connectivity::UserAction::SuggestionRemote);
+                    sendMessage(Connectivity::EventType::SuggestionRemote);
                 } else {
-                    sendMessage(Connectivity::UserAction::SuggestionLocal);
+                    sendMessage(Connectivity::EventType::SuggestionLocal);
                 }
 #endif
             } else {
@@ -424,6 +424,7 @@ namespace Suggestion {
             engine->cancelQuery();
         }
         m_ProgressiveLoadTimer.stop();
+        sendMessage(Connectivity::EventType::SuggestionCancel);
     }
 
     QStringList KeywordsSuggestor::getEngineNames() const {

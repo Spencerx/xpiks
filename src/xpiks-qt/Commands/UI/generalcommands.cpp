@@ -16,6 +16,7 @@
 #include <QUrl>
 
 #include "Common/logging.h"
+#include "Connectivity/analyticsuserevent.h"
 #include "Helpers/uihelpers.h"
 #include "MetadataIO/csvexportmodel.h"
 #include "Models/Artworks/artworkslistmodel.h"
@@ -70,6 +71,7 @@ namespace Commands {
         void CheckWarningsCommand::execute(const QVariant &) {
             LOG_DEBUG << "#";
             m_Source.update();
+            m_Source.sendMessage(Connectivity::EventType::WarningsCheck);
         }
 
         void InitUploadHostCommand::execute(const QVariant &value) {
@@ -104,6 +106,7 @@ namespace Commands {
             LOG_DEBUG << "#";
             m_Source.setReplaceFrom("");
             m_Source.setReplaceTo("");
+            m_Source.sendMessage(Connectivity::EventType::SetupFindAndReplace);
         }
 
         void StartCSVExportCommand::execute(const QVariant &value) {

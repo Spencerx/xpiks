@@ -186,6 +186,7 @@ namespace SpellCheck {
         LOG_DEBUG << "#";
         m_SpellSuggestionsTarget = target;
         setupRequests(target->generateSuggestionItems(flags));
+        sendMessage(Connectivity::EventType::SpellSuggestions);
     }
 
     void SpellCheckSuggestionModel::submitCorrections() const {

@@ -21,6 +21,7 @@
 #include "Artworks/basickeywordsmodel.h"
 #include "Common/messages.h"
 #include "Common/types.h"
+#include "Connectivity/analyticsuserevent.h"
 #include "KeywordsPresets/presetmodel.h"
 #include "Models/Artworks/artworksviewmodel.h"
 #include "Models/iactionmodel.h"
@@ -49,12 +50,16 @@ namespace Models {
     class DeleteKeywordsViewModel:
             public Models::ArtworksViewModel,
             public Models::IActionModel,
-            public Common::MessagesSource<BasicSpellCheckMessageType>
+            public Common::MessagesSource<BasicSpellCheckMessageType>,
+            public Common::MessagesSource<Common::NamedType<Connectivity::EventType>>
     {
         Q_OBJECT
         Q_PROPERTY(int commonKeywordsCount READ getCommonKeywordsCount NOTIFY commonKeywordsCountChanged)
         Q_PROPERTY(int keywordsToDeleteCount READ getKeywordsToDeleteCount NOTIFY keywordsToDeleteCountChanged)
         Q_PROPERTY(bool caseSensitive READ getCaseSensitive WRITE setCaseSensitive NOTIFY caseSensitiveChanged)
+
+        using Common::MessagesSource<BasicSpellCheckMessageType>::sendMessage;
+        using Common::MessagesSource<Common::NamedType<Connectivity::EventType>>::sendMessage;
 
     public:
         DeleteKeywordsViewModel(Services::IArtworksUpdater &artworksUpdater,

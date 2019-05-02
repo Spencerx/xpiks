@@ -633,7 +633,8 @@ HEADERS += \
     ftpuploadtest.h \
     ftpcredentialschecktest.h \
     ../../xpiks-qt/QMLExtensions/uicommandid.h \
-    ../../xpiks-qt/Connectivity/curlhelpers.h
+    ../../xpiks-qt/Connectivity/curlhelpers.h \
+    ../../xpiks-qt/Commands/Services/sendmessagecommand.h
 
 INCLUDEPATH += ../../../
 INCLUDEPATH += ../../xpiks-qt

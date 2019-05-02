@@ -551,7 +551,8 @@ HEADERS += \
     UndoRedo/undoredomanager.h \
     xpiksapp.h \
     Connectivity/curlhelpers.h \
-    Suggestion/suggestedkeywords.h
+    Suggestion/suggestedkeywords.h \
+    Commands/Services/sendmessagecommand.h
 
 DISTFILES += \
     ../xpiks-common/xpiks-common.pri \

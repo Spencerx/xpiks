@@ -21,6 +21,8 @@
 #include <QVariant>
 #include <QVector>
 
+#include "Common/messages.h"
+#include "Connectivity/analyticsuserevent.h"
 #include "Models/Artworks/artworkslistmodel.h"
 
 class QByteArray;
@@ -29,7 +31,9 @@ class QModelIndex;
 namespace Warnings {
     class WarningsSettingsModel;
 
-    class WarningsModel: public QSortFilterProxyModel
+    class WarningsModel:
+            public QSortFilterProxyModel,
+            public Common::MessagesSource<Common::NamedType<Connectivity::EventType>>
     {
         Q_OBJECT
         Q_PROPERTY(int warningsCount READ getWarningsCount NOTIFY warningsCountChanged)

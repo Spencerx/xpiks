@@ -68,7 +68,7 @@ namespace Suggestion {
 
     class KeywordsSuggestor:
             public QAbstractListModel,
-            public Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>,
+            public Common::MessagesSource<Common::NamedType<Connectivity::EventType>>,
             public Common::MessagesSource<Models::QuickBufferMessage>
     {
         Q_OBJECT
@@ -83,7 +83,7 @@ namespace Suggestion {
         Q_PROPERTY(QStringList engineNames READ getEngineNames NOTIFY engineNamesChanged)
 
     private:
-        using Common::MessagesSource<Common::NamedType<Connectivity::UserAction>>::sendMessage;
+        using Common::MessagesSource<Common::NamedType<Connectivity::EventType>>::sendMessage;
         using Common::MessagesSource<Models::QuickBufferMessage>::sendMessage;
 
     public:
