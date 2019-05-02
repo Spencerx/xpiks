@@ -245,7 +245,7 @@ namespace Suggestion {
         return result;
     }
 
-    void KeywordsSuggestor::resultsAvailableHandler() {
+    void KeywordsSuggestor::resultsAvailableHandler(bool success) {
         LOG_INFO << "#";
         auto engine = getSelectedEngine();
         unsetInProgress();
@@ -253,6 +253,8 @@ namespace Suggestion {
             auto &results = engine->getSuggestions();
             setSuggestedArtworks(results);
         }
+
+        if (!success) { sendMessage(Connectivity::EventType::SuggestionFailure); }
     }
 
     void KeywordsSuggestor::errorsReceivedHandler(const QString &error) {

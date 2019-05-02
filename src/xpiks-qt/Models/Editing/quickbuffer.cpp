@@ -133,6 +133,7 @@ namespace Models {
             result = true;
         } else {
             LOG_WARNING << "Nothing registered as current item";
+            sendMessage(Connectivity::EventType::CurrentItemMiss);
         }
 
         return result;
@@ -155,6 +156,7 @@ namespace Models {
             result = true;
         } else {
             LOG_WARNING << "Nothing registered as current item";
+            sendMessage(Connectivity::EventType::CurrentItemMiss);
         }
 
         return result;

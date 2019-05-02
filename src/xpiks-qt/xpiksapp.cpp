@@ -874,7 +874,7 @@ void XpiksApp::setupMessaging() {
     Common::connectTarget<Common::NamedType<Connectivity::EventType>>(
                 m_TelemetryService,
     { m_ArtworksUploader, m_KeywordsSuggestor, m_SpellSuggestionModel, m_ReplaceModel,
-                m_WarningsModel, m_DeleteKeywordsModel});
+                m_WarningsModel, m_DeleteKeywordsModel, m_QuickBuffer, m_TranslationManager});
 
     Common::connectTarget<std::shared_ptr<Models::ICurrentEditable>>(
                 m_CurrentEditableModel,

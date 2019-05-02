@@ -22,6 +22,7 @@ namespace Suggestion {
         virtual ~ISuggestionsRepository() {}
         virtual void setSuggestions(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestions) = 0;
         virtual std::vector<std::shared_ptr<SuggestionArtwork> > &getSuggestions() = 0;
+        virtual void setError() = 0;
     };
 }
 

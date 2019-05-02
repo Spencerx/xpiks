@@ -283,6 +283,8 @@ namespace Translation {
 
         emit dictionariesChanged();
 
+        if (!success) { sendMessage(Connectivity::EventType::AddDictionaryFailed); }
+
         return success;
     }
 

@@ -28,11 +28,11 @@ namespace Suggestion {
 
         // IConnectivityResponse interface
     public:
-        virtual void setResult(bool result, const QByteArray &body) override;
+        virtual void setResult(bool success, const QByteArray &body) override;
 
     protected:
         virtual bool parseResponse(const QByteArray &body, std::vector<std::shared_ptr<SuggestionArtwork> > &artworks) = 0;
-        virtual void onResultsAvailable();
+        virtual void onResultsAvailable(bool success);
 
     public:
         std::vector<std::shared_ptr<SuggestionArtwork> > &getSuggestedArtworks() { return m_SuggestedArtworks; }

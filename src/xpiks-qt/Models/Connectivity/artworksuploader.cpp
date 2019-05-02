@@ -107,6 +107,7 @@ namespace Models {
         setPercent(100);
         setInProgress(false);
         emit finishedProcessing();
+        if (anyError) { sendMessage(Connectivity::EventType::UploadFailed); }
     }
 
     void ArtworksUploader::credentialsTestingFinished() {

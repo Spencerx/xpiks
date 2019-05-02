@@ -18,18 +18,24 @@ namespace Suggestion {
     {
     }
 
-    void SuggestionResultsResponse::setResult(bool result, const QByteArray &body) {
-        if (result) {
+    void SuggestionResultsResponse::setResult(bool success, const QByteArray &body) {
+        bool parsed = false;
+        if (success) {
             decltype(m_SuggestedArtworks) artworks;
-            if (parseResponse(body, artworks)) {
+            parsed = parseResponse(body, artworks);
+            if (parsed) {
                 m_SuggestedArtworks.swap(artworks);
             }
         }
 
-        onResultsAvailable();
+        onResultsAvailable(success && parsed);
     }
 
-    void SuggestionResultsResponse::onResultsAvailable() {
-        m_Suggestions.setSuggestions(m_SuggestedArtworks);
+    void SuggestionResultsResponse::onResultsAvailable(bool success) {
+        if (success) {
+            m_Suggestions.setSuggestions(m_SuggestedArtworks);
+        } else {
+            m_Suggestions.setError();
+        }
     }
 }

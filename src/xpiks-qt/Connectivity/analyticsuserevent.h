@@ -36,7 +36,11 @@ namespace Connectivity {
         CheckUploadCredentials,
         AddFiles,
         AddDirectories,
-        DropFilesDirectories
+        DropFilesDirectories,
+        UploadFailed,
+        CurrentItemMiss,
+        AddDictionaryFailed,
+        SuggestionFailure
     };
 
     class AnalyticsUserEvent {
@@ -68,6 +72,10 @@ namespace Connectivity {
                 case EventType::AddFiles: return QLatin1String("AddFiles");
                 case EventType::AddDirectories: return QLatin1String("AddDirectories");
                 case EventType::DropFilesDirectories: return QLatin1String("DropFilesDirectories");
+                case EventType::UploadFailed: return QLatin1String("UploadFailed");
+                case EventType::CurrentItemMiss: return QLatin1String("CurrentItemMiss");
+                case EventType::AddDictionaryFailed: return QLatin1String("AddDictionaryFailed");
+                case EventType::SuggestionFailure: return QLatin1String("SuggestionFailure");
                 default: return QLatin1String("Unknown");
             }
         }

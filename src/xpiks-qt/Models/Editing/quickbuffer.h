@@ -23,6 +23,7 @@
 #include "Common/delayedactionentity.h"
 #include "Common/messages.h"
 #include "Common/types.h"
+#include "Connectivity/analyticsuserevent.h"
 #include "Models/Editing/artworkproxybase.h"
 #include "Services/SpellCheck/spellcheckinfo.h"
 
@@ -43,11 +44,12 @@ namespace Models {
     using BasicSpellCheckMessageType = Common::NamedType<std::shared_ptr<Artworks::IBasicModelSource>, Common::MessageType::SpellCheck>;
 
     class QuickBuffer:
-            public QObject,
-            public Models::ArtworkProxyBase,
-            public Common::DelayedActionEntity,
-            public Common::MessagesSource<BasicSpellCheckMessageType>,
-            public Common::MessagesTarget<QuickBufferMessage>
+        public QObject,
+        public Models::ArtworkProxyBase,
+        public Common::DelayedActionEntity,
+        public Common::MessagesSource<BasicSpellCheckMessageType>,
+        public Common::MessagesSource<Common::NamedType<Connectivity::EventType>>,
+        public Common::MessagesTarget<QuickBufferMessage>
     {
         Q_OBJECT
         Q_PROPERTY(QString description READ getDescription WRITE setDescription NOTIFY descriptionChanged)
@@ -57,6 +59,9 @@ namespace Models {
         Q_PROPERTY(bool hasTitleSpellErrors READ getHasTitleSpellErrors NOTIFY titleSpellingChanged)
         Q_PROPERTY(bool hasDescriptionSpellErrors READ getHasDescriptionSpellError NOTIFY descriptionSpellingChanged)
         Q_PROPERTY(bool hasKeywordsSpellErrors READ getHasKeywordsSpellError NOTIFY keywordsSpellingChanged)
+
+        using Common::MessagesSource<BasicSpellCheckMessageType>::sendMessage;
+        using Common::MessagesSource<Common::NamedType<Connectivity::EventType>>::sendMessage;
 
     public:
         explicit QuickBuffer(CurrentEditableModel &currentEditableModel,

@@ -139,7 +139,7 @@ namespace Suggestion {
         void engineNamesChanged();
 
     private slots:
-        void resultsAvailableHandler();
+        void resultsAvailableHandler(bool success);
         void errorsReceivedHandler(const QString &error);
         void onProgressiveLoadTimer();
         void onSwitchesUpdated();

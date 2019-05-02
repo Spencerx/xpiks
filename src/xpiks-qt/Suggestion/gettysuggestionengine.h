@@ -61,10 +61,10 @@ namespace Suggestion {
         { }
 
     protected:
-        virtual void onSuggestionsArrived() override { emit resultsAvailable(); }
+        virtual void onSuggestionsArrived(bool success) override { emit resultsAvailable(success); }
 
     signals:
-        void resultsAvailable();
+        void resultsAvailable(bool success);
     };
 }
 

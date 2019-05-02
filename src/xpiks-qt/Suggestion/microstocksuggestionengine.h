@@ -79,14 +79,14 @@ namespace Suggestion {
         virtual void setSuggestions(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestions) override {
             if (!m_IsCancelled) {
                 m_Suggestions = std::move(suggestions);
-                onSuggestionsArrived();
+                onSuggestionsArrived(true);
             }
         }
-
         virtual std::vector<std::shared_ptr<SuggestionArtwork> > &getSuggestions() override { return m_Suggestions; }
+        virtual void setError() override { onSuggestionsArrived(false); }
 
     protected:
-        virtual void onSuggestionsArrived() = 0;
+        virtual void onSuggestionsArrived(bool success) = 0;
 
     private:
         int m_EngineID;

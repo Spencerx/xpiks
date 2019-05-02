@@ -42,6 +42,7 @@ namespace Suggestion {
 
     public:
         virtual void setSuggestions(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestions) override;
+        virtual void setError() override;
         virtual std::vector<std::shared_ptr<SuggestionArtwork> > &getSuggestions() override { return m_Suggestions; }
 
         // ISuggestionEngine interface
@@ -60,7 +61,7 @@ namespace Suggestion {
         void resultsFoundHandler();
 
     signals:
-        void resultsAvailable();
+        void resultsAvailable(bool success);
 
     private:
         int m_EngineID;

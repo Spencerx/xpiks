@@ -40,7 +40,11 @@ namespace Suggestion {
 
     void LocalLibraryQueryEngine::setSuggestions(std::vector<std::shared_ptr<SuggestionArtwork> > &suggestions) {
         m_Suggestions = std::move(suggestions);
-        emit resultsAvailable();
+        emit resultsAvailable(true);
+    }
+
+    void LocalLibraryQueryEngine::setError() {
+        emit resultsAvailable(false);
     }
 
     void LocalLibraryQueryEngine::submitQuery(const Microstocks::SearchQuery &query) {

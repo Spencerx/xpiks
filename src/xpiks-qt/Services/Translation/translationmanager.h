@@ -19,7 +19,10 @@
 #include <QTimer>
 #include <QVector>
 
+#include "Common/messages.h"
 #include "Common/statefulentity.h"
+#include "Common/types.h"
+#include "Connectivity/analyticsuserevent.h"
 
 class QUrl;
 namespace Common {
@@ -34,7 +37,7 @@ namespace Translation {
         QString m_Description;
     };
 
-    class TranslationManager: public QObject
+    class TranslationManager: public QObject, public Common::MessagesSource<Common::NamedType<Connectivity::EventType>>
     {
         Q_OBJECT
         Q_PROPERTY(bool isBusy READ getIsBusy WRITE setIsBusy NOTIFY isBusyChanged)
