@@ -14,11 +14,12 @@ public:
 private slots:
     void trivialCombineNoItemsTest();
     void trivialCombineOneItemTest();
+    void combineAllEmptyTest();
     void combineSeveralSameItemsTest();
     void combineSeveralWithEmptyFirstTest();
     void combineSeveralWithEmptyManyTest();
     void combineSeveralWithEmptyTest();
-    void combineSeveralEmptyTest();
+    void combineWithSeveralEmptyTest();
     void combineAllDifferentItemsTest();
     void combineAllManyDifferentItemsTest();
     void combineAllManyLastDifferentItemsTest();
@@ -53,7 +54,7 @@ private slots:
     void savedAfterModifiedDescriptionTest();
     void savedAfterModifiedTitleTest();
     void savedAfterKeywordsModifiedTest();
-    void savedIfMoreThanOneButNotModifiedTest();
+    void nothingChangedIfNoModificationsMadeTest();
     void caseIsPreservedForOneItemTest();
     void caseIsPreservedForSeveralItemsTest();
     void clearKeywordsFiresKeywordsCountTest();

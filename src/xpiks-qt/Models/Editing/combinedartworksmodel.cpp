@@ -85,11 +85,26 @@ namespace Models {
 
         recombineArtworks();
 
-        if (getArtworksCount() == 1) {
-            enableAllFields();
-        }
-
         registerAsCurrentEditable();
+    }
+
+    void CombinedArtworksModel::initKeywords(const QStringList &keywords, bool onlyAppend) {
+         m_CommonKeywordsModel.setKeywords(keywords);
+         setKeywordsModified(false);
+         setChangeKeywords(true);
+         setAppendKeywords(onlyAppend);
+    }
+
+    void CombinedArtworksModel::initDescription(const QString &description, bool enabled) {
+        setDescription(description);
+        setDescriptionModified(false);
+        setChangeDescription(enabled);
+    }
+
+    void CombinedArtworksModel::initTitle(const QString &title, bool enabled) {
+         setTitle(title);
+         setTitleModified(false);
+         setChangeTitle(enabled);
     }
 
     void CombinedArtworksModel::recombineArtworks() {
@@ -327,12 +342,12 @@ namespace Models {
         // TEMPORARY (enable everything on initial launch) --
         m_ModifiedFlags = 0;
         m_EditFlags = Common::ArtworkEditFlags::None;
-        enableAllFields();
-        // TEMPORARY (enable everything on initial launch) --
 
-        initDescription("");
-        initTitle("");
-        initKeywords(QStringList());
+        const bool enable = true;
+        initDescription("", enable);
+        initTitle("", enable);
+        initKeywords(QStringList(), false /*only append*/);
+        // TEMPORARY (enable everything on initial launch) --
 
         // clear current editable
         sendMessage(std::shared_ptr<ICurrentEditable>());
@@ -354,31 +369,27 @@ namespace Models {
         return accepted;
     }
 
-    void CombinedArtworksModel::enableAllFields() {
-        setChangeDescription(true);
-        setChangeTitle(true);
-        setChangeKeywords(true);
-    }
-
     void CombinedArtworksModel::assignFromOneArtwork() {
         LOG_DEBUG << "#";
         Q_ASSERT(getArtworksCount() == 1);
         auto &artwork = accessItem(0)->getArtwork();
+        const bool enable = true;
 
         if (!isDescriptionModified()) {
-            initDescription(artwork->getDescription());
+            initDescription(artwork->getDescription(), enable);
         }
 
         if (!isTitleModified()) {
-            initTitle(artwork->getTitle());
+            initTitle(artwork->getTitle(), enable);
         }
 
         if (!areKeywordsModified()) {
-            initKeywords(artwork->getKeywords());
+            initKeywords(artwork->getKeywords(), false /*only append*/);
         }
     }
 
     void CombinedArtworksModel::assignFromManyArtworks() {
+        LOG_DEBUG << "#";
         recombineArtworks([](std::shared_ptr<Artworks::ArtworkElement> const &) { return true; });
     }
 
@@ -439,15 +450,15 @@ namespace Models {
                 title = "";
             }
 
-            initDescription(description);
-            initTitle(title);
+            initDescription(description, !descriptionsDiffer);
+            initTitle(title, !titleDiffer);
 
             if (!areKeywordsModified()) {
                 if ((!anyDifferent) && unitedKeywords.subtract(commonKeywords).isEmpty()) {
                     // all keywords are the same
-                    initKeywords(firstItemKeywords);
+                    initKeywords(firstItemKeywords, false /*only append*/);
                 } else {
-                    initKeywords(commonKeywords.toList());
+                    initKeywords(commonKeywords.toList(), true /*only append*/);
                 }
             }
         }

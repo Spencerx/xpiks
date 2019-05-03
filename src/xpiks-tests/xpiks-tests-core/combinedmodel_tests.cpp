@@ -58,6 +58,7 @@ void CombinedModelTests::trivialCombineNoItemsTest() {
     QCOMPARE(combinedModel.getChangeDescription(), true);
     QCOMPARE(combinedModel.getChangeTitle(), true);
     QCOMPARE(combinedModel.getChangeKeywords(), true);
+    QCOMPARE(combinedModel.getAppendKeywords(), false);
 }
 
 void CombinedModelTests::trivialCombineOneItemTest() {
@@ -78,6 +79,30 @@ void CombinedModelTests::trivialCombineOneItemTest() {
     QCOMPARE(combinedModel.getTitle(), title);
     QCOMPARE(combinedModel.getKeywordsCount(), keywords.count());
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), false);
+}
+
+void CombinedModelTests::combineAllEmptyTest() {
+    DECLARE_MODELS;
+
+    Artworks::ArtworksSnapshot snapshot;
+    snapshot.append(createArtworkMetadata("", "", QStringList(), 0));
+    snapshot.append(createArtworkMetadata("", "", QStringList(), 1));
+    snapshot.append(createArtworkMetadata("", "", QStringList(), 2));
+
+    int size = static_cast<int>(snapshot.size());
+
+    combinedModel.setArtworks(snapshot);
+
+    QCOMPARE(combinedModel.getArtworksCount(), size);
+    QVERIFY(combinedModel.getTitle().isEmpty());
+    QVERIFY(combinedModel.getChangeTitle());
+    QVERIFY(combinedModel.getDescription().isEmpty());
+    QVERIFY(combinedModel.getChangeDescription());
+    QCOMPARE(combinedModel.getKeywordsCount(), 0);
+    QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QVERIFY(combinedModel.getChangeKeywords());
+    QCOMPARE(combinedModel.getAppendKeywords(), false);
 }
 
 void CombinedModelTests::combineSeveralSameItemsTest() {
@@ -99,9 +124,12 @@ void CombinedModelTests::combineSeveralSameItemsTest() {
 
     QCOMPARE(combinedModel.getArtworksCount(), itemsToGenerate);
     QCOMPARE(combinedModel.getDescription(), desc);
+    QVERIFY(combinedModel.getChangeDescription());
     QCOMPARE(combinedModel.getTitle(), title);
+    QVERIFY(combinedModel.getChangeTitle());
     QCOMPARE(combinedModel.getKeywordsCount(), keywords.count());
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), false);
 }
 
 void CombinedModelTests::combineSeveralWithEmptyFirstTest() {
@@ -119,9 +147,12 @@ void CombinedModelTests::combineSeveralWithEmptyFirstTest() {
 
     QCOMPARE(combinedModel.getArtworksCount(), size);
     QVERIFY(combinedModel.getDescription().isEmpty());
+    QVERIFY(!combinedModel.getChangeDescription());
     QVERIFY(combinedModel.getTitle().isEmpty());
+    QVERIFY(!combinedModel.getChangeTitle());
     QCOMPARE(combinedModel.getKeywords(), keywords);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), false);
 }
 
 void CombinedModelTests::combineSeveralWithEmptyManyTest() {
@@ -144,6 +175,7 @@ void CombinedModelTests::combineSeveralWithEmptyManyTest() {
     QCOMPARE(combinedModel.getKeywordsCount(), 1);
     QCOMPARE(combinedModel.getKeywords()[0], commonKeyword);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), true);
 }
 
 void CombinedModelTests::combineSeveralWithEmptyTest() {
@@ -166,9 +198,10 @@ void CombinedModelTests::combineSeveralWithEmptyTest() {
     QCOMPARE(combinedModel.getKeywordsCount(), 1);
     QCOMPARE(combinedModel.getKeywords()[0], commonKeyword);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), true);
 }
 
-void CombinedModelTests::combineSeveralEmptyTest() {
+void CombinedModelTests::combineWithSeveralEmptyTest() {
     DECLARE_MODELS;
 
     const QString title = "title";
@@ -188,6 +221,7 @@ void CombinedModelTests::combineSeveralEmptyTest() {
     QCOMPARE(combinedModel.getDescription(), description);
     QCOMPARE(combinedModel.getKeywordsCount(), 0);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), false);
 }
 
 void CombinedModelTests::combineAllDifferentItemsTest() {
@@ -204,9 +238,12 @@ void CombinedModelTests::combineAllDifferentItemsTest() {
 
     QCOMPARE(combinedModel.getArtworksCount(), size);
     QVERIFY(combinedModel.getDescription().isEmpty());
+    QVERIFY(!combinedModel.getChangeDescription());
     QVERIFY(combinedModel.getTitle().isEmpty());
+    QVERIFY(!combinedModel.getChangeTitle());
     QCOMPARE(combinedModel.getKeywordsCount(), 0);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), true);
 }
 
 void CombinedModelTests::combineAllManyDifferentItemsTest() {
@@ -225,6 +262,7 @@ void CombinedModelTests::combineAllManyDifferentItemsTest() {
     QVERIFY(combinedModel.getTitle().isEmpty());
     QCOMPARE(combinedModel.getKeywordsCount(), 0);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), true);
 }
 
 void CombinedModelTests::combineAllManyLastDifferentItemsTest() {
@@ -244,6 +282,7 @@ void CombinedModelTests::combineAllManyLastDifferentItemsTest() {
     QVERIFY(combinedModel.getTitle().isEmpty());
     QCOMPARE(combinedModel.getKeywordsCount(), 0);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), true);
 }
 
 void CombinedModelTests::combineCommonInKeywordsTest() {
@@ -261,10 +300,13 @@ void CombinedModelTests::combineCommonInKeywordsTest() {
 
     QCOMPARE(combinedModel.getArtworksCount(), size);
     QVERIFY(combinedModel.getDescription().isEmpty());
+    QVERIFY(!combinedModel.getChangeDescription());
     QVERIFY(combinedModel.getTitle().isEmpty());
+    QVERIFY(!combinedModel.getChangeTitle());
     QCOMPARE(combinedModel.getKeywordsCount(), 1);
     QCOMPARE(combinedModel.getKeywords()[0], commonKeyword);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), true);
 }
 
 void CombinedModelTests::combineCommonInManyKeywordsTest() {
@@ -282,10 +324,13 @@ void CombinedModelTests::combineCommonInManyKeywordsTest() {
 
     QCOMPARE(combinedModel.getArtworksCount(), size);
     QVERIFY(combinedModel.getDescription().isEmpty());
+    QVERIFY(!combinedModel.getChangeDescription());
     QVERIFY(combinedModel.getTitle().isEmpty());
+    QVERIFY(!combinedModel.getChangeTitle());
     QCOMPARE(combinedModel.getKeywordsCount(), 1);
     QCOMPARE(combinedModel.getKeywords()[0], commonKeyword);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), true);
 }
 
 void CombinedModelTests::combineCommonInTitleTest() {
@@ -303,9 +348,12 @@ void CombinedModelTests::combineCommonInTitleTest() {
 
     QCOMPARE(combinedModel.getArtworksCount(), size);
     QVERIFY(combinedModel.getDescription().isEmpty());
+    QVERIFY(!combinedModel.getChangeDescription());
     QCOMPARE(combinedModel.getTitle(), commonTitle);
+    QVERIFY(combinedModel.getChangeTitle());
     QCOMPARE(combinedModel.getKeywordsCount(), 0);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), true);
 }
 
 void CombinedModelTests::combineCommonInDescriptionTest() {
@@ -323,9 +371,12 @@ void CombinedModelTests::combineCommonInDescriptionTest() {
 
     QCOMPARE(combinedModel.getArtworksCount(), size);
     QVERIFY(combinedModel.getTitle().isEmpty());
+    QVERIFY(!combinedModel.getChangeTitle());
     QCOMPARE(combinedModel.getDescription(), commonDescription);
+    QVERIFY(combinedModel.getChangeDescription());
     QCOMPARE(combinedModel.getKeywordsCount(), 0);
     QCOMPARE(combinedModel.areKeywordsModified(), false);
+    QCOMPARE(combinedModel.getAppendKeywords(), true);
 }
 
 void CombinedModelTests::editSeveralWithSameKeywordsTest() {
@@ -389,6 +440,9 @@ void CombinedModelTests::recombineAfterRemoveAllButOneTest() {
 
     combinedModel.setArtworks(snapshot);
 
+    QVERIFY(!combinedModel.getChangeTitle());
+    QVERIFY(!combinedModel.getChangeDescription());
+
     combinedModel.setIsSelected(1, true);
     combinedModel.setIsSelected(2, true);
     combinedModel.removeSelectedArtworks();
@@ -396,7 +450,9 @@ void CombinedModelTests::recombineAfterRemoveAllButOneTest() {
 
     QCOMPARE(combinedModel.getArtworksCount(), 1);
     QCOMPARE(combinedModel.getTitle(), first->getTitle());
+    QVERIFY(combinedModel.getChangeTitle());
     QCOMPARE(combinedModel.getDescription(), first->getDescription());
+    QVERIFY(combinedModel.getChangeDescription());
     QCOMPARE(combinedModel.getKeywordsCount(), first->getBasicModel().getKeywordsCount());
     QCOMPARE(combinedModel.getKeywords(), first->getKeywords());
     QCOMPARE(combinedModel.areKeywordsModified(), false);
@@ -623,7 +679,8 @@ void CombinedModelTests::initManyArtworksDoesNotEnableAllFields() {
     QCOMPARE(combinedModel.areKeywordsModified(), false);
     QCOMPARE(combinedModel.getChangeDescription(), false);
     QCOMPARE(combinedModel.getChangeTitle(), false);
-    QCOMPARE(combinedModel.getChangeKeywords(), false);
+    // temporary the logic is that keywords are enabled
+    // QCOMPARE(combinedModel.getChangeKeywords(), false);
 }
 
 void CombinedModelTests::resetModelClearsEverythingTest() {
@@ -826,22 +883,20 @@ void CombinedModelTests::savedAfterKeywordsModifiedTest() {
     for (auto &item: snapshot) { QCOMPARE(item->isModified(), true); }
 }
 
-void CombinedModelTests::savedIfMoreThanOneButNotModifiedTest() {
+void CombinedModelTests::nothingChangedIfNoModificationsMadeTest() {
     DECLARE_MODELS;
 
-    QString commonDescription = "a common Description1";
-
     Artworks::ArtworksSnapshot snapshot;
-    snapshot.append(createArtworkMetadata(commonDescription, "title1", QStringList() << "Keyword1", 0));
-    snapshot.append(createArtworkMetadata(commonDescription, "title2", QStringList() << "Keyword2", 1));
-    snapshot.append(createArtworkMetadata(commonDescription, "title3", QStringList() << "Keyword3", 2));
+    snapshot.append(createArtworkMetadata("descrtiption1", "title1", QStringList() << "Keyword1", 0));
+    snapshot.append(createArtworkMetadata("descrtiption2", "title2", QStringList() << "Keyword2", 1));
+    snapshot.append(createArtworkMetadata("descrtiption3", "title3", QStringList() << "Keyword3", 2));
 
     combinedModel.resetModel();
     combinedModel.setArtworks(snapshot);
 
     combinedModel.getActionCommand(true)->execute();
 
-    for (auto &item: snapshot) { QCOMPARE(item->isModified(), true); }
+    for (auto &item: snapshot) { QCOMPARE(item->isModified(), false); }
 }
 
 void CombinedModelTests::caseIsPreservedForOneItemTest() {

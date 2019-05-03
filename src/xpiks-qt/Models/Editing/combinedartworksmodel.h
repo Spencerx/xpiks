@@ -125,9 +125,9 @@ namespace Models {
         bool isSpellingFixed() const { return getSpellingFixedFlag(); }
 
     private:
-        void initKeywords(const QStringList &keywords) { m_CommonKeywordsModel.setKeywords(keywords); setKeywordsModified(false); }
-        void initDescription(const QString &description) { setDescription(description); setDescriptionModified(false); }
-        void initTitle(const QString &title) { setTitle(title); setTitleModified(false); }
+        void initKeywords(const QStringList &keywords, bool onlyAppend);
+        void initDescription(const QString &description, bool enabled);
+        void initTitle(const QString &title, bool enabled);
         void recombineArtworks();
         void registerAsCurrentEditable();
 
@@ -209,7 +209,6 @@ namespace Models {
         bool acceptCompletionAsPreset(AutoComplete::ICompletionSource &completionSource, int completionID);
 
     private:
-        void enableAllFields();
         void assignFromOneArtwork();
         void assignFromManyArtworks();
         void recombineArtworks(std::function<bool (std::shared_ptr<Artworks::ArtworkElement> const &)> pred);
