@@ -37,7 +37,7 @@ namespace Maintenance {
         QFile file(fileNameFull);
 
         if (file.exists()) {
-            LOG_DEBUG << "Removing log file " << fileNameFull;
+            LOG_DEBUG << "Removing file " << fileNameFull;
             bool removed = false;
 
             try {
@@ -54,19 +54,17 @@ namespace Maintenance {
     }
 
     void removeFiles(const QVector<FilesCleanup::CleanupCandidate> &files) {
-        LOG_INFO << files.size() << "logs to delete";
+        LOG_INFO << files.size() << "files to delete";
         for (auto &f: files) {
             removeFile(f.m_Filepath);
         }
     }
 
     QVector<FilesCleanup::CleanupCandidate> findCleanupCandidates(const QString &rootDir,
-                                                    const QStringList &filters,
-                                                    const QSet<QString> &ignoreList,
-                                                    qint64& logsSizeBytes) {
+                                                                  const QStringList &filters,
+                                                                  const QSet<QString> &ignoreList) {
         QDirIterator it(rootDir, filters, QDir::Files);
         QDateTime currentTime = QDateTime::currentDateTime();
-        logsSizeBytes = 0;
         QVector<FilesCleanup::CleanupCandidate> candidates;
 
         while (it.hasNext()) {
@@ -80,7 +78,6 @@ namespace Maintenance {
             qint64 fileSize = fileInfo.size();
             QString fileName = fileInfo.fileName();
 
-            logsSizeBytes += fileSize;
             QDateTime createTime = getDateFromName(fileName);
             qint64 deltaTimeDays = createTime.daysTo(currentTime);
 
@@ -95,7 +92,7 @@ namespace Maintenance {
         return candidates;
     }
 
-    // logFiles vector is supposed to be sorted by age and then by size
+    // candidates vector is supposed to be sorted by age and then by size
     QVector<FilesCleanup::CleanupCandidate> filterCleanupCandidates(const QVector<FilesCleanup::CleanupCandidate> &candidates,
                                                                     qint64 overallSizeBytes,
                                                                     int maxFiles,
@@ -129,10 +126,9 @@ namespace Maintenance {
 
     FilesCleanup::FilesCleanup(const QString &rootDir,
                                const QStringList &filters,
-                               const QSet<QString> &ignoreList)
+                               const QSet<QString> &ignoreList):
+        FilesCleanup(findCleanupCandidates(rootDir, filters, ignoreList))
     {
-        m_Candidates = findCleanupCandidates(rootDir, filters, ignoreList, m_OverallSizeBytes);
-        std::sort(m_Candidates.begin(), m_Candidates.end());
     }
 
     FilesCleanup::FilesCleanup(QVector<FilesCleanup::CleanupCandidate> &&candidates):
