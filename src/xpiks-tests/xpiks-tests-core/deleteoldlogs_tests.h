@@ -2,11 +2,8 @@
 #define DELETEOLDLOGSTEST_H
 
 #include <QObject>
-#include <QVector>
 #include <QtTest>  // IWYU pragma: keep
 // IWYU pragma: no_include <QString>
-
-#include "Services/Maintenance/logscleanupjobitem.h"
 
 class DeleteOldLogsTest: public QObject
 {
@@ -18,17 +15,6 @@ private slots:
     void deleteLargeTest();
     void deleteManyTest();
     void deleteCombinedTest();
-
-private:
-    QVector<Maintenance::FileInfoHolder> createTooManyLogs(int logsCount);
-    QVector<Maintenance::FileInfoHolder> createOldLogs(int logsCount, int startDay);
-    QVector<Maintenance::FileInfoHolder> createBigLogs(int logsCount);
-    QVector<Maintenance::FileInfoHolder> createLogs(int freshLogsCount, int oldLogsCount, int largeLogsCount);
-
-private:
-    QVector<Maintenance::FileInfoHolder> m_Logs;
-    QVector<Maintenance::FileInfoHolder> m_LogsToDelete;
-    int m_TotalSizeB;
 };
 
 #endif // DELETEOLDLOGSTEST_H

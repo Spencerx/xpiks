@@ -61,6 +61,7 @@ namespace Maintenance {
 #endif
 
     public:
+        void cleanupCrashDumps();
         void cleanupUpdatesArtifacts();
         void cleanupDownloadedUpdates(const QString &downloadsPath);
         void launchExiftool(const QString &exiftoolPath);

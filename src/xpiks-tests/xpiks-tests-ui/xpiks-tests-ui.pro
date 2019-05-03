@@ -354,7 +354,9 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Commands/UI/currenteditablecommands.cpp \
     ../../xpiks-qt/QMLExtensions/proxyindexmiddlware.cpp \
     ../../xpiks-qt/Connectivity/curlhelpers.cpp \
-    ../xpiks-tests-integration/integrationtestsenvironment.cpp
+    ../xpiks-tests-integration/integrationtestsenvironment.cpp \
+    ../../xpiks-qt/Services/Maintenance/crashdumpcleanupjobitem.cpp \
+    ../../xpiks-qt/Services/Maintenance/filescleanup.cpp
 
 DISTFILES += \
     ../../xpiks-qt/Components/EditableTags.qml \
@@ -447,6 +449,8 @@ DISTFILES += \
     ../../xpiks-qt/Components/StaticDialogBase.qml
 
 HEADERS += \
+    ../../xpiks-qt/Services/Maintenance/crashdumpcleanupjobitem.h \
+    ../../xpiks-qt/Services/Maintenance/filescleanup.h \
     testshost.h \
     ../../../vendors/tiny-aes/aes.h \
     ../../../vendors/sqlite/sqlite3.h \

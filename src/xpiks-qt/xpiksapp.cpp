@@ -573,6 +573,7 @@ void XpiksApp::executeMaintenanceJobs() {
     // integration test just don't have old ones
     m_MaintenanceService.cleanupLogs();
     m_MaintenanceService.cleanupUpdatesArtifacts();
+    m_MaintenanceService.cleanupCrashDumps();
 }
 
 int XpiksApp::restoreSession() {

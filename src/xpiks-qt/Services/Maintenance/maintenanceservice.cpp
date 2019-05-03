@@ -27,6 +27,7 @@
 #include "Services/Maintenance/xpkscleanupjob.h"
 
 #ifdef Q_OS_WIN
+#include "Services/Maintenance/crashdumpcleanupjobitem.h"
 #include "Services/Maintenance/updatescleanupjobitem.h"
 #endif
 
@@ -95,6 +96,15 @@ namespace Maintenance {
         m_MaintenanceWorker->cancelBatch(m_LastSessionBatchId);
     }
 #endif
+
+    void MaintenanceService::cleanupCrashDumps() {
+#if defined(Q_OS_WIN)
+        LOG_DEBUG << "#";
+        if (!isRunning()) { return; }
+        auto jobItem = std::make_shared<CrashDumpCleanupJobItem>(m_Environment);
+        m_MaintenanceWorker->submitItem(jobItem);
+#endif
+    }
 
     void MaintenanceService::cleanupUpdatesArtifacts() {
 #ifdef Q_OS_WIN

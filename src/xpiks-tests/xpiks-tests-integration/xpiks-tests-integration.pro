@@ -31,6 +31,8 @@ DEFINES += WITH_FTP_SERVER
 SOURCES += main.cpp \
     ../../../vendors/tiny-aes/aes.cpp \
     ../../../vendors/sqlite/sqlite3.c \
+    ../../xpiks-qt/Services/Maintenance/crashdumpcleanupjobitem.cpp \
+    ../../xpiks-qt/Services/Maintenance/filescleanup.cpp \
     addfilesbasictest.cpp \
     autoattachvectorstest.cpp \
     savefilebasictest.cpp \
@@ -292,6 +294,8 @@ include(deployment.pri)
 HEADERS += \
     ../../../vendors/tiny-aes/aes.h \
     ../../../vendors/sqlite/sqlite3.h \
+    ../../xpiks-qt/Services/Maintenance/crashdumpcleanupjobitem.h \
+    ../../xpiks-qt/Services/Maintenance/filescleanup.h \
     integrationtestbase.h \
     addfilesbasictest.h \
     signalwaiter.h \

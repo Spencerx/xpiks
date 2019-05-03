@@ -75,6 +75,7 @@ appveyor {
 TEMPLATE = app
 
 SOURCES += main.cpp \
+    ../../xpiks-qt/Services/Maintenance/filescleanup.cpp \
     encryption_tests.cpp \
     indicestoranges_tests.cpp \
     addcommand_tests.cpp \
@@ -160,7 +161,6 @@ SOURCES += main.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellsuggestionsitem.cpp \
     ../../xpiks-qt/Services/SpellCheck/spellcheckinfo.cpp \
     ../../xpiks-qt/Models/Editing/deletekeywordsviewmodel.cpp \
-    ../../xpiks-qt/Services/Maintenance/logscleanupjobitem.cpp \
     ../../xpiks-qt/Services/Warnings/warningsitem.cpp \
     ../../xpiks-qt/Services/Warnings/warningssettingsmodel.cpp \
     ../../xpiks-qt/QMLExtensions/cachedimage.cpp \
@@ -208,6 +208,7 @@ SOURCES += main.cpp \
     keywordssuggestion_tests.cpp
 
 HEADERS += \
+    ../../xpiks-qt/Services/Maintenance/filescleanup.h \
     encryption_tests.h \
     indicestoranges_tests.h \
     Mocks/commandmanagermock.h \
@@ -333,7 +334,6 @@ HEADERS += \
     ../../xpiks-qt/Services/SpellCheck/spellcheckinfo.h \
     ../../xpiks-qt/Models/Editing/deletekeywordsviewmodel.h \
     ../../xpiks-qt/Services/Maintenance/imaintenanceitem.h \
-    ../../xpiks-qt/Services/Maintenance/logscleanupjobitem.h \
     ../../xpiks-qt/Services/Warnings/iwarningsitem.h \
     ../../xpiks-qt/Services/Warnings/warningsitem.h \
     ../../xpiks-qt/Services/Warnings/warningssettingsmodel.h \

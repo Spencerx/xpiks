@@ -172,6 +172,8 @@ SOURCES += main.cpp \
     QMLExtensions/uicommandlistener.cpp \
     QMLExtensions/videocachingservice.cpp \
     QMLExtensions/videocachingworker.cpp \
+    Services/Maintenance/crashdumpcleanupjobitem.cpp \
+    Services/Maintenance/filescleanup.cpp \
     Services/artworkseditinghub.cpp \
     Services/artworksupdatehub.cpp \
     Services/AutoComplete/autocompletemodel.cpp \
@@ -476,6 +478,8 @@ HEADERS += \
     QMLExtensions/videocacherequest.h \
     QMLExtensions/videocachingservice.h \
     QMLExtensions/videocachingworker.h \
+    Services/Maintenance/crashdumpcleanupjobitem.h \
+    Services/Maintenance/filescleanup.h \
     Services/artworkseditinghub.h \
     Services/artworksupdatehub.h \
     Services/artworkupdaterequest.h \
