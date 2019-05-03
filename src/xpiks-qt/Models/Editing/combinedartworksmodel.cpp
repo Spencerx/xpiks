@@ -287,7 +287,9 @@ namespace Models {
     void CombinedArtworksModel::clearModel() {
         LOG_DEBUG << "#";
         m_CommonKeywordsModel.clearModel();
-        enableAllFields();
+        setChangeTitle(true);
+        setChangeDescription(true);
+        setChangeKeywords(true);
         emit descriptionChanged();
         emit titleChanged();
         emit keywordsCountChanged();
