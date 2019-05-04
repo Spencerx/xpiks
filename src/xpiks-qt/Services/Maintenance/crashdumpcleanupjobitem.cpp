@@ -10,6 +10,9 @@
 
 #include "crashdumpcleanupjobitem.h"
 
+#include <QDateTime>
+#include <QDirIterator>
+
 #include "Common/isystemenvironment.h"
 #include "Common/logging.h"
 #include "Helpers/constants.h"
@@ -21,6 +24,22 @@
 #define MAX_CRASHES_NUMBER 20
 
 namespace Maintenance {
+    QString findLastModifiedFile(const QString &directory, const QStringList &filters) {
+        QString lastModifiedPath;
+        QDateTime maxDate = QDateTime::currentDateTime().addYears(-1);
+        QDirIterator it(directory, filters, QDir::Files);
+        while (it.hasNext()) {
+            it.next();
+            QFileInfo fi = it.fileInfo();
+            const QDateTime lastModified = fi.lastModified();
+            if (lastModified > maxDate) {
+                maxDate = lastModified;
+                lastModifiedPath = fi.fileName();
+            }
+        }
+        return lastModifiedPath;
+    }
+
     CrashDumpCleanupJobItem::CrashDumpCleanupJobItem(Common::ISystemEnvironment &environment):
         m_CrashesDir(environment.path({Constants::CRASHES_DIR}))
     { }
@@ -28,9 +47,14 @@ namespace Maintenance {
     void CrashDumpCleanupJobItem::processJob() {
         LOG_DEBUG << "#";
 
+        QStringList filters = QStringList() << "xpiks_*.dmp";
+
         FilesCleanup(m_CrashesDir,
-                     QStringList() << "xpiks_*.dmp",
+                     filters,
                      QSet<QString>())
             .Run(MAX_CRASHES_NUMBER, MAX_CRASHES_AGE_DAYS, MAX_CRASHES_SIZE_BYTES);
+
+        QString lastCrashPath = findLastModifiedFile(m_CrashesDir, filters);
+        emit lastCrashFound(lastCrashPath);
     }
 }

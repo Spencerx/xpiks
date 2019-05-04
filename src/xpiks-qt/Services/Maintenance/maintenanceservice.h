@@ -18,6 +18,10 @@
 #include <QString>
 
 #include "Common/itemprocessingworker.h"
+#include "Common/messages.h"
+#include "Common/statefulentity.h"
+#include "Common/types.h"
+#include "Connectivity/analyticsuserevent.h"
 #include "Services/Maintenance/maintenanceworker.h"
 
 class QThread;
@@ -43,7 +47,7 @@ namespace Helpers {
 }
 
 namespace Maintenance {
-    class MaintenanceService: public QObject
+    class MaintenanceService: public QObject, public Common::MessagesSource<Common::NamedType<Connectivity::EventType>>
     {
         Q_OBJECT
     public:
@@ -84,9 +88,11 @@ namespace Maintenance {
     private slots:
         void workerFinished();
         void workerDestroyed(QObject *object);
+        void lastCrashFound(QString crashFilePath);
 
     private:
         QThread *m_MaintenanceThread;
+        Common::StatefulEntity m_State;
         Common::ISystemEnvironment &m_Environment;
         MaintenanceWorker *m_MaintenanceWorker;
         MaintenanceWorker::batch_id_t m_LastSessionBatchId;

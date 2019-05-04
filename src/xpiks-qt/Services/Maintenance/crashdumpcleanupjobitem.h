@@ -11,6 +11,7 @@
 #ifndef CRASHDUMPCLEANUPJOBITEM_H
 #define CRASHDUMPCLEANUPJOBITEM_H
 
+#include <QObject>
 #include <QString>
 
 #include "Services/Maintenance/imaintenanceitem.h"
@@ -20,13 +21,17 @@ namespace Common {
 }
 
 namespace Maintenance {
-    class CrashDumpCleanupJobItem: public IMaintenanceItem
+    class CrashDumpCleanupJobItem: public QObject, public IMaintenanceItem
     {
+        Q_OBJECT
     public:
         CrashDumpCleanupJobItem(Common::ISystemEnvironment &environment);
 
     public:
         virtual void processJob() override;
+
+    signals:
+        void lastCrashFound(QString filename);
 
     private:
         QString m_CrashesDir;

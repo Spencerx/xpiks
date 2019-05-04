@@ -18,6 +18,7 @@
 #include "Common/defines.h"
 #include "Common/logging.h"
 #include "Helpers/asynccoordinator.h"
+#include "Helpers/constants.h"
 #include "Services/Maintenance/initializedictionariesjobitem.h"
 #include "Services/Maintenance/launchexiftooljobitem.h"
 #include "Services/Maintenance/logscleanupjobitem.h"
@@ -34,6 +35,7 @@
 namespace Maintenance {
     MaintenanceService::MaintenanceService(Common::ISystemEnvironment &environment):
         m_MaintenanceThread(nullptr),
+        m_State("maintenance", environment),
         m_Environment(environment),
         m_MaintenanceWorker(nullptr),
         m_LastSessionBatchId(INVALID_BATCH_ID),
@@ -43,6 +45,7 @@ namespace Maintenance {
 
     void MaintenanceService::startService() {
         LOG_DEBUG << "#";
+        m_State.init();
 
         if (m_MaintenanceWorker != nullptr) {
             LOG_WARNING << "Attempt to start running worker";
@@ -102,6 +105,8 @@ namespace Maintenance {
         LOG_DEBUG << "#";
         if (!isRunning()) { return; }
         auto jobItem = std::make_shared<CrashDumpCleanupJobItem>(m_Environment);
+        QObject::connect(jobItem.get(), &CrashDumpCleanupJobItem::lastCrashFound,
+                         this, &MaintenanceService::lastCrashFound);
         m_MaintenanceWorker->submitItem(jobItem);
 #endif
     }
@@ -184,5 +189,17 @@ namespace Maintenance {
         Q_UNUSED(object);
         LOG_DEBUG << "#";
         m_MaintenanceWorker = nullptr;
+    }
+
+    void MaintenanceService::lastCrashFound(QString crashFilePath) {
+        LOG_INFO << crashFilePath;
+        QString lastSavedCrash = m_State.getString(Constants::lastCrashDump);
+        if (crashFilePath != lastSavedCrash) {
+            m_State.setValue(Constants::lastCrashDump, crashFilePath);
+            m_State.sync();
+            if (!crashFilePath.isEmpty()) {
+                sendMessage(Connectivity::EventType::CrashDump);
+            }
+        }
     }
 }

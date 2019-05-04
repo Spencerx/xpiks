@@ -40,7 +40,8 @@ namespace Connectivity {
         UploadFailed,
         CurrentItemMiss,
         AddDictionaryFailed,
-        SuggestionFailure
+        SuggestionFailure,
+        CrashDump
     };
 
     class AnalyticsUserEvent {
@@ -76,6 +77,7 @@ namespace Connectivity {
                 case EventType::CurrentItemMiss: return QLatin1String("CurrentItemMiss");
                 case EventType::AddDictionaryFailed: return QLatin1String("AddDictionaryFailed");
                 case EventType::SuggestionFailure: return QLatin1String("SuggestionFailure");
+                case EventType::CrashDump: return QLatin1String("CrashDump");
                 default: return QLatin1String("Unknown");
             }
         }

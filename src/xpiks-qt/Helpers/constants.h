@@ -177,6 +177,7 @@ namespace Constants {
     const char suggestorSearchTypeIndex[] = "suggestorSearchTypeIndex";
     const char useAutoImport[] = "useAutoImport";
     const char useSimplifiedUI[] = "useSimplifiedUI";
+    const char lastCrashDump[] = "lastCrashDump";
 }
 
 #endif // CONSTANTS
